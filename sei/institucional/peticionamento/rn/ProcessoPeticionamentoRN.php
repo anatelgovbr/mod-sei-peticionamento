@@ -139,7 +139,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objProtocoloDTO->setArrObjObservacaoDTO( array() );
 			
 			//Atribuição de dados do procedimento
-			//TODO: Validar cada uma das informações de entrada do webservice
 			$objProcedimentoDTO = new ProcedimentoDTO();
 			$objProcedimentoDTO->setNumIdUnidadeGeradoraProtocolo( $unidadeDTO->getNumIdUnidade() );
 			$objProcedimentoDTO->setDblIdProcedimento(null);
@@ -159,9 +158,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objUnidadeDTO = $this->atribuirDadosUnidade($objProcedimentoDTO, $unidadeDTO);		
 			$objProcedimentoDTO->setNumIdUnidadeGeradoraProtocolo( $objUnidadeDTO->getNumIdUnidade() );
 			
-			//TODO: Finalizar criação do procedimento
 			$objProcedimentoRN = new ProcedimentoPeticionamentoRN();
-			//print_r( $objProcedimentoDTO->getObjProtocoloDTO() ); die();
 			$objProcedimentoDTOGerado = $objProcedimentoRN->gerarRN0156($objProcedimentoDTO);
 			$objProcedimentoDTO->setDblIdProcedimento($objProcedimentoDTOGerado->getDblIdProcedimento());
 			
@@ -206,8 +203,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 	
 	private function montarArrDocumentos( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO, $arrParticipantesParametro, $reciboDTOBasico ){
 		
-		//print_r( $reciboDTOBasico ); die();
-		
 		//tentando simular sessao de usuario interno do SEI
 		SessaoSEI::getInstance()->setNumIdUnidadeAtual( $objUnidadeDTO->getNumIdUnidade() );
 		SessaoSEI::getInstance()->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
@@ -216,9 +211,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		
 		//verificar se foi editado documento principal gerado pelo editor do SEI
 		if( isset( $arrParametros['docPrincipalConteudoHTML'] ) && $arrParametros['docPrincipalConteudoHTML'] != ""  ){
-			
-			//echo "aqui"; die();
-			
+						
 			$idTipoProc = $arrParametros['id_tipo_procedimento'];
 			$objTipoProcDTO = new TipoProcessoPeticionamentoDTO();
 			$objTipoProcDTO->retTodos(true);
@@ -262,19 +255,10 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		}
 				
 		//tratando documentos essenciais e complementares
-		//hdnDocPrincipal
-		//echo "aqui 3"; die();
-		//print_r( $objProcedimentoDTO ); die();
 		$anexoRN = new AnexoPeticionamentoRN();
 		$strSiglaUsuario = SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno();
 		
-		//print_r( $arrParametros['hdnDocPrincipal'] ); echo " <hr/> ";
-		//print_r( $arrParametros['hdnDocEssencial'] ); echo " <hr/> ";
-		//print_r( $arrParametros['hdnDocComplementar'] ); echo " <hr/> "; die();
-		
 		if( isset( $arrParametros['hdnDocPrincipal'] ) && $arrParametros['hdnDocPrincipal']  != "") {
-				
-			//echo $arrParametros['hdnDocPrincipal']; die();
 			
 			$arrAnexoDocPrincipal = $this->processarStringAnexos( $arrParametros['hdnDocPrincipal'] ,
 					$objUnidadeDTO->getNumIdUnidade() ,
@@ -283,33 +267,127 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					$objProcedimentoDTO->getDblIdProcedimento()  );
 			
 			$arrAnexoPrincipalVinculacaoProcesso = array();
-				
+			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocPrincipal']  );
+			$contador = 0;	
+			$objDocumentoRN = new DocumentoRN();
+			
 			foreach( $arrAnexoDocPrincipal as $itemAnexo ){
 				
-				//print_r( $itemAnexo ); die();
+				//================================
+				//PROTOCOLO / DOCUMENTO DO ANEXO
+				//=================================
+				
+				$idSerieAnexo = $arrLinhasAnexos[ $contador ][9];
+				$idTipoConferencia = $arrLinhasAnexos[ $contador ][7];
+								
+				$idNivelAcesso = null;
+				
+				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
+					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
+				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
+					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
+				}
+				
+				$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
+				$idGrauSigilo = null;
+				
+				//criando registro em protocolo
+				$objDocumentoDTO = new DocumentoDTO();
+				$objDocumentoDTO->setDblIdDocumento(null);
+				$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+				
+				$objProtocoloDTO = new ProtocoloDTO();
+				$objProtocoloDTO->setDblIdProtocolo(null);
+				
+				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
+				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
+				
+				$objDocumentoDTO->setDblIdDocumentoEdoc( null );
+				$objDocumentoDTO->setDblIdDocumentoEdocBase( null );
+				$objDocumentoDTO->setNumIdUnidadeResponsavel( SessaoSEI::getInstance()->getNumIdUnidadeAtual() );
+				$objDocumentoDTO->setStrNumero(null);
+				$objDocumentoDTO->setNumIdTipoConferencia( $idTipoConferencia );
+				$objDocumentoDTO->setStrSinFormulario('N');
+				$objDocumentoDTO->setStrSinBloqueado('N');
+				
+				$objDocumentoDTO->setStrStaEditor( null );
+				
+				$objDocumentoDTO->setNumVersaoLock(0);
+				
+				$arrObjUnidadeDTOReabertura = array();
+				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo." 
+				//nao esta fazendo reabertura de processo - trata-se de processo novo
+				//$arrObjUnidadeDTOReabertura[] = $objUnidadeDTO;				
+				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
+				
+				$objProtocoloDTO->setStrStaNivelAcessoLocal( $idNivelAcesso );
+				$objProtocoloDTO->setNumIdHipoteseLegal( $idHipoteseLegal );
+				$objProtocoloDTO->setStrStaGrauSigilo( $idGrauSigilo );
+				
+				$objProtocoloDTO->setStrDescricao('');
+				$objProtocoloDTO->setDtaGeracao(InfraData::getStrDataAtual());
+				
+				//$arrAssuntos = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnAssuntos']);
+				//ASSUNTOS
+				$arrObjAssuntosDTO = array();
+				$objProtocoloDTO->setArrObjRelProtocoloAssuntoDTO($arrObjAssuntosDTO);
+				
+				//INTERESSADOS
+				$arrObjParticipantesDTO = array();
+				$objProtocoloDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
+				
+				//OBSERVACOES
+				$objObservacaoDTO  = new ObservacaoDTO();
+				$objObservacaoDTO->setStrDescricao('');
+				$objProtocoloDTO->setArrObjObservacaoDTO(array($objObservacaoDTO));
+				
+				//ATRIBUTOS
+				$arrRelProtocoloAtributo = AtributoINT::processarRI0691();
+				$arrObjRelProtocoloAtributoDTO = array();
+				for($x = 0;$x<count($arrRelProtocoloAtributo);$x++){
+					$arrRelProtocoloAtributoDTO = new RelProtocoloAtributoDTO();
+					$arrRelProtocoloAtributoDTO->setStrValor($arrRelProtocoloAtributo[$x]->getStrValor());
+					$arrRelProtocoloAtributoDTO->setNumIdAtributo($arrRelProtocoloAtributo[$x]->getNumIdAtributo());
+					$arrObjRelProtocoloAtributoDTO[$x] = $arrRelProtocoloAtributoDTO;
+				}
+				$objProtocoloDTO->setArrObjRelProtocoloAtributoDTO($arrObjRelProtocoloAtributoDTO);
+				
+				//ANEXOS
+				$objProtocoloDTO->setArrObjAnexoDTO( array() );
+				//$objProtocoloDTO->setArrObjAnexoDTO(AnexoINT::processarRI0872($_POST['hdnAnexos']));
+				
+				$objDocumentoDTO->setObjProtocoloDTO($objProtocoloDTO);
+				
+				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
+				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');				
+				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
+				
+				//=============================
+				//criando registro em anexo
+				//=============================
 				$strTamanho = str_replace("","Kb", $itemAnexo->getNumTamanho() );
-				$itemAnexo->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+				$strTamanho = str_replace("","Mb", $strTamanho );
+				
+				//TODO aplicar regra para validar tamanho do anexo enviado 
+				
+				$itemAnexo->setDblIdProtocolo( $objDocumentoDTO->getDblIdDocumento() );
 				$itemAnexo->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$itemAnexo->setNumTamanho( (int)$strTamanho );
 				$itemAnexo->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 				$itemAnexo->setStrSinAtivo('S');
-				//print_r( $itemAnexo ); die();
 				$itemAnexo = $anexoRN->cadastrarRN0172( $itemAnexo );
 				$arrAnexoPrincipalVinculacaoProcesso[] = $itemAnexo;
+				$contador = $contador+1;
 		
 			}
 				
 			//cria o protocolo, cria o documento, e no documento aponta o procedimento (o processo)
 			$arrParametros['CLASSIFICACAO_RECIBO'] = ReciboDocumentoAnexoPeticionamentoRN::$TP_PRINCIPAL;
 			
-			//print_r( $reciboDTOBasico ); die();
-			
 			$this->montarProtocoloDocumentoAnexo( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO,
 					$arrParticipantesParametro, $arrAnexoPrincipalVinculacaoProcesso, $reciboDTOBasico );
 				
 		}
-		
-		//echo "aqui = passou do principal"; die();
 		
 		if( isset( $arrParametros['hdnDocEssencial'] ) && $arrParametros['hdnDocEssencial']  != "") {
 			
@@ -323,10 +401,106 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$arrAnexoEssencialVinculacaoProcesso = array();
 			$arrAnexoComplementarVinculacaoProcesso = array();
 			
+			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocEssencial']  );
+			$contador = 0;
+			
 			foreach( $arrAnexoDocEssencial as $itemAnexo ){
 				
-				//print_r($itemAnexo);die();
+				//================================
+				//PROTOCOLO / DOCUMENTO DO ANEXO
+				//=================================
+					
+				$idSerieAnexo = $arrLinhasAnexos[ $contador ][9];
+				$idTipoConferencia = $arrLinhasAnexos[ $contador ][7];
+					
+				$idNivelAcesso = null;
+					
+				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
+					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
+				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
+					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
+				}
+					
+				$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
+				$idGrauSigilo = null;
+					
+				//criando registro em protocolo
+				$objDocumentoDTO = new DocumentoDTO();
+				$objDocumentoDTO->setDblIdDocumento(null);
+				$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+					
+				$objProtocoloDTO = new ProtocoloDTO();
+				$objProtocoloDTO->setDblIdProtocolo(null);
+					
+				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
+				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
+					
+				$objDocumentoDTO->setDblIdDocumentoEdoc( null );
+				$objDocumentoDTO->setDblIdDocumentoEdocBase( null );
+				$objDocumentoDTO->setNumIdUnidadeResponsavel( SessaoSEI::getInstance()->getNumIdUnidadeAtual() );
+				$objDocumentoDTO->setStrNumero(null);
+				$objDocumentoDTO->setNumIdTipoConferencia( $idTipoConferencia );
+				$objDocumentoDTO->setStrSinFormulario('N');
+				$objDocumentoDTO->setStrSinBloqueado('N');
+					
+				$objDocumentoDTO->setStrStaEditor( null );
+					
+				$objDocumentoDTO->setNumVersaoLock(0);
+					
+				$arrObjUnidadeDTOReabertura = array();
+				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo."
+				//nao esta fazendo reabertura de processo - trata-se de processo novo
+				//$arrObjUnidadeDTOReabertura[] = $objUnidadeDTO;
+				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
+					
+				$objProtocoloDTO->setStrStaNivelAcessoLocal( $idNivelAcesso );
+				$objProtocoloDTO->setNumIdHipoteseLegal( $idHipoteseLegal );
+				$objProtocoloDTO->setStrStaGrauSigilo( $idGrauSigilo );
+					
+				$objProtocoloDTO->setStrDescricao('');
+				$objProtocoloDTO->setDtaGeracao(InfraData::getStrDataAtual());
+					
+				//$arrAssuntos = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnAssuntos']);
+				//ASSUNTOS
+				$arrObjAssuntosDTO = array();
+				$objProtocoloDTO->setArrObjRelProtocoloAssuntoDTO($arrObjAssuntosDTO);
+					
+				//INTERESSADOS
+				$arrObjParticipantesDTO = array();
+				$objProtocoloDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
+					
+				//OBSERVACOES
+				$objObservacaoDTO  = new ObservacaoDTO();
+				$objObservacaoDTO->setStrDescricao('');
+				$objProtocoloDTO->setArrObjObservacaoDTO(array($objObservacaoDTO));
+					
+				//ATRIBUTOS
+				$arrRelProtocoloAtributo = AtributoINT::processarRI0691();
+				$arrObjRelProtocoloAtributoDTO = array();
+				for($x = 0;$x<count($arrRelProtocoloAtributo);$x++){
+					$arrRelProtocoloAtributoDTO = new RelProtocoloAtributoDTO();
+					$arrRelProtocoloAtributoDTO->setStrValor($arrRelProtocoloAtributo[$x]->getStrValor());
+					$arrRelProtocoloAtributoDTO->setNumIdAtributo($arrRelProtocoloAtributo[$x]->getNumIdAtributo());
+					$arrObjRelProtocoloAtributoDTO[$x] = $arrRelProtocoloAtributoDTO;
+				}
+				$objProtocoloDTO->setArrObjRelProtocoloAtributoDTO($arrObjRelProtocoloAtributoDTO);
+					
+				//ANEXOS
+				$objProtocoloDTO->setArrObjAnexoDTO( array() );
+				//$objProtocoloDTO->setArrObjAnexoDTO(AnexoINT::processarRI0872($_POST['hdnAnexos']));
+					
+				$objDocumentoDTO->setObjProtocoloDTO($objProtocoloDTO);
+					
+				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
+				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
+				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
+				
+				//==================================
+				//CRIANDO ANEXOS
+				//=================================
+				
 				$strTamanho = str_replace("","Kb", $itemAnexo->getNumTamanho() );
+				$strTamanho = str_replace("","Mb", $strTamanho );
 				$itemAnexo->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
 				$itemAnexo->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$itemAnexo->setNumTamanho( (int)$strTamanho );
@@ -335,13 +509,12 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				//print_r( $itemAnexo ); die();
 				$itemAnexo = $anexoRN->cadastrarRN0172( $itemAnexo );
 				$arrAnexoEssencialVinculacaoProcesso[] = $itemAnexo; 
+				$contador =  $contador+1;
 				
 			}
 			
 			//cria o protocolo, cria o documento, e no documento aponta o procedimento (o processo)
 			$arrParametros['CLASSIFICACAO_RECIBO'] = ReciboDocumentoAnexoPeticionamentoRN::$TP_ESSENCIAL;
-			
-			//print_r( $reciboDTOBasico ); die();
 			
 			$this->montarProtocoloDocumentoAnexo( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO,
 					$arrParticipantesParametro, $arrAnexoEssencialVinculacaoProcesso, $reciboDTOBasico );
@@ -358,27 +531,120 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			
 			//$arrAnexoDocComplementar = AnexoINT::processarRI0872( $arrParametros['hdnDocComplementar'] );
 			
+			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocComplementar']  );
+			$contador = 0;
+						
 			foreach( $arrAnexoDocComplementar as $itemAnexoComplementar ){
 				
+				//================================
+				//PROTOCOLO / DOCUMENTO DO ANEXO
+				//=================================
+					
+				$idSerieAnexo = $arrLinhasAnexos[ $contador ][9];
+				$idTipoConferencia = $arrLinhasAnexos[ $contador ][7];
+					
+				$idNivelAcesso = null;
+					
+				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
+					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
+				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
+					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
+				}
+					
+				$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
+				$idGrauSigilo = null;
+					
+				//criando registro em protocolo
+				$objDocumentoDTO = new DocumentoDTO();
+				$objDocumentoDTO->setDblIdDocumento(null);
+				$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+					
+				$objProtocoloDTO = new ProtocoloDTO();
+				$objProtocoloDTO->setDblIdProtocolo(null);
+					
+				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
+				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
+					
+				$objDocumentoDTO->setDblIdDocumentoEdoc( null );
+				$objDocumentoDTO->setDblIdDocumentoEdocBase( null );
+				$objDocumentoDTO->setNumIdUnidadeResponsavel( SessaoSEI::getInstance()->getNumIdUnidadeAtual() );
+				$objDocumentoDTO->setStrNumero(null);
+				$objDocumentoDTO->setNumIdTipoConferencia( $idTipoConferencia );
+				$objDocumentoDTO->setStrSinFormulario('N');
+				$objDocumentoDTO->setStrSinBloqueado('N');
+					
+				$objDocumentoDTO->setStrStaEditor( null );
+					
+				$objDocumentoDTO->setNumVersaoLock(0);
+					
+				$arrObjUnidadeDTOReabertura = array();
+				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo."
+				//nao esta fazendo reabertura de processo - trata-se de processo novo
+				//$arrObjUnidadeDTOReabertura[] = $objUnidadeDTO;
+				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
+					
+				$objProtocoloDTO->setStrStaNivelAcessoLocal( $idNivelAcesso );
+				$objProtocoloDTO->setNumIdHipoteseLegal( $idHipoteseLegal );
+				$objProtocoloDTO->setStrStaGrauSigilo( $idGrauSigilo );
+					
+				$objProtocoloDTO->setStrDescricao('');
+				$objProtocoloDTO->setDtaGeracao(InfraData::getStrDataAtual());
+					
+				//$arrAssuntos = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnAssuntos']);
+				//ASSUNTOS
+				$arrObjAssuntosDTO = array();
+				$objProtocoloDTO->setArrObjRelProtocoloAssuntoDTO($arrObjAssuntosDTO);
+					
+				//INTERESSADOS
+				$arrObjParticipantesDTO = array();
+				$objProtocoloDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
+					
+				//OBSERVACOES
+				$objObservacaoDTO  = new ObservacaoDTO();
+				$objObservacaoDTO->setStrDescricao('');
+				$objProtocoloDTO->setArrObjObservacaoDTO(array($objObservacaoDTO));
+					
+				//ATRIBUTOS
+				$arrRelProtocoloAtributo = AtributoINT::processarRI0691();
+				$arrObjRelProtocoloAtributoDTO = array();
+				for($x = 0;$x<count($arrRelProtocoloAtributo);$x++){
+					$arrRelProtocoloAtributoDTO = new RelProtocoloAtributoDTO();
+					$arrRelProtocoloAtributoDTO->setStrValor($arrRelProtocoloAtributo[$x]->getStrValor());
+					$arrRelProtocoloAtributoDTO->setNumIdAtributo($arrRelProtocoloAtributo[$x]->getNumIdAtributo());
+					$arrObjRelProtocoloAtributoDTO[$x] = $arrRelProtocoloAtributoDTO;
+				}
+				$objProtocoloDTO->setArrObjRelProtocoloAtributoDTO($arrObjRelProtocoloAtributoDTO);
+					
+				//ANEXOS
+				$objProtocoloDTO->setArrObjAnexoDTO( array() );
+				//$objProtocoloDTO->setArrObjAnexoDTO(AnexoINT::processarRI0872($_POST['hdnAnexos']));
+					
+				$objDocumentoDTO->setObjProtocoloDTO($objProtocoloDTO);
+					
+				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
+				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
+				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
+				
+				//========================
+				//CRIANDO ANEXOS
+				//========================
 				$strTamanho = str_replace("","Kb", $itemAnexo->getNumTamanho() );
-				$itemAnexoComplementar->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+				$strTamanho = str_replace("","Mb", $strTamanho );
+				$itemAnexoComplementar->setDblIdProtocolo( $objDocumentoDTO->getDblIdDocumento() );
 				$itemAnexoComplementar->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$itemAnexoComplementar->setNumTamanho( (int)$strTamanho );
 				$itemAnexoComplementar->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 				$itemAnexoComplementar->setStrSinAtivo('S');
 				$itemAnexoComplementar = $anexoRN->cadastrarRN0172( $itemAnexoComplementar );
 				$arrAnexoComplementarVinculacaoProcesso[] = $itemAnexoComplementar;
+				$contador = $contador+1;
 			}
 			
 			//cria o protocolo, cria o documento, e no documento aponta o procedimento (o processo)
 			$arrParametros['CLASSIFICACAO_RECIBO'] = ReciboDocumentoAnexoPeticionamentoRN::$TP_COMPLEMENTAR;
 			
-			//print_r( $reciboDTOBasico ); die();
-			
 			$this->montarProtocoloDocumentoAnexo( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO,
 					$arrParticipantesParametro, $arrAnexoComplementarVinculacaoProcesso, $reciboDTOBasico );
-			
-			
 			
 		}
 						
@@ -386,121 +652,25 @@ class ProcessoPeticionamentoRN extends InfraRN {
 	
 	private function montarProtocoloDocumentoAnexo( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO, 
 			                                        $arrParticipantesParametro, $arrAnexos, $reciboDTOBasico ){
-		
-			                                        	
+					                                        	
 	    $reciboAnexoRN = new ReciboDocumentoAnexoPeticionamentoRN();
-		$strClassificacao = $arrParametros['CLASSIFICACAO_RECIBO'];
-		//print_r( $reciboDTOBasico ); die();
-			                                        	
+	    $strClassificacao = $arrParametros['CLASSIFICACAO_RECIBO'];
+	    
 		foreach( $arrAnexos as $anexoDTOVinculado){	                                        	
-			                                        	
-			$protocoloRN = new ProtocoloPeticionamentoRN();
-			$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
-				                                        	
-			// =============================================
-			// MONTAGEM DO PROTOCOLODTO DO DOCUMENTO
-			// =============================================
-			
-			$strChave = "ID_SERIE_RECIBO_MODULO_PETICIONAMENTO";
-			$objInfraParametro = new InfraParametro( $this->getObjInfraIBanco() );
-			$idSerieParametro = $objInfraParametro->getValor($strChave);
-			
-			$protocoloReciboDocumentoDTO = new ProtocoloDTO();
-			
-			$protocoloReciboDocumentoDTO->setDblIdProtocolo(null);
-			$protocoloReciboDocumentoDTO->setStrDescricao( null );
-			$protocoloReciboDocumentoDTO->setStrStaNivelAcessoLocal( ProtocoloRN::$NA_PUBLICO );
-			$protocoloReciboDocumentoDTO->setStrProtocoloFormatado( $numeroDocumento );
-			$protocoloReciboDocumentoDTO->setStrProtocoloFormatadoPesquisa( $numeroDocumento );
-			$protocoloReciboDocumentoDTO->setNumIdUnidadeGeradora( $objUnidadeDTO->getNumIdUnidade() );
-			$protocoloReciboDocumentoDTO->setNumIdUsuarioGerador( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-			$protocoloReciboDocumentoDTO->setStrStaProtocolo( ProtocoloRN::$TP_DOCUMENTO_GERADO );
-			
-			$protocoloReciboDocumentoDTO->setStrStaNivelAcessoLocal( ProtocoloRN::$NA_PUBLICO );
-			$protocoloReciboDocumentoDTO->setNumIdHipoteseLegal( $hipoteseLegalDocPrincipal );
-			$protocoloReciboDocumentoDTO->setStrStaGrauSigilo('');
-				
-			$protocoloReciboDocumentoDTO->setDtaGeracao( InfraData::getStrDataAtual() );
-			$protocoloReciboDocumentoDTO->setArrObjAnexoDTO(array());
-			$protocoloReciboDocumentoDTO->setArrObjRelProtocoloAssuntoDTO(array());
-			$protocoloReciboDocumentoDTO->setArrObjRelProtocoloProtocoloDTO(array());
-			
-			$protocoloReciboDocumentoDTO->setStrStaEstado( ProtocoloRN::$TE_NORMAL );
-			$protocoloReciboDocumentoDTO->setStrStaArquivamento(ProtocoloRN::$TA_NAO_ARQUIVADO);
-			$protocoloReciboDocumentoDTO->setNumIdLocalizador(null);
-			$protocoloReciboDocumentoDTO->setNumIdUnidadeArquivamento(null);
-			$protocoloReciboDocumentoDTO->setNumIdUsuarioArquivamento(null);
-			$protocoloReciboDocumentoDTO->setDthArquivamento(null);
-			$protocoloReciboDocumentoDTO->setArrObjObservacaoDTO( array() );
-			$protocoloReciboDocumentoDTO->setArrObjParticipanteDTO( $arrParticipantesParametro );
-			$protocoloReciboDocumentoDTO->setNumIdSerieDocumento( $idSerieParametro );
-			
-			//==========================
-			//ATRIBUTOS
-			//==========================
-			
-			$arrRelProtocoloAtributo = AtributoINT::processarRI0691();
-			$arrObjRelProtocoloAtributoDTO = array();
-			
-			for($x = 0;$x<count($arrRelProtocoloAtributo);$x++){
-				$arrRelProtocoloAtributoDTO = new RelProtocoloAtributoDTO();
-				$arrRelProtocoloAtributoDTO->setStrValor($arrRelProtocoloAtributo[$x]->getStrValor());
-				$arrRelProtocoloAtributoDTO->setNumIdAtributo($arrRelProtocoloAtributo[$x]->getNumIdAtributo());
-				$arrObjRelProtocoloAtributoDTO[$x] = $arrRelProtocoloAtributoDTO;
-			}
-			
-			$protocoloReciboDocumentoDTO->setArrObjRelProtocoloAtributoDTO($arrObjRelProtocoloAtributoDTO);
-			
-			//=============================================
-			//MONTAGEM DO DOCUMENTODTO
-			//=============================================
-				
-			//TESTE COMENTADO $documentoBD = new DocumentoBD( $this->getObjInfraIBanco() );
-			$docRN = new DocumentoPeticionamentoRN();
-			
-			$documentoReciboDTO = new DocumentoDTO();
-			$documentoReciboDTO->setDblIdDocumento( $protocoloReciboDocumentoDTO->getDblIdProtocolo() );
-			$documentoReciboDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
-			$documentoReciboDTO->setNumIdSerie( $idSerieParametro );
-			$documentoReciboDTO->setNumIdUnidadeResponsavel( $objUnidadeDTO->getNumIdUnidade() );
-			$documentoReciboDTO->setObjProtocoloDTO( $protocoloReciboDocumentoDTO );
-			
-			$documentoReciboDTO->setNumIdConjuntoEstilos(null);
-			
-			//TODO de onde pega o tipo conferencia?
-			$documentoReciboDTO->setNumIdTipoConferencia( 4 );
-			$documentoReciboDTO->setStrNumero( null );
-			$documentoReciboDTO->setStrConteudo( null );
-			
-			$documentoReciboDTO->setStrConteudoAssinatura(null);
-			$documentoReciboDTO->setStrCrcAssinatura(null);
-			$documentoReciboDTO->setStrQrCodeAssinatura(null);
-			
-			$documentoReciboDTO->setStrSinBloqueado('N');
-			$documentoReciboDTO->setStrStaEditor( EditorRN::$TE_NENHUM );
-			$documentoReciboDTO->setStrSinFormulario('N');
-			$documentoReciboDTO->setNumVersaoLock(0);
-			
-			$documentoReciboDTO->setNumIdTextoPadraoInterno(null);
-			$documentoReciboDTO->setStrStaProtocoloProtocolo( ProtocoloRN::$TP_DOCUMENTO_GERADO );
-			$documentoReciboDTO = $docRN->gerarRN0003Customizado( $documentoReciboDTO );
 			
 			$anexoBD = new AnexoBD( $this->getObjInfraIBanco() );
-			$anexoDTOVinculado->setDblIdProtocolo( $documentoReciboDTO->getDblIdDocumento() );
+			//$anexoDTOVinculado->setDblIdProtocolo( $documentoReciboDTO->getDblIdDocumento() );
 			$anexoBD->alterar( $anexoDTOVinculado );
-			
-			$this->assinarETravarDocumento($objUnidadeDTO, $arrParametros, $documentoReciboDTO, $objProcedimentoDTO);
-			
-			//disponibilizando no recibo consultavel (nao na versao HTML Documento do processo)
 			
 			$reciboAnexoDTO = new ReciboDocumentoAnexoPeticionamentoDTO();
 			$reciboAnexoDTO->setNumIdAnexo( $anexoDTOVinculado->getNumIdAnexo() );
 			$reciboAnexoDTO->setNumIdReciboPeticionamento( $reciboDTOBasico->getNumIdReciboPeticionamento() );
-			$reciboAnexoDTO->setNumIdDocumento( $objProcedimentoDTO->getDblIdProcedimento() );
-			$reciboAnexoDTO->setStrClassificacaoDocumento( $strClassificacao );
+			$reciboAnexoDTO->setNumIdDocumento( null );
+			$reciboAnexoDTO->setStrClassificacaoDocumento( $strClassificacao );				
+			$reciboAnexoDTO = $reciboAnexoRN->cadastrar( $reciboAnexoDTO );
 			
-			//$reciboAnexoDTO = $reciboAnexoRN->cadastrar( $reciboAnexoDTO );
 		}
+		
 	}
 	
 	private function montarDocumentoPrincipal( $objProcedimentoDTO, 
@@ -589,7 +759,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objConjuntoEstilosDTO = $objConjuntoEstilosRN->consultar($objConjuntoEstilosDTO);			
 			$documentoDTOPrincipal->setNumIdConjuntoEstilos( $objConjuntoEstilosDTO->getNumIdConjuntoEstilos() );
 			
-			//TODO de onde pega o tipo conferencia?
 			$documentoDTOPrincipal->setNumIdTipoConferencia( null );
 			$documentoDTOPrincipal->setStrNumero(''); //sistema atribui numeracao sequencial automatica						
 			$documentoDTOPrincipal->setStrConteudo( $arrParametros['docPrincipalConteudoHTML'] );
@@ -654,12 +823,9 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objParticipanteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 			$objParticipanteDTO->setNumIdContato( $idContato );
 			$objParticipanteDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
-			
-			//print_r( $objParticipanteDTO ); die();
-			
+						
 			$objParticipanteRN = new ParticipanteRN();
 			$arrObjParticipanteDTO = $objParticipanteRN->listarRN0189($objParticipanteDTO);
-			//print_r( $objParticipanteDTO ); die();
 			
 			if( $arrObjParticipanteDTO == null || count( $arrObjParticipanteDTO ) == 0){
 				
@@ -678,9 +844,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				
 				$idParticipante = $arrObjParticipanteDTO[0]->getNumIdParticipante();
 			}
-			
-			//echo $idParticipante;
-			//die();
 			
 			$objAcessoExternoDTO->setStrEmailUnidade($orgaoDTO->getStrEmail() ); //informando o email do orgao associado a unidade
 			$objAcessoExternoDTO->setDblIdDocumento( $documentoDTO->getDblIdDocumento() );
@@ -878,10 +1041,11 @@ class ProcessoPeticionamentoRN extends InfraRN {
 	
 		$objProcedimentoRN = new ProcedimentoRN();
 		$objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
-	
-		if ($objProcedimentoDTO == null || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo()==ProtocoloRN::$NA_SIGILOSO) {
-			$objInfraException->lancarValidacao('Processo ['.$parObjProcedimentoDTO->getStrProtocoloProcedimentoFormatado().'] não encontrado.');
-		}
+		
+		//PETICIONAMENTO NAO VAI ACEITAR NIVEL SIGILOSO
+		//if ($objProcedimentoDTO == null || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo()==ProtocoloRN::$NA_SIGILOSO) {
+			//$objInfraException->lancarValidacao('Processo ['.$parObjProcedimentoDTO->getStrProtocoloProcedimentoFormatado().'] não encontrado.');
+		//}
 	
 		if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo()==ProtocoloRN::$NA_RESTRITO) {
 			$objAcessoDTO = new AcessoDTO();
@@ -1073,7 +1237,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				
 			foreach($arrAnexos as $anexo){
 				
-				print_r( $anexo );die();
+				//print_r( $anexo );die();
 				$objAnexoDTO = new AnexoDTO();
 				$objAnexoDTO->setNumIdAnexo( null );
 				$objAnexoDTO->setStrSinAtivo('S');

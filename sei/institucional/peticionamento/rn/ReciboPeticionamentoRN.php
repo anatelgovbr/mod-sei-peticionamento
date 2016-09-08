@@ -164,38 +164,12 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$objBD = new ReciboPeticionamentoBD($this->getObjInfraIBanco());
 		$ret = $objBD->cadastrar( $reciboDTO );
 		
-		//agora vinculando interessados ao recibo
-		if( $arrParticipantesParametro != null && count( $arrParticipantesParametro ) > 0 ){
-		  
-		    //foreach( $arrParticipantesParametro as $itemParticipante ){
-		   	
-		    //}
-		}
-		
-		//TODO vinculando documento principal ao recibo
-		if( $arrDocsPrincipais != null && count( $arrDocsPrincipais ) > 0 ){
-		
-		}
-		
-		//TODO vinculando documento essecial ao recibo (caso exista) md_pet_rel_recibo_docanexo
-		if( $arrDocsEssenciais != null && count( $arrDocsEssenciais ) > 0 ){
-		
-		}
-		
-		//TODO vinculando documento complementar ao recibo (caso exista) md_pet_rel_recibo_docanexo
-		if( $arrDocsComplementares != null && count( $arrDocsComplementares ) > 0 ){
-		
-		}
-		
 		return $ret; 
 	
     }
 	
 	//método utilizado para gerar recibo ao final do cadastramento de um processo de peticionamento de usuario externo
 	protected function montarReciboControlado( $arrParams ){
-		
-		//echo " <br/><br/><br/><hr/>";
-		//print_r( $arrParams ); die();
 		
 		$reciboDTO = $this->cadastrar( $arrParams );
 		

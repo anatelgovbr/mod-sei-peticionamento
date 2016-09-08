@@ -297,6 +297,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
                <th class="infraTh" style="display: none;"> Formato de documento </th>
                <th class="infraTh" style="display: none;"> Tipo de Conferencia </th>
                <th class="infraTh" style="display: none;"> Nome Upload servidor </th>
+               <th class="infraTh" style="display: none;"> ID Tipo de Documento </th>
                
                <!-- Coluna de ações (Baixar, remover) da grid -->
                <th align="center" class="infraTh" style="width:70px;"> Ações </th>                              
@@ -492,6 +493,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
                <th class="infraTh" style="display: none;"> Formato de documento </th>
                <th class="infraTh" style="display: none;"> Tipo de Conferencia </th>
                <th class="infraTh" style="display: none;"> Nome Upload servidor </th>
+               <th class="infraTh" style="display: none;"> ID Tipo de Documento </th>
                
                <!-- Coluna de ações (Baixar, remover) da grid -->
     			<th class="infraTh" style="width: 70px;">Ações</th>
@@ -680,6 +682,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
                 <th class="infraTh" style="display: none;"> Formato de documento </th>
                 <th class="infraTh" style="display: none;"> Tipo de Conferencia </th>
                 <th class="infraTh" style="display: none;"> Nome Upload servidor </th>
+                <th class="infraTh" style="display: none;"> ID Tipo de Documento </th>
                
                 <!-- Coluna de ações (Baixar, remover) da grid -->
     			<th class="infraTh" style="width: 70px;">Ações</th>    			

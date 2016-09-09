@@ -171,7 +171,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			
 			$this->montarArrDocumentos( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO, $arrParticipantesParametro, $reciboDTOBasico );
 			
-			$this->enviarProcedimentoUnidade($objProcedimentoDTO);
+			//$this->enviarProcedimentoUnidade($objProcedimentoDTO);
 			
 			$arrParams = array();
 			$arrParams[0] = $arrParametros;
@@ -189,9 +189,11 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			//$arrProcessoReciboRetorno[0] = $retornoRecibo;
 			$arrProcessoReciboRetorno[1] = $objProcedimentoDTO;
 			
-			//enviando email de sistema EU 5155  / 5156 
-			//$emailNotificacaoPeticionamentoRN = new EmailNotificacaoPeticionamentoRN();
-			//$emailNotificacaoPeticionamentoRN->notificaoPeticionamentoExterno( $arrParams );
+			//enviando email de sistema EU 5155  / 5156 - try catch por causa que em localhost o envio de email gera erro 
+			try {
+			  $emailNotificacaoPeticionamentoRN = new EmailNotificacaoPeticionamentoRN();
+			  $emailNotificacaoPeticionamentoRN->notificaoPeticionamentoExterno( $arrParams );
+			} catch( Exception $exEmail ){}
 			
 			return $arrProcessoReciboRetorno;
 		
@@ -283,12 +285,16 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$idNivelAcesso = null;
 				
 				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
+					
 					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
+					$idHipoteseLegal = null;
+					
 				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
+					
 					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
+					$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
 				}
-				
-				$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
+								
 				$idGrauSigilo = null;
 				
 				//criando registro em protocolo
@@ -299,9 +305,18 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objProtocoloDTO = new ProtocoloDTO();
 				$objProtocoloDTO->setDblIdProtocolo(null);
 				
-				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
-				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
+				$objDocumentoDTO->setStrStaNivelAcessoLocalProtocolo( $idNivelAcesso );
 				
+				if( $idNivelAcesso == ProtocoloRN::$NA_PUBLICO ){
+					
+					$objDocumentoDTO->setNumIdHipoteseLegalProtocolo( null );
+				}
+				
+				else if( $idNivelAcesso == ProtocoloRN::$NA_RESTRITO ){
+					
+					$objDocumentoDTO->setNumIdHipoteseLegalProtocolo( $idHipoteseLegal );
+				}
+								
 				$objDocumentoDTO->setDblIdDocumentoEdoc( null );
 				$objDocumentoDTO->setDblIdDocumentoEdocBase( null );
 				$objDocumentoDTO->setNumIdUnidadeResponsavel( SessaoSEI::getInstance()->getNumIdUnidadeAtual() );
@@ -310,8 +325,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objDocumentoDTO->setStrSinFormulario('N');
 				$objDocumentoDTO->setStrSinBloqueado('N');
 				
-				$objDocumentoDTO->setStrStaEditor( null );
-				
+				$objDocumentoDTO->setStrStaEditor( null );				
 				$objDocumentoDTO->setNumVersaoLock(0);
 				
 				$arrObjUnidadeDTOReabertura = array();
@@ -321,7 +335,15 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
 				
 				$objProtocoloDTO->setStrStaNivelAcessoLocal( $idNivelAcesso );
-				$objProtocoloDTO->setNumIdHipoteseLegal( $idHipoteseLegal );
+				
+				if( $idNivelAcesso == ProtocoloRN::$NA_PUBLICO ){
+				   $objProtocoloDTO->setNumIdHipoteseLegal( null );
+				}
+				
+				else if( $idNivelAcesso == ProtocoloRN::$NA_RESTRITO ){
+					$objProtocoloDTO->setNumIdHipoteseLegal( $idHipoteseLegal );
+				}
+				
 				$objProtocoloDTO->setStrStaGrauSigilo( $idGrauSigilo );
 				
 				$objProtocoloDTO->setStrDescricao('');
@@ -359,9 +381,13 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objDocumentoDTO->setObjProtocoloDTO($objProtocoloDTO);
 				
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
-				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');				
-				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
+				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
 				
+				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
+				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
+				
+				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
+								
 				//=============================
 				//criando registro em anexo
 				//=============================
@@ -376,6 +402,9 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$itemAnexo->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 				$itemAnexo->setStrSinAtivo('S');
 				$itemAnexo = $anexoRN->cadastrarRN0172( $itemAnexo );
+				
+				$this->assinarETravarDocumento( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO );
+				
 				$arrAnexoPrincipalVinculacaoProcesso[] = $itemAnexo;
 				$contador = $contador+1;
 		
@@ -409,7 +438,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				//================================
 				//PROTOCOLO / DOCUMENTO DO ANEXO
 				//=================================
-					
+				
 				$idSerieAnexo = $arrLinhasAnexos[ $contador ][9];
 				$idTipoConferencia = $arrLinhasAnexos[ $contador ][7];
 					
@@ -417,11 +446,12 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					
 				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
 					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
+					$idHipoteseLegal = null;
 				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
 					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
+					$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
 				}
-					
-				$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
+								
 				$idGrauSigilo = null;
 					
 				//criando registro em protocolo
@@ -493,6 +523,10 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
+				
+				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
+				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
+				
 				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
 				
 				//==================================
@@ -501,13 +535,16 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				
 				$strTamanho = str_replace("","Kb", $itemAnexo->getNumTamanho() );
 				$strTamanho = str_replace("","Mb", $strTamanho );
-				$itemAnexo->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+				$itemAnexo->setDblIdProtocolo( $objDocumentoDTO->getDblIdDocumento() );
 				$itemAnexo->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$itemAnexo->setNumTamanho( (int)$strTamanho );
 				$itemAnexo->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 				$itemAnexo->setStrSinAtivo('S');
 				//print_r( $itemAnexo ); die();
 				$itemAnexo = $anexoRN->cadastrarRN0172( $itemAnexo );
+				
+				$this->assinarETravarDocumento( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO );
+				
 				$arrAnexoEssencialVinculacaoProcesso[] = $itemAnexo; 
 				$contador =  $contador+1;
 				
@@ -539,7 +576,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				//================================
 				//PROTOCOLO / DOCUMENTO DO ANEXO
 				//=================================
-					
+				
 				$idSerieAnexo = $arrLinhasAnexos[ $contador ][9];
 				$idTipoConferencia = $arrLinhasAnexos[ $contador ][7];
 					
@@ -547,11 +584,12 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					
 				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
 					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
+					$idHipoteseLegal = null;
 				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
 					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
+					$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
 				}
-					
-				$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
+				
 				$idGrauSigilo = null;
 					
 				//criando registro em protocolo
@@ -561,10 +599,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					
 				$objProtocoloDTO = new ProtocoloDTO();
 				$objProtocoloDTO->setDblIdProtocolo(null);
-					
-				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
-				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
-					
+									
 				$objDocumentoDTO->setDblIdDocumentoEdoc( null );
 				$objDocumentoDTO->setDblIdDocumentoEdocBase( null );
 				$objDocumentoDTO->setNumIdUnidadeResponsavel( SessaoSEI::getInstance()->getNumIdUnidadeAtual() );
@@ -623,6 +658,10 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
+				
+				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
+				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
+				
 				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
 				
 				//========================
@@ -637,6 +676,9 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$itemAnexoComplementar->setStrSinAtivo('S');
 				$itemAnexoComplementar = $anexoRN->cadastrarRN0172( $itemAnexoComplementar );
 				$arrAnexoComplementarVinculacaoProcesso[] = $itemAnexoComplementar;
+				
+				$this->assinarETravarDocumento( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO );
+				
 				$contador = $contador+1;
 			}
 			
@@ -1210,48 +1252,24 @@ class ProcessoPeticionamentoRN extends InfraRN {
 	public function processarStringAnexos($strDelimitadaAnexos, $idUnidade, $strSiglaUsuario, $bolDocumentoPrincipal, $idProtocolo){
 		
 		$arrAnexos = array();
+				
+		$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($strDelimitadaAnexos);
+		$arrObjAnexoDTO = array();
 		
-		if( $bolDocumentoPrincipal == true ){ 
-		
-			$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($strDelimitadaAnexos);
-			$arrObjAnexoDTO = array();
+		foreach($arrAnexos as $anexo){
 			
-			foreach($arrAnexos as $anexo){
-				
-				$objAnexoDTO = new AnexoDTO();
-				$objAnexoDTO->setNumIdAnexo( null );
-				$objAnexoDTO->setStrSinAtivo('S');
-				$objAnexoDTO->setStrNome($anexo[8]);
-				$objAnexoDTO->setDthInclusao($anexo[1]);
-				$objAnexoDTO->setNumTamanho($anexo[2]);
-				$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
-				$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
-				$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-				$arrObjAnexoDTO[] = $objAnexoDTO;
-			}
-		
-		} else {
-			
-			$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($strDelimitadaAnexos);
-			$arrObjAnexoDTO = array();
-				
-			foreach($arrAnexos as $anexo){
-				
-				//print_r( $anexo );die();
-				$objAnexoDTO = new AnexoDTO();
-				$objAnexoDTO->setNumIdAnexo( null );
-				$objAnexoDTO->setStrSinAtivo('S');
-				$objAnexoDTO->setStrNome($anexo[10]);
-				$objAnexoDTO->setDthInclusao($anexo[2]);
-				$objAnexoDTO->setNumTamanho($anexo[4]);
-				$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
-				$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
-				$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-				$arrObjAnexoDTO[] = $objAnexoDTO;
-			}
+			$objAnexoDTO = new AnexoDTO();
+			$objAnexoDTO->setNumIdAnexo( null );
+			$objAnexoDTO->setStrSinAtivo('S');
+			$objAnexoDTO->setStrNome($anexo[8]);
+			$objAnexoDTO->setDthInclusao($anexo[1]);
+			$objAnexoDTO->setNumTamanho($anexo[2]);
+			$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
+			$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
+			$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+			$arrObjAnexoDTO[] = $objAnexoDTO;
 		}
 		
-		//print_r( $arrObjAnexoDTO ); die();
 		return $arrObjAnexoDTO;
 	}
 }

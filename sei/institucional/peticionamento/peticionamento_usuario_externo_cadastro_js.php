@@ -959,6 +959,7 @@ function carregarCamposDocEssencialUpload(){
 
 	  //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoEssencial = document.getElementById('tipoDocumentoEssencial');
+	  	
 	  var strComplemento = document.getElementById('complementoEssencial').value;	
       var documento = getStrTipoDocumento( cbTpoEssencial.value, 'Essencial' ) + ' - ' + strComplemento;
       
@@ -976,8 +977,9 @@ function carregarCamposDocEssencialUpload(){
 
     //TipoConferenciaPrincipal / TipoConferenciaEssencial
       var tipoConferencia = document.getElementById('TipoConferenciaEssencial').value;
-      
-      objTabelaDocEssencial.adicionar([ nome , nome , dataHora , '4', tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoEssencial, '' ]);	
+
+      //objTabelaDocPrincipal.adicionar([ nome , dataHora ,  tamanhoFormatado , documento , nivelAcesso , hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoPrincipal.value, '' ]);
+      objTabelaDocEssencial.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoEssencial.value, '' ]);	
       //objTabelaDocEssencial.adicionar([ nomeUpload , nomeUpload, dataHora , '4', '5', '6', '7']);		
       //objTabelaDocEssencial.adicionar([ nomeUpload , dataHora ,  tamanhoFormatado , documento , nivelAcesso , '']);
       //objTabelaDocEssencial.adicionar([ '-' , nomeUpload ,  dataHora , dataHora , tamanhoFormatado, documento, 'nivel de acesso', 'acoes' ]);
@@ -1070,7 +1072,7 @@ function carregarCamposDocComplementarUpload(){
 	  var formatoDocumento = $('input[name="formatoDocumentoComplementar"]:checked').val();
 	  var tipoConferencia = document.getElementById('TipoConferenciaComplementar').value;
 
-      objTabelaDocComplementar.adicionar([ nome , nome , dataHora , '4', tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoComplementar.value, '' ]);	
+      objTabelaDocComplementar.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoComplementar.value, '' ]);	
       //objTabelaDocComplementar.adicionar([ '-' , nomeUpload ,  dataHora , dataHora , tamanhoFormatado, documento, 'nivel de acesso', 'acoes' ]);
 	  //objTabelaDocComplementar.adicionar([arr['nome_upload'],arr['nome'],arr['data_hora'],arr['tamanho'],infraFormatarTamanhoBytes(arr['tamanho']),'<?= time() ?>']);
 	  

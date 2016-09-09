@@ -24,11 +24,11 @@ try {
   $strLinkAjaxNivelAcesso     = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=nivel_acesso_auto_completar');
   
   //Tipo Documento Complementar
-  $strLinkTipoDocumentoSelecao  = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=serie_peticionamento_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumento');
-  $strLinkAjaxTipoDocumento     = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=serie_auto_completar');
+  $strLinkTipoDocumentoSelecao  = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=serie_peticionamento_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumento&tipoDoc=E');
+  $strLinkAjaxTipoDocumento     = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=serie_peticionamento_auto_completar');
   
   //Tipo de Documento Essencial
-  $strLinkTipoDocumentoEssencialSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=serie_peticionamento_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumentoEssencial');
+  $strLinkTipoDocumentoEssencialSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=serie_peticionamento_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumentoEssencial&tipoDoc=E');
   
   //Tipo Processo
   $strLinkTipoProcessoSelecao   = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcesso');
@@ -1567,7 +1567,9 @@ function carregarComponenteTipoDocumento(){
 		
 	objAutoCompletarTipoDocumento.prepararExecucao = function(){
 		var gerado = document.getElementsByName('rdDocPrincipal[]')[0].checked;
-	    var tipo   = gerado ? 'G' : 'E';
+	    //var tipo   = gerado ? 'G' : 'E';
+	    //20160908 - Essencial e Complementar SEMPRE EXTERNO
+	    var tipo  = 'E';
 	    return 'palavras_pesquisa='+document.getElementById('txtSerie').value + '&tipoDoc=' + tipo;
 		};
 		  
@@ -1615,7 +1617,9 @@ function carregarComponenteTipoDocumentoEssencial(){
 		
 	objAutoCompletarTipoDocumentoEssencial.prepararExecucao = function(){
 		var gerado = document.getElementsByName('rdDocPrincipal[]')[0].checked;
-	    var tipo   = gerado ? 'G' : 'E';
+	    //var tipo   = gerado ? 'G' : 'E';
+	    //20160908 - Essencial e Complementar SEMPRE EXTERNO	    
+	    var tipo = 'E';
 	    return 'palavras_pesquisa='+document.getElementById('txtSerieEssencial').value + '&tipoDoc=' + tipo;
 		};
 		  

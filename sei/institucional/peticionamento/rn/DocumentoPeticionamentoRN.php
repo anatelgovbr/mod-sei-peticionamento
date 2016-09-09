@@ -702,7 +702,7 @@ class DocumentoPeticionamentoRN extends InfraRN {
 	private function validarNumIdSerieRN0009(DocumentoDTO $objDocumentoDTO, InfraException $objInfraException){
 		 
 		if (InfraString::isBolVazia($objDocumentoDTO->getNumIdSerie())){
-			$objInfraException->lancarValidacao('Tipo do documento não informado.');
+			$objInfraException->lancarValidacao('ABS Tipo do documento não informado.');
 		}else{
 	
 			$objSerieDTO = new SerieDTO();
@@ -722,6 +722,10 @@ class DocumentoPeticionamentoRN extends InfraRN {
 				if ($objDocumentoDTO->getStrStaProtocoloProtocolo()==ProtocoloRN::$TP_DOCUMENTO_GERADO && $objSerieDTO->getStrStaAplicabilidade()==SerieRN::$TA_EXTERNO){
 					$objInfraException->adicionarValidacao('Tipo do documento não aplicável para documentos internos.');
 				}else if ($objDocumentoDTO->getStrStaProtocoloProtocolo()==ProtocoloRN::$TP_DOCUMENTO_RECEBIDO && $objSerieDTO->getStrStaAplicabilidade()==SerieRN::$TA_INTERNO){
+					//echo "<pre>";
+					//debug_print_backtrace();
+					//echo "</pre>";
+					//die();
 					$objInfraException->adicionarValidacao('Tipo do documento não aplicável para documentos externos.');
 				}
 			}

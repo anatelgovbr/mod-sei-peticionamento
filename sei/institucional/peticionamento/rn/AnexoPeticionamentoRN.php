@@ -290,7 +290,7 @@ class AnexoPeticionamentoRN extends InfraRN {
 		print_r( $objAnexoDTO ); die(); */
 		
 		if (InfraString::isBolVazia($objAnexoDTO->getStrNome())){
-			$objInfraException->adicionarValidacao('111 Nome do anexo não informado.');
+			$objInfraException->adicionarValidacao('Nome do anexo não informado.');
 		}else{
 
 			$objAnexoDTO->setStrNome(trim($objAnexoDTO->getStrNome()));

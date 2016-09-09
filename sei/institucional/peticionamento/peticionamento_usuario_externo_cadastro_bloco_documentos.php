@@ -280,10 +280,6 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
     <? if( $externo == 'S') { ?>
     
     <table id="tbDocumentoPrincipal" class="infraTable" width="95%" >
-    		
-    	  <!--  	
-          <caption class="infraCaption">Lista de Documentos principais</caption> 
-         -->
            
            <tr>
                <th class="infraTh" style="width:30%;"> Nome do arquivo </th>
@@ -475,15 +471,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
      <div style="clear: both;"> &nbsp; </div>
     
      <table id="tbDocumentoEssencial" name="tbDocumentoEssencial" class="infraTable" style="width:95%;">
- 		
- 		<!--     
-        <caption class="infraCaption"><?=PaginaSEIExterna::getInstance()->gerarCaptionTabela("Lista de Documentos Essenciais",0)?></caption>
-        -->
+
     		<tr>
-    			<th style="display:none;">ID</th>
     			<th class="infraTh" style="width:30%;">Nome</th>
     			<th class="infraTh" style="width: 70px;" align="center">Data</th>
-    			<th style="display:none;">Bytes</th>
     			<th class="infraTh" align="center">Tamanho</th>
     			<th class="infraTh" align="center" style="width:30%;">Documento</th>
     			<th class="infraTh" style="width: 120px;" align="center">Nível de acesso</th>
@@ -663,16 +654,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
      <div style="clear: both;"> &nbsp; </div>
     
      <table id="tbDocumentoComplementar" name="tbDocumentoComplementar" class="infraTable" style="width:95%;">
-    	
-    	<!--  
-        <caption class="infraCaption"><?=PaginaSEIExterna::getInstance()->gerarCaptionTabela("Documentos complementares",0)?></caption>
-         -->
        
     		<tr>
-    			<th style="display:none;">ID</th>
     			<th class="infraTh" style="width:30%;">Nome</th>
     			<th class="infraTh" style="width: 70px;" align="center">Data</th>
-    			<th style="display:none;">Bytes</th>
     			<th class="infraTh" align="center">Tamanho</th>
     			<th class="infraTh" align="center" style="width:30%;">Documento</th>
     			<th class="infraTh" style="width: 120px;" align="center">Nível de acesso</th>

@@ -24,8 +24,8 @@ try {
   SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
 	if (isset($_GET['id_grupo_serie'])){
-    PaginaSEI::getInstance()->salvarCampo('selGrupoSerie',$_GET['id_grupo_serie']);
-    //$_POST['hdnInfraTotalRegistros'] = 0;
+	  PaginaSEI::getInstance()->salvarCampo('selGrupoSerie',$_GET['id_grupo_serie']);
+	  //$_POST['hdnInfraTotalRegistros'] = 0;
 	}else{
 	  PaginaSEI::getInstance()->salvarCamposPost(array('selGrupoSerie'));
 	}
@@ -357,8 +357,8 @@ PaginaSEI::getInstance()->abrirStyle();
 #lblGrupoSerie {position:absolute;left:0%;top:0%;width:20%;}
 #selGrupoSerie {position:absolute;left:0%;top:40%;width:20%;}
 
-#lblNomeSeriePesquisa {position:absolute;left:25%;top:0%;width:20%;}
-#txtNomeSeriePesquisa {position:absolute;left:25%;top:40%;width:20%;}
+#lblNomeSeriePesquisa {position:absolute;left:0%;top:0%;width:20%;}
+#txtNomeSeriePesquisa {position:absolute;left:0%;top:40%;width:20%;}
 
 #lblModeloPesquisa {position:absolute;left:50%;top:0%;width:24%;}
 #selModeloPesquisa {position:absolute;left:50%;top:40%;width:24%;}
@@ -460,16 +460,16 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
   PaginaSEI::getInstance()->abrirAreaDados('4.5em');
   ?>
-  <label id="lblGrupoSerie" for="selGrupoSerie" accesskey="" class="infraLabelOpcional">Grupo:</label>
-  <select id="selGrupoSerie" name="selGrupoSerie" onchange="this.form.submit();" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" >
+  <label id="lblGrupoSerie" for="selGrupoSerie" accesskey="" class="infraLabelOpcional" style="display:none!important">Grupo:</label>
+  <select id="selGrupoSerie" name="selGrupoSerie" onchange="this.form.submit();" class="infraSelect" style="display:none!important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" >
   <?=$strItensSelGrupoSerie?>
   </select>
  
   <label id="lblNomeSeriePesquisa" for="txtNomeSeriePesquisa" accesskey="" class="infraLabelOpcional">Nome:</label>
   <input type="text" id="txtNomeSeriePesquisa" name="txtNomeSeriePesquisa" value="<?=$strNomeSeriePesquisa?>" class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
-  <label id="lblModeloPesquisa" for="selModeloPesquisa" accesskey="" class="infraLabelOpcional">Modelo:</label>
-  <select id="selModeloPesquisa" name="selModeloPesquisa" onchange="this.form.submit();" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" >
+  <label id="lblModeloPesquisa" for="selModeloPesquisa" accesskey="" class="infraLabelOpcional" style="display:none!important">Modelo:</label>
+  <select id="selModeloPesquisa" name="selModeloPesquisa" onchange="this.form.submit();" class="infraSelect" style="display:none!important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" >
   <?=$strItensSelModelo?>
   </select>
 

@@ -33,8 +33,8 @@ try {
 		case 'menu_peticionamento_usuario_externo_cadastrar':
 			
 			$strTitulo = 'Novo Menu';
-			$arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-			$arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+			$arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
 			$objEditorRN=new EditorRN();
 			$objEditorDTO=new EditorDTO();
@@ -95,9 +95,11 @@ try {
 			}
 
 			if ($_GET['acao']=='menu_peticionamento_usuario_externo_alterar'){
-				$arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+				$arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 			}
-			$arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\'&id_menu_peticionamento_usuario_externo=' . $_GET['id_menu_peticionamento_usuario_externo'] .';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+
+			//TODO: Marcelo ou Herley, a construção dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi construído para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o botão "Fechar", enquanto que Novo e Alterar tem o botão "Cancelar".
+			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 			
 			$objEditorRN=new EditorRN();
 			$objEditorDTO=new EditorDTO();
@@ -320,7 +322,7 @@ else if( $tipo == 'H' ){
 }
 ?>
 
-<label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome do Menu:</label>
+<label id="lblNome" for="txtNome" class="infraLabelObrigatorio">Nome do Menu:</label>
 <input type="text" id="txtNome" name="txtNome" class="infraText" maxlength="30" <?= $disabled ?> value="<?= $txtNome ?>">
 
  <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset">
@@ -332,10 +334,10 @@ else if( $tipo == 'H' ){
      
  </fieldset>
 
-<label id="lblUrl" for="txtUrl" accesskey="" class="infraLabelObrigatorio">URL do Link Externo:</label>
+<label id="lblUrl" for="txtUrl" class="infraLabelObrigatorio">URL do Link Externo:</label>
 <input type="text" id="txtUrl" name="txtUrl" maxlength="2083" class="infraText" <?= $disabled ?> value="<?= $txtUrl ?>">
 
-<label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">Conteúdo HTML:</label>
+<label id="lblConteudo" for="txaConteudo" class="infraLabelObrigatorio">Conteúdo HTML:</label>
 
 <?php 
 PaginaSEI::getInstance()->fecharAreaDados();

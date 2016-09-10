@@ -225,8 +225,8 @@ try {
 	
      $strTitulo = 'Novo Tipo de Processo para Peticionamento';
 
-	  $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarTpProcessoPeticionamento" id="sbmCadastrarTpProcessoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-      $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+	  $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarTpProcessoPeticionamento" id="sbmCadastrarTpProcessoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+      $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
      
       $objTipoProcessoPeticionamentoDTO->setNumIdProcedimento($_POST['hdnIdTipoProcesso']);
       $objTipoProcessoPeticionamentoDTO->setStrOrientacoes($_POST['txtOrientacoes']);
@@ -381,8 +381,8 @@ try {
       $strItensSelUnidades     = UnidadeINT::montarSelectSiglaDescricao(null, null, $_POST['selUnidade']);
       $strItensSelDoc          = SerieINT::montarSelectNomeRI0802(null, null, $_POST['selDocumento']);
       
-      $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarTipoPeticionamento" id="sbmAlterarTipoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-      $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+      $arrComandos[] = '<button type="submit" accesskey="s" name="sbmAlterarTipoPeticionamento" id="sbmAlterarTipoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+	  $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_tipo_processo_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
       
       $objTipoProcessoPeticionamentoDTO->setNumIdTipoProcessoPeticionamento($_POST['hdnIdMdPetTipoProcesso']);
       $objTipoProcessoPeticionamentoDTO->setNumIdProcedimento($_POST['hdnIdTipoProcesso']);
@@ -576,7 +576,7 @@ try {
 
     case 'tipo_processo_peticionamento_consultar':
       $strTitulo = 'Consultar Tipo de Processo para Peticionamento';
-      $arrComandos[] = '<button type="button" accesskey="F" id="btnCancelar" name="btnCancelar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_tipo_processo_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+      $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_tipo_processo_peticionamento']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
       
       $strItensSelTipoProcesso = TipoProcessoPeticionamentoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
       $strItensSelUnidades     = UnidadeINT::montarSelectSiglaDescricao(null, null, $_POST['selUnidade']);
@@ -782,7 +782,7 @@ PaginaSEI::getInstance()->abrirAreaDados('100em');
     
  <!-- Orientações -->
   <div class="fieldsetClear">
-  <label id="lblOrientacoes" for="txtOrientacoes" accesskey="q" class="infraLabelObrigatorio">
+  <label id="lblOrientacoes" for="txtOrientacoes" class="infraLabelObrigatorio">
   Orientações:
   </label>
   <textarea type="text" id="txtOrientacoes" rows="3" name="txtOrientacoes" class="infraText" onkeypress="return infraMascaraTexto(this,event,500);" maxlength="500" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?php echo $orientacoes;?></textarea>
@@ -830,7 +830,7 @@ PaginaSEI::getInstance()->abrirAreaDados('100em');
    
    <img id="imgLupaUnidadeMultipla" onclick="objLupaUnidadeMultipla.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
     <?php  if ($_GET['acao'] != 'tipo_processo_peticionamento_consultar'){ ?>
-   <button type="button" accesskey="S" name="sbmAdicionarUnidade" onclick="addUnidade();" id="sbmAdicionarUnidade" value="Adicionar" class="infraButton"><span class="infraTeclaAtalho">A</span>dicionar</button>
+   <button type="button" accesskey="a" name="sbmAdicionarUnidade" onclick="addUnidade();" id="sbmAdicionarUnidade" value="Adicionar" class="infraButton"><span class="infraTeclaAtalho">A</span>dicionar</button>
    <?php } ?>
    <!-- Tabela Múltiplas Unidades -->
 
@@ -1031,7 +1031,7 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
       <div>
      <div style="clear:both;">&nbsp;</div>
      <div>
-      <label id="lblDescricaoEssencial" for="selDescricaoEssencial" accesskey="q" class="infraLabelOpcional">
+      <label id="lblDescricaoEssencial" for="selDescricaoEssencial" class="infraLabelOpcional">
 	  Tipos dos Documentos Essenciais:
 	  </label>
 	</div>
@@ -1063,7 +1063,7 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
       <div>
      <div style="clear:both;">&nbsp;</div>
      <div>
-      <label id="lblDescricao" for="txtDescricao" accesskey="q" class="infraLabelOpcional">
+      <label id="lblDescricao" for="txtDescricao" class="infraLabelOpcional">
 	  Tipos dos Documentos Complementares:
 	  </label>
 	</div>

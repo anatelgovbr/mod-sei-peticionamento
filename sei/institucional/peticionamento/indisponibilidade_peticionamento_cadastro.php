@@ -67,8 +67,8 @@ try {
 
       $strTitulo = 'Nova Indisponibilidade do SEI';
 
-      $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarIndisponibilidadePeticionamento" id="sbmCadastrarIndisponibilidadePeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-      $arrComandos[] = '<button type="button" accesskey="C" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+      $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarIndisponibilidadePeticionamento" id="sbmCadastrarIndisponibilidadePeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+      $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
       $strLinkAnexos = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=indisponibilidade_peticionamento_upload_anexo');
           
@@ -102,8 +102,8 @@ try {
 
     case 'indisponibilidade_peticionamento_alterar':
       $strTitulo = 'Alterar Indisponibilidade do SEI';
-      $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarIndisponibilidadePeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-      $arrComandos[] = '<button type="button" accesskey="C" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+      $arrComandos[] = '<button type="submit" accesskey="s" name="sbmAlterarIndisponibilidadePeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+	  $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
       
       $strDesabilitar = 'disabled="disabled"';
       
@@ -207,7 +207,8 @@ try {
     
     case 'indisponibilidade_peticionamento_consultar':
       $strTitulo = 'Consultar Indisponibilidade do SEI';
-      $arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+      $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+	  
       $objIndisponibilidadePeticionamentoDTO->setNumIdIndisponibilidade($_GET['id_indisponibilidade_peticionamento']);
       $objIndisponibilidadePeticionamentoDTO->setBolExclusaoLogica(false);
       $objIndisponibilidadePeticionamentoDTO->retTodos();
@@ -329,7 +330,7 @@ PaginaSEI::getInstance()->abrirAreaDados('60em');
     <!-- Resumo da Indisponibilidade -->
     
     <fieldset class="sizeFieldset fieldsetClear">
-    <label id="lblResumoIndisponibilidade" for="txtResumoIndisponibilidade" accesskey="q" class="infraLabelObrigatorio">Resumo da Indisponibilidade:</label>
+    <label id="lblResumoIndisponibilidade" for="txtResumoIndisponibilidade" class="infraLabelObrigatorio">Resumo da Indisponibilidade:</label>
     <textarea type="text" id="txtResumoIndisponibilidade" rows="3" name="txtResumoIndisponibilidade" class="infraText" onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?php echo isset($objIndisponibilidadePeticionamentoDTO) ? $objIndisponibilidadePeticionamentoDTO->getStrResumoIndisponibilidade() : '' ?></textarea>
     </fieldset>
         
@@ -437,7 +438,7 @@ function inicializar(){
 	document.getElementById("filArquivo").disabled = 'disabled';
     infraDesabilitarCamposAreaDados();
   }else{
-    document.getElementById('btnFechar').focus();
+    document.getElementById('btnCancelar').focus();
   }
 
   objUpload = new infraUpload('frmAnexos','<?=$strLinkAnexos?>');

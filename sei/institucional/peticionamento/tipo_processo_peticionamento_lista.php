@@ -118,9 +118,10 @@ try {
       throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
   }
 
+  //TODO: Marcelo, qual é a utilidade dessa funcionalidade de Transportar seleção neste tela?
   $arrComandos = array();
   if ($_GET['acao'] == 'tipo_processo_peticionamento_selecionar'){
-    $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
+    $arrComandos[] = '<button type="button" accesskey="t" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
   }
 
     
@@ -170,13 +171,13 @@ try {
 
   
   $strLinkPesquisar = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] .'&acao_origem='.$_GET['acao'].'&acao_retorno=tipo_processo_peticionamento_listar'));
-  $arrComandos[] = '<button type="button" accesskey="N" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
+  $arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
   
-  $arrComandos[] = '<button type="button" accesskey="N" id="btnOrientacoesGerais" value="Orientações Gerais" class="infraButton" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_cadastrar_orientacoes&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'"><span class="infraTeclaAtalho">O</span>rientações Gerais</button>';
+  $arrComandos[] = '<button type="button" accesskey="o" id="btnOrientacoesGerais" value="Orientações Gerais" class="infraButton" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_cadastrar_orientacoes&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'"><span class="infraTeclaAtalho">O</span>rientações Gerais</button>';
   
   $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('tipo_processo_peticionamento_cadastrar');
   if ($bolAcaoCadastrar){
-  	$arrComandos[] = '<button type="button" accesskey="N" id="btnNovo" value="Novo" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo</button>';
+  	$arrComandos[] = '<button type="button" accesskey="n" id="btnNovo" value="Novo" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo</button>';
   }
   
   if ($numRegistros > 0){
@@ -207,16 +208,17 @@ try {
       $bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('tipo_processo_peticionamento_desativar');
     }
 
-    if ($bolAcaoDesativar){
+    //TODO: Marcelo, melhor desativar também o botão de Desativação em lote, para padronizar as telas de listagem de registros.
+	if ($bolAcaoDesativar){
       $bolCheck = true;
-     $arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
-    //  $arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
+     //$arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
       $strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_desativar&acao_origem='.$_GET['acao']);
     }
 
      $strLinkReativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_reativar&acao_origem='.$_GET['acao'].'&acao_confirmada=sim');
 
-    if ($bolAcaoExcluir){
+    //TODO: Marcelo, se não vai ter o botão de Excluir em lote, melhor retirar todo este bloco de código.
+	if ($bolAcaoExcluir){
       $bolCheck = true;
       //$arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
       $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_excluir&acao_origem='.$_GET['acao']);
@@ -331,13 +333,13 @@ try {
   
   
   if( $bolAcaoImprimir ) {
-    $arrComandos[] = '<button type="button" accesskey="F" id="btnImprimir" value="Fechar" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
+    $arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
   }
   
   if ($_GET['acao'] == 'tipo_processo_peticionamento_reativar'){
-    $arrComandos[] = '<button type="button" accesskey="F" id="btnFecharSelecao" value="Fechar" onclick="window.close();" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+    $arrComandos[] = '<button type="button" accesskey="c" id="btnFecharSelecao" value="Fechar" onclick="window.close();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
   }else{
-    $arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+    $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora('1'))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
   }
   
  // $strItensSelSinProrrogacaoAutomatica = IndisponibilidadePeticionamentoINT::montarSelectProrrogacaoAutomaticaPrazos('null','&nbsp;','');
@@ -472,18 +474,18 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   <div style="height:4.5em; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
   
   <!--  Tipo de Processo -->
-  	<label id="lblTipoProcesso" for="txtTipoProcesso" accesskey="S"  class="infraLabelOpcional">Tipo de Processo:</label>
+  	<label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelOpcional">Tipo de Processo:</label>
     <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" value="<?php echo isset($_POST['txtTipoProcesso']) ? $_POST['txtTipoProcesso'] : ''?>"  class="infraText" />
     
   <!--  Indicação de Interessado -->
-  	<label id="lblIndicacaoInteressado" for="selIndicacaoInteressado" accesskey="S" class="infraLabelOpcional">Indicação de Interessado:</label>
+  	<label id="lblIndicacaoInteressado" for="selIndicacaoInteressado" class="infraLabelOpcional">Indicação de Interessado:</label>
    <select onchange="pesquisar();" id="selIndicacaoInteressado" name="selIndicacaoInteressado" class="infraSelect" >
   <?=$strItensSelIndicacaoInteressado?>
   </select> 
 
 <!--  Select Documento Principal -->
 
- <label id="lblDocumentoPrincipal" for="selDocumentoPrincipal" accesskey="" class="infraLabelOpcional">Documento Principal:</label>
+ <label id="lblDocumentoPrincipal" for="selDocumentoPrincipal" class="infraLabelOpcional">Documento Principal:</label>
   <select onchange="pesquisar();"  id="selDocumentoPrincipal" name="selDocumentoPrincipal" class="infraSelect" >
   <?=$strItensSelTipoDocumento?>
   </select> 

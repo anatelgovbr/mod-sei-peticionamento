@@ -109,8 +109,9 @@ try {
 	}
 
 	$arrComandos = array();
-	$arrComandos[] = '<button type="button" accesskey="P" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
+	$arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
 	
+	//TODO: Marcelo, qual é a utilidade dessa funcionalidade de Transportar seleção neste tela?
 	if ($_GET['acao'] == 'menu_peticionamento_usuario_externo_selecionar'){
 		$arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
 	}
@@ -118,7 +119,7 @@ try {
 	$bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('menu_peticionamento_usuario_externo_cadastrar');
 	
 	if ($bolAcaoCadastrar){
-		$arrComandos[] = '<button type="button" accesskey="N" id="btnNovo" value="Nova" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=menu_peticionamento_usuario_externo_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo</button>';
+		$arrComandos[] = '<button type="button" accesskey="n" id="btnNovo" value="Nova" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=menu_peticionamento_usuario_externo_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo</button>';
 	}
 
 	$objMenuPeticionamentoUsuarioExternoDTO = new MenuPeticionamentoUsuarioExternoDTO();
@@ -181,6 +182,7 @@ try {
 			$bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('menu_peticionamento_usuario_externo_desativar');
 		}
 
+		//TODO: Marcelo, se não vai ter o botão de Desativar em lote, melhor retirar todo este bloco de código.
 		if ($bolAcaoDesativar){
 			$bolCheck = true;
 			//$arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
@@ -189,6 +191,7 @@ try {
 
 		$strLinkReativar = SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo='. $_GET['id_menu_peticionamento_usuario_externo'] .'&acao=menu_peticionamento_usuario_externo_reativar&acao_origem='.$_GET['acao'].'&acao_confirmada=sim');
 
+		//TODO: Marcelo, se não vai ter o botão de Excluir em lote, melhor retirar todo este bloco de código.
 		if ($bolAcaoExcluir){
 			$bolCheck = true;
 			//$arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
@@ -196,7 +199,7 @@ try {
 		}
 		
 		if( $bolAcaoImprimir ) {
-			$arrComandos[] = '<button type="button" accesskey="F" id="btnImprimir" value="Fechar" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
+			$arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
 		}
 		
 		$strResultado = '';
@@ -283,9 +286,9 @@ try {
 		$strResultado .= '</table>';
 	}
 	if ($_GET['acao'] == 'menu_peticionamento_usuario_externo_selecionar'){
-		$arrComandos[] = '<button type="button" accesskey="F" id="btnFecharSelecao" value="Fechar" onclick="window.close();" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+		$arrComandos[] = '<button type="button" accesskey="c" id="btnFecharSelecao" value="Fechar" onclick="window.close();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 	}else{
-		$arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo='.$_GET['id_menu_peticionamento_usuario_externo'].'&acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+		$arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo='.$_GET['id_menu_peticionamento_usuario_externo'].'&acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 	}
 
 }catch(Exception $e){

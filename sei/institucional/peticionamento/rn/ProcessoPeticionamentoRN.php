@@ -182,7 +182,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			//$arrDocsEssenciais = $arrParams[5]; //array de DocumentoDTO (docs essenciais)
 			//$arrDocsComplementares = $arrParams[6]; //array de DocumentoDTO (docs complementares)
 					
-			//$reciboPeticionamentoRN->montarRecibo( $arrParams );
+			$reciboPeticionamentoRN->montarRecibo( $arrParams );
 			
 			$arrProcessoReciboRetorno = array();
 			$arrProcessoReciboRetorno[0] = $reciboDTOBasico;
@@ -260,13 +260,23 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		$anexoRN = new AnexoPeticionamentoRN();
 		$strSiglaUsuario = SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno();
 		
+		$tamanhoRN = new TamanhoArquivoPermitidoPeticionamentoRN();
+		$tamanhoDTO = new TamanhoArquivoPermitidoPeticionamentoDTO();
+		$tamanhoDTO->setStrSinAtivo('S');
+		$tamanhoDTO->retTodos();
+		
+		$arrTamanhoDTO = $tamanhoRN->listarTamanhoMaximoConfiguradoParaUsuarioExterno( $tamanhoDTO );
+		$tamanhoPrincipal = $arrTamanhoDTO[0]->getNumValorDocPrincipal();
+		$tamanhoEssencialComplementar = $arrTamanhoDTO[0]->getNumValorDocComplementar();
+		
 		if( isset( $arrParametros['hdnDocPrincipal'] ) && $arrParametros['hdnDocPrincipal']  != "") {
 			
 			$arrAnexoDocPrincipal = $this->processarStringAnexos( $arrParametros['hdnDocPrincipal'] ,
 					$objUnidadeDTO->getNumIdUnidade() ,
 					$strSiglaUsuario,
 					true,
-					$objProcedimentoDTO->getDblIdProcedimento()  );
+					$objProcedimentoDTO->getDblIdProcedimento(), 
+					$tamanhoPrincipal, "principais" );
 			
 			$arrAnexoPrincipalVinculacaoProcesso = array();
 			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocPrincipal']  );
@@ -424,7 +434,8 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					                      $objUnidadeDTO->getNumIdUnidade() , 
 					                      $strSiglaUsuario, 
 					                      false, 
-					                      $objProcedimentoDTO->getDblIdProcedimento()  );
+					                      $objProcedimentoDTO->getDblIdProcedimento(), 
+										  $tamanhoEssencialComplementar, "essenciais");
 			
 			//$arrAnexoDocEssencial = AnexoINT::processarRI0872( $arrParametros['hdnDocEssencial'] );
 			$arrAnexoEssencialVinculacaoProcesso = array();
@@ -564,7 +575,8 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					$objUnidadeDTO->getNumIdUnidade() ,
 					$strSiglaUsuario,
 					false,
-					$objProcedimentoDTO->getDblIdProcedimento()  );
+					$objProcedimentoDTO->getDblIdProcedimento(), 
+					$tamanhoEssencialComplementar, "complementares" );
 			
 			//$arrAnexoDocComplementar = AnexoINT::processarRI0872( $arrParametros['hdnDocComplementar'] );
 			
@@ -1249,8 +1261,11 @@ class ProcessoPeticionamentoRN extends InfraRN {
 	// nao foi possivel usar a classe AnexoINT para processar a string de anexos, por conta da quantidade diferenciada 
 	// de campos da grid da tela de peticionamento
 	// dentre outras especificidades técnicas desta tela
-	public function processarStringAnexos($strDelimitadaAnexos, $idUnidade, $strSiglaUsuario, $bolDocumentoPrincipal, $idProtocolo){
+	public function processarStringAnexos($strDelimitadaAnexos, $idUnidade, $strSiglaUsuario, $bolDocumentoPrincipal, $idProtocolo, 
+			                              $numTamanhoArquivoPermitido, $strAreaDocumento ){
 		
+			                              	
+			                              	
 		$arrAnexos = array();
 				
 		$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($strDelimitadaAnexos);
@@ -1258,12 +1273,31 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		
 		foreach($arrAnexos as $anexo){
 			
+			$tamanhoDoAnexo = $anexo[2];
+			
+			//o tamanho do arquivo pode vir em Mb ou em Kb
+			//se vier em Mb compara o tamanho, se vier em Kb é porque é menor do que 1Mb e portanto deixar passar (nao havera limite inferior a 1Mb)
+			if (strpos( $tamanhoDoAnexo , 'Mb') !== false) {
+				
+				$tamanhoDoAnexo = str_replace("Mb","", $tamanhoDoAnexo );
+				
+				//validando tamanho máximo do arquivo
+				if( $tamanhoDoAnexo > $numTamanhoArquivoPermitido ){
+					
+					$objInfraException = new InfraException();
+					$objInfraException->adicionarValidacao('Um dos documentos ' . $strAreaDocumento . ' adicionados excedeu o tamanho máximo permitido (Limite: ' . $numTamanhoArquivoPermitido . ' Mb).');
+					$objInfraException->lancarValidacoes();
+					
+				}
+				
+			}
+						
 			$objAnexoDTO = new AnexoDTO();
 			$objAnexoDTO->setNumIdAnexo( null );
 			$objAnexoDTO->setStrSinAtivo('S');
 			$objAnexoDTO->setStrNome($anexo[8]);
 			$objAnexoDTO->setDthInclusao($anexo[1]);
-			$objAnexoDTO->setNumTamanho($anexo[2]);
+			$objAnexoDTO->setNumTamanho($anexo[2] );
 			$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
 			$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
 			$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());

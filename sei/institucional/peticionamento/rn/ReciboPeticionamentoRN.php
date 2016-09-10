@@ -190,7 +190,8 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$hipoteseLegalDocPrincipal = $arrParametros['hipoteseLegalDocPrincipal']; 
 				
 		//TODO montar corretamente conteudo HTML final do recibo
-		$htmlRecibo = $this->gerarHTMLConteudoDocRecibo( $arrParams );
+		$htmlRecibo = "teste";
+		//$htmlRecibo = $this->gerarHTMLConteudoDocRecibo( $arrParams );
 		
 		$protocoloRN = new ProtocoloPeticionamentoRN();
 		
@@ -214,7 +215,7 @@ class ReciboPeticionamentoRN extends InfraRN {
 		
 		$protocoloReciboDocumentoDTO->setStrStaNivelAcessoLocal( ProtocoloRN::$NA_PUBLICO );
 		$protocoloReciboDocumentoDTO->setNumIdHipoteseLegal( null );
-		$protocoloReciboDocumentoDTO->setStrStaGrauSigilo('');
+		$protocoloReciboDocumentoDTO->setStrStaGrauSigilo(null);
 					
 		$protocoloReciboDocumentoDTO->setDtaGeracao( InfraData::getStrDataAtual() );
 		$protocoloReciboDocumentoDTO->setArrObjAnexoDTO(array());
@@ -272,7 +273,7 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$documentoReciboDTO->setStrCrcAssinatura(null);			
 		$documentoReciboDTO->setStrQrCodeAssinatura(null);
 		
-		$documentoReciboDTO->setStrSinBloqueado('N');			
+		$documentoReciboDTO->setStrSinBloqueado('S');			
 		$documentoReciboDTO->setStrStaEditor( EditorRN::$TE_NENHUM );			
 		$documentoReciboDTO->setStrSinFormulario('S');			
 		$documentoReciboDTO->setNumVersaoLock(0);

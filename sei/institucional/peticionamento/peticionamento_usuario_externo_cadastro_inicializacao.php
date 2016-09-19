@@ -96,6 +96,9 @@ $objTipoProcDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
 $objTipoProcRN = new TipoProcessoPeticionamentoRN();
 $objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 
+//texto de orientacoes
+$txtOrientacoes = $objTipoProcDTO->getStrOrientacoes();
+
 //obtendo a unidade do tipo de processo selecionado - Pac 10 - pode ser uma ou MULTIPLAS unidades selecionadas
 $relTipoProcUnidadeDTO = new RelTipoProcessoUnidadePeticionamentoDTO();
 $relTipoProcUnidadeDTO->retTodos();
@@ -141,7 +144,7 @@ else if( $arrRelTipoProcUnidadeDTO != null && count( $arrRelTipoProcUnidadeDTO )
 $ObjRelTipoProcessoSeriePeticionamentoRN = new RelTipoProcessoSeriePeticionamentoRN();
 $ObjRelTipoProcessoSeriePeticionamentoDTO = new RelTipoProcessoSeriePeticionamentoDTO();
 $ObjRelTipoProcessoSeriePeticionamentoDTO->retTodos();
-$ObjRelTipoProcessoSeriePeticionamentoDTO->setNumIdTipoProcessoPeticionamento( 2 );
+$ObjRelTipoProcessoSeriePeticionamentoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
 $arrTiposDocumentosComplementares = $ObjRelTipoProcessoSeriePeticionamentoRN->listar( $ObjRelTipoProcessoSeriePeticionamentoDTO );
 //print_r( $arrTiposDocumentosComplementares ); die();
 
@@ -182,6 +185,7 @@ if( $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"){
 	$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 	$idHipoteseLegalPadrao = $objTipoProcDTO->getNumIdHipoteseLegal();
     $strHipoteseLegalPadrao = $objTipoProcDTO->getStrNomeHipoteseLegal();
+    $strHipoteseLegalPadrao .= " (".$objTipoProcDTO->getStrBaseLegalHipoteseLegal().")";
 }
 
 $isUsuarioExternoPodeIndicarNivelAcesso = $objTipoProcDTO->getStrSinNaUsuarioExterno();
@@ -205,20 +209,6 @@ $ObjTipoProcessoPeticionamentoDTO = $objTipoProcessoPeticionamentoRN->consultar(
 //print_r( $ObjTipoProcessoPeticionamentoDTO ); die();
 
 $txtTipoProcessoEscolhido = $objTipoProcDTO->getStrNomeProcesso();
-
-//texto de orientacoes
-$objTipoProcessoOrientacoesPeticionamentoDTO2 = new TipoProcessoOrientacoesPeticionamentoDTO();
-$objTipoProcessoOrientacoesPeticionamentoDTO2->setNumIdTipoProcessoOrientacoesPeticionamento(TipoProcessoOrientacoesPeticionamentoRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
-$objTipoProcessoOrientacoesPeticionamentoDTO2->retTodos();
-
-$objTipoProcessoOrientacoesPeticionamentoRN  = new TipoProcessoOrientacoesPeticionamentoRN();
-$objLista = $objTipoProcessoOrientacoesPeticionamentoRN->listar($objTipoProcessoOrientacoesPeticionamentoDTO2);
-$alterar = count($objLista) > 0;
-
-$txtOrientacoes ='';
-if($alterar){
-	$txtOrientacoes = $objLista[0]->getStrOrientacoesGerais();
-}
 
 //preeche a lista de interessados PF/PJ CASO 2
 $arrPFPJInteressados = array();
@@ -304,8 +294,6 @@ $numSeiTamMbDocExterno = ($numSeiTamMbDocExterno < 1024 ? $numSeiTamMbDocExterno
 //$arrTipoConferencia = ;
 $urlBaseLink = "";
 $arrComandos = array();
-$arrComandos[] = '<button type="button" accesskey="P" name="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
-$arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\''.
-
-PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_iniciar&id_orgao_acesso_externo=0')).'\';" class="infraButton"><span class="infraTeclaAtalho">V</span>oltar</button>';
+$arrComandos[] = '<button type="button" accesskey="p" name="Peticionar" id="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
+$arrComandos[] = '<button type="button" accesskey="v" name="btnVoltar" id="btnVoltar" value="Voltar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_iniciar&id_orgao_acesso_externo=0')).'\';" class="infraButton"><span class="infraTeclaAtalho">V</span>oltar</button>';
 ?>

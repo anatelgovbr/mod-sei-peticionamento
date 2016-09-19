@@ -1,13 +1,14 @@
 <?
-    /**
+/**
      * ANATEL
      *
      * 28/06/2016 - criado por marcelo.bezerra - CAST
      *
-     */
+*/
 
-    try {
-        require_once dirname(__FILE__) . '/../../SEI.php';
+try {
+
+	   require_once dirname(__FILE__) . '/../../SEI.php';
 
         session_start();
         SessaoSEIExterna::getInstance()->validarLink();
@@ -20,14 +21,10 @@
                 // PDF - Gerando
                 if ($_POST['hdnInfraBarraLocalizacao'] != '' || $_POST['hdnInfraAreaDados'] != '') {
 
-                    //$arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnInfraBarraLocalizacao']);
                     $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnInfraAreaDados']);
 
-                    //$pdf = new InfraEtiquetasPDF('contato', 'mm', $_POST['txtColuna'], $_POST['txtLinha']);
-                    //$pdf = new InfraEtiquetasPDF('contato', 'mm', 1, 1);
                     require_once dirname(__FILE__) . '/util/InfraReciboPDF.php';
                     $pdf = new InfraReciboPDF('contato', 'mm', 1, 1);
-
 
                     $pdf->Open();
 
@@ -42,13 +39,12 @@
                     $pdf->Add_PDF_Row(' ', '', 'J', 'V', 0);
                     $pdf->Add_PDF_Row(' ', '', 'J', 'V', 1);
 
-
                     for ($i = 0; $i < count($arr); $i++) {
                         $recibo = $arr[$i];
-                        //$recibolinhas = '';
+                        
                         for ($j = 0; $j < count($recibo); $j++) {
-                            //$recibolinhas = $recibolinhas . $recibo[$j] . "\n";
-                            $recibolinha = explode("|", $recibo[$j]);
+                            
+                        	$recibolinha = explode("|", $recibo[$j]);
                             //TD - primeira
                             $pdf->SetFont("", (strrpos($recibolinha[1], "<b>") > -1 ? "b" : ""), "8");
                             $pdf->Set_Font_Size(8);
@@ -60,8 +56,7 @@
                             $pdf->Set_Font_Size(8);
                             $pdf->Add_PDF_Row(str_replace('<b>', '', $recibolinha[0]), '', 'J', 'V', 1);
                         }
-                        //$pdf->Add_PDF_Row($recibolinhas, 'T', 'J', 'V');
-
+                       
                     }
                     $pdf->Set_Font_Size(8);
                     $pdf->Add_PDF_Row(' ', '', 'J', 'V', 0);
@@ -71,7 +66,6 @@
 
                 }
                 // PDF - Gerando - FIM
-
 
                 //Titulo do Protocolo
                 $objReciboPeticionamentoDTO = new ReciboPeticionamentoDTO();
@@ -90,34 +84,29 @@
                 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
                 $idSerieParam = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
                 
-                //agora vamos obter o documento recibo que estará vinculado ao processo em questão
-                $docReciboDTO = new DocumentoDTO();
-                $docRN = new DocumentoRN();
-                $docReciboDTO->retTodos();
-                $docReciboDTO->setDblIdProcedimento( $objProtocoloDTO->getDblIdProtocolo() );
-                $docReciboDTO->setNumIdSerie( $idSerieParam );
-                $docReciboDTO = $docRN->consultarRN0005( $docReciboDTO );
-                //print_r( $docReciboDTO ); die();
+                $documentoRN = new DocumentoRN();
+                $documentoReciboDTO = new DocumentoDTO();
+                $documentoReciboDTO->retStrProtocoloDocumentoFormatado();
+                $documentoReciboDTO->setDblIdProcedimento( $objReciboPeticionamentoDTO->getNumIdProtocolo() );
+                $documentoReciboDTO->setNumIdSerie( $idSerieParam );
+                $documentoReciboDTO = $documentoRN->consultarRN0005( $documentoReciboDTO );
                 
-                if( $docReciboDTO != null ){
-                  $strTitulo = 'Recibo Eletrônico de Protocolo - SEI n° ' . $docReciboDTO->getStrNumero();
+                if( $documentoReciboDTO != null ){
+                  $strTitulo = 'Recibo Eletrônico de Protocolo - SEI n° ' . $documentoReciboDTO->getStrProtocoloDocumentoFormatado();
                 } else {
                 	$strTitulo = 'Recibo Eletrônico de Protocolo';
                 }
+                
                 break;
-
-
-                break;
-
 
             default:
                 throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
         }
 
         $arrComandos   = array();
-        $arrComandos[] = '<button type="button" id="btnSalvarPDF" value="Salvar em PDF" onclick="salvarPDF();" class="infraButton">Salvar em PDF</button>';
-        $arrComandos[] = '<button type="button" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton">Imprimir</button>';
-        $arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc=' . $_GET['id_md_pet_rel_recibo_protoc'] . '&acao=' . PaginaSEIExterna::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\'" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+        $arrComandos[] = '<button type="button" accesskey="s" id="btnSalvarPDF" value="Salvar em PDF" onclick="salvarPDF();" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar em PDF</button>';
+        $arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
+        $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc=' . $_GET['id_md_pet_rel_recibo_protoc'] . '&acao=' . PaginaSEIExterna::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
         $objReciboPeticionamentoDTO = new ReciboPeticionamentoDTO();
         $objReciboPeticionamentoDTO->retTodos();
@@ -125,6 +114,7 @@
         
         $objReciboDocumentoAnexoPeticionamentoDTO = new ReciboDocumentoAnexoPeticionamentoDTO();
         $objReciboDocumentoAnexoPeticionamentoDTO->retTodos();
+        $objReciboDocumentoAnexoPeticionamentoDTO->retStrNumeroDocumento();
         $objReciboDocumentoAnexoPeticionamentoDTO->retStrNomeSerie();
         $objReciboDocumentoAnexoPeticionamentoDTO->retStrProtocoloFormatado();
 
@@ -152,13 +142,9 @@
         $protocoloDTO = new ProtocoloDTO();
         $protocoloDTO->retDblIdProtocolo();
         $protocoloDTO->retStrProtocoloFormatado();
+        $protocoloDTO->retNumIdOrgaoUnidadeGeradora();
         $protocoloDTO->setDblIdProtocolo($objReciboPeticionamentoDTO->getNumIdProtocolo());
         $protocoloDTO = $protocoloRN->consultarRN0186($protocoloDTO);
-
-        //obter documentos principais
-
-        //obter documentos essenciais e complementares
-
 
         //obter interessados
         $objParticipanteDTO = new ParticipanteDTO();
@@ -174,8 +160,15 @@
             $objContatoRN      = new ContatoRN();
             $arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
         }
-
-
+        
+        //obtendo descricao do orgao para o rodape do recibo
+        $idOrgao = $protocoloDTO->retNumIdOrgaoUnidadeGeradora();
+		$orgaoDTO = new OrgaoDTO();
+		$orgaoRN = new OrgaoRN();
+		$orgaoDTO->retTodos();
+		$orgaoDTO->setNumIdOrgao(  $protocoloDTO->getNumIdOrgaoUnidadeGeradora() );
+		$orgaoDTO = $orgaoRN->consultarRN1352( $orgaoDTO );
+		
     } catch (Exception $e) {
         PaginaSEIExterna::getInstance()->processarExcecao($e);
     }
@@ -224,7 +217,7 @@
         document.getElementById('hdnInfraBarraLocalizacao').value = document.getElementById('divInfraBarraLocalizacao').innerHTML;
         document.getElementById('hdnRodape').value = document.getElementById('divRodape').innerHTML.trim();
 
-//document.getElementById('hdnInfraAreaDados').value = document.getElementById('divInfraAreaDados').innerHTML;
+		//document.getElementById('hdnInfraAreaDados').value = document.getElementById('divInfraAreaDados').innerHTML;
         var tabela = document.getElementById('divInfraAreaDados').getElementsByTagName('TABLE');
         if (tabela.length > 0) {
             var tabl = tabela[0]; // console.log(tabl);
@@ -263,10 +256,10 @@
 
     <div style="height:auto; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
 
-        <table width="80%" style="width: 80%" border="0">
+        <table align="center" style="width: 90%" border="0">
 
             <tr>
-                <td style="font-weight: bold; width: 280px;" width="280">Usuário Externo (signatário):</td>
+                <td style="font-weight: bold; width: 300px;">Usuário Externo (signatário):</td>
                 <td><?= $usuarioDTO->getStrNome() ?></td>
             </tr>
 
@@ -276,17 +269,17 @@
             </tr>
 
             <tr>
-                <td style="font-weight: bold;">Tipo de Peticionamento:</td>
-                <td><?= $objReciboPeticionamentoDTO->getStrTipoPeticionamento() ?></td>
-            </tr>
-
-            <tr>
-                <td style="font-weight: bold;">Data e horário (recebimento final pelo SEI):</td>
+                <td style="font-weight: bold;">Data e Horário:</td>
                 <td><?= $objReciboPeticionamentoDTO->getDthDataHoraRecebimentoFinal() ?></td>
             </tr>
+			
+            <tr>
+                <td style="font-weight: bold;">Tipo de Peticionamento:</td>
+                <td><?= $objReciboPeticionamentoDTO->getStrStaTipoPeticionamentoFormatado() ?></td>
+            </tr>
 
             <tr>
-                <td style="font-weight: bold;">Número do processo:</td>
+                <td style="font-weight: bold;">Número do Processo:</td>
                 <td><?= $protocoloDTO->getStrProtocoloFormatado() ?></td>
             </tr>
 
@@ -319,7 +312,7 @@
 
                     <?php if ($documento->getStrClassificacaoDocumento() == "P"): ?>
                         <tr>
-                            <td>&nbsp&nbsp&nbsp&nbsp- <?= $documento->getStrNomeSerie() ?> </td>
+                            <td>&nbsp&nbsp&nbsp&nbsp- <?= $documento->getStrNomeSerie() ?> <?= $documento->getStrNumeroDocumento() ?> </td>
                             <td> <?= $documento->getStrProtocoloFormatado() ?></td>
                         </tr>
                     <?php endif; ?>
@@ -328,46 +321,58 @@
             <?php endif; ?>
 
             <!-- lista DOC ESSENCIAL -->
-            <?php if ($arrDocumentos != null && is_array($arrDocumentos) && count($arrDocumentos) > 0): ?>
-                <tr>
-                    <td style="font-weight: bold;">- Documentos Essenciais:</td>
-                    <td></td>
-                </tr>
-
-                <?php foreach ($arrDocumentos as $documento) : ?>
-                    <!-- E-ESSENCIAL-->
-                    <?php if ($documento->getStrClassificacaoDocumento() == "E") : ?>
-                        <tr>
-                            <td>&nbsp&nbsp&nbsp&nbsp- <?= $documento->getStrNomeSerie() ?> </td>
-                            <td> <?= $documento->getStrProtocoloFormatado() ?></td>
-                        </tr>
-                    <?php endif ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            <?php 
+            if ($arrDocumentos != null && is_array($arrDocumentos) && count($arrDocumentos) > 0){
+             	$documentoExiste=false;
+				foreach ($arrDocumentos as $documento) {
+					// E-ESSENCIAL
+					if ($documento->getStrClassificacaoDocumento() == "E") { 
+						if ($documentoExiste==false){
+							echo "                <tr>";
+							echo "                    <td style='font-weight: bold;'>- Documentos Essenciais:</td>";
+							echo "                    <td></td>";
+							echo "                </tr>";
+							$documentoExiste=true;
+						}
+						echo "                <tr>";
+						echo "                    <td>&nbsp&nbsp&nbsp&nbsp- " . $documento->getStrNomeSerie() . "&nbsp" . $documento->getStrNumeroDocumento() . "</td>";
+						echo "                    <td> " . $documento->getStrProtocoloFormatado() . "</td>";
+						echo "                </tr>";
+                    }
+				}
+            }					
+			?>
 
             <!--  lista DOC COMPLEMENTAR -->
-            <?php if ($arrDocumentos != null && is_array($arrDocumentos) && count($arrDocumentos) > 0): ?>
-                <tr>
-                    <td style="font-weight: bold;">- Documentos Complementares:</td>
-                    <td></td>
-                </tr>
-                <?php foreach ($arrDocumentos as $documento) : ?>
-                    <!--C = COMPLEMENTAR-->
-                    <?php if ($documento->getStrClassificacaoDocumento() == "C") : ?>
-                        <tr>
-                            <td>&nbsp&nbsp&nbsp&nbsp- <?= $documento->getStrNomeSerie() ?> </td>
-                            <td> <?= $documento->getStrProtocoloFormatado() ?></td>
-                        </tr>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            <?php 
+            if ($arrDocumentos != null && is_array($arrDocumentos) && count($arrDocumentos) > 0){
+             	$documentoExiste=false;
+				foreach ($arrDocumentos as $documento) {
+					// C-COMPLEMENTAR
+					if ($documento->getStrClassificacaoDocumento() == "C") { 
+						if ($documentoExiste==false){
+							echo "                <tr>";
+							echo "                    <td style='font-weight: bold;'>- Documentos Complementares:</td>";
+							echo "                    <td></td>";
+							echo "                </tr>";
+							$documentoExiste=true;
+						}
+						echo "                <tr>";                        
+						echo "                    <td>&nbsp&nbsp&nbsp&nbsp- " . $documento->getStrNomeSerie() . "&nbsp" . $documento->getStrNumeroDocumento() . "</td>";
+						echo "                    <td> " . $documento->getStrProtocoloFormatado() . "</td>";
+						echo "                </tr>";
+                    }
+				}
+            }					
+			?>
 
         </table>
         <br/>
         <br/>
-        <label>
-            A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida na Página Eletrônica do(a) <?= htmlentities($objReciboPeticionamentoDTO->getStrDscUnidadeGeradora()); ?>
-        </label>
+        
+		<label id=divRodape>
+			<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) <?= htmlentities( $orgaoDTO->getStrDescricao() ); ?>.</p>
+		</label>
 
     </div>
 

@@ -36,9 +36,18 @@ class ReciboDocumentoAnexoPeticionamentoDTO extends InfraDTO  {
 				'ClassificacaoDocumento',
 				'classificacao_documento');
 		
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+				'FormatoDocumento',
+				'formato_documento');
+		
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,
 				'IdSerie',
 				'doc.id_serie',
+				'documento doc');
+		
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
+				'NumeroDocumento',
+				'doc.numero',
 				'documento doc');
 
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,

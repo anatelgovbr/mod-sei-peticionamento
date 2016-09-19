@@ -130,7 +130,7 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$reciboDTO->setDthDataHoraRecebimentoFinal( InfraData::getStrDataHoraAtual() );
 		$reciboDTO->setStrIpUsuario( InfraUtil::getStrIpUsuario() );
 		$reciboDTO->setStrSinAtivo('S');
-		$reciboDTO->setStrTipoPeticionamento('Novo');
+		$reciboDTO->setStrStaTipoPeticionamento('N');
 		
 		$objBD = new ReciboPeticionamentoBD($this->getObjInfraIBanco());
 		$ret = $objBD->cadastrar( $reciboDTO );
@@ -159,7 +159,7 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$reciboDTO->setDthDataHoraRecebimentoFinal( InfraData::getStrDataHoraAtual() );		
 		$reciboDTO->setStrIpUsuario( InfraUtil::getStrIpUsuario() );		
 		$reciboDTO->setStrSinAtivo('S');		
-		$reciboDTO->setStrTipoPeticionamento('Novo');
+		$reciboDTO->setStrStaTipoPeticionamento('N');
 		
 		$objBD = new ReciboPeticionamentoBD($this->getObjInfraIBanco());
 		$ret = $objBD->cadastrar( $reciboDTO );
@@ -171,7 +171,8 @@ class ReciboPeticionamentoRN extends InfraRN {
 	//método utilizado para gerar recibo ao final do cadastramento de um processo de peticionamento de usuario externo
 	protected function montarReciboControlado( $arrParams ){
 		
-		$reciboDTO = $this->cadastrar( $arrParams );
+		//$reciboDTO = $this->cadastrar( $arrParams );
+		$reciboDTO = $arrParams[4];
 		
 		//gerando documento recibo (nao assinado) dentro do processo do SEI
 		$objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
@@ -180,7 +181,6 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$objUnidadeDTO = $arrParams[1]; //UnidadeDTO da unidade geradora do processo
 		$objProcedimentoDTO = $arrParams[2]; //ProcedimentoDTO para vincular o recibo ao processo correto
 		$arrParticipantesParametro = $arrParams[3]; //array de ParticipanteDTO
-		$arrParams[4] = $reciboDTO;
 		
 		//tentando simular sessao de usuario interno do SEI
 		SessaoSEI::getInstance()->setNumIdUnidadeAtual( $objUnidadeDTO->getNumIdUnidade() );
@@ -190,8 +190,8 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$hipoteseLegalDocPrincipal = $arrParametros['hipoteseLegalDocPrincipal']; 
 				
 		//TODO montar corretamente conteudo HTML final do recibo
-		$htmlRecibo = "teste";
-		//$htmlRecibo = $this->gerarHTMLConteudoDocRecibo( $arrParams );
+		//$htmlRecibo = "teste";
+		$htmlRecibo = $this->gerarHTMLConteudoDocRecibo( $arrParams );
 		
 		$protocoloRN = new ProtocoloPeticionamentoRN();
 		
@@ -304,9 +304,9 @@ class ReciboPeticionamentoRN extends InfraRN {
   	
 	$html = '';
 	
-    $html .= '<table width="90%" align="center" style="width: 90%" border="0">';
+    $html .= '<table align="center" style="width: 90%" border="0">';
     $html .= '<tbody><tr>';
-    $html .= '<td style="font-weight: bold; width: 280px;" width="280">Usuário Externo (signatário):</td>';
+    $html .= '<td style="font-weight: bold; width: 300px;">Usuário Externo (signatário):</td>';
     $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
     $html .= '</tr>';
     
@@ -316,77 +316,133 @@ class ReciboPeticionamentoRN extends InfraRN {
     $html .= '</tr>';
     
     $html .= '<tr>';
-    $html .= '<td style="font-weight: bold;">Tipo de Peticionamento:</td>';
-    $html .= '<td>Processo ' . $reciboDTO->getStrTipoPeticionamento() . '</td>';
-    $html .= '</tr>';
-    
-    $html .= '<tr>';
-    $html .= '<td style="font-weight: bold;">Data e horário (recebimento final pelo SEI):</td>';
+    $html .= '<td style="font-weight: bold;">Data e Horário:</td>';
     $html .= '<td>' . DataUtils::setFormat( $reciboDTO->getDthDataHoraRecebimentoFinal(),'dd/mm/yyyy hh:mm')  .  '</td>';
     $html .= '</tr>';
+	
+    $html .= '<tr>';
+    $html .= '<td style="font-weight: bold;">Tipo de Peticionamento:</td>';
+    $html .= '<td>' . $reciboDTO->getStrStaTipoPeticionamentoFormatado() . '</td>';
+    $html .= '</tr>';
     
     $html .= '<tr>';
-    $html .= '<td style="font-weight: bold;">Número do processo:</td>';
+    $html .= '<td style="font-weight: bold;">Número do Processo:</td>';
     $html .= '<td>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() .  '</td>';
     $html .= '</tr>';
     
+    //obter interessados
+    $arrInteressados = array();
+    $objParticipanteDTO = new ParticipanteDTO();
+    $objParticipanteDTO->setDblIdProtocolo( $reciboDTO->getNumIdProtocolo() );
+    $objParticipanteDTO->retNumIdContato();
+    $objParticipanteRN     = new ParticipanteRN();
+    $arrObjParticipanteDTO = $objParticipanteRN->listarRN0189($objParticipanteDTO);
+    
+    foreach ($arrObjParticipanteDTO as $objParticipanteDTO) {
+    	$objContatoDTO = new ContatoDTO();
+    	$objContatoDTO->setNumIdContato($objParticipanteDTO->getNumIdContato());
+    	$objContatoDTO->retStrNome();
+    	$objContatoRN      = new ContatoRN();
+    	$arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
+    }
+        
     $html .= '<tr>';
     $html .= '<td style="font-weight: bold;">Interessados:</td>';
     $html .= '<td></td>';
     $html .= '</tr>';
+    
+    if( $arrInteressados != null && count( $arrInteressados ) > 0 ){
+    	
+    	foreach ($arrInteressados as $interessado) {
+                $html .= '<tr>';
+                $html .= '<td>&nbsp&nbsp&nbsp&nbsp ' . $interessado->getStrNome() . '</td>';
+                $html .= '<td></td>';
+                $html .= '</tr>';
+         } 
+    	
+    }
     
     $html .= '<tr>';
     $html .= '<td style="font-weight: bold;">Protocolos dos Documentos (Número SEI):</td>';
     $html .= '<td></td>';
     $html .= '</tr>';
     
+    $idPrincipalGerado = SessaoSEIExterna::getInstance()->getAtributo('idDocPrincipalGerado');
+    $arrIdPrincipal = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoPrincipal');
+    $arrIdEssencial = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoEssencial');
+    $arrIdComplementar = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoComplementar');
+    
     $anexoRN = new AnexoRN();
     $documentoRN = new DocumentoRN();
     
-    if( isset($arrParams[0]['hdnDocPrincipal']) && $arrParams[0]['hdnDocPrincipal'] != ""  ){
+    if( $idPrincipalGerado != null ){
+    	
+    	$html .= '<tr>';
+    	$html .= '<td style="font-weight: bold;">&nbsp;&nbsp;&nbsp; - Documento Principal:</td>';
+    	$html .= '<td></td>';
+    	$html .= '</tr>';
+    	    	 
+    	$documentoDTO = new DocumentoDTO();
+    	$documentoDTO->retStrNumero();
+    	$documentoDTO->retStrNomeSerie();
+    	$documentoDTO->retStrDescricaoProtocolo();
+    	$documentoDTO->retStrProtocoloDocumentoFormatado();
+    	$documentoDTO->setDblIdDocumento( $idPrincipalGerado );
+    	$documentoDTO = $documentoRN->consultarRN0005( $documentoDTO );
+    	
+    	$strNome = $documentoDTO->getStrNomeSerie() . " " . $documentoDTO->getStrNumero();
+    	$strNumeroSEI = $documentoDTO->getStrProtocoloDocumentoFormatado();
+    	
+    	$html .= '<tr>';
+    	$html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
+    	$html .= '<td>' . $strNumeroSEI . '</td>';
+    	$html .= '</tr>';
+    	
+    	//SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
+    }
+    
+    if( $arrIdPrincipal != null && count( $arrIdPrincipal ) > 0  ){
       
       $html .= '<tr>';
-      $html .= '<td style="font-weight: bold;">- Documento Principal:</td>';
+      $html .= '<td style="font-weight: bold;">&nbsp;&nbsp;&nbsp; - Documento Principal:</td>';
       $html .= '<td></td>';
       $html .= '</tr>';
       
       //loop na lista de documentos principais
-    	
-      $arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica( $arrParams[0]['hdnDocPrincipal'] );
-      $arrObjAnexoDTO = array();
-      	
-      foreach($arrAnexos as $anexo){
+       	
+      $objAnexoDTO = new AnexoDTO();
+      $objAnexoDTO->retTodos(true);
       
-      	$objAnexoDTO = new AnexoDTO();
-      	$objAnexoDTO->retTodos(true);
-      	//$objAnexoDTO->setNumIdAnexo( null );
-      	$objAnexoDTO->setStrSinAtivo('S');
-      	$objAnexoDTO->setStrNome($anexo[8]);
-      	//$objAnexoDTO->setDthInclusao($anexo[1]);
-      	//$objAnexoDTO->setNumTamanho($anexo[2]);
-      	//$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
-      	//$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
-      	$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+      $objAnexoDTO->adicionarCriterio(array('IdAnexo'),
+      		array(InfraDTO::$OPER_IN),
+      		array($arrIdPrincipal));
+      
+      $arrAnexoDTO = $anexoRN->listarRN0218( $objAnexoDTO );
+      
+      foreach($arrAnexoDTO as $anexoPrincipal){
       	
-      	$objAnexoDTO = $anexoRN->consultarRN0736( $objAnexoDTO );
-      	$strNome = $objAnexoDTO->getStrNome();
+      	$strNome = $anexoPrincipal->getStrNome();
       	$strTipoDocumento = "";
-      	$strNumeroSEI = $objAnexoDTO->getStrProtocoloFormatadoProtocolo();
+      	$strNumeroSEI = $anexoPrincipal->getStrProtocoloFormatadoProtocolo();
       	
       	$documentoDTO = new DocumentoDTO();
+      	
+      	$documentoDTO->retStrNumero();
       	$documentoDTO->retStrNomeSerie();
-      	$documentoDTO->setDblIdDocumento( $objAnexoDTO->getDblIdProtocolo() );
+      	$documentoDTO->retStrDescricaoProtocolo();
+      	$documentoDTO->retStrProtocoloDocumentoFormatado();
+      	
+      	$documentoDTO->setDblIdDocumento( $anexoPrincipal->getDblIdProtocolo() );
       	$documentoDTO = $documentoRN->consultarRN0005( $documentoDTO );
       	
       	//concatenar tipo e complemento
-      	$strNome = $documentoDTO->getStrNomeSerie() . ' - Complemento:';
+      	$strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNumero();
       	
       	$html .= '<tr>';
-      	$html .= '<td> &nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
+      	$html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
       	$html .= '<td>' . $strNumeroSEI . '</td>';
       	$html .= '</tr>';
-      	
-      	//$arrObjAnexoDTO[] = $objAnexoDTO;
+      	      	
       }
       
       //fim loop de documentos principais
@@ -394,48 +450,46 @@ class ReciboPeticionamentoRN extends InfraRN {
     	
     //ESSENCIAL
     
-    if( isset($arrParams[0]['hdnDocEssencial']) && $arrParams[0]['hdnDocEssencial'] != ""  ){
+    if( $arrIdEssencial != null && count( $arrIdEssencial ) > 0  ){
     	
     	$html .= '<tr>';
-    	$html .= '<td style="font-weight: bold;">- Documentos Essenciais:</td>';
+    	$html .= '<td style="font-weight: bold;">&nbsp;&nbsp;&nbsp; - Documentos Essenciais:</td>';
     	$html .= '<td></td>';
     	$html .= '</tr>';
+    	    	
+    	$objAnexoDTO = new AnexoDTO();
+    	$objAnexoDTO->retTodos(true);
     	
-    	$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica( $arrParams[0]['hdnDocEssencial'] );
-    	$arrObjAnexoDTO = array();
+    	$objAnexoDTO->adicionarCriterio(array('IdAnexo'),
+    			array(InfraDTO::$OPER_IN),
+    			array($arrIdEssencial));
     	
-    	foreach($arrAnexos as $anexo){
+    	$arrAnexoDTOEssencial = $anexoRN->listarRN0218( $objAnexoDTO );
+    	
+    	foreach( $arrAnexoDTOEssencial as $objAnexoEssencial ){  		
     		
-    		$objAnexoDTO = new AnexoDTO();
-    		$objAnexoDTO->retTodos(true);
-    		//$objAnexoDTO->setNumIdAnexo( null );
-    		$objAnexoDTO->setStrSinAtivo('S');
-    		$objAnexoDTO->getStrProtocoloFormatadoProtocolo();
-    		$objAnexoDTO->setStrNome($anexo[10]);
-    		//$objAnexoDTO->setDthInclusao($anexo[2]);
-    		//$objAnexoDTO->setNumTamanho($anexo[4]);
-    		//$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
-    		//$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
-    		//$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-    		$arrObjAnexoDTO[] = $objAnexoDTO;
-    		
-    		$strNome = $objAnexoDTO->getStrNome();
+    		$strNome = $objAnexoEssencial->getStrNome();
     		$strTipoDocumento = "";
-    		$strNumeroSEI = $objAnexoDTO->getStrProtocoloFormatadoProtocolo();
+    		$strNumeroSEI = $objAnexoEssencial->getStrProtocoloFormatadoProtocolo();
     		 
     		$documentoDTO = new DocumentoDTO();
+    		
+    		$documentoDTO->retStrNumero();
     		$documentoDTO->retStrNomeSerie();
-    		$documentoDTO->setDblIdDocumento( $objAnexoDTO->getDblIdProtocolo() );
+    		$documentoDTO->retStrDescricaoProtocolo();
+    		$documentoDTO->retStrProtocoloDocumentoFormatado();
+    		
+    		$documentoDTO->setDblIdDocumento( $objAnexoEssencial->getDblIdProtocolo() );
     		$documentoDTO = $documentoRN->consultarRN0005( $documentoDTO );
+    		
     		//concatenar tipo e complemento
-    		$strNome = $documentoDTO->getStrNomeSerie() . ' - Complemento:';
+    		$strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNumero();
     		
     		$html .= '<tr>';
-    		$html .= '<td> &nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
+    		$html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
     		$html .= '<td>' . $strNumeroSEI . '</td>';
-    		$html .= '</tr>';
-    		 
-    	
+    		$html .= '</tr>'; 
+    		
     	}
     	
     }
@@ -444,61 +498,52 @@ class ReciboPeticionamentoRN extends InfraRN {
     
     //COMPLEMENTAR
     
-    if( isset($arrParams[0]['hdnDocComplementar']) && $arrParams[0]['hdnDocComplementar'] != ""  ){
+    if( $arrIdComplementar != null && count( $arrIdComplementar ) > 0  ){
     	
     	$html .= '<tr>';
-    	$html .= '<td style="font-weight: bold;">- Documentos Complementares:</td>';
+    	$html .= '<td style="font-weight: bold;">&nbsp;&nbsp;&nbsp; - Documentos Complementares:</td>';
     	$html .= '<td></td>';
     	$html .= '</tr>';
     	
-    	$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica( $arrParams[0]['hdnDocComplementar'] );
-    	$arrObjAnexoDTO = array();
+    	$objAnexoDTO = new AnexoDTO();
+    	$objAnexoDTO->retTodos(true);
     	 
-    	foreach($arrAnexos as $anexo){
-    
-    		$objAnexoDTO = new AnexoDTO();
-    		$objAnexoDTO->setNumIdAnexo( null );
-    		$objAnexoDTO->setStrSinAtivo('S');
-    		$objAnexoDTO->setStrNome($anexo[10]);
-    		$objAnexoDTO->setDthInclusao($anexo[2]);
-    		$objAnexoDTO->setNumTamanho($anexo[4]);
-    		$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
-    		$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
-    		$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-    		$arrObjAnexoDTO[] = $objAnexoDTO;
+    	$objAnexoDTO->adicionarCriterio(array('IdAnexo'),
+    			array(InfraDTO::$OPER_IN),
+    			array($arrIdComplementar));
+    	 
+    	$arrAnexoDTOComplementar = $anexoRN->listarRN0218( $objAnexoDTO );
+    	    	 
+    	foreach( $arrAnexoDTOComplementar as $objAnexoComplementar ){
     		
-    		$strNome = $objAnexoDTO->getStrNome();
+    		$strNome = $objAnexoComplementar->getStrNome();
     		$strTipoDocumento = "";
-    		$strNumeroSEI = $objAnexoDTO->getStrProtocoloFormatadoProtocolo();
+    		$strNumeroSEI = $objAnexoComplementar->getStrProtocoloFormatadoProtocolo();
     		 
     		$documentoDTO = new DocumentoDTO();
+    		
+    		$documentoDTO->retStrNumero();
     		$documentoDTO->retStrNomeSerie();
-    		$documentoDTO->setDblIdDocumento( $objAnexoDTO->getDblIdProtocolo() );
+    		$documentoDTO->retStrDescricaoProtocolo();
+    		$documentoDTO->retStrProtocoloDocumentoFormatado();
+    		
+    		$documentoDTO->setDblIdDocumento( $objAnexoComplementar->getDblIdProtocolo() );
     		$documentoDTO = $documentoRN->consultarRN0005( $documentoDTO );
+    		
     		//concatenar tipo e complemento
-    		$strNome = $documentoDTO->getStrNomeSerie() . ' - Complemento:';
+    		$strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNumero();
     		
     		$html .= '<tr>';
-    		$html .= '<td> &nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
+    		$html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
     		$html .= '<td>' . $strNumeroSEI . '</td>';
     		$html .= '</tr>';
-    		 
+    		
     	}
     	 
     }
     
     //FIM COMPLEMENTAR
-    
-    /*
-	$html .= '<tr>';
-    $html .= '<td colspan="2" align="left"> 
-    		  A existência deste Recibo e do processo e documentos acima indicados podem ser 
-    		  conferidas na Página Eletrônica do(a) ' . $objOrgaoDTO->getStrDescricao() . ' 
-    		</td>';
-    
-    $html .= '</tr>';
-    */
-    
+
     $html .= '</tbody></table>';
     
     $orgaoRN = new OrgaoRN();
@@ -508,8 +553,7 @@ class ReciboPeticionamentoRN extends InfraRN {
     $objOrgaoDTO->setStrSinAtivo('S');
     $objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
     
-    $html .= '<p> A existência deste Recibo e do processo e documentos acima indicados podem ser 
-    		  conferidas na Página Eletrônica do(a) ' . $objOrgaoDTO->getStrDescricao() . '</p>';
+    $html .= '<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
 	
 	return $html;
 	

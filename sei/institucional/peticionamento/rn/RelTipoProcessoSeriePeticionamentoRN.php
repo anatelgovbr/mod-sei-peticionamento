@@ -32,25 +32,16 @@ class RelTipoProcessoSeriePeticionamentoRN extends InfraRN{
 	protected function listarConectado(RelTipoProcessoSeriePeticionamentoDTO $objTipoProcessoSeriePeticionamentoDTO) {
 	
 		try {
-	
-			//Regras de Negocio
-			$objInfraException = new InfraException();
-	
-			$objInfraException->lancarValidacoes();
 			
 			$objTipoProcessoSeriePeticionamentoBD = new RelTipoProcessoSeriePeticionamentoBD($this->getObjInfraIBanco());
 			$ret = $objTipoProcessoSeriePeticionamentoBD->listar($objTipoProcessoSeriePeticionamentoDTO);
-				
-			return $ret;
+	     	return $ret;
+	     	
 		} catch (Exception $e) {
 			throw new InfraException ('Erro listando Relacionamento de Tipo de Processo e Série Peticionamento.', $e);
 		}
 	}
-	
-	
-	
-	
-
+		
 /**
 	 * Short description of method consultarConectado
 	 *

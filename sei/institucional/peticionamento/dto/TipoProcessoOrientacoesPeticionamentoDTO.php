@@ -25,6 +25,10 @@ class TipoProcessoOrientacoesPeticionamentoDTO extends InfraDTO  {
 				'OrientacoesGerais',
 				'orientacoes_gerais');
 		
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
+				'IdConjuntoEstilos',
+				'id_conjunto_estilos');
+		
 		$this->configurarPK('IdTipoProcessoOrientacoesPeticionamento', InfraDTO::$TIPO_PK_INFORMADO);
 	
 	}}

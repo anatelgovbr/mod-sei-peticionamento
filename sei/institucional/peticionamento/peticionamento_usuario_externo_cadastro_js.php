@@ -7,6 +7,8 @@
 * Funções de JS para cadastro de peticionamento de usuario externo
 * Essa página é incluida na página principal do cadastro de peticionamento
 *
+* Documento com este mesmo nome de arquivo já foi adicionado.
+*
 */
 
 $strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_anexo&id_tipo_procedimento='
@@ -76,6 +78,13 @@ if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoP
 
 //TODO refatorar para utilizar controlador_ajax
 $strLinkAjaxContato = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=contato_cpf_cnpj');
+
+//Validacao de tipo de arquivos
+$strSelExtensoesPrin = GerirExtensoesArquivoPeticionamentoINT::recuperaExtensoes(null,null,null,'S');
+$strSelExtensoesComp = GerirExtensoesArquivoPeticionamentoINT::recuperaExtensoes(null,null,null,'N');
+
+$strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=validar_documento_principal');
+
 ?>
 <script type="text/javascript">
 
@@ -91,6 +100,8 @@ var objTabelaDocComplementar = null;
 
 var objAutoCompletarInteressado = null;
 var objLupaInteressados = null;
+
+var docTipoEssencial = Array();
 
 function validarQtdArquivosPrincipal(){
 
@@ -108,6 +119,30 @@ function validarUploadArquivo(numero){
 	try {
 		
 		var isValido = true;
+
+		if( numero == '1'){
+
+		   //se a tabela existir na tela (ou seja se for doc principal do tipo externo)
+		   //nao permitir adicionar mais do que 1 documento na grid	
+		   var tbDocumentoPrincipal = document.getElementById('tbDocumentoPrincipal');
+		   var hiddenCampoPrincipal = document.getElementById('hdnDocPrincipal');
+		   
+		    if( tbDocumentoPrincipal != null && 
+			   tbDocumentoPrincipal != undefined ){
+
+		    	if( hiddenCampoPrincipal != null && 
+		    		hiddenCampoPrincipal != undefined &&
+		    		hiddenCampoPrincipal.value != '' ){
+
+					alert('Somente pode ter um Documento Principal.');
+					isValido = false;
+					return;
+					
+		 		}
+			
+		    }
+
+		}
 		
 		//validar se selecionou nivel de acesso
 		var cbHipoteseLegal = document.getElementById('hipoteseLegal'+numero);
@@ -149,58 +184,192 @@ function validarUploadArquivo(numero){
 			   alert('Informe o arquivo para upload.');
 			   isValido = false;
 			   fileArquivo.focus();
+			   return;
 		}
 
 		//validar campo/combo Tipo (apenas para Essencial ou Complementar)
 		else if( ( numero == '2' || numero == '3' ) && ( cbTipo == undefined || cbTipo == null || cbTipo.value == '')  ){
 			   alert('Informe o Tipo.');
 			   isValido = false;
-			   cbTipo.focus();	
+			   cbTipo.focus();
+			   return;	
+		}
+
+		if(numero == '2'){
+
+			docTipoEssencial.push(cbTipo.value);
+
+			//validar campo Complemento
+			if( strTxtComplemento == ""){
+				   alert('Informe o Complemento.');
+				   isValido = false;
+				   document.getElementById('complemento' + complemento).focus();
+				   return;
+			}
+				
 		}
 
 		//validar campo Complemento
-		else if( strTxtComplemento == ""){
+		if( strTxtComplemento == ""){
 			   alert('Informe o Complemento.');
 			   isValido = false;
 			   document.getElementById('complemento' + complemento).focus();
+			   return;
 		}
 		
 		//validar campo nivel de acesso
 		else if( strNivelAcesso == ""){
-		   alert('Informe o nível de acesso.');
+		   alert('Informe o Nível de Acesso.');
 		   isValido = false;
 		   cbNivelAcesso.focus();
+		   return;
 		}
 
 		//se informou Nivel de Acesso restrito, entao precisa informar tambem a hipotese legal
 		else if( ( cbHipoteseLegal != null && cbHipoteseLegal != undefined ) && strNivelAcesso == '1' && strHipoteseLegal == ''){
 
-			alert('Informe a hipótese legal.');
+			alert('Informe a Hipótese Legal.');
 			isValido = false;
 		   cbHipoteseLegal.focus();	
+		   return;
 
 		}
 
 		else if( strFormatoDocumento == ''){
-			alert('Informe o formato do documento.');
+			alert('Informe o Formato do Documento.');
 			isValido = false;
+			return;
 		}
 		
 		//se marcou formato de documento Digitalizado, verificar se selecione o tipo de conferencia
 		else if( strFormatoDocumento == 'digitalizado' && strTipoConferencia == '' ){
-			alert('Informe o Documento Objeto da Digitalização.');
+			alert('Informe a Conferência com o documento digitalizado.');
 			isValido = false;
 			cbTipoConferencia.focus();
+			return;
 		}
 		
 		//validar tamanho do arquivo no lado server side apenas	
 		if( isValido  ){
 
 			if(numero == '1'){ objPrincipalUpload.executar(); }
-			else if(numero == '2'){ objEssencialUpload.executar(); }
+			else if(numero == '2'){ objEssencialUpload.executar(); return true; }
 			else if(numero == '3'){ objComplementarUpload.executar(); }
 		  
 		}
+		
+	} catch(err) {
+	    alert(" Erro: " + err);
+	    console.log(err.stack);
+	}
+	
+}
+
+//para uso em um caso excepcional do tipo essencial
+function validarUploadArquivoEssencial(){
+	
+	try {
+
+		var numero = '2';
+		var isValido = true;
+		
+		//validar se selecionou nivel de acesso
+		var cbHipoteseLegal = document.getElementById('hipoteseLegal'+numero);
+		var cbNivelAcesso = document.getElementById('nivelAcesso'+numero);
+		var strNivelAcesso = cbNivelAcesso.value;
+		var strHipoteseLegal = '';
+
+		if( cbHipoteseLegal != null && cbHipoteseLegal != undefined ){
+		   strHipoteseLegal = cbHipoteseLegal.value;
+		}
+		
+		//verificar se marcou o formato de documento
+		var complemento = 'Essencial';
+		var fileArquivo = document.getElementById('fileArquivo' + complemento);
+		var cbTipo = document.getElementById('tipoDocumento' + complemento);
+		var strFormatoDocumento = '';
+		var cbTipoConferencia = document.getElementById('TipoConferencia' + complemento);
+		var strTipoConferencia = document.getElementById('TipoConferencia' + complemento).value;
+
+		var radios = document.getElementsByName('formatoDocumento'+complemento);
+		for (var i = 0, length = radios.length; i < length; i++) {
+
+		    if (radios[i].checked) {		    
+		    	strFormatoDocumento = radios[i].value;
+		        break;
+		    }
+		}
+
+		//validar campo Complemento
+		var strTxtComplemento = document.getElementById('complemento' + complemento).value;
+
+		//verificar se algum arquivo foi selecionado para o upload
+		if( fileArquivo.value == '' ){
+			   alert('Informe o arquivo para upload.');
+			   isValido = false;
+			   fileArquivo.focus();
+			   return;
+		}
+
+		//validar campo/combo Tipo (apenas para Essencial ou Complementar)
+		else if( cbTipo == undefined || cbTipo == null || cbTipo.value == '' ){
+			   alert('Informe o Tipo.');
+			   isValido = false;
+			   cbTipo.focus();
+			   return;	
+		}
+
+		docTipoEssencial.push(cbTipo.value);
+
+		//validar campo Complemento
+		if( strTxtComplemento == ""){
+				   alert('Informe o Complemento.');
+				   isValido = false;
+				   document.getElementById('complemento' + complemento).focus();
+				   return;
+		}
+
+		//validar campo Complemento
+		if( strTxtComplemento == ""){
+			   alert('Informe o Complemento.');
+			   isValido = false;
+			   document.getElementById('complemento' + complemento).focus();
+			   return;
+		}
+		
+		//validar campo nivel de acesso
+		else if( strNivelAcesso == ""){
+		   alert('Informe o Nível de Acesso.');
+		   isValido = false;
+		   cbNivelAcesso.focus();
+		   return;
+		}
+
+		//se informou Nivel de Acesso restrito, entao precisa informar tambem a hipotese legal
+		else if( ( cbHipoteseLegal != null && cbHipoteseLegal != undefined ) && strNivelAcesso == '1' && strHipoteseLegal == ''){
+
+			alert('Informe a Hipótese Legal.');
+			isValido = false;
+		   cbHipoteseLegal.focus();	
+		   return;
+
+		}
+
+		else if( strFormatoDocumento == ''){
+			alert('Informe o Formato do Documento.');
+			isValido = false;
+			return;
+		}
+		
+		//se marcou formato de documento Digitalizado, verificar se selecione o tipo de conferencia
+		else if( strFormatoDocumento == 'digitalizado' && strTipoConferencia == '' ){
+			alert('Informe a Conferência com o documento digitalizado.');
+			isValido = false;
+			cbTipoConferencia.focus();
+			return;
+		}
+
+		return isValido;
 		
 	} catch(err) {
 	    alert(" Erro: " + err);
@@ -269,21 +438,29 @@ function limparCampoUpload( numero ){
     
 	}
 	
-	document.getElementById('camposDigitalizado'+complemento).style.display = 'none';
+	//document.getElementById('camposDigitalizado'+complemento).style.display = 'none';
 	
 	//limpar e ocultar hipotese legal ( divhipoteseLegal1 )
-	document.getElementById('divhipoteseLegal'+numero).style.display = 'none';
+	if(cbNivelAcesso.getAttribute("type")!= 'hidden'){
+		document.getElementById('divhipoteseLegal'+numero).style.display = 'none';
+	}
 
 	//limpar o campo Complemento
 	document.getElementById('complemento'+complemento).value = '';
 
 	//retornar a combo "Nivel de Acesso" para a primeira opçao selecionada
-	cbNivelAcesso.options[0].selected='selected';
+	if(cbNivelAcesso.getAttribute("type")!= 'hidden'){
+		cbNivelAcesso.options[0].selected='selected';
+	}
 
 	//se nao for o "Principal", resetar a seleçao da combo "Tipo"
 	if(numero != '1'){
 		document.getElementById('tipoDocumento'+complemento).options[0].selected='selected';				
 	}
+
+	cbTipoConferencia.options[0].selected='selected';
+	document.getElementById('camposDigitalizado'+complemento).style.display = 'none';
+	document.getElementById('camposDigitalizado'+complemento+'Botao').style.display = 'block';
 	
 }
 
@@ -537,8 +714,21 @@ function addFormatoDocumento(){
 	alert('Formato documento');
 }
 
-function validarFormulario(){
+//função de apoio para debug
+function dump(obj) {
 
+    var out = '';
+
+    for (var i in obj) {
+        out += i + ": " + obj[i] + "\n";
+    }
+
+    alert(out);
+
+}
+
+function validarFormulario(){
+	
 	//valida campo especificação
 	var textoEspecificacao = document.getElementById("txtEspecificacao").value;
 	var cbUF = document.getElementById("selUFAberturaProcesso");	
@@ -551,7 +741,7 @@ function validarFormulario(){
 	}
 	
 	if( textoEspecificacao == '' ){
-      alert('Informe a especificação.');
+      alert('Informe a Especificação.');
       document.getElementById("txtEspecificacao").focus();
       return false;      
 	}
@@ -563,12 +753,182 @@ function validarFormulario(){
 	}
 
 	if( selInteressados != undefined && selInteressados != null && selInteressados.value == '' ){
-	      alert('Informe o(s) interessado(s).');
+	      alert('Informe o(s) Interessado(s).');
 	      selInteressados.focus();
 	      return false;      
 	}		 
 
+	//aplicando validações relacionadas ao documento principal
+	var fileArquivoPrincipal = document.getElementById('fileArquivoPrincipal');
+	var complementoPrincipal = document.getElementById('complementoPrincipal');
+	var nivelAcessoPrincipal = document.getElementById('nivelAcesso1');
+	var hipoteseLegalPrincipal = document.getElementById('hipoteseLegal1');
+		
+	//validando seleçao de nivel de acesso principal e hipotese legal principal
+	var tbDocumentoPrincipal = document.getElementById('tbDocumentoPrincipal');
+
+	//se for documento principao do tipo externo, só validar complemento, 
+	// nivel de acesso e hipotese legal SE a grid estiver ainda sem nenhum documento
+	if( tbDocumentoPrincipal != null && 
+		tbDocumentoPrincipal != undefined ){
+
+		var hdnDocPrincipal = document.getElementById('hdnDocPrincipal').value;
+		
+		if( hdnDocPrincipal == "" && fileArquivoPrincipal.value == ''){
+			alert('Informe o Documento Principal.');
+			fileArquivoPrincipal.focus();
+			return false;
+			
+		} else if( hdnDocPrincipal == "" && complementoPrincipal.value == ''){
+			alert('Informe o Complemento.');
+			complementoPrincipal.focus();
+			return false;
+			
+		} else if( hdnDocPrincipal == "" && nivelAcessoPrincipal.value == ''){
+			alert('Informe o Nível de Acesso.');
+			nivelAcessoPrincipal.focus();
+			return false;
+			
+		} else if( hdnDocPrincipal == "" && nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal.value == ''){
+			alert('Informe a Hipótese Legal.');
+			hipoteseLegalPrincipal.focus();
+			return false;
+		}
+	
+	} 
+
+	//se for documento gerado sempre valida complemento, nivel de acesso e hipotese legal
+	else {
+		
+		if( nivelAcessoPrincipal.value == ''){
+			alert('Informe o Nível de Acesso.');
+			nivelAcessoPrincipal.focus();
+			return false;
+			
+		} else if( nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal.value == ''){
+			alert('Informe a Hipótese Legal.');
+			hipoteseLegalPrincipal.focus();
+			return false;
+		}
+		
+	}
+
+	//validar se pelo menos um doc principal foi adicionado CASO
+	//a grid de doc principal exista na tela (ou seja, quando a parametrização)
+	//informar doc principal do tipo Externo
+
+	if( tbDocumentoPrincipal != null && 
+		tbDocumentoPrincipal != undefined ){
+
+		var strHashPrincipal = document.getElementById('hdnDocPrincipal').value;
+		//alert( strHashPrincipal );
+
+		if( strHashPrincipal == ''){
+			alert('Informe o Documento Principal.');
+			document.getElementById('fileArquivoPrincipal').focus();
+			return false;
+		}
+	} 
+
+	//caso doc principal seja do tipo "Gerado", fazer requisição AJAX
+	//para validar se usuário salvou na sessao algum conteudo para o documento
+	//caso nao tenha conteudo obrigar usuario a informar
+	else {
+
+		/*
+		var conteudoDocumento = "";
+		
+		$( document ).ready(function() {
+		
+			var  formData = "";  
+	   		
+			$.ajax({
+			    url : "",
+			    type: "POST",
+			    data : formData,
+			    success: function(data, textStatus, jqXHR)
+			    {
+
+			        conteudoDocumento = data;
+			    	
+			    },
+			    
+			    error: function (jqXHR, textStatus, errorThrown)
+			    {
+				   alert('Erro ao validar documento principal.'); 	
+				   console.log('Erro' + textStatus);
+			       return;
+			    }
+			});
+		});
+
+		alert( conteudoDocumento ); 
+		*/
+		
+	}
+	
+	//valida se todos os tipos essenciais contem na lista
+	
+	var comboTipoEssencial = document.getElementById('tipoDocumentoEssencial');
+	
+	if(comboTipoEssencial!=null){
+		  var retornoUploadEssencial = false;
+		  var validarTipoEssenc = true;
+		  var strHashEssencial = document.getElementById('hdnDocEssencial').value;
+
+		  //caractere de quebra de linha/registro
+		  var arrHashEssencial = strHashEssencial.split('¥');
+		  var qtdX = arrHashEssencial.length;
+		  
+		  if( qtdX == 1 && arrHashEssencial[0] == "" ){
+
+			  arrHashEssencial = Array();
+			  arrHashEssencial[0] = strHashEssencial;
+			  
+		  }	
+		  			  
+		  var local = 9;
+		  var tiposIncluidos = Array();
+
+		//so vai adicionar no array dos incluidos quando tem registros na grid
+		  if( strHashEssencial != "") {		
+		  
+			  for(var i = 0; i < qtdX ; i++ ){
+				  	
+				  //caractere de quebra de coluna/campo	
+				  var arrLocal = arrHashEssencial[i].split('±');	
+				  var tipo = arrLocal[local];
+	
+				  if(tiposIncluidos.indexOf(tipo) <= -1){
+					  tiposIncluidos.push(arrLocal[local]);
+				  }
+				  
+			  }
+		  
+		  } else {
+			  //grid vazia e campos de upload de essencial nao preenchidos	
+			  retornoUploadEssencial = validarUploadArquivoEssencial();
+
+			  if( retornoUploadEssencial != true ){
+			     return false;
+			  }
+	      }
+		  
+		  var tamnhoOptions = comboTipoEssencial.options.length-1;
+		  
+		  if(tiposIncluidos.length == 0 || tamnhoOptions != tiposIncluidos.length){
+			 validarTipoEssenc = false;
+		  }
+		  
+	      if(!validarTipoEssenc){
+	    	  alert('Deve adicionar pelo menos um Documento Essencial para cada Tipo.');
+		      document.getElementById('fileArquivoEssencial').focus();
+		      return false;      
+	      }
+	} 
+	
 	return true;
+	
 }
 
 function abrirPeticionar(){
@@ -577,8 +937,8 @@ function abrirPeticionar(){
 	
          infraAbrirJanela('<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] .'&acao=peticionamento_usuario_externo_concluir&tipo_selecao=2'))?>',
     	             'concluirPeticionamento',
-    	             750,
-    	             415,
+    	             770,
+    	             464,
     	             '', //options
     	             false); //modal     
     } 
@@ -698,7 +1058,7 @@ function inicializar(){
 
 	<? if( $objTipoProcDTO->getStrSinIIIndicacaoDiretaContato() == 'S') { ?>
 	objLupaInteressados = new infraLupaSelect('selInteressados','hdnInteressados','<?=$strLinkInteressadosSelecao?>');   
-	
+
 	objAutoCompletarInteressado = new infraAjaxAutoCompletar('hdnIdInteressado','txtInteressado','<?=$strLinkAjaxInteressado?>');
     objAutoCompletarInteressado.limparCampo = true;
     //objAutoCompletarInteressado.tamanhoMinimo = 3;
@@ -847,7 +1207,7 @@ function carregarCamposDocPrincipalUpload(){
     //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoPrincipal = document.getElementById('tipoDocumentoPrincipal');
       var strComplemento = document.getElementById('complementoPrincipal').value;	
-      var documento = getStrTipoDocumento( cbTpoPrincipal.value, 'Principal' ) + ' - ' + strComplemento;
+      var documento = getStrTipoDocumento( cbTpoPrincipal.value, 'Principal' ) + ' ' + strComplemento;
 
       var nivelAcesso = getStrNivelAcesso( document.getElementById('nivelAcesso1').value );
 
@@ -860,11 +1220,15 @@ function carregarCamposDocPrincipalUpload(){
       }
       
       var formatoDocumento = $('input[name="formatoDocumentoPrincipal"]:checked').val();
+      var formatoDocumentoLbl = 'Nato-digital';
+      if(formatoDocumento != 'nato'){
+    	  formatoDocumentoLbl = 'Digitalizado';
+      }
 
       //TipoConferenciaPrincipal / TipoConferenciaEssencial
       var tipoConferencia = document.getElementById('TipoConferenciaPrincipal').value;
 	 	
-	  objTabelaDocPrincipal.adicionar([ nome , dataHora ,  tamanhoFormatado , documento , nivelAcesso , hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoPrincipal.value, '' ]);
+	  objTabelaDocPrincipal.adicionar([ nome , dataHora ,  tamanhoFormatado , documento , nivelAcesso , hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoPrincipal.value,strComplemento,formatoDocumentoLbl, '' ]);
 	  
 	  var strHashPrincipal = document.getElementById('hdnDocPrincipal').value;
 	  var arrHashPrincipal = strHashPrincipal.split('±');
@@ -887,16 +1251,29 @@ function carregarCamposDocPrincipalUpload(){
 
 	  limparCampoUpload('1');
 
-	  //limpar campo do nivel de acesso
-	  //limpar campo da hipotese legal
-	  //limpar campo do formato de documento
-	  //limpar campo do tipo de conferencia
+	  //aplicando valign='middle' nas colunas  da tabela 
+	  //(necessário especificamente para alinhar coluna ações)
+	  var table = document.getElementById("tbDocumentoPrincipal");
+
+	  for (var i = 0, row; row = table.rows[i]; i++) {
+
+		   for (var j = 0, col; col = row.cells[j]; j++) {
+		    col.setAttribute("valign","middle");
+		   }
+		     
+	  }
 	  
 	}
 
 	  objPrincipalUpload.validar = function(arr){
 
-		  console.log(arr);
+		  //INICIO VALIDACAO EXTENSOES
+		  var arrExtensoesPermitidas = [<?=$strSelExtensoesPrin?>];
+		  if ( $("#fileArquivoPrincipal").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoPrincipal").val().replace(/^.*\./, '') , arrExtensoesPermitidas ) == -1 ) {
+			  alert("O arquivo selecionado não é permitido.\nSomente são permitidos arquivos com as extensões:\n<?=preg_replace("%'%"," ",$strSelExtensoesPrin)?> .");
+			  return false;
+		  }
+		  //FIM VALIDACAO EXTENSOES
 		  	
 		  var arquivoPrincipal = document.getElementById('fileArquivoPrincipal').value;
 		  var ext = (arquivoPrincipal.substring(arquivoPrincipal.lastIndexOf(".")).toLowerCase()).split('.')[1];
@@ -961,7 +1338,7 @@ function carregarCamposDocEssencialUpload(){
 	  var cbTpoEssencial = document.getElementById('tipoDocumentoEssencial');
 	  	
 	  var strComplemento = document.getElementById('complementoEssencial').value;	
-      var documento = getStrTipoDocumento( cbTpoEssencial.value, 'Essencial' ) + ' - ' + strComplemento;
+      var documento = getStrTipoDocumento( cbTpoEssencial.value, 'Essencial' ) + ' ' + strComplemento;
       
       var nivelAcesso = getStrNivelAcesso( document.getElementById('nivelAcesso2').value );
 
@@ -974,12 +1351,16 @@ function carregarCamposDocEssencialUpload(){
       
 	  //var hipoteseLegal=  ' hip legal essencial';
       var formatoDocumento = $('input[name="formatoDocumentoEssencial"]:checked').val();
+      var formatoDocumentoLbl = 'Nato-digital';
+      if(formatoDocumento != 'nato'){
+    	  formatoDocumentoLbl = 'Digitalizado';
+      }
 
     //TipoConferenciaPrincipal / TipoConferenciaEssencial
       var tipoConferencia = document.getElementById('TipoConferenciaEssencial').value;
 
       //objTabelaDocPrincipal.adicionar([ nome , dataHora ,  tamanhoFormatado , documento , nivelAcesso , hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoPrincipal.value, '' ]);
-      objTabelaDocEssencial.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoEssencial.value, '' ]);	
+      objTabelaDocEssencial.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoEssencial.value,strComplemento, formatoDocumentoLbl, '' ]);	
       //objTabelaDocEssencial.adicionar([ nomeUpload , nomeUpload, dataHora , '4', '5', '6', '7']);		
       //objTabelaDocEssencial.adicionar([ nomeUpload , dataHora ,  tamanhoFormatado , documento , nivelAcesso , '']);
       //objTabelaDocEssencial.adicionar([ '-' , nomeUpload ,  dataHora , dataHora , tamanhoFormatado, documento, 'nivel de acesso', 'acoes' ]);
@@ -1006,10 +1387,28 @@ function carregarCamposDocEssencialUpload(){
 
 	  limparCampoUpload('2');
 
+	  var table = document.getElementById("tbDocumentoEssencial");
+
+	  for (var i = 0, row; row = table.rows[i]; i++) {
+
+		   for (var j = 0, col; col = row.cells[j]; j++) {
+		    col.setAttribute("valign","middle");
+		   }
+		     
+	  }
+	
 	  
 	}
 
 	  objEssencialUpload.validar = function(arr){
+
+		  //INICIO VALIDACAO EXTENSOES
+		  var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];
+		  if ( $("#fileArquivoEssencial").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoEssencial").val().replace(/^.*\./, '') , arrExtensoesPermitidas ) == -1 ) {
+			  alert("O arquivo selecionado não é permitido.\nSomente são permitidos arquivos com as extensões:\n<?=preg_replace("%'%"," ",$strSelExtensoesComp)?> .");
+			  return false;
+		  }
+		  //FIM VALIDACAO EXTENSOES
 
 		  var arquivoEssencial = document.getElementById('fileArquivoEssencial').value;
 		  var ext = (arquivoEssencial.substring(arquivoEssencial.lastIndexOf(".")).toLowerCase()).split('.')[1];
@@ -1058,7 +1457,7 @@ function carregarCamposDocComplementarUpload(){
       //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoComplementar = document.getElementById('tipoDocumentoComplementar');
       var strComplemento = document.getElementById('complementoComplementar').value;	
-      var documento = getStrTipoDocumento( cbTpoComplementar.value, 'Complementar' ) + ' - ' + strComplemento;
+      var documento = getStrTipoDocumento( cbTpoComplementar.value, 'Complementar' ) + ' ' + strComplemento;
 
       var nivelAcesso = getStrNivelAcesso( document.getElementById('nivelAcesso3').value );
 
@@ -1070,9 +1469,14 @@ function carregarCamposDocComplementarUpload(){
       }
 
 	  var formatoDocumento = $('input[name="formatoDocumentoComplementar"]:checked').val();
+	  var formatoDocumentoLbl = 'Nato-digital';
+      if(formatoDocumento != 'nato'){
+    	  formatoDocumentoLbl = 'Digitalizado';
+      }
+	  
 	  var tipoConferencia = document.getElementById('TipoConferenciaComplementar').value;
 
-      objTabelaDocComplementar.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoComplementar.value, '' ]);	
+      objTabelaDocComplementar.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoComplementar.value, strComplemento,formatoDocumentoLbl, '' ]);	
       //objTabelaDocComplementar.adicionar([ '-' , nomeUpload ,  dataHora , dataHora , tamanhoFormatado, documento, 'nivel de acesso', 'acoes' ]);
 	  //objTabelaDocComplementar.adicionar([arr['nome_upload'],arr['nome'],arr['data_hora'],arr['tamanho'],infraFormatarTamanhoBytes(arr['tamanho']),'<?= time() ?>']);
 	  
@@ -1095,10 +1499,27 @@ function carregarCamposDocComplementarUpload(){
 	  document.getElementById("fileArquivoComplementar").value = '';
 
 	  limparCampoUpload('3');
-	  //document.getElementById('divArquivo').style.display = 'none';
+
+	  var table = document.getElementById("tbDocumentoComplementar");
+
+	  for (var i = 0, row; row = table.rows[i]; i++) {
+
+		   for (var j = 0, col; col = row.cells[j]; j++) {
+		    col.setAttribute("valign","middle");
+		   }
+		     
+	  }
 	}
 
 	  objComplementarUpload.validar = function(arr){
+
+		  //INICIO VALIDACAO EXTENSOES
+		  var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];
+		  if ( $("#fileArquivoComplementar").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoComplementar").val().replace(/^.*\./, '') , arrExtensoesPermitidas ) == -1 ) {
+			  alert("O arquivo selecionado não é permitido.\nSomente são permitidos arquivos com as extensões:\n<?=preg_replace("%'%"," ",$strSelExtensoesComp)?> .");
+			  return false;
+		  }
+		  //FIM VALIDACAO EXTENSOES
 
 		  var arquivoComplementar = document.getElementById('fileArquivoComplementar').value;
 		  var ext = (arquivoComplementar.substring(arquivoComplementar.lastIndexOf(".")).toLowerCase()).split('.')[1];
@@ -1144,7 +1565,7 @@ function carregarComponenteLupaInteressados( tipoAcao ){
 
 function mascaraTexto( elem, evento ){
 
-	alert('entrou aqui');
+	//alert('entrou aqui');
 	var formPeticionamento = document.getElementById('frmPeticionamentoCadastro');
 	//alert(formPeticionamento.tipoPessoa.value);
 	
@@ -1275,7 +1696,7 @@ function exibirAjudaCaso3(){
 }
 
 function exibirAjudaFormatoDocumento(){
-	alert('Selecione a opção “Nato-Digital” se o arquivo a ser carregado foi criado originalmente em meio eletrônico.\n\n' + 
+	alert('Selecione a opção “Nato-digital” se o arquivo a ser carregado foi criado originalmente em meio eletrônico.\n\n' + 
 		  'Selecione a opção “Digitalizado” somente se o arquivo a ser carregado foi produzido da digitalização de um documento em papel.');
 }
 

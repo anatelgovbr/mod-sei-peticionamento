@@ -38,8 +38,10 @@ try {
   $alterar = count($objLista) > 0;
   
   $txtOrientacoes ='';
+  $id_conjunto_estilos = null;
   if($alterar){
   	$txtOrientacoes = $objLista[0]->getStrOrientacoesGerais();
+  	$id_conjunto_estilos = $objLista[0]->getNumIdConjuntoEstilos();
   }
   
   
@@ -61,6 +63,17 @@ try {
   
   //DTO basico de Processo Peticionamento Novo
   //$objIndisponibilidadePeticionamentoDTO = new IndisponibilidadePeticionamentoDTO();
+  
+   $objEditorRN = new EditorRN();
+   
+   if ($_GET['iframe']!=''){
+      PaginaSEIExterna::getInstance()->abrirStyle();
+      echo $objEditorRN->montarCssEditor($id_conjunto_estilos);
+      PaginaSEIExterna::getInstance()->fecharStyle();
+      echo $txtOrientacoes;
+      die();	
+   }
+     
   
   //=====================================================
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
@@ -113,11 +126,12 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 ?>
  <br />
  <br />
- <fieldset id="field1" class="infraFieldset sizeFieldset">
+ <fieldset id="field1" class="infraFieldset sizeFieldset" style="width:auto">
  <legend class="infraLegend">&nbsp; Orientações Gerais &nbsp;</legend>
-   <label> 
-   <?= $txtOrientacoes ?>
-   </label>
+   <? 
+   echo '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_iniciar&iframe=S') . '"></iframe>'; 
+   ?>
+   
  </fieldset>
  
  <div id="divInfraAreaDadosDinamica" class="infraAreaDadosDinamica" style="width:50%">
@@ -164,12 +178,48 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 <script type="text/javascript">
 
 function inicializar(){
-  
   infraEfeitoTabelas();
-  
+  document.getElementsByTagName("BODY")[0].onresize = function() {resizeIFramePorConteudo()};
 }
 
 function OnSubmitForm() {
 	return true;
-}	 
+}
+
+function resizeIFramePorConteudo(){
+	var id = 'ifrConteudoHTML';
+	var ifrm = document.getElementById(id);
+	ifrm.style.visibility = 'hidden';
+	ifrm.style.height = "10px"; 
+
+	var doc = ifrm.contentDocument? ifrm.contentDocument : ifrm.contentWindow.document;
+	doc = doc || document;
+	var body = doc.body, html = doc.documentElement;
+
+	///console.clear();
+
+	///var fieldset = document.getElementById('field1');
+	///console.log('field1');
+	///console.log(field1.scrollWidth+'-'+field1.offsetWidth+'-'+field1.clientWidth+'-'+field1.scrollWidth+'-'+field1.offsetWidth);
+
+	///console.log('body.scrollWidth-body.offsetWidth-html.clientWidth-html.scrollWidth-html.offsetWidth');
+	///console.log(body.scrollWidth+'-'+body.offsetWidth+'-'+html.clientWidth+'-'+html.scrollWidth+'-'+html.offsetWidth);
+	var width = Math.max( body.scrollWidth, body.offsetWidth, 
+	                      html.clientWidth, html.scrollWidth, html.offsetWidth );
+	///ifrm.style.width=width+'px';
+	ifrm.style.width='100%';
+
+	///console.log('body.scrollHeight-body.offsetHeight-html.clientHeight-html.scrollHeight-html.offsetHeight');
+	///console.log(body.scrollHeight+'-'+body.offsetHeight+'-'+html.clientHeight+'-'+html.scrollHeight+'-'+html.offsetHeight);
+	var height = Math.max( body.scrollHeight, body.offsetHeight, 
+	                       html.clientHeight, html.scrollHeight, html.offsetHeight );
+	ifrm.style.height=height+'px';
+
+	ifrm.style.visibility = 'visible';
+}
+
+document.getElementById('ifrConteudoHTML').onload = function() {
+	resizeIFramePorConteudo();
+}
+
 </script>

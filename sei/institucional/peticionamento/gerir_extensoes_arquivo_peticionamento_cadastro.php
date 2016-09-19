@@ -67,8 +67,8 @@ $strSelExtensoesComp = GerirExtensoesArquivoPeticionamentoINT::montarSelectExten
 
 $strTitulo = "Peticionamento - Extensões de Arquivos Permitidas";
 
-$arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarGrupoUnidade" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-$arrComandos[] = '<button type="button" accesskey="C" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSei::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+$arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarGrupoUnidade" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSei::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem='.$_GET['acao'])).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 	
 PaginaSEI::getInstance()->montarDocType();
 PaginaSEI::getInstance()->abrirHtml();
@@ -223,7 +223,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
     <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
-	<label id="lblComplementar" for="txtComplementar" accesskey="C" class="infraLabelObrigatorio">Extensões permitidas para Documentos Essenciais e Complementares:</label>
+	<label id="lblComplementar" for="txtComplementar" class="infraLabelObrigatorio">Extensões permitidas para Documentos Essenciais e Complementares:</label>
     <input type="text" id="txtComplementar" name="txtComplementar" class="infraText"  onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
     <select id="selComplementar" name="selComplementar" size="12" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
     <?=$strSelExtensoesComp; ?>

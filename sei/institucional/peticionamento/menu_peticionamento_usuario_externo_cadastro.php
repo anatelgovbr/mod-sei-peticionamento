@@ -65,6 +65,15 @@ try {
 					}
 					
 					$objMenuPeticionamentoUsuarioExternoDTO->setStrConteudoHtml($_POST['txaConteudo']);
+					
+					//Estilo
+					$conjuntoEstilosRN = new ConjuntoEstilosRN();
+			  		$conjuntoEstilosDTO = new ConjuntoEstilosDTO();
+			  		$conjuntoEstilosDTO->setStrSinUltimo('S');
+			  		$conjuntoEstilosDTO->retNumIdConjuntoEstilos();
+			  		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar( $conjuntoEstilosDTO );
+			  		$objMenuPeticionamentoUsuarioExternoDTO->setNumIdConjuntoEstilos( $conjuntoEstilosDTO->getNumIdConjuntoEstilos() );
+					
 					$objMenuPeticionamentoUsuarioExternoDTO->setStrUrl($_POST['txtUrl']);
 					$objMenuPeticionamentoUsuarioExternoDTO->setStrNome($_POST['txtNome']);
 					$objMenuPeticionamentoUsuarioExternoDTO->setStrTipo($_POST['tipo']);
@@ -79,27 +88,14 @@ try {
 			}
 			break;
 		
-		case 'menu_peticionamento_usuario_externo_alterar':
 		case 'menu_peticionamento_usuario_externo_consultar':
 			
 			$disabled = '';
-			
-			if( $_GET['acao'] == "menu_peticionamento_usuario_externo_alterar" ){
-				$strTitulo = 'Alterar Menu';
-				$disabled = '';
-			}
-			
-			else if( $_GET['acao'] == "menu_peticionamento_usuario_externo_consultar" ){
-				$strTitulo = 'Consultar Menu';
-				$disabled = " disabled='disabled' ";
-			}
-
-			if ($_GET['acao']=='menu_peticionamento_usuario_externo_alterar'){
-				$arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-			}
+			$strTitulo = 'Consultar Menu';
+			$disabled = " disabled='disabled' ";
 
 			//TODO: Marcelo ou Herley, a construção dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi construído para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o botão "Fechar", enquanto que Novo e Alterar tem o botão "Cancelar".
-			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+			$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 			
 			$objEditorRN=new EditorRN();
 			$objEditorDTO=new EditorDTO();
@@ -147,6 +143,15 @@ try {
 					
 					$objMenuPeticionamentoUsuarioExternoDTO2->setNumIdMenuPeticionamentoUsuarioExterno( $_POST['hdnIdMenuPeticionamentoUsuarioExterno'] );
 					$objMenuPeticionamentoUsuarioExternoDTO2->setStrConteudoHtml($_POST['txaConteudo']);
+					
+					//Estilo
+					$conjuntoEstilosRN = new ConjuntoEstilosRN();
+			  		$conjuntoEstilosDTO = new ConjuntoEstilosDTO();
+			  		$conjuntoEstilosDTO->setStrSinUltimo('S');
+			  		$conjuntoEstilosDTO->retNumIdConjuntoEstilos();
+			  		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar( $conjuntoEstilosDTO );
+			  		$objMenuPeticionamentoUsuarioExternoDTO2->setNumIdConjuntoEstilos( $conjuntoEstilosDTO->getNumIdConjuntoEstilos() );
+					
 					$objMenuPeticionamentoUsuarioExternoDTO2->setStrUrl($_POST['txtUrl']);
 					$objMenuPeticionamentoUsuarioExternoDTO2->setStrNome($_POST['txtNome']);
 					$objMenuPeticionamentoUsuarioExternoDTO2->setStrTipo($_POST['tipo']);			
@@ -165,6 +170,90 @@ try {
 			
 			break;
 		
+		case 'menu_peticionamento_usuario_externo_alterar':
+			
+			$disabled = '';
+			$strTitulo = 'Alterar Menu';
+			$disabled = '';
+
+			$arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+
+			//TODO: Marcelo ou Herley, a construção dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi construído para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o botão "Fechar", enquanto que Novo e Alterar tem o botão "Cancelar".
+			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+			
+			$objEditorRN=new EditorRN();
+			$objEditorDTO=new EditorDTO();
+			
+			$objEditorDTO->setStrNomeCampo('txaConteudo');
+			$objEditorDTO->setStrSinSomenteLeitura('N');
+			$objEditorDTO->setNumTamanhoEditor(220);
+			$retEditor = $objEditorRN->montarSimples($objEditorDTO);			
+			
+			$objMenuPeticionamentoUsuarioExternoDTO2 = new MenuPeticionamentoUsuarioExternoDTO();
+			//$objMenuPeticionamentoUsuarioExternoDTO2->setNumIdTipoProcessoOrientacoesPeticionamento(MenuPeticionamentoUsuarioExternoRN::$ID_FIXO_TP_PROCESSO);
+			$objMenuPeticionamentoUsuarioExternoDTO2->retTodos();
+			
+			$objMenuPeticionamentoUsuarioExternoRN  = new MenuPeticionamentoUsuarioExternoRN();
+			
+			if ( !isset($_POST['hdnIdMenuPeticionamentoUsuarioExterno'])) {
+				$objMenuPeticionamentoUsuarioExternoDTO2->setNumIdMenuPeticionamentoUsuarioExterno( $_GET['id_menu_peticionamento_usuario_externo'] );
+				$objLista = $objMenuPeticionamentoUsuarioExternoRN->consultar($objMenuPeticionamentoUsuarioExternoDTO2);
+				
+				$txtNome = $objLista->getStrNome();
+				$tipo = $objLista->getStrTipo();
+				$txtConteudo = $objLista->getStrConteudoHtml();
+				$txtUrl = $objLista->getStrUrl();
+				$sinAtivo = $objLista->getStrSinAtivo();
+			} else {
+				try{
+			
+					$objMenuPeticionamentoUsuarioExternoDTO2->setNumIdMenuPeticionamentoUsuarioExterno( $_POST['hdnIdMenuPeticionamentoUsuarioExterno'] );
+					$objMenuPeticionamentoUsuarioExternoDTO2 = $objMenuPeticionamentoUsuarioExternoRN->consultar($objMenuPeticionamentoUsuarioExternoDTO2);
+					
+					$txtNome = $_POST['txtNome'];
+					$tipo = $_POST['tipo'];
+					$txtConteudo = $_POST['txaConteudo'];
+					$txtUrl = $_POST['txtUrl'];
+					
+					if( $_POST['tipo'] == MenuPeticionamentoUsuarioExternoRN::$TP_EXTERNO ){
+						$_POST['txaConteudo'] = '';
+					}
+					
+					if( $_POST['tipo'] == MenuPeticionamentoUsuarioExternoRN::$TP_CONTEUDO_HTML ){
+						$_POST['txtUrl'] = '';
+					}
+					
+					//$sinAtivo = $objMenuPeticionamentoUsuarioExternoDTO2->getStrSinAtivo();
+					
+					$objMenuPeticionamentoUsuarioExternoDTO2->setNumIdMenuPeticionamentoUsuarioExterno( $_POST['hdnIdMenuPeticionamentoUsuarioExterno'] );
+					$objMenuPeticionamentoUsuarioExternoDTO2->setStrConteudoHtml($_POST['txaConteudo']);
+					
+					//Estilo
+					$conjuntoEstilosRN = new ConjuntoEstilosRN();
+			  		$conjuntoEstilosDTO = new ConjuntoEstilosDTO();
+			  		$conjuntoEstilosDTO->setStrSinUltimo('S');
+			  		$conjuntoEstilosDTO->retNumIdConjuntoEstilos();
+			  		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar( $conjuntoEstilosDTO );
+			  		$objMenuPeticionamentoUsuarioExternoDTO2->setNumIdConjuntoEstilos( $conjuntoEstilosDTO->getNumIdConjuntoEstilos() );
+					
+					$objMenuPeticionamentoUsuarioExternoDTO2->setStrUrl($_POST['txtUrl']);
+					$objMenuPeticionamentoUsuarioExternoDTO2->setStrNome($_POST['txtNome']);
+					$objMenuPeticionamentoUsuarioExternoDTO2->setStrTipo($_POST['tipo']);			
+											
+					$objMenuPeticionamentoUsuarioExternoDTO =  $objMenuPeticionamentoUsuarioExternoRN->alterar($objMenuPeticionamentoUsuarioExternoDTO2);
+					
+					//PaginaSEI::getInstance()->setStrMensagem('Assunto "'.$objAssuntoDTO->getStrCodigoEstruturado().'" alterado com sucesso.');
+					header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'] . '&id_menu_peticionamento_usuario_externo=' . $_POST['hdnIdMenuPeticionamentoUsuarioExterno']));
+					
+					die;
+					
+				} catch(Exception $e){
+					PaginaSEI::getInstance()->processarExcecao($e);
+				}
+			}
+			
+			break;
+			
 		default:
 			throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
 			break;
@@ -194,10 +283,12 @@ PaginaSEI::getInstance()->abrirStyle();
   		
 #lblConteudo {position:absolute;left:0%;top:125px;width:95%; display:none;}
 #containerEditor {position:absolute;top:290px;width:870px; display:none;}
-  		
+
+.cke_contents#cke_1_contents {height:490px !important;}
+
 /*
-#txaConteudo { display:none; }  		
-.cke_contents#cke_1_contents {left:0%; height:290px !important; display:none;}
+#txaConteudo { display:none; }
+.cke_contents#cke_1_contents {left:0%; height:490px !important; display:none;}
 */
   		
 <?
@@ -222,7 +313,7 @@ function rdTipo(){
         
         //document.getElementById("txaConteudo").style.display = 'none';
         document.getElementById("lblConteudo").style.display = 'none';
-        document.getElementById("containerEditor").style.display = 'none';        
+        document.getElementById("tbConteudo").style.display = 'none';
         
      } else if( html ){
         
@@ -234,10 +325,10 @@ function rdTipo(){
         
         //document.getElementById("txaConteudo").style.display = 'block';
         document.getElementById("lblConteudo").style.display = 'block';
-         document.getElementById("containerEditor").style.display = 'block'; 
+         document.getElementById("tbConteudo").style.display = 'block';
          
          //limpa campo
-         $("#containerEditor  iframe").contents().find("body").html('')    
+         $("#tbConteudo  iframe").contents().find("body").html('')
      }
      
 }
@@ -329,8 +420,8 @@ else if( $tipo == 'H' ){
  
   	<legend class="infraLegend">&nbsp;Tipo de Menu &nbsp;</legend>
   	
-  	<input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?> > <label for="tipoExterno" class="infraLabelRadio"> Link externo </label> <br/>
-  	<input type="radio" id="tipoHTML" name="tipo" <?= $disabled ?> value="H" onclick="rdTipo()" <?php if( $tipo == 'H' ){ echo " checked='checked' "; } ?> > <label for="tipoHTML" class="infraLabelRadio"> Conteúdo HTML </label> <br/>
+  	<input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?> > <label for="tipoExterno" class="infraLabelRadio"> Link externo</label> <br/>
+  	<input type="radio" id="tipoHTML" name="tipo" <?= $disabled ?> value="H" onclick="rdTipo()" <?php if( $tipo == 'H' ){ echo " checked='checked' "; } ?> > <label for="tipoHTML" class="infraLabelRadio"> Conteúdo HTML</label> <br/>
      
  </fieldset>
 
@@ -339,23 +430,21 @@ else if( $tipo == 'H' ){
 
 <label id="lblConteudo" for="txaConteudo" class="infraLabelObrigatorio">Conteúdo HTML:</label>
 
-<?php 
+<?php
 PaginaSEI::getInstance()->fecharAreaDados();
 ?>
   
-  <div id="containerEditor">
-  <table id="tbConteudo" style="width: 95%;">
+  <table id="tbConteudo" style="width: 100%; display: none;">
     <td style="width: 95%">
-      <div id="divEditores" style="overflow: auto;">
-        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> rows="4" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
+      <div id="divEditores" style="">
+        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> rows="20" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
         <script type="text/javascript">
           <?=$retEditor->getStrEditores();?>
         </script>
       </div>
     </td>
   </table>
-  </div>
-  
+
   <input type="hidden" id="hdnIdMenuPeticionamentoUsuarioExterno" name="hdnIdMenuPeticionamentoUsuarioExterno" 
          value="<?php echo isset($_GET['id_menu_peticionamento_usuario_externo']) ? $_GET['id_menu_peticionamento_usuario_externo'] : '' ?>" />
     

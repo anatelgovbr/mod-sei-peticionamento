@@ -37,19 +37,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			if (InfraString::isBolVazia($strNumeracao)){
 				throw new InfraException('Formato da numeração não configurado para o órgão '.$objOrgaoDTO->getStrSigla().'.');
 			}
-			
-			/* TODO como ja esta passando a unidade por parametro acho que nao precisa dessa parte, certo? CONFIRMAR
-			if (strpos($strNumeracao,'@cod_unidade_sei')!==false || strpos($strNumeracao,'@seq_anual_cod_unidade_sei')!==false){
-				$objUnidadeDTO = new UnidadeDTO();
-				$objUnidadeDTO->retStrSigla();
-				$objUnidadeDTO->retStrCodigoSei();
-				$objUnidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-	
-				$objUnidadeRN = new UnidadeRN();
-				print_r( $objUnidadeDTO );die();
-				$objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
-			} */
-	
+		
 			//Padrao SEI
 			//@ano_2d@.@cod_orgao_sip@.@seq_anual_cod_orgao_sip_09d@-@dv_mod11_1d@
 	
@@ -101,9 +89,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			}
 	
 			if (strpos($strNumeracao,'@cod_unidade_sei')!==false){
-				
-				//debug_print_backtrace(); die();
-				
+								
 				if (InfraString::isBolVazia($objUnidadeDTO->getStrCodigoSei())){
 					throw new InfraException('Código SEI não configurado para a unidade '.$objUnidadeDTO->getStrSigla().' / '.$objOrgaoDTO->getStrSigla().'.');
 				}
@@ -209,10 +195,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			}else if (strpos($strNumeracao,'@dv_mod11_executivo_federal_2d@')!==false){
 				
 				$dv1 = $this->calcularMod11ExecutivoFederal($strNumeracaoDv);
-				//echo " dv1" . $dv1; die(); 
-				//echo " strNumeracaoDv.dv1 = " . $strNumeracaoDv.$dv1; die();
 				$dv2 = $this->calcularMod11ExecutivoFederal($strNumeracaoDv.$dv1);
-				//echo " dv2" . $dv2; die();
 				$strNumeracao = str_replace('@dv_mod11_executivo_federal_2d@',(string)$dv1.(string)$dv2, $strNumeracao);				
 				
 			}else if (strpos($strNumeracao,'@dv_mod97_base10_cnj_2d@')!==false){
@@ -220,8 +203,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			}else if (strpos($strNumeracao,'@dv_mod97_base10_executivo_federal_2d@')!==false){
 				$strNumeracao = str_replace('@dv_mod97_base10_executivo_federal_2d@', $this->calcularMod97Base10ExecutivoFederal($strNumeracaoDv), $strNumeracao);
 			}
-			
-			//echo $strNumeracao; die();	
+				
 			return $strNumeracao;
 		  
 		} catch(Exception $e){
@@ -231,7 +213,6 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 	
 	private function calcularMod11ExecutivoFederal($strValor){
 		
-		//echo "teste" . $strValor;
 		$soma = 0; // acumulador
 		$peso = 2; // peso inicial
 	
@@ -239,16 +220,12 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			//InfraDebug::getInstance()->gravar(substr($strValor, $i, 1).' * '.$peso.' = '.intval(substr($strValor, $i, 1)) * $peso);
 			$soma += intval(substr($strValor, $i, 1)) * $peso++;
 		}
-	
-		//echo "teste 2 " . $strValor;
-		
+			
 		//InfraDebug::getInstance()->gravar('SOMA='.$soma);
 	
 		$resto = $soma % 11;
 		$dv = 11 - $resto;
-		
-		//echo "teste 3 " . $dv;
-	
+			
 		//11 - 10 =  1
 		//11 -  9 =  2
 		//11 -  8 =  3
@@ -267,10 +244,6 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			$dv = 1;
 		}
 		
-		//echo "teste 4 " . $dv;
-			
-		//InfraDebug::getInstance()->gravar('RESTO:'.$resto);
-	
 		return $dv;
 	}
 	
@@ -296,6 +269,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			if ($objProtocoloDTO->isSetArrObjRelProtocoloAtributoDTO()){
 				$this->validarArrObjRelProtocoloAtributoDTO($objProtocoloDTO, $objInfraException);
 			}
+			
 			$this->validarArrParticipanteRN0572($objProtocoloDTO, $objInfraException);
 			$this->validarArrObjObservacaoRN0573($objProtocoloDTO, $objInfraException);
 			$this->validarArrAnexoRN0227($objProtocoloDTO,$objInfraException);
@@ -303,11 +277,6 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 			$this->validarNumIdUsuarioGeradorRN0214($objProtocoloDTO, $objInfraException);
 			$this->validarDtaGeracaoRN0215($objProtocoloDTO, $objInfraException);
 			$this->validarStrDescricaoRN1229($objProtocoloDTO, $objInfraException);
-	
-			//TESTE COMENTADO
-			//if ($objProtocoloDTO->isSetStrStaEstado()){
-				//$objInfraException->adicionarValidacao('Estado do protocolo não pode ser informado na geração.');
-			//}
 	
 			$this->validarStrStaNivelAcessoLocalRN0685($objProtocoloDTO, $objInfraException);
 	
@@ -320,16 +289,6 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 				$objProtocoloDTO->setNumIdHipoteseLegal(null);
 			} 
 			
-			//print_r( $objProtocoloDTO ); die();
-			
-			// PHP < 5.3.6
-			//foreach (debug_backtrace() as $trace)
-			//{
-				//echo sprintf("\n%s:%s %s::%s <br/>", $trace['file'], $trace['line'], $trace['class'], $trace['function']);
-			//}
-			//die;
-			
-			//print_r( $objProtocoloDTO ); die();
 			$this->validarNumIdHipoteseLegal($objProtocoloDTO, $objInfraException);
 	
 			$objProtocoloDTO->setStrStaEstado(self::$TE_NORMAL);
@@ -434,6 +393,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 	
 			$objAnexoRN = new AnexoRN();
 			$arrAnexos = $objProtocoloDTO->getArrObjAnexoDTO();
+			
 			for($i=0;$i<count($arrAnexos);$i++){
 				$arrAnexos[$i]->setDblIdProtocolo($objProtocoloDTO->getDblIdProtocolo());
 				$arrAnexos[$i]->setNumIdBaseConhecimento(null);
@@ -442,7 +402,6 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 				$arrAnexos[$i]->setNumIdUnidade( $numIdUnidade );
 				$arrAnexos[$i]->setStrSinAtivo('S');
 				$objAnexoRN->cadastrarRN0172($arrAnexos[$i]);
-				//$arrAnexos[$i]->setNumIdAnexo($objAnexoDTO->getNumIdAnexo());
 			}
 	
 			//Auditoria
@@ -523,6 +482,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 	}
 	
 	private function validarArrAnexoRN0227(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
+		//TODO checar se pode remover este método
 		//Nada a validar
 	}
 	
@@ -571,7 +531,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 	}
 	
 	private function validarStrStaGrauSigilo(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
-		//if (SessaoSEI::getInstance()->isBolHabilitada()){ //Não validar para Web-services
+		
 		$objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 		$numHabilitarGrauSigilo = $objInfraParametro->getValor('SEI_HABILITAR_GRAU_SIGILO');
 	
@@ -597,20 +557,17 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 		}else{
 			$objProtocoloDTO->setStrStaGrauSigilo(null);
 		}
-		//}
 	}
 	
 	private function validarNumIdHipoteseLegal(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
-		//if (SessaoSEI::getInstance()->isBolHabilitada()){ //Não validar para Web-services
+		
 		$objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 		$numHabilitarHipoteseLegal = $objInfraParametro->getValor('SEI_HABILITAR_HIPOTESE_LEGAL');
 	
 		if ($numHabilitarHipoteseLegal){
 	
 			if($objProtocoloDTO->getStrStaNivelAcessoLocal()==ProtocoloRN::$NA_SIGILOSO || $objProtocoloDTO->getStrStaNivelAcessoLocal()==ProtocoloRN::$NA_RESTRITO){
-				
-				//echo " aqui 1"; die();
-				
+								
 				if ($numHabilitarHipoteseLegal==2 && InfraString::isBolVazia($objProtocoloDTO->getNumIdHipoteseLegal())){
 					$objInfraException->adicionarValidacao('Hipótese Legal não informada.');
 				}
@@ -626,21 +583,12 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 	
 					if ($objHipoteseLegalDTO==null){
 						$objInfraException->adicionarValidacao('Hipótese Legal não encontrada.');
-					}else{
-	
-						//if ($objHipoteseLegalDTO->getStrStaNivelAcesso()!=$objProtocoloDTO->getStrStaNivelAcessoLocal()){
-							//$objInfraException->adicionarValidacao('Hipótese Legal não aplicável ao Nível de Acesso do protocolo.');
-						//}
-	
 					}
 				}
 	
 			}else{
-				
-				//echo " aqui 2 :: " . $objProtocoloDTO->getNumIdHipoteseLegal(); die();
-				
+								
 				if ( $objProtocoloDTO->isSetNumIdHipoteseLegal() && !InfraString::isBolVazia($objProtocoloDTO->getNumIdHipoteseLegal())){
-					//var_dump( debug_backtrace() ); die();
 					$objInfraException->adicionarValidacao('Hipótese Legal não aplicável ao protocolo.');
 				}
 	
@@ -648,7 +596,6 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 		}else{
 			$objProtocoloDTO->setNumIdHipoteseLegal(null);
 		}
-		//}
 	}
 	
 	public function gerarNumeracaoInterna() {
@@ -674,6 +621,7 @@ class ProtocoloPeticionamentoRN extends ProtocoloRN {
 	}
 	
 	private function validarStrProtocoloFormatadoRN0211(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
+		
 		if (InfraString::isBolVazia($objProtocoloDTO->getStrProtocoloFormatado())){
 			$objInfraException->adicionarValidacao('Número do protocolo não informado.');
 		}else{

@@ -15,7 +15,6 @@ try{
  switch($_GET['acao_ajax_externo']){
     
   	case 'contato_auto_completar_contexto_pesquisa':
-  		
   		//alterado para atender anatel exibir apenas nome contato
   		$objContatoDTO = new ContatoDTO();
   		$objContatoDTO->retNumIdContato();
@@ -33,7 +32,25 @@ try{
   		$objContatoDTO->setStrSinContexto('S');
   		$objContatoDTO->setNumMaxRegistrosRetorno(50);
   		$objContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
-  		
+
+        $objRelTipoContextoPeticionamentoDTO = new RelTipoContextoPeticionamentoDTO();
+        $objRelTipoContextoPeticionamentoRN = new GerirTipoContextoPeticionamentoRN();
+        $objRelTipoContextoPeticionamentoDTO->retTodos();
+        $objRelTipoContextoPeticionamentoDTO->setStrSinSelecaoInteressado('S');
+        $arrobjRelTipoContextoPeticionamentoDTO = $objRelTipoContextoPeticionamentoRN->listar( $objRelTipoContextoPeticionamentoDTO );
+        if(!empty($arrobjRelTipoContextoPeticionamentoDTO)){
+            $arrId = array();
+            foreach($arrobjRelTipoContextoPeticionamentoDTO as $item){
+                array_push($arrId, $item->getNumIdTipoContextoContato());
+            }
+            $objContatoDTO->adicionarCriterio(array('IdTipoContextoContato'),
+                array(InfraDTO::$OPER_IN),
+                array($arrId));
+        }
+
+        $objContatoRN = new ContatoRN();
+        $arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);
+
   		$objContatoRN = new ContatoRN();  		
   		//$arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
   		$arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);

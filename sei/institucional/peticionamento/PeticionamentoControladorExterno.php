@@ -100,6 +100,17 @@
   			    	require_once dirname ( __FILE__ ) . '/editor_peticionamento_processar.php';
   			    	return true;
   			
+  			case 'validar_documento_principal':
+  				
+  				  $conteudo = "";
+  				  
+  				  if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
+  				  	$conteudo = SessaoSEIExterna::getInstance()->getAtributo('docPrincipalConteudoHTML');
+  				  }
+  				  
+  				  echo $conteudo;
+  				  return true;
+  			    	
   			case 'contato_cpf_cnpj':
   			    
   				$objContatoDTO = ContatoPeticionamentoINT::getContatoByCPFCNPJ( $_POST['cpfcnpj'] );

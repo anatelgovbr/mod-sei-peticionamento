@@ -283,14 +283,20 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN {
   	$this->logar(' CRIANDO A TABELA md_pet_usu_externo_menu E SUA sequence'); 	 
   	
   	BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_usu_externo_menu( id_md_pet_usu_externo_menu ' . $objInfraMetaBD->tipoNumero() .' NOT NULL,
-    nome ' . $objInfraMetaBD->tipoTextoVariavel(30) . ' NOT NULL ,
+    id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() . ' NULL ,
+  	nome ' . $objInfraMetaBD->tipoTextoVariavel(30) . ' NOT NULL ,
     tipo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL , 
     url ' . $objInfraMetaBD->tipoTextoVariavel(2083) .' DEFAULT NULL , 
     conteudo_html ' . $objInfraMetaBD->tipoTextoGrande() .' DEFAULT NULL, 
     sin_ativo  ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ) ');
   	
   	$objInfraMetaBD->adicionarChavePrimaria('md_pet_usu_externo_menu','pk_md_pet_usu_externo_menu',array('id_md_pet_usu_externo_menu'));
-    	
+    
+  	$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_menu_cj_est_01',
+  			'md_pet_usu_externo_menu',
+  			array('id_conjunto_estilos'), 
+  			'conjunto_estilos',array('id_conjunto_estilos'));
+  	
   	if (BancoSEI::getInstance() instanceof InfraMySql){
   		BancoSEI::getInstance()->executarSql('create table seq_md_pet_usu_externo_menu (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
   	} else if (BancoSEI::getInstance() instanceof InfraSqlServer){
@@ -441,7 +447,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 	ip_usuario ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' NOT NULL,
 	data_hora_recebimento_final ' . $objInfraMetaBD->tipoDataHora() . ' DEFAULT NULL,
 	sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
-	tipo_peticionamento ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' DEFAULT NULL )');
+	sta_tipo_peticionamento ' . $objInfraMetaBD->tipoTextoVariavel(1) . ' DEFAULT NULL )');
   	
   	$objInfraMetaBD->adicionarChavePrimaria('md_pet_rel_recibo_protoc','pk1_md_pet_rel_recibo_protoc',array('id_md_pet_rel_recibo_protoc'));
   	
@@ -463,7 +469,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
   	BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_rel_recibo_docanexo (
 	id_md_pet_rel_recibo_docanexo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 	id_md_pet_rel_recibo_protoc ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-	id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' DEFAULT NULL,
+	formato_documento ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+  	id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' DEFAULT NULL,
 	id_anexo ' . $objInfraMetaBD->tipoNumero() . ' DEFAULT NULL,
 	classificacao_documento ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
   	
@@ -554,9 +561,12 @@ $this->logar(' CRIANDO A TABELA md_pet_tp_processo_orientacoes');
 
 BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_tp_processo_orientacoes (
   id_md_pet_tp_processo_orientacoes ' . $objInfraMetaBD->tipoNumero() .' NOT NULL,
+  id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() .' NULL,
   orientacoes_gerais ' . $objInfraMetaBD->tipoTextoGrande() .' NOT NULL )');
-  
+
 $objInfraMetaBD->adicionarChavePrimaria('md_pet_tp_processo_orientacoes','pk_md_pet_tp_proc_orient',array('id_md_pet_tp_processo_orientacoes'));
+
+$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_tp_proc_or_cj_est','md_pet_tp_processo_orientacoes',array('id_conjunto_estilos'),'conjunto_estilos',array('id_conjunto_estilos'));
 
 //4 - md_pet_extensao_arquivo_perm
 

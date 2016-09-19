@@ -57,7 +57,15 @@
   			try{
   				
   				$objTipoProcessoOrientacoesPeticionamentoDTO2->setStrOrientacoesGerais($_POST['txaConteudo']);
-  				
+					
+				//Estilo
+				$conjuntoEstilosRN = new ConjuntoEstilosRN();
+		  		$conjuntoEstilosDTO = new ConjuntoEstilosDTO();
+		  		$conjuntoEstilosDTO->setStrSinUltimo('S');
+		  		$conjuntoEstilosDTO->retNumIdConjuntoEstilos();
+		  		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar( $conjuntoEstilosDTO );
+		  		$objTipoProcessoOrientacoesPeticionamentoDTO2->setNumIdConjuntoEstilos( $conjuntoEstilosDTO->getNumIdConjuntoEstilos() );
+					
                 $objTipoProcessoOrientacoesPeticionamentoDTO =  $alterar ? $objTipoProcessoOrientacoesPeticionamentoRN->alterar($objTipoProcessoOrientacoesPeticionamentoDTO2) : $objTipoProcessoOrientacoesPeticionamentoRN->cadastrar($objTipoProcessoOrientacoesPeticionamentoDTO);
   				header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao']));
   				die;

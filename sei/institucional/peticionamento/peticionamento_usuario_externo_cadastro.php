@@ -137,9 +137,6 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
    <? if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'S') { ?>
    
    <!--  CASO 1 -->
-   <!--  <label style="font-weight: bold;">Interessado: </label> -->
-   <!--   <img src="/infra_css/imagens/ajuda.gif" class="infraImg" onclick="exibirAjudaCaso1()"/> -->
-   
    <div id="divOptPublico" class="infraDivRadio">
    
 	   <span id="spnPublico0">
@@ -159,7 +156,6 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
    <? } else if( $objTipoProcDTO->getStrSinIIIndicacaoDiretaCpfCnpj() == 'S') { ?>
    
    <!--  CASO 2 -->
-    
    <div id="divOptPublico" class="infraDivRadio">
       
       <span id="spnPublico0">

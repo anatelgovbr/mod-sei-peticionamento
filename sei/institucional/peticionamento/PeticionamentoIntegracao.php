@@ -25,7 +25,10 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 		//utilizado para ordenação
 		$urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
 		$arrMenusNomes = array();
-		$arrMenusNomes["Peticionar Processo Inicio"] = $urlBase .'/controlador_externo.php?acao=peticionamento_usuario_externo_iniciar';
+		
+		//$arrMenusNomes["Peticionar Processo Inicio"] = $urlBase .'/controlador_externo.php?acao=peticionamento_usuario_externo_iniciar';
+		$arrMenusNomes["Peticionamento"] = $urlBase .'/controlador_externo.php?acao=peticionamento_usuario_externo_iniciar';
+		
 		$arrMenusNomes["Recibos Eletrônicos de Protocolo"] = $urlBase .'/controlador_externo.php?acao=recibo_peticionamento_usuario_externo_listar';
 		
 		if( is_array( $objLista ) && $numRegistros > 0 ){
@@ -63,10 +66,16 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 		    foreach ( $arrMenusNomes as $key => $value) {
 		    	$urlLink = $arrMenusNomes[ $key ];
 		    	$nomeMenu = $key;
-		    	$arrLink[] = '-^' . $urlLink .'^^' . $nomeMenu .'^';
+		    	if($nomeMenu=='Peticionamento'){
+		    		$arrLink[] = '-^^^' . $nomeMenu .'^';
+		    		$arrLink[] = '--^' . $urlLink .'^^' . 'Processo Novo' .'^';	
+		    	}else{
+		    		$arrLink[] = '-^' . $urlLink .'^^' . $nomeMenu .'^';	
+		    	}
+		    	
 		    }
 		}
-				
+
 		return $arrLink; 
 	}
 }

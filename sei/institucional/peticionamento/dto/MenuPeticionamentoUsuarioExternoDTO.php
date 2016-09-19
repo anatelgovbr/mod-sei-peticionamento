@@ -19,7 +19,11 @@ class MenuPeticionamentoUsuarioExternoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdMenuPeticionamentoUsuarioExterno',
 				'id_md_pet_usu_externo_menu');
-	
+		
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
+				'IdConjuntoEstilos',
+				'id_conjunto_estilos');
+		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'Nome',
 				'nome');

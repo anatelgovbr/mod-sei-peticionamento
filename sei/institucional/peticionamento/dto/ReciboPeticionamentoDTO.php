@@ -14,6 +14,17 @@ class ReciboPeticionamentoDTO extends InfraDTO  {
 		return 'md_pet_rel_recibo_protoc';
 	}
 	
+	public function getStrStaTipoPeticionamentoFormatado(){
+		
+		if( $this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == "N"  ){
+			return "Processo Novo";
+		} else if( $this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == "I" ){
+			return "Intercorrente";
+		} else {
+			return "";
+		}
+	}
+	
 	public function montar() {
 
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
@@ -41,8 +52,8 @@ class ReciboPeticionamentoDTO extends InfraDTO  {
 				'sin_ativo');
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
-				'TipoPeticionamento',
-				'tipo_peticionamento');
+				'StaTipoPeticionamento',
+				'sta_tipo_peticionamento');
 				
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
 				'NomeTipoPeticionamento',

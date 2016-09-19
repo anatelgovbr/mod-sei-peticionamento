@@ -47,6 +47,13 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 		$objOrgaoDTO->setStrSinAtivo('S');
 		$objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
 
+        //pegar a lista de email da unidade, a unidade pode não ter, email unidade
+        $objEmailUnidadeDTO = new EmailUnidadeDTO();
+        $emailUnidadeRN = new EmailUnidadeRN();
+        $objEmailUnidadeDTO->retStrEmail();
+        $objEmailUnidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
+        $arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
+
 		//obtendo o tipo de procedimento
 		$idTipoProc = $arrParametros['id_tipo_procedimento'];
 		$objTipoProcDTO = new TipoProcessoPeticionamentoDTO();
@@ -57,7 +64,7 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 		$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 		
 		//variaveis basicas em uso no email
-		$linkLoginUsuarioExterno = "http://linkLoginUsuarioExterno.com";
+		$linkLoginUsuarioExterno = $objOrgaoDTO->getStrSitioInternet();
 		$strNomeTipoProcedimento = $objProcedimentoDTO->getStrNomeTipoProcedimento();
 		$strProtocoloFormatado = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
 		$strSiglaUnidade = $objUnidadeDTO->getStrSigla();
@@ -169,17 +176,6 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 	     	$strDe = str_replace('@sigla_orgao_minusculas@',InfraString::transformarCaixaBaixa($objOrgaoDTO->getStrSigla()),$strDe);
 	     	$strDe = str_replace('@sufixo_email@',$objInfraParametro->getValor('SEI_SUFIXO_EMAIL'),$strDe);
 	     
-	     	$strPara = $objEmailSistemaDTO->getStrPara();
-	     	
-	     	//TODO obter o email da unidade para onde enviar o email
-	     	//$strPara = str_replace('@nome_contato@',$objProcedimentoOuvidoriaDTO->getStrNome(),$strPara);
-	     	//$strPara = str_replace('@email_contato@',$objProcedimentoOuvidoriaDTO->getStrEmail(),$strPara);
-
-	     	$strPara = str_replace('@processo@', $strProtocoloFormatado , $strPara);
-	     	$strPara = str_replace('@nome_contato@', $strNomeContato , $strPara);
-	     	$strPara = str_replace('@email_contato@', $strEmailContato , $strPara);
-	     	$strPara = str_replace('@email_usuario_externo@', $strEmailContato , $strPara);
-	     	
 	     	$strAssunto = $objEmailSistemaDTO->getStrAssunto();
 	     	$strAssunto = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(), $strAssunto);
 	     	$strAssunto = str_replace('@processo@', $strProtocoloFormatado , $strAssunto);
@@ -231,12 +227,18 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 	     	//$strConteudo = str_replace('@conteudo_formulario_ouvidoria@',$strConteudoFormulario,$strConteudo);	     
 	     	//echo "segundo email :: Conteudo :: ";
 	     	//echo $strConteudo; die();	     	
-	     	
-	     	InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
-	     
-	     }
-	     
+
+
+
+             $strPara = $objEmailSistemaDTO->getStrPara();
+             $strPara = str_replace('@processo@', $strProtocoloFormatado , $strPara);
+             $strPara = str_replace('@email_usuario_externo@', $strEmailContato , $strPara);
+             foreach($arrEmailUnidade as $mail){
+                 $strPara = str_replace('@nome_contato@', $objUnidadeDTO->getStrDescricao() , $strPara);
+                 $strPara = str_replace('@email_contato@', $mail->getStrEmail() , $strPara);
+                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+             }
+         }
 	}
-			
 }
 ?>

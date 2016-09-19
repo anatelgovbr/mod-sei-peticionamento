@@ -33,7 +33,12 @@ try {
    $objMenuPeticionamentoUsuarioExternoRN = new MenuPeticionamentoUsuarioExternoRN();
    $objMenuConsulta = $objMenuPeticionamentoUsuarioExternoRN->consultar( $objMenuPeticionamentoUsuarioExternoDTO );
  
+   $objEditorRN = new EditorRN();
+   
    if ($_GET['iframe']!=''){
+      PaginaSEIExterna::getInstance()->abrirStyle();
+      echo $objEditorRN->montarCssEditor($objMenuConsulta->retNumIdConjuntoEstilos);
+      PaginaSEIExterna::getInstance()->fecharStyle();
       echo $objMenuConsulta->getStrConteudoHtml();
       die();	
    }
@@ -46,33 +51,62 @@ PaginaSEIExterna::getInstance()->montarMeta();
 PaginaSEIExterna::getInstance()->montarTitle(':: '.PaginaSEIExterna::getInstance()->getStrNomeSistema().' - '. $objMenuConsulta->getStrNome() .' ::');
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
-
-$objEditorRN = new EditorRN();
 echo $objEditorRN->montarCssEditor(null);
-
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
 ?>
-function inicializar(){
-  //document.getElementById('pwdSenhaAtual').focus();
-  //infraEfeitoTabelas();
-  resizeIFrameToFitContent(document.getElementById('ifrConteudoHMTL'));
-}
-function resizeIFrameToFitContent( iFrame ) {
-    //iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
-    iFrame.width  = document.getElementById("divInfraAreaTelaD").scrollWidth*.98;
-    
-    //document.getElementById("divInfraAreaTelaD").scrollHeight = 0;
-    iFrame.height = iFrame.contentWindow.document.body.scrollHeight*1.02;
-    //iFrame.height = document.getElementById("divInfraAreaTelaD").scrollHeight;
-}
 <?
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody( '' ,'onload="inicializar();"');
-echo '<iframe id=ifrConteudoHMTL name=ifrConteudoHMTL frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=pagina_conteudo_externo_peticionamento&iframe=S&id_md_pet_usu_externo_menu='. $_GET['id_md_pet_usu_externo_menu']) . '"></iframe>';
+echo '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=pagina_conteudo_externo_peticionamento&iframe=S&id_md_pet_usu_externo_menu='. $_GET['id_md_pet_usu_externo_menu']) . '"></iframe>';
 PaginaSEIExterna::getInstance()->fecharBody();
+?>
+<script type="text/javascript">
+function inicializar(){
+	  //infraEfeitoTabelas();
+	  document.getElementsByTagName("BODY")[0].onresize = function() {resizeIFramePorConteudo()};
+	}
+
+function resizeIFramePorConteudo(){
+	var id = 'ifrConteudoHTML';
+	var ifrm = document.getElementById(id);
+	ifrm.style.visibility = 'hidden';
+	ifrm.style.height = "10px"; 
+
+	var doc = ifrm.contentDocument? ifrm.contentDocument : ifrm.contentWindow.document;
+	doc = doc || document;
+	var body = doc.body, html = doc.documentElement;
+
+	///console.clear();
+
+	///var fieldset = document.getElementById('field1');
+	///console.log('field1');
+	///console.log(field1.scrollWidth+'-'+field1.offsetWidth+'-'+field1.clientWidth+'-'+field1.scrollWidth+'-'+field1.offsetWidth);
+
+	///console.log('body.scrollWidth-body.offsetWidth-html.clientWidth-html.scrollWidth-html.offsetWidth');
+	///console.log(body.scrollWidth+'-'+body.offsetWidth+'-'+html.clientWidth+'-'+html.scrollWidth+'-'+html.offsetWidth);
+	var width = Math.max( body.scrollWidth, body.offsetWidth, 
+	                      html.clientWidth, html.scrollWidth, html.offsetWidth );
+	///ifrm.style.width=width+'px';
+	ifrm.style.width='100%';
+
+	///console.log('body.scrollHeight-body.offsetHeight-html.clientHeight-html.scrollHeight-html.offsetHeight');
+	///console.log(body.scrollHeight+'-'+body.offsetHeight+'-'+html.clientHeight+'-'+html.scrollHeight+'-'+html.offsetHeight);
+	var height = Math.max( body.scrollHeight, body.offsetHeight, 
+	                       html.clientHeight, html.scrollHeight, html.offsetHeight );
+	ifrm.style.height=height+'px';
+
+	ifrm.style.visibility = 'visible';
+}
+
+document.getElementById('ifrConteudoHTML').onload = function() {
+	resizeIFramePorConteudo();
+}
+
+</script>
+<?
 PaginaSEIExterna::getInstance()->fecharHtml();
 
 }catch(Exception $e){	

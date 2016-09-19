@@ -175,12 +175,14 @@ try {
       case 'indisponibilidade_peticionamento_download':
       	      	
       	if( $_POST['hdnIdIndisponibilidadePeticionamento'] != "" ) {
-      	
+
+
       	  $objIndisponibilidadeAnexoPeticionamentoDTO = new IndisponibilidadeAnexoPeticionamentoDTO();
       	  $objIndisponibilidadeAnexoPeticionamentoDTO->retTodos();
-      	  $objIndisponibilidadeAnexoPeticionamentoDTO->setNumIdAnexoPeticionamento( $_POST['hdnIdIndisponibilidadePeticionamento'] );
+      	  $objIndisponibilidadeAnexoPeticionamentoDTO->setNumIdIndisponibilidade( $_POST['hdnIdIndisponibilidadePeticionamento'] );
       	  $objIndisponibilidadePeticionamentoRN = new IndisponibilidadeAnexoPeticionamentoRN(); //hdnIdIndisponibilidadePeticionamento
       	  $objIndisponibilidadeAnexoPeticionamentoDTO = $objIndisponibilidadePeticionamentoRN->consultar( $objIndisponibilidadeAnexoPeticionamentoDTO );
+			
       	  $strDiretorio = $objIndisponibilidadePeticionamentoRN->obterDiretorio( $objIndisponibilidadeAnexoPeticionamentoDTO );
       	  $file = $strDiretorio.'/'.$objIndisponibilidadeAnexoPeticionamentoDTO->getNumIdAnexoPeticionamento();
       	
@@ -189,19 +191,18 @@ try {
       		$file = DIR_SEI_TEMP . '/' . $_POST['hdnNomeArquivoDownload'];
       		
       	}
-      	
-      	if (file_exists($file)) {
-      		
-      		header('Pragma: public');
-      		header("Cache-Control: private, no-cache, no-store, post-check=0, pre-check=0");
-      		header('Expires: 0');      		
-      		header('Content-Description: File Transfer');
-      		header('Content-Type: application/octet-stream');
-      		header('Content-Disposition: attachment; filename="'. $_POST['hdnNomeArquivoDownloadReal'] .'"');
-      		header('Content-Length: ' . filesize($file));      		
-      		readfile($file, true);
-      		exit;
-      	}
+
+		  if (file_exists($file)) {
+			  header('Pragma: public');
+			  header("Cache-Control: no-cache, no-store, post-check=0, pre-check=0,  must-revalidate");
+			  header('Pragma: no-cache');
+			  header('Expires: 0');
+			  header('Content-Description: File Transfer');
+			  header('Content-Disposition: attachment; filename="' . $_POST['hdnNomeArquivoDownloadReal'] . '"');
+			  header('Content-Length: ' . filesize($file));
+			  readfile($file, true);
+			  exit;
+		  }
       	
       	die;
     

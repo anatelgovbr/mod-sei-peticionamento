@@ -93,6 +93,27 @@ try {
 			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo . "&acao=recibo_peticionamento_usuario_externo_consultar&acao_origem=recibo_peticionamento_usuario_externo_listar&acao_retorno=recibo_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0";
 			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
 			
+			//removendo atributos da sessao
+			if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
+				SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
+			}
+			
+			if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
+				SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
+			}
+			
+			if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoEssencial') ){
+				SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoEssencial');
+			}
+			
+			if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoComplementar') ){
+				SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoComplementar');
+			}
+			
+			if( SessaoSEIExterna::getInstance()->isSetAtributo('idDocPrincipalGerado') ){
+				SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
+			}
+									
 			echo "<script>";
   			echo "window.opener.location = '" . $urlAssinada . "';";
   			echo " window.opener.focus();";
@@ -108,7 +129,29 @@ try {
   }
 
 }catch(Exception $e){
-  PaginaSEIExterna::getInstance()->processarExcecao($e);
+	
+	//removendo atributos da sessao
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
+	}
+		
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
+	}
+		
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoEssencial') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoEssencial');
+	}
+		
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoComplementar') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoComplementar');
+	}
+	
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('idDocPrincipalGerado') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
+	}
+	
+    PaginaSEIExterna::getInstance()->processarExcecao($e);
 }
 
 $hashAnexo = "";
@@ -129,22 +172,19 @@ PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
 $arrComandos = array();
-$arrComandos[] = '<button type="button" accesskey="A" name="Assinar" value="Assinar" onclick="assinar()" class="infraButton"><span class="infraTeclaAtalho">A</span>ssinar</button>';
-$arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+$arrComandos[] = '<button type="button" accesskey="a" name="Assinar" value="Assinar" onclick="assinar()" class="infraButton"><span class="infraTeclaAtalho">A</span>ssinar</button>';
+$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 ?> 
-<form id="frmConcluir" method="post" onsubmit="return OnSubmitForm();"  
+<form id="frmConcluir" method="post" onsubmit="return assinar();"  
       action="<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] .'&acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
 <?
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 ?>
     
-    <p>
-    <label> 
-    Para concluir o peticionamento é necessário efetivar sua assinatura eletrônica. A confirmação de sua senha de acesso, abaixo, iniciará o efetivo peticionamento e importa na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados porventura anexados (neste segundo caso, é seu dever exclusivo conservar os originais em papel até que decaia o direito da Administração de rever os atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência).
-	</label>
+	<p>
+	<label>A confirmação de sua senha de acesso iniciará o peticionamento e importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</label>
     </p>
-	<br/>
     
     <p> 
     <label class="infraLabelObrigatorio">Usuário Externo:</label> <br/>
@@ -155,9 +195,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     </p>
     
     <p> 
-    <label class="infraLabelObrigatorio">Função:</label><br/>
+    <label class="infraLabelObrigatorio">Cargo/Função:</label><br/>
     <select id="selCargo" name="selCargo" class="infraSelect" style="width:60%;">
-    <option value="">Selecione um cargo</option>
+    <option value="">Selecione Cargo/Função</option>
     <? foreach( $arrObjCargoDTO as $cargo ){
     	
     	if( $_POST['selCargo'] != $cargo->getNumIdCargo() ){
@@ -174,13 +214,14 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     </select>
     </p>
     
-    <p> 
-    <label class="infraLabelObrigatorio"> Senha de acesso ao SEI: </label> <br/>
+    <p>
+    <label class="infraLabelObrigatorio"> Senha de Acesso ao SEI: </label> <br/>
     <input type="password" name="senhaSEI" id="senhaSEI" class="infraText" autocomplete="off" style="width:60%;" />
     </p>
     
     <!--  Campos Hidden para preencher com valores da janela pai -->
     <input type="hidden" id="txtEspecificacaoDocPrincipal" name="txtEspecificacaoDocPrincipal" />
+    <input type="hidden" id="nivelAcessoDocPrincipal" name="nivelAcessoDocPrincipal" />
     <input type="hidden" id="grauSigiloDocPrincipal" name="grauSigiloDocPrincipal" />
     <input type="hidden" id="hdnListaInteressados" name="hdnListaInteressados" />
     
@@ -229,7 +270,7 @@ function isValido(){
 }
 
 function assinar(){
-
+	
 	if( isValido() ){
 
 		var textoEspecificacao = window.opener.document.getElementById('txtEspecificacao').value;
@@ -265,6 +306,7 @@ function assinar(){
 		}		
 		
 		document.getElementById('txtEspecificacaoDocPrincipal').value = textoEspecificacao;
+		document.getElementById('nivelAcessoDocPrincipal').value = nivelAcesso;
 		document.getElementById('grauSigiloDocPrincipal').value = nivelAcesso;
 		document.getElementById('hipoteseLegalDocPrincipal').value = hipoteseLegal;
 
@@ -305,10 +347,6 @@ function assinar(){
 		var hdnDocPrincipal = window.opener.document.getElementById('hdnDocPrincipal');
 		var hdnDocEssencial = window.opener.document.getElementById('hdnDocEssencial');
 		var hdnDocComplementar = window.opener.document.getElementById('hdnDocComplementar');
-
-		//alert( hdnDocPrincipal.value );
-		//alert( hdnDocEssencial.value );
-		//alert( hdnDocComplementar.value );
 		
 		if( hdnDocPrincipal != null && hdnDocPrincipal != undefined){
 		  document.getElementById('hdnDocPrincipal').value = hdnDocPrincipal.value;
@@ -323,7 +361,8 @@ function assinar(){
 		}
 
 		document.getElementById('frmConcluir').submit();
-	}
+				
+	} 
 	
 }
 

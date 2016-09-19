@@ -66,16 +66,10 @@ class ReciboDocumentoAnexoPeticionamentoRN extends InfraRN {
 	}
 	
 	protected function cadastrarControlado(ReciboDocumentoAnexoPeticionamentoDTO $objDTO) {
+		
 		try {
-			// Valida Permissao
-			//SessaoSEI::getInstance ()->validarAuditarPermissao ('menu_peticionamento_usuario_externo_cadastrar', __METHOD__, $objMenuPeticionamentoUsuarioExternoDTO );
-	
+			
 			$objInfraException = new InfraException();
-	
-			//$this->_validarCamposObrigatorios($objMenuPeticionamentoUsuarioExternoDTO, $objInfraException);
-			//$this->_validarDuplicidade($objMenuPeticionamentoUsuarioExternoDTO, $objInfraException, true);
-			//$objInfraException->lancarValidacoes();
-	
 			$objBD = new ReciboDocumentoAnexoPeticionamentoBD($this->getObjInfraIBanco());
 			$ret = $objBD->cadastrar($objDTO);	
 			return $ret;

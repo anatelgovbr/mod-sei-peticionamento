@@ -28,21 +28,11 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
  
  <fieldset id="field3" class="infraFieldset sizeFieldset">
  <legend class="infraLegend">&nbsp; Documentos &nbsp;</legend>
- <br/>
+	<br/>
+	<label>Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre os dados informados e os documentos. Os Níveis de Acesso abaixo indicados estão condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso.</label>
+	<br/><br/>
    
-   <label> 
-   Os documentos que constarão da petição devem ser anexados abaixo, sendo responsabilidade do Usuário Externo a integridade de seu conteúdo e correspondência com o preenchimento deste formulário. Ainda, os Níveis de Acesso abaixo indicados estão condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso.
-   </label>
-   
-   <br/><br/>
-   
-   <? 
-   //[RN8]	O sistema deve verificar na funcionalidade “Gerir Tipos de Processo para Peticionamento” 
-   // se o documento principal selecionado foi “Externo (Anexação de Arquivo)”. 
-   // Caso tenha sido selecionado ao preencher os dados do novo peticionamento, o sistema permitirá 
-   // anexar o arquivo conforme o tipo informado. O sistema deve recuperar o tamanho e tipo de arquivo 
-   // permitidos das funcionalidades “Gerir Tamanho Arquivo Permitido” e “Gerir Extensões Arquivo”.
-   //- obter tamanho maximo de arquivo da configuraçao do modulo
+   <?
    $objTamanhoMaximoDTO = new TamanhoArquivoPermitidoPeticionamentoDTO();
    $objTamanhoMaximoDTO->setStrSinAtivo('S');
    $objTamanhoMaximoDTO->retTodos();
@@ -66,16 +56,14 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    	  }
    	   
    }
+
    
    //checando se Documento Principal está parametrizado para "Externo (Anexação de Arquivo) ou Gerador (editor do SEI)
    $gerado = $ObjTipoProcessoPeticionamentoDTO->getStrSinDocGerado();
    $externo = $ObjTipoProcessoPeticionamentoDTO->getStrSinDocExterno();
 
-   //[RN7]	O sistema deve verificar na funcionalidade “Gerir Tipos de Processo para Peticionamento” se o 
-   // documento principal selecionado foi “Gerado (Editor e Modelo do SEI)”. Caso tenha sido selecionado ao preencher os 
-   // dados do novo peticionamento, o usuário irá editar o conteúdo do documento principal diretamente no editor HTML do SEI.
    if( $externo == 'S' ) { ?>
-       <label style="font-weight: bold;" for="fileArquivoPrincipal"> Documento principal (<?= $strTamanhoMaximoPrincipal ?>):</label><br/>
+       <label style="font-weight: bold;" for="fileArquivoPrincipal"> Documento Principal (<?= $strTamanhoMaximoPrincipal ?>):</label><br/>
        <input style="margin-top:0.3%" type="file" name="fileArquivoPrincipal" id="fileArquivoPrincipal" /> <br/><br/>
    <? }?>
    
@@ -96,7 +84,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   </div>
 
        <div style=" float: left; width: 250px;"> 
-         <label style="font-weight: bold;" class="infraLabel"> Complemento (limitado a 30 caracteres): </label> <br/> 
+         <label style="font-weight: bold;" class="infraLabel"> Complemento:</label> <br/> 
          <input type="text" class="infraText" name="complementoPrincipal" id="complementoPrincipal" style="width:220px;" maxlength="30" />          
        </div>
        
@@ -109,17 +97,11 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
          <label style="font-weight: bold;"> Documento Principal:</label> 
          <label class="infraLabelRadio" onclick="abrirJanelaDocumento()"><?= $strTipoDocumentoPrincipal ?> (clique aqui para editar conteúdo) </label>          
        </div>
-       
-       <!-- 
-       Quando o Documento Principal é do tipo "Gerado", colocar as combos de Nível de Acesso e Hipótese Legal na linha de baixo, 
-       para que não fique truncado a identificação do nome do Tipo do Documento e o parenteses existente.   
-       [PENDENTE!!!!!!!!!]
-	   -->
 	   
 	   <div style="clear: both;"> &nbsp; </div>
 	    
 	   <div style=" float: left; width: 15%;"> 
-         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso: </label> <br/> 
+         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso:</label> <br/> 
          
          <? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
          <select class="infraSelect" width="140" id="nivelAcesso1" name="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" style="width:140px;" >
@@ -154,7 +136,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	            ?>
 	                <option value="<?= $itemObj->getNumIdHipoteseLegal() ?>">
 	                <?= $itemObj->getStrNome() ?> 
-	                ( <?= $itemObj->getStrBaseLegal() ?> ) </option>
+	                (<?= $itemObj->getStrBaseLegal() ?>) </option>
 	            <?    } 
 	               } ?>
 	         </select>
@@ -181,18 +163,25 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    
    <div style=" float: left; width: 15%;"> 
     
-         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso: </label> <br/> 
-         <select class="infraSelect" width="140" id="nivelAcesso1" name="nivelAcesso1" style="width:140px;" 
-                 onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" >
+         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso:</label> <br/> 
+         
          <? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
-            <option value=""></option>
-            <option value="0">Público</option>
-            <option value="1">Restrito</option>
+           
+            <select class="infraSelect" width="140" id="nivelAcesso1" 
+                    name="nivelAcesso1" style="width:140px;" 
+                    onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" >
+                 
+                <option value=""></option>
+                <option value="0">Público</option>
+                <option value="1">Restrito</option>
+            
+            </select>
+            
          <? } else if( $isNivelAcessoPadrao == 'S' ) { ?>
-             <option selected="selected" value="<?= $nivelAcessoPadrao ?>"><?= $strNomeNivelAcessoPadrao ?></option>
+            <label class="infraLabel"><?= $strNomeNivelAcessoPadrao ?></label>
+            <input type="hidden" name="nivelAcesso1" id="nivelAcesso1" value="<?= $nivelAcessoPadrao ?>" /> 
          <? } ?>
-         </select>
-   
+            
    </div> 
       
 	      <? if( $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"  ) { ?>
@@ -201,7 +190,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	         <div id="divhipoteseLegal1" style=" float: left; width: 38% ; display:none;">
 	      <? } ?>
 	         
-	         <?if($isConfigHipoteseLegal) { ?>  
+	         <?if($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S' ) { ?>  
 	         
 	         <label style="font-weight: bold;" class="infraLabel"> Hipótese Legal: </label> <br/>
 	         <select class="infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" width="285" style="width:285px; float: left; margin-right: 5px;">
@@ -212,46 +201,41 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	            ?>
 	                <option value="<?= $itemObj->getNumIdHipoteseLegal() ?>">
 	                <?= $itemObj->getStrNome() ?> 
-	                ( <?= $itemObj->getStrBaseLegal() ?> ) </option>
+	                (<?= $itemObj->getStrBaseLegal() ?>) </option>
 	            <?    } 
 	               } ?>
 	         </select>
 	         
-	         <? } else { ?>
-	         <label class="infraLabel"> &nbsp; </label> <br/>	         
+	          <? } else if($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1" ) { ?>
+	         
+	          <label style="font-weight: bold;" class="infraLabel"> Hipótese Legal: </label> <br/>
+	         <label class="infraLabel"> <?= $strHipoteseLegalPadrao ?> </label>
+	         <input type="hidden" name="hipoteseLegal1" id="hipoteseLegal1" value="<?= $idHipoteseLegalPadrao ?>" />   
+	         	         
 	         <? } ?>
 	         
     </div>
     
     <div style="clear: both;"> &nbsp; </div>
     
-     <div style=" float: left; margin-right: 20px;">
-    
-	   <label style="font-weight: bold;" class="infraLabel"> Formato de Documento:</label>
-	    
-	   <span id="spnPublico">
-		      <label id="lblPublico" class="infraLabelRadio">
-		      <img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaFormatoDocumento()"/> 
-		      </label>
-		</span>
-	    
-	    <input type="radio" name="formatoDocumentoPrincipal" value="nato" id="rdNato1_1" onclick="selecionarFormatoNatoDigitalPrincipal()" /> 
-	    <label for="rdNato1_1" class="infraLabelRadio">
-	    Nato-digital
-	    </label>
-	      
-	    <input type="radio" name="formatoDocumentoPrincipal" value="digitalizado" id="rdDigitalizado1_2" onclick="selecionarFormatoDigitalizadoPrincipal()" /> 
-	    <label for="rdDigitalizado1_2" class="infraLabelRadio">
-	    Digitalizado
-	    </label>  
-    
-    </div>
+	<div style=" float: left; margin-right: 20px;">
+		<label style="font-weight: bold;" class="infraLabel">Formato:</label>
+			<span id="spnPublico">
+				<label id="lblPublico" class="infraLabelRadio">
+					<img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaFormatoDocumento()"/>
+				</label>
+			</span>
+		<input type="radio" name="formatoDocumentoPrincipal" value="nato" id="rdNato1_1" onclick="selecionarFormatoNatoDigitalPrincipal()" />
+		<label for="rdNato1_1" class="infraLabelRadio">Nato-digital</label>
+	    <input type="radio" name="formatoDocumentoPrincipal" value="digitalizado" id="rdDigitalizado1_2" onclick="selecionarFormatoDigitalizadoPrincipal()" />
+	    <label for="rdDigitalizado1_2" class="infraLabelRadio">Digitalizado</label>
+	</div>
      
     <div id="camposDigitalizadoPrincipal" style=" float: left; width: 50%; display: none;">
      
       <div style="float: left; width: 100%;">
 	      
-	      <label style="font-weight: bold;" class="infraLabel"> Documento Objeto da Digitalização era: </label> <br/>
+	      <label style="font-weight: bold;" class="infraLabel"> Conferência com o documento digitalizado:</label> <br/>
 	  
 	      <select class="infraSelect" id="TipoConferenciaPrincipal" name="TipoConferenciaPrincipal" width="285" 
 	              style="width: 285px; float:left; margin-right: 5px;">
@@ -269,7 +253,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
       
       </div>
       
-      <div id="camposDigitalizadoPrincipalBotao" style=" float: left; width: 50%; display: none;">
+      <div id="camposDigitalizadoPrincipalBotao" style=" float: left; width: 50%;">
          <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('1')">
       </div>
           
@@ -279,32 +263,33 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
     
     <? if( $externo == 'S') { ?>
     
-    <table id="tbDocumentoPrincipal" class="infraTable" width="95%" >
+		<table id="tbDocumentoPrincipal" name="tbDocumentoPrincipal" class="infraTable" style="width:95%;">
            
-           <tr>
-               <th class="infraTh" style="width:30%;"> Nome do arquivo </th>
-               <th class="infraTh" style="width:70px;"> Data </th>
-               <th class="infraTh"> Tamanho </th>
-               <th class="infraTh" style="width:30%;"> Documento </th>
-               <th class="infraTh" style="width:120px;"> Nível de acesso </th>
+    		<tr>
+    			<th class="infraTh" style="width:25%;">Nome do Arquivo</th>
+				<th class="infraTh" style="width:80px;" align="center">Data</th>
+    			<th class="infraTh" style="width:80px;" align="center">Tamanho</th>
+    			<th class="infraTh" style="width:25%;" align="center">Documento</th>
+    			<th class="infraTh" style="width:120px;" align="center">Nível de Acesso</th>
+    		    
+    		    <!--  colunas nao exibidas na tela, usadas apenas para guardar valor na grid (note que estao com display:none) -->
+                <th class="infraTh" style="display: none;">Hipótese Legal</th>
+                <th class="infraTh" style="display: none;">Formato</th>
+                <th class="infraTh" style="display: none;">Tipo de Conferência</th>
+                <th class="infraTh" style="display: none;">Nome Upload servidor</th>
+                <th class="infraTh" style="display: none;">ID Tipo de Documento</th>
+                <th class="infraTh" style="display: none;">Complemento</th>
+                <th class="infraTh" style="width: 120px;" align="center">Formato</th>
                
-               <!--  colunas nao exibidas na tela, usadas apenas para guardar valor na grid (note que estao com display:none) -->
-               <th class="infraTh" style="display: none;"> Hipotese legal </th>
-               <th class="infraTh" style="display: none;"> Formato de documento </th>
-               <th class="infraTh" style="display: none;"> Tipo de Conferencia </th>
-               <th class="infraTh" style="display: none;"> Nome Upload servidor </th>
-               <th class="infraTh" style="display: none;"> ID Tipo de Documento </th>
-               
-               <!-- Coluna de ações (Baixar, remover) da grid -->
-               <th align="center" class="infraTh" style="width:70px;"> Ações </th>                              
-           </tr>
-           
-       </table>
-       
-       <br/><br/>
-       
-       <? } ?>
-       </form>
+                <!-- Coluna de ações (Baixar, remover) da grid -->
+    			<th align="center" class="infraTh" style="width:50px;">Ações</th>
+    		</tr>
+    		   
+		</table> <br/><br/>
+		
+		<? } ?>
+		</form>
+		<!-- ================================== FIM DOCUMENTO PRINCIPAL  =============================================== -->
        
        <form method="post" id="frmDocumentosEssenciais" enctype="multipart/form-data" action="<?= $strLinkUploadDocEssencial ?>">
        
@@ -323,7 +308,8 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   
 	   if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){ ?>
 	   
-	   <label class="infraLabelObrigatorio" for="fileArquivoEssencial"> Documentos essenciais (<?= $strTamanhoMaximoComplementar ?>):</label><br/>
+	   <br/>
+	   <label class="infraLabelObrigatorio" for="fileArquivoEssencial"> Documentos Essenciais (<?= $strTamanhoMaximoComplementar ?>):</label><br/>
        
        <input style="margin-top:0.3%" type="file" id="fileArquivoEssencial" name="fileArquivoEssencial" size="50" /> <br/><br/>
    
@@ -361,7 +347,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    </div>
    
    <div style=" float: left; width: 250px;"> 
-         <label style="font-weight: bold;" class="infraLabel"> Complemento (limitado a 30 caracteres): </label> <br/> 
+         <label style="font-weight: bold;" class="infraLabel"> Complemento:</label> <br/> 
          <input type="text" class="infraText" name="complementoEssencial" id="complementoEssencial" style="width: 220px;" maxlength="30" />         
    </div>
    
@@ -369,17 +355,21 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    
    <div style=" float: left; width: 15%;"> 
    
-         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso: </label> <br/> 
+         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso:</label> <br/> 
          
-         <select class="infraSelect" name="nivelAcesso2" id="nivelAcesso2" onchange="selectNivelAcesso('nivelAcesso2', 'hipoteseLegal2')" width="140" style="width:140px;" >
          <? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
+         <select class="infraSelect" name="nivelAcesso2" id="nivelAcesso2" onchange="selectNivelAcesso('nivelAcesso2', 'hipoteseLegal2')" width="140" style="width:140px;">
             <option value=""></option>
             <option value="0">Público</option>
             <option value="1">Restrito</option>
-         <? } else if( $isNivelAcessoPadrao == 'S' ) { ?>
-             <option selected="selected" value="<?= $nivelAcessoPadrao ?>"><?= $strNomeNivelAcessoPadrao ?></option>
-         <? } ?>
          </select>
+         <? } else {?>
+         <label class="infraLabelRadio">
+	   		<?= $strNomeNivelAcessoPadrao ?>
+	    	</label>
+         <input type="hidden" value="<?= $nivelAcessoPadrao ?>" id="nivelAcesso2" name="nivelAcesso2" />
+         <?} ?>
+         
          
    </div> 
    
@@ -389,7 +379,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
       <div id="divhipoteseLegal2" style=" float: left; width: 38%; display:none;">
     <? } ?>
     
-         <? if($isConfigHipoteseLegal) { ?>
+         <? if($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
 	         
 	         <label style="font-weight: bold;" class="infraLabel"> Hipótese Legal: </label> <br/>
 	         
@@ -401,14 +391,16 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	            ?>
 	                <option value="<?= $itemObj->getNumIdHipoteseLegal() ?>">
 	                <?= $itemObj->getStrNome() ?> 
-	                ( <?= $itemObj->getStrBaseLegal() ?> ) </option>
+	                (<?= $itemObj->getStrBaseLegal() ?>) </option>
 	            <?    } 
 	               } ?>
 	         </select>
          
-         <? } else { ?>
+         <? } else if($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1" ){ ?>
          	
-         	<label class="infraLabel"> &nbsp; </label> <br/>
+         	<label style="font-weight: bold;" class="infraLabel"> Hipótese Legal: </label> <br/>
+	         <label class="infraLabel"> <?= $strHipoteseLegalPadrao ?> </label>
+	         <input type="hidden" name="hipoteseLegal2" id="hipoteseLegal2" value="<?= $idHipoteseLegalPadrao ?>" />   
          
          <? } ?>
    
@@ -420,33 +412,24 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
            
    <div style="clear: both;"> &nbsp; </div>
    
-   <div style=" float: left; margin-right: 20px;">
-    
-	   <label style="font-weight: bold;" class="infraLabel"> Formato de Documento:</label>
-	    
-	   <span id="spnPublico">
-		      <label id="lblPublico" class="infraLabelRadio">
-		      <img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaFormatoDocumento()"/> 
-		      </label>
-		</span>
-	    
-	    <input type="radio" name="formatoDocumentoEssencial" value="nato" id="rdNato2_1" onclick="selecionarFormatoNatoDigitalEssencial()" /> 
-	    <label for="rdNato2_1" class="infraLabelRadio">
-	    Nato-digital
-	    </label>
-	      
-	    <input type="radio" name="formatoDocumentoEssencial" value="digitalizado" id="rdDigitalizado2_2" onclick="selecionarFormatoDigitalizadoEssencial()" /> 
-	    <label for="rdDigitalizado2_2" class="infraLabelRadio">
-	    Digitalizado
-	    </label>  
-    
-    </div>
+	<div style=" float: left; margin-right: 20px;">
+		<label style="font-weight: bold;" class="infraLabel">Formato:</label>
+			<span id="spnPublico">
+				<label id="lblPublico" class="infraLabelRadio">
+					<img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaFormatoDocumento()"/>
+				</label>
+			</span>
+		<input type="radio" name="formatoDocumentoEssencial" value="nato" id="rdNato2_1" onclick="selecionarFormatoNatoDigitalEssencial()" />
+		<label for="rdNato2_1" class="infraLabelRadio">Nato-digital</label>
+		<input type="radio" name="formatoDocumentoEssencial" value="digitalizado" id="rdDigitalizado2_2" onclick="selecionarFormatoDigitalizadoEssencial()" />
+		<label for="rdDigitalizado2_2" class="infraLabelRadio">Digitalizado</label>
+	</div>
      
     <div id="camposDigitalizadoEssencial" style=" float: left; width: 50%; display: none;">
      
       <div style="float: left; width: 100%;">
 	      
-	      <label style="font-weight: bold;" class="infraLabel"> Documento Objeto da Digitalização era: </label> <br/>
+	      <label style="font-weight: bold;" class="infraLabel"> Conferência com o documento digitalizado:</label> <br/>
 	  
 	      <select class="infraSelect" id="TipoConferenciaEssencial" name="TipoConferenciaEssencial" width="285" 
 	              style="width: 285px; float:left; margin-right: 5px;">
@@ -464,45 +447,47 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
       
       </div>
       
-      <div id="camposDigitalizadoEssencialBotao" style=" float: left; width: 50%; display: none;">
+      <div id="camposDigitalizadoEssencialBotao" style=" float: left; width: 50%;">
          <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('2')">
       </div>
       
      <div style="clear: both;"> &nbsp; </div>
     
-     <table id="tbDocumentoEssencial" name="tbDocumentoEssencial" class="infraTable" style="width:95%;">
+		<table id="tbDocumentoEssencial" name="tbDocumentoEssencial" class="infraTable" style="width:95%;">
 
     		<tr>
-    			<th class="infraTh" style="width:30%;">Nome</th>
-    			<th class="infraTh" style="width: 70px;" align="center">Data</th>
-    			<th class="infraTh" align="center">Tamanho</th>
-    			<th class="infraTh" align="center" style="width:30%;">Documento</th>
-    			<th class="infraTh" style="width: 120px;" align="center">Nível de acesso</th>
-    			
-    			<!--  colunas nao exibidas na tela, usadas apenas para guardar valor na grid (note que estao com display:none) -->
-               <th class="infraTh" style="display: none;"> Hipotese legal </th>
-               <th class="infraTh" style="display: none;"> Formato de documento </th>
-               <th class="infraTh" style="display: none;"> Tipo de Conferencia </th>
-               <th class="infraTh" style="display: none;"> Nome Upload servidor </th>
-               <th class="infraTh" style="display: none;"> ID Tipo de Documento </th>
+    			<th class="infraTh" style="width:25%;">Nome do Arquivo</th>
+				<th class="infraTh" style="width:80px;" align="center">Data</th>
+    			<th class="infraTh" style="width:80px;" align="center">Tamanho</th>
+    			<th class="infraTh" style="width:25%;" align="center">Documento</th>
+    			<th class="infraTh" style="width:120px;" align="center">Nível de Acesso</th>
+    		    
+    		    <!--  colunas nao exibidas na tela, usadas apenas para guardar valor na grid (note que estao com display:none) -->
+                <th class="infraTh" style="display: none;">Hipótese Legal</th>
+                <th class="infraTh" style="display: none;">Formato</th>
+                <th class="infraTh" style="display: none;">Tipo de Conferência</th>
+                <th class="infraTh" style="display: none;">Nome Upload servidor</th>
+                <th class="infraTh" style="display: none;">ID Tipo de Documento</th>
+                <th class="infraTh" style="display: none;">Complemento</th>
+                <th class="infraTh" style="width: 120px;" align="center">Formato</th>
                
-               <!-- Coluna de ações (Baixar, remover) da grid -->
-    			<th class="infraTh" style="width: 70px;">Ações</th>
-    			
+                <!-- Coluna de ações (Baixar, remover) da grid -->
+    			<th align="center" class="infraTh" style="width:50px;">Ações</th>
     		</tr>
     		   
-       </table> <br/><br/>
+		</table> <br/><br/>
        
-       <!-- =================================== FIM DOCUMENTOS ESSENCIAIS =====================================================  -->
-       </form>
-       
+		<? } ?>
+		</form>
+		<!-- ================================== FIM DOCUMENTOS ESSENCIAIS  =============================================== -->
+	   
        <form method="post" id="frmDocumentosComplementares" enctype="multipart/form-data" action="<?= $strLinkUploadDocComplementar ?>">
        
        <input type="hidden" id="hdnDocComplementar" name="hdnDocComplementar" value="<?=$_POST['hdnDocComplementar']?>"/>
 	   <input type="hidden" id="hdnDocComplementarInicial" name="hdnDocComplementarInicial" value="<?=$_POST['hdnDocComplementarInicial']?>"/>
 	   
        <!-- ================================== INICIO DOCUMENTOS COMPLEMENTARES  =============================================== -->
-       <? 
+       <?php 
 	   // TODO o bloco de seleçao de documento essencial pode sumir da tela
        // conforme parametrizaçao da Administraçao do modulo 
        $objRelTipoProcessoSeriePeticionamentoDTO = new RelTipoProcessoSeriePeticionamentoDTO();
@@ -516,7 +501,8 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   
 	   if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){ ?>
 	     
-	     <label class="infraLabel" for="fileArquivoComplementar"> Documentos complementares (<?= $strTamanhoMaximoComplementar ?>):</label><br/>
+	     <br/>
+		 <label class="infraLabel" for="fileArquivoComplementar"> Documentos Complementares (<?= $strTamanhoMaximoComplementar ?>):</label><br/>
 	     
 	     <input style="margin-top:0.3%" type="file" id="fileArquivoComplementar" name="fileArquivoComplementar" size="50" /> <br/><br/>
    
@@ -548,7 +534,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    </div>
    
    <div style=" float: left; width: 250px;"> 
-         <label style="font-weight: bold;" class="infraLabel"> Complemento (limitado a 30 caracteres): </label> <br/> 
+         <label style="font-weight: bold;" class="infraLabel"> Complemento:</label> <br/> 
          <input type="text" class="infraText" name="complementoComplementar" id="complementoComplementar" style="width: 220px;" maxlength="30" />         
    </div>
    
@@ -556,17 +542,20 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    
    <div style=" float: left; width: 15%;"> 
    
-         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso: </label> <br/> 
+         <label style="font-weight: bold;" class="infraLabel"> Nível de Acesso:</label> <br/> 
          
-         <select class="infraSelect" name="nivelAcesso3" id="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" width="140" style="width:140px;" >
          <? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
+         <select class="infraSelect" name="nivelAcesso3" id="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" width="140" style="width:140px;" >
             <option value=""></option>
             <option value="0">Público</option>
             <option value="1">Restrito</option>
-         <? } else if( $isNivelAcessoPadrao == 'S' ) { ?>
-             <option selected="selected" value="<?= $nivelAcessoPadrao ?>"><?= $strNomeNivelAcessoPadrao ?></option>
-         <? } ?>
          </select>
+         <? } else {?>
+         <label class="infraLabelRadio">
+	   		<?= $strNomeNivelAcessoPadrao ?>
+	    	</label>
+         <input type="hidden" value="<?= $nivelAcessoPadrao ?>" id="nivelAcesso3" name="nivelAcesso3" />
+         <?} ?>
          
    </div> 
    
@@ -576,7 +565,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
      <div id="divhipoteseLegal3" style=" float: left; width: 38%; display:none;">
    <? } ?>       
        
-         <? if($isConfigHipoteseLegal) { ?>
+         <? if($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
 	         
 	         <label style="font-weight: bold;" class="infraLabel"> Hipótese Legal: </label> <br/>
 	         
@@ -588,14 +577,16 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	            ?>
 	                <option value="<?= $itemObj->getNumIdHipoteseLegal() ?>">
 	                <?= $itemObj->getStrNome() ?> 
-	                ( <?= $itemObj->getStrBaseLegal() ?> ) </option>
+	                (<?= $itemObj->getStrBaseLegal() ?>) </option>
 	            <?    } 
 	               } ?>
 	         </select>
          
-         <? } else { ?>
+         <? } else if($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1" ){ ?>
          	
-         	<label class="infraLabel"> &nbsp; </label> <br/>
+         	 <label style="font-weight: bold;" class="infraLabel"> Hipótese Legal: </label> <br/>
+	         <label class="infraLabel"> <?= $strHipoteseLegalPadrao ?> </label>
+	         <input type="hidden" name="hipoteseLegal3" id="hipoteseLegal3" value="<?= $idHipoteseLegalPadrao ?>" />   
          
          <? } ?>
    
@@ -603,33 +594,24 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
                  
    <div style="clear: both;"> &nbsp; </div>
    
-   <div style=" float: left; margin-right: 20px;">
-    
-	   <label style="font-weight: bold;" class="infraLabel"> Formato de Documento:</label>
-	    
-	   <span id="spnPublico">
-		      <label id="lblPublico" class="infraLabelRadio">
-		      <img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaFormatoDocumento()"/> 
+	<div style=" float: left; margin-right: 20px;">
+		<label style="font-weight: bold;" class="infraLabel">Formato:</label>
+			<span id="spnPublico">
+				<label id="lblPublico" class="infraLabelRadio">
+		      <img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaFormatoDocumento()"/>
 		      </label>
-		</span>
-	    
-	    <input type="radio" name="formatoDocumentoComplementar" value="nato" id="rdNato3_1" onclick="selecionarFormatoNatoDigitalComplementar()" /> 
-	    <label for="rdNato3_1" class="infraLabelRadio">
-	    Nato-digital
-	    </label>
-	      
-	    <input type="radio" name="formatoDocumentoComplementar" value="digitalizado" id="rdDigitalizado3_2" onclick="selecionarFormatoDigitalizadoComplementar()" /> 
-	    <label for="rdDigitalizado3_2" class="infraLabelRadio">
-	    Digitalizado
-	    </label>  
-    
-    </div>
+			</span>
+		<input type="radio" name="formatoDocumentoComplementar" value="nato" id="rdNato3_1" onclick="selecionarFormatoNatoDigitalComplementar()" />
+		<label for="rdNato3_1" class="infraLabelRadio">Nato-digital</label>
+		<input type="radio" name="formatoDocumentoComplementar" value="digitalizado" id="rdDigitalizado3_2" onclick="selecionarFormatoDigitalizadoComplementar()" />
+		<label for="rdDigitalizado3_2" class="infraLabelRadio">Digitalizado</label>
+	</div>
      
     <div id="camposDigitalizadoComplementar" style=" float: left; width: 50%; display: none;">
      
 	      <div style="float: left; width: 100%;">
 		      
-		      <label style="font-weight: bold;" class="infraLabel"> Documento Objeto da Digitalização era: </label> <br/>
+		      <label style="font-weight: bold;" class="infraLabel"> Conferência com o documento digitalizado:</label> <br/>
 		  
 		      <select class="infraSelect" id="TipoConferenciaComplementar" name="TipoConferenciaComplementar" width="285" 
 		              style="width: 285px; float:left; margin-right: 5px;">
@@ -647,40 +629,40 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
      
      </div>
      
-     <div id="camposDigitalizadoComplementarBotao" style=" float: left; width: 50%; display: none;">
+     <div id="camposDigitalizadoComplementarBotao" style=" float: left; width: 50%;">
         <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('3')">
      </div>
       
      <div style="clear: both;"> &nbsp; </div>
     
-     <table id="tbDocumentoComplementar" name="tbDocumentoComplementar" class="infraTable" style="width:95%;">
+		<table id="tbDocumentoComplementar" name="tbDocumentoComplementar" class="infraTable" style="width:95%;">
        
     		<tr>
-    			<th class="infraTh" style="width:30%;">Nome</th>
-    			<th class="infraTh" style="width: 70px;" align="center">Data</th>
-    			<th class="infraTh" align="center">Tamanho</th>
-    			<th class="infraTh" align="center" style="width:30%;">Documento</th>
-    			<th class="infraTh" style="width: 120px;" align="center">Nível de acesso</th>
+    			<th class="infraTh" style="width:25%;">Nome do Arquivo</th>
+				<th class="infraTh" style="width:80px;" align="center">Data</th>
+    			<th class="infraTh" style="width:80px;" align="center">Tamanho</th>
+    			<th class="infraTh" style="width:25%;" align="center">Documento</th>
+    			<th class="infraTh" style="width:120px;" align="center">Nível de Acesso</th>
     		    
     		    <!--  colunas nao exibidas na tela, usadas apenas para guardar valor na grid (note que estao com display:none) -->
-                <th class="infraTh" style="display: none;"> Hipotese legal </th>
-                <th class="infraTh" style="display: none;"> Formato de documento </th>
-                <th class="infraTh" style="display: none;"> Tipo de Conferencia </th>
-                <th class="infraTh" style="display: none;"> Nome Upload servidor </th>
-                <th class="infraTh" style="display: none;"> ID Tipo de Documento </th>
+                <th class="infraTh" style="display: none;">Hipótese Legal</th>
+                <th class="infraTh" style="display: none;">Formato</th>
+                <th class="infraTh" style="display: none;">Tipo de Conferência</th>
+                <th class="infraTh" style="display: none;">Nome Upload servidor</th>
+                <th class="infraTh" style="display: none;">ID Tipo de Documento</th>
+                <th class="infraTh" style="display: none;">Complemento</th>
+                <th class="infraTh" style="width: 120px;" align="center">Formato</th>
                
                 <!-- Coluna de ações (Baixar, remover) da grid -->
-    			<th class="infraTh" style="width: 70px;">Ações</th>    			
+    			<th align="center" class="infraTh" style="width:50px;">Ações</th>
     		</tr>
     		   
-       </table> <br/><br/>
+		</table> <br/><br/>
 	     
-       <? } ?>
-       
-       <!-- ================================== FIM DOCUMENTOS COMPLEMENTARES  =============================================== -->
-       </form>
-       
-<? } ?>     
+		<? } ?>
+		</form>
+		<!-- ================================== FIM DOCUMENTOS COMPLEMENTARES  =============================================== -->
+     
 </fieldset>
 
 <!-- =========================== -->

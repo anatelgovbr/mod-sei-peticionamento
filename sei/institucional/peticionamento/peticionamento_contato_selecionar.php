@@ -56,14 +56,14 @@ try {
     case 'peticionamento_contato_selecionar':
       
       if ($_GET['acao']=='peticionamento_contato_selecionar'){
-        $strTitulo = PaginaSEIExterna::getInstance()->getTituloSelecao('Selecionar Contato','Selecionar Contatos');
+        $strTitulo = PaginaSEIExterna::getInstance()->getTituloSelecao('Selecionar Interessado','Selecionar Interessados');
       } 
       
       break;
        
     case 'peticionamento_contato_listar':
             
-       $strTitulo = 'Contatos';
+       $strTitulo = 'Interessados';
        break;
 
     default:
@@ -139,6 +139,14 @@ try {
     $numTipoContextoContato = PaginaSEIExterna::getInstance()->recuperarCampo('selTipoContextoContato');
     if ($numTipoContextoContato!='' && $numTipoContextoContato!='null'){
         $objContatoDTO->setNumIdTipoContextoContatoContato($numTipoContextoContato);
+    }else if(!empty($arrobjRelTipoContextoPeticionamentoDTO)){
+        $arrId = array();
+        foreach($arrobjRelTipoContextoPeticionamentoDTO as $item){
+            array_push($arrId, $item->getNumIdTipoContextoContato());
+        }
+        $objContatoDTO->adicionarCriterio(array('IdTipoContextoContato'),
+            array(InfraDTO::$OPER_IN),
+            array($arrId));
     }
 
     $objContatoDTO->setStrMaisOpcoes(PaginaSEIExterna::getInstance()->recuperarCampo('chkMaisOpcoesContatos'));
@@ -195,11 +203,11 @@ try {
 
     $strCaptionTabela = '';
     if ($_GET['acao'] == 'peticionamento_contato_listar'){
-      $strSumarioTabela = 'Tabela de Contatos.';
-      $strCaptionTabela .= 'Contatos';
+      $strSumarioTabela = 'Tabela de Interessados.';
+      $strCaptionTabela .= 'Interessadis';
     }else{
-      $strSumarioTabela = 'Tabela de Contatos.';
-      $strCaptionTabela .= 'Contatos';
+      $strSumarioTabela = 'Tabela de Interessados.';
+      $strCaptionTabela .= 'Interessados';
     }
     
     $strResultado = '';
@@ -255,11 +263,7 @@ try {
     	      		}
     	      	}
     	      }
-    	      
-    	      if ($bolAcaoConsultarContexto){
-    	        $strResultado .= '<a href="'.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao_externa=contexto_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_tipo_contexto_contato='.$dto->getNumIdTipoContextoContatoContato().'&id_contato='.$dto->getNumIdContextoContato().'&sin_contexto=S')).'" tabindex="'.PaginaSEIExterna::getInstance()->getProxTabTabela().'"><img src="imagens/consultar.gif" title="Consultar Contexto" alt="Consultar Contexto" class="infraImg" /></a>&nbsp;';
-    	      }
-      		
+    	      		
     		   $strResultado .= '</td></tr>'."\n";
           }
         }
@@ -356,10 +360,6 @@ try {
 		  			$strResultado .= '<a onmouseover="return infraTooltipMostrar(\''.$balao.'\');" onmouseout="return infraTooltipOcultar();"><img src="/infra_css/imagens/balao.gif" class="infraImg" tabindex="'.PaginaSEIExterna::getInstance()->getProxTabTabela().'" /></a>&nbsp;';    	
 		      }
 	    	}     
-	    	
-		    if ($bolAcaoConsultar){
-		      $strResultado .= '<a href="'.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao_externa=contato_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_tipo_contexto_contato='.$dto->getNumIdTipoContextoContatoContato().'&id_contexto_contato='.$dto->getNumIdContextoContato().'&id_contato='.$dto->getNumIdContato().'&sin_contexto=N')).'" tabindex="'.PaginaSEIExterna::getInstance()->getProxTabTabela().'"><img src="imagens/consultar.gif" title="Consultar Contato" alt="Consultar Contato" class="infraImg" /></a>&nbsp;';
-		    }    
 	    	
 	    }      
       $strResultado .= '</td></tr>'."\n";
@@ -470,7 +470,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
   <label id="lblPalavrasPesquisaContatos" for="txtPalavrasPesquisaContatos" accesskey="" class="infraLabelOpcional">Palavras-chave para pesquisa:</label>
   <input type="text" id="txtPalavrasPesquisaContatos" name="txtPalavrasPesquisaContatos" class="infraText" value="<?=$strPalavrasPesquisa;?>" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" />
 
-  <label id="lblTipoContextoContato" for="selTipoContextoContato" accesskey="" class="infraLabelOpicional">Tipo de Contato:</label>
+  <label id="lblTipoContextoContato" for="selTipoContextoContato" accesskey="" class="infraLabelOpicional">Tipo de Interessado:</label>
   <select id="selTipoContextoContato" name="selTipoContextoContato" class="infraSelect" 
           onchange="selecionarTipoContato()" 
           tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" >

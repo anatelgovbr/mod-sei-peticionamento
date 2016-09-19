@@ -89,6 +89,7 @@ class TipoProcessoPeticionamentoDTO extends InfraDTO  {
 				
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeProcesso', 'tipo.nome', 'tipo_procedimento tipo');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeHipoteseLegal', 'hl.nome', 'hipotese_legal hl');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'BaseLegalHipoteseLegal', 'hl.base_legal', 'hipotese_legal hl');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeSerie', 's.nome', 'serie s');
 		
 		$this->configurarPK('IdTipoProcessoPeticionamento',InfraDTO::$TIPO_PK_NATIVA);

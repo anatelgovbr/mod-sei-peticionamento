@@ -22,6 +22,8 @@ try {
   //PaginaSEIExterna::getInstance()->prepararSelecao('indisponibilidade_peticionamento_usuario_externo_selecionar');
   //SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
 
+  PaginaSEIExterna::getInstance()->setTipoPagina( InfraPagina::$TIPO_PAGINA_SEM_MENU );
+  
   switch($_GET['acao_externa']){
 
     case 'indisponibilidade_peticionamento_usuario_externo_selecionar':
@@ -180,6 +182,9 @@ PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
 ?>
 function inicializar(){
+
+  document.getElementById('divInfraBarraSistemaD').style.display='none';
+    	
   if ('<?=$_GET['acao']?>'=='indisponibilidade_peticionamento_usuario_externo_listar'){
     infraReceberSelecao();
     document.getElementById('btnFecharSelecao').focus();
@@ -188,10 +193,12 @@ function inicializar(){
   infraEfeitoTabelas();
   corrigirTela();
 
-    var menu = document.getElementById('lnkInfraMenuSistema');
-    if(menu != null){
-        menu.onclick=esconderMenu;
-    }
+  var menu = document.getElementById('lnkInfraMenuSistema');
+  if(menu != null){
+      menu.onclick=esconderMenu;
+  }
+  
+  
 }
 
 
@@ -289,10 +296,16 @@ function pesquisar(){
 }
 
 function corrigirTela(){
-    var tamanhoGrid = document.getElementById('tbIndisponibilidade').offsetHeight;
-    var tamanhoLinha = document.getElementById('divInfraAreaTela').offsetHeight;
-    var tamanhoTotal = (tamanhoGrid + tamanhoLinha) - 395;
-    document.getElementById('divInfraAreaTela').style.height = tamanhoTotal + 'px';
+
+    var grid = document.getElementById('tbIndisponibilidade');
+    var area = document.getElementById('divInfraAreaTela');
+
+    if( grid != null && area != null ){
+      var tamanhoGrid = document.getElementById('tbIndisponibilidade').offsetHeight;
+      var tamanhoLinha = document.getElementById('divInfraAreaTela').offsetHeight;
+      var tamanhoTotal = (tamanhoGrid + tamanhoLinha) - 395;
+      document.getElementById('divInfraAreaTela').style.height = tamanhoTotal + 'px';
+    }
 }
 
 function esconderMenu(){
@@ -319,6 +332,8 @@ PaginaSEIExterna::getInstance()->fecharHead();
 #lblSinProrrogacao {position:absolute;left:29%;top:0px;width:30%;}
 #selSinProrrogacao {position:absolute;left:29%;top:20px;width:20%;}
 #divInfraAreaTabela {position:absolute;left:0%;top:50px; }
+
+#divInfraBarraSistemaE { display:none; }
 </style>
 
 <?php 
@@ -379,6 +394,7 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
   </div>
   
 </form>
+
 <?
 PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();

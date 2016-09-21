@@ -22,7 +22,7 @@ PROCEDIMENTOS PARA INSTALAÇÂO:
 	3) Editar o arquivo "sei/ConfiguracaoSEI.php", tomando o cuidado de usar editor que não altere o charset do arquivo, para adicionar a referência ao módulo Peticionamento na chave 'Modulos' abaixo da chave 'SEI':
 
 		'SEI' => array(
-			'URL' => 'http://localhost/sei',
+			'URL' => 'http://[Servidor_PHP]sei',
 			'Producao' => false,
 			'RepositorioArquivos' => '/var/sei/arquivos',
 			'Modulos' => array(),
@@ -36,11 +36,11 @@ PROCEDIMENTOS PARA INSTALAÇÂO:
 	
 	5) Rodar via browser (não via linha de comando) o script:
 			
-		http://[Servidor PHP]/sei/sei_atualizar_versao_modulo_peticionamento.php
+		http://[Servidor_PHP]/sei/sei_atualizar_versao_modulo_peticionamento.php
 	
 	6) Rodar via browser (não via linha de comando) o script:
 			
-		http://[Servidor PHP]/sip/sip_atualizar_versao_modulo_peticionamento.php
+		http://[Servidor_PHP]/sip/sip_atualizar_versao_modulo_peticionamento.php
 	
 	--IMPORTANTE 1: Na execução dos dois scripts acima, ao final deve constar o termo "FIM". Do contrário, o script não foi executado até o final e algum dado não foi inserido/atualizado no banco de dados correspondente, devendo recuperar o backup correspondente e repetir o procedimento.
 	
@@ -50,9 +50,12 @@ PROCEDIMENTOS PARA INSTALAÇÂO:
 
 	8) Recomenda-se que, após a instalação/atualização do módulo, os scripts "/sei/sei_atualizar_versao_modulo_peticionamento.php" e "/sip/sip_atualizar_versao_modulo_peticionamento.php" sejam removidos do servidor.
 	
-	9) Imediatamente após a instalação é necessário realizar as parametrizações do módulo em Administração > Peticionamento Eletrônico, para que o módulo seja utilizado adequadamente pelos Usuários Externos na tela de Acesso Externo do SEI (http://[Servidor PHP]/sei/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0).
+	9) Imediatamente após a instalação é necessário realizar as parametrizações do módulo em Administração > Peticionamento Eletrônico, para que o módulo seja utilizado adequadamente pelos Usuários Externos na tela de Acesso Externo do SEI: http://[Servidor_PHP]/sei/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0
 		
-	--IMPORTANTE: É impreterível ativar no SIP, para o Perfil "Administrador" do SEI, os menus "Contextos/Contatos / Cargos / Novo", "Contextos/Contatos / Cargos / Listar" e "Contextos/Contatos / Cargos / Reativar", pois será necessário cadastrar "Cargos" para que os Usuários Externos possam selecionar o Cargo pertinente no momento da assinatura de cada Peticionamento.
+		--IMPORTANTE: É impreterível ativar no SIP, para o Perfil "Administrador" do SEI, os menus "Contextos/Contatos / Cargos / Novo", "Contextos/Contatos / Cargos / Listar" e "Contextos/Contatos / Cargos / Reativar", pois será necessário cadastrar "Cargos" para que os Usuários Externos possam selecionar o Cargo pertinente no momento da assinatura de cada Peticionamento.
+	
+	10) Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
+		http://[Servidor_PHP]/sei/institucional/peticionamento/indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0
 
 Em caso de erro durante a execução do script verificar (lendo as mensagens de erro e os logs no SEI em Infra > Log e no SIP em Infra > Log) se a causa é algum problema na infra-estrutura local. Neste caso, após a correção, restaurar o backup do banco de dados e executar novamente os scripts indicados nos itens 4 e 5 acima. 
 

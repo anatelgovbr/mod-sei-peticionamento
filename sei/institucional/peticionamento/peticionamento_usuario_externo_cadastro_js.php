@@ -1028,12 +1028,10 @@ function abrirCadastroInteressado(){
 					//charmar janela para cadastrar um novo interessado
 					$('#txtNomeRazaoSocial').val('');
 
-					var str = '<?= PaginaSEIExterna::getInstance()->formatarXHTML(
-					SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpfcnpj=#conteudo#'))
-					?>';
-
-					var res = str.replace("#conteudo#", conteudo);					
-					infraAbrirJanela( res, 'cadastrarInteressado', 900, 900, '', true); //modal 
+					var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpfcnpj=#conteudo#') ?>';
+					var res = str.replace("#conteudo#", conteudo);	
+					//alert( str );				
+					infraAbrirJanela( str, 'cadastrarInteressado', 900, 900, '', true); //modal 
 					return;
 					
 				}

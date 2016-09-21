@@ -8,9 +8,6 @@
 
 require_once dirname(__FILE__).'/../../../SEI.php';
 
-//Data
-require_once dirname(__FILE__).'/../util/DataUtils.php';
-
 class ReciboPeticionamentoRN extends InfraRN { 
 	
 	public function __construct() {
@@ -122,7 +119,6 @@ class ReciboPeticionamentoRN extends InfraRN {
 	
 	protected function gerarReciboSimplificadoControlado( $idProcedimento ) {
 		
-		//echo $idProcedimento; die();
 		$reciboDTO = new ReciboPeticionamentoDTO();
 		
 		$reciboDTO->setNumIdProtocolo( $idProcedimento );
@@ -171,7 +167,6 @@ class ReciboPeticionamentoRN extends InfraRN {
 	//método utilizado para gerar recibo ao final do cadastramento de um processo de peticionamento de usuario externo
 	protected function montarReciboControlado( $arrParams ){
 		
-		//$reciboDTO = $this->cadastrar( $arrParams );
 		$reciboDTO = $arrParams[4];
 		
 		//gerando documento recibo (nao assinado) dentro do processo do SEI
@@ -195,7 +190,7 @@ class ReciboPeticionamentoRN extends InfraRN {
 		
 		$protocoloRN = new ProtocoloPeticionamentoRN();
 		
-		$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
+		//$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
 		$idSerieRecibo = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
 		
 		//=============================================
@@ -207,8 +202,8 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$protocoloReciboDocumentoDTO->setDblIdProtocolo(null);
 		$protocoloReciboDocumentoDTO->setStrDescricao( null );
 		$protocoloReciboDocumentoDTO->setStrStaNivelAcessoLocal( ProtocoloRN::$NA_PUBLICO );
-		$protocoloReciboDocumentoDTO->setStrProtocoloFormatado( $numeroDocumento );
-		$protocoloReciboDocumentoDTO->setStrProtocoloFormatadoPesquisa( $numeroDocumento );
+		//$protocoloReciboDocumentoDTO->setStrProtocoloFormatado( $numeroDocumento );
+		//$protocoloReciboDocumentoDTO->setStrProtocoloFormatadoPesquisa( $numeroDocumento );
 		$protocoloReciboDocumentoDTO->setNumIdUnidadeGeradora( $objUnidadeDTO->getNumIdUnidade() );
 		$protocoloReciboDocumentoDTO->setNumIdUsuarioGerador( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 		$protocoloReciboDocumentoDTO->setStrStaProtocolo( ProtocoloRN::$TP_DOCUMENTO_GERADO );
@@ -317,7 +312,7 @@ class ReciboPeticionamentoRN extends InfraRN {
     
     $html .= '<tr>';
     $html .= '<td style="font-weight: bold;">Data e Horário:</td>';
-    $html .= '<td>' . DataUtils::setFormat( $reciboDTO->getDthDataHoraRecebimentoFinal(),'dd/mm/yyyy hh:mm')  .  '</td>';
+    $html .= '<td>' . $reciboDTO->getDthDataHoraRecebimentoFinal() .  '</td>';
     $html .= '</tr>';
 	
     $html .= '<tr>';
@@ -347,17 +342,15 @@ class ReciboPeticionamentoRN extends InfraRN {
     }
         
     $html .= '<tr>';
-    $html .= '<td style="font-weight: bold;">Interessados:</td>';
-    $html .= '<td></td>';
+    $html .= '<td colspan="2" style="font-weight: bold;">Interessados:</td>';
     $html .= '</tr>';
     
     if( $arrInteressados != null && count( $arrInteressados ) > 0 ){
     	
     	foreach ($arrInteressados as $interessado) {
-                $html .= '<tr>';
-                $html .= '<td>&nbsp&nbsp&nbsp&nbsp ' . $interessado->getStrNome() . '</td>';
-                $html .= '<td></td>';
-                $html .= '</tr>';
+           $html .= '<tr>';
+           $html .= '<td colspan="2" >&nbsp&nbsp&nbsp&nbsp ' . $interessado->getStrNome() . '</td>';
+           $html .= '</tr>';
          } 
     	
     }

@@ -309,17 +309,11 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN {
   	$this->logar(' INSERINDO EMAILS 3001 e 3002 em email_sistema');
   	
   	//Parametrizar Email de Alerta às Unidades
-  	$conteudo1 = ":: Este é um e-mail automático ::
+  	$conteudo1 = "      :: Este é um e-mail automático ::
 
-			O Usuário Externo @nome_usuario_externo@ (@email_usuario_externo@) efetivou o Peticionamento Eletrônico abaixo identificado, conforme Tipo de Peticionamento indicado. O processo nº @processo@ (@tipo_processo@) se encontra aberto nas seguintes Unidades:
+O Usuário Externo @nome_usuario_externo@ (@email_usuario_externo@) efetivou o Peticionamento Eletrônico do tipo @tipo_peticionamento@, no âmbito do processo nº @processo@, conforme disposto no Recibo Eletrônico de Protocolo SEI nº @documento_recibo_eletronico_de_protocolo@.
 
-			    @siglas_unidades_abertura_do_processo@
-
-			Entre no SEI e confira o mencionado processo. Caso não seja de competência de sua Unidade, verifique se já está aberto na Unidade correta e, do contrário, envie-o para a Unidade competente para que seja devidamente tratado.
-
-			Identificação do Peticionamento:
-
-			@conteudo_recibo_eletronico_de_protocolo@
+O mencionado processo se encontra aberto em sua unidade (@sigla_unidades_abertura_do_processo@). Entre no SEI e confira! Caso não seja de competência de sua Unidade, verifique se já está aberto na Unidade correta e, do contrário, envie-o para a Unidade competente para que seja devidamente tratado.
 
 
 @sigla_orgao@
@@ -348,17 +342,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
   	)";
   	
   	//Parametrizar Email de Confirmação ao Usuario Externo
-  	$conteudo2 = ":: Este é um e-mail automático ::
+  	$conteudo2 = "      :: Este é um e-mail automático ::
 
-			Prezado(a) @nome_usuario_externo@,
+Prezado(a) @nome_usuario_externo@,
 
-			Este e-mail confirma a realização do Peticionamento Eletrônico abaixo identificado no SEI-@sigla_orgao@, conforme Tipo de Peticionamento indicado.
+Este e-mail confirma a realização do Peticionamento Eletrônico do tipo @tipo_peticionamento@ no SEI-@sigla_orgao@, no âmbito do processo nº @processo@, conforme disposto no Recibo Eletrônico de Protocolo SEI nº @documento_recibo_eletronico_de_protocolo@.
 
-			Caso no futuro precise realizar novo peticionamento, sempre acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em seu Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
-
-			Identificação do Peticionamento:
-
-			    @conteudo_recibo_eletronico_de_protocolo@
+Caso no futuro precise realizar novo peticionamento, sempre acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em seu Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
 
 @sigla_orgao@

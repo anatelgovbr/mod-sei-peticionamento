@@ -14,6 +14,13 @@ try {
 	require_once dirname(__FILE__).'/util/DataUtils.php';
 	
 	session_start();
+	
+	//////////////////////////////////////////////////////////////////////////////
+	InfraDebug::getInstance()->setBolLigado(false);
+	InfraDebug::getInstance()->setBolDebugInfra(false);
+	InfraDebug::getInstance()->limpar();
+	//////////////////////////////////////////////////////////////////////////////
+	
 	SessaoSEIExterna::getInstance()->validarLink();
 	PaginaSEIExterna::getInstance()->prepararSelecao('recibo_peticionamento_usuario_externo_selecionar');
 	SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
@@ -26,6 +33,7 @@ try {
 
 			//Se cadastrou alguem
 			if ($_GET['acao_origem']=='recibo_peticionamento_usuario_externo_cadastrar'){
+				
 				if (isset($_GET['id_md_pet_rel_recibo_protoc'])){
 					PaginaSEIExterna::getInstance()->adicionarSelecionado($_GET['id_md_pet_rel_recibo_protoc']);
 				}
@@ -44,12 +52,13 @@ try {
 
 	$arrComandos = array();
 	$arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
-	$arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc='.$_GET['id_md_pet_rel_recibo_protoc'].'&acao='.'usuario_externo_controle_acessos'/*PaginaSEIExterna::getInstance()->getAcaoRetorno()*/.'&acao_origem='.$_GET['acao'])).'\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+	$arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=usuario_externo_controle_acessos&acao_origem='.$_GET['acao'])).'\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 	$bolAcaoCadastrar = SessaoSEIExterna::getInstance()->verificarPermissao('recibo_peticionamento_usuario_externo_cadastrar');
 
 	$objReciboPeticionamentoDTO = new ReciboPeticionamentoDTO();
 	$objReciboPeticionamentoDTO->retTodos();
+	$objReciboPeticionamentoDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 	
 	//txtDataInicio
 	if( isset( $_POST['txtDataInicio'] ) && $_POST['txtDataInicio'] != ""){
@@ -64,12 +73,13 @@ try {
 	if( isset( $_POST['selTipo'] ) && $_POST['selTipo'] != ""){
 		$objReciboPeticionamentoDTO->setStrStaTipoPeticionamento( $_POST['selTipo'] );
 	}
-
+	
+	//$objReciboPeticionamentoDTO->setOrd('DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC );
+	$objReciboPeticionamentoDTO->setOrdDthDataHoraRecebimentoFinal(InfraDTO::$TIPO_ORDENACAO_DESC);
+	
 	$objReciboPeticionamentoRN = new ReciboPeticionamentoRN();
-	PaginaSEIExterna::getInstance()->prepararOrdenacao($objReciboPeticionamentoDTO, 'DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_ASC);
-	//print_r( $objReciboPeticionamentoDTO );die();
+	//PaginaSEIExterna::getInstance()->prepararOrdenacao($objReciboPeticionamentoDTO, 'DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC);
 	$arrObjReciboPeticionamentoDTO = $objReciboPeticionamentoRN->listar($objReciboPeticionamentoDTO);
-	//print_r( $arrObjReciboPeticionamentoDTO ); die();
 	$numRegistros = count($arrObjReciboPeticionamentoDTO);
 	
 	if ($numRegistros > 0){
@@ -108,12 +118,12 @@ try {
 			$protocoloDTO->setDblIdProtocolo( $arrObjReciboPeticionamentoDTO[$i]->getNumIdProtocolo() );			
 			$protocoloDTO = $protocoloRN->consultarRN0186( $protocoloDTO );
 			
-			if( $protocoloDTO == null){
+			//if( $protocoloDTO == null){
 				//echo $i; die();
 				//print_r( $arrObjReciboPeticionamentoDTO[$i] ); die();
-			}
+			//}
 			
-		   	if( $_GET['id_md_pet_rel_recibo_protoc'] == $arrObjReciboPeticionamentoDTO[$i]->getNumIdReciboPeticionamento()){
+		   	if( isset( $_GET['id_md_pet_rel_recibo_protoc'] ) && $_GET['id_md_pet_rel_recibo_protoc'] == $arrObjReciboPeticionamentoDTO[$i]->getNumIdReciboPeticionamento()){
 		    		$strCssTr = '<tr class="infraTrAcessada">';
 			}else{
 				if( $arrObjReciboPeticionamentoDTO[$i]->getStrSinAtivo()=='S' ){
@@ -127,7 +137,7 @@ try {
 			$data = '';
 			
 			if( $arrObjReciboPeticionamentoDTO[$i] != null && $arrObjReciboPeticionamentoDTO[$i]->getDthDataHoraRecebimentoFinal() != "" ) {
-			  $data = DataUtils::setFormat( $arrObjReciboPeticionamentoDTO[$i]->getDthDataHoraRecebimentoFinal(),'dd/mm/yyyy hh:mm');
+			  $data = $arrObjReciboPeticionamentoDTO[$i]->getDthDataHoraRecebimentoFinal();
 			}
 			
 			$strResultado .= '<td>' . $data .'</td>';
@@ -253,6 +263,7 @@ $strTipo = $_POST['selTipo'];;
 <?  
 PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado,$numRegistros);
 PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);
+PaginaSEIExterna::getInstance()->montarAreaDebug();
 ?>
 
 </form>

@@ -175,6 +175,7 @@ PaginaSEIExterna::getInstance()->fecharJavaScript();
 #fldProrrogacao {height: 10%; width: 86%;}
 .sizeFieldset {height:auto; width: 86%;}
 .fieldsetClear {border:none !important;}
+#divInfraBarraSistemaD { display:none; }
 </style>
 <? 
 PaginaSEIExterna::getInstance()->fecharHead();
@@ -309,7 +310,16 @@ function inicializar(){
   } else{
      document.getElementById('btnFechar').focus();
   }
- 
+
+  infraMenuSistemaEsquema(false,'Ocultar');
+  if(window.location.href.indexOf('/sei')>0){
+    if (document.getElementById('divInfraBarraSistemaE').childNodes[1]!=undefined){
+      if (document.getElementById('divInfraBarraSistemaE').childNodes[1].tagName=='IMG'){
+        document.getElementById('divInfraBarraSistemaE').childNodes[1].src=window.location.href.substring(0, window.location.href.indexOf('/sei')+4)+'/imagens/sei_logo_azul_celeste.jpg';
+      }
+    }
+  }
+	  
   var strHash = document.getElementById('hdnAnexos').value;
   var arrHash = strHash.split('±');
     

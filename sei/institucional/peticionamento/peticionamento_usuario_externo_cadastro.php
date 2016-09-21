@@ -217,7 +217,10 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                <th class="infraTh"  id="tdDescNomePessoa" > Nome/Razão social </th>
                <th align="center" class="infraTh" style="width:70px;"> Ações </th>               
            </tr>
+           
            <tbody> 
+           
+           <!--  
            <tr class="infraTrClara">
                <td class="infraTdSetaOrdenacao"> CPF/CNPJ </td>
                <td class="infraTdSetaOrdenacao"> Razão social </td>
@@ -227,8 +230,10 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                  <img src="/infra_css/imagens/remover.gif" alt="Remover" onclick="deleteRow(this)" title="Remover" class="infraImg"/>
                </td>               
            </tr>
+           -->
            
            </tbody>
+           
        </table>
        
        </div>

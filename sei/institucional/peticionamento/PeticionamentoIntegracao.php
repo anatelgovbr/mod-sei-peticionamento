@@ -9,7 +9,44 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 		
 	public function __construct(){
 	}
+			
+	//EU 7352 - Icone exibido na tela interna do processo (Controle de Processos -> clicar em algum processo da lista)
+	public function montarIconeProcedimento(SeiIntegracaoDTO $objSeiIntegracaoDTO){
 		
+		$arrSeiNoAcaoDTO = array();
+		
+		$idProcedimento = null;
+		
+		if( $objSeiIntegracaoDTO != null && $objSeiIntegracaoDTO->isSetObjProcedimentoDTO() ){
+			$idProcedimento = $objSeiIntegracaoDTO->getObjProcedimentoDTO()->getDblIdProcedimento();
+		}
+		
+		/*
+		$seiAcaoDTO = new SeiNoAcaoDTO();
+		$seiAcaoDTO->setStrTipo('"CIENCIAS"');
+        $seiAcaoDTO->setStrId('C');
+        $seiAcaoDTO->setStrIdPai($idProcedimento);
+        $seiAcaoDTO->setStrHref('http://www.anatel.gov.br');
+        $seiAcaoDTO->setStrTarget('ifrVisualizacao');
+        $seiAcaoDTO->setStrTitle('title teste');
+        $seiAcaoDTO->setStrIcone('"imagens/sei_ciencia_pequeno.gif"');
+        $seiAcaoDTO->setBolHabilitado(true);		
+		$arrSeiNoAcaoDTO[] = $seiAcaoDTO;
+		*/
+		
+		return $arrSeiNoAcaoDTO;
+	}
+		
+	//EU 7352 - Icone exibido na tela "Controle de Processos"
+	public function montarIconeControleProcessos($arrObjProcedimentoDTO){
+		return array("<img src='imagens/retorno_programado.gif' title='teste1' />");
+	}
+	
+	//EU 7352 - Icone exibido na tela "Acompanhamento Especial"
+	public function montarIconeAcompanhamentoEspecial($arrObjProcedimentoDTO){
+		return array("<img src='imagens/retorno_programado.gif' title='teste2' />");
+	}
+	
 	public function montarMenuUsuarioExterno(){ 
 				
 		$menuExternoRN = new MenuPeticionamentoUsuarioExternoRN();

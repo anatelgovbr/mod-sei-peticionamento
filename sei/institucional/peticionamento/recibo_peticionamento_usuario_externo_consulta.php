@@ -104,7 +104,8 @@ try {
         }
 
         $arrComandos   = array();
-        $arrComandos[] = '<button type="button" accesskey="s" id="btnSalvarPDF" value="Salvar em PDF" onclick="salvarPDF();" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar em PDF</button>';
+		// Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
+		// $arrComandos[] = '<button type="button" accesskey="s" id="btnSalvarPDF" value="Salvar em PDF" onclick="salvarPDF();" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar em PDF</button>';
         $arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
         $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc=' . $_GET['id_md_pet_rel_recibo_protoc'] . '&acao=' . PaginaSEIExterna::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
@@ -121,6 +122,9 @@ try {
         if (isset($_GET['id_md_pet_rel_recibo_protoc']) && $_GET['id_md_pet_rel_recibo_protoc'] != "") {
             $objReciboPeticionamentoDTO->setNumIdReciboPeticionamento($_GET['id_md_pet_rel_recibo_protoc']);
         }
+		
+        //usuarios so podem ver peticionamentos feitos por ele mesmo
+        $objReciboPeticionamentoDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 
         $objReciboPeticionamentoRN               = new ReciboPeticionamentoRN();
         $objReciboDocumentoAnexoPeticionamentoRN = new ReciboDocumentoAnexoPeticionamentoRN();
@@ -163,11 +167,11 @@ try {
         
         //obtendo descricao do orgao para o rodape do recibo
         $idOrgao = $protocoloDTO->retNumIdOrgaoUnidadeGeradora();
-		$orgaoDTO = new OrgaoDTO();
+		$OrgaoDTO = new OrgaoDTO();
 		$orgaoRN = new OrgaoRN();
-		$orgaoDTO->retTodos();
-		$orgaoDTO->setNumIdOrgao(  $protocoloDTO->getNumIdOrgaoUnidadeGeradora() );
-		$orgaoDTO = $orgaoRN->consultarRN1352( $orgaoDTO );
+		$OrgaoDTO->retTodos();
+		$OrgaoDTO->setNumIdOrgao(  $protocoloDTO->getNumIdOrgaoUnidadeGeradora() );
+		$OrgaoDTO = $orgaoRN->consultarRN1352( $OrgaoDTO );
 		
     } catch (Exception $e) {
         PaginaSEIExterna::getInstance()->processarExcecao($e);
@@ -187,13 +191,15 @@ try {
     function imprimir() {
         document.getElementById('btnFechar').style.display = 'none';
         document.getElementById('btnImprimir').style.display = 'none';
-        document.getElementById('btnSalvarPDF').style.display = 'none';
+        // Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
+		// document.getElementById('btnSalvarPDF').style.display = 'none';
         infraImprimirDiv('divInfraAreaTelaD');
 
         self.setTimeout(function () {
             document.getElementById('btnFechar').style.display = '';
             document.getElementById('btnImprimir').style.display = '';
-            document.getElementById('btnSalvarPDF').style.display = '';
+            // Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
+			// document.getElementById('btnSalvarPDF').style.display = '';
         }, 1000);
     }
 
@@ -220,23 +226,25 @@ try {
 		//document.getElementById('hdnInfraAreaDados').value = document.getElementById('divInfraAreaDados').innerHTML;
         var tabela = document.getElementById('divInfraAreaDados').getElementsByTagName('TABLE');
         if (tabela.length > 0) {
-            var tabl = tabela[0]; // console.log(tabl);
-
-            var l = tabl.rows.length; //console.log(l);
+            var tabl = tabela[0];
             var s = '';
-            var td1maior = 0;
-            var td2maior = 0;
 
-            for (var i = 0; i < l; i++) {
+            for (var i = 0; i < tabl.rows.length; i++) {
+                // linha
                 var tr = tabl.rows[i];
-                if (tr.childNodes[1].style.fontWeight.indexOf('bold') > -1) {
-                    s += '<b>';
+                
+                if (tr.cells.length>0){
+	                for (var j = 0; j < tr.cells.length; j++) {
+		                if (j>0) {
+		                	s += '|';
+		                }
+		                if (tr.cells[j].style.fontWeight.indexOf('bold') > -1) {
+		                    s += '<b>';
+		                }
+		             	s += tr.cells[j].innerHTML;
+	                }
+	                s += '±';
                 }
-                s += tr.childNodes[1].innerHTML + '|'
-                if (tr.childNodes[3].style.fontWeight.indexOf('bold') > -1) {
-                    s += '<b>';
-                }
-                s += tr.childNodes[3].innerHTML + '±';
             }
             document.getElementById('hdnInfraAreaDados').value = s;
         }
@@ -285,13 +293,11 @@ try {
 
             <?php if ($arrInteressados != null && is_array($arrInteressados) && count($arrInteressados) > 0) : ?>
                 <tr>
-                    <td style="font-weight: bold;">Interessados:</td>
-                    <td></td>
+                    <td style="font-weight: bold;"colspan="2">Interessados:</td>
                 </tr>
                 <?php foreach ($arrInteressados as $interessado) : ?>
                     <tr>
-                        <td>&nbsp&nbsp&nbsp&nbsp<?= $interessado->getStrNome() ?> </td>
-                        <td></td>
+                        <td colspan="2">&nbsp&nbsp&nbsp&nbsp<?= $interessado->getStrNome() ?> </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -370,9 +376,9 @@ try {
         <br/>
         <br/>
         
-		<label id=divRodape>
-			<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) <?= htmlentities( $orgaoDTO->getStrDescricao() ); ?>.</p>
-		</label>
+        <label id=divRodape>
+                <p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) <?= htmlentities( $OrgaoDTO->getStrDescricao() ); ?>.
+        </label>
 
     </div>
 

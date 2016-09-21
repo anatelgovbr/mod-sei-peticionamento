@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * ANATEL
 *
@@ -9,17 +9,17 @@
 try {
 	
   require_once dirname(__FILE__).'/../../SEI.php';
-
+  
   session_start();
   
   //////////////////////////////////////////////////////////////////////////////
-  InfraDebug::getInstance()->setBolLigado(true);
-  InfraDebug::getInstance()->setBolDebugInfra(true);
+  InfraDebug::getInstance()->setBolLigado(false);
+  InfraDebug::getInstance()->setBolDebugInfra(false);
   InfraDebug::getInstance()->limpar();
   //////////////////////////////////////////////////////////////////////////////
 	
   PaginaSEIExterna::getInstance()->setTipoPagina( InfraPagina::$TIPO_PAGINA_SIMPLES );  
-  SessaoSEIExterna::getInstance()->validarLink();
+  //SessaoSEIExterna::getInstance()->validarLink();
   
   //SessaoSEI::getInstance(false);
   //SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() , SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual() );
@@ -57,8 +57,6 @@ PaginaSEIExterna::getInstance()->montarMeta();
 PaginaSEIExterna::getInstance()->montarTitle(':: '.PaginaSEIExterna::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
-$objEditorRN = new EditorRN();
-echo $objEditorRN->montarCssEditor(null);
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
@@ -75,37 +73,229 @@ PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 $urlBaseLink = "";
 $arrComandos = array();
-$arrComandos[] = '<button type="button" accesskey="P" name="Peticionar" value="Peticionar" onclick="enviarInteressado()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
-$arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador.php?acao='.PaginaSEIExterna::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEIExterna::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">V</span>oltar</button>';
+$arrComandos[] = '<button type="button" accesskey="S" name="Salvar" value="Salvar" onclick="salvar()" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+$arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador.php?acao='.PaginaSEIExterna::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEIExterna::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
 ?> 
 <form id="frmIndisponibilidadeCadastro" method="post" onsubmit="return OnSubmitForm();"  action="<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
-<?
+<?php
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 ?>
 
  <fieldset id="field1" class="infraFieldset sizeFieldset">
- <legend class="infraLegend">&nbsp; Interessado &nbsp;</legend>
-
+    
+    <legend class="infraLegend">&nbsp; Interessado &nbsp;</legend>       
+	
+	<input type="radio" name="tipoPessoa" value="pf" id="rdPF" onclick="selecionarPF()" />
+	<label for="rdPF" class="infraLabelRadio">Pessoa física</label> <br/>
+	
+	    <input type="radio" name="tipoPessoaPF" value="0" id="rdPF1" style="display: none;" onclick="selecionarPF1()" />
+	    <label for="rdPF1" id="lblrdPF1" class="infraLabelRadio" style="display: none;">
+	    Sem vínculo com qualquer Pessoa Jurídica <br/> 
+	    </label>
+	
+	    <input type="radio" name="tipoPessoaPF" value="1" id="rdPF2" style="display: none;" onclick="selecionarPF2()" />
+	    <label for="rdPF2" id="lblrdPF2" class="infraLabelRadio" style="display: none;">
+	    Com vínculo com Pessoa Jurídica <br/> 
+	    </label> 
+	
+	<input type="radio" name="tipoPessoa" value="pj" id="rdPJ" onclick="selecionarPJ()" />
+	<label for="rdPJ" class="infraLabelRadio">Pessoa jurídica</label>
+			
  </fieldset>
   
  <fieldset id="field2" class="infraFieldset sizeFieldset">
- <legend class="infraLegend">&nbsp; Formulário de Cadastro &nbsp;</legend>
+    
+    <legend class="infraLegend">&nbsp; Formulário de Cadastro &nbsp;</legend>
+    
+    <label class="infraLabelObrigatorio"> Tipo de Interessado:</label><br/>
+    <select class="infraSelect" width="380" id="tipoInteressado" name="tipoInteressado" style="width:380px;" >
+        <option value=""></option>
+    </select> <br/>
+    
+    <label class="infraLabelObrigatorio"> Nome / Razão Social:</label><br/>
+    <select class="infraSelect" width="380" id="razaoSocial" name="razaoSocial" style="width:380px;" >
+        <option value=""></option>
+    </select> <br/>
+    
+    <label id="lblPjVinculada" style="display: none;" class="infraLabelObrigatorio"> 
+    Pessoa jurídica a qual o interessado é vinculado:<br/>
+    <input type="text" class="infraText" name="txtPjVinculada" id="txtPjVinculada" style="width: 540px; display: none;" />
+    <br/><br/>
+    </label>
+    
+    <label class="infraLabelObrigatorio"> CPF/CNPJ:</label><br/>
+    <input type="text" class="infraText" name="cpfCnpj" id="cpfCnpj" style="width: 540px;" />
+    <br/><br/>
+    
+    <label class="infraLabelObrigatorio"> Tratamento:</label><br/>
+    <select class="infraSelect" width="380" id="tratamento" name="tratamento" style="width:380px;" >
+        <option value=""></option>
+    </select> <br/>
+    
+    <label class="infraLabelObrigatorio"> Cargo:</label><br/>
+    <select class="infraSelect" width="380" id="cargo" name="cargo" style="width:380px;" >
+        <option value=""></option>
+    </select> <br/>
+    
+    <label class="infraLabelObrigatorio"> Vocativo:</label><br/>
+    <select class="infraSelect" width="380" id="vocativo" name="vocativo" style="width:380px;" >
+        <option value=""></option>
+    </select> <br/>  
+    
+    <div class="div1" style="float:left; width: auto;">
+        
+        <div id="div1_1" style="float:left; width: auto;">
+        <label class="infraLabel">Número da OAB:</label><br/>
+        <input type="text" class="infraText" name="numeroOab" id="numeroOab" />
+        </div>
+        
+        <div id="div1_2" style="float:left; margin-left:20px; width: auto;">
+        <label class="infraLabelObrigatorio">RG:</label><br/>
+        <input type="text" class="infraText" name="rg" id="rg" />
+        </div>
+        
+        <div id="div1_3" style="float:left; margin-left:20px; width: auto;">
+        <label class="infraLabelObrigatorio">Órgão Expedidor do RG:</label><br/>
+        <input type="text" class="infraText" name="orgaoExpedidor" id="orgaoExpedidor" />
+        </div>
+        
+        <div id="div1_4" style="float:left; margin-left:20px; width: auto;">
+        <label class="infraLabelObrigatorio">Telefone:</label><br/>
+        <input type="text" class="infraText" name="telefone" id="telefone" />
+        </div>
+                
+    </div>  
+    
+    <div style="clear: both;"></div>
+    
+    <div class="div2" style="float:left; width: auto;">
+    
+        <div id="div2_1" style="float:left; width: 280px;">
+          <label class="infraLabel">Email:</label><br/>
+          <input type="text" class="infraText" name="email" id="email" style="width: 280px;" />
+        </div>
+        
+        <div id="div2_2" style="float:left; margin-left:20px; width: 280px;">
+          <label class="infraLabel">Sítio na Internet:</label><br/>
+          <input type="text" class="infraText" style="width: 280px;" name="sitioInternet" id="sitioInternet" />
+        </div>
+    
+    </div>  
+    
+    <div style="clear: both;"></div>
+    
+    <div class="div3" style="float:left; width: auto;">
+    
+        <div id="div3_1" style="float:left; width: 280px;">
+        <label class="infraLabelObrigatorio">Endereço:</label><br/>
+        <input type="text" class="infraText" style="width: 280px;" name="endereco" id="endereco" />
+        </div>
+        
+        <div id="div3_2" style="float:left; margin-left:20px; width: 280px;">
+        <label class="infraLabelObrigatorio">Bairro:</label><br/>
+        <input type="text" class="infraText" style="width: 280px;" name="bairro" id="bairro" />
+        </div>
+    
+    </div>  
+    
+    <div style="clear: both;"></div>
+    
+    <div class="div4" style="float:left; width: auto;">
+    
+        <div id="div4_1" style="float:left; width: auto;">
+        <label class="infraLabelObrigatorio">País:</label><br/>
+        <input type="text" class="infraText" name="pais" id="pais" />
+        </div>
+        
+        <div id="div4_2" style="float:left; margin-left:20px; width: auto;">
+        <label class="infraLabelObrigatorio">Estado:</label><br/>
+        <input type="text" class="infraText" name="estado" id="estado" />
+        </div>
+        
+        <div id="div4_3" style="float:left; margin-left:20px; width: auto;">
+        <label class="infraLabelObrigatorio">Cidade:</label><br/>
+        <input type="text" class="infraText" name="cidade" id="cidade" />
+        </div>
+        
+        <div id="div4_4" style="float:left; margin-left:20px; width: auto;">
+        <label class="infraLabelObrigatorio">CEP:</label><br/>
+        <input type="text" class="infraText" name="cep" id="cep" />
+        </div>
+    
+    </div>  
+    
+    <div style="clear: both;"></div>
+  
   </fieldset>  
     
 </form>
 
-<?
-PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);  
+<?php
+//PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);  
+PaginaSEIExterna::getInstance()->montarAreaDebug();
 PaginaSEIExterna::getInstance()->fecharAreaDados();
 PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 ?>
 <script type="text/javascript">
 
+function selecionarPF(){
+  mostrarCamposPF();
+}
+
+function selecionarPF1(){
+  ocultarComboPJVinculada();
+}
+
+function selecionarPF2(){
+	mostrarComboPJVinculada();	
+}
+
+function ocultarComboPJVinculada(){
+  document.getElementById('lblPjVinculada').style.display = 'none';
+  document.getElementById('txtPjVinculada').style.display = 'none';
+  document.getElementById('txtPjVinculada').value = '';
+}
+
+function mostrarComboPJVinculada(){
+  document.getElementById('lblPjVinculada').style.display = '';
+  document.getElementById('txtPjVinculada').style.display = '';
+}
+
+function selecionarPJ(){
+	mostrarCamposPJ();
+}
+
+function mostrarCamposPF(){
+	
+  document.getElementById('rdPF1').style.display = '';
+  document.getElementById('rdPF2').style.display = '';
+  document.getElementById('lblrdPF1').style.display = '';
+  document.getElementById('lblrdPF2').style.display = '';
+}
+
+function mostrarCamposPJ(){
+	
+  document.getElementById('rdPF1').style.display = 'none';
+  document.getElementById('rdPF2').style.display = 'none';
+
+  document.getElementById('rdPF1').checked = false;
+  document.getElementById('rdPF2').checked = false;
+  document.getElementById('rdPF1').checked = '';
+  document.getElementById('rdPF2').checked = '';
+  
+  document.getElementById('lblrdPF1').style.display = 'none';
+  document.getElementById('lblrdPF2').style.display = 'none';
+
+  document.getElementById('lblPjVinculada').style.display = 'none';
+  document.getElementById('txtPjVinculada').style.display = 'none';
+  
+}
+
 function enviarInteressado(){
 
-	alert('Enviar interessados - INICIO');
+	//alert('Enviar interessados - INICIO');
 	
 	var arrDados = ["Banana1", "Orange1", "Apple1", "Mango1"];
 	arrDados.push("Kiwi1");
@@ -115,7 +305,7 @@ function enviarInteressado(){
 	arrDados2.push("Kiwi2");
 	opener.receberInteressado(arrDados2, false);
 
-	alert('Enviar interessados - FIM');
+	//alert('Enviar interessados - FIM');
 	
 }
 

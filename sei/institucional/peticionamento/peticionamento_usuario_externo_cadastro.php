@@ -199,7 +199,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
        <div id="divSel2" style=" float: left; margin-left: 10px; display: none;"> 
        
          <label id="descNomePessoa" style="font-weight: bold;"> </label> <br/>
-         <input type="text" name="txtNomeRazaoSocial" id="txtNomeRazaoSocial" maxlength="250" width="280" style="width:280px; display: none;"> 
+         <input type="text" name="txtNomeRazaoSocial" id="txtNomeRazaoSocial" 
+                readonly="readonly" maxlength="250" width="280" 
+                style="width:280px; display: none;"> 
          
          <input type="text" readonly="readonly" id="btAdicionarInteressado" class="infraText" value=" Adicionar " 
                 onclick="adicionarInteressadoValido()" style="width: 60px; margin-left: 2px; display: none;" />   
@@ -215,6 +217,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
            <tr>
                <th class="infraTh" id="tdDescTipoPessoa" > CPF/CNPJ </th>
                <th class="infraTh"  id="tdDescNomePessoa" > Nome/Razão social </th>
+               <th class="infraTh" style="display: none;" > ID Usuario </th>
+               <th class="infraTh" style="display: none;" > ID Contato </th>
+               <th class="infraTh" style="display: none;" > ID Contexto </th>
                <th align="center" class="infraTh" style="width:70px;"> Ações </th>               
            </tr>
            

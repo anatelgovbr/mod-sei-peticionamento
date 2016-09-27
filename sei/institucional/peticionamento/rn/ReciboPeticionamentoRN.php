@@ -325,12 +325,13 @@ class ReciboPeticionamentoRN extends InfraRN {
     $html .= '<td>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() .  '</td>';
     $html .= '</tr>';
     
-    //obter interessados
+    //obter interessados (apenas os do tipo interessado, nao os do tipo remetente)
     $arrInteressados = array();
     $objParticipanteDTO = new ParticipanteDTO();
     $objParticipanteDTO->setDblIdProtocolo( $reciboDTO->getNumIdProtocolo() );
+    $objParticipanteDTO->setStrStaParticipacao( ParticipanteRN::$TP_INTERESSADO );
     $objParticipanteDTO->retNumIdContato();
-    $objParticipanteRN     = new ParticipanteRN();
+    $objParticipanteRN = new ParticipanteRN();
     $arrObjParticipanteDTO = $objParticipanteRN->listarRN0189($objParticipanteDTO);
     
     foreach ($arrObjParticipanteDTO as $objParticipanteDTO) {

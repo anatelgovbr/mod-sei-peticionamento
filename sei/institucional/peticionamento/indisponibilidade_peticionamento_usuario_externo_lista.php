@@ -6,39 +6,43 @@
 *
 */
 
-
 try {
 
   require_once dirname(__FILE__).'/../../SEI.php';
-  
+
   session_start();
+
+  //////////////////////////////////////////////////////////////////////////////
   //InfraDebug::getInstance()->setBolLigado(false);
   //InfraDebug::getInstance()->setBolDebugInfra(false);
   //InfraDebug::getInstance()->limpar();
-  
-  //SessaoSEIExterna::getInstance()->validarLink();
+  //////////////////////////////////////////////////////////////////////////////
   //PaginaSEIExterna::getInstance()->setBolXHTML(false);
+  //SessaoSEIExterna::getInstance()->validarLink();
   
-  //PaginaSEIExterna::getInstance()->prepararSelecao('indisponibilidade_peticionamento_usuario_externo_selecionar');
+  //PaginaPeticionamentoExterna::getInstance()->prepararSelecao('indisponibilidade_peticionamento_usuario_externo_selecionar');
   //SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
 
+  PaginaPeticionamentoExterna::getInstance()->setTipoPagina(PaginaPeticionamentoExterna::$TIPO_PAGINA_SEM_MENU);
+  PaginaPeticionamentoExterna::getInstance()->getBolAutoRedimensionar();
+  
   switch($_GET['acao_externa']){
 
     case 'indisponibilidade_peticionamento_usuario_externo_selecionar':
       
-      $strTitulo = PaginaSEIExterna::getInstance()->getTituloSelecao('Selecionar Indisponibilidades','Selecionar Indisponibilidades');
+      $strTitulo = PaginaPeticionamentoExterna::getInstance()->getTituloSelecao('Selecionar Indisponibilidades','Selecionar Indisponibilidades');
 
       //Se cadastrou alguem
       if ($_GET['acao_origem']=='indisponibilidade_peticionamento_usuario_externo_cadastrar'){
         if (isset($_GET['id_indisponibilidade_peticionamento'])){
-          PaginaSEIExterna::getInstance()->adicionarSelecionado($_GET['id_indisponibilidade_peticionamento']);
+          PaginaPeticionamentoExterna::getInstance()->adicionarSelecionado($_GET['id_indisponibilidade_peticionamento']);
         }
       }
       break;
 
     case 'indisponibilidade_peticionamento_usuario_externo_listar':
         
-      $strTitulo = 'Indisponibilidade do Sistema';
+      $strTitulo = 'Indisponibilidades do Sistema';
       break;
 
     default:
@@ -62,17 +66,17 @@ try {
   	$objIndisponibilidadePeticionamentoDTO->setStrSinProrrogacao($_POST['selSinProrrogacao']);
   }
   
-  PaginaSEIExterna::getInstance()->prepararOrdenacao($objIndisponibilidadePeticionamentoDTO, 'DataInicio', InfraDTO::$TIPO_ORDENACAO_DESC);
-  PaginaSEIExterna::getInstance()->prepararPaginacao($objIndisponibilidadePeticionamentoDTO, 200);
+  PaginaPeticionamentoExterna::getInstance()->prepararOrdenacao($objIndisponibilidadePeticionamentoDTO, 'DataInicio', InfraDTO::$TIPO_ORDENACAO_DESC);
+  PaginaPeticionamentoExterna::getInstance()->prepararPaginacao($objIndisponibilidadePeticionamentoDTO, 200);
     
   $objIndisponibilidadePeticionamentoRN = new IndisponibilidadePeticionamentoRN();
   $arrObjIndisponibilidadePeticionamentoDTO = $objIndisponibilidadePeticionamentoRN->listar($objIndisponibilidadePeticionamentoDTO);
 
-  PaginaSEIExterna::getInstance()->processarPaginacao($objIndisponibilidadePeticionamentoDTO);
+  PaginaPeticionamentoExterna::getInstance()->processarPaginacao($objIndisponibilidadePeticionamentoDTO);
   $numRegistros = count($arrObjIndisponibilidadePeticionamentoDTO);
 
-  $strLinkPesquisar = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0' ) );
-  //$strLinkPesquisar = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] .'&acao_origem='.$_GET['acao']));
+  $strLinkPesquisar = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0' ) );
+  //$strLinkPesquisar = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] .'&acao_origem='.$_GET['acao']));
   $arrComandos[] = '<button type="button" accesskey="P" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
   $arrComandos[] = '<button type="button" accesskey="I" id="btnImprimir" value="Fechar" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
   //$arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="fechar();" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
@@ -88,16 +92,16 @@ try {
     $strCaptionTabela = 'Indisponibilidades';
     
     $strResultado .= '<table width="99%" id="tbIndisponibilidade" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
-    $strResultado .= '<caption class="infraCaption">'.PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela,$numRegistros).'</caption>';
+    $strResultado .= '<caption class="infraCaption">'.PaginaPeticionamentoExterna::getInstance()->gerarCaptionTabela($strCaptionTabela,$numRegistros).'</caption>';
     $strResultado .= '<tr>';
     
     if ($bolCheck) {
-      $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEIExterna::getInstance()->getThCheck().'</th>'."\n";
+      $strResultado .= '<th class="infraTh" width="1%">'.PaginaPeticionamentoExterna::getInstance()->getThCheck().'</th>'."\n";
     }
     
-    $strResultado .= '<th class="infraTh" width="30%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objIndisponibilidadePeticionamentoDTO,'Início','DataInicio',$arrObjIndisponibilidadePeticionamentoDTO).'</th>'."\n";
-    $strResultado .= '<th class="infraTh">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objIndisponibilidadePeticionamentoDTO,'Fim','DataFim',$arrObjIndisponibilidadePeticionamentoDTO).'</th>'."\n";
-    $strResultado .= '<th class="infraTh">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objIndisponibilidadePeticionamentoDTO,'Prorrogação Automática dos Prazos','SinProrrogacao',$arrObjIndisponibilidadePeticionamentoDTO).'</th>'."\n";
+    $strResultado .= '<th class="infraTh" width="30%">'.PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objIndisponibilidadePeticionamentoDTO,'Início','DataInicio',$arrObjIndisponibilidadePeticionamentoDTO).'</th>'."\n";
+    $strResultado .= '<th class="infraTh">'.PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objIndisponibilidadePeticionamentoDTO,'Fim','DataFim',$arrObjIndisponibilidadePeticionamentoDTO).'</th>'."\n";
+    $strResultado .= '<th class="infraTh">'.PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objIndisponibilidadePeticionamentoDTO,'Prorrogação Automática dos Prazos','SinProrrogacao',$arrObjIndisponibilidadePeticionamentoDTO).'</th>'."\n";
     $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
@@ -117,7 +121,7 @@ try {
       $strResultado .= $strCssTr;
 
       if ($bolCheck){
-        $strResultado .= '<td valign="top">'.PaginaSEIExterna::getInstance()->getTrCheck($i,$arrObjIndisponibilidadePeticionamentoDTO[$i]->getNumIdIndisponibilidade(),$arrObjIndisponibilidadePeticionamentoDTO[$i]->getStrSinProrrogacao()).'</td>';
+        $strResultado .= '<td valign="top">'.PaginaPeticionamentoExterna::getInstance()->getTrCheck($i,$arrObjIndisponibilidadePeticionamentoDTO[$i]->getNumIdIndisponibilidade(),$arrObjIndisponibilidadePeticionamentoDTO[$i]->getStrSinProrrogacao()).'</td>';
       }
       
       $dataInicio = isset($arrObjIndisponibilidadePeticionamentoDTO[$i]) && $arrObjIndisponibilidadePeticionamentoDTO[$i]->getDthDataInicio() != '' ? str_replace(' ', ' - ',substr($arrObjIndisponibilidadePeticionamentoDTO[$i]->getDthDataInicio(), 0, -3))  :  '';
@@ -132,7 +136,7 @@ try {
 	  
       if ($bolAcaoConsultar){
       	$urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
-        $strResultado .= '<a href="'. $urlBase . '/institucional/peticionamento/indisponibilidade_peticionamento_usuario_externo_cadastro.php?id_orgao_acesso_externo=0&acao_externa=indisponibilidade_peticionamento_usuario_externo_consultar&id_indisponibilidade_peticionamento='.$arrObjIndisponibilidadePeticionamentoDTO[$i]->getNumIdIndisponibilidade().'" tabindex="'.PaginaSEIExterna::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'. $urlBase . '/institucional/peticionamento/indisponibilidade_peticionamento_usuario_externo_cadastro.php?id_orgao_acesso_externo=0&acao_externa=indisponibilidade_peticionamento_usuario_externo_consultar&id_indisponibilidade_peticionamento='.$arrObjIndisponibilidadePeticionamentoDTO[$i]->getNumIdIndisponibilidade().'" tabindex="'.PaginaPeticionamentoExterna::getInstance()->getProxTabTabela().'"><img src="'.PaginaPeticionamentoExterna::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
       }        
 
       $strResultado .= '</td></tr>'."\n";
@@ -163,47 +167,27 @@ try {
   $strItensSelSinProrrogacaoAutomatica = IndisponibilidadePeticionamentoINT::montarSelectProrrogacaoAutomaticaPrazos('','Todos',$valorComboProrrogacao);
 
 }catch(Exception $e){
-  PaginaSEIExterna::getInstance()->processarExcecao($e);
+  PaginaPeticionamentoExterna::getInstance()->processarExcecao($e);
 } 
 
-PaginaSEIExterna::getInstance()->montarDocType();
-PaginaSEIExterna::getInstance()->abrirHtml();
-PaginaSEIExterna::getInstance()->abrirHead();
-PaginaSEIExterna::getInstance()->montarMeta();
-PaginaSEIExterna::getInstance()->montarTitle(':: '.PaginaSEIExterna::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
-PaginaSEIExterna::getInstance()->montarStyle();
-PaginaSEIExterna::getInstance()->abrirStyle();
+PaginaPeticionamentoExterna::getInstance()->montarDocType();
+PaginaPeticionamentoExterna::getInstance()->abrirHtml();
+PaginaPeticionamentoExterna::getInstance()->abrirHead();
+PaginaPeticionamentoExterna::getInstance()->montarMeta();
+PaginaPeticionamentoExterna::getInstance()->montarTitle(':: '.PaginaPeticionamentoExterna::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
+PaginaPeticionamentoExterna::getInstance()->montarStyle();
+PaginaPeticionamentoExterna::getInstance()->abrirStyle();
 ?>
 <?
-PaginaSEIExterna::getInstance()->fecharStyle();
-PaginaSEIExterna::getInstance()->montarJavaScript();
-PaginaSEIExterna::getInstance()->abrirJavaScript();
+PaginaPeticionamentoExterna::getInstance()->fecharStyle();
+PaginaPeticionamentoExterna::getInstance()->montarJavaScript();
+PaginaPeticionamentoExterna::getInstance()->abrirJavaScript();
 ?>
 function inicializar(){
   if ('<?=$_GET['acao']?>'=='indisponibilidade_peticionamento_usuario_externo_listar'){
     infraReceberSelecao();
     document.getElementById('btnFecharSelecao').focus();
   }
-
-  infraEfeitoTabelas();
-  corrigirTela();
-
-  var menu = document.getElementById('lnkInfraMenuSistema');
-  if(menu != null){
-  	menu.onclick=esconderMenu;
-  }
-    
-  infraMenuSistemaEsquema(false,'Ocultar');
-  if(window.location.href.indexOf('/sei')>0){
-    if (document.getElementById('divInfraBarraSistemaE').childNodes[1]!=undefined){
-      if (document.getElementById('divInfraBarraSistemaE').childNodes[1].tagName=='IMG'){
-        document.getElementById('divInfraBarraSistemaE').childNodes[1].src=window.location.href.substring(0, window.location.href.indexOf('/sei')+4)+'/imagens/sei_logo_azul_celeste.jpg';
-      }
-    }
-  }
-	  
-  var strHash = document.getElementById('hdnAnexos').value;
- 	
 }
 
 function validDate(valor) {
@@ -312,12 +296,12 @@ function esconderMenu(){
 }
 
 <?
-PaginaSEIExterna::getInstance()->fecharJavaScript();
-PaginaSEIExterna::getInstance()->fecharHead();
+PaginaPeticionamentoExterna::getInstance()->fecharJavaScript();
+PaginaPeticionamentoExterna::getInstance()->fecharHead();
 ?>
 
 <style type="text/css">
-#lblDescricao {position:absolute;left:0%;top:0%;width:99%;}
+#lblDescricaoInvalido {position:absolute;left:0%;top:0%;width:99%;}
 
 #lblDtInicio {position:absolute;left:0%;top:0px;width:10%;}
 #txtDtInicio {position:absolute;left:0%;top:20px;width:10%;}
@@ -335,20 +319,18 @@ PaginaSEIExterna::getInstance()->fecharHead();
 </style>
 
 <?php 
-PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
+PaginaPeticionamentoExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_consultar&id_orgao_acesso_externo=0';
 ?>
 <form id="frmIndisponibilidadePeticionamentoLista" method="post" action="<?= $strLinkPesquisar ?>">
 
-<?php  PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
+<?php  PaginaPeticionamentoExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
 
   <!--  <div style="height:4.5em; margin-top: 11px; overflow: hidden;" class="infraAreaDados" id="divInfraAreaDados">  -->
   <div style="height:auto; width: 98%;" class="infraAreaDados" id="divInfraAreaDados">
   
   <label id="lblDescricao" class="infraLabelOpcional">
-  Conforme normativo, algumas indisponibilidades justificam a prorrogação automática dos prazos para a realização de atos processuais em meio eletrônico que  
-  venceriam no dia de sua ocorrência, prorrogando-os para o primeiro dia útil seguinte à resolução do problema. Na coluna "Prorrogação Automática dos Prazos", 
-  as indisponibilidades marcadas com "Sim" justificaram a referida prorrogação.
+  <br/>Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação automática dos prazos para a realização de atos processuais em meio eletrônico que venceriam no dia de sua ocorrência, prorrogando-os para o primeiro dia útil seguinte à resolução do problema. Na coluna "Prorrogação Automática dos Prazos", as indisponibilidades marcadas com "Sim" justificaram a referida prorrogação.<br/><br/><br/>
   </label>
   
   </div>   
@@ -360,7 +342,7 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
     <input type="text" name="txtDtInicio" id="txtDtInicio" onchange="validDate('I');" 
     value="<?= $strDtInicio ?>" 
     onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" class="infraText" />
- 	<img src="<?=PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtInicio" 
+ 	<img src="<?=PaginaPeticionamentoExterna::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtInicio" 
  	     title="Selecionar Data/Hora Inicial" 
  	     alt="Selecionar Data/Hora Inicial" class="infraImg" 
  	     onclick="infraCalendario('txtDtInicio',this,true,'<?=InfraData::getStrDataAtual().' 00:00'?>');" />
@@ -370,7 +352,7 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
     <input type="text" name="txtDtFim" onchange="validDate('F');" id="txtDtFim" 
     value="<?= $strDtFim ?>"  
     onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" maxlength="16" class="infraText"/>
-    <img src="<?=PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtFim" 
+    <img src="<?=PaginaPeticionamentoExterna::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtFim" 
          title="Selecionar Data/Hora Final" 
          alt="Selecionar Data/Hora Final" 
          class="infraImg" onclick="infraCalendario('txtDtFim',this,true,'<?=InfraData::getStrDataAtual().' 23:59'?>');" />
@@ -385,14 +367,14 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
     <input type="submit" style="visibility: hidden; display:none;" />
     
   <?
-  PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado,$numRegistros);
-//  PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);
+  PaginaPeticionamentoExterna::getInstance()->montarAreaTabela($strResultado,$numRegistros);
+//  PaginaPeticionamentoExterna::getInstance()->montarBarraComandosInferior($arrComandos);
   ?>
 
   </div>
   
 </form>
 <?
-PaginaSEIExterna::getInstance()->fecharBody();
-PaginaSEIExterna::getInstance()->fecharHtml();
+PaginaPeticionamentoExterna::getInstance()->fecharBody();
+PaginaPeticionamentoExterna::getInstance()->fecharHtml();
 ?>

@@ -17,8 +17,7 @@ class GerirTipoContextoPeticionamentoRN extends InfraRN {
 	protected function inicializarObjInfraIBanco() {
 		return BancoSEI::getInstance ();
 	}
-	
-	
+		
 	/**
 	 * Short description of method excluirControlado
 	 *
@@ -67,8 +66,7 @@ class GerirTipoContextoPeticionamentoRN extends InfraRN {
 			throw new InfraException ('Erro listando Tipo de Interessado.', $e);
 		}
 	}
-	
-	
+		
 	/**
 	 * Short description of method consultarConectado
 	 *

@@ -120,11 +120,19 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$arrParticipantesParametro = array();
 			
 			if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'S' ){
-				$arrParametros['hdnListaInteressados'] = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+				
+				$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
+				$arrParametros['hdnListaInteressados'] = $contatoDTOUsuarioLogado->getNumIdContato();
+				$idsContatos = array();
+				$idsContatos[] = $arrParametros['hdnListaInteressados'];
+				$arrParticipantesParametro = $this->atribuirParticipantes($objProtocoloDTO, $this->montarArrContatosInteressados( $idsContatos ) );
+				//$arrParametros['hdnListaInteressados'] = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 			}
 			
 			//verificar se esta vindo o array de participantes
-			if( isset( $arrParametros['hdnListaInteressados'] ) && $arrParametros['hdnListaInteressados'] != "" ){			
+			if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'N' && 
+				isset( $arrParametros['hdnListaInteressados'] ) && 
+				$arrParametros['hdnListaInteressados'] != "" ){			
 				
 				$arrContatosInteressados = array();
 				
@@ -137,9 +145,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				
 				$arrParticipantesParametro = $this->atribuirParticipantes($objProtocoloDTO, $this->montarArrContatosInteressados( $idsContatos ) );
 							
-			} else {
-				
-				$this->atribuirParticipantes($objProtocoloDTO, array() );
 			}
 			
 			$objProtocoloDTO->setArrObjObservacaoDTO( array() );
@@ -173,8 +178,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			
 			//$reciboDTOBasico = null;
 			$reciboDTOBasico = $reciboPeticionamentoRN->gerarReciboSimplificado( $objProcedimentoDTO->getDblIdProcedimento() );
-			//print_r( $reciboDTOBasico ); die();
-			
+				
 			$this->montarArrDocumentos( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO, $arrParticipantesParametro, $reciboDTOBasico );
 			
 			//$this->enviarProcedimentoUnidade($objProcedimentoDTO);
@@ -403,19 +407,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$arrObjParticipantesDTO = array();
 				
 				//o proprio usuario externo logado é remetente do documento
-				$usuarioRN = new UsuarioRN();
-				$usuarioDTO = new UsuarioDTO();
-				$usuarioDTO->retNumIdUsuario();
-				$usuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-				$usuarioDTO->retNumIdContato();
-				$usuarioDTO->retStrNomeContato();
-				$usuarioDTO = $usuarioRN->consultarRN0489( $usuarioDTO );
-				
-				$contatoRN = new ContatoRN();
-				$contatoDTO = new ContatoDTO();
-				$contatoDTO->retTodos();
-				$contatoDTO->setNumIdContato( $usuarioDTO->getNumIdContato() );
-				$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+				$contatoDTO = $this->getContatoDTOUsuarioLogado();
 				
 				$remetenteDTO = new ParticipanteDTO();
 				$remetenteRN = new ParticipanteRN();
@@ -425,7 +417,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$remetenteDTO->setNumSequencia(0);
 				
-				$arrObjParticipantesDTO = array();
+				$arrObjParticipantesDTO = $arrParticipantesParametro;				
 				$arrObjParticipantesDTO[] = $remetenteDTO;
 				
 				$objProtocoloDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
@@ -580,19 +572,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$arrObjParticipantesDTO = array();
 				
 				//o proprio usuario externo logado é remetente do documento
-				$usuarioRN = new UsuarioRN();
-				$usuarioDTO = new UsuarioDTO();
-				$usuarioDTO->retNumIdUsuario();
-				$usuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-				$usuarioDTO->retNumIdContato();
-				$usuarioDTO->retStrNomeContato();
-				$usuarioDTO = $usuarioRN->consultarRN0489( $usuarioDTO );
-				
-				$contatoRN = new ContatoRN();
-				$contatoDTO = new ContatoDTO();
-				$contatoDTO->retTodos();
-				$contatoDTO->setNumIdContato( $usuarioDTO->getNumIdContato() );
-				$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+				$contatoDTO = $this->getContatoDTOUsuarioLogado();
 				
 				$remetenteDTO = new ParticipanteDTO();
 				$remetenteRN = new ParticipanteRN();
@@ -602,7 +582,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$remetenteDTO->setNumSequencia(0);
 				
-				$arrObjParticipantesDTO = array();
+				$arrObjParticipantesDTO = $arrParticipantesParametro;
 				$arrObjParticipantesDTO[] = $remetenteDTO;
 				
 				$objProtocoloDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
@@ -751,19 +731,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$arrObjParticipantesDTO = array();
 				
 				//o proprio usuario externo logado é remetente do documento
-				$usuarioRN = new UsuarioRN();
-				$usuarioDTO = new UsuarioDTO();
-				$usuarioDTO->retNumIdUsuario();
-				$usuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-				$usuarioDTO->retNumIdContato();
-				$usuarioDTO->retStrNomeContato();
-				$usuarioDTO = $usuarioRN->consultarRN0489( $usuarioDTO );
-				
-				$contatoRN = new ContatoRN();
-				$contatoDTO = new ContatoDTO();
-				$contatoDTO->retTodos();
-				$contatoDTO->setNumIdContato( $usuarioDTO->getNumIdContato() );
-				$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+				$contatoDTO = $this->getContatoDTOUsuarioLogado();
 				
 				$remetenteDTO = new ParticipanteDTO();
 				$remetenteRN = new ParticipanteRN();
@@ -773,7 +741,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$remetenteDTO->setNumSequencia(0);
 				
-				$arrObjParticipantesDTO = array();
+				$arrObjParticipantesDTO = $arrParticipantesParametro;
 				$arrObjParticipantesDTO[] = $remetenteDTO;
 				
 				$objProtocoloDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
@@ -869,7 +837,8 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			                                   $objUnidadeDTO, 
 			                                   $arrParticipantesParametro, 
 			                                   $arrParametros ){
-		
+			
+			//print_r( $arrParticipantesParametro ); die; 
 		    $protocoloRN = new ProtocoloPeticionamentoRN();
 			$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
 			
@@ -915,19 +884,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$arrObjParticipantesDTO = array();
 			
 			//o proprio usuario externo logado é remetente do documento
-			$usuarioRN = new UsuarioRN();
-			$usuarioDTO = new UsuarioDTO();
-			$usuarioDTO->retNumIdUsuario();
-			$usuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-			$usuarioDTO->retNumIdContato();
-			$usuarioDTO->retStrNomeContato();
-			$usuarioDTO = $usuarioRN->consultarRN0489( $usuarioDTO );
-			
-			$contatoRN = new ContatoRN();
-			$contatoDTO = new ContatoDTO();
-			$contatoDTO->retTodos();
-			$contatoDTO->setNumIdContato( $usuarioDTO->getNumIdContato() );
-			$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+			$contatoDTO = $this->getContatoDTOUsuarioLogado();
 			
 			$remetenteDTO = new ParticipanteDTO();
 			$remetenteRN = new ParticipanteRN();
@@ -939,8 +896,10 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			
 			$arrObjParticipantesDTO = array();
 			$arrObjParticipantesDTO[] = $remetenteDTO;
+			$arrParticipantesParametro[] = $remetenteDTO;
 			
-			$protocoloPrincipalDocumentoDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
+			//$protocoloPrincipalDocumentoDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
+			$protocoloPrincipalDocumentoDTO->setArrObjParticipanteDTO( $arrParticipantesParametro );
 			
 			//==========================
 			//ATRIBUTOS
@@ -1422,7 +1381,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			//se vier em Mb compara o tamanho, se vier em Kb é porque é menor do que 1Mb e portanto deixar passar (nao havera limite inferior a 1Mb)
 			if (strpos( $tamanhoDoAnexo , 'Mb') !== false) {
 				
-				$tamanhoDoAnexo = str_replace("Mb","", $tamanhoDoAnexo );
+				$tamanhoDoAnexo = str_replace(" Mb","", $tamanhoDoAnexo );
 								
 				//validando tamanho máximo do arquivo
 				if( floatval($tamanhoDoAnexo) > floatval($numTamanhoArquivoPermitido) ){
@@ -1431,16 +1390,24 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					$objInfraException->adicionarValidacao('Um dos documentos ' . $strAreaDocumento . ' adicionados excedeu o tamanho máximo permitido (Limite: ' . $numTamanhoArquivoPermitido . ' Mb).');
 					$objInfraException->lancarValidacoes();
 					
+				} else {
+					
+					$tamanhoDoAnexo = floatval( ( $tamanhoDoAnexo*1024 ) * 1024 );
 				}
 				
+			} else {
+				
+				$tamanhoDoAnexo = str_replace(" Kb","", $tamanhoDoAnexo );
+				$tamanhoDoAnexo = floatval($tamanhoDoAnexo*1024);
 			}
-						
+			
+			//echo $tamanhoDoAnexo; die;			
 			$objAnexoDTO = new AnexoDTO();
 			$objAnexoDTO->setNumIdAnexo( null );
 			$objAnexoDTO->setStrSinAtivo('S');
 			$objAnexoDTO->setStrNome($anexo[8]);
 			$objAnexoDTO->setDthInclusao($anexo[1]);
-			$objAnexoDTO->setNumTamanho($anexo[2] );
+			$objAnexoDTO->setNumTamanho( $tamanhoDoAnexo );
 			$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );
 			$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
 			$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
@@ -1448,6 +1415,25 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		}
 		
 		return $arrObjAnexoDTO;
+	}
+	
+	private function getContatoDTOUsuarioLogado(){
+		
+		$usuarioRN = new UsuarioRN();
+		$usuarioDTO = new UsuarioDTO();
+		$usuarioDTO->retNumIdUsuario();
+		$usuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
+		$usuarioDTO->retNumIdContato();
+		$usuarioDTO->retStrNomeContato();
+		$usuarioDTO = $usuarioRN->consultarRN0489( $usuarioDTO );
+		
+		$contatoRN = new ContatoRN();
+		$contatoDTO = new ContatoDTO();
+		$contatoDTO->retTodos();
+		$contatoDTO->setNumIdContato( $usuarioDTO->getNumIdContato() );
+		$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+		
+		return $contatoDTO;
 	}
 }
 ?>

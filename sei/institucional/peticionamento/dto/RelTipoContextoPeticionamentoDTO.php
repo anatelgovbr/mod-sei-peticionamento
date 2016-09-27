@@ -32,6 +32,11 @@ class RelTipoContextoPeticionamentoDTO extends InfraDTO {
     		'SinSelecaoInteressado',
     		'sin_selecao_interessado');
     
+    $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
+    		'NomeTipoContexto',
+    		'tp.nome',
+    		'tipo_contexto_contato tp');
+    
     $this->configurarPK('IdTipoContextoPeticionamento', InfraDTO::$TIPO_PK_NATIVA );
     
     $this->configurarFK('IdTipoContextoContato', 'tipo_contexto_contato tp', 'tp.id_tipo_contexto_contato');

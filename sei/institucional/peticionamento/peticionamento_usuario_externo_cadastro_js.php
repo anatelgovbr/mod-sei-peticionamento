@@ -127,7 +127,7 @@ function validarUploadArquivo(numero){
 		   var tbDocumentoPrincipal = document.getElementById('tbDocumentoPrincipal');
 		   var hiddenCampoPrincipal = document.getElementById('hdnDocPrincipal');
 		   
-		    if( tbDocumentoPrincipal != null && 
+		   if( tbDocumentoPrincipal != null && 
 			   tbDocumentoPrincipal != undefined ){
 
 		    	if( hiddenCampoPrincipal != null && 
@@ -248,7 +248,7 @@ function validarUploadArquivo(numero){
 			cbTipoConferencia.focus();
 			return;
 		}
-		
+
 		//validar tamanho do arquivo no lado server side apenas	
 		if( isValido  ){
 
@@ -1028,10 +1028,15 @@ function abrirCadastroInteressado(){
 					//charmar janela para cadastrar um novo interessado
 					$('#txtNomeRazaoSocial').val('');
 
-					var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpfcnpj=#conteudo#') ?>';
-					var res = str.replace("#conteudo#", conteudo);	
-					//alert( str );				
-					infraAbrirJanela( str, 'cadastrarInteressado', 900, 900, '', true); //modal 
+					if( chkTipoPessoaFisica ){
+						var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpf=true') ?>';
+					}
+
+					else if( chkTipoPessoaJuridica ){
+						var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cnpj=true') ?>';
+					}
+
+					infraAbrirJanela( str, 'cadastrarInteressado', 900, 900, '', false); //modal 
 					return;
 					
 				}
@@ -1202,6 +1207,14 @@ function carregarCamposDocPrincipalUpload(){
       var dataHoraFormatada = '<?= time() ?>';
       var tamanhoFormatado = infraFormatarTamanhoBytes(arr['tamanho']);
 
+      //Tamanho
+      var tamanhoMb = tamanho/1024/1024; 
+      var tamanhoPermitidoMb = document.getElementById('hdnTamArquivoPrincipal').value.toLowerCase().replace(' mb','');
+      if(tamanhoMb>tamanhoPermitidoMb){
+            alert('Arquivo com tamanho maior que o permitido.'); 
+            return false;
+      }
+		
     //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoPrincipal = document.getElementById('tipoDocumentoPrincipal');
       var strComplemento = document.getElementById('complementoPrincipal').value;	
@@ -1225,7 +1238,7 @@ function carregarCamposDocPrincipalUpload(){
 
       //TipoConferenciaPrincipal / TipoConferenciaEssencial
       var tipoConferencia = document.getElementById('TipoConferenciaPrincipal').value;
-	 	
+
 	  objTabelaDocPrincipal.adicionar([ nome , dataHora ,  tamanhoFormatado , documento , nivelAcesso , hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoPrincipal.value,strComplemento,formatoDocumentoLbl, '' ]);
 	  
 	  var strHashPrincipal = document.getElementById('hdnDocPrincipal').value;
@@ -1260,7 +1273,7 @@ function carregarCamposDocPrincipalUpload(){
 		   }
 		     
 	  }
-	  
+
 	}
 
 	  objPrincipalUpload.validar = function(arr){
@@ -1332,6 +1345,49 @@ function carregarCamposDocEssencialUpload(){
       var dataHoraFormatada = '<?= time() ?>';
       var tamanhoFormatado = infraFormatarTamanhoBytes(arr['tamanho']);
 
+      //Tamanho
+      var tamanhoMb = tamanho/1024/1024; 
+      var tamanhoPermitidoMb = document.getElementById('hdnTamArquivoEssencial').value.toLowerCase().replace(' mb','');
+      if(tamanhoMb>tamanhoPermitidoMb){
+            alert('Arquivo com tamanho maior que o permitido.'); 
+            return false;
+      }
+
+      //Nome
+      var linhas = document.getElementById('tbDocumentoEssencial').rows;
+      var tamanhoInserido = 0;
+      var tamanhoVerificar = 0;
+
+      for (var i = 1; i < linhas.length; i++) {
+		//Nome igual
+		if (nome.toLowerCase()==linhas[i].cells[0].innerText.toLowerCase()){
+			/*
+			//TAMANHO
+			tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' Kb','');
+			//arquivo em Kb
+			if (tamanhoInserido != linhas[i].cells[2].innerText){
+				tamanhoVerificar = tamanho/1024;
+				tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
+			//arquivo em Mb
+			}else{
+				tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' mb','');
+				if (tamanhoInserido != linhas[i].cells[2].innerText){
+					tamanhoVerificar = tamanho/1024/1024;
+					tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
+				}else{
+					tamanhoInserido=0;
+				}
+			}
+			if (tamanhoVerificar==tamanhoInserido){
+				alert('Arquivo já inserido');
+	            return false;
+			}
+			*/
+			alert('Arquivo já inserido');
+            return false;
+		}	
+      }
+      
 	  //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoEssencial = document.getElementById('tipoDocumentoEssencial');
 	  	
@@ -1452,6 +1508,49 @@ function carregarCamposDocComplementarUpload(){
       var dataHoraFormatada = '<?= time() ?>';
       var tamanhoFormatado = infraFormatarTamanhoBytes(arr['tamanho']);
 
+      //Tamanho
+      var tamanhoMb = tamanho/1024/1024; 
+      var tamanhoPermitidoMb = document.getElementById('hdnTamArquivoComplementar').value.toLowerCase().replace(' mb','');
+      if(tamanhoMb>tamanhoPermitidoMb){
+            alert('Arquivo com tamanho maior que o permitido.'); 
+            return false;
+      }
+
+      //Nome
+      var linhas = document.getElementById('tbDocumentoComplementar').rows;
+      var tamanhoInserido = 0;
+      var tamanhoVerificar = 0;
+
+      for (var i = 1; i < linhas.length; i++) {
+		//Nome igual
+		if (nome.toLowerCase()==linhas[i].cells[0].innerText.toLowerCase()){
+			/*
+			//TAMANHO
+			tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' Kb','');
+			//arquivo em Kb
+			if (tamanhoInserido != linhas[i].cells[2].innerText){
+				tamanhoVerificar = tamanho/1024;
+				tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
+			//arquivo em Mb
+			}else{
+				tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' mb','');
+				if (tamanhoInserido != linhas[i].cells[2].innerText){
+					tamanhoVerificar = tamanho/1024/1024;
+					tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
+				}else{
+					tamanhoInserido=0;
+				}
+			}
+			if (tamanhoVerificar==tamanhoInserido){
+				alert('Arquivo já inserido');
+	            return false;
+			}
+			*/
+			alert('Arquivo já inserido');
+            return false;
+		}	
+      }
+      
       //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoComplementar = document.getElementById('tipoDocumentoComplementar');
       var strComplemento = document.getElementById('complementoComplementar').value;	
@@ -1765,7 +1864,7 @@ function adicionarInteressadoValido(){
 	}
 
 	//adicionar o interessado na grid
-	var arrDadosInteressadoValido = array();
+	var arrDadosInteressadoValido = [];
 	var bolInteressadoCustomizado = false;
 	receberInteressado( arrDadosInteressadoValido , bolInteressadoCustomizado );
 	

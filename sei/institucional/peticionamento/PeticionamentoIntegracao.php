@@ -5,6 +5,9 @@
  * 21/06/2016 - criado por marcelo.bezerra@cast.com.br - CAST
  *
  */
+
+require_once dirname(__FILE__).'/util/DataUtils.php';
+
 class PeticionamentoIntegracao extends SeiIntegracao {
 		
 	public function __construct(){
@@ -13,6 +16,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 	//EU 7352 - Icone exibido na tela interna do processo (Controle de Processos -> clicar em algum processo da lista)
 	public function montarIconeProcedimento(SeiIntegracaoDTO $objSeiIntegracaoDTO){
 		
+		$reciboRN = new ReciboPeticionamentoRN();
 		$arrSeiNoAcaoDTO = array();
 		
 		$idProcedimento = null;
@@ -21,30 +25,103 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 			$idProcedimento = $objSeiIntegracaoDTO->getObjProcedimentoDTO()->getDblIdProcedimento();
 		}
 		
-		/*
-		$seiAcaoDTO = new SeiNoAcaoDTO();
-		$seiAcaoDTO->setStrTipo('"CIENCIAS"');
-        $seiAcaoDTO->setStrId('C');
-        $seiAcaoDTO->setStrIdPai($idProcedimento);
-        $seiAcaoDTO->setStrHref('http://www.anatel.gov.br');
-        $seiAcaoDTO->setStrTarget('ifrVisualizacao');
-        $seiAcaoDTO->setStrTitle('title teste');
-        $seiAcaoDTO->setStrIcone('"imagens/sei_ciencia_pequeno.gif"');
-        $seiAcaoDTO->setBolHabilitado(true);		
-		$arrSeiNoAcaoDTO[] = $seiAcaoDTO;
-		*/
+		//verificar se este processo é de peticionamento
+		$reciboDTO = new ReciboPeticionamentoDTO();
+		$reciboDTO->retNumIdProtocolo();
+		$reciboDTO->retDthDataHoraRecebimentoFinal();
+		$reciboDTO->setNumIdProtocolo( $idProcedimento );
+		$arrRecibos = $reciboRN->listar( $reciboDTO );
+		
+		if( $arrRecibos != null && count( $arrRecibos ) > 0){
+			
+			 $recibo = $arrRecibos[0];
+			 $data = DataUtils::setFormat($recibo->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
+			 $title = 'Peticionamento Eletrônico\nProcesso Novo: ' . $data;
+			 
+			 //$link = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=protocolo_ciencia_listar&acao_origem=procedimento_visualizar&id_procedimento='. $idProcedimento . '&arvore=1');
+			 
+			 $seiAcaoDTO = new SeiNoAcaoDTO();
+			 $seiAcaoDTO->setStrTipo('PETICIONAMENTO');
+			 $seiAcaoDTO->setStrId('PET');
+			 $seiAcaoDTO->setStrIdPai($idProcedimento);
+			 $seiAcaoDTO->setStrHref('javascript:;');
+			 $seiAcaoDTO->setStrTarget('ifrVisualizacao');
+			 $seiAcaoDTO->setStrTitle( $title );
+			 $seiAcaoDTO->setStrIcone('institucional/peticionamento/imagens/peticionamento_processo_novo.png');
+			 $seiAcaoDTO->setBolHabilitado(true);
+			 $arrSeiNoAcaoDTO[] = $seiAcaoDTO;			 
+			
+		}
 		
 		return $arrSeiNoAcaoDTO;
 	}
 		
 	//EU 7352 - Icone exibido na tela "Controle de Processos"
 	public function montarIconeControleProcessos($arrObjProcedimentoDTO){
-		return array("<img src='imagens/retorno_programado.gif' title='teste1' />");
+		
+		$reciboRN = new ReciboPeticionamentoRN();
+		$arrParam = array();
+		
+		if( $arrObjProcedimentoDTO != null && count( $arrObjProcedimentoDTO ) > 0 ){
+			
+			foreach( $arrObjProcedimentoDTO as $procDTO ){
+				
+				//verificar se este processo é de peticionamento
+				$reciboDTO = new ReciboPeticionamentoDTO();
+				$reciboDTO->retNumIdProtocolo();
+				$reciboDTO->retDthDataHoraRecebimentoFinal();
+				$reciboDTO->setNumIdProtocolo($procDTO->getDblIdProcedimento());
+				$arrRecibos = $reciboRN->listar( $reciboDTO );
+				
+				if( $arrRecibos != null && count( $arrRecibos ) > 0){
+					
+				  $recibo = $arrRecibos[0];	
+				  $data = DataUtils::setFormat($recibo->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
+				  $linhaDeCima = '"Peticionamento Eletrônico"';
+				  $linhaDeBaixo = '"Processo Novo: ' . $data . '"';
+				  $arrParam[$procDTO->getDblIdProcedimento()] = array("<img src='institucional/peticionamento/imagens/peticionamento_processo_novo.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo .  "," . $linhaDeCima .  ");' />");
+				}
+			}
+			
+		}
+		
+		return $arrParam;
 	}
 	
 	//EU 7352 - Icone exibido na tela "Acompanhamento Especial"
 	public function montarIconeAcompanhamentoEspecial($arrObjProcedimentoDTO){
-		return array("<img src='imagens/retorno_programado.gif' title='teste2' />");
+		
+		$reciboRN = new ReciboPeticionamentoRN();
+		$arrParam = array();
+		
+		if( $arrObjProcedimentoDTO != null && count( $arrObjProcedimentoDTO ) > 0 ){
+			
+			foreach( $arrObjProcedimentoDTO as $procDTO ){
+				
+				//verificar se este processo é de peticionamento
+				$reciboDTO = new ReciboPeticionamentoDTO();
+				$reciboDTO->retNumIdProtocolo();
+				$reciboDTO->retDthDataHoraRecebimentoFinal();
+				$reciboDTO->setNumIdProtocolo($procDTO->getDblIdProcedimento());
+				$arrRecibos = $reciboRN->listar( $reciboDTO );
+				
+				if( $arrRecibos != null && count( $arrRecibos ) > 0){
+					
+					$recibo = $arrRecibos[0];
+					$data = DataUtils::setFormat($recibo->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
+					
+					$linhaDeCima = '"Peticionamento Eletrônico"';
+					$linhaDeBaixo = '"Processo Novo: ' . $data . '"';
+					$arrParam[$procDTO->getDblIdProcedimento()] = array("<img src='institucional/peticionamento/imagens/peticionamento_processo_novo.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo .  "," . $linhaDeCima .  ");' />");
+					
+				}
+				
+			
+			}
+			
+		}
+				
+		return $arrParam;
 	}
 	
 	public function montarMenuUsuarioExterno(){ 

@@ -48,11 +48,11 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
       $numValorTamanhoMaximoComplementar = $arrTamanhoMaximo[0]->getNumValorDocComplementar();
    	  
    	  if( $numValorTamanhoMaximo != null && $numValorTamanhoMaximo > 0 ){   	      
-          $strTamanhoMaximoPrincipal = $numValorTamanhoMaximo . " mb"; 	
+          $strTamanhoMaximoPrincipal = $numValorTamanhoMaximo . " Mb"; 	
    	  }
    	  
    	  if( $numValorTamanhoMaximoComplementar != null && $numValorTamanhoMaximoComplementar > 0 ){   	  
-   	  	$strTamanhoMaximoComplementar = $numValorTamanhoMaximoComplementar . " mb";   	  
+   	  	$strTamanhoMaximoComplementar = $numValorTamanhoMaximoComplementar . " Mb";   	  
    	  }
    	   
    }
@@ -63,7 +63,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    $externo = $ObjTipoProcessoPeticionamentoDTO->getStrSinDocExterno();
 
    if( $externo == 'S' ) { ?>
-       <label style="font-weight: bold;" for="fileArquivoPrincipal"> Documento Principal (<?= $strTamanhoMaximoPrincipal ?>):</label><br/>
+       <label style="font-weight: bold;" for="fileArquivoPrincipal"> Documento Principal (<?
+       echo $strTamanhoMaximoPrincipal;
+       echo "<input type=hidden name=hdnTamArquivoPrincipal id=hdnTamArquivoPrincipal value='" . $strTamanhoMaximoPrincipal . "'>"; 
+       ?>):</label><br/>
        <input style="margin-top:0.3%" type="file" name="fileArquivoPrincipal" id="fileArquivoPrincipal" /> <br/><br/>
    <? }?>
    
@@ -309,7 +312,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){ ?>
 	   
 	   <br/>
-	   <label class="infraLabelObrigatorio" for="fileArquivoEssencial"> Documentos Essenciais (<?= $strTamanhoMaximoComplementar ?>):</label><br/>
+	   <label class="infraLabelObrigatorio" for="fileArquivoEssencial"> Documentos Essenciais (<?
+       echo $strTamanhoMaximoComplementar;
+       echo "<input type=hidden name=hdnTamArquivoEssencial id=hdnTamArquivoEssencial value='" . $strTamanhoMaximoComplementar . "'>"; 
+       ?>):</label><br/>
        
        <input style="margin-top:0.3%" type="file" id="fileArquivoEssencial" name="fileArquivoEssencial" size="50" /> <br/><br/>
    
@@ -502,7 +508,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){ ?>
 	     
 	     <br/>
-		 <label class="infraLabel" for="fileArquivoComplementar"> Documentos Complementares (<?= $strTamanhoMaximoComplementar ?>):</label><br/>
+		 <label class="infraLabel" for="fileArquivoComplementar"> Documentos Complementares (<?
+       		echo $strTamanhoMaximoComplementar;
+       		echo "<input type=hidden name=hdnTamArquivoComplementar id=hdnTamArquivoComplementar value='" . $strTamanhoMaximoComplementar . "'>"; 
+       	?>):</label><br/>
 	     
 	     <input style="margin-top:0.3%" type="file" id="fileArquivoComplementar" name="fileArquivoComplementar" size="50" /> <br/><br/>
    

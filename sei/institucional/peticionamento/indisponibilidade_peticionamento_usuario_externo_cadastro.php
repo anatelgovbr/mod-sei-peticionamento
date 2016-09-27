@@ -17,15 +17,18 @@ try {
   //InfraDebug::getInstance()->setBolDebugInfra(false);
   //InfraDebug::getInstance()->limpar();
   //////////////////////////////////////////////////////////////////////////////
-  //PaginaSEIExterna::getInstance()->setBolXHTML(false);
+  //PaginaPeticionamentoExterna::getInstance()->setBolXHTML(false);
   //SessaoSEIExterna::getInstance()->validarLink();
   
   //if( isset( $_GET['acao_externa'] ) && $_GET['acao_externa'] != "indisponibilidade_peticionamento_usuario_externo_download" ){
-    //PaginaSEIExterna::getInstance()->verificarSelecao('indisponibilidade_peticionamento_usuario_externo_alterar');
+    //PaginaPeticionamentoExterna::getInstance()->verificarSelecao('indisponibilidade_peticionamento_usuario_externo_alterar');
   //}
   
   //SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao_externa']);
 
+  PaginaPeticionamentoExterna::getInstance()->setTipoPagina(PaginaPeticionamentoExterna::$TIPO_PAGINA_SEM_MENU);
+  PaginaPeticionamentoExterna::getInstance()->getBolAutoRedimensionar();  
+  
   $objIndisponibilidadePeticionamentoDTO = new IndisponibilidadePeticionamentoDTO();
 
   if( $_GET['acao_externa'] != "indisponibilidade_peticionamento_usuario_externo_download"){
@@ -98,7 +101,6 @@ try {
       $strLinkFinal .= '&id_indisponibilidade_peticionamento='.$_GET['id_indisponibilidade_peticionamento'];
     	    	
       $strTitulo = 'Indisponibilidade do Sistema';
-      $arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\''. $strLinkFinal .'\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
       $objIndisponibilidadePeticionamentoDTO->setNumIdIndisponibilidade($_GET['id_indisponibilidade_peticionamento']);
       $objIndisponibilidadePeticionamentoDTO->setBolExclusaoLogica(false);
       $objIndisponibilidadePeticionamentoDTO->retTodos();
@@ -118,7 +120,7 @@ try {
   }
 
 }catch(Exception $e){
-  PaginaSEIExterna::getInstance()->processarExcecao($e);
+  PaginaPeticionamentoExterna::getInstance()->processarExcecao($e);
 }
 
 $hashAnexo = "";
@@ -159,17 +161,17 @@ if ( isset($_GET['id_indisponibilidade_peticionamento'])){
 	
 }
 
-PaginaSEIExterna::getInstance()->montarDocType();
-PaginaSEIExterna::getInstance()->abrirHtml();
-PaginaSEIExterna::getInstance()->abrirHead();
-PaginaSEIExterna::getInstance()->montarMeta();
-PaginaSEIExterna::getInstance()->montarTitle(':: '.PaginaSEIExterna::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
-PaginaSEIExterna::getInstance()->montarStyle();
-PaginaSEIExterna::getInstance()->abrirStyle();
-PaginaSEIExterna::getInstance()->fecharStyle();
-PaginaSEIExterna::getInstance()->montarJavaScript();
-PaginaSEIExterna::getInstance()->abrirJavaScript();
-PaginaSEIExterna::getInstance()->fecharJavaScript();
+PaginaPeticionamentoExterna::getInstance()->montarDocType();
+PaginaPeticionamentoExterna::getInstance()->abrirHtml();
+PaginaPeticionamentoExterna::getInstance()->abrirHead();
+PaginaPeticionamentoExterna::getInstance()->montarMeta();
+PaginaPeticionamentoExterna::getInstance()->montarTitle(':: '.PaginaPeticionamentoExterna::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
+PaginaPeticionamentoExterna::getInstance()->montarStyle();
+PaginaPeticionamentoExterna::getInstance()->abrirStyle();
+PaginaPeticionamentoExterna::getInstance()->fecharStyle();
+PaginaPeticionamentoExterna::getInstance()->montarJavaScript();
+PaginaPeticionamentoExterna::getInstance()->abrirJavaScript();
+PaginaPeticionamentoExterna::getInstance()->fecharJavaScript();
 ?>
 <style type="text/css">
 #fldProrrogacao {height: 10%; width: 86%;}
@@ -178,8 +180,8 @@ PaginaSEIExterna::getInstance()->fecharJavaScript();
 #divInfraBarraSistemaD { display:none; }
 </style>
 <? 
-PaginaSEIExterna::getInstance()->fecharHead();
-PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
+PaginaPeticionamentoExterna::getInstance()->fecharHead();
+PaginaPeticionamentoExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 $urlBaseLink = "";
 //echo "teste 3"; die();
 if (count($arrAcoesRemover)>0 || $_POST['hdnAnexos'] != ""  ){
@@ -193,18 +195,18 @@ if (count($arrAcoesRemover)>0 || $_POST['hdnAnexos'] != ""  ){
           //$urlBaseLink = "";          
           $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL') . "/institucional/peticionamento/";
           $urlBaseLink = $urlBase . "indisponibilidade_peticionamento_usuario_externo_cadastro.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_download";
-          //$urlBaseLink = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=indisponibilidade_peticionamento_usuario_externo_download'));
+          //$urlBaseLink = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=indisponibilidade_peticionamento_usuario_externo_download'));
         } 
       }  
   ?> 
 <form id="frmIndisponibilidadeCadastro" method="post" onsubmit="return OnSubmitForm();"  action="">
 <?
 $arrComandos = array();
-$arrComandos[] = '<button type="button" accesskey="I" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
-$arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="fechar();" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+$arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
+$arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="fechar();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
-PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
-PaginaSEIExterna::getInstance()->abrirAreaDados('60em');
+PaginaPeticionamentoExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
+PaginaPeticionamentoExterna::getInstance()->abrirAreaDados('60em');
 ?>
  <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset">
  
@@ -231,7 +233,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('60em');
     </label>
     </fieldset>
         
-    <label id="fldProrrogacao" class="infraLabelObrigatorio">Indisponibilidade justifica a prorrogação automática dos prazos:</label>
+    <label id="fldProrrogacao" class="infraLabelObrigatorio">Indisponibilidade justificou prorrogação automática dos prazos:</label>
 
     <label class="infraLabel">
         <?php echo isset($objIndisponibilidadePeticionamentoDTO) && ($objIndisponibilidadePeticionamentoDTO->getStrSinProrrogacao() && $objIndisponibilidadePeticionamentoDTO->getStrSinProrrogacao() == 'S') ? 'Sim' : ''  ?>
@@ -241,8 +243,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('60em');
     <div>
         <label id="lblDescricao" class="infraLabelOpcional">
             <ul>
-            Observação: Conforme normativo, algumas indisponibilidades justificam a prorrogação automática dos prazos para a realização de atos processuais em meio eletrônico que
-            venceriam no dia de sua ocorrência, prorrogando-os para o primeiro dia útil seguinte à resolução do problema.
+            Observação: Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação automática dos prazos para a realização de atos processuais em meio eletrônico que venceriam no dia de sua ocorrência, prorrogando-os para o primeiro dia útil seguinte à resolução do problema.
             </ul>
         </label>
     </div>
@@ -278,9 +279,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('60em');
   <input type="hidden" id="hdnNomeArquivoDownload" name="hdnNomeArquivoDownload" value="" />
   <input type="hidden" id="hdnNomeArquivoDownloadReal" name="hdnNomeArquivoDownloadReal" value="" />
 <?
-PaginaSEIExterna::getInstance()->fecharAreaDados();
-PaginaSEIExterna::getInstance()->fecharBody();
-PaginaSEIExterna::getInstance()->fecharHtml();
+PaginaPeticionamentoExterna::getInstance()->fecharAreaDados();
+PaginaPeticionamentoExterna::getInstance()->fecharBody();
+PaginaPeticionamentoExterna::getInstance()->fecharHtml();
   
 $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
 $strLink = $urlBase . '/institucional/peticionamento/indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0&id_indisponibilidade_peticionamento='.$_GET['id_indisponibilidade_peticionamento'].PaginaSEI::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']);
@@ -310,21 +311,12 @@ function inicializar(){
   } else{
      document.getElementById('btnFechar').focus();
   }
-
-  infraMenuSistemaEsquema(false,'Ocultar');
-  if(window.location.href.indexOf('/sei')>0){
-    if (document.getElementById('divInfraBarraSistemaE').childNodes[1]!=undefined){
-      if (document.getElementById('divInfraBarraSistemaE').childNodes[1].tagName=='IMG'){
-        document.getElementById('divInfraBarraSistemaE').childNodes[1].src=window.location.href.substring(0, window.location.href.indexOf('/sei')+4)+'/imagens/sei_logo_azul_celeste.jpg';
-      }
-    }
-  }
 	  
   var strHash = document.getElementById('hdnAnexos').value;
   var arrHash = strHash.split('±');
     
   //var urlBase = "":
-  var urlBase = "<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=indisponibilidade_peticionamento_usuario_externo_download'))?>";
+  var urlBase = "<?=PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=indisponibilidade_peticionamento_usuario_externo_download'))?>";
   document.getElementById('hdnNomeArquivoDownload').value = arrHash[0];
   document.getElementById('hdnNomeArquivoDownloadReal').value = arrHash[1];
   //document.getElementById('spanDownload').innerHTML = arrHash[0];
@@ -339,7 +331,7 @@ function inicializar(){
   
   	    foreach(array_keys($arrAcoesRemover) as $id) { 
           
-        $urlBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=indisponibilidade_peticionamento_usuario_externo_download'));
+        $urlBase = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=indisponibilidade_peticionamento_usuario_externo_download'));
         
   ?>        
         var strHash = document.getElementById('hdnAnexos').value;

@@ -150,9 +150,10 @@ try {
         $protocoloDTO->setDblIdProtocolo($objReciboPeticionamentoDTO->getNumIdProtocolo());
         $protocoloDTO = $protocoloRN->consultarRN0186($protocoloDTO);
 
-        //obter interessados
+        //obter interessados (do tipo interessado, nao os do tipo rementente)
         $objParticipanteDTO = new ParticipanteDTO();
         $objParticipanteDTO->setDblIdProtocolo($objReciboPeticionamentoDTO->getNumIdProtocolo());
+        $objParticipanteDTO->setStrStaParticipacao( ParticipanteRN::$TP_INTERESSADO );
         $objParticipanteDTO->retNumIdContato();
         $objParticipanteRN     = new ParticipanteRN();
         $arrObjParticipanteDTO = $objParticipanteRN->listarRN0189($objParticipanteDTO);
@@ -166,12 +167,11 @@ try {
         }
         
         //obtendo descricao do orgao para o rodape do recibo
-        $idOrgao = $protocoloDTO->retNumIdOrgaoUnidadeGeradora();
-		$OrgaoDTO = new OrgaoDTO();
-		$orgaoRN = new OrgaoRN();
-		$OrgaoDTO->retTodos();
-		$OrgaoDTO->setNumIdOrgao(  $protocoloDTO->getNumIdOrgaoUnidadeGeradora() );
-		$OrgaoDTO = $orgaoRN->consultarRN1352( $OrgaoDTO );
+        $OrgaoRN = new OrgaoRN();
+        $OrgaoDTO = new OrgaoDTO();
+        $OrgaoDTO->retTodos();
+        $OrgaoDTO->setNumIdOrgao(  $protocoloDTO->getNumIdOrgaoUnidadeGeradora() );
+        $OrgaoDTO = $OrgaoRN->consultarRN1352( $OrgaoDTO );
 		
     } catch (Exception $e) {
         PaginaSEIExterna::getInstance()->processarExcecao($e);
@@ -191,14 +191,14 @@ try {
     function imprimir() {
         document.getElementById('btnFechar').style.display = 'none';
         document.getElementById('btnImprimir').style.display = 'none';
-        // Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
+		// Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
 		// document.getElementById('btnSalvarPDF').style.display = 'none';
         infraImprimirDiv('divInfraAreaTelaD');
 
         self.setTimeout(function () {
             document.getElementById('btnFechar').style.display = '';
             document.getElementById('btnImprimir').style.display = '';
-            // Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
+			// Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
 			// document.getElementById('btnSalvarPDF').style.display = '';
         }, 1000);
     }
@@ -293,11 +293,11 @@ try {
 
             <?php if ($arrInteressados != null && is_array($arrInteressados) && count($arrInteressados) > 0) : ?>
                 <tr>
-                    <td style="font-weight: bold;"colspan="2">Interessados:</td>
+                    <td style="font-weight: bold;" colspan="2">Interessados:</td>
                 </tr>
                 <?php foreach ($arrInteressados as $interessado) : ?>
                     <tr>
-                        <td colspan="2">&nbsp&nbsp&nbsp&nbsp<?= $interessado->getStrNome() ?> </td>
+                        <td colspan="2">&nbsp&nbsp&nbsp&nbsp<?= $interessado->getStrNome() ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -377,7 +377,7 @@ try {
         <br/>
         
         <label id=divRodape>
-                <p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) <?= htmlentities( $OrgaoDTO->getStrDescricao() ); ?>.
+                <p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) <?= $OrgaoDTO->getStrDescricao() ?>.
         </label>
 
     </div>

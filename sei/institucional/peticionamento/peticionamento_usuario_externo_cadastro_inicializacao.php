@@ -230,6 +230,9 @@ $arrTipo = array();
 //preenche a combo "Nivel de acesso"
 $arrNivelAcesso = array();
 
+//monta combo "Nivel de acesso"
+$strItensSelNivelAcesso  = TipoProcessoPeticionamentoINT::montarSelectNivelAcesso(null, null, null, $objTipoProcDTO->getNumIdProcedimento());
+
 //ler valor do parametro SEI_HABILITAR_HIPOTESE_LEGAL
 //aplicar RA 5: Os campos “Hipótese Legal” somente serão apresentados se na funcionalidade Infra > Parâmetros
 //a opção SEI_HABILITAR_HIPOTESE_LEGAL estiver configurado como 1 ou 2 sendo assim obrigatório.

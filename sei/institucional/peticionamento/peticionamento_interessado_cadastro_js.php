@@ -1,3 +1,9 @@
+<?php 
+//$strLinkAjaxContatos = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax_externo=contato_pj_vinculada');
+$strLinkAjaxContatos = SessaoSEIExterna::getInstance()->assinarLink('/sei/institucional/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=contato_pj_vinculada&id_orgao_acesso_externo=0');
+//$strLinkAjaxContatoRI0571 = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax_externo=contato_pj_vinculada');
+$strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=cidade_montar_select_nome');
+?>
 <script type="text/javascript">
 /**
 * ANATEL
@@ -5,6 +11,12 @@
 * 23/09/2016 - criado por marcelo.bezerra@cast.com.br - CAST
 *
 */
+
+var objAjaxNomeCidade = null;
+var objSelectSiglaEstado = null;
+var objSelectNomeCidade = null;
+var objAjaxContatoRI0571 = null;
+var objAutoCompletarContexto = null;
 
 function selecionarPF(){
   mostrarCamposPF();
@@ -105,8 +117,6 @@ function mostrarCamposPJ(){
 }
 
 function enviarInteressado(){
-
-	//alert('Enviar interessados - INICIO');
 	
 	var arrDados = ["Banana1", "Orange1", "Apple1", "Mango1"];
 	arrDados.push("Kiwi1");
@@ -115,8 +125,6 @@ function enviarInteressado(){
 	var arrDados2 = ["Banana2", "Orange2", "Apple2", "Mango2"];
 	arrDados2.push("Kiwi2");
 	opener.receberInteressado(arrDados2, false);
-
-	//alert('Enviar interessados - FIM');
 	
 }
 
@@ -136,20 +144,82 @@ function validarFormulario(){
 
 function inicializar(){
 
-	var txtcpf = window.opener.document.getElementById("txtCPF").value;
-	var txtcnpj = window.opener.document.getElementById("txtCNPJ").value;
+	<?php if( isset( $_GET['edicao'] ) ) { ?>
+
+      var idEdicao = window.opener.document.getElementById("hdnIdEdicao").value;
+	  document.getElementById("hdnIdEdicaoAuxiliar").value = idEdicao;
+	  document.frmEdicaoAuxiliar.submit();
+	  return;
 	
-	<?php if( isset( $_GET['cpf'] ) ) { ?>
-	document.getElementById("rdPF").click();
-	document.getElementById("txtCPF").value = txtcpf;
-	<?php } ?>
+	<?php } else { ?>
 	
-	<?php if( isset( $_GET['cnpj'] ) ) { ?>
-	document.getElementById("rdPJ").click();
-	document.getElementById("txtCNPJ").value = txtcnpj;
-	<?php } ?>
+	  var txtcpf = window.opener.document.getElementById("txtCPF").value;
+	  var txtcnpj = window.opener.document.getElementById("txtCNPJ").value;
+		
+	  <?php if( isset( $_GET['cpf'] ) ) { ?>
+	  document.getElementById("rdPF").click();
+	  document.getElementById("txtCPF").value = txtcpf;
+	  <?php } ?>
+		
+	  <?php if( isset( $_GET['cnpj'] ) ) { ?>
+	  document.getElementById("rdPJ").click();
+	  document.getElementById("txtCNPJ").value = txtcnpj;
+	  <?php } ?>
+
+	  <?php if( isset( $_GET['edicaoExibir'] ) && isset( $_GET['cnpj'] )  ) { ?>
+      document.getElementById("txtCNPJ").value = "<?= InfraUtil::formatarCnpj( $_POST['txtCNPJ'] ) ?>";	  
+	  <?php } ?>
+
+	  <?php if( isset( $_GET['edicaoExibir'] ) && isset( $_GET['cpf'] ) ) { ?>
+	  document.getElementById("txtCPF").value = "<?= InfraUtil::formatarCpf( $_POST['txtCPF'] ) ?>";	  
+	  <?php } ?>
+
+	//Preenchimento com o endereço do contexto
+	  //objAutoCompletarInteressado = new infraAjaxAutoCompletar('hdnIdInteressado','txtInteressado','<?=$strLinkAjaxInteressado?>');
+      //objAjaxContatoRI0571 = new infraAjaxComplementar('hdnIdContextoContato','txtPjVinculada','<?=$strLinkAjaxContatoRI0571?>');
+	  //objAjaxContatoRI0571.limparCampo = false;
 	  
-    infraEfeitoTabelas();
+	  //objAjaxContatoRI0571.prepararExecucao = function(){
+	    //return 'idContextoContato='+document.getElementById('hdnIdContextoContato').value;
+	  //}
+
+	  //objAjaxContatoRI0571.processarResultado = function(arr){
+		//alert(arr);
+	  //}
+		
+	  debugger;
+	  objAutoCompletarContexto = new infraAjaxAutoCompletar('hdnIdContextoContato','txtPjVinculada','<?=$strLinkAjaxContatos?>');
+	  objAutoCompletarContexto.limparCampo = false;
+
+	  objAutoCompletarContexto.prepararExecucao = function(){
+		debugger;
+	    return 'id_tipo_contexto_contato='+document.getElementById('tipoInteressado').value+'&palavras_pesquisa='+document.getElementById('txtPjVinculada').value;
+	  };
+	  
+	  objAutoCompletarContexto.processarResultado = function(id,descricao,complemento){
+
+        console.log("Resultado:" + id );
+		  
+	    if (id!=''){
+	      document.getElementById('hdnIdContextoContato').value = id;
+	      document.getElementById('txtPjVinculada').value = descricao;
+	      //objAjaxContatoRI0571.executar();
+	    }
+	    
+	  }
+	  	
+	  //Ajax para carregar as cidades na escolha do estado
+	  objAjaxCidade = new infraAjaxMontarSelectDependente('selEstado','selCidade','<?=$strLinkAjaxCidade?>');
+	  objAjaxCidade.prepararExecucao = function(){
+	    return infraAjaxMontarPostPadraoSelect('null','','null') + '&siglaUf='+document.getElementById('selEstado').value;
+	  }
+	  objAjaxCidade.processarResultado = function(){
+	    //alert('terminou carregamento');
+	  }
+	  
+	  infraEfeitoTabelas();
+    
+    <?php } ?>
   
 }
 
@@ -176,53 +246,17 @@ function OnSubmitForm() {
 	return true;
 }
 
-function paisEstadoCidade(objPais, txtPais){
-
-	  /*	
-	  var objTxtEstado = document.getElementById('txtSiglaEstado');
-	  var objSelEstado = document.getElementById('selSiglaEstado');
-	  var objTxtCidade = document.getElementById('txtNomeCidade');
-	  var objSelCidade = document.getElementById('selNomeCidade');
-	  
-	  var flagAlterando = false;
-	  if (txtPais != undefined){
-	    objPais.value = txtPais;
-	  }else{
-	    flagAlterando = true;
-	    txtPais = objPais.value;
-	  }
-
-	  if (infraTrim(txtPais).toLowerCase() == 'brasil'){
-	    if (flagAlterando){
-	      objTxtEstado.value='';
-	      objTxtCidade.value='';
-	    }
-
-	    infraSelectSelecionarItem(objSelEstado,document.getElementById('txtSiglaEstado').value);
-	    objAjaxNomeCidade.executar();
-
-	    objTxtEstado.style.visibility = 'hidden';
-	    objTxtCidade.style.visibility = 'hidden';
-	    objSelEstado.style.visibility = 'visible';
-	    objSelCidade.style.visibility = 'visible';
-	  }else{
-	    infraSelectSelecionarItem(objSelEstado, 'null');
-	    infraSelectSelecionarItem(objSelCidade, 'null');
-	  
-	    objTxtEstado.style.visibility = 'visible';
-	    objTxtCidade.style.visibility = 'visible';
-	    objSelEstado.style.visibility = 'hidden';
-	    objSelCidade.style.visibility = 'hidden';
-	  }
-	  */
-}
-
 function salvar(){
 	
 	//validar interessado
 	var interessado1 = document.frmCadastro.tipoPessoa.value;
-	var interessado2 = document.frmCadastro.tipoPessoaPF.value;
-
+	var interessado2 = '';
+	var tipoPessoaPF = document.frmCadastro.tipoPessoaPF;
+	
+	if( tipoPessoaPF != null && tipoPessoaPF != undefined ){
+	  interessado2 = tipoPessoaPF.value;
+	}
+	
 	if( interessado1 == '' ){
       alert('Informe o Interessado.');
       return;
@@ -334,6 +368,15 @@ function salvar(){
 	  document.getElementById('telefone').focus();
 	  return;
 	}
+
+	//email
+	if (!infraValidarEmail(infraTrim(document.getElementById('email').value))){
+		
+		alert('E-mail Inválido.');
+		document.getElementById('email').focus();
+		return false;
+	
+	}
 	
 	//endereco
 	var endereco = document.getElementById('endereco').value;
@@ -354,29 +397,28 @@ function salvar(){
 	}
 	
 	//pais
+	/*
 	var pais = document.getElementById('pais').value;
 
 	if( pais == ''){
 	  alert('Informe o  país.');
 	  document.getElementById('pais').focus();
 	  return;
-	}
+	} */
 	
 	//estado
-	var estado = document.getElementById('estado').value;
-	var cbEstado = document.getElementById('cbEstado').value;
+	var estado = document.getElementById('selEstado').value;
 
-	if( estado == '' && cbEstado == ''){
+	if( estado == ''){
 	  alert('Informe o  estado.');
 	  document.getElementById('estado').focus();
 	  return;
 	}
 	
 	//cidade
-	var cidade = document.getElementById('cidade').value;
-	var cbCidade = document.getElementById('cbCidade').value;
+	var cidade = document.getElementById('selCidade').value;
 
-	if( cidade == '' && cbCidade == ''){
+	if( cidade == ''){
 	  alert('Informe a cidade.');
 	  document.getElementById('cidade').focus();
 	  return;

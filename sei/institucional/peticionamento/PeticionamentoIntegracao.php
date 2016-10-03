@@ -181,7 +181,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 		    	$urlLink = $arrMenusNomes[ $key ];
 		    	$nomeMenu = $key;
 		    	if($nomeMenu=='Peticionamento'){
-		    		$arrLink[] = '-^^^' . $nomeMenu .'^';
+		    		$arrLink[] = '-^#^^' . $nomeMenu .'^';
 		    		$arrLink[] = '--^' . $urlLink .'^^' . 'Processo Novo' .'^';	
 		    	}else{
 		    		$arrLink[] = '-^' . $urlLink .'^^' . $nomeMenu .'^';	

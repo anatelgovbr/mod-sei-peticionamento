@@ -20,6 +20,30 @@ try {
 
   SessaoSEI::getInstance()->validarLink();
   
+  //=========================================
+  //INICIO - Funções de apoio ao download
+  //=========================================
+  
+  function obterDiretorio(IndisponibilidadeAnexoPeticionamentoDTO $objAnexoDTO){
+  	try{
+  		return ConfiguracaoSEI::getInstance()->getValor('SEI','RepositorioArquivos').'/'.substr($objAnexoDTO->getDthInclusao(),6,4).'/'.substr($objAnexoDTO->getDthInclusao(),3,2) .'/' .substr($objAnexoDTO->getDthInclusao(),0,2);
+  	}catch(Exception $e){
+  		throw new InfraException('Erro obtendo diretório do anexo.',$e);
+  	}
+  }
+  
+  function obterLocalizacao(IndisponibilidadeAnexoPeticionamentoDTO $objAnexoDTO){
+  	try{
+  		return obterDiretorio($objAnexoDTO).'/'.$objAnexoDTO->getNumIdAnexoPeticionamento();
+  	}catch(Exception $e){
+  		throw new InfraException('Erro obtendo localização do anexo.',$e);
+  	}
+  }
+  
+  //=========================================
+  //FIM - Funções de apoio ao download
+  //=========================================
+  
   if( $_GET['acao'] != "indisponibilidade_peticionamento_download"){
     PaginaSEI::getInstance()->verificarSelecao('indisponibilidade_peticionamento_alterar');
   }
@@ -81,7 +105,6 @@ try {
       $objIndisponibilidadePeticionamentoDTO->setDthDataFim($dateFim);
       $objIndisponibilidadePeticionamentoDTO->setStrResumoIndisponibilidade($_POST['txtResumoIndisponibilidade']);
       $objIndisponibilidadePeticionamentoDTO->setStrSinProrrogacao($_POST['hdnSinProrrogacao']);
-      //echo $_POST['hdnAnexos']; die;
       $objIndisponibilidadePeticionamentoDTO->setArrObjAnexoDTO(IndisponibilidadeAnexoPeticionamentoINT::processarAnexo($_POST['hdnAnexos']));
             
       //processarAnexo
@@ -159,8 +182,7 @@ try {
             $objIndisponibilidadePeticionamentoRN->alterar($objIndisponibilidadePeticionamentoDTO);
             PaginaSEI::getInstance()->adicionarMensagem('Os dados foram alterados com sucesso.');
             header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].'&id_indisponibilidade_peticionamento='.$objIndisponibilidadePeticionamentoDTO->getNumIdIndisponibilidade().PaginaSEI::getInstance()->montarAncora($objIndisponibilidadePeticionamentoDTO->getNumIdIndisponibilidade())));
-            //header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?id_tipo_processo_litigioso='. $_POST['hdnIdTipoProcessoLitigioso'] . '&acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($objFaseLitigiosoDTO->getNumIdFaseLitigioso())));
-          die;
+            die;
           
         } catch(Exception $e){
         	PaginaSEI::getInstance()->setBolAutoRedimensionar(false);
@@ -193,18 +215,45 @@ try {
       	}
 
 		  if (file_exists($file)) {
-			  header('Pragma: public');
-			  header("Cache-Control: no-cache, no-store, post-check=0, pre-check=0,  must-revalidate");
-			  header('Pragma: no-cache');
-			  header('Expires: 0');
-			  header('Content-Description: File Transfer');
-			  header('Content-Disposition: attachment; filename="' . $_POST['hdnNomeArquivoDownloadReal'] . '"');
-			  header('Content-Length: ' . filesize($file));
-			  readfile($file, true);
-			  exit;
+		  	  
+		  	  PaginaSEI::getInstance()->getObjInfraLog()->gravar($file);
+		  	
+		  	  try {
+		  	  	  
+		  	  	  //implementaçao baseada na pagina "anexo_download.php"
+				  header("Pragma: public");
+				  header("Cache-Control: private, no-cache, no-store, post-check=0, pre-check=0");
+				  header("Expires: 0");		  				  
+				  
+				  $strContentDisposition = 'inline';
+				  
+				  if ((isset($_GET['download']) && $_GET['download']=='1')) {				  
+				  	$strContentDisposition = 'attachment';				  
+				  }
+				  
+				  PaginaSEI::montarHeaderDownload($_POST['hdnNomeArquivoDownloadReal'],$strContentDisposition);
+				  				  
+				  ob_implicit_flush();
+				  ob_flush();
+				  
+				  $fp = fopen(obterLocalizacao($objIndisponibilidadeAnexoPeticionamentoDTO), "rb");
+				  while (!feof($fp)) {
+				  	echo fread($fp, TAM_BLOCO_LEITURA_ARQUIVO);
+				  }
+				  fclose($fp);
+				  
+				  ob_flush();
+				  break;
+				  
+			  }catch(Exception $e){
+		  	  	PaginaSEI::getInstance()->getObjInfraLog()->gravar($e->getTraceAsString());
+		  	  	echo 'InfraLog';
+		  	  }
+			  //exit;
 		  }
       	
-      	die;
+		break;  
+      	//die;
     
     case 'indisponibilidade_peticionamento_consultar':
       $strTitulo = 'Consultar Indisponibilidade do SEI';
@@ -449,7 +498,7 @@ function inicializar(){
   var strHash = document.getElementById('hdnAnexos').value;
   var arrHash = strHash.split('±');
     
-  var urlBase = "<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=indisponibilidade_peticionamento_download'))?>";
+  var urlBase = "<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?download=1&acao=indisponibilidade_peticionamento_download'))?>";
   document.getElementById('hdnNomeArquivoDownload').value = arrHash[0];
   document.getElementById('hdnNomeArquivoDownloadReal').value = arrHash[1];
   
@@ -502,15 +551,14 @@ function inicializar(){
   
   	    foreach(array_keys($arrAcoesRemover) as $id) { 
           
-        $urlBase = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=indisponibilidade_peticionamento_download'));
+        $urlBase = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?download=1&acao=indisponibilidade_peticionamento_download'));
         
   ?>        
         var strHash = document.getElementById('hdnAnexos').value;
         var arrHash = strHash.split('±');
 
         //hash anexo / nome real do arquivo
-        //alert('teste 1 <?=$idAnexo?>');
-  		document.getElementById('hdnNomeArquivoDownload').value = '<?=$hashAnexo?>';
+        document.getElementById('hdnNomeArquivoDownload').value = '<?=$hashAnexo?>';
   		document.getElementById('hdnNomeArquivoDownloadReal').value = arrHash[1];
 
 		<?php if( $_GET['acao'] == 'indisponibilidade_peticionamento_consultar' ){ ?>
@@ -520,8 +568,6 @@ function inicializar(){
 		 	"<a href='#' onclick=\"downloadArquivo('<?= $urlBase ?>')\"><img title='Baixar anexo' alt='Baixar anexo' src='/infra_css/imagens/download.gif' class='infraImg' /></a>",
 		 	false,
 		 	false);
-
-  		//alert('teste 2');
   		
   		<?php } else { ?>
 
@@ -530,8 +576,6 @@ function inicializar(){
   			 	"<a href='#' onclick=\"downloadArquivo('<?= $urlBase ?>')\"><img title='Baixar anexo' alt='Baixar anexo' src='/infra_css/imagens/download.gif' class='infraImg' /></a>",
   			 	false,
   			 	true);
-
-  	  	//alert('teste 3');
 		
   		<?php } ?>
 	 	
@@ -645,7 +689,6 @@ function validarCadastro(){
 		  if(!prorrogacao)
 		  {
 			alert('Informe se a Indisponibilidade justifica prorrogação automática dos prazos');
-			//alert('Informe a Indisponibilidade justifica prorrogação automática dos prazos.');
 			document.getElementById('rdProrrogacaoSim').focus();
 			return false;
 	       }

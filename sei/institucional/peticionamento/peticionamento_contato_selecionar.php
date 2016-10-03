@@ -110,10 +110,10 @@ try {
 
   $arrComandos = array();
  
-  $arrComandos[] = '<button type="submit" accesskey="P" id="btnPesquisar" name="btnPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';        
+  $arrComandos[] = '<button type="submit" accesskey="p" id="btnPesquisar" name="btnPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';        
   
   if (PaginaSEIExterna::getInstance()->isBolPaginaSelecao()){
-      $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
+      $arrComandos[] = '<button type="button" accesskey="t" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
   }
       
   if($_GET['acao']=='contexto_selecionar' || 
@@ -204,7 +204,7 @@ try {
     $strCaptionTabela = '';
     if ($_GET['acao'] == 'peticionamento_contato_listar'){
       $strSumarioTabela = 'Tabela de Interessados.';
-      $strCaptionTabela .= 'Interessadis';
+      $strCaptionTabela .= 'Interessados';
     }else{
       $strSumarioTabela = 'Tabela de Interessados.';
       $strCaptionTabela .= 'Interessados';
@@ -377,7 +377,7 @@ try {
                     '</table>'."\n";
   }
   
-  $arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="window.close();" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
+  $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="window.close();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
   
   $strItensSelGrupoContato = GrupoContatoINT::ConjuntoPorUnidadeRI0515('null','&nbsp;',$numIdGrupoContato);
   $strItensSelTipoContextoContato = TipoContextoContatoINT::montarSelectNomeRI0518('null','&nbsp;',$numTipoContextoContato);
@@ -467,10 +467,10 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
   PaginaSEIExterna::getInstance()->abrirAreaDados('6.5em');
   ?>
   
-  <label id="lblPalavrasPesquisaContatos" for="txtPalavrasPesquisaContatos" accesskey="" class="infraLabelOpcional">Palavras-chave para pesquisa:</label>
+  <label id="lblPalavrasPesquisaContatos" for="txtPalavrasPesquisaContatos" class="infraLabelOpcional">Palavras-chave para pesquisa:</label>
   <input type="text" id="txtPalavrasPesquisaContatos" name="txtPalavrasPesquisaContatos" class="infraText" value="<?=$strPalavrasPesquisa;?>" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" />
 
-  <label id="lblTipoContextoContato" for="selTipoContextoContato" accesskey="" class="infraLabelOpicional">Tipo de Interessado:</label>
+  <label id="lblTipoContextoContato" for="selTipoContextoContato" class="infraLabelOpicional">Tipo de Interessado:</label>
   <select id="selTipoContextoContato" name="selTipoContextoContato" class="infraSelect" 
           onchange="selecionarTipoContato()" 
           tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" >

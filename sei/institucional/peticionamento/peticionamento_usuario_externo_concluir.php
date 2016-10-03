@@ -224,6 +224,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <input type="hidden" id="nivelAcessoDocPrincipal" name="nivelAcessoDocPrincipal" />
     <input type="hidden" id="grauSigiloDocPrincipal" name="grauSigiloDocPrincipal" />
     <input type="hidden" id="hdnListaInteressados" name="hdnListaInteressados" />
+    <input type="hidden" id="hdnListaInteressadosIndicados" name="hdnListaInteressadosIndicados" />
     
     <input type="hidden" id="hipoteseLegalDocPrincipal" name="hipoteseLegalDocPrincipal" />
     <input type="hidden" id="hipoteseLegalDocEssencial" name="hipoteseLegalDocEssencial" />
@@ -282,8 +283,7 @@ function assinar(){
 
 		var hipoteseLegal = null;
 		var hipoteseLegal2 = null;
-		var hipoteseLegal3 = null;
-		
+		var hipoteseLegal3 = null;		
 		
 		if( campoHipLegal1 != null && campoHipLegal1 != undefined ){
 		  hipoteseLegal = campoHipLegal1.value;
@@ -312,8 +312,8 @@ function assinar(){
 
 		//verificar se esta vindo uma lista de interessados
 		var selInteressados = window.opener.document.getElementById('selInteressados');
+		var hdnSelInteressadosIndicados = window.opener.document.getElementById('hdnListaInteressadosIndicados');
 		var selInteressadosSelecionadosTxt = '';
-		//alert(selInteressadosSelecionados);
 		
 		//verificar se esta a combo de UF (Unidades multiplas)
 		var selUFAberturaProcesso = window.opener.document.getElementById('selUFAberturaProcesso');
@@ -338,9 +338,50 @@ function assinar(){
 			        
 			}
 
-			//alert( selInteressadosSelecionadosTxt );
 			document.getElementById('hdnListaInteressados').value = selInteressadosSelecionadosTxt;
 
+		}
+
+		//lista de interessados indicados por CPF/CNPJ
+		if( hdnSelInteressadosIndicados != null && hdnSelInteressadosIndicados != "") {
+
+			var hdnListaInteressadosIndicados = hdnSelInteressadosIndicados.value;
+			
+			//caractere de quebra de linha
+			var arrHash = hdnListaInteressadosIndicados.split('¥');
+		    var quantidadeRegistro = arrHash.length;
+		
+			if( quantidadeRegistro == 0){
+				
+				//caractere de quebra de coluna
+				var arrLocal = hdnListaInteressadosIndicados.split('±');
+				var idContato = arrLocal[0];
+				
+				if( selInteressadosSelecionadosTxt != ''){
+			    	selInteressadosSelecionadosTxt += ','; 
+				}
+				
+			    selInteressadosSelecionadosTxt += idContato;
+				
+			} else if( quantidadeRegistro > 0 ){
+				
+				for(var i = 0; i < quantidadeRegistro ; i++ ){
+		
+					var arrLocal = arrHash[i].split('±');
+					var idContato = arrLocal[0];
+
+					if( selInteressadosSelecionadosTxt != ''){
+				    	selInteressadosSelecionadosTxt += ','; 
+					}
+					
+				    selInteressadosSelecionadosTxt += idContato;
+					
+				}
+				
+			}
+
+			document.getElementById('hdnListaInteressados').value = selInteressadosSelecionadosTxt;
+		
 		}
 
 		//obtendo valores das grids de documentos principais, essenciais e complementares

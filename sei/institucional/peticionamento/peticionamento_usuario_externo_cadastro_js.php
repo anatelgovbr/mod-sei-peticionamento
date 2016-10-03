@@ -98,6 +98,8 @@ var objTabelaDocEssencial = null;
 var objComplementarUpload = null;
 var objTabelaDocComplementar = null;
 
+var objTabelaInteressado = null;
+
 var objAutoCompletarInteressado = null;
 var objLupaInteressados = null;
 
@@ -135,6 +137,10 @@ function validarUploadArquivo(numero){
 		    		hiddenCampoPrincipal.value != '' ){
 
 					alert('Somente pode ter um Documento Principal.');
+
+					document.getElementById("fileArquivoPrincipal").value = '';
+					limparCampoUpload('1');
+
 					isValido = false;
 					return;
 					
@@ -189,7 +195,7 @@ function validarUploadArquivo(numero){
 
 		//validar campo/combo Tipo (apenas para Essencial ou Complementar)
 		else if( ( numero == '2' || numero == '3' ) && ( cbTipo == undefined || cbTipo == null || cbTipo.value == '')  ){
-			   alert('Informe o Tipo.');
+			   alert('Informe o Tipo de Documento.');
 			   isValido = false;
 			   cbTipo.focus();
 			   return;	
@@ -201,7 +207,7 @@ function validarUploadArquivo(numero){
 
 			//validar campo Complemento
 			if( strTxtComplemento == ""){
-				   alert('Informe o Complemento.');
+				   alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
 				   isValido = false;
 				   document.getElementById('complemento' + complemento).focus();
 				   return;
@@ -211,7 +217,7 @@ function validarUploadArquivo(numero){
 
 		//validar campo Complemento
 		if( strTxtComplemento == ""){
-			   alert('Informe o Complemento.');
+			   alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
 			   isValido = false;
 			   document.getElementById('complemento' + complemento).focus();
 			   return;
@@ -313,7 +319,7 @@ function validarUploadArquivoEssencial(){
 
 		//validar campo/combo Tipo (apenas para Essencial ou Complementar)
 		else if( cbTipo == undefined || cbTipo == null || cbTipo.value == '' ){
-			   alert('Informe o Tipo.');
+			   alert('Informe o Tipo de Documento.');
 			   isValido = false;
 			   cbTipo.focus();
 			   return;	
@@ -323,7 +329,7 @@ function validarUploadArquivoEssencial(){
 
 		//validar campo Complemento
 		if( strTxtComplemento == ""){
-				   alert('Informe o Complemento.');
+				   alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
 				   isValido = false;
 				   document.getElementById('complemento' + complemento).focus();
 				   return;
@@ -331,7 +337,7 @@ function validarUploadArquivoEssencial(){
 
 		//validar campo Complemento
 		if( strTxtComplemento == ""){
-			   alert('Informe o Complemento.');
+			   alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
 			   isValido = false;
 			   document.getElementById('complemento' + complemento).focus();
 			   return;
@@ -491,7 +497,6 @@ function validarQtdArquivos(){
 function validarQtdArquivosPrincipal(){
 
 	try {
-	  //alert('teste principal');
 	  objPrincipalUpload.executar();
 	} catch(err) {
 	    alert(" Erro: " + err);
@@ -501,50 +506,52 @@ function validarQtdArquivosPrincipal(){
 
 function abrirJanelaDocumento( ){
 
-	 var windowFeatures = "location=1,status=1,resizable=1,scrollbars=1";
+	 <?php
+	 $linkEditor = PaginaSEIExterna::getInstance()->formatarXHTML(
+	 		SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=editor_peticionamento_montar&id_serie=' . $objTipoProcDTO->getNumIdSerie() ));
+	 ?>
+	 
+	 var janelaEditor = infraAbrirJanela('','janelaEditor_<?=SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()?>',infraClientWidth(),infraClientHeight(),'location=0,status=0,resizable=1,scrollbars=1',false);
 
-	infraAbrirJanela('<?=PaginaSEIExterna::getInstance()->formatarXHTML(
-    		           SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=editor_peticionamento_montar&id_serie=' . $objTipoProcDTO->getNumIdSerie() ))?>',
-   	             'cadastrarInteressado',
-   	             780,
-   	             600,
-   	             windowFeatures, //options
-   	             true); //modal 
+	 if (janelaEditor.location == 'about:blank'){
+	      janelaEditor.location.href = '<?=$linkEditor?>';
+	 }
+
+	 janelaEditor.focus();
+ 
 }
 
 function receberInteressado( arrDadosInteressado, InteressadoCustomizado ){
-
-	// Find a <table> element with id="myTable":
-	var table = document.getElementById("tbInteressado");
-
-	// Create an empty <tr> element and add it to the 1st position of the table:
-	var row = table.insertRow(-1);
-	row.className = 'infraTrClara'; 
-	// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
 	
-	//CPF/CNPJ 	
-	var cell1 = row.insertCell(0);
-	cell1.className = 'infraTdSetaOrdenacao';
-	
-	//Nome/Razão social 
-	var cell2 = row.insertCell(1);
-	cell2.className = 'infraTdSetaOrdenacao';
-	
-	//Ações
-	var cell3 = row.insertCell(2);
-	cell3.className = 'infraTdSetaOrdenacao';
+	objTabelaInteressado.adicionar([ arrDadosInteressado[0], 
+	                    arrDadosInteressado[1] , 
+	                  	arrDadosInteressado[2] ,  
+	                  	arrDadosInteressado[3], 
+	                  	'' ]);
 
-	//infraTrClara
-	//infraTdSetaOrdenacao
-	cell1.innerHTML = "NEW CELL1";
-	cell2.innerHTML = "NEW CELL2";
-	
-	if( InteressadoCustomizado != null && InteressadoCustomizado == true ){
-	  cell3.innerHTML = " customizado ";
-	} else {
-		cell3.innerHTML = " selecionado ";
-	}
+    if( InteressadoCustomizado != "") {
 
+    	objTabelaInteressado.adicionarAcoes(
+		arrDadosInteressado[0] , 
+		"<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('" + arrDadosInteressado[0] +"', '" + arrDadosInteressado[1] +"', '"+ arrDadosInteressado[2] +"')\"><img title='Alterar interessado' alt='Alterar interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>",
+		false,
+		true);
+		
+    } else {
+
+    	objTabelaInteressado.adicionarAcoes(
+    	  arrDadosInteressado[0] , 
+    	  "", 
+    	  false,
+    	  true);
+    }
+    
+	document.getElementById("txtCPF").value='';
+	document.getElementById("txtCNPJ").value='';
+	document.getElementById("hdnCustomizado").value='';
+	document.getElementById("txtNomeRazaoSocial").value='';
+	document.getElementById("hdnIdInteressadoCadastrado").value='';
+	
 	infraEfeitoTabelas();
 	
 }
@@ -733,7 +740,8 @@ function validarFormulario(){
 	var textoEspecificacao = document.getElementById("txtEspecificacao").value;
 	var cbUF = document.getElementById("selUFAberturaProcesso");	
 	var ufSelecionada = '';
-
+	var DocPrincipalValidado = false;
+	
 	var selInteressados = document.getElementById("selInteressados");	
 
 	if( cbUF != undefined && cbUF != null ){ 
@@ -780,7 +788,7 @@ function validarFormulario(){
 			return false;
 			
 		} else if( hdnDocPrincipal == "" && complementoPrincipal.value == ''){
-			alert('Informe o Complemento.');
+			alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
 			complementoPrincipal.focus();
 			return false;
 			
@@ -821,12 +829,13 @@ function validarFormulario(){
 		tbDocumentoPrincipal != undefined ){
 
 		var strHashPrincipal = document.getElementById('hdnDocPrincipal').value;
-		//alert( strHashPrincipal );
-
+		
 		if( strHashPrincipal == ''){
 			alert('Informe o Documento Principal.');
 			document.getElementById('fileArquivoPrincipal').focus();
 			return false;
+		} else {
+			DocPrincipalValidado = true;
 		}
 	} 
 
@@ -835,24 +844,28 @@ function validarFormulario(){
 	//caso nao tenha conteudo obrigar usuario a informar
 	else {
 
-		/*
 		var conteudoDocumento = "";
 		
 		$( document ).ready(function() {
 		
-			var  formData = "";  
+			//var  formData = "";  
 	   		
 			$.ajax({
-			    url : "",
+			    url : "<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=validar_documento_principal'))?>",
 			    type: "POST",
-			    data : formData,
+			    //data : formData,
+			    async: false,
 			    success: function(data, textStatus, jqXHR)
 			    {
-
 			        conteudoDocumento = data;
-			    	
+			        if (data==''){
+			        	alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes é necessário acessar o Editor do SEI no link “clique aqui para editar conteúdo” em frente ao campo “Documento Principal”, preencher apenas os campos pertinentes com os dados da demanda e clicar no botão “Salvar” no canto superior esquerdo do Editor.");
+			        	return;
+			        }else{
+			        	DocPrincipalValidado=true;
+			        }
+			        
 			    },
-			    
 			    error: function (jqXHR, textStatus, errorThrown)
 			    {
 				   alert('Erro ao validar documento principal.'); 	
@@ -861,78 +874,84 @@ function validarFormulario(){
 			    }
 			});
 		});
-
-		alert( conteudoDocumento ); 
-		*/
 		
 	}
-	
-	//valida se todos os tipos essenciais contem na lista
-	
-	var comboTipoEssencial = document.getElementById('tipoDocumentoEssencial');
-	
-	if(comboTipoEssencial!=null){
-		  var retornoUploadEssencial = false;
-		  var validarTipoEssenc = true;
-		  var strHashEssencial = document.getElementById('hdnDocEssencial').value;
 
-		  //caractere de quebra de linha/registro
-		  var arrHashEssencial = strHashEssencial.split('¥');
-		  var qtdX = arrHashEssencial.length;
-		  
-		  if( qtdX == 1 && arrHashEssencial[0] == "" ){
-
-			  arrHashEssencial = Array();
-			  arrHashEssencial[0] = strHashEssencial;
+	if (DocPrincipalValidado==true){
+		
+		//valida se todos os tipos essenciais contem na lista
+		var comboTipoEssencial = document.getElementById('tipoDocumentoEssencial');
+		
+		if(comboTipoEssencial!=null){
+			  var retornoUploadEssencial = false;
+			  var validarTipoEssenc = true;
+			  var strHashEssencial = document.getElementById('hdnDocEssencial').value;
+	
+			  //caractere de quebra de linha/registro
+			  var arrHashEssencial = strHashEssencial.split('¥');
+			  var qtdX = arrHashEssencial.length;
 			  
-		  }	
-		  			  
-		  var local = 9;
-		  var tiposIncluidos = Array();
-
-		//so vai adicionar no array dos incluidos quando tem registros na grid
-		  if( strHashEssencial != "") {		
-		  
-			  for(var i = 0; i < qtdX ; i++ ){
-				  	
-				  //caractere de quebra de coluna/campo	
-				  var arrLocal = arrHashEssencial[i].split('±');	
-				  var tipo = arrLocal[local];
+			  if( qtdX == 1 && arrHashEssencial[0] == "" ){
 	
-				  if(tiposIncluidos.indexOf(tipo) <= -1){
-					  tiposIncluidos.push(arrLocal[local]);
-				  }
+				  arrHashEssencial = Array();
+				  arrHashEssencial[0] = strHashEssencial;
 				  
-			  }
-		  
-		  } else {
-			  //grid vazia e campos de upload de essencial nao preenchidos	
-			  retornoUploadEssencial = validarUploadArquivoEssencial();
-
-			  if( retornoUploadEssencial != true ){
-			     return false;
-			  }
-	      }
-		  
-		  var tamnhoOptions = comboTipoEssencial.options.length-1;
-		  
-		  if(tiposIncluidos.length == 0 || tamnhoOptions != tiposIncluidos.length){
-			 validarTipoEssenc = false;
-		  }
-		  
-	      if(!validarTipoEssenc){
-	    	  alert('Deve adicionar pelo menos um Documento Essencial para cada Tipo.');
-		      document.getElementById('fileArquivoEssencial').focus();
-		      return false;      
-	      }
-	} 
+			  }	
+			  			  
+			  var local = 9;
+			  var tiposIncluidos = Array();
 	
-	return true;
+			//so vai adicionar no array dos incluidos quando tem registros na grid
+			  if( strHashEssencial != "") {		
+			  
+				  for(var i = 0; i < qtdX ; i++ ){
+					  	
+					  //caractere de quebra de coluna/campo	
+					  var arrLocal = arrHashEssencial[i].split('±');	
+					  var tipo = arrLocal[local];
+		
+					  if(tiposIncluidos.indexOf(tipo) <= -1){
+						  tiposIncluidos.push(arrLocal[local]);
+					  }
+					  
+				  }
+			  
+			  } else {
+				  //grid vazia e campos de upload de essencial nao preenchidos	
+				  retornoUploadEssencial = validarUploadArquivoEssencial();
+	
+				  if( retornoUploadEssencial != true ){
+				     return false;
+				  }
+		      }
+			  
+			  var tamnhoOptions = comboTipoEssencial.options.length-1;
+			  
+			  if(tiposIncluidos.length == 0 || tamnhoOptions != tiposIncluidos.length){
+				 validarTipoEssenc = false;
+			  }
+			  
+		      if(!validarTipoEssenc){
+		    	  alert('Deve adicionar pelo menos um Documento Essencial para cada Tipo.');
+			      document.getElementById('fileArquivoEssencial').focus();
+			      return false;      
+		      }
+		}
+		 
+		return true;
+		
+	}else{
+		
+		return false;
+
+	}
+
+	
 	
 }
 
 function abrirPeticionar(){
-
+    
     if( validarFormulario() ) {
 	
          infraAbrirJanela('<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] .'&acao=peticionamento_usuario_externo_concluir&tipo_selecao=2'))?>',
@@ -942,6 +961,31 @@ function abrirPeticionar(){
     	             '', //options
     	             false); //modal     
     } 
+}
+
+function abrirCadastroInteressadoAlterar( id, tipo, cpfcnpj){
+
+	//charmar janela para cadastrar um novo interessado
+	$('#txtNomeRazaoSocial').val('');
+	$('#hdnCustomizado').val('');
+	$('#hdnIdEdicao').val( id );
+
+	<?php 
+	$strLinkEdicaoPF = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpf=true&id_orgao_acesso_externo=0');
+	$strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=peticionamento_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=0');
+	?>
+	
+	if( tipo == 'Pessoa Física' ){
+		var str = '<?= $strLinkEdicaoPF ?>';
+	}
+
+	else if( tipo == 'Pessoa Jurídica' ){
+		var str = '<?= $strLinkEdicaoPJ ?>';
+	}
+	
+	infraAbrirJanela( str, 'cadastrarInteressado', 900, 900, '', false); //modal 
+	return;
+	
 }
 
 function abrirCadastroInteressado(){
@@ -1018,8 +1062,11 @@ function abrirCadastroInteressado(){
 		        //data - response from server
 		        
 		        if( data != null && data != undefined && data != ""){
+
 				  var obj = jQuery.parseJSON( data );
+				  $('#hdnIdInteressadoCadastrado').val(obj.id);
 		    	  $('#txtNomeRazaoSocial').val(obj.nome);
+		    	  $('#hdnCustomizado').val('');
 		    	  return;
 		        } 
 
@@ -1027,6 +1074,7 @@ function abrirCadastroInteressado(){
 			      	  
 					//charmar janela para cadastrar um novo interessado
 					$('#txtNomeRazaoSocial').val('');
+					$('#hdnCustomizado').val('');
 
 					if( chkTipoPessoaFisica ){
 						var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpf=true') ?>';
@@ -1049,7 +1097,6 @@ function abrirCadastroInteressado(){
 		    }
 		});
 				
-		//alert('Consultar CPF/CNPJ via AJAX 2');
 		return;
 		
 	}
@@ -1125,66 +1172,49 @@ function inicializar(){
 
 	  objAjaxContato.processarResultado = function(arr){
 
-		//console.log( arr );	
-		//alert( arr );	
-		//inicio processo ajax
-		/*	
-	    document.getElementById('txtTelefone').value = '';
-	    document.getElementById('txtFax').value = '';
-	    document.getElementById('txtEmail').value = '';
-	    document.getElementById('txtSitioInternet').value = '';
-	    document.getElementById('txtEndereco').value = '';
-	    document.getElementById('txtBairro').value = '';
-	    document.getElementById('txtNomePais').value = '';
-	    document.getElementById('txtSiglaEstado').value = '';
-	    document.getElementById('txtNomeCidade').value = '';
-	    document.getElementById('txtCep').value = '';
-
-	    if (arr!=null){
-	      if (arr['Telefone']!=undefined){
-	        document.getElementById('txtTelefone').value = arr['Telefone'];
-	      }
-	      if (arr['Fax']!=undefined){
-	        document.getElementById('txtFax').value = arr['Fax'];
-	      }
-	      if (arr['Email']!=undefined){
-	        document.getElementById('txtEmail').value = arr['Email'];
-	      }
-	      if (arr['SitioInternet']!=undefined){
-	        document.getElementById('txtSitioInternet').value = arr['SitioInternet'];
-	      }
-	      if (arr['Endereco']!=undefined){
-	        document.getElementById('txtEndereco').value = arr['Endereco'];
-	      }
-	      if (arr['Bairro']!=undefined){
-	        document.getElementById('txtBairro').value = arr['Bairro'];
-	      }
-
-	      if (arr['SiglaEstado']!=undefined){
-	        document.getElementById('txtSiglaEstado').value = arr['SiglaEstado'];
-	      }
-
-	      if (arr['NomeCidade']!=undefined){
-	        document.getElementById('txtNomeCidade').value = arr['NomeCidade'];
-	      }
-
-	      if (arr['NomePais']!=undefined){
-	        document.getElementById('txtNomePais').value = arr['NomePais'];
-	        paisEstadoCidadeRI0520(document.getElementById('txtNomePais'),arr['NomePais']);
-	      }
-
-	      if (arr['Cep']!=undefined){
-	        document.getElementById('txtCep').value = arr['Cep'];
-	      }
-	    } */
+		//inicio processo ajax	
 
 	    //fim processo ajax
 	  }
+
+	  //instanciar tabela dinamica de interessados caso os objetos existam na tela	
+	  var tabelaInteressadosIndicados = document.getElementById('tbInteressadosIndicados');
+	  var hdnTabelaInteressadosIndicados = document.getElementById('hdnListaInteressadosIndicados');	
+
+      if( ( tabelaInteressadosIndicados != null && tabelaInteressadosIndicados != undefined) 
+    	  &&
+    	  ( hdnTabelaInteressadosIndicados != null && hdnTabelaInteressadosIndicados != undefined ) ){ 
+	  	
+	      objTabelaInteressado = new infraTabelaDinamica('tbInteressadosIndicados','hdnListaInteressadosIndicados',false,false);
+	      objTabelaInteressado.gerarEfeitoTabela=true;
+
+	      document.getElementById("txtCPF").addEventListener("keyup", function(event) {
+
+		      event.preventDefault();
+
+	         if (event.keyCode == 13) {
+	    	   abrirCadastroInteressado();
+	           //document.getElementById("id_of_button").click();
+	         }
+	         
+	  	  });
+
+	      document.getElementById("txtCNPJ").addEventListener("keyup", function(event) {
+
+		      event.preventDefault();
+
+	         if (event.keyCode == 13) {
+	    	   abrirCadastroInteressado();
+	           //document.getElementById("id_of_button").click();
+	         }
+	         
+	  	  });
+
+      }
+      
 }
 
 function getStrNivelAcesso( nivel ){
-
-	//alert(nivel);
 	
 	if( nivel == '0'){ return 'Público'; }
 	else if( nivel == '1'){ return 'Restrito'; }
@@ -1291,7 +1321,6 @@ function carregarCamposDocPrincipalUpload(){
 
 		  var extPermitida = false;
 		  var extensoes = $('#hdnArquivosPermitidos').val();
-		  //alert( 'Extensoes :: ' + extensoes ); 
 		  var obj = JSON.parse($('#hdnArquivosPermitidos').val());
 
 		  for (var index in obj) {
@@ -1307,15 +1336,7 @@ function carregarCamposDocPrincipalUpload(){
 			alert('A extensão do arquivo não é permitida.');
 	    }
 	    //FIM VALIDACAO EXTENSOES
-	    
-	    //validar tamanho maximo de arquivo
-	    
-	    //validar quantidade registros na tabela?
-	    //if (document.getElementById('tblAnexos').rows.length>1){
-	    //alert('Apenas um anexo pode ser adicionado no cadastro.');
-	    //return false;
-	    //}
-	    
+	    	    
 	 	return extPermitida;
 
 	  }
@@ -1326,7 +1347,6 @@ function carregarCamposDocPrincipalUpload(){
 	  
   } catch(err){
       alert(' ERRO ' + err);
-      //console.log(err.stack);
   }
 }
 
@@ -1360,30 +1380,8 @@ function carregarCamposDocEssencialUpload(){
 
       for (var i = 1; i < linhas.length; i++) {
 		//Nome igual
-		if (nome.toLowerCase()==linhas[i].cells[0].innerText.toLowerCase()){
-			/*
-			//TAMANHO
-			tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' Kb','');
-			//arquivo em Kb
-			if (tamanhoInserido != linhas[i].cells[2].innerText){
-				tamanhoVerificar = tamanho/1024;
-				tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
-			//arquivo em Mb
-			}else{
-				tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' mb','');
-				if (tamanhoInserido != linhas[i].cells[2].innerText){
-					tamanhoVerificar = tamanho/1024/1024;
-					tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
-				}else{
-					tamanhoInserido=0;
-				}
-			}
-			if (tamanhoVerificar==tamanhoInserido){
-				alert('Arquivo já inserido');
-	            return false;
-			}
-			*/
-			alert('Arquivo já inserido');
+		if (nome.toLowerCase().trim()==linhas[i].cells[0].innerText.toLowerCase().trim()){
+			alert('Não é permitido adicionar documento com o mesmo nome de arquivo.');
             return false;
 		}	
       }
@@ -1523,30 +1521,8 @@ function carregarCamposDocComplementarUpload(){
 
       for (var i = 1; i < linhas.length; i++) {
 		//Nome igual
-		if (nome.toLowerCase()==linhas[i].cells[0].innerText.toLowerCase()){
-			/*
-			//TAMANHO
-			tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' Kb','');
-			//arquivo em Kb
-			if (tamanhoInserido != linhas[i].cells[2].innerText){
-				tamanhoVerificar = tamanho/1024;
-				tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
-			//arquivo em Mb
-			}else{
-				tamanhoInserido = linhas[i].cells[2].innerText.toLowerCase().toLowerCase().replace(' mb','');
-				if (tamanhoInserido != linhas[i].cells[2].innerText){
-					tamanhoVerificar = tamanho/1024/1024;
-					tamanhoVerificar = parseFloat(tamanhoVerificar.toFixed(2));
-				}else{
-					tamanhoInserido=0;
-				}
-			}
-			if (tamanhoVerificar==tamanhoInserido){
-				alert('Arquivo já inserido');
-	            return false;
-			}
-			*/
-			alert('Arquivo já inserido');
+		if (nome.toLowerCase().trim()==linhas[i].cells[0].innerText.toLowerCase().trim()){
+			alert('Não é permitido adicionar documento com o mesmo nome de arquivo.');
             return false;
 		}	
       }
@@ -1623,9 +1599,6 @@ function carregarCamposDocComplementarUpload(){
 
 		  var extPermitida = false;
 		  var listaExtensoes = $('#hdnArquivosPermitidosEssencialComplementar').val();
-		  //alert( 'Extensao enviada: ' + ext );
-		  //alert( 'Extensoes permitidas: ' + listaExtensoes );
-		  
 		  var obj = JSON.parse( listaExtensoes );
 
 		  for (var index in obj) {
@@ -1662,9 +1635,7 @@ function carregarComponenteLupaInteressados( tipoAcao ){
 
 function mascaraTexto( elem, evento ){
 
-	//alert('entrou aqui');
 	var formPeticionamento = document.getElementById('frmPeticionamentoCadastro');
-	//alert(formPeticionamento.tipoPessoa.value);
 	
 	if(formPeticionamento.tipoPessoa.value == 'pf'){
 		return infraMascaraCpf(elem, evento);
@@ -1682,12 +1653,13 @@ function selecionarPF(){
 	
   document.getElementById('descTipoPessoa').innerHTML = 'CPF:';
   document.getElementById('descNomePessoa').innerHTML = 'Nome:';	
-  document.getElementById('tdDescTipoPessoa').innerHTML = 'CPF';
-  document.getElementById('tdDescNomePessoa').innerHTML = 'Nome';
+  //document.getElementById('tdDescTipoPessoa').innerHTML = 'CPF';
+  //document.getElementById('tdDescNomePessoa').innerHTML = 'Nome';
 
   document.getElementById('divSel1').style.display = 'inline';
   document.getElementById('divSel2').style.display = 'inline';
 
+  document.getElementById('txtNomeRazaoSocial').value = '';
   document.getElementById('txtNomeRazaoSocial').style.display = 'inline';
   document.getElementById('btAdicionarInteressado').style.display = 'inline';
   
@@ -1703,12 +1675,13 @@ function selecionarPJ(){
 	
   document.getElementById('descTipoPessoa').innerHTML = 'CNPJ:';
   document.getElementById('descNomePessoa').innerHTML = 'Razão Social:';
-  document.getElementById('tdDescTipoPessoa').innerHTML = 'CNPJ';
-  document.getElementById('tdDescNomePessoa').innerHTML = 'Razão Social';
+  //document.getElementById('tdDescTipoPessoa').innerHTML = 'CNPJ';
+  //document.getElementById('tdDescNomePessoa').innerHTML = 'Razão Social';
 
   document.getElementById('divSel1').style.display = 'inline';
   document.getElementById('divSel2').style.display = 'inline';
 
+  document.getElementById('txtNomeRazaoSocial').value = '';
   document.getElementById('txtNomeRazaoSocial').style.display = 'inline';
   document.getElementById('btAdicionarInteressado').style.display = 'inline';
   
@@ -1797,6 +1770,19 @@ function exibirAjudaFormatoDocumento(){
 		  'Selecione a opção “Digitalizado” somente se o arquivo a ser carregado foi produzido da digitalização de um documento em papel.');
 }
 
+function exibirAjudaComplementoTipo(){
+	alert('O Complemento do Tipo de Documento é o texto que completa a identificação do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo "Recurso" e Complemento "de 1ª Instância" identificará o documento como "Recurso de 1ª Instância").\n\n' + 
+		  'Exemplos: O Complemento do Tipo "Nota" pode ser "Fiscal Eletrônica" ou "Fiscal nº 75/2016". O Complemento do Tipo "Comprovante" pode ser "de Pagamento" ou "de Endereço".');
+}
+
+function exibirAjudaTipoDocumentoPrincipal(){
+	alert('Como somente pode ter um Documento Principal, o Tipo de Documento correspondente já é previamente definido. Deve, ainda, ser complementado no campo ao lado.');
+}
+
+function exibirAjudaTipoDocumentoEssenciaisComplementares(){
+	alert('Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.');
+}
+
 function downloadArquivo( urlBaseDownload ){
 
     var actionAnterior = document.getElementById("frmPeticionamentoCadastro").action;
@@ -1813,14 +1799,12 @@ function downloadArquivo( urlBaseDownload ){
 
 function concluirAssinarPeticionamento(){
 
-	//alert('Finalizar o processo');
 	var formCadastro = document.getElementById('frmPeticionamentoCadastro');
 	formCadastro.target = "concluirPeticionamento";
 	formCadastro.submit();
 }
 
 window.CallParent = function() {
-    //alert(" Parent window Alert");
     concluirAssinarPeticionamento();
 }
 
@@ -1844,7 +1828,21 @@ function selectNivelAcesso( idNivelAcesso, idHipoteseLegal ){
 
 function adicionarInteressadoValido(){
 
+	var txtCPF = document.getElementById("txtCPF").value;
+	var txtCNPJ = document.getElementById("txtCNPJ").value;
+    var txtCPFCNPJ = '';
+
+	if( txtCPF != ""){
+		txtCPFCNPJ = txtCPF;
+	}
+
+	else if( txtCNPJ != ""){
+		txtCPFCNPJ = txtCNPJ;
+	}
+	
+	var hdnCustomizado = document.getElementById("hdnCustomizado").value;
 	var txtNomeRazaoSocial = document.getElementById("txtNomeRazaoSocial").value;
+	var hdnIdInteressadoCadastrado = document.getElementById('hdnIdInteressadoCadastrado').value;
 	var chkTipoPessoaFisica = document.getElementById("optTipoPessoaFisica").checked;
 	var chkTipoPessoaJuridica = document.getElementById("optTipoPessoaJuridica").checked;
 	
@@ -1864,9 +1862,91 @@ function adicionarInteressadoValido(){
 	}
 
 	//adicionar o interessado na grid
-	var arrDadosInteressadoValido = [];
-	var bolInteressadoCustomizado = false;
+	var arrDadosInteressadoValido = [];	
+	
+	if( txtCPF != ""){
+		arrDadosInteressadoValido[1] = "Pessoa Física";
+	}
+
+	else if( txtCNPJ != ""){
+		arrDadosInteressadoValido[1] = "Pessoa Jurídica";
+	}
+	
+	arrDadosInteressadoValido[2] = txtCPFCNPJ;
+	arrDadosInteressadoValido[3] = txtNomeRazaoSocial;
+	arrDadosInteressadoValido[0] = hdnIdInteressadoCadastrado;
+
+	var bolInteressadoCustomizado = hdnCustomizado;
+
+	//checar se o cpf ou cnpj informado já existe na grid
+	var hdnListaInteressadosIndicados = document.getElementById('hdnListaInteressadosIndicados').value;
+	
+	if( hdnListaInteressadosIndicados != "") {
+	
+		//caractere de quebra de linha
+		var arrHash = hdnListaInteressadosIndicados.split('¥');
+	    var quantidadeRegistro = arrHash.length;
+	
+		if( quantidadeRegistro == 0){
+
+			var cpfInserido = arrDadosInteressadoValido[2];
+			
+			//caractere de quebra de coluna
+			var arrLocal = hdnListaInteressadosIndicados.split('±');
+			var cpfLocal = arrLocal[2];
+			
+			if( cpfInserido == cpfLocal){
+			   alert('Não é permitido adicionar interessado com CPF ou CNPJ já adicionado.');
+			   return;
+			}
+			
+		} else if( quantidadeRegistro > 0 ){
+
+			var cpfInserido = arrDadosInteressadoValido[1];
+			
+			for(var i = 0; i < quantidadeRegistro ; i++ ){
+	
+				var arrLocal = arrHash[i].split('±');
+				var cpfLocal = arrLocal[2];
+
+				if( cpfInserido == cpfLocal){
+				   alert('Não é permitido adicionar interessado com CPF ou CNPJ já adicionado.');
+				   return;
+				}
+				
+			}
+			
+		}
+	
+	}
+	
 	receberInteressado( arrDadosInteressadoValido , bolInteressadoCustomizado );
+	
+}
+
+function atualizarNomeRazaoSocial( cpfEditado , nomeEditado ){
+
+	var table = document.getElementById("tbInteressadosIndicados");
+	var linhas = table.rows;
+
+	for ( var i = 0; row = table.rows[i]; i++ ) {
+
+		 row = table.rows[i];
+
+		 if( i > 0){
+			  	
+		   cpflinha = row.cells[2].innerHTML;
+		   nomeRazaoSocialLinha = row.cells[3].innerHTML;
+
+		   cpfEditado = '<div>' + cpfEditado + '</div>';
+
+		   if( cpflinha == cpfEditado){
+			   row.cells[3].innerHTML = '<div>' + nomeEditado + '</div>';
+		   }
+		   
+		 }
+	     
+	  }	
 	
 }
 </script>

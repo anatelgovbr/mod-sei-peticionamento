@@ -14,6 +14,12 @@ try{
   
  switch($_GET['acao_ajax_externo']){
     
+ 	case 'contato_pj_vinculada':
+ 		
+ 		$objContatoDTO = ContatoINT::obterSugestoesRI0571($_POST['idContextoContato']);
+ 		$xml = InfraAjax::gerarXMLComplementosArrInfraDTO($objContatoDTO,array('Telefone','Fax','Email','SitioInternet','Endereco','Bairro','SiglaEstado','NomeCidade','NomePais','Cep'));
+ 		break;
+ 	
   	case 'contato_auto_completar_contexto_pesquisa':
   		//alterado para atender anatel exibir apenas nome contato
   		$objContatoDTO = new ContatoDTO();

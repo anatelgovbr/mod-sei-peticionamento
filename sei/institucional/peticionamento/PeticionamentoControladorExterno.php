@@ -113,14 +113,25 @@
   			    	
   			case 'contato_cpf_cnpj':
   			    
-  				$objContatoDTO = ContatoPeticionamentoINT::getContatoByCPFCNPJ( $_POST['cpfcnpj'] );
+  				$cpfcnpj =  $_POST['cpfcnpj'];
+  				$cpfcnpj = str_replace(".","", $cpfcnpj );
+  				$cpfcnpj = str_replace("-","", $cpfcnpj );
+  				$cpfcnpj = str_replace("/","", $cpfcnpj );
+  				
+  				$total = ContatoPeticionamentoINT::getTotalContatoByCPFCNPJ( $cpfcnpj );
   				$json = null;
   				
-  				if( $objContatoDTO != null){
-  				  $objContato = new stdClass();
-  				  $objContato->nome = $objContatoDTO->getStrNome();
-  				  $objContato->id = $objContatoDTO->getNumIdContato();  				
-  			      $json = json_encode( $objContato , true );
+  				if( $total == 1 ) {
+  				
+	  				$objContatoDTO = ContatoPeticionamentoINT::getContatoByCPFCNPJ( $cpfcnpj );
+	  				
+	  				if( $objContatoDTO != null){
+	  				  $objContato = new stdClass();
+	  				  $objContato->nome = $objContatoDTO->getStrNome();
+	  				  $objContato->id = $objContatoDTO->getNumIdContato();  				
+	  			      $json = json_encode( $objContato , true );
+	  				}
+  				
   				}
   				
   				echo $json;

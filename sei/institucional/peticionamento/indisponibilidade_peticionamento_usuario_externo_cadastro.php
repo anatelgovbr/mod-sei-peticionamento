@@ -11,21 +11,29 @@ try {
   require_once dirname(__FILE__).'/../../SEI.php';
 
   session_start();
-  
-  //////////////////////////////////////////////////////////////////////////////
-  //InfraDebug::getInstance()->setBolLigado(false);
-  //InfraDebug::getInstance()->setBolDebugInfra(false);
-  //InfraDebug::getInstance()->limpar();
-  //////////////////////////////////////////////////////////////////////////////
-  //PaginaPeticionamentoExterna::getInstance()->setBolXHTML(false);
-  //SessaoSEIExterna::getInstance()->validarLink();
-  
-  //if( isset( $_GET['acao_externa'] ) && $_GET['acao_externa'] != "indisponibilidade_peticionamento_usuario_externo_download" ){
-    //PaginaPeticionamentoExterna::getInstance()->verificarSelecao('indisponibilidade_peticionamento_usuario_externo_alterar');
-  //}
-  
-  //SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao_externa']);
 
+  //=========================================
+  //INICIO - Funções de apoio ao download
+  //=========================================
+  function obterDiretorio(IndisponibilidadeAnexoPeticionamentoDTO $objAnexoDTO){
+  	try{
+  		return ConfiguracaoSEI::getInstance()->getValor('SEI','RepositorioArquivos').'/'.substr($objAnexoDTO->getDthInclusao(),6,4).'/'.substr($objAnexoDTO->getDthInclusao(),3,2) .'/' .substr($objAnexoDTO->getDthInclusao(),0,2);
+  	}catch(Exception $e){
+  		throw new InfraException('Erro obtendo diretório do anexo.',$e);
+  	}
+  }
+  
+  function obterLocalizacao(IndisponibilidadeAnexoPeticionamentoDTO $objAnexoDTO){
+  	try{
+  		return obterDiretorio($objAnexoDTO).'/'.$objAnexoDTO->getNumIdAnexoPeticionamento();
+  	}catch(Exception $e){
+  		throw new InfraException('Erro obtendo localização do anexo.',$e);
+  	}
+  }
+  //=========================================
+  //FIM - Funções de apoio ao download
+  //=========================================
+  
   PaginaPeticionamentoExterna::getInstance()->setTipoPagina(PaginaPeticionamentoExterna::$TIPO_PAGINA_SEM_MENU);
   PaginaPeticionamentoExterna::getInstance()->getBolAutoRedimensionar();  
   
@@ -41,7 +49,6 @@ try {
       $objArquivoExtensaoDTO->retStrExtensao();
       $objArquivoExtensaoDTO->retStrSinAtivo();
       $objArquivoExtensaoDTO->setStrSinAtivo('S');
-      //$arrObjArquivoExtensaoDTO[] = $objArquivoExtensaoDTO;
       $objArquivoExtensaoRN     = new IndisponibilidadeAnexoPeticionamentoRN();
       $arrObjArquivoExtensaoDTO = $objArquivoExtensaoRN->listarAnexoPublico($objArquivoExtensaoDTO);
 	  $arrExtPermitidas = array();
@@ -80,18 +87,32 @@ try {
       	
       	if (file_exists($file)) {
       		
-      		header('Pragma: public');
+      		//implementaçao baseada na pagina "anexo_download.php"
+      		header("Pragma: public");
       		header("Cache-Control: private, no-cache, no-store, post-check=0, pre-check=0");
-      		header('Expires: 0');      		
-      		header('Content-Description: File Transfer');
-      		header('Content-Type: application/octet-stream');
-      		header('Content-Disposition: attachment; filename="'. $_POST['hdnNomeArquivoDownloadReal'] .'"');
-      		header('Content-Length: ' . filesize($file));      		
-      		readfile($file, true);
-      		exit;
+      		header("Expires: 0");      		      		
+      		$strContentDisposition = 'inline';
+      		
+      		if ((isset($_GET['download']) && $_GET['download']=='1')) {
+      			$strContentDisposition = 'attachment';
+      		}
+      		
+      		PaginaSEI::montarHeaderDownload($_POST['hdnNomeArquivoDownloadReal'],$strContentDisposition);
+      		
+      		ob_implicit_flush();
+      		ob_flush();
+      		
+      		$fp = fopen(obterLocalizacao($objIndisponibilidadeAnexoPeticionamentoDTO), "rb");
+      		while (!feof($fp)) {
+      			echo fread($fp, TAM_BLOCO_LEITURA_ARQUIVO);
+      		}
+      		fclose($fp);
+      		
+      		ob_flush();
+      		break;
       	}
       	
-      	die;
+      	//die;
     
     case 'indisponibilidade_peticionamento_usuario_externo_consultar':
     	
@@ -194,7 +215,7 @@ if (count($arrAcoesRemover)>0 || $_POST['hdnAnexos'] != ""  ){
   	    foreach(array_keys($arrAcoesRemover) as $id) { 
           //$urlBaseLink = "";          
           $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL') . "/institucional/peticionamento/";
-          $urlBaseLink = $urlBase . "indisponibilidade_peticionamento_usuario_externo_cadastro.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_download";
+          $urlBaseLink = $urlBase . "indisponibilidade_peticionamento_usuario_externo_cadastro.php?download=1&acao_externa=indisponibilidade_peticionamento_usuario_externo_download";
           //$urlBaseLink = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=indisponibilidade_peticionamento_usuario_externo_download'));
         } 
       }  

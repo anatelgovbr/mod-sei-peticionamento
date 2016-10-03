@@ -58,7 +58,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 	protected function gerarProcedimentoControlado( $arrParametros ){
 		
 		try {	
-			
+						
 			$idTipoProc = $arrParametros['id_tipo_procedimento'];
 			$objTipoProcDTO = new TipoProcessoPeticionamentoDTO();
 			$objTipoProcDTO->retTodos(true);
@@ -130,7 +130,8 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			}
 			
 			//verificar se esta vindo o array de participantes
-			if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'N' && 
+			//participantes selecionados via pop up OU indicados diretamente por CPF/CNPJ
+			else if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'N' && 
 				isset( $arrParametros['hdnListaInteressados'] ) && 
 				$arrParametros['hdnListaInteressados'] != "" ){			
 				
@@ -145,7 +146,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				
 				$arrParticipantesParametro = $this->atribuirParticipantes($objProtocoloDTO, $this->montarArrContatosInteressados( $idsContatos ) );
 							
-			}
+			} 
 			
 			$objProtocoloDTO->setArrObjObservacaoDTO( array() );
 			
@@ -181,8 +182,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				
 			$this->montarArrDocumentos( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO, $arrParticipantesParametro, $reciboDTOBasico );
 			
-			//$this->enviarProcedimentoUnidade($objProcedimentoDTO);
-			
 			$arrParams = array();
 			$arrParams[0] = $arrParametros;
 			$arrParams[1] = $objUnidadeDTO;
@@ -206,11 +205,33 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			  $emailNotificacaoPeticionamentoRN->notificaoPeticionamentoExterno( $arrParams );
 			} catch( Exception $exEmail ){}
 			
-			// obtendo a ultima atividade informada para o processo, para marcar como nao visualizada, 
-			// deixando assim o processo marcado como "vermelho" (status de Nao Visualizado) na listagem da tela "Controle de processos"
+			//obter todos os documentos deste processo
+			$documentoRN = new DocumentoRN();
+			$documentoListaDTO = new DocumentoDTO();
+			$documentoListaDTO->retDblIdDocumento();
+			$documentoListaDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+			$arrDocsProcesso = $documentoRN->listarRN0008(  $documentoListaDTO );
 			
 			$atividadeRN = new AtividadeRN();
 			$atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
+			
+			//removendo as tarefas do tipo "Disponibilizado acesso externo para @INTERESSADO@"
+			foreach( $arrDocsProcesso as $DocumentoProcessoDTO ){
+				
+				$objAtividadeDTOLiberacao = new AtividadeDTO();
+				$objAtividadeDTOLiberacao->retTodos();
+				$objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+				//$objAtividadeDTOLiberacao->setNumIdUnidade( $idUnidade );
+				$objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
+				
+				$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
+				$atividadeRN->excluirRN0034( $arrDTOAtividades );
+				
+			}
+						
+			// obtendo a ultima atividade informada para o processo, para marcar 
+			// como nao visualizada, deixando assim o processo marcado como "vermelho" 
+			// (status de Nao Visualizado) na listagem da tela "Controle de processos"
 			$atividadeDTO = new AtividadeDTO();
 			$atividadeDTO->retTodos();
 			$atividadeDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
@@ -288,7 +309,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 				
 			$protocoloRN = new ProtocoloPeticionamentoRN();
-			//$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
 			
 		}
 				
@@ -319,7 +339,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$arrAnexoPrincipalVinculacaoProcesso = array();
 			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocPrincipal']  );
 			$contador = 0;	
-			//$objDocumentoRN = new DocumentoRN();
 			
 			foreach( $arrAnexoDocPrincipal as $itemAnexo ){
 				
@@ -378,6 +397,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objDocumentoDTO->setNumVersaoLock(0);
 				
 				$arrObjUnidadeDTOReabertura = array();
+				
 				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo." 
 				//nao esta fazendo reabertura de processo - trata-se de processo novo
 				//$arrObjUnidadeDTOReabertura[] = $objUnidadeDTO;				
@@ -605,14 +625,12 @@ class ProcessoPeticionamentoRN extends InfraRN {
 					
 				//ANEXOS
 				$objProtocoloDTO->setArrObjAnexoDTO( array() );
-				//$objProtocoloDTO->setArrObjAnexoDTO(AnexoINT::processarRI0872($_POST['hdnAnexos']));
 					
-				$objDocumentoDTO->setObjProtocoloDTO($objProtocoloDTO);
-					
+				$objDocumentoDTO->setObjProtocoloDTO($objProtocoloDTO);					
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
-				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
-				
+				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');				
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
+				
 				$objProtocoloDTO->setNumIdSerieDocumento( $idSerieAnexo );
 				
 				$objDocumentoDTO = $objDocumentoRN->receberRN0991($objDocumentoDTO);
@@ -628,7 +646,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$itemAnexo->setNumTamanho( (int)$strTamanho );
 				$itemAnexo->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 				$itemAnexo->setStrSinAtivo('S');
-				//print_r( $itemAnexo ); die();
 				$itemAnexo = $anexoRN->cadastrarRN0172( $itemAnexo );
 				
 				$this->assinarETravarDocumento( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO );
@@ -818,7 +835,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		foreach( $arrAnexos as $anexoDTOVinculado){	                                        	
 			
 			$anexoBD = new AnexoBD( $this->getObjInfraIBanco() );
-			//$anexoDTOVinculado->setDblIdProtocolo( $documentoReciboDTO->getDblIdDocumento() );
 			$anexoBD->alterar( $anexoDTOVinculado );
 			
 			$reciboAnexoDTO = new ReciboDocumentoAnexoPeticionamentoDTO();
@@ -838,8 +854,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			                                   $arrParticipantesParametro, 
 			                                   $arrParametros ){
 			
-			//print_r( $arrParticipantesParametro ); die; 
-		    $protocoloRN = new ProtocoloPeticionamentoRN();
+			$protocoloRN = new ProtocoloPeticionamentoRN();
 			$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
 			
 			$nivelAcessoDocPrincipal = $arrParametros['nivelAcessoDocPrincipal'];
@@ -1100,41 +1115,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objParticipanteDTO->setNumIdContato( $objInteressado->getNumIdContato() );
 			$arrObjParticipantesDTO[] = $objParticipanteDTO;
 		}
-		
-		//TODO remover para evitar participante duplicado
-		//usuario logado NAO é participante por default exceto
-		//no caso da parametrizaçao "Proprio Usuario Externo"
-		//obter objeto Contato do usuario logado
-		/*
-		$idUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
-		
-		$objUsuarioDTO = new UsuarioDTO();
-		$objUsuarioDTO->retTodos();
-		$objUsuarioDTO->setNumIdUsuario( $idUsuarioExterno );
-		$objUsuarioRN = new UsuarioRN();
-		$objUsuarioDTO = $objUsuarioRN->consultarRN0489( $objUsuarioDTO );
-		$idContatoUsuario = $objUsuarioDTO->getNumIdContato();
-		
-		$contatoRN = new ContatoRN();
-		$contatoDTO = new ContatoDTO();
-		$contatoDTO->retTodos();
-		$contatoDTO->setNumIdContato( $idContatoUsuario );
-		$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
-		
-		$objParticipanteDTO  = new ParticipanteDTO();
-		$objParticipanteDTO->setStrSiglaContato($contatoDTO->getStrSigla());
-		$objParticipanteDTO->setStrNomeContato($contatoDTO->getStrNome());
-		$objParticipanteDTO->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
-		
-		if( $i == 0) {
-		    $objParticipanteDTO->setNumSequencia($i);
-		} else if( $i > 0 ){
-			$objParticipanteDTO->setNumSequencia($i++);
-		}
-		
-		$arrObjParticipantesDTO[] = $objParticipanteDTO;
-		*/
-		
+				
 		$arrObjParticipanteDTO = $this->prepararParticipantes($arrObjParticipantesDTO);
 		$objProtocoloDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
 		return $arrObjParticipantesDTO;
@@ -1401,7 +1382,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$tamanhoDoAnexo = floatval($tamanhoDoAnexo*1024);
 			}
 			
-			//echo $tamanhoDoAnexo; die;			
 			$objAnexoDTO = new AnexoDTO();
 			$objAnexoDTO->setNumIdAnexo( null );
 			$objAnexoDTO->setStrSinAtivo('S');

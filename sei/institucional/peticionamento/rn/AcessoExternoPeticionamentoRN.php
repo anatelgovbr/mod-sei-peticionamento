@@ -473,7 +473,7 @@ class AcessoExternoPeticionamentoRN extends InfraRN {
 				
 				$objAtividadeRN = new AtividadeRN();
 				$objAtividadeDTO = $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
-
+								
 				$objAtividadeRN = new AtividadeRN();
 				//a pedido do cliente removendo do historico / andamento a atividade de "liberar para assinatura"
 				$objAtividadeDTO = $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
@@ -510,7 +510,7 @@ class AcessoExternoPeticionamentoRN extends InfraRN {
 				$objAtributoAndamentoDTO->setStrValor($objParticipanteDTO->getStrSiglaContato() . '¥' . $objParticipanteDTO->getStrNomeContato());
 				$objAtributoAndamentoDTO->setStrIdOrigem($objAcessoExternoDTO->getNumIdParticipante());
 				$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
-
+				
 				$objAtividadeDTO = new AtividadeDTO();
 				$objAtividadeDTO->setDblIdProtocolo($objParticipanteDTO->getDblIdProtocolo());
 				$objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
@@ -519,7 +519,7 @@ class AcessoExternoPeticionamentoRN extends InfraRN {
 
 				$objAtividadeRN = new AtividadeRN();
 				$objAtividadeDTO = $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
-
+								
 				$objAcessoExternoDTO->setNumIdAtividade($objAtividadeDTO->getNumIdAtividade());
 
 			}
@@ -530,7 +530,6 @@ class AcessoExternoPeticionamentoRN extends InfraRN {
 
 			$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
 			$ret = $objAcessoExternoBD->cadastrar($objAcessoExternoDTO);
-
 
 			//ENVIAR EMAIL
 			if ($objAcessoExternoDTO->getStrStaTipo() == self::$TA_INTERESSADO || $objAcessoExternoDTO->getStrStaTipo() == self::$TA_DESTINATARIO_ISOLADO) {

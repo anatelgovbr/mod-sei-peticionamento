@@ -88,38 +88,30 @@ PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 ?>
  <p>
-   <label style="font-weight: bold;">Tipo de Processo:</label> 
+   <label class="infraLabelObrigatorio">Tipo de Processo:</label> 
    <label><?= $txtTipoProcessoEscolhido ?></label> 
  </p>
  <br/>
  
  <fieldset id="field1" class="infraFieldset sizeFieldset">
  <legend class="infraLegend">&nbsp; Orientações sobre o Tipo de Processo &nbsp;</legend>
-   <label> 
-   <?= $txtOrientacoes ?>
-   </label>
+	<br />
+	<label>
+	<?= $txtOrientacoes ?>
+	</label>
+	<br /><br />
  </fieldset>
   
  <fieldset id="field2" class="infraFieldset sizeFieldset">
  <legend class="infraLegend">&nbsp; Formulário de Peticionamento &nbsp;</legend>
-   
-   <!--  $objTipoProcDTO   
-   [RN1]	O sistema deve recuperar o que foi informado no campo “Indicação de Interessado” da funcionalidade “Gerir Tipo de Processo para Peticionamento”:
-     a.	Caso tenha sido marcada a opção “Próprio Usuário Externo”, não deve apresentar nenhum campo adicional, devendo vincular o novo peticionamento ao usuário externo logado no sistema.
-     b.	Caso tenha sido marcada a opção “Indicação Direta > Informando CPF ou CNPJ” deve apresentar os campos “CPF/CNPJ” e “Nome/Razão Social”;
-     c.	Caso tenha sido marcada a opção “Contatos já existentes com opção de incluir um novo” deve apresentar a lista de opções com o nome dos interessados.
-   [RN2]	O campo CPF somente será apresentado caso seja selecionado a opção “Pessoa Física” do campo “Interessado”.
-   [RN3]	O campo CNPJ somente será apresentado caso seja selecionado a opção “Pessoa Jurídica” do campo “Interessado”.   
-   -->
-
    <br/>
-   <label style="font-weight: bold;"> Especificação (resumo limitado a 50 caracteres): </label>
+   <label class="infraLabelObrigatorio">Especificação (resumo limitado a 50 caracteres):</label>
    <br/>
-   <input type="text" name="txtEspecificacao" maxlength="50" id="txtEspecificacao" style="width:360px;" class="infraText" value="" /> <br/><br/>
+   <input type="text" class="infraText" name="txtEspecificacao" id="txtEspecificacao" style="width: 360px;" maxlength="50" /> <br/><br/>
    
    <? if( $arrUnidadeUFDTO != null && count( $arrUnidadeUFDTO ) > 1 ){ ?>
    
-     <label style="font-weight: bold;"> UF em que o processo deve ser aberto: </label>
+     <label class="infraLabelObrigatorio">UF em que o processo deve ser aberto:</label>
      <br/>
      
      <select id="selUFAberturaProcesso" name="selUFAberturaProcesso">
@@ -144,7 +136,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 	      </span>
 	   
 	   <span id="spnPublico">
-	      <label id="lblPublico" class="infraLabelRadio">
+	      <label id="lblPublico" class="infraLabel">
 	      <img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaCaso1()"/> 
 	      </label>
 	    </span>
@@ -159,20 +151,20 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
    <div id="divOptPublico" class="infraDivRadio">
       
       <span id="spnPublico0">
-        <label id="lblPublico" class="infraLabelObrigatorio">Interessado:</label>
+        <label id="lblPublico" class="infraLabelObrigatorio">Interessados:</label>
       </span>
             
       <span id="spnPublico">
-      <label id="lblPublico" class="infraLabelRadio">
+      <label id="lblPublico" class="infraLabel">
       <img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaCaso2()"/> 
       </label>
       </span>
       
       <input name="rdoTipoPessoa" id="optTipoPessoaFisica" onclick="selecionarPF()" name="tipoPessoa" value="pf" class="infraRadio" type="radio"/>
-      <span id="spnPublico"><label id="lblPublico" for="optTipoPessoaFisica" class="infraLabelRadio">Pessoa física</label></span>
+      <span id="spnPublico"><label id="lblPublico" for="optTipoPessoaFisica" class="infraLabelRadio">Pessoa Física</label></span>
        
        <input name="rdoTipoPessoa" id="optTipoPessoaJuridica" onclick="selecionarPJ()" name="tipoPessoa" value="pj" class="infraRadio" type="radio"/>
-       <span id="spnPublico"><label id="lblPublico2" for="optTipoPessoaJuridica" class="infraLabelRadio">Pessoa jurídica</label></span>
+       <span id="spnPublico"><label id="lblPublico2" for="optTipoPessoaJuridica" class="infraLabelRadio">Pessoa Jurídica</label></span>
        
     </div>
    
@@ -182,60 +174,49 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
        
        <div id="divSel1" style=" float: left; display: none;"> 
               
-         <label id="descTipoPessoa" style="font-weight: bold;"> </label> <br/> 
+         <label id="descTipoPessoa" class="infraLabelObrigatorio"> </label> <br/> 
          
-         <input type="text" id="txtCPF" class="infraText" name="txtCPF" width="280" onkeypress="return infraMascaraCpf(this, event)" 
-                style="width:280px; display:none;"/>
+         <input type="text" id="txtCPF" class="infraText" name="txtCPF" onkeypress="return infraMascaraCpf(this, event)" 
+                style="width:140px; display:none;"/>
          
-         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" width="280" onkeypress="return infraMascaraCnpj(this, event)" 
-                style="width:280px; display:none;"/> 
+         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeypress="return infraMascaraCnpj(this, event)" 
+                style="width:140px; display:none;"/> 
          
-         <input type="text" readonly="readonly" id="btValidarCPFCNPJ" class="infraText" value=" Validar " 
-                style="visibility: hidden; width: 45px; margin-left: 2px; " 
+         <input type="button" readonly="readonly" id="btValidarCPFCNPJ" class="infraText" value="Validar" 
+                style="visibility: hidden; margin-left: 2px; " 
                 onclick="abrirCadastroInteressado()" />      
                          
        </div> 
        
-       <div id="divSel2" style=" float: left; margin-left: 10px; display: none;"> 
+       <div id="divSel2" style="float: left; margin-left: 15px; display: none;">
        
-         <label id="descNomePessoa" style="font-weight: bold;"> </label> <br/>
-         <input type="text" name="txtNomeRazaoSocial" id="txtNomeRazaoSocial" 
-                readonly="readonly" maxlength="250" width="280" 
-                style="width:280px; display: none;"> 
+         <label id="descNomePessoa" class="infraLabelObrigatorio"> </label> <br/>
+         <input type="text" name="txtNomeRazaoSocial" id="txtNomeRazaoSocial" readonly="readonly" maxlength="250" style="width: 300px; display: none;">
          
-         <input type="text" readonly="readonly" id="btAdicionarInteressado" class="infraText" value=" Adicionar " 
-                onclick="adicionarInteressadoValido()" style="width: 60px; margin-left: 2px; display: none;" />   
+         <input type="button" readonly="readonly" id="btAdicionarInteressado" class="infraText" value="Adicionar" onclick="adicionarInteressadoValido()" style="margin-left: 2px; display: none;" />
          
         </div>
                
        <div style="margin-left: 35px; width: auto;">
        
-       <table id="tbInteressado" class="infraTable" width="95%" align="right" summary="Lista de Interessados" >
+       <input type="hidden" name="hdnIdInteressadoCadastrado" id="hdnIdInteressadoCadastrado" value="" />
+       <input type="hidden" name="hdnListaInteressadosIndicados" id="hdnListaInteressadosIndicados" value="" />
+       <input type="hidden" name="hdnCustomizado" id="hdnCustomizado" value="" />
+       <input type="hidden" name="hdnIdEdicao" id="hdnIdEdicao" value="" />
+       
+       <table id="tbInteressadosIndicados" class="infraTable" width="95%" align="right" summary="Lista de Interessados" >
           
           <caption class="infraCaption">Lista de Interessados:</caption>       
           
            <tr>
-               <th class="infraTh" id="tdDescTipoPessoa" > CPF/CNPJ </th>
-               <th class="infraTh"  id="tdDescNomePessoa" > Nome/Razão social </th>
-               <th class="infraTh" style="display: none;" > ID Usuario </th>
                <th class="infraTh" style="display: none;" > ID Contato </th>
-               <th class="infraTh" style="display: none;" > ID Contexto </th>
-               <th align="center" class="infraTh" style="width:70px;"> Ações </th>               
+               <th class="infraTh" width="100" id="tdDescTipoPessoaSelecao" > Tipo </th>
+               <th class="infraTh" width="120" id="tdDescTipoPessoa" > CPF/CNPJ </th>
+               <th class="infraTh"  id="tdDescNomePessoa" > Nome/Razão social </th>
+               <th align="center" class="infraTh" style="width:50px;"> Ações </th>               
            </tr>
            
            <tbody> 
-           
-           <!--  
-           <tr class="infraTrClara">
-               <td class="infraTdSetaOrdenacao"> CPF/CNPJ </td>
-               <td class="infraTdSetaOrdenacao"> Razão social </td>
-               
-               <td align="center" class="infraTdSetaOrdenacao"> 
-                 <img src="/infra_css/imagens/alterar.gif" title="Alterar" alt="Alterar" class="infraImg"/>
-                 <img src="/infra_css/imagens/remover.gif" alt="Remover" onclick="deleteRow(this)" title="Remover" class="infraImg"/>
-               </td>               
-           </tr>
-           -->
            
            </tbody>
            
@@ -257,11 +238,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
    <div id="divOptPublico" class="infraDivRadio">
    
 	   <span id="spnPublico0">
-	        <label id="lblPublico" class="infraLabelObrigatorio">Interessado:</label>
+	        <label id="lblPublico" class="infraLabelObrigatorio">Interessados:</label>
 	      </span>
 	   
 	   <span id="spnPublico">
-	      <label id="lblPublico" class="infraLabelRadio">
+	      <label id="lblPublico" class="infraLabel">
 	      <img src="/infra_css/imagens/ajuda.gif" title="Ajuda" alt="Ajuda" class="infraImg" onclick="exibirAjudaCaso3()"/> 
 	      </label>
 	    </span>
@@ -270,7 +251,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
    
    <div style="clear: both;"></div>
    
-   <input type="text" name="txtInteressado" id="txtInteressado" maxlength="50" value="" style="width: 50%" class="infraText" autocomplete="off" /> <br/>
+   <input type="text" name="txtInteressado" id="txtInteressado" maxlength="250" value="" style="width: 50%" class="infraText" autocomplete="off" /> <br/>
    
    <div style="margin-top: 5px;">
 	  

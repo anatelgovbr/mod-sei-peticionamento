@@ -311,9 +311,9 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN {
   	//Parametrizar Email de Alerta às Unidades
   	$conteudo1 = "      :: Este é um e-mail automático ::
 
-O Usuário Externo @nome_usuario_externo@ (@email_usuario_externo@) efetivou o Peticionamento Eletrônico do tipo @tipo_peticionamento@, no âmbito do processo nº @processo@, conforme disposto no Recibo Eletrônico de Protocolo SEI nº @documento_recibo_eletronico_de_protocolo@.
+O Usuário Externo @nome_usuario_externo@ (@email_usuario_externo@) efetivou o Peticionamento Eletrônico do tipo @tipo_peticionamento@ (@tipo_processo@), no âmbito do processo nº @processo@, conforme disposto no Recibo Eletrônico de Protocolo SEI nº @documento_recibo_eletronico_de_protocolo@.
 
-O mencionado processo se encontra aberto em sua unidade (@sigla_unidade_abertura_do_processo@). Entre no SEI e confira! Caso não seja de competência de sua Unidade, verifique se já está aberto na Unidade correta e, do contrário, envie-o para a Unidade competente para que seja devidamente tratado.
+O mencionado processo se encontra aberto em sua Unidade (@sigla_unidade_abertura_do_processo@). Entre no SEI e confira! Caso não seja de competência de sua Unidade, verifique se já está aberto na Unidade correta e, do contrário, envie-o para a Unidade competente para que seja devidamente tratado.
 
 
 @sigla_orgao@
@@ -336,7 +336,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
   			'Peticionamento Eletrônico - Alerta às Unidades',
   			'@sigla_sistema@ <@email_sistema@>',
   			'@emails_unidade@',
-  			'SEI Peticionamento Eletrônico - Processo nº @processo@ nesta Unidade',
+  			'SEI Peticionamento Eletrônico - Processo nº @processo@',
   			'" . $conteudo1 . "',
   			'S'
   	)";
@@ -595,8 +595,8 @@ $objTamanhoArquivoDTO = new TamanhoArquivoPermitidoPeticionamentoDTO();
 $objTamanhoArquivoRN  = new TamanhoArquivoPermitidoPeticionamentoRN();
 
 $objTamanhoArquivoDTO->retTodos();
-$objTamanhoArquivoDTO->setNumValorDocPrincipal('10');
-$objTamanhoArquivoDTO->setNumValorDocComplementar('5');
+$objTamanhoArquivoDTO->setNumValorDocPrincipal('5');
+$objTamanhoArquivoDTO->setNumValorDocComplementar('10');
 $objTamanhoArquivoDTO->setNumIdTamanhoArquivo(TamanhoArquivoPermitidoPeticionamentoRN::$ID_FIXO_TAMANHO_ARQUIVO);
 $objTamanhoArquivoDTO->setStrSinAtivo('S');
 

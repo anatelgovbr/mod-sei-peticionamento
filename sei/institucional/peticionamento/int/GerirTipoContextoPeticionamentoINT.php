@@ -28,7 +28,7 @@ class GerirTipoContextoPeticionamentoINT extends InfraINT {
 		$objTipoContextoContatoRN = new TipoContextoContatoRN();
 		$arrObjTipoContextoContatoDTO = $objTipoContextoContatoRN->listarRN0337($objTipoContextoContatoDTO);
 	    return $arrObjTipoContextoContatoDTO;
-		//return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjTipoContextoContatoDTO, 'IdTipoContextoContato', 'Nome');
+		
 	}
 	
 	public static function montarSelectTipoInteressado($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $strTipo){
@@ -42,15 +42,6 @@ class GerirTipoContextoPeticionamentoINT extends InfraINT {
 			$objTipoContextoContatoDTO->setStrSinCadastroInteressado('S');
 		} else {
 			$objTipoContextoContatoDTO->setStrSinSelecaoInteressado('S');			
-		}
-		
-		if ($strValorItemSelecionado!=null){
-	
-			$objTipoContextoContatoDTO->setBolExclusaoLogica(false);
-			$objTipoContextoContatoDTO->adicionarCriterio(array('NomeTipoContexto'),
-					array(InfraDTO::$OPER_IGUAL),
-					array($strValorItemSelecionado),
-					InfraDTO::$OPER_LOGICO_OR);
 		}
 		
 		$objRelTipoContextoContatoRN = new GerirTipoContextoPeticionamentoRN();

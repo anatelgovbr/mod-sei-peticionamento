@@ -1,7 +1,6 @@
 # Módulo Peticionamento e Intimação Eletrônicos do SEI
-
-    Data de Criação : 30/09/2016
-    Versão : 1.0.0
+- Data de Criação: 30/09/2016
+- Versão: 1.0.0
 
 ## Requisitos:
 - SEI 2.6.0.A13 instalada (verificar valor da constante de versão do SEI no arquivo sei/SEI.php).

@@ -62,4 +62,4 @@
 
 Em caso de erro durante a execução do script verificar (lendo as mensagens de erro e no SEI em Infra > Log e no SIP em Infra > Log) se a causa é algum problema na infra-estrutura local. Neste caso, após a correção, restaurar o backup do banco de dados e executar novamente os scripts indicados nos itens 5 e 6 acima.
 
-Caso não seja possível identificar, a causa entrar em contato com o desenvolvedor responsável por esta versão do módulo: Marcelo Bezerra - marcelo.bezerra@cast.com.br
+Caso não seja possível identificar a causa, entrar em contato com o desenvolvedor responsável por esta versão do módulo: Marcelo Bezerra - marcelo.bezerra@cast.com.br

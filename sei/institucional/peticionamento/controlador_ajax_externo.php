@@ -16,8 +16,34 @@ try{
     
  	case 'contato_pj_vinculada':
  		
- 		$objContatoDTO = ContatoINT::obterSugestoesRI0571($_POST['idContextoContato']);
- 		$xml = InfraAjax::gerarXMLComplementosArrInfraDTO($objContatoDTO,array('Telefone','Fax','Email','SitioInternet','Endereco','Bairro','SiglaEstado','NomeCidade','NomePais','Cep'));
+ 		if( ($_POST['id_tipo_contexto_contato'] != null && $_POST['id_tipo_contexto_contato'] != "" ) 
+ 		    && 
+ 		    ($_POST['palavras_pesquisa'] != null && $_POST['palavras_pesquisa'] != "")
+ 		) {
+ 		
+	 		$objContatoRN = new ContatoRN();
+	 		$objContextoContatoDTO = new ContatoDTO();
+	 		
+	 		$objContextoContatoDTO->retNumIdContato();
+	 		$objContextoContatoDTO->retStrNome();
+			
+	 		//trazer todos que sejam empresas (CNPJ diferente de null), estejam ativos, 
+	 		//e atenda ao filtro por nome informado na tela
+	 		$objContextoContatoDTO->adicionarCriterio(
+	 				array('Cnpj','Nome', 'SinAtivo'),
+	 				array(InfraDTO::$OPER_DIFERENTE,InfraDTO::$OPER_LIKE, InfraDTO::$OPER_IGUAL ),
+	 				array(null, "%".$_POST['palavras_pesquisa']."%", 'S' ),
+	 				array( InfraDTO::$OPER_LOGICO_AND , InfraDTO::$OPER_LOGICO_AND ) 
+	 		);
+	 		
+	 		$objContextoContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
+	 			 		
+	 		$arrObjContatoDTO = $objContatoRN->pesquisarRN0471( $objContextoContatoDTO );
+	 		$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
+	 		InfraAjax::enviarXML($xml);
+	 		
+ 		}
+ 		
  		break;
  	
   	case 'contato_auto_completar_contexto_pesquisa':
@@ -57,9 +83,9 @@ try{
         $objContatoRN = new ContatoRN();
         $arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);
 
-  		$objContatoRN = new ContatoRN();  		
+  		//$objContatoRN = new ContatoRN();  		
   		//$arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
-  		$arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);
+  		//$arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);
   		
   		$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
   		InfraAjax::enviarXML($xml);

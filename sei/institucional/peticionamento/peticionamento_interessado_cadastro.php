@@ -19,19 +19,6 @@ try {
   //////////////////////////////////////////////////////////////////////////////
 
   PaginaSEIExterna::getInstance()->setTipoPagina( InfraPagina::$TIPO_PAGINA_SIMPLES );  
-  //SessaoSEIExterna::getInstance()->validarLink();
-  
-  //SessaoSEI::getInstance(false);
-  //SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() , SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual() );
-  //SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
-  
-  //=====================================================
-  //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
-  //=====================================================
-
-  //=====================================================
-  //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
-  //=====================================================
   
   switch($_GET['acao']){
     
@@ -67,7 +54,7 @@ try {
   		
   		//setando dados no contato que esta sendo cadastrado ou editado
   		if( isset( $_POST['hdnCadastrar'] ) ){
-  			  			
+  			
   			$objContatoDTO = new ContatoDTO();
   			$objContatoDTO->retTodos();
   			
@@ -75,14 +62,37 @@ try {
   			
   			if( !isset( $_POST['hdnIdEdicao'] ) || $_POST['hdnIdEdicao'] == ""  ){
   			  $objContatoDTO->setNumIdContato(null);
+  			  
   			} else {
-  			  $objContatoDTO->setNumIdContato( $_POST['hdnIdEdicao'] );
-  			}
+  				  				
+  				$objContatoRN = new ContatoRN();  					
+  				$objContatoDTO = new ContatoDTO();
+  				$objContatoDTO->retStrSinContexto();
+  				$objContatoDTO->retNumMatricula();
+	  			$objContatoDTO->retDblRg();
+	  			$objContatoDTO->retStrOrgaoExpedidor();
+	  			$objContatoDTO->retStrTelefone();
+	  			$objContatoDTO->retStrFax();
+	  			$objContatoDTO->retStrEmail();
+	  			$objContatoDTO->retStrSitioInternet();
+	  			$objContatoDTO->retStrEndereco();
+	  			$objContatoDTO->retStrBairro();
+	  			$objContatoDTO->retStrSiglaEstado();
+	  			$objContatoDTO->retStrNomeCidade();
+	  			$objContatoDTO->retStrNomePais();
+	  			$objContatoDTO->retStrCep();
+	  			$objContatoDTO->retStrObservacao();
+	  			$objContatoDTO->retStrSinEnderecoContexto();
+	  			$objContatoDTO->retDblIdPessoaRh();
+	  			$objContatoDTO->retNumIdCarreira();
+	  			$objContatoDTO->retNumIdNivelFuncao();
+	  			$objContatoDTO->retNumIdContato();
   			
-  			$strSinContexto = 'S';
-  			$objContatoDTO->setStrSinContexto($strSinContexto);
-  			//$objContatoDTO->setStrSinContexto('S');
-  			$objContatoDTO->setNumIdTipoContextoContato($numIdTipoContextoContato);
+  				$objContatoDTO->setNumIdContato( $_POST['hdnIdEdicao'] );
+  				$objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
+  			    
+  			}
+  					
   			$objContatoDTO->setNumIdTratamento($_POST['tratamento']);
   			$objContatoDTO->setNumIdVocativo($_POST['vocativo']);
   			$objContatoDTO->setNumIdCargo($_POST['cargo']);
@@ -101,9 +111,45 @@ try {
   			$objContatoDTO->setStrSigla('');
   			$objContatoDTO->setStrGenero('');
   			$objContatoDTO->setStrMatriculaOab($_POST['numeroOab']);
-  			$objContatoDTO->setDblCpf($_POST['txtCPF']);
+  			
+  			//campos manipulados apenas no cadastro (nao na ediçao)
+  			if( !isset( $_POST['hdnIdEdicao'] ) || $_POST['hdnIdEdicao'] == "" ) {
+  			  
+  			  $objContatoDTO->setDblCpf($_POST['txtCPF']);
+  			  $objContatoDTO->setDblCnpj($_POST['txtCNPJ']);
+  			  $objContatoDTO->setStrSinAtivo('S');
+  			  
+  			  if( isset ( $_POST['hdnIdContextoContato'] ) && $_POST['hdnIdContextoContato'] != "") {
+  			   	$objContatoDTO->setNumIdContextoContato( $_POST['hdnIdContextoContato'] );
+  			  }
+  			  
+  			  //PF sem vinculo com PJ
+  			  if( $_POST['tipoPessoaPF'] == '0' ){
+  			  
+  			  	$strSinContexto = 'S';
+  			  	unset( $_POST['hdnIdContextoContato'] );
+  			  	$objContatoDTO->setNumIdTipoContextoContato($numIdTipoContextoContato);
+  			  		
+  			  	//PF com vinculo com PJ
+  			  } else if( $_POST['tipoPessoaPF'] == '1' ){
+  			  
+  			  	$strSinContexto = 'N';
+  			  	$objContatoDTO->setNumIdTipoContextoContato('');
+  			  
+  			  } 
+  			  
+  			  //PJ
+  			  else {
+  			  	
+  			  	$strSinContexto = 'S';
+  			  	unset( $_POST['hdnIdContextoContato'] );
+  			  	$objContatoDTO->setNumIdTipoContextoContato($numIdTipoContextoContato);
+  			  }
+  			  
+  			  $objContatoDTO->setStrSinContexto($strSinContexto);
+  			}
+  			
   			$objContatoDTO->setNumMatricula('');
-  			$objContatoDTO->setDblCnpj($_POST['txtCNPJ']);
   			$objContatoDTO->setDblRg($_POST['rg']);
   			$objContatoDTO->setStrOrgaoExpedidor($_POST['orgaoExpedidor']);
   			$objContatoDTO->setStrTelefone($_POST['telefone']);
@@ -119,7 +165,6 @@ try {
   			$objContatoDTO->setStrObservacao('');
   			$objContatoDTO->setStrSinEnderecoContexto('N');
   			$objContatoDTO->setDblIdPessoaRh(null);
-  			$objContatoDTO->setStrSinAtivo('S');
   			$objContatoDTO->setNumIdCarreira(null);
   			$objContatoDTO->setNumIdNivelFuncao(null);
   			
@@ -132,7 +177,7 @@ try {
   			
   			//verificando se é cadastro ou ediçao de contato
   			if( !isset( $_POST['hdnIdEdicao'] ) || $_POST['hdnIdEdicao'] == ""  ){
-  				  			  
+  			  
   			  $objContatoDTO = $objContatoRN->cadastrarRN0322($objContatoDTO);
   			  $idContatoCadastro = $objContatoDTO->getNumIdContato();
   			  
@@ -224,8 +269,23 @@ try {
   			$_POST['cargo'] = $objContatoDTO->getNumIdCargo();
   			$_POST['hdnIdEdicao'] = $_POST['hdnIdEdicaoAuxiliar'];
   			
-  			$numIdTipoContextoContato = $objContatoDTO->getNumIdTipoContextoContato();
-  			
+  			$_POST['hdnIdContextoContato'] = $objContatoDTO->getNumIdContextoContato();
+  			  			
+  			if( $_POST['hdnIdContextoContato'] != "" && $_POST['hdnIdContextoContato'] != null ){
+  				
+  				$objContatoPJVinculadaDTO = new ContatoDTO();
+  				$objContatoPJVinculadaDTO->retNumIdContato();
+  				$objContatoPJVinculadaDTO->retStrNome();
+  				$objContatoPJVinculadaDTO->retNumIdTipoContextoContato();
+  				$objContatoPJVinculadaDTO->setNumIdContato( $_POST['hdnIdContextoContato']  );
+  				
+  				$objContatoPJVinculadaDTO = $objContatoRN->consultarRN0324( $objContatoPJVinculadaDTO );
+  				$_POST['tipoInteressado'] = $objContatoPJVinculadaDTO->getNumIdTipoContextoContato();  				
+  				$numIdTipoContextoContato = $_POST['tipoInteressado']; 
+  				$_POST['txtPjVinculada'] = $objContatoPJVinculadaDTO->getStrNome();
+  				
+  			}
+  			  			
   			$strItensSelTipoInteressado = GerirTipoContextoPeticionamentoINT::montarSelectTipoInteressado($strPrimeiroItemValor, $strPrimeiroItemDescricao, $numIdTipoContextoContato, $strTipo);
   			
   			if( isset( $_GET['cpf'] )) {
@@ -372,11 +432,27 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 	    </label>
 	    
 	    <label id="lblPjVinculada" style="display: none;" class="infraLabelObrigatorio">Razão Social da Pessoa Jurídica vinculada:<br/>
+	    
+	    <?php if( $_POST['hdnIdContextoContato'] == '') {?>
+	    
 	    <input type="text" class="infraText" 
 	    tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
 	    name="txtPjVinculada" id="txtPjVinculada" 
 	           autocomplete="off" style="width: 580px; display: none;" />
-	    <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato" value="" />
+	    
+	    <?php } else { ?>
+	    
+	    <input type="text" class="infraText" 
+	      value="<?php echo $_POST['txtPjVinculada']; ?>"
+	      tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
+	      name="txtPjVinculada" id="txtPjVinculada" 
+	           autocomplete="off" style="width: 580px;" />
+	    
+	    <?php } ?>
+	           
+	    <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato" 
+	           value="<?php echo $_POST['hdnIdContextoContato'];  ?>" />
+	           
 	    <br/><br/>
 	    </label>
 	    
@@ -528,35 +604,15 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 	        <div id="div4_2" style="float:left; width: auto;">
 	        <label class="infraLabelObrigatorio">Estado:</label><br/>
 	        
-	        <!--  
-	        <input type="text" class="infraText" name="estado"
-	           value="<?php echo $_POST['estado']; ?>"
-	           id="estado" />
-	        -->
-	        
 	        <select class="infraSelect" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" 
 	          name="selEstado" id="selEstado">
 	        <?=$strItensSelSiglaEstado?>
 	        </select>  
 	           	         	         
 	        </div>
-	        	        
-	        <!--  
-	        <div id="div4_2_combo" style="float:left; margin-left:20px; width: auto; display: none;">
-	            <label class="infraLabelObrigatorio">Estado:</label><br/>
-	            <select class="infraSelect" name="cbEstado" id="cbEstado">
-	            </select>
-	        </div>
-	        -->
 	        
 	        <div id="div4_3" style="float:left; margin-left:20px; width: auto;">
 	        <label class="infraLabelObrigatorio">Cidade:</label><br/>
-	        
-	        <!--  
-	        <input type="text" class="infraText" name="cidade"
-	         value="<?php echo $_POST['cidade']; ?>"
-	         id="cidade" />
-	         -->
 	         
 	         <select class="infraSelect" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" 
 	           name="selCidade" id="selCidade">
@@ -564,22 +620,14 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 	         </select>
 	        </div>
 	        
-	        <!--  
-	        <div id="div4_3_combo" style="float:left; margin-left:20px; width: auto; display: none;">
-	            <label class="infraLabelObrigatorio">Cidade:</label><br/>
-	            <select class="infraSelect" name="cbCidade" id="cbCidade">
-	            </select>
-	        </div>
-	        -->
-	        
 	        <div id="div4_4" style="float:left; margin-left:20px; width: auto;">
 	        <label class="infraLabelObrigatorio">CEP:</label><br/>
 	        <input type="text" class="infraText" 
-	        onkeypress="return infraMascaraCEP(this,event);"
-		    maxlength="15"
-	        tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
-	        value="<?php echo $_POST['cep']; ?>"
-	        name="cep" id="cep" />
+	          onkeypress="return infraMascaraCEP(this,event);"
+		      maxlength="15"
+	          tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
+	          value="<?php echo $_POST['cep']; ?>"
+	          name="cep" id="cep" />
 	        </div>
 	    
 	    </div>  
@@ -597,7 +645,7 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 <?php } ?>
 
 <?php
-//PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);  
+
 PaginaSEIExterna::getInstance()->montarAreaDebug();
 PaginaSEIExterna::getInstance()->fecharAreaDados();
 PaginaSEIExterna::getInstance()->fecharBody();

@@ -272,7 +272,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 			
 			$protocoloRN = new ProtocoloPeticionamentoRN();
-			$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
+			//$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
 			
 			//====================================
 			//gera no sistema as informações referentes ao documento principal

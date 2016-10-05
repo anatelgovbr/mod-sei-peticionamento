@@ -634,8 +634,8 @@ $browser = $_SERVER['HTTP_USER_AGENT'];
 $firefox = strpos($browser, 'Firefox') ? true : false;
 ?>
 
-#lblTipoProcesso {position:absolute;left:0%;top:0.5%;width:50%;}
-#txtTipoProcesso {position:absolute;left:0%;top:2.4%;width:50%;}
+#lblTipoProcesso {position:absolute;left:0%;top:2px;width:50%;}
+#txtTipoProcesso {position:absolute;left:0%;top:18px;width:50%;}
 
 #fldProrrogacao {height: 20%; width: 86%;}
 
@@ -647,8 +647,8 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
 #divIndicacaoInteressado {}
 #divUnidade {margin-top:138px!important;}
 
-#imgLupaTipoProcesso {position:absolute;left:51%;top:2.4%;}
-#imgExcluirTipoProcesso {position:absolute;left:52.7%;top:2.4%;}
+#imgLupaTipoProcesso {position:absolute;left:51%;top:18px;}
+#imgExcluirTipoProcesso {position:absolute;left:53.6%;top:18px;}
 
 #lblUnidade {position:absolute;left:0%;width:50%;}
 #txtUnidade {left:12px;width:65%;margin-top: 0.5%;}
@@ -657,10 +657,10 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
 
 #txtUnidadeMultipla {left:12px;width:65%;margin-top: 0.5%;}
 #imgLupaUnidadeMultipla {position:absolute;left:51%;margin-top: 0.5%;}
-#sbmAdicionarUnidade {position:absolute;left:52.7%;margin-top: 0.5%;}
+#sbmAdicionarUnidade {position:absolute;left:53.7%;margin-top: 0.5%;}
 
-#lblOrientacoes {position:absolute;left:0%;top:5%;width:20%;}
-#txtOrientacoes {position:absolute;left:0%;top:6.6%;width:75%;}
+#lblOrientacoes {position:absolute;left:0%;top:50px;width:20%;}
+#txtOrientacoes {position:absolute;left:0%;top:66px;width:75%;}
 
 #lblNivelAcesso {width:50%;}
 #selNivelAcesso {width:20%;}
@@ -695,8 +695,8 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
 .tamanhoFieldset{height:auto; width:86%;}
 
 #divIndicacaoInteressado {}
-#imgLupaTipoProcesso {position:absolute;left:51%;top:2.4%;}
-#imgExcluirTipoProcesso {position:absolute;left:52.7%;top:2.4%;}
+#imgLupaTipoProcesso {position:absolute;left:51%;top:18px;}
+#imgExcluirTipoProcesso {position:absolute;left:53.1%;top:18px;}
 
 #divUnidade {margin-top:111px!important;}
 
@@ -707,10 +707,10 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
 
 #txtUnidadeMultipla {left:12px;width:65%;margin-top: 0.5%;}
 #imgLupaUnidadeMultipla {position:absolute;left:50.5%;margin-top: 0.5%;}
-#sbmAdicionarUnidade {position:absolute;left:52.2%;margin-top: 0.5%;}
+#sbmAdicionarUnidade {position:absolute;left:53.2%;margin-top: 0.5%;}
 
-#lblOrientacoes {position:absolute;left:0%;top:5.3%;width:20%;}
-#txtOrientacoes {position:absolute;left:0%;top:6.9%;width:75%;}
+#lblOrientacoes {position:absolute;left:0%;top:50px;width:20%;}
+#txtOrientacoes {position:absolute;left:0%;top:66px;width:75%;}
 
 #lblNivelAcesso {width:50%;}
 #selNivelAcesso {width:20%;}
@@ -760,7 +760,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
 <?
 PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-PaginaSEI::getInstance()->abrirAreaDados('100em');
+PaginaSEI::getInstance()->abrirAreaDados('98%');
 ?>
  
  <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal" value="<?php echo $valorParametroHipoteseLegal; ?>"/>
@@ -772,7 +772,7 @@ PaginaSEI::getInstance()->abrirAreaDados('100em');
   <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo $nomeTipoProcesso; ?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
   <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>" />
   <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>" />
-  <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+  <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg" />
   <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg" />
    
  </div>
@@ -807,7 +807,7 @@ PaginaSEI::getInstance()->abrirAreaDados('100em');
   <div id="divCpUnidadeUnica" <?php echo $divUnidadeUnica;?>>
   <input type="text" id="txtUnidade" name="txtUnidade" class="infraText" value="<?=$nomeUnidade?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
   <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?=$idUnidade?>" />
-  <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+  <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" />
   <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Unidade" title="Remover Unidade" class="infraImg" />
   </div>
  <!--  Fim da Unidade Única --> 
@@ -828,9 +828,9 @@ PaginaSEI::getInstance()->abrirAreaDados('100em');
    <input type="hidden" id="hdnIdUnidadeMultipla" name="hdnIdUnidadeMultipla" value="<?=$idUnidadeMultipla?>" />
    <input type="hidden" id="hdnUfUnidadeMultipla" name="hdnUfUnidadeMultipla" value="" />
    
-   <img id="imgLupaUnidadeMultipla" onclick="objLupaUnidadeMultipla.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+   <img id="imgLupaUnidadeMultipla" onclick="objLupaUnidadeMultipla.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" />
     <?php  if ($_GET['acao'] != 'tipo_processo_peticionamento_consultar'){ ?>
-   <button type="button" accesskey="a" name="sbmAdicionarUnidade" onclick="addUnidade();" id="sbmAdicionarUnidade" value="Adicionar" class="infraButton"><span class="infraTeclaAtalho">A</span>dicionar</button>
+   <button type="button" accesskey="a" name="sbmAdicionarUnidade" onclick="addUnidade();" id="sbmAdicionarUnidade" value="Adicionar" class="infraButton" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><span class="infraTeclaAtalho">A</span>dicionar</button>
    <?php } ?>
    <!-- Tabela Múltiplas Unidades -->
 
@@ -1016,7 +1016,7 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
 	  <input type="text" id="txtTipoDocPrinc" name="txtTipoDocPrinc" class="infraText" value="<?=$nomeSerie?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 	   
 	  <input type="hidden" id="hdnIdTipoDocPrinc" name="hdnIdTipoDocPrinc" value="<?=$idSerie?>" />
-	  <img id="imgLupaTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('S');" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />      
+	  <img id="imgLupaTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('S');" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" />      
 	  <img id="imgExcluirTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('R')" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Documento" title="Remover Tipo de Documento" class="infraImg" />   
 	       
 	  </div>
@@ -1040,7 +1040,7 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
 	   
 	   </div>
 	   <div style="margin-top: 5px;">
-	  <select style="float: left;" id="selDescricaoEssencial" name="selDescricaoEssencial" size="4" multiple="multiple" class="infraSelect">
+	  <select style="float: left;" id="selDescricaoEssencial" name="selDescricaoEssencial" size="8" multiple="multiple" class="infraSelect">
 	  <?=$strItensSelSeriesEss; ?>
 	  </select>
 	
@@ -1072,7 +1072,7 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
 	   
 	   </div>
 	   <div style="margin-top: 5px;">
-	  <select style="float: left;" id="selDescricao" name="selDescricao" size="4" multiple="multiple" class="infraSelect">
+	  <select style="float: left;" id="selDescricao" name="selDescricao" size="16" multiple="multiple" class="infraSelect">
 	  <?=$strItensSelSeries?>
 	  </select>
 	

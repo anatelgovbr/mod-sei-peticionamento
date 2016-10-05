@@ -1,7 +1,5 @@
 <?php 
-//$strLinkAjaxContatos = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax_externo=contato_pj_vinculada');
 $strLinkAjaxContatos = SessaoSEIExterna::getInstance()->assinarLink('/sei/institucional/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=contato_pj_vinculada&id_orgao_acesso_externo=0');
-//$strLinkAjaxContatoRI0571 = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax_externo=contato_pj_vinculada');
 $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=cidade_montar_select_nome');
 ?>
 <script type="text/javascript">
@@ -116,18 +114,6 @@ function mostrarCamposPJ(){
   
 }
 
-function enviarInteressado(){
-	
-	var arrDados = ["Banana1", "Orange1", "Apple1", "Mango1"];
-	arrDados.push("Kiwi1");
-	opener.receberInteressado(arrDados, true);
-
-	var arrDados2 = ["Banana2", "Orange2", "Apple2", "Mango2"];
-	arrDados2.push("Kiwi2");
-	opener.receberInteressado(arrDados2, false);
-	
-}
-
 function validarFormulario(){
 
 	//valida campo especificação
@@ -144,6 +130,29 @@ function validarFormulario(){
 
 function inicializar(){
 
+	var hdnIdContexto = document.getElementById('hdnIdContextoContato');
+	var txtPjVinculada = document.getElementById('txtPjVinculada');
+
+	if( txtPjVinculada != null && hdnIdContexto != null){
+	
+		objAutoCompletarContexto = new infraAjaxAutoCompletar('hdnIdContextoContato','txtPjVinculada','<?=$strLinkAjaxContatos?>');
+		objAutoCompletarContexto.limparCampo = true;
+	
+		objAutoCompletarContexto.prepararExecucao = function(){
+			return 'id_tipo_contexto_contato='+document.getElementById('tipoInteressado').value+'&palavras_pesquisa='+document.getElementById('txtPjVinculada').value;
+		};
+		  
+		objAutoCompletarContexto.processarResultado = function(id,descricao,complemento){
+		    	  
+		if (id!=''){
+		      document.getElementById('hdnIdContextoContato').value = id;
+		      document.getElementById('txtPjVinculada').value = descricao;
+	    }
+		    
+	    };
+
+	}
+	
 	<?php if( isset( $_GET['edicao'] ) ) { ?>
 
       var idEdicao = window.opener.document.getElementById("hdnIdEdicao").value;
@@ -172,42 +181,23 @@ function inicializar(){
 
 	  <?php if( isset( $_GET['edicaoExibir'] ) && isset( $_GET['cpf'] ) ) { ?>
 	  document.getElementById("txtCPF").value = "<?= InfraUtil::formatarCpf( $_POST['txtCPF'] ) ?>";	  
+	  <?php } ?>  
+
+	  <?php if( isset( $_POST['hdnIdContextoContato'] ) && isset( $_GET['cpf'] ) ) { ?>
+
+	    //rdPF2 com vinculo
+	    document.getElementById("rdPF2").checked = 'checked';
+	    document.getElementById("rdPF2").click();
+	    document.getElementById("txtPjVinculada").value = '<?php echo $_POST['txtPjVinculada']; ?>';
+	  
+	  <?php } else if( isset( $_GET['cpf'] ) ) { ?>
+
+	    //rdPF1 com vinculo
+	    document.getElementById("rdPF1").checked = 'checked';
+	    document.getElementById("rdPF1").click();
+	  
 	  <?php } ?>
-
-	//Preenchimento com o endereço do contexto
-	  //objAutoCompletarInteressado = new infraAjaxAutoCompletar('hdnIdInteressado','txtInteressado','<?=$strLinkAjaxInteressado?>');
-      //objAjaxContatoRI0571 = new infraAjaxComplementar('hdnIdContextoContato','txtPjVinculada','<?=$strLinkAjaxContatoRI0571?>');
-	  //objAjaxContatoRI0571.limparCampo = false;
-	  
-	  //objAjaxContatoRI0571.prepararExecucao = function(){
-	    //return 'idContextoContato='+document.getElementById('hdnIdContextoContato').value;
-	  //}
-
-	  //objAjaxContatoRI0571.processarResultado = function(arr){
-		//alert(arr);
-	  //}
-		
-	  debugger;
-	  objAutoCompletarContexto = new infraAjaxAutoCompletar('hdnIdContextoContato','txtPjVinculada','<?=$strLinkAjaxContatos?>');
-	  objAutoCompletarContexto.limparCampo = false;
-
-	  objAutoCompletarContexto.prepararExecucao = function(){
-		debugger;
-	    return 'id_tipo_contexto_contato='+document.getElementById('tipoInteressado').value+'&palavras_pesquisa='+document.getElementById('txtPjVinculada').value;
-	  };
-	  
-	  objAutoCompletarContexto.processarResultado = function(id,descricao,complemento){
-
-        console.log("Resultado:" + id );
-		  
-	    if (id!=''){
-	      document.getElementById('hdnIdContextoContato').value = id;
-	      document.getElementById('txtPjVinculada').value = descricao;
-	      //objAjaxContatoRI0571.executar();
-	    }
-	    
-	  }
-	  	
+		  	
 	  //Ajax para carregar as cidades na escolha do estado
 	  objAjaxCidade = new infraAjaxMontarSelectDependente('selEstado','selCidade','<?=$strLinkAjaxCidade?>');
 	  objAjaxCidade.prepararExecucao = function(){
@@ -219,6 +209,29 @@ function inicializar(){
 	  
 	  infraEfeitoTabelas();
     
+    <?php } ?>
+
+    <?php if( isset($_GET['edicaoExibir']) ) { ?>
+
+      document.getElementById('txtPjVinculada').disabled = true;
+      document.getElementById('txtPjVinculada').disabled = 'disabled';
+
+      document.getElementById('tipoInteressado').disabled = true;
+      document.getElementById('tipoInteressado').disabled = 'disabled';
+
+      <?php if( isset( $_GET['cpf'] ) ) { ?>
+      
+	  document.getElementById("rdPF").disabled = true;
+	  document.getElementById("rdPF").disabled = 'disabled';
+
+	  document.getElementById("rdPF1").disabled = true;
+	  document.getElementById("rdPF1").disabled = 'disabled';
+
+	  document.getElementById("rdPF2").disabled = true;
+	  document.getElementById("rdPF2").disabled = 'disabled';
+	  
+	  <?php } ?>
+    	
     <?php } ?>
   
 }
@@ -395,16 +408,6 @@ function salvar(){
 	  document.getElementById('bairro').focus();
 	  return;
 	}
-	
-	//pais
-	/*
-	var pais = document.getElementById('pais').value;
-
-	if( pais == ''){
-	  alert('Informe o  país.');
-	  document.getElementById('pais').focus();
-	  return;
-	} */
 	
 	//estado
 	var estado = document.getElementById('selEstado').value;

@@ -290,7 +290,6 @@ try {
         	$arrIdTipoDocumentoEssencial = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
         	$arrIdUnidadesSelecionadas   = $_POST['hdnUnidadesSelecionadas'] != '' ? json_decode($_POST['hdnUnidadesSelecionadas']) : array();
         	//para nao limpar os campos em caso de erro de duplicidade
-        	//print_r( $_POST ); die();
         	$tipoUnidade     =  is_array($_POST['rdUnidade']) ? current($_POST['rdUnidade']) : array();
         	$nomeTipoProcesso = $_POST['txtTipoProcesso'];
         	$idTipoProcesso   = $objTipoProcessoPeticionamentoDTO->getNumIdProcedimento();
@@ -306,7 +305,6 @@ try {
         	$gerado           = $objTipoProcessoPeticionamentoDTO->getStrSinDocGerado() == 'S' ? 'checked = checked' : '';
         	$externo          = $objTipoProcessoPeticionamentoDTO->getStrSinDocExterno() == 'S' ? 'checked = checked' : '';
         	$nomeSerie        = $_POST['txtTipoDocPrinc'];
-        	//$nomeSerie        = $objTipoProcessoPeticionamentoDTO->getStrNomeSerie();
         	$idSerie          = $objTipoProcessoPeticionamentoDTO->getNumIdSerie();
         	$multipla         = $tipoUnidade == 'M' ? true : false;
         	$unica            = $tipoUnidade == 'U' ? true : false;

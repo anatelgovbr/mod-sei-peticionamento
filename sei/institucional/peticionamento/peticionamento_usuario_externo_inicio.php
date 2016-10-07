@@ -55,14 +55,6 @@ try {
    
   $objTipoProcedimentoRN = new TipoProcessoPeticionamentoRN();
   $arrObjTipoProcedimentoDTO = $objTipoProcedimentoRN->listar($objTipoProcessoDTO);
-  //print_r( $arrObjTipoProcedimentoDTO ); die(); 
-  
-  //foreach($arrObjTipoProcedimentoDTO as $objTipoProcessoDTO){
-  	//$arrOpcoes[] = array($objTipoProcessoDTO->getNumIdTipoProcessoPeticionamento(),$objTipoProcessoDTO->getStrNome(),$objTipoProcessoDTO->getStrSinOuvidoria());
-  //}
-  
-  //DTO basico de Processo Peticionamento Novo
-  //$objIndisponibilidadePeticionamentoDTO = new IndisponibilidadePeticionamentoDTO();
   
    $objEditorRN = new EditorRN();
    

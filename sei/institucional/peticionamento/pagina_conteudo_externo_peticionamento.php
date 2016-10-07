@@ -2,7 +2,6 @@
 try {
   
   require_once dirname(__FILE__).'/../../SEI.php';
-  //require_once ("ConverteURI.php");
   
   session_start();
   SessaoSEIExterna::getInstance()->validarLink();
@@ -13,15 +12,6 @@ try {
   InfraDebug::getInstance()->setBolDebugInfra( false );
   InfraDebug::getInstance()->limpar();
   //////////////////////////////////////////////////////////////////////////////
-  //ConverteURI::converterURI();
-  //if (isset($_GET['id_acesso_externo'])){
-     //SessaoSEIExterna::getInstance($_GET['id_acesso_externo'])->validarLink();  
-   //}else{
-     //SessaoSEIExterna::getInstance()->validarLink();
-   //}
-   
-   //echo "página limpa";
-   //print_r($_SESSION);
    
    $objMenuPeticionamentoUsuarioExternoDTO = new MenuPeticionamentoUsuarioExternoDTO();
    $objMenuPeticionamentoUsuarioExternoDTO->retTodos();

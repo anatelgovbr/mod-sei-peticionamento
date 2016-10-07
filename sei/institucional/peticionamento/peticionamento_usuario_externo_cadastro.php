@@ -25,9 +25,7 @@ try {
   InfraDebug::getInstance()->setBolDebugInfra( true );
   InfraDebug::getInstance()->limpar();
   //////////////////////////////////////////////////////////////////////////////
- 
-  //print_r( ContatoPeticionamentoINT::getContatoByCPFCNPJ('707.230.281-68') ); die();
-  
+   
   SessaoSEIExterna::getInstance()->validarLink();
   SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
   SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
@@ -60,7 +58,6 @@ PaginaSEIExterna::getInstance()->montarTitle(':: '.PaginaSEIExterna::getInstance
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
 $objEditorRN = new EditorRN();
-//echo $objEditorRN->montarCssEditor(null);
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
@@ -78,11 +75,6 @@ PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 ?> 
 <!--  tela terá multiplos forms por conta dos uploads, logo nao fará sentido ter um form geral -->
-<!-- 
-<form id="frmPeticionamentoCadastro" method="post" 
-      onsubmit="return OnSubmitForm();"  
-      action="<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
--->
 <?
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
@@ -176,15 +168,13 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
               
          <label id="descTipoPessoa" class="infraLabelObrigatorio"> </label> <br/> 
          
-         <input type="text" id="txtCPF" class="infraText" name="txtCPF" onkeypress="return infraMascaraCpf(this, event)" 
+         <input type="text" id="txtCPF" class="infraText" name="txtCPF" onkeydown="return alterandoCPF(this, event)" 
                 style="width:140px; display:none;"/>
          
-         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeypress="return infraMascaraCnpj(this, event)" 
+         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeydown="return alterandoCNPJ(this, event)" 
                 style="width:140px; display:none;"/> 
          
-         <input type="button" readonly="readonly" id="btValidarCPFCNPJ" class="infraText" value="Validar" 
-                style="visibility: hidden; margin-left: 2px; " 
-                onclick="abrirCadastroInteressado()" />      
+         <input type="button" id="btValidarCPFCNPJ" class="infraText" value="Validar" style="visibility: hidden; margin-left: 2px;" onclick="abrirCadastroInteressado()" />      
                          
        </div> 
        
@@ -193,7 +183,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
          <label id="descNomePessoa" class="infraLabelObrigatorio"> </label> <br/>
          <input type="text" name="txtNomeRazaoSocial" id="txtNomeRazaoSocial" readonly="readonly" maxlength="250" style="width: 300px; display: none;">
          
-         <input type="button" readonly="readonly" id="btAdicionarInteressado" class="infraText" value="Adicionar" onclick="adicionarInteressadoValido()" style="margin-left: 2px; display: none;" />
+         <input type="button" id="btAdicionarInteressado" class="infraText" value="Adicionar" style="margin-left: 2px; display: none;" onclick="adicionarInteressadoValido()" />
          
         </div>
                
@@ -212,7 +202,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                <th class="infraTh" style="display: none;" > ID Contato </th>
                <th class="infraTh" width="100" id="tdDescTipoPessoaSelecao" > Tipo </th>
                <th class="infraTh" width="120" id="tdDescTipoPessoa" > CPF/CNPJ </th>
-               <th class="infraTh"  id="tdDescNomePessoa" > Nome/Razão social </th>
+               <th class="infraTh"  id="tdDescNomePessoa" > Nome/Razão Social </th>
                <th align="center" class="infraTh" style="width:50px;"> Ações </th>               
            </tr>
            

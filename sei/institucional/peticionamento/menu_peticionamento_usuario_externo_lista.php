@@ -59,8 +59,6 @@ try {
 			die;
 
 		case 'menu_peticionamento_usuario_externo_reativar':
-
-			//print_r($_GET); die();
 			 
 			$strTitulo = 'Reativar Menus';
 
@@ -402,7 +400,6 @@ PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 $strNome = $_POST['txtNome'];
 $strTipo = $_POST['selTipo'];;
-//print_r( $_GET ); die();
 ?>
 <form id="frmLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo='. $_GET['id_menu_peticionamento_usuario_externo'] .'&acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
     

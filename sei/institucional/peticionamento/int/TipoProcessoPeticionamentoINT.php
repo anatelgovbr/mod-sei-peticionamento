@@ -92,6 +92,7 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
 	
 		$objNivelAcessoDTO = new NivelAcessoPermitidoDTO();
 		$objNivelAcessoDTO->retTodos();
+		$objNivelAcessoDTO->setOrd('StaNivelAcesso', InfraDTO::$TIPO_ORDENACAO_ASC);
 		
 		if(!(is_null($idTipoProcedimento))){
 			$objNivelAcessoDTO->setNumIdTipoProcedimento($idTipoProcedimento);
@@ -105,7 +106,7 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
 		$arrayDescricoes = array();
 		$arrayDescricoes[ProtocoloRN::$NA_PUBLICO] = 'Público';
 		$arrayDescricoes[ProtocoloRN::$NA_RESTRITO] = 'Restrito';
-		$arrayDescricoes[ProtocoloRN::$NA_SIGILOSO] = 'Sigiloso';
+		//$arrayDescricoes[ProtocoloRN::$NA_SIGILOSO] = 'Sigiloso';
 		$arrayDescricoes[''] = '';
 		
 		$stringFim = '<option value=""> </option>';

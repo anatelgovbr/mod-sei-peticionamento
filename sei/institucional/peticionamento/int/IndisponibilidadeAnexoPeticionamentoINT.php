@@ -13,7 +13,6 @@ class IndisponibilidadeAnexoPeticionamentoINT extends InfraINT {
  public static function processarAnexo($strAnexos){
      	
  	$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($strAnexos);
- 	//print_r( $arrAnexos ); die;
  	$arrObjAnexoDTO = array();
     
     foreach($arrAnexos as $anexo){

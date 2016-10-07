@@ -119,51 +119,26 @@ try {
   if ($_GET['acao'] == 'serie_peticionamento_selecionar'){
     $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
   }
-
-  /* REMOVIDO APOS SOLICITACAO E ALINHAMENTO DA JAQUELINE E MIRLENE
-  if ($_GET['acao'] == 'serie_peticionamento_listar' || $_GET['acao'] == 'serie_peticionamento_selecionar'){
-    $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('serie_cadastrar');
-    if ($bolAcaoCadastrar){
-      $arrComandos[] = '<button type="button" accesskey="N" id="btnNova" value="Nova" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=serie_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo Tipo de Documento</button>';
-    }
-    
-    $bolAcaoCadastrarGrupoSerie = SessaoSEI::getInstance()->verificarPermissao('grupo_serie_cadastrar');
-    if ($bolAcaoCadastrarGrupoSerie){
-      $arrComandos[] = '<button type="button" accesskey="N" id="btnNovo" value="Novo" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=grupo_serie_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton">Novo <span class="infraTeclaAtalho">G</span>rupo</button>';
-    }
-    
-  } */
-  
-  //print_r( $_REQUEST); die();
   
   $objSerieRN = new SerieRN();  
   $objSerieDTO = new SerieDTO(true);
   $objSerieDTO->retTodos();
   $objSerieDTO->retStrNome();
-  //$objSerieDTO->retStrDescricao();
   $objSerieDTO->retStrNomeGrupoSerie();
-  //$objSerieDTO->retStrDescricaoModeloEdoc();
   
   $filtro = $_GET['filtro'];
-  //echo "Filtro: " . $filtro; die();
+  
   if($filtro == '1'){
   	$tipoDoc = $_GET['tipoDoc'];
   	
   	//Todos DOCS
   	$aplicalidade = $tipoDoc == TipoProcessoPeticionamentoRN::$DOC_GERADO ? SerieRN::$TA_INTERNO : SerieRN::$TA_EXTERNO;
-  	//echo " Aplicalidade: " . $aplicalidade; die();
-
+  	
   	//ignorar o chkboxes "SinInterno", considerar apenas o campo Aplicabilidade em si
   	$objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
   				array(InfraDTO::$OPER_IN),
-  				array(array(SerieRN::$TA_TODOS, $aplicalidade)));
+  				array(array(SerieRN::$TA_TODOS, $aplicalidade)));  	
   	
-  	/*
-  	 * $objSerieDTO->adicionarCriterio(array('StaAplicabilidade', 'SinInterno'),
-  				array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL),
-  				array(array(SerieRN::$TA_TODOS, $aplicalidade),'S'),
-  				InfraDTO::$OPER_LOGICO_OR);
-  	 * */
   }
   
   $numIdGrupoSerie = PaginaSEI::getInstance()->recuperarCampo('selGrupoSerie');
@@ -195,7 +170,6 @@ try {
   PaginaSEI::getInstance()->prepararOrdenacao($objSerieDTO, 'Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
   PaginaSEI::getInstance()->prepararPaginacao($objSerieDTO);
 
-  //print_r( $objSerieDTO ); die();
   $arrObjSerieDTO = $objSerieRN->listarRN0646($objSerieDTO);
   
   PaginaSEI::getInstance()->processarPaginacao($objSerieDTO);

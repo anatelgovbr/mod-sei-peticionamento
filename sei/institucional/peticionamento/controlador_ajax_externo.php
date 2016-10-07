@@ -28,12 +28,13 @@ try{
 	 		$objContextoContatoDTO->retStrNome();
 			
 	 		//trazer todos que sejam empresas (CNPJ diferente de null), estejam ativos, 
-	 		//e atenda ao filtro por nome informado na tela
+	 		//e atenda ao filtro por nome e tipo de contexto informado na tela
+	 			 		
 	 		$objContextoContatoDTO->adicionarCriterio(
-	 				array('Cnpj','Nome', 'SinAtivo'),
-	 				array(InfraDTO::$OPER_DIFERENTE,InfraDTO::$OPER_LIKE, InfraDTO::$OPER_IGUAL ),
-	 				array(null, "%".$_POST['palavras_pesquisa']."%", 'S' ),
-	 				array( InfraDTO::$OPER_LOGICO_AND , InfraDTO::$OPER_LOGICO_AND ) 
+	 				array('Cnpj','Nome', 'SinAtivo', 'IdTipoContextoContato'),
+	 				array(InfraDTO::$OPER_DIFERENTE,InfraDTO::$OPER_LIKE, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL ),
+	 				array(null, "%".$_POST['palavras_pesquisa']."%", 'S', $_POST['id_tipo_contexto_contato'] ),
+	 				array( InfraDTO::$OPER_LOGICO_AND , InfraDTO::$OPER_LOGICO_AND , InfraDTO::$OPER_LOGICO_AND ) 
 	 		);
 	 		
 	 		$objContextoContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);

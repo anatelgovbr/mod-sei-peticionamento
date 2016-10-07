@@ -550,8 +550,7 @@ class EditorUsuarioExternoRN extends InfraRN
       
       $docDTO = $docRN->consultarRN0005( $docDTO );
       $idUnidadeResponsavel = $docDTO->getNumIdUnidadeResponsavel();
-      //print_r( $docDTO );die();	
-    	
+      
       $objParametrosEditorDTO = $this->obterParametros($parObjEditorDTO);
 
       $arrTags = $objParametrosEditorDTO->getArrTags();
@@ -562,7 +561,6 @@ class EditorUsuarioExternoRN extends InfraRN
       $objVersaoSecaoDocumentoRN = new VersaoSecaoDocumentoRN();
       //$objRelSecaoModeloEstiloRN = new RelSecaoModeloEstiloRN();
       $objDocumentoRN = new DocumentoRN();
-      //$objSerieRN = new SerieRN();
       $dthAtual = InfraData::getStrDataHoraAtual();
 
       $parObjEditorDTO->setNumIdConjuntoEstilos(null);
@@ -920,7 +918,6 @@ class EditorUsuarioExternoRN extends InfraRN
       }
 
       //cadastrar conjunto de estilos
-      //print_r($parObjEditorDTO); die;
       $this->atualizarConteudo($parObjEditorDTO);
 
     } catch (Exception $e) {
@@ -1361,9 +1358,7 @@ class EditorUsuarioExternoRN extends InfraRN
   public function converteTextoEstiloCss($arrEstilosCss, $strConteudo)
   {
 
-    //print_r($strConteudo);
     $strConteudoNovo = "";
-//    $posAtual = 0;
     $posAnterior = 0;
     $cntNaoEncontrados = 0;
     $cntEncontrados = 0;
@@ -1382,7 +1377,6 @@ class EditorUsuarioExternoRN extends InfraRN
           $cntNaoEncontrados++;
           $posAnterior = $posAtual + 1;
           $strConteudoNovo .= 's';
-          //InfraDebug::getInstance()->gravar("Nao encontrado estilo para: /".$strEstilo."/");
         } else {
           $posAnterior = $posFimEstilo + 1;
           $cntEncontrados++;
@@ -2271,9 +2265,7 @@ class EditorUsuarioExternoRN extends InfraRN
           }
         }
       }
-
-      //print_r($arrConteudoTags);die;
-
+      
       $objParametrosEditorDTO->setArrTags($arrConteudoTags);
 
       return $objParametrosEditorDTO;

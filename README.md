@@ -64,6 +64,9 @@
 		- "Contextos/Contatos / Tipos de Contexto / Reativar" (recurso "tipo_contexto_contato_reativar")
 		- **IMPORTANTE**: Os Tipos de Contextos indicados no submenu do módulo "Tipos de Contatos Permitidos" no campo "Para Cadastro de Interessado" devem estar com a opção "Aceita contatos" ativada.
 
-3. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
+4. Destacamos que a janela de Cadastro de Interessado na tela de Peticionamento de Processo Novo é aberta ao Validar CPF ou CPNJ em duas situações: (i) quando o CPF ou CNPJ não existir na tabela "contato" no banco do SEI ou (ii) quando existir mais de um registro na referida tabela com o mesmo CPF ou CNPJ. A segunda regra visa a priorizar o cadastro novo feito por meio do Módulo pelo próprio Usuário Externo, que geralmente possui mais dados sobre o Interessado.
+	- **IMPORTANTE**: sugere-se que o órgão faça uma extração da tabela "contato" e faça análises para levantar os cadastros com CPF ou CNPJ duplicados, para resolver as duplicações, mantendo um só cadastro por CPF ou CNPJ.
+	
+5. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
 
 		http://[Servidor_PHP]/sei/institucional/peticionamento/indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0

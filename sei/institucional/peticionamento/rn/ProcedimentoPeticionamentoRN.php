@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * ANATEL
+ *
+ * 21/07/2016 - criado por marcelo.bezerra - CAST
+ *
+ */
 require_once dirname(__FILE__).'/../../../SEI.php';
 
 class ProcedimentoPeticionamentoRN extends ProcedimentoRN {
@@ -57,15 +62,11 @@ class ProcedimentoPeticionamentoRN extends ProcedimentoRN {
       }
       
       $objProtocoloDTO->setStrStaProtocolo(ProtocoloRN::$TP_PROCEDIMENTO);
-      //(TESTE COMENTADO)
-      //$objProtocoloDTO->setNumIdUnidadeGeradora(SessaoSEI::getInstance()->getNumIdUnidadeAtual());      
-      //$objProtocoloDTO->setNumIdUsuarioGerador(SessaoSEI::getInstance()->getNumIdUsuario());
-    	
+      
       if (!$objProtocoloDTO->isSetDtaGeracao() || InfraString::isBolVazia($objProtocoloDTO->getDtaGeracao()))
         $objProtocoloDTO->setDtaGeracao(InfraData::getStrDataAtual());
       
       $objProcedimentoDTO->setObjProtocoloDTO($objProtocoloDTO);
-      //print_r( $objProcedimentoDTO->getObjProtocoloDTO() ); die();
       
       $objProtocoloDTOGerado = $objProtocoloRN->gerarRN0154($objProcedimentoDTO->getObjProtocoloDTO());
       

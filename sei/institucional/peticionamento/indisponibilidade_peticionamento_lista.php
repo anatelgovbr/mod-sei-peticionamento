@@ -55,9 +55,7 @@ try {
       die;
 
     case 'indisponibilidade_peticionamento_reativar':
-      
-      //print_r($_GET); die();
-    	
+            
       $strTitulo = 'Reativar Indisponibilidade Peticionamento';
 
       if ($_GET['acao_confirmada']=='sim'){

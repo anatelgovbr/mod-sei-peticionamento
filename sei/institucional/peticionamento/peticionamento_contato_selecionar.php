@@ -32,7 +32,6 @@ try {
   $objRelTipoContextoPeticionamentoDTO->retTodos();
   $objRelTipoContextoPeticionamentoDTO->setStrSinSelecaoInteressado('S');
   $arrobjRelTipoContextoPeticionamentoDTO = $objRelTipoContextoPeticionamentoRN->listar( $objRelTipoContextoPeticionamentoDTO );
-  //print_r( $arrobjRelTipoContextoPeticionamentoDTO ); die();  
   
   if (isset($_POST['hdnFlag'])){
 	  PaginaSEIExterna::getInstance()->salvarCampo('chkMaisOpcoesContatos',(isset($_POST['chkMaisOpcoesContatos']) ? PaginaSEIExterna::getInstance()->getCheckbox($_POST['chkMaisOpcoesContatos']) : 'N'));
@@ -108,12 +107,13 @@ try {
   $objContatoDTO->setOrdStrSinContexto(InfraDTO::$TIPO_ORDENACAO_DESC);
   $objContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
 
+  SessaoSEIExterna::getInstance()->setAtributo('janelaSelecaoPorNome', 'true');
   $arrComandos = array();
- 
-  $arrComandos[] = '<button type="submit" accesskey="p" id="btnPesquisar" name="btnPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';        
+  $arrComandos[] = '<button type="button" accesskey="n" id="btnCadastrar" name="btnCadastrar" onclick="cadastrarNovoInteressado()" value="Cadastrar Novo Interessado" class="infraButton">Cadastrar <span class="infraTeclaAtalho">N</span>ovo Interessado</button>';
+  $arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" name="btnPesquisar" onclick="pesquisar();" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
   
   if (PaginaSEIExterna::getInstance()->isBolPaginaSelecao()){
-      $arrComandos[] = '<button type="button" accesskey="t" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
+      $arrComandos[] = '<button type="button" accesskey="t" id="btnTransportarSelecao" name="btnTransportarSelecao" onclick="infraTransportarSelecao();" value="Transportar" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
   }
       
   if($_GET['acao']=='contexto_selecionar' || 
@@ -198,7 +198,7 @@ try {
     
     if ($bolAcaoImprimir){
       $bolCheck = true;
-      $arrComandos[] = '<button type="button" accesskey="I" id="btnImprimir" value="Imprimir" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
+      $arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" onclick="infraImprimirTabela();" value="Imprimir" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
     }
 
     $strCaptionTabela = '';
@@ -270,7 +270,7 @@ try {
             
       $strResultado .= $strCssTr;
       $strTitle = '';
-      $strNomeSigla = ContatoINT::formatarNomeSiglaRI1224($dto->getStrNome(),$dto->getStrSigla());
+      $strNomeSigla = $dto->getStrNome();
       $strTitle = $strNomeSigla;
       
       if ($bolCheck){
@@ -377,7 +377,7 @@ try {
                     '</table>'."\n";
   }
   
-  $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="window.close();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+  $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" name="btnFechar" onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
   
   $strItensSelGrupoContato = GrupoContatoINT::ConjuntoPorUnidadeRI0515('null','&nbsp;',$numIdGrupoContato);
   $strItensSelTipoContextoContato = TipoContextoContatoINT::montarSelectNomeRI0518('null','&nbsp;',$numTipoContextoContato);
@@ -408,7 +408,12 @@ PaginaSEIExterna::getInstance()->abrirStyle();
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
+$linkCadastroInteressado = PaginaSEIExterna::getInstance()->formatarXHTML( SessaoSEIExterna::getInstance()->assinarLink("controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpf=true&cnpj=true&id_orgao_acesso_externo=0"));
 ?>
+
+function cadastrarNovoInteressado(){
+  document.location.href = '<?= $linkCadastroInteressado ?>';
+}
 
 function inicializar(){
   if ('<?=PaginaSEIExterna::getInstance()->isBolPaginaSelecao()?>'!=''){
@@ -488,7 +493,6 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
 		   $selected = " selected='selected' ";
 	   }
 	   
-	   //print_r( $dto ); die();
   ?>
 	 <option value="<?= $item->getNumIdTipoContextoContato() ?>" <?= $selected ?> >
      <?= $dto->getStrNome() ?>

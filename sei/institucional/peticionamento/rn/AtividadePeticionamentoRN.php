@@ -18,7 +18,6 @@ class AtividadePeticionamentoRN extends AtividadeRN {
 			
 			$objAtividadeDTO = $param[0];
 			$idUnidadeDTO = $param[1];
-			//print_r( $objAtividadeDTO );die();
 			
 			//Valida Permissao
 			//SessaoSEI::getInstance()->validarAuditarPermissao('atividade_gerar',__METHOD__,$objAtividadeDTO);
@@ -307,10 +306,9 @@ class AtividadePeticionamentoRN extends AtividadeRN {
 				$numIdTarefa != TarefaRN::$TI_REABERTURA_PROCESSO_USUARIO &&
 				$numIdTarefa != TarefaRN::$TI_CANCELAMENTO_AGENDAMENTO &&
 				$numIdTarefa != TarefaRN::$TI_REMOCAO_SOBRESTANDO_PROCESSO){ //confirmacao de publicacao
-					//throw new InfraException('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' não possui andamento aberto na unidade '.SessaoSEI::getInstance()->getStrSiglaUnidadeAtual().' ['.$numIdTarefa.'].');
-					//TODO montar outro unidade dto para obter a sigla
+					
 					$objInfraException->lancarValidacao('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' não possui andamento aberto na unidade ID = '. $idUnidadeDTO .'.');
-					//$objInfraException->lancarValidacao('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' não possui andamento aberto na unidade '.SessaoSEI::getInstance()->getStrSiglaUnidadeAtual().'.');
+					
 				}
 				 
 				//lança andamento em aberto mas não altera outros dados como usuário de visualização e atribuição
@@ -410,10 +408,7 @@ class AtividadePeticionamentoRN extends AtividadeRN {
 		$idUnidade = $objAtividadeDTO->get('IdUnidade');
 		
 		if ( $idUnidade == null || $idUnidade == '' ){
-			debug_print_backtrace(); die();
-			//echo " UNIDADE ::: " . $idUnidade; 
-			//print_r( $objAtividadeDTO ); die();
-			$objInfraException->adicionarValidacao('Unidade não informada 333.');
+			$objInfraException->adicionarValidacao('Unidade não informada.');
 		}
 	}
 	
@@ -1272,8 +1267,6 @@ class AtividadePeticionamentoRN extends AtividadeRN {
 	}
 	
 	protected function enviarRN0023CustomizadoInternoControlado(EnviarProcessoDTO $parObjEnviarProcessoDTO) {
-
-		//print_r( $parObjEnviarProcessoDTO); die();
 		
 		try{
 	
@@ -1282,9 +1275,7 @@ class AtividadePeticionamentoRN extends AtividadeRN {
 	
 			//Regras de Negocio
 			$objInfraException = new InfraException();
-	
-			//$objInfraException->lancarValidacao('aaaaaaa');
-	
+			
 			//verifica se não houve mudança nas atividades abertas
 			$idUnidadeOrigem = '';
 			$arrObjAtividadeDTOOrigem = $parObjEnviarProcessoDTO->getArrAtividadesOrigem();
@@ -1299,8 +1290,6 @@ class AtividadePeticionamentoRN extends AtividadeRN {
 			$arrObjAtividadeDTO = $parObjEnviarProcessoDTO->getArrAtividades();
 			$arrIdProtocolosOrigem = array_unique(InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdProtocolo'));
 	
-			//TODO TESTE COMENTARIO Pode remover validaçoes por se tratar de processos novos?
-			//$this->validarAndamentosAtuais($arrIdProtocolosOrigem, $arrIdAtividadesOrigem, $objInfraException);
 			$this->validarStrSinConluirOriginaisRN0826($parObjEnviarProcessoDTO, $objInfraException);
 			$this->validarStrSinRemoverAnotacoes($parObjEnviarProcessoDTO, $objInfraException);
 			$this->validarStrSinEnviarEmailNotificacao($parObjEnviarProcessoDTO, $objInfraException);

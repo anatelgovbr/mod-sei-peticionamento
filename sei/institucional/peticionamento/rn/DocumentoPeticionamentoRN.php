@@ -160,7 +160,6 @@ class DocumentoPeticionamentoRN extends InfraRN {
 			$objProtocoloDTO->setDblIdProtocolo(null);
 			$objProtocoloDTO->setStrStaProtocolo(ProtocoloRN::$TP_DOCUMENTO_RECEBIDO);
 			$objProtocoloDTO->setStrDescricao(utf8_decode($objDocumento->descricao));
-			//TODO: Avaliar regra de formação do número do documento
 			$objDocumentoDTO->setStrNumero((isset($objDocumento->identificacao) ? $objDocumento->identificacao->numero : utf8_decode($objDocumento->descricao)));
 			$objProtocoloDTO->setStrStaNivelAcessoLocal($this->obterNivelSigiloSEI($objDocumento->nivelDeSigilo));
 			$objProtocoloDTO->setDtaGeracao($this->objProcessoEletronicoRN->converterDataSEI($objDocumento->dataHoraDeProducao));
@@ -168,15 +167,11 @@ class DocumentoPeticionamentoRN extends InfraRN {
 			$objProtocoloDTO->setArrObjRelProtocoloAssuntoDTO(array());
 			$objProtocoloDTO->setArrObjRelProtocoloProtocoloDTO(array());
 			$objProtocoloDTO->setArrObjParticipanteDTO(array());
-	
-			//TODO: Analisar se o modelo de dados do PEN possui destinatários específicos para os documentos
-			//caso não possua, analisar o repasse de tais informações via parãmetros adicionais
-	
+				
 			$objObservacaoDTO  = new ObservacaoDTO();
 			$objObservacaoDTO->setStrDescricao($objDocumento->Observacao);
 			$objProtocoloDTO->setArrObjObservacaoDTO(array($objObservacaoDTO));
-	
-	
+		
 			$bolReabriuAutomaticamente = false;
 			if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo()==ProtocoloRN::$NA_PUBLICO || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo()==ProtocoloRN::$NA_RESTRITO) {
 	
@@ -307,9 +302,7 @@ class DocumentoPeticionamentoRN extends InfraRN {
 	}
 	
 	protected function gerarRN0003InternoCustomizadoControlado(DocumentoDTO $objDocumentoDTO) {
-		
-		//print_r( $objDocumentoDTO ); die();
-		
+				
 		try{
 			
 			$idUnidadeResponsavel = $objDocumentoDTO->getNumIdUnidadeResponsavel();
@@ -531,9 +524,7 @@ class DocumentoPeticionamentoRN extends InfraRN {
 	
 			$objAtividadeRN = new AtividadePeticionamentoRN();
 			$objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
-	
-			///
-	
+		
 			$arrAnexos = $objProtocoloDTO->getArrObjAnexoDTO();
 			for($i=0;$i<count($arrAnexos);$i++){
 	
@@ -622,9 +613,7 @@ class DocumentoPeticionamentoRN extends InfraRN {
 				}else if ($objDocumentoDTO->isSetNumIdTextoPadraoInterno() && $objDocumentoDTO->getNumIdTextoPadraoInterno()!=null){
 					$objEditorDTO->setNumIdTextoPadraoInterno($objDocumentoDTO->getNumIdTextoPadraoInterno());
 				}
-				
-				//print_r( $objEditorDTO ); die();
-	
+					
 				$objEditorRN = new EditorUsuarioExternoRN();
 				$objEditorRN->gerarVersaoInicial($objEditorDTO);
 			}
@@ -722,10 +711,6 @@ class DocumentoPeticionamentoRN extends InfraRN {
 				if ($objDocumentoDTO->getStrStaProtocoloProtocolo()==ProtocoloRN::$TP_DOCUMENTO_GERADO && $objSerieDTO->getStrStaAplicabilidade()==SerieRN::$TA_EXTERNO){
 					$objInfraException->adicionarValidacao('Tipo do documento não aplicável para documentos internos.');
 				}else if ($objDocumentoDTO->getStrStaProtocoloProtocolo()==ProtocoloRN::$TP_DOCUMENTO_RECEBIDO && $objSerieDTO->getStrStaAplicabilidade()==SerieRN::$TA_INTERNO){
-					//echo "<pre>";
-					//debug_print_backtrace();
-					//echo "</pre>";
-					//die();
 					$objInfraException->adicionarValidacao('Tipo do documento não aplicável para documentos externos.');
 				}
 			}
@@ -752,19 +737,12 @@ class DocumentoPeticionamentoRN extends InfraRN {
 	}
 
 	private function tratarProtocoloRN1164(DocumentoDTO $objDocumentoDTO) {
-		
-		//print_r( $objDocumentoDTO ); die();
-		
+				
 		try{
 			
-			$idUnidadeResponsavel = $objDocumentoDTO->getNumIdUnidadeResponsavel();
-			
-			//$objInfraException = new InfraException();
-	
-			$objProtocoloDTO = $objDocumentoDTO->getObjProtocoloDTO();
-	
-			$objProtocoloDTO->setStrProtocoloFormatado(null);
-	
+			$idUnidadeResponsavel = $objDocumentoDTO->getNumIdUnidadeResponsavel();						
+			$objProtocoloDTO = $objDocumentoDTO->getObjProtocoloDTO();	
+			$objProtocoloDTO->setStrProtocoloFormatado(null);	
 			$objProtocoloDTO->setStrStaProtocolo($objDocumentoDTO->getStrStaProtocoloProtocolo());
 	
 			if (!$objProtocoloDTO->isSetNumIdUnidadeGeradora()){

@@ -126,7 +126,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$idsContatos = array();
 				$idsContatos[] = $arrParametros['hdnListaInteressados'];
 				$arrParticipantesParametro = $this->atribuirParticipantes($objProtocoloDTO, $this->montarArrContatosInteressados( $idsContatos ) );
-				//$arrParametros['hdnListaInteressados'] = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 			}
 			
 			//verificar se esta vindo o array de participantes
@@ -159,7 +158,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objProcedimentoDTO->setDtaGeracaoProtocolo( InfraData::getStrDataAtual() );
 			$objProcedimentoDTO->setStrProtocoloProcedimentoFormatado( $numeracaoProcesso );
 			$objProcedimentoDTO->setStrSinGerarPendencia('S');
-			$objProcedimentoDTO->setNumVersaoLock(0);  //TODO: Avaliar o comportamento desse campo no cadastro do processo
+			$objProcedimentoDTO->setNumVersaoLock(0);  
 			$objProcedimentoDTO->setArrObjDocumentoDTO(array());
 		
 			//Identificar o tipo de procedimento correto para atribuição ao novo processo
@@ -188,15 +187,11 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$arrParams[2] = $objProcedimentoDTO;
 			$arrParams[3] = $arrParticipantesParametro;
 			$arrParams[4] = $reciboDTOBasico;
-			//$arrDocsPrincipais = $arrParams[4]; //array de DocumentoDTO (docs principais)
-			//$arrDocsEssenciais = $arrParams[5]; //array de DocumentoDTO (docs essenciais)
-			//$arrDocsComplementares = $arrParams[6]; //array de DocumentoDTO (docs complementares)
 			
 			$reciboPeticionamentoRN->montarRecibo( $arrParams );
 			
 			$arrProcessoReciboRetorno = array();
 			$arrProcessoReciboRetorno[0] = $reciboDTOBasico;
-			//$arrProcessoReciboRetorno[0] = $retornoRecibo;
 			$arrProcessoReciboRetorno[1] = $objProcedimentoDTO;
 			
 			//enviando email de sistema EU 5155  / 5156 - try catch por causa que em localhost o envio de email gera erro 
@@ -221,7 +216,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objAtividadeDTOLiberacao = new AtividadeDTO();
 				$objAtividadeDTOLiberacao->retTodos();
 				$objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
-				//$objAtividadeDTOLiberacao->setNumIdUnidade( $idUnidade );
 				$objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
 				
 				$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
@@ -272,7 +266,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 			
 			$protocoloRN = new ProtocoloPeticionamentoRN();
-			//$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
 			
 			//====================================
 			//gera no sistema as informações referentes ao documento principal
@@ -477,9 +470,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				//=============================
 				$strTamanho = str_replace("","Kb", $itemAnexo->getNumTamanho() );
 				$strTamanho = str_replace("","Mb", $strTamanho );
-				
-				//TODO aplicar regra para validar tamanho do anexo enviado 
-				
+								
 				$itemAnexo->setDblIdProtocolo( $objDocumentoDTO->getDblIdDocumento() );
 				$itemAnexo->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
 				$itemAnexo->setNumTamanho( (int)$strTamanho );
@@ -855,7 +846,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			                                   $arrParametros ){
 			
 			$protocoloRN = new ProtocoloPeticionamentoRN();
-			$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
+			//$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
 			
 			$nivelAcessoDocPrincipal = $arrParametros['nivelAcessoDocPrincipal'];
 			$grauSigiloDocPrincipal = $arrParametros['grauSigiloDocPrincipal'];
@@ -870,8 +861,8 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$protocoloPrincipalDocumentoDTO->setDblIdProtocolo(null);
 			$protocoloPrincipalDocumentoDTO->setStrDescricao( null );
 			$protocoloPrincipalDocumentoDTO->setStrStaNivelAcessoLocal( ProtocoloRN::$NA_PUBLICO );
-			$protocoloPrincipalDocumentoDTO->setStrProtocoloFormatado( $numeroDocumento );
-			$protocoloPrincipalDocumentoDTO->setStrProtocoloFormatadoPesquisa( $numeroDocumento );
+			//$protocoloPrincipalDocumentoDTO->setStrProtocoloFormatado( $numeroDocumento );
+			//$protocoloPrincipalDocumentoDTO->setStrProtocoloFormatadoPesquisa( $numeroDocumento );
 			$protocoloPrincipalDocumentoDTO->setNumIdUnidadeGeradora( $objUnidadeDTO->getNumIdUnidade() );
 			$protocoloPrincipalDocumentoDTO->setNumIdUsuarioGerador( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 			$protocoloPrincipalDocumentoDTO->setStrStaProtocolo( ProtocoloRN::$TP_DOCUMENTO_GERADO );

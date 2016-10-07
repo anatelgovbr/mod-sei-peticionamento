@@ -117,12 +117,7 @@ try {
 			$protocoloDTO->retStrProtocoloFormatado();			
 			$protocoloDTO->setDblIdProtocolo( $arrObjReciboPeticionamentoDTO[$i]->getNumIdProtocolo() );			
 			$protocoloDTO = $protocoloRN->consultarRN0186( $protocoloDTO );
-			
-			//if( $protocoloDTO == null){
-				//echo $i; die();
-				//print_r( $arrObjReciboPeticionamentoDTO[$i] ); die();
-			//}
-			
+						
 		   	if( isset( $_GET['id_md_pet_rel_recibo_protoc'] ) && $_GET['id_md_pet_rel_recibo_protoc'] == $arrObjReciboPeticionamentoDTO[$i]->getNumIdReciboPeticionamento()){
 		    		$strCssTr = '<tr class="infraTrAcessada">';
 			}else{
@@ -218,7 +213,6 @@ PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 $strTipo = $_POST['selTipo'];;
-//print_r( $_GET ); die();
 ?>
 <form id="frmLista" method="post" action="<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao='.$_GET['acao']))?>">
     

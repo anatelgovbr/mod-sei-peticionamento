@@ -357,9 +357,7 @@ class IndisponibilidadePeticionamentoRN extends InfraRN {
 					$objIndisponibilidadeAnexoPeticionamentoDTO->retTodos();
 					$objIndisponibilidadeAnexoPeticionamentoDTO->setNumIdIndisponibilidade($arrIndisponibilidadePeticionamentoDTO[$i]->getNumIdIndisponibilidade(), InfraDTO::$OPER_IGUAL);
 					$arrObjIndisponibilidadeAnexoPeticionamentoDTO = $objIndisponibilidadeAnexoPeticionamentoRN->listar($objIndisponibilidadeAnexoPeticionamentoDTO);
-				    
-					//print_r( $arrObjIndisponibilidadeAnexoPeticionamentoDTO ); die();
-					
+				    					
 					$objIndisponibilidadeAnexoPeticionamentoRN->excluir($arrObjIndisponibilidadeAnexoPeticionamentoDTO);
 				    
 				    //Excluindo Indisponibilidade

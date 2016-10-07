@@ -16,6 +16,12 @@ var objSelectNomeCidade = null;
 var objAjaxContatoRI0571 = null;
 var objAutoCompletarContexto = null;
 
+function selecionarTipoInteressado(){
+
+	document.getElementById('hdnIdContextoContato').value = '';
+    document.getElementById('txtPjVinculada').value = '';
+}
+
 function selecionarPF(){
   mostrarCamposPF();
 }
@@ -67,6 +73,11 @@ function mostrarCamposPF(){
 
   //mostrar campos RG, orgao expedidor, numero da OAB
   document.getElementById('div1').style.display = '';
+
+  <?php if( isset( $_GET['cnpj']) ) { ?>
+  document.getElementById('lblCNPJ').style.display = 'none';
+  document.getElementById('lblRazaoSocial').style.display = 'none';
+  <?php } ?>
   
 }
 
@@ -111,6 +122,24 @@ function mostrarCamposPJ(){
 
   //mostrar campos RG, orgao expedidor, numero da OAB
   document.getElementById('div1').style.display = 'none';
+
+  <?php if( isset( $_GET['cpf']) ) { ?>
+  document.getElementById('rdPF1').style.display = 'none';
+  document.getElementById('rdPF2').style.display = 'none';
+  document.getElementById('lblrdPF1').style.display = 'none';
+  document.getElementById('lblrdPF2').style.display = 'none';
+  
+  document.getElementById('rdPF1').checked = false;
+  document.getElementById('rdPF1').checked = '';
+
+  document.getElementById('rdPF2').checked = false;
+  document.getElementById('rdPF2').checked = '';
+
+  document.getElementById('lblNome').style.display = 'none';
+  document.getElementById('lblCPF').style.display = 'none';
+  document.getElementById('txtNome').value='';
+  document.getElementById('txtCPF').value='';
+  <?php } ?>
   
 }
 
@@ -161,36 +190,44 @@ function inicializar(){
 	  return;
 	
 	<?php } else { ?>
+
+	var txtcpf = '';
+	var txtcnpj = '';
 	
-	  var txtcpf = window.opener.document.getElementById("txtCPF").value;
-	  var txtcnpj = window.opener.document.getElementById("txtCNPJ").value;
-		
-	  <?php if( isset( $_GET['cpf'] ) ) { ?>
+    if( window.opener.document.getElementById("txtCPF") != null ){	
+	  txtcpf = window.opener.document.getElementById("txtCPF").value;
+    }
+
+    if( window.opener.document.getElementById("txtCNPJ") != null ){
+	  txtcnpj = window.opener.document.getElementById("txtCNPJ").value;
+    }
+      
+	<?php if( isset( $_GET['cpf'] ) ) { ?>
 	  document.getElementById("rdPF").click();
 	  document.getElementById("txtCPF").value = txtcpf;
-	  <?php } ?>
+	<?php } ?>
 		
-	  <?php if( isset( $_GET['cnpj'] ) ) { ?>
+	<?php if( isset( $_GET['cnpj'] ) ) { ?>
 	  document.getElementById("rdPJ").click();
 	  document.getElementById("txtCNPJ").value = txtcnpj;
-	  <?php } ?>
+	<?php } ?>
 
-	  <?php if( isset( $_GET['edicaoExibir'] ) && isset( $_GET['cnpj'] )  ) { ?>
+	<?php if( isset( $_GET['edicaoExibir'] ) && isset( $_GET['cnpj'] )  ) { ?>
       document.getElementById("txtCNPJ").value = "<?= InfraUtil::formatarCnpj( $_POST['txtCNPJ'] ) ?>";	  
-	  <?php } ?>
+	<?php } ?>
 
-	  <?php if( isset( $_GET['edicaoExibir'] ) && isset( $_GET['cpf'] ) ) { ?>
+	<?php if( isset( $_GET['edicaoExibir'] ) && isset( $_GET['cpf'] ) ) { ?>
 	  document.getElementById("txtCPF").value = "<?= InfraUtil::formatarCpf( $_POST['txtCPF'] ) ?>";	  
-	  <?php } ?>  
+	<?php } ?>  
 
-	  <?php if( isset( $_POST['hdnIdContextoContato'] ) && isset( $_GET['cpf'] ) ) { ?>
+	<?php if( isset( $_POST['hdnIdContextoContato'] ) && isset( $_GET['cpf'] ) ) { ?>
 
 	    //rdPF2 com vinculo
 	    document.getElementById("rdPF2").checked = 'checked';
 	    document.getElementById("rdPF2").click();
 	    document.getElementById("txtPjVinculada").value = '<?php echo $_POST['txtPjVinculada']; ?>';
 	  
-	  <?php } else if( isset( $_GET['cpf'] ) ) { ?>
+	<?php } else if( isset( $_GET['cpf'] ) ) { ?>
 
 	    //rdPF1 com vinculo
 	    document.getElementById("rdPF1").checked = 'checked';
@@ -232,6 +269,30 @@ function inicializar(){
 	  
 	  <?php } ?>
     	
+    <?php } ?>
+
+    <?php 
+    $janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
+    if( $janelaSelecaoPorNome != null && $janelaSelecaoPorNome != "" ) { ?>
+
+    document.getElementById("rdPF").checked = false;
+    document.getElementById("rdPF").checked = '';
+
+    document.getElementById("rdPJ").checked = false;
+    document.getElementById("rdPJ").checked = '';
+
+    document.getElementById('lblNome').style.display = 'none';
+    document.getElementById('lblCPF').style.display = 'none';
+
+    document.getElementById('lblRazaoSocial').style.display = 'none';
+    document.getElementById('lblCNPJ').style.display = 'none';
+
+    document.getElementById('txtCPF').readOnly = false;
+    document.getElementById('txtCPF').readOnly = '';
+
+    document.getElementById('txtCNPJ').readOnly = false;
+    document.getElementById('txtCNPJ').readOnly = '';
+    
     <?php } ?>
   
 }
@@ -306,8 +367,9 @@ function salvar(){
 	
 	//validar pj vinculada (caso exista)
 	var pjVinculada = document.getElementById('txtPjVinculada').value;
+	var idContextoAjax = document.getElementById('hdnIdContextoContato');
 
-	if( interessado1 == 'pf' && interessado2 == '1' && pjVinculada == '' ){
+	if( interessado1 == 'pf' && interessado2 == '1' && ( pjVinculada == '' || idContextoAjax == null || idContextoAjax.value=='' ) ){
 		alert('Informe a pessoa jurídica vinculada.');
 		document.getElementById('txtPjVinculada').focus();
 		return;		 
@@ -383,7 +445,7 @@ function salvar(){
 	}
 
 	//email
-	if (!infraValidarEmail(infraTrim(document.getElementById('email').value))){
+	if ( document.getElementById('email').value != "" && !infraValidarEmail(infraTrim(document.getElementById('email').value))){
 		
 		alert('E-mail Inválido.');
 		document.getElementById('email').focus();

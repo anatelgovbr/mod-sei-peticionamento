@@ -493,7 +493,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   
        <!-- ================================== INICIO DOCUMENTOS COMPLEMENTARES  =============================================== -->
        <?php 
-	   // TODO o bloco de seleçao de documento essencial pode sumir da tela
+	   //o bloco de seleçao de documento essencial pode sumir da tela
        // conforme parametrizaçao da Administraçao do modulo 
        $objRelTipoProcessoSeriePeticionamentoDTO = new RelTipoProcessoSeriePeticionamentoDTO();
 	   $objRelTipoProcessoSeriePeticionamentoDTO->retTodos();
@@ -502,7 +502,6 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   $objRelTipoProcessoSeriePeticionamentoRN = new RelTipoProcessoSeriePeticionamentoRN();
 	   
 	   $arrRelTipoProcessoSeriePeticionamentoDTO = $objRelTipoProcessoSeriePeticionamentoRN->listar( $objRelTipoProcessoSeriePeticionamentoDTO );
-	   //print_r( $arrRelTipoProcessoSeriePeticionamentoDTO ); die();
 	   
 	   if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){ ?>
 	     

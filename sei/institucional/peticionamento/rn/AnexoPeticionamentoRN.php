@@ -65,7 +65,6 @@ class AnexoPeticionamentoRN extends InfraRN {
 			$this->validarDthInclusaoRN0868($objAnexoDTO, $objInfraException);
 			$this->validarStrSinAtivoRN0886($objAnexoDTO, $objInfraException);
 			
-			//print_r( $objAnexoDTO );die();
 			$strNomeUpload = $objAnexoDTO->getStrNome();
 			$strNomeUploadCompleto = DIR_SEI_TEMP.'/'.$strNomeUpload;
 
@@ -280,14 +279,6 @@ class AnexoPeticionamentoRN extends InfraRN {
 	}
 
 	private function validarStrNomeRN0228(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
-		
-		/* foreach (debug_backtrace() as $trace)
-		{
-		  echo sprintf("\n%s:%s %s::%s <br/>", $trace['file'], $trace['line'], $trace['class'], $trace['function']);
-		}
-		die;
-		
-		print_r( $objAnexoDTO ); die(); */
 		
 		if (InfraString::isBolVazia($objAnexoDTO->getStrNome())){
 			$objInfraException->adicionarValidacao('Nome do anexo não informado.');

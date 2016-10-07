@@ -209,10 +209,18 @@ try {
   			//após cadastrar o contato fechar janela modal e preencher campos necessarios  			
   			if( !isset( $_POST['hdnIdEdicao'] ) || $_POST['hdnIdEdicao'] == ""  ){
   				
+  				$janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
+  				
   				echo "<script>";
-  				echo "window.opener.document.getElementById('txtNomeRazaoSocial').value = '" . $nome . "';";
-  				echo "window.opener.document.getElementById('hdnCustomizado').value = 'true';";
-  				echo "window.opener.document.getElementById('hdnIdInteressadoCadastrado').value = " . $objContatoDTO->getNumIdContato() . ";";
+  				
+  				if( $janelaSelecaoPorNome == null || $janelaSelecaoPorNome == "" ){
+  				  echo "window.opener.document.getElementById('txtNomeRazaoSocial').value = '" . $nome . "';";
+  				  echo "window.opener.document.getElementById('hdnCustomizado').value = 'true';";
+  				  echo "window.opener.document.getElementById('hdnIdInteressadoCadastrado').value = " . $objContatoDTO->getNumIdContato() . ";";
+  				} else {
+  					SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
+  				}
+  				
   				echo " window.close();";
   				echo "</script>";
   				die;
@@ -409,7 +417,8 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 		<label class="infraLabelObrigatorio">Tipo de Interessado:</label><br/>
 	    <select class="infraSelect" width="380" id="tipoInteressado" 
 	         tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
-	         name="tipoInteressado" style="width:380px;" >
+	         name="tipoInteressado" 
+	         onchange="selecionarTipoInteressado()" style="width:380px;" >
 	        <?=$strItensSelTipoInteressado?>
 	    </select> <br/>
 	    
@@ -436,17 +445,19 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 	    <?php if( $_POST['hdnIdContextoContato'] == '') {?>
 	    
 	    <input type="text" class="infraText" 
-	    tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
-	    name="txtPjVinculada" id="txtPjVinculada" 
-	           autocomplete="off" style="width: 580px; display: none;" />
+	      tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
+	      onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+	      name="txtPjVinculada" id="txtPjVinculada" 
+	      autocomplete="off" style="width: 580px; display: none;" />
 	    
 	    <?php } else { ?>
 	    
 	    <input type="text" class="infraText" 
 	      value="<?php echo $_POST['txtPjVinculada']; ?>"
 	      tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
+	      onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
 	      name="txtPjVinculada" id="txtPjVinculada" 
-	           autocomplete="off" style="width: 580px;" />
+	      autocomplete="off" style="width: 580px;" />
 	    
 	    <?php } ?>
 	           
@@ -480,7 +491,7 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 	        <input type="text" class="infraText" 
 	          value="<?php echo $_POST['rg']; ?>"
 	          tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
-	          onkeypress="return infraMascaraNumero(this,event, 10);" 
+	          onkeypress="return infraMascaraNumero(this,event, 15);" 
 	          name="rg" id="rg" />
 	        </div>
 	        

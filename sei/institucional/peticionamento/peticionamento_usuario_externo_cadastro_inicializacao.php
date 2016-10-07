@@ -111,15 +111,14 @@ $idUnidadeTipoProcesso = null;
 
 //APENAS UMA UNIDADE
 if( $arrRelTipoProcUnidadeDTO != null && count( $arrRelTipoProcUnidadeDTO ) == 1 ) {
-  $idUnidadeTipoProcesso = $arrRelTipoProcUnidadeDTO[0]->getNumIdUnidade();
-  //echo $idUnidadeTipoProcesso; die();
+  
+	$idUnidadeTipoProcesso = $arrRelTipoProcUnidadeDTO[0]->getNumIdUnidade();
+  
 }
 
 //MULTIPLAS UNIDADES
 else if( $arrRelTipoProcUnidadeDTO != null && count( $arrRelTipoProcUnidadeDTO ) > 1 ){
-	
-	//print_r( $arrRelTipoProcUnidadeDTO ); die();
-	
+		
 	$arrIdUnidade = array();
 	
 	//consultar UFs das unidades informadas
@@ -138,7 +137,7 @@ else if( $arrRelTipoProcUnidadeDTO != null && count( $arrRelTipoProcUnidadeDTO )
 	
 	$objUnidadeRN = new UnidadeRN();
 	$arrUnidadeUFDTO = $objUnidadeRN->listarRN0127( $objUnidadeDTO );
-	//print_r( $arrUnidadeUFDTO ); die();
+	
 }
 
 $ObjRelTipoProcessoSeriePeticionamentoRN = new RelTipoProcessoSeriePeticionamentoRN();
@@ -146,7 +145,6 @@ $ObjRelTipoProcessoSeriePeticionamentoDTO = new RelTipoProcessoSeriePeticionamen
 $ObjRelTipoProcessoSeriePeticionamentoDTO->retTodos();
 $ObjRelTipoProcessoSeriePeticionamentoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
 $arrTiposDocumentosComplementares = $ObjRelTipoProcessoSeriePeticionamentoRN->listar( $ObjRelTipoProcessoSeriePeticionamentoDTO );
-//print_r( $arrTiposDocumentosComplementares ); die();
 
 //ler configuraçoes necessarias para aplicar a RN 8
 /*
@@ -206,7 +204,6 @@ $objTipoProcessoPeticionamentoDTO->setStrSinAtivo('S', InfraDTO::$OPER_IGUAL);
 $objTipoProcessoPeticionamentoDTO->retTodos();
 $objTipoProcessoPeticionamentoDTO->setNumIdProcedimento( $objTipoProcDTO->getNumIdProcedimento() , InfraDTO::$OPER_IGUAL );
 $ObjTipoProcessoPeticionamentoDTO = $objTipoProcessoPeticionamentoRN->consultar( $objTipoProcessoPeticionamentoDTO );
-//print_r( $ObjTipoProcessoPeticionamentoDTO ); die();
 
 $txtTipoProcessoEscolhido = $objTipoProcDTO->getStrNomeProcesso();
 
@@ -215,14 +212,6 @@ $arrPFPJInteressados = array();
 
 //preenche a combo de interessados - CASO 3
 $arrContatosInteressados = array();
-
-/*
- $contatoRN = new ContatoRN();
-$contatoDTO = new ContatoDTO();
-$contatoDTO->retTodos();
-$contatoDTO->setStrSinAtivo('S');
-$arrContatosInteressados = $contatoRN->listarRN0325( $contatoDTO );
-*/
 
 //preenche a combo "Tipo"
 $arrTipo = array();
@@ -269,7 +258,6 @@ if( $valorConfigHipoteseLegal == 1 || $valorConfigHipoteseLegal == 2){
 		$hipoteseDTO->retTodos();
 		$hipoteseDTO->setStrSinAtivo('S');
 		$arrHipoteseLegal = $hipoteseRN->listar( $hipoteseDTO );
-		//$valorConfigHipoteseLegal $arrHipoteseLegal
 	
 	}
 }

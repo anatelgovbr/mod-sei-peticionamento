@@ -63,9 +63,7 @@ try {
       die;
 
     case 'tipo_processo_peticionamento_reativar':
-      
-      //print_r($_GET); die();
-    	
+            
       $strTitulo = 'Reativar Tipo de Processo';
 
       if ($_GET['acao_confirmada']=='sim'){
@@ -118,20 +116,15 @@ try {
       throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
   }
 
-  //TODO: Marcelo, qual é a utilidade dessa funcionalidade de Transportar seleção neste tela?
   $arrComandos = array();
   if ($_GET['acao'] == 'tipo_processo_peticionamento_selecionar'){
     $arrComandos[] = '<button type="button" accesskey="t" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
   }
-
     
   $objTipoProcessoPeticionamentoDTO = new TipoProcessoPeticionamentoDTO();
   $objTipoProcessoPeticionamentoDTO->retTodos();
   $objTipoProcessoPeticionamentoDTO->retStrNomeProcesso();
-  
-  //#6155 - removido. Agora serão n Unidades
-  //$objTipoProcessoPeticionamentoDTO->retStrSiglaUnidade();
-
+    
   //NomeProcesso
   if(!(InfraString::isBolVazia($_POST['txtTipoProcesso']))){
   	$objTipoProcessoPeticionamentoDTO->setStrNomeProcesso('%'.$_POST ['txtTipoProcesso'] . '%',InfraDTO::$OPER_LIKE);
@@ -208,8 +201,7 @@ try {
       $bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('tipo_processo_peticionamento_desativar');
     }
 
-    //TODO: Marcelo, melhor desativar também o botão de Desativação em lote, para padronizar as telas de listagem de registros.
-	if ($bolAcaoDesativar){
+    if ($bolAcaoDesativar){
       $bolCheck = true;
      //$arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
       $strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_desativar&acao_origem='.$_GET['acao']);
@@ -217,8 +209,7 @@ try {
 
      $strLinkReativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_reativar&acao_origem='.$_GET['acao'].'&acao_confirmada=sim');
 
-    //TODO: Marcelo, se não vai ter o botão de Excluir em lote, melhor retirar todo este bloco de código.
-	if ($bolAcaoExcluir){
+    if ($bolAcaoExcluir){
       $bolCheck = true;
       //$arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
       $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_processo_peticionamento_excluir&acao_origem='.$_GET['acao']);
@@ -466,7 +457,6 @@ PaginaSEI::getInstance()->fecharJavaScript();
 <?php 
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
-//print_r( $_GET ); die();
 ?>
 <form id="frmTipoProcessoPeticionamentoLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
 

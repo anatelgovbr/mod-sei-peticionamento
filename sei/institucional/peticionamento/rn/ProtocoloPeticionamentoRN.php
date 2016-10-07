@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 
 class ProtocoloPeticionamentoRN extends ProtocoloRN {
 	
-	//METODO PRECISOU SER SOBRESCRITO DA RN ORIGINAO POR CONTA DE USUARIO EXTERNO
+	//METODO PRECISOU SER SOBRESCRITO DA RN ORIGINAL POR CONTA DE USUARIO EXTERNO
 	private function validarNumIdUnidadeGeradoraRN0213(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		
 		if (InfraString::isBolVazia($objProtocoloDTO->getNumIdUnidadeGeradora())){

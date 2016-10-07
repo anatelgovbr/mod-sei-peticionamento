@@ -36,9 +36,7 @@ try {
 		}
 	
 		$objInfraException->lancarValidacoes();
-		
-		//print_r( $arrPrincipal ); die();
-		
+				
 		foreach($arrPrincipal as $numPrincipal){
 			$objDTO = new RelTipoContextoPeticionamentoDTO();
 			$objDTO->setNumIdTipoContextoContato($numPrincipal);
@@ -67,9 +65,7 @@ try {
 	   	}
 	   
 	   	$objInfraException->lancarValidacoes();
-	   
-	   	//print_r( $arrPrincipal ); die();
-	   
+	   	   	
 	   	foreach($arrPrincipal2 as $numPrincipal){
 	   		$objDTO2 = new RelTipoContextoPeticionamentoDTO();
 	   		$objDTO2->setNumIdTipoContextoContato($numPrincipal);
@@ -95,9 +91,6 @@ $objDTO2->setStrSinSelecaoInteressado('S');
 $arrItens2 = $objRN->listar($objDTO2);
 $numero2 = count( $arrItens2 );
 $strSelPrin2 = "";
-
-//print_r($arrItens);die();
-//print_r($arrItens2);die();
 
 if( $numero > 0){
 	

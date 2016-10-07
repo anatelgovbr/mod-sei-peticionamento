@@ -184,8 +184,6 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$grauSigiloDocPrincipal = $arrParametros['grauSigiloDocPrincipal'];
 		$hipoteseLegalDocPrincipal = $arrParametros['hipoteseLegalDocPrincipal']; 
 				
-		//TODO montar corretamente conteudo HTML final do recibo
-		//$htmlRecibo = "teste";
 		$htmlRecibo = $this->gerarHTMLConteudoDocRecibo( $arrParams );
 		
 		$protocoloRN = new ProtocoloPeticionamentoRN();
@@ -259,7 +257,6 @@ class ReciboPeticionamentoRN extends InfraRN {
 		
 		$documentoReciboDTO->setNumIdConjuntoEstilos(null);
 		
-		//TODO de onde pega o tipo conferencia?
 		$documentoReciboDTO->setNumIdTipoConferencia( null );
 		$documentoReciboDTO->setStrNumero(''); //sistema atribui numeracao sequencial automatica						
 		$documentoReciboDTO->setStrConteudo( $htmlRecibo );

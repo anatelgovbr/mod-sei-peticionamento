@@ -64,7 +64,6 @@
   		$conjuntoEstilosDTO->setStrSinUltimo('S');
   		$conjuntoEstilosDTO->retTodos();
   		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar( $conjuntoEstilosDTO );
-  		//print_r( $conjuntoEstilosDTO ); die();
   		
   		//recupera estilos padrão das seções do modelo
   		$objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();

@@ -63,7 +63,6 @@ $objRelTipoProcessoSeriePeticionamentoDTO->setNumIdTipoProcessoPeticionamento( $
 $objRelTipoProcessoSeriePeticionamentoRN = new RelTipoProcessoSeriePeticionamentoRN();
 
 $arrRelTipoProcessoSeriePeticionamentoDTO = $objRelTipoProcessoSeriePeticionamentoRN->listar( $objRelTipoProcessoSeriePeticionamentoDTO );
-//print_r( $arrRelTipoProcessoSeriePeticionamentoDTO ); die();
 
 if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){
 
@@ -766,6 +765,18 @@ function validarFormulario(){
 	      return false;      
 	}		 
 
+	//aplicando validaçao de interessados informados no cenario de indicaçao por cpf ou cnpj
+	var tbInteressadosIndicados = document.getElementById("tbInteressadosIndicados");	
+	var hdnListaInteressadosIndicados = document.getElementById("hdnListaInteressadosIndicados");
+	var optTipoPessoaFisica = document.getElementById("optTipoPessoaFisica");
+	
+	if( tbInteressadosIndicados != null && hdnListaInteressadosIndicados != null && hdnListaInteressadosIndicados.value == ""  ){
+
+		alert('Informe o(s) Interessado(s).');
+		optTipoPessoaFisica.focus();
+	    return false;  
+	}
+	
 	//aplicando validações relacionadas ao documento principal
 	var fileArquivoPrincipal = document.getElementById('fileArquivoPrincipal');
 	var complementoPrincipal = document.getElementById('complementoPrincipal');
@@ -1025,8 +1036,12 @@ function abrirCadastroInteressado(){
 	else {
 
 		if( chkTipoPessoaFisica ){
+			
+			ponto = txtcpf.split(".");
+			traco = txtcpf.split("-");
 
-			if (!infraValidarCpf(infraTrim( txtcpf ))){
+			//cpf tem que ser valido , ter 2 pontos e um traço (ou seja, estar na mascara)
+			if (!infraValidarCpf(infraTrim( txtcpf )) || (ponto.length-1) != 2 || (traco.length-1) != 1 ){
 				
 				alert('CPF Inválido.');
 				document.getElementById('txtCPF').focus();
@@ -1039,7 +1054,11 @@ function abrirCadastroInteressado(){
 
 		else if( chkTipoPessoaJuridica ){
 
-			if (!infraValidarCnpj(infraTrim( txtcnpj ))){
+			ponto = txtcnpj.split(".");
+			traco = txtcnpj.indexOf("-");
+			barra = txtcnpj.indexOf("/");
+			
+			if (!infraValidarCnpj(infraTrim( txtcnpj )) || ponto.length != 3 || traco != 15 || barra != 10 ){
 				
 				alert('CNPJ Inválido.');
 				document.getElementById('txtCNPJ').focus();
@@ -1626,7 +1645,7 @@ function carregarCamposDocComplementarUpload(){
 function carregarComponenteLupaInteressados( tipoAcao ){
 
    if( tipoAcao == 'S'){
-	 objLupaInteressados.selecionar(700,500);
+	 objLupaInteressados.selecionar(900,900);
   } else if( tipoAcao == 'R'){
 	 objLupaInteressados.remover();
   }
@@ -1850,12 +1869,12 @@ function adicionarInteressadoValido(){
 	if( txtNomeRazaoSocial == ''){
 
 		if( chkTipoPessoaFisica ){
-			alert('Informe o Nome.');
+			alert('Antes é necessário validar o CPF.');
 			return;
 		}
 
 		else if( chkTipoPessoaJuridica ){
-			alert('Informe a Razão Social.');
+			alert('Antes é necessário validar o CNPJ.');
 			return;
 		}
 		
@@ -1947,6 +1966,20 @@ function atualizarNomeRazaoSocial( cpfEditado , nomeEditado ){
 		 }
 	     
 	  }	
+	
+}
+
+function alterandoCPF(objeto, evt){
+	document.getElementById('txtNomeRazaoSocial').value = '';
+	document.getElementById('hdnIdInteressadoCadastrado').value = '';		
+	return infraMascaraCpf(objeto, evt);
+	
+}
+
+function alterandoCNPJ(objeto, evt){
+	document.getElementById('txtNomeRazaoSocial').value = '';
+	document.getElementById('hdnIdInteressadoCadastrado').value = '';		
+	return infraMascaraCnpj(objeto, evt);
 	
 }
 </script>

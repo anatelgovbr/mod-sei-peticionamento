@@ -31,11 +31,12 @@ try {
   			$strTitulo = 'Alterar Interessado';
   		}
   		
-  		if( isset( $_GET['cpf']) ){
+  		$janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
+  		if( $janelaSelecaoPorNome != null && $janelaSelecaoPorNome != "" ) { 
+  			
+  		} else if( isset( $_GET['cpf']) ){
   			$strTitulo .= ' - Pessoa Física';
-  		}
-  		
-  		else if( isset( $_GET['cnpj']) ){
+  		} else if( isset( $_GET['cnpj']) ){
   			$strTitulo .= ' - Pessoa Jurídica';
   		}
   		
@@ -257,20 +258,20 @@ try {
   			  $_POST['txtRazaoSocial'] = $objContatoDTO->getStrNome();
   			}
   			
-  			$_POST['numeroOab'] = $objContatoDTO->getStrMatriculaOab();
-  			$_POST['txtCPF'] = $objContatoDTO->getDblCpf();
-  			$_POST['txtCNPJ'] = $objContatoDTO->getDblCnpj();
-  			$_POST['rg'] = $objContatoDTO->getDblRg();
-  			$_POST['orgaoExpedidor'] = $objContatoDTO->getStrOrgaoExpedidor();
-  			$_POST['telefone'] = $objContatoDTO->getStrTelefone();
-  			$_POST['email'] = $objContatoDTO->getStrEmail();
-  			$_POST['sitioInternet'] = $objContatoDTO->getStrSitioInternet();
-  			$_POST['endereco'] = $objContatoDTO->getStrEndereco();
-  			$_POST['bairro'] = $objContatoDTO->getStrBairro();
-  			$_POST['estado'] = $objContatoDTO->getStrSiglaEstado();
-  			$_POST['cidade'] = $objContatoDTO->getStrNomeCidade();
-  			$_POST['pais'] = $objContatoDTO->getStrNomePais();
-  			$_POST['cep'] = $objContatoDTO->getStrCep();
+  			$_POST['numeroOab'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrMatriculaOab() );
+  			$_POST['txtCPF'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getDblCpf() );
+  			$_POST['txtCNPJ'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getDblCnpj() );
+  			$_POST['rg'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getDblRg() );
+  			$_POST['orgaoExpedidor'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrOrgaoExpedidor() );
+  			$_POST['telefone'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrTelefone() );
+  			$_POST['email'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrEmail() );
+  			$_POST['sitioInternet'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrSitioInternet() );
+  			$_POST['endereco'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrEndereco() );
+  			$_POST['bairro'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrBairro() );
+  			$_POST['estado'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrSiglaEstado() );
+  			$_POST['cidade'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrNomeCidade() );
+  			$_POST['pais'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrNomePais() );
+  			$_POST['cep'] = PaginaSEIExterna::tratarHTML( $objContatoDTO->getStrCep() );
   			
   			$_POST['tratamento'] = $objContatoDTO->getNumIdTratamento();
   			$_POST['vocativo'] = $objContatoDTO->getNumIdVocativo();

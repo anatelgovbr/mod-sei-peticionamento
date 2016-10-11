@@ -131,9 +131,9 @@ try {
 }catch(Exception $e){
 	
 	//removendo atributos da sessao
-	if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
-		SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
-	}
+	//if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
+		//SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
+	//}
 		
 	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
 		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
@@ -189,7 +189,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <p> 
     <label class="infraLabelObrigatorio">Usuário Externo:</label> <br/>
     <input type="text" name="loginUsuarioExterno" style="width:60%;"
-           value="<?= SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno() ?> "
+           value="<?= PaginaSEIExterna::tratarHTML( SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno() ) ?> "
            readonly="readonly" 
            id="loginUsuarioExterno" class="infraText" autocomplete="off" />
     </p>

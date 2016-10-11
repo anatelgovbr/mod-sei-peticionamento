@@ -48,45 +48,46 @@ try{
  		break;
  	
   	case 'contato_auto_completar_contexto_pesquisa':
+  		
   		//alterado para atender anatel exibir apenas nome contato
   		$objContatoDTO = new ContatoDTO();
   		$objContatoDTO->retNumIdContato();
   		$objContatoDTO->retStrSigla();
-  		$objContatoDTO->retStrNome();
-  		
+  		$objContatoDTO->retStrNome();  		
   		$objContatoDTO->setStrPalavrasPesquisa($_POST['extensao']);
-  		$objContatoDTO->setStrNome("%".$_POST['extensao']."%", InfraDTO::$OPER_LIKE);
   		
-  		$objContatoDTO->adicionarCriterio(array('SinAtivo','Nome'),
-  				array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_LIKE),
-  				array('S', "%".$_POST['extensao']."%" ),
-  				InfraDTO::$OPER_LOGICO_OR);
+  		$objContatoDTO->adicionarCriterio(
+  				array('SinAtivo','Nome'),
+  				array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_LIKE ),
+  				array('S', '%'.$_POST["extensao"]. '%' ),
+  				array( InfraDTO::$OPER_LOGICO_AND ) 
+  		);
   		
-  		$objContatoDTO->setStrSinContexto('S');
   		$objContatoDTO->setNumMaxRegistrosRetorno(50);
   		$objContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
 
         $objRelTipoContextoPeticionamentoDTO = new RelTipoContextoPeticionamentoDTO();
         $objRelTipoContextoPeticionamentoRN = new GerirTipoContextoPeticionamentoRN();
         $objRelTipoContextoPeticionamentoDTO->retTodos();
-        $objRelTipoContextoPeticionamentoDTO->setStrSinSelecaoInteressado('S');
+        //$objRelTipoContextoPeticionamentoDTO->setStrSinSelecaoInteressado('S');
         $arrobjRelTipoContextoPeticionamentoDTO = $objRelTipoContextoPeticionamentoRN->listar( $objRelTipoContextoPeticionamentoDTO );
+        
         if(!empty($arrobjRelTipoContextoPeticionamentoDTO)){
-            $arrId = array();
+            
+        	$arrId = array();
+            
             foreach($arrobjRelTipoContextoPeticionamentoDTO as $item){
                 array_push($arrId, $item->getNumIdTipoContextoContato());
             }
-            $objContatoDTO->adicionarCriterio(array('IdTipoContextoContato'),
-                array(InfraDTO::$OPER_IN),
-                array($arrId));
+            
+            $objContatoDTO->adicionarCriterio(array('IdTipoContextoContato', 'IdTipoContextoContato'),
+                array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL),
+                array($arrId, null), 
+            	array( InfraDTO::$OPER_LOGICO_OR));
         }
 
         $objContatoRN = new ContatoRN();
         $arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);
-
-  		//$objContatoRN = new ContatoRN();  		
-  		//$arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
-  		//$arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);
   		
   		$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
   		InfraAjax::enviarXML($xml);

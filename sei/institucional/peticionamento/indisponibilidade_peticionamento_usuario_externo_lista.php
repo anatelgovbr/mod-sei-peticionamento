@@ -326,7 +326,6 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
 
 <?php  PaginaPeticionamentoExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
 
-  <!--  <div style="height:4.5em; margin-top: 11px; overflow: hidden;" class="infraAreaDados" id="divInfraAreaDados">  -->
   <div style="height:auto; width: 98%;" class="infraAreaDados" id="divInfraAreaDados">
   
   <label id="lblDescricao" class="infraLabelOpcional">
@@ -340,7 +339,7 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
   <!--  Data Inicio  -->
   	<label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">Início:</label>
     <input type="text" name="txtDtInicio" id="txtDtInicio" onchange="validDate('I');" 
-    value="<?= $strDtInicio ?>" 
+    value="<?= PaginaSEIExterna::tratarHTML( $strDtInicio ) ?>" 
     onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" class="infraText" />
  	<img src="<?=PaginaPeticionamentoExterna::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtInicio" 
  	     title="Selecionar Data/Hora Inicial" 
@@ -350,7 +349,7 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
   <!--  Data Fim  -->
   	<label id="lblDtFim" for="txtDtFim" class="infraLabelOpcional">Fim:</label>
     <input type="text" name="txtDtFim" onchange="validDate('F');" id="txtDtFim" 
-    value="<?= $strDtFim ?>"  
+    value="<?= PaginaSEIExterna::tratarHTML( $strDtFim ) ?>"  
     onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" maxlength="16" class="infraText"/>
     <img src="<?=PaginaPeticionamentoExterna::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtFim" 
          title="Selecionar Data/Hora Final" 
@@ -368,7 +367,6 @@ $urlForm = 'institucional/peticionamento/indisponibilidade_peticionamento_usuari
     
   <?
   PaginaPeticionamentoExterna::getInstance()->montarAreaTabela($strResultado,$numRegistros);
-//  PaginaPeticionamentoExterna::getInstance()->montarBarraComandosInferior($arrComandos);
   ?>
 
   </div>

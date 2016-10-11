@@ -310,7 +310,8 @@ function validarUploadArquivoEssencial(){
 
 		//verificar se algum arquivo foi selecionado para o upload
 		if( fileArquivo.value == '' ){
-			   alert('Informe o arquivo para upload.');
+			   //alert('Informe o arquivo para upload.');
+			   alert('Deve adicionar pelo menos um Documento Essencial para cada Tipo.');
 			   isValido = false;
 			   fileArquivo.focus();
 			   return;
@@ -532,7 +533,7 @@ function receberInteressado( arrDadosInteressado, InteressadoCustomizado ){
 
     	objTabelaInteressado.adicionarAcoes(
 		arrDadosInteressado[0] , 
-		"<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('" + arrDadosInteressado[0] +"', '" + arrDadosInteressado[1] +"', '"+ arrDadosInteressado[2] +"')\"><img title='Alterar interessado' alt='Alterar interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>",
+		"<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('" + arrDadosInteressado[0] +"', '" + arrDadosInteressado[1] +"', '"+ arrDadosInteressado[2] +"')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>",
 		false,
 		true);
 		
@@ -792,6 +793,19 @@ function validarFormulario(){
 		tbDocumentoPrincipal != undefined ){
 
 		var hdnDocPrincipal = document.getElementById('hdnDocPrincipal').value;
+
+		var strFormatoDocumento = '';
+		var cbTipoConferencia = document.getElementById('TipoConferenciaPrincipal');
+		var strTipoConferencia = document.getElementById('TipoConferenciaPrincipal').value;
+
+		var radios = document.getElementsByName('formatoDocumentoPrincipal');
+		for (var i = 0, length = radios.length; i < length; i++) {
+
+		    if (radios[i].checked) {		    
+		    	strFormatoDocumento = radios[i].value;
+		        break;
+		    }
+		}
 		
 		if( hdnDocPrincipal == "" && fileArquivoPrincipal.value == ''){
 			alert('Informe o Documento Principal.');
@@ -812,8 +826,14 @@ function validarFormulario(){
 			alert('Informe a Hipótese Legal.');
 			hipoteseLegalPrincipal.focus();
 			return false;
+		} else if( hdnDocPrincipal == "" && strFormatoDocumento == ''){
+			alert('Informe o Formato do Documento.');
+			return false;
+		} else if( hdnDocPrincipal == "" && strFormatoDocumento == 'digitalizado' && strTipoConferencia == '' ){
+			alert('Informe a Conferência com o documento digitalizado.');
+			return false;
 		}
-	
+
 	} 
 
 	//se for documento gerado sempre valida complemento, nivel de acesso e hipotese legal
@@ -1096,11 +1116,11 @@ function abrirCadastroInteressado(){
 					$('#hdnCustomizado').val('');
 
 					if( chkTipoPessoaFisica ){
-						var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpf=true') ?>';
+						var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpf=true&cadastro=true') ?>';
 					}
 
 					else if( chkTipoPessoaJuridica ){
-						var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cnpj=true') ?>';
+						var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_interessado_cadastro&tipo_selecao=2&cnpj=true&cadastro=true') ?>';
 					}
 
 					infraAbrirJanela( str, 'cadastrarInteressado', 900, 900, '', false); //modal 
@@ -1266,7 +1286,13 @@ function carregarCamposDocPrincipalUpload(){
 		
     //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoPrincipal = document.getElementById('tipoDocumentoPrincipal');
-      var strComplemento = document.getElementById('complementoPrincipal').value;	
+	  
+	//abordagem anti-XSS client side	
+	  var htmlComplemento = document.getElementById('complementoPrincipal').value;
+	  var escaped = $("<pre>").text(htmlComplemento).html();
+      var strComplemento = escaped;	
+	  
+      //var strComplemento = document.getElementById('complementoPrincipal').value;	
       var documento = getStrTipoDocumento( cbTpoPrincipal.value, 'Principal' ) + ' ' + strComplemento;
 
       var nivelAcesso = getStrNivelAcesso( document.getElementById('nivelAcesso1').value );
@@ -1407,8 +1433,13 @@ function carregarCamposDocEssencialUpload(){
       
 	  //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoEssencial = document.getElementById('tipoDocumentoEssencial');
+
+	  //abordagem anti-XSS client side	
+	  var htmlComplemento = document.getElementById('complementoEssencial').value;
+	  var escaped = $("<pre>").text(htmlComplemento).html();
+      var strComplemento = escaped;	
 	  	
-	  var strComplemento = document.getElementById('complementoEssencial').value;	
+	  //var strComplemento = document.getElementById('complementoEssencial').value;	
       var documento = getStrTipoDocumento( cbTpoEssencial.value, 'Essencial' ) + ' ' + strComplemento;
       
       var nivelAcesso = getStrNivelAcesso( document.getElementById('nivelAcesso2').value );
@@ -1548,7 +1579,12 @@ function carregarCamposDocComplementarUpload(){
       
       //concatenacao de "Tipo" e "Complemento"
 	  var cbTpoComplementar = document.getElementById('tipoDocumentoComplementar');
-      var strComplemento = document.getElementById('complementoComplementar').value;	
+
+	  //abordagem anti-XSS client side	
+	  var htmlComplemento = document.getElementById('complementoComplementar').value;
+	  var escaped = $("<pre>").text(htmlComplemento).html();
+      var strComplemento = escaped;	
+      
       var documento = getStrTipoDocumento( cbTpoComplementar.value, 'Complementar' ) + ' ' + strComplemento;
 
       var nivelAcesso = getStrNivelAcesso( document.getElementById('nivelAcesso3').value );
@@ -1777,11 +1813,11 @@ function exibirAjudaCaso1(){
 }
 
 function exibirAjudaCaso2(){
-	alert('Para o Tipo de Processo escolhido é possível adicionar os Interessados no processo a ser aberto por meio da indicação de CPF ou CNPJ válidos, devendo complementar seus cadastros caso necessário.'); 
+	alert('Para o Tipo de Processo escolhido é possível adicionar os Interessados do processo a ser aberto por meio da indicação de CPF ou CNPJ válidos, devendo complementar seus cadastros caso necessário.');
 }
 
 function exibirAjudaCaso3(){
-	alert('Para o Tipo de Processo escolhido é possível adicionar os Interessados no processo a partir da base de Interessados já existente do órgão, devendo complementar seus cadastros caso necessário.'); 
+	alert('Para o Tipo de Processo escolhido é possível adicionar os Interessados do processo a ser aberto a partir da base de Interessados já existente do órgão. Caso necessário, clique na Lupa "Localizar Interessados" para uma pesquisa mais detalhada ou, na janela aberta, acessar o botão "Cadastrar Novo Interessado" e em seguida selecionar o Interessado cadastrado.');
 }
 
 function exibirAjudaFormatoDocumento(){

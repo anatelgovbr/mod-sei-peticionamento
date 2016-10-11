@@ -212,7 +212,7 @@ function pesquisar(){
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
-$strTipo = $_POST['selTipo'];;
+$strTipo = $_POST['selTipo'];
 ?>
 <form id="frmLista" method="post" action="<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao='.$_GET['acao']))?>">
     
@@ -222,7 +222,9 @@ $strTipo = $_POST['selTipo'];;
   
 <!--  Inicio -->
 <label id="lblDataInicio" for="txtDataInicio" class="infraLabelOpcional">Início:</label>
-<input type="text" name="txtDataInicio" id="txtDataInicio" maxlength="16" value="<?= $_POST['txtDataInicio'] ?>" class="infraText" 
+<input type="text" name="txtDataInicio" id="txtDataInicio" maxlength="16" 
+       value="<?= PaginaSEIExterna::tratarHTML( $_POST['txtDataInicio'] ) ?>" 
+       class="infraText" 
  onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" maxlength="16" 
 />
 
@@ -234,7 +236,9 @@ $strTipo = $_POST['selTipo'];;
 
 <!-- Fim -->
 <label id="lblDataFim" for="txtDataFim" class="infraLabelOpcional">Fim:</label>
-<input type="text" name="txtDataFim" id="txtDataFim" value="<?= $_POST['txtDataFim'] ?>" class="infraText" 
+<input type="text" name="txtDataFim" id="txtDataFim" 
+       value="<?= PaginaSEIExterna::tratarHTML( $_POST['txtDataFim'] ) ?>" 
+       class="infraText" 
  onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" maxlength="16" 
 />
 

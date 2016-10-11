@@ -282,6 +282,10 @@ $arrTipoConferencia = $tipoConferenciaRN->listar( $tipoConferenciaDTO );
 $numSeiTamMbDocExterno = $objInfraParametro->getValor('SEI_TAM_MB_DOC_EXTERNO');
 $numSeiTamMbDocExterno = ($numSeiTamMbDocExterno < 1024 ? $numSeiTamMbDocExterno." MB" : (round($numSeiTamMbDocExterno/1024,2))." GB");
 
+//limpando variavel de sessao que controla detalhes de exibicao internos 
+//da janela de cadastro de interessado (quando é indicacao por nome)
+SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
+
 //$arrTipoConferencia = ;
 $urlBaseLink = "";
 $arrComandos = array();

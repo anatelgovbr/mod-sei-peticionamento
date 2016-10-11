@@ -273,8 +273,9 @@ function inicializar(){
 
     <?php 
     $janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
-    if( $janelaSelecaoPorNome != null && $janelaSelecaoPorNome != "" ) { ?>
+    if( $janelaSelecaoPorNome != null && $janelaSelecaoPorNome != "" && !isset( $_GET['cadastro'] ) ) { ?>
 
+	//alert('aqui <?= $janelaSelecaoPorNome ?>');
     document.getElementById("rdPF").checked = false;
     document.getElementById("rdPF").checked = '';
 
@@ -332,12 +333,12 @@ function salvar(){
 	}
 	
 	if( interessado1 == '' ){
-      alert('Informe o Interessado.');
-      return;
+      alert('Informe se o Interessado é Pessoa Física ou Pessoa Jurídica.');
+	  return;
 	}
 
 	else if( interessado1 == 'pf' && interessado2 == ''){
-	  alert('Informe se o interessado possui ou não vínculo com Pessoa Jurídica.');
+	  alert('Informe se o Interessado Pessoa Física a ser cadastrado possui ou não vínculo com Pessoa Jurídica.');
 	  return;
 	}
 	
@@ -345,7 +346,7 @@ function salvar(){
 	var tipoInteressado = document.getElementById('tipoInteressado').value;
 	
 	if( tipoInteressado == '' || tipoInteressado == 'null'  ){
-		alert('Informe o tipo de interessado.');
+		alert('Informe o Tipo de Interessado.');
 		document.getElementById('tipoInteressado').focus();
 		return;
 	}
@@ -355,12 +356,12 @@ function salvar(){
 	var razaoSocial = document.getElementById('txtRazaoSocial').value;
 
 	if( interessado1 == 'pf' && nome == '' ){
-		alert('Informe o nome.');
+		alert('Informe o Nome Completo.');
 		document.getElementById('txtNome').focus();
 		return;
 		 
 	} else if( interessado1 == 'pj' && razaoSocial == '' ){
-		alert('Informe a razão social.');
+		alert('Informe a Razão Social.');
 		document.getElementById('txtRazaoSocial').focus();
 		return;
 	}
@@ -370,12 +371,12 @@ function salvar(){
 	var idContextoAjax = document.getElementById('hdnIdContextoContato');
 
 	if( interessado1 == 'pf' && interessado2 == '1' && ( pjVinculada == '' || idContextoAjax == null || idContextoAjax.value=='' ) ){
-		alert('Informe a pessoa jurídica vinculada.');
+		alert('Informe a Razão Social da Pessoa Jurídica vinculada.');
 		document.getElementById('txtPjVinculada').focus();
 		return;		 
 	}
 	
-	//validar cpf ou cnpj
+	//validar se o cpf ou o cnpj foram preenchidos
 	var cpf = document.getElementById('txtCPF').value;
 	var cnpj = document.getElementById('txtCNPJ').value;
 
@@ -389,7 +390,22 @@ function salvar(){
 	  document.getElementById('txtCNPJ').focus();
 	  return;
 	}
-
+	
+	//validar se o CPF ou o CNPJ preenchidos são válidos
+	if ( document.getElementById('txtCNPJ').value != "" && !infraValidarCnpj(infraTrim(document.getElementById('txtCNPJ').value))){
+		
+		alert('CNPJ inválido.');
+		document.getElementById('txtCNPJ').focus();
+		return;
+	}
+	
+	if ( document.getElementById('txtCPF').value != "" && !infraValidarCpf(infraTrim(document.getElementById('txtCPF').value))){
+		
+		alert('CPF inválido.');
+		document.getElementById('txtCPF').focus();
+		return;
+	}
+	
 	//rg
 	var rg = document.getElementById('rg').value;
 
@@ -403,7 +419,7 @@ function salvar(){
 	var orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
 
 	if( interessado1 == 'pf' && orgaoExpedidor == '' ){
-	  alert('Informe o órgão expedidor.');
+	  alert('Informe o Órgão Expedidor do RG.');
 	  document.getElementById('orgaoExpedidor').focus();
 	  return;
 	}
@@ -412,7 +428,7 @@ function salvar(){
 	var tratamento = document.getElementById('tratamento').value;
 
 	if( interessado1 == 'pf' && ( tratamento == 'null' || tratamento == '') ){
-	  alert('Informe o tratamento.');
+	  alert('Informe o Tratamento.');
 	  document.getElementById('tratamento').focus();
 	  return;
 	}
@@ -421,7 +437,7 @@ function salvar(){
 	var cargo = document.getElementById('cargo').value;
 
 	if( interessado1 == 'pf' && ( cargo == 'null' || cargo == '') ){
-	  alert('Informe o cargo.');
+	  alert('Informe o Cargo.');
 	  document.getElementById('cargo').focus();
 	  return;
 	}
@@ -430,7 +446,7 @@ function salvar(){
 	var vocativo = document.getElementById('vocativo').value;
 
 	if( interessado1 == 'pf' && ( vocativo == 'null' || vocativo == '') ){
-	  alert('Informe o vocativo.');
+	  alert('Informe o Vocativo.');
 	  document.getElementById('vocativo').focus();
 	  return;
 	}
@@ -439,7 +455,7 @@ function salvar(){
 	var telefone = document.getElementById('telefone').value;
 
 	if( telefone == ''){
-	  alert('Informe o telefone.');
+	  alert('Informe o Telefone.');
 	  document.getElementById('telefone').focus();
 	  return;
 	}
@@ -447,7 +463,7 @@ function salvar(){
 	//email
 	if ( document.getElementById('email').value != "" && !infraValidarEmail(infraTrim(document.getElementById('email').value))){
 		
-		alert('E-mail Inválido.');
+		alert('E-mail inválido.');
 		document.getElementById('email').focus();
 		return false;
 	
@@ -457,7 +473,7 @@ function salvar(){
 	var endereco = document.getElementById('endereco').value;
 
 	if( endereco == ''){
-	  alert('Informe o endereço.');
+	  alert('Informe o Endereço.');
 	  document.getElementById('endereco').focus();
 	  return;
 	}
@@ -466,7 +482,7 @@ function salvar(){
 	var bairro = document.getElementById('bairro').value;
 
 	if( bairro == ''){
-	  alert('Informe o  bairro.');
+	  alert('Informe o Bairro.');
 	  document.getElementById('bairro').focus();
 	  return;
 	}
@@ -474,18 +490,18 @@ function salvar(){
 	//estado
 	var estado = document.getElementById('selEstado').value;
 
-	if( estado == ''){
-	  alert('Informe o  estado.');
-	  document.getElementById('estado').focus();
+	if( estado == '' || estado == 'null'){
+	  alert('Informe o Estado.');
+	  document.getElementById('selEstado').focus();
 	  return;
 	}
 	
 	//cidade
 	var cidade = document.getElementById('selCidade').value;
 
-	if( cidade == ''){
-	  alert('Informe a cidade.');
-	  document.getElementById('cidade').focus();
+	if( cidade == '' || cidade == 'null'){
+	  alert('Informe a Cidade.');
+	  document.getElementById('selCidade').focus();
 	  return;
 	}
 	

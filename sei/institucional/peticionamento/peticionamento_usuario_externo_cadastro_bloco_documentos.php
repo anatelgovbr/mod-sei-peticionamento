@@ -308,11 +308,11 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   
 	   if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){ ?>
 	   
-	   <br/>
-	   <label class="infraLabelObrigatorio" for="fileArquivoEssencial">Documentos Essenciais (<?
-       echo $strTamanhoMaximoComplementar;
-       echo "<input type=hidden name=hdnTamArquivoEssencial id=hdnTamArquivoEssencial value='" . $strTamanhoMaximoComplementar . "'>"; 
-       ?>):</label><br/>
+		<hr style="border:none; padding:0; margin:5px 6px 12px 6px; border-top:medium double #333" />
+		<label class="infraLabelObrigatorio" for="fileArquivoEssencial">Documentos Essenciais (<?
+		echo $strTamanhoMaximoComplementar;
+		echo "<input type=hidden name=hdnTamArquivoEssencial id=hdnTamArquivoEssencial value='" . $strTamanhoMaximoComplementar . "'>"; 
+		?>):</label><br/>
        
        <input style="margin-top:0.3%" type="file" id="fileArquivoEssencial" name="fileArquivoEssencial" size="50" /> <br/><br/>
    
@@ -480,7 +480,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
     			<th align="center" class="infraTh" style="width:50px;">Ações</th>
     		</tr>
     		   
-		</table> <br/><br/>
+		</table> <br/>
        
 		<? } ?>
 		</form>
@@ -505,11 +505,11 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	   
 	   if( is_array( $arrRelTipoProcessoSeriePeticionamentoDTO ) && count( $arrRelTipoProcessoSeriePeticionamentoDTO ) > 0 ){ ?>
 	     
-	     <br/>
-		 <label class="infraLabel" for="fileArquivoComplementar">Documentos Complementares (<?
+		<hr style="border:none; padding:0; margin:5px 6px 12px 6px; border-top:medium double #333" />
+		<label class="infraLabel" for="fileArquivoComplementar">Documentos Complementares (<?
        		echo $strTamanhoMaximoComplementar;
        		echo "<input type=hidden name=hdnTamArquivoComplementar id=hdnTamArquivoComplementar value='" . $strTamanhoMaximoComplementar . "'>"; 
-       	?>):</label><br/>
+		?>):</label><br/>
 	     
 	     <input style="margin-top:0.3%" type="file" id="fileArquivoComplementar" name="fileArquivoComplementar" size="50" /> <br/><br/>
    
@@ -672,7 +672,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
     			<th align="center" class="infraTh" style="width:50px;">Ações</th>
     		</tr>
     		   
-		</table> <br/><br/>
+		</table> <br/>
 	     
 		<? } ?>
 		</form>

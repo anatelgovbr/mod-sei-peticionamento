@@ -168,10 +168,12 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
               
          <label id="descTipoPessoa" class="infraLabelObrigatorio"> </label> <br/> 
          
-         <input type="text" id="txtCPF" class="infraText" name="txtCPF" onkeydown="return alterandoCPF(this, event)" 
+         <input type="text" id="txtCPF" class="infraText" 
+                name="txtCPF" 
+                onkeypress="return alterandoCPF(this, event)" 
                 style="width:140px; display:none;"/>
          
-         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeydown="return alterandoCNPJ(this, event)" 
+         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeypress="return alterandoCNPJ(this, event)" 
                 style="width:140px; display:none;"/> 
          
          <input type="button" id="btValidarCPFCNPJ" class="infraText" value="Validar" style="visibility: hidden; margin-left: 2px;" onclick="abrirCadastroInteressado()" />      

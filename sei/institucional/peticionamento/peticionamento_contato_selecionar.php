@@ -460,6 +460,10 @@ function selecionarTipoContato(){
 	document.getElementById('frmContatoLista').submit();
 }
 
+function pesquisar(){
+   document.getElementById('frmContatoLista').submit();
+}
+
 <?
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();

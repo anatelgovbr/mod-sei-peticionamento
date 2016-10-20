@@ -2,7 +2,7 @@
 /**
  * ANATEL
  *
- * Controlador responsavel por açoes do usuario externo
+ * Controlador responsavel por aÃ§oes do usuario externo
  * 21/06/2016 - criado por marcelo.bezerra@cast.com.br - CAST
  *
  */
@@ -96,7 +96,7 @@
   					  				
   			case 'editor_peticionamento_montar':
   			case 'editor_peticionamento_imagem_upload':
-  			    	//case 'editor_salvar': enviada diretamente para a página editor_processar.php para tratatamento de troca de unidade com documento aberto
+  			    	//case 'editor_salvar': enviada diretamente para a pÃ¡gina editor_processar.php para tratatamento de troca de unidade com documento aberto
   			    	require_once dirname ( __FILE__ ) . '/editor_peticionamento_processar.php';
   			    	return true;
   			
@@ -127,9 +127,9 @@
 	  				
 	  				if( $objContatoDTO != null){
 	  				  $objContato = new stdClass();
-	  				  $objContato->nome = $objContatoDTO->getStrNome();
-	  				  $objContato->id = $objContatoDTO->getNumIdContato();  				
-	  			      $json = json_encode( $objContato , true );
+	  				  $objContato->nome =  utf8_encode( $objContatoDTO->getStrNome() );
+	  				  $objContato->id = utf8_encode( $objContatoDTO->getNumIdContato() );  				
+	  			      $json = json_encode( $objContato , JSON_FORCE_OBJECT);
 	  				}
   				
   				}

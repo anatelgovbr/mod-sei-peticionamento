@@ -79,6 +79,7 @@ class HipoteseLegalPeticionamentoRN extends InfraRN {
 			$objHipoteseLegalBD = new HipoteseLegalBD($this->getObjInfraIBanco());
 			$objHipoteseLegalDTO = new HipoteseLegalDTO();
 			$objHipoteseLegalDTO->retTodos();
+			$objHipoteseLegalDTO->setOrd('Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
 			
 			$objHipoteseLegalDTO->adicionarCriterio(array('IdHipoteseLegal'),
 					array(InfraDTO::$OPER_IN),

@@ -47,6 +47,7 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
 		$objHipoteseLegalPeticionamentoDTO = new HipoteseLegalPeticionamentoDTO();
 		$objHipoteseLegalPeticionamentoRN  = new HipoteseLegalPeticionamentoRN();
 		$objHipoteseLegalPeticionamentoDTO->retTodos();
+		$objHipoteseLegalPeticionamentoDTO->setOrd('Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
 		$countHipotesesPeticionamento = $objHipoteseLegalPeticionamentoRN->contar($objHipoteseLegalPeticionamentoDTO);
 		
 		if($countHipotesesPeticionamento > 0)
@@ -113,16 +114,21 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
 		
 		if(count($arrObjNivelAcessoDTO) > 0 ){
 			foreach($arrObjNivelAcessoDTO as $objNivelAcessoDTO){
-			  $stringFim .= '<option value="'.$objNivelAcessoDTO->getStrStaNivelAcesso().'"';
 			  
-			  if(!is_null($strValorItemSelecionado) &&  ($strValorItemSelecionado == $objNivelAcessoDTO->getStrStaNivelAcesso())){
-			  	$stringFim .= 'selected = selected';
+			  if( $objNivelAcessoDTO->getStrStaNivelAcesso() != ProtocoloRN::$NA_SIGILOSO ){	
+			  	
+				  $stringFim .= '<option value="'.$objNivelAcessoDTO->getStrStaNivelAcesso().'"';
+				  
+				  if(!is_null($strValorItemSelecionado) &&  ($strValorItemSelecionado == $objNivelAcessoDTO->getStrStaNivelAcesso())){
+				  	$stringFim .= 'selected = selected';
+				  }
+				  
+				  $stringFim .= '>';
+				  $stringFim .= $arrayDescricoes[$objNivelAcessoDTO->getStrStaNivelAcesso()];
+				  
+				  $stringFim .= '</option>';
 			  }
 			  
-			  $stringFim .= '>';
-			  $stringFim .= $arrayDescricoes[$objNivelAcessoDTO->getStrStaNivelAcesso()];
-			  
-			  $stringFim .= '</option>';
 			}
 		}
 	

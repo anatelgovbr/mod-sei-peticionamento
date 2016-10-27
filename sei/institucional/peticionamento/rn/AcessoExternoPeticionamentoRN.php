@@ -457,13 +457,6 @@ class AcessoExternoPeticionamentoRN extends InfraRN {
 				$objAtributoAndamentoDTO->setStrValor($objDocumentoDTO->getStrProtocoloDocumentoFormatado());
 				$objAtributoAndamentoDTO->setStrIdOrigem($objDocumentoDTO->getDblIdDocumento());
 				$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
-
-				//a pedido do cliente removendo do historico / andamento a atividade de "liberar para assinatura"
-				//$objAtividadeDTO = new AtividadeDTO();
-				//$objAtividadeDTO->setDblIdProtocolo($objDocumentoDTO->getDblIdProcedimento());
-				//$objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
-				//$objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_LIBERACAO_ASSINATURA_EXTERNA);
-				//$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
 				
 				$objAtividadeDTO = new AtividadeDTO();
 				$objAtividadeDTO->setDblIdProtocolo($objParticipanteDTO->getDblIdProtocolo());
@@ -475,7 +468,6 @@ class AcessoExternoPeticionamentoRN extends InfraRN {
 				$objAtividadeDTO = $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
 								
 				$objAtividadeRN = new AtividadeRN();
-				//a pedido do cliente removendo do historico / andamento a atividade de "liberar para assinatura"
 				$objAtividadeDTO = $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
 				$objAcessoExternoDTO->setNumIdAtividade($objAtividadeDTO->getNumIdAtividade());
 

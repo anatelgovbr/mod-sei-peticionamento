@@ -23,22 +23,11 @@ class TipoProcessoPeticionamentoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdProcedimento',
 				'id_tipo_procedimento');
-
-		//#6155 - removido. Agora serão n Unidades
-		//$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
-		//		'IdUnidade',
-		//		'id_unidade');
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdSerie',
 				'id_serie');
 		
-		//REMOVIDO MODELO A PEDIDO DO CLIENTE
-		//$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
-		//		'IdModelo',
-		//		'id_modelo');
-		
-		//ADICIONADO HIPOTESE LEGAL A PEDIDO DO CLIENTE
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdHipoteseLegal',
 				'id_hipotese_legal');
@@ -57,11 +46,11 @@ class TipoProcessoPeticionamentoDTO extends InfraDTO  {
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinIIIndicacaoDiretaCpfCnpj',
-				'sin_ii_indicacao_direta_cpf_cnpj');
+				'sin_ii_indic_direta_cpf_cnpj');
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinIIIndicacaoDiretaContato',
-				'sin_ii_indicacao_direta_contato');
+				'sin_ii_indic_direta_contato');
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinNaUsuarioExterno',
@@ -97,12 +86,10 @@ class TipoProcessoPeticionamentoDTO extends InfraDTO  {
 		$this->configurarFK('IdProcedimento', 'tipo_procedimento tipo', 'tipo.id_tipo_procedimento');
 		$this->configurarFK('IdSerie', 'serie s', 's.id_serie', InfraDTO::$TIPO_FK_OPCIONAL);
 		
-		//ADICIONADO HIPOTESE LEGAL A PEDIDO DO CLIENTE
 		$this->configurarFK('IdHipoteseLegal', 'hipotese_legal hl', 'hl.id_hipotese_legal', InfraDTO::$TIPO_FK_OPCIONAL);
 				
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_ARR,'ObjRelTipoProcessoSerieDTO');
 		
-		//#6155 - Add Campo a pedindo do cliente
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_ARR,'ObjRelTipoProcessoSerieEssDTO');
 	}}
 ?>

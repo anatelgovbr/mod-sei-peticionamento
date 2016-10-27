@@ -11,7 +11,7 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 class GerirExtensoesArquivoPeticionamentoDTO extends InfraDTO  {
 
 	public function getStrNomeTabela() {
-		return 'md_pet_extensao_arquivo_perm';
+		return 'md_pet_ext_arquivo_perm';
 	}
 	
 	
@@ -19,7 +19,7 @@ class GerirExtensoesArquivoPeticionamentoDTO extends InfraDTO  {
 	
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdExtensaoArquivoPerm',
-				'id_md_pet_extensao_arquivo_perm');
+				'id_md_pet_ext_arquivo_perm');
 	
 	
 	    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,

@@ -139,7 +139,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	         <label class="infraLabelObrigatorio">Hipótese Legal:</label> <br/>
 	         <select class="infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" style="width: 95%; float: left; margin-right: 5px;">
 	            <option value=""></option>
-	            <? //$isConfigHipoteseLegal $arrHipoteseLegal
+	            <?
 	            if( $isConfigHipoteseLegal && is_array( $arrHipoteseLegal ) && count( $arrHipoteseLegal ) > 0 ) { 
 	                 foreach( $arrHipoteseLegal as $itemObj ) { 
 	            ?>
@@ -195,7 +195,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	         <label class="infraLabelObrigatorio">Hipótese Legal:</label> <br/>
 	         <select class="infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" style="width: 95%; float: left; margin-right: 5px;">
 	            <option value=""></option>
-	            <? //$isConfigHipoteseLegal $arrHipoteseLegal
+	            <?
 	            if( $isConfigHipoteseLegal && is_array( $arrHipoteseLegal ) && count( $arrHipoteseLegal ) > 0 ) { 
 	                 foreach( $arrHipoteseLegal as $itemObj ) { 
 	            ?>

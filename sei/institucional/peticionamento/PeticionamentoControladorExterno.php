@@ -1,11 +1,12 @@
 <?
 /**
- * ANATEL
- *
- * Controlador responsavel por açoes do usuario externo
- * 21/06/2016 - criado por marcelo.bezerra@cast.com.br - CAST
- *
- */
+* ANATEL
+*
+* Controlador responsavel por ações do Usuario Externo
+* 21/06/2016 - criado por marcelo.bezerra@cast.com.br - CAST
+*
+*/
+
  class PeticionamentoControladorExterno implements ISeiControlador {
 
 		public function processar($strAcao){

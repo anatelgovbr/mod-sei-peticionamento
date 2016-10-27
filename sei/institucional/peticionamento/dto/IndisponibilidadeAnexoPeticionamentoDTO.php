@@ -11,7 +11,7 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 class IndisponibilidadeAnexoPeticionamentoDTO extends InfraDTO {
 
   public function getStrNomeTabela() {
-  	 return 'md_pet_indisponibilidade_anexo';
+  	 return 'md_pet_indisp_anexo';
   }
 
   public function montar() {

@@ -168,15 +168,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
               
          <label id="descTipoPessoa" class="infraLabelObrigatorio"> </label> <br/> 
          
-         <input type="text" id="txtCPF" class="infraText" 
-                name="txtCPF" 
-                onkeypress="return alterandoCPF(this, event)" 
-                style="width:140px; display:none;"/>
+         <input type="text" id="txtCPF" class="infraText" name="txtCPF" onkeyup="return alterandoCPF(this, event)" style="width:120px; display:none;" maxlength="14"/>
          
-         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeypress="return alterandoCNPJ(this, event)" 
-                style="width:140px; display:none;"/> 
+         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeyup="return alterandoCNPJ(this, event)" style="width:120px; display:none;"/ maxlength="18"/>
          
-         <input type="button" id="btValidarCPFCNPJ" class="infraText" value="Validar" style="visibility: hidden; margin-left: 2px;" onclick="abrirCadastroInteressado()" />      
+         <input type="button" id="btValidarCPFCNPJ" class="infraText" value="Validar" style="visibility: hidden; margin-left: 2px;" onclick="abrirCadastroInteressado()"/>
                          
        </div> 
        
@@ -198,7 +194,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
        
        <table id="tbInteressadosIndicados" class="infraTable" width="98%" align="left" summary="Lista de Interessados" >
           
-          <caption class="infraCaption">Lista de Interessados:</caption>       
+          <caption class="infraCaption"> &nbsp; </caption>
           
            <tr>
                <th class="infraTh" style="display: none;" > ID Contato </th>

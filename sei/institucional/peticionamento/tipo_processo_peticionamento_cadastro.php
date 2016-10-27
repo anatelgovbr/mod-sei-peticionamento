@@ -2,6 +2,7 @@
 /**
 * ANATEL
 *
+* Construi a tela de Cadastro, Alteração e Consulta de Tipos de Processos para Peticionamento
 * 15/04/2016 - criado por jaqueline.mendes@cast.com.br - CAST
 *
 */
@@ -69,7 +70,6 @@ try {
   
   $strItensSelNivelAcesso = '';
   $strItensSelHipoteseLegal  = '';
-  //$strItensSelHipoteseLegal  = TipoProcessoPeticionamentoINT::montarSelectHipoteseLegal(null, null, ProtocoloRN::$NA_RESTRITO );
   
   //Preencher Array de Unidades para buscar posteriormente
   $objUnidadeDTO = new UnidadeDTO();
@@ -911,35 +911,25 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
    <fieldset class="infraFieldset" style="width:75%;">
   	<legend class="infraLegend">&nbsp;Indicação de Interessado&nbsp;</legend>
    
-   <input onclick="changeIndicacaoInteressado()" type="radio" id="rdUsuExterno" name="indicacaoInteressado[]" value="1" <?php echo $sinIndIntUsExt ?>> 
-   <label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">
-   Próprio Usuário Externo
-   </label>
- 	<br/>
-   <input onclick="changeIndicacaoInteressado()" type="radio" name="indicacaoInteressado[]" id="rdIndicacaoIndireta" value="2"  <?php echo $sinIndIntIndIndir ?>> 
-   <label name="lblIndicacaoIndireta" id="lblIndicacaoIndireta" for="rdIndicacaoIndireta" class="infraLabelRadio"> 
-   Indicação Direta
-   </label>
-   
-   <br/>
-  <div id="divRdIndicacaoIndiretaHide" <?php echo $sinIndIntIndIndir != '' ? 'style="display: inherit;"' : 'style="display: none;"'?> >
-  <input <?php echo $sinIndIntIndCpfCn; ?>  type="radio" name="indicacaoIndireta[]" id="indicacaoIndireta1" class="rdIndicacaoIndiretaHide" value="3"> 
-   <label  name="lblInformandoCpfCnpj" for="indicacaoIndireta1" id="lblInformandoCpfCnpj" 
-   class="lblIndicacaoIndiretaHide infraLabelRadio"> 
-   Informando CPF ou CNPJ
-   </label>
-   <br/>
- 
-   <input <?php echo $sinIndIntIndConta;  ?> type="radio" name="indicacaoIndireta[]"  id="indicacaoIndireta2" class="rdIndicacaoIndiretaHide" value="4"> 
-   <label for="indicacaoIndireta2" id="lblContatosJaExistentes" name="lblContatosJaExistentes" 
-   class="lblIndicacaoIndiretaHide infraLabelRadio"> 
-   Digitando nome de Contatos já existentes
-   </label>
-   </div>
-   </fieldset>
-   </div>
-   
-</br>
+	<input onclick="changeIndicacaoInteressado()" type="radio" id="rdUsuExterno" name="indicacaoInteressado[]" value="1" <?php echo $sinIndIntUsExt ?>> 
+	<label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">Próprio Usuário Externo</label>
+	<br/>
+	<input onclick="changeIndicacaoInteressado()" type="radio" name="indicacaoInteressado[]" id="rdIndicacaoIndireta" value="2"  <?php echo $sinIndIntIndIndir ?>> 
+	<label name="lblIndicacaoIndireta" id="lblIndicacaoIndireta" for="rdIndicacaoIndireta" class="infraLabelRadio">Indicação Direta</label>
+	<br/>
+	
+	<div id="divRdIndicacaoIndiretaHide" <?php echo $sinIndIntIndIndir != '' ? 'style="display: inherit;"' : 'style="display: none;"'?> >
+	<input <?php echo $sinIndIntIndCpfCn; ?>  type="radio" name="indicacaoIndireta[]" id="indicacaoIndireta1" class="rdIndicacaoIndiretaHide" value="3"> 
+	<label  name="lblInformandoCpfCnpj" for="indicacaoIndireta1" id="lblInformandoCpfCnpj" class="lblIndicacaoIndiretaHide infraLabelRadio">Informando CPF ou CNPJ</label>
+	<br/>
+	
+	<input <?php echo $sinIndIntIndConta;  ?> type="radio" name="indicacaoIndireta[]"  id="indicacaoIndireta2" class="rdIndicacaoIndiretaHide" value="4"> 
+	<label for="indicacaoIndireta2" id="lblContatosJaExistentes" name="lblContatosJaExistentes" class="lblIndicacaoIndiretaHide infraLabelRadio">Digitando nome de Contatos já existentes</label>
+	</div>
+	
+	</fieldset>
+	</div>
+	</br>
   
   <!--  Fim da Indicação de Interessados -->
   
@@ -949,21 +939,15 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
    <div>
    <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]" id="rdUsuExternoIndicarEntrePermitidos" onclick="changeNivelAcesso();" value="1"> 
    
-   <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">
-   Usuário Externo indicar diretamente
-   </label>
+   <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário Externo indica diretamente</label>
    <br/>
    
    <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]"  id="rdPadrao" onclick="changeNivelAcesso();" value="2"> 
-   <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">
-   Padrão pré definido
-   </label>
+   <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido</label>
      
    <div id="divNivelAcesso"  <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"'?>>
 	   <div style="clear:both;">&nbsp;</div>
-	   <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">
-	   Nível de Acesso:
-	   </label>
+	   <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">Nível de Acesso:</label>
 	   <br/>
 	   <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()">
 	     <?=$strItensSelNivelAcesso?>
@@ -972,9 +956,7 @@ $idTabela =	'tabNomeUnidade_' .$cadaObjUnidadeDTO->getNumIdUnidade();
    
    <div id="divHipoteseLegal" <?php echo $hipoteseLegal //$sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"'?> >
 	   <div style="clear:both;">&nbsp;</div>
-	   <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal" class="infraLabelObrigatorio">
-	   Hipótese Legal:
-	   </label>
+	   <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal" class="infraLabelObrigatorio">Hipótese Legal:</label>
 	   <br/>
 	   <select id="selHipoteseLegal" name="selHipoteseLegal">
 	   <?=$strItensSelHipoteseLegal?>
@@ -1300,8 +1282,6 @@ function changeDocPrincipal(){
     var gerado = document.getElementsByName('rdDocPrincipal[]')[0].checked;
     var tipo   = '';
 
-    //REMOVIDO MODELO A PEDIDO DO CLIENTE
-	//document.getElementById('divModelo').style.display = "none";
 	document.getElementById('divDocPrincipal').style.display = "inherit";
 	document.getElementById('fldDocEssenciais').style.display = "inherit";
 	document.getElementById('fldDocComplementar').style.display = "inherit";
@@ -1311,26 +1291,13 @@ function changeDocPrincipal(){
 	}
 
 	if(gerado){
-
 		tipo = 'G';
-
-		//REMOVIDO MODELO A PEDIDO DO CLIENTE
-		//document.getElementById('selModelo').value = '';
-		
 		document.getElementById('txtTipoDocPrinc').value = '';
-
-		//REMOVIDO MODELO A PEDIDO DO CLIENTE
-		//document.getElementById('divModelo').style.display = "inherit";
-		
 		document.getElementsByName("rdDocPrincipal[]")[0].focus();
-		//document.getElementById('fldDocComplementar').style.display = "inherit";
     }else{
     	tipo = 'E';
-    	//REMOVIDO MODELO A PEDIDO DO CLIENTE
-    	//document.getElementById('selModelo').value = '';
 		document.getElementById('txtTipoDocPrinc').value = '';
     	document.getElementsByName("rdDocPrincipal[]")[1].focus();
-    	//document.getElementById('fldDocComplementar').style.display = "inherit";
     }
 
 	carregarComponenteAutoCompleteTpDocPrinc(tipo);
@@ -1786,15 +1753,6 @@ if (!validoDP) {
 	 document.getElementById('rdDocGerado').focus();
     return false;
   }
-
-//REMOVIDO MODELO A PEDIDO DO CLIENTE
-/*
-if (elemsDP[0].checked == true && infraTrim(document.getElementById('selModelo').value)=='') {
-	 alert('Informe o Modelo.');
-   document.getElementById('selModelo').focus();
-   return false;
-}
-*/
 
 if (infraTrim(document.getElementById('txtTipoDocPrinc').value)=='') {
 	 alert('Informe o Tipo de Documento Principal.');

@@ -440,6 +440,8 @@ function OnSubmitForm() {
 }
 
 function validarPesquisaRI0570() {
+  
+  /*
   if (document.getElementById('chkMaisOpcoesContatos').checked){
       
     var dataNascIni = infraTrim(document.getElementById('txtNascimentoInicio').value);
@@ -453,6 +455,8 @@ function validarPesquisaRI0570() {
       }
     }
   }
+  */
+  
   return true;
 }
 
@@ -503,7 +507,6 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
      </option>	  
   <? } ?>
   
-  <?//=$strItensSelTipoContextoContato?>
   </select>
   
   <?

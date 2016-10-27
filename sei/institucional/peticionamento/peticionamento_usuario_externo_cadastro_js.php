@@ -522,7 +522,41 @@ function abrirJanelaDocumento( ){
 }
 
 function receberInteressado( arrDadosInteressado, InteressadoCustomizado ){
+
+	//antes de adicionar verificar se o interessado ja está na grid
+	var strHash = document.getElementById('hdnListaInteressadosIndicados').value;
 	
+	//caractere de quebra de linha/registro
+	var arrHash = strHash.split('¥');
+	var qtdX = arrHash.length;
+	  
+	if( qtdX == 1 && arrHash[0] == "" ){
+
+	  arrHash = Array();
+	  arrHash[0] = strHash;
+		  
+	}	
+
+	if( strHash != "") {		
+
+		  for(var i = 0; i < qtdX ; i++ ){
+
+			  //caractere de quebra de coluna/campo	
+			  var arrLocal = arrHash[i].split('±');	
+			  var idContato = arrLocal[0];
+
+			  if( idContato == arrDadosInteressado[0]){
+				 alert('O Interessado informado já foi selecionado.');
+				 document.getElementById('txtCPF').value='';
+				 document.getElementById('txtNomeRazaoSocial').value='';
+                 return false;
+		      }
+			  
+		  }
+	  
+	  }
+
+	debugger;
 	objTabelaInteressado.adicionar([ arrDadosInteressado[0], 
 	                    arrDadosInteressado[1] , 
 	                  	arrDadosInteressado[2] ,  

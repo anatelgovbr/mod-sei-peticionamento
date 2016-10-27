@@ -497,17 +497,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
   id_tipo_procedimento ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
   id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL , 
   id_serie ' . $objInfraMetaBD->tipoNumero() . ' DEFAULT NULL , '
-  //removendo modelo a pedido do cliente 
-  //id_modelo ' . $objInfraMetaBD->tipoNumero() .' DEFAULT NULL ,
   
-  //adicionando hipotese legal a pedido do cliente
   . 'id_hipotese_legal ' . $objInfraMetaBD->tipoNumero() .' DEFAULT NULL ,
   orientacoes ' . $objInfraMetaBD->tipoTextoVariavel(500) .' NOT NULL,
   sta_nivel_acesso  ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
   sin_ii_proprio_usuario_externo ' . $objInfraMetaBD->tipoTextoFixo(1) .' DEFAULT NULL,
   sin_ii_indicacao_direta ' . $objInfraMetaBD->tipoTextoFixo(1) .' DEFAULT NULL,
-  sin_ii_indicacao_direta_cpf_cnpj ' . $objInfraMetaBD->tipoTextoFixo(1) .  ' DEFAULT NULL,
-  sin_ii_indicacao_direta_contato ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
+  sin_ii_indic_direta_cpf_cnpj ' . $objInfraMetaBD->tipoTextoFixo(1) .  ' DEFAULT NULL,
+  sin_ii_indic_direta_contato ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
   sin_na_usuario_externo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
   sin_na_padrao ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
   sin_doc_gerado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
@@ -520,10 +517,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
  $objInfraMetaBD->adicionarChaveEstrangeira('fk_pet_tp_proc_unidade_02','md_pet_tipo_processo',array('id_unidade'),'unidade',array('id_unidade'));
  $objInfraMetaBD->adicionarChaveEstrangeira('fk_pet_tp_proc_serie_03','md_pet_tipo_processo',array('id_serie'),'serie',array('id_serie'));
 
- //removendo modelo a pedido do cliente
- //$objInfraMetaBD->adicionarChaveEstrangeira('fk_pet_tp_proc_modelo_04','md_pet_tipo_processo',array('id_modelo'),'modelo',array('id_modelo'));
-
- //adicionando hipotese legal a pedido do cliente
  $objInfraMetaBD->adicionarChaveEstrangeira('fk_pet_tp_proc_hip_legal_04','md_pet_tipo_processo',array('id_hipotese_legal'),'hipotese_legal',array('id_hipotese_legal'));
 
 if (BancoSEI::getInstance() instanceof InfraMySql){
@@ -550,33 +543,33 @@ $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_rel_tp_processo_serie_02',
 $this->logar(' CRIANDO A TABELA md_pet_tp_processo_orientacoes');
 
 BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_tp_processo_orientacoes (
-  id_md_pet_tp_processo_orientacoes ' . $objInfraMetaBD->tipoNumero() .' NOT NULL,
+  id_md_pet_tp_proc_orientacoes ' . $objInfraMetaBD->tipoNumero() .' NOT NULL,
   id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() .' NULL,
   orientacoes_gerais ' . $objInfraMetaBD->tipoTextoGrande() .' NOT NULL )');
 
-$objInfraMetaBD->adicionarChavePrimaria('md_pet_tp_processo_orientacoes','pk_md_pet_tp_proc_orient',array('id_md_pet_tp_processo_orientacoes'));
+$objInfraMetaBD->adicionarChavePrimaria('md_pet_tp_processo_orientacoes','pk_md_pet_tp_proc_orient',array('id_md_pet_tp_proc_orientacoes'));
 
 $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_tp_proc_or_cj_est','md_pet_tp_processo_orientacoes',array('id_conjunto_estilos'),'conjunto_estilos',array('id_conjunto_estilos'));
 
 //4 - md_pet_extensao_arquivo_perm
 
-$this->logar(' CRIANDO A TABELA md_pet_extensao_arquivo_perm e sua sequence ');
+$this->logar(' CRIANDO A TABELA md_pet_ext_arquivo_perm e sua sequence ');
 
-BancoSEI::getInstance()->executarSql(' CREATE TABLE IF NOT EXISTS md_pet_extensao_arquivo_perm (
-  id_md_pet_extensao_arquivo_perm ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+BancoSEI::getInstance()->executarSql(' CREATE TABLE IF NOT EXISTS md_pet_ext_arquivo_perm (
+  id_md_pet_ext_arquivo_perm ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
   id_arquivo_extensao ' . $objInfraMetaBD->tipoNumero() . ' DEFAULT NULL ,
   sin_principal ' . $objInfraMetaBD->tipoTextoFixo(1) .' NOT NULL,  
   sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
 
-$objInfraMetaBD->adicionarChavePrimaria('md_pet_extensao_arquivo_perm','pk_md_pet_extensao_arquivo_perm',array('id_md_pet_extensao_arquivo_perm'));
-$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_ext_arquivo_perm_01','md_pet_extensao_arquivo_perm',array('id_arquivo_extensao'),'arquivo_extensao',array('id_arquivo_extensao'));
+$objInfraMetaBD->adicionarChavePrimaria('md_pet_ext_arquivo_perm','pk_md_pet_extensao_arquivo_perm',array('id_md_pet_ext_arquivo_perm'));
+$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_ext_arquivo_perm_01','md_pet_ext_arquivo_perm',array('id_arquivo_extensao'),'arquivo_extensao',array('id_arquivo_extensao'));
 
 if (BancoSEI::getInstance() instanceof InfraMySql){
-	BancoSEI::getInstance()->executarSql('create table seq_md_pet_extensao_arquivo_perm (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+	BancoSEI::getInstance()->executarSql('create table seq_md_pet_ext_arquivo_perm (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
 } else if (BancoSEI::getInstance() instanceof InfraSqlServer){
-	BancoSEI::getInstance()->executarSql('create table seq_md_pet_extensao_arquivo_perm (id bigint identity(1,1), campo char(1) null)');
+	BancoSEI::getInstance()->executarSql('create table seq_md_pet_ext_arquivo_perm (id bigint identity(1,1), campo char(1) null)');
 } else if (BancoSEI::getInstance() instanceof InfraOracle){
-	BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_extensao_arquivo_perm', 1);
+	BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_ext_arquivo_perm', 1);
 }
 
 //6 - md_pet_tamanho_arquivo
@@ -590,7 +583,6 @@ BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_tamanho_arquivo (
 
 $objInfraMetaBD->adicionarChavePrimaria('md_pet_tamanho_arquivo','pk_md_pet_tamanho_arquivo',array('id_md_pet_tamanho_arquivo'));
 
-// Inserindo valores defaults 10 para principal e 5 para complementar - Solicitação Cliente
 $objTamanhoArquivoDTO = new TamanhoArquivoPermitidoPeticionamentoDTO();
 $objTamanhoArquivoRN  = new TamanhoArquivoPermitidoPeticionamentoRN();
 
@@ -624,9 +616,9 @@ if (BancoSEI::getInstance() instanceof InfraMySql){
 }
 
 //8 - md_pet_indisponibilidade_anexo e sequence
-$this->logar(' CRIANDO A TABELA md_pet_indisponibilidade_anexo e sequence ');
+$this->logar(' CRIANDO A TABELA md_pet_indisp_anexo e sequence ');
 
-BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_indisponibilidade_anexo (
+BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_indisp_anexo (
   id_md_pet_anexo ' .  $objInfraMetaBD->tipoNumero() .' NOT NULL,
   id_md_pet_indisponibilidade ' .  $objInfraMetaBD->tipoNumero() .' NOT NULL,
   id_unidade ' .  $objInfraMetaBD->tipoNumero() .' NOT NULL,
@@ -637,18 +629,18 @@ BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_indisponibilidade_ane
   sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,  
   hash ' . $objInfraMetaBD->tipoTextoFixo(32) . ' NOT NULL ) ');
 
-$objInfraMetaBD->adicionarChavePrimaria('md_pet_indisponibilidade_anexo','pk_pet_indisponibilidade_anexo',array('id_md_pet_anexo'));
+$objInfraMetaBD->adicionarChavePrimaria('md_pet_indisp_anexo','pk_pet_indisponibilidade_anexo',array('id_md_pet_anexo'));
 
-$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_01','md_pet_indisponibilidade_anexo',array('id_md_pet_indisponibilidade'),'md_pet_indisponibilidade',array('id_md_pet_indisponibilidade'));
-$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_02','md_pet_indisponibilidade_anexo',array('id_unidade'),'unidade',array('id_unidade'));
-$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_03','md_pet_indisponibilidade_anexo',array('id_usuario'),'usuario',array('id_usuario'));
+$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_01','md_pet_indisp_anexo',array('id_md_pet_indisponibilidade'),'md_pet_indisponibilidade',array('id_md_pet_indisponibilidade'));
+$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_02','md_pet_indisp_anexo',array('id_unidade'),'unidade',array('id_unidade'));
+$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_03','md_pet_indisp_anexo',array('id_usuario'),'usuario',array('id_usuario'));
 
 if (BancoSEI::getInstance() instanceof InfraMySql){
-	BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisponibilidade_anexo (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+	BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisp_anexo (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
 } else if (BancoSEI::getInstance() instanceof InfraSqlServer){
-	BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisponibilidade_anexo (id bigint identity(1,1), campo char(1) null)');
+	BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisp_anexo (id bigint identity(1,1), campo char(1) null)');
 } else if (BancoSEI::getInstance() instanceof InfraOracle){
-	BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisponibilidade_anexo', 1);
+	BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_anexo', 1);
 }
   	  	 
 //adicionando parametro para controlar versao do modulo

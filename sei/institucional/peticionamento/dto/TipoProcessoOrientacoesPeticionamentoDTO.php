@@ -19,7 +19,7 @@ class TipoProcessoOrientacoesPeticionamentoDTO extends InfraDTO  {
 	
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdTipoProcessoOrientacoesPeticionamento',
-				'id_md_pet_tp_processo_orientacoes');
+				'id_md_pet_tp_proc_orientacoes');
 	
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'OrientacoesGerais',

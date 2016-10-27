@@ -257,6 +257,7 @@ if( $valorConfigHipoteseLegal == 1 || $valorConfigHipoteseLegal == 2){
 		$hipoteseDTO = new HipoteseLegalDTO();
 		$hipoteseDTO->retTodos();
 		$hipoteseDTO->setStrSinAtivo('S');
+		$hipoteseDTO->setOrd('Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
 		$arrHipoteseLegal = $hipoteseRN->listar( $hipoteseDTO );
 	
 	}

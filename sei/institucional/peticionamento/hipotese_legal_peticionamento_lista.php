@@ -7,6 +7,7 @@
 */
 
 try {
+  
   require_once dirname(__FILE__).'/../../SEI.php';
 
   session_start();
@@ -18,9 +19,7 @@ try {
   //////////////////////////////////////////////////////////////////////////////
 
   SessaoSEI::getInstance()->validarLink();
-
   PaginaSEI::getInstance()->prepararSelecao('hipotese_legal_peticionamento_selecionar');
-
   SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
   switch($_GET['acao']){
@@ -386,14 +385,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 ?>
 <form id="frmHipoteseLegalLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
   
-  <input type="hidden" name="hdnNivelAcesso" id="hdnNivelAcesso" value="<?php echo isset($_GET['nvl_acesso']) && $_GET['nvl_acesso'] != '' ? $_GET['nvl_acesso'] : $_POST['hdnNivelAcesso']; ?>"
+ <input type="hidden" name="hdnNivelAcesso" id="hdnNivelAcesso" value="<?php echo isset($_GET['nvl_acesso']) && $_GET['nvl_acesso'] != '' ? $_GET['nvl_acesso'] : $_POST['hdnNivelAcesso']; ?>" />
   
-  <?php 
+  <?
   PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-  //PaginaSEI::getInstance()->abrirAreaDados('5em');
-  //PaginaSEI::getInstance()->fecharAreaDados();
   PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros);
-  //PaginaSEI::getInstance()->montarAreaDebug();
   PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
   ?>
 </form>

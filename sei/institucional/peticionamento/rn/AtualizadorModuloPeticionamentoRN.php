@@ -90,8 +90,17 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN {
 	 		array('id_md_pet_hipotese_legal'), 'hipotese_legal',array('id_hipotese_legal'));
 	 
 	$this->logar(' DROPANDO COLUNA  id_unidade (Não é mais unidade única. Agora terá opção para Peticionamento de Processo Novo para Múltiplas Unidades)');
-	$objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
-	$objInfraMetaBD->excluirIndice('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');	
+	
+	if (BancoSEI::getInstance() instanceof InfraMySql){
+	  $objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
+	  $objInfraMetaBD->excluirIndice('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');	
+	} else if (BancoSEI::getInstance() instanceof InfraSqlServer){
+	  $objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
+	  $objInfraMetaBD->excluirIndice('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
+	} else if (BancoSEI::getInstance() instanceof InfraOracle){
+	  $objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
+	}
+	
 	BancoSEI::getInstance()->executarSql(' ALTER TABLE md_pet_tipo_processo DROP COLUMN id_unidade');
 	 
 	$this->logar(' CRIANDO A TABELA md_pet_rel_tp_processo_unid (para permitir multiplas unidades)');
@@ -534,10 +543,10 @@ BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_rel_tp_processo_serie
   id_md_pet_tipo_processo ' . $objInfraMetaBD->tipoNumero() .' NOT NULL,
   id_serie ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL)');
 
-$objInfraMetaBD->adicionarChavePrimaria('md_pet_rel_tp_processo_serie','pk1_md_pet_rel_tp_processo_serie',array('id_md_pet_tipo_processo', 'id_serie'));
+$objInfraMetaBD->adicionarChavePrimaria('md_pet_rel_tp_processo_serie','pk1_md_pet_rel_tp_proc_serie',array('id_md_pet_tipo_processo', 'id_serie'));
 
-$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_rel_tp_processo_serie_01','md_pet_rel_tp_processo_serie',array('id_md_pet_tipo_processo'),'md_pet_tipo_processo',array('id_md_pet_tipo_processo'));
-$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_rel_tp_processo_serie_02','md_pet_rel_tp_processo_serie',array('id_serie'),'serie',array('id_serie'));
+$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_rel_tp_proc_serie','md_pet_rel_tp_processo_serie',array('id_md_pet_tipo_processo'),'md_pet_tipo_processo',array('id_md_pet_tipo_processo'));
+$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_rel_tp_proc_serie','md_pet_rel_tp_processo_serie',array('id_serie'),'serie',array('id_serie'));
 
 //3 - md_pet_tp_processo_orientacoes
 $this->logar(' CRIANDO A TABELA md_pet_tp_processo_orientacoes');
@@ -555,14 +564,14 @@ $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_tp_proc_or_cj_est','md_pet
 
 $this->logar(' CRIANDO A TABELA md_pet_ext_arquivo_perm e sua sequence ');
 
-BancoSEI::getInstance()->executarSql(' CREATE TABLE IF NOT EXISTS md_pet_ext_arquivo_perm (
+BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_ext_arquivo_perm (
   id_md_pet_ext_arquivo_perm ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
   id_arquivo_extensao ' . $objInfraMetaBD->tipoNumero() . ' DEFAULT NULL ,
   sin_principal ' . $objInfraMetaBD->tipoTextoFixo(1) .' NOT NULL,  
   sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
 
-$objInfraMetaBD->adicionarChavePrimaria('md_pet_ext_arquivo_perm','pk_md_pet_extensao_arquivo_perm',array('id_md_pet_ext_arquivo_perm'));
-$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_ext_arquivo_perm_01','md_pet_ext_arquivo_perm',array('id_arquivo_extensao'),'arquivo_extensao',array('id_arquivo_extensao'));
+$objInfraMetaBD->adicionarChavePrimaria('md_pet_ext_arquivo_perm','pk_md_pet_ext_arquivo_perm',array('id_md_pet_ext_arquivo_perm'));
+$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_ext_arquivo_perm','md_pet_ext_arquivo_perm',array('id_arquivo_extensao'),'arquivo_extensao',array('id_arquivo_extensao'));
 
 if (BancoSEI::getInstance() instanceof InfraMySql){
 	BancoSEI::getInstance()->executarSql('create table seq_md_pet_ext_arquivo_perm (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
@@ -645,9 +654,7 @@ if (BancoSEI::getInstance() instanceof InfraMySql){
   	  	 
 //adicionando parametro para controlar versao do modulo
 BancoSEI::getInstance()->executarSql('insert into infra_parametro (valor, nome ) VALUES( \''. $this->versaoAtualDesteModulo .'\',  \''. $this->nomeParametroModulo .'\' )' );
-  	 
-//$this->logar(' EXECUTADA A INSTALACAO DA VERSAO 0.0.1 DO MODULO PETICIONAMENTO NO SEI COM SUCESSO');
-  	
+  	   	
 }
   
 protected function atualizarVersaoConectado(){

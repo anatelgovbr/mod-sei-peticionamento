@@ -41,7 +41,7 @@
 
 6. Recomenda-se que, após a instalação/atualização do módulo, os scripts "/sei/sei_atualizar_versao_modulo_peticionamento.php" e "/sip/sip_atualizar_versao_modulo_peticionamento.php" sejam removidos do servidor.
 7. Em caso de erro durante a execução do script verificar (lendo as mensagens de erro e no SEI em Infra > Log e no SIP em Infra > Log) se a causa é algum problema na infra-estrutura local. Neste caso, após a correção, restaurar o backup do banco de dados e executar novamente os scripts indicados nos itens 4 e 5 acima.
-	- Caso não seja possível identificar a causa, entrar em contato com o desenvolvedor responsável por esta versão do módulo: Marcelo Bezerra - marcelo.bezerra@cast.com.br
+	- Caso não seja possível identificar a causa, entrar em contato com o desenvolvedor responsável por esta versão do módulo: Nei Jobson - neijobson@anatel.gov.br
 
 ## Orientações Negociais:
 

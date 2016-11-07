@@ -9,7 +9,7 @@
 ## Procedimentos para Instalação:
 
 1. Fazer backup dos banco de dados do SEI e SIP.
-2. Carregar os arquivos do módulo localizados na pasta "/sei/institucional/peticionamento" e os scripts de instalação/atualização "/sei/sei_atualizar_versao_modulo_peticionamento.php" e "/sip/sip_atualizar_versao_modulo_peticionamento.php".
+2. Carregar os arquivos do módulo localizados na pasta "/sei/modulos/peticionamento" e os scripts de instalação/atualização "/sei/sei_atualizar_versao_modulo_peticionamento.php" e "/sip/sip_atualizar_versao_modulo_peticionamento.php".
 3. Editar o arquivo "sei/ConfiguracaoSEI.php", tomando o cuidado de usar editor que não altere o charset do arquivo, para adicionar a referência e caminho até a pasta do módulo Peticionamento na chave 'Modulos' abaixo da chave 'SEI':
 
 		'SEI' => array(
@@ -21,7 +21,7 @@
 
 		==> Adicionar a referência e caminho até a pasta do módulo Peticionamento na array da chave 'Modulos' indicada acima:
 			
-			'Modulos' => array('Peticionamento' => dirname(__FILE__).'/institucional/peticionamento'),
+			'Modulos' => array('Peticionamento' => dirname(__FILE__).'/modulos/peticionamento'),
 
 4. Rodar o script de banco "/sei/sei_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SEI. Por exemplo:
 
@@ -69,4 +69,4 @@
 	
 5. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
 
-		http://[Servidor_PHP]/sei/institucional/peticionamento/indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0
+		http://[Servidor_PHP]/sei/modulos/peticionamento/indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0

@@ -94,12 +94,16 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN {
 	if (BancoSEI::getInstance() instanceof InfraMySql){
 	  $objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
 	  $objInfraMetaBD->excluirIndice('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');	
-	} else if (BancoSEI::getInstance() instanceof InfraSqlServer){
-	  $objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
-	  $objInfraMetaBD->excluirIndice('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
-	} else if (BancoSEI::getInstance() instanceof InfraOracle){
+	} else {
 	  $objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
 	}
+	
+	//else if (BancoSEI::getInstance() instanceof InfraSqlServer){
+	  //$objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
+	  //$objInfraMetaBD->excluirIndice('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
+	//} else if (BancoSEI::getInstance() instanceof InfraOracle){
+	  //$objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
+	//}
 	
 	BancoSEI::getInstance()->executarSql(' ALTER TABLE md_pet_tipo_processo DROP COLUMN id_unidade');
 	 

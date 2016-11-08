@@ -567,7 +567,7 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
 		 
 	}
 	
-	protected function atualizarVersaoControlado(){
+	protected function atualizarVersaoConectado(){
 
 	try {
 

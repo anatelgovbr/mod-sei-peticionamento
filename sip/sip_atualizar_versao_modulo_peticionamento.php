@@ -10,7 +10,7 @@ require_once dirname(__FILE__).'/Sip.php';
 class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
 
 	private $numSeg = 0;
-	private $versaoAtualDesteModulo = '1.0.0';
+	private $versaoAtualDesteModulo = '1.0.3';
 	private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
 
 	public function __construct(){

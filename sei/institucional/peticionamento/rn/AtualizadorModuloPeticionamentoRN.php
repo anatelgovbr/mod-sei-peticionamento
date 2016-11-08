@@ -11,10 +11,10 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 class AtualizadorModuloPeticionamentoRN extends InfraRN {
 
   private $numSeg = 0;
-  private $versaoAtualDesteModulo = '1.0.0'; //atualizaçoes do pacote 10
+  private $versaoAtualDesteModulo = '1.0.3'; //atualizaçoes do pacote 10
   private $nomeDesteModulo = 'Peticionamento';
   private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-  private $historicoVersoes = array('0.0.1','0.0.2','1.0.0');
+  private $historicoVersoes = array('0.0.1','0.0.2','1.0.3');
   
   public function __construct(){
     parent::__construct();
@@ -299,8 +299,8 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN {
     id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() . ' NULL ,
   	nome ' . $objInfraMetaBD->tipoTextoVariavel(30) . ' NOT NULL ,
     tipo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL , 
-    url ' . $objInfraMetaBD->tipoTextoVariavel(2083) .' DEFAULT NULL , 
-    conteudo_html ' . $objInfraMetaBD->tipoTextoGrande() .' DEFAULT NULL, 
+    url ' . $objInfraMetaBD->tipoTextoVariavel(2083) .' NULL , 
+    conteudo_html ' . $objInfraMetaBD->tipoTextoGrande() .' NULL, 
     sin_ativo  ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ) ');
   	
   	$objInfraMetaBD->adicionarChavePrimaria('md_pet_usu_externo_menu','pk_md_pet_usu_externo_menu',array('id_md_pet_usu_externo_menu'));
@@ -398,12 +398,12 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
   	BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_usu_ext_processo (
   	id_md_pet_usu_externo_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
   	id_md_pet_tipo_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-  	especificacao ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' DEFAULT NULL,
-  	tipo_interessado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
+  	especificacao ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' NULL,
+  	tipo_interessado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
   	id_usuario_externo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
   	data_hora_recebimento ' . $objInfraMetaBD->tipoDataHora() . ' NULL,
-  	ip_usuario ' . $objInfraMetaBD->tipoTextoVariavel(60) . ' DEFAULT NULL,
-  	numero_processo ' . $objInfraMetaBD->tipoTextoVariavel(40) . ' DEFAULT NULL,
+  	ip_usuario ' . $objInfraMetaBD->tipoTextoVariavel(60) . ' NULL,
+  	numero_processo ' . $objInfraMetaBD->tipoTextoVariavel(40) . ' NULL,
 	sin_ativo  ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ) ');
 
   	$objInfraMetaBD->adicionarChavePrimaria('md_pet_usu_ext_processo','pk_md_pet_usu_externo_processo',array('id_md_pet_usu_externo_processo'));
@@ -448,9 +448,9 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 	id_protocolo ' . $objInfraMetaBD->tipoNumeroGrande() .' NOT NULL,
 	id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 	ip_usuario ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' NOT NULL,
-	data_hora_recebimento_final ' . $objInfraMetaBD->tipoDataHora() . ' DEFAULT NULL,
+	data_hora_recebimento_final ' . $objInfraMetaBD->tipoDataHora() . ' NULL,
 	sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
-	sta_tipo_peticionamento ' . $objInfraMetaBD->tipoTextoVariavel(1) . ' DEFAULT NULL )');
+	sta_tipo_peticionamento ' . $objInfraMetaBD->tipoTextoVariavel(1) . ' NULL )');
   	
   	$objInfraMetaBD->adicionarChavePrimaria('md_pet_rel_recibo_protoc','pk1_md_pet_rel_recibo_protoc',array('id_md_pet_rel_recibo_protoc'));
   	
@@ -473,8 +473,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 	id_md_pet_rel_recibo_docanexo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 	id_md_pet_rel_recibo_protoc ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 	formato_documento ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
-  	id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' DEFAULT NULL,
-	id_anexo ' . $objInfraMetaBD->tipoNumero() . ' DEFAULT NULL,
+  	id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NULL,
+	id_anexo ' . $objInfraMetaBD->tipoNumero() . ' NULL,
 	classificacao_documento ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
   	
   	$objInfraMetaBD->adicionarChavePrimaria('md_pet_rel_recibo_docanexo','pk1_md_pet_rel_recibo_docanexo',array('id_md_pet_rel_recibo_docanexo'));
@@ -509,19 +509,19 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
   BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_tipo_processo( id_md_pet_tipo_processo ' . $objInfraMetaBD->tipoNumero() .' NOT NULL,
   id_tipo_procedimento ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
   id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL , 
-  id_serie ' . $objInfraMetaBD->tipoNumero() . ' DEFAULT NULL , '
+  id_serie ' . $objInfraMetaBD->tipoNumero() . ' NULL , '
   
-  . 'id_hipotese_legal ' . $objInfraMetaBD->tipoNumero() .' DEFAULT NULL ,
+  . 'id_hipotese_legal ' . $objInfraMetaBD->tipoNumero() .' NULL ,
   orientacoes ' . $objInfraMetaBD->tipoTextoVariavel(500) .' NOT NULL,
-  sta_nivel_acesso  ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
-  sin_ii_proprio_usuario_externo ' . $objInfraMetaBD->tipoTextoFixo(1) .' DEFAULT NULL,
-  sin_ii_indicacao_direta ' . $objInfraMetaBD->tipoTextoFixo(1) .' DEFAULT NULL,
-  sin_ii_indic_direta_cpf_cnpj ' . $objInfraMetaBD->tipoTextoFixo(1) .  ' DEFAULT NULL,
-  sin_ii_indic_direta_contato ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
-  sin_na_usuario_externo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
-  sin_na_padrao ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
-  sin_doc_gerado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
-  sin_doc_externo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' DEFAULT NULL,
+  sta_nivel_acesso  ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+  sin_ii_proprio_usuario_externo ' . $objInfraMetaBD->tipoTextoFixo(1) .' NULL,
+  sin_ii_indicacao_direta ' . $objInfraMetaBD->tipoTextoFixo(1) .' NULL,
+  sin_ii_indic_direta_cpf_cnpj ' . $objInfraMetaBD->tipoTextoFixo(1) .  ' NULL,
+  sin_ii_indic_direta_contato ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+  sin_na_usuario_externo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+  sin_na_padrao ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+  sin_doc_gerado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+  sin_doc_externo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
   sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) .' NOT NULL ) ');
 
   $objInfraMetaBD->adicionarChavePrimaria('md_pet_tipo_processo','pk_md_pet_tipo_processo',array('id_md_pet_tipo_processo'));
@@ -570,7 +570,7 @@ $this->logar(' CRIANDO A TABELA md_pet_ext_arquivo_perm e sua sequence ');
 
 BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_ext_arquivo_perm (
   id_md_pet_ext_arquivo_perm ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-  id_arquivo_extensao ' . $objInfraMetaBD->tipoNumero() . ' DEFAULT NULL ,
+  id_arquivo_extensao ' . $objInfraMetaBD->tipoNumero() . ' NULL ,
   sin_principal ' . $objInfraMetaBD->tipoTextoFixo(1) .' NOT NULL,  
   sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
 
@@ -591,7 +591,7 @@ $this->logar(' CRIANDO A TABELA md_pet_tamanho_arquivo ');
 BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_tamanho_arquivo (
   id_md_pet_tamanho_arquivo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
   valor_doc_principal ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-  valor_doc_complementar ' . $objInfraMetaBD->tipoNumero() . '  DEFAULT NULL,
+  valor_doc_complementar ' . $objInfraMetaBD->tipoNumero() . '  NULL,
   sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ) ');
 
 $objInfraMetaBD->adicionarChavePrimaria('md_pet_tamanho_arquivo','pk_md_pet_tamanho_arquivo',array('id_md_pet_tamanho_arquivo'));
@@ -614,7 +614,7 @@ BancoSEI::getInstance()->executarSql(' CREATE TABLE md_pet_indisponibilidade (
   id_md_pet_indisponibilidade ' . $objInfraMetaBD->tipoNumero() .' NOT NULL,
   dth_inicio ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL,
   dth_fim ' . $objInfraMetaBD->tipoDataHora() .' NOT NULL,
-  resumo_indisponibilidade ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' DEFAULT NULL,
+  resumo_indisponibilidade ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' NULL,
   sin_prorrogacao ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
   sin_ativo '. $objInfraMetaBD->tipoTextoFixo(1) .' NOT NULL ) ');
 
@@ -724,7 +724,7 @@ protected function atualizarVersaoConectado(){
 			$this->finalizar('FIM', false);
 		}
 		
-		else if( $strVersaoModuloLitigioso == '1.0.0' ){
+		else if( $strVersaoModuloLitigioso == '1.0.3' ){
 			$this->logar(' A VERSAO MAIS ATUAL DO MODULO ' . $this->nomeDesteModulo .' (v ' . $this->versaoAtualDesteModulo  . ') JA ESTA INSTALADA. ');
 			$this->finalizar('FIM', true);
 		}

@@ -80,11 +80,7 @@ try {
   
   $objRelUnidadeTipoContContatoDTO->retNumIdTipoContato();
   $objRelUnidadeTipoContContatoDTO->setNumIdUnidade(SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual());
-
-  //seiv2
-  //$arrTiposContextosUnidade = InfraArray::converterArrInfraDTO($objRelUnidadeTipoContContatoRN->listarRN0547($objRelUnidadeTipoContContatoDTO),'IdTipoContextoContato');
-  //alteracoes seiv3
-  $arrTiposContextosUnidade = InfraArray::converterArrInfraDTO($objRelUnidadeTipoContContatoRN->listarRN0547($objRelUnidadeTipoContContatoDTO),'IdTipoContato');
+  $arrTiposContextosUnidade = InfraArray::converterArrInfraDTO($objRelUnidadeTipoContContatoRN->listarRN0547($objRelUnidadeTipoContContatoDTO),'IdTipoContextoContato');
 
   $objContatoDTO = new ContatoDTO();
   $objContatoDTO->retNumIdContato();
@@ -117,11 +113,9 @@ try {
   //$objContatoDTO->retStrSinContatosTipoContextoContato();
   //$objContatoDTO->retStrSinContatosTipoContextoContatoContato();
   //$objContatoDTO->retStrSinContexto();
+
   if (count($arrTiposContextosUnidade)) {
-    //seiv2
-    //$objContatoDTO->adicionarCriterio(array('SinLiberadoTipoContextoContatoContato', 'IdTipoContextoContatoContato'),
-    //alteracoes seiv3
-    $objContatoDTO->adicionarCriterio(array('SinAtivo', 'IdTipoContato'),
+    $objContatoDTO->adicionarCriterio(array('SinLiberadoTipoContextoContatoContato', 'IdTipoContextoContatoContato'),
         array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IN),
         array('S', $arrTiposContextosUnidade),
         InfraDTO::$OPER_LOGICO_OR);
@@ -157,12 +151,9 @@ try {
   $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
     
   if ($_GET['acao']=='contexto_selecionar_unidade' || $_GET['acao']=='contexto_selecionar_usuario'){
-    //seiv2
-    //$objContatoDTO->setNumIdTipoContextoContatoContato($_GET['id_tipo_contexto_contato']);
-    //alteracoes seiv3
-    $objContatoDTO->setNumIdTipoContato($_GET['id_tipo_contexto_contato']);
+      $objContatoDTO->setNumIdTipoContextoContatoContato($_GET['id_tipo_contexto_contato']);
   }
-
+    
   $strPalavrasPesquisa = PaginaSEIExterna::getInstance()->recuperarCampo('txtPalavrasPesquisaContatos');
 
   if ($strPalavrasPesquisa!=''){
@@ -171,10 +162,7 @@ try {
 
     $numTipoContextoContato = PaginaSEIExterna::getInstance()->recuperarCampo('selTipoContextoContato');
     if ($numTipoContextoContato!='' && $numTipoContextoContato!='null'){
-        //seiv2
-        //$objContatoDTO->setNumIdTipoContextoContatoContato($numTipoContextoContato);
-        //alteracoes seiv3
-        $objContatoDTO->setNumIdTipoContato($numTipoContextoContato);
+        $objContatoDTO->setNumIdTipoContextoContatoContato($numTipoContextoContato);
     }else if(!empty($arrobjRelTipoContextoPeticionamentoDTO)){
         $arrId = array();
         foreach($arrobjRelTipoContextoPeticionamentoDTO as $item){
@@ -268,7 +256,8 @@ try {
     foreach($arrObjContatoDTO as $dto){
         
         $strCssTr='<tr class="infraTrClara">';
-      
+
+/*
         //seiv2
         //if($dto->getStrSinContexto()=='S'){
           
@@ -301,10 +290,10 @@ try {
               //alteracoes seiv3
               $strResultado .= '<td align="center">'.PaginaSEIExterna::getInstance()->getTrCheck($n,$dto->getNumIdContato(),$strNomeSiglaContato).'</td>';
             }
-            
-        	$strResultado .= '<td>'.$strNegritoContextoIni.PaginaSEIExterna::getInstance()->formatarXHTML($strNomeSiglaContextoContato).$strNegritoContextoFim.'</td>';            
+
+            $strResultado .= '<td>'.$strNegritoContextoIni.PaginaSEIExterna::getInstance()->formatarXHTML($strNomeSiglaContextoContato).$strNegritoContextoFim.'</td>';            
             $strResultado .= '<td align="center">';            
-            
+
             //seiv2
             //$strResultado .= PaginaSEIExterna::getInstance()->getAcaoTransportarItem($n++,$dto->getNumIdContextoContato());
             
@@ -327,22 +316,21 @@ try {
             
             //se aceita contatos
             //seiv2
-            /*
-            if($dto->getStrSinContatosTipoContextoContatoContato()=='S'){
-    	      	if($_GET['acao']=='peticionamento_contato_selecionar' || $_GET['acao']=='peticionamento_contato_listar'){
-    	      		if($bolAcaoCadastrar && $bolTipoContextoUnidade){	      			
-    	      			$strResultado .= '<a href="'.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao_externa=contato_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&sin_contexto=N&id_tipo_contexto_contato='.$dto->getNumIdTipoContextoContatoContato().'&id_contexto_contato='.$dto->getNumIdContextoContato())).'" tabindex="'.PaginaSEIExterna::getInstance()->getProxTabTabela().'"><img src="/infra_css/imagens/mais.gif" title="Adicionar Contato" alt="Adicionar Contato" class="infraImg" /></a>&nbsp;';
-    	      		}
-    	      	}
-    	     } 
-    	     */
-    	      		
-    		 $strResultado .= '</td></tr>'."\n";
+
+            //if($dto->getStrSinContatosTipoContextoContatoContato()=='S'){
+            //  	if($_GET['acao']=='peticionamento_contato_selecionar' || $_GET['acao']=='peticionamento_contato_listar'){
+            //  		if($bolAcaoCadastrar && $bolTipoContextoUnidade){	      			
+            //  			$strResultado .= '<a href="'.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao_externa=contato_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&sin_contexto=N&id_tipo_contexto_contato='.$dto->getNumIdTipoContextoContatoContato().'&id_contexto_contato='.$dto->getNumIdContextoContato())).'" tabindex="'.PaginaSEIExterna::getInstance()->getProxTabTabela().'"><img src="/infra_css/imagens/mais.gif" title="Adicionar Contato" alt="Adicionar Contato" class="infraImg" /></a>&nbsp;';
+            //  		}
+            //  	}
+            // } 
+
+            $strResultado .= '</td></tr>'."\n";
           }
           
         //seiv2  
         //}
-            
+*/            
       $strResultado .= $strCssTr;
       $strTitle = '';
       $strNomeSigla = $dto->getStrNome();

@@ -53,14 +53,16 @@ try {
   		
   	case 'md_pet_intercorrente_usu_ext_concluir':
         $objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN();
-        $objReciboDTO = $objMdPetIntercorrenteProcessoRN->cadastrar($_POST);
+        $resultado = $objMdPetIntercorrenteProcessoRN->cadastrar($_POST);
+		$objReciboDTO = $resultado['recibo'];
+		$documentoDTO = $resultado['documento'];
         /*
         if(! $objReciboDTO){
 
         }
         */
 
-        $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() . "&acao=recibo_pet_intercorrente_usuario_externo_consultar&acao_origem=recibo_peticionamento_usuario_externo_listar&acao_retorno=recibo_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0";
+        $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() . "&id_documento=" . $documentoDTO->getDblIdDocumento() . "&acao=recibo_pet_intercorrente_usuario_externo_consultar&acao_origem=recibo_peticionamento_usuario_externo_listar&acao_retorno=recibo_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0";
         $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
 
         echo "<script>";

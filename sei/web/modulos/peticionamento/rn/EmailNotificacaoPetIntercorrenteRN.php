@@ -33,11 +33,12 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
     protected function notificaoPeticionamentoExternoConectado($arrParams ){
 
         $objInfraParametro = new InfraParametro( $this->getObjInfraIBanco() );
-        $arrParametros = $arrParams[0];             //parametros adicionais fornecidos no formulario de peticionamento
-        $objUnidadeDTO = $arrParams[1];             //UnidadeDTO da unidade geradora do processo
-        $objProcedimentoDTO = $arrParams[2];        //ProcedimentoDTO para vincular o recibo ao processo correto
-        $arrParticipantesParametro = $arrParams[3]; //array de ParticipanteDTO
-        $reciboDTOBasico =  $arrParams[4];          //Recibo
+        $arrParametros             = $arrParams[0]; // parametros adicionais fornecidos no formulario de peticionamento
+        $objUnidadeDTO             = $arrParams[1]; // UnidadeDTO da unidade geradora do processo
+        $objProcedimentoDTO        = $arrParams[2]; // ProcedimentoDTO para vincular o recibo ao processo correto
+        $arrParticipantesParametro = $arrParams[3]; // array de ParticipanteDTO
+        $reciboDTOBasico           = $arrParams[4]; // Recibo
+        $documentoDTORecibo        = $arrParams[5]; // Documento Recibo
 
         //consultar email da unidade (orgao)
         $orgaoRN = new OrgaoRN();
@@ -105,6 +106,7 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
         $documentoDTO->retTodos();
         $documentoDTO->setDblIdProcedimento( $reciboDTOBasico->getNumIdProtocolo() );
         $documentoDTO->setNumIdSerie( $idSerieParam );
+        $documentoDTO->setDblIdDocumento( $documentoDTORecibo->getDblIdDocumento() );
 
         $documentoDTO = $documentoRN->consultarRN0005( $documentoDTO );
 

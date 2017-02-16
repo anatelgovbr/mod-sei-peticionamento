@@ -50,6 +50,11 @@ class RelTipoContextoPeticionamentoDTO extends InfraDTO {
     'tp.nome',
     'tipo_contato tp');
     
+    $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
+    		'SinSistema',
+    		'tp.sin_sistema',
+    		'tipo_contato tp');
+    
     $this->configurarPK('IdTipoContextoPeticionamento', InfraDTO::$TIPO_PK_NATIVA );
     
     //versao SEIv2

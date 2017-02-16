@@ -90,7 +90,7 @@ class ReciboPeticionamentoIntercorrenteRN extends ReciboPeticionamentoRN {
 					
 		//TESTE COMENTADO $documentoBD = new DocumentoBD( $this->getObjInfraIBanco() );
 		$docRN = new DocumentoPeticionamentoRN();
-		
+
 		$documentoReciboDTO = new DocumentoDTO();
 		$documentoReciboDTO->setDblIdDocumento( $protocoloReciboDocumentoDTO->getDblIdProtocolo() );
 		$documentoReciboDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
@@ -116,8 +116,9 @@ class ReciboPeticionamentoIntercorrenteRN extends ReciboPeticionamentoRN {
 		$documentoReciboDTO->setStrProtocoloDocumentoTextoBase('');
 		
 		$documentoReciboDTO = $docRN->gerarRN0003Customizado( $documentoReciboDTO );
-				
-		return $reciboDTO;
+//				ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
+//				var_dump($documentoReciboDTO); echo '</pre>'; exit;
+		return $documentoReciboDTO;
 
     }
   
@@ -130,7 +131,7 @@ class ReciboPeticionamentoIntercorrenteRN extends ReciboPeticionamentoRN {
         $arrDocumentos      = $arrParams[5]; //ReciboPeticionamentoDTO
 
         $objUsuarioDTO = new UsuarioDTO();
-        $objUsuarioDTO->retTodos();
+        $objUsuarioDTO->retTodos(true);
         $objUsuarioDTO->setNumIdUsuario( $reciboDTO->getNumIdUsuario() );
 
         $objUsuarioRN = new UsuarioRN();

@@ -43,6 +43,7 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 		$orgaoRN = new OrgaoRN();
 		$objOrgaoDTO = new OrgaoDTO();
 		$objOrgaoDTO->retTodos();
+		$objOrgaoDTO->retStrSitioInternetContato();
 		$objOrgaoDTO->setNumIdOrgao( $objUnidadeDTO->getNumIdOrgao() );
 		$objOrgaoDTO->setStrSinAtivo('S');
 		$objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
@@ -162,7 +163,7 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 			$strConteudo = str_replace('@documento_recibo_eletronico_de_protocolo@',$documentoDTO->getStrProtocoloDocumentoFormatado(),$strConteudo);
 			$strConteudo = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(),$strConteudo);
 			$strConteudo = str_replace('@descricao_orgao@',$objOrgaoDTO->getStrDescricao(),$strConteudo);
-			$strConteudo = str_replace('@sitio_internet_orgao@',$objOrgaoDTO->getStrSitioInternet(),$strConteudo);
+			$strConteudo = str_replace('@sitio_internet_orgao@', $objOrgaoDTO->getStrSitioInternetContato() ,$strConteudo);
 			
 			InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
 		
@@ -214,7 +215,7 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 	     	$strConteudo = str_replace('@documento_recibo_eletronico_de_protocolo@',$documentoDTO->getStrProtocoloDocumentoFormatado(),$strConteudo);
 	     	$strConteudo = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(),$strConteudo);
 	     	$strConteudo = str_replace('@descricao_orgao@',$objOrgaoDTO->getStrDescricao(),$strConteudo);
-	     	$strConteudo = str_replace('@sitio_internet_orgao@',$objOrgaoDTO->getStrSitioInternet(),$strConteudo);
+	     	$strConteudo = str_replace('@sitio_internet_orgao@', $objOrgaoDTO->getStrSitioInternetContato() ,$strConteudo);
 	     	
 			foreach($arrEmailUnidade as $mail){
 				$strPara = $objEmailSistemaDTO->getStrPara();

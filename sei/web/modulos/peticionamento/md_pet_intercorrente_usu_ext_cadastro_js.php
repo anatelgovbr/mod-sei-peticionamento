@@ -1,9 +1,5 @@
 <?php
     /**
-     * @since  25/11/2016
-     * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
-     * @author André Luiz <andre.luiz@castgroup.com.br>
-     *
      * Include de JS chamado pela pagina principal de cadastro/ediçao de peticionamento intercorrente
      */
 
@@ -21,8 +17,6 @@
 
     /**
      * Inicia Grid Dinâmica do Processo
-     * @author: Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
-     * @since: 28/11/2016
      */
     function iniciarGridDinamicaProcesso() {
         objTabelaDinamicaProcesso = new infraTabelaDinamica('tbProcesso', 'hdnTbProcesso', false, true);
@@ -40,10 +34,9 @@
 
     /**
      * Add um processo na Grid Dinâmica
-     * @author: Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
-     * @since: 28/11/2016
      */
     function adicionarProcesso() {
+        iniciarGridDinamicaProcesso();
         var numeroProcesso = document.getElementById('txtNumeroProcesso');
         var tipoProcesso = document.getElementById('txtTipo');
         var processoIntercorrente = document.getElementById("hdnProcessoIntercorrente");
@@ -60,13 +53,10 @@
 
         //Carrega os campos de documento junto com suas RN's
         carregarFieldDocumentos();
-
     }
 
     /**
      * Salva um peticionamento
-     * @author: Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
-     * @since: 28/11/2016
      */
     function abrirPeticionar() {
         if (validarCamposObrigatorios()) {
@@ -84,31 +74,25 @@
 
     /**
      * Validar Campos obrigataórios
-     * @author: Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
-     * @since: 08/12/2016
      */
     function validarCamposObrigatorios() {
         var linhasTbProcesso = document.getElementById('tbProcesso').rows.length;
-
         if (linhasTbProcesso == 1) {
             alert('Informe o Processo.');
             return false;
         }
 
-        /*var linhaTbDocumento = document.getElementById('tbDocumento').rows.length;
-
-         if (linhaTbDocumento == 1) {
-         alert('Informe ao menos um Documento.');
-         return false;
-         }*/
+        var linhasTbArquivo = document.getElementById('tbDocumento').rows.length;
+        if (linhasTbArquivo == 1) {
+            alert('Adicione um Documento.');
+            return false;
+        }
 
         return true;
     }
 
     /**
      * Funções responsáveis pela validação do processo
-     * @author: Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
-     * @since: 28/11/2016
      */
     function validarNumeroProcesso() {
 
@@ -160,8 +144,6 @@
 
     /**
      * Funções responsáveis pelo controle do fieldset Documentos
-     * @author: André Luiz <andre.luiz@castgroup.com>
-     * @since: 28/11/2016
      */
     var NATO_DIGITAL = 'N';
     var DIGITAL = 'D';
@@ -176,7 +158,10 @@
     var objAjaxSelectTipoDocumento = null;
     var objAjaxSelectNivelAcesso = null;
     var objAjaxSelectHipoteseLegal = null;
-
+    var labelFormato = {
+        'N': 'Nato-Digital',
+        'D': 'Digitalizado'
+    };
 
     function inicializarDocumento() {
         iniciarTabelaDinamicaDocumento();
@@ -195,10 +180,7 @@
         //=======================================================//
         //------------------ Fim da Validação -------------------//
         //=======================================================//
-
-
     }
-
 
     function iniciarObjAjaxSelectTipoDocumento() {
         objAjaxSelectTipoDocumento = new infraAjaxMontarSelect('selTipoDocumento', '<?= $strUrlAjaxMontarSelectTipoDocumento?>');
@@ -209,7 +191,6 @@
         objAjaxSelectNivelAcesso.prepararExecucao = function () {
             return 'id_tipo_procedimento=' + document.getElementById('hdnIdTipoProcedimento').value;
         };
-
     }
 
     function iniciarObjAjaxSelectHipoteseLegal() {
@@ -217,7 +198,6 @@
         objAjaxSelectHipoteseLegal.processarResultado = function () {
             return 'nivelAcesso=' + RESTRITO;
         }
-
     }
 
     function carregarFieldDocumentos() {
@@ -228,7 +208,7 @@
         //RN da Hipotese Legal
         verificarCriterioIntercorrente();
 
-        document.getElementById('field_documentos').style.display = '';
+        document.getElementById('field_documentos').style.display = 'block';
     }
 
     function verificarCriterioIntercorrente() {
@@ -267,13 +247,16 @@
     function criarSelectNivelAcesso() {
         var selNivelAcesso = document.createElement("select");
         var divNivelAcesso = document.getElementById('divNivelAcesso');
+        var txtComplementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento');
 
         divNivelAcesso.innerHTML = '';
         selNivelAcesso.name = 'selNivelAcesso';
         selNivelAcesso.id = 'selNivelAcesso';
         selNivelAcesso.className = 'infraSelect';
+        selNivelAcesso.tabIndex = txtComplementoTipoDocumento.tabIndex + 1;
+
         selNivelAcesso.addEventListener('change', function () {
-            exibirHipoteseLegal(selNivelAcesso);
+            exibirHipoteseLegal(selNivelAcesso.value);
         });
         divNivelAcesso.appendChild(selNivelAcesso);
 
@@ -303,21 +286,22 @@
     }
 
     function criarSelectHipoteseLegal() {
-
         var selHipoteseLegal = document.createElement("select");
         var divHipoteseLegal = document.getElementById('divHipoteseLegal');
         var divBlcHipoteseLegal = document.getElementById('divBlcHipoteseLegal');
+        var selNivelAcesso = document.getElementById('selNivelAcesso');
 
         divHipoteseLegal.innerHTML = '';
         divBlcHipoteseLegal.style.display = 'none';
         selHipoteseLegal.id = 'selHipoteseLegal';
         selHipoteseLegal.name = 'selHipoteseLegal';
         selHipoteseLegal.className = 'infraSelect';
+        selHipoteseLegal.tabIndex = selNivelAcesso.tabIndex + 1;
+
         divHipoteseLegal.appendChild(selHipoteseLegal);
 
         iniciarObjAjaxSelectHipoteseLegal();
         objAjaxSelectHipoteseLegal.executar();
-
     }
 
     function criarHiddenHipoteseLegal(hipoteseLegal) {
@@ -344,11 +328,20 @@
 
 
     function exibirTipoConferencia() {
-        var formato = document.querySelector('input[name="rdoFormato"]:checked').value;
+        var formato = '';
         var divTipoConferencia = document.getElementById('divTipoConferencia');
         var selTipoConferencia = document.getElementById('selTipoConferencia');
         divTipoConferencia.style.display = 'none';
         selTipoConferencia.value = 'null';
+
+        var radiosFormato = document.getElementsByName("rdoFormato");
+
+        for (var i = 0; i < radiosFormato.length; i++) {
+            if (radiosFormato[i].checked == true) {
+                formato = radiosFormato[i].value;
+                break;
+            }
+        }
 
         //Ajusta a posição quando o browser é o IE;
         if (isInternetExplorer()) {
@@ -360,11 +353,9 @@
             divTipoConferencia.style.marginTop = '-5px';
             divTipoConferencia.style.display = '';
         }
-
     }
 
-    function exibirHipoteseLegal(select) {
-        var nivelAcesso = select.querySelector('option:checked').value;
+    function exibirHipoteseLegal(nivelAcesso) {
         var divBlcHipoteseLegal = document.getElementById('divBlcHipoteseLegal');
 
         document.getElementById('selHipoteseLegal').value = '';
@@ -372,7 +363,6 @@
         if (nivelAcesso == RESTRITO) {
             divBlcHipoteseLegal.style.display = '';
         }
-
     }
 
     function verificarTabelaVazia(qtdLinha) {
@@ -435,49 +425,47 @@
     }
 
     function validarDocumento() {
-        var tipoDocumento = document.querySelector('#selTipoDocumento option:checked');
-        var complementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento').value.trim();
-        var nivelAcesso = document.querySelector('#selNivelAcesso option:checked');
-        var hipoteseLegal = document.querySelector('#selHipoteseLegal option:checked');
-        var selHipoteseLegal = document.getElementById('selHipoteseLegal');
-        var formato = document.querySelector('input[name="rdoFormato"]:checked');
-        var selTipoConferencia = document.getElementById('selTipoConferencia');
-        var tipoConferencia = document.querySelector('#selTipoConferencia option:checked');
         var fileArquivo = document.getElementById('fileArquivo');
-
         if (fileArquivo.value.trim() == '') {
             alert('Informe o arquivo para upload.');
             fileArquivo.focus();
             return false;
         }
-
+        var tipoDocumento = document.getElementById('selTipoDocumento');
         if (tipoDocumento == null || tipoDocumento.value == 'null') {
             alert('Informe o Tipo de Documento.');
             document.getElementById('selTipoDocumento').focus();
             return false;
         }
-
+        var complementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento').value.trim();
         if (complementoTipoDocumento == '') {
             alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
             document.getElementById('txtComplementoTipoDocumento').focus();
             return false;
         }
+        var nivelAcesso = document.getElementById('selNivelAcesso');
 
-        if (document.querySelector('[name="selNivelAcesso"]').nodeName.toLowerCase() == 'select') {
+        if (nivelAcesso) {
             if (nivelAcesso == null || nivelAcesso.value == '') {
                 alert('Informe o Nível de Acesso.');
                 document.getElementById('selNivelAcesso').focus();
                 return false;
             }
         }
+        var selHipoteseLegal = document.getElementById('selHipoteseLegal');
 
-        if (document.querySelector('[name="selHipoteseLegal"]').nodeName.toLowerCase() == 'select') {
-            if (selHipoteseLegal.offsetHeight > 0) {
-                if (hipoteseLegal == null || hipoteseLegal.value == '') {
-                    alert('Informe a Hipótese Legal.');
-                    selHipoteseLegal.focus();
-                    return false;
-                }
+        if (EXIBIR_HIPOTESE_LEGAL && nivelAcesso.value == RESTRITO && selHipoteseLegal && selHipoteseLegal.value == '') {
+            alert('Informe a Hipótese Legal');
+            selHipoteseLegal.focus();
+            return false;
+        }
+
+        var formato = null;
+        var rdoFormato = document.getElementsByName('rdoFormato');
+        for (var i = 0; i < rdoFormato.length; i++) {
+            if (rdoFormato[i].checked == true) {
+                formato = parseInt(rdoFormato[i].value);
+                break;
             }
         }
 
@@ -487,8 +475,9 @@
             return false;
         }
 
+        var selTipoConferencia = document.getElementById('selTipoConferencia');
         if (selTipoConferencia.offsetHeight > 0) {
-            if (tipoConferencia == null || tipoConferencia.value == 'null') {
+            if (selTipoConferencia == null || selTipoConferencia.value == 'null') {
                 alert('Informe a Conferência com o documento digitalizado.');
                 selTipoConferencia.focus();
                 return false;
@@ -496,7 +485,6 @@
         }
 
         return true;
-
     }
 
     function dataHoraLocal() {
@@ -523,34 +511,64 @@
         var tamanhoArquivoFormatado = infraFormatarTamanhoBytes(tamanhoArquivo);
         var dataHora = arr['data_hora'];
 
-        var formato = document.querySelector('input[name="rdoFormato"]:checked').nextSibling.nextSibling.innerHTML.trim();
-        var tipoDocumento = document.querySelector('#selTipoDocumento option:checked').text;
+        var formato = '';
+        var rdoFormato = document.getElementsByName('rdoFormato');
+
+
+        var elTipoDocumento = document.getElementById('selTipoDocumento');
+        var tipoDocumento = elTipoDocumento.options[elTipoDocumento.selectedIndex].text;
+
+        // montando o nome do documento
         var complementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento').value.trim();
         complementoTipoDocumento = $("<pre>").text(complementoTipoDocumento).html();
         var documento = tipoDocumento + ' ' + complementoTipoDocumento;
 
+        // pegando o nivel de acesso selecionado
         var nivelAcesso = '-';
-        if (document.querySelector('[name="selNivelAcesso"]').nodeName.toLowerCase() == 'select') {
-            nivelAcesso = document.querySelector('#selNivelAcesso option:checked').text;
+        var idNivelAcesso = '';
+        var elNivelAcesso = document.getElementById('selNivelAcesso');
+        if (elNivelAcesso) {
+            nivelAcesso = elNivelAcesso.options[elNivelAcesso.selectedIndex].text;
+            idNivelAcesso = elNivelAcesso.value;
         } else {
             nivelAcesso = document.getElementById('lblNivelAcesso').innerHTML.trim();
+            idNivelAcesso = document.getElementById('hdnNivelAcesso').value;
         }
 
         //ids
         var idLinha = gerarIdDocumento();
         var idTipoDocumento = document.getElementById('selTipoDocumento').value;
         var complementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento').value;
-        var idNivelAcesso = document.getElementById('selNivelAcesso').value;
-        var idHipoteseLegal = document.getElementById('selHipoteseLegal').value;
-        var idFormato = document.querySelector('input[name="rdoFormato"]:checked').value;
-        var idTipoConferencia = document.getElementById('selTipoConferencia').value;
+        //var idNivelAcesso = nivelAcesso;
+        var idHipoteseLegal = '';
+        var selHipoteseLegal = document.getElementById('selHipoteseLegal');
+        if(selHipoteseLegal){
+            idHipoteseLegal = selHipoteseLegal.value;
+        } else {
+            idHipoteseLegal = document.getElementById('hdnHipoteseLegal').value;
+        }
+
+        var idTipoConferencia = '';
+        var idFormato = '';
+
+        for (var i = 0; i < rdoFormato.length; i++) {
+            if (rdoFormato[i].checked == true) {
+                idFormato = rdoFormato[i].value;
+                break;
+            }
+        }
+
+        if(idFormato == DIGITAL) {
+            idTipoConferencia = document.getElementById('selTipoConferencia').value;
+        }
+
+        formato = labelFormato[idFormato];
 
         var dados = [
             idLinha, idTipoDocumento, complementoTipoDocumento, idNivelAcesso,
             idHipoteseLegal, idFormato, idTipoConferencia, nomeArquivoHash, tamanhoArquivo, nomeArquivo,
             dataHora, tamanhoArquivoFormatado, documento, nivelAcesso, formato
         ];
-
         objTabelaDinamicaDocumento.adicionar(dados);
     }
 
@@ -568,13 +586,11 @@
         document.getElementById('selTipoDocumento').value = 'null';
         document.getElementById('txtComplementoTipoDocumento').value = '';
 
-        var selNivelAcesso = document.querySelector('[name="selNivelAcesso"]');
-        if (selNivelAcesso.nodeName.toLowerCase() == 'select') {
+        if (document.getElementById('selNivelAcesso')) {
             document.getElementById('selNivelAcesso').value = '';
         }
 
-        var selHipoteseLegal = document.querySelector('[name="selHipoteseLegal"]');
-        if (selHipoteseLegal.nodeName.toLowerCase() == 'select') {
+        if (document.getElementById('selHipoteseLegal')) {
             document.getElementById('selHipoteseLegal').value = '';
             document.getElementById('divBlcHipoteseLegal').style.display = 'none';
         }
@@ -595,10 +611,7 @@
         var tbDocumento = document.getElementById('tbDocumento');
 
         if (tbDocumento.rows.length > 1) {
-            remover = confirm('Ao remover este processo os documentos abaixo carregados serão desconsiderados e somente' +
-                ' poderão ser carregados novamente após adicionar novo número de processo.\n\n' +
-                'Deseja continuar?');
-
+            remover = confirm('Ao remover este processo os documentos abaixo carregados serão desconsiderados e somente poderão ser carregados novamente após adicionar novo número de processo.\n\n Deseja continuar?');
         }
 
         if (remover) {
@@ -629,7 +642,6 @@
             //===========================================//
             //--------- Validações pós-upload  ----------//
             //===========================================//
-
             //Tamanho do Arquivo
             var fileArquivo = document.getElementById('fileArquivo');
             var tamanhoArquivo = (arr['tamanho'] / 1024 / 1024).toFixed(2);
@@ -640,7 +652,6 @@
                 verificarTabelaVazia(1);
                 return false;
             }
-
 
             //Arquivo com o mesmo nome já adicionado
             for (var i = 0; i < tbDocumento.rows.length; i++) {
@@ -667,7 +678,6 @@
             var fileArquivo = document.getElementById('fileArquivo');
             var ext = fileArquivo.value.split('.').pop();
             var extensaoConfigurada = arrExtensoesPermitidas.length > 0;
-
             var tamanhoConfigurado = parseInt(TAMANHO_MAXIMO) > 0;
             if (!tamanhoConfigurado) {
                 alert('Limite não configurado na Administração do Sistema.');
@@ -685,13 +695,12 @@
 
             var arquivoPermitido = arrExtensoesPermitidas.indexOf(ext) != -1;
             if (!arquivoPermitido) {
-                alert("O arquivo selecionado não é permitido.\n" +
-                    "Somente são permitidos arquivos com as extensões:\n" +
-                    arrExtensoesPermitidas.join().replace(/,/g, ' '));
+                alert("O arquivo selecionado não é permitido.\n Somente são permitidos arquivos com as extensões:\n" + arrExtensoesPermitidas.join().replace(/,/g, ' '));
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 return false;
             }
+
             return true;
         };
     }

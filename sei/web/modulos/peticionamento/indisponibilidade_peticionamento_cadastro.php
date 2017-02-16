@@ -808,7 +808,7 @@ function OnSubmitForm() {
 	 var prorrogacaoSim = document.getElementsByName('rdProrrogacao[]')[0].checked;
 	 if(prorrogacaoSim)
    {
-	 var msg =	'Ao marcar que a presente indisponibilidade justifica a prorrogação automática dos prazos, as intimações eletrônicas com respostas ainda pendentes terão seus prazos prorrogados até as 23h59min59s do primeiro dia útil seguinte ao fim da indisponibilidade indicada. Confirma a prorrogação automática dos prazos?';
+	 var msg =	'Ao marcar que a presente indisponibilidade justifica a prorrogação automática dos prazos, as Intimações Eletrônicas ainda pendentes de resposta terão seus Prazos Externos que venceriam durante o período da indisponibilidade prorrogados até as 23h59min59s do primeiro dia útil seguinte ao fim da indisponibilidade.\n\nConfirma a prorrogação automática dos prazos?';
 	 
 	if(confirm(msg)){
 	  return validarCadastro();

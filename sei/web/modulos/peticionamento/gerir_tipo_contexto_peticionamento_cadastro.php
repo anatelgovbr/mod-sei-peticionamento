@@ -9,72 +9,37 @@ try {
 	require_once dirname(__FILE__).'/../../SEI.php';
 
 	session_start();	
+	
+	//////////////////////////////////////////////////////////////////////////////
+	InfraDebug::getInstance()->setBolLigado(false);
+	InfraDebug::getInstance()->setBolDebugInfra(false);
+	InfraDebug::getInstance()->limpar();
+	//////////////////////////////////////////////////////////////////////////////
+	
 	SessaoSei::getInstance()->validarLink();
 	SessaoSei::getInstance()->validarPermissao($_GET['acao']);
-	
-	}catch(Exception $e){
-		PaginaSEI::getInstance()->processarExcecao($e);
-	}
 		
 	$objRN = new GerirTipoContextoPeticionamentoRN();
 	
     if( isset( $_POST['hdnPrincipal'] ) && $_POST['hdnPrincipal'] != "") {
 		    	
-		$objInfraException = new InfraException();
-			
-		// excluindo registros anteriores
-		$objDTO = new RelTipoContextoPeticionamentoDTO();
-		$objDTO->retTodos();
-		$objDTO->setStrSinCadastroInteressado('S');
-		$objDTO->setStrSinSelecaoInteressado('N');
-		$objRN->excluir($objRN->listar($objDTO));
-				
-		$arrPrincipal = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal']);
-		
-		if(!$arrPrincipal) {
-			$objInfraException->adicionarValidacao('Informe pelo menos um tipo de interessado.');
-		}
-	
-		$objInfraException->lancarValidacoes();
-				
-		foreach($arrPrincipal as $numPrincipal){
-			$objDTO = new RelTipoContextoPeticionamentoDTO();
-			$objDTO->setNumIdTipoContextoContato($numPrincipal);
-			$objDTO->setStrSinCadastroInteressado('S');
-			$objDTO->setStrSinSelecaoInteressado('N');
-			$objDTO = $objRN->cadastrar($objDTO);
-		}
+    	$arrPrincipal = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal']);
+    	$arrPrincipal['cadastro'] = 'S';
+    	$objRN->cadastrarMultiplo( $arrPrincipal );    			
 	
    }
    
    if( isset( $_POST['hdnPrincipal2'] ) && $_POST['hdnPrincipal2'] != "") {
    
-	   	$objInfraException = new InfraException();
-	   		
-	   	// excluindo registros anteriores
-	   	$objDTO2 = new RelTipoContextoPeticionamentoDTO();
-	   	$objDTO2->retTodos();
-	   	$objDTO2->setStrSinCadastroInteressado('N');
-	   	$objDTO2->setStrSinSelecaoInteressado('S');
-	   	$objRN->excluir($objRN->listar($objDTO2));
-	   
-	   	$arrPrincipal2 = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal2']);
-	   
-	   	if(!$arrPrincipal2) {
-	   		$objInfraException->adicionarValidacao('Informe pelo menos um tipo de interessado.');
-	   	}
-	   
-	   	$objInfraException->lancarValidacoes();
-	   	   	
-	   	foreach($arrPrincipal2 as $numPrincipal){
-	   		$objDTO2 = new RelTipoContextoPeticionamentoDTO();
-	   		$objDTO2->setNumIdTipoContextoContato($numPrincipal);
-	   		$objDTO2->setStrSinCadastroInteressado('N');
-	   		$objDTO2->setStrSinSelecaoInteressado('S');
-	   		$objDTO2 = $objRN->cadastrar($objDTO2);
-	   	}
+   	   $arrPrincipal2 = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal2']);
+   	   $arrPrincipal2['cadastro'] = 'N';
+   	   $objRN->cadastrarMultiplo( $arrPrincipal2 );
+   	   
+   }
    
-    }
+   }catch(Exception $e){
+   	PaginaSEI::getInstance()->processarExcecao($e);
+   }
 
 $objDTO = new RelTipoContextoPeticionamentoDTO();
 $objDTO->retTodos();
@@ -163,7 +128,7 @@ $strTitulo = "Peticionamento - Tipos de Contatos Permitidos";
 
 $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarGrupoUnidade" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSei::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem='.$_GET['acao'])).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
-	
+
 PaginaSEI::getInstance()->montarDocType();
 PaginaSEI::getInstance()->abrirHtml();
 PaginaSEI::getInstance()->abrirHead();
@@ -369,6 +334,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     ?>
   </form>
 <?
+PaginaSEI::getInstance()->montarAreaDebug();
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

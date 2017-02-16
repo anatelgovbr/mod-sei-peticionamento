@@ -57,7 +57,7 @@ class ReciboPeticionamentoDTO extends InfraDTO  {
 
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL,
 			  'IdProtocoloRelacionado',
-			  'id_protocolo');
+			  'id_protocolo_relacionado');
 				
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
 				'NomeTipoPeticionamento',

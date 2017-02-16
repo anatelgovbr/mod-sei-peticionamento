@@ -203,7 +203,7 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$objDocumentoAPI->setNivelAcesso( ProtocoloRN::$NA_PUBLICO );
 		$objDocumentoAPI->setIdTipoConferencia( null );
 		
-		$objDocumentoAPI->setConteudo(base64_encode( $htmlRecibo ) );
+		$objDocumentoAPI->setConteudo(base64_encode( utf8_encode($htmlRecibo)  ) );
 		
 		$objSeiRN = new SeiRN();
 		$saidaDocExternoAPI = $objSeiRN->incluirDocumento( $objDocumentoAPI );
@@ -303,10 +303,46 @@ class ReciboPeticionamentoRN extends InfraRN {
     $html .= '<td></td>';
     $html .= '</tr>';
     
-    $idPrincipalGerado = SessaoSEIExterna::getInstance()->getAtributo('idDocPrincipalGerado');
-    $arrIdPrincipal = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoPrincipal');
-    $arrIdEssencial = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoEssencial');
-    $arrIdComplementar = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoComplementar');
+    //consultando DOCs
+    
+    $reciboAnexoDTO = new ReciboDocumentoAnexoPeticionamentoDTO();
+    $reciboAnexoDTO->retTodos( true );
+    $reciboAnexoRN = new ReciboDocumentoAnexoPeticionamentoRN();
+    $reciboAnexoDTO->setNumIdReciboPeticionamento( $reciboDTO->getNumIdReciboPeticionamento() );
+    
+    $arrReciboAnexoDTO = $reciboAnexoRN->listar( $reciboAnexoDTO );
+    
+    $idPrincipalGerado = null;
+    $arrIdPrincipal = array();
+    $arrIdEssencial = array();
+    $arrIdComplementar = array();
+    
+    foreach( $arrReciboAnexoDTO as $itemReciboAnexoDTO ){
+    	
+    	if( $itemReciboAnexoDTO->getStrClassificacaoDocumento() == ReciboDocumentoAnexoPeticionamentoRN::$TP_PRINCIPAL ){
+    		
+    		$idPrincipalGerado = $itemReciboAnexoDTO->getNumIdDocumento();
+    		//array_push( $arrIdPrincipal, $itemReciboAnexoDTO->getNumIdDocumento() );
+    	}
+    	
+    	else if( $itemReciboAnexoDTO->getStrClassificacaoDocumento() == ReciboDocumentoAnexoPeticionamentoRN::$TP_ESSENCIAL ){
+    		 
+    		array_push( $arrIdEssencial, $itemReciboAnexoDTO->getNumIdDocumento() );
+    	}
+    	
+    	else if( $itemReciboAnexoDTO->getStrClassificacaoDocumento() == ReciboDocumentoAnexoPeticionamentoRN::$TP_COMPLEMENTAR ){
+    	
+    		array_push( $arrIdComplementar, $itemReciboAnexoDTO->getNumIdDocumento() );
+    	}
+    	
+    }
+        
+    //$idPrincipalGerado = SessaoSEIExterna::getInstance()->getAtributo('idDocPrincipalGerado');
+    //$arrIdPrincipal = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoPrincipal');
+    //$arrIdEssencial = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoEssencial');
+    //$arrIdComplementar = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoComplementar');
+    
+    
     
     $anexoRN = new AnexoRN();
     $documentoRN = new DocumentoRN();
@@ -396,7 +432,7 @@ class ReciboPeticionamentoRN extends InfraRN {
     	$objAnexoDTO = new AnexoDTO();
     	$objAnexoDTO->retTodos(true);
     	
-    	$objAnexoDTO->adicionarCriterio(array('IdAnexo'),
+    	$objAnexoDTO->adicionarCriterio(array('IdProtocolo'),
     			array(InfraDTO::$OPER_IN),
     			array($arrIdEssencial));
     	
@@ -444,7 +480,7 @@ class ReciboPeticionamentoRN extends InfraRN {
     	$objAnexoDTO = new AnexoDTO();
     	$objAnexoDTO->retTodos(true);
     	 
-    	$objAnexoDTO->adicionarCriterio(array('IdAnexo'),
+    	$objAnexoDTO->adicionarCriterio(array('IdProtocolo'),
     			array(InfraDTO::$OPER_IN),
     			array($arrIdComplementar));
     	 

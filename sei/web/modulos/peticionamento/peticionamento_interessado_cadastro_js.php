@@ -37,14 +37,26 @@ function selecionarPF2(){
 }
 
 function ocultarComboPJVinculada(){
-  document.getElementById('lblPjVinculada').style.display = 'none';
-  document.getElementById('txtPjVinculada').style.display = 'none';
-  document.getElementById('txtPjVinculada').value = '';
+
+   if( document.getElementById('lblPjVinculada') != null ){
+	  document.getElementById('lblPjVinculada').style.display = 'none';
+   }
+
+   if( document.getElementById('txtPjVinculada') != null ){
+   
+     document.getElementById('txtPjVinculada').style.display = 'none';
+     document.getElementById('txtPjVinculada').value = '';
+
+  }
+   
 }
 
 function mostrarComboPJVinculada(){
-  document.getElementById('lblPjVinculada').style.display = '';
-  document.getElementById('txtPjVinculada').style.display = '';
+
+	if( document.getElementById('lblPjVinculada') != null ){
+	  document.getElementById('lblPjVinculada').style.display = '';
+      document.getElementById('txtPjVinculada').style.display = '';
+	}
 }
 
 function selecionarPJ(){
@@ -253,7 +265,7 @@ function inicializar(){
 	  document.getElementById("txtCPF").value = "<?= InfraUtil::formatarCpf( $_POST['txtCPF'] ) ?>";	  
 	<?php } ?>  
 
-	<?php if( isset( $_POST['hdnIdContextoContato'] ) && isset( $_GET['cpf'] ) ) { ?>
+	<?php if( isset( $_POST['hdnIdContextoContato'] ) && $_POST['txtPjVinculada'] != "" && isset( $_GET['cpf'] ) ) { ?>
 
 	    //rdPF2 com vinculo
 	    document.getElementById("rdPF2").checked = 'checked';
@@ -329,13 +341,24 @@ function inicializar(){
 
     <?php if( isset($_GET['edicaoExibir']) ) { ?>
 
+    if( document.getElementById('txtPjVinculada') != null) {
       document.getElementById('txtPjVinculada').disabled = true;
       document.getElementById('txtPjVinculada').disabled = 'disabled';
+    }
 
-      document.getElementById('tipoInteressado').disabled = true;
-      document.getElementById('tipoInteressado').disabled = 'disabled';
+    document.getElementById('tipoInteressado').disabled = true;
+    document.getElementById('tipoInteressado').disabled = 'disabled';
 
-      <?php if( isset( $_GET['cpf'] ) ) { ?>
+    document.getElementById("rdPF").disabled = true;
+	document.getElementById("rdPF").disabled = 'disabled';
+
+	document.getElementById("rdPF1").disabled = true;
+	document.getElementById("rdPF1").disabled = 'disabled';
+
+	document.getElementById("rdPF2").disabled = true;
+	document.getElementById("rdPF2").disabled = 'disabled';
+
+	<?php if( isset( $_GET['cpf'] ) ) { ?>
       
 	  document.getElementById("rdPF").disabled = true;
 	  document.getElementById("rdPF").disabled = 'disabled';
@@ -378,6 +401,7 @@ function inicializar(){
     <?php } ?>
 
     mostrarCampos();
+  
 }
 
 function returnDateTime(valor){

@@ -25,7 +25,7 @@
     <div class="clear"></div>
 
     <div class="bloco">
-        <label class="infraLabelObrigatorio" for="selTipoDocumento">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento) ?> alt="Ajuda" class="infraImg"/></label>
+        <label class="infraLabelObrigatorio" for="selTipoDocumento">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipal) ?> alt="Ajuda" class="infraImg"/></label>
         <select id="selTipoDocumento" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"></select>
     </div>
 
@@ -37,37 +37,36 @@
     <div class="clear"></div>
 
     <div class="bloco" style="min-width: 200px;" id="divBlcNivelAcesso">
-		<label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso:</label>
+		<label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso) ?> alt="Ajuda" class="infraImg"/></label>
 		<div id="divNivelAcesso"></div>
     </div>
 
 	<?php if ($exibirHipoteseLegal): ?>
 		<div class="bloco" id="divBlcHipoteseLegal" style="display: none">
-			<label class="infraLabelObrigatorio" for="selHipoteseLegal">Hipótese Legal:</label>
+			<label class="infraLabelObrigatorio" for="selHipoteseLegal">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal) ?> alt="Ajuda" class="infraImg"/></label>
 			<div id="divHipoteseLegal"></div>
 		</div>
 	<?php endif; ?>
 
     <div class="clear"></div>
 
-	<div class="bloco" style="width: 272px; margin-top: 23px;">
+	<div class="bloco" style="width:290px; margin: 23px 0 11px 0;">
 		<label class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato) ?> class="infraImg"/></label>
-        <input type="radio" class="infraRadio" id="rdoNatoDigital" name="rdoFormato" style="margin-left: 5%;" value="N" onclick="exibirTipoConferencia();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+        <input type="radio" class="infraRadio" id="rdoNatoDigital" name="rdoFormato" style="margin-left: 5%;" value="N" onclick="exibirTipoConferencia();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() +2; ?>">
         <label for="rdoNatoDigital" class="infraLabelRadio">Nato-Digital</label>
-        <input type="radio" class="infraRadio" id="rdoDigitalizado" name="rdoFormato" style="margin-left: 5%;" value="D" onclick="exibirTipoConferencia();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+        <input type="radio" class="infraRadio" id="rdoDigitalizado" name="rdoFormato" style="margin-left: 5%;" value="D" onclick="exibirTipoConferencia();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() +2; ?>">
 		<label for="rdoDigitalizado" class="infraLabelRadio">Digitalizado</label>
 	</div>
 
 	<div class="bloco">
 		<div id="divTipoConferencia" style="display: none">
 			<label class="infraLabelObrigatorio" for="selTipoConferencia">Conferência com o documento digitalizado:</label>
-			<select id="selTipoConferencia" name="selTipoConferencia" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"><?= $strSelectTipoConferencia ?></select>
+			<select id="selTipoConferencia" name="selTipoConferencia" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() +2; ?>"><?= $strSelectTipoConferencia ?></select>
 		</div>
-		<button type="button" class="infraButton" id="btnAdicionarDocumento" onclick="adicionarDocumento();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">Adicionar</button>
+		<button type="button" class="infraButton" id="btnAdicionarDocumento" onclick="adicionarDocumento();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() +2; ?>">Adicionar</button>
 	</div>
-
-    <table width="99%" class="infraTable" summary="Documento" id="tbDocumento" style="display: none">
-        <caption class="infraCaption">&nbsp;</caption>
+    <div style="clear: both"></div>
+    <table width="99%" class="infraTable" id="tbDocumento" style="width:99%;">
         <tr>
             <th class="infraTh" width="0" style="display: none;">ID Linha</th> <!--0-->
             <th class="infraTh" width="0" style="display: none;">ID Tipo Documento</th> <!--1-->

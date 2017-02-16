@@ -190,7 +190,7 @@ PaginaSEIExterna::getInstance()->fecharHead();
         <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" 
                  tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
         <script type="text/javascript">
-        CKEDITOR.replace('txaConteudo',{ 'autoGrow_onStartup':'true', 'toolbar':[["Save"],["Find","Replace","-","RemoveFormat","Bold","Italic","Underline","Strike","Subscript","Superscript","Maiuscula","Minuscula","TextColor","BGColor"],["Cut","Copy","PasteFromWord","PasteText","-","Undo","Redo","ShowBlocks","Symbol","Scayt"],["NumberedList","BulletedList","-","Outdent","Indent","base64image"],["Table","SpecialChar","SimpleLink","linksei","Extenso","Zoom"],["Styles"]]});
+        CKEDITOR.replace('txaConteudo',{ 'autoGrow_onStartup':'true', 'toolbar':[["Save"],["Find","Replace","-","RemoveFormat","Bold","Italic","Underline","Strike","Subscript","Superscript","Maiuscula","Minuscula","TextColor","BGColor"],["Cut","Copy","PasteFromWord","PasteText","-","Undo","Redo","ShowBlocks","Symbol","Scayt"],["NumberedList","BulletedList","-","Outdent","Indent","base64image"],["Table","SpecialChar","SimpleLink","Extenso","Zoom"],["Styles"]]});
         </script>
       </div>
     </td>

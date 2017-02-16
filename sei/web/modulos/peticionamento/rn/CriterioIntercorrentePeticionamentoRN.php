@@ -153,6 +153,16 @@ class CriterioIntercorrentePeticionamentoRN extends InfraRN
      */
     public function cadastrarPadrao(CriterioIntercorrentePeticionamentoDTO $objCriterioIntercorrentePeticionamentoDTO)
     {
+        $objCriterioIntercorrentePadraoConsultaDTO = new CriterioIntercorrentePeticionamentoDTO();
+        $objCriterioIntercorrentePadraoConsultaDTO->setStrSinCriterioPadrao('S');
+        $objCriterioIntercorrentePadraoConsultaDTO->retTodos();
+        $objCriterioIntercorrentePeticionamentoRN = new CriterioIntercorrentePeticionamentoRN();
+        $objCriterioIntercorrentePadraoDTO = $objCriterioIntercorrentePeticionamentoRN->consultar($objCriterioIntercorrentePadraoConsultaDTO);
+
+        if($objCriterioIntercorrentePadraoDTO){
+            $this->excluir(array($objCriterioIntercorrentePadraoDTO));
+        }
+
         $objCriterioIntercorrentePeticionamentoDTO->setStrSinCriterioPadrao('S');
         return $this->cadastrarControlado($objCriterioIntercorrentePeticionamentoDTO);
     }
@@ -237,7 +247,10 @@ class CriterioIntercorrentePeticionamentoRN extends InfraRN
         try {
 
             SessaoSEI::getInstance()->validarAuditarPermissao('criterio_intercorrente_peticionamento_excluir', __METHOD__, $arrCriterioIntercorrentePeticionamentoDTO);
-
+            $objCriterioIntercorrentePeticionamentoBD = new CriterioIntercorrentePeticionamentoBD($this->getObjInfraIBanco());
+            for($i = 0; $i < count($arrCriterioIntercorrentePeticionamentoDTO); $i ++) {
+                $objCriterioIntercorrentePeticionamentoBD->excluir($arrCriterioIntercorrentePeticionamentoDTO[$i]);
+            }
         } catch (Exception $e) {
             throw new InfraException ('Erro excluindo.', $e);
         }
@@ -257,10 +270,17 @@ class CriterioIntercorrentePeticionamentoRN extends InfraRN
     {
         $objCriterioIntercorrentePeticionamentoValidarDTO = new CriterioIntercorrentePeticionamentoDTO();
         $objCriterioIntercorrentePeticionamentoValidarDTO->setNumIdTipoProcedimento($objCriterioIntercorrentePeticionamentoDTO->getNumIdTipoProcedimento());
+        $objCriterioIntercorrentePeticionamentoValidarDTO->setStrSinCriterioPadrao($objCriterioIntercorrentePeticionamentoDTO->getStrSinCriterioPadrao());
+
+        if($objCriterioIntercorrentePeticionamentoDTO->isSetNumIdCriterioIntercorrentePeticionamento()){
+            $objCriterioIntercorrentePeticionamentoValidarDTO->setNumIdCriterioIntercorrentePeticionamento($objCriterioIntercorrentePeticionamentoDTO->getNumIdCriterioIntercorrentePeticionamento(),InfraDTO::$OPER_DIFERENTE);
+        }
+
         $objCriterioIntercorrentePeticionamentoValidarDTO->retTodos();
         $arrObjCriterioIntercorrentePeticionamentoValidarDTO = $this->consultar($objCriterioIntercorrentePeticionamentoValidarDTO);
 
-        if(count($arrObjCriterioIntercorrentePeticionamentoValidarDTO) > 0){
+        if((count($arrObjCriterioIntercorrentePeticionamentoValidarDTO) > 0 ) &&
+            $objCriterioIntercorrentePeticionamentoDTO->getStrSinCriterioPadrao() == $arrObjCriterioIntercorrentePeticionamentoValidarDTO->getStrSinCriterioPadrao()){
             $objInfraException->adicionarValidacao('Tipo de Processo já possui Critério Intercorrente associado.');
         }
 
@@ -290,6 +310,36 @@ class CriterioIntercorrentePeticionamentoRN extends InfraRN
             if (InfraString::isBolVazia($objCriterioIntercorrentePeticionamentoDTO->getNumIdHipoteseLegal())) {
                 $objInfraException->adicionarValidacao('Hipótese legal não informada.');
             }
+        }
+
+        $this->_validarTipoProcedimentoComAssunto($objCriterioIntercorrentePeticionamentoDTO, $objInfraException);
+    }
+
+    /**
+     * Short description of method _validarTipoProcessoAssociado
+     *
+     * @access private
+     * @author Marcelo Bezerra <marcelo.cast@castgroup.com.br>
+     * @param  $objTipoProcessoPeticionamentoDTO
+     * @param  $objInfraException
+     * @return mixed
+     */
+    private function _validarTipoProcedimentoComAssunto(CriterioIntercorrentePeticionamentoDTO $objCriterioIntercorrentePeticionamentoDTO, InfraException $objInfraException){
+
+        //VALIDA NOVA REGRA ADICIONADA
+        // somente aceita tipo de processo que na parametrização do SEI tenha
+        //indicação de pelo menos uma sugestao de assunto
+
+        $relTipoProcedimentoDTO = new RelTipoProcedimentoAssuntoDTO();
+        $relTipoProcedimentoDTO->retTodos();
+        $relTipoProcedimentoDTO->setNumIdTipoProcedimento( $objCriterioIntercorrentePeticionamentoDTO->getNumIdTipoProcedimento() );
+
+        $relTipoProcedimentoRN = new RelTipoProcedimentoAssuntoRN();
+        $arrLista = $relTipoProcedimentoRN->listarRN0192( $relTipoProcedimentoDTO );
+
+        if( !is_array( $arrLista ) || count( $arrLista ) == 0 ){
+            $msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
+            $objInfraException->adicionarValidacao ($msg);
         }
     }
 

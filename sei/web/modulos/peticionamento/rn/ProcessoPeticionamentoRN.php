@@ -187,7 +187,10 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objEntradaConsultarProcedimentoAPI->setIdProcedimento( $objSaidaGerarProcedimentoAPI->getIdProcedimento() );
 			$objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento( $objEntradaConsultarProcedimentoAPI );
 			
+			$nomeTipo = $objSaidaConsultarProcedimentoAPI->getTipoProcedimento()->getNome();
+			
 			$objProcedimentoDTO = new ProcedimentoDTO();
+			$objProcedimentoDTO->setStrNomeTipoProcedimento( $nomeTipo );
 			$objProcedimentoDTO->setDblIdProcedimento( $objSaidaGerarProcedimentoAPI->getIdProcedimento() );
 			$objProcedimentoDTO->setStrProtocoloProcedimentoFormatado( $objSaidaConsultarProcedimentoAPI->getProcedimentoFormatado()  );
 			$objProcedimentoDTO->setNumIdTipoProcedimento( $objSaidaConsultarProcedimentoAPI->getTipoProcedimento()->getIdTipoProcedimento()  );

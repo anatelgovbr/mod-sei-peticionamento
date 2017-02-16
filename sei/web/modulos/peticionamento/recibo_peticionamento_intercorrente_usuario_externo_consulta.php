@@ -89,6 +89,7 @@ try {
             $documentoReciboDTO->retStrProtocoloDocumentoFormatado();
             $documentoReciboDTO->setDblIdProcedimento( $objReciboPeticionamentoDTO->getNumIdProtocolo() );
             $documentoReciboDTO->setNumIdSerie( $idSerieParam );
+            $documentoReciboDTO->setDblIdDocumento( $_GET['id_documento'] );
             $documentoReciboDTO = $documentoRN->consultarRN0005( $documentoReciboDTO );
 
             if( $documentoReciboDTO != null ){

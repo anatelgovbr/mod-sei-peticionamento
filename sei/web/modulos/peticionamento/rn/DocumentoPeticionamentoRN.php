@@ -120,7 +120,8 @@ class DocumentoPeticionamentoRN extends InfraRN {
 			}
 	
 			if (InfraString::isBolVazia($objDocumento->dataHoraDeProducao)) {
-				$objInfraException->lancarValidacao('Data do documento não informada.');
+				//$objInfraException->lancarValidacao('Data do documento não informada.');
+                throw new InfraException('Data do documento não informada.');
 			}
 	
 			$objProcedimentoDTO2 = new ProcedimentoDTO();
@@ -1478,41 +1479,49 @@ class DocumentoPeticionamentoRN extends InfraRN {
 	
 			$objTarjaAssinaturaDTO = new TarjaAssinaturaDTO();
 			$objTarjaAssinaturaDTO->retNumIdTarjaAssinatura();
-	
-			if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_DOCUMENTO_GERADO) {
-				if ($objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_SENHA) {
-					$objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(TarjaAssinaturaRN::$TT_ASSINATURA_SENHA);
-				} else {
-					$objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(TarjaAssinaturaRN::$TT_ASSINATURA_CERTIFICADO_DIGITAL);
-				}
-			}else{
-				
-				//CUSTOMIZACAO DA TARJA DE ASSINATURA PARA DOC ANEXO NATO-DIGITAL
-				$arrDocs = $objAssinaturaDTO->getArrObjDocumentoDTO();
-				
-				if( is_array( $arrDocs ) && count( $arrDocs ) > 0 ) {
-					
-					$documentoDTOParaAssinar = $arrDocs[0];
-					
-					if( $documentoDTOParaAssinar->isSetStrDescricaoTipoConferencia() 
-						&& $documentoDTOParaAssinar->getStrDescricaoTipoConferencia() == "do próprio documento nato-digital" ){						
-						
-							//vai usar tarja customizada
-						$objTarjaAssinaturaDTO->setStrStaTarjaAssinatura( AssinaturaPeticionamentoRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO );
-						
-					} else {
-											
-						//vai usar a tarja normal
-						$objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(TarjaAssinaturaRN::$TT_AUTENTICACAO_SENHA);
-					
-					}
-				}
 
-			}
+            if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO) {
+                $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura( AssinaturaPeticionamentoRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO );
+            } else {
+                if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_DOCUMENTO_GERADO) {
+                    if ($objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_SENHA) {
+                        $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(TarjaAssinaturaRN::$TT_ASSINATURA_SENHA);
+                        // $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(TarjaAssinaturaRN::$TT_AUTENTICACAO_SENHA);
+                    } else {
+                        $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(TarjaAssinaturaRN::$TT_ASSINATURA_CERTIFICADO_DIGITAL);
+                    }
+                }else{
+
+                    //CUSTOMIZACAO DA TARJA DE ASSINATURA PARA DOC ANEXO NATO-DIGITAL
+                    $arrDocs = $objAssinaturaDTO->getArrObjDocumentoDTO();
+
+                    if( is_array( $arrDocs ) && count( $arrDocs ) > 0 ) {
+
+                        $documentoDTOParaAssinar = $arrDocs[0];
+
+                        if( $documentoDTOParaAssinar->isSetStrDescricaoTipoConferencia()
+                            && $documentoDTOParaAssinar->getStrDescricaoTipoConferencia() == "do próprio documento nato-digital" ){
+
+                            //vai usar tarja customizada
+                            $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura( AssinaturaPeticionamentoRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO );
+
+                        } else {
+
+                            //vai usar a tarja normal
+                            $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(TarjaAssinaturaRN::$TT_AUTENTICACAO_SENHA);
+
+                        }
+                    }
+
+                }
+            }
+	
+
 				
 			$objTarjaAssinaturaRN = new TarjaAssinaturaRN();
 			$objTarjaAssinaturaDTO = $objTarjaAssinaturaRN->consultar($objTarjaAssinaturaDTO);
-	
+//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
+//var_dump($objTarjaAssinaturaDTO); echo '</pre>'; exit;
 			$objAtividadeRN = new AtividadeRN();
 			$arrObjAssinaturaDTO = array();
 			$arrObjDocumentoDTOCredencialAssinatura = array();

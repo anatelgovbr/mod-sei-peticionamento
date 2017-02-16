@@ -348,7 +348,7 @@ try {
 			$objContatoDTO->retTodos(true);
 			$objContatoDTO->setNumIdContato( $_POST['hdnIdEdicaoAuxiliar'] );
 			$objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
-
+			
 			//seiv2
 			//$strItensSelSiglaEstado = UfINT::montarSelectSiglaRI0892('null','&nbsp;', $objContatoDTO->getStrSiglaEstado());
 
@@ -412,7 +412,10 @@ try {
   			//alteracoes seiv3
   			$_POST['hdnIdContextoContato'] = $objContatoDTO->getNumIdContato();
   			
-  			if( $_POST['hdnIdContextoContato'] != "" && $_POST['hdnIdContextoContato'] != null ){
+  			
+  			//if( $objContatoDTO->getStrStaNaturezaContatoAssociado() == ContatoRN::$TN_PESSOA_JURIDICA ){
+  			
+  			    //if( $_POST['hdnIdContextoContato'] != "" && $_POST['hdnIdContextoContato'] != null ){
   				
   				$objContatoPJVinculadaDTO = new ContatoDTO();
   				$objContatoPJVinculadaDTO->retNumIdContato();
@@ -430,12 +433,19 @@ try {
   				//$_POST['tipoInteressado'] = $objContatoPJVinculadaDTO->getNumIdTipoContextoContato();
   				
   				//alteracoes seiv3
-  				$_POST['tipoInteressado'] = $objContatoPJVinculadaDTO->getNumIdTipoContato();
+  				//$_POST['tipoInteressado'] = $objContatoPJVinculadaDTO->getNumIdTipoContato();
+  				$_POST['tipoInteressado'] = $objContatoDTO->getNumIdTipoContato();
+  				
+  				if( $objContatoDTO->getStrStaNaturezaContatoAssociado() == ContatoRN::$TN_PESSOA_JURIDICA ){
+  				  $_POST['txtPjVinculada'] = $objContatoDTO->getStrNomeContatoAssociado();
+  				} else {
+  				  $_POST['txtPjVinculada'] = "";
+  				}
   				
   				$numIdTipoContextoContato = $_POST['tipoInteressado']; 
-  				$_POST['txtPjVinculada'] = $objContatoPJVinculadaDTO->getStrNome();
+  				//$_POST['txtPjVinculada'] = $objContatoPJVinculadaDTO->getStrNome();
   				
-  			}
+  			//}
   			  			
   			$strItensSelTipoInteressado = GerirTipoContextoPeticionamentoINT::montarSelectTipoInteressado($strPrimeiroItemValor, $strPrimeiroItemDescricao, $numIdTipoContextoContato, $strTipo);
   			
@@ -584,17 +594,26 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 	    <br/><br/>
 	    </label>
 	    
-	    <label id="lblPjVinculada" style="display: none;" class="infraLabelObrigatorio">Razão Social da Pessoa Jurídica vinculada:<br/>
 	    
 	    <?php if( $_POST['hdnIdContextoContato'] == '') {?>
+	    
+	    <label id="lblPjVinculada" style="display: none;" class="infraLabelObrigatorio">Razão Social da Pessoa Jurídica vinculada:<br/>
 	    
 	    <input type="text" class="infraText" 
 	      tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
 	      onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
 	      name="txtPjVinculada" id="txtPjVinculada" 
 	      autocomplete="off" style="width: 580px; display: none;" />
+	      
+	      <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato" 
+	           value="<?php echo $_POST['hdnIdContextoContato'];  ?>" />
+	           
+	    <br/><br/>
+	    </label>
 	    
-	    <?php } else { ?>
+	    <?php } else if( $_POST['txtPjVinculada'] != "" ) { ?>
+	    
+	    <label id="lblPjVinculada" style="display: none;" class="infraLabelObrigatorio">Razão Social da Pessoa Jurídica vinculada:<br/>
 	    
 	    <input type="text" class="infraText" 
 	      value="<?php echo $_POST['txtPjVinculada']; ?>"
@@ -602,15 +621,15 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 	      onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
 	      name="txtPjVinculada" id="txtPjVinculada" 
 	      autocomplete="off" style="width: 580px;" />
-	    
-	    <?php } ?>
-	           
-	    <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato" 
+	      
+	      <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato" 
 	           value="<?php echo $_POST['hdnIdContextoContato'];  ?>" />
 	           
 	    <br/><br/>
 	    </label>
-	    
+	      	    
+	    <?php } ?>
+	           
 	    <label id="lblCPF" style="display: none;" class="infraLabelObrigatorio">CPF:<br/>
 	    <input type="text" class="infraText" name="txtCPF" id="txtCPF" 
 	      value="<?php echo $_POST['txtCPF']; ?>"

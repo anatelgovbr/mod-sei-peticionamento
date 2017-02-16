@@ -25,10 +25,18 @@ class GerirTipoContextoPeticionamentoINT extends InfraINT {
 		if ($strValorItemSelecionado!=null){
 	
 			$objTipoContextoContatoDTO->setBolExclusaoLogica(false);
-			$objTipoContextoContatoDTO->adicionarCriterio(array('SinAtivo','Nome'),
-					array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),
-					array('S',$strValorItemSelecionado),
-					InfraDTO::$OPER_LOGICO_OR);
+			$objTipoContextoContatoDTO->adicionarCriterio(array('SinSistema', 'SinAtivo','Nome'),
+					array( InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_LIKE),
+					array('N', 'S', '%' . $strValorItemSelecionado . '%'),
+					array( InfraDTO::$OPER_LOGICO_AND , InfraDTO::$OPER_LOGICO_AND ) );
+		} else {
+			
+			$objTipoContextoContatoDTO->setBolExclusaoLogica(false);
+			
+			$objTipoContextoContatoDTO->adicionarCriterio(array('SinSistema', 'SinAtivo' ),
+					array( InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL ),
+					array('N', 'S' ),
+					InfraDTO::$OPER_LOGICO_AND );			
 		}
 		
 		//SEIv2
@@ -53,6 +61,8 @@ class GerirTipoContextoPeticionamentoINT extends InfraINT {
 		} else {
 			$objTipoContextoContatoDTO->setStrSinSelecaoInteressado('S');			
 		}
+		
+		$objTipoContextoContatoDTO->setStrSinSistema('N');
 		
 		$objRelTipoContextoContatoRN = new GerirTipoContextoPeticionamentoRN();
 		$arrObjTipoContextoContatoDTO = $objRelTipoContextoContatoRN->listar($objTipoContextoContatoDTO);

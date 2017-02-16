@@ -142,7 +142,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 			case 'md_pet_int_serie_cadastrar':
 				require_once dirname ( __FILE__ ).'/md_pet_int_serie_cadastro.php';
                 return true;
-
+                
     }
 
     return false;
@@ -165,7 +165,17 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 				break;
 
 			case 'tipo_processo_auto_completar':
-				$arrObjTipoProcessoDTO = TipoProcedimentoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa'] );
+				$arrObjTipoProcessoDTO = TipoProcedimentoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa']);
+				$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
+				break;
+
+            case 'tipo_processo_auto_completar_intercorretne':
+                $arrObjTipoProcessoDTO = TipoProcessoPeticionamentoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa'], $_POST['itens_selecionados'] );
+                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
+                break;
+
+            case 'tipo_processo_auto_completar_com_assunto':
+				$arrObjTipoProcessoDTO = TipoProcedimentoINT::autoCompletarTipoProcessoComAssunto($_POST['palavras_pesquisa'] );
 				$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
 				break;
 
@@ -180,6 +190,14 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 				//$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjUnidadeDTO,'IdUnidade', 'Sigla');
 				break;
 
+		   case 'nivel_acesso_validar':
+				$xml = TipoProcessoPeticionamentoINT::validarNivelAcesso($_POST);
+				break;
+
+		   case 'tipo_peticionamento_assunto_validar':
+				$xml = TipoProcessoPeticionamentoINT::validarTipoProcessoComAssunto($_POST);
+				break;
+
 			//SEIv2
 			//case 'tipo_contexto_contato_listar':
 				//$arrObjTipoContextoDTO = GerirTipoContextoPeticionamentoINT::montarSelectNome(null, null, $_POST['txtPrincipal']);
@@ -188,7 +206,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
 		    //Ajustes SEIV3
 			case 'tipo_contexto_contato_listar':
-					$arrObjTipoContextoDTO = GerirTipoContextoPeticionamentoINT::montarSelectNome(null, null, $_POST['txtPrincipal']);
+					$arrObjTipoContextoDTO = GerirTipoContextoPeticionamentoINT::montarSelectNome(null, null, $_POST['extensao']);
 					$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoContextoDTO, 'IdTipoContato', 'Nome');
 					break;
 
@@ -782,6 +800,18 @@ class PeticionamentoIntegracao extends SeiIntegracao {
   	return $array;
 
   }
+
+    public function montarTipoTarjaAssinaturaCustomizada()
+    {
+        $objArrTipoDTO = array();
+
+        $objTipoDTO = new TipoDTO();
+        $objTipoDTO->setStrStaTipo(AssinaturaPeticionamentoRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO);
+        $objTipoDTO->setStrDescricao('Assinatura Eletrônica - Módulo de Peticionamento e Intimação Eletrônicos');
+        $objArrTipoDTO[] = $objTipoDTO;
+
+        return $objArrTipoDTO;
+    }
 
 }
 ?>

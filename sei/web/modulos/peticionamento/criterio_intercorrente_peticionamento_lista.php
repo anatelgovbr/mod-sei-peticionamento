@@ -26,14 +26,14 @@ try {
 		case 'criterio_intercorrente_peticionamento_excluir':
 			try{
 				$arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
-				$arrObjIndisponibilidadePeticionamentoDTO = array();
+				$arrObjCriterioIntercorrentePeticionamentoDTO = array();
 				for ($i=0;$i<count($arrStrIds);$i++){
-					$objIndisponibilidadePeticionamentoDTO = new IndisponibilidadePeticionamentoDTO();
-					$objIndisponibilidadePeticionamentoDTO->setNumIdIndisponibilidade($arrStrIds[$i]);
-					$arrObjIndisponibilidadePeticionamentoDTO[] = $objIndisponibilidadePeticionamentoDTO;
+					$objCriterioIntercorrentePeticionamentoDTO = new CriterioIntercorrentePeticionamentoDTO();
+					$objCriterioIntercorrentePeticionamentoDTO->setNumIdCriterioIntercorrentePeticionamento($arrStrIds[$i]);
+					$arrObjCriterioIntercorrentePeticionamentoDTO[] = $objCriterioIntercorrentePeticionamentoDTO;
 				}
-				$objIndisponibilidadePeticionamentoRN = new IndisponibilidadePeticionamentoRN();
-				$objIndisponibilidadePeticionamentoRN->excluir($arrObjIndisponibilidadePeticionamentoDTO);
+				$objCriterioIntercorrentePeticionamentoRN = new CriterioIntercorrentePeticionamentoRN();
+				$objCriterioIntercorrentePeticionamentoRN->excluir($arrObjCriterioIntercorrentePeticionamentoDTO);
 	
 			}catch(Exception $e){
 				PaginaSEI::getInstance()->processarExcecao($e);
@@ -115,6 +115,7 @@ try {
     }
 
     $objCriterioIntercorrentePeticionamentoDTO = new CriterioIntercorrentePeticionamentoDTO();
+    $objCriterioIntercorrentePeticionamentoDTO->setStrSinCriterioPadrao('N');
     $objCriterioIntercorrentePeticionamentoDTO->retTodos(true);
 
     //NomeProcesso

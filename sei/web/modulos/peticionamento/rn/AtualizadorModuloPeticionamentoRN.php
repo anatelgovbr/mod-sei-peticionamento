@@ -111,6 +111,17 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN
                 BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_criterio', 1);
             }
             // FIM 7048
+            
+            //Criando campo md_pet_rel_recibo_protoc.id_protocolo_relacionado caso ainda nao exista
+            $coluna = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'id_protocolo_relacionado');
+            
+            if( $coluna == null || !is_array( $coluna ) ){
+            	
+            	$objInfraMetaBD->adicionarColuna('md_pet_rel_recibo_protoc', 'id_protocolo_relacionado', '' . $objInfraMetaBD->tipoNumeroGrande() , 'NULL');
+            	
+            	$objInfraMetaBD->adicionarChaveEstrangeira('fk5_md_pet_rel_recibo_protoc', 'md_pet_rel_recibo_protoc', array('id_protocolo_relacionado'), 'protocolo', array('id_protocolo'));
+            	
+            }
 
             //Atualizando parametro para controlar versao do modulo
             $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');

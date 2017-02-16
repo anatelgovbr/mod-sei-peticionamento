@@ -105,64 +105,73 @@ try {
     }
 
     $objInfraParametroDTO = new InfraParametroDTO();
-    $objInfraParametroRN = new InfraParametroRN();
+    $objMdPetParametroRN = new MdPetParametroRN();
     $objInfraParametroDTO->retTodos();
     $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
-    $objInfraParametroDTO = $objInfraParametroRN->consultar($objInfraParametroDTO);
+    $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
     $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
 
     switch ($_GET['acao']) {
         case 'criterio_intercorrente_peticionamento_padrao':
-
-            $strItensSelHipoteseLegal = TipoProcessoPeticionamentoINT::montarSelectHipoteseLegal(null, null, null);
-
-            //Carregando campos select
-            $strItensSelTipoProcesso = TipoProcessoPeticionamentoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
-            //$strItensSelUnidades     = UnidadeINT::montarSelectSiglaDescricao(null, null, $_POST['selUnidade']);
-
-            //$strItensSelDoc          = SerieINT::montarSelectNomeRI0802(null, null, $_POST['selDocumento']);
-
             $strTitulo = 'Intercorrente Padrão';
 
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarTpProcessoPeticionamento" id="sbmCadastrarTpProcessoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
-            /*
-            $objTipoProcessoPeticionamentoRN = new TipoProcessoPeticionamentoRN();
-            $objTipoProcessoPeticionamentoDTO = new TipoProcessoPeticionamentoDTO();
-            $objTipoProcessoPeticionamentoDTO->setNumIdProcedimento($_POST['hdnIdTipoProcesso']);
-            $objTipoProcessoPeticionamentoDTO->setStrSinIIProprioUsuarioExterno('N');
-            $objTipoProcessoPeticionamentoDTO->setStrSinIIIndicacaoDireta('N');
-            $objTipoProcessoPeticionamentoDTO->setStrSinIIIndicacaoDiretaCpfCnpj('N');
-            $objTipoProcessoPeticionamentoDTO->setStrSinIIIndicacaoDiretaContato('N');
-            $objTipoProcessoPeticionamentoDTO->setStrSinNaUsuarioExterno('N');
-            $objTipoProcessoPeticionamentoDTO->setStrSinNaPadrao('N');
-            $objTipoProcessoPeticionamentoDTO->setStrSinDocGerado('N');
-            $objTipoProcessoPeticionamentoDTO->setStrSinDocExterno('N');
-            */
-
             // cadastrando o critério intercorrente
             if (isset($_POST['sbmCadastrarTpProcessoPeticionamento'])) {
-                $strStaTipoNivelAcesso = 'I';
-                if ($_POST['rdNivelAcesso'][0] == 1) {
-                    $strStaTipoNivelAcesso = 'P';
-                }
-                /*
-                echo '<pre>';
-                var_dump($_POST);
-                exit;
-                */
                 $objCriterioIntercorrentePeticionamentoDTO = new CriterioIntercorrentePeticionamentoDTO();
-                //$objCriterioIntercorrentePeticionamentoDTO->setNumIdCriterioIntercorrentePeticionamento();
-
-                $objCriterioIntercorrentePeticionamentoDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
-                $objCriterioIntercorrentePeticionamentoDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
-                $objCriterioIntercorrentePeticionamentoDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
                 $objCriterioIntercorrentePeticionamentoDTO->setNumIdTipoProcedimento($_POST['hdnIdTipoProcesso']);
+                $objCriterioIntercorrentePeticionamentoDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
+
+                if (isset($_POST['selNivelAcesso']) && !empty($_POST['selNivelAcesso']) && $_POST['rdNivelAcesso'][0] == '2') {
+                    $strStaTipoNivelAcesso = $_POST['selNivelAcesso'];
+                    if ($_POST['selNivelAcesso'] == 'I') {
+                        $objCriterioIntercorrentePeticionamentoDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
+                    }
+                    $objCriterioIntercorrentePeticionamentoDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
+                }
 
                 $objCriterioIntercorrentePeticionamentoRN = new CriterioIntercorrentePeticionamentoRN();
-                if ($_GET['acao'] == 'criterio_intercorrente_peticionamento_padrao') {
-                    $objCriterioIntercorrentePeticionamentoRN->cadastrarPadrao($objCriterioIntercorrentePeticionamentoDTO);
+                $objCriterioIntercorrentePeticionamentoRN->cadastrarPadrao($objCriterioIntercorrentePeticionamentoDTO);
+
+                header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']));
+                die;
+            } else {
+                $objCriterioIntercorrentePadraoConsultaDTO = new CriterioIntercorrentePeticionamentoDTO();
+                $objCriterioIntercorrentePadraoConsultaDTO->setStrSinCriterioPadrao('S');
+                $objCriterioIntercorrentePadraoConsultaDTO->retTodos(true);
+                $objCriterioIntercorrentePadraoConsultaDTO->retStrNomeProcesso();
+                $objCriterioIntercorrentePeticionamentoRN = new CriterioIntercorrentePeticionamentoRN();
+                $objCriterioIntercorrentePadraoDTO = $objCriterioIntercorrentePeticionamentoRN->consultar($objCriterioIntercorrentePadraoConsultaDTO);
+                $strItensSelHipoteseLegal = TipoProcessoPeticionamentoINT::montarSelectHipoteseLegal(null, null, null);
+
+                //Carregando campos select
+                $strItensSelTipoProcesso = TipoProcessoPeticionamentoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
+
+                if($objCriterioIntercorrentePadraoDTO){
+                    $nomeTipoProcesso    = $objCriterioIntercorrentePadraoDTO->getStrNomeProcesso();
+                    $idTipoProcesso      = $objCriterioIntercorrentePadraoDTO->getNumIdTipoProcedimento();
+                    $sinCriterioPadrao   = $objCriterioIntercorrentePadraoDTO->getStrSinCriterioPadrao() == 'S' ? 'checked = checked' : '';
+                    $sinNAUsuExt         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
+                    $sinNAPadrao         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
+                    $hipoteseLegal       = $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
+                    $strItensSelTipoProcesso = TipoProcessoPeticionamentoINT::montarSelectTipoProcesso(null, null, $idTipoProcesso);
+                    $strItensSelHipoteseLegal = TipoProcessoPeticionamentoINT::montarSelectHipoteseLegal(null, null, $objCriterioIntercorrentePadraoDTO->getNumIdHipoteseLegal());
+                    $nivelAcessoTemplate = '<option value="%s" %s>%s</option>';
+                    $arrNivelAcesso = array(
+                        '' => '',
+                        'P' => 'Público',
+                        'I' => 'Restrito'
+                    );
+                    $strTipoProcesso = sprintf($nivelAcessoTemplate, $idTipoProcesso, 'selected="selected"', $nomeTipoProcesso);
+
+                    $strItensSelNivelAcesso = '';
+                    foreach($arrNivelAcesso as $i => $nivelAcesso){
+                        $selected = ($i == $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso()) ? ' selected="selected" ': '';
+                        $strItensSelNivelAcesso .= sprintf($nivelAcessoTemplate, $i, $selected, $nivelAcesso);
+                    }
+
                 }
             }
             break;
@@ -209,29 +218,7 @@ PaginaSEI::getInstance()->fecharJavaScript();
         width: 50%;
     }
 
-    #fldProrrogacao {
-        height: 20%;
-        width: 86%;
-    }
-
     <?php if($firefox): ?>
-
-    .sizeFieldset {
-        height: 30%;
-        width: 86%;
-    }
-
-    .tamanhoFieldset {
-        height: auto;
-        width: 86%;
-    }
-
-    #divIndicacaoInteressado {
-    }
-
-    #divUnidade {
-        margin-top: 138px !important;
-    }
 
     #imgLupaTipoProcesso {
         position: absolute;
@@ -245,62 +232,6 @@ PaginaSEI::getInstance()->fecharJavaScript();
         top: 18px;
     }
 
-    #lblUnidade {
-        position: absolute;
-        left: 0%;
-        width: 50%;
-    }
-
-    #txtUnidade {
-        left: 12px;
-        width: 65%;
-        margin-top: 0.5%;
-    }
-
-    #imgLupaUnidade {
-        position: absolute;
-        left: 51%;
-        margin-top: 0.5%;
-    }
-
-    #imgExcluirUnidade {
-        position: absolute;
-        left: 52.7%;
-        margin-top: 0.5%;
-    }
-
-    #txtUnidadeMultipla {
-        left: 12px;
-        width: 65%;
-        margin-top: 0.5%;
-    }
-
-    #imgLupaUnidadeMultipla {
-        position: absolute;
-        left: 51%;
-        margin-top: 0.5%;
-    }
-
-    #sbmAdicionarUnidade {
-        position: absolute;
-        left: 53.7%;
-        margin-top: 0.5%;
-    }
-
-    #lblOrientacoes {
-        position: absolute;
-        left: 0%;
-        top: 50px;
-        width: 20%;
-    }
-
-    #txtOrientacoes {
-        position: absolute;
-        left: 0%;
-        top: 66px;
-        width: 75%;
-    }
-
     #lblNivelAcesso {
         width: 50%;
     }
@@ -317,85 +248,7 @@ PaginaSEI::getInstance()->fecharJavaScript();
         width: 50%;
     }
 
-    #lblModelo {
-        width: 50%;
-    }
-
-    #selModelo {
-        width: 40%;
-    }
-
-    #lblTipoDocPrincipal {
-        width: 50%;
-    }
-
-    #txtTipoDocPrinc {
-        width: 39.5%;
-    }
-
-    #imgLupaTipoDocPrinc {
-        top: 198%
-    }
-
-    #imgExcluirTipoDocPrinc {
-        top: 198%
-    }
-
-    #txtSerie {
-        width: 50%;
-    }
-
-    #lblDescricao {
-        width: 50%;
-    }
-
-    #selDescricao {
-        width: 75%;
-    }
-
-    #imgLupaTipoDocumento {
-        margin-top: 2px;
-        margin-left: 4px;
-    }
-
-    #txtSerieEssencial {
-        width: 50%;
-    }
-
-    #lblDescricaoEssencial {
-        width: 50%;
-    }
-
-    #selDescricaoEssencial {
-        width: 75%;
-    }
-
-    #imgLupaTipoDocumentoEssencial {
-        margin-top: 2px;
-        margin-left: 4px;
-    }
-
-    .fieldNone {
-        border: none !important;
-    }
-
-    .sizeFieldset#fldDocPrincipal {
-        height: 50% !important;
-    }
-
     <?php else: ?>
-    .sizeFieldset {
-        height: 30%;
-        width: 86%;
-    }
-
-    .tamanhoFieldset {
-        height: auto;
-        width: 86%;
-    }
-
-    #divIndicacaoInteressado {
-    }
 
     #imgLupaTipoProcesso {
         position: absolute;
@@ -409,65 +262,6 @@ PaginaSEI::getInstance()->fecharJavaScript();
         top: 18px;
     }
 
-    #divUnidade {
-        margin-top: 111px !important;
-    }
-
-    #lblUnidade {
-        left: 0%;
-        top: 15.7%;
-        width: 65%;
-    }
-
-    #txtUnidade {
-        left: 0%;
-        top: 17.6%;
-        width: 65%;
-        margin-top: 0.5%;
-    }
-
-    #imgLupaUnidade {
-        position: absolute;
-        left: 50.4%;
-    }
-
-    #imgExcluirUnidade {
-        position: absolute;
-        left: 52.1%;
-    }
-
-    #txtUnidadeMultipla {
-        left: 12px;
-        width: 65%;
-        margin-top: 0.5%;
-    }
-
-    #imgLupaUnidadeMultipla {
-        position: absolute;
-        left: 50.5%;
-        margin-top: 0.5%;
-    }
-
-    #sbmAdicionarUnidade {
-        position: absolute;
-        left: 53.2%;
-        margin-top: 0.5%;
-    }
-
-    #lblOrientacoes {
-        position: absolute;
-        left: 0%;
-        top: 50px;
-        width: 20%;
-    }
-
-    #txtOrientacoes {
-        position: absolute;
-        left: 0%;
-        top: 66px;
-        width: 75%;
-    }
-
     #lblNivelAcesso {
         width: 50%;
     }
@@ -484,113 +278,31 @@ PaginaSEI::getInstance()->fecharJavaScript();
         width: 50%;
     }
 
-    #lblModelo {
-        width: 50%;
-    }
-
-    #selModelo {
-        width: 40%;
-    }
-
-    #lblTipoDocPrincipal {
-        width: 50%;
-    }
-
-    #txtTipoDocPrinc {
-        width: 39.5%;
-    }
-
-    #imgLupaTipoDocPrinc {
-        top: 198%
-    }
-
-    #imgExcluirTipoDocPrinc {
-        top: 198%
-    }
-
-    #txtSerie {
-        width: 50%;
-    }
-
-    #lblDescricao {
-        width: 50%;
-    }
-
-    #selDescricao {
-        width: 75%;
-    }
-
-    #imgLupaTipoDocumento {
-        margin-top: 2px;
-        margin-left: 4px;
-    }
-
-    #imgExcluirTipoDocumento {
-    }
-
-    .fieldNone {
-        border: none !important;
-    }
-
-    .sizeFieldset#fldDocPrincipal {
-        height: 50% !important;
-    }
-
-    #txtSerieEssencial {
-        width: 50%;
-    }
-
-    #lblDescricaoEssencial {
-        width: 50%;
-    }
-
-    #selDescricaoEssencial {
-        width: 75%;
-    }
-
-    #imgLupaTipoDocumentoEssencial {
-        margin-top: 2px;
-        margin-left: 4px;
-    }
-
     <?php endif; ?>
 
     .fieldsetClear {
         border: none !important;
-    }
-
-    .rdIndicacaoIndiretaHide {
-        margin-left: 2.8% !important;
     }
 </style>
 <?php
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-<form id="frmCriterioCadastro" method="post" onsubmit="return OnSubmitForm();"
-      action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
+<form id="frmCriterioCadastro" method="post" onsubmit="return OnSubmitForm();" action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
     <?
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEI::getInstance()->abrirAreaDados('98%');
     ?>
 
-    <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
-           value="<?php echo $valorParametroHipoteseLegal; ?>"/>
+    <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal" value="<?php echo $valorParametroHipoteseLegal; ?>"/>
     <!--  Tipo de Processo  -->
     <div class="fieldsetClear">
         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo: </label>
-        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
-               class="infraText" value="<?php echo $nomeTipoProcesso; ?>"
-               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo $nomeTipoProcesso; ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
         <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
-        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
-               value="<?php echo $idMdPetTipoProcesso ?>"/>
-        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-             src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
-             class="infraImg"/>
-        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-             src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
-             class="infraImg"/>
+        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>"/>
+        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"/>
+        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"/>
 
     </div>
     <!--  Fim do Tipo de Processo -->
@@ -600,23 +312,15 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <fieldset class="infraFieldset" style="width:75%;">
             <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos&nbsp;</legend>
             <div>
-                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
-                                                   id="rdUsuExternoIndicarEntrePermitidos"
-                                                   onclick="changeNivelAcesso();" value="1">
+                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]" id="rdUsuExternoIndicarEntrePermitidos" onclick="changeNivelAcesso();" value="1">
+                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário Externo indicar diretamente</label><br/>
 
-                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário
-                    Externo indicar diretamente</label><br/>
+                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao" onclick="changeNivelAcesso();" value="2">
+                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido</label>
 
-                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
-                                                   onclick="changeNivelAcesso();" value="2">
-                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
-                    definido</label>
-
-                <div
-                    id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
+                <div id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
                     <div style="clear:both;">&nbsp;</div>
-                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">Nível
-                        de Acesso: </label><br/>
+                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
                     <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()">
                         <?= $strItensSelNivelAcesso ?>
                     </select>
@@ -624,8 +328,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <div id="divHipoteseLegal" <?php echo $hipoteseLegal; ?>>
                     <div style="clear:both;">&nbsp;</div>
-                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
-                           class="infraLabelObrigatorio">Hipótese Legal:</label><br/>
+                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal" class="infraLabelObrigatorio">Hipótese Legal:</label><br/>
                     <select id="selHipoteseLegal" name="selHipoteseLegal">
                         <?= $strItensSelHipoteseLegal ?>
                     </select>
@@ -635,19 +338,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     </div>
 
     <div style="clear:both;">&nbsp;</div>
-    <!--
-	<input type="hidden" id="hdnCorpoTabela" name="hdnCorpoTabela" value=""/>
-	<input type="hidden" id="hdnUnidadesSelecionadas" name="hdnUnidadesSelecionadas" value=""/>
-	<input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades" value='<?= json_encode($arrObjUnidadeDTOFormatado); ?>' />
-	<input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="" />
-	<input type="hidden" id="hdnSerie" name="hdnSerie" value="<?= $_POST['hdnSerie'] ?>" />
-	<input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>" />
-	<input type="hidden" id="hdnIdIndisponibilidadePeticionamento" name="hdnIdIndisponibilidadePeticionamento" value="" />
-	<input type="hidden" id="hdnIdSerie" name="hdnIdSerie" value="<?= $_POST['hdnIdSerie'] ?>" />
-	<input type="hidden" id="hdnIdSerieEssencial" name="hdnIdSerieEssencial" value="<?= $_POST['hdnIdSerieEssencial'] ?>" />
-	<input type="hidden" id="hdnSerieEssencial" name="hdnSerieEssencial" value="<?= $_POST['hdnSerieEssencial'] ?>" />
-	 -->
-
     <?
     PaginaSEI::getInstance()->fecharAreaDados();
     ?>
@@ -666,10 +356,9 @@ PaginaSEI::getInstance()->fecharHtml();
         document.getElementById('divNivelAcesso').style.display = "none";
         var padrao = document.getElementsByName('rdNivelAcesso[]')[1].checked;
 
-        document.getElementById('selNivelAcesso').value = '';
-        document.getElementById('selNivelAcesso').value = '';
         document.getElementById('selHipoteseLegal').value = '';
         document.getElementById('divHipoteseLegal').style.display = 'none';
+        document.getElementById('selNivelAcesso').value = '';
 
         if (padrao) {
             document.getElementById('divNivelAcesso').style.display = "inherit";
@@ -682,7 +371,7 @@ PaginaSEI::getInstance()->fecharHtml();
         var valorSelectNivelAcesso = document.getElementById('selNivelAcesso').value;
         var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
 
-        if (valorSelectNivelAcesso == '<?= ProtocoloRN::$NA_RESTRITO ?>' && valorHipoteseLegal != '0') {
+        if (valorSelectNivelAcesso == 'I' && valorHipoteseLegal != '0') {
             document.getElementById('divHipoteseLegal').style.display = 'inherit';
         } else {
             document.getElementById('divHipoteseLegal').style.display = 'none';
@@ -703,14 +392,16 @@ PaginaSEI::getInstance()->fecharHtml();
         infraEfeitoTabelas();
     }
 
+    /*
     function carregarDependenciaNivelAcesso() {
         //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?=$strLinkAjaxNivelAcesso?>');
+        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '< ?=$strLinkAjaxNivelAcesso?>');
         objAjaxIdNivelAcesso.prepararExecucao = function () {
             document.getElementById('selNivelAcesso').innerHTML = '';
             return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idTipoProcesso=' + document.getElementById('hdnIdTipoProcesso').value;
         }
     }
+    */
 
     function inicializarTela() {
     }
@@ -751,7 +442,9 @@ PaginaSEI::getInstance()->fecharHtml();
             if (id != '') {
                 document.getElementById('hdnIdTipoProcesso').value = id;
                 document.getElementById('txtTipoProcesso').value = descricao;
-                objAjaxIdNivelAcesso.executar();
+                //objAjaxIdNivelAcesso.executar();
+                document.getElementById('selNivelAcesso').value = '';
+                changeSelectNivelAcesso();
             }
         }
         objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
@@ -760,7 +453,6 @@ PaginaSEI::getInstance()->fecharHtml();
     function removerProcessoAssociado(remover) {
         document.getElementById('selNivelAcesso').innerHTML = '';
         document.getElementById('divHipoteseLegal').style.display = "none";
-        console.log(remover);
         if (remover === '1') {
             objLupaTipoProcesso.remover();
         }
@@ -785,7 +477,6 @@ PaginaSEI::getInstance()->fecharHtml();
             if (elemsNA[i].checked === true) {
                 validoNA = true;
                 valorNA = parseInt(elemsNA[i].value);
-                //console.log(elemsNA[i].value);
             }
         }
 
@@ -798,7 +489,7 @@ PaginaSEI::getInstance()->fecharHtml();
             alert('Informe o Nível de Acesso.');
             document.getElementById('selNivelAcesso').focus();
             return false;
-        } else if (document.getElementById('selNivelAcesso').value == <?= ProtocoloRN::$NA_RESTRITO ?> && valorHipoteseLegal != '0') {
+        } else if (document.getElementById('selNivelAcesso').value == 'I' && valorHipoteseLegal != '0') {
 
             //validar hipotese legal
             if (document.getElementById('selHipoteseLegal').value == '') {
@@ -807,10 +498,6 @@ PaginaSEI::getInstance()->fecharHtml();
                 return false;
             }
         }
-
-
-        //console.log('validação efetuada com sucesso');
-        //return false;
 
         return true;
     }

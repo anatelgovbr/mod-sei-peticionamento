@@ -75,6 +75,18 @@
   		$objRelSecaoModCjEstilosItemRN = new RelSecaoModCjEstilosItemRN();
   		$arrObjRelSecaoModCjEstilosItemDTO = InfraArray::indexarArrInfraDTO($objRelSecaoModCjEstilosItemRN->listar($objRelSecaoModCjEstilosItemDTO), 'IdSecaoModelo');
   		
+      foreach ($arrObjSecaoModeloDTO as $objSecaoModeloDTO) {
+        if (isset($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()])) {
+
+          $arrObjRelSecaoModCjEstilosItemDTO = array($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()]);
+          foreach ($arrObjRelSecaoModCjEstilosItemDTO as $objRelSecaoModCjEstilosItemDTO) {
+            echo count($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()]);
+            $strFormatos .= $objRelSecaoModCjEstilosItemDTO->getStrNomeEstilo() . "|";
+          }
+        }
+        $strFormatos = rtrim($strFormatos, '|');          
+      }       
+
   		$objImagemFormatoDTO = new ImagemFormatoDTO();
   		$objImagemFormatoDTO->retStrFormato();
   		$objImagemFormatoDTO->setBolExclusaoLogica(false);
@@ -90,15 +102,11 @@
   			
   			$txtConteudo = SessaoSEIExterna::getInstance()->getAtributo('docPrincipalConteudoHTML');
   			
-  		} else {
-  			
+  		} else {  			
   			//gera copia das secoes do modelo, ja formatando o conteudo com a formatacao padrao
-  			foreach ($arrObjSecaoModeloDTO as $objSecaoModeloDTO) {
-  					
+  			foreach ($arrObjSecaoModeloDTO as $objSecaoModeloDTO) {  					
   				$txtConteudo .= $objSecaoModeloDTO->getStrConteudo();
-  				
-  			}
-  			
+  			}  			
   		}
   		  		
   		//======================= FIM APLICANDO ESTILOS
@@ -109,7 +117,6 @@
   		$objEditorDTO->setStrSinSomenteLeitura('N');  		 
   		  		
   		$strConteudoCss = $objEditorRN->montarCssEditor( $conjuntoEstilosDTO->getNumIdConjuntoEstilos()  );
-  		//echo $strConteudoCss; die();
   		$objEditorDTO->setStrConteudoCss( $strConteudoCss );
   		$objEditorDTO->setStrCss( $strConteudoCss );
   		$objEditorDTO->setStrSinEstilos('S');
@@ -123,6 +130,7 @@
   			
   			try{
   				
+          //TODO: Possível risco de consumo excessivo de memória do servidor
   				SessaoSEIExterna::getInstance()->setAtributo('docPrincipalConteudoHTML', $_POST['txaConteudo']);
   				SessaoSEIExterna::getInstance()->setAtributo('idConjuntoEstilo', $_POST['idConjuntoEstilo']);
   				$txtConteudo = $_POST['txaConteudo'];
@@ -190,7 +198,8 @@ PaginaSEIExterna::getInstance()->fecharHead();
         <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" 
                  tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
         <script type="text/javascript">
-        CKEDITOR.replace('txaConteudo',{ 'autoGrow_onStartup':'true', 'toolbar':[["Save"],["Find","Replace","-","RemoveFormat","Bold","Italic","Underline","Strike","Subscript","Superscript","Maiuscula","Minuscula","TextColor","BGColor"],["Cut","Copy","PasteFromWord","PasteText","-","Undo","Redo","ShowBlocks","Symbol","Scayt"],["NumberedList","BulletedList","-","Outdent","Indent","base64image"],["Table","SpecialChar","SimpleLink","Extenso","Zoom"],["Styles"]]});
+        CKEDITOR.replace('txaConteudo',{ 'autoGrow_onStartup':'true', "stylesheetParser_validSelectors":/^(p).(<?=$strFormatos?>)$/i, 
+          'toolbar':[["Save"],["Find","Replace","-","RemoveFormat","Bold","Italic","Underline","Strike","Subscript","Superscript","Maiuscula","Minuscula","TextColor","BGColor"],["Cut","Copy","PasteFromWord","PasteText","-","Undo","Redo","ShowBlocks","Symbol","Scayt"],["NumberedList","BulletedList","-","Outdent","Indent","base64image"],["Table","SpecialChar","SimpleLink","Extenso","Zoom"],["Styles"]]});
         </script>
       </div>
     </td>

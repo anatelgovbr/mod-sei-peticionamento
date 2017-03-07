@@ -429,11 +429,13 @@ function OnSubmitForm() {
 
 function salvar(){
 	
+
 	//validar interessado
 	var interessado1 = document.frmCadastro.tipoPessoa.value;
 	var interessado2 = '';
 	var tipoPessoaPF = document.frmCadastro.tipoPessoaPF;
 	
+
 	if( tipoPessoaPF != null && tipoPessoaPF != undefined ){
 	  interessado2 = tipoPessoaPF.value;
 	}
@@ -473,12 +475,13 @@ function salvar(){
 	}
 	
 	//validar pj vinculada (caso exista)
-	var pjVinculada = document.getElementById('txtPjVinculada').value;
+    var inputPjVinculada = document.getElementById('txtPjVinculada');
+	var pjVinculada = (inputPjVinculada) ? document.getElementById('txtPjVinculada').value : "";
 	var idContextoAjax = document.getElementById('hdnIdContextoContato');
 
 	if( interessado1 == 'pf' && interessado2 == '1' && ( pjVinculada == '' || idContextoAjax == null || idContextoAjax.value=='' ) ){
 		alert('Informe a Razão Social da Pessoa Jurídica vinculada.');
-		document.getElementById('txtPjVinculada').focus();
+		inputPjVinculada.focus();
 		return;		 
 	}
 	
@@ -592,7 +595,7 @@ function salvar(){
 	  document.getElementById('bairro').focus();
 	  return;
 	}
-	
+
 	//estado
 	var estado = document.getElementById('selEstado').value;
 

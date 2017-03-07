@@ -16,113 +16,92 @@
          * @param int $numeroProcesso
          * @return string
          * @since  28/11/2016
-         * @author Jaqueline Mendes jaqueline.mendes@castgroup.com.br
          */
         public static function gerarXMLvalidacaoNumeroProcesso($numeroProcesso)
         {
+            $xmlMensagemErro = '<Validacao><MensagemValidacao>%s</MensagemValidacao></Validacao>';
+            $strMsgProcessoNaoExiste = 'O número de processo indicado não existe no sistema. Verifique se o número está correto e completo, inclusive com o Dígito Verificador.';
+            $strMsgProcessoNaoAceitaPeticionamento = 'O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.';
 
             $objMdPetIntercorrenteRN = new MdPetIntercorrenteProcessoRN();
             $objProtocoloDTO         = new ProtocoloDTO();
             $objProtocoloDTO->setStrProtocoloFormatadoPesquisa(InfraUtil::retirarFormatacao($numeroProcesso, false));
             $objProtocoloDTO = $objMdPetIntercorrenteRN->pesquisarProtocoloFormatado($objProtocoloDTO);
-
             $xml = '<Validacao>';
 
-            if (!is_null($objProtocoloDTO)) {
-                $objProcedimentoDTO = new ProcedimentoDTO();
-                $objProcedimentoRN  = new ProcedimentoRN();
-                $objProcedimentoDTO->setDblIdProcedimento($objProtocoloDTO->getDblIdProtocolo());
-                $objProcedimentoDTO->retTodos(true);
-                $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
-                $msg                = '';
+            if (! $objProtocoloDTO) {
+                return sprintf($xmlMensagemErro, $strMsgProcessoNaoExiste);
+            }
 
-                if (!is_null($objProcedimentoDTO)) {
+            $objProcedimentoDTO = new ProcedimentoDTO();
+            $objProcedimentoRN  = new ProcedimentoRN();
+            $objProcedimentoDTO->setDblIdProcedimento($objProtocoloDTO->getDblIdProtocolo());
+            $objProcedimentoDTO->retTodos(true);
+            $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
 
-                    $unidadeValida  = $objMdPetIntercorrenteRN->validarUnidadeProcesso($objProcedimentoDTO);
-                    $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
+            $unidadeValida  = $objMdPetIntercorrenteRN->validarUnidadeProcesso($objProcedimentoDTO);
 
-                    if ($unidadeValida) {
-                        $idTpProcedimento = $objProcedimentoDTO->getNumIdTipoProcedimento();
-                        $tpProcedimento   = $objProcedimentoDTO->getStrNomeTipoProcedimento();
+            if (! $unidadeValida) {
+                return sprintf($xmlMensagemErro, $strMsgProcessoNaoAceitaPeticionamento);
+            }
 
+            $objAtividadeDTO = new AtividadeDTO();
+            $objAtividadeDTO->setDblIdProcedimentoProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+            $idUnidadeReabrirProcesso = $objMdPetIntercorrenteRN->retornaUltimaUnidadeProcessoConcluido($objAtividadeDTO);
 
-                        //$processoIntercorrente = $contadorCriterioIntercorrente > 0 ? 'Direto no Processo Indicado.' : 'Em Processo Novo Relacionado ao Processo indicado';
+            $unidadeDTO = new UnidadeDTO();
+            $unidadeDTO->retTodos();
+            $unidadeDTO->setBolExclusaoLogica(false);
+            $unidadeDTO->setNumIdUnidade($idUnidadeReabrirProcesso);
+            $unidadeRN = new UnidadeRN();
+            $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
-                        $objAtividadeDTO = new AtividadeDTO();
-                        $objAtividadeDTO->setDblIdProcedimentoProtocolo($objProcedimentoDTO->getDblIdProcedimento());
-                        $idUnidadeReabrirProcesso = $objMdPetIntercorrenteRN->retornaUltimaUnidadeProcessoConcluido($objAtividadeDTO);
+            if($objUnidadeDTO->getStrSinAtivo() == 'N'){
+                $idUnidadeReabrirProcesso = null;
+                $objAtividadeRN  = new MdPetIntercorrenteAtividadeRN();
+                $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
 
-                        $unidadeDTO = new UnidadeDTO();
-                        $unidadeDTO->retTodos();
-                        $unidadeDTO->setBolExclusaoLogica(false);
-                        $unidadeDTO->setNumIdUnidade($idUnidadeReabrirProcesso);
-                        $unidadeRN = new UnidadeRN();
-                        $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
-//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//var_dump($objUnidadeDTO); echo '</pre>'; exit;
-                       // $idUnidadeAbrirNovoProcesso = $objMdPetIntercorrenteRN->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
-                        if($objUnidadeDTO->getStrSinAtivo() == 'N'){
-                            $idUnidadeReabrirProcesso = null;
-                            $objAtividadeRN  = new MdPetIntercorrenteAtividadeRN();
-                            $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
-
-                            foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
-                                if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
-                                    $idUnidadeReabrirProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
-                                }
-                            }
-                        }
-//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//var_dump($idUnidadeReabrirProcesso); echo '</pre>'; exit;
-                        if($idUnidadeReabrirProcesso == null) {
-                            $msg = 'O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.';
-                        } else {
-                            $objCriterioIntercorrenteDTO = new CriterioIntercorrentePeticionamentoDTO();
-                            $objCriterioIntercorrenteRN  = new CriterioIntercorrentePeticionamentoRN();
-                            $objCriterioIntercorrenteDTO->setNumIdTipoProcedimento($idTpProcedimento);
-                            $objCriterioIntercorrenteDTO->setStrSinCriterioPadrao('N');
-                            $objCriterioIntercorrenteDTO->retTodos(true);
-
-                            $contadorCriterioIntercorrente = $objCriterioIntercorrenteRN->contar($objCriterioIntercorrenteDTO);
-
-                            $estadosReabrirRelacionado = array(ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO, ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO, ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO);
-                            /**
-                             * Verifica se:
-                             * 1 - Se o processo eh sigiloso (nivel de acesso global ou local eh igual a 2)
-                             * 2 - Se o Tipo do Processo do procedimento informado nao possui um intercorrente cadastrado(neste caso irah utilizar o Intercorrente Padrao)
-                             */
-                            $processoIntercorrente = 'Direto no Processo Indicado';
-                            if($contadorCriterioIntercorrente <= 0
-                                || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
-                                || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO
-                                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado)){
-                                $processoIntercorrente = 'Em Processo Novo Relacionado ao Processo Indicado';
-                            }
-
-                            $urlValida = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_procedimento=' . $idProcedimento . '&id_tipo_procedimento=' . $idTpProcedimento . '&acao=md_pet_intercorrente_usu_ext_assinar&tipo_selecao=2'));
-
-                            $xml .= '<IdTipoProcedimento>' . $idTpProcedimento . '</IdTipoProcedimento>';
-                            $xml .= '<IdProcedimento>' . $idProcedimento . '</IdProcedimento>';
-                            $xml .= '<numeroProcesso>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . '</numeroProcesso>';
-                            $xml .= '<TipoProcedimento> ' . $tpProcedimento . ' </TipoProcedimento>';
-                            $xml .= '<ProcessoIntercorrente>' . $processoIntercorrente . '</ProcessoIntercorrente>';
-                            $xml .= '<UrlValida>' . htmlentities($urlValida) . '</UrlValida>';
-                        }
-                    } else {
-                        $msg = 'O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.';
-                        //$xml .= '<MensagemValidacao>. $msg.</MensagemValidacao>';
+                foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
+                    if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
+                        $idUnidadeReabrirProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
                     }
-                } else {
-                    $msg = 'O número de processo indicado não existe no sistema. Verifique se o número está correto e completo, inclusive com o Dígito Verificador.';
                 }
-            } else {
-                $msg = 'O número de processo indicado não existe no sistema. Verifique se o número está correto e completo, inclusive com o Dígito Verificador.';
+
+                if($idUnidadeReabrirProcesso == null) {
+                    return sprintf($xmlMensagemErro, $strMsgProcessoNaoAceitaPeticionamento);
+                }
             }
 
-            if ($msg != '') {
-                $xml .= '<MensagemValidacao>' . $msg . '</MensagemValidacao>';
+            $objCriterioIntercorrenteDTO = new CriterioIntercorrentePeticionamentoDTO();
+            $objCriterioIntercorrenteRN  = new CriterioIntercorrentePeticionamentoRN();
+            $objCriterioIntercorrenteDTO->setNumIdTipoProcedimento($objProcedimentoDTO->getNumIdTipoProcedimento());
+            $objCriterioIntercorrenteDTO->setStrSinCriterioPadrao('N');
+            $objCriterioIntercorrenteDTO->retTodos(true);
+
+            $contadorCriterioIntercorrente = $objCriterioIntercorrenteRN->contar($objCriterioIntercorrenteDTO);
+
+            $estadosReabrirRelacionado = array(ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO, ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO, ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO);
+            /**
+             * Verifica se:
+             * 1 - Se o processo eh sigiloso (nivel de acesso global ou local eh igual a 2)
+             * 2 - Se o Tipo do Processo do procedimento informado nao possui um intercorrente cadastrado(neste caso irah utilizar o Intercorrente Padrao)
+             */
+            $processoIntercorrente = 'Direto no Processo Indicado';
+            if($contadorCriterioIntercorrente <= 0
+                || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
+                || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO
+                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado)){
+                $processoIntercorrente = 'Em Processo Novo Relacionado ao Processo Indicado';
             }
 
+            $urlValida = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_procedimento=' . $objProcedimentoDTO->getDblIdProcedimento() . '&id_tipo_procedimento=' . $objProcedimentoDTO->getNumIdTipoProcedimento() . '&acao=md_pet_intercorrente_usu_ext_assinar&tipo_selecao=2'));
+
+            $xml .= '<IdTipoProcedimento>' . $objProcedimentoDTO->getNumIdTipoProcedimento() . '</IdTipoProcedimento>';
+            $xml .= '<IdProcedimento>' . $objProcedimentoDTO->getDblIdProcedimento() . '</IdProcedimento>';
+            $xml .= '<numeroProcesso>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . '</numeroProcesso>';
+            $xml .= '<TipoProcedimento> ' . $objProcedimentoDTO->getStrNomeTipoProcedimento() . ' </TipoProcedimento>';
+            $xml .= '<ProcessoIntercorrente>' . $processoIntercorrente . '</ProcessoIntercorrente>';
+            $xml .= '<UrlValida>' . htmlentities($urlValida) . '</UrlValida>';
             $xml .= '</Validacao>';
 
             return $xml;

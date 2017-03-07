@@ -220,6 +220,80 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         return $objUnidadeAPI->getIdUnidade();
     }
 
+    /**
+     * Função responsável por Retornar todas as unidades em que o processo está aberto
+     *   buscado em: ProcedimentoINT.php - montarAcoesArvore() - linhas 766 a 870
+     * @param $idProcedimento
+     * @return AtividadeDTO $arrObjAtividadeDTO
+     * @since  07/03/2017
+     * @author CAST - castgroup.com.br
+     */    
+    protected function retornaUnidadesProcessoAbertoConectado($idProcedimento){
+
+		$arrAtividade = array();
+
+		$objProcedimentoDTO = new ProcedimentoDTO();
+		$objProcedimentoDTO->setDblIdProcedimento($idProcedimento);
+		$objProcedimentoDTO->retStrStaNivelAcessoGlobalProtocolo();
+		$objProcedimentoDTO->retStrStaEstadoProtocolo();
+
+		$objProcedimentoRN = new ProcedimentoRN();
+		$objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
+		$strStaNivelAcessoGlobal = $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo();
+
+		$bolFlagSobrestado = false;
+		if ($objProcedimentoDTO->getStrStaEstadoProtocolo()==ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO){
+			$bolFlagSobrestado = true;
+		}
+
+		$objAtividadeRN = new AtividadeRN();
+		$objAtividadeDTO = new AtividadeDTO();
+		$objAtividadeDTO->setDistinct(true);
+		$objAtividadeDTO->retNumIdUnidade();
+		$objAtividadeDTO->retStrSiglaUnidade();
+		$objAtividadeDTO->retStrDescricaoUnidade();
+
+		$objAtividadeDTO->setOrdStrSiglaUnidade(InfraDTO::$TIPO_ORDENACAO_ASC);
+
+		if ($strStaNivelAcessoGlobal==ProtocoloRN::$NA_SIGILOSO){
+			$objAtividadeDTO->retNumIdUsuario();
+			$objAtividadeDTO->retStrSiglaUsuario();
+			$objAtividadeDTO->retStrNomeUsuario();
+		}else{
+			$objAtividadeDTO->retNumIdUsuarioAtribuicao();
+			$objAtividadeDTO->retStrSiglaUsuarioAtribuicao();
+			$objAtividadeDTO->retStrNomeUsuarioAtribuicao();
+
+			//ordena descendente pois no envio de processo que já existe na unidade e está atribuído ficará com mais de um andamento em aberto
+			//desta forma os andamentos com usuário nulo (envios do processo) serão listados depois
+			$objAtividadeDTO->setOrdStrSiglaUsuarioAtribuicao(InfraDTO::$TIPO_ORDENACAO_DESC);
+		}
+		$objAtividadeDTO->setDblIdProtocolo($idProcedimento);
+		$objAtividadeDTO->setDthConclusao(null);
+
+		//sigiloso sem credencial nao considera o usuario atual
+		if ($strStaNivelAcessoGlobal==ProtocoloRN::$NA_SIGILOSO){
+			$objAcessoDTO = new AcessoDTO();
+			$objAcessoDTO->setDistinct(true);
+			$objAcessoDTO->retNumIdUsuario();
+			$objAcessoDTO->setDblIdProtocolo($dblIdProcedimento);
+			$objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
+
+			$objAcessoRN = new AcessoRN();
+			$arrObjAcessoDTO = $objAcessoRN->listar($objAcessoDTO);
+
+			$objAtividadeDTO->setNumIdUsuario(InfraArray::converterArrInfraDTO($arrObjAcessoDTO,'IdUsuario'),InfraDTO::$OPER_IN);
+		}
+
+		$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
+
+		if ($strStaNivelAcessoGlobal!=ProtocoloRN::$NA_SIGILOSO){
+			//filtra andamentos com indicação de usuário atribuído 
+			$arrObjAtividadeDTO = InfraArray::distinctArrInfraDTO($arrObjAtividadeDTO,'SiglaUnidade');
+		}
+		return $arrObjAtividadeDTO;
+    }
+
     protected function incluirDocumentosApi($objProcedimentoDTO, $arrObjDocumentoAPI)
     {
         $arrObjReciboDocPet = array();
@@ -575,6 +649,7 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
          * 1 - Se o processo eh sigiloso (nivel de acesso global ou local eh igual a 2)
          * 2 - Se o Tipo do Processo do procedimento informado nao possui um intercorrente cadastrado(neste caso irah utilizar o Intercorrente Padrao)
          */
+        $params['diretoProcessoIndicado']=false;
         if ($objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S'
             || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
             || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO
@@ -600,6 +675,8 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         	if( $reaberturaRN->isNecessarioReabrirProcedimento( $objProcedimentoDTO ) ) {		
         		$reaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
         	}
+        	
+        	$params['diretoProcessoIndicado']=true;
         	
             $this->setProcedimentoDTO($params['id_procedimento']);
         }

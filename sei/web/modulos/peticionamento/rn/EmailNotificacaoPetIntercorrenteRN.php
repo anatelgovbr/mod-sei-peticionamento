@@ -48,12 +48,29 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
         $objOrgaoDTO->setStrSinAtivo('S');
         $objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
 
-        //pegar a lista de email da unidade, a unidade pode não ter, email unidade
-        $objEmailUnidadeDTO = new EmailUnidadeDTO();
-        $emailUnidadeRN = new EmailUnidadeRN();
-        $objEmailUnidadeDTO->retStrEmail();
-        $objEmailUnidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-        $arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
+		// Se Direto no Processo Indicado, não só unidade geradoras, mas todas abertas
+		if ($arrParametros['diretoProcessoIndicado']){
+			$objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN(); 
+			$arrObjAtividadeDTO = $objMdPetIntercorrenteProcessoRN->retornaUnidadesProcessoAberto( $arrParametros['id_procedimento'] );
+			$arrUnidade = InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');				
+
+			$objEmailUnidadeDTO = new EmailUnidadeDTO();
+			$emailUnidadeRN = new EmailUnidadeRN();
+			$objEmailUnidadeDTO->retStrEmail();
+			$objEmailUnidadeDTO->adicionarCriterio(
+				array('IdUnidade'),
+				array(InfraDTO::$OPER_IN),
+				array( $arrUnidade )
+			);
+			$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
+		//pegar a lista de email da unidade, a unidade pode não ter, email unidade
+		}else{
+			$objEmailUnidadeDTO = new EmailUnidadeDTO();
+			$emailUnidadeRN = new EmailUnidadeRN();
+			$objEmailUnidadeDTO->retStrEmail();
+			$objEmailUnidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
+			$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
+		}
 
         //obtendo o tipo de procedimento
         $idTipoProc = $arrParametros['id_tipo_procedimento'];

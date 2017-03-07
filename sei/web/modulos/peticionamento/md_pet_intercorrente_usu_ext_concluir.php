@@ -26,31 +26,19 @@ try {
   //=====================================================
      
   //preenche a combo Função
-  $objCargoDTO = new CargoDTO();
-  //seiv2
-  //$objCargoDTO->retTodos(); 
-  
-  //alteracoes seiv3
-  $objCargoDTO->retNumIdCargo();
-  $objCargoDTO->retStrExpressao();
-  $objCargoDTO->retStrSinAtivo();
-  
-  $objCargoDTO->setOrdStrExpressao(InfraDTO::$TIPO_ORDENACAO_ASC);
-   
-  $objCargoRN = new CargoRN();
-  $arrObjCargoDTO = $objCargoRN->listarRN0302($objCargoDTO);
-  
+  $objMdPetCargoRN = new MdPetCargoRN();
+  $arrObjCargoDTO = $objMdPetCargoRN->listarDistintos();  
+
   //=====================================================
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
 
-  
+  $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
+
   switch($_GET['acao']){
     
   	case 'md_pet_intercorrente_usu_ext_assinar':
-        $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
         break;
-  		
   	case 'md_pet_intercorrente_usu_ext_concluir':
         $objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN();
         $resultado = $objMdPetIntercorrenteProcessoRN->cadastrar($_POST);
@@ -124,7 +112,7 @@ $arrComandos[] = '<button type="button" accesskey="a" name="Assinar" value="Assi
 $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intercorrente_usu_ext_concluir&id_procedimento='.$_REQUEST['id_procedimento'].'&id_tipo_procedimento='.$_REQUEST['id_tipo_procedimento'].'&acao_origem='.$_GET['acao']);
 ?>
-<form id="frmConcluir" method="post" action="<?=PaginaSEIExterna::getInstance()->formatarXHTML($urlAssinada)?>">
+<form id="frmConcluir" method="post" onsubmit="return assinar();" action="<?=PaginaSEIExterna::getInstance()->formatarXHTML($urlAssinada)?>">
 <?
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
@@ -196,11 +184,11 @@ function isValido(){
 	var senha = document.getElementById("senhaSEI").value;
 
 	if( cargo == ""){
-		alert('Favor informe o cargo.');
+		alert('Favor informe o Cargo/Função.');
 		document.getElementById("selCargo").focus();
 		return false;
 	} else if( senha == ""){
-		alert('Favor informe a senha');
+		alert('Favor informe a Senha.');
 		document.getElementById("senhaSEI").focus();
 		return false;
 	} else {
@@ -212,8 +200,10 @@ function isValido(){
 function assinar(){
 	if( isValido() ) {
         document.getElementById('hdnSubmit').value = '1';
+        processando();
 		document.getElementById('frmConcluir').submit();
 	}
+	return false;
 }
 
 function assinar2(){
@@ -411,6 +401,61 @@ function carregarTabelaDocumento() {
     hdnTbDocumento.name = 'hdnTbDocumento';
     hdnTbDocumento.value = hdnTbDocumentoPai.value;
     frm.appendChild(hdnTbDocumento);
+
+}
+
+function exibirBotaoCancelarAviso(){
+
+	var div = document.getElementById('divInfraAvisoFundo');
+
+	if (div!=null && div.style.visibility == 'visible'){
+
+		var botaoCancelar = document.getElementById('btnInfraAvisoCancelar');
+
+		if (botaoCancelar != null){
+			botaoCancelar.style.display = 'block';
+		}
+	}
+}
+
+function exibirAvisoEditor(){
+
+  var divFundo = document.getElementById('divInfraAvisoFundo');
+
+  if (divFundo==null){
+    divFundo = infraAviso(false, 'Processando...');
+  }else{
+    document.getElementById('btnInfraAvisoCancelar').style.display = 'none';
+    document.getElementById('imgInfraAviso').src='/infra_css/imagens/aguarde.gif';
+  }
+
+  if (INFRA_IE==0 || INFRA_IE>=7){
+    divFundo.style.position = 'fixed';
+  }
+
+  var divAviso = document.getElementById('divInfraAviso');
+
+  divAviso.style.top = Math.floor(infraClientHeight()/3) + 'px';
+  divAviso.style.left = Math.floor((infraClientWidth()-200)/2) + 'px';
+  divAviso.style.width = '200px';
+  divAviso.style.border = '1px solid black';
+
+  divFundo.style.width = screen.width*2 + 'px';
+  divFundo.style.height = screen.height*2 + 'px';
+  divFundo.style.visibility = 'visible';
+
+}
+
+function processando() {
+
+	exibirAvisoEditor();
+	timeoutExibirBotao = self.setTimeout('exibirBotaoCancelarAviso()',30000);
+
+	if (INFRA_IE>0) {
+	  window.tempoInicio=(new Date()).getTime();
+	} else {
+	  console.time('s'); 
+	}	
 
 }
 </script>

@@ -71,9 +71,10 @@ try {
             $objReciboPeticionamentoDTO = new ReciboPeticionamentoDTO();
             $objReciboPeticionamentoDTO->setNumIdReciboPeticionamento($_GET['id_md_pet_rel_recibo_protoc']);
             $objReciboPeticionamentoDTO->retNumIdProtocolo();
+            $objReciboPeticionamentoDTO->retDblIdDocumento();
             $objReciboPeticionamentoRN  = new ReciboPeticionamentoRN();
             $objReciboPeticionamentoDTO = $objReciboPeticionamentoRN->consultar($objReciboPeticionamentoDTO);
-
+            
             $objProtocoloDTO = new ProtocoloDTO();
             $objProtocoloDTO->retDblIdProtocolo();
             $objProtocoloDTO->setDblIdProtocolo($objReciboPeticionamentoDTO->getNumIdProtocolo());
@@ -87,11 +88,10 @@ try {
             $documentoRN = new DocumentoRN();
             $documentoReciboDTO = new DocumentoDTO();
             $documentoReciboDTO->retStrProtocoloDocumentoFormatado();
-            $documentoReciboDTO->setDblIdProcedimento( $objReciboPeticionamentoDTO->getNumIdProtocolo() );
-            $documentoReciboDTO->setNumIdSerie( $idSerieParam );
-            $documentoReciboDTO->setDblIdDocumento( $_GET['id_documento'] );
+            $documentoReciboDTO->setDblIdDocumento( $objReciboPeticionamentoDTO->getDblIdDocumento() );
+            
             $documentoReciboDTO = $documentoRN->consultarRN0005( $documentoReciboDTO );
-
+            
             if( $documentoReciboDTO != null ){
                 $strTitulo = 'Recibo Eletrônico de Protocolo - SEI n° ' . $documentoReciboDTO->getStrProtocoloDocumentoFormatado();
             } else {
@@ -265,10 +265,10 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
 
         <div style="height:auto; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
 
-            <table align="center" style="width: 90%" border="0">
+            <table align="center" style="width: 95%" border="0">
 
                 <tr>
-                    <td style="font-weight: bold; width: 300px;">Usuário Externo (signatário):</td>
+                    <td style="font-weight: bold; width: 400px;">Usuário Externo (signatário):</td>
                     <td><?= $usuarioDTO->getStrNome() ?></td>
                 </tr>
 

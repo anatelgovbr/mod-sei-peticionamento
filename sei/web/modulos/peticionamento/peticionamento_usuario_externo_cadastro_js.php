@@ -557,11 +557,11 @@ function receberInteressado( arrDadosInteressado, InteressadoCustomizado ){
 	  
 	  }
 
-	debugger;
+	var nomeInteressadoTratado = document.getElementById('txtNomeRazaoSocialTratadoHTML').value;
 	objTabelaInteressado.adicionar([ arrDadosInteressado[0], 
 	                    arrDadosInteressado[1] , 
-	                  	arrDadosInteressado[2] ,  
-	                  	arrDadosInteressado[3], 
+	                  	arrDadosInteressado[2] ,
+						nomeInteressadoTratado, 
 	                  	'' ]);
     if( InteressadoCustomizado != "" || strUsuarioLogado == arrDadosInteressado[4]) {
 
@@ -1140,6 +1140,7 @@ function abrirCadastroInteressado(){
 				  $('#hdnIdInteressadoCadastrado').val(obj.id);
 		    	  $('#txtNomeRazaoSocial').val(obj.nome);
 		    	  $('#hdnUsuarioCadastro').val(obj.usuario);
+				  $('#txtNomeRazaoSocialTratadoHTML').val(obj.nomeTratado);
 		    	  $('#hdnCustomizado').val('');
 		    	  return;
 		        } 
@@ -1148,6 +1149,7 @@ function abrirCadastroInteressado(){
 			      	  
 					//charmar janela para cadastrar um novo interessado
 					$('#txtNomeRazaoSocial').val('');
+					$('#txtNomeRazaoSocialTratadoHTML').val('');
 					$('#hdnCustomizado').val('');
 
 					if( chkTipoPessoaFisica ){

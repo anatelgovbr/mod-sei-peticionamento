@@ -1,6 +1,6 @@
 <?php
     //INICIALIZACAO DE VARIAVEIS DA PAGINA
-    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao número do processo a ser validado abaixo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluídos diretamente no processo indicado ou protocolizado em processo novo apartado relacionado ao processo indicado.";
+    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao número do processo a ser validado abaixo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluídos diretamente no processo indicado ou em processo novo relacionado.";
 
     $arrComandos   = array();
     $arrComandos[] = '<button type="button" accesskey="p" name="Peticionar" id="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
@@ -11,18 +11,10 @@
     $strUrlAjaxMontarSelectTipoDocumento = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=montar_select_tipo_documento');
     $strUrlAjaxMontarSelectNivelAcesso   = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=montar_select_nivel_acesso');
     $strUrlAjaxCriterioIntercorrente     = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=verificar_criterio_intercorrente');
-    $strUrlAjaxMontarHipoteseLegal       = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=montar_select_hipotese_legal');
+
     //Fim Links
 
     //Msgs dos Tooltips de Ajuda
-    $strMsgTooltipFormato                  = 'Selecione a opção “Nato-digital” se o arquivo a ser carregado foi criado originalmente em meio eletrônico.\n\n\n Selecione a opção “Digitalizado” somente se o arquivo a ser carregado foi produzido da digitalização de um documento em papel.';
-    $strMsgTooltipTipoDocumento            = 'Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.';
-    $strMsgTooltipComplementoTipoDocumento = 'O Complemento do Tipo de Documento é o texto que completa a identificação do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo “Recurso” e Complemento “de 1ª Instância” identificará o documento como “Recurso de 1ª Instância”).\n\n\n Exemplos: O Complemento do Tipo “Nota” pode ser “Fiscal Eletrônica” ou “Fiscal nº 75/2016”. O Complemento do Tipo “Comprovante” pode ser “de Pagamento” ou “de Endereço”.';
-    //Msgs dos Tooltips de Ajuda
-    $strMsgTooltipInteressadoProprioUsuarioExterno	= 'Para o Tipo de Processo escolhido o Interessado do processo a ser aberto somente pode ser o próprio Usuário Externo logado no sistema.';
-    $strMsgTooltipInteressadoInformandoCPFeCNPJ		= 'Para o Tipo de Processo escolhido é possível adicionar os Interessados do processo a ser aberto por meio da indicação de CPF ou CNPJ válidos, devendo complementar seus cadastros caso necessário.';
-    $strMsgTooltipInteressadoDigitadoNomeExistente	= 'Para o Tipo de Processo escolhido é possível adicionar os Interessados do processo a ser aberto a partir da base de Interessados já existentes. Caso necessário, clique na Lupa "Localizar Interessados" para uma pesquisa mais detalhada ou, na janela aberta, acessar o botão "Cadastrar Novo Interessado".';
-    $strMsgTooltipTipoDocumentoPrincipal			= 'Como somente pode ter um Documento Principal, o Tipo de Documento correspondente já é previamente definido. Deve, ainda, ser complementado no campo ao lado.';
     $strMsgTooltipTipoDocumento						= 'Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.';
     $strMsgTooltipComplementoTipoDocumento			= 'O Complemento do Tipo de Documento é o texto que completa a identificação do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo “Recurso” e Complemento “de 1ª Instância” identificará o documento como “Recurso de 1ª Instância”).\n\n\n Exemplos: O Complemento do Tipo “Nota” pode ser “Fiscal Eletrônica” ou “Fiscal nº 75/2016”. O Complemento do Tipo “Comprovante” pode ser “de Pagamento” ou “de Endereço”.';
     $strMsgTooltipNivelAcesso						= 'O Nível de Acesso que for indicado é de sua exclusiva responsabilidade e estará condicionado à análise por servidor público, que poderá, motivadamente, alterá-lo a qualquer momento sem necessidade de prévio aviso.\n\n\n Selecione "Público" se no teor do documento a ser carregado não existir informações restritas. Se no teor do documento existir informações restritas, selecione "Restrito" e, em seguida, a Hipótese Legal correspondente.';
@@ -32,8 +24,8 @@
     $strMsgTooltipFormato							= 'Selecione a opção “Nato-digital” se o arquivo a ser carregado foi criado originalmente em meio eletrônico.\n\n\n Selecione a opção “Digitalizado” somente se o arquivo a ser carregado foi produzido da digitalização de um documento em papel.';
     //Fim Msgs
 
-
-
+    $selHipoteseLegal = MdPetIntercorrenteINT::montarSelectHipoteseLegal();
+    
 //RN Tamanho Maximo Arquivo
     $tamanhoMaximo = MdPetIntercorrenteINT::tamanhoMaximoArquivoPermitido();
     //Fim RN

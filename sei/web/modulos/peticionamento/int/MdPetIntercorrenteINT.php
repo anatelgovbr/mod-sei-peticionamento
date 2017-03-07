@@ -45,24 +45,69 @@
                         $idTpProcedimento = $objProcedimentoDTO->getNumIdTipoProcedimento();
                         $tpProcedimento   = $objProcedimentoDTO->getStrNomeTipoProcedimento();
 
-                        $objCriterioIntercorrenteDTO = new CriterioIntercorrentePeticionamentoDTO();
-                        $objCriterioIntercorrenteRN  = new CriterioIntercorrentePeticionamentoRN();
-                        $objCriterioIntercorrenteDTO->setNumIdTipoProcedimento($idTpProcedimento);
-                        $objCriterioIntercorrenteDTO->setStrSinCriterioPadrao('N');
-                        $objCriterioIntercorrenteDTO->retTodos(true);
 
-                        $count                 = $objCriterioIntercorrenteRN->contar($objCriterioIntercorrenteDTO);
-                        $processoIntercorrente = $count > 0 ? 'Direto no Processo Indicado.' : 'Em Processo Novo Relacionado ao Processo indicado';
+                        //$processoIntercorrente = $contadorCriterioIntercorrente > 0 ? 'Direto no Processo Indicado.' : 'Em Processo Novo Relacionado ao Processo indicado';
 
-                        $urlValida = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_procedimento=' . $idProcedimento . '&id_tipo_procedimento=' . $idTpProcedimento . '&acao=md_pet_intercorrente_usu_ext_assinar&tipo_selecao=2'));
+                        $objAtividadeDTO = new AtividadeDTO();
+                        $objAtividadeDTO->setDblIdProcedimentoProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+                        $idUnidadeReabrirProcesso = $objMdPetIntercorrenteRN->retornaUltimaUnidadeProcessoConcluido($objAtividadeDTO);
 
-                        $xml .= '<IdTipoProcedimento>' . $idTpProcedimento . '</IdTipoProcedimento>';
-                        $xml .= '<IdProcedimento>' . $idProcedimento . '</IdProcedimento>';
-                        $xml .= '<numeroProcesso>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . '</numeroProcesso>';
-                        $xml .= '<TipoProcedimento> ' . $tpProcedimento . ' </TipoProcedimento>';
-                        $xml .= '<ProcessoIntercorrente>' . $processoIntercorrente . '</ProcessoIntercorrente>';
-                        $xml .= '<UrlValida>' . htmlentities($urlValida) . '</UrlValida>';
+                        $unidadeDTO = new UnidadeDTO();
+                        $unidadeDTO->retTodos();
+                        $unidadeDTO->setBolExclusaoLogica(false);
+                        $unidadeDTO->setNumIdUnidade($idUnidadeReabrirProcesso);
+                        $unidadeRN = new UnidadeRN();
+                        $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
+//var_dump($objUnidadeDTO); echo '</pre>'; exit;
+                       // $idUnidadeAbrirNovoProcesso = $objMdPetIntercorrenteRN->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
+                        if($objUnidadeDTO->getStrSinAtivo() == 'N'){
+                            $idUnidadeReabrirProcesso = null;
+                            $objAtividadeRN  = new MdPetIntercorrenteAtividadeRN();
+                            $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
 
+                            foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
+                                if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
+                                    $idUnidadeReabrirProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
+                                }
+                            }
+                        }
+//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
+//var_dump($idUnidadeReabrirProcesso); echo '</pre>'; exit;
+                        if($idUnidadeReabrirProcesso == null) {
+                            $msg = 'O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.';
+                        } else {
+                            $objCriterioIntercorrenteDTO = new CriterioIntercorrentePeticionamentoDTO();
+                            $objCriterioIntercorrenteRN  = new CriterioIntercorrentePeticionamentoRN();
+                            $objCriterioIntercorrenteDTO->setNumIdTipoProcedimento($idTpProcedimento);
+                            $objCriterioIntercorrenteDTO->setStrSinCriterioPadrao('N');
+                            $objCriterioIntercorrenteDTO->retTodos(true);
+
+                            $contadorCriterioIntercorrente = $objCriterioIntercorrenteRN->contar($objCriterioIntercorrenteDTO);
+
+                            $estadosReabrirRelacionado = array(ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO, ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO, ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO);
+                            /**
+                             * Verifica se:
+                             * 1 - Se o processo eh sigiloso (nivel de acesso global ou local eh igual a 2)
+                             * 2 - Se o Tipo do Processo do procedimento informado nao possui um intercorrente cadastrado(neste caso irah utilizar o Intercorrente Padrao)
+                             */
+                            $processoIntercorrente = 'Direto no Processo Indicado';
+                            if($contadorCriterioIntercorrente <= 0
+                                || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
+                                || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO
+                                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado)){
+                                $processoIntercorrente = 'Em Processo Novo Relacionado ao Processo Indicado';
+                            }
+
+                            $urlValida = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_procedimento=' . $idProcedimento . '&id_tipo_procedimento=' . $idTpProcedimento . '&acao=md_pet_intercorrente_usu_ext_assinar&tipo_selecao=2'));
+
+                            $xml .= '<IdTipoProcedimento>' . $idTpProcedimento . '</IdTipoProcedimento>';
+                            $xml .= '<IdProcedimento>' . $idProcedimento . '</IdProcedimento>';
+                            $xml .= '<numeroProcesso>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . '</numeroProcesso>';
+                            $xml .= '<TipoProcedimento> ' . $tpProcedimento . ' </TipoProcedimento>';
+                            $xml .= '<ProcessoIntercorrente>' . $processoIntercorrente . '</ProcessoIntercorrente>';
+                            $xml .= '<UrlValida>' . htmlentities($urlValida) . '</UrlValida>';
+                        }
                     } else {
                         $msg = 'O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.';
                         //$xml .= '<MensagemValidacao>. $msg.</MensagemValidacao>';
@@ -171,9 +216,9 @@
             $objInfraParametroDTO = new InfraParametroDTO();
             $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
             $objInfraParametroDTO->retTodos();
-            $objInfraParametroRN = new InfraParametroRN();
+            $objMdPetParametroRN = new MdPetParametroRN();
 
-            $objInfraParametroDTO = $objInfraParametroRN->consultar($objInfraParametroDTO);
+            $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
 
             return $objInfraParametroDTO->isSetStrValor() &&
             ($objInfraParametroDTO->getStrValor() == 1 || $objInfraParametroDTO->getStrValor() == 2);
@@ -204,7 +249,7 @@
             //Se não tem criterio intercorrente cadastrado, verifica se tem interorrente padrão cadastrado.
             if (is_null($objCriterioIntercorrenteDTO)) {
                 $objCriterioIntercorrenteDTO = new CriterioIntercorrentePeticionamentoDTO();
-                $objCriterioIntercorrenteDTO->setNumIdTipoProcedimento($idTipoProcessoPeticionamento);
+                //$objCriterioIntercorrenteDTO->setNumIdTipoProcedimento($idTipoProcessoPeticionamento);
                 $objCriterioIntercorrenteDTO->setStrSinCriterioPadrao('S');
                 $objCriterioIntercorrenteDTO->setStrSinAtivo('S');
                 $objCriterioIntercorrenteDTO->retTodos(true);
@@ -253,21 +298,30 @@
          * @since  08/12/2016
          * @author André Luiz <andre.luiz@castgroup.com.br>
          */
-        public static function montarSelectHipoteseLegal($objEntradaListarHipotesesLegaisAPI)
+        public static function montarSelectHipoteseLegal()
         {
+            $objHipoteseLegalPetDTO = new HipoteseLegalPeticionamentoDTO();
+            $objHipoteseLegalPetDTO->setStrNivelAcessoHl(ProtocoloRN::$NA_RESTRITO);
+            $objHipoteseLegalPetDTO->setStrSinAtivo('S');
+            $objHipoteseLegalPetDTO->retStrBaseLegal();
+            $objHipoteseLegalPetDTO->retStrNome();
+            $objHipoteseLegalPetDTO->retNumIdHipoteseLegalPeticionamento();
+            $objHipoteseLegalPetDTO->setOrd("Nome", InfraDTO::$TIPO_ORDENACAO_ASC);
 
-            $seiRN                  = new SeiRN();
-            $arrObjHipoteseLegalAPI = $seiRN->listarHipotesesLegais($objEntradaListarHipotesesLegaisAPI);
-            $strOptions             = '<option value="null"> </option>';
+            $objHipoteseLegalPetRN = new HipoteseLegalPeticionamentoRN();
+            $arrObjHipoteseLegal =   $objHipoteseLegalPetRN->listar($objHipoteseLegalPetDTO);
+            $strOptions             = '<select id="selHipoteseLegal" name="selHipoteseLegal"><option value=""> </option>';
 
-            foreach ($arrObjHipoteseLegalAPI as $objHipoteseLegalAPI) {
-                $nomeBaseLegal = $objHipoteseLegalAPI->getNome() . ' (' . $objHipoteseLegalAPI->getBaseLegal() . ')';
-                $strOptions .= '<option value="' . $objHipoteseLegalAPI->getIdHipoteseLegal() . '">';
+            foreach ($arrObjHipoteseLegal as $objHipoteseLegalPetDTO) {
+                $nomeBaseLegal = $objHipoteseLegalPetDTO->getStrNome() . ' (' . $objHipoteseLegalPetDTO->getStrBaseLegal() . ')';
+                $strOptions .= '<option value="' . $objHipoteseLegalPetDTO->getNumIdHipoteseLegalPeticionamento() . '">';
                 $strOptions .= $nomeBaseLegal;
                 $strOptions .= '</option>';
             }
 
-            return InfraAjax::gerarXMLSelect($strOptions);
+            $strOptions .= '</select>';
+
+            return $strOptions;
         }
 
         /**
@@ -282,14 +336,14 @@
         public static function montarArrDocumentoAPI($idProcedimento, $hdnTabelaDinamicaDocumento)
         {
 
-            $objRemetenteAPI = new RemetenteAPI();
-            $objRemetenteAPI->setNome(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno());
-            $objRemetenteAPI->setSigla(SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno());
+            //seiv3
+            //$objRemetenteAPI = new RemetenteAPI();
+            //$objRemetenteAPI->setNome(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno());
+            //$objRemetenteAPI->setSigla(SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno());
 
-            /*
-            $objDestinatarioAPI = new DestinatarioAPI();
-            $objDestinatarioAPI->set
-            */
+            //seiv3
+            //$objDestinatarioAPI = new DestinatarioAPI();
+            //$objDestinatarioAPI->set
 
             $arrItensTbDocumento = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($hdnTabelaDinamicaDocumento);
             $arrDocumentoAPI     = array();
@@ -299,6 +353,7 @@
                 $documentoAPI->setIdProcedimento($idProcedimento);
                 $documentoAPI->setIdSerie($itemTbDocumento[1]);
                 $documentoAPI->setDescricao($itemTbDocumento[2]);
+                $documentoAPI->setNumero($itemTbDocumento[2]);
                 $documentoAPI->setNivelAcesso($itemTbDocumento[3]);
                 $documentoAPI->setIdHipoteseLegal($itemTbDocumento[4]);
                 //$documentoAPI->setCampos($itemTbDocumento[5]);
@@ -310,8 +365,11 @@
                 $documentoAPI->setIdArquivo($itemTbDocumento[7]);
                 $documentoAPI->setSinAssinado('S');
                 $documentoAPI->setSinBloqueado('S');
-                $documentoAPI->setRemetente($objRemetenteAPI);
 
+                //seiv3
+                //$documentoAPI->setRemetente($objRemetenteAPI);
+
+                //seiv3
                 //$documentoAPI->setDestinatarios();
 
                 $arrDocumentoAPI[] = $documentoAPI;

@@ -22,20 +22,17 @@ try {
 	$objRN = new GerirTipoContextoPeticionamentoRN();
 	
     if( isset( $_POST['hdnPrincipal'] ) && $_POST['hdnPrincipal'] != "") {
-		    	
     	$arrPrincipal = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal']);
     	$arrPrincipal['cadastro'] = 'S';
-    	$objRN->cadastrarMultiplo( $arrPrincipal );    			
-	
-   }
-   
-   if( isset( $_POST['hdnPrincipal2'] ) && $_POST['hdnPrincipal2'] != "") {
-   
+    	$objRN->cadastrarMultiplo( $arrPrincipal );
+    }
+
+    // São permitidos Contatos de sistema para Seleção
+    if( isset( $_POST['hdnPrincipal2'] ) && $_POST['hdnPrincipal2'] != "") {
    	   $arrPrincipal2 = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal2']);
    	   $arrPrincipal2['cadastro'] = 'N';
    	   $objRN->cadastrarMultiplo( $arrPrincipal2 );
-   	   
-   }
+    }
    
    }catch(Exception $e){
    	PaginaSEI::getInstance()->processarExcecao($e);

@@ -46,30 +46,10 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
 	 * @return boolean
 	 */
 	protected function validarUnidadeProcessoConectado($objProcedimentoDTO){
-		$objAtividadeDTO = new AtividadeDTO();
-		$objAtividadeRN  = new AtividadeRN();
-		$objAtividadeDTO->setDblIdProcedimentoProtocolo($objProcedimentoDTO->getDblIdProcedimento());
-		$objAtividadeDTO->retNumIdUnidade();
-		$arrObjAtividUnidTramitado = $objAtividadeRN->listarRN0036($objAtividadeDTO);
+        $objAtividadeRN  = new AtividadeRN();
+        $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
 
-		$arr = array();
-		if(count($arrObjAtividUnidTramitado) > 0){
-			foreach($arrObjAtividUnidTramitado as $objAtividadeDTO){
-			      	$idUnidade = $objAtividadeDTO->getNumIdUnidade();
-					array_push($arr, $idUnidade);
-			}
-		}
-
-		$arrIdsUnidades = array_unique($arr);
-		$objUnidadeDTO = new UnidadeDTO();
-		$objUnidadeRN = new UnidadeRN();
-
-		$objUnidadeDTO->setStrSinAtivo('S');
-		$objUnidadeDTO->setNumIdUnidade($arrIdsUnidades, InfraDTO::$OPER_IN);
-		$objUnidadeDTO->retNumIdUnidade();
-		$count = $objUnidadeRN->contarRN0128($objUnidadeDTO);
-
-		if($count == 0){
+		if(count($arrObjUnidadeDTO) == 0){
 			return false;
 		}
 
@@ -132,8 +112,6 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
 		$objAtividadeDTO->retNumIdUnidade();
 		$objAtividadeDTO->setOrdDthConclusao(InfraDTO::$TIPO_ORDENACAO_DESC);
 		$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
-//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//var_dump($arrObjAtividadeDTO); echo '</pre>'; exit;
 		$objUltimaAtvProcesso = count($arrObjAtividadeDTO) > 0 ? current($arrObjAtividadeDTO) : null;
 		if(!is_null($objUltimaAtvProcesso)) {
 			$idUnidadeReabrirProcesso = $objUltimaAtvProcesso->getNumIdUnidade();
@@ -147,11 +125,39 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $objProcedimentoDTO = $params[0];
         $objCriterioIntercorrenteDTO = $params[1];
         //$arrObjDocumentoAPI = $params[2];
+        $especificacao = $params[2];
 
         $idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
-//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//var_dump($idUnidadeAbrirNovoProcesso); echo '</pre>'; exit;
-        //Salva um processo do tipo padrão selecionado
+
+        // inicio da verificação da unidade ativa, caso não esteja tenta buscar uma unidade ativa para reabrir o processo.
+        $unidadeDTO = new UnidadeDTO();
+        $unidadeDTO->retTodos();
+        $unidadeDTO->setBolExclusaoLogica(false);
+        $unidadeDTO->setNumIdUnidade($idUnidadeAbrirNovoProcesso);
+        $unidadeRN = new UnidadeRN();
+        $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+
+        if($objUnidadeDTO->getStrSinAtivo() == 'N'){
+            $idUnidadeAbrirNovoProcesso = null;
+            $objAtividadeRN  = new MdPetIntercorrenteAtividadeRN();
+            $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
+
+            foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
+                if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
+                    $idUnidadeAbrirNovoProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
+                }
+            }
+        }
+
+        if($idUnidadeAbrirNovoProcesso == null) {
+            $objInfraException = new InfraException();
+            $objInfraException->adicionarValidacao('O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
+            $objInfraException->lancarValidacoes();
+            return false;
+        }
+        // fim da verificação da unidade ativa
+
+        // Salva um processo do tipo padrão selecionado
         $this->simularLogin($idUnidadeAbrirNovoProcesso);
 
         $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
@@ -159,6 +165,11 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
 
         $objProcedimentoAPI = new ProcedimentoAPI();
         $objProcedimentoAPI->setIdTipoProcedimento($objCriterioIntercorrenteDTO->getNumIdTipoProcedimento());
+        if ($especificacao!=null){
+            $objProcedimentoAPI->setEspecificacao( $especificacao );
+        }
+
+
         $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
         $objEntradaGerarProcedimentoAPI->setProcedimentosRelacionados($arrProcedimentoRelacionado);
         //$objEntradaGerarProcedimentoAPI->setDocumentos($arrObjDocumentoAPI);
@@ -173,28 +184,30 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
      * @since  19/12/2016
      * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
      */
-    private function retornaUltimaUnidadeProcessoAberto($idProcedimento){
-        $objSEIRN = new SeiRN();
+    protected function retornaUltimaUnidadeProcessoAbertoConectado($idProcedimento){
+
+        $objProcedimentoDTO = new ProcedimentoDTO();
+        $objProcedimentoDTO->retTodos(true);
+        $objProcedimentoDTO->setDblIdProcedimento($idProcedimento);
+        $objProcedimentoRN = new ProcedimentoRN();
+        $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
+
         $objEntradaConsultaProcApi = new EntradaConsultarProcedimentoAPI();
         $objEntradaConsultaProcApi->setIdProcedimento($idProcedimento);
         $objEntradaConsultaProcApi->setSinRetornarUltimoAndamento('S');
+
         /**
          * @var $saidaConsultarProcedimentoAPI SaidaConsultarProcedimentoAPI
          */
-        $saidaConsultarProcedimentoAPI = $objSEIRN->consultarProcedimento($objEntradaConsultaProcApi);
+        if($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO ||
+            $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
+            $md = new MdPetIntercorrenteAndamentoSigilosoRN();
+            $saidaConsultarProcedimentoAPI = $md->consultarProcedimento($objEntradaConsultaProcApi);
+        } else {
+            $objSEIRN = new SeiRN();
+            $saidaConsultarProcedimentoAPI = $objSEIRN->consultarProcedimento($objEntradaConsultaProcApi);
+        }
 
-
-        /*
-        $objProcedimentoHistoricoDTO = new ProcedimentoHistoricoDTO();
-        $objProcedimentoHistoricoDTO->setDblIdProcedimento($idProcedimento);
-        $objProcedimentoRN = new ProcedimentoRN();
-        $objProcedimentoDTOHistorico = $objProcedimentoRN->consultarHistoricoRN1025($objProcedimentoHistoricoDTO);
-        $arrObjAtividadeDTOHistorico = $objProcedimentoDTOHistorico->getArrObjAtividadeDTO();
-        */
-
-//        ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//        var_dump($arrObjAtividadeDTOHistorico);
-//        var_dump($saidaConsultarProcedimentoAPI); echo '</pre>'; exit;
         /**
          * @var $ultimoAndamento AndamentoAPI
          */
@@ -204,44 +217,7 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
          */
         $objUnidadeAPI = $ultimoAndamento->getUnidade();
 
-
         return $objUnidadeAPI->getIdUnidade();
-    }
-
-    protected function reabrirProcessoApiConectado(ProcedimentoDTO $objProcedimentoDTO) {
-        $objSEIRN = new SeiRN();
-        //Reabre o Processo quando necessário de Critério Intercorrente
-        $objEntradaConsultaProcApi = new EntradaConsultarProcedimentoAPI();
-        $objEntradaConsultaProcApi->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
-        $objEntradaConsultaProcApi->setSinRetornarUnidadesProcedimentoAberto('S');
-
-        $ret = $objSEIRN->consultarProcedimento($objEntradaConsultaProcApi);
-        $arrUnidadesAberto = $ret->getUnidadesProcedimentoAberto();
-        $unidadesAberto = count($arrUnidadesAberto);
-//        var_dump($unidadesAberto); echo '</pre>'; exit;
-
-        if ($unidadesAberto < 0) {
-            return false;
-        }
-        $objAtividadeDTO = new AtividadeDTO();
-        $objAtividadeDTO->setDblIdProcedimentoProtocolo($objProcedimentoDTO->getDblIdProcedimento());
-        $idUnidadeReabrirProcesso = $this->retornaUltimaUnidadeProcessoConcluido($objAtividadeDTO);
-
-//        ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//        var_dump($idUnidadeReabrirProcesso); echo '</pre>'; exit;
-
-        if (!$idUnidadeReabrirProcesso) {
-            return true;
-        }
-
-        $this->simularLogin($idUnidadeReabrirProcesso);
-
-        $objEntradaReabrirProcessoAPI = new EntradaReabrirProcessoAPI();
-        $objEntradaReabrirProcessoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
-        $objEntradaReabrirProcessoAPI->setProtocoloProcedimento($objProcedimentoDTO->getStrProtocoloProcedimentoFormatado());
-
-        $objSEIRN->reabrirProcesso($objEntradaReabrirProcessoAPI);
-        return true;
     }
 
     protected function incluirDocumentosApi($objProcedimentoDTO, $arrObjDocumentoAPI)
@@ -249,20 +225,96 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $arrObjReciboDocPet = array();
         $objSEIRN = new SeiRN();
         $idUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
+
+
+        // inicio da verificação da unidade ativa, caso não esteja tenta buscar uma unidade ativa para reabrir o processo.
+        $unidadeDTO = new UnidadeDTO();
+        $unidadeDTO->retTodos();
+        $unidadeDTO->setBolExclusaoLogica(false);
+        $unidadeDTO->setNumIdUnidade($idUnidadeProcesso);
+        $unidadeRN = new UnidadeRN();
+        $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+
+        if($objUnidadeDTO->getStrSinAtivo() == 'N'){
+            $idUnidadeProcesso = null;
+            $objAtividadeRN  = new AtividadeRN();
+            $arrObjAtividadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
+
+            foreach ($arrObjAtividadeDTO as $itemObjAtividadeDTO) {
+                $unidadeDTO = new UnidadeDTO();
+                $unidadeDTO->retTodos();
+                $unidadeDTO->setBolExclusaoLogica(false);
+                $unidadeDTO->setNumIdUnidade($itemObjAtividadeDTO->getNumIdUnidade());
+                $unidadeRN = new UnidadeRN();
+                $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+
+
+                if ($objUnidadeDTO->getStrSinAtivo() == 'S') {
+                    $idUnidadeProcesso = $objUnidadeDTO->getNumIdUnidade();
+                }
+            }
+        }
+
+
+
         $this->simularLogin($idUnidadeProcesso);
-        /*
-        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-        $idSerieParam = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
-        */
+
         foreach ($arrObjDocumentoAPI as $documentoAPI) {
             /* @var $documentoAPI DocumentoAPI */
-            //$documentoAPI->setIdSerie($idSerieParam);
-            //$documentoAPI->set
             $saidaIncluirDocumentoAPI = $objSEIRN->incluirDocumento($documentoAPI);
-            $formato = MdPetIntercorrenteINT::retornaTipoFormatoDocumento($saidaIncluirDocumentoAPI);
-            $objReciboDocAnexPetDTO = MdPetIntercorrenteINT::retornaObjReciboDocPreenchido(array($saidaIncluirDocumentoAPI->getIdDocumento(), $formato));
-            array_push($arrObjReciboDocPet, $objReciboDocAnexPetDTO);
-            $this->assinarETravarDocumento($saidaIncluirDocumentoAPI);
+
+			// Remententes
+			$idsParticipantes = array();
+
+			$objParticipante  = new ParticipanteDTO();
+			$objParticipante->setDblIdProtocolo($saidaIncluirDocumentoAPI->getIdDocumento());
+			$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
+			$objParticipante->setNumIdUnidade($idUnidadeProcesso);
+			$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
+			$objParticipante->setNumSequencia(0);
+			$idsParticipantes[] = $objParticipante;
+
+			//Interessados
+			// Processo Principal - Interessados
+			$objParticipanteProcPrincDTO = new ParticipanteDTO();
+			$objParticipanteProcPrincDTO->retNumIdParticipante();
+			$objParticipanteProcPrincDTO->retNumIdContato();
+			$objParticipanteProcPrincDTO->retNumIdUnidade();
+			$objParticipanteProcPrincDTO->retStrStaParticipacao();
+			$objParticipanteProcPrincDTO->retStrNomeContato();
+			$objParticipanteProcPrincDTO->retNumSequencia();
+			$objParticipanteProcPrincDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+			$objParticipanteProcPrincDTO->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);	        
+
+			$objParticipanteProcPrincRN = new ParticipanteRN();
+			$arrobjParticipanteProcPrinc = $objParticipanteProcPrincRN->listarRN0189($objParticipanteProcPrincDTO);            
+			// Processo Principal - Interessados - FIM
+
+			// Processo - Interessados
+			$i=0;
+			foreach($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc){
+				$objParticipante  = new ParticipanteDTO();
+				$objParticipante->setDblIdProtocolo($saidaIncluirDocumentoAPI->getIdDocumento());
+				$objParticipante->setNumIdContato($objParticipanteProcPrinc->getNumIdContato());
+				$objParticipante->setNumIdUnidade($objParticipanteProcPrinc->getNumIdUnidade());
+				$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+				$objParticipante->setNumSequencia($i);
+				$idsParticipantes[] = $objParticipante;
+				$i++;
+			}
+
+			$objMdPetParticipanteRN = new MdPetParticipanteRN();
+			$arrInteressado = array();
+			$arrInteressado[0] = $saidaIncluirDocumentoAPI->getIdDocumento();
+			$arrInteressado[1] = $idsParticipantes;
+			//$arrInteressado[2] = $idsRemententes;
+			$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );            
+			// Processo - Interessados - FIM
+
+			$formato = MdPetIntercorrenteINT::retornaTipoFormatoDocumento($saidaIncluirDocumentoAPI);
+			$objReciboDocAnexPetDTO = MdPetIntercorrenteINT::retornaObjReciboDocPreenchido(array($saidaIncluirDocumentoAPI->getIdDocumento(), $formato));
+			array_push($arrObjReciboDocPet, $objReciboDocAnexPetDTO);
+			$this->assinarETravarDocumento($saidaIncluirDocumentoAPI);
         }
         return $arrObjReciboDocPet;
     }
@@ -282,15 +334,25 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $this->tipoConferenciaAlterado = false;
         //setar temporariamente e depois remover da entidade
         if(! $documentoDTO->getNumIdTipoConferencia() ){
+            // buscando o menor tipo de conferencia
+            $tipoConferenciaDTOConsulta = new TipoConferenciaDTO();
+            $tipoConferenciaDTOConsulta->retTodos();
+            $tipoConferenciaDTOConsulta->setStrSinAtivo('S');
+            $tipoConferenciaDTOConsulta->setOrd('IdTipoConferencia', InfraDTO::$TIPO_ORDENACAO_ASC);
+            $tipoConferenciaRN = new TipoConferenciaRN();
+            $arrTipoConferenciaDTO = $tipoConferenciaRN->listar($tipoConferenciaDTOConsulta);
+            $numIdTipoConferencia = $arrTipoConferenciaDTO[0]->getNumIdTipoConferencia();
+            // fim buscando o menor tipo de conferencia
+
             //setando um tipo de conferencia padrao (que sera removido depois), apenas para passar na validação
-            $documentoDTO->setNumIdTipoConferencia(1);
+            $documentoDTO->setNumIdTipoConferencia($numIdTipoConferencia);
             $documentoAlteracaoDTO = new DocumentoDTO();
             $documentoAlteracaoDTO->retDblIdDocumento();
             $documentoAlteracaoDTO->retNumIdTipoConferencia();
             $documentoAlteracaoDTO->setDblIdDocumento( $documentoDTO->getDblIdDocumento() );
             $documentoAlteracaoDTO = $documentoRN->consultarRN0005( $documentoAlteracaoDTO );
 
-            $documentoAlteracaoDTO->setNumIdTipoConferencia(1);
+            $documentoAlteracaoDTO->setNumIdTipoConferencia($numIdTipoConferencia);
             $documentoBD->alterar( $documentoAlteracaoDTO );
             $this->tipoConferenciaAlterado = true;
         }
@@ -342,7 +404,8 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $objParticipanteDTO->retNumIdUnidade();
         $objParticipanteDTO->retDblIdProtocolo();
         $objParticipanteDTO->retNumIdParticipante();
-        $objParticipanteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+        //FK de BD (ak1_participante) trata somente id_contato, id_protocolo, sta_participacao, então desconsiderar unidade
+        //$objParticipanteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
         $objParticipanteDTO->setNumIdContato( $objUsuarioDTO->getNumIdContato() );
         $objParticipanteDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
 
@@ -399,7 +462,7 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $objAssinaturaDTO->setStrCargoFuncao( "Usuário Externo - " . $cargoDTO->getStrExpressao() );
         $objAssinaturaDTO->setArrObjDocumentoDTO(array($documentoDTO));
 
-        $documentoRN = new DocumentoRN();
+        $documentoRN = new DocumentoPeticionamentoRN();
         $objAssinaturaDTO = $documentoRN->assinar($objAssinaturaDTO);
         $this->addDocumentos($documentoDTO);
         $this->fecharDocumentoParaAssinatura($documentoDTO);
@@ -488,8 +551,8 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $objProcedimentoDTO = new ProcedimentoDTO();
         $objProcedimentoRN = new ProcedimentoRN();
         $objProcedimentoDTO->setDblIdProcedimento($params['id_procedimento']);
-        $objProcedimentoDTO->retDblIdProcedimento();
-        $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
+        $objProcedimentoDTO->retTodos(true);
+        //$objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
         $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
 
         $objCriterioIntercorrenteRN = new CriterioIntercorrentePeticionamentoRN();
@@ -501,33 +564,101 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $arrDadosRecibo = array();
         $arrDadosRecibo['idProcedimento'] = $params['id_procedimento'];
 
-        if ($objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S') {
+		// Remententes 
+		$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
+		$idsRemententes = array();
+		$idsRemententes[] = $contatoDTOUsuarioLogado->getNumIdContato();
 
+        $estadosReabrirRelacionado = array(ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO, ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO, ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO);
+        /**
+         * Verifica se:
+         * 1 - Se o processo eh sigiloso (nivel de acesso global ou local eh igual a 2)
+         * 2 - Se o Tipo do Processo do procedimento informado nao possui um intercorrente cadastrado(neste caso irah utilizar o Intercorrente Padrao)
+         */
+        if ($objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S'
+            || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
+            || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO
+            || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado)) {
 
-            $objSaidaGerarProcedimentoAPI = $this->gerarProcedimentoApi(array($objProcedimentoDTO, $objCriterioIntercorrenteDTO));
+            $especificacao = 'Peticionamento Intercorrente relacionado ao Processo nº ' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
+            $objSaidaGerarProcedimentoAPI = $this->gerarProcedimentoApi(array($objProcedimentoDTO, $objCriterioIntercorrenteDTO, $especificacao));
+
             $arrDadosRecibo['idProcedimentoRel'] = $params['id_procedimento'];
             $arrDadosRecibo['idProcedimento'] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
             $params['id_procedimento'] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
-            //$arrDadosRecibo['idProcedimento'] = ;
-            //$arrObjReciboDocPet = $this->retornarDocumentosRecibo($objSaidaGerarProcedimentoAPI);
             //Se possui critérios intercorrentes setta os documentos no processo existente
             $this->setProcedimentoDTO($objSaidaGerarProcedimentoAPI->getIdProcedimento());
-        } else {
-//            var_dump('Padrão'); echo '</pre>'; exit;
-            $this->reabrirProcessoApi($objProcedimentoDTO);
+        } 
+        
+        //SE o criterio existe, e NAO é o criterio padrao, tenta incluir documento no proprio processo (caso o mesmo esteja aberto) ou reabrir o processo (caso o mesmo esteja fechado)
+        else if( $objCriterioIntercorrenteDTO != null && 
+        		$objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'N') {
+            
+        	//se for necessario, executar reabertura do processo		
+        	$reaberturaRN = new MdPetIntercorrenteReaberturaRN();
+        			
+        	if( $reaberturaRN->isNecessarioReabrirProcedimento( $objProcedimentoDTO ) ) {		
+        		$reaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
+        	}
+        	
             $this->setProcedimentoDTO($params['id_procedimento']);
         }
-        $arrDocApi = MdPetIntercorrenteINT::montarArrDocumentoAPI($params['id_procedimento'],$params['hdnTbDocumento']);
 
-        /*
-        ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-        var_dump($arrDadosRecibo);
-        var_dump($objProcedimentoDTO);
-        var_dump($this->getProcedimentoDTO());
-        echo '</pre>'; exit;
-        */
+        $idUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto($this->getProcedimentoDTO()->getDblIdProcedimento());
 
-        $arrObjReciboDocPet = $this->incluirDocumentosApi($this->getProcedimentoDTO(), $arrDocApi);
+		//Remetentes
+		$idsParticipantes = array();
+
+		$objParticipante  = new ParticipanteDTO();
+		$objParticipante->setDblIdProtocolo($this->getProcedimentoDTO()->getDblIdProcedimento());
+		$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
+		$objParticipante->setNumIdUnidade($idUnidadeProcesso);
+		$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
+		$objParticipante->setNumSequencia(0);
+		$idsParticipantes[] = $objParticipante;
+
+		//Interessados
+		// Processo Principal - Interessados
+		$objParticipanteProcPrincDTO = new ParticipanteDTO();
+		$objParticipanteProcPrincDTO->retNumIdParticipante();
+		$objParticipanteProcPrincDTO->retNumIdContato();
+		$objParticipanteProcPrincDTO->retNumIdUnidade();
+		$objParticipanteProcPrincDTO->retStrStaParticipacao();
+		$objParticipanteProcPrincDTO->retStrNomeContato();
+		$objParticipanteProcPrincDTO->retNumSequencia();
+		$objParticipanteProcPrincDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+		$objParticipanteProcPrincDTO->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);	        
+
+		$objParticipanteProcPrincRN = new ParticipanteRN();
+		$arrobjParticipanteProcPrinc = $objParticipanteProcPrincRN->listarRN0189($objParticipanteProcPrincDTO);            
+		// Processo Principal - Interessados - FIM
+
+		// Processo - Interessados
+		$i=0;
+		foreach($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc){
+			$objParticipante  = new ParticipanteDTO();
+			$objParticipante->setDblIdProtocolo($this->getProcedimentoDTO()->getDblIdProcedimento());
+			$objParticipante->setNumIdContato($objParticipanteProcPrinc->getNumIdContato());
+			$objParticipante->setNumIdUnidade($objParticipanteProcPrinc->getNumIdUnidade());
+			$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+			$objParticipante->setNumSequencia($i);
+			$idsParticipantes[] = $objParticipante;
+			$i++;
+		}
+
+		$objMdPetParticipanteRN = new MdPetParticipanteRN();
+		$arrInteressado = array();
+		$arrInteressado[0] = $this->getProcedimentoDTO()->getDblIdProcedimento();
+		$arrInteressado[1] = $idsParticipantes;
+		//$arrInteressado[2] = $idsRemententes;
+		$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );            
+		// Processo - Interessados - FIM
+
+
+		$arrDocApi = MdPetIntercorrenteINT::montarArrDocumentoAPI($params['id_procedimento'],$params['hdnTbDocumento']);
+
+		$arrObjReciboDocPet = $this->incluirDocumentosApi($this->getProcedimentoDTO(), $arrDocApi);
+
         $objReciboRN = new ReciboPeticionamentoRN();
         $objReciboDTO = $objReciboRN->gerarReciboSimplificadoIntercorrente($arrDadosRecibo);
 
@@ -535,13 +666,64 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
             $this->setReciboDTO($objReciboDTO);
             $this->cadastrarReciboDocumentoAnexo(array($objReciboDTO, $arrObjReciboDocPet));
             $documentoReciboDTO = $this->montarReciboIntercorrente($params);
-            $this->setDocumentoRecibo($documentoReciboDTO);
-            $this->enviarEmail($params);
+
+			//Remetentes
+			$idsParticipantes = array();
+
+			$objParticipante  = new ParticipanteDTO();
+			$objParticipante->setDblIdProtocolo($documentoReciboDTO->getDblIdDocumento());
+			$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
+			$objParticipante->setNumIdUnidade($idUnidadeProcesso);
+			$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
+			$objParticipante->setNumSequencia(0);
+			$idsParticipantes[] = $objParticipante;
+
+			// Recibo - Interessados
+			$i=0;
+			foreach($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc){
+				$objParticipante  = new ParticipanteDTO();
+				$objParticipante->setDblIdProtocolo($documentoReciboDTO->getDblIdDocumento());
+				$objParticipante->setNumIdContato($objParticipanteProcPrinc->getNumIdContato());
+				$objParticipante->setNumIdUnidade($objParticipanteProcPrinc->getNumIdUnidade());
+				$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+				$objParticipante->setNumSequencia($i);
+				$idsParticipantes[] = $objParticipante;
+				$i++;
+			}
+
+			$objMdPetParticipanteRN = new MdPetParticipanteRN();
+			$arrInteressado = array();
+			$arrInteressado[0] = $documentoReciboDTO->getDblIdDocumento();
+			$arrInteressado[1] = $idsParticipantes;
+			//$arrInteressado[2] = $idsRemententes;
+
+			$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );            
+			// Recibo - Interessados - FIM
+
+			$this->setDocumentoRecibo($documentoReciboDTO);
+			$this->enviarEmail($params);
             return array(
                 'recibo'    => $objReciboDTO,
                 'documento' => $documentoReciboDTO
             );
             //Gerar Recibo e executar javascript para fechar janela filha e redirecionar janela pai para a tela de detalhes do recibo que foi gerado]
+            
+            
+        }
+        
+        // obtendo a ultima atividade informada para o processo, para marcar
+        // como nao visualizada, deixando assim o processo marcado como "vermelho"
+        // (status de Nao Visualizado) na listagem da tela "Controle de processos"
+        $atividadeDTO = new AtividadeDTO();
+        $atividadeDTO->retTodos();
+        $atividadeDTO->setDblIdProtocolo( $this->getProcedimentoDTO()->getDblIdProcedimento() );
+        $atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
+        $ultimaAtividadeDTO = $atividadeRN->listarRN0036( $atividadeDTO );
+        
+        //alterar a ultima atividade criada para nao visualizado
+        if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
+        	$ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
+        	$atividadeBD->alterar( $ultimaAtividadeDTO[0] );
         }
 
         return false;
@@ -712,6 +894,25 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
     private function getDocumentos(){
         return $this->arrDocumentos;
     }
+
+	private function getContatoDTOUsuarioLogado(){
+
+		$usuarioRN = new UsuarioRN();
+		$usuarioDTO = new UsuarioDTO();
+		$usuarioDTO->retNumIdUsuario();
+		$usuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
+		$usuarioDTO->retNumIdContato();
+		$usuarioDTO->retStrNomeContato();
+		$usuarioDTO = $usuarioRN->consultarRN0489( $usuarioDTO );
+
+		$contatoRN = new ContatoRN();
+		$contatoDTO = new ContatoDTO();
+		$contatoDTO->retTodos();
+		$contatoDTO->setNumIdContato( $usuarioDTO->getNumIdContato() );
+		$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+
+		return $contatoDTO;
+	}
 
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-    /**
+/**
      * ANATEL
      *
      * 20/10/2016 - criado por marcelo.bezerra@cast.com.br - CAST
@@ -15,8 +15,8 @@
      *  - área / bloco de processos
      *  - área / bloco de documentos
      * ===========================================================================================================
-     */
-    try {
+*/
+try {
 
         require_once dirname(__FILE__) . '/../../SEI.php';
 
@@ -30,16 +30,6 @@
 
         SessaoSEIExterna::getInstance()->validarLink();
         SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
-
-        /*
-        $doc = new DocumentoDTO();
-        $doc->retTodos(true);
-        $doc->setDblIdDocumento(10);
-
-        $rn = new DocumentoRN();
-        ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-        var_dump($rn->consultarRN0005($doc)); echo '</pre>'; exit;
-        */
 
         //=====================================================
         //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
@@ -67,17 +57,12 @@
     //=====================================================
     //INICIO FOLHAS DE ESTILOS CSS
     //=====================================================
-    //@todo remover a tag <style> do arquivo e descomentar a function abrirStyle()
-    //PaginaSEIExterna::getInstance()->abrirStyle();
     require_once('md_pet_intercorrente_usu_ext_cadastro_css.php');
-    //PaginaSEIExterna::getInstance()->fecharStyle();
     //=====================================================
     //FIM FOLHAS DE ESTILOS CSS
     //=====================================================
 
     PaginaSEIExterna::getInstance()->montarJavaScript();
-    //@todo remover a tag <script> do arquivo e descomentar a function abrirJavaScript()
-    //PaginaSEIExterna::getInstance()->abrirJavaScript();
     //=====================================================
     //INICIO JAVASCRIPT
     //=====================================================
@@ -85,7 +70,6 @@
     //=====================================================
     //FIM JAVASCRIPT
     //=====================================================
-    //PaginaSEIExterna::getInstance()->fecharJavaScript();
     PaginaSEIExterna::getInstance()->fecharHead();
     PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>

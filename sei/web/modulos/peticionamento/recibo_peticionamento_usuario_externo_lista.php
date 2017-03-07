@@ -57,7 +57,8 @@ try {
 	$bolAcaoCadastrar = SessaoSEIExterna::getInstance()->verificarPermissao('recibo_peticionamento_usuario_externo_cadastrar');
 
 	$objReciboPeticionamentoDTO = new ReciboPeticionamentoDTO();
-	$objReciboPeticionamentoDTO->retTodos();
+	$objReciboPeticionamentoDTO->retTodos( );
+	$objReciboPeticionamentoDTO->retStrNumeroProcessoFormatadoDoc();
 
     $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
     $strVersaoModuloPeticionamento = $objInfraParametro->getValor('VERSAO_MODULO_PETICIONAMENTO', false);
@@ -105,8 +106,9 @@ try {
 		$strResultado .= '<caption class="infraCaption">'.PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela,$numRegistros).'</caption>';
 		$strResultado .= '<tr>';
 				
-		$strResultado .= '<th class="infraTh" width="20%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objReciboPeticionamentoDTO,'Data e Horário','DataHoraRecebimentoFinal',$arrObjReciboPeticionamentoDTO).'</th>'."\n";
-		$strResultado .= '<th class="infraTh" width="30%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objReciboPeticionamentoDTO,'Número do Processo','NumeroProcessoFormatado',$arrObjReciboPeticionamentoDTO).'</th>'."\n";
+		$strResultado .= '<th class="infraTh" width="15%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objReciboPeticionamentoDTO,'Data e Horário','DataHoraRecebimentoFinal',$arrObjReciboPeticionamentoDTO).'</th>'."\n";
+		$strResultado .= '<th class="infraTh" width="20%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objReciboPeticionamentoDTO,'Número do Processo','NumeroProcessoFormatado',$arrObjReciboPeticionamentoDTO).'</th>'."\n";
+		$strResultado .= '<th class="infraTh" width="15%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objReciboPeticionamentoDTO,'Recibo','NumeroProcessoFormatadoDoc',$arrObjReciboPeticionamentoDTO).'</th>'."\n";
 		$strResultado .= '<th class="infraTh" width="30%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objReciboPeticionamentoDTO,'Tipo de Peticionamento','TipoPeticionamento',$arrObjReciboPeticionamentoDTO).'</th>'."\n";
 		$strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
 		$strResultado .= '</tr>'."\n";
@@ -146,6 +148,8 @@ try {
 			} else {
 			  $strResultado .= '<td></td>';
 			}
+			
+			$strResultado .= '<td>' . $arrObjReciboPeticionamentoDTO[$i]->getStrNumeroProcessoFormatadoDoc() .'</td>';
 			
 			$strResultado .= '<td>' . $arrObjReciboPeticionamentoDTO[$i]->getStrStaTipoPeticionamentoFormatado() .'</td>';
 			

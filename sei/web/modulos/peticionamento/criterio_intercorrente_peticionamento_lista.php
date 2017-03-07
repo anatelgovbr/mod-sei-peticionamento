@@ -144,7 +144,7 @@ try {
 
     $strLinkPesquisar = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] .'&acao_origem='.$_GET['acao'].'&acao_retorno=criterio_intercorrente_peticionamento_listar'));
     $arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
-    $arrComandos[] = '<button type="button" accesskey="i" id="btnIntercorrentePadrao" value="IntercorentePadrao" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=criterio_intercorrente_peticionamento_padrao&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">I</span>ntercorrente Padr&atilde;o</button>';
+    $arrComandos[] = '<button type="button" accesskey="e" id="btnIntercorrentePadrao" value="IntercorentePadrao" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=criterio_intercorrente_peticionamento_padrao&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton">Int<span class="infraTeclaAtalho">e</span>rcorrente Padr&atilde;o</button>';
 
     $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('criterio_intercorrente_peticionamento_cadastrar');
     if ($bolAcaoCadastrar){

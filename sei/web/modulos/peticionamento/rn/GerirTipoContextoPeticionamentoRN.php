@@ -120,11 +120,11 @@ class GerirTipoContextoPeticionamentoRN extends InfraRN {
 			$arrIdTipo = array();
 			
 			foreach( $arrRelTipoContextoPeticionamentoDTO as $itemDTO ){
-				
-				$idTipo = $itemDTO->getNumIdTipoContextoContato();
-				array_push( $arrIdTipo , $idTipo);
+				//$idTipo = $itemDTO->getNumIdTipoContextoContato();
+				//array_push( $arrIdTipo , $idTipo);
+				array_push( $arrIdTipo , $itemDTO);
 			}
-			
+
 			$objTipoContatoRN = new TipoContatoRN();
 			$objTipoContatoDTO = new TipoContatoDTO();
 			$objTipoContatoDTO->retTodos();
@@ -139,20 +139,17 @@ class GerirTipoContextoPeticionamentoRN extends InfraRN {
 						
 			//se tiver tipos do sistema, monta mensagem de erro
 			if( is_array( $arrTipoContatoReservado ) && count( $arrTipoContatoReservado ) > 0 ){
-				
 				foreach( $arrTipoContatoReservado as $itemTipoContatoDTO ){
-					
-					$strMensagem .= $itemTipoContatoDTO->getStrNome() . "\n" ;
+					$strMensagem .= "\t- ". $itemTipoContatoDTO->getStrNome() . "\n" ;
 				}
-				
 			}
 			
 		}
 				
 		if( $strMensagem != ""){
-		  $objInfraException->adicionarValidacao( " Nao permitido adicionar tipos de interessado reservados do sistema. Os seguintes tipos de interessado não são permitidos: \n ". $strMensagem );
+		  $objInfraException->adicionarValidacao( " Não permitido adicionar Tipos de Contatos reservados do Sistema. Os seguintes Tipos não são permitidos: \n\n ". $strMensagem );
 		}
-		
+
 	}
 	
 	protected function cadastrarMultiploControlado( $arrPrincipal ){
@@ -176,14 +173,20 @@ class GerirTipoContextoPeticionamentoRN extends InfraRN {
 		unset( $arrPrincipal['cadastro'] );
 		
 		$lista = $this->listar($objDTO);
-		$this->validarTiposReservados( $lista, $objInfraException );
+
+		//$this->validarTiposReservados( $lista, $objInfraException );
+		
+		//quando for Cadastro, impedir tipos reservados, quando for seleçao, nao deve impedir
+		if( $cadastro == 'S'){
+		  $this->validarTiposReservados( $arrPrincipal, $objInfraException );
+		}
 		
 		$this->excluir( $lista );
-		
+
 		//$arrPrincipal = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal']);
 		
 		if(!$arrPrincipal) {
-			$objInfraException->adicionarValidacao('Informe pelo menos um tipo de interessado.');
+			$objInfraException->adicionarValidacao('Informe pelo menos um Tipo de Contato.');
 		}
 		
 		$objInfraException->lancarValidacoes();

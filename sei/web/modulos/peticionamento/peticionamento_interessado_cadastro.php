@@ -319,6 +319,7 @@ try {
   				
   				if( $janelaSelecaoPorNome == null || $janelaSelecaoPorNome == "" ){
   				  echo "window.opener.document.getElementById('txtNomeRazaoSocial').value = '" . $nome . "';";
+				  echo "window.opener.document.getElementById('txtNomeRazaoSocialTratadoHTML').value = '" .PaginaSEI::tratarHTML($nome) . "';";
   				  echo "window.opener.document.getElementById('hdnCustomizado').value = 'true';";
   				  echo "window.opener.document.getElementById('hdnIdInteressadoCadastrado').value = " . $objContatoDTO->getNumIdContato() . ";";
   				} else {

@@ -171,7 +171,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
             case 'tipo_processo_auto_completar_intercorretne':
                 $arrObjTipoProcessoDTO = TipoProcessoPeticionamentoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa'], $_POST['itens_selecionados'] );
-                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
+                $xml = TipoProcessoPeticionamentoINT::gerarXMLItensArrInfraApi($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
                 break;
 
             case 'tipo_processo_auto_completar_com_assunto':
@@ -390,6 +390,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
                       $objContato->usuario = $objContatoDTO->getNumIdUsuarioCadastro();
 	  				  $objContato->nome =  utf8_encode( $objContatoDTO->getStrNome() );
 	  				  $objContato->id = utf8_encode( $objContatoDTO->getNumIdContato() );
+					  $objContato->nomeTratado = PaginaSEI::tratarHTML($objContatoDTO->getStrNome());
 	  			      $json = json_encode( $objContato , JSON_FORCE_OBJECT);
 	  				}
 
@@ -429,14 +430,6 @@ class PeticionamentoIntegracao extends SeiIntegracao {
         case 'verificar_criterio_intercorrente':
             $arrNivelAcessoHipoteseLegal = MdPetIntercorrenteINT::verificarCriterioIntercorrente($_POST['idTipoProcedimento']);
             echo json_encode($arrNivelAcessoHipoteseLegal);
-            return true;
-
-        case 'montar_select_hipotese_legal':
-            $objEntradaListarHipotesesLegaisAPI = new EntradaListarHipotesesLegaisAPI();
-            $objEntradaListarHipotesesLegaisAPI->setNivelAcesso($_POST['nivelAcesso']);
-            $xml = MdPetIntercorrenteINT::montarSelectHipoteseLegal($objEntradaListarHipotesesLegaisAPI);
-            InfraAjax::enviarXML($xml);
-
             return true;
     }
 
@@ -770,36 +763,31 @@ class PeticionamentoIntegracao extends SeiIntegracao {
   } */
 
   public function montarBotaoAcessoExternoAutorizado(ProcedimentoAPI $objProcedimentoAPI){
-//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//var_dump($objProcedimentoAPI); echo '</pre>'; exit;
 
-      $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
-      $arrMenusNomes = array();
+      $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0';
+      $hash = md5($strParam.'#'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'@'.SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
+      $link = 'http://localhost/sei/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0&infra_hash=' . $hash;
+      $id_procedimento = $_GET['id_procedimento'];
 
+    $array[] = "<script> function criarForm(){ 
+            var f = document.createElement(\"form\");
+        f.setAttribute('method',\"post\");
+        f.setAttribute('action',\"$link\");
+        
+        var i = document.createElement(\"input\"); 
+        i.setAttribute('type',\"hidden\");
+        i.setAttribute('name',\"id_procedimento\");
+        i.setAttribute('value',\"$id_procedimento\");
+    
+        f.appendChild(i);
+        document.getElementsByTagName('body')[0].appendChild(f);
+        f.submit();
+    }</script>";
+    $array[] = '<button type="button" accesskey="i" name="btnPetIntercorrente" value="Peticionamento Intercorrente" onclick="criarForm();" class="infraButton">Peticionamento <span class="infraTeclaAtalho">I</span>ntercorrente</button>';
 
+    return $array;
 
-
-      //$arrMenusNomes["Peticionar Processo Inicio"] = $urlBase .'/controlador_externo.php?acao=peticionamento_usuario_externo_iniciar';
-      //$url = $urlBase .'/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar';
-      //$url = $urlBase . '/' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&txtProcesso=' . $objProcedimentoAPI->getNumeroProtocolo());
-
-      //@todo EU 7051 - falta apenas montar o link adequado no botão "Peticionamento Intercorrente"
-//      $replaces = array('/', '-', '.');
-//      $numeroProtocolo = str_replace($replaces, '', $objProcedimentoAPI->getNumeroProtocolo());
-      $numeroProtocolo = '1';//$objProcedimentoAPI->getNumeroProtocolo();
-
-    $array = array();
-      $url = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0');
-
-      //$arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc=' . $_GET['id_md_pet_rel_recibo_protoc'] . '&acao=' . PaginaSEIExterna::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
-    //$array[] = "<script> function acessarPeticionamentoIntercorrente( idProcedimento ){ alert(' Id do Processo' + idProcedimento ); }</script>";
-   // $array[] = "<script> function acessarPeticionamentoIntercorrente(){ window.location = '" . $url . "'; }</script>";
-    //$array[] = '<button type="button" accesskey="P" name="btnPetIntercorrente" value="Peticionamento Intercorrente" onclick="acessarPeticionamentoIntercorrente();" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionamento Intercorrente</button>';
-//    $array[] = '<button type="button" accesskey="P" name="btnPetIntercorrente" value="Peticionamento Intercorrente" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?txtProcesso=' . $numeroProtocolo . '&acao=md_pet_intercorrente_usu_ext_cadastrar')) . '\'" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionamento Intercorrente</button>';
-    $array[] = '<a href="' . $url . '" >Peticionamento Intercorrente</a>';
-  	return $array;
-
-  }
+    }
 
     public function montarTipoTarjaAssinaturaCustomizada()
     {

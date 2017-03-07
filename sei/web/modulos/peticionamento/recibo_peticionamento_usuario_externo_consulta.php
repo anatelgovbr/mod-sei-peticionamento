@@ -71,6 +71,7 @@ try {
                 $objReciboPeticionamentoDTO = new ReciboPeticionamentoDTO();
                 $objReciboPeticionamentoDTO->setNumIdReciboPeticionamento($_GET['id_md_pet_rel_recibo_protoc']);
                 $objReciboPeticionamentoDTO->retNumIdProtocolo();
+                $objReciboPeticionamentoDTO->retDblIdDocumento();
                 $objReciboPeticionamentoRN  = new ReciboPeticionamentoRN();
                 $objReciboPeticionamentoDTO = $objReciboPeticionamentoRN->consultar($objReciboPeticionamentoDTO);
 
@@ -87,8 +88,7 @@ try {
                 $documentoRN = new DocumentoRN();
                 $documentoReciboDTO = new DocumentoDTO();
                 $documentoReciboDTO->retStrProtocoloDocumentoFormatado();
-                $documentoReciboDTO->setDblIdProcedimento( $objReciboPeticionamentoDTO->getNumIdProtocolo() );
-                $documentoReciboDTO->setNumIdSerie( $idSerieParam );
+                $documentoReciboDTO->setDblIdDocumento( $objReciboPeticionamentoDTO->getDblIdDocumento() );
                 $documentoReciboDTO = $documentoRN->consultarRN0005( $documentoReciboDTO );
                 
                 if( $documentoReciboDTO != null ){
@@ -275,10 +275,10 @@ try {
 
     <div style="height:auto; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
 
-        <table align="center" style="width: 90%" border="0">
+        <table align="center" style="width: 95%" border="0">
 
             <tr>
-                <td style="font-weight: bold; width: 300px;">Usuário Externo (signatário):</td>
+                <td style="font-weight: bold; width: 400px;">Usuário Externo (signatário):</td>
                 <td><?= $usuarioDTO->getStrNome() ?></td>
             </tr>
 
@@ -308,7 +308,7 @@ try {
                 </tr>
                 <?php foreach ($arrInteressados as $interessado) : ?>
                     <tr>
-                        <td colspan="2">&nbsp&nbsp&nbsp&nbsp<?= $interessado->getStrNome() ?></td>
+                        <td colspan="2">&nbsp&nbsp&nbsp&nbsp<?= PaginaSEI::tratarHTML($interessado->getStrNome()) ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

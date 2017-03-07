@@ -1,7 +1,7 @@
 # Módulo Peticionamento e Intimação Eletrônicos
 
 ## Requisitos:
-- SEI 3.0.1 instalado ou atualizado (verificar valor da constante de versão do SEI no arquivo /sei/web/SEI.php).
+- SEI 3.0.2 instalado ou atualizado (verificar valor da constante de versão do SEI no arquivo /sei/web/SEI.php).
 	- **IMPORTANTE**, no caso de atualização do módulo: A atualização do SEI 2.6.0 para 3.0.0 alterou diversas tabelas que as tabelas do módulo relacionava. Dessa forma, alertamos que, imediatamente antes de executar o script de atualização do SEI é necessário executar o script abaixo no banco do SEI para que a atualização do SEI possa ser executada sem erro:
 		
 		ALTER TABLE `md_pet_rel_tp_ctx_contato` DROP FOREIGN KEY `fk_md_pet_rel_tp_ctx_cont_1`;

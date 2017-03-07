@@ -26,6 +26,7 @@ class HipoteseLegalPeticionamentoDTO extends InfraDTO {
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'Nome', 'h.nome', 'hipotese_legal h');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'BaseLegal', 'h.base_legal', 'hipotese_legal h');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SinAtivo', 'h.sin_ativo', 'hipotese_legal h');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NivelAcessoHl', 'h.sta_nivel_acesso', 'hipotese_legal h');
 	}
 	
 	

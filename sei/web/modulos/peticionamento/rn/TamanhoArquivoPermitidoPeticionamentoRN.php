@@ -142,8 +142,8 @@ class TamanhoArquivoPermitidoPeticionamentoRN extends InfraRN {
 		$objInfraParametroDTO->retStrValor();
 		$objInfraParametroDTO->setStrNome('SEI_TAM_MB_DOC_EXTERNO');
 		
-		$objInfraParametroRN = new InfraParametroRN();
-		$objInfraParametroDTO = $objInfraParametroRN->consultar($objInfraParametroDTO);
+		$objMdPetParametroRN = new MdPetParametroRN();
+		$objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
 		
 		$valor = $objInfraParametroDTO->getStrValor();
 		

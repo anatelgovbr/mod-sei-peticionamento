@@ -154,7 +154,7 @@ try {
 	switch ($_GET['acao']) {
 		case 'criterio_intercorrente_peticionamento_consultar':
 			$strTitulo = 'Consultar Critério Intercorrente';
-			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 			//$strItensSelTipoProcesso = TipoProcessoPeticionamentoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
 			//$strItensSelDoc      = SerieINT::montarSelectNomeRI0802(null, null, $_POST['selDocumento']);
@@ -162,9 +162,9 @@ try {
 		case 'criterio_intercorrente_peticionamento_alterar':
 			$strTitulo = 'Alterar Critério para Intercorrente';
 			$arrComandos[] = '<button type="submit" accesskey="s" name="sbmAlterarCriterio" id="sbmAlterarCriterio" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+            $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
-			if (isset($_POST['sbmAlterarCriterio'])) {
+            if (isset($_POST['sbmAlterarCriterio'])) {
                 /*
                 $id = $_POST['hdnIdCriterioIntercorrentePeticionamento'];
                 $objCriterioIntercorrentePeticionamentoDTO = new CriterioIntercorrentePeticionamentoDTO();
@@ -291,15 +291,15 @@ PaginaSEI::getInstance()->fecharJavaScript();
     #lblTipoProcesso { position: absolute; left: 0%; top: 2px; width: 50%; }
     #txtTipoProcesso { position: absolute; left: 0%; top: 18px; width: 50%; }
 
-    <? if ($_GET['acao'] == 'criterio_intercorrente_peticionamento_alterar'){ ?>
-        #imgLupaTipoProcesso { position: absolute; left: 52%; top: 9%; }
-        #imgExcluirTipoProcesso { position: absolute; left: 55%; top: 9%; }
+    <? if ($_GET['acao'] == 'criterio_intercorrente_peticionamento_alterar' || $_GET['acao'] == 'criterio_intercorrente_peticionamento_consultar'){ ?>
+        #imgLupaTipoProcesso { position: absolute; left: 51%; top: 15%; }
+        #imgExcluirTipoProcesso { position: absolute; left: 53.5%; top: 15%; }
         #imgAjuda { display: none; }
-        #selTipoProcesso {display: none; }
+        #selTipoProcesso { display: none; }
     <?} else{ ?>
-        #imgLupaTipoProcesso { position: absolute; left: 72%; top: 18%; }
-        #imgExcluirTipoProcesso { position: absolute; left: 72%; top: 26%; }
-        #imgAjuda { position: absolute; left: 75%; top: 18%; }
+        #imgLupaTipoProcesso { position: absolute; left: 71%; top: 18%; }
+        #imgExcluirTipoProcesso { position: absolute; left: 71%; top: 26%; }
+        #imgAjuda { position: absolute; left: 74%; top: 18%; }
     <?} ?>
     #lblNivelAcesso { width: 50%; }
     #selNivelAcesso { width: 20%; }
@@ -327,9 +327,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <div class="fieldsetClear">
         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipos de Processos: </label>
         <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText InfraAutoCompletar" value="<?= $nomeTipoProcesso ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <?php if($_GET['acao'] != 'criterio_intercorrente_peticionamento_consultar'){ ?>
         <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect" multiple="multiple" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
             <?= $strTipoProcesso; ?>
         </select>
+        <?php } ?>
         <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
         <input type="hidden" id="hdnIdCriterioIntercorrentePeticionamento" name="hdnIdCriterioIntercorrentePeticionamento" value="<?php echo $IdCriterioIntercorrentePeticionamento ?>"/>
         <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"/>
@@ -339,7 +341,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <!--  Fim do Tipo de Processo -->
 
     <div style="clear:both;">&nbsp;</div>
-    <? if ($_GET['acao'] == 'criterio_intercorrente_peticionamento_alterar'){ ?>
+    <? if ($_GET['acao'] == 'criterio_intercorrente_peticionamento_alterar' || $_GET['acao'] == 'criterio_intercorrente_peticionamento_consultar'){ ?>
         <div style="margin-top: 40px!important;">
     <? } else { ?>
         <div style="margin-top: 166px!important;">

@@ -49,41 +49,55 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
 		$objHipoteseLegalPeticionamentoDTO->retTodos();
 		$objHipoteseLegalPeticionamentoDTO->setOrd('Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
 		$countHipotesesPeticionamento = $objHipoteseLegalPeticionamentoRN->contar($objHipoteseLegalPeticionamentoDTO);
-		
-		if($countHipotesesPeticionamento > 0)
-		{
-			$peticionamento = true;
-			$objHipoteseLegalPeticionamentoDTO->retStrNome();
-			$objHipoteseLegalPeticionamentoDTO->retStrBaseLegal();
-			$arrHipoteses = $objHipoteseLegalPeticionamentoRN->listar($objHipoteseLegalPeticionamentoDTO);
-		}
-		else
-		{
-			$objHipoteseLegalRN = new HipoteseLegalRN();
-			$objHipoteseLegalCoreDTO = new HipoteseLegalDTO();
-		
-			$objHipoteseLegalCoreDTO->retTodos();		
-			$objHipoteseLegalCoreDTO->setStrStaNivelAcesso( ProtocoloRN::$NA_RESTRITO );
-			$objHipoteseLegalCoreDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
-			$arrHipoteses = $objHipoteseLegalRN->listar( $objHipoteseLegalCoreDTO );
-		}
-		
-		$stringFim = '<option value=""> </option>';
-		if(count($arrHipoteses) > 0 ){
-			
-			foreach($arrHipoteses as $objHipoteseLegalDTO){
-				
-				$idHipoteseLegal = $peticionamento ? $objHipoteseLegalDTO->getNumIdHipoteseLegalPeticionamento() : $objHipoteseLegalDTO->getNumIdHipoteseLegal();
-				
-				if(!is_null($strValorItemSelecionado) &&  $strValorItemSelecionado == $idHipoteseLegal){
-				    $stringFim .= '<option value="' . $idHipoteseLegal . '" selected="selected">' . $objHipoteseLegalDTO->getStrNome() . ' (' . $objHipoteseLegalDTO->getStrBaseLegal() .')';
-				} else {
-					$stringFim .= '<option value="' . $idHipoteseLegal . '">' . $objHipoteseLegalDTO->getStrNome() . ' (' . $objHipoteseLegalDTO->getStrBaseLegal() .  ')';
-				}
-				$stringFim .= '</option>';
-				
-			}
-		}
+
+        if($countHipotesesPeticionamento > 0)
+        {
+            $peticionamento = true;
+            $objHipoteseLegalPeticionamentoDTO->retStrNome();
+            $objHipoteseLegalPeticionamentoDTO->retStrBaseLegal();
+            $arrHipoteses = $objHipoteseLegalPeticionamentoRN->listar($objHipoteseLegalPeticionamentoDTO);
+            $stringFim = '<option value=""> </option>';
+            if(count($arrHipoteses) > 0 ){
+
+                foreach($arrHipoteses as $objHipoteseLegalDTO){
+
+                    $idHipoteseLegal = $peticionamento ? $objHipoteseLegalDTO->getNumIdHipoteseLegalPeticionamento() : $objHipoteseLegalDTO->getNumIdHipoteseLegal();
+
+                    if(!is_null($strValorItemSelecionado) &&  $strValorItemSelecionado == $idHipoteseLegal){
+                        $stringFim .= '<option value="' . $idHipoteseLegal . '" selected="selected">' . $objHipoteseLegalDTO->getStrNome() . ' (' . $objHipoteseLegalDTO->getStrBaseLegal() .')';
+                    } else {
+                        $stringFim .= '<option value="' . $idHipoteseLegal . '">' . $objHipoteseLegalDTO->getStrNome() . ' (' . $objHipoteseLegalDTO->getStrBaseLegal() .  ')';
+                    }
+                    $stringFim .= '</option>';
+
+                }
+            }
+        }
+        else
+        {
+            $objEntradaListarHipotesesLegaisAPI = new EntradaListarHipotesesLegaisAPI();
+            $objEntradaListarHipotesesLegaisAPI->setNivelAcesso(ProtocoloRN::$NA_RESTRITO);
+
+            $objSeiRN = new SeiRN();
+            $arrHipoteseLegalAPI = $objSeiRN->listarHipotesesLegais($objEntradaListarHipotesesLegaisAPI);
+
+            $stringFim = '<option value=""> </option>';
+            if(count($arrHipoteseLegalAPI) > 0 ){
+                /* @var $hipoteseLegalAPI HipoteseLegalAPI */
+                foreach($arrHipoteseLegalAPI as $hipoteseLegalAPI){
+
+                    $idHipoteseLegal = $hipoteseLegalAPI->getIdHipoteseLegal();
+
+                    if(!is_null($strValorItemSelecionado) &&  $strValorItemSelecionado == $idHipoteseLegal){
+                        $stringFim .= '<option value="' . $idHipoteseLegal . '" selected="selected">' . $hipoteseLegalAPI->getNome() . ' (' . $hipoteseLegalAPI->getBaseLegal() .')';
+                    } else {
+                        $stringFim .= '<option value="' . $idHipoteseLegal . '">' . $hipoteseLegalAPI->getNome() . ' (' . $hipoteseLegalAPI->getBaseLegal() .  ')';
+                    }
+                    $stringFim .= '</option>';
+
+                }
+            }
+        }
 		
 		return $stringFim;
 	}
@@ -247,34 +261,65 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
 
     public static function autoCompletarTipoProcedimento($strPalavrasPesquisa, $itensSelecionados = null){
 
-        $objTipoProcedimentoDTO = new TipoProcedimentoDTO();
-        $objTipoProcedimentoDTO->retNumIdTipoProcedimento();
-        $objTipoProcedimentoDTO->retStrNome();
+        $seiRN = new SeiRN();
+        $arrObjTipoProcedimentoApi = $seiRN->listarTiposProcedimento();
 
-        $objTipoProcedimentoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
-
-        $objTipoProcedimentoRN = new TipoProcedimentoRN();
-
-        $arrObjTipoProcedimentoDTO = $objTipoProcedimentoRN->listarRN0244($objTipoProcedimentoDTO);
-
-        $strPalavrasPesquisa = trim($strPalavrasPesquisa);
-
-        $ret = $arrObjTipoProcedimentoDTO;
         if ($strPalavrasPesquisa != '' || $itensSelecionados != null) {
             $ret = array();
             $strPalavrasPesquisa = strtolower($strPalavrasPesquisa);
-            foreach($arrObjTipoProcedimentoDTO as $objTipoProcedimentoDTO){
-                if($itensSelecionados != null && in_array($objTipoProcedimentoDTO->getNumIdTipoProcedimento(), $itensSelecionados)){
+            foreach($arrObjTipoProcedimentoApi as $objTipoProcedimentoApi){
+                /**@var $objTipoProcedimentoApi TipoProcedimentoAPI */
+                if($itensSelecionados != null && in_array($objTipoProcedimentoApi->getIdTipoProcedimento(), $itensSelecionados)){
                     continue;
                 }
-                if ($strPalavrasPesquisa != '' && strpos(strtolower($objTipoProcedimentoDTO->getStrNome()),$strPalavrasPesquisa)==false){
+                if ($strPalavrasPesquisa != '' && strpos(strtolower($objTipoProcedimentoApi->getNome()),$strPalavrasPesquisa)==false){
                     continue;
                 }
-                $ret[] = $objTipoProcedimentoDTO;
+                $ret[] = $objTipoProcedimentoApi;
             }
         }
 
         return $ret;
+    }
+
+    public static function gerarXMLItensArrInfraApi($arr, $strAtributoId, $strAtributoDescricao, $strAtributoComplemento=null, $strAtributoGrupo=null){
+        $metodoAtributoId = "get{$strAtributoId}";
+        $metodoAtributoDescricao = "get{$strAtributoDescricao}";
+        $metodoAtributoComplemento = "get{$strAtributoComplemento}";
+        $metodoAtributoGrupo = "get{$strAtributoGrupo}";
+
+        $xml = '';
+        $xml .= '<itens>';
+        if ($arr !== null ){
+            foreach($arr as $dto){
+                $xml .= '<item id="'.self::formatarXMLAjax($dto->$metodoAtributoId()).'"';
+                $xml .= ' descricao="'.self::formatarXMLAjax($dto->$metodoAtributoDescricao()).'"';
+
+                if ($strAtributoComplemento!==null){
+                    $xml .= ' complemento="'.self::formatarXMLAjax($dto->$metodoAtributoComplemento()).'"';
+                }
+
+                if ($strAtributoGrupo!==null){
+                    $xml .= ' grupo="'.self::formatarXMLAjax($dto->$metodoAtributoGrupo()).'"';
+                }
+
+                $xml .= '></item>';
+            }
+        }
+        $xml .= '</itens>';
+        return $xml;
+    }
+
+    private static function formatarXMLAjax($str){
+        if (!is_numeric($str)){
+            $str = str_replace('&','&amp;',$str);
+            $str = str_replace('<','&amp;lt;',$str);
+            $str = str_replace('>','&amp;gt;',$str);
+            $str = str_replace('\"','&amp;quot;',$str);
+            $str = str_replace('"','&amp;quot;',$str);
+            //$str = str_replace("\n",'_',$str);
+        }
+        return $str;
     }
 
 }

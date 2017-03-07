@@ -13,6 +13,23 @@
     function inicializar() {
         iniciarGridDinamicaProcesso();
         inicializarDocumento();
+        document.getElementById("txtNumeroProcesso").addEventListener("keyup", controlarEnterValidarProcesso, false);
+
+        <?php if( isset( $_POST['id_procedimento'] ) ) { 
+        	
+        	$objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
+        	$objEntradaConsultarProcedimentoAPI->setIdProcedimento( $_POST['id_procedimento'] );
+        	$objSeiRN = new SeiRN();
+        	$objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento( $objEntradaConsultarProcedimentoAPI );
+        	    	
+        	$numeroProcesso = $objSaidaConsultarProcedimentoAPI->getProcedimentoFormatado();
+        	?>
+
+         document.getElementById('txtNumeroProcesso').value = '<?= $numeroProcesso ?>';
+         validarNumeroProcesso();
+         adicionarProcesso();
+         	
+       <? } ?>
     }
 
     /**
@@ -109,6 +126,7 @@
         $.ajax({
             url: '<?=$strUrlAjaxNumeroProcesso?>',
             type: 'POST',
+            async: false,
             dataType: 'XML',
             data: paramsAjax,
             success: function (r) {
@@ -124,6 +142,7 @@
                     document.getElementById('btnAdicionar').style.display = '';
                     document.getElementById('hdnProcessoIntercorrente').value = $(r).find('ProcessoIntercorrente').text();
                     document.getElementById('urlValidaAssinaturaProcesso').value = $(r).find('UrlValida').text();
+
                 }
             },
             error: function (e) {
@@ -192,14 +211,7 @@
             return 'id_tipo_procedimento=' + document.getElementById('hdnIdTipoProcedimento').value;
         };
     }
-
-    function iniciarObjAjaxSelectHipoteseLegal() {
-        objAjaxSelectHipoteseLegal = new infraAjaxMontarSelect('selHipoteseLegal', '<?= $strUrlAjaxMontarHipoteseLegal?>');
-        objAjaxSelectHipoteseLegal.processarResultado = function () {
-            return 'nivelAcesso=' + RESTRITO;
-        }
-    }
-
+    
     function carregarFieldDocumentos() {
 
         //Combos que dependem do processo
@@ -212,7 +224,6 @@
     }
 
     function verificarCriterioIntercorrente() {
-
         var paramsAjax = {
             idTipoProcedimento: document.getElementById('hdnIdTipoProcedimento').value
         };
@@ -220,22 +231,30 @@
         $.ajax({
             url: '<?=$strUrlAjaxCriterioIntercorrente?>',
             type: 'POST',
+            async: false,
             dataType: 'JSON',
             data: paramsAjax,
             success: function (r) {
                 if (r.nivelAcesso) {
                     criarHiddenNivelAcesso(r.nivelAcesso);
+                    if (EXIBIR_HIPOTESE_LEGAL && r.nivelAcesso.id == RESTRITO && r.hipoteseLegal) {
+                        criarHiddenHipoteseLegal(r.hipoteseLegal);
+                    }
                 } else {
                     criarSelectNivelAcesso();
-                }
+                 }
 
-                if (EXIBIR_HIPOTESE_LEGAL) {
+                /*
+                if (EXIBIR_HIPOTESE_LEGAL && r.nivelAcesso.id == RESTRITO) {
                     if (r.hipoteseLegal) {
+                        console.log('criando a hipotese legal hidden');
                         criarHiddenHipoteseLegal(r.hipoteseLegal);
                     } else {
+                        console.log('criando a hipotese legal html select');
                         criarSelectHipoteseLegal();
                     }
                 }
+                */
             },
             error: function (e) {
                 console.error('Erro ao processar o AJAX do SEI: ' + e.responseText);
@@ -285,25 +304,6 @@
         divNivelAcesso.appendChild(hdnNivelAcesso);
     }
 
-    function criarSelectHipoteseLegal() {
-        var selHipoteseLegal = document.createElement("select");
-        var divHipoteseLegal = document.getElementById('divHipoteseLegal');
-        var divBlcHipoteseLegal = document.getElementById('divBlcHipoteseLegal');
-        var selNivelAcesso = document.getElementById('selNivelAcesso');
-
-        divHipoteseLegal.innerHTML = '';
-        divBlcHipoteseLegal.style.display = 'none';
-        selHipoteseLegal.id = 'selHipoteseLegal';
-        selHipoteseLegal.name = 'selHipoteseLegal';
-        selHipoteseLegal.className = 'infraSelect';
-        selHipoteseLegal.tabIndex = selNivelAcesso.tabIndex + 1;
-
-        divHipoteseLegal.appendChild(selHipoteseLegal);
-
-        iniciarObjAjaxSelectHipoteseLegal();
-        objAjaxSelectHipoteseLegal.executar();
-    }
-
     function criarHiddenHipoteseLegal(hipoteseLegal) {
         var lblHipoteseLegal = document.createElement('label');
         var divBlcHipoteseLegal = document.getElementById('divBlcHipoteseLegal');
@@ -323,7 +323,7 @@
         hdnHipoteseLegal.value = hipoteseLegal.id;
         divHipoteseLegal.appendChild(hdnHipoteseLegal);
 
-        divBlcHipoteseLegal.style.display = '';
+        divBlcHipoteseLegal.style.display = 'block';
     }
 
 
@@ -451,13 +451,18 @@
                 document.getElementById('selNivelAcesso').focus();
                 return false;
             }
+        } else {
+            nivelAcesso = document.getElementById('hdnNivelAcesso');
         }
+
         var selHipoteseLegal = document.getElementById('selHipoteseLegal');
 
-        if (EXIBIR_HIPOTESE_LEGAL && nivelAcesso.value == RESTRITO && selHipoteseLegal && selHipoteseLegal.value == '') {
-            alert('Informe a Hipótese Legal');
-            selHipoteseLegal.focus();
-            return false;
+        if (nivelAcesso.value == RESTRITO) {
+            if (selHipoteseLegal && selHipoteseLegal.value == '') {
+                alert('Informe a Hipótese Legal');
+                selHipoteseLegal.focus();
+                return false;
+            }
         }
 
         var formato = null;
@@ -541,10 +546,9 @@
         var complementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento').value;
         //var idNivelAcesso = nivelAcesso;
         var idHipoteseLegal = '';
-        var selHipoteseLegal = document.getElementById('selHipoteseLegal');
-        if(selHipoteseLegal){
-            idHipoteseLegal = selHipoteseLegal.value;
-        } else {
+        if(document.getElementById('selHipoteseLegal')){
+            idHipoteseLegal = document.getElementById('selHipoteseLegal').value;
+        } else if(document.getElementById('hdnHipoteseLegal')){
             idHipoteseLegal = document.getElementById('hdnHipoteseLegal').value;
         }
 
@@ -710,6 +714,28 @@
         document.getElementById('btnValidar').removeAttribute('disabled');
         document.getElementById('btnAdicionar').style.display = 'none';
     }
+
+
+    function controlarEnterValidarProcesso(e){
+       var focus = returnElementFocus();
+        if(infraGetCodigoTecla(e)==13) {
+            document.getElementById('btnValidar').onclick();
+        }
+    }
+
+
+    function returnElementFocus() {
+        var focused = document.activeElement;
+        if (!focused || focused == document.body) {
+            focused = null;
+        }
+        else if (document.querySelector){
+            focused = document.querySelector(":focus")
+        }
+
+        return focused;
+    }
+
 
     //===============================================================================================================//
     //--------------------------------------------- FIM DOCUMENTO ---------------------------------------------------//

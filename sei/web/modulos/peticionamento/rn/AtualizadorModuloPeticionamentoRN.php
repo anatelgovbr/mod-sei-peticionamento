@@ -78,7 +78,7 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN
         die;
     }
 
-    //Contem atualizações da versao 1.1.0
+    //Contem atualizações da versao 1.1.0 (Intercorrente)
     protected function instalarv110()
     {
         try {
@@ -122,6 +122,49 @@ class AtualizadorModuloPeticionamentoRN extends InfraRN
             	$objInfraMetaBD->adicionarChaveEstrangeira('fk5_md_pet_rel_recibo_protoc', 'md_pet_rel_recibo_protoc', array('id_protocolo_relacionado'), 'protocolo', array('id_protocolo'));
             	
             }
+            
+            //coluna id_documento na tabela de recibo
+            $objInfraMetaBD->adicionarColuna('md_pet_rel_recibo_protoc', 'id_documento', '' . $objInfraMetaBD->tipoNumeroGrande() , 'NULL');          
+            			$objInfraMetaBD->adicionarChaveEstrangeira('fk6_md_pet_rel_recibo_protoc', 'md_pet_rel_recibo_protoc', array('id_documento'), 'documento', array('id_documento'));
+
+            //Atualizando dados da tabela
+            $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+            $ret = $objInfraParametro->listarValores(array('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO'), false);
+            
+            $arrObjInfraParametroDTO = NULL;
+            $idSeriePet = array_key_exists('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO' , $ret) ? $ret['ID_SERIE_RECIBO_MODULO_PETICIONAMENTO'] : null;
+
+            if($idSeriePet){
+                $arrObjDocumentDTO = array();
+
+                $objDocumentoDTO = new DocumentoDTO();
+                $objDocumentoDTO->retDblIdDocumento();
+                $objDocumentoDTO->retDblIdProcedimento();
+                $objDocumentoDTO->setNumIdSerie($idSeriePet);
+                $objDocumentoRN = new DocumentoRN();
+                $countDoc = $objDocumentoRN->contarRN0007($objDocumentoDTO);
+
+                if ($countDoc > 0) {
+                    $arrObjDocumentDTO = $objDocumentoRN->listarRN0008($objDocumentoDTO);
+                    foreach ($arrObjDocumentDTO as $objDocumentoDTO) {
+                        $objReciboPeticionamentoDTO = new ReciboPeticionamentoDTO();
+                        $objReciboPeticionamentoRN = new ReciboPeticionamentoRN();
+                        $objReciboPeticionamentoDTO->setNumIdProtocolo($objDocumentoDTO->getDblIdProcedimento());
+                        $objReciboPeticionamentoDTO->setDblIdDocumento($objDocumentoDTO->getDblIdDocumento());
+                        $objReciboPeticionamentoDTO->retNumIdReciboPeticionamento();
+                        $arrObjReciboPeticionamentoDTO = $objReciboPeticionamentoRN->listar($objReciboPeticionamentoDTO);
+                        
+                        foreach ($arrObjReciboPeticionamentoDTO as $objDTO){
+                            $objReciboPeticionamentoRN->alterar($objDTO);
+                        }
+                    }
+                }
+
+            }
+
+
+
+
 
             //Atualizando parametro para controlar versao do modulo
             $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');

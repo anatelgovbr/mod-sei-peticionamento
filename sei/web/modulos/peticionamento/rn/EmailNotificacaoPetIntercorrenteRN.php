@@ -67,7 +67,10 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
         //variaveis basicas em uso no email
         //$linkLoginUsuarioExterno = $objOrgaoDTO->getStrSitioInternet();
         //$linkLoginUsuarioExterno = $this->getObjInfraSessao()->getStrPaginaLogin()
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin();
+        //$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin();
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+
+
         $strNomeTipoProcedimento = $objProcedimentoDTO->getStrNomeTipoProcedimento();
         $strProtocoloFormatado = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
         $strSiglaUnidade = $objUnidadeDTO->getStrSigla();
@@ -199,7 +202,7 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
 
             $strAssunto = $objEmailSistemaDTO->getStrAssunto();
             $strAssunto = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(), $strAssunto);
-            $strAssunto = str_replace('@processo@', $documentoDTO->getStrProtocoloDocumentoFormatado() , $strAssunto);
+            $strAssunto = str_replace('@processo@', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() , $strAssunto);
 
             $strConteudo = $objEmailSistemaDTO->getStrConteudo();
 

@@ -84,9 +84,14 @@ class ProcessoPeticionamentoRN extends InfraRN {
 	}	
 
 	protected function gerarProcedimentoControlado( $arrParametros ){
-		
-		try {	
-						
+		try {
+
+			$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
+			
+			//Remententes 
+			$idsRemententes = array();
+			$idsRemententes[] = $contatoDTOUsuarioLogado->getNumIdContato();
+			
 			$idTipoProc = $arrParametros['id_tipo_procedimento'];
 			$objTipoProcDTO = new TipoProcessoPeticionamentoDTO();
 			$objTipoProcDTO->retTodos(true);
@@ -129,19 +134,25 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$unidadeDTO = $unidadeRN->consultarRN0125( $unidadeDTO );				
 			
 			$protocoloRN = new ProtocoloPeticionamentoRN();
-			
-			$arrParticipantesParametro = array();
-			
+
+			//seiv2
+			//$arrParticipantesParametro = array();
+			//$arrObjInteressadoAPI = array();
+
 			if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'S' ){
-				
-				$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
+
 				$arrParametros['hdnListaInteressados'] = $contatoDTOUsuarioLogado->getNumIdContato();
+
+				// Interessados
 				$idsContatos = array();
 				$idsContatos[] = $arrParametros['hdnListaInteressados'];
-				
-				$arrParticipantesParametro = $this->atribuirParticipantes( $this->montarArrContatosInteressados( $idsContatos ) );
+				$idsContatos = array_merge($idsRemententes, $idsContatos);
+
+				//seiv3 refatoraçao
+				//$arrParticipantesParametro = $this->atribuirParticipantes( $this->montarArrContatosInteressados( $idsContatos ) );
+
 			}
-			
+
 			//verificar se esta vindo o array de participantes
 			//participantes selecionados via pop up OU indicados diretamente por CPF/CNPJ
 			else if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'N' && 
@@ -151,17 +162,21 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$arrContatosInteressados = array();
 				
 				if (strpos( $arrParametros['hdnListaInteressados'] , ',') !== false) {
+					// Interessados
 					$idsContatos = split(",", $arrParametros['hdnListaInteressados']);
 				} else {
+					// Interessados				
 					$idsContatos = array();
 					$idsContatos[] = $arrParametros['hdnListaInteressados'];
 				}
-				
+
 				//seiv3 refatoraçao
-				$arrParticipantesParametro = $this->atribuirParticipantes( $this->montarArrContatosInteressados( $idsContatos ) );
-							
+				//$arrParticipantesParametro = $this->atribuirParticipantes( $this->montarArrContatosInteressados( $idsContatos ) );
+
 			} 
-						
+
+			$idsContatos = array_unique($idsContatos);
+
 			//Gera um processo
 			$objProcedimentoAPI = new ProcedimentoAPI();
 			$objProcedimentoAPI->setIdTipoProcedimento( $objTipoProcDTO->getNumIdProcedimento() );
@@ -169,7 +184,10 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objProcedimentoAPI->setIdUnidadeGeradora( $unidadeDTO->getNumIdUnidade() );
 			$objProcedimentoAPI->setEspecificacao( $arrParametros['txtEspecificacaoDocPrincipal'] );
 			$objProcedimentoAPI->setNumeroProtocolo('');
+
+			//seiv2
 			//$objProcedimentoAPI->setInteressados( $arrParticipantesParametro );
+			
 			$objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
 			$objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
 				
@@ -178,7 +196,40 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			
 			//$objSaidaGerarProcedimentoAPI = new SaidaGerarProcedimentoAPI();
 			$objSaidaGerarProcedimentoAPI = $objSeiRN->gerarProcedimento($objEntradaGerarProcedimentoAPI);
-				
+
+			//seiv3
+			//Remetentes
+			$idsParticipantes = array();
+
+			$objParticipante  = new ParticipanteDTO();
+			$objParticipante->setDblIdProtocolo($objSaidaGerarProcedimentoAPI->getIdProcedimento());
+			$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
+			$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
+			$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
+			$objParticipante->setNumSequencia(0);
+			$idsParticipantes[] = $objParticipante;
+
+			// Processo - Interessados
+			$i=0;
+			foreach($idsContatos as $interessado){
+				$objParticipante  = new ParticipanteDTO();
+				$objParticipante->setDblIdProtocolo($objSaidaGerarProcedimentoAPI->getIdProcedimento());
+				$objParticipante->setNumIdContato($interessado);
+				$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
+				$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+				$objParticipante->setNumSequencia($i);
+				$idsParticipantes[] = $objParticipante;
+				$i++;
+			}
+
+			$objMdPetParticipanteRN = new MdPetParticipanteRN();
+			$arrInteressado = array();
+			$arrInteressado[0] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
+			$arrInteressado[1] = $idsParticipantes;
+
+			$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );
+			// Processo - Interessados - FIM
+
 			//gerando recibo e adicionando recibo NAO ASSINADO ao processo
 			$reciboPeticionamentoRN = new ReciboPeticionamentoRN();
 			$reciboDTOBasico = $reciboPeticionamentoRN->gerarReciboSimplificado( $objSaidaGerarProcedimentoAPI->getIdProcedimento() );
@@ -194,24 +245,28 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objProcedimentoDTO->setDblIdProcedimento( $objSaidaGerarProcedimentoAPI->getIdProcedimento() );
 			$objProcedimentoDTO->setStrProtocoloProcedimentoFormatado( $objSaidaConsultarProcedimentoAPI->getProcedimentoFormatado()  );
 			$objProcedimentoDTO->setNumIdTipoProcedimento( $objSaidaConsultarProcedimentoAPI->getTipoProcedimento()->getIdTipoProcedimento()  );
-			
-			$this->montarArrDocumentos( $arrParametros, $unidadeDTO, $objProcedimentoDTO, 
-					                    $arrParticipantesParametro, $reciboDTOBasico );
-			
+
+			//seiv2
+			//$this->montarArrDocumentos( $arrParametros, $unidadeDTO, $objProcedimentoDTO, 
+			//		                    $arrParticipantesParametro, $reciboDTOBasico );
+			//seiv3
+			$this->montarArrDocumentos( $arrParametros, $unidadeDTO, $objProcedimentoDTO, $reciboDTOBasico );
+
 			$arrParams = array();
 			$arrParams[0] = $arrParametros;
 			$arrParams[1] = $unidadeDTO;
 			$arrParams[2] = $objProcedimentoDTO;
-			$arrParams[3] = $arrParticipantesParametro;
+			//seiv2
+			//$arrParams[3] = $arrParticipantesParametro;
 			$arrParams[4] = $reciboDTOBasico;
-			
-			$reciboPeticionamentoRN->montarRecibo( $arrParams );
+
+			$reciboGerado = $reciboPeticionamentoRN->montarRecibo( $arrParams );
 			
 			$arrProcessoReciboRetorno = array();
 			$arrProcessoReciboRetorno[0] = $reciboDTOBasico;
 			$arrProcessoReciboRetorno[1] = $objProcedimentoDTO;
-			
-			//enviando email de sistema EU 5155  / 5156 - try catch por causa que em localhost o envio de email gera erro 
+
+			//enviando email de sistema EU 5155  / 5156 - try catch por causa que em localhost o envio de email gera erro
 			try {
 			  $emailNotificacaoPeticionamentoRN = new EmailNotificacaoPeticionamentoRN();
 			  $emailNotificacaoPeticionamentoRN->notificaoPeticionamentoExterno( $arrParams );
@@ -229,7 +284,41 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			
 			//removendo as tarefas do tipo "Disponibilizado acesso externo para @INTERESSADO@"
 			foreach( $arrDocsProcesso as $DocumentoProcessoDTO ){
+
+				//seiv3
+				//Remetentes
+				$idsParticipantes = array();
+
+				$objParticipante  = new ParticipanteDTO();
+				$objParticipante->setDblIdProtocolo($DocumentoProcessoDTO->getDblIdDocumento());
+				$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
+				$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
+				$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
+				$objParticipante->setNumSequencia(0);
+				$idsParticipantes[] = $objParticipante;
+
+				// Documento - Interessados
+				$i=0;
+				//foreach($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc){
+				foreach($idsContatos as $interessado){
+					$objParticipante  = new ParticipanteDTO();
+					$objParticipante->setDblIdProtocolo($DocumentoProcessoDTO->getDblIdDocumento());
+					$objParticipante->setNumIdContato($interessado);
+					$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
+					$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+					$objParticipante->setNumSequencia($i);
+					$idsParticipantes[] = $objParticipante;
+					$i++;
+				}
+
+				$objMdPetParticipanteRN = new MdPetParticipanteRN();
+				$arrInteressado = array();
+				$arrInteressado[0] = $DocumentoProcessoDTO->getDblIdDocumento();
+				$arrInteressado[1] = $idsParticipantes;
 				
+				$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );
+				// Documento - Interessados - FIM
+
 				$objAtividadeDTOLiberacao = new AtividadeDTO();
 				$objAtividadeDTOLiberacao->retTodos();
 				$objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
@@ -304,11 +393,10 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		return $saidaDocExternoAPI;
 		
 	}
-	
+
 	private function montarArrDocumentos( $arrParametros , $objUnidadeDTO , 
-			                              $objProcedimentoDTO , $arrParticipantesParametro , 
-			                              $reciboDTOBasico ){
-		
+			                              $objProcedimentoDTO , $reciboDTOBasico ){
+
 		//tentando simular sessao de usuario interno do SEI
 		SessaoSEI::getInstance()->setNumIdUnidadeAtual( $objUnidadeDTO->getNumIdUnidade() );
 		SessaoSEI::getInstance()->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
@@ -316,7 +404,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		$objDocumentoPeticionamentoRN = new DocumentoPeticionamentoRN();
 		
 		$arrDocumentoDTO = array();
-		
+
 		//verificar se foi editado documento principal gerado pelo editor do SEI
 		if( isset( $arrParametros['docPrincipalConteudoHTML'] ) && $arrParametros['docPrincipalConteudoHTML'] != ""  ){
 						
@@ -330,10 +418,14 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			//====================================
 			//gera no sistema as informações referentes ao documento principal
 			//====================================
+			//seiv2
+			//$documentoDTOPrincipal = $this->montarDocumentoPrincipal( $objProcedimentoDTO, 
+			//		                          $objTipoProcDTO, $objUnidadeDTO, 
+			//		                          $arrParticipantesParametro, $arrParametros );
+			//seiv3
 			$documentoDTOPrincipal = $this->montarDocumentoPrincipal( $objProcedimentoDTO, 
-					                          $objTipoProcDTO, $objUnidadeDTO, 
-					                          $arrParticipantesParametro, $arrParametros );
-			
+					                          $objTipoProcDTO, $objUnidadeDTO, $arrParametros );
+
 			//====================================
 			//ASSINAR O DOCUMENTO PRINCIPAL
 			//====================================			
@@ -348,9 +440,9 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$reciboDocAnexoDTO->setNumIdDocumento( $documentoDTOPrincipal->getDblIdDocumento() );
 			$reciboDocAnexoDTO->setStrClassificacaoDocumento( ReciboDocumentoAnexoPeticionamentoRN::$TP_PRINCIPAL );
 			$reciboDocAnexoDTO = $reciboDocAnexoRN->cadastrar( $reciboDocAnexoDTO );
-			
+
 		} 
-		
+
 		//verificar se o documento principal é do tipo externo (ANEXO)
 		else {
 			
@@ -444,32 +536,27 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo." 
 				//nao esta fazendo reabertura de processo - trata-se de processo novo
 				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
-								
-				//INTERESSADOS E REMETENTES
-				$arrObjParticipantesDTO = array();
-				
-				//o proprio usuario externo logado é remetente do documento
-				$contatoDTO = $this->getContatoDTOUsuarioLogado();
-				
-				$remetenteDTO = new ParticipanteDTO();
-				$remetenteRN = new ParticipanteRN();
-				$remetenteDTO->retTodos();
-				$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
-				$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
-				$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
-				$remetenteDTO->setNumSequencia(0);
-				
-				$arrObjParticipantesDTO = $arrParticipantesParametro;				
-				$arrObjParticipantesDTO[] = $remetenteDTO;
-				
+
+				//seiv2
+				//$remetenteDTO = new ParticipanteDTO();
+				//$remetenteRN = new ParticipanteRN();
+				//$remetenteDTO->retTodos();
+				//$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
+				//$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
+				//$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+				//$remetenteDTO->setNumSequencia(0);
+
+				//seiv2
+				//$arrObjParticipantesDTO = $arrParticipantesParametro;				
+				//$arrObjParticipantesDTO[] = $remetenteDTO;
+
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
-				
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
 				$objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EXTERNO);
-				
-				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, 			                                                         $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_PRINCIPAL );
-								                
+
+				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_PRINCIPAL );
+
 				//=============================
 				//criando registro em anexo
 				//=============================
@@ -559,30 +646,26 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo."
 				//nao esta fazendo reabertura de processo - trata-se de processo novo
 				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
-									
-				//INTERESSADOS E REMETENTES
-				$arrObjParticipantesDTO = array();
-				
-				//o proprio usuario externo logado é remetente do documento
-				$contatoDTO = $this->getContatoDTOUsuarioLogado();
-				
-				$remetenteDTO = new ParticipanteDTO();
-				$remetenteRN = new ParticipanteRN();
-				$remetenteDTO->retTodos();
-				$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
-				$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
-				$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
-				$remetenteDTO->setNumSequencia(0);
-				
-				$arrObjParticipantesDTO = $arrParticipantesParametro;
-				$arrObjParticipantesDTO[] = $remetenteDTO;
-				
+
+				//seiv2
+				//$remetenteDTO = new ParticipanteDTO();
+				//$remetenteRN = new ParticipanteRN();
+				//$remetenteDTO->retTodos();
+				//$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
+				//$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
+				//$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+				//$remetenteDTO->setNumSequencia(0);
+
+				//seiv2
+				//$arrObjParticipantesDTO = $arrParticipantesParametro;
+				//$arrObjParticipantesDTO[] = $remetenteDTO;
+
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');				
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
 				
 				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, 			                                                         $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_ESSENCIAL );
-				
+
 				//==================================
 				//CRIANDO ANEXOS
 				//=================================
@@ -670,30 +753,25 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				//nao esta fazendo reabertura de processo - trata-se de processo novo
 				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
 									
-				//INTERESSADOS E REMETENTES
-				$arrObjParticipantesDTO = array();
-				
-				//o proprio usuario externo logado é remetente do documento
-				$contatoDTO = $this->getContatoDTOUsuarioLogado();
-				
-				$remetenteDTO = new ParticipanteDTO();
-				$remetenteRN = new ParticipanteRN();
-				$remetenteDTO->retTodos();
-				$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
-				$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
-				$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
-				$remetenteDTO->setNumSequencia(0);
-				
-				$arrObjParticipantesDTO = $arrParticipantesParametro;
-				$arrObjParticipantesDTO[] = $remetenteDTO;
-									
+				//seiv2
+				//$remetenteDTO = new ParticipanteDTO();
+				//$remetenteRN = new ParticipanteRN();
+				//$remetenteDTO->retTodos();
+				//$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
+				//$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
+				//$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+				//$remetenteDTO->setNumSequencia(0);
+
+				//seiv3
+				//$arrObjParticipantesDTO = $arrParticipantesParametro;
+				//$arrObjParticipantesDTO[] = $remetenteDTO;
+
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
-				
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
-				
-				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, 			                                                         $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_COMPLEMENTAR );
-								
+
+				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_COMPLEMENTAR );
+
 				//========================
 				//CRIANDO ANEXOS
 				//========================
@@ -722,59 +800,59 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		}
 						
 	}
-	
-	private function montarProtocoloDocumentoAnexo( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO, 
-			                                        $arrParticipantesParametro, $arrAnexos, $reciboDTOBasico ){
-			                                        	
-	    $reciboAnexoRN = new ReciboDocumentoAnexoPeticionamentoRN();
-	    $strClassificacao = $arrParametros['CLASSIFICACAO_RECIBO'];
-	    
-		foreach( $arrAnexos as $anexoDTOVinculado){	                                        	
-			
-			$anexoBD = new AnexoBD( $this->getObjInfraIBanco() );
-			$anexoBD->alterar( $anexoDTOVinculado );
-			
-			$reciboAnexoDTO = new ReciboDocumentoAnexoPeticionamentoDTO();
-			$reciboAnexoDTO->setNumIdAnexo( $anexoDTOVinculado->getNumIdAnexo() );
-			$reciboAnexoDTO->setNumIdReciboPeticionamento( $reciboDTOBasico->getNumIdReciboPeticionamento() );
-			$reciboAnexoDTO->setNumIdDocumento( $anexoDTOVinculado->getDblIdProtocolo() );
-			$reciboAnexoDTO->setStrClassificacaoDocumento( $strClassificacao );				
-			$reciboAnexoDTO = $reciboAnexoRN->cadastrar( $reciboAnexoDTO );
-			
-		}
-		
-	}
-	
+
+	//NÃO FOI ACHADO USO
+	//private function montarProtocoloDocumentoAnexo( $arrParametros, $objUnidadeDTO, $objProcedimentoDTO, 
+	//		                                        $arrParticipantesParametro, $arrAnexos, $reciboDTOBasico ){
+	//
+	//    $reciboAnexoRN = new ReciboDocumentoAnexoPeticionamentoRN();
+	//    $strClassificacao = $arrParametros['CLASSIFICACAO_RECIBO'];
+	//
+	//	foreach( $arrAnexos as $anexoDTOVinculado){	                                        	
+	//
+	//		$anexoBD = new AnexoBD( $this->getObjInfraIBanco() );
+	//		$anexoBD->alterar( $anexoDTOVinculado );
+	//
+	//		$reciboAnexoDTO = new ReciboDocumentoAnexoPeticionamentoDTO();
+	//		$reciboAnexoDTO->setNumIdAnexo( $anexoDTOVinculado->getNumIdAnexo() );
+	//		$reciboAnexoDTO->setNumIdReciboPeticionamento( $reciboDTOBasico->getNumIdReciboPeticionamento() );
+	//		$reciboAnexoDTO->setNumIdDocumento( $anexoDTOVinculado->getDblIdProtocolo() );
+	//		$reciboAnexoDTO->setStrClassificacaoDocumento( $strClassificacao );				
+	//		$reciboAnexoDTO = $reciboAnexoRN->cadastrar( $reciboAnexoDTO );
+	//
+	//	}
+	//
+	//}
+
 	private function montarDocumentoPrincipal( $objProcedimentoDTO, 
 			                                   $objTipoProcDTO, 
 			                                   $objUnidadeDTO, 
-			                                   $arrParticipantesParametro, 
+			                                   //seiv2
+			                                   //$arrParticipantesParametro,
 			                                   $arrParametros ){
-			
+
 			$objSeiRN = new SeiRN();
 			
 			$nivelAcessoDocPrincipal = $arrParametros['nivelAcessoDocPrincipal'];
 			$grauSigiloDocPrincipal = $arrParametros['grauSigiloDocPrincipal'];
 			$hipoteseLegalDocPrincipal = $arrParametros['hipoteseLegalDocPrincipal'];
-						
-			//INTERESSADOS E REMETENTES
-			$arrObjParticipantesDTO = array();
-			
+
 			//o proprio usuario externo logado é remetente do documento
 			$contatoDTO = $this->getContatoDTOUsuarioLogado();
-			
-			$remetenteDTO = new ParticipanteDTO();
-			$remetenteRN = new ParticipanteRN();
-			$remetenteDTO->retTodos();
-			$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
-			$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
-			$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
-			$remetenteDTO->setNumSequencia(0);
-			
-			$arrObjParticipantesDTO = array();
-			$arrObjParticipantesDTO[] = $remetenteDTO;
-			$arrParticipantesParametro[] = $remetenteDTO;
-			
+
+			//seiv2
+			//$remetenteDTO = new ParticipanteDTO();
+			//$remetenteRN = new ParticipanteRN();
+			//$remetenteDTO->retTodos();
+			//$remetenteDTO->setStrStaParticipacao( ParticipanteRN::$TP_REMETENTE );
+			//$remetenteDTO->setNumIdContato( $contatoDTO->getNumIdContato() );
+			//$remetenteDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+			//$remetenteDTO->setNumSequencia(0);
+
+			//seiv2
+			//$arrObjParticipantesDTO[] = $remetenteDTO;
+			//$arrParticipantesParametro[] = $remetenteDTO;
+
 			//Incluir documento interno
 			$objDocumentoAPI = new DocumentoAPI();
 			
@@ -787,10 +865,11 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objDocumentoAPI->setConteudo(base64_encode( $arrParametros['docPrincipalConteudoHTML'] ));
 			$objDocumentoAPI->setSinAssinado('S');
 			$objDocumentoAPI->setSinBloqueado('S');
-						
-			$objSaidaIncluirDocumentoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);			
+
+			$objSaidaIncluirDocumentoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
+
 			SessaoSEIExterna::getInstance()->setAtributo('idDocPrincipalGerado', $objSaidaIncluirDocumentoAPI->getIdDocumento() );
-			
+
 			$documentoDTOPrincipal = new DocumentoDTO();
 			$documentoDTOPrincipal->setDblIdDocumento( $objSaidaIncluirDocumentoAPI->getIdDocumento() );
 			return $documentoDTOPrincipal;
@@ -893,18 +972,26 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$bolRemoverTipoConferencia = false;
 			
 			if( !$documentoDTO->isSetNumIdTipoConferencia() || $documentoDTO->getNumIdTipoConferencia()==null ){
-				
+
+                // buscando o menor tipo de conferencia
+                $tipoConferenciaDTOConsulta = new TipoConferenciaDTO();
+                $tipoConferenciaDTOConsulta->retTodos();
+                $tipoConferenciaDTOConsulta->setStrSinAtivo('S');
+                $tipoConferenciaDTOConsulta->setOrd('IdTipoConferencia', InfraDTO::$TIPO_ORDENACAO_ASC);
+                $tipoConferenciaRN = new TipoConferenciaRN();
+                $arrTipoConferenciaDTO = $tipoConferenciaRN->listar($tipoConferenciaDTOConsulta);
+                $numIdTipoConferencia = $arrTipoConferenciaDTO[0]->getNumIdTipoConferencia();
+                // fim buscando o menor tipo de conferencia
+
 				//setando um tipo de conferencia padrao (que sera removido depois), apenas para passar na validação
-				//@todo nao deixar o ID hard-coded (talvez criar novo tipo de conferencia para usar aqui)
-				$documentoDTO->setNumIdTipoConferencia( 1 );
+				$documentoDTO->setNumIdTipoConferencia($numIdTipoConferencia);
 				$documentoAlteracaoDTO = new DocumentoDTO();
 				$documentoAlteracaoDTO->retDblIdDocumento();
 				$documentoAlteracaoDTO->retNumIdTipoConferencia();
 				$documentoAlteracaoDTO->setDblIdDocumento( $documentoDTO->getDblIdDocumento() );
 				$documentoAlteracaoDTO = $documentoRN->consultarRN0005( $documentoAlteracaoDTO );
 				
-				//@todo nao deixar o ID hard-coded (talvez criar novo tipo de conferencia para usar aqui)
-				$documentoAlteracaoDTO->setNumIdTipoConferencia(1);
+				$documentoAlteracaoDTO->setNumIdTipoConferencia($numIdTipoConferencia);
 				$documentoBD->alterar( $documentoAlteracaoDTO );
 				$bolRemoverTipoConferencia = true;
 				
@@ -946,23 +1033,24 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			$objAcessoExternoBD->excluir( $objAcessoExternoDTO );
 		
 	}
-	
-	private function montarArrContatosInteressados( $idsContatos ){
-		
-		$contatoRN = new ContatoRN();
-		$objContatoDTO = new ContatoDTO();
-		$objContatoDTO->retStrSigla();
-		$objContatoDTO->retStrNome();
-		$objContatoDTO->retNumIdContato();
-		
-		$objContatoDTO->adicionarCriterio(array('IdContato', 'SinAtivo'),
-				array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL),
-				array( $idsContatos,'S'),
-				InfraDTO::$OPER_LOGICO_AND);
-		
-		$arrContatos = $contatoRN->listarRN0325( $objContatoDTO );
-		return $arrContatos;
-	}
+
+	//NÃO FOI ACHADO USO
+	//private function montarArrContatosInteressados( $idsContatos ){
+	//
+	//	$contatoRN = new ContatoRN();
+	//	$objContatoDTO = new ContatoDTO();
+	//	$objContatoDTO->retStrSigla();
+	//	$objContatoDTO->retStrNome();
+	//	$objContatoDTO->retNumIdContato();
+
+	//	$objContatoDTO->adicionarCriterio(array('IdContato', 'SinAtivo'),
+	//			array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL),
+	//			array( $idsContatos,'S'),
+	//			InfraDTO::$OPER_LOGICO_AND);
+
+	//	$arrContatos = $contatoRN->listarRN0325( $objContatoDTO );
+	//	return $arrContatos;
+	//}
 
 	private function atribuirParticipantes( $arrObjInteressados)
 	{		
@@ -1213,5 +1301,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		
 		return $contatoDTO;
 	}
+
 }
 ?>

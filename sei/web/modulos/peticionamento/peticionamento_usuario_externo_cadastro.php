@@ -183,7 +183,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
         </div>
                
        <div style="width: auto;">
-       
+
+       <input type="hidden" name="txtNomeRazaoSocialTratadoHTML" id="txtNomeRazaoSocialTratadoHTML" value=""/>
        <input type="hidden" name="hdnIdInteressadoCadastrado" id="hdnIdInteressadoCadastrado" value="" />
        <input type="hidden" name="hdnListaInteressadosIndicados" id="hdnListaInteressadosIndicados" value="" />
        <input type="hidden" name="hdnCustomizado" id="hdnCustomizado" value="" />

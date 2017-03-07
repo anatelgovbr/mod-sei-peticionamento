@@ -67,7 +67,10 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 		//variaveis basicas em uso no email
 		//$linkLoginUsuarioExterno = $objOrgaoDTO->getStrSitioInternet();
 		//$linkLoginUsuarioExterno = $this->getObjInfraSessao()->getStrPaginaLogin()
-		$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin();
+		//$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin();
+		$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+
+
 		$strNomeTipoProcedimento = $objProcedimentoDTO->getStrNomeTipoProcedimento();
 		$strProtocoloFormatado = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
 		$strSiglaUnidade = $objUnidadeDTO->getStrSigla();
@@ -151,6 +154,7 @@ class EmailNotificacaoPeticionamentoRN extends InfraRN {
 			///
 			$strConteudo = str_replace('@email_usuario_externo@', $strEmailContato ,$strConteudo);
 			$strConteudo = str_replace('@link_login_usuario_externo@', $linkLoginUsuarioExterno , $strConteudo);
+
 
 			if ($reciboDTOBasico->getStrStaTipoPeticionamento()=="N"){
 				$strConteudo = str_replace('@tipo_peticionamento@',"Processo Novo",$strConteudo);

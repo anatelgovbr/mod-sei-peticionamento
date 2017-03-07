@@ -350,10 +350,10 @@ class TipoProcessoPeticionamentoRN extends InfraRN {
 	
 	private function _retornaValorParametroHipoteseLegal(){
 		$objInfraParametroDTO = new InfraParametroDTO();
-		$objInfraParametroRN  = new InfraParametroRN();
+		$objMdPetParametroRN  = new MdPetParametroRN();
 		$objInfraParametroDTO->retTodos();
 		$objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
-		$objInfraParametroDTO = $objInfraParametroRN->consultar($objInfraParametroDTO);
+		$objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
 		$valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
 		return $valorParametroHipoteseLegal;
 	}

@@ -80,7 +80,8 @@ try {
   
   $objRelUnidadeTipoContContatoDTO->retNumIdTipoContato();
   $objRelUnidadeTipoContContatoDTO->setNumIdUnidade(SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual());
-  $arrTiposContextosUnidade = InfraArray::converterArrInfraDTO($objRelUnidadeTipoContContatoRN->listarRN0547($objRelUnidadeTipoContContatoDTO),'IdTipoContextoContato');
+  //$arrTiposContextosUnidade = InfraArray::converterArrInfraDTO($objRelUnidadeTipoContContatoRN->listarRN0547($objRelUnidadeTipoContContatoDTO),'IdTipoContextoContato');
+  $arrTiposContextosUnidade = InfraArray::converterArrInfraDTO($objRelUnidadeTipoContContatoRN->listarRN0547($objRelUnidadeTipoContContatoDTO),'IdTipoContato');
 
   $objContatoDTO = new ContatoDTO();
   $objContatoDTO->retNumIdContato();
@@ -115,14 +116,21 @@ try {
   //$objContatoDTO->retStrSinContexto();
 
   if (count($arrTiposContextosUnidade)) {
-    $objContatoDTO->adicionarCriterio(array('SinLiberadoTipoContextoContatoContato', 'IdTipoContextoContatoContato'),
-        array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IN),
-        array('S', $arrTiposContextosUnidade),
-        InfraDTO::$OPER_LOGICO_OR);
-  }else{
-    
   	//seiv2
-    //$objContatoDTO->setStrSinLiberadoTipoContextoContatoContato('S');
+    //$objContatoDTO->adicionarCriterio(array('SinLiberadoTipoContextoContatoContato', 'IdTipoContextoContatoContato'),
+    //    array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IN),
+    //    array('S', $arrTiposContextosUnidade),
+    //    InfraDTO::$OPER_LOGICO_OR);
+    
+  	//Verificar se novo campo SinAtivoTipoContato ou outro substitui anterior SinLiberadoTipoContextoContatoContato
+    $objContatoDTO->adicionarCriterio(
+        array('IdTipoContato'),
+        array(InfraDTO::$OPER_IN),
+        array($arrTiposContextosUnidade)
+        );
+  //seiv2
+  //}else{
+  //  $objContatoDTO->setStrSinLiberadoTipoContextoContatoContato('S');
   }
 
   //seiv2
@@ -162,7 +170,7 @@ try {
 
     $numTipoContextoContato = PaginaSEIExterna::getInstance()->recuperarCampo('selTipoContextoContato');
     if ($numTipoContextoContato!='' && $numTipoContextoContato!='null'){
-        $objContatoDTO->setNumIdTipoContextoContatoContato($numTipoContextoContato);
+        $objContatoDTO->setNumIdTipoContato($numTipoContextoContato);
     }else if(!empty($arrobjRelTipoContextoPeticionamentoDTO)){
         $arrId = array();
         foreach($arrobjRelTipoContextoPeticionamentoDTO as $item){
@@ -577,54 +585,36 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
           onchange="selecionarTipoContato()" 
           tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" >
   <option></option>
-  
-  <? 
-  //seiv2
-  //$objTipoContextoContatoRN = new TipoContextoContatoRN();
-  
-  //alteracoes seiv3
-  $objTipoContextoContatoRN = new TipoContatoRN();
+  <?
+	if(!empty($arrobjRelTipoContextoPeticionamentoDTO)){
+		
+		$objTipoContatoDTO = new TipoContatoDTO();
+		$objTipoContatoRN = new TipoContatoRN();
 
+		$objTipoContatoDTO->retStrSinSistema();
+		$objTipoContatoDTO->retNumIdTipoContato();
+		$objTipoContatoDTO->retStrNome();
 
+		// Tipos permitidos
+		$arrRelTipoContextoPeticionamento = InfraArray::converterArrInfraDTO($arrobjRelTipoContextoPeticionamentoDTO,'IdTipoContextoContato');
 
-
-
-
-  foreach( $arrobjRelTipoContextoPeticionamentoDTO as $item ){ 
-       //seiv2
-  	   //$dto = new TipoContextoContatoDTO();
-  	   
-  	   //alteracoes seiv3
-  	   $dto = new TipoContatoDTO();
-  	
-	   //seiv2
-	   //$dto->setNumIdTipoContextoContato( $item->getNumIdTipoContextoContato() );
-
-	   //alteracoes seiv3
-	   $dto->setNumIdTipoContato( $item->getNumIdTipoContextoContato() );
-
-	   $dto->retTodos();
-	   $dto = $objTipoContextoContatoRN->consultarRN0336( $dto );
-
-	   $selected = "";
-
-	   //seiv2
-	   //if( $_POST['selTipoContextoContato'] == $item->getNumIdTipoContextoContato() ){
-	   //alteracoes seiv3
-	   if( $_POST['selTipoContextoContato'] == $item->getNumIdTipoContextoContato() ){
-	     $selected = " selected='selected' ";
-	   }
-	   
-	   //seiv2
-	   //<option value="<*?= $item->getNumIdTipoContextoContato() ?*>" <*?= $selected ?*> >
-	   
-	   //alteracoes seiv3
+		$objTipoContatoDTO->adicionarCriterio(array('IdTipoContato'),
+			array(InfraDTO::$OPER_IN),
+			array($arrRelTipoContextoPeticionamento)
+		);
+		$objTipoContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
+		$objTipoContatoDTO = $objTipoContatoRN->listarRN0337( $objTipoContatoDTO );
+		foreach( $objTipoContatoDTO as $item ){
+			$selected = ''; 
+			if( $_POST['selTipoContextoContato'] == $item->getNumIdTipoContato() ){
+				$selected = 'SELECTED';
+			}
+			if( $item->getStrSinSistema != "S" ) { 
+				echo "<option value='" . $item->getNumIdTipoContato() . "' " . $selected . ">" . $item->getStrNome() . "</option>";
+			}
+		}
+	}
   ?>
-     <option value="<?= $item->getNumIdTipoContextoContato() ?>" <?= $selected ?> >
-     <?= $dto->getStrNome() ?>
-     </option>	  
-  <? } ?>
-  
   </select>
   
   <?

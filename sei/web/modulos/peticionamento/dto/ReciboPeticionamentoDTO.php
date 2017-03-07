@@ -34,6 +34,15 @@ class ReciboPeticionamentoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdProtocolo',
 				'id_protocolo');
+		
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL,
+				'IdDocumento',
+				'id_documento');
+		
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
+				'NumeroProcessoFormatadoDoc',
+				'protdoc.protocolo_formatado',
+				'protocolo protdoc');
 
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdUsuario',
@@ -58,6 +67,10 @@ class ReciboPeticionamentoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL,
 			  'IdProtocoloRelacionado',
 			  'id_protocolo_relacionado');
+
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL,
+				'IdDocumento',
+				'id_documento');
 				
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
 				'NomeTipoPeticionamento',
@@ -93,12 +106,17 @@ class ReciboPeticionamentoDTO extends InfraDTO  {
 
 		$this->configurarPK('IdReciboPeticionamento',InfraDTO::$TIPO_PK_NATIVA);
 
+		$this->configurarFK('IdDocumento', 'documento doc', 'documento.id_documento', InfraDTO::$TIPO_FK_OPCIONAL);
+		$this->configurarFK('IdDocumento', 'protocolo protdoc', 'protdoc.id_protocolo', InfraDTO::$TIPO_FK_OPCIONAL);
 		$this->configurarFK('IdProtocoloRelacionado', 'protocolo protRel', 'protRel.id_protocolo', InfraDTO::$TIPO_FK_OPCIONAL);
 		$this->configurarFK('IdProtocolo', 'protocolo prot', 'prot.id_protocolo', InfraDTO::$TIPO_FK_OPCIONAL);
 
 		//unidade
 		$this->configurarFK('IdUnidadeGeradora', 'unidade und', 'und.id_unidade');
-		$this->configurarFK('IdUsuario', 'usuario user', 'user.id_usuario');						
-	
+		$this->configurarFK('IdUsuario', 'usuario user', 'user.id_usuario');
+
+		//documento
+		$this->configurarFK('IdDocumento', 'documento doc', 'doc.id_documento');
+
 	}}
 ?>

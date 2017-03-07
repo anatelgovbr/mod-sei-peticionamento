@@ -25,7 +25,7 @@
     <div class="clear"></div>
 
     <div class="bloco">
-        <label class="infraLabelObrigatorio" for="selTipoDocumento">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipal) ?> alt="Ajuda" class="infraImg"/></label>
+        <label class="infraLabelObrigatorio" for="selTipoDocumento">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento) ?> alt="Ajuda" class="infraImg"/></label>
         <select id="selTipoDocumento" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"></select>
     </div>
 
@@ -44,7 +44,9 @@
 	<?php if ($exibirHipoteseLegal): ?>
 		<div class="bloco" id="divBlcHipoteseLegal" style="display: none">
 			<label class="infraLabelObrigatorio" for="selHipoteseLegal">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal) ?> alt="Ajuda" class="infraImg"/></label>
-			<div id="divHipoteseLegal"></div>
+			<div id="divHipoteseLegal">
+                <?php echo $selHipoteseLegal; ?>
+            </div>
 		</div>
 	<?php endif; ?>
 
@@ -89,5 +91,6 @@
     <input type="hidden" name="hdnTbDocumento" value="" id="hdnTbDocumento"/>
     <input type="hidden" value="0" id="hdnIdDocumento"/>
     <input type="hidden" name="hdnIdProcedimento" id="hdnIdProcedimento" value=""/>
+
 
 </fieldset>

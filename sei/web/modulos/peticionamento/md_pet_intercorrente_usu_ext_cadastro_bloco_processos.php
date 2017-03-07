@@ -9,9 +9,9 @@
             Número:
         </label>
 
-        <input onchange="controlarChangeNumeroProcesso();" type="text" id="txtNumeroProcesso" name="txtNumeroProcesso" class="infraText" maxlength="30" style="width:170px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtNumeroProcesso ?>"/>
+        <input onchange="controlarChangeNumeroProcesso();" type="text" id="txtNumeroProcesso" name="txtNumeroProcesso" class="infraText" maxlength="30" style="width:169px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtNumeroProcesso ?>"/>
 
-        <button type="button" accesskey="V" id="btnValidar" onclick="validarNumeroProcesso()" class="infraButton">
+        <button tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" type="button" accesskey="V" id="btnValidar" onclick="validarNumeroProcesso()" class="infraButton">
             <span class="infraTeclaAtalho">V</span>alidar
         </button>
     </div>
@@ -26,7 +26,7 @@
 
         <input type="text" id="txtTipo" name="txtTipo" class="infraText" readonly="readonly" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtTipo ?>"/>
 
-        <button type="button"  onclick="adicionarProcesso();" accesskey="A" id="btnAdicionar" class="infraButton" style="display: none">
+        <button type="button" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" onclick="adicionarProcesso();" accesskey="A" id="btnAdicionar" class="infraButton" style="display: none">
             <span class="infraTeclaAtalho">A</span>dicionar
         </button>
 

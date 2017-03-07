@@ -103,13 +103,13 @@ try {
   		$contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324( $contatoAssociadoDTO );
   		$arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = $contatoAssociadoDTO->getStrSiglaUf();
   }
-  
-  
+
+
   $objInfraParametroDTO = new InfraParametroDTO();
-  $objInfraParametroRN  = new InfraParametroRN();
+  $objMdPetParametroRN  = new MdPetParametroRN();
   $objInfraParametroDTO->retTodos();
   $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
-  $objInfraParametroDTO = $objInfraParametroRN->consultar($objInfraParametroDTO);
+  $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
   $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
 
   if($_GET['acao'] === 'tipo_processo_peticionamento_consultar' || $_GET['acao'] === 'tipo_processo_peticionamento_alterar'){

@@ -39,86 +39,43 @@ class ReciboPeticionamentoIntercorrenteRN extends ReciboPeticionamentoRN {
 		$idSerieRecibo = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
 		
 		//=============================================
-		//MONTAGEM DO PROTOCOLODTO DO DOCUMENTO
+		//MONTAGEM DO DOCUMENTO VIA SEI RN
 		//=============================================
 		
-		$protocoloReciboDocumentoDTO = new ProtocoloDTO();
+		$objDocumentoAPI = new DocumentoAPI();
+		$objDocumentoAPI->setIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+		$objDocumentoAPI->setSubTipo( DocumentoRN::$TD_FORMULARIO_AUTOMATICO );
+		$objDocumentoAPI->setTipo( ProtocoloRN::$TP_DOCUMENTO_GERADO );
+		$objDocumentoAPI->setIdSerie( $idSerieRecibo );
+		$objDocumentoAPI->setSinAssinado('N');
+		$objDocumentoAPI->setSinBloqueado('S');
+		$objDocumentoAPI->setIdHipoteseLegal( null );
+		$objDocumentoAPI->setNivelAcesso( ProtocoloRN::$NA_PUBLICO );
+		$objDocumentoAPI->setIdTipoConferencia( null );
 		
-		$protocoloReciboDocumentoDTO->setDblIdProtocolo(null);
-		$protocoloReciboDocumentoDTO->setStrDescricao( null );
-		$protocoloReciboDocumentoDTO->setStrStaNivelAcessoLocal( ProtocoloRN::$NA_PUBLICO );
-		//$protocoloReciboDocumentoDTO->setStrProtocoloFormatado( $numeroDocumento );
-		//$protocoloReciboDocumentoDTO->setStrProtocoloFormatadoPesquisa( $numeroDocumento );
-		$protocoloReciboDocumentoDTO->setNumIdUnidadeGeradora( $objUnidadeDTO->getNumIdUnidade() );
-		$protocoloReciboDocumentoDTO->setNumIdUsuarioGerador( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-		$protocoloReciboDocumentoDTO->setStrStaProtocolo( ProtocoloRN::$TP_DOCUMENTO_GERADO );
+		$objDocumentoAPI->setConteudo(base64_encode( utf8_encode($htmlRecibo)  ) );
 		
-		$protocoloReciboDocumentoDTO->setStrStaNivelAcessoLocal( ProtocoloRN::$NA_PUBLICO );
-		$protocoloReciboDocumentoDTO->setNumIdHipoteseLegal( null );
-		$protocoloReciboDocumentoDTO->setStrStaGrauSigilo(null);
-					
-		$protocoloReciboDocumentoDTO->setDtaGeracao( InfraData::getStrDataAtual() );
-		$protocoloReciboDocumentoDTO->setArrObjAnexoDTO(array());
-		$protocoloReciboDocumentoDTO->setArrObjRelProtocoloAssuntoDTO(array());
-		$protocoloReciboDocumentoDTO->setArrObjRelProtocoloProtocoloDTO(array());
+		$objSeiRN = new SeiRN();
+		$saidaDocExternoAPI = $objSeiRN->incluirDocumento( $objDocumentoAPI );
 		
-		$protocoloReciboDocumentoDTO->setStrStaEstado( ProtocoloRN::$TE_NORMAL );
-		$protocoloReciboDocumentoDTO->setArrObjLocalizadorDTO(array());
-		$protocoloReciboDocumentoDTO->setArrObjObservacaoDTO( array() );
-		$protocoloReciboDocumentoDTO->setArrObjParticipanteDTO( $arrParticipantesParametro );
-		$protocoloReciboDocumentoDTO->setNumIdSerieDocumento( $idSerieRecibo );
+		//necessario forçar update da coluna sta_documento da tabela documento
+		//inclusao via SeiRN nao permitiu definir como documento de formulario automatico
+		$parObjDocumentoDTO = new DocumentoDTO();
+		$parObjDocumentoDTO->retTodos();
+		$parObjDocumentoDTO->setDblIdDocumento( $saidaDocExternoAPI->getIdDocumento() );
+		
+		$docRN = new DocumentoRN();
+		$parObjDocumentoDTO = $docRN->consultarRN0005( $parObjDocumentoDTO );
+		$parObjDocumentoDTO->setStrStaDocumento( DocumentoRN::$TD_FORMULARIO_AUTOMATICO );
+		$objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
+		$objDocumentoBD->alterar($parObjDocumentoDTO);
+		
+		$reciboDTO->setDblIdDocumento( $saidaDocExternoAPI->getIdDocumento() );
+		
+		$objBD = new ReciboPeticionamentoBD($this->getObjInfraIBanco());
+		$reciboDTO = $objBD->alterar( $reciboDTO );
 
-		//==========================
-		//ATRIBUTOS
-		//==========================
-		$arrRelProtocoloAtributo = AtributoINT::processar(null, null);
-		
-		$arrObjRelProtocoloAtributoDTO = array();
-		
-		for($x = 0;$x<count($arrRelProtocoloAtributo);$x++){
-			$arrRelProtocoloAtributoDTO = new RelProtocoloAtributoDTO();
-			$arrRelProtocoloAtributoDTO->setStrValor($arrRelProtocoloAtributo[$x]->getStrValor());
-			$arrRelProtocoloAtributoDTO->setNumIdAtributo($arrRelProtocoloAtributo[$x]->getNumIdAtributo());
-			$arrObjRelProtocoloAtributoDTO[$x] = $arrRelProtocoloAtributoDTO;
-		}
-		
-		$protocoloReciboDocumentoDTO->setArrObjRelProtocoloAtributoDTO($arrObjRelProtocoloAtributoDTO);
-
-		//=============================================
-		//MONTAGEM DO DOCUMENTODTO
-		//=============================================
-					
-		//TESTE COMENTADO $documentoBD = new DocumentoBD( $this->getObjInfraIBanco() );
-		$docRN = new DocumentoPeticionamentoRN();
-
-		$documentoReciboDTO = new DocumentoDTO();
-		$documentoReciboDTO->setDblIdDocumento( $protocoloReciboDocumentoDTO->getDblIdProtocolo() );
-		$documentoReciboDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
-		$documentoReciboDTO->setNumIdSerie( $idSerieRecibo );
-		$documentoReciboDTO->setNumIdUnidadeResponsavel( $objUnidadeDTO->getNumIdUnidade() );
-		$documentoReciboDTO->setObjProtocoloDTO( $protocoloReciboDocumentoDTO );
-		
-		$documentoReciboDTO->setNumIdConjuntoEstilos(null);
-		
-		$documentoReciboDTO->setNumIdTipoConferencia( null );
-		$documentoReciboDTO->setStrNumero(''); //sistema atribui numeracao sequencial automatica						
-		$documentoReciboDTO->setStrConteudo( $htmlRecibo );
-		
-		$documentoReciboDTO->setStrConteudoAssinatura(null);			
-		$documentoReciboDTO->setStrCrcAssinatura(null);			
-		$documentoReciboDTO->setStrQrCodeAssinatura(null);
-		
-		$documentoReciboDTO->setStrSinBloqueado('S');			
-		
-		$documentoReciboDTO->setStrStaDocumento(DocumentoRN::$TD_FORMULARIO_AUTOMATICO);
-		
-		$documentoReciboDTO->setNumIdTextoPadraoInterno(null);
-		$documentoReciboDTO->setStrProtocoloDocumentoTextoBase('');
-		
-		$documentoReciboDTO = $docRN->gerarRN0003Customizado( $documentoReciboDTO );
-//				ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//				var_dump($documentoReciboDTO); echo '</pre>'; exit;
-		return $documentoReciboDTO;
+		return $parObjDocumentoDTO;
 
     }
   
@@ -139,9 +96,9 @@ class ReciboPeticionamentoIntercorrenteRN extends ReciboPeticionamentoRN {
 
         $html = '';
 
-        $html .= '<table align="center" style="width: 90%" border="0">';
+        $html .= '<table align="center" style="width: 95%" border="0">';
         $html .= '<tbody><tr>';
-        $html .= '<td style="font-weight: bold; width: 300px;">Usuário Externo (signatário):</td>';
+        $html .= '<td style="font-weight: bold; width: 400px;">Usuário Externo (signatário):</td>';
         $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
         $html .= '</tr>';
 
@@ -164,7 +121,32 @@ class ReciboPeticionamentoIntercorrenteRN extends ReciboPeticionamentoRN {
         $html .= '<td style="font-weight: bold;">Número do Processo:</td>';
         $html .= '<td>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() .  '</td>';
         $html .= '</tr>';
-
+        
+        if( $reciboDTO->isSetDblIdProtocoloRelacionado()) {
+        	
+        	$idProtocoloPrinc = $reciboDTO->getDblIdProtocoloRelacionado();
+        
+	        if(!(InfraString::isBolVazia($idProtocoloPrinc))){
+	                
+	        	$objProtocoloRN = new ProtocoloRN();
+	        	$objProtocoloDTO = new ProtocoloDTO();
+	        
+	        	$objProtocoloDTO->setDblIdProtocolo($idProtocoloPrinc);
+	        	$objProtocoloDTO->retTodos();
+	        
+	        	$objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
+	        	$protocoloRelFormatado = $objProtocoloDTO->getStrProtocoloFormatado();
+	        	
+	        	//se houver processo relacionado
+	        	$html .= '<tr>';
+	        	$html .= '<td> &ensp;&nbsp; Relacionado ao Processo:</td>';
+	        	$html .= '<td>' . $protocoloRelFormatado . '</td>';
+	        	$html .= '</tr>';
+	        
+	        }
+        
+        }
+        
         //obter interessados (apenas os do tipo interessado, nao os do tipo remetente)
         $arrInteressados = array();
         /*

@@ -123,6 +123,7 @@ class ReciboPeticionamentoRN extends InfraRN {
 	protected function gerarReciboSimplificadoControlado( $idProcedimento ) {
 		
 		$reciboDTO = new ReciboPeticionamentoDTO();
+		$reciboDTO->retTodos();
 		
 		$reciboDTO->setNumIdProtocolo( $idProcedimento );
 		$reciboDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
@@ -178,8 +179,9 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$arrParametros = $arrParams[0]; //parametros adicionais fornecidos no formulario de peticionamento
 		$objUnidadeDTO = $arrParams[1]; //UnidadeDTO da unidade geradora do processo
 		$objProcedimentoDTO = $arrParams[2]; //ProcedimentoDTO para vincular o recibo ao processo correto
-		$arrParticipantesParametro = $arrParams[3]; //array de ParticipanteDTO
-		
+		//seiv2
+		//$arrParticipantesParametro = $arrParams[3]; //array de ParticipanteDTO
+
 		//tentando simular sessao de usuario interno do SEI
 		SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $objUnidadeDTO->getNumIdUnidade() );
 				
@@ -220,6 +222,11 @@ class ReciboPeticionamentoRN extends InfraRN {
 		$objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
 		$objDocumentoBD->alterar($parObjDocumentoDTO);
 		
+		$reciboDTO->setDblIdDocumento( $saidaDocExternoAPI->getIdDocumento() );
+				
+		$objBD = new ReciboPeticionamentoBD($this->getObjInfraIBanco());
+		$reciboDTO = $objBD->alterar( $reciboDTO );
+				
 		return $reciboDTO;
 		
   }
@@ -241,9 +248,9 @@ class ReciboPeticionamentoRN extends InfraRN {
   	
 	$html = '';
 	
-    $html .= '<table align="center" style="width: 90%" border="0">';
+    $html .= '<table align="center" style="width: 95%" border="0">';
     $html .= '<tbody><tr>';
-    $html .= '<td style="font-weight: bold; width: 300px;">Usuário Externo (signatário):</td>';
+    $html .= '<td style="font-weight: bold; width: 400px;">Usuário Externo (signatário):</td>';
     $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
     $html .= '</tr>';
     
@@ -560,6 +567,26 @@ class ReciboPeticionamentoRN extends InfraRN {
 		}
 
 		return null;
+	}
+
+
+	/**
+	 * Short description of method alterarControlado
+	 *
+	 * @access protected
+	 * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
+	 * @param $objDTO
+	 * @return mixed
+	 */
+	protected function alterarControlado(ReciboPeticionamentoDTO $objDTO) {
+
+		try {
+			$objBD = new ReciboPeticionamentoBD($this->getObjInfraIBanco());
+			$objBD->alterar($objDTO);
+
+		} catch ( Exception $e ) {
+			throw new InfraException ('Erro alterando Recibo Peticionamento, ', $e);
+		}
 	}
 
 }

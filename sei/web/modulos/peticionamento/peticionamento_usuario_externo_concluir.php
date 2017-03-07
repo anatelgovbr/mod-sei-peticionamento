@@ -400,9 +400,11 @@ function assinar(){
 		processando();
 
 		document.getElementById('frmConcluir').submit();
-				
+
+		return true;
+
 	} 
-	
+	return false;
 }
 
 function callback(opt) {

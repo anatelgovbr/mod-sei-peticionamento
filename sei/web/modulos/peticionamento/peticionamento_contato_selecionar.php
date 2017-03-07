@@ -355,8 +355,8 @@ try {
         //$strResultado .= $strNegritoContextoIni;
       //}
 
-      $strResultado .= PaginaSEIExterna::getInstance()->formatarXHTML($strNomeSigla);
-      
+      $strResultado .= PaginaSEIExterna::tratarHTML($strNomeSigla);
+
       //seiv2
       //if($dto->getStrSinContexto()=='S'){
         //$strResultado .= $strNegritoContextoFim;

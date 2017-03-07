@@ -766,7 +766,10 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
       $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0';
       $hash = md5($strParam.'#'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'@'.SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
-      $link = 'http://localhost/sei/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0&infra_hash=' . $hash;
+      
+      $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
+      
+      $link = $urlBase . '/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0&infra_hash=' . $hash;
       $id_procedimento = $_GET['id_procedimento'];
 
     $array[] = "<script> function criarForm(){ 

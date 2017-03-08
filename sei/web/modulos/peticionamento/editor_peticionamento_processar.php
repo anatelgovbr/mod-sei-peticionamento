@@ -49,7 +49,7 @@
   		$objSecaoModeloDTO->retStrConteudo();
   		$objSecaoModeloDTO->retNumOrdem();
   		$objSecaoModeloDTO->setStrSinSomenteLeitura('N');
-  		$objSecaoModeloDTO->setNumIdModelo( $serieDTO->getNumIdModelo() );
+  		$objSecaoModeloDTO->setNumIdModelo($serieDTO->getNumIdModelo());
   		$objSecaoModeloDTO->setOrdNumOrdem(InfraDTO::$TIPO_ORDENACAO_ASC);
   		
   		$arrObjSecaoModeloDTO = $objSecaoModeloRN->listar($objSecaoModeloDTO);
@@ -63,29 +63,36 @@
   		$conjuntoEstilosDTO = new ConjuntoEstilosDTO();
   		$conjuntoEstilosDTO->setStrSinUltimo('S');
   		$conjuntoEstilosDTO->retTodos();
-  		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar( $conjuntoEstilosDTO );
+  		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar($conjuntoEstilosDTO);
   		
   		//recupera estilos padrão das seções do modelo
-  		$objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
-  		$objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
-  		$objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
-  		$objRelSecaoModCjEstilosItemDTO->setNumIdSecaoModelo(InfraArray::converterArrInfraDTO($arrObjSecaoModeloDTO, 'IdSecaoModelo'), InfraDTO::$OPER_IN);
-  		$objRelSecaoModCjEstilosItemDTO->setStrSinPadrao('S');
-  		$objRelSecaoModCjEstilosItemDTO->setNumIdConjuntoEstilos( $conjuntoEstilosDTO->getNumIdConjuntoEstilos() );
-  		$objRelSecaoModCjEstilosItemRN = new RelSecaoModCjEstilosItemRN();
-  		$arrObjRelSecaoModCjEstilosItemDTO = InfraArray::indexarArrInfraDTO($objRelSecaoModCjEstilosItemRN->listar($objRelSecaoModCjEstilosItemDTO), 'IdSecaoModelo');
+  		//$objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
+  		//$objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
+  		//$objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
+  		//$objRelSecaoModCjEstilosItemDTO->setNumIdSecaoModelo(InfraArray::converterArrInfraDTO($arrObjSecaoModeloDTO, 'IdSecaoModelo'), InfraDTO::$OPER_IN);
+  		//$objRelSecaoModCjEstilosItemDTO->setNumIdConjuntoEstilos($conjuntoEstilosDTO->getNumIdConjuntoEstilos());
+      //$objRelSecaoModCjEstilosItemDTO->setStrSinPadrao('S');
+
+      //busca os estilos permitidos por seção-modelo
+      $objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
+      $objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
+      $objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
+      $objRelSecaoModCjEstilosItemDTO->retStrFormatacao();
+      $objRelSecaoModCjEstilosItemDTO->setNumIdSecaoModelo(InfraArray::converterArrInfraDTO($arrObjSecaoModeloDTO, 'IdSecaoModelo'), InfraDTO::$OPER_IN);
+      $objRelSecaoModCjEstilosItemDTO->setOrdStrNomeEstilo(InfraDTO::$TIPO_ORDENACAO_ASC);
+      $objRelSecaoModCjEstilosItemDTO->setNumIdConjuntoEstilos($conjuntoEstilosDTO->getNumIdConjuntoEstilos());
+      $objRelSecaoModCjEstilosItemRN = new RelSecaoModCjEstilosItemRN();
+      $arrObjRelSecaoModCjEstilosItemDTO = InfraArray::indexarArrInfraDTO($objRelSecaoModCjEstilosItemRN->listar($objRelSecaoModCjEstilosItemDTO), 'IdSecaoModelo', true);
   		
+      $strFormatos = "";
       foreach ($arrObjSecaoModeloDTO as $objSecaoModeloDTO) {
         if (isset($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()])) {
-
-          $arrObjRelSecaoModCjEstilosItemDTO = array($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()]);
-          foreach ($arrObjRelSecaoModCjEstilosItemDTO as $objRelSecaoModCjEstilosItemDTO) {
-            echo count($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()]);
+          foreach ($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()] as $objRelSecaoModCjEstilosItemDTO) {
             $strFormatos .= $objRelSecaoModCjEstilosItemDTO->getStrNomeEstilo() . "|";
           }
         }
-        $strFormatos = rtrim($strFormatos, '|');          
-      }       
+        $strFormatos = rtrim($strFormatos, '|');
+      }
 
   		$objImagemFormatoDTO = new ImagemFormatoDTO();
   		$objImagemFormatoDTO->retStrFormato();

@@ -658,9 +658,9 @@
             }
 
             //Arquivo com o mesmo nome já adicionado
-            for (var i = 0; i < tbDocumento.rows.length; i++) {
+            for (var i = 1; i < tbDocumento.rows.length; i++) {
                 var tr = tbDocumento.getElementsByTagName('tr')[i];
-                if (arr['nome'].toLowerCase().trim() == tr.cells[1].innerText.toLowerCase().trim()) {
+                if (arr['nome'].toLowerCase().trim() == tr.cells[9].innerText.toLowerCase().trim()) {
                     alert('Não é permitido adicionar documento com o mesmo nome de arquivo.');
                     fileArquivo.value = '';
                     fileArquivo.focus();

@@ -78,6 +78,25 @@ class ReciboDocumentoAnexoPeticionamentoRN extends InfraRN {
 			throw new InfraException ('Erro cadastrando Menu.', $e );
 		}
 	}
+
+	/**
+	 * Short description of method contarConectado
+	 *
+	 * @access protected
+	 * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
+	 * @param $objDTO
+	 * @return mixed
+	 */
+	protected function contarConectado(ReciboDocumentoAnexoPeticionamentoDTO $objDTO) {
+
+		try {
+			$objBD = new ReciboDocumentoAnexoPeticionamentoBD($this->getObjInfraIBanco());
+			return $objBD->contar($objDTO);
+
+		} catch ( Exception $e ) {
+			throw new InfraException ('Erro contando Recibo Anexo do Peticionamento, ', $e);
+		}
+	}
 	
 }
 ?>

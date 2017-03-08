@@ -137,8 +137,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 	       case 'md_pet_int_prazo_tacita_alterar':
 				require_once dirname ( __FILE__ ).'/md_pet_int_prazo_tacita_cadastro.php';
                 return true;
-				
-			//EU 8611	
+
 			case 'md_pet_int_serie_cadastrar':
 				require_once dirname ( __FILE__ ).'/md_pet_int_serie_cadastro.php';
                 return true;
@@ -187,7 +186,6 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 		   case 'nivel_acesso_auto_completar':
 				$arrObjNivelAcessoDTO = TipoProcessoPeticionamentoINT::montarSelectNivelAcesso(null, null,  null, $_POST['idTipoProcesso']);
 				$xml = InfraAjax::gerarXMLSelect($arrObjNivelAcessoDTO);
-				//$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjUnidadeDTO,'IdUnidade', 'Sigla');
 				break;
 
 		   case 'nivel_acesso_validar':
@@ -198,25 +196,16 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 				$xml = TipoProcessoPeticionamentoINT::validarTipoProcessoComAssunto($_POST);
 				break;
 
-			//SEIv2
-			//case 'tipo_contexto_contato_listar':
-				//$arrObjTipoContextoDTO = GerirTipoContextoPeticionamentoINT::montarSelectNome(null, null, $_POST['txtPrincipal']);
-				//$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoContextoDTO, 'IdTipoContextoContato', 'Nome');
-				//break;
-
-		    //Ajustes SEIV3
 			case 'tipo_contexto_contato_listar':
 					$arrObjTipoContextoDTO = GerirTipoContextoPeticionamentoINT::montarSelectNome(null, null, $_POST['extensao']);
 					$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoContextoDTO, 'IdTipoContato', 'Nome');
 					break;
 
-		    //EU6912
 			case 'hipotese_legal_rest_peticionamento_auto_completar':
 				$arrObjHipoteseLegalDTO = HipoteseLegalPeticionamentoINT::autoCompletarHipoteseLegal($_POST['palavras_pesquisa'], ProtocoloRN::$NA_RESTRITO);
 				$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjHipoteseLegalDTO, 'IdHipoteseLegal', 'Nome');
 				break;
 
-			//EU3396
 			case 'arquivo_extensao_peticionamento_listar_todos':
 				$arrObjArquivoExtensaoPeticionamentoDTO = ArquivoExtensaoPeticionamentoINT::autoCompletarExtensao($_POST['extensao']);
 				$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjArquivoExtensaoPeticionamentoDTO,'IdArquivoExtensao', 'Extensao');
@@ -270,10 +259,10 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 				require_once dirname ( __FILE__ ) . '/md_pet_intercorrente_usu_ext_concluir.php';
 				return true;
 		
-		//novo peticionamento - 5152
-		  		case 'peticionamento_usuario_externo_iniciar':
-		  			require_once dirname ( __FILE__ ) . '/peticionamento_usuario_externo_inicio.php';
-		  			return true;
+			//novo peticionamento - 5152
+	  		case 'peticionamento_usuario_externo_iniciar':
+	  			require_once dirname ( __FILE__ ) . '/peticionamento_usuario_externo_inicio.php';
+	  			return true;
 
 		  	case 'peticionamento_usuario_externo_cadastrar':
 		  		require_once dirname ( __FILE__ ) . '/peticionamento_usuario_externo_cadastro.php';
@@ -356,7 +345,6 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
   			case 'editor_peticionamento_montar':
   			case 'editor_peticionamento_imagem_upload':
-  			    	//case 'editor_salvar': enviada diretamente para a pÃ¡gina editor_processar.php para tratatamento de troca de unidade com documento aberto
   			    	require_once dirname ( __FILE__ ) . '/editor_peticionamento_processar.php';
   			    	return true;
 
@@ -436,8 +424,6 @@ class PeticionamentoIntegracao extends SeiIntegracao {
          return false;
   }
 
-  //seiv3 - ponto de extensao totalmente refatorado
-  //EU 7352 - Icone exibido na tela interna do processo (Controle de Processos -> clicar em algum processo da lista)
   public function montarIconeProcesso(ProcedimentoAPI $objProcedimentoAPI){
 
   	$arrObjArvoreAcaoItemAPI = array();
@@ -510,7 +496,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
   }
 
-  //EU 7352 - Icone exibido na tela "Controle de Processos"
+  //Icone exibido na tela "Controle de Processos"
   public function montarIconeControleProcessos($arrObjProcedimentoDTO){
 
   	$reciboRN = new ReciboPeticionamentoRN();
@@ -567,7 +553,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
   	return $arrParam;
   }
 
-  //EU 7352 - Icone exibido na tela "Acompanhamento Especial"
+  //Icone exibido na tela "Acompanhamento Especial"
   public function montarIconeAcompanhamentoEspecial($arrObjProcedimentoDTO){
 
   	$reciboRN = new ReciboPeticionamentoRN();
@@ -640,7 +626,6 @@ class PeticionamentoIntegracao extends SeiIntegracao {
   	$urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
   	$arrMenusNomes = array();
 
-  	//$arrMenusNomes["Peticionar Processo Inicio"] = $urlBase .'/controlador_externo.php?acao=peticionamento_usuario_externo_iniciar';
   	$arrMenusNomes["Peticionamento"] = $urlBase .'/controlador_externo.php?acao=peticionamento_usuario_externo_iniciar';
 
   	$arrMenusNomes["Recibos Eletrônicos de Protocolo"] = $urlBase .'/controlador_externo.php?acao=recibo_peticionamento_usuario_externo_listar';
@@ -712,56 +697,6 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
   }
 
-  /* //@todo Desativação da montagem de ícone de documento personalizado para o Recibo, pois não é necessário quando utilizado o tipo de documento formulário, sobretudo por causa de caracteristicas propria necessarias. APAGAR TODA ESTA FUNÇÃO AO FINAL SE NENHUM PROBLEMA ADICIONAL SURGIR!!!
-  public function alterarIconeArvoreDocumento( ProcedimentoAPI $objProcedimentoAPI, $arrObjDocumentoAPI ){
-
-  	    
-  		$nomeTipoRecibo = "Recibo Eletrônico de Protocolo";
-  		$seiRN = new SeiRN();
-  		$docRN = new DocumentoRN();
-  		
-  		$arrIcones = null;
-                
-        //$objDocumentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_DOCUMENTO_CANCELADO){
-  		foreach ($arrObjDocumentoAPI as $objDocumentoAPI) {
-  			
-  			$objEntradaConsultarDocumentoAPI = new EntradaConsultarDocumentoAPI();
-  			$objEntradaConsultarDocumentoAPI->setIdDocumento( $objDocumentoAPI->getIdDocumento() );
-  			$objSaidaConsultarDocumentoAPI = new SaidaConsultarDocumentoAPI();
-  			
-  			$documentoDTO = new DocumentoDTO();
-  			$documentoDTO->setDblIdDocumento( $objDocumentoAPI->getIdDocumento() );
-  			$documentoDTO->retDblIdDocumento();
-  			$documentoDTO->retStrStaEstadoProtocolo();
-  			$documentoDTO =$docRN->consultarRN0005( $documentoDTO );
-  			
-  			$objSaidaConsultarDocumentoAPI = null;
-  			
-  			if( $documentoDTO->getStrStaEstadoProtocolo() != ProtocoloRN::$TE_DOCUMENTO_CANCELADO){
-  				//ao executar esta linha em documento cancelado gera erro na tela dizendo "Documento foi cancelado.", por isso antes foi preciso gerar se o doc em questao estava cancelado ou nao
-  				$objSaidaConsultarDocumentoAPI = $seiRN->consultarDocumento($objEntradaConsultarDocumentoAPI);
-  			}
-  			
-  			
-  			if ( $objSaidaConsultarDocumentoAPI != null &&
-  				 $objSaidaConsultarDocumentoAPI->getSerie() != null &&
-  				 $objSaidaConsultarDocumentoAPI->getSerie()->getNome() == $nomeTipoRecibo ) {
-
-  				 	
-  				 if( !is_array( $arrIcones ) ){
-  				 	$arrIcones = array();
-  				 }
-  				 	
-  			     $arrIcones[$objDocumentoAPI->getIdDocumento()] = 'modulos/peticionamento/imagens/formulario.gif';
-
-  		    } 
-  		    
-  	   }
-  	   
-  	   return $arrIcones;
-  	   
-  } */
-
   public function montarBotaoAcessoExternoAutorizado(ProcedimentoAPI $objProcedimentoAPI){
 
       $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0';
@@ -798,11 +733,55 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
         $objTipoDTO = new TipoDTO();
         $objTipoDTO->setStrStaTipo(AssinaturaPeticionamentoRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO);
-        $objTipoDTO->setStrDescricao('Assinatura Eletrônica - Módulo de Peticionamento e Intimação Eletrônicos');
+        $objTipoDTO->setStrDescricao('Assinatura Eletrônica por Usuários Externos');
         $objArrTipoDTO[] = $objTipoDTO;
 
         return $objArrTipoDTO;
     }
+
+	/**
+	 * Valida se o Documento que está sendo cancelado foi peticionado
+	 *
+	 * @access public
+	 * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
+	 * @param  DocumentoAPI $objDocumentoAPI
+	 * @return mixed
+	 */
+	public function cancelarDocumento(DocumentoAPI $objDocumentoAPI)
+	{
+		$numRecibo = '';
+		$idDoc = $_GET['id_documento'];
+
+		$objReciboDocAnexPetDTO = new ReciboDocumentoAnexoPeticionamentoDTO();
+		$objReciboDocAnexPetDTO->setNumIdDocumento($idDoc);
+
+		$objReciboDocAnexPetRN  = new ReciboDocumentoAnexoPeticionamentoRN();
+		$cont = $objReciboDocAnexPetRN->contar($objReciboDocAnexPetDTO);
+
+		if ($cont > 0) {
+			$objReciboDocAnexPetDTO->retNumIdReciboPeticionamento();
+			$objReciboDocAnexPetDTO = 	$objReciboDocAnexPetRN->consultar($objReciboDocAnexPetDTO);
+
+			$objReciboPetDTO = new ReciboPeticionamentoDTO();
+			$objReciboPetDTO->setNumIdReciboPeticionamento($objReciboDocAnexPetDTO->getNumIdReciboPeticionamento());
+			$objReciboPetDTO->retStrNumeroProcessoFormatadoDoc();
+
+			$objReciboPetRN  = new ReciboPeticionamentoRN();
+			$objReciboPetDTO = $objReciboPetRN->consultar($objReciboPetDTO);
+
+			if($objReciboPetDTO){
+				$numRecibo = 	$objReciboPetDTO->getStrNumeroProcessoFormatadoDoc();
+			}
+
+			$msg = 'Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI nº '.$numRecibo.'.';
+			$objInfraException = new InfraException();
+			$objInfraException->adicionarValidacao($msg);
+			$objInfraException->lancarValidacoes();
+		}
+
+		return parent::cancelarDocumento($objDocumentoAPI);
+	}
+
 
 }
 ?>

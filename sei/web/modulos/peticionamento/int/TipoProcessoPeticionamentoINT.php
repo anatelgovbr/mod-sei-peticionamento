@@ -275,7 +275,19 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
                 if ($strPalavrasPesquisa != '' && strpos(strtolower($objTipoProcedimentoApi->getNome()),$strPalavrasPesquisa)==false){
                     continue;
                 }
-                $ret[] = $objTipoProcedimentoApi;
+                
+                //checando se o tipo de processo informado possui sugestao de assunto
+                
+                $rnAssunto = new RelTipoProcedimentoAssuntoRN();
+                $dto = new RelTipoProcedimentoAssuntoDTO();
+                $dto->retTodos();
+                $dto->setNumIdTipoProcedimento( $objTipoProcedimentoApi->getIdTipoProcedimento() );
+                
+                $arrAssuntos = $rnAssunto->listarRN0192( $dto );
+                
+                if( is_array( $arrAssuntos ) && count( $arrAssuntos ) > 0 ){
+                   $ret[] = $objTipoProcedimentoApi;
+                }
             }
         }
 

@@ -16,7 +16,7 @@ class AssinaturaPeticionamentoRN extends AssinaturaRN {
 	public static $TA_SIMPLES = 'S';
 	public static $TA_COMPLETA = 'C';
 	
-	public static $TT_ASSINATURA_SENHA_PETICIONAMENTO = "P";
+	public static $TT_ASSINATURA_SENHA_PETICIONAMENTO = "U";
 
 	public function __construct(){
 		parent::__construct();

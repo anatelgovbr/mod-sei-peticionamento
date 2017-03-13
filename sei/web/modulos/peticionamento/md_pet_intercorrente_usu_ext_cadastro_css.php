@@ -65,4 +65,9 @@
         margin-left: -5px;
     }
 
+	#imgNivelAcesso {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
+	#selNivelAcesso {min-width: 120px !important; max-width: 120px !important;}
+	#imgHipoteseLegal {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
+	#selHipoteseLegal {float: left; max-width:100% !important;}
+
 </style>

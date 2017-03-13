@@ -1022,7 +1022,7 @@ function abrirPeticionar(){
          infraAbrirJanela('<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] .'&acao=peticionamento_usuario_externo_concluir&tipo_selecao=2'))?>',
     	             'concluirPeticionamento',
     	             770,
-    	             464,
+    	             480,
     	             '', //options
     	             false); //modal     
     } 

@@ -35,21 +35,19 @@
     </div>
 
     <div class="clear"></div>
-
-    <div class="bloco" style="min-width: 200px;" id="divBlcNivelAcesso">
-		<label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso) ?> alt="Ajuda" class="infraImg"/></label>
+    <div class="bloco"  style="float: left;" id="divBlcNivelAcesso">
+		<label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso: <img id=imgNivelAcesso name=imgNivelAcesso src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"  onmouseover="" onmouseout="" alt="Ajuda" class="infraImg"/></label>
 		<div id="divNivelAcesso"></div>
     </div>
 
 	<?php if ($exibirHipoteseLegal): ?>
-		<div class="bloco" id="divBlcHipoteseLegal" style="display: none">
-			<label class="infraLabelObrigatorio" for="selHipoteseLegal">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal) ?> alt="Ajuda" class="infraImg"/></label>
+		<div class="bloco" id="divBlcHipoteseLegal" style="float: left; width: 70%; display: none;">
+			<label class="infraLabelObrigatorio" for="selHipoteseLegal">Hipótese Legal: <img id=imgHipoteseLegal name=imgHipoteseLegal src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" onmouseover="" onmouseout="" alt="Ajuda" class="infraImg"/></label>
 			<div id="divHipoteseLegal">
-                <?php echo $selHipoteseLegal; ?>
-            </div>
+				<?php echo $selHipoteseLegal; ?>
+			</div>
 		</div>
 	<?php endif; ?>
-
     <div class="clear"></div>
 
 	<div class="bloco" style="width:290px; margin: 23px 0 11px 0;">

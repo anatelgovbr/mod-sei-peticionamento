@@ -54,7 +54,8 @@
 
 4. Peticionamento Intercorrente:
 	- Os Usuários Externos somente visualizarão o menu Peticionamento > Intercorrente depois que na Administração for configurado pelo menos o "Intercorrente Padrão".
-	- O "Intercorrente Padrão" será utilizado para a abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo quando este corresponder a processo: 1) de Tipo sem Critério Intercorrente parametrizado; 2) com Nível de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado; 4) que todas as Unidades por onde tramitou estejam desativadas.
+	- O "Intercorrente Padrão" será utilizado para a abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo quando este corresponder a processo: 1) de Tipo sem Critério Intercorrente parametrizado; 2) com Nível de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado.
+	- Se TODAS as Unidades por onde o processo indicado tenha tramitado estiverem Desativadas no SEI, o Usuário Externo será avisado que o Peticionamento Intercorrente não é possível e que deverá utilizar a funcionalidade de Peticionamento de Processo Novo.
 
 5. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
 

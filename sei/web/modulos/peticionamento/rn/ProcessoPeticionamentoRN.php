@@ -369,7 +369,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		$objDocumentoAPI->setIdHipoteseLegal( $docDTO->getNumIdHipoteseLegalProtocolo() );
 		$objDocumentoAPI->setNivelAcesso( $docDTO->getStrStaNivelAcessoLocalProtocolo() );
 		$objDocumentoAPI->setIdTipoConferencia( $docDTO->getNumIdTipoConferencia() );
-		
+			
 		$objDocumentoAPI->setNomeArquivo( $itemAnexo->getStrNome() );
 		$objDocumentoAPI->setConteudo(base64_encode(file_get_contents(DIR_SEI_TEMP. '/'. $itemAnexo->getStrNome() )));
 		
@@ -770,7 +770,7 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
 
-				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_COMPLEMENTAR );
+				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexoComplementar, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_COMPLEMENTAR );
 
 				//========================
 				//CRIANDO ANEXOS

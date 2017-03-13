@@ -272,7 +272,7 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
                 if($itensSelecionados != null && in_array($objTipoProcedimentoApi->getIdTipoProcedimento(), $itensSelecionados)){
                     continue;
                 }
-                if ($strPalavrasPesquisa != '' && strpos(strtolower($objTipoProcedimentoApi->getNome()),$strPalavrasPesquisa)==false){
+                if ($strPalavrasPesquisa != '' && strpos(strtolower($objTipoProcedimentoApi->getNome()),$strPalavrasPesquisa)===false){
                     continue;
                 }
                 

@@ -437,6 +437,8 @@ class PeticionamentoIntegracao extends SeiIntegracao {
   	$reciboIntercorrenteDTO->retDthDataHoraRecebimentoFinal();
   	$reciboIntercorrenteDTO->setNumIdProtocolo( $dblIdProcedimento );
   	$reciboIntercorrenteDTO->setStrStaTipoPeticionamento( ReciboPeticionamentoRN::$TP_RECIBO_INTERCORRENTE );
+	$reciboIntercorrenteDTO->setOrd('DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC);
+
   	$arrRecibosIntercorrentes = $reciboRN->listar( $reciboIntercorrenteDTO );
 
   	if( $arrRecibosIntercorrentes != null && count( $arrRecibosIntercorrentes ) > 0){
@@ -513,6 +515,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
   			$reciboIntercorrenteDTO->retDthDataHoraRecebimentoFinal();
   			$reciboIntercorrenteDTO->setNumIdProtocolo($objProcedimentoAPI->getIdProcedimento());
   			$reciboIntercorrenteDTO->setStrStaTipoPeticionamento( ReciboPeticionamentoRN::$TP_RECIBO_INTERCORRENTE );
+			$reciboIntercorrenteDTO->setOrd('DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC);
   			$arrRecibosIntercorrentes = $reciboRN->listar( $reciboIntercorrenteDTO );
 
   			if( $arrRecibosIntercorrentes != null && count( $arrRecibosIntercorrentes ) > 0){

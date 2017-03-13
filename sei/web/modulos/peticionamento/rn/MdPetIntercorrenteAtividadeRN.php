@@ -25,13 +25,26 @@ class MdPetIntercorrenteAtividadeRN extends AtividadeRN {
 			$objAtividadeDTO->retStrDescricaoUnidade();
 
 			$objAtividadeDTO->setNumIdTarefa(array(TarefaRN::$TI_GERACAO_PROCEDIMENTO,
-																						 TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE,
-																						 TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL,
-																						 TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL_ANULADA),InfraDTO::$OPER_IN);
+                                                 TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE,
+                                                 TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL,
+                                                 TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL_ANULADA),InfraDTO::$OPER_IN);
 
-			$objAtividadeDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+            if($objProcedimentoDTO->getStrStaEstadoProtocolo() == 3){
+                $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+                $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
+                $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
+                $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($objProcedimentoDTO->getDblIdProcedimento());
+                $objRelProtocoloProtocoloDTO->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO);
 
-			//$objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual(),InfraDTO::$OPER_DIFERENTE);
+                $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
+                $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
+
+                $idProcedimento = $objRelProtocoloProtocoloDTO->getDblIdProtocolo1();
+            }else{
+                $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
+            }
+
+            $objAtividadeDTO->setDblIdProtocolo($idProcedimento);
 
 			$objAtividadeDTO->setOrdStrSiglaUnidade(InfraDTO::$TIPO_ORDENACAO_ASC);
 
@@ -53,7 +66,7 @@ class MdPetIntercorrenteAtividadeRN extends AtividadeRN {
 				$objRetornoProgramadoDTO->retNumIdUnidade();
 				$objRetornoProgramadoDTO->retDtaProgramada();
 				$objRetornoProgramadoDTO->setNumIdUnidade($arrIdUnidade,InfraDTO::$OPER_IN);
-				$objRetornoProgramadoDTO->setDblIdProtocoloAtividadeEnvio($objProcedimentoDTO->getDblIdProcedimento());
+				$objRetornoProgramadoDTO->setDblIdProtocoloAtividadeEnvio($idProcedimento);
 				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeEnvio(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeRetorno(null);
 

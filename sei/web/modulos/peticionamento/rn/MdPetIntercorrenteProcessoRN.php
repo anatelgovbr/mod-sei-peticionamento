@@ -127,7 +127,20 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         //$arrObjDocumentoAPI = $params[2];
         $especificacao = $params[2];
 
-        $idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
+        if($objProcedimentoDTO->getStrStaEstadoProtocolo() == 3){
+            $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+            $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
+            $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
+            $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($objProcedimentoDTO->getDblIdProcedimento());
+            $objRelProtocoloProtocoloDTO->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO);
+
+            $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
+            $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
+
+            $idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objRelProtocoloProtocoloDTO->getDblIdProtocolo1());
+        }else{
+            $idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
+        }
 
         // inicio da verificação da unidade ativa, caso não esteja tenta buscar uma unidade ativa para reabrir o processo.
         $unidadeDTO = new UnidadeDTO();
@@ -178,14 +191,13 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
     }
 
     /**
-     * Função responsável por Retornar a última unidade em que o processo foi aberto
+     * Função responsável por Retornar a última unidade em que o processo ESTÀ aberto agora
      * @param $idProcedimento
      * @return  string $idUnidade
-     * @since  19/12/2016
-     * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
      */
     protected function retornaUltimaUnidadeProcessoAbertoConectado($idProcedimento){
 
+    	$objSEIRN = new SeiRN();
         $objProcedimentoDTO = new ProcedimentoDTO();
         $objProcedimentoDTO->retTodos(true);
         $objProcedimentoDTO->setDblIdProcedimento($idProcedimento);
@@ -194,7 +206,9 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
 
         $objEntradaConsultaProcApi = new EntradaConsultarProcedimentoAPI();
         $objEntradaConsultaProcApi->setIdProcedimento($idProcedimento);
+        $objEntradaConsultaProcApi->setSinRetornarUnidadesProcedimentoAberto('S');
         $objEntradaConsultaProcApi->setSinRetornarUltimoAndamento('S');
+        $objEntradaConsultaProcApi->setSinRetornarAndamentoConclusao('N');
 
         /**
          * @var $saidaConsultarProcedimentoAPI SaidaConsultarProcedimentoAPI
@@ -204,21 +218,53 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
             $md = new MdPetIntercorrenteAndamentoSigilosoRN();
             $saidaConsultarProcedimentoAPI = $md->consultarProcedimento($objEntradaConsultaProcApi);
         } else {
-            $objSEIRN = new SeiRN();
             $saidaConsultarProcedimentoAPI = $objSEIRN->consultarProcedimento($objEntradaConsultaProcApi);
         }
 
-        /**
-         * @var $ultimoAndamento AndamentoAPI
-         */
-        $ultimoAndamento = $saidaConsultarProcedimentoAPI->getUltimoAndamento();
-        /**
-         * @var $objUnidadeAPI UnidadeAPI
-         */
-        $objUnidadeAPI = $ultimoAndamento->getUnidade();
-
-        return $objUnidadeAPI->getIdUnidade();
-    }
+        //informaçoes da tarefa de conclusao de processo na unidade
+        $tarefaRN = new TarefaRN();
+        $tarefaDTO = new TarefaDTO();
+        $tarefaDTO->retNumIdTarefa( );
+        $tarefaDTO->retStrNome( );
+        $tarefaDTO->setNumIdTarefa( TarefaRN::$TI_CONCLUSAO_PROCESSO_UNIDADE );
+        $arrTarefaDTO = $tarefaRN->listar( $tarefaDTO );
+        $tarefaDTO = $arrTarefaDTO[0];
+        
+        //lista de unidades nas quais o processo ainda encontra-se aberto
+        $arrUnidadesAbertas = $saidaConsultarProcedimentoAPI->getUnidadesProcedimentoAberto();        	
+        	
+        //o processo encontra-se aberto em pelo menos uma unidade
+        if( is_array( $arrUnidadesAbertas ) && count( $arrUnidadesAbertas ) > 0 ){
+        		
+        	$objEntradaAndamentos = new EntradaListarAndamentosAPI();
+        	$objEntradaAndamentos->setIdProcedimento( $idProcedimento );
+        	$objEntradaAndamentos->setTarefas( array( TarefaRN::$TI_GERACAO_PROCEDIMENTO , TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE, TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE ) );
+        	$arrAndamentos = $objSEIRN->listarAndamentos( $objEntradaAndamentos );
+        		
+        	$arrIdUnidade = array();
+        	
+        	foreach( $arrUnidadesAbertas as $unidadeAberta ){
+        		$arrIdUnidade[] = $unidadeAberta->getUnidade()->getIdUnidade();
+        	}
+        	        	
+        	foreach( $arrAndamentos as $andamento ){
+        			
+        		$idUnidadeAndamento = $andamento->getUnidade()->getIdUnidade();
+        		
+        		if( in_array( $idUnidadeAndamento, $arrIdUnidade ) ){
+        			return $idUnidadeAndamento;
+        		}
+        		        			
+        	}
+        		
+        } 
+        	
+        //o processo nao esta aberto em nenhuma unidade, nao ha id para ser retornado
+        else {
+        	return null;
+        }
+        	
+    }        
 
     /**
      * Função responsável por Retornar todas as unidades em que o processo está aberto
@@ -681,7 +727,21 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
             $this->setProcedimentoDTO($params['id_procedimento']);
         }
 
-        $idUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto($this->getProcedimentoDTO()->getDblIdProcedimento());
+        if($objProcedimentoDTO->getStrStaEstadoProtocolo() == 3){
+            $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+            $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
+            $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
+            $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($objProcedimentoDTO->getDblIdProcedimento());
+            $objRelProtocoloProtocoloDTO->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO);
+
+            $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
+            $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
+
+            $idUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto($objRelProtocoloProtocoloDTO->getDblIdProtocolo1());
+
+        }else{
+            $idUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto($this->getProcedimentoDTO()->getDblIdProcedimento());
+        }
 
 		//Remetentes
 		$idsParticipantes = array();
@@ -779,6 +839,26 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
 
 			$this->setDocumentoRecibo($documentoReciboDTO);
 			$this->enviarEmail($params);
+			
+			// obtendo a ultima atividade informada para o processo, para marcar
+			// como nao visualizada, deixando assim o processo marcado como "vermelho"
+			// (status de Nao Visualizado) na listagem da tela "Controle de processos"
+			//trecho comentado para preservar apresentacao do "icone amarelo" na tela de Controle de Processos
+			/*
+			$atividadeRN = new AtividadeRN();
+			$atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
+			$atividadeDTO = new AtividadeDTO();
+			$atividadeDTO->retTodos();
+			$atividadeDTO->setDblIdProtocolo( $this->getProcedimentoDTO()->getDblIdProcedimento() );
+			$atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
+			$ultimaAtividadeDTO = $atividadeRN->listarRN0036( $atividadeDTO );
+						
+			//alterar a ultima atividade criada para nao visualizado
+			if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
+				$ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
+				$atividadeBD->alterar( $ultimaAtividadeDTO[0] );
+			} */
+			
             return array(
                 'recibo'    => $objReciboDTO,
                 'documento' => $documentoReciboDTO
@@ -786,21 +866,6 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
             //Gerar Recibo e executar javascript para fechar janela filha e redirecionar janela pai para a tela de detalhes do recibo que foi gerado]
             
             
-        }
-        
-        // obtendo a ultima atividade informada para o processo, para marcar
-        // como nao visualizada, deixando assim o processo marcado como "vermelho"
-        // (status de Nao Visualizado) na listagem da tela "Controle de processos"
-        $atividadeDTO = new AtividadeDTO();
-        $atividadeDTO->retTodos();
-        $atividadeDTO->setDblIdProtocolo( $this->getProcedimentoDTO()->getDblIdProcedimento() );
-        $atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
-        $ultimaAtividadeDTO = $atividadeRN->listarRN0036( $atividadeDTO );
-        
-        //alterar a ultima atividade criada para nao visualizado
-        if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
-        	$ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
-        	$atividadeBD->alterar( $ultimaAtividadeDTO[0] );
         }
 
         return false;

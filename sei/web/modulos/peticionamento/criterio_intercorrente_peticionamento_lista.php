@@ -129,7 +129,9 @@ try {
         $strTipo = $_POST['selTipo'];
         list($nivelAcesso, $tipoNivelAcesso) = explode('-',$_POST['selTipo']);
         $objCriterioIntercorrentePeticionamentoDTO->setStrStaNivelAcesso($nivelAcesso);
-        $objCriterioIntercorrentePeticionamentoDTO->setStrStaTipoNivelAcesso($tipoNivelAcesso);
+        if ($tipoNivelAcesso){
+        	$objCriterioIntercorrentePeticionamentoDTO->setStrStaTipoNivelAcesso($tipoNivelAcesso);
+        }
     }
 
     PaginaSEI::getInstance()->prepararPaginacao($objCriterioIntercorrentePeticionamentoDTO);

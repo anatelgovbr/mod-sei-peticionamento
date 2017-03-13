@@ -56,6 +56,7 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
 
 			$objEmailUnidadeDTO = new EmailUnidadeDTO();
 			$emailUnidadeRN = new EmailUnidadeRN();
+			$objEmailUnidadeDTO->retNumIdUnidade();
 			$objEmailUnidadeDTO->retStrEmail();
 			$objEmailUnidadeDTO->adicionarCriterio(
 				array('IdUnidade'),
@@ -67,6 +68,7 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
 		}else{
 			$objEmailUnidadeDTO = new EmailUnidadeDTO();
 			$emailUnidadeRN = new EmailUnidadeRN();
+			$objEmailUnidadeDTO->retNumIdUnidade();
 			$objEmailUnidadeDTO->retStrEmail();
 			$objEmailUnidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
 			$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
@@ -209,43 +211,57 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         if ($objEmailSistemaDTO!=null){
-            $strDe = $objEmailSistemaDTO->getStrDe();
-            $strDe = str_replace('@sigla_sistema@',SessaoSEIExterna::getInstance()->getStrSiglaSistema() ,$strDe);
-            $strDe = str_replace('@processo@',$documentoDTO->getStrProtocoloDocumentoFormatado() ,$strDe);
-            $strDe = str_replace('@email_sistema@',$objInfraParametro->getValor('SEI_EMAIL_SISTEMA'),$strDe);
-            $strDe = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(),$strDe);
-            $strDe = str_replace('@sigla_orgao_minusculas@',InfraString::transformarCaixaBaixa($objOrgaoDTO->getStrSigla()),$strDe);
-            $strDe = str_replace('@sufixo_email@',$objInfraParametro->getValor('SEI_SUFIXO_EMAIL'),$strDe);
-
-            $strAssunto = $objEmailSistemaDTO->getStrAssunto();
-            $strAssunto = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(), $strAssunto);
-            $strAssunto = str_replace('@processo@', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() , $strAssunto);
-
-            $strConteudo = $objEmailSistemaDTO->getStrConteudo();
-
-            $strConteudo = str_replace('@processo@',$objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(),$strConteudo);
-            $strConteudo = str_replace('@tipo_processo@', $objProcedimentoDTO->getStrNomeTipoProcedimento() ,$strConteudo);
-            $strConteudo = str_replace('@nome_usuario_externo@', $strNomeContato ,$strConteudo);
-            $strConteudo = str_replace('@email_usuario_externo@', $strEmailContato ,$strConteudo);
-            $strConteudo = str_replace('@link_login_usuario_externo@', $linkLoginUsuarioExterno ,$strConteudo);
-
-            if ($reciboDTOBasico->getStrStaTipoPeticionamento()=="N"){
-                $strConteudo = str_replace('@tipo_peticionamento@',"Processo Novo",$strConteudo);
-            }else if ($reciboDTOBasico->getStrStaTipoPeticionamento()=="I"){
-                $strConteudo = str_replace('@tipo_peticionamento@',"Intercorrente",$strConteudo);
-            }
-
-            $strConteudo = str_replace('@sigla_unidade_abertura_do_processo@', $strSiglaUnidade ,$strConteudo);
-            $strConteudo = str_replace('@descricao_unidade_abertura_do_processo@',$objUnidadeDTO->getStrDescricao(),$strConteudo);
-            $strConteudo = str_replace('@documento_recibo_eletronico_de_protocolo@',$documentoDTO->getStrProtocoloDocumentoFormatado(),$strConteudo);
-            $strConteudo = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(),$strConteudo);
-            $strConteudo = str_replace('@descricao_orgao@',$objOrgaoDTO->getStrDescricao(),$strConteudo);
-            $strConteudo = str_replace('@sitio_internet_orgao@',$objOrgaoDTO->getStrSitioInternetContato(),$strConteudo);
-
             foreach($arrEmailUnidade as $mail){
-                $strPara = $objEmailSistemaDTO->getStrPara();
-                $strPara = str_replace('@processo@', $documentoDTO->getStrProtocoloDocumentoFormatado() , $strPara);
-                $strPara = str_replace('@emails_unidade@', $mail->getStrEmail() , $strPara);
+	            $strDe = $objEmailSistemaDTO->getStrDe();
+	            $strDe = str_replace('@sigla_sistema@',SessaoSEIExterna::getInstance()->getStrSiglaSistema() ,$strDe);
+	            $strDe = str_replace('@processo@',$documentoDTO->getStrProtocoloDocumentoFormatado() ,$strDe);
+	            $strDe = str_replace('@email_sistema@',$objInfraParametro->getValor('SEI_EMAIL_SISTEMA'),$strDe);
+	            $strDe = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(),$strDe);
+	            $strDe = str_replace('@sigla_orgao_minusculas@',InfraString::transformarCaixaBaixa($objOrgaoDTO->getStrSigla()),$strDe);
+	            $strDe = str_replace('@sufixo_email@',$objInfraParametro->getValor('SEI_SUFIXO_EMAIL'),$strDe);
+
+	            $strAssunto = $objEmailSistemaDTO->getStrAssunto();
+	            $strAssunto = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(), $strAssunto);
+	            $strAssunto = str_replace('@processo@', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() , $strAssunto);
+
+	            $strConteudo = $objEmailSistemaDTO->getStrConteudo();
+
+	            $strConteudo = str_replace('@processo@',$objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(),$strConteudo);
+	            $strConteudo = str_replace('@tipo_processo@', $objProcedimentoDTO->getStrNomeTipoProcedimento() ,$strConteudo);
+	            $strConteudo = str_replace('@nome_usuario_externo@', $strNomeContato ,$strConteudo);
+	            $strConteudo = str_replace('@email_usuario_externo@', $strEmailContato ,$strConteudo);
+	            $strConteudo = str_replace('@link_login_usuario_externo@', $linkLoginUsuarioExterno ,$strConteudo);
+
+	            if ($reciboDTOBasico->getStrStaTipoPeticionamento()=="N"){
+	                $strConteudo = str_replace('@tipo_peticionamento@',"Processo Novo",$strConteudo);
+	            }else if ($reciboDTOBasico->getStrStaTipoPeticionamento()=="I"){
+	                $strConteudo = str_replace('@tipo_peticionamento@',"Intercorrente",$strConteudo);
+	            }
+
+	            // Se Direto no Processo Indicado, não só unidade geradoras, mas todas abertas
+	            if ($arrParametros['diretoProcessoIndicado']){
+	                $objUnidadeRN = new UnidadeRN();
+	                $objUnidadeDTO = new UnidadeDTO();
+	                $objUnidadeDTO->setNumIdUnidade($mail->getNumIdUnidade());
+	                $objUnidadeDTO->retStrSigla();
+	                $objUnidadeDTO->retStrDescricao();					
+	                $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+	                $strConteudo = str_replace('@sigla_unidade_abertura_do_processo@' , $objUnidadeDTO->getStrSigla() , $strConteudo);
+	                $strConteudo = str_replace('@descricao_unidade_abertura_do_processo@' , $objUnidadeDTO->getStrDescricao() , $strConteudo);
+	            }else{
+	                $strConteudo = str_replace('@sigla_unidade_abertura_do_processo@', $strSiglaUnidade ,$strConteudo);
+	                $strConteudo = str_replace('@descricao_unidade_abertura_do_processo@',$objUnidadeDTO->getStrDescricao(),$strConteudo);
+	            }
+
+
+	            $strConteudo = str_replace('@documento_recibo_eletronico_de_protocolo@',$documentoDTO->getStrProtocoloDocumentoFormatado(),$strConteudo);
+	            $strConteudo = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(),$strConteudo);
+	            $strConteudo = str_replace('@descricao_orgao@',$objOrgaoDTO->getStrDescricao(),$strConteudo);
+	            $strConteudo = str_replace('@sitio_internet_orgao@',$objOrgaoDTO->getStrSitioInternetContato(),$strConteudo);
+
+	            $strPara = $objEmailSistemaDTO->getStrPara();
+	            $strPara = str_replace('@processo@', $documentoDTO->getStrProtocoloDocumentoFormatado() , $strPara);
+	            $strPara = str_replace('@emails_unidade@', $mail->getStrEmail() , $strPara);
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
             }
         }

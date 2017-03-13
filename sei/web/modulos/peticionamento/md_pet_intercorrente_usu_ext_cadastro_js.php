@@ -39,13 +39,7 @@
         objTabelaDinamicaProcesso = new infraTabelaDinamica('tbProcesso', 'hdnTbProcesso', false, true);
         objTabelaDinamicaProcesso.gerarEfeitoTabela = true;
         objTabelaDinamicaProcesso.remover = function () {
-            if (validarRemoverProcesso()) {
-                document.getElementById('tbProcesso').style.display = 'none';
-                document.getElementById('txtNumeroProcesso').removeAttribute("disabled");
-                document.getElementById('btnValidar').removeAttribute('disabled');
-                return true;
-            }
-            return false;
+            return validarRemoverProcesso();
         };
     }
 
@@ -58,7 +52,7 @@
         var tipoProcesso = document.getElementById('txtTipo');
         var processoIntercorrente = document.getElementById("hdnProcessoIntercorrente");
 
-        objTabelaDinamicaProcesso.adicionar([document.getElementById('hdnIdTipoProcedimento').value, numeroProcesso.value, tipoProcesso.value, processoIntercorrente.value, '28/11/2016']);
+        objTabelaDinamicaProcesso.adicionar([document.getElementById('hdnIdTipoProcedimento').value, numeroProcesso.value, tipoProcesso.value, processoIntercorrente.value, infraDataAtual() ]);
 
         document.getElementById('tbProcesso').style.display = '';
         document.getElementById('btnAdicionar').style.display = 'none';
@@ -82,7 +76,7 @@
             infraAbrirJanela(urlValida.value,
                 'concluirPeticionamento',
                 770,
-                464,
+                480,
                 '', //options
                 false); //modal*/
         }
@@ -182,6 +176,84 @@
         'D': 'Digitalizado'
     };
 
+	var MSGTOOLTIPNIVELACESSO = '<?=str_replace("'", "\'", PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso));?>';
+	var MSGTOOLTIPHIPOTESELEGAL = '<?=str_replace("'", "\'", PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal));?>';
+	var MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO = '<?=str_replace("'", "\'", PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido));?>';
+	var MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = '<?=str_replace("'", "\'", PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido));?>';
+
+	function tooltip(tipo,evento,objeto){
+		switch (tipo) {
+			case 1:
+				MSGTOOLTIPNIVELACESSO = MSGTOOLTIPNIVELACESSO.replace(/\n/g, "\\n");
+				MSGTOOLTIPNIVELACESSO = MSGTOOLTIPNIVELACESSO.replace('onmouseover=','');
+				MSGTOOLTIPNIVELACESSO = MSGTOOLTIPNIVELACESSO.replace(/\"/g, '');
+				MSGTOOLTIPNIVELACESSO = MSGTOOLTIPNIVELACESSO.replace(/return /g,'');
+				var MSGTOOLTIPNIVELACESSO2 = MSGTOOLTIPNIVELACESSO.split(" onmouseout=");
+				if (evento==0){ 
+					objeto.addEventListener('mouseover', function () {
+						eval (MSGTOOLTIPNIVELACESSO2[0]);
+					});
+				}
+				if (evento==1){ 
+					objeto.addEventListener('mouseout', function () {
+						eval (MSGTOOLTIPNIVELACESSO2[1]);
+					});
+				}
+				break;
+			case 2:
+				MSGTOOLTIPHIPOTESELEGAL = MSGTOOLTIPHIPOTESELEGAL.replace(/\n/g, "\\n");
+				MSGTOOLTIPHIPOTESELEGAL = MSGTOOLTIPHIPOTESELEGAL.replace('onmouseover=','');
+				MSGTOOLTIPHIPOTESELEGAL = MSGTOOLTIPHIPOTESELEGAL.replace(/\"/g, '');
+				MSGTOOLTIPHIPOTESELEGAL = MSGTOOLTIPHIPOTESELEGAL.replace(/return /g,'');
+				var MSGTOOLTIPHIPOTESELEGAL2 = MSGTOOLTIPHIPOTESELEGAL.split(" onmouseout=");
+				if (evento==0){ 
+					objeto.addEventListener('mouseover', function () {
+						eval (MSGTOOLTIPHIPOTESELEGAL2[0]);
+					});
+				}
+				if (evento==1){ 
+					objeto.addEventListener('mouseout', function () {
+						eval (MSGTOOLTIPHIPOTESELEGAL2[1]);
+					});
+				}
+				break;
+			case 3:
+				MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.replace(/\n/g, "\\n");
+				MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.replace('onmouseover=','');
+				MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.replace(/\"/g, '');
+				MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.replace(/return /g,'');
+				var MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO2 = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.split(" onmouseout=");
+				if (evento==0){ 
+					objeto.addEventListener('mouseover', function () {
+						eval (MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO2[0]);
+					});
+				}
+				if (evento==1){ 
+					objeto.addEventListener('mouseout', function () {
+						eval (MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO2[1]);
+					});
+				}
+				break;
+			case 4:
+				MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.replace(/\n/g, "\\n");
+				MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.replace('onmouseover=','');
+				MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.replace(/\"/g, '');
+				MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.replace(/return /g,'');
+				var MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO2 = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.split(" onmouseout=");
+				if (evento==0){ 
+					objeto.addEventListener('mouseover', function () {
+						eval (MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO2[0]);
+					});
+				}
+				if (evento==1){ 
+					objeto.addEventListener('mouseout', function () {
+						eval (MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO2[1]);
+					});
+				}
+				break;
+		}
+    }
+        
     function inicializarDocumento() {
         iniciarTabelaDinamicaDocumento();
         iniciarObjUploadArquivo();
@@ -243,18 +315,6 @@
                 } else {
                     criarSelectNivelAcesso();
                  }
-
-                /*
-                if (EXIBIR_HIPOTESE_LEGAL && r.nivelAcesso.id == RESTRITO) {
-                    if (r.hipoteseLegal) {
-                        console.log('criando a hipotese legal hidden');
-                        criarHiddenHipoteseLegal(r.hipoteseLegal);
-                    } else {
-                        console.log('criando a hipotese legal html select');
-                        criarSelectHipoteseLegal();
-                    }
-                }
-                */
             },
             error: function (e) {
                 console.error('Erro ao processar o AJAX do SEI: ' + e.responseText);
@@ -281,6 +341,11 @@
 
         iniciarObjAjaxSelectNivelAcesso();
         objAjaxSelectNivelAcesso.executar();
+
+        tooltip(1,0,document.getElementById("imgNivelAcesso"));
+        tooltip(1,1,document.getElementById("imgNivelAcesso"));
+        tooltip(2,0,document.getElementById("imgHipoteseLegal"));
+        tooltip(2,1,document.getElementById("imgHipoteseLegal"));
     }
 
     function criarHiddenNivelAcesso(nivelAcesso) {
@@ -292,7 +357,7 @@
         divNivelAcesso.innerHTML = '';
         divHipoteseLegal.innerHTML = '';
 
-        lblNivelAcesso.className = 'infraLabelRadio';
+        lblNivelAcesso.className = 'infraLabel';
         lblNivelAcesso.id = 'lblNivelAcesso';
         lblNivelAcesso.innerHTML = nivelAcesso.descricao;
         divNivelAcesso.appendChild(lblNivelAcesso);
@@ -302,6 +367,10 @@
         hdnNivelAcesso.id = 'hdnNivelAcesso';
         hdnNivelAcesso.value = nivelAcesso.id;
         divNivelAcesso.appendChild(hdnNivelAcesso);
+
+        tooltip(3,0,document.getElementById("imgNivelAcesso"));
+        tooltip(3,1,document.getElementById("imgNivelAcesso"));
+
     }
 
     function criarHiddenHipoteseLegal(hipoteseLegal) {
@@ -312,7 +381,7 @@
 
         divHipoteseLegal.innerHTML = '';
 
-        lblHipoteseLegal.className = 'infraLabelRadio';
+        lblHipoteseLegal.className = 'infraLabel';
         lblHipoteseLegal.id = 'lblHipoteseLegal';
         lblHipoteseLegal.innerHTML = hipoteseLegal.descricao;
         divHipoteseLegal.appendChild(lblHipoteseLegal);
@@ -324,6 +393,11 @@
         divHipoteseLegal.appendChild(hdnHipoteseLegal);
 
         divBlcHipoteseLegal.style.display = 'block';
+
+        tooltip(3,0,document.getElementById("imgNivelAcesso"));
+        tooltip(3,1,document.getElementById("imgNivelAcesso"));
+        tooltip(4,0,document.getElementById("imgHipoteseLegal"));
+        tooltip(4,1,document.getElementById("imgHipoteseLegal"));
     }
 
 
@@ -619,11 +693,9 @@
         }
 
         if (remover) {
-            limparCampoDocumento();
-            limparTabelaDocumento();
-            document.getElementById('field_documentos').style.display = 'none';
+           location.href=location.href;
         }
-        return remover;
+        return false;
     }
 
     function gerarIdDocumento() {

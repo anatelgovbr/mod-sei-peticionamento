@@ -32,7 +32,10 @@ try {
 
     //Tipo Processo
     $strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcesso');
-    $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=tipo_processo_auto_completar');
+    
+    $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=tipo_processo_auto_completar_intercorretne');
+    
+    //$strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=tipo_processo_auto_completar');
 
     //Unidade
     $strLinkUnidadeSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidade');
@@ -315,7 +318,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>"/>
         <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"/>
         <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"/>
-        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Somente após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n\n\n O Intercorrente Padrão será utilizado para a abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo quando este corresponder a processo: 1) de Tipo sem Critério Intercorrente parametrizado; 2) com Nível de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado; 4) que todas as Unidades por onde tramitou estejam desativadas.') ?> alt="Ajuda" class="infraImg"/>
+        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Somente após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n\n\n O Intercorrente Padrão será utilizado para a abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo quando este corresponder a processo: 1) de Tipo sem Critério Intercorrente parametrizado; 2) com Nível de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado.') ?> alt="Ajuda" class="infraImg"/>
     </div>
     <!--  Fim do Tipo de Processo -->
 

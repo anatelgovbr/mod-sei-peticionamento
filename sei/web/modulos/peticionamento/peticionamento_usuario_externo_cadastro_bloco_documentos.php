@@ -75,11 +75,9 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 		<div style="float: left; height: 42px; margin-right: 10px;">
 			<label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipal) ?> alt="Ajuda" class="infraImg"/></label>
 			<br/>
-	         
 			<label class="infraLabel">
 			<?= $strTipoDocumentoPrincipal ?>
 			</label>
-	         
 			<select id="tipoDocumentoPrincipal" style="display:none;">
 			<option value="<?= $serieDTO->getNumIdSerie() ?>"><?= $strTipoDocumentoPrincipal ?></option>
 			</select>
@@ -98,7 +96,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
        <!-- DOCUMENTO PRINCIPAL DO TIPO GERADO -->
 		<br />
 		<div style="float: left; width: 90%;">
-			<label class="infraLabelObrigatorio">Documento Principal:&nbsp;&nbsp;</label>
+			<label class="infraLabelObrigatorio">Documento Principal:&nbsp;&nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensLocal() ?>/sei_formulario1.gif" name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?> alt="Formulário"/></label>&nbsp;&nbsp;
 			<label class="infraLabelRadio" onclick="abrirJanelaDocumento()"><?= $strTipoDocumentoPrincipal ?> &nbsp;&nbsp;(clique aqui para editar conteúdo)</label>
 		</div>
 

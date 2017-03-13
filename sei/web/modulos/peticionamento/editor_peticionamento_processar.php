@@ -189,19 +189,36 @@
  		?>
   function inicializar(){
     infraEfeitoTabelas(); 
+    infraAdicionarEvento(window,'resize',redimensionar);
+    CKEDITOR.on('instanceReady', function( evt ) { redimensionar();});
   }
+
+  function redimensionar() {
+    setTimeout(function(){
+
+      var tamComandos=document.getElementById('divComandos').offsetHeight;
+      var divEd=document.getElementById('divEditores');
+      if (tamComandos>divEd.offsetHeight) tamComandos-=divEd.offsetHeight;
+      var tamEditor=infraClientHeight()- tamComandos - 20;
+      divEd.style.height = (tamEditor>0?tamEditor:1) +'px';
+      },0);
+  }
+
 <?
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 echo $retEditor->getStrInicializacao();
 PaginaSEIExterna::getInstance()->fecharHead();
 ?>
-  
+<body onload="inicializar();" style="margin: 5px;overflow: hidden">  
 <form id="frmTextoPadraoInternoCadastro" method="post" onsubmit="return OnSubmitForm();" 
       action="<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_serie=' . $_GET['id_serie'] . '&acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
 
-  <table style="width: 100%; height: 95%;">
-    <td style="width: 95%; height: 95%;">
-      <div id="divEditores" style="overflow: auto; ">
+    <div id="divComandos" style="margin:0px;"></div>
+    <?
+      if (PaginaSEIExterna::getInstance()->getNumTipoBrowser()==InfraPagina::$TIPO_BROWSER_IE7 ) echo '<br style="margin:0;font-size:1px;"/>';
+    ?>
+
+    <div id="divEditores" style="overflow: auto;border-top:2px solid;border-bottom:0px;">
         <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" 
                  tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
         <script type="text/javascript">
@@ -209,8 +226,7 @@ PaginaSEIExterna::getInstance()->fecharHead();
           'toolbar':[["Save"],["Find","Replace","-","RemoveFormat","Bold","Italic","Underline","Strike","Subscript","Superscript","Maiuscula","Minuscula","TextColor","BGColor"],["Cut","Copy","PasteFromWord","PasteText","-","Undo","Redo","ShowBlocks","Symbol","Scayt"],["NumberedList","BulletedList","-","Outdent","Indent","base64image"],["Table","SpecialChar","SimpleLink","Extenso","Zoom"],["Styles"]]});
         </script>
       </div>
-    </td>
-  </table>
+
   
   <input type="hidden" id="hdnVersao" name="hdnVersao" value="0" />
   <input type="hidden" id="hdnIdConjuntoEstilos" name="hdnIdConjuntoEstilos" value="<?= $conjuntoEstilosDTO->getNumIdConjuntoEstilos() ?>" />

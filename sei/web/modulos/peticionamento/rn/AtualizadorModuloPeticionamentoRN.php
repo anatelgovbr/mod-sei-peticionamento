@@ -827,7 +827,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $this->inicializar('INICIANDO ATUALIZACAO DO MODULO ' . $this->nomeDesteModulo . ' NO SEI VERSAO ' . SEI_VERSAO);
 
             //checando versao do framework
-            $numVersaoInfraRequerida = '1.376';
+            $numVersaoInfraRequerida = '1.385';
             if (VERSAO_INFRA != $numVersaoInfraRequerida) {
                 $this->finalizar('VERSAO DO FRAMEWORK PHP INCOMPATIVEL (VERSAO ATUAL ' . VERSAO_INFRA . ', VERSAO REQUERIDA ' . $numVersaoInfraRequerida . ')', true);
             }

@@ -740,7 +740,7 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
             $this->inicializar('INICIANDO ATUALIZACAO DO MODULO '. $this->nomeDesteModulo .' NO SIP VERSAO '.SIP_VERSAO);
 
             //checando versao do framework
-            $numVersaoInfraRequerida = '1.376';
+            $numVersaoInfraRequerida = '1.385';
             if (VERSAO_INFRA != $numVersaoInfraRequerida){
                 $this->finalizar('VERSAO DO FRAMEWORK PHP INCOMPATIVEL (VERSAO ATUAL '.VERSAO_INFRA.', VERSAO REQUERIDA '.$numVersaoInfraRequerida.')',true);
             }

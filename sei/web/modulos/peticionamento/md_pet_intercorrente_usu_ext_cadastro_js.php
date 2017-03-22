@@ -51,8 +51,9 @@
         var numeroProcesso = document.getElementById('txtNumeroProcesso');
         var tipoProcesso = document.getElementById('txtTipo');
         var processoIntercorrente = document.getElementById("hdnProcessoIntercorrente");
+        var dataAtuacao = document.getElementById("hdnDataAtuacao");
 
-        objTabelaDinamicaProcesso.adicionar([document.getElementById('hdnIdTipoProcedimento').value, numeroProcesso.value, tipoProcesso.value, processoIntercorrente.value, infraDataAtual() ]);
+        objTabelaDinamicaProcesso.adicionar([document.getElementById('hdnIdTipoProcedimento').value, numeroProcesso.value, tipoProcesso.value, processoIntercorrente.value, dataAtuacao.value ]);
 
         document.getElementById('tbProcesso').style.display = '';
         document.getElementById('btnAdicionar').style.display = 'none';
@@ -135,6 +136,7 @@
                     document.getElementById('txtTipo').value = $(r).find('TipoProcedimento').text();
                     document.getElementById('btnAdicionar').style.display = '';
                     document.getElementById('hdnProcessoIntercorrente').value = $(r).find('ProcessoIntercorrente').text();
+                    document.getElementById('hdnDataAtuacao').value = $(r).find('DataGeracao').text();
                     document.getElementById('urlValidaAssinaturaProcesso').value = $(r).find('UrlValida').text();
 
                 }

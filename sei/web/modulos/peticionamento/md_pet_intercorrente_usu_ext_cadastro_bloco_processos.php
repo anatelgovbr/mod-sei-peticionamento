@@ -6,12 +6,12 @@
     <!-- INICIO NUMERO DO PROCESSO -->
     <div class="bloco" style="width: 240px;">
         <label id="lblNumeroSei" for="txtNumeroProcesso" accesskey="f" class="infraLabelObrigatorio">Número:</label>
-        <input onchange="controlarChangeNumeroProcesso();" type="text" id="txtNumeroProcesso" name="txtNumeroProcesso" class="infraText" maxlength="100" style="width: 184px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtNumeroProcesso ?>"/>
+        <input onchange="controlarChangeNumeroProcesso();" type="text" id="txtNumeroProcesso" name="txtNumeroProcesso" class="infraText" maxlength="100" style="width: 182px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtNumeroProcesso ?>"/>
         <button tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" type="button" accesskey="V" id="btnValidar" onclick="validarNumeroProcesso()" class="infraButton"><span class="infraTeclaAtalho">V</span>alidar</button>
     </div>
     <!-- FIM NUMERO DO PROCESSO -->
     <!-- INICIO TIPO DO PROCESSO VALIDADO -->
-    <div class="bloco" style="width: 380px;">
+    <div class="bloco" style="width: 390px;">
         <label id="lblTipo" for="txtTipo" accesskey="f" class="infraLabelObrigatorio">Tipo:</label>
         <input type="text" id="txtTipo" name="txtTipo" class="infraText" readonly="readonly" style="width: 318px;" value="<?= $txtTipo ?>"/>
         <button type="button" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" onclick="adicionarProcesso();" accesskey="A" id="btnAdicionar" class="infraButton" style="display: none"><span class="infraTeclaAtalho">A</span>dicionar</button>
@@ -36,6 +36,7 @@
         <input type="hidden" name="hdnIdTipoProcedimento" id="hdnIdTipoProcedimento" value=""/>
         <input type="hidden" name="hdnTbProcesso" id="hdnTbProcesso" value="<?php echo $strGridProcesso?>"/>
         <input type="hidden" name="hdnProcessoIntercorrente" id="hdnProcessoIntercorrente" value=""/>
+        <input type="hidden" name="hdnDataAtuacao" id="hdnDataAtuacao" value=""/>
         <input type="hidden" name="urlValidaAssinaturaProcesso" id="urlValidaAssinaturaProcesso" value=""/>
         
     </div>

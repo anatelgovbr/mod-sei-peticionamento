@@ -126,8 +126,15 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
         $objCriterioIntercorrenteDTO = $params[1];
         //$arrObjDocumentoAPI = $params[2];
         $especificacao = $params[2];
-
-        if($objProcedimentoDTO->getStrStaEstadoProtocolo() == 3){
+        
+        $protocoloDTO = new ProtocoloDTO();
+        $protocoloDTO->retTodos();
+        $protocoloDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+        $protocoloRN = new ProtocoloRN();
+        $protocoloDTO = $protocoloRN->consultarRN0186( $protocoloDTO );
+                
+        // Verifica se o processo é anexado, se for, retorna a unidade do processo pai.
+        if($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO){
             $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
             $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
             $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
@@ -138,6 +145,13 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
             $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
 
             $idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objRelProtocoloProtocoloDTO->getDblIdProtocolo1());
+        }else if($protocoloDTO->getStrStaNivelAcessoLocal() == ProtocoloRN::$NA_SIGILOSO ||
+        		$protocoloDTO->getStrStaNivelAcessoGlobal ==  ProtocoloRN::$NA_SIGILOSO ){
+
+            $objMdPetIntercorrenteAndamentoSigiloso = new MdPetIntercorrenteAndamentoSigilosoRN();
+
+            $idUnidadeAbrirNovoProcesso = $objMdPetIntercorrenteAndamentoSigiloso->retornaIdUnidadeAberturaProcesso( $objProcedimentoDTO->getDblIdProcedimento() );
+
         }else{
             $idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
         }
@@ -745,14 +759,6 @@ class MdPetIntercorrenteProcessoRN extends ProcessoPeticionamentoRN {
 
 		//Remetentes
 		$idsParticipantes = array();
-
-		$objParticipante  = new ParticipanteDTO();
-		$objParticipante->setDblIdProtocolo($this->getProcedimentoDTO()->getDblIdProcedimento());
-		$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
-		$objParticipante->setNumIdUnidade($idUnidadeProcesso);
-		$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
-		$objParticipante->setNumSequencia(0);
-		$idsParticipantes[] = $objParticipante;
 
 		//Interessados
 		// Processo Principal - Interessados

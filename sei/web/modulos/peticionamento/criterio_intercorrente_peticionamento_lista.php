@@ -400,7 +400,7 @@ $arrNivelAcesso = array(
     <div style="height:4.5em; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
         <!--  Nome do Menu -->
         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelOpcional">Tipo de Processo:</label>
-        <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" maxlength="30" value="<?= $txtTipoProcesso ?>" class="infraText" />
+        <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" value="<?= $txtTipoProcesso ?>" class="infraText" />
         <!--  Tipo do Menu -->
         <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Nível de Acesso dos Documentos:</label>
         <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect" >

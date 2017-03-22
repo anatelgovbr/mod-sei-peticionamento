@@ -122,16 +122,13 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 	<label>A confirmação de sua senha de acesso iniciará o peticionamento e importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</label>
     </p>
     
-    <p> 
+    <p>
     <label class="infraLabelObrigatorio">Usuário Externo:</label> <br/>
-    <input type="text" name="loginUsuarioExterno" style="width:60%;"
-           value="<?= PaginaSEIExterna::tratarHTML( SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno() ) ?> "
-           readonly="readonly" 
-           id="loginUsuarioExterno" class="infraText" autocomplete="off" />
+    <input type="text" name="loginUsuarioExterno" style="width: 60%;" value="<?= PaginaSEIExterna::tratarHTML( SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno() ) ?>" readonly="readonly" id="loginUsuarioExterno" class="infraText" autocomplete="off" />
     </p>
     
-    <p> 
-    <label class="infraLabelObrigatorio">Cargo/Função:</label><br/>
+    <p>
+    <label class="infraLabelObrigatorio">Cargo/Função:</label> <br/>
     <select id="selCargo" name="selCargo" class="infraSelect" style="width:60%;">
     <option value="">Selecione Cargo/Função</option>
     <? foreach( $arrObjCargoDTO as $cargo ){
@@ -151,8 +148,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     </p>
     
     <p>
-    <label class="infraLabelObrigatorio"> Senha de Acesso ao SEI: </label> <br/>
-    <input type="password" name="senhaSEI" id="senhaSEI" class="infraText" autocomplete="off" style="width:60%;" />
+    <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label> <br/>
+    <input type="password" name="senhaSEI" id="senhaSEI" class="infraText" autocomplete="off" style="width: 60%;" />
     </p>
 
     <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $_REQUEST['id_tipo_procedimento'] ?>" />

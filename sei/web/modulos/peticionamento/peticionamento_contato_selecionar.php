@@ -102,6 +102,8 @@ try {
   //alteracoes seiv3
   $objContatoDTO->retNumIdContato();
   $objContatoDTO->retNumIdTipoContato();
+  $objContatoDTO->retNumIdUsuarioCadastro();
+  
   $objContatoDTO->retStrExpressaoVocativoCargo();
   $objContatoDTO->retStrExpressaoTratamentoCargo();
   
@@ -361,11 +363,22 @@ try {
       //if($dto->getStrSinContexto()=='S'){
         //$strResultado .= $strNegritoContextoFim;
       //}
-      
-      $strResultado .= '</td>';            
-      $strResultado .= '<td align="center">';      
+
+      $strResultado .= '</td>';
+
+
+
+      $strResultado .= '<td align="center">';
+
+      //Alteração
+
+      if (SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()==$dto->getNumIdUsuarioCadastro()){
+      	//$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('" + arrDadosInteressado[0] +"', '" + arrDadosInteressado[1] +"', '"+ arrDadosInteressado[2] +"')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>"	
+      	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', 'Pessoa Física', '123.456.789-09')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>";
+      }
+
       $strResultado .= PaginaSEIExterna::getInstance()->getAcaoTransportarItem($n++,$dto->getNumIdContato());
-      
+
       $strId = $dto->getNumIdContato();
       $strDescricao = PaginaSEIExterna::getInstance()->formatarParametrosJavaScript($strNomeSigla);
       
@@ -565,6 +578,36 @@ function pesquisar(){
    document.getElementById('frmContatoLista').submit();
 }
 
+
+function abrirCadastroInteressadoAlterar( id, tipo, cpfcnpj){
+
+	//charmar janela para cadastrar um novo interessado
+	$('#txtNomeRazaoSocial').val('');
+	$('#hdnCustomizado').val('');
+	$('#hdnIdEdicao').val( id );
+
+	<?php 
+	$strLinkEdicaoPF = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=peticionamento_interessado_cadastro&tipo_selecao=2&cpf=true&id_orgao_acesso_externo=0');
+	$strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=peticionamento_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=0');
+	?>
+
+	if( tipo == 'Pessoa Física' ){
+		var str = '<?= $strLinkEdicaoPF ?>';
+	}
+
+	else if( tipo == 'Pessoa Jurídica' ){
+		var str = '<?= $strLinkEdicaoPJ ?>';
+	}
+	
+	infraAbrirJanela( str, 'cadastrarInteressado', 900, 900, '', false); //modal 
+	return;
+	
+}
+function atualizarNomeRazaoSocial( cpfEditado , nomeEditado ){
+	location.href=location.href;
+}
+
+
 <?
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
@@ -621,7 +664,8 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
   PaginaSEIExterna::getInstance()->fecharAreaDados();
   ?>
   
-  <input type="hidden" name="hdnFlag" value="1" />  
+  <input type="hidden" name="hdnFlag" value="1" />
+  <input type="hidden" name="hdnIdEdicao" id="hdnIdEdicao" value="" />  
   
   <?
   PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado,$numRegistros);

@@ -201,14 +201,6 @@ class ProcessoPeticionamentoRN extends InfraRN {
 			//Remetentes
 			$idsParticipantes = array();
 
-			$objParticipante  = new ParticipanteDTO();
-			$objParticipante->setDblIdProtocolo($objSaidaGerarProcedimentoAPI->getIdProcedimento());
-			$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
-			$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
-			$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
-			$objParticipante->setNumSequencia(0);
-			$idsParticipantes[] = $objParticipante;
-
 			// Processo - Interessados
 			$i=0;
 			foreach($idsContatos as $interessado){
@@ -371,9 +363,9 @@ class ProcessoPeticionamentoRN extends InfraRN {
 		$objDocumentoAPI->setIdTipoConferencia( $docDTO->getNumIdTipoConferencia() );
 			
 		$objDocumentoAPI->setNomeArquivo( $itemAnexo->getStrNome() );
-		$objDocumentoAPI->setConteudo(base64_encode(file_get_contents(DIR_SEI_TEMP. '/'. $itemAnexo->getStrNome() )));
-		
-		$objSeiRN = new SeiRN();		
+		$objDocumentoAPI->setConteudo(base64_encode(file_get_contents(DIR_SEI_TEMP. '/'. $itemAnexo->getStrHash() )));
+
+		$objSeiRN = new SeiRN();
 		$saidaDocExternoAPI = $objSeiRN->incluirDocumento( $objDocumentoAPI );
 		$idDocumentoAnexo = $saidaDocExternoAPI->getIdDocumento();
 		$docDTO->setDblIdDocumento( $idDocumentoAnexo );
@@ -663,8 +655,8 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$objDocumentoDTO->setNumIdTextoPadraoInterno('');
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');				
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
-				
-				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, 			                                                         $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_ESSENCIAL );
+
+				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, ReciboDocumentoAnexoPeticionamentoRN::$TP_ESSENCIAL );
 
 				//==================================
 				//CRIANDO ANEXOS
@@ -1267,11 +1259,12 @@ class ProcessoPeticionamentoRN extends InfraRN {
 				$tamanhoDoAnexo = str_replace(" Kb","", $tamanhoDoAnexo );
 				$tamanhoDoAnexo = floatval($tamanhoDoAnexo*1024);
 			}
-			
+
 			$objAnexoDTO = new AnexoDTO();
 			$objAnexoDTO->setNumIdAnexo( null );
 			$objAnexoDTO->setStrSinAtivo('S');
-			$objAnexoDTO->setStrNome($anexo[8]);
+			$objAnexoDTO->setStrNome($anexo[0]);
+			$objAnexoDTO->setStrHash($anexo[8]);
 			$objAnexoDTO->setDthInclusao($anexo[1]);
 			$objAnexoDTO->setNumTamanho( $tamanhoDoAnexo );
 			$objAnexoDTO->setStrSiglaUsuario( $strSiglaUsuario );

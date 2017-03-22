@@ -168,9 +168,9 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 				$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
 				break;
 
-            case 'tipo_processo_auto_completar_intercorretne':
+            case 'tipo_processo_auto_completar_intercorrente':
                 $arrObjTipoProcessoDTO = TipoProcessoPeticionamentoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa'], $_POST['itens_selecionados'] );
-                $xml = TipoProcessoPeticionamentoINT::gerarXMLItensArrInfraApi($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
+                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO,'IdTipoProcedimento', 'Nome');
                 break;
 
             case 'tipo_processo_auto_completar_com_assunto':
@@ -318,7 +318,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
 		  		if (isset($_FILES['fileArquivoPrincipal'])){
 
-		  			PaginaSEIExterna::getInstance()->processarUpload('fileArquivoPrincipal', DIR_SEI_TEMP, true);
+		  			PaginaSEIExterna::getInstance()->processarUpload('fileArquivoPrincipal', DIR_SEI_TEMP, false);
 		  		}
 		  		die;
 
@@ -326,7 +326,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
 		  		if (isset($_FILES['fileArquivoEssencial'])){
 
-		  			PaginaSEIExterna::getInstance()->processarUpload('fileArquivoEssencial', DIR_SEI_TEMP, true);
+		  			PaginaSEIExterna::getInstance()->processarUpload('fileArquivoEssencial', DIR_SEI_TEMP, false);
 		  		}
 		  		die;
 
@@ -334,7 +334,7 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
 		  		if (isset($_FILES['fileArquivoComplementar'])){
 
-		  			PaginaSEIExterna::getInstance()->processarUpload('fileArquivoComplementar', DIR_SEI_TEMP, true);
+		  			PaginaSEIExterna::getInstance()->processarUpload('fileArquivoComplementar', DIR_SEI_TEMP, false);
 		  		}
 		  		die;
 
@@ -363,30 +363,25 @@ class PeticionamentoIntegracao extends SeiIntegracao {
 
   				$cpfcnpj =  $_POST['cpfcnpj'];
   				$cpfcnpj = str_replace(".","", $cpfcnpj );
-  				$cpfcnpj = str_replace("-","", $cpfcnpj );
-  				$cpfcnpj = str_replace("/","", $cpfcnpj );
+				$cpfcnpj = str_replace("-","", $cpfcnpj );
+				$cpfcnpj = str_replace("/","", $cpfcnpj );
 
-  				$total = ContatoPeticionamentoINT::getTotalContatoByCPFCNPJ( $cpfcnpj );
-  				$json = null;
+				$objContextoContatoDTO = ContatoPeticionamentoINT::getTotalContatoByCPFCNPJ( $cpfcnpj );
 
-  				if( $total == 1 ) {
+				if(count($objContextoContatoDTO)>0) {
+					$objContato = new stdClass();
+					$objContato->usuario = $objContextoContatoDTO[0]->getNumIdUsuarioCadastro();
+					$objContato->nome =  utf8_encode( $objContextoContatoDTO[0]->getStrNome() );
+					$objContato->id = utf8_encode( $objContextoContatoDTO[0]->getNumIdContato() );
+					$objContato->nomeTratado = PaginaSEI::tratarHTML($objContextoContatoDTO[0]->getStrNome());
+					$json = json_encode( $objContato , JSON_FORCE_OBJECT);
+				}else{
+					$json = null;
+				}
 
-	  				$objContatoDTO = ContatoPeticionamentoINT::getContatoByCPFCNPJ( $cpfcnpj );
-
-	  				if( $objContatoDTO != null){
-	  				  $objContato = new stdClass();
-                      $objContato->usuario = $objContatoDTO->getNumIdUsuarioCadastro();
-	  				  $objContato->nome =  utf8_encode( $objContatoDTO->getStrNome() );
-	  				  $objContato->id = utf8_encode( $objContatoDTO->getNumIdContato() );
-					  $objContato->nomeTratado = PaginaSEI::tratarHTML($objContatoDTO->getStrNome());
-	  			      $json = json_encode( $objContato , JSON_FORCE_OBJECT);
-	  				}
-
-  				}
-
-  				echo $json;
-
-  			    return true;
+				echo $json;
+				return true;
+				break;
 
   			 //EU7050
 			case 'validar_numero_processo_peticionamento':

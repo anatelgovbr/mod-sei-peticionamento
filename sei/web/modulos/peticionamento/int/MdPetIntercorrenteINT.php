@@ -101,6 +101,7 @@
             $xml .= '<numeroProcesso>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . '</numeroProcesso>';
             $xml .= '<TipoProcedimento> ' . $objProcedimentoDTO->getStrNomeTipoProcedimento() . ' </TipoProcedimento>';
             $xml .= '<ProcessoIntercorrente>' . $processoIntercorrente . '</ProcessoIntercorrente>';
+            $xml .= '<DataGeracao> ' . $objProcedimentoDTO->getDtaGeracaoProtocolo() . ' </DataGeracao>';
             $xml .= '<UrlValida>' . htmlentities($urlValida) . '</UrlValida>';
             $xml .= '</Validacao>';
 

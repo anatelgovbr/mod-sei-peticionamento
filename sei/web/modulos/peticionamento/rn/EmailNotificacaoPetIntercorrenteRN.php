@@ -48,31 +48,27 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
         $objOrgaoDTO->setStrSinAtivo('S');
         $objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
 
-		// Se Direto no Processo Indicado, não só unidade geradoras, mas todas abertas
-		if ($arrParametros['diretoProcessoIndicado']){
+        $objEmailUnidadeDTO = new EmailUnidadeDTO();
+        $emailUnidadeRN = new EmailUnidadeRN();
+        $objEmailUnidadeDTO->setDistinct(true);
+        $objEmailUnidadeDTO->retNumIdUnidade();
+        $objEmailUnidadeDTO->retStrEmail();
+        // Se Direto no Processo Indicado, não só unidade geradoras, mas todas abertas
+        if ($arrParametros['diretoProcessoIndicado']){
 			$objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN(); 
 			$arrObjAtividadeDTO = $objMdPetIntercorrenteProcessoRN->retornaUnidadesProcessoAberto( $arrParametros['id_procedimento'] );
 			$arrUnidade = InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');				
 
-			$objEmailUnidadeDTO = new EmailUnidadeDTO();
-			$emailUnidadeRN = new EmailUnidadeRN();
-			$objEmailUnidadeDTO->retNumIdUnidade();
-			$objEmailUnidadeDTO->retStrEmail();
 			$objEmailUnidadeDTO->adicionarCriterio(
 				array('IdUnidade'),
 				array(InfraDTO::$OPER_IN),
 				array( $arrUnidade )
 			);
-			$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
 		//pegar a lista de email da unidade, a unidade pode não ter, email unidade
 		}else{
-			$objEmailUnidadeDTO = new EmailUnidadeDTO();
-			$emailUnidadeRN = new EmailUnidadeRN();
-			$objEmailUnidadeDTO->retNumIdUnidade();
-			$objEmailUnidadeDTO->retStrEmail();
 			$objEmailUnidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-			$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
 		}
+		$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
 
         //obtendo o tipo de procedimento
         $idTipoProc = $arrParametros['id_tipo_procedimento'];
@@ -238,21 +234,28 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
 	                $strConteudo = str_replace('@tipo_peticionamento@',"Intercorrente",$strConteudo);
 	            }
 
+	            $enviaemail = false;
+	            
 	            // Se Direto no Processo Indicado, não só unidade geradoras, mas todas abertas
 	            if ($arrParametros['diretoProcessoIndicado']){
-	                $objUnidadeRN = new UnidadeRN();
-	                $objUnidadeDTO = new UnidadeDTO();
-	                $objUnidadeDTO->setNumIdUnidade($mail->getNumIdUnidade());
-	                $objUnidadeDTO->retStrSigla();
-	                $objUnidadeDTO->retStrDescricao();					
-	                $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
-	                $strConteudo = str_replace('@sigla_unidade_abertura_do_processo@' , $objUnidadeDTO->getStrSigla() , $strConteudo);
-	                $strConteudo = str_replace('@descricao_unidade_abertura_do_processo@' , $objUnidadeDTO->getStrDescricao() , $strConteudo);
+	                $objUnidadeProcIndicRN = new UnidadeRN();
+	                $objUnidadeProcIndicDTO = new UnidadeDTO();
+	                $objUnidadeProcIndicDTO->retStrSigla();
+	                $objUnidadeProcIndicDTO->retStrDescricao();
+	                $objUnidadeProcIndicDTO->setNumIdUnidade($mail->getNumIdUnidade());
+	                $objUnidadeProcIndicDTO->setBolExclusaoLogica(false);
+	                $arrObjUnidadeProcIndicDTO = $objUnidadeProcIndicRN->consultarRN0125($objUnidadeProcIndicDTO);
+		
+	                if (count($arrObjUnidadeProcIndicDTO)>0){
+	                	$enviaemail = true;
+	                	$strConteudo = str_replace('@sigla_unidade_abertura_do_processo@' , $arrObjUnidadeProcIndicDTO->getStrSigla() , $strConteudo);
+	                	$strConteudo = str_replace('@descricao_unidade_abertura_do_processo@' , $arrObjUnidadeProcIndicDTO->getStrDescricao() , $strConteudo);
+	                }
 	            }else{
+	            	$enviaemail = true;
 	                $strConteudo = str_replace('@sigla_unidade_abertura_do_processo@', $strSiglaUnidade ,$strConteudo);
 	                $strConteudo = str_replace('@descricao_unidade_abertura_do_processo@',$objUnidadeDTO->getStrDescricao(),$strConteudo);
 	            }
-
 
 	            $strConteudo = str_replace('@documento_recibo_eletronico_de_protocolo@',$documentoDTO->getStrProtocoloDocumentoFormatado(),$strConteudo);
 	            $strConteudo = str_replace('@sigla_orgao@',$objOrgaoDTO->getStrSigla(),$strConteudo);
@@ -262,7 +265,9 @@ class EmailNotificacaoPetIntercorrenteRN extends EmailNotificacaoPeticionamentoR
 	            $strPara = $objEmailSistemaDTO->getStrPara();
 	            $strPara = str_replace('@processo@', $documentoDTO->getStrProtocoloDocumentoFormatado() , $strPara);
 	            $strPara = str_replace('@emails_unidade@', $mail->getStrEmail() , $strPara);
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+	            if ($enviaemail){
+                	InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+	            }
             }
         }
     }

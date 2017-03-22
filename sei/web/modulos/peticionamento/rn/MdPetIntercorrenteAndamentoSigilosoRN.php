@@ -754,6 +754,68 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
 
         $strNomeTarefa = str_replace('@LOCALIZADOR@', $strSubstituicao, $strNomeTarefa);
     }
+
+    //método que retorna a unidade de abertura de processo novo relacionado ao processo sigiloso que foi informado pelo usuario na tela de processo intercorrente
+    public function retornaIdUnidadeAberturaProcessoConectado( $idProcedimento ){
+
+    	//1 - obtendo TODAS as unidades por onde o processo ja tramitou    	
+    	$objProcedimentoDTO = new ProcedimentoDTO();
+    	$objProcedimentoDTO->setDblIdProcedimento( $idProcedimento );
+    	
+    	$objAtividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
+    	$objAtividadeDTO = new AtividadeDTO();
+    	$objAtividadeDTO->retNumIdAtividade();
+    	$objAtividadeDTO->setDistinct(true);
+    	$objAtividadeDTO->retNumIdUnidade();
+    	$objAtividadeDTO->retStrSiglaUnidade();
+    	$objAtividadeDTO->retStrDescricaoUnidade();
+    	
+    	/* 
+    	 * Tarefas que implicam na abertura do processo na Unidade  (ID/Nome):
+    	 * MESCLANDO TAREFAS DE PROCESSOS PUBLICO/RESTRITO + SIGILOSO
+    	   1 - Processo @NIVEL_ACESSO@@GRAU_SIGILO@ gerado @DATA_AUTUACAO@@HIPOTESE_LEGAL@
+           21 - Remoção de sobrestamento        
+           29 - Reabertura do processo na unidade 
+           32 - Processo remetido pela unidade @UNIDADE@ 
+           61 - Credencial concedida para o usuário @USUARIO@ 
+           64 - Reabertura do processo
+           66 - Transferência de credencial
+           73 - Concessão de credencial para assinatura
+           118 - Ativação de credencial por Coordenador de Acervo para o usuário @USUARIO@    	    */
+    	
+    	$objAtividadeDTO->setNumIdTarefa(array(TarefaRN::$TI_GERACAO_PROCEDIMENTO,
+    			TarefaRN::$TI_REMOCAO_SOBRESTAMENTO,
+    			TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE,
+    			TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE,
+    			TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL,
+    			TarefaRN::$TI_REABERTURA_PROCESSO_USUARIO,
+    			TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA,
+    			TarefaRN::$TI_PROCESSO_ATIVACAO_CREDENCIAL),InfraDTO::$OPER_IN);
+    	
+    	$objAtividadeDTO->setDblIdProtocolo( $idProcedimento );
+    	
+    	//ordenando pelo id da atividade, obtendo a ordem cronologica da tramitacao
+    	$objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_DESC);
+    	
+    	$arrObjAtividadeDTO = $objAtividadeBD->listar($objAtividadeDTO);
+    	
+    	if( is_array( $arrObjAtividadeDTO ) && count( $arrObjAtividadeDTO ) > 0){
+	    	
+    		foreach( $arrObjAtividadeDTO as $atividade ){
+	    		
+    			//2 - descobrindo se o processo ainda está aberto nesta unidade
+    			return $atividade->getNumIdUnidade();
+	    	}
+	    	
+    	} 
+    	
+    	//se nao estiver aberto em nenhuma unidade retorna null
+    	else {
+    		return null;
+    	}
+    	
+    }
+
 }
 
 ?>

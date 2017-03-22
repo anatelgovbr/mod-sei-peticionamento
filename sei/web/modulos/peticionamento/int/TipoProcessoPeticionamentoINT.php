@@ -260,37 +260,41 @@ class TipoProcessoPeticionamentoINT extends InfraINT {
     }
 
     public static function autoCompletarTipoProcedimento($strPalavrasPesquisa, $itensSelecionados = null){
+		$objTipoProcedimentoDTO = new TipoProcedimentoDTO();
+		$objTipoProcedimentoDTO->retNumIdTipoProcedimento();
+		$objTipoProcedimentoDTO->retStrNome();
+		$objTipoProcedimentoDTO->setOrd('Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
+		
+		$objTipoProcedimentoRN = new TipoProcedimentoRN();
+		$arrObjTipoProcedimentoDTO = $objTipoProcedimentoRN->listarRN0244($objTipoProcedimentoDTO);
 
-        $seiRN = new SeiRN();
-        $arrObjTipoProcedimentoApi = $seiRN->listarTiposProcedimento();
 
         if ($strPalavrasPesquisa != '' || $itensSelecionados != null) {
             $ret = array();
             $strPalavrasPesquisa = strtolower($strPalavrasPesquisa);
-            foreach($arrObjTipoProcedimentoApi as $objTipoProcedimentoApi){
+            foreach($arrObjTipoProcedimentoDTO as $objTipoProcedimentoDTO){
                 /**@var $objTipoProcedimentoApi TipoProcedimentoAPI */
-                if($itensSelecionados != null && in_array($objTipoProcedimentoApi->getIdTipoProcedimento(), $itensSelecionados)){
-                    continue;
+                if($itensSelecionados != null && in_array($objTipoProcedimentoDTO->getNumIdTipoProcedimento(), $itensSelecionados)){
+                	continue;
                 }
-                if ($strPalavrasPesquisa != '' && strpos(strtolower($objTipoProcedimentoApi->getNome()),$strPalavrasPesquisa)===false){
-                    continue;
+                if ($strPalavrasPesquisa != '' && strpos(strtolower($objTipoProcedimentoDTO->getStrNome()),$strPalavrasPesquisa)===false){
+                	continue;
                 }
-                
+
                 //checando se o tipo de processo informado possui sugestao de assunto
                 
                 $rnAssunto = new RelTipoProcedimentoAssuntoRN();
                 $dto = new RelTipoProcedimentoAssuntoDTO();
                 $dto->retTodos();
-                $dto->setNumIdTipoProcedimento( $objTipoProcedimentoApi->getIdTipoProcedimento() );
-                
+                $dto->setNumIdTipoProcedimento( $objTipoProcedimentoDTO->getNumIdTipoProcedimento() );
+
                 $arrAssuntos = $rnAssunto->listarRN0192( $dto );
                 
                 if( is_array( $arrAssuntos ) && count( $arrAssuntos ) > 0 ){
-                   $ret[] = $objTipoProcedimentoApi;
+                   $ret[] = $objTipoProcedimentoDTO;
                 }
             }
         }
-
         return $ret;
     }
 

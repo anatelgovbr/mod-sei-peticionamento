@@ -739,10 +739,13 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
         try{
             $this->inicializar('INICIANDO ATUALIZACAO DO MODULO '. $this->nomeDesteModulo .' NO SIP VERSAO '.SIP_VERSAO);
 
-            //checando versao do framework
+            //testando versao do framework
             $numVersaoInfraRequerida = '1.385';
-            if (VERSAO_INFRA != $numVersaoInfraRequerida){
-                $this->finalizar('VERSAO DO FRAMEWORK PHP INCOMPATIVEL (VERSAO ATUAL '.VERSAO_INFRA.', VERSAO REQUERIDA '.$numVersaoInfraRequerida.')',true);
+            $versaoInfraFormatada = (int) str_replace('.','', VERSAO_INFRA);
+            $versaoInfraReqFormatada = (int) str_replace('.','', $numVersaoInfraRequerida);
+            
+            if ($versaoInfraFormatada < $versaoInfraReqFormatada){
+            	$this->finalizar('VERSAO DO FRAMEWORK PHP INCOMPATIVEL (VERSAO ATUAL '.VERSAO_INFRA.', SENDO REQUERIDA VERSAO IGUAL OU SUPERIOR A '.$numVersaoInfraRequerida.')',true);
             }
 
             //checando BDs suportados

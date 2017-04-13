@@ -1,7 +1,7 @@
 # Módulo Peticionamento e Intimação Eletrônicos
 
 ## Requisitos:
-- SEI 3.0.2 instalado ou atualizado (verificar valor da constante de versão do SEI no arquivo /sei/web/SEI.php).
+- SEI 3.0.2 instalado/atualizado ou versão superior (verificar valor da constante de versão do SEI no arquivo /sei/web/SEI.php).
 	- **IMPORTANTE**, no caso de atualização do presente módulo: A atualização do SEI 2.6 para 3.0 alterou diversas tabelas que as tabelas do módulo relacionava. Dessa forma, alertamos que, imediatamente ANTES de executar o script de atualização do SEI 3.0 é necessário executar o script abaixo no banco do SEI para que a atualização do SEI 3.0 possa ocorrer sem erro:
 		
 		ALTER TABLE `md_pet_rel_tp_ctx_contato` DROP FOREIGN KEY `fk_md_pet_rel_tp_ctx_cont_1`;
@@ -59,4 +59,4 @@
 
 5. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
 
-		http://[Servidor_PHP]/sei/modulos/peticionamento/indisponibilidade_peticionamento_usuario_externo_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0
+		http://[Servidor_PHP]/sei/modulos/peticionamento/md_pet_indisponibilidade_usu_ext_lista.php?acao_externa=indisponibilidade_peticionamento_usuario_externo_listar&id_orgao_acesso_externo=0

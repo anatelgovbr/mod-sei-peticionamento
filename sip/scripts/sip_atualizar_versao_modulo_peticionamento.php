@@ -71,6 +71,7 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
         $this->numSeg = 0;
         die;
     }
+
     //Contem atualizações da versao 1.1.0
     protected function instalarv110(){
         //criar novo grupo de auditoria
@@ -152,30 +153,96 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
+        //SIP v 0.0.1 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 0.0.1 NA BASE DO SIP...');
+
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_extensoes_arquivo_peticionamento_cadastrar', 'md_pet_extensoes_arquivo_cadastrar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_tamanho_arquivo_peticionamento_cadastrar', 'md_pet_tamanho_arquivo_cadastrar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_listar', 'md_pet_indisponibilidade_listar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_listar', 'md_pet_tipo_processo_listar');
+
+        //recursos que nao sao chamados em menus
+        //gerir tamanho de arquivo
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'arquivo_extensao_peticionamento_selecionar', 'md_pet_arquivo_extensao_selecionar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_tamanho_arquivo_peticionamento_listar', 'md_pet_tamanho_arquivo_listar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_tamanho_arquivo_peticionamento_consultar', 'md_pet_tamanho_arquivo_consultar');
+
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_desativar', 'md_pet_indisponibilidade_desativar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_reativar', 'md_pet_indisponibilidade_reativar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_excluir', 'md_pet_indisponibilidade_excluir');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_cadastrar', 'md_pet_indisponibilidade_cadastrar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_consultar', 'md_pet_indisponibilidade_consultar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_alterar', 'md_pet_indisponibilidade_alterar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_upload_anexo', 'md_pet_indisponibilidade_upload_anexo');
+
+        //tipo processo
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_desativar', 'md_pet_tipo_processo_desativar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_reativar', 'md_pet_tipo_processo_reativar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_excluir', 'md_pet_tipo_processo_excluir');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_cadastrar', 'md_pet_tipo_processo_cadastrar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_alterar', 'md_pet_tipo_processo_alterar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_consultar', 'md_pet_tipo_processo_consultar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_salvar', 'md_pet_tipo_processo_salvar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'tipo_processo_peticionamento_cadastrar_orientacoes', 'md_pet_tipo_processo_cadastrar_orientacoes');
+
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'indisponibilidade_peticionamento_download', 'md_pet_indisponibilidade_download');
+
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'serie_peticionamento_selecionar', 'md_pet_serie_selecionar');
+
+        //SIP v 0.0.1 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //SIP v 0.0.2 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 0.0.2 NA BASE DO SIP...');
+
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_listar', 'md_pet_menu_usu_ext_listar');
+
+        //Tipos de Contatos Permitidos
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_tipo_contexto_peticionamento_cadastrar', 'md_pet_tp_ctx_contato_cadastrar');
+
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_desativar', 'md_pet_menu_usu_ext_desativar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_reativar', 'md_pet_menu_usu_ext_reativar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_excluir', 'md_pet_menu_usu_ext_excluir');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_cadastrar', 'md_pet_menu_usu_ext_cadastrar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_consultar', 'md_pet_menu_usu_ext_consultar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_alterar', 'md_pet_menu_usu_ext_alterar');
+
+        //SIP v 0.0.2 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //SIP v 1.0.0 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 1.0.0 NA BASE DO SIP...');
+
+        //Hipoteses Legais Permitidas
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'hipotese_legal_nl_acesso_peticionamento_cadastrar', 'md_pet_hipotese_legal_nl_acesso_cadastrar');
+        $objDTO = $this->renomearRecurso($numIdSistemaSei, 'hipotese_legal_peticionamento_selecionar', 'md_pet_hipotese_legal_selecionar');
+
+        //SIP v 1.0.0 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //SIP v 1.0.4 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 1.0.4 NA BASE DO SIP...');
+
+        //SIP v 1.0.4 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
         //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
         //criando os recursos e vinculando-os aos perfil Administrador
         //recursos que serao chamados via menus vem primeiro
-        $objRecursoComMenuDTO1 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,'criterio_intercorrente_peticionamento_listar'); //tipo de documento
-        $objRecursoDTO2 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'criterio_intercorrente_peticionamento_desativar'); //contrato
-        $objRecursoDTO3 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'criterio_intercorrente_peticionamento_reativar'); //unidade expedidora
-        $objRecursoDTO4 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'criterio_intercorrente_peticionamento_excluir'); //mapeamento unid exp x solicitantes
-        $objRecursoDTO5 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'criterio_intercorrente_peticionamento_cadastrar'); //extensao de midia
-        $objRecursoDTO6 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'criterio_intercorrente_peticionamento_alterar'); //mapeamento unid x servicos postais
-        $objRecursoDTO6 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'criterio_intercorrente_peticionamento_consultar'); //mapeamento unid x servicos postais
-        $objRecursoDTO6 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'criterio_intercorrente_peticionamento_padrao'); //mapeamento unid x servicos postais
+        $objRecursoComMenuDTO1 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,'md_pet_intercorrente_criterio_listar');
+        $objRecursoDTO2 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_desativar');
+        $objRecursoDTO3 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_reativar');
+        $objRecursoDTO4 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_excluir');
+        $objRecursoDTO5 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_cadastrar');
+        $objRecursoDTO6 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_alterar');
+        $objRecursoDTO6 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_consultar');
+        $objRecursoDTO6 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_padrao');
 
-
-
-        //criando os recursos e vinculando-os aos perfil Administrador
+        //criando os recursos e vinculando-os ao perfil Administrador
         //recursos que serao chamados via menus vem primeiro
-
         //Cadastro de Menus
         //Hipoteses Legais Permitidas
-//        $objMenuListarDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'hipotese_legal_nl_acesso_peticionamento_cadastrar');
-
-//        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'hipotese_legal_peticionamento_selecionar');
-
         //recupera o ID do menu Peticionamento Eletronico
         $objItemMenuDTOPeticionamentoEletronico = new ItemMenuDTO();
         $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
@@ -313,7 +380,7 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
         //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
-        //criando os recursos e vinculando-os aos perfil Administrador
+        //criando os recursos e vinculando-os ao perfil Administrador
         //recursos que serao chamados via menus vem primeiro
 
         //Cadastro de Menus
@@ -652,7 +719,6 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
         //criando Administração -> Peticionamento Eletrônico -> Extensão de Arquivos Permitidos
         //criando Administração -> Peticionamento Eletrônico -> Tamanho Máximo de Arquivos
         //criando Administração -> Peticionamento Eletrônico -> Indisponibilidades do SEI
-
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
@@ -965,6 +1031,24 @@ class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
             $objItemMenuRN->excluir($arrObjItemMenuDTO);
 
             $objRecursoRN->excluir(array($objRecursoDTO));
+        }
+    }
+
+    private function renomearRecurso($numIdSistema, $strNomeAtual, $strNomeNovo){
+        $objRecursoDTO = new RecursoDTO();
+        $objRecursoDTO->setBolExclusaoLogica(false);
+        $objRecursoDTO->retNumIdRecurso();
+        $objRecursoDTO->retStrCaminho();
+        $objRecursoDTO->setNumIdSistema($numIdSistema);
+        $objRecursoDTO->setStrNome($strNomeAtual);
+
+        $objRecursoRN = new RecursoRN();
+        $objRecursoDTO = $objRecursoRN->consultar($objRecursoDTO);
+
+        if ($objRecursoDTO!=null){
+            $objRecursoDTO->setStrNome($strNomeNovo);
+            $objRecursoDTO->setStrCaminho(str_replace($strNomeAtual,$strNomeNovo,$objRecursoDTO->getStrCaminho()));
+            $objRecursoRN->alterar($objRecursoDTO);
         }
     }
 

@@ -7,7 +7,7 @@
 		
 		SessaoSEI::getInstance(false);
 		
-		$objVersaoRN = new AtualizadorModuloPeticionamentoRN();
+		$objVersaoRN = new MdPetAtualizadorRN();
 		$objVersaoRN->atualizarVersao();
         exit;
 

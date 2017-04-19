@@ -245,7 +245,22 @@ class PeticionamentoIntegracao extends SeiIntegracao {
     return false;
   }
 
-  public function processarControladorExterno($strAcao){
+  public function processarControladorAjaxExterno($strAcaoAjax)
+  {
+      $xml = null;
+      switch ($strAcaoAjax){
+          case 'md_pet_intercorrente_usu_ext_remover_upload_arquivo':
+              $xml = MdPetIntercorrenteProcessoRN::removerArquivoIntecorrenteTemp($_POST['hdnTbDocumento']);
+              break;
+          case 'md_pet_usu_ext_remover_upload_arquivo':
+              $xml = MdPetIntercorrenteProcessoRN::removerArquivoTemp($_POST['hdnTbDocumento']);
+              break;
+      }
+
+      return $xml;
+  }
+
+    public function processarControladorExterno($strAcao){
 
     switch($strAcao) {
 

@@ -37,10 +37,11 @@ public static function montarSelectExtensoes($strPrimeiroItemValor, $strPrimeiro
       $tamanho = count($arrObjMdPetExtensoesArquivoDTO);
       $arrExtPerm = "";
       for($i=0;$i<$tamanho;$i++){
+        $nomeExtensao = strtolower($arrObjMdPetExtensoesArquivoDTO[$i]->get('Extensao'));
         if($i<$tamanho-1){
-             $arrExtPerm .= "'".$arrObjMdPetExtensoesArquivoDTO[$i]->get('Extensao')."'".",";
+             $arrExtPerm .= "'".$nomeExtensao."'".",";
         }else{
-             $arrExtPerm .= "'".$arrObjMdPetExtensoesArquivoDTO[$i]->get('Extensao')."'";
+             $arrExtPerm .= "'".$nomeExtensao."'";
         }
       }
       return $arrExtPerm;

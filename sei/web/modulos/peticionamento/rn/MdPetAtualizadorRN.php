@@ -765,7 +765,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objMdPetTamanhoArquivoDTO->retTodos();
         $objMdPetTamanhoArquivoDTO->setNumValorDocPrincipal('5');
         $objMdPetTamanhoArquivoDTO->setNumValorDocComplementar('10');
-        $objMdPetTamanhoArquivoDTO->setNumIdTamanhoArquivo(MdPetTamanhoArquivo::$ID_FIXO_TAMANHO_ARQUIVO);
+        $objMdPetTamanhoArquivoDTO->setNumIdTamanhoArquivo(MdPetTamanhoArquivoRN::$ID_FIXO_TAMANHO_ARQUIVO);
         $objMdPetTamanhoArquivoDTO->setStrSinAtivo('S');
         $objMdPetTamanhoArquivoRN->cadastrar($objMdPetTamanhoArquivoDTO);
 

@@ -26,6 +26,9 @@ $strLinkUploadDocEssencial = SessaoSEIExterna::getInstance()->assinarLink('contr
 //Acao para upload de documento complementar
 $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_complementar');
 
+//Acao para apagar o arquivo temp
+$strUrlMdPetUsuExtRemoverUploadArquivo = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_usu_ext_remover_upload_arquivo');
+
 //==================================================================
 //saber se o documento principal é externo ou gerado
 //==================================================================
@@ -1392,7 +1395,7 @@ function carregarCamposDocPrincipalUpload(){
 
 		  //INICIO VALIDACAO EXTENSOES
 		  var arrExtensoesPermitidas = [<?=$strSelExtensoesPrin?>];
-		  if ( $("#fileArquivoPrincipal").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoPrincipal").val().replace(/^.*\./, '') , arrExtensoesPermitidas ) == -1 ) {
+		  if ( $("#fileArquivoPrincipal").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoPrincipal").val().replace(/^.*\./, '').toLowerCase() , arrExtensoesPermitidas ) == -1 ) {
 			  alert("O arquivo selecionado não é permitido.\nSomente são permitidos arquivos com as extensões:\n<?=preg_replace("%'%"," ",$strSelExtensoesPrin)?> .");
 			  return false;
 		  }
@@ -1426,6 +1429,24 @@ function carregarCamposDocPrincipalUpload(){
 	  //Monta tabela de anexos
 	  objTabelaDocPrincipal = new infraTabelaDinamica('tbDocumentoPrincipal','hdnDocPrincipal',false,false);
 	  objTabelaDocPrincipal.gerarEfeitoTabela=true;
+
+		objTabelaDocPrincipal.remover = function (arrLinha) {
+			//remove o arquivo da pasta temp
+			$.ajax({
+				url: '<?=$strUrlMdPetUsuExtRemoverUploadArquivo?>',
+				type: 'POST',
+				async: false,
+				dataType: 'XML',
+				data: {hdnTbDocumento:arrLinha},
+				success: function (r) {
+				},
+				error: function (e) {
+					console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+				}
+			});
+
+			return true;
+		};
 	  
   } catch(err){
       alert(' ERRO ' + err);
@@ -1543,7 +1564,7 @@ function carregarCamposDocEssencialUpload(){
 
 		  //INICIO VALIDACAO EXTENSOES
 		  var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];
-		  if ( $("#fileArquivoEssencial").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoEssencial").val().replace(/^.*\./, '') , arrExtensoesPermitidas ) == -1 ) {
+		  if ( $("#fileArquivoEssencial").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoEssencial").val().replace(/^.*\./, '').toLowerCase() , arrExtensoesPermitidas ) == -1 ) {
 			  alert("O arquivo selecionado não é permitido.\nSomente são permitidos arquivos com as extensões:\n<?=preg_replace("%'%"," ",$strSelExtensoesComp)?> .");
 			  return false;
 		  }
@@ -1575,6 +1596,24 @@ function carregarCamposDocEssencialUpload(){
 	  //Monta tabela de anexos
 	  objTabelaDocEssencial = new infraTabelaDinamica('tbDocumentoEssencial','hdnDocEssencial',false,false);
 	  objTabelaDocEssencial.gerarEfeitoTabela=true;
+
+		objTabelaDocEssencial.remover = function (arrLinha) {
+			//remove o arquivo da pasta temp
+			$.ajax({
+				url: '<?=$strUrlMdPetUsuExtRemoverUploadArquivo?>',
+				type: 'POST',
+				async: false,
+				dataType: 'XML',
+				data: {hdnTbDocumento:arrLinha},
+				success: function (r) {
+				},
+				error: function (e) {
+					console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+				}
+			});
+
+			return true;
+		};
 	
 }
 
@@ -1680,7 +1719,7 @@ function carregarCamposDocComplementarUpload(){
 
 		  //INICIO VALIDACAO EXTENSOES
 		  var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];
-		  if ( $("#fileArquivoComplementar").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoComplementar").val().replace(/^.*\./, '') , arrExtensoesPermitidas ) == -1 ) {
+		  if ( $("#fileArquivoComplementar").val().replace(/^.*\./, '')!='' && $.inArray( $("#fileArquivoComplementar").val().replace(/^.*\./, '').toLowerCase() , arrExtensoesPermitidas ) == -1 ) {
 			  alert("O arquivo selecionado não é permitido.\nSomente são permitidos arquivos com as extensões:\n<?=preg_replace("%'%"," ",$strSelExtensoesComp)?> .");
 			  return false;
 		  }
@@ -1712,6 +1751,24 @@ function carregarCamposDocComplementarUpload(){
 	  //Monta tabela de anexos
 	  objTabelaDocComplementar = new infraTabelaDinamica('tbDocumentoComplementar','hdnDocComplementar',false,false);
 	  objTabelaDocComplementar.gerarEfeitoTabela=true;
+
+		objTabelaDocComplementar.remover = function (arrLinha) {
+			//remove o arquivo da pasta temp
+			$.ajax({
+				url: '<?=$strUrlMdPetUsuExtRemoverUploadArquivo?>',
+				type: 'POST',
+				async: false,
+				dataType: 'XML',
+				data: {hdnTbDocumento:arrLinha},
+				success: function (r) {
+				},
+				error: function (e) {
+					console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+				}
+			});
+
+			return true;
+		};
 	
 }
 

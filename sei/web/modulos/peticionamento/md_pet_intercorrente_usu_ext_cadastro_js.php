@@ -5,6 +5,7 @@
 
     $strUrlAjaxNumeroProcesso = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_processo_validar_numero');
     $strUrlSubmit             = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar');
+    $strUrlMdPetUsuExtRemoverUploadArquivo             = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_intercorrente_usu_ext_remover_upload_arquivo');
 ?>
 
 <script type="text/javascript">
@@ -452,8 +453,22 @@
     function iniciarTabelaDinamicaDocumento() {
         objTabelaDinamicaDocumento = new infraTabelaDinamica('tbDocumento', 'hdnTbDocumento', false, true);
         objTabelaDinamicaDocumento.gerarEfeitoTabela = true;
-        objTabelaDinamicaDocumento.remover = function () {
-            verificarTabelaVazia(2);
+        objTabelaDinamicaDocumento.remover = function (arrLinha) {
+            //remove o arquivo da pasta temp
+            $.ajax({
+                url: '<?=$strUrlMdPetUsuExtRemoverUploadArquivo?>',
+                type: 'POST',
+                async: false,
+                dataType: 'XML',
+                data: {hdnTbDocumento:arrLinha},
+                success: function (r) {
+                    verificarTabelaVazia(2);
+                },
+                error: function (e) {
+                    console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+                }
+            });
+
             return true;
         };
     }
@@ -462,7 +477,7 @@
     function validarArquivo(input) {
         if (input.value != '') {
             var tamanhoArquivo = input.files[0].size;
-            var ext = input.files[0].name.split('.').pop();
+            var ext = input.files[0].name.split('.').pop().toLowerCase();
 
             var tamanhoConfigurado = parseInt(TAMANHO_MAXIMO) > 0;
             if (!tamanhoConfigurado) {
@@ -695,6 +710,20 @@
         }
 
         if (remover) {
+            //remove os arquivos da pasta temp
+            $.ajax({
+                url: '<?=$strUrlMdPetUsuExtRemoverUploadArquivo?>',
+                type: 'POST',
+                async: false,
+                dataType: 'XML',
+                data: {hdnTbDocumento:objTabelaDinamicaDocumento.hdn.value},
+                success: function (r) {
+                    verificarTabelaVazia(2);
+                },
+                error: function (e) {
+                    console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+                }
+            });
            location.href=location.href;
         }
         return false;
@@ -754,7 +783,7 @@
 
         objUploadArquivo.validar = function () {
             var fileArquivo = document.getElementById('fileArquivo');
-            var ext = fileArquivo.value.split('.').pop();
+            var ext = fileArquivo.value.split('.').pop().toLowerCase();
             var extensaoConfigurada = arrExtensoesPermitidas.length > 0;
             var tamanhoConfigurado = parseInt(TAMANHO_MAXIMO) > 0;
             if (!tamanhoConfigurado) {

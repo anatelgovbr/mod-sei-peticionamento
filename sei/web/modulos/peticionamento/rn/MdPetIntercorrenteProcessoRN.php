@@ -191,7 +191,29 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
         $arrProcedimentoRelacionado = array($objProcedimentoDTO->getDblIdProcedimento());
 
         $objProcedimentoAPI = new ProcedimentoAPI();
-        $objProcedimentoAPI->setIdTipoProcedimento($objCriterioIntercorrenteDTO->getNumIdTipoProcedimento());
+
+		//Tipo Procedimento
+		$objTipoProcedimentoDTO = new TipoProcedimentoDTO();
+		$objTipoProcedimentoDTO->setBolExclusaoLogica(false);
+		$objTipoProcedimentoDTO->setDistinct(true);
+		$objTipoProcedimentoDTO->retStrSinAtivo();
+		$objTipoProcedimentoDTO->setNumIdTipoProcedimento($objProcedimentoDTO->getNumIdTipoProcedimento());
+
+		$objTipoProcedimentoRN = new TipoProcedimentoRN();
+		$arrObjTipoProcedimentoDTO = $objTipoProcedimentoRN->listarRN0244($objTipoProcedimentoDTO);
+
+		if (count($arrObjTipoProcedimentoDTO)==1) {
+			$objTipoProcedimentoDTO = $arrObjTipoProcedimentoDTO[0];
+			if ($objTipoProcedimentoDTO->getStrSinAtivo()=='S'){
+				$objProcedimentoAPI->setIdTipoProcedimento($objProcedimentoDTO->getNumIdTipoProcedimento());
+			}else{
+				$objProcedimentoAPI->setIdTipoProcedimento($objCriterioIntercorrenteDTO->getNumIdTipoProcedimento());
+			}
+		}else{
+			$objProcedimentoAPI->setIdTipoProcedimento($objCriterioIntercorrenteDTO->getNumIdTipoProcedimento());			
+		}
+		// Tipo Procedimento - fim
+
         if ($especificacao!=null){
             $objProcedimentoAPI->setEspecificacao( $especificacao );
         }
@@ -1076,6 +1098,75 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 		return $contatoDTO;
 	}
+
+    /**      $arquivos_enviados[0] recebe idLinha
+     *        $arquivos_enviados[1] recebe idTipoDocumento
+     *        $arquivos_enviados[2] recebe complementoTipoDocumento
+     *        $arquivos_enviados[3] recebe idNivelAcesso
+     *        $arquivos_enviados[4] recebe idHipoteseLegal
+     *        $arquivos_enviados[5] recebe idFormato
+     *        $arquivos_enviados[6] recebe idTipoConferencia
+     *        $arquivos_enviados[7] recebe nomeArquivoHash
+     *        $arquivos_enviados[8] recebe tamanhoArquivo
+     *        $arquivos_enviados[9] recebe nomeArquivo
+     *        $arquivos_enviados[10] recebe dataHora
+     *        $arquivos_enviados[11] recebe tamanhoArquivoFormatado
+     *        $arquivos_enviados[12] recebe documento
+     *        $arquivos_enviados[13] recebe nivelAcesso
+     *        $arquivos_enviados[14] recebe formato
+     */
+	public static function removerArquivoIntecorrenteTemp($arquivos_enviado){
+        //se for varios mandado pelo hdn
+        if(is_string($arquivos_enviado)){
+            $arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($arquivos_enviado);
+
+            $xml = null;
+            foreach ($arquivos_enviados as $arquivo_enviado) {
+                $arquivo = DIR_SEI_TEMP.'/'.$arquivo_enviado[7];
+                if(file_exists($arquivo)){
+                    unlink($arquivo);
+                    $xml =  "<success>true</success>";
+                }
+            }
+        }else{
+            $arquivo = DIR_SEI_TEMP.'/'.$arquivos_enviado[7];
+            if(file_exists($arquivo)){
+                unlink($arquivo);
+                $xml =  "<success>true</success>";
+            }
+        }
+
+        if($xml)
+            return $xml;
+
+        return "<success>false</success>";
+    }
+
+
+    /**
+     * $arquivos_enviados[0] recebe nome,
+     * $arquivos_enviados[1] recebe dataHora,
+     * $arquivos_enviados[2] recebe tamanhoFormatado,
+     * $arquivos_enviados[3] recebe documento,
+     * $arquivos_enviados[4] recebe nivelAcesso,
+     * $arquivos_enviados[5] recebe hipoteseLegal,
+     * $arquivos_enviados[6] recebe formatoDocumento,
+     * $arquivos_enviados[7] recebe tipoConferencia,
+     * $arquivos_enviados[8] recebe nomeUpload,
+     * $arquivos_enviados[9] recebe idTpoPrincipal,
+     * $arquivos_enviados[10] recebe strComplemento,
+     * $arquivos_enviados[11] recebe formatoDocumentoLbl,
+     * $arquivos_enviados[12] recebe ''
+     */
+    public static function removerArquivoTemp($arquivos_enviado){
+        $arquivo = DIR_SEI_TEMP.'/'.$arquivos_enviado[8];
+        if(file_exists($arquivo)){
+            unlink($arquivo);
+            return  "<success>true</success>";
+        }
+
+        return "<success>false</success>";
+    }
 
 }
 ?>

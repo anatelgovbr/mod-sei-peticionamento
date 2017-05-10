@@ -8,7 +8,7 @@
 
 require_once dirname(__FILE__).'/../web/Sip.php';
 
-class AtualizadorSipModuloPeticionamentoRN extends InfraRN {
+class MdPetAtualizadorSipRN extends InfraRN {
 
     private $numSeg = 0;
     private $versaoAtualDesteModulo = '1.1.0';
@@ -1213,7 +1213,7 @@ try{
 
     SessaoSip::getInstance(false);
 
-    $objVersaoRN = new AtualizadorSipModuloPeticionamentoRN();
+    $objVersaoRN = new MdPetAtualizadorSipRN();
     $objVersaoRN->atualizarVersao();
 
 }catch(Exception $e){

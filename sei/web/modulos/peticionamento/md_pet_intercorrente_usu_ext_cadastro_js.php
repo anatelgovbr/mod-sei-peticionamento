@@ -358,7 +358,10 @@
         var hdnNivelAcesso = document.createElement('input');
 
         divNivelAcesso.innerHTML = '';
-        divHipoteseLegal.innerHTML = '';
+
+        if (divHipoteseLegal!=null){
+			divHipoteseLegal.innerHTML = '';
+        }
 
         lblNivelAcesso.className = 'infraLabel';
         lblNivelAcesso.id = 'lblNivelAcesso';

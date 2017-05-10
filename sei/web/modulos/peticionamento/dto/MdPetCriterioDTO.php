@@ -46,6 +46,9 @@ class MdPetCriterioDTO extends InfraDTO  {
 
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeProcesso', 'tipo_proc.nome', 'tipo_procedimento tipo_proc');
+        
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'TipoProcessoSinAtivo', 'tipo_proc.sin_ativo', 'tipo_procedimento tipo_proc');
+        
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeHipoteseLegal', 'hl.nome', 'hipotese_legal hl');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'BaseLegalHipoteseLegal', 'hl.base_legal', 'hipotese_legal hl');
 		

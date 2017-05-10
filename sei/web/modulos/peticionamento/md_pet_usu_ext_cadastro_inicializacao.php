@@ -294,6 +294,7 @@ $tipoConferenciaRN = new TipoConferenciaRN();
 $tipoConferenciaDTO = new TipoConferenciaDTO();
 $tipoConferenciaDTO->retTodos();
 $tipoConferenciaDTO->setStrSinAtivo('S');
+$tipoConferenciaDTO->setOrdStrDescricao(InfraDTO::$TIPO_ORDENACAO_ASC);
 $arrTipoConferencia = $tipoConferenciaRN->listar( $tipoConferenciaDTO );
 
 //tamanho maximo de arquivo, tem o interno do SEI e tem o da parametrizaçao 

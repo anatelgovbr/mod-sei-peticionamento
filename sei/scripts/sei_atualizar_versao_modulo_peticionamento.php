@@ -7,7 +7,7 @@
 		
 		SessaoSEI::getInstance(false);
 		
-		$objVersaoRN = new MdPetAtualizadorRN();
+		$objVersaoRN = new MdPetAtualizadorSeiRN();
 		$objVersaoRN->atualizarVersao();
         exit;
 

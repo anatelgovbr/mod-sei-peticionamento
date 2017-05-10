@@ -8,7 +8,7 @@
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
-class MdPetAtualizadorRN extends InfraRN
+class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;

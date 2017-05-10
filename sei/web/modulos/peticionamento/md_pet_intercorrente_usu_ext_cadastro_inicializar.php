@@ -35,7 +35,17 @@
     //Fim RN
 
     //RN para exibir Hipotese Legal
-    $exibirHipoteseLegal = true;
-    //@todo Não estou conseguindo instanciar aqui
-    //$exibirHipoteseLegal = MdPetIntercorrenteINT::verificarHipoteseLegal();
+
+    $objInfraParametroDTO = new InfraParametroDTO();
+    $objMdPetParametroRN = new MdPetParametroRN();
+    $objInfraParametroDTO->retTodos();
+    $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
+    $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
+    $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
+
+    if ($valorParametroHipoteseLegal=='0') {
+    	$exibirHipoteseLegal = false;
+    }else{
+    	$exibirHipoteseLegal = true;
+    }
     //Fim RN

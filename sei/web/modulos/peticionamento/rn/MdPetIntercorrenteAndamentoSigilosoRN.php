@@ -758,18 +758,120 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     //método que retorna a unidade de abertura de processo novo relacionado ao processo sigiloso que foi informado pelo usuario na tela de processo intercorrente
     public function retornaIdUnidadeAberturaProcessoConectado( $idProcedimento ){
 
-    	//1 - obtendo TODAS as unidades por onde o processo ja tramitou    	
-    	$objProcedimentoDTO = new ProcedimentoDTO();
-    	$objProcedimentoDTO->setDblIdProcedimento( $idProcedimento );
+    	//encontra a unidade de abertura e setar aqui
+    	$idUnidadeSigiloso = null;
+    	$unidadeRN = new UnidadeRN();
+    	
+    	//====================================================================================
+    	//INICIO CASO 1 - Processo sigiloso que possui credencial apontada para unidade ativa
+    	//====================================================================================
+    	$acessoDTO = new AcessoDTO();    	
+    	$acessoDTO->retNumIdUnidade();
+    	$acessoDTO->setDblIdProtocolo( $idProcedimento );
+    	$acessoDTO->setStrStaTipo( array( AcessoRN::$TA_CREDENCIAL_PROCESSO, AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO ), InfraDTO::$OPER_IN );
+    	$acessoDTO->setOrd('IdAcesso', InfraDTO::$TIPO_ORDENACAO_DESC );
+    	
+    	$acessoRN = new AcessoRN();
+    	$arrCredenciaisComUnidadeValida = array();
+    	$arrCredenciais = $acessoRN->listar( $acessoDTO );
+    	    	
+    	if( is_array( $arrCredenciais ) && count( $arrCredenciais ) > 0 ){
+    		    		
+    		foreach( $arrCredenciais as $itemCredencial ){
+    			
+    			//descobrir se a unidade vinculada a esta credencial ainda está ativa
+    			$idUnidade = $itemCredencial->getNumIdUnidade();
+    			$unidadeDTO = new UnidadeDTO();
+    			$unidadeDTO->retNumIdUnidade();
+    			$unidadeDTO->retStrSinAtivo();
+    			$unidadeDTO->setNumIdUnidade( $idUnidade );
+    			$unidadeDTO->setStrSinAtivo('S');
+    			
+    			$retUnidadeDTO = $unidadeRN->pesquisar( $unidadeDTO );
+    			    			
+    			//encontrou uma unidade ativa com credencial, usar ela
+    			if( is_array( $retUnidadeDTO ) && count( $retUnidadeDTO ) > 0 && $retUnidadeDTO[0] != null && $retUnidadeDTO[0]->isSetNumIdUnidade() ){
+    				$idUnidadeSigiloso = $retUnidadeDTO[0]->getNumIdUnidade();
+    				return $idUnidadeSigiloso;
+    			}
+    		}
+    	}
+    	
+    	//====================================================================================
+    	//FIM CASO 1 - Processo sigiloso que possui credencial apontada para unidade ativa
+    	//====================================================================================
+    	
+    	//====================================================================================
+    	//CASO 2 - Processo sigiloso com andamento de Credencial cassada ou revogada apontada para unidade ativa
+    	//====================================================================================
     	
     	$objAtividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
     	$objAtividadeDTO = new AtividadeDTO();
+    	$objAtividadeDTO->retNumIdTarefa();
+    	$objAtividadeDTO->retStrNomeTarefa();
     	$objAtividadeDTO->retNumIdAtividade();
-    	$objAtividadeDTO->setDistinct(true);
     	$objAtividadeDTO->retNumIdUnidade();
     	$objAtividadeDTO->retStrSiglaUnidade();
     	$objAtividadeDTO->retStrDescricaoUnidade();
     	
+    	$objAtividadeDTO->setNumIdTarefa( 
+    		array(
+    	 		TarefaRN::$TI_PROCESSO_CASSACAO_CREDENCIAL,
+    	 		TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL,
+    	 		TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL_CASSADA,
+    	 		TarefaRN::$TI_PROCESSO_RENUNCIA_CREDENCIAL,
+    	 		TarefaRN::$TI_PROCESSO_ATIVACAO_CREDENCIAL,
+    			TarefaRN::$TI_PROCESSO_TRANSFERENCIA_CREDENCIAL,
+    	 		TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA
+    	), InfraDTO::$OPER_IN);
+    	
+    	 $objAtividadeDTO->setDblIdProtocolo( $idProcedimento );
+    	
+    	 //ordenando pelo id da atividade, obtendo a ordem cronologica da tramitacao
+    	 $objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_DESC);
+    	
+    	 //echo $objAtividadeBD->listar( $objAtividadeDTO, true ); die;
+    	 $arrObjAtividadeDTO = $objAtividadeBD->listar( $objAtividadeDTO );
+    	 
+    	 // print_r( $arrObjAtividadeDTO ); die;
+    	
+    	 if( is_array( $arrObjAtividadeDTO ) && count( $arrObjAtividadeDTO ) > 0){
+    	 	
+    	 	foreach( $arrObjAtividadeDTO as $atividade ){
+    	 		
+    	 		//verificando se a unidade desta atividade está ativa
+    	 		$idUnidade = $atividade->getNumIdUnidade();
+    	 		
+    	 		$unidadeDTO = new UnidadeDTO();
+    	 		$unidadeDTO->retNumIdUnidade();
+    	 		$unidadeDTO->retStrSinAtivo();
+    	 		$unidadeDTO->setNumIdUnidade( $idUnidade );
+    	 		
+    	 		$unidadeDTO = $unidadeRN->consultarRN0125( $unidadeDTO );
+    	 		    	 		
+    	 		//verificar se a unidade está ativa
+    	 		if( $unidadeDTO->getStrSinAtivo() == 'S' ){
+    	 			
+    	 			$idUnidadeSigiloso = $unidadeDTO->getNumIdUnidade();
+    	 			return $idUnidadeSigiloso;
+    	 			
+    	 		}
+    	 		
+    	 	}
+    	 	
+    	 }
+    	 
+    	//====================================================================================
+    	//CASO 3 - Nao possui credencial apontada para unidade ativa, os andamentos de concessao e revogaçao de credencial nao estao apontados para unidade ativa
+    	// Resta fazer a checagem "padrao" em todo o andamento do processo para ver a ultima unidade ativa por onde o processo tramitou
+    	//====================================================================================
+    	    	
+    	//1 - obtendo TODAS as unidades por onde o processo ja tramitou    	
+    	$objAtividadeDTO = new AtividadeDTO();
+    	$objAtividadeDTO->retNumIdAtividade();
+    	$objAtividadeDTO->retNumIdUnidade();
+    	$objAtividadeDTO->retStrSiglaUnidade();
+    	 
     	/* 
     	 * Tarefas que implicam na abertura do processo na Unidade  (ID/Nome):
     	 * MESCLANDO TAREFAS DE PROCESSOS PUBLICO/RESTRITO + SIGILOSO
@@ -777,20 +879,17 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
            21 - Remoção de sobrestamento        
            29 - Reabertura do processo na unidade 
            32 - Processo remetido pela unidade @UNIDADE@ 
-           61 - Credencial concedida para o usuário @USUARIO@ 
-           64 - Reabertura do processo
-           66 - Transferência de credencial
-           73 - Concessão de credencial para assinatura
-           118 - Ativação de credencial por Coordenador de Acervo para o usuário @USUARIO@    	    */
+           64 - Reabertura do processo    
+         */
     	
-    	$objAtividadeDTO->setNumIdTarefa(array(TarefaRN::$TI_GERACAO_PROCEDIMENTO,
+    	$objAtividadeDTO->setNumIdTarefa( 
+    		  array(
+    		  	TarefaRN::$TI_GERACAO_PROCEDIMENTO,
     			TarefaRN::$TI_REMOCAO_SOBRESTAMENTO,
     			TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE,
     			TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE,
-    			TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL,
-    			TarefaRN::$TI_REABERTURA_PROCESSO_USUARIO,
-    			TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA,
-    			TarefaRN::$TI_PROCESSO_ATIVACAO_CREDENCIAL),InfraDTO::$OPER_IN);
+    			TarefaRN::$TI_REABERTURA_PROCESSO_USUARIO
+    		  ), InfraDTO::$OPER_IN);
     	
     	$objAtividadeDTO->setDblIdProtocolo( $idProcedimento );
     	
@@ -798,12 +897,11 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	$objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_DESC);
     	
     	$arrObjAtividadeDTO = $objAtividadeBD->listar($objAtividadeDTO);
-    	$unidadeRN = new UnidadeRN();
+    	
+    	//print_r( $arrObjAtividadeDTO ); die;
     	
     	if( is_array( $arrObjAtividadeDTO ) && count( $arrObjAtividadeDTO ) > 0){
-	    	
-    		$idUltimaUnidadeRetorno = $this->retornaUltimaUnidadeProcessoSigilosoAberto( $idProcedimento );
-    		
+	    	    		
     		foreach( $arrObjAtividadeDTO as $atividade ){
 	    		
     			$idUnidade = $atividade->getNumIdUnidade();
@@ -814,34 +912,27 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     			$unidadeDTO->setNumIdUnidade( $idUnidade );
     			
     			$unidadeDTO = $unidadeRN->consultarRN0125( $unidadeDTO );
-    			print_r( $unidadeDTO ); die;
     			
     			//1- verificar se a unidade está ativa
-    			if( $unidadeDTO->getStrSinAtivo() == 'S' ){
+    			if( $unidadeDTO != null && $unidadeDTO->getStrSinAtivo() == 'S' ){
     				
-    				//2 - descobrindo se o processo ainda está aberto nesta unidade
-    				$isProcessoAbertoNessaUnidade = true;
+    				$idUnidadeSigiloso = $unidadeDTO->getNumIdUnidade();
+    				return $idUnidadeSigiloso;
     				
-    				if( $isProcessoAbertoNessaUnidade ){
-    					return $atividade->getNumIdUnidade();
-    				}
-    				
-    			} else {
-    				
-    				echo "Unidade desativada"; die;
-    			}
+    			} 
     		    			
 	    	}
-	    	
-	    	//se chegar aqui sem ter dado return é porque o processo nao está aberto em nenhuma unidade
-	    	return null;
-	    	
+	    		    	
     	} 
     	
-    	//se nao estiver aberto em nenhuma unidade retorna null
-    	else {
-    		return null;
+    	//====================================================================================
+    	//CASO 4 - Nao há nenhuma unidade ativa dentre aquelas em que o processo tramitou, deve dar erro / msg de validação
+    	//====================================================================================
+    	if( $idUnidadeSigiloso == null ){
+    		
     	}
+    	
+    	return $idUnidadeSigiloso;
     	
 }
 
@@ -896,8 +987,8 @@ protected function retornaUltimaUnidadeProcessoSigilosoAbertoConectado($idProced
 
 	//lista de unidades nas quais o processo ainda encontra-se aberto
 	$arrUnidadesAbertas = $saidaConsultarProcedimentoAPI->getUnidadesProcedimentoAberto();
-	echo "Unidades em que está aberto";
-	print_r( $arrUnidadesAbertas ); die; 
+	//echo "Unidades em que está aberto";
+	//print_r( $arrUnidadesAbertas ); die; 
 	
 	//o processo encontra-se aberto em pelo menos uma unidade
 	if( is_array( $arrUnidadesAbertas ) && count( $arrUnidadesAbertas ) > 0 ){

@@ -387,24 +387,37 @@ class MdPetCriterioRN extends InfraRN
 
             // Verifica se o processo possui critério intercorrente cadastrado
             $objMdPetCriterioDTO->retTodos();
+            $objMdPetCriterioDTO->retStrTipoProcessoSinAtivo();
             $objMdPetCriterioDTO->setNumIdTipoProcedimento($idTpProcedimento);
             $objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
+            
+            // se o criterio estiver apontando para um tipo de processo que foi desativado nao trazer ele
+            $objMdPetCriterioDTO->setStrTipoProcessoSinAtivo('S'); 
+            
             $arrObjCriterioIntercorrenteDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
 
             //Se não possui busca o padrão e cria um processo relacionado ao processo selecionado
             if (count($arrObjCriterioIntercorrenteDTO) > 0) {
                 $ret = $arrObjCriterioIntercorrenteDTO[0];
-            } else {
-                $objMdPetCriterioPadraoDTO = new MdPetCriterioDTO();
+            } 
+            
+            else {
+            
+            	$objMdPetCriterioPadraoDTO = new MdPetCriterioDTO();
                 $objMdPetCriterioPadraoDTO->setStrSinCriterioPadrao('S');
                 $objMdPetCriterioPadraoDTO->retTodos();
                 $arrObjCriterioIntercorrenteDTO = $objMdPetCriterioRN->listar($objMdPetCriterioPadraoDTO);
+                
                 if (count($arrObjCriterioIntercorrenteDTO) <= 0) {
                     throw new InfraException ('Nenhum critério para Intercorrente Foi encontrado para o Tipo de Processo informado.');
                 }
+                
                 $ret = $arrObjCriterioIntercorrenteDTO[0];
+                
             }
+            
             return $ret;
+            
         } catch (Exception $e) {
             throw new InfraException('Erro consultando', $e);
         }

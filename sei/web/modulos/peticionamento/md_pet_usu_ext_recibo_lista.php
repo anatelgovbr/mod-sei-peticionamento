@@ -85,18 +85,20 @@ try {
 	}
 	
 	//$objMdPetReciboDTO->setOrd('DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC );
-	$objMdPetReciboDTO->setOrdDthDataHoraRecebimentoFinal(InfraDTO::$TIPO_ORDENACAO_DESC);
-	
+	//objMdPetReciboDTO->setOrdDthDataHoraRecebimentoFinal(InfraDTO::$TIPO_ORDENACAO_DESC);
+
+	PaginaSEIExterna::getInstance()->prepararOrdenacao($objMdPetReciboDTO, 'DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC);
+	PaginaSEIExterna::getInstance()->prepararPaginacao($objMdPetReciboDTO,200);
+
 	$objMdPetReciboRN = new MdPetReciboRN();
-	//PaginaSEIExterna::getInstance()->prepararOrdenacao($objMdPetReciboDTO, 'DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC);
 	$arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
+
+	PaginaSEIExterna::getInstance()->processarPaginacao($objMdPetReciboDTO);
+
 	$numRegistros = count($arrObjMdPetReciboDTO);
-	
+
 	if ($numRegistros > 0){
         
-		PaginaSEIExterna::getInstance()->prepararPaginacao($objMdPetReciboDTO,1);
-		PaginaSEIExterna::getInstance()->processarPaginacao($objMdPetReciboDTO);
-
 		$bolAcaoConsultar = SessaoSEIExterna::getInstance()->verificarPermissao('md_pet_usu_ext_recibo_consultar');
 
 		$strResultado = '';
@@ -110,7 +112,7 @@ try {
 		$strResultado .= '<th class="infraTh" width="15%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO,'Data e Horário','DataHoraRecebimentoFinal',$arrObjMdPetReciboDTO).'</th>'."\n";
 		$strResultado .= '<th class="infraTh" width="20%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO,'Número do Processo','NumeroProcessoFormatado',$arrObjMdPetReciboDTO).'</th>'."\n";
 		$strResultado .= '<th class="infraTh" width="15%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO,'Recibo','NumeroProcessoFormatadoDoc',$arrObjMdPetReciboDTO).'</th>'."\n";
-		$strResultado .= '<th class="infraTh" width="30%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO,'Tipo de Peticionamento','TipoPeticionamento',$arrObjMdPetReciboDTO).'</th>'."\n";
+		$strResultado .= '<th class="infraTh" width="30%">'.PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO,'Tipo de Peticionamento','StaTipoPeticionamento',$arrObjMdPetReciboDTO).'</th>'."\n";
 		$strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
 		$strResultado .= '</tr>'."\n";
 		$strCssTr='';
@@ -118,7 +120,6 @@ try {
 		$protocoloRN = new ProtocoloRN();
 		
 		for($i = 0;$i < $numRegistros; $i++){
-			
 			$protocoloDTO = new ProtocoloDTO();
 			$protocoloDTO->retDblIdProtocolo();
 			$protocoloDTO->retStrProtocoloFormatado();			

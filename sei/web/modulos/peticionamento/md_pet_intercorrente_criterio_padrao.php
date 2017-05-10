@@ -413,7 +413,7 @@ PaginaSEI::getInstance()->fecharHtml();
 
     function carregarDependenciaNivelAcesso() {
         //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '< ?=$strLinkAjaxNivelAcesso?>');
+        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?=$strLinkAjaxNivelAcesso?>');
         objAjaxIdNivelAcesso.prepararExecucao = function () {
             document.getElementById('selNivelAcesso').innerHTML = '';
             return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idTipoProcesso=' + document.getElementById('hdnIdTipoProcesso').value;

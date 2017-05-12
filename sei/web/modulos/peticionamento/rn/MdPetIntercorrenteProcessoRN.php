@@ -931,27 +931,25 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 					$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
 					$atividadeRN->excluirRN0034( $arrDTOAtividades );
 					
-					$this->enviarEmail($params);
-					
 					// obtendo a ultima atividade informada para o processo, para marcar
 					// como nao visualizada, deixando assim o processo marcado como "vermelho"
 					// (status de Nao Visualizado) na listagem da tela "Controle de processos"
 					//trecho comentado para preservar apresentacao do "icone amarelo" na tela de Controle de Processos
-					/*
-					 $atividadeRN = new AtividadeRN();
-					 $atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
-					 $atividadeDTO = new AtividadeDTO();
-					 $atividadeDTO->retTodos();
-					 $atividadeDTO->setDblIdProtocolo( $this->getProcedimentoDTO()->getDblIdProcedimento() );
-					 $atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
-					 $ultimaAtividadeDTO = $atividadeRN->listarRN0036( $atividadeDTO );
+					$atividadeRN = new AtividadeRN();
+					$atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
+					$atividadeDTO = new AtividadeDTO();
+					$atividadeDTO->retTodos();
+					$atividadeDTO->setDblIdProtocolo( $this->getProcedimentoDTO()->getDblIdProcedimento() );
+					$atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
+					$ultimaAtividadeDTO = $atividadeRN->listarRN0036( $atividadeDTO );
 					 
-					 //alterar a ultima atividade criada para nao visualizado
-					 if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
-					 $ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
-					 $atividadeBD->alterar( $ultimaAtividadeDTO[0] );
-					 }
-					 */
+					//alterar a ultima atividade criada para nao visualizado
+					if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
+						$ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
+						$atividadeBD->alterar( $ultimaAtividadeDTO[0] );
+					}
+					
+					$this->enviarEmail($params);
 					
 					// Temporários apagando
 					$arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($params['hdnTbDocumento']);

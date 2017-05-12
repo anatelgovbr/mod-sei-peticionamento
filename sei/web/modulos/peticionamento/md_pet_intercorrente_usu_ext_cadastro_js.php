@@ -54,6 +54,15 @@
         var processoIntercorrente = document.getElementById("hdnProcessoIntercorrente");
         var dataAtuacao = document.getElementById("hdnDataAtuacao");
 
+        if (document.getElementById('hdnIdTipoProcedimento')==null       || document.getElementById('hdnIdTipoProcedimento').value==''
+			|| document.getElementById('txtNumeroProcesso')==null        || numeroProcesso.value==''
+			|| document.getElementById('txtTipo')==null                  || tipoProcesso.value==''
+			|| document.getElementById('hdnProcessoIntercorrente')==null || processoIntercorrente.value==''
+			|| document.getElementById('hdnDataAtuacao')==null           || dataAtuacao.value==''
+		){
+			return false;
+        }
+       
         objTabelaDinamicaProcesso.adicionar([document.getElementById('hdnIdTipoProcedimento').value, numeroProcesso.value, tipoProcesso.value, processoIntercorrente.value, dataAtuacao.value ]);
 
         document.getElementById('tbProcesso').style.display = '';
@@ -185,6 +194,7 @@
 	var MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = '<?=str_replace("'", "\'", PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido));?>';
 
 	function tooltip(tipo,evento,objeto){
+		if (objeto==null) return false;
 		switch (tipo) {
 			case 1:
 				MSGTOOLTIPNIVELACESSO = MSGTOOLTIPNIVELACESSO.replace(/\n/g, "\\n");
@@ -436,6 +446,11 @@
     }
 
     function exibirHipoteseLegal(nivelAcesso) {
+		if (document.getElementById('divBlcHipoteseLegal')==null
+			|| document.getElementById('selHipoteseLegal')==null){
+			return false;
+		}
+
         var divBlcHipoteseLegal = document.getElementById('divBlcHipoteseLegal');
 
         document.getElementById('selHipoteseLegal').value = '';

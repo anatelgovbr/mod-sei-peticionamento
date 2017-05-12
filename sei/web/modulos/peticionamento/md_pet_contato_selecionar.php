@@ -102,6 +102,7 @@ try {
   //alteracoes seiv3
   $objContatoDTO->retNumIdContato();
   $objContatoDTO->retNumIdTipoContato();
+  $objContatoDTO->retStrStaNatureza();
   $objContatoDTO->retNumIdUsuarioCadastro();
   
   $objContatoDTO->retStrExpressaoVocativoCargo();
@@ -373,8 +374,7 @@ try {
       //Alteração
 
       if (SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()==$dto->getNumIdUsuarioCadastro()){
-      	//$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('" + arrDadosInteressado[0] +"', '" + arrDadosInteressado[1] +"', '"+ arrDadosInteressado[2] +"')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>"	
-      	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', 'Pessoa Física', '123.456.789-09')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>";
+      	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', '".$dto->getStrStaNatureza()."')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>";
       }
 
       $strResultado .= PaginaSEIExterna::getInstance()->getAcaoTransportarItem($n++,$dto->getNumIdContato());
@@ -579,7 +579,7 @@ function pesquisar(){
 }
 
 
-function abrirCadastroInteressadoAlterar( id, tipo, cpfcnpj){
+function abrirCadastroInteressadoAlterar(id, tipo){
 
 	//charmar janela para cadastrar um novo interessado
 	$('#txtNomeRazaoSocial').val('');
@@ -591,11 +591,11 @@ function abrirCadastroInteressadoAlterar( id, tipo, cpfcnpj){
 	$strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=0');
 	?>
 
-	if( tipo == 'Pessoa Física' ){
+	if( tipo == '<?= ContatoRN::$TN_PESSOA_FISICA ?>' ){
 		var str = '<?= $strLinkEdicaoPF ?>';
 	}
 
-	else if( tipo == 'Pessoa Jurídica' ){
+	else if( tipo == '<?= ContatoRN::$TN_PESSOA_JURIDICA ?>' ){
 		var str = '<?= $strLinkEdicaoPJ ?>';
 	}
 	

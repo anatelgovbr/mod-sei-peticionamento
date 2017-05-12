@@ -349,17 +349,16 @@ function inicializar(){
     document.getElementById('tipoInteressado').disabled = true;
     document.getElementById('tipoInteressado').disabled = 'disabled';
 
-    document.getElementById("rdPF").disabled = true;
-	document.getElementById("rdPF").disabled = 'disabled';
+	//document.getElementById("rdPF").disabled = true;
+	//document.getElementById("rdPF").disabled = 'disabled';
 
-	document.getElementById("rdPF1").disabled = true;
-	document.getElementById("rdPF1").disabled = 'disabled';
+	//document.getElementById("rdPF1").disabled = true;
+	//document.getElementById("rdPF1").disabled = 'disabled';
 
-	document.getElementById("rdPF2").disabled = true;
-	document.getElementById("rdPF2").disabled = 'disabled';
+	//document.getElementById("rdPF2").disabled = true;
+	//document.getElementById("rdPF2").disabled = 'disabled';
 
 	<?php if( isset( $_GET['cpf'] ) ) { ?>
-      
 	  document.getElementById("rdPF").disabled = true;
 	  document.getElementById("rdPF").disabled = 'disabled';
 
@@ -370,21 +369,22 @@ function inicializar(){
 	  document.getElementById("rdPF2").disabled = 'disabled';
 
 	  objAjaxCargo.executar();
+	<?php } else if( isset( $_GET['cnpj'] ) ) { ?>
+	  document.getElementById("rdPJ").disabled = true;
+	  document.getElementById("rdPJ").disabled = 'disabled';
+	<?php } ?>
 
-      <?php } ?>
-    	
     <?php } ?>
 
     <?php 
     $janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
     if( $janelaSelecaoPorNome != null && $janelaSelecaoPorNome != "" && !isset( $_GET['cadastro'] ) ) { ?>
 
-	//alert('aqui <?= $janelaSelecaoPorNome ?>');
-    document.getElementById("rdPF").checked = false;
-    document.getElementById("rdPF").checked = '';
+    //document.getElementById("rdPF").checked = false;
+    //document.getElementById("rdPF").checked = '';
 
-    document.getElementById("rdPJ").checked = false;
-    document.getElementById("rdPJ").checked = '';
+    //document.getElementById("rdPJ").checked = false;
+    //document.getElementById("rdPJ").checked = '';
 
     document.getElementById('lblNome').style.display = 'none';
     document.getElementById('lblCPF').style.display = 'none';
@@ -473,7 +473,7 @@ function salvar(){
 	}
 	
 	//validar pj vinculada (caso exista)
-	var pjVinculada = document.getElementById('txtPjVinculada').value;
+	var pjVinculada = document.getElementById('txtPjVinculada')!=null ? document.getElementById('txtPjVinculada').value : '';
 	var idContextoAjax = document.getElementById('hdnIdContextoContato');
 
 	if( interessado1 == 'pf' && interessado2 == '1' && ( pjVinculada == '' || idContextoAjax == null || idContextoAjax.value=='' ) ){

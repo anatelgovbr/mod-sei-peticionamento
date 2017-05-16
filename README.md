@@ -54,9 +54,12 @@
 
 4. Peticionamento Intercorrente:
 	- Os Usuários Externos somente visualizarão o menu Peticionamento > Intercorrente depois que na Administração for configurado pelo menos o "Intercorrente Padrão".
-	- O "Intercorrente Padrão" será utilizado para a abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo quando este corresponder a processo: 1) de Tipo sem Critério Intercorrente parametrizado; 2) com Nível de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado.
+	- A abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando este corresponder a processo: 1) de Tipo sem Critério Intercorrente parametrizado; 2) com Nível de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado; ou 4) de Tipo de Processo desativado.
+		- Em todos os casos acima a forma de indicação de Nível de Acesso pelo Usuário Externo será a indicada em Administração > Peticionamento Eletrônico > Critérios para Intercorrente > botão "Intercorrente Padrão". Somente no caso 4 é que o Tipo de Processo também será o indicado para "Intercorrente Padrão".
 	- Se TODAS as Unidades por onde o processo indicado tenha tramitado estiverem Desativadas no SEI, o Usuário Externo será avisado que o Peticionamento Intercorrente não é possível e que deverá utilizar a funcionalidade de Peticionamento de Processo Novo.
 
-5. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
+5. Não foi possível fazer um Manual do Usuário Externo genérico para qualquer órgão, em razão das especificidades de cada órgão quanto aos procedimentos de credenciamento dos Usuários Externos e até mesmo de parametrização do Módulo. De qualquer forma, segue link para o Manual do Usuário Externo do SEI elaborado pela Anatel que pode ser quase que completamente aproveitado para elaboração de outros Manuais: https://goo.gl/eyJr12
+
+6. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
 
 		http://[Servidor_PHP]/sei/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo=0

@@ -29,7 +29,7 @@
             $objProtocoloDTO = $objMdPetIntercorrenteRN->pesquisarProtocoloFormatado($objProtocoloDTO);
             $xml = '<Validacao>';
 
-            if (! $objProtocoloDTO) {
+            if (!$objProtocoloDTO || $objProtocoloDTO == null || $objProtocoloDTO == '' ) {
                 return sprintf($xmlMensagemErro, $strMsgProcessoNaoExiste);
             }
 

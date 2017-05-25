@@ -317,7 +317,30 @@ class MdPetProcessoRN extends InfraRN {
 				$atividadeRN->excluirRN0034( $arrDTOAtividades );
 				
 			}
-						
+
+
+    		// Andamento - Processo remetido pela unidade 
+    		$arrObjAtributoAndamentoDTO = array();
+    		$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
+    		$objAtributoAndamentoDTO->setStrNome('UNIDADE');
+    		$objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla().'¥'.$unidadeDTO->getStrDescricao());
+    		$objAtributoAndamentoDTO->setStrIdOrigem($unidadeDTO->getNumIdUnidade());
+    		$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
+
+    		$objAtividadeDTO = new AtividadeDTO();
+    		$objAtividadeDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+    		$objAtividadeDTO->setNumIdUnidade( $unidadeDTO->getNumIdUnidade() );
+    		$objAtividadeDTO->setNumIdUnidadeOrigem( $unidadeDTO->getNumIdUnidade() );
+    		//$objAtividadeDTO->setNumIdUsuario($objAtividadeDTO->getNumIdUsuario());
+    		//$objAtividadeDTO->setNumIdUsuarioOrigem($objAtividadeDTO->getNumIdUsuarioOrigem());
+    		//$objAtividadeDTO->setDtaPrazo($objAtividadeDTO->getDtaPrazo());
+    		$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
+    		$objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
+
+    		$objAtividadeRN = new AtividadeRN();
+    		$objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);      
+
+
 			// obtendo a ultima atividade informada para o processo, para marcar 
 			// como nao visualizada, deixando assim o processo marcado como "vermelho" 
 			// (status de Nao Visualizado) na listagem da tela "Controle de processos"

@@ -81,6 +81,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			$strProtocoloPesquisa = InfraUtil::retirarFormatacao($parObjProtocoloDTO->getStrProtocoloFormatadoPesquisa(),false);
 			
 			$objProtocoloDTOPesquisa->setStrProtocoloFormatadoPesquisa($strProtocoloPesquisa);
+			$objProtocoloDTOPesquisa->setStrStaProtocolo( ProtocoloRN::$TPP_PROCEDIMENTOS );
 			$arrObjProtocoloDTO = $objProtocoloRN->listarRN0668($objProtocoloDTOPesquisa);
 			
 			if (count($arrObjProtocoloDTO) > 1) {
@@ -920,8 +921,6 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 					$this->setDocumentoRecibo($documentoReciboDTO);
 					
 					//apagando andamentos do tipo "Disponibilizado acesso externo para @INTERESSADO@"
-					
-					
 					$objAtividadeDTOLiberacao = new AtividadeDTO();
 					$objAtividadeDTOLiberacao->retTodos();
 					$objAtividadeDTOLiberacao->setDblIdProtocolo( $this->getProcedimentoDTO()->getDblIdProcedimento() );
@@ -930,7 +929,36 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 					
 					$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
 					$atividadeRN->excluirRN0034( $arrDTOAtividades );
-					
+
+					// Andamento - Processo remetido pela unidade
+					$unidadeDTO = new UnidadeDTO();
+					$unidadeDTO->retTodos();
+					$unidadeDTO->setBolExclusaoLogica(false);
+					$unidadeDTO->setNumIdUnidade($idUnidadeProcesso);
+					$unidadeRN = new UnidadeRN();
+					$unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+
+					$arrObjAtributoAndamentoDTO = array();
+					$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
+					$objAtributoAndamentoDTO->setStrNome('UNIDADE');
+					$objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla().'¥'.$unidadeDTO->getStrDescricao());
+					$objAtributoAndamentoDTO->setStrIdOrigem($unidadeDTO->getNumIdUnidade());
+					$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
+
+					$objAtividadeDTO = new AtividadeDTO();
+					$objAtividadeDTO->setDblIdProtocolo( $this->getProcedimentoDTO()->getDblIdProcedimento() );
+					$objAtividadeDTO->setNumIdUnidade( $unidadeDTO->getNumIdUnidade() );
+					$objAtividadeDTO->setNumIdUnidadeOrigem( $unidadeDTO->getNumIdUnidade() );
+					//$objAtividadeDTO->setNumIdUsuario($objAtividadeDTO->getNumIdUsuario());
+					//$objAtividadeDTO->setNumIdUsuarioOrigem($objAtividadeDTO->getNumIdUsuarioOrigem());
+					//$objAtividadeDTO->setDtaPrazo($objAtividadeDTO->getDtaPrazo());
+					$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
+					$objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
+
+					$objAtividadeRN = new AtividadeRN();
+					$objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
+
+
 					// obtendo a ultima atividade informada para o processo, para marcar
 					// como nao visualizada, deixando assim o processo marcado como "vermelho"
 					// (status de Nao Visualizado) na listagem da tela "Controle de processos"

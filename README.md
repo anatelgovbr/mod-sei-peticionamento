@@ -66,6 +66,9 @@
 
 7. Acesse o Manual de Administração do Módulo (ainda em construção): https://goo.gl/pqIoZY
 
-8. Não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
+8. Ainda, conforme pode ser observado no Manual do Usuário Externo disponibilizado no item 7 acima, é extremamente recomendado que o órgão tenham bem definido procedimento para cadastro e liberação de Usuários Externos no SEI, preferencialmente com assinatura e entrega de "Termo de Declaração de Concordância e Veracidade" e mais um documento que contenha número de CPF.
+	- Segue link para exemplo de Termo que pode ser utilizado, desde que ajuste a indicação do endereço para envio da correspondência. Sugerimos que seja disponibilizado em formato PDF: https://docs.google.com/document/d/1ZvoDA5Jpx2VwNKvva6V9v3d3j7hQdbJUXBJ81wEbITg/edit?usp=sharing
+
+9. Por fim, não é aconselhável dar publicidade a registros de indisponibilidades do SEI até que o módulo possua funcionalidades afetas a Intimação Eletrônica, prevista para a versão 2.0. De qualquer forma, segue URL da página pública que lista os cadastrados realizados no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI:
 
 		http://[Servidor_PHP]/sei/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo=0

@@ -206,8 +206,8 @@ try {
             $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
         }
 
-        $strResultado .= '<th class="infraTh" width="30%">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetCriterioDTO,'Tipo de Processo','NomeProcesso',$arrObjMdPetCriterioDTO).'</th>'."\n";
-        $strResultado .= '<th class="infraTh">Nível de Acesso dos Documentos</th>'."\n";
+        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetCriterioDTO,'Tipo de Processo','NomeProcesso',$arrObjMdPetCriterioDTO).'</th>'."\n";
+        $strResultado .= '<th class="infraTh" width="30%">Nível de Acesso dos Documentos</th>'."\n";
         $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
         $strResultado .= '</tr>'."\n";
         $strCssTr='';

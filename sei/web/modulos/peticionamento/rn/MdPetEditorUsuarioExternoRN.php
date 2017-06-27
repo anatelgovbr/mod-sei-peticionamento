@@ -86,8 +86,6 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         $scayt="";
         LogSEI::getInstance()->gravar("'Erro acessando servidor SCAYT para validar versão do plugin:\n".InfraException::inspecionar($e));
       }
-    } elseif ($objOrgaoDTO != null && $objOrgaoDTO->getStrStaCorretorOrtografico()==OrgaoRN::$TCO_GRATUITO){
-        $scayt = 'scayt3';
     }
     if ($scayt!="") {
         $includePlugins[] = $scayt;
@@ -385,8 +383,6 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           $scayt="";
           LogSEI::getInstance()->gravar("'Erro acessando servidor SCAYT para validar versão do plugin:\n".InfraException::inspecionar($e));
         }
-      } elseif ($objOrgaoDTO->getStrStaCorretorOrtografico()==OrgaoRN::$TCO_GRATUITO){
-        $scayt = 'scayt3';
       }
       if ($scayt!="") {
           $includePlugins[] = $scayt;

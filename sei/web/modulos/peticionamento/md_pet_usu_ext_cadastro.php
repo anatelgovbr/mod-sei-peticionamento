@@ -110,30 +110,53 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
      <br/>
      
      <select id="selUFAberturaProcesso" name="selUFAberturaProcesso">
-     
-       <option value=""></option>
-     
-       <? foreach( $arrUnidadeUFDTO as $itemUnidadeDTO ){ ?>
-         <option value="<?= $itemUnidadeDTO->getNumIdUnidade() ?>">
-         <? // seiv2 $itemUnidadeDTO->getStrSiglaUf() ?>
-         <?php 
-         //alteracoes seiv3
-         $contatoAssociadoDTO = new ContatoDTO();
-         $contatoAssociadoRN = new ContatoRN();
-         $contatoAssociadoDTO->retStrSiglaUf();
-         $contatoAssociadoDTO->retNumIdContato();
-         $contatoAssociadoDTO->setNumIdContato( $itemUnidadeDTO->getNumIdContato() );
-         
-         $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324( $contatoAssociadoDTO );
-         echo $contatoAssociadoDTO->getStrSiglaUf();
-         ?>
-         </option>
-       <? } ?>
-     
+        <option value=""></option>
+        <?
+        function array_msort($array, $cols) {
+            $colarr = array();
+            foreach ($cols as $col => $order) {
+                $colarr[$col] = array();
+                foreach ($array as $k => $row) { $colarr[$col]['_'.$k] = strtolower($row[$col]); }
+            }
+            $eval = 'array_multisort(';
+            foreach ($cols as $col => $order) {
+               $eval .= '$colarr[\''.$col.'\'],'.$order.',';
+            }
+            $eval = substr($eval,0,-1).');';
+            eval($eval);
+            $ret = array();
+            foreach ($colarr as $col => $arr) {
+                foreach ($arr as $k => $v) {
+                    $k = substr($k,1);
+                    if (!isset($ret[$k])) $ret[$k] = $array[$k];
+                    $ret[$k][$col] = $array[$k][$col];
+                }
+            }
+            return $ret;
+        }
+        $arrUnidadeUF = array();
+        foreach( $arrUnidadeUFDTO as $itemUnidadeDTO ){
+            $contatoAssociadoDTO = new ContatoDTO();
+            $contatoAssociadoRN = new ContatoRN();
+            $contatoAssociadoDTO->retStrSiglaUf();
+            $contatoAssociadoDTO->retNumIdContato();
+            $contatoAssociadoDTO->setNumIdContato( $itemUnidadeDTO->getNumIdContato() );
+
+            $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324( $contatoAssociadoDTO );
+
+            $arrUnidadeUF[] = array ('IdUnidade' => $itemUnidadeDTO->getNumIdUnidade()
+                                     , 'IdContato' => $itemUnidadeDTO->getNumIdContato()
+                                     , 'SiglaUf' => $contatoAssociadoDTO->getStrSiglaUf()
+            );
+       }
+       $arrUnidadeUF = array_msort($arrUnidadeUF, array('name'=>SORT_DESC, 'SiglaUf'=>SORT_ASC));
+       foreach( $arrUnidadeUF as $itemUnidade ){
+           echo '<option value="' . $itemUnidade['IdUnidade'] . '">' . $itemUnidade['SiglaUf'] . '</option>';
+       }
+       ?>
      </select> <br/><br/>
-   
-   <? } ?>	
-   	
+   <? } ?>
+
    <? if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'S') { ?>
    
    <!--  CASO 1 -->

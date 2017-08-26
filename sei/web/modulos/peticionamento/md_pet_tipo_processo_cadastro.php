@@ -87,10 +87,10 @@ try {
   $objUnidadeRN = new UnidadeRN();
 
   $arrObjUnidadeDTO = $objUnidadeRN->listarTodasComFiltro($objUnidadeDTO);
-  
+
   foreach($arrObjUnidadeDTO as  $key => $objUnidadeDTO){
   		
-  	    $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['sigla'] = $objUnidadeDTO->getStrSigla();
+  	    $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['sigla'] = utf8_encode($objUnidadeDTO->getStrSigla());
   		$arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricao'] = utf8_encode($objUnidadeDTO->getStrDescricao());
   		
   		//alteracoes SEIv3
@@ -103,9 +103,12 @@ try {
   		$contatoAssociadoDTO->setNumIdContato( $objUnidadeDTO->getNumIdContato() );
   		
   		$contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324( $contatoAssociadoDTO );
-  		$arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = $contatoAssociadoDTO->getStrSiglaUf();
+		
+		//so recuperar caso se trata de unidade que possua UF configurada
+		if( $contatoAssociadoDTO != null && $contatoAssociadoDTO->isSetStrSiglaUf() && $contatoAssociadoDTO->getStrSiglaUf() != null ) {
+  		  $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = utf8_encode($contatoAssociadoDTO->getStrSiglaUf());
+		}
   }
-
 
   $objInfraParametroDTO = new InfraParametroDTO();
   $objMdPetParametroRN  = new MdPetParametroRN();
@@ -1104,7 +1107,7 @@ echo $contatoAssociadoDTO->getStrSiglaUf();
 	  </div>
     </fieldset>
     <!--  Fim do Documento Complementar -->
-  
+
   <input type="hidden" id="hdnCorpoTabela" name="hdnCorpoTabela" value=""/>
   <input type="hidden" id="hdnUnidadesSelecionadas" name="hdnUnidadesSelecionadas" value=""/>
   <input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades" value='<?= json_encode($arrObjUnidadeDTOFormatado);?>' />

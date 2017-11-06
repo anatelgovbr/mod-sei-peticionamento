@@ -27,20 +27,20 @@ class MdPetDocumentoRN extends InfraRN {
 		return BancoSEI::getInstance ();
 	}
 	
-	//TODO: Grande parte da regra de negÃ³cio se baseou em SEIRN:199 - incluirDocumento.
-	//Avaliar a refatoraÃ§Ã£o para impedir a duplicaÃ§Ã£o de cÃ³digo
+	//TODO: Grande parte da regra de negócio se baseou em SEIRN:199 - incluirDocumento.
+	//Avaliar a refatoração para impedir a duplicação de código
 	private function atribuirDocumentos($objProcedimentoDTO, $arrObjDocumentoDTO , $objUnidadeDTO, $parObjMetadadosProcedimento)
 	{
 		if(!isset($objProcesso)) {
-			throw new InfraException('ParÃ¢metro $objProcesso nÃ£o informado.');
+			throw new InfraException('Parâmetro $objProcesso não informado.');
 		}
 	
 		if(!isset($objUnidadeDTO)) {
-			throw new InfraException('Unidade responsÃ¡vel pelo documento nÃ£o informada.');
+			throw new InfraException('Unidade responsável pelo documento não informada.');
 		}
 	
 		if(!isset($objProcesso->documento)) {
-			throw new InfraException('Lista de documentos do processo nÃ£o informada.');
+			throw new InfraException('Lista de documentos do processo não informada.');
 		}
 	
 		$arrObjDocumentos = $arrObjDocumentoDTO;
@@ -52,10 +52,10 @@ class MdPetDocumentoRN extends InfraRN {
 		$strNumeroRegistro = $parObjMetadadosProcedimento->metadados->NRE;
 		//$numTramite = $parObjMetadadosProcedimento->metadados->IDT;
 	
-		//OrdenaÃ§Ã£o dos documentos conforme informado pelo remetente. Campo documento->ordem
+		//Ordenação dos documentos conforme informado pelo remetente. Campo documento->ordem
 		usort($arrObjDocumentos, array("ReceberProcedimentoRN", "comparacaoOrdemDocumentos"));
 	
-		//Obter dados dos documentos jÃ¡ registrados no sistema
+		//Obter dados dos documentos já registrados no sistema
 		$objComponenteDigitalDTO = new ComponenteDigitalDTO();
 		$objComponenteDigitalDTO->retNumOrdem();
 		$objComponenteDigitalDTO->retDblIdDocumento();
@@ -79,7 +79,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 				$strHashConteudo = ProcessoEletronicoRN::getHashFromMetaDados($objDocumento->componenteDigital->hash);
 	
-				// Caso jÃ¡ esteja cadastrado, de um reenvio anterior, entÃ£o move para bloqueado
+				// Caso já esteja cadastrado, de um reenvio anterior, então move para bloqueado
 				if(array_key_exists($strHashConteudo, $arrStrHashConteudo)) {
 	
 					//Busca o ID do protocolo
@@ -102,9 +102,9 @@ class MdPetDocumentoRN extends InfraRN {
 				continue;
 			}
 	
-			//ValidaÃ§Ã£o dos dados dos documentos
+			//Validação dos dados dos documentos
 			if(!isset($objDocumento->especie)){
-				throw new InfraException('EspÃ©cie do documento ['.$objDocumento->descricao.'] nÃ£o informada.');
+				throw new InfraException('Espécie do documento ['.$objDocumento->descricao.'] não informada.');
 			}
 	
 			//---------------------------------------------------------------------------------------------------
@@ -116,12 +116,12 @@ class MdPetDocumentoRN extends InfraRN {
 			$objSerieDTO = $this->obterSerieMapeada($objDocumento->especie->codigo);
 	
 			if ($objSerieDTO==null){
-				throw new InfraException('Tipo de documento [EspÃ©cie '.$objDocumento->especie->codigo.'] nÃ£o encontrado.');
+				throw new InfraException('Tipo de documento [Espécie '.$objDocumento->especie->codigo.'] não encontrado.');
 			}
 	
 			if (InfraString::isBolVazia($objDocumento->dataHoraDeProducao)) {
-				//$objInfraException->lancarValidacao('Data do documento nÃ£o informada.');
-                throw new InfraException('Data do documento nÃ£o informada.');
+				//$objInfraException->lancarValidacao('Data do documento não informada.');
+                throw new InfraException('Data do documento não informada.');
 			}
 	
 			$objProcedimentoDTO2 = new ProcedimentoDTO();
@@ -141,7 +141,7 @@ class MdPetDocumentoRN extends InfraRN {
 			$objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO2);
 	
 			if ($objProcedimentoDTO==null){
-				throw new InfraException('Processo ['.$objDocumentoDTO->getDblIdProcedimento().'] nÃ£o encontrado.');
+				throw new InfraException('Processo ['.$objDocumentoDTO->getDblIdProcedimento().'] não encontrado.');
 			}
 	
 			$objDocumentoDTO->setDblIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
@@ -180,12 +180,12 @@ class MdPetDocumentoRN extends InfraRN {
 				$objAtividadeDTO->setDblIdProtocolo($objDocumentoDTO->getDblIdProcedimento());
 				$objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 	
-				//TODO: Possivelmente, essa regra Ã© desnecessÃ¡ria jÃ¡ que o processo pode ser enviado para outra unidade do Ã³rgÃ£o atravÃ©s da expediÃ§Ã£o
+				//TODO: Possivelmente, essa regra é desnecessária já que o processo pode ser enviado para outra unidade do órgão através da expedição
 				
 				$objMdPetAtividadeRN = new MdPetAtividadeRN();
 				
 				if ($objMdPetAtividadeRN->contarRN0035($objAtividadeDTO) == 0) {
-					throw new InfraException('Unidade '.$objUnidadeDTO->getStrSigla().' nÃ£o possui acesso ao Procedimento '.$objProcedimentoDTO->getStrProtocoloProcedimentoFormatado().'.');
+					throw new InfraException('Unidade '.$objUnidadeDTO->getStrSigla().' não possui acesso ao Procedimento '.$objProcedimentoDTO->getStrProtocoloProcedimentoFormatado().'.');
 				}
 	
 				$objAtividadeDTO = new AtividadeDTO();
@@ -226,7 +226,7 @@ class MdPetDocumentoRN extends InfraRN {
 			}
 			$objDocumentoDTO->setStrSinBloqueado('S');
 	
-			//TODO: Fazer a atribuiÃ§Ã£o dos componentes digitais do processo a partir desse ponto
+			//TODO: Fazer a atribuição dos componentes digitais do processo a partir desse ponto
 			$this->atribuirComponentesDigitais($objDocumentoDTO, $objDocumento->componenteDigital);
 			$objDocumentoDTOGerado = $objDocumentoRN->receberRN0991($objDocumentoDTO);
 	
@@ -249,15 +249,15 @@ class MdPetDocumentoRN extends InfraRN {
 		$objProcedimentoDTO->setArrObjDocumentoDTO($arrObjDocumentoDTO);
 	}
 	
-	//TODO: MÃ©todo deverÃ¡ poderÃ¡ ser transferido para a classe responsÃ¡vel por fazer o recebimento dos componentes digitais
+	//TODO: Método deverá poderá ser transferido para a classe responsável por fazer o recebimento dos componentes digitais
 	private function atribuirComponentesDigitais(DocumentoDTO $parObjDocumentoDTO, $parArrObjComponentesDigitais)
 	{
 		if(!isset($parArrObjComponentesDigitais)) {
-			throw new InfraException('Componentes digitais do documento nÃ£o informado.');
+			throw new InfraException('Componentes digitais do documento não informado.');
 		}
 	
-		//TODO: Aplicar mesmas validaÃ§Ãµes realizadas no momento do upload de um documento InfraPagina::processarUpload
-		//TODO: Avaliar a refatoraÃ§Ã£o do cÃ³digo abaixo para impedir a duplicaÃ§Ã£o de regras de negÃ³cios
+		//TODO: Aplicar mesmas validações realizadas no momento do upload de um documento InfraPagina::processarUpload
+		//TODO: Avaliar a refatoração do código abaixo para impedir a duplicação de regras de negócios
 		
 		$arrObjAnexoDTO = array();
 		if($parObjDocumentoDTO->getObjProtocoloDTO()->isSetArrObjAnexoDTO()) {
@@ -365,11 +365,11 @@ class MdPetDocumentoRN extends InfraRN {
 				$arrObjProtocoloDTO = $objProtocoloRN->pesquisarRN0967($objPesquisaProtocoloDTO);
 	
 				if (count($arrObjProtocoloDTO)==0){
-					$objInfraException->lancarValidacao('Documento Base nÃ£o encontrado.');
+					$objInfraException->lancarValidacao('Documento Base não encontrado.');
 				}
 	
 				if ($arrObjProtocoloDTO[0]->getStrStaEditorDocumento()!=EditorRN::$TE_INTERNO){
-					$objInfraException->lancarValidacao('Documento Base nÃ£o foi gerado pelo editor interno.');
+					$objInfraException->lancarValidacao('Documento Base não foi gerado pelo editor interno.');
 				}
 	
 				$objDocumentoDTO->setDblIdDocumentoTextoBase($arrObjProtocoloDTO[0]->getDblIdProtocolo());
@@ -432,11 +432,11 @@ class MdPetDocumentoRN extends InfraRN {
 			if($strStaNumeracao == SerieRN::$TN_SEM_NUMERACAO){
 				// nao deve entrar nunca
 				if(!InfraString::isBolVazia($objDocumentoDTO->getStrNumero())){
-					$objInfraException->lancarValidacao('Documento com nÃºmero preenchido mas o tipo '.$strNomeSerie.' nÃ£o tem numeraÃ§Ã£o.');
+					$objInfraException->lancarValidacao('Documento com número preenchido mas o tipo '.$strNomeSerie.' não tem numeração.');
 				}
 			}else if($strStaNumeracao == SerieRN::$TN_INFORMADA){
 				if(InfraString::isBolVazia($objDocumentoDTO->getStrNumero())){
-					$objInfraException->lancarValidacao('Tipo '.$strNomeSerie.' requer preenchimento do nÃºmero do documento.');
+					$objInfraException->lancarValidacao('Tipo '.$strNomeSerie.' requer preenchimento do número do documento.');
 				}else{
 					$this->validarTamanhoNumeroRN0993($objDocumentoDTO, $objInfraException);
 				}
@@ -471,7 +471,7 @@ class MdPetDocumentoRN extends InfraRN {
 					$objNumeracaoDTO->setNumIdOrgao($objUnidadeDTO->getNumIdOrgao());
 					$objNumeracaoDTO->setNumAno(Date('Y'));
 				}else{
-					$objInfraException->lancarValidacao('Tipo de numeraÃ§Ã£o invÃ¡lido.');
+					$objInfraException->lancarValidacao('Tipo de numeração inválido.');
 				}
 	
 				$objNumeracaoRN = new NumeracaoRN();
@@ -605,7 +605,7 @@ class MdPetDocumentoRN extends InfraRN {
 				$objEditorDTO->setNumIdBaseConhecimento(null);
 	
 				if ($objSerieDTO->getNumIdModelo()==null){
-					throw new InfraException('Tipo '.$objSerieDTO->getStrNome().' nÃ£o possui modelo interno associado.');
+					throw new InfraException('Tipo '.$objSerieDTO->getStrNome().' não possui modelo interno associado.');
 				}
 	
 				$objEditorDTO->setNumIdModelo($objSerieDTO->getNumIdModelo());
@@ -663,11 +663,11 @@ class MdPetDocumentoRN extends InfraRN {
 		
 		//seiv2
 		//if (InfraString::isBolVazia($objDocumentoDTO->getStrStaEditor())){
-			//$objInfraException->adicionarValidacao('Editor nÃ£o informado.');
+			//$objInfraException->adicionarValidacao('Editor não informado.');
 		//}
 	
 		//if ($objDocumentoDTO->getStrStaEditor()!=EditorRN::$TE_EDOC && $objDocumentoDTO->getStrStaEditor()!=EditorRN::$TE_INTERNO && $objDocumentoDTO->getStrStaEditor()!=EditorRN::$TE_NENHUM){
-			//$objInfraException->adicionarValidacao('Editor ['.$objDocumentoDTO->getStrStaEditor().'] invÃ¡lido.');
+			//$objInfraException->adicionarValidacao('Editor ['.$objDocumentoDTO->getStrStaEditor().'] inválido.');
 		//}
 		
 	}
@@ -676,10 +676,10 @@ class MdPetDocumentoRN extends InfraRN {
 		
 		//seiv2
 		//if (InfraString::isBolVazia($objDocumentoDTO->getStrSinFormulario())){
-			//$objInfraException->adicionarValidacao('Sinalizador de FormulÃ¡rio nÃ£o informado.');
+			//$objInfraException->adicionarValidacao('Sinalizador de Formulário não informado.');
 		//}else{
 			//if (!InfraUtil::isBolSinalizadorValido($objDocumentoDTO->getStrSinFormulario())){
-				//$objInfraException->adicionarValidacao('Sinalizador de FormulÃ¡rio invÃ¡lido.');
+				//$objInfraException->adicionarValidacao('Sinalizador de Formulário inválido.');
 			//}
 		//}
 		
@@ -687,7 +687,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 	private function validarNumIdUnidadeResponsavelRN0915(DocumentoDTO $objDocumentoDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objDocumentoDTO->getNumIdUnidadeResponsavel ())){
-			$objInfraException->adicionarValidacao('Unidade ResponsÃ¡vel nÃ£o informada.');
+			$objInfraException->adicionarValidacao('Unidade Responsável não informada.');
 		}
 	}
 	
@@ -697,7 +697,7 @@ class MdPetDocumentoRN extends InfraRN {
 		}else{
 			$objDocumentoDTO->setStrCrcAssinatura(strtoupper(trim($objDocumentoDTO->getStrCrcAssinatura())));
 			if (strlen($objDocumentoDTO->getStrCrcAssinatura())>8){
-				$objInfraException->lancarValidacao('Tamanho do cÃ³digo CRC invÃ¡lido.');
+				$objInfraException->lancarValidacao('Tamanho do código CRC inválido.');
 			}
 		}
 	}
@@ -708,7 +708,7 @@ class MdPetDocumentoRN extends InfraRN {
 		}else{
 			$objDocumentoDTO->setStrCodigoVerificador(strtoupper(trim($objDocumentoDTO->getStrCodigoVerificador())));
 			if (!preg_match("/^[0-9]{10}(V)[0-9]+$/i", $objDocumentoDTO->getStrCodigoVerificador()) && strlen($objDocumentoDTO->getStrCodigoVerificador())!=7){
-				$objInfraException->lancarValidacao('CÃ³digo Verificador invÃ¡lido.');
+				$objInfraException->lancarValidacao('Código Verificador inválido.');
 			}
 		}
 	}
@@ -716,7 +716,7 @@ class MdPetDocumentoRN extends InfraRN {
 	private function validarNumIdSerieRN0009(DocumentoDTO $objDocumentoDTO, InfraException $objInfraException){
 		 
 		if (InfraString::isBolVazia($objDocumentoDTO->getNumIdSerie())){
-			$objInfraException->lancarValidacao('ABS Tipo do documento nÃ£o informado.');
+			$objInfraException->lancarValidacao('ABS Tipo do documento não informado.');
 		}else{
 	
 			$objSerieDTO = new SerieDTO();
@@ -729,7 +729,7 @@ class MdPetDocumentoRN extends InfraRN {
 			$objSerieDTO = $objSerieRN->consultarRN0644($objSerieDTO);
 	
 			if ($objSerieDTO==null){
-				throw new InfraException('Tipo do documento ['.$objDocumentoDTO->getNumIdSerie().'] nÃ£o encontrado.');
+				throw new InfraException('Tipo do documento ['.$objDocumentoDTO->getNumIdSerie().'] não encontrado.');
 			}
 	        
 			//seiv2
@@ -738,9 +738,9 @@ class MdPetDocumentoRN extends InfraRN {
 			//alteracoes seiv3
 			if ($objSerieDTO->getStrStaAplicabilidade()!=SerieRN::$TA_INTERNO_EXTERNO){
 				if ($objDocumentoDTO->getStrStaProtocoloProtocolo()==ProtocoloRN::$TP_DOCUMENTO_GERADO && $objSerieDTO->getStrStaAplicabilidade()==SerieRN::$TA_EXTERNO){
-					$objInfraException->adicionarValidacao('Tipo do documento nÃ£o aplicÃ¡vel para documentos internos.');
+					$objInfraException->adicionarValidacao('Tipo do documento não aplicável para documentos internos.');
 				}else if ($objDocumentoDTO->getStrStaProtocoloProtocolo()==ProtocoloRN::$TP_DOCUMENTO_RECEBIDO && $objSerieDTO->getStrStaAplicabilidade()==SerieRN::$TA_INTERNO){
-					$objInfraException->adicionarValidacao('Tipo do documento nÃ£o aplicÃ¡vel para documentos externos.');
+					$objInfraException->adicionarValidacao('Tipo do documento não aplicável para documentos externos.');
 				}
 			}
 		}
@@ -749,7 +749,7 @@ class MdPetDocumentoRN extends InfraRN {
 	private function validarTamanhoNumeroRN0993(DocumentoDTO $objDocumentoDTO, InfraException $objInfraException){
 		$objDocumentoDTO->setStrNumero(trim($objDocumentoDTO->getStrNumero()));
 		if (strlen($objDocumentoDTO->getStrNumero())>50){
-			$objInfraException->adicionarValidacao('NÃºmero possui tamanho superior a 50 caracteres.');
+			$objInfraException->adicionarValidacao('Número possui tamanho superior a 50 caracteres.');
 		}
 	}
 	
@@ -881,12 +881,12 @@ class MdPetDocumentoRN extends InfraRN {
 				}
 			}
 		} catch(Exception $e){
-			 throw new InfraException('Erro lanÃ§ando acesso para o Controle Interno.',$e);
+			 throw new InfraException('Erro lançando acesso para o Controle Interno.',$e);
 		}
 		
 	}
 	
-	//mÃ©todo copiado da antiga DocumentoRN do seiv2, porque o SEIv3 removeu o metodo receberRN0991
+	//método copiado da antiga DocumentoRN do seiv2, porque o SEIv3 removeu o metodo receberRN0991
 	public function receberRN0991(DocumentoDTO $objDocumentoDTO){
 	
 		$bolAcumulacaoPrevia = FeedSEIProtocolos::getInstance()->isBolAcumularFeeds();
@@ -913,7 +913,7 @@ class MdPetDocumentoRN extends InfraRN {
 		return $objDocumentoDTO;
 	}
 	
-	//mÃ©todo copiado da antiga DocumentoRN do seiv2 (com pequenas alteraÃ§Ãµes), porque o SEIv3 removeu o metodo receberRN0991InternoControlado
+	//método copiado da antiga DocumentoRN do seiv2 (com pequenas alterações), porque o SEIv3 removeu o metodo receberRN0991InternoControlado
 	protected function receberRN0991InternoControlado(DocumentoDTO $objDocumentoDTO) {
 		try{
 	
@@ -928,7 +928,7 @@ class MdPetDocumentoRN extends InfraRN {
 			$objDocumentoDTO->setStrStaProtocoloProtocolo(ProtocoloRN::$TP_DOCUMENTO_RECEBIDO);
 	
 			if ($objDocumentoDTO->isSetDblIdDocumentoEdoc() && $objDocumentoDTO->getDblIdDocumentoEdoc()!=null){
-				$objInfraException->adicionarValidacao('Identificador do eDoc nÃ£o pode ser informado na geraÃ§Ã£o.');
+				$objInfraException->adicionarValidacao('Identificador do eDoc não pode ser informado na geração.');
 			}
 	
 	
@@ -1083,11 +1083,11 @@ class MdPetDocumentoRN extends InfraRN {
 			$objDocumentoDTO->setStrStaNivelAcessoGlobalProtocolo($objProtocoloDTOGerado->getStrStaNivelAcessoGlobal());
 			$this->lancarAcessoControleInterno($objDocumentoDTO);
 	
-			//Reabertura AutomÃ¡tica
+			//Reabertura Automática
 			if ($objDocumentoDTO->isSetArrObjUnidadeDTO() && count($objDocumentoDTO->getArrObjUnidadeDTO()) > 0){
 	
 				if ($objProtocoloDTOGerado->getStrStaNivelAcessoGlobal()==ProtocoloRN::$NA_SIGILOSO){
-					$objInfraException->lancarValidacao('NÃ£o Ã© possÃ­vel reabrir automaticamente um processo sigiloso.');
+					$objInfraException->lancarValidacao('Não é possível reabrir automaticamente um processo sigiloso.');
 				}
 	
 				$objUnidadeDTO = new UnidadeDTO();
@@ -1100,7 +1100,7 @@ class MdPetDocumentoRN extends InfraRN {
 				$objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
 	
 				if ($objUnidadeDTO->getStrSinProtocolo()=='N'){
-					$objInfraException->lancarValidacao('Unidade '.$objUnidadeDTO->getStrSigla().' nÃ£o estÃ¡ sinalizada como protocolo.');
+					$objInfraException->lancarValidacao('Unidade '.$objUnidadeDTO->getStrSigla().' não está sinalizada como protocolo.');
 				}
 	
 				$arrIdUnidadesReabertura = InfraArray::converterArrInfraDTO($objDocumentoDTO->getArrObjUnidadeDTO(),'IdUnidade');
@@ -1126,9 +1126,9 @@ class MdPetDocumentoRN extends InfraRN {
 						$objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
 	
 						if ($objUnidadeDTO==null){
-							$objInfraException->adicionarValidacao('Unidade ['.$numIdUnidadeReabertura.'] nÃ£o encontrada para reabertura do processo.');
+							$objInfraException->adicionarValidacao('Unidade ['.$numIdUnidadeReabertura.'] não encontrada para reabertura do processo.');
 						}else{
-							$objInfraException->adicionarValidacao('NÃ£o Ã© possÃ­vel reabrir o processo na unidade '.$objUnidadeDTO->getStrSigla().' pois nÃ£o ocorreu tramitaÃ§Ã£o nesta unidade.');
+							$objInfraException->adicionarValidacao('Não é possível reabrir o processo na unidade '.$objUnidadeDTO->getStrSigla().' pois não ocorreu tramitação nesta unidade.');
 						}
 					}
 				}
@@ -1233,21 +1233,21 @@ class MdPetDocumentoRN extends InfraRN {
 			$objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTOPesquisa);
 	
 			if ($objUsuarioDTO==null){
-				throw new InfraException('Assinante nÃ£o cadastrado como usuÃ¡rio do sistema.');
+				throw new InfraException('Assinante não cadastrado como usuário do sistema.');
 			}
 	
 			if ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO_PENDENTE){
-				$objInfraException->lancarValidacao('UsuÃ¡rio externo '.$objUsuarioDTO->getStrSigla().' nÃ£o foi liberado.');
+				$objInfraException->lancarValidacao('Usuário externo '.$objUsuarioDTO->getStrSigla().' não foi liberado.');
 			}
 	
 			if ($objUsuarioDTO->getStrStaTipo()!=UsuarioRN::$TU_SIP && $objUsuarioDTO->getStrStaTipo()!=UsuarioRN::$TU_EXTERNO){
-				throw new InfraException('Tipo do usuÃ¡rio ['.$objUsuarioDTO->getStrStaTipo().'] invÃ¡lido para assinatura.');
+				throw new InfraException('Tipo do usuário ['.$objUsuarioDTO->getStrStaTipo().'] inválido para assinatura.');
 			}
 	
 			if ($objAssinaturaDTO->getStrStaFormaAutenticacao()==AssinaturaRN::$TA_CERTIFICADO_DIGITAL &&
 					InfraString::isBolVazia($objUsuarioDTO->getDblCpfContato()) &&
 					$objInfraParametro->getValor('SEI_HABILITAR_VALIDACAO_CPF_CERTIFICADO_DIGITAL')=='1'){
-						$objInfraException->lancarValidacao('Assinante nÃ£o possui CPF cadastrado.');
+						$objInfraException->lancarValidacao('Assinante não possui CPF cadastrado.');
 			}
 	
 			if (SessaoSEI::getInstance()->getNumIdUsuario()==$objAssinaturaDTO->getNumIdUsuario()){
@@ -1261,9 +1261,9 @@ class MdPetDocumentoRN extends InfraRN {
 						
 			if( $docDTOVerificacao != null 
 				&& 	$docDTOVerificacao->isSetStrDescricaoTipoConferencia() 
-				&& $docDTOVerificacao->getStrDescricaoTipoConferencia() == "do prÃ³prio documento nato-digital"  ){
+				&& $docDTOVerificacao->getStrDescricaoTipoConferencia() == "do próprio documento nato-digital"  ){
 				    
-					//instanciando RN especifica, para viabilizar customizaÃ§ao da tarja de assinatura para documentos do tipo nato-digital
+					//instanciando RN especifica, para viabilizar customizaçao da tarja de assinatura para documentos do tipo nato-digital
 					$objAssinaturaRN = new MdPetAssinaturaRN();
 				
 			} else {
@@ -1275,7 +1275,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 			$arrIdDocumentoAssinatura = array_unique(InfraArray::converterArrInfraDTO($objAssinaturaDTO->getArrObjDocumentoDTO(),'IdDocumento'));
 	
-			//verifica permissÃ£o de acesso ao documento
+			//verifica permissão de acesso ao documento
 			$objPesquisaProtocoloDTO = new PesquisaProtocoloDTO();
 			$objPesquisaProtocoloDTO->setStrStaTipo(ProtocoloRN::$TPP_DOCUMENTOS);
 			$objPesquisaProtocoloDTO->setStrStaAcesso(ProtocoloRN::$TAP_TODOS);
@@ -1290,12 +1290,12 @@ class MdPetDocumentoRN extends InfraRN {
 	
 			if ($n == 1){
 				if ($numDocOrigem == 1){
-					$objInfraException->lancarValidacao('Documento nÃ£o encontrado para assinatura.');
+					$objInfraException->lancarValidacao('Documento não encontrado para assinatura.');
 				}else{
-					$objInfraException->lancarValidacao('Um documento nÃ£o estÃ¡ mais disponÃ­vel para assinatura.');
+					$objInfraException->lancarValidacao('Um documento não está mais disponível para assinatura.');
 				}
 			}else if ($n > 1){
-				$objInfraException->lancarValidacao($n.' documentos nÃ£o estÃ£o mais disponÃ­veis para assinatura.');
+				$objInfraException->lancarValidacao($n.' documentos não estão mais disponíveis para assinatura.');
 			}
 		
 			$objProtocoloDTOProcedimento = new ProtocoloDTO();
@@ -1322,9 +1322,9 @@ class MdPetDocumentoRN extends InfraRN {
 	
 				}else if ($objUsuarioDTOLogado->getStrStaTipo()==UsuarioRN::$TU_SIP && $objProtocoloDTO->getNumCodigoAcesso() < 0){
 	
-					$objInfraException->adicionarValidacao('UsuÃ¡rio '.$objUsuarioDTOLogado->getStrSigla().' nÃ£o possui acesso ao documento '.$objProtocoloDTO->getStrProtocoloFormatado().'.');
+					$objInfraException->adicionarValidacao('Usuário '.$objUsuarioDTOLogado->getStrSigla().' não possui acesso ao documento '.$objProtocoloDTO->getStrProtocoloFormatado().'.');
 	
-					//sÃ³ valida se o usuÃ¡rio externo estiver logado pois ele pode estar na instituiÃ§Ã£o para assinar atravÃ©s do login de outro usuÃ¡rio
+					//só valida se o usuário externo estiver logado pois ele pode estar na instituição para assinar através do login de outro usuário
 				}elseif ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO && $objUsuarioDTO->getNumIdUsuario()==$objUsuarioDTOLogado->getNumIdUsuario()){
 	
 					$objAcessoExternoDTO = new AcessoExternoDTO();
@@ -1335,21 +1335,21 @@ class MdPetDocumentoRN extends InfraRN {
 					$objAcessoExternoDTO->setNumMaxRegistrosRetorno(1);
 	
 					if ($objAcessoExternoRN->consultar($objAcessoExternoDTO) == null){
-						$objInfraException->adicionarValidacao('UsuÃ¡rio externo '.$objUsuarioDTO->getStrSigla().' nÃ£o recebeu liberaÃ§Ã£o para assinar o documento '.$objProtocoloDTO->getStrProtocoloFormatado().'.');
+						$objInfraException->adicionarValidacao('Usuário externo '.$objUsuarioDTO->getStrSigla().' não recebeu liberação para assinar o documento '.$objProtocoloDTO->getStrProtocoloFormatado().'.');
 					}
 				}
 	
 				if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_DOCUMENTO_GERADO){
 					if ($objProtocoloDTO->getStrSinPublicado()=='S'){
-						$objInfraException->adicionarValidacao('Documento '.$objProtocoloDTO->getStrProtocoloFormatado().' jÃ¡ foi publicado.');
+						$objInfraException->adicionarValidacao('Documento '.$objProtocoloDTO->getStrProtocoloFormatado().' já foi publicado.');
 					}
 	
 					if ($objProtocoloDTO->getStrStaDocumentoDocumento()==DocumentoRN::$TD_FORMULARIO_AUTOMATICO){
-						$objInfraException->adicionarValidacao('FormulÃ¡rio '.$objProtocoloDTO->getStrProtocoloFormatado().' nÃ£o pode receber assinatura.');
+						$objInfraException->adicionarValidacao('Formulário '.$objProtocoloDTO->getStrProtocoloFormatado().' não pode receber assinatura.');
 					}
 	
 					if ($objProtocoloDTO->getStrStaDocumentoDocumento()==DocumentoRN::$TD_EDITOR_EDOC){
-						$objInfraException->adicionarValidacao('NÃ£o Ã© possÃ­vel assinar documentos gerados pelo e-Doc ('.$objProtocoloDTO->getStrProtocoloFormatado().').');
+						$objInfraException->adicionarValidacao('Não é possível assinar documentos gerados pelo e-Doc ('.$objProtocoloDTO->getStrProtocoloFormatado().').');
 					}
 				}
 	
@@ -1360,7 +1360,7 @@ class MdPetDocumentoRN extends InfraRN {
 				$dto = $objAssinaturaRN->consultarRN1322($dto);
 	
 				if ($dto != null){
-					$objInfraException->adicionarValidacao('Documento '.$objProtocoloDTO->getStrProtocoloFormatado().' jÃ¡ foi assinado por "'.$dto->getStrNomeUsuario().'".');
+					$objInfraException->adicionarValidacao('Documento '.$objProtocoloDTO->getStrProtocoloFormatado().' já foi assinado por "'.$dto->getStrNomeUsuario().'".');
 				}
 	
 				if ($objProtocoloDTO->getStrStaDocumentoDocumento()==DocumentoRN::$TD_EDITOR_INTERNO) {
@@ -1371,12 +1371,12 @@ class MdPetDocumentoRN extends InfraRN {
 					$objSecaoDocumentoDTO->setNumMaxRegistrosRetorno(1);
 	
 					if ($objSecaoDocumentoRN->consultar($objSecaoDocumentoDTO) == null) {
-						$objInfraException->adicionarValidacao('Documento ' . $objProtocoloDTO->getStrProtocoloFormatado() . ' nÃ£o contÃ©m seÃ§Ã£o de assinatura.');
+						$objInfraException->adicionarValidacao('Documento ' . $objProtocoloDTO->getStrProtocoloFormatado() . ' não contém seção de assinatura.');
 					}
 				}
 	
 				if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_DOCUMENTO_RECEBIDO && $objProtocoloDTO->getNumIdTipoConferenciaDocumento()==null){
-					$objInfraException->adicionarValidacao('Documento ' . $objProtocoloDTO->getStrProtocoloFormatado() . ' nÃ£o possui Tipo de ConferÃªncia informada.');
+					$objInfraException->adicionarValidacao('Documento ' . $objProtocoloDTO->getStrProtocoloFormatado() . ' não possui Tipo de Conferência informada.');
 				}
 			}
 	
@@ -1398,7 +1398,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 					$bcrypt = new InfraBcrypt();
 					if (!$bcrypt->verificar(md5($objAssinaturaDTO->getStrSenhaUsuario()), $objUsuarioDTO->getStrSenha())) {
-						$objInfraException->lancarValidacao('Senha invÃ¡lida.');
+						$objInfraException->lancarValidacao('Senha inválida.');
 					}
 	
 				}
@@ -1419,7 +1419,7 @@ class MdPetDocumentoRN extends InfraRN {
 							$objEditorDTO->setStrSinCabecalho('S');
 							$objEditorDTO->setStrSinRodape('S');
 							$objEditorDTO->setStrSinIdentificacaoVersao('N');
-                            $objEditorDTO->setStrSinCarimboPublicacao('S');
+							$objEditorDTO->setStrSinCarimboPublicacao('S');
 	
 							$objEditorRN = new EditorRN();
 							$strDocumentoHTML = $objEditorRN->consultarHtmlVersao($objEditorDTO);
@@ -1456,7 +1456,7 @@ class MdPetDocumentoRN extends InfraRN {
 					$objAnexoDTO = $objAnexoRN->consultarRN0736($objAnexoDTO);
 	
 					if ($objAnexoDTO==null){
-						$objInfraException->lancarValidacao('Documento '.$objProtocoloDTO->getStrProtocoloFormatado().' nÃ£o possui anexo associado.');
+						$objInfraException->lancarValidacao('Documento '.$objProtocoloDTO->getStrProtocoloFormatado().' não possui anexo associado.');
 					}
 	
 					$objDocumentoConteudoBD = new DocumentoConteudoBD($this->getObjInfraIBanco());
@@ -1501,7 +1501,7 @@ class MdPetDocumentoRN extends InfraRN {
                         $documentoDTOParaAssinar = $arrDocs[0];
 
                         if( $documentoDTOParaAssinar->isSetStrDescricaoTipoConferencia()
-                            && $documentoDTOParaAssinar->getStrDescricaoTipoConferencia() == "do prÃ³prio documento nato-digital" ){
+                            && $documentoDTOParaAssinar->getStrDescricaoTipoConferencia() == "do próprio documento nato-digital" ){
 
                             //vai usar tarja customizada
                             $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura( MdPetAssinaturaRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO );
@@ -1531,7 +1531,7 @@ class MdPetDocumentoRN extends InfraRN {
 				$numIdAtividade = null;
 				if ($objAssinaturaDTO->getStrStaFormaAutenticacao()==AssinaturaRN::$TA_SENHA){
 	
-					//lanÃ§a tarefa de assinatura
+					//lança tarefa de assinatura
 					$arrObjAtributoAndamentoDTO = array();
 					$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
 					$objAtributoAndamentoDTO->setStrNome('DOCUMENTO');
@@ -1541,11 +1541,11 @@ class MdPetDocumentoRN extends InfraRN {
 	
 					$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
 					$objAtributoAndamentoDTO->setStrNome('USUARIO');
-					$objAtributoAndamentoDTO->setStrValor($objUsuarioDTO->getStrSigla().'Â¥'.$objUsuarioDTO->getStrNome());
+					$objAtributoAndamentoDTO->setStrValor($objUsuarioDTO->getStrSigla().'¥'.$objUsuarioDTO->getStrNome());
 					$objAtributoAndamentoDTO->setStrIdOrigem($objUsuarioDTO->getNumIdUsuario());
 					$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 	
-					//Define se o propÃ³sito da operaÃ§Ã£o Ã© assinar ou autenticar o documento
+					//Define se o propósito da operação é assinar ou autenticar o documento
 					$numIdTarefaAssinatura = TarefaRN::$TI_ASSINATURA_DOCUMENTO;
 					if($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_RECEBIDO) {
 						$numIdTarefaAssinatura = TarefaRN::$TI_AUTENTICACAO_DOCUMENTO;
@@ -1561,7 +1561,7 @@ class MdPetDocumentoRN extends InfraRN {
 					$numIdAtividade = $objAtividadeDTO->getNumIdAtividade();
 				}
 	
-				//remove ocorrÃªncia pendente, se existir
+				//remove ocorrência pendente, se existir
 				$dto = new AssinaturaDTO();
 				$dto->retNumIdAssinatura();
 				$dto->setDblIdDocumento($objProtocoloDTO->getDblIdProtocolo());
@@ -1647,7 +1647,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 	
 			if (!file_exists($strArquivoQRCaminhoCompleto)){
-				$objInfraException->lancarValidacao('Arquivo do QRCode nÃ£o encontrado.');
+				$objInfraException->lancarValidacao('Arquivo do QRCode não encontrado.');
 			}
 	
 			if (filesize($strArquivoQRCaminhoCompleto)==0){
@@ -1655,7 +1655,7 @@ class MdPetDocumentoRN extends InfraRN {
 			}
 	
 			if (($binQrCode = file_get_contents($strArquivoQRCaminhoCompleto))===false){
-				$objInfraException->lancarValidacao('NÃ£o foi possÃ­vel ler o arquivo do QRCode.');
+				$objInfraException->lancarValidacao('Não foi possível ler o arquivo do QRCode.');
 			}
 	
 			$objDocumentoConteudoDTO->setStrQrCodeAssinatura(base64_encode($binQrCode));

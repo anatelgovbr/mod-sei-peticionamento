@@ -1419,6 +1419,7 @@ class MdPetDocumentoRN extends InfraRN {
 							$objEditorDTO->setStrSinCabecalho('S');
 							$objEditorDTO->setStrSinRodape('S');
 							$objEditorDTO->setStrSinIdentificacaoVersao('N');
+                            $objEditorDTO->setStrSinCarimboPublicacao('S');
 	
 							$objEditorRN = new EditorRN();
 							$strDocumentoHTML = $objEditorRN->consultarHtmlVersao($objEditorDTO);

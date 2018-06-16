@@ -11,10 +11,10 @@ require_once dirname(__FILE__).'/../web/Sip.php';
 class MdPetAtualizadorSipRN extends InfraRN {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.1.0';
+    private $versaoAtualDesteModulo = '2.0.0';
     private $nomeDesteModulo = 'PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1','0.0.2','1.0.3','1.0.4','1.1.0');
+    private $historicoVersoes = array('0.0.1','0.0.2','1.0.3','1.0.4','1.1.0', '2.0.0');
 
     public function __construct(){
         parent::__construct();
@@ -72,6 +72,312 @@ class MdPetAtualizadorSipRN extends InfraRN {
         die;
     }
 
+    //Contem atualizações da versao 2.0.0
+    protected function instalarv200(){
+    	
+    	$arrAuditoria = array();
+    	
+    	//criar novo grupo de auditoria
+    	$objSistemaRN = new SistemaRN();
+    	$objPerfilRN = new PerfilRN();
+    	$objMenuRN = new MenuRN();
+    	$objItemMenuRN = new ItemMenuRN();
+    	$objRecursoRN = new RecursoRN();
+    	
+    	$objSistemaDTO = new SistemaDTO();
+    	$objSistemaDTO->retNumIdSistema();
+    	$objSistemaDTO->setStrSigla('SEI');
+    	
+    	$objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
+    	
+    	if ($objSistemaDTO == null){
+    		throw new InfraException('Sistema SEI não encontrado.');
+    	}
+    	
+    	$numIdSistemaSei = $objSistemaDTO->getNumIdSistema();
+    	
+    	$objPerfilDTO = new PerfilDTO();
+    	$objPerfilDTO->retNumIdPerfil();
+    	$objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+    	$objPerfilDTO->setStrNome('Administrador');
+    	$objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
+    	
+    	if ($objPerfilDTO == null){
+    		throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
+    	}
+    	
+    	$numIdPerfilSeiAdministrador = $objPerfilDTO->getNumIdPerfil();
+    	
+    	$objPerfilBasicoDTO = new PerfilDTO();
+    	$objPerfilBasicoDTO->retNumIdPerfil();
+    	$objPerfilBasicoDTO->setNumIdSistema($numIdSistemaSei);
+    	$objPerfilBasicoDTO->setStrNome('Básico');
+    	$objPerfilBasicoDTO = $objPerfilRN->consultar( $objPerfilBasicoDTO );
+    	
+    	if ($objPerfilBasicoDTO== null){
+    		throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
+    	}
+
+    	$numIdPerfilSeiBasico = $objPerfilBasicoDTO->getNumIdPerfil();
+
+    	$objMenuDTO = new MenuDTO();
+    	$objMenuDTO->retNumIdMenu();
+    	$objMenuDTO->setNumIdSistema($numIdSistemaSei);
+    	$objMenuDTO->setStrNome('Principal');
+    	$objMenuDTO = $objMenuRN->consultar($objMenuDTO);
+    	
+    	if ($objMenuDTO == null){
+    		throw new InfraException('Menu do sistema SEI não encontrado.');
+    	}
+    	
+    	$numIdMenuSei = $objMenuDTO->getNumIdMenu();
+    	
+    	$objItemMenuDTO = new ItemMenuDTO();
+    	$objItemMenuDTO->retNumIdItemMenu();
+    	$objItemMenuDTO->setNumIdSistema($numIdSistemaSei);
+    	$objItemMenuDTO->setStrRotulo('Administração');
+    	$objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
+    	
+    	if ($objItemMenuDTO == null){
+    		throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
+    	}
+    	
+    	//SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    	$this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+    	
+    	$objRegraAuditoriaDTO = new RegraAuditoriaDTO();
+    	$objRegraAuditoriaDTO->retNumIdRegraAuditoria();
+    	$objRegraAuditoriaDTO->setNumIdSistema($numIdSistemaSei);
+    	$objRegraAuditoriaDTO->setStrDescricao('Modulo_Peticionamento_Eletronico');
+    	
+    	$objRegraAuditoriaRN = new RegraAuditoriaRN();
+    	$objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
+    	
+    	//recupera o ID do menu Peticionamento Eletronico
+    	$objItemMenuDTOPeticionamentoEletronico = new ItemMenuDTO();
+    	$objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
+    	$objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
+    	$objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
+    	$objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+    	
+    	//add menu default
+    	$objItemMenuIntimacaoTacita = $this->adicionarItemMenu($numIdSistemaSei,
+    			$numIdPerfilSeiAdministrador,
+    			$numIdMenuSei,
+    			$objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
+    			'',
+    			'Intimação Eletrônica',
+    			70);
+    	
+    	//Cadastro de Menus
+    	// Prazo Tácito
+    	$objMenuListarDTO1 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_prazo_tacita_alterar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_prazo_tacita_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_prazo_tacita_consultar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_prazo_tacita_listar');
+
+    	//tipo de documento
+    	$objMenuListarDTO3 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,     'md_pet_int_serie_cadastrar');
+
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_serie_listar');
+		
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,     'md_pet_int_serie_alterar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,     'md_pet_int_serie_excluir');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,     'md_pet_int_serie_desativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,     'md_pet_int_serie_reativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_serie_selecionar');
+
+    	//tipo de resposta
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_resp_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_resp_alterar');
+    	
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_tipo_resp_consultar');
+
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_resp_listar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_resp_desativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_resp_reativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_resp_excluir');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_resp_selecionar');
+    	
+    	//tipo de intimacao
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador    , 'md_pet_int_tipo_intimacao_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador    , 'md_pet_int_tipo_intimacao_alterar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador    , 'md_pet_int_tipo_intimacao_selecionar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico           , 'md_pet_int_tipo_intimacao_consultar');
+		
+		$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador    , 'md_pet_int_tipo_intimacao_listar');
+    	$objMenuListarDTO2 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico           , 'md_pet_int_tipo_intimacao_listar');
+		
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_intimacao_desativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_intimacao_reativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_intimacao_excluir');
+    	
+    	//rel intimacao x resposta
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_intim_resp_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_intim_resp_alterar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_intim_resp_excluir');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_intim_resp_consultar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_intim_resp_listar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_intim_resp_desativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_intim_resp_reativar');
+    	
+    	//cadastro destinatario
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,'md_pet_int_rel_destinatario_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,'md_pet_int_rel_destinatario_alterar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,'md_pet_int_rel_destinatario_excluir');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,'md_pet_int_rel_destinatario_listar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,'md_pet_int_rel_destinatario_consultar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,'md_pet_int_rel_destinatario_desativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,'md_pet_int_rel_destinatario_reativar');
+    	
+    	//gerar intimacao + listar intimaçao
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_intimacao_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_intimacao_consultar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_intimacao_listar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_intimacao_eletronica_listar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_dest_resposta_listar');
+    	
+    	//Aceitar/Consultar Intimacao
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_intimacao_usu_ext_confirmar_aceite');
+    	
+    	//responder intimaçao
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_responder_intimacao_usu_ext');
+    	
+    	//rel tipo_resp x intimacao
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_tipo_resp_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_tipo_resp_alterar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_tipo_resp_excluir');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_tipo_resp_listar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_tipo_resp_consultar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_tipo_resp_reativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_rel_tipo_resp_desativar');
+    	
+    	//md_pet_int_documento_cadastrar
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_documento_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_documento_alterar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_documento_excluir');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_documento_reativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_documento_desativar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_documento_consultar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,            'md_pet_int_documento_listar');
+
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_documento_cadastrar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_documento_alterar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_documento_excluir');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_documento_reativar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_documento_desativar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_documento_consultar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_documento_listar');
+
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico,        'md_pet_int_documento_consultar');
+
+    	//md_pet_int_doc_disponivel_cadastrar
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_doc_disponivel_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_doc_disponivel_alterar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_doc_disponivel_excluir');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_doc_disponivel_reativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_doc_disponivel_desativar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_doc_disponivel_listar');
+    	
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_doc_disponivel_consultar');
+    	
+    	//md_pet_int_aceite_cadastrar
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_aceite_cadastrar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_aceite_consultar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_aceite_listar');
+    	$objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_aceite_alterar');
+
+    	//Add para Auditoria
+    	array_push($arrAuditoria,
+    			'\'md_pet_int_prazo_tacita_alterar\'',
+    			'\'md_pet_int_prazo_tacita_cadastrar\'',
+    			'\'md_pet_intimacao_usu_ext_confirmar_aceite\'',
+    			'\'md_pet_responder_intimacao_usu_ext\'',
+    			
+    			'\'md_pet_int_tipo_resp_cadastrar\'',
+    			'\'md_pet_int_tipo_resp_alterar\'',
+    			'\'md_pet_int_tipo_resp_desativar\'',
+    			'\'md_pet_int_tipo_resp_reativar\'',
+    			'\'md_pet_int_tipo_resp_excluir\'',
+    			
+    			'\'md_pet_int_tipo_intimacao_cadastrar\'',
+    			'\'md_pet_int_tipo_intimacao_alterar\'',
+    			'\'md_pet_int_tipo_intimacao_desativar\'',
+    			'\'md_pet_int_tipo_intimacao_reativar\'',
+    			'\'md_pet_int_tipo_intimacao_excluir\'',
+    			'\'md_pet_intimacao_cadastrar\'');
+    	
+    	//Menu Prazo para Intimação Tácita
+    	$this->adicionarItemMenu($numIdSistemaSei,
+    			$numIdPerfilSeiAdministrador,
+    			$numIdMenuSei,
+    			$objItemMenuIntimacaoTacita->getNumIdItemMenu(),
+    			$objMenuListarDTO1->getNumIdRecurso(),
+    			'Prazo para Intimação Tácita',
+    			10);
+    	
+    	//menu Tipo de Intimação
+    	$this->adicionarItemMenu($numIdSistemaSei,
+    			$numIdPerfilSeiAdministrador,
+    			$numIdMenuSei,
+    			$objItemMenuIntimacaoTacita->getNumIdItemMenu(),
+    			$objMenuListarDTO2->getNumIdRecurso(),
+    			'Tipos de Intimação Eletrônica',
+    			20);
+
+    	//menu Tipos de Documentos para Intimação
+    	$this->adicionarItemMenu($numIdSistemaSei,
+    			$numIdPerfilSeiAdministrador,
+    			$numIdMenuSei,
+    			$objItemMenuIntimacaoTacita->getNumIdItemMenu(),
+    			$objMenuListarDTO3->getNumIdRecurso(),
+    			'Tipos de Documentos para Intimação',
+    			30);
+    	
+    	//FIM 8610
+
+        //recupera o ID do menu Relatorio EU9265
+        $objItemMenuDTORelatorioDTO = new ItemMenuDTO();
+        $objItemMenuDTORelatorioDTO->retNumIdItemMenu();
+        $objItemMenuDTORelatorioDTO->setNumIdSistema($numIdSistemaSei);
+        $objItemMenuDTORelatorioDTO->setStrRotulo('Relatórios');
+        $objItemMenuDTORelatorioDTO = $objItemMenuRN->consultar( $objItemMenuDTORelatorioDTO );
+
+        $objItemRecursoIntRelaListarDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_listar');
+        $objItemRecursoDTO1             = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_ht_listar');
+        $objItemRecursoDTO2             = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_exp_excel');
+
+        $this->adicionarItemMenu($numIdSistemaSei,
+            $numIdPerfilSeiBasico,
+            $numIdMenuSei,
+            $objItemMenuDTORelatorioDTO->getNumIdItemMenu(),
+            $objItemRecursoIntRelaListarDTO->getNumIdRecurso(),
+            'Intimações Eletrônicas',
+            30);
+
+    	//ADD para Auditoria todos recursos
+    	$rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+		  '.implode(', ', $arrAuditoria).')'
+    			);
+    	
+    	//CRIANDO REGRA DE AUDITORIA PARA NOVOS RECURSOS RECEM ADICIONADOS
+    	foreach($rs as $recurso){
+    		BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+    	}
+    	
+    	$objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
+    	$objReplicacaoRegraAuditoriaDTO->setStrStaOperacao('A');
+    	$objReplicacaoRegraAuditoriaDTO->setNumIdRegraAuditoria($objRegraAuditoriaDTO->getNumIdRegraAuditoria());
+    	
+    	$objSistemaRN = new SistemaRN();
+    	$objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
+    	
+    	//Atualizando parametro para controlar versao do modulo
+    	$this->logar('ATUALIZANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+    	BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+    	
+    }
+    
     //Contem atualizações da versao 1.1.0
     protected function instalarv110(){
         //criar novo grupo de auditoria
@@ -842,6 +1148,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv100();
                 $this->instalarv104();
                 $this->instalarv110();
+                $this->instalarv200();
                 $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
@@ -852,6 +1159,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv100();
                 $this->instalarv104();
                 $this->instalarv110();
+                $this->instalarv200();
                 $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
@@ -861,6 +1169,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv100();
                 $this->instalarv104();
                 $this->instalarv110();
+                $this->instalarv200();
                 $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
@@ -869,15 +1178,25 @@ class MdPetAtualizadorSipRN extends InfraRN {
             else if( in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3')) ){
                 $this->instalarv104();
                 $this->instalarv110();
+                $this->instalarv200();
                 $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
             //se ja tem 104 instala apenas 110
             else if ( $strVersaoModuloPeticionamento == '1.0.4' ){
                 $this->instalarv110();
+                $this->instalarv200();
                 $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
+            
+            //se ja tem 104 instala apenas 200
+            else if ( $strVersaoModuloPeticionamento == '1.1.0' ){
+            	$this->instalarv200();
+            	$this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
+            	$this->finalizar('FIM', false);
+            }
+            
             //se a versão instalada já é a atual, então não instala nada e avisa
             else {
                 $this->logar('A VERSAO MAIS ATUAL DO MODULO '. $this->nomeDesteModulo .' (v '. $this->versaoAtualDesteModulo .') JA ESTA INSTALADA.');
@@ -1053,7 +1372,16 @@ class MdPetAtualizadorSipRN extends InfraRN {
     }
 
     private function adicionarItemMenu($numIdSistema, $numIdPerfil, $numIdMenu, $numIdItemMenuPai, $numIdRecurso, $strRotulo, $numSequencia ){
-
+/*
+ *   	//add menu default
+    	$objItemMenuIntimacaoTacita = $this->adicionarItemMenu($numIdSistemaSei,
+    			$numIdPerfilSeiAdministrador,
+    			$numIdMenuSei,
+    			$objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
+    			'',
+    			'Intimação Eletrônica',
+    			70);
+ * */
         $objItemMenuDTO = new ItemMenuDTO();
         $objItemMenuDTO->retNumIdItemMenu();
         $objItemMenuDTO->setNumIdMenu($numIdMenu);

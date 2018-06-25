@@ -1,20 +1,16 @@
-# MÛdulo Peticionamento e IntimaÁ„o EletrÙnicos
+# M√≥dulo Peticionamento e Intima√ß√£o Eletr√¥nicos
 
-## Requisitos:
-- SEI 3.0.7 instalado/atualizado ou vers„o superior (verificar valor da constante de vers„o do SEI no arquivo /sei/web/SEI.php).
-	- **IMPORTANTE**, no caso de atualizaÁ„o do presente mÛdulo: A atualizaÁ„o do SEI 2.6 para 3.0 alterou diversas tabelas que as tabelas do mÛdulo relacionava. Dessa forma, alertamos que, imediatamente ANTES de executar o script de atualizaÁ„o do SEI 3.0 È necess·rio executar o script abaixo no banco do SEI para que a atualizaÁ„o do SEI 3.0 possa ocorrer sem erro:
-		
-		ALTER TABLE `md_pet_rel_tp_ctx_contato` DROP FOREIGN KEY `fk_md_pet_rel_tp_ctx_cont_1`;
-		
-- Antes de executar os scripts de instalaÁ„o/atualizaÁ„o (itens 4 e 5 abaixo), o usu·rio de acesso aos bancos de dados do SEI e do SIP, constante nos arquivos ConfiguracaoSEI.php e ConfiguracaoSip.php, dever· ter permiss„o de acesso total ao banco de dados, permitindo, por exemplo, criaÁ„o e exclus„o de tabelas.
+## Requisitos
+- SEI 3.0.11 instalado/atualizado ou vers√£o superior.
+   - Verificar valor da constante de vers√£o no arquivo /sei/web/SEI.php ou, ap√≥s logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
+- Antes de executar os scripts de instala√ß√£o/atualiza√ß√£o (itens 4 e 5 abaixo), o usu√°rio de acesso aos bancos de dados do SEI e do SIP, constante nos arquivos ConfiguracaoSEI.php e ConfiguracaoSip.php, dever√° ter permiss√£o de acesso total ao banco de dados, permitindo, por exemplo, cria√ß√£o e exclus√£o de tabelas.
+- Os c√≥digos-fonte do M√≥dulo podem ser baixados a partir do link a seguir, devendo sempre utilizar a vers√£o mais recente: [https://softwarepublico.gov.br/gitlab/anatel/mod-sei-peticionamento/tags](https://softwarepublico.gov.br/gitlab/anatel/mod-sei-peticionamento/tags "Clique e acesse")
+- Solicitamos que os √ìrg√£os que tenham instalado o M√≥dulo preencham a pesquisa a seguir, para termos um feedback sobre sua utiliza√ß√£o: [https://goo.gl/gubYLL](https://goo.gl/gubYLL "Clique e acesse")
 
-## Procedimentos para InstalaÁ„o:
-
+## Procedimentos para Instala√ß√£o
 1. Antes, fazer backup dos bancos de dados do SEI e do SIP.
-
-2. Carregar no servidor os arquivos do mÛdulo localizados na pasta "/sei/web/modulos/peticionamento" e os scripts de instalaÁ„o/atualizaÁ„o "/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php" e "/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php".
-
-3. Editar o arquivo "/sei/config/ConfiguracaoSEI.php", tomando o cuidado de usar editor que n„o altere o charset do arquivo, para adicionar a referÍncia ‡ classe de integraÁ„o do mÛdulo e seu caminho relativo dentro da pasta "/sei/web/modulos" na array 'Modulos' da chave 'SEI':
+2. Carregar no servidor os arquivos do m√≥dulo localizados na pasta "/sei/web/modulos/peticionamento" e os scripts de instala√ß√£o/atualiza√ß√£o "/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php" e "/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php".
+3. Editar o arquivo "/sei/config/ConfiguracaoSEI.php", tomando o cuidado de usar editor que n√£o altere o charset do arquivo, para adicionar a refer√™ncia √† classe de integra√ß√£o do m√≥dulo e seu caminho relativo dentro da pasta "/sei/web/modulos" na array 'Modulos' da chave 'SEI':
 
 		'SEI' => array(
 			'URL' => 'http://[Servidor_PHP]/sei',
@@ -23,55 +19,31 @@
 			'Modulos' => array('PeticionamentoIntegracao' => 'peticionamento',)
 			),
 
-4. Rodar o script de banco "/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SEI, verificando se n„o houve erro em sua execuÁ„o, em que ao final do log dever· ser informado "FIM". Exemplo de comando de execuÁ„o:
+4. Rodar o script de banco "/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SIP, verificando se n√£o houve erro em sua execu√ß√£o, em que ao final do log dever√° ser informado "FIM". Exemplo de comando de execu√ß√£o:
+
+		/usr/bin/php -c /etc/php.ini /opt/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php > atualizacao_peticionamento_sip.log
+
+5. Rodar o script de banco "/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SEI, verificando se n√£o houve erro em sua execu√ß√£o, em que ao final do log dever√° ser informado "FIM". Exemplo de comando de execu√ß√£o:
 
 		/usr/bin/php -c /etc/php.ini /opt/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php > atualizacao_modulo_peticionamento_sei.log
 
-5. Rodar o script de banco "/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SIP, verificando se n„o houve erro em sua execuÁ„o, em que ao final do log dever· ser informado "FIM". Exemplo de comando de execuÁ„o:
+6. Ap√≥s a execu√ß√£o com sucesso, com um usu√°rio com permiss√£o de Administrador no SEI, seguir os passos dispostos no t√≥pico "Orienta√ß√µes Negociais" mais abaixo.
+7. **IMPORTANTE**: Na execu√ß√£o dos dois scripts acima, ao final deve constar o termo "FIM" e informa√ß√£o de que a instala√ß√£o ocorreu com sucesso (SEM ERROS). Do contr√°rio, o script n√£o foi executado at√© o final e algum dado n√£o foi inserido/atualizado no banco de dados correspondente, devendo recuperar o backup do banco pertinente e repetir o procedimento.
+		- Constando o termo "FIM" e informa√ß√£o de que a instala√ß√£o ocorreu com sucesso, pode logar no SEI e SIP e verificar no menu Infra > Par√¢metros dos dois sistemas se consta o par√¢metro "VERSAO_MODULO_PETICIONAMENTO" com o valor da √∫ltima vers√£o do m√≥dulo.
+8. Em caso de erro durante a execu√ß√£o do script, verificar (lendo as mensagens de erro e no menu Infra > Log do SEI e do SIP) se a causa √© algum problema na infraestrutura local ou ajustes indevidos na estrutura de banco do core do sistema. Neste caso, ap√≥s a corre√ß√£o, deve recuperar o backup do banco pertinente e repetir o procedimento, especialmente a execu√ß√£o dos scripts indicados nos itens 4 e 5 acima.
+	- Caso n√£o seja poss√≠vel identificar a causa, entrar em contato com: Nei Jobson - neijobson@anatel.gov.br
 
-		/usr/bin/php -c /etc/php.ini /opt/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php > atualizacao_modulo_peticionamento_sip.log
-
-6. ApÛs a execuÁ„o com sucesso, com um usu·rio com permiss„o de Administrador no SEI, seguir os passos dispostos no tÛpico OrientaÁıes Negociais, abaixo.
-
-7. **IMPORTANTE**: Na execuÁ„o dos dois scripts acima, ao final deve constar o termo "FIM" e informaÁ„o de que a instalaÁ„o ocorreu com sucesso (SEM ERROS). Do contr·rio, o script n„o foi executado atÈ o final e algum dado n„o foi inserido/atualizado no banco de dados correspondente, devendo recuperar o backup do banco pertinente e repetir o procedimento.
-		- Constando o termo "FIM" e informaÁ„o de que a instalaÁ„o ocorreu com sucesso, pode logar no SEI e SIP e verificar no menu Infra > Par‚metros se consta o par‚metro "VERSAO_MODULO_PETICIONAMENTO" com o valor da ˙ltima vers„o do mÛdulo.
-
-8. Em caso de erro durante a execuÁ„o do script verificar (lendo as mensagens de erro e no menu Infra > Log do SEI e do SIP) se a causa È algum problema na infra-estrutura local. Neste caso, apÛs a correÁ„o, deve recuperar o backup do banco pertinente e repetir o procedimento, especialmente a execuÁ„o dos scripts indicados nos itens 4 e 5 acima.
-	- Caso n„o seja possÌvel identificar a causa, entrar em contato com: Nei Jobson - neijobson@anatel.gov.br
-
-## OrientaÁıes Negociais:
-
-1. Imediatamente apÛs a instalaÁ„o com sucesso, com usu·rio com permiss„o de "Administrador" do SEI, È necess·rio realizar as parametrizaÁıes do mÛdulo no menu AdministraÁ„o > Peticionamento EletrÙnico, para que o mÛdulo seja utilizado adequadamente pelos Usu·rios Externos na tela de Acesso Externo do SEI:
+## Orienta√ß√µes Negociais
+1. Imediatamente ap√≥s a instala√ß√£o com sucesso, com usu√°rio com permiss√£o de "Administrador" do SEI, acessar os menus de administra√ß√£o do M√≥dulo pelo seguinte caminho: Administra√ß√£o > Peticionamento Eletr√¥nico. Somente com tudo parametrizado adequadamente ser√° poss√≠vel o uso do m√≥dulo pelos Usu√°rios Externos por meio da tela de Acesso Externo do SEI:
 
 		http://[Servidor_PHP]/sei/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0
 
-2. Ainda com usu·rio com permiss„o de "Administrador" do SEI, È necess·rio cadastrar os "Cargos", "Tratamentos", "Vocativos" e "Tipos" no menu AdministraÁ„o > Contatos.
-	- Os "Cargos" ser„o utilizados pelos Usu·rios Externos na seleÁ„o do "Cargo/FunÁ„o" na assinatura de cada Peticionamento e tambÈm no cadastro de novos Interessados.
-	- Os demais registros acima ser„o utilizados no cadastro de novos Interessados pelos Usu·rios Externos.
-	- Caso a instalaÁ„o do SEI do Ûrg„o n„o possua as parametrizaÁıes acima, sugerimos como exemplo a lista disponibilizada no link a seguir, mapeada no ‚mbito do PEN: [https://goo.gl/NqikRu](https://goo.gl/NqikRu "Clique e acesse")
-
-3. Outro ponto importante È a parametrizaÁ„o do menu AdministraÁ„o > Peticionamento EletrÙnico > HipÛteses Legais Permitidas. Contudo, antes, exige que no menu AdministraÁ„o > HipÛteses Legais > Listar j· contenha uma lista bem definida de uso pelo Ûrg„o, com todas as opÁıes legais aplic·veis, inclusive em raz„o de Lei prÛprio do Ûrg„o, pois, na medida que se disponibiliza HipÛteses Legais aplic·veis, melhor ser„o as indicaÁıes de RestriÁ„o.
-	- Caso a instalaÁ„o do SEI do Ûrg„o n„o possua lista de HipÛteses Legais ou a lista tenha poucas opÁıes, sugerimos como exemplo a lista disponibilizada no link a seguir, mapeada no ‚mbito do PEN: [https://goo.gl/JzycpM](https://goo.gl/JzycpM "Clique e acesse")
-
-4. AtenÁ„o especial para as parametrizaÁıes de Aplicabilidade dos Tipos de Documentos, pois os Tipos com Aplicabilidade "Documentos Externos" e "Documentos Internos e Externos" s„o apresentados como opÁıes de Tipos de Documentos na AdministraÁ„o > Peticionamento EletrÙnico > Tipos para Peticionamento na indicaÁ„o dos Tipos permitidos para Documento Principal, Essenciais e Complementares e, ainda, na tela dos Usu·rios Externos na tela de Peticionamento Intercorrente no combo "Tipo de Documento". Importante lembrar que a lista de Tipos de Documentos Externos devem ser de EspÈcies Documentais, ou seja, deve ser sempre complementado.
-	- Caso a instalaÁ„o do SEI do Ûrg„o n„o possua lista adequada de Tipos de Documentos com as Aplicabilidades acima, sugerimos como exemplo a lista disponibilizada no link a seguir, mapeada no ‚mbito do PEN: [https://goo.gl/1JuEqA](https://goo.gl/1JuEqA "Clique e acesse")
-
-5. Destacamos que a janela de Cadastro de Interessado na tela de Peticionamento de Processo Novo È aberta ao Validar CPF ou CPNJ em duas situaÁıes: (i) quando o CPF ou CNPJ n„o existir na tabela "contato" no banco do SEI ou (ii) quando existir mais de um registro na referida tabela com o mesmo CPF ou CNPJ. A segunda regra visa a priorizar o cadastro novo feito por meio do mÛdulo pelo prÛprio Usu·rio Externo, que geralmente possui mais dados sobre o Interessado.
-	- **IMPORTANTE**: sugere-se que o Ûrg„o faÁa uma extraÁ„o da tabela "contato" e faÁa an·lises para levantar os cadastros com CPF ou CNPJ duplicados, para resolver as duplicaÁıes, mantendo um sÛ cadastro por CPF ou CNPJ.
-
-6. Peticionamento Intercorrente:
-	- Os Usu·rios Externos somente visualizar„o o menu Peticionamento > Intercorrente depois que na AdministraÁ„o for configurado pelo menos o "Intercorrente Padr„o".
-	- A abertura de processo novo relacionado ao processo de fato indicado pelo Usu·rio Externo ocorrer· quando este corresponder a processo: 1) de Tipo de Processo sem CritÈrio Intercorrente parametrizado; 2) com NÌvel de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado; ou 4) de Tipo de Processo desativado.
-		- Em todos os casos acima a forma de indicaÁ„o de NÌvel de Acesso pelo Usu·rio Externo ser· a indicada em AdministraÁ„o > Peticionamento EletrÙnico > CritÈrios para Intercorrente > bot„o "Intercorrente Padr„o". Somente no caso 4 È que o Tipo de Processo tambÈm ser· o indicado para "Intercorrente Padr„o".
-	- Se TODAS as Unidades por onde o processo indicado tenha tramitado estiverem Desativadas no SEI, o Usu·rio Externo ser· avisado que o Peticionamento Intercorrente n„o È possÌvel, devendo utilizar a funcionalidade de Peticionamento de Processo Novo.
-
-7. N„o foi possÌvel fazer um Manual do Usu·rio Externo genÈrico para qualquer Ûrg„o, em raz„o das especificidades de cada Ûrg„o quanto aos procedimentos de credenciamento dos Usu·rios Externos e atÈ mesmo de parametrizaÁ„o do MÛdulo. De qualquer forma, segue link para o Manual do Usu·rio Externo do SEI elaborado pela Anatel que pode ser quase que completamente aproveitado para elaboraÁ„o de outros Manuais: [https://goo.gl/eyJr12](https://goo.gl/eyJr12 "Clique e acesse")
-
-8. Acesse o Manual de AdministraÁ„o do MÛdulo (ainda em construÁ„o): [https://goo.gl/pqIoZY](https://goo.gl/pqIoZY "Clique e acesse")
-
-9. Ainda, conforme pode ser observado no Manual do Usu·rio Externo disponibilizado no item 7 acima, È extremamente recomendado que o Ûrg„o tenha bem definido procedimento para cadastro e liberaÁ„o de Usu·rios Externos no SEI, preferencialmente com assinatura e entrega de "Termo de DeclaraÁ„o de Concord‚ncia e Veracidade" juntamente com documento que contenha n˙mero de CPF.
-	- Segue link para exemplo de Termo que pode ser utilizado, desde que ajuste a indicaÁ„o do endereÁo para envio da correspondÍncia. Sugerimos que seja disponibilizado em formato PDF: [https://goo.gl/u7dfFs](https://goo.gl/u7dfFs "Clique e acesse")
-
-10. Por fim, È aconselh·vel dar publicidade a registros de indisponibilidades do SEI. De qualquer forma, segue URL da p·gina p˙blica que lista os cadastrados realizados no menu AdministraÁ„o > Peticionamento EletrÙnico > Indisponibilidades do SEI:
-
-		http://[Servidor_PHP]/sei/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo=0
+2. O script de banco do SIP j√° cria todos os Recursos e Menus e os associam automaticamente ao Perfil "B√°sico" ou ao Perfil "Administrador".
+	- Independente da cria√ß√£o de outros Perfis, os recursos indicados para o Perfil "B√°sico" ou "Administrador" devem manter correspond√™ncia com os Perfis dos Usu√°rios internos que utilizar√£o o M√≥dulo e dos Usu√°rios Administradores do M√≥dulo.
+	- O SIP n√£o controla Perfil pr√≥prio para os Usu√°rios Externos, cabendo diretamente ao c√≥digo do M√≥dulo o controle devido junto aos Recursos e Menus criados pelo M√≥dulo para os Usu√°rios Externos.
+	- T√£o quanto ocorre com as atualiza√ß√µes do SEI, vers√µes futuras deste M√≥dulo continuar√£o a atualizar e criar Recursos e associ√°-los apenas aos Perfis "B√°sico" e "Administrador".
+	- Todos os recursos do M√≥dulo iniciam pelo sufix **"md_pet_"**.
+3. Acesse no link a seguir o Manual de Administra√ß√£o [https://goo.gl/pqIoZY](https://goo.gl/pqIoZY "Clique e acesse")
+4. Acesse no link a seguir o Manual do Usu√°rio Interno: [https://goo.gl/oo34ur](https://goo.gl/oo34ur "Clique e acesse")
+5. Acesse no link a seguir o Manual do Usu√°rio Externo: [https://goo.gl/eyJr12](https://goo.gl/eyJr12 "Clique e acesse")
+	- N√£o foi poss√≠vel fazer um Manual do Usu√°rio Externo gen√©rico para qualquer √≥rg√£o, em raz√£o das especificidades de cada √≥rg√£o quanto aos procedimentos de credenciamento dos Usu√°rios Externos e at√© mesmo de parametriza√ß√£o do M√≥dulo. De qualquer forma, o Manual do Usu√°rio Externo do SEI elaborado pela Anatel, acima, que pode ser quase que completamente aproveitado.

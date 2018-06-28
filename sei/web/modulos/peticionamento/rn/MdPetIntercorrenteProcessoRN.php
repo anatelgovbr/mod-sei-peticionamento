@@ -645,7 +645,9 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		return $ret;
 	}
 
-	private function assinarETravarDocumento( $documento )
+
+
+	public function assinarETravarDocumento($documento)
 	{
 		//consultar email da unidade (orgao)
 		$orgaoDTO           = $this->getOrgaoDTO();
@@ -1181,7 +1183,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 		$arrDtoDestinatario = $rnDestinatario->listar( $dtoDestinatario );
 
-		$idRelDest = $arrDtoDestinatario[0]->getNumIdMdPetIntRelDestinatario();
+		$idRelDest       = $arrDtoDestinatario[0]->getNumIdMdPetIntRelDestinatario();
+		$idAcessoExterno = $arrDtoDestinatario[0]->getNumIdAcessoExterno();
 
 		$objMdPetIntDestRespostaDTO->setNumIdMdPetIntRelDestinatario(	$idRelDest );
 
@@ -1206,7 +1209,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$dtoIntimacao->setNumIdMdPetIntimacao( $id_intimacao );
 		$dtoIntimacao = $rnIntimacao->consultar( $dtoIntimacao );
 
-		$sinTipoAcesso = $dtoIntimacao->getStrSinTipoAcessoProcesso();
+		$sinTipoAcesso = $this->_getTipoAcessoExterno($idAcessoExterno);
 
 		if( is_array( $arrObjMdPetRelReciboDocumentoAnexoDTO ) && count( $arrObjMdPetRelReciboDocumentoAnexoDTO ) > 0 ){
 
@@ -1228,7 +1231,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 			//so precisa intervir no acesso externo (para adicionar docs a mais nele, ou seja, ampliar o acesso ext) caso se trate de acesso ext parcial, para acesso integral nao é necessário intervir
 
-			if( $sinTipoAcesso == MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL ){
+			if(!is_null($sinTipoAcesso) && $sinTipoAcesso == MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL ){
 
 				$objRelDestRN = new MdPetIntRelDestinatarioRN();
 				$objRelDestDTO = new MdPetIntRelDestinatarioDTO();
@@ -1286,6 +1289,15 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$objMdPetIntDestRespostaRN->lancarAndamentoRecibo($arrParametros);
 
 
+	}
+	
+	private function _getTipoAcessoExterno($idAcessoExterno){
+		$objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
+		$arrRetorno = $objMdPetAcessoExternoRN->getTipoAcessoExternoPorAcessoExterno(array($idAcessoExterno));
+
+		$tpAcesso = array_key_exists($idAcessoExterno, $arrRetorno) ? $arrRetorno[$idAcessoExterno] : null;
+
+		return $tpAcesso;
 	}
 
 

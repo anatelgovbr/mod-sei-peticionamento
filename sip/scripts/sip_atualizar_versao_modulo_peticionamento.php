@@ -12,13 +12,12 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
     private $numSeg = 0;
     private $versaoAtualDesteModulo = '2.0.0';
-    private $nomeDesteModulo = 'PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
+    private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1','0.0.2','1.0.3','1.0.4','1.1.0', '2.0.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0');
 
     public function __construct(){
         parent::__construct();
-        $this->inicializar(' SIP - INICIALIZAR ');
     }
 
     protected function inicializarObjInfraIBanco(){
@@ -26,7 +25,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
     }
 
     private function inicializar($strTitulo){
-
         ini_set('max_execution_time','0');
         ini_set('memory_limit','-1');
 
@@ -143,7 +141,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
     	}
     	
     	//SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    	$this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+    	$this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
     	
     	$objRegraAuditoriaDTO = new RegraAuditoriaDTO();
     	$objRegraAuditoriaDTO->retNumIdRegraAuditoria();
@@ -460,7 +458,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
         //SIP v 0.0.1 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 0.0.1 NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_extensoes_arquivo_peticionamento_cadastrar', 'md_pet_extensoes_arquivo_cadastrar');
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_tamanho_arquivo_peticionamento_cadastrar', 'md_pet_tamanho_arquivo_cadastrar');
@@ -499,7 +497,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
 
         //SIP v 0.0.2 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 0.0.2 NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_listar', 'md_pet_menu_usu_ext_listar');
 
@@ -517,7 +515,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
 
         //SIP v 1.0.0 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 1.0.0 NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //Hipoteses Legais Permitidas
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'hipotese_legal_nl_acesso_peticionamento_cadastrar', 'md_pet_hipotese_legal_nl_acesso_cadastrar');
@@ -527,13 +525,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
 
         //SIP v 1.0.4 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' v 1.0.4 NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //SIP v 1.0.4 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
         //criando os recursos e vinculando-os aos perfil Administrador
         //recursos que serao chamados via menus vem primeiro
         $objRecursoComMenuDTO1 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,'md_pet_intercorrente_criterio_listar');
@@ -684,7 +682,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
         //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //criando os recursos e vinculando-os ao perfil Administrador
         //recursos que serao chamados via menus vem primeiro
@@ -822,7 +820,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
         //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //criando os recursos e vinculando-os aos perfil Administrador
         //recursos que serao chamados via menus vem primeiro
@@ -982,7 +980,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
         //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //criando os recursos e vinculando-os aos perfil Administrador
         //recursos que serao chamados via menus vem primeiro
@@ -1103,13 +1101,12 @@ class MdPetAtualizadorSipRN extends InfraRN {
         //Adicionando parametro para controlar versao do modulo
         $this->logar('ADICIONANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \''. $this->nomeParametroModulo .'\' )' );
-
     }
 
     protected function atualizarVersaoConectado(){
 
-        try{
-            $this->inicializar('INICIANDO ATUALIZACAO DO MODULO '. $this->nomeDesteModulo .' NO SIP VERSAO '.SIP_VERSAO);
+        try {
+            $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SIP VERSÃO ' . SIP_VERSAO);
 
             //testando versao do framework
             $numVersaoInfraRequerida = '1.385';
@@ -1117,14 +1114,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
             $versaoInfraReqFormatada = (int) str_replace('.','', $numVersaoInfraRequerida);
             
             if ($versaoInfraFormatada < $versaoInfraReqFormatada){
-            	$this->finalizar('VERSAO DO FRAMEWORK PHP INCOMPATIVEL (VERSAO ATUAL '.VERSAO_INFRA.', SENDO REQUERIDA VERSAO IGUAL OU SUPERIOR A '.$numVersaoInfraRequerida.')',true);
+            	$this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL '.VERSAO_INFRA.', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A '.$numVersaoInfraRequerida.')',true);
             }
 
             //checando BDs suportados
             if (!(BancoSip::getInstance() instanceof InfraMySql) &&
                 !(BancoSip::getInstance() instanceof InfraSqlServer) &&
-                !(BancoSip::getInstance() instanceof InfraOracle)){
-                $this->finalizar('BANCO DE DADOS NAO SUPORTADO: '.get_parent_class(BancoSip::getInstance()),true);
+                !(BancoSip::getInstance() instanceof InfraOracle)) {
+                $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSip::getInstance()), true);
             }
 
             //checando permissoes na base de dados
@@ -1149,7 +1146,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
 
@@ -1160,7 +1157,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
 
@@ -1170,7 +1167,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
 
@@ -1179,28 +1176,28 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
             //se ja tem 104 instala apenas 110
             else if ( $strVersaoModuloPeticionamento == '1.0.4' ){
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
             
             //se ja tem 104 instala apenas 200
             else if ( $strVersaoModuloPeticionamento == '1.1.0' ){
             	$this->instalarv200();
-            	$this->logar('ATUALIZAÇÔES DA VERSÃO '. $this->versaoAtualDesteModulo .' DO MODULO '. $this->nomeDesteModulo .' INSTALADAS COM SUCESSO NA BASE DO SIP');
+            	$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
             	$this->finalizar('FIM', false);
             }
             
             //se a versão instalada já é a atual, então não instala nada e avisa
             else {
-                $this->logar('A VERSAO MAIS ATUAL DO MODULO '. $this->nomeDesteModulo .' (v '. $this->versaoAtualDesteModulo .') JA ESTA INSTALADA.');
-                $this->finalizar('FIM', true);
+                $this->logar('A VERSÃO MAIS ATUAL DO '. $this->nomeDesteModulo .' (v'. $this->versaoAtualDesteModulo .') JÁ ESTÁ INSTALADA.');
+                $this->finalizar('FIM', false);
             }
 
             InfraDebug::getInstance()->setBolLigado(false);

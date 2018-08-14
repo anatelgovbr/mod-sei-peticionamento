@@ -168,6 +168,7 @@ class MdPetContatoINT extends ContatoINT {
 				if(count($arrDocumentoIntimacao) > 0){
 					$possuiIntimacao = $destinatario->getNumIdMdPetIntimacao();
 					$situacao = !is_null($destinatario->getStrStaSituacaoIntimacao()) && $destinatario->getStrStaSituacaoIntimacao() != 0 ? $arrSituacao[$destinatario->getStrStaSituacaoIntimacao()] :MdPetIntimacaoRN::$STR_SITUACAO_NAO_CADASTRADA;
+					$dataIntimacao = $destinatario->getDthDataCadastro() ? substr($destinatario->getDthDataCadastro(),0,10) : '';
 				}
 			}
 			$objIntimacaoRN = new MdPetIntimacaoRN();
@@ -189,6 +190,7 @@ class MdPetContatoINT extends ContatoINT {
 			$xml .= '<Situacao>'. $situacao .'</Situacao>';
 			$xml .= '<Intimacao>'. $possuiIntimacao .'</Intimacao>';
 			$xml .= '<Url>'.$montaLink.'</Url>';
+			$xml .= '<DataIntimacao>'. $dataIntimacao .'</DataIntimacao>';
 			$xml .= '</Documento>';
 		}else{
 			$xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
@@ -199,6 +201,7 @@ class MdPetContatoINT extends ContatoINT {
 			$xml['Situacao'] = $situacao;
 			$xml['Intimacao'] = $possuiIntimacao;
 			$xml['Url'] = $montaLink;
+			$xml['DataIntimacao'] = $dataIntimacao;
 		}
 		
 		return $xml;

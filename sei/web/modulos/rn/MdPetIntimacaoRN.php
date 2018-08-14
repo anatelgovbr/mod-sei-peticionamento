@@ -1772,15 +1772,16 @@ class MdPetIntimacaoRN extends InfraRN {
 
     protected function existeIntimacaoPrazoValidoConectado($arrParams)
     {
-       $idAcessoExt = false;
+      $idAcessoExt = false;
 
-        if(is_array($arrParams)){
-            $arrIdsDoc   = $this->_getDocumentosProcesso($arrParams[0]);
-            $idAcessoExt = $arrParams[1];
-        }else{
-            $arrIdsDoc = $this->_getDocumentosProcesso($arrParams);
-        }
+      if(is_array($arrParams)){
+          $arrIdsDoc   = $this->_getDocumentosProcesso($arrParams[0]);
+          $idAcessoExt = $arrParams[1];
+      }else{
+          $arrIdsDoc = $this->_getDocumentosProcesso($arrParams);
+      }
 
+      if (count($arrIdsDoc)==0)  return false;
 
       $isValidoInt = false;
 

@@ -180,7 +180,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <td> <?= $intimacao['Nome'] ?></td>
                                     <td> <?= $intimacao['Email'] ?></td>
                                     <td> <?= InfraUtil::formatarCpf($intimacao['Cpf']) ?></td>
-                                    <td align="center"> <?= $intimacao['Data'] ?></td>
+                                    <td align="center"> <?= $intimacao['DataIntimacao'] ?></td>
                                     <td> <?= $intimacao['Situacao'] ?></td>
                                     <td align="center"><a href='#'
                                                           onclick="abrirIntimacaoCadastrada('<?= $intimacao['Url'] ?>')">
@@ -230,7 +230,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="clear"></div>
 
         <fieldset id="fldDocumentosIntimacao">
-            <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação </legend>
+            <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img style="margin-top:1px; margin-bottom: -3px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até 15 dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n\n\n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.') ?> /></legend>
 
             <!-- Documento Principal-->
             <div class="grid grid_8" style="margin-top:5px">
@@ -243,7 +243,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <input type="checkbox" id="optPossuiAnexo" name="rdoPossuiAnexo" value="S"
                        onclick="esconderAnexos(this)" class="infraCheckbox" <?= (false ? 'checked="checked"' : '') ?>
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelCheckbox">Intimação possui Anexos </label>&nbsp;&nbsp;<img style="margin-top:2px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considera-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou a qualquer um dos Documentos Anexos ou, não efetuada a consulta, por Decurso do Prazo Tácito.') ?> class="infraImg"/>
+                <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelCheckbox">Intimação possui Anexos </label>
             </div>
 
             <div class="clear"></div>
@@ -281,13 +281,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <!-- Integral -->
                     <div id="divOptAno" class="infraDivRadio">
                         <input type="radio" id="optIntegral" name="optIntegral" value="I" class="infraRadio" onclick="mostrarProtocoloParcial(this)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        <label id="lblIntegral" for="optIntegral" accesskey="" class="infraLabelRadio">Integral </label> &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! A escolha do Tipo de Acesso Externo que será concedido junto com a Intimação Eletrônica não poderá ser alterado nem cancelado. Todos os documentos incluídos no Acesso Externo poderão ser visualizados pelos destinatários, independentemente de seus Níveis de Acesso. \n\n\n No caso do Tipo de Acesso Externo Integral, todos os documentos constantes neste processo serão disponibilizados para acesso pelos destinatários desta Intimação, inclusive Protocolos futuros que forem incluídos no processo.') ?> class="infraImg"/>
+                        <label id="lblIntegral" for="optIntegral" accesskey="" class="infraLabelRadio">Integral </label> &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.') ?> class="infraImg"/>
                     </div>
 
                     <!-- Parcial -->
                     <div id="divOptAno" class="infraDivRadio" style="margin-left: 16px;">
                         <input type="radio" id="optParcial" name="optParcial" value="P" class="infraRadio" onclick="mostrarProtocoloParcial(this)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        <label id="lblParcial" for="optParcial" accesskey="" class="infraLabelRadio">Parcial </label> &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! A escolha do Tipo de Acesso Externo que será concedido junto com a Intimação Eletrônica não poderá ser alterado nem cancelado. Todos os documentos incluídos no Acesso Externo poderão ser visualizados pelos destinatários, independentemente de seus Níveis de Acesso. \n\n\n No caso do Tipo de Acesso Externo Parcial, somente os documentos selecionados serão disponibilizados aos destinatários, sendo que o Documento Principal da Intimação e seus eventuais Anexos indicados acima serão necessariamente incluídos, podendo selecionar os demais documentos que sejam pertinentes, evitando futuros pedidos de vistas desnecessários.') ?> class="infraImg"/>
+                        <label id="lblParcial" for="optParcial" accesskey="" class="infraLabelRadio">Parcial </label> &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE serão disponibilizados ao Destinatário o Documento Principal, os Protocolos dos Anexos da Intimação (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos serão automaticamente incluídos no Acesso Parcial. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Parcial não poderá ser alterado nem cancelado. Todos os Protocolos incluídos no Acesso Externo Parcial poderão ser visualizados pelo Destinatário, independentemente de seus Níveis de Acesso, não abrangendo Protocolos futuros que forem adicionados ao processo.') ?> class="infraImg"/>
                     </div>
                 </div>
 

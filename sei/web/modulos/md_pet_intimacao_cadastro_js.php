@@ -319,7 +319,7 @@
                     var usuariosCadastro = document.getElementById('hdnDadosUsuario').value;
 
                     if($(r).find('Intimacao').text() > 0){
-                      objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), $(r).find('Email').text(), cpf, $(r).find('Data').text(), $(r).find('Situacao').text()]);
+                      objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), $(r).find('Email').text(), cpf, $(r).find('DataIntimacao').text(), $(r).find('Situacao').text()]);
                     } else {
                       objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), $(r).find('Email').text(), cpf, infraDataAtual(), 'Em geração' ]);
                     }

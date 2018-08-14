@@ -371,9 +371,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
     	$objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
     	
     	//Atualizando parametro para controlar versao do modulo
-    	$this->logar('ATUALIZANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+    	$this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
     	BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
-    	
     }
     
     //Contem atualizações da versao 1.1.0
@@ -588,14 +587,15 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 
     //Contem atualizações da versao 1.0.4
     protected function instalarv104(){
+
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 
@@ -734,7 +734,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 
@@ -894,7 +894,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 

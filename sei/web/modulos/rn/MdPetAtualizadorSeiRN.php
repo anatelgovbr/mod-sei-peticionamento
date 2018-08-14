@@ -944,24 +944,21 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$arrObjInfraParamDTO = $objInfraParamRN->listar( $objInfraParamDTO );
 
     		if( is_array( $arrObjInfraParamDTO ) && count( $arrObjInfraParamDTO ) > 0){
-
     			BancoSEI::getInstance()->executarSql("UPDATE infra_parametro SET nome ='" . MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO. "'  WHERE nome = '" . $idParamAntigo . "'");
-
     		}
 
-    		//Atualizando parametro para controlar versao do modulo
-    		$this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-
-    		BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
-
-
-    		// Alteração na tarefa "Cancelada disponibilização de acesso externo", passando permitir em PROCESSO FECHADO  
+    		//Alteração na tarefa "Cancelada disponibilização de acesso externo", passando a permitir em PROCESSO FECHADO  
     		$tarefaDTO = new TarefaDTO();
     		$tarefaDTO->setNumIdTarefa(90);
     		$tarefaDTO->setStrSinPermiteProcessoFechado('S');
 
     		$tarefaRN = new TarefaRN();
     		$tarefaRN->alterar( $tarefaDTO );
+
+    		//Atualizando parametro para controlar versao do modulo
+    		$this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+
+    		BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
     	} catch (Exception $e) {
     		$this->logar($e->getTraceAsString());
@@ -1054,12 +1051,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
             }
 
-
-
-
-
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         } catch (Exception $e) {
@@ -1109,7 +1102,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objTarjaAssinaturaDTO = $objTarjaAssinaturaBD->cadastrar( $objTarjaAssinaturaDTO );
             
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
             
         } catch (Exception $e) {
@@ -1325,7 +1318,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
 
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         } catch (Exception $e) {
@@ -1534,7 +1527,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         }
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
     }

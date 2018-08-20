@@ -325,11 +325,14 @@ function inicializar(){
     infraEfeitoTabelas();
     //Carrega os valores da tabela documento da tela pai.
     carregarTabelaDocumento();
+    if (document.getElementById('selCargo')!=null){
+        document.getElementById('selCargo').focus();
+    }
 }
 
 function fecharJanela(){
-	
-	if (window.opener != null && !window.opener.closed) {
+
+    if (window.opener != null && !window.opener.closed) {
         window.opener.focus();
     }
 

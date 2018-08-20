@@ -57,7 +57,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
         if (!$bolErro) {
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
-            $this->logar('TEMPO TOTAL DE EXECUÇÃO: ' . $this->numSeg . ' s');
+            $this->logar('TEMPO TOTAL DE EXECUÇÃO: '.$this->numSeg.' s');
         } else {
             $strMsg = 'ERRO: '.$strMsg;
         }
@@ -74,11 +74,10 @@ class MdPetAtualizadorSeiRN extends InfraRN {
     }
     
     //Contem atualizações da versao 2.0.0
-    protected function instalarv200()
-    {
+    protected function instalarv200(){
     	try {
     		$objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-    		$this->logar('EXECUTANDO A INSTALAÇÃO DA VERSÃO 2.0.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+    		$this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.0 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
 
 			//INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
 			$this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS NA TABELA email_sistema');
@@ -956,7 +955,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$tarefaRN->alterar( $tarefaDTO );
 
     		//Atualizando parametro para controlar versao do modulo
-    		$this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+    		$this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
 
     		BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
@@ -968,14 +967,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     }
 
     //Contem atualizações da versao 1.1.0 (Intercorrente)
-    protected function instalarv110()
-    {
+    protected function instalarv110(){
         try {
-
             $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-            $this->logar('EXECUTANDO A INSTALAÇÃO DA VERSÃO 1.1.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+            $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.1.0 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
 
-            // INICIO 7048
             //Cria a tabela de tipo de resposta
             BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_criterio (
 				id_md_pet_criterio ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -1052,7 +1048,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             }
 
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         } catch (Exception $e) {
@@ -1063,12 +1059,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     }
 
 //Contem atualizações da versao 1.0.4
-    protected function instalarv104()
-    {
+    protected function instalarv104(){
         try {
-        	
             $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-            $this->logar('EXECUTANDO A INSTALAÇÃO DA VERSÃO 1.0.4 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+            $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.4 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
 
             //Caso exista a coluna na tabela a instalação é nova, então não é necessario executar a migração de dados
             $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_tp_ctx_contato', 'id_tipo_contato');
@@ -1102,7 +1096,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objTarjaAssinaturaDTO = $objTarjaAssinaturaBD->cadastrar( $objTarjaAssinaturaDTO );
             
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
             
         } catch (Exception $e) {
@@ -1113,16 +1107,12 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     }
 
     //Contem atualizações da versao 1.0.0
-    protected function instalarv100()
-    {
-
+    protected function instalarv100(){
         try {
-
             $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-
-            $this->logar('EXECUTANDO A INSTALAÇÃO DA VERSÃO 1.0.3 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+            $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.3 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+            
             $this->logar('CRIANDO A TABELA md_pet_hipotese_legal');
-
             BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_hipotese_legal (
 			id_md_pet_hipotese_legal ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL )');
 
@@ -1318,7 +1308,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
 
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         } catch (Exception $e) {
@@ -1330,13 +1320,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     }
 
     //Contem atualizações da versao 0.0.2
-    protected function instalarv002()
-    {
-
+    protected function instalarv002(){
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-        $this->logar('EXECUTANDO A INSTALAÇÃO DA VERSÃO 0.0.2 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+        
         $this->logar('CRIANDO A TABELA md_pet_usu_externo_menu E SUA sequence');
-
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_usu_externo_menu( id_md_pet_usu_externo_menu ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() . ' NULL ,
 		nome ' . $objInfraMetaBD->tipoTextoVariavel(30) . ' NOT NULL ,
@@ -1527,20 +1515,17 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         }
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
     }
 
     //Contem atualizações da versao 0.0.1
-    protected function instalarv001()
-    {
-
+    protected function instalarv001(){
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-
-        $this->logar('EXECUTANDO A INSTALAÇÃO DA VERSÃO 0.0.1 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+        
         $this->logar('CRIANDO A TABELA md_pet_tipo_processo E SUA sequence');
-
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_tipo_processo( id_md_pet_tipo_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		id_tipo_procedimento ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
 		id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
@@ -1679,14 +1664,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         }
 
         //Adicionando parametro para controlar versao do modulo
-        $this->logar('ADICIONANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ADICIONANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \'' . $this->nomeParametroModulo . '\' )');
     }
 
     protected function atualizarVersaoConectado(){
 
         try {
-            $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SEI VERSÃO ' . SEI_VERSAO);
+            $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO '.$this->nomeDesteModulo.' NO SEI VERSÃO '.SEI_VERSAO);
             
             //testando versao do framework
             $numVersaoInfraRequerida = '1.385';
@@ -1726,7 +1711,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } 
             
@@ -1737,7 +1722,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } 
             
@@ -1747,7 +1732,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } 
             
@@ -1756,7 +1741,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } 
             
@@ -1764,19 +1749,19 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             else if ($strVersaoModuloPeticionamento == '1.0.4') {
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             }
             
             //se ja tem 104 apenas a 110
             else if ($strVersaoModuloPeticionamento == '1.1.0') {
             	$this->instalarv200();
-            	$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+            	$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
             	$this->finalizar('FIM', false);
             }
             
             else if ($strVersaoModuloPeticionamento == '2.0.0') {
-                $this->logar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
+                $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
                 $this->finalizar('FIM', false);
             }
 
@@ -1797,8 +1782,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
     }
 
-    private function existeIdEmailSistemaPecitionamento()
-    {
+    private function existeIdEmailSistemaPecitionamento(){
         $this->logar('VERIFICANDO A EXISTENCIA DE MODELOS DE EMAIL PARA PETICIONAMENTO');
         $sql = "select 
 			id_email_sistema 
@@ -1809,22 +1793,19 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         return (count($rs) > 0) ? true : false;
     }
 
-    private function atualizarIdEmailSistemaAlertaPecitionamento()
-    {
+    private function atualizarIdEmailSistemaAlertaPecitionamento(){
         $this->logar('ATUALIZANDO O IDENTIFICADOR DO MODELO DE EMAIL PARA PETICIONAMENTO DA CONSTANTE MD_PET_ALERTA_PETICIONAMENTO_UNIDADES');
         $idEmailSistema = $this->retornarMaxIdEmailSistema();
         BancoSEI::getInstance()->executarSql('update email_sistema SET id_email_sistema = ' . $idEmailSistema . ', id_email_sistema_modulo = \'MD_PET_ALERTA_PETICIONAMENTO_UNIDADES\' WHERE id_email_sistema = 3002');
     }
 
-    private function atualizarIdEmailSistemaConfirmacaoPeticionamento()
-    {
+    private function atualizarIdEmailSistemaConfirmacaoPeticionamento(){
         $this->logar('ATUALIZANDO O IDENTIFICADOR DO MODELO DE EMAIL PARA PETICIONAMENTO DA CONSTANTE MD_PET_CONFIRMACAO_PETICIONAMENTO_USUARIO_EXTERNO');
         $idEmailSistema = $this->retornarMaxIdEmailSistema();
         BancoSEI::getInstance()->executarSql('update email_sistema SET id_email_sistema = ' . $idEmailSistema . ', id_email_sistema_modulo = \'MD_PET_CONFIRMACAO_PETICIONAMENTO_USUARIO_EXTERNO\' WHERE  id_email_sistema = 3001');
     }
 
-    private function retornarMaxIdEmailSistema()
-    {
+    private function retornarMaxIdEmailSistema(){
         $this->logar('BUSCANDO O PROXIMO ID DISPONIVEL NA TABELA EMAIL_SISTEMA ');
         $sql = "select id_email_sistema from email_sistema where id_email_sistema > 999";
         $rs = BancoSEI::getInstance()->consultarSql($sql);

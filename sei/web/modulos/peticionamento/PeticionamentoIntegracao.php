@@ -184,6 +184,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_pet_intimacao_cadastro.php';
                 return true;
 
+            case 'md_pet_intimacao_cadastro_confirmar':
+                require_once dirname(__FILE__) . '/md_pet_intimacao_cadastro_confirmar.php';
+                return true;
+
             case 'md_pet_intimacao_consultar':
                 require_once dirname(__FILE__) . '/md_pet_intimacao_consulta.php';
                 return true;

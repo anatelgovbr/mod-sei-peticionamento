@@ -692,12 +692,12 @@
                     return false;
                 }else if(alerta){
                     if (confirm(msg)) {
-                      document.getElementById('frmMdPetIntimacaoCadastro').submit();
+                      confirmarTipoAcessoExterno();
                     } else {
                         return false;
                     }
                 } else {
-                    document.getElementById('frmMdPetIntimacaoCadastro').submit();
+                    confirmarTipoAcessoExterno();
                 }
 
           },
@@ -722,8 +722,17 @@ function preencherHiddenComponente(tpSelect) {
         
 }
 
+function confirmarTipoAcessoExterno(){
+<?
+    $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
+    $strLink = SessaoSEI::getInstance()->assinarLink($urlBase . '/controlador.php?acao=md_pet_intimacao_cadastro_confirmar');
+    $js = "infraAbrirJanela('" . $strLink . "', 'janelaConfirmarIntimacao', 900, 400);";
+    echo $js;
+?>
+}
+
 function onSubmitForm() {
-        
+
      preencherHiddenComponente('A');
      preencherHiddenComponente('P');
      validarCadastro();

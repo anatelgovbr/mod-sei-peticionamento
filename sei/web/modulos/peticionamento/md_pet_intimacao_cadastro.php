@@ -87,6 +87,17 @@ try {
                 }
                 
             }
+            
+            $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
+            $objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
+            $objMdPetIntPrazoTacitaDTO->retTodos();
+            
+            $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
+            $objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
+            if (count($objMdPetIntPrazoTacitaDTO)>0) {
+            	$numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
+            }
+            
             break;
 
         default:
@@ -230,7 +241,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="clear"></div>
 
         <fieldset id="fldDocumentosIntimacao">
-            <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img style="margin-top:1px; margin-bottom: -3px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até 15 dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n\n\n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.') ?> /></legend>
+            <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img style="margin-top:1px; margin-bottom: -3px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até ' . $numNumPrazo . ' dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n\n\n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.') ?> /></legend>
 
             <!-- Documento Principal-->
             <div class="grid grid_8" style="margin-top:5px">

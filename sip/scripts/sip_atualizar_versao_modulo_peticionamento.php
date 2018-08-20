@@ -54,7 +54,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         if (!$bolErro) {
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
-            $this->logar('TEMPO TOTAL DE EXECUÇÃO: ' . $this->numSeg . ' s');
+            $this->logar('TEMPO TOTAL DE EXECUÇÃO: '.$this->numSeg.' s');
         }else{
             $strMsg = 'ERRO: '.$strMsg;
         }
@@ -73,6 +73,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
     //Contem atualizações da versao 2.0.0
     protected function instalarv200(){
     	
+    	$this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
     	$arrAuditoria = array();
     	
     	//criar novo grupo de auditoria
@@ -371,12 +372,15 @@ class MdPetAtualizadorSipRN extends InfraRN {
     	$objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
     	
     	//Atualizando parametro para controlar versao do modulo
-    	$this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+    	$this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
     	BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
     
     //Contem atualizações da versao 1.1.0
     protected function instalarv110(){
+        
+		$this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.1.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+
         //criar novo grupo de auditoria
         $objSistemaRN = new SistemaRN();
         $objPerfilRN = new PerfilRN();
@@ -587,20 +591,24 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 
     //Contem atualizações da versao 1.0.4
     protected function instalarv104(){
 
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.4 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 
     //Contem atualizações da versao 1.0.0
     protected function instalarv100(){
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
 
         //criar novo grupo de auditoria
         $objSistemaRN = new SistemaRN();
@@ -734,12 +742,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 
     //Contem atualizações da versao 0.0.2
     protected function instalarv002(){
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
 
         $objSistemaRN = new SistemaRN();
         $objPerfilRN = new PerfilRN();
@@ -894,12 +904,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
 
     //Contem atualizações da versao 0.0.1
     protected function instalarv001(){
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
 
         $objSistemaRN = new SistemaRN();
         $objPerfilRN = new PerfilRN();
@@ -1099,14 +1111,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
         //Adicionando parametro para controlar versao do modulo
-        $this->logar('ADICIONANDO PARAMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ADICIONANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \''. $this->nomeParametroModulo .'\' )' );
     }
 
     protected function atualizarVersaoConectado(){
 
         try {
-            $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SIP VERSÃO ' . SIP_VERSAO);
+            $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO '.$this->nomeDesteModulo.' NO SIP VERSÃO '.SIP_VERSAO);
 
             //testando versao do framework
             $numVersaoInfraRequerida = '1.385';
@@ -1146,7 +1158,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
 
@@ -1157,7 +1169,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
 
@@ -1167,7 +1179,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
 
@@ -1176,27 +1188,27 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->instalarv104();
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
             //se ja tem 104 instala apenas 110
             else if ( $strVersaoModuloPeticionamento == '1.0.4' ){
                 $this->instalarv110();
                 $this->instalarv200();
-                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                 $this->finalizar('FIM', false);
             }
             
             //se ja tem 104 instala apenas 200
             else if ( $strVersaoModuloPeticionamento == '1.1.0' ){
             	$this->instalarv200();
-            	$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $this->versaoAtualDesteModulo .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SIP');
+            	$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
             	$this->finalizar('FIM', false);
             }
             
             //se a versão instalada já é a atual, então não instala nada e avisa
             else {
-                $this->logar('A VERSÃO MAIS ATUAL DO '. $this->nomeDesteModulo .' (v'. $this->versaoAtualDesteModulo .') JÁ ESTÁ INSTALADA.');
+                $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
                 $this->finalizar('FIM', false);
             }
 

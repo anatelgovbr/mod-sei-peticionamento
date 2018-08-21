@@ -61,7 +61,6 @@ class MdPetExtensoesArquivoRN extends InfraRN {
 			//$objInfraException = new InfraException();
 	
 			//$objInfraException->lancarValidacoes();
-			//var_dump($objCondutaLitigiosoDTO->getStrSinAtivo());exit;
 			$objMdPetExtensoesArquivoBD = new MdPetExtensoesArquivoBD($this->getObjInfraIBanco());
 			$ret = $objMdPetExtensoesArquivoBD->listar($objMdPetExtensoesArquivoDTO);
 
@@ -107,20 +106,11 @@ class MdPetExtensoesArquivoRN extends InfraRN {
 		try {
 			// Valida Permissao
 			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_extensoes_arquivo_cadastrar', __METHOD__, $objMdPetExtensoesArquivoDTO );
-				
-			// Regras de Negocio
-			/*
-			$objInfraException = new InfraException();
-			$valido = $this->_validarCamposDocumento($objTamanhoArquivoDTO->getNumValorDocPrincipal(), 'Valor para Documento Principal', $objInfraException);
-			$valido = $this->_validarCamposDocumento($objTamanhoArquivoDTO->getNumValorDocComplementar(), 'Valor para Documento Complementar', $objInfraException);
-			
-			if($valido){
-				$this->_validarParametroMaxPermitido($objTamanhoArquivoDTO, $objInfraException);
-			}
-			
-			$objInfraException->lancarValidacoes();
-			*/
-	
+
+			// $objInfraException = new InfraException();
+
+			// $objInfraException->lancarValidacoes();
+
 			$objMdPetExtensoesArquivoBD = new MdPetExtensoesArquivoBD($this->getObjInfraIBanco());
 			$ret = $objMdPetExtensoesArquivoBD->cadastrar($objMdPetExtensoesArquivoDTO);
 

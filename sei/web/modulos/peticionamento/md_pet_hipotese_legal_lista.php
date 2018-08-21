@@ -94,11 +94,6 @@ try {
       }
       break;
 
-    // NÃO ENCONTRADO USO
-    //case 'hipotese_legal_peticionamento_listar':
-    //  $strTitulo = 'Hipóteses Legais';
-    //  break;
-
     default:
       throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
   }
@@ -108,9 +103,7 @@ try {
     $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
   }
 
-  // NÃO ENCONTRADO USO
-  //if ($_GET['acao'] == 'hipotese_legal_peticionamento_listar' || $_GET['acao'] == 'md_pet_hipotese_legal_selecionar'){
-    if ($_GET['acao'] == 'md_pet_hipotese_legal_selecionar'){  
+  if ($_GET['acao'] == 'md_pet_hipotese_legal_selecionar'){
     $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_cadastrar');
     if ($bolAcaoCadastrar){
       $arrComandos[] = '<button type="button" accesskey="N" id="btnNova" value="Nova" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=hipotese_legal_peticionamento_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ova</button>';
@@ -122,8 +115,7 @@ try {
   $objHipoteseLegalDTO->retStrStaNivelAcesso();
   $objHipoteseLegalDTO->retStrNome();
   $objHipoteseLegalDTO->retStrBaseLegal();
-  //$objHipoteseLegalDTO->retStrDescricao();
-  
+
   if ($_GET['acao'] == 'md_pet_hipotese_legal_selecionar'){
     $objHipoteseLegalDTO->setStrSinAtivo('S');
   }
@@ -158,7 +150,6 @@ try {
       $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_consultar');
       $bolAcaoAlterar = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_alterar');
       $bolAcaoImprimir = false;
-      //$bolAcaoGerarPlanilha = false;
       $bolAcaoExcluir = false;
       $bolAcaoDesativar = false;
       $bolCheck = true;
@@ -167,7 +158,6 @@ try {
       $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_consultar');
       $bolAcaoAlterar = false;
       $bolAcaoImprimir = true;
-      //$bolAcaoGerarPlanilha = SessaoSEI::getInstance()->verificarPermissao('infra_gerar_planilha_tabela');
       $bolAcaoExcluir = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_excluir');
       $bolAcaoDesativar = false;
     }else{
@@ -175,12 +165,10 @@ try {
       $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_consultar');
       $bolAcaoAlterar = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_alterar');
       $bolAcaoImprimir = true;
-      //$bolAcaoGerarPlanilha = SessaoSEI::getInstance()->verificarPermissao('infra_gerar_planilha_tabela');
       $bolAcaoExcluir = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_excluir');
       $bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('hipotese_legal_peticionamento_desativar');
     }
 
-    
     if ($bolAcaoDesativar){
       $bolCheck = true;
       $arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
@@ -200,13 +188,6 @@ try {
       $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=hipotese_legal_peticionamento_excluir&acao_origem='.$_GET['acao']);
     }
 
-    /*
-    if ($bolAcaoGerarPlanilha){
-      $bolCheck = true;
-      $arrComandos[] = '<button type="button" accesskey="P" id="btnGerarPlanilha" value="Gerar Planilha" onclick="infraGerarPlanilhaTabela(\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=infra_gerar_planilha_tabela')).'\');" class="infraButton">Gerar <span class="infraTeclaAtalho">P</span>lanilha</button>';
-    }
-    */
-    
     $objProtocoloRN = new ProtocoloRN();
     $arrObjNivelAcessoDTO = InfraArray::indexarArrInfraDTO($objProtocoloRN->listarNiveisAcessoRN0878(),'StaNivel');
 
@@ -229,7 +210,6 @@ try {
     $strResultado .= '<th class="infraTh" width="20%">Nível de Restrição de Acesso</th>'."\n";
     $strResultado .= '<th class="infraTh" width="20%">Nome</th>'."\n";
     $strResultado .= '<th class="infraTh">Base Legal</th>'."\n";
-    //$strResultado .= '<th class="infraTh">Descrição</th>'."\n";
     $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
@@ -246,7 +226,6 @@ try {
       $strResultado .= '<td>'.$arrObjNivelAcessoDTO[$arrObjHipoteseLegalDTO[$i]->getStrStaNivelAcesso()]->getStrDescricao().'</td>';
       $strResultado .= '<td>'.$arrObjHipoteseLegalDTO[$i]->getStrNome().'</td>';
       $strResultado .= '<td>'.$arrObjHipoteseLegalDTO[$i]->getStrBaseLegal().'</td>';
-      //$strResultado .= '<td>'.$arrObjHipoteseLegalDTO[$i]->getStrDescricao().'</td>';
       $strResultado .= '<td align="center">';
 
       $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i,$arrObjHipoteseLegalDTO[$i]->getNumIdHipoteseLegal());

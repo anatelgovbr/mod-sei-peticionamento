@@ -653,7 +653,6 @@
         var idLinha = gerarIdDocumento();
         var idTipoDocumento = document.getElementById('selTipoDocumento').value;
         var complementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento').value;
-        //var idNivelAcesso = nivelAcesso;
         var idHipoteseLegal = '';
         if(document.getElementById('selHipoteseLegal')){
             idHipoteseLegal = document.getElementById('selHipoteseLegal').value;

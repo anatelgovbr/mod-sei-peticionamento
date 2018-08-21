@@ -13,43 +13,16 @@ try {
 
     SessaoSEI::getInstance()->validarLink();
 
-    //PaginaSEI::getInstance()->verificarSelecao('criterio_peticionamento_intercorrente_selecionar');
-
-    //SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
-
     $strDesabilitar = '';
 
     $arrComandos = array();
     //Tipo Processo - Nivel de Acesso
     $strLinkAjaxNivelAcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tipo_processo_nivel_acesso_auto_completar');
 
-//  NÃO FOI ENCONTRADO USO
-    //Tipo Documento Complementar
-//    $strLinkTipoDocumentoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumento&tipoDoc=E');
-//    $strLinkAjaxTipoDocumento = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_serie_auto_completar');
-
-//  NÃO FOI ENCONTRADO USO
-    //Tipo de Documento Essencial
-//    $strLinkTipoDocumentoEssencialSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumentoEssencial&tipoDoc=E');
-
     //Tipo Processo
     $strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcesso');
     $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_intercorrente_tipo_processo_auto_completar');
     
-//  NÃO FOI ENCONTRADO USO
-    //$strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tipo_processo_auto_completar');
-
-//  NÃO FOI ENCONTRADO USO
-    //Unidade
-//    $strLinkUnidadeSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidade');
-//    $strLinkUnidadeMultiplaSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidadeMultipla');
-//    $strLinkAjaxUnidade = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_unidade_auto_completar');
-
-//  NÃO FOI ENCONTRADO USO
-    //Tipo Documento Principal
-//    $strLinkTipoDocPrincSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=E&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
-//    $strLinkAjaxTipoDocPrinc = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_serie_auto_completar');
-
     //Preparar Preenchimento Alteração
     $idMdPetTipoProcesso = '';
     $nomeTipoProcesso = '';
@@ -76,7 +49,6 @@ try {
 
     $strItensSelNivelAcesso = '';
     $strItensSelHipoteseLegal = '';
-    //$strItensSelHipoteseLegal  = MdPetTipoProcessoINT::montarSelectHipoteseLegal(null, null, ProtocoloRN::$NA_RESTRITO );
 
     //Preencher Array de Unidades para buscar posteriormente
     $objUnidadeDTO = new UnidadeDTO();
@@ -84,9 +56,6 @@ try {
     $objUnidadeDTO->retNumIdUnidade();
     $objUnidadeDTO->retStrSigla();
     $objUnidadeDTO->retStrDescricao();
-    
-    //seiv2
-    //$objUnidadeDTO->retStrSiglaUf();
 
     $contatoRN = new ContatoRN();
     $objUnidadeRN = new UnidadeRN();
@@ -103,10 +72,7 @@ try {
         $contatoDTO->setNumIdContato( $objUnidadeDTO->getNumIdContato() );
         
         $contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
-        
-        //seiv2
-        //$arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = $objUnidadeDTO->getStrSiglaUf();
-        
+
         //alteracoes seiv3
         $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = $contatoDTO->getStrSiglaUf();
     }
@@ -322,7 +288,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>"/>
         <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"/>
         <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"/>
-        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Somente após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. A abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando este corresponder a processo: 1) de Tipo de Processo sem Critério Intercorrente parametrizado; 2) com Nível de Acesso "Sigiloso"; 3) Sobrestado, Anexado ou Bloqueado; ou 4) de Tipo de Processo desativado.\n\n\n- Em todos os casos acima a forma de indicação de Nível de Acesso pelo Usuário Externo será a indicada para Intercorrente Padrão. Somente no caso 4 é que o Tipo de Processo também será o indicado para Intercorrente Padrão.') ?> alt="Ajuda" class="infraImg"/>
+        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Somente após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n   A abertura de processo novo relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando este corresponder a processo: \n   1) de Tipo de Processo sem Critério Intercorrente parametrizado; \n   2) Sobrestado; \n   3) Bloqueado;\n\n\n- Em todos os casos acima a forma de indicação de Nível de Acesso pelo Usuário Externo será a indicada para Intercorrente Padrão.') ?> alt="Ajuda" class="infraImg"/>
     </div>
     <!--  Fim do Tipo de Processo -->
 
@@ -459,7 +425,6 @@ PaginaSEI::getInstance()->fecharHtml();
             if (id != '') {
                 document.getElementById('hdnIdTipoProcesso').value = id;
                 document.getElementById('txtTipoProcesso').value = descricao;
-                //objAjaxIdNivelAcesso.executar();
                 document.getElementById('selNivelAcesso').value = '';
                 changeSelectNivelAcesso();
             }
@@ -520,7 +485,6 @@ PaginaSEI::getInstance()->fecharHtml();
     }
 
     function OnSubmitForm() {
-        //preencherUnidadesMultiplas();
         return validarCadastro();
     }
 

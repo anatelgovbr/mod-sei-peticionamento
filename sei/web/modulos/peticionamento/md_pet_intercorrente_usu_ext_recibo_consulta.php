@@ -83,7 +83,7 @@ try {
             $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 
             $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-            $idSerieParam = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
+            $idSerieParam = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
 
             $documentoRN = new DocumentoRN();
             $documentoReciboDTO = new DocumentoDTO();
@@ -106,8 +106,8 @@ try {
 
     $arrComandos   = array();
     // Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
-    // $arrComandos[] = '<button type="button" accesskey="s" id="btnSalvarPDF" value="Salvar em PDF" onclick="salvarPDF();" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar em PDF</button>';
     $arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
+    
     $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc=' . $_GET['id_md_pet_rel_recibo_protoc'] . '&acao=' . PaginaSEIExterna::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
     $objMdPetReciboDTO = new MdPetReciboDTO();
@@ -127,9 +127,9 @@ try {
     //usuarios so podem ver peticionamentos feitos por ele mesmo
     $objMdPetReciboDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 
-    $objMdPetReciboRN               = new MdPetReciboRN();
+    $objMdPetReciboRN = new MdPetReciboRN();
     $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
-    $objMdPetReciboDTO                       = $objMdPetReciboRN->consultar($objMdPetReciboDTO);
+    $objMdPetReciboDTO = $objMdPetReciboRN->consultar($objMdPetReciboDTO);
 
     //obtendo a lista de documentos vinculados ao recibo
     $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($objMdPetReciboDTO->getNumIdReciboPeticionamento());
@@ -163,6 +163,7 @@ try {
         $objContatoDTO = new ContatoDTO();
         $objContatoDTO->setNumIdContato($objParticipanteDTO->getNumIdContato());
         $objContatoDTO->retStrNome();
+        $objContatoDTO->setBolExclusaoLogica(false);
         $objContatoRN      = new ContatoRN();
         $arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
     }
@@ -292,9 +293,10 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
                     <td><?= $protocoloDTO->getStrProtocoloFormatado() ?></td>
                 </tr>
 
-                <?php  $idProtocoloPrinc = $objMdPetReciboDTO->getDblIdProtocoloRelacionado();
+                <?php
+                $idProtocoloPrinc = $objMdPetReciboDTO->getDblIdProtocoloRelacionado();
+                
                 if(!(InfraString::isBolVazia($idProtocoloPrinc))){
-
 
                     $objProtocoloRN = new ProtocoloRN();
                     $objProtocoloDTO = new ProtocoloDTO();
@@ -303,15 +305,30 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
                     $objProtocoloDTO->retTodos();
 
                     $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
-                    $protocoloRelFormatado = $objProtocoloDTO->getStrProtocoloFormatado();
-
-                    ?>
+                    $protocoloRelFormatado = $objProtocoloDTO->getStrProtocoloFormatado(); ?>
                     <tr>
-                        <td> &ensp;&nbsp; Relacionado ao Processo:</td>
+                        <td> &ensp;&nbsp; Relacionado ao Processo Indicado:</td>
                         <td><?= $protocoloRelFormatado ?></td>
                     </tr>
-
-
+				<?php 
+				//se for recibo do resposta acrescenta os campos: Tipo de Resposta, Tipo de Intimação, Documento Principal da Intimação
+				if( $objMdPetReciboDTO->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ) { ?>
+                    <tr>
+                       <td style="font-weight: bold;">Tipo de Intimação:</td>
+                       <td> <?= $objMdPetReciboDTO->getStrNomeTipoIntimacao() ?> </td>
+                    </tr>
+                    
+                    <tr>
+                       <td style="font-weight: bold;">Documento Principal da Intimação:</td>
+                       <td>  <?= $objMdPetReciboDTO->getStrTextoDocumentoPrincipalIntimac() ?> </td>
+                    </tr>
+                    
+                    <tr>
+                       <td style="font-weight: bold;">Tipo de Resposta:</td>
+                       <td> <?= $objMdPetReciboDTO->getStrNomeTipoResposta() ?> </td>
+                    </tr>
+				
+				<?php } ?>
 
                 <?php } if ($arrInteressados != null && is_array($arrInteressados) && count($arrInteressados) > 0) : ?>
                     <tr>
@@ -344,7 +361,7 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
             <br/>
             <br/>
 
-            <p><label>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</label></p>
+            <p><label>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</label></p>
             <ul><label>
                     <li>a conformidade entre os dados informados e os documentos;</li>
                     <li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li>

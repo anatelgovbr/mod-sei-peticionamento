@@ -528,7 +528,6 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
       <div style="float:left; width: 100%;">
       <label id="lblIdCargo" for="cargo" class="infraLabelObrigatorio">Cargo:</label>
       <select id="cargo" name="cargo" class="infraSelect" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" style="width: 100%; align:left">
-        <?/*=$strItensSelCargo*/?>
       </select>
       </div>
 

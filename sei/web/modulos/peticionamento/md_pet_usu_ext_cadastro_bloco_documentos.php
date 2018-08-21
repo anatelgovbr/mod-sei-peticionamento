@@ -29,7 +29,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
  <fieldset id="field3" class="infraFieldset sizeFieldset">
  <legend class="infraLegend">&nbsp; Documentos &nbsp;</legend>
 	<br/>
-	<label>Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre os dados informados e os documentos. Os Níveis de Acesso que forem indicados abaixo estarão condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso.</label>
+	<label>Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre os dados informados e os documentos. Os Níveis de Acesso que forem indicados abaixo estarão condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso.</label>
 	<br/><br/>
    
    <?

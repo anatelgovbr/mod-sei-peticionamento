@@ -81,8 +81,14 @@ class MdPetTipoProcessoRN extends InfraRN {
 			throw new InfraException('Erro listando valores de Indicação de Interessado.',$e);
 		}
 	}
-	
-	
+
+	protected function contarConectado(MdPetTipoProcessoDTO $objMdPetTipoProcessoDTO){
+		$objMdPetTipoProcessoBD = new MdPetTipoProcessoBD($this->getObjInfraIBanco());
+		$ret = $objMdPetTipoProcessoBD->contar($objMdPetTipoProcessoDTO);
+
+		return $ret;
+
+	}
 	/**
 	 * Short description of method listarValoresTipoDocumento
 	 *
@@ -313,11 +319,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 		else if ( strlen($objMdPetTipoProcessoDTO->getStrOrientacoes()) > 500 ) {
 			$objInfraException->adicionarValidacao('Orientações possui tamanho superior a 500 caracteres.');
 		}
-		
-/*		if (InfraString::isBolVazia ($objMdPetTipoProcessoDTO->getNumIdUnidade())) {
-			$objInfraException->adicionarValidacao('Unidade não informada.');
-		}*/
-		
+
 		if (($objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'N' && $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'N')) {
 			$objInfraException->adicionarValidacao('Indicação de Interessado não informada.');
 		}
@@ -332,9 +334,9 @@ class MdPetTipoProcessoRN extends InfraRN {
 			if( InfraString::isBolVazia( $objMdPetTipoProcessoDTO->getNumIdHipoteseLegal() ) ){
 				$objInfraException->adicionarValidacao('Hipótese legal não informada.');
 			}
-			//$objInfraException->adicionarValidacao('Nível de Acesso não informado.');
+
 		}
-		
+
 		if (($objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'N' && $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'N')) {
 			$objInfraException->adicionarValidacao('Documento Principal não informado.');
 		}
@@ -427,12 +429,8 @@ class MdPetTipoProcessoRN extends InfraRN {
 			$msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
 			$objInfraException->adicionarValidacao ($msg);
 		}
-		
-		//TipoProcedimentoDTO - IdProcedimento
-		//IdTipoProcedimento
-		//ObjRelTipoProcedimentoAssuntoDTO
-		
+
 	}
-	
+
 }
 ?>

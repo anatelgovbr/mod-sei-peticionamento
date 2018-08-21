@@ -120,8 +120,6 @@ class MdPetTpCtxContatoRN extends InfraRN {
 			$arrIdTipo = array();
 
 			foreach( $arrMdPetRelTpCtxContatoDTO as $itemDTO ){
-				//$idTipo = $itemDTO->getNumIdTipoContextoContato();
-				//array_push( $arrIdTipo , $idTipo);
 				array_push( $arrIdTipo , $itemDTO);
 			}
 
@@ -174,8 +172,6 @@ class MdPetTpCtxContatoRN extends InfraRN {
 		
 		$lista = $this->listar($objDTO);
 
-		//$this->validarTiposReservados( $lista, $objInfraException );
-		
 		//quando for Cadastro, impedir tipos reservados, quando for seleçao, nao deve impedir
 		if( $cadastro == 'S'){
 		  $this->validarTiposReservados( $arrPrincipal, $objInfraException );
@@ -183,8 +179,6 @@ class MdPetTpCtxContatoRN extends InfraRN {
 		
 		$this->excluir( $lista );
 
-		//$arrPrincipal = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal']);
-		
 		if(!$arrPrincipal) {
 			$objInfraException->adicionarValidacao('Informe pelo menos um Tipo de Contato.');
 		}

@@ -12,28 +12,12 @@ try {
 	session_start();
 
 	SessaoSEI::getInstance()->validarLink();
-	//PaginaSEI::getInstance()->verificarSelecao('md_pet_intercorrente_criterio_cadastrar');
-
-	//SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
 	$strDesabilitar = '';
 
 	$arrComandos = array();
-	
-//  NÃO FOI ENCONTRADO USO    
-	//Tipo Processo - Nivel de Acesso
-//  $strLinkAjaxNivelAcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tipo_processo_nivel_acesso_auto_completar');
-//  $strUrlAjaxTipoPeticionamentoAssuntoValidar = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tipo_processo_assunto_validar');
+
     $strUrlAjaxValidarNivelAcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tipo_processo_nivel_acesso_validar');
-
-//  NÃO FOI ENCONTRADO USO    
-	//Tipo Documento Complementar
-//	$strLinkTipoDocumentoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumento&tipoDoc=E');
-//	$strLinkAjaxTipoDocumento = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_serie_auto_completar');
-
-//  NÃO FOI ENCONTRADO USO    
-    //Tipo de Documento Essencial
-//	$strLinkTipoDocumentoEssencialSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipo_selecao=2&id_object=objLupaTipoDocumentoEssencial&tipoDoc=E');
 
 	//Tipo Processo
 	$strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=2&id_object=objLupaTipoProcesso');
@@ -41,17 +25,6 @@ try {
     if ($_GET['acao'] == 'md_pet_intercorrente_criterio_alterar') {
         $strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcesso');
     }
-
-//  NÃO FOI ENCONTRADO USO    
-	//Unidade
-//	$strLinkUnidadeSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidade');
-//	$strLinkUnidadeMultiplaSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidadeMultipla');
-//	$strLinkAjaxUnidade = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_unidade_auto_completar');
-
-//  NÃO FOI ENCONTRADO USO    
-    //Tipo Documento Principal
-//	$strLinkTipoDocPrincSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=E&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
-//	$strLinkAjaxTipoDocPrinc = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_serie_auto_completar');
 
 	//Preparar Preenchimento Alteração
 	$idMdPetTipoProcesso = '';
@@ -113,7 +86,6 @@ try {
                 $IdCriterioIntercorrentePeticionamento = $_REQUEST['id_criterio_intercorrente_peticionamento'];
                 $nomeTipoProcesso = $objMdPetCriterioDTO->getStrNomeProcesso();
                 $idTipoProcesso   = $objMdPetCriterioDTO->getNumIdTipoProcedimento();
-                //$strItensSelNivelAcesso  = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, $objMdPetCriterioDTO->getStrStaNivelAcesso(), $idTipoProcesso);
             } else {
                 if (isset($_POST['hdnIdTipoProcesso'])) {
 
@@ -137,7 +109,6 @@ try {
                 }
             }
 
-//        $sinCriterioPadrao   = $objMdPetCriterioDTO->getStrSinCriterioPadrao() == 'S' ? 'checked = checked' : '';
             $sinNAUsuExt         = $objMdPetCriterioDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
             $sinNAPadrao         = $objMdPetCriterioDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
             if ($objMdPetCriterioDTO->getStrStaNivelAcesso() == 2) {
@@ -161,9 +132,6 @@ try {
 		case 'md_pet_intercorrente_criterio_consultar':
 			$strTitulo = 'Consultar Critério Intercorrente';
 			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
-
-			//$strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
-			//$strItensSelDoc      = SerieINT::montarSelectNomeRI0802(null, null, $_POST['selDocumento']);
 			break;
 		case 'md_pet_intercorrente_criterio_alterar':
 			$strTitulo = 'Alterar Critério para Intercorrente';
@@ -171,43 +139,6 @@ try {
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             if (isset($_POST['sbmAlterarCriterio'])) {
-                /*
-                $id = $_POST['hdnIdCriterioIntercorrentePeticionamento'];
-                $objMdPetCriterioDTO = new MdPetCriterioDTO();
-                $objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento($id);
-                $objMdPetCriterioDTO->retTodos(true);
-                $objMdPetCriterioDTO->retStrNomeProcesso();
-
-                $objMdPetCriterioRN = new MdPetCriterioRN();
-                $objMdPetCriterioDTO = $objMdPetCriterioRN->consultar($objMdPetCriterioDTO);
-
-                //$strItensSelHipoteseLegal  = MdPetTipoProcessoINT::montarSelectHipoteseLegal(null, null, $objMdPetCriterioDTO->getNumIdHipoteseLegal() );
-
-                $IdCriterioIntercorrentePeticionamento = $id;
-                $nomeTipoProcesso    = $objMdPetCriterioDTO->getStrNomeProcesso();
-                $idTipoProcesso      = $objMdPetCriterioDTO->getNumIdTipoProcedimento();
-                $sinCriterioPadrao   = $objMdPetCriterioDTO->getStrSinCriterioPadrao() == 'S' ? 'checked = checked' : '';
-                $sinNAUsuExt         = $objMdPetCriterioDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
-                $sinNAPadrao         = $objMdPetCriterioDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
-                $hipoteseLegal       = $objMdPetCriterioDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
-
-                //$strItensSelNivelAcesso  = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, $objMdPetCriterioDTO->getStrStaNivelAcesso(), $idTipoProcesso);
-
-                $nivelAcessoTemplate = '<option value="%s" %s>%s</option>';
-                $arrNivelAcesso = array(
-                    'P' => 'Público',
-                    'I' => 'Restrito'
-                );
-                $strItensSelNivelAcesso = sprintf($nivelAcessoTemplate, $objMdPetCriterioDTO->getStrStaTipoNivelAcesso(), '', $arrNivelAcesso[$objMdPetCriterioDTO->getStrStaTipoNivelAcesso()]);
-                $strTipoProcesso = sprintf($nivelAcessoTemplate, $idTipoProcesso, 'selected="selected"', $nomeTipoProcesso);
-                if ($_GET['acao'] == 'md_pet_intercorrente_criterio_alterar') {
-                    $strItensSelNivelAcesso = '';
-                    foreach($arrNivelAcesso as $i => $nivelAcesso){
-                        $selected = ($i == $objMdPetCriterioDTO->getStrStaTipoNivelAcesso()) ? ' selected="selected" ': '';
-                        $strItensSelNivelAcesso .= sprintf($nivelAcessoTemplate, $i, $selected, $nivelAcesso);
-                    }
-                }
-                */
 				$objMdPetCriterioDTO = new MdPetCriterioDTO();
 				$objMdPetCriterioDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
 				$objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
@@ -224,12 +155,6 @@ try {
 			break;
 		case 'md_pet_intercorrente_criterio_cadastrar':
 		case 'md_pet_intercorrente_criterio_padrao':
-
-			//$strItensSelHipoteseLegal = MdPetTipoProcessoINT::montarSelectHipoteseLegal(null, null, null);
-
-			//Carregando campos select
-			//$strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
-
 			$arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarTpProcessoPeticionamento" id="sbmCadastrarTpProcessoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -423,8 +348,6 @@ PaginaSEI::getInstance()->fecharHtml();
     }
 
     function inicializar() {
-        //carregarDependenciaNivelAcesso();
-
         if ('<?=$_GET['acao']?>' == 'md_pet_intercorrente_criterio_cadastrar') {
             carregarComponenteTipoProcessoNovo();
             document.getElementById('txtTipoProcesso').focus();
@@ -432,21 +355,11 @@ PaginaSEI::getInstance()->fecharHtml();
             carregarComponenteTipoProcessoAlterar();
             document.getElementById('txtTipoProcesso').focus();
         } else if ('<?=$_GET['acao']?>'=='md_pet_intercorrente_criterio_consultar'){
-            //document.getElementById("filArquivo").disabled = 'disabled';
             infraDesabilitarCamposAreaDados();
         }
 
         infraEfeitoTabelas();
     }
-
-    //function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-    //    objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('selTipoProcesso', 'selNivelAcesso', '< ? =$strLinkAjaxNivelAcesso?>');
-    //    objAjaxIdNivelAcesso.prepararExecucao = function () {
-    //        //document.getElementById('selNivelAcesso').innerHTML = '';
-    //        return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idTipoProcesso=' + document.getElementById('hdnIdTipoProcesso').value;
-    //    }
-    //}
 
     function carregarComponenteTipoProcessoNovo() {
         objLupaTipoProcesso = new infraLupaSelect('selTipoProcesso', 'hdnIdTipoProcesso', '<?=$strLinkTipoProcessoSelecao?>');
@@ -460,7 +373,6 @@ PaginaSEI::getInstance()->fecharHtml();
                 options[i].selected = true;
             }
             objLupaTipoProcesso.atualizar();
-            //objAjaxIdNivelAcesso.executar();
         };
 
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
@@ -514,7 +426,6 @@ PaginaSEI::getInstance()->fecharHtml();
 
         objLupaTipoProcesso.finalizarSelecao = function () {
             objAutoCompletarTipoProcesso.selecionar(document.getElementById('hdnIdTipoProcesso').value, document.getElementById('txtTipoProcesso').value);
-            //objAjaxIdNivelAcesso.executar();
         }
 
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
@@ -534,9 +445,6 @@ PaginaSEI::getInstance()->fecharHtml();
     }
 
     function removerProcessoAssociado(remover) {
-        //document.getElementById('selNivelAcesso').innerHTML = '';
-        //document.getElementById('divHipoteseLegal').style.display = "none";
-        //console.log(remover);
         if (remover === '1') {
             objLupaTipoProcesso.remover();
         }
@@ -549,7 +457,6 @@ PaginaSEI::getInstance()->fecharHtml();
 
         if (document.getElementById('selTipoProcesso').options < 1) {
             alert('Informe o Tipo de Processo.');
-           // document.getElementById('selTipoProcesso').focus();
             return false;
         }
 
@@ -562,7 +469,6 @@ PaginaSEI::getInstance()->fecharHtml();
             if (elemsNA[i].checked === true) {
                 validoNA = true;
                 valorNA = parseInt(elemsNA[i].value);
-                //console.log(elemsNA[i].value);
             }
         }
 
@@ -611,38 +517,11 @@ PaginaSEI::getInstance()->fecharHtml();
                 return validacaoSelNivelAcesso;
             }
         }
-        /*
-        var validacaoAssunto = false;
-        $.ajax({
-            url: '< ? //= $strUrlAjaxTipoPeticionamentoAssuntoValidar?>',
-            type: 'POST',
-            dataType: 'XML',
-            data: $('form#frmCriterioCadastro').serialize(),
-            async: false,
-            success: function (r) {
-                if ($(r).find('MensagemValidacao').text()) {
-                    alert($(r).find('MensagemValidacao').text());
-                } else {
-                    validacaoAssunto = true;
-                }
-            },
-            error: function (e) {
-                if ($(e.responseText).find('MensagemValidacao').text()) {
-                    alert($(e.responseText).find('MensagemValidacao').text());
-                }
-            }
-        });
-
-        if(validacaoAssunto == false ){
-            return validacaoAssunto;
-        }
-        */
 
         return true;
     }
 
     function OnSubmitForm() {
-        //preencherUnidadesMultiplas();
         return validarCadastro();
     }
 

@@ -35,9 +35,8 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
 
 		$protocoloRN = new MdPetProtocoloRN();
 		
-		//$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
-		$idSerieRecibo = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
-		
+		$idSerieRecibo = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+				
 		//=============================================
 		//MONTAGEM DO DOCUMENTO VIA SEI RN
 		//=============================================
@@ -80,12 +79,13 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
     }
   
     private function gerarHTMLConteudoDocRecibo( $arrParams ){
-        $arrParametros      = $arrParams[0]; //parametros adicionais fornecidos no formulario de peticionamento
-        $objUnidadeDTO      = $arrParams[1]; //UnidadeDTO da unidade geradora do processo
+    	
+    	$arrParametros = $arrParams[0]; //parametros adicionais fornecidos no formulario de peticionamento
+    	$objUnidadeDTO = $arrParams[1]; //UnidadeDTO da unidade geradora do processo
         $objProcedimentoDTO = $arrParams[2]; //ProcedimentoDTO para vincular o recibo ao processo correto
-        $arrParticipantes   = $arrParams[3]; //array de ParticipanteDTO
-        $reciboDTO          = $arrParams[4]; //MdPetReciboDTO
-        $arrDocumentos      = $arrParams[5]; //MdPetReciboDTO
+        $arrParticipantes = $arrParams[3]; //array de ParticipanteDTO
+        $reciboDTO = $arrParams[4]; //MdPetReciboDTO
+        $arrDocumentos = $arrParams[5]; //MdPetReciboDTO
 
         $objUsuarioDTO = new UsuarioDTO();
         $objUsuarioDTO->retTodos(true);
@@ -97,13 +97,14 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         $html = '';
 
         $html .= '<table align="center" style="width: 95%" border="0">';
-        $html .= '<tbody><tr>';
+        $html .= '<tbody>';
+        $html .= '<tr>';
         $html .= '<td style="font-weight: bold; width: 400px;">Usuário Externo (signatário):</td>';
         $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">IP utilizado: </td>';
+        $html .= '<td style="font-weight: bold;">IP utilizado:</td>';
         $html .= '<td>' . $reciboDTO->getStrIpUsuario() .'</td>';
         $html .= '</tr>';
 
@@ -139,7 +140,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
 	        	
 	        	//se houver processo relacionado
 	        	$html .= '<tr>';
-	        	$html .= '<td> &ensp;&nbsp; Relacionado ao Processo:</td>';
+	        	$html .= '<td> &ensp;&nbsp; Relacionado ao Processo Indicado:</td>';
 	        	$html .= '<td>' . $protocoloRelFormatado . '</td>';
 	        	$html .= '</tr>';
 	        
@@ -147,31 +148,91 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         
         }
         
+        //se for recibo de resposta adicionar campos especificos
+        if( isset( $arrParametros['isRespostaIntimacao'] ) ) {
+        	
+        	//obter tipo da intimção
+        	$id_intimacao = $arrParametros['id_intimacao'];
+        	$dtoIntimacao = new MdPetIntimacaoDTO();
+        	$rnIntimacao = new MdPetIntimacaoRN();
+        	$dtoIntimacao->retTodos();
+        	$dtoIntimacao->retStrNomeTipoIntimacao();
+        	$dtoIntimacao->setNumIdMdPetIntimacao( $id_intimacao );
+        	$dtoIntimacao = $rnIntimacao->consultar( $dtoIntimacao );
+        	
+        	//obter documento principal da intimação
+        	$rnDocIntimacao = new MdPetIntProtocoloRN();
+        	$dtoDocIntimacao = new MdPetIntProtocoloDTO();
+        	$dtoDocIntimacao->setStrSinPrincipal('S');
+        	$dtoDocIntimacao->setNumIdMdPetIntimacao( $id_intimacao );
+        	$dtoDocIntimacao->retTodos();
+        	$dtoDocIntimacao->retNumIdSerie();
+        	$dtoDocIntimacao->retStrNomeSerie();
+        	$dtoDocIntimacao->retStrNumeroDocumento();
+        	$dtoDocIntimacao->retStrProtocoloFormatadoDocumento();
+        	$dtoDocIntimacao->retDblIdProtocolo();
+        	$dtoDocIntimacao = $rnDocIntimacao->consultar( $dtoDocIntimacao );
+        	
+        	$n1 = $dtoDocIntimacao->getStrNomeSerie();
+        	$n2 = $dtoDocIntimacao->getStrNumeroDocumento();
+        	$n3 = $dtoDocIntimacao->getStrProtocoloFormatadoDocumento();
+        	
+        	$texto_doc = $n1 . " " . $n2 . " (" . $n3 . ")";
+        	
+        	//obter tipo de resposta
+        	$id_md_pet_int_rel_tipo_resp = $arrParametros['id_tipo_resposta'];
+        	$rnTipoResposta = new MdPetIntRelTipoRespRN();
+        	$dtoTipoResposta = new MdPetIntRelTipoRespDTO();
+        	$dtoTipoResposta->retTodos();
+        	$dtoTipoResposta->retStrNome();
+        	$dtoTipoResposta->setNumIdMdPetIntRelTipoResp( $id_md_pet_int_rel_tipo_resp );
+        	$dtoTipoResposta = $rnTipoResposta->consultar( $dtoTipoResposta );
+        	
+        	$html .= '<tr>';
+        	$html .= '<td style="font-weight: bold;">Tipo de Intimação:</td>';
+        	$html .= '<td> ' . $dtoIntimacao->getStrNomeTipoIntimacao() .' </td>';
+        	$html .= '</tr>';
+        	
+        	$html .= '<tr>';
+        	$html .= '<td style="font-weight: bold;">Documento Principal da Intimação:</td>';
+        	$html .= '<td> ' . $texto_doc . ' </td>';
+        	$html .= '</tr>';
+        	
+        	$html .= '<tr>';
+        	$html .= '<td style="font-weight: bold;">Tipo de Resposta:</td>';
+        	$html .= '<td> ' . $dtoTipoResposta->getStrNome() . ' </td>';
+        	$html .= '</tr>';
+        }
+        
         //obter interessados (apenas os do tipo interessado, nao os do tipo remetente)
         $arrInteressados = array();
-        /*
+        
+        //obter interessados (apenas os do tipo interessado, nao os do tipo remetente)
+        $arrInteressados = array();
         $objParticipanteDTO = new ParticipanteDTO();
-        $objParticipanteDTO->setDblIdProtocolo( $reciboDTO->getNumIdProtocolo() );
+        $objParticipanteDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
         $objParticipanteDTO->setStrStaParticipacao( ParticipanteRN::$TP_INTERESSADO );
         $objParticipanteDTO->retNumIdContato();
-        */
         $objParticipanteRN = new ParticipanteRN();
-        //$arrObjParticipanteDTO = $objParticipanteRN->listarRN0189($objParticipanteDTO);
-
-        foreach ($arrParticipantes as $objParticipanteDTO) {
-            $objContatoDTO = new ContatoDTO();
-            $objContatoDTO->setNumIdContato($objParticipanteDTO->getNumIdContato());
-            $objContatoDTO->retStrNome();
-            $objContatoRN      = new ContatoRN();
-            $arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
+        $arrObjParticipanteDTO = $objParticipanteRN->listarRN0189($objParticipanteDTO);
+                
+        $objContatoRN = new ContatoRN();
+        
+        foreach ($arrObjParticipanteDTO as $objParticipanteDTO) {
+        	$objContatoDTO = new ContatoDTO();
+        	$objContatoDTO->setNumIdContato($objParticipanteDTO->getNumIdContato());
+        	$objContatoDTO->retStrNome();
+        	$objContatoDTO->setBolExclusaoLogica(false); //é possivel e permitido usar aqui contato desativado!!!
+        	$arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
         }
-
-        $html .= '<tr>';
-        $html .= '<td colspan="2" style="font-weight: bold;">Interessados:</td>';
-        $html .= '</tr>';
-
+        
         if( $arrInteressados != null && count( $arrInteressados ) > 0 ){
-            foreach ($arrInteressados as $interessado) {
+            
+        	$html .= '<tr>';
+        	$html .= '<td colspan="2" style="font-weight: bold;">Interessados:</td>';
+        	$html .= '</tr>';
+        	
+        	foreach ($arrInteressados as $interessado) {
                $html .= '<tr>';
                $html .= '<td colspan="2" >&nbsp&nbsp&nbsp&nbsp ' . $interessado->getStrNome() . '</td>';
                $html .= '</tr>';
@@ -182,16 +243,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         $html .= '<td style="font-weight: bold;">Protocolos dos Documentos (Número SEI):</td>';
         $html .= '<td></td>';
         $html .= '</tr>';
-        /*
-        $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica($arrParametros['hdnTbDocumento']);
-        ob_start();
-        var_dump($arr);
-        var_dump($arrParams);
-        $dump = ob_get_contents();
-        ob_end_clean();
 
-        $html .= $dump;
-        */
         if( $arrDocumentos != null && count( $arrDocumentos ) > 0  ){
           foreach($arrDocumentos as $documentoDTO){
             $strNumeroSEI = $documentoDTO->getStrProtocoloDocumentoFormatado();
@@ -213,12 +265,14 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         $objOrgaoDTO->setStrSinAtivo('S');
         $objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
 
-        $html .= '<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
+        $html .= '<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
+                
         return $html;
   }
 
 
 	protected function gerarReciboSimplificadoIntercorrenteControlado($arr) {
+				
 		if(is_array($arr)){
 
 			$idProcedimento    = array_key_exists('idProcedimento', $arr) ? $arr['idProcedimento'] : null;
@@ -233,8 +287,17 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
 					$reciboDTO->setDthDataHoraRecebimentoFinal( InfraData::getStrDataHoraAtual() );
 					$reciboDTO->setStrIpUsuario( InfraUtil::getStrIpUsuario() );
 					$reciboDTO->setStrSinAtivo('S');
-					$reciboDTO->setStrStaTipoPeticionamento('I');
-
+					
+					//recibo intercorrente
+					if( !isset( $arr['isRespostaIntimacao'] ) ){
+						$reciboDTO->setStrStaTipoPeticionamento( MdPetReciboRN::$TP_RECIBO_INTERCORRENTE );
+					}
+					
+					//recibo de resposta a intimacao
+					else {
+						$reciboDTO->setStrStaTipoPeticionamento( MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO );
+					}
+					
                     if(!is_null($idProcedimentoRel)){
 						$reciboDTO->setDblIdProtocoloRelacionado($idProcedimentoRel);
 					}

@@ -691,17 +691,12 @@ function addDocumentoComplementar( docCustomizado ){
 	var hipoteseCombo2 = document.getElementById("hipoteseLegal2");
 	var valorHipoteseLegal2 = hipoteseCombo2.options[hipoteseCombo2.selectedIndex].text;
 	
-	// Find a <table> element with id="myTable":
-	//var table = document.getElementById("tbDocumentoComplementar");
 	var table = document.getElementById("tblAnexos");
 
-	// Create an empty <tr> element and add it to the 1st position of the table:
 	var row = table.insertRow(-1);
 	row.className = 'infraTrClara';
 
-	// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-	
-	//Nome do arquivo	
+	//Nome do arquivo
 	var cell1 = row.insertCell(0);
 	cell1.align = 'center';
 	cell1.className = 'infraTdSetaOrdenacao';
@@ -819,8 +814,12 @@ function validarFormulario(){
 	var fileArquivoPrincipal = document.getElementById('fileArquivoPrincipal');
 	var complementoPrincipal = document.getElementById('complementoPrincipal');
 	var nivelAcessoPrincipal = document.getElementById('nivelAcesso1');
-	var hipoteseLegalPrincipal = document.getElementById('hipoteseLegal1');
-		
+
+	var hipoteseLegalPrincipal;
+	if (document.getElementById('hipoteseLegal1')!=null){
+		hipoteseLegalPrincipal = document.getElementById('hipoteseLegal1');
+	}
+
 	//validando seleçao de nivel de acesso principal e hipotese legal principal
 	var tbDocumentoPrincipal = document.getElementById('tbDocumentoPrincipal');
 
@@ -858,8 +857,8 @@ function validarFormulario(){
 			alert('Informe o Nível de Acesso.');
 			nivelAcessoPrincipal.focus();
 			return false;
-			
-		} else if( hdnDocPrincipal == "" && nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal.value == ''){
+
+		} else if( hdnDocPrincipal == "" && nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal!=null && hipoteseLegalPrincipal.value == ''){
 			alert('Informe a Hipótese Legal.');
 			hipoteseLegalPrincipal.focus();
 			return false;
@@ -880,8 +879,8 @@ function validarFormulario(){
 			alert('Informe o Nível de Acesso.');
 			nivelAcessoPrincipal.focus();
 			return false;
-			
-		} else if( nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal.value == ''){
+
+		} else if( nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal!=null && hipoteseLegalPrincipal.value == ''){
 			alert('Informe a Hipótese Legal.');
 			hipoteseLegalPrincipal.focus();
 			return false;
@@ -1268,27 +1267,18 @@ function inicializar(){
 	      objTabelaInteressado.gerarEfeitoTabela=true;
 
 	      document.getElementById("txtCPF").addEventListener("keyup", function(event) {
-
-		      event.preventDefault();
-
+	         event.preventDefault();
 	         if (event.keyCode == 13) {
 	    	   abrirCadastroInteressado();
-	           //document.getElementById("id_of_button").click();
 	         }
-	         
 	  	  });
 
 	      document.getElementById("txtCNPJ").addEventListener("keyup", function(event) {
-
-		      event.preventDefault();
-
+		     event.preventDefault();
 	         if (event.keyCode == 13) {
 	    	   abrirCadastroInteressado();
-	           //document.getElementById("id_of_button").click();
 	         }
-	         
 	  	  });
-
       }
       
 }
@@ -1368,7 +1358,6 @@ function carregarCamposDocPrincipalUpload(){
 	  objTabelaDocPrincipal.adicionarAcoes(
 		arr['nome'], 
 		"", 
-		//"<a href='#' onclick=\"downloadArquivo( ' "+ urlBase +"')\"><img title='Baixar anexo' alt='Baixar arquivo' src='/infra_css/imagens/download.gif' class='infraImg' /></a>",
 		false,
 		true);
 
@@ -1382,11 +1371,9 @@ function carregarCamposDocPrincipalUpload(){
 	  var table = document.getElementById("tbDocumentoPrincipal");
 
 	  for (var i = 0, row; row = table.rows[i]; i++) {
-
 		   for (var j = 0, col; col = row.cells[j]; j++) {
 		    col.setAttribute("valign","middle");
 		   }
-		     
 	  }
 
 	}
@@ -1496,10 +1483,9 @@ function carregarCamposDocEssencialUpload(){
 	  var htmlComplemento = document.getElementById('complementoEssencial').value;
 	  var escaped = $("<pre>").text(htmlComplemento).html();
       var strComplemento = escaped;	
-	  	
-	  //var strComplemento = document.getElementById('complementoEssencial').value;	
+
       var documento = getStrTipoDocumento( cbTpoEssencial.value, 'Essencial' ) + ' ' + strComplemento;
-      
+
       var nivelAcesso = getStrNivelAcesso( document.getElementById('nivelAcesso2').value );
 
       var hipoteseLegal = '';
@@ -1508,24 +1494,18 @@ function carregarCamposDocEssencialUpload(){
       if( cbHipotese != null && cbHipotese != undefined ){
     	  hipoteseLegal = cbHipotese.value;
       }
-      
-	  //var hipoteseLegal=  ' hip legal essencial';
+
       var formatoDocumento = $('input[name="formatoDocumentoEssencial"]:checked').val();
       var formatoDocumentoLbl = 'Nato-digital';
       if(formatoDocumento != 'nato'){
     	  formatoDocumentoLbl = 'Digitalizado';
       }
 
-    //TipoConferenciaPrincipal / TipoConferenciaEssencial
+      //TipoConferenciaPrincipal / TipoConferenciaEssencial
       var tipoConferencia = document.getElementById('TipoConferenciaEssencial').value;
 
-      //objTabelaDocPrincipal.adicionar([ nome , dataHora ,  tamanhoFormatado , documento , nivelAcesso , hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoPrincipal.value, '' ]);
       objTabelaDocEssencial.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoEssencial.value,strComplemento, formatoDocumentoLbl, '' ]);	
-      //objTabelaDocEssencial.adicionar([ nomeUpload , nomeUpload, dataHora , '4', '5', '6', '7']);		
-      //objTabelaDocEssencial.adicionar([ nomeUpload , dataHora ,  tamanhoFormatado , documento , nivelAcesso , '']);
-      //objTabelaDocEssencial.adicionar([ '-' , nomeUpload ,  dataHora , dataHora , tamanhoFormatado, documento, 'nivel de acesso', 'acoes' ]);
-	  //objTabelaDocEssencial.adicionar([arr['nome_upload'],arr['nome'],arr['data_hora'],arr['tamanho'],infraFormatarTamanhoBytes(arr['tamanho']),'<?= time() ?>']);
-	  
+
 	  var strHashEssencial = document.getElementById('hdnDocEssencial').value;
 	  var arrHashEssencial = strHashEssencial.split('±');
 
@@ -1543,7 +1523,6 @@ function carregarCamposDocEssencialUpload(){
 		true);
 		  
 	  document.getElementById("fileArquivoEssencial").value = '';
-	  //document.getElementById('divArquivo').style.display = 'none';
 
 	  limparCampoUpload('2');
 
@@ -1681,8 +1660,6 @@ function carregarCamposDocComplementarUpload(){
 	  var tipoConferencia = document.getElementById('TipoConferenciaComplementar').value;
 
       objTabelaDocComplementar.adicionar([ nome , dataHora , tamanhoFormatado , documento , nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoComplementar.value, strComplemento,formatoDocumentoLbl, '' ]);	
-      //objTabelaDocComplementar.adicionar([ '-' , nomeUpload ,  dataHora , dataHora , tamanhoFormatado, documento, 'nivel de acesso', 'acoes' ]);
-	  //objTabelaDocComplementar.adicionar([arr['nome_upload'],arr['nome'],arr['data_hora'],arr['tamanho'],infraFormatarTamanhoBytes(arr['tamanho']),'<?= time() ?>']);
 	  
 	  var strHashComplementar = document.getElementById('hdnDocComplementar').value;
 	  var arrHashComplementar = strHashComplementar.split('±');
@@ -1696,7 +1673,6 @@ function carregarCamposDocComplementarUpload(){
 	  objTabelaDocComplementar.adicionarAcoes(
 		arr['nome'], 
 		"",
-		//"<a href='#' onclick=\"downloadArquivo( ' "+ urlBase +"')\"><img title='Baixar anexo' alt='Baixar arquivo' src='/infra_css/imagens/download.gif' class='infraImg' /></a>",
 		false,
 		true);
 		  
@@ -1802,8 +1778,6 @@ function selecionarPF(){
 	
   document.getElementById('descTipoPessoa').innerHTML = 'CPF:';
   document.getElementById('descNomePessoa').innerHTML = 'Nome:';	
-  //document.getElementById('tdDescTipoPessoa').innerHTML = 'CPF';
-  //document.getElementById('tdDescNomePessoa').innerHTML = 'Nome';
 
   document.getElementById('divSel1').style.display = 'inline';
   document.getElementById('divSel2').style.display = 'inline';
@@ -1813,7 +1787,6 @@ function selecionarPF(){
   document.getElementById('btAdicionarInteressado').style.display = 'inline';
   
   document.getElementById('txtCPF').style.display = 'inline';
-  //document.getElementById('txtCPF').style.width='80%';
   document.getElementById('txtCNPJ').value = '';
   document.getElementById('txtCNPJ').style.display = 'none';
   document.getElementById('btValidarCPFCNPJ').style.visibility = 'visible';
@@ -1824,8 +1797,6 @@ function selecionarPJ(){
 	
   document.getElementById('descTipoPessoa').innerHTML = 'CNPJ:';
   document.getElementById('descNomePessoa').innerHTML = 'Razão Social:';
-  //document.getElementById('tdDescTipoPessoa').innerHTML = 'CNPJ';
-  //document.getElementById('tdDescNomePessoa').innerHTML = 'Razão Social';
 
   document.getElementById('divSel1').style.display = 'inline';
   document.getElementById('divSel2').style.display = 'inline';
@@ -1838,7 +1809,6 @@ function selecionarPJ(){
   document.getElementById('txtCPF').value = '';
   
   document.getElementById('txtCNPJ').style.display = 'inline';
-  //document.getElementById('txtCNPJ').style.width='80%';
   document.getElementById('btValidarCPFCNPJ').style.visibility = 'visible';
   
 }
@@ -1932,17 +1902,20 @@ function selectNivelAcesso( idNivelAcesso, idHipoteseLegal ){
       var valorSelectNivelAcesso = document.getElementById(idNivelAcesso).value;
       
       if( valorSelectNivelAcesso == '1' ){
-			//mostrar combo do nivel de acesso
-    	   document.getElementById(idHipoteseLegal).selectedIndex=0;
-    	   document.getElementById('div'+idHipoteseLegal).style.display='block';      
+           //mostrar combo e selecionar se existe existe
+           if (document.getElementById(idHipoteseLegal)!=null){
+               document.getElementById(idHipoteseLegal).selectedIndex=0;
+           }
+           document.getElementById('div'+idHipoteseLegal).style.display='block';
       }
       else{
-           //ocultar combo do nivel de acesso e limpar a seleção da combo
-    	  document.getElementById(idHipoteseLegal).selectedIndex=0;
-    	  document.getElementById('div'+idHipoteseLegal).style.display='none';
-    	  
+           //ocultar combo e limpar a seleção da combo
+           if (document.getElementById(idHipoteseLegal)!=null){
+               document.getElementById(idHipoteseLegal).selectedIndex=0;
+           }
+           document.getElementById('div'+idHipoteseLegal).style.display='none';
       }
-	
+
 }
 
 function adicionarInteressadoValido(){

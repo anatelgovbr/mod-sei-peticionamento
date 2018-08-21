@@ -10,8 +10,6 @@ try{
     require_once dirname(__FILE__).'/../../SEI.php';
     session_start();
     
-  	//alteracoes seiv3
-  	//SessaoSEIExterna::getInstance()->validarLink();
     InfraAjax::decodificarPost();
   
  switch($_GET['acao_ajax_externo']){
@@ -40,8 +38,6 @@ try{
 			//e atenda ao filtro por nome e tipo de contexto informado na tela
 
 			$objContextoContatoDTO->adicionarCriterio(
-					//seiv2
-					//array('Cnpj','Nome', 'SinAtivo', 'IdTipoContextoContato'),
 					//alteracoes seiv3
 					array('Cnpj','Nome', 'SinAtivo', 'IdTipoContato'),
 					array(InfraDTO::$OPER_DIFERENTE,InfraDTO::$OPER_LIKE, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL ),
@@ -80,7 +76,6 @@ try{
         $objMdPetRelTpCtxContatoDTO = new MdPetRelTpCtxContatoDTO();
         $objMdPetTpCtxContatoRN = new MdPetTpCtxContatoRN();
         $objMdPetRelTpCtxContatoDTO->retTodos();
-        //$objMdPetRelTpCtxContatoDTO->setStrSinSelecaoInteressado('S');
         $arrobjMdPetRelTpCtxContatoDTO = $objMdPetTpCtxContatoRN->listar( $objMdPetRelTpCtxContatoDTO );
         
         if(!empty($arrobjMdPetRelTpCtxContatoDTO)){
@@ -90,18 +85,14 @@ try{
             foreach($arrobjMdPetRelTpCtxContatoDTO as $item){
                 array_push($arrId, $item->getNumIdTipoContextoContato());
             }
-            
-            //seiv2
-            //$objContatoDTO->adicionarCriterio(array('IdTipoContextoContato', 'IdTipoContextoContato'),
-            
+
             //alteracoes seiv3
             $objContatoDTO->adicionarCriterio(array('IdTipoContato', 'IdTipoContato'),
                 array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL),
                 array($arrId, null), 
             	array( InfraDTO::$OPER_LOGICO_OR));
         }
-        
-        //SessaoSEI::getInstance()->simularLogin( SessaoSEIExterna::getInstance()->getStrSiglaUsuario(), null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
+
         $objMdPetContatoRN = new MdPetContatoRN();
         $arrObjContatoDTO = $objMdPetContatoRN->pesquisar($objContatoDTO);        
         $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
@@ -144,7 +135,6 @@ try{
   }
   
 }catch(Exception $e){
-	//LogSEI::getInstance()->gravar('ERRO AJAX: '.$e->__toString());
   InfraAjax::processarExcecao($e);
 }
 ?>

@@ -65,11 +65,7 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 		$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 		
 		//variaveis basicas em uso no email
-		//$linkLoginUsuarioExterno = $objOrgaoDTO->getStrSitioInternet();
-		//$linkLoginUsuarioExterno = $this->getObjInfraSessao()->getStrPaginaLogin()
-		//$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin();
 		$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
-
 
 		$strNomeTipoProcedimento = $objProcedimentoDTO->getStrNomeTipoProcedimento();
 		$strProtocoloFormatado = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
@@ -81,10 +77,7 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 		$strSiglaOrgao = $objOrgaoDTO->getStrSigla();
 		$strSiglaOrgaoMinusculas = InfraString::transformarCaixaBaixa($objOrgaoDTO->getStrSigla());
 		$strSufixoEmail = $objInfraParametro->getValor('SEI_SUFIXO_EMAIL');
-		
-		//$strNomeContato = $objProcedimentoDTO->getStrNome();
-		//$strEmailContato = $objProcedimentoDTO->getStrEmail();
-		
+
 		//Tentando simular sessao de usuario interno do SEI
 		SessaoSEI::getInstance()->setNumIdUnidadeAtual( $objUnidadeDTO->getNumIdUnidade() );
 		SessaoSEI::getInstance()->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
@@ -101,7 +94,7 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 		
 		//RECIBO
 		$objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-		$idSerieParam = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
+		$idSerieParam = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
 		                
 		$documentoRN = new DocumentoRN();
 		$documentoDTO = new DocumentoDTO();
@@ -208,12 +201,8 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 	     	$strConteudo = str_replace('@email_usuario_externo@', $strEmailContato ,$strConteudo);
 	     	$strConteudo = str_replace('@link_login_usuario_externo@', $linkLoginUsuarioExterno ,$strConteudo);
 
-	     	if ($reciboDTOBasico->getStrStaTipoPeticionamento()=="N"){
-	     		$strConteudo = str_replace('@tipo_peticionamento@',"Processo Novo",$strConteudo);
-	     	}else if ($reciboDTOBasico->getStrStaTipoPeticionamento()=="I"){
-	     		$strConteudo = str_replace('@tipo_peticionamento@',"Intercorrente",$strConteudo);
-	     	}
-			
+	     	$strConteudo = str_replace('@tipo_peticionamento@',$reciboDTOBasico->getStrStaTipoPeticionamentoFormatado(),$strConteudo);
+
 	     	$strConteudo = str_replace('@sigla_unidade_abertura_do_processo@', $strSiglaUnidade ,$strConteudo);
 	     	$strConteudo = str_replace('@descricao_unidade_abertura_do_processo@',$objUnidadeDTO->getStrDescricao(),$strConteudo);
 	     	$strConteudo = str_replace('@documento_recibo_eletronico_de_protocolo@',$documentoDTO->getStrProtocoloDocumentoFormatado(),$strConteudo);

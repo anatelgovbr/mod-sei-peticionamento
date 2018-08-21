@@ -168,13 +168,8 @@ function mostrarCampos(){
 }
 
 function mostrarCamposGenero(){
-	if (document.getElementById('optFeminino').checked==false 
-		&& document.getElementById('optMasculino').checked==false){
-		//document.getElementById('field2').style.display = 'none';
-	}else{
-		//document.getElementById('field2').style.display = '';
-	}
 }
+
 function trocarGenero(){
 	document.getElementById('cargo').disabled = false;
 	document.getElementById('tratamento').value = '';
@@ -283,13 +278,9 @@ function inicializar(){
 	  //Ajax para carregar as cidades na escolha do estado
 	  objAjaxCidade = new infraAjaxMontarSelectDependente('selEstado','selCidade','<?=$strLinkAjaxCidade?>');
 	  objAjaxCidade.prepararExecucao = function(){
-	    //seiv2
-            //return infraAjaxMontarPostPadraoSelect('null','','null') + '&siglaUf='+document.getElementById('selEstado').value;
-            //alteracoes seiv3
-            return infraAjaxMontarPostPadraoSelect('null','','null') + '&idUf='+document.getElementById('selEstado').value;
+		  return infraAjaxMontarPostPadraoSelect('null','','null') + '&idUf='+document.getElementById('selEstado').value;
 	  }
 	  objAjaxCidade.processarResultado = function(){
-	    //alert('terminou carregamento');
 	  }
 
 
@@ -349,15 +340,6 @@ function inicializar(){
     document.getElementById('tipoInteressado').disabled = true;
     document.getElementById('tipoInteressado').disabled = 'disabled';
 
-	//document.getElementById("rdPF").disabled = true;
-	//document.getElementById("rdPF").disabled = 'disabled';
-
-	//document.getElementById("rdPF1").disabled = true;
-	//document.getElementById("rdPF1").disabled = 'disabled';
-
-	//document.getElementById("rdPF2").disabled = true;
-	//document.getElementById("rdPF2").disabled = 'disabled';
-
 	<?php if( isset( $_GET['cpf'] ) ) { ?>
 	  document.getElementById("rdPF").disabled = true;
 	  document.getElementById("rdPF").disabled = 'disabled';
@@ -379,12 +361,6 @@ function inicializar(){
     <?php 
     $janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
     if( $janelaSelecaoPorNome != null && $janelaSelecaoPorNome != "" && !isset( $_GET['cadastro'] ) ) { ?>
-
-    //document.getElementById("rdPF").checked = false;
-    //document.getElementById("rdPF").checked = '';
-
-    //document.getElementById("rdPJ").checked = false;
-    //document.getElementById("rdPJ").checked = '';
 
     document.getElementById('lblNome').style.display = 'none';
     document.getElementById('lblCPF').style.display = 'none';

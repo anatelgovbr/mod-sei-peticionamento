@@ -13,7 +13,8 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 	
 	public static $SIM = 'S';
 	public static $NAO = 'N';
-	
+	public static $ID_TAREFA_PRORROGACAO = 'MD_PET_INTIMACAO_PRORROGACAO_AUTOMATICA_PRAZO_EXT';
+
 	public function __construct() {
 		parent::__construct ();
 	}
@@ -117,8 +118,9 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 		
 			$objMdPetIndisponibilidadeBD = new MdPetIndisponibilidadeBD($this->getObjInfraIBanco());
 			$objMdPetIndisponibilidadeBD->alterar($objMdPetIndisponibilidadeDTO);
-		
-			$this->_controlarAnexos($objMdPetIndisponibilidadeDTO);
+
+			$this->_controlarProrrogacoesIntimacoes();
+			$this->_cadastrarDocumentoIndisponibilidadePeticionamento($objMdPetIndisponibilidadeDTO->getNumIdIndisponibilidade());
 				
 			// Auditoria
 		} catch ( Exception $e ) {
@@ -136,43 +138,161 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 	 * @param  $objMdPetIndisponibilidadeDTO
 	 * @return mixed
 	 */
-	protected function cadastrarControlado(MdPetIndisponibilidadeDTO $objMdPetIndisponibilidadeDTO) {
+	protected function cadastrarControlado(MdPetIndisponibilidadeDTO $objMdPetIndisponibilidadeDTO)
+	{
 		try {
 			// Valida Permissao
-			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_indisponibilidade_cadastrar', __METHOD__, $objMdPetIndisponibilidadeDTO );
-
+			SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_indisponibilidade_cadastrar', __METHOD__, $objMdPetIndisponibilidadeDTO);
 
 			// Regras de Negocio
 			$objInfraException = new InfraException();
-			
+
 			$this->_validarDuplicidade($objInfraException, $objMdPetIndisponibilidadeDTO);
 			$this->_validarTxtResumoIndisponibilidade($objInfraException, $objMdPetIndisponibilidadeDTO);
-				
+
 			$objInfraException->lancarValidacoes();
-	
+
 			//Cadastrar Indisponibilidade
 			$objMdPetIndisponibilidadeBD = new MdPetIndisponibilidadeBD($this->getObjInfraIBanco());
 			$objMdPetIndisponibilidadeDTO->setStrSinAtivo('S');
-			
+
 			$objRetorno = $objMdPetIndisponibilidadeBD->cadastrar($objMdPetIndisponibilidadeDTO);
-	
-			$this->_cadastrarAnexosIndisponibilidadePeticionamento($objMdPetIndisponibilidadeDTO, $objRetorno);
-			
+
+			$this->_controlarProrrogacoesIntimacoes();
+			$this->_cadastrarDocumentoIndisponibilidadePeticionamento($objRetorno->getNumIdIndisponibilidade());
+
 			return $objRetorno;
-		} catch ( Exception $e ) {
-			throw new InfraException ('Erro cadastrando Tamanho de Arquivo Peticionamento.', $e );
+		} catch (Exception $e) {
+			throw new InfraException ('Erro cadastrando Tamanho de Arquivo Peticionamento.', $e);
+		}
+
+	}
+
+	private function _controlarProrrogacoesIntimacoes()
+	{
+	  $dtPostFim        = array_key_exists('txtDtFim', $_POST) && $_POST['txtDtFim'] != '' ? $_POST['txtDtFim']  : false;
+	  $arrDtInicio      = explode(' ', $_POST['txtDtInicio']);
+	  $arrDtFim         = explode(' ', $dtPostFim);
+	  $dataInicioIndisp = $arrDtInicio[0]. ' 00:00:00';
+	  $dataFimIndisp    = $arrDtFim[0]. ' 23:59:59';
+	  $sinProrrogar     = $_POST['hdnSinProrrogacao'] == 'S';
+
+		if($sinProrrogar && $dtPostFim)
+		{
+			$objDTOS = $this->_retornaObjsIntimacoesProrrogacao($dataInicioIndisp, $dataFimIndisp);
+
+			if (count($objDTOS) > 0)
+			{
+				$dtProrrogacao = $this->_retornaDataProrrogacao($dataFimIndisp);
+				$this->_efetivarProrrogacoes($objDTOS, $dtProrrogacao);
+				$this->_verificaIndisponibilidadesNaDataProrrogada($dtProrrogacao);
+			}
 		}
 	}
-	
-	
+
+	private function _retornaObjsIntimacoesProrrogacao($dataInicioIndisp, $dataFimIndisp, $consultaDtLimite = true){
+
+		$objMdPetIntTpRespDestDTO = new MdPetIntRelTipoRespDestDTO();
+		$objMdPetIntTpRespDestDTO->retTodos();
+
+		if($consultaDtLimite)
+		{
+			/* Pesquisa os objetos que possuem data prorrogada null e data limite no periodo da indisponibilidade OU se data prorrogada not null e data prorrogada no periodo da indisponibilidade*/
+			$objMdPetIntTpRespDestDTO->adicionarCriterio(array('DataProrrogada', 'DataLimite', 'DataLimite', 'DataProrrogada', 'DataProrrogada', 'DataProrrogada'),
+				array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL, InfraDTO::$OPER_DIFERENTE, InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL),
+				array(null, $dataInicioIndisp, $dataFimIndisp, null, $dataInicioIndisp, $dataFimIndisp),
+				array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_OR, InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
+		}else
+		{
+			$objMdPetIntTpRespDestDTO->adicionarCriterio(array('DataProrrogada', 'DataProrrogada', 'DataProrrogada'),
+				array(InfraDTO::$OPER_DIFERENTE, InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL),
+				array(null, $dataInicioIndisp, $dataFimIndisp),
+				array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
+		}
+
+		$objMdPetIntTpRespDestRN = new MdPetIntRelTipoRespDestRN();
+
+		$objDTOS = $objMdPetIntTpRespDestRN->listar($objMdPetIntTpRespDestDTO);
+
+		return $objDTOS;
+	}
+
+	private function _efetivarProrrogacoes($objDTOS, $dtProrrogacao)
+	{
+	 $objMdPetIntTpRespDestRN = new MdPetIntRelTipoRespDestRN();
+	 $objMdPetUsuRN           = new MdPetIntUsuarioRN();
+	 $idUsuarioIntimacao      = $objMdPetUsuRN->getObjUsuarioPeticionamento(true);
+
+	if(count($objDTOS) > 0)
+	{
+		foreach ($objDTOS as $objDTO)
+		{
+			$objDTO->setDthDataProrrogada($dtProrrogacao);
+			$objMdPetIntTpRespDestRN->alterar($objDTO);
+			$this->lancarAndamentoProrrogacao(array($objDTO->getNumIdMdPetIntRelDest(), $dtProrrogacao, $idUsuarioIntimacao));
+		}
+	}
+
+	}
+
+	private function _retornaIndisponibilidadesPeriodoProrrogado($dtProrrogacao){
+		$arrDtProrrogacaoInicio = explode(' ', $dtProrrogacao);
+		$arrDtProrrogacaoFim    = explode(' ', $dtProrrogacao);
+		$dtProrrogacaoInicio    = $arrDtProrrogacaoInicio[0].' 00:00:00';
+		$dtProrrogacaoFim       = $arrDtProrrogacaoFim[0].' 23:59:59';
+
+		$objMdPetIndisponibilidadeDTO = new MdPetIndisponibilidadeDTO();
+		$objMdPetIndisponibilidadeDTO->adicionarCriterio(array('DataInicio', 'DataInicio', 'DataFim', 'DataFim'),
+			array(InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL, InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL),
+			array($dtProrrogacaoInicio, $dtProrrogacaoFim, $dtProrrogacaoInicio, $dtProrrogacaoFim),
+			array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_OR, InfraDTO::$OPER_LOGICO_AND));
+
+		$objMdPetIndisponibilidadeDTO->setOrdDthDataFim(InfraArray::$TIPO_ORDENACAO_ASC);
+		$objMdPetIndisponibilidadeDTO->setStrSinProrrogacao('S');
+		$objMdPetIndisponibilidadeDTO->setNumMaxRegistrosRetorno(1);
+		$objMdPetIndisponibilidadeDTO->retTodos();
+		$objMdPetIndisponibilidadeRN = new MdPetIndisponibilidadeRN();
+		$objDTO = $objMdPetIndisponibilidadeRN->consultar($objMdPetIndisponibilidadeDTO);
+
+		return $objDTO;
+	}
+
+	private function _verificaIndisponibilidadesNaDataProrrogada($dtProrrogacaoAnterior){
+
+		$objDTOIndisp = $this->_retornaIndisponibilidadesPeriodoProrrogado($dtProrrogacaoAnterior);
+
+		if(!is_null($objDTOIndisp)){
+			$objDTOS           = $this->_retornaObjsIntimacoesProrrogacao($objDTOIndisp->getDthDataInicio(), $objDTOIndisp->getDthDataFim(), false);
+
+			if(count($objDTOS) > 0)
+			{
+				$novaDtProrrogacao = $this->_retornaDataProrrogacao($objDTOIndisp->getDthDataFim());
+
+				$this->_efetivarProrrogacoes($objDTOS, $novaDtProrrogacao);
+				if(count($objDTOS) > 0) {
+					$this->_verificaIndisponibilidadesNaDataProrrogada($novaDtProrrogacao);
+				}
+			}
+		}
+	}
+
+
+	private function _retornaDataProrrogacao($dataFimIndisp){
+	  $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
+	  $proximoDiaUtil =  $objMdPetIntPrazoRN->somarDiaUtil(1 , $dataFimIndisp);
+      $dataRetorno    = $proximoDiaUtil. ' 23:59:59';
+
+	  return $dataRetorno;
+	}
+
 	private function _validarTxtResumoIndisponibilidade($objInfraException, $objMdPetIndisponibilidadeDTO){
 		if (InfraString::isBolVazia ($objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade())) {
 			$objInfraException->adicionarValidacao('Resumo da Indisponibilidade não informada.');
 		}
 		if (trim ( $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade () ) != '')
 		{
-			if (strlen ( $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade () ) > 250) {
-				$objInfraException->adicionarValidacao('Resumo da Indisponibilidade possui tamanho superior a 250 caracteres.');
+			if (strlen ( $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade () ) > 500) {
+				$objInfraException->adicionarValidacao('Resumo da Indisponibilidade possui tamanho superior a 500 caracteres.');
 			}
 		}
 	}
@@ -212,75 +332,151 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 		
 	}
 	
-	private function _cadastrarAnexosIndisponibilidadePeticionamento($objMdPetIndisponibilidadeDTO, $objRetorno){
-		// Cadastra os anexos da Indisponibilidade
-		if (count($objMdPetIndisponibilidadeDTO->getArrObjAnexoDTO()) > 0){
-			$objMdPetIndisponibilidadeAnexoRN = new MdPetIndisponibilidadeAnexoRN();
-			$arrAnexos = $objMdPetIndisponibilidadeDTO->getArrObjAnexoDTO();
-		
-			for($i=0;$i<count($arrAnexos);$i++){
-				$arrAnexos[$i]->setNumIdIndisponibilidade($objRetorno->getNumIdIndisponibilidade());
-				$arrAnexos[$i]->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
-				$arrAnexos[$i]->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
-				$arrAnexos[$i]->setStrSinAtivo('S');
-				$objAnexoDTO = $objMdPetIndisponibilidadeAnexoRN->cadastrar($arrAnexos[$i]);
-			}
+	private function _cadastrarDocumentoIndisponibilidadePeticionamento($idIndisponibilidade){
+		$idDocumento = $_POST['hdnIdDocumento'];
+		if ($idDocumento != '') {
+			$idProcedimento = $this->_retornaIdProcedimentoGeradoDocumento($idDocumento);
+			$objAcessoExternoDTO = $this->_retornaObjAcessoExterno($idDocumento, $idProcedimento);
+
+			$objRN = new MdPetIndisponibilidadeDocRN();
+			$objMdPetIndisponibilidadeDocDTO = new MdPetIndisponibilidadeDocDTO();
+			$objMdPetIndisponibilidadeDocDTO->setDblIdDocumento($idDocumento);
+			$objMdPetIndisponibilidadeDocDTO->setNumIdIndisponibilidade($idIndisponibilidade);
+			$objMdPetIndisponibilidadeDocDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+			$objMdPetIndisponibilidadeDocDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+			$objMdPetIndisponibilidadeDocDTO->setDthInclusao(InfraData::getStrDataHoraAtual());
+			$objMdPetIndisponibilidadeDocDTO->setStrSinAtivo('S');
+			$objMdPetIndisponibilidadeDocDTO->setNumIdAcessoExterno($objAcessoExternoDTO->getNumIdAcessoExterno());
+			$objDTO = $objRN->cadastrar($objMdPetIndisponibilidadeDocDTO);
 		}
 	}
-	
-	private function _controlarAnexos(MdPetIndisponibilidadeDTO $objMdPetIndisponibilidadeDTO){
-		
-		if ($objMdPetIndisponibilidadeDTO->isSetArrObjAnexoDTO()){
-			$objMdPetIndisponibilidadeAnexoRN = new MdPetIndisponibilidadeAnexoRN();
-			
-			$objMdPetIndisponibilidadeAnexoDTO = new MdPetIndisponibilidadeAnexoDTO();
-			$objMdPetIndisponibilidadeAnexoDTO->retTodos();
-			
-			$objMdPetIndisponibilidadeAnexoDTO->setNumIdAnexoPeticionamento($objMdPetIndisponibilidadeDTO->getNumIdIndisponibilidade());
-			$arrAnexosAntigos = $objMdPetIndisponibilidadeAnexoRN->listar($objMdPetIndisponibilidadeAnexoDTO);
-			
-			$arrAnexosNovos = $objMdPetIndisponibilidadeDTO->getArrObjAnexoDTO();
-			 
-			$arrRemocao = array();
-			foreach($arrAnexosAntigos as $anexoAntigo){
-				$flagRemover = true;
-				foreach($arrAnexosNovos as $anexoNovo){
-					if ($anexoAntigo->getNumIdAnexoPeticionamento()==$anexoNovo->getNumIdAnexoPeticionamento()){
-						$flagRemover = false;
-						break;
+
+	private function _retornaIdProcedimentoGeradoDocumento($idDocumento)
+	{
+		$objDocumentoRN = new DocumentoRN();
+
+		if ($idDocumento != null && $idDocumento != '')
+		{
+			$objDocumentoDTO = new DocumentoDTO();
+			$objDocumentoDTO->setDblIdDocumento($idDocumento);
+			$objDocumentoDTO->retDblIdProcedimento();
+			$objDocumentoDTO->setNumMaxRegistrosRetorno(1);
+
+			$objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+
+			if(!is_null($objDocumentoDTO)) {
+				return $objDocumentoDTO->getDblIdProcedimento();
+			}
+		}
+
+		return null;
+	}
+
+	private function _retornaObjAcessoExterno($idDocumento, $idProcedimento)
+	{
+		$objMdPetIntUsuarioRN = new MdPetIntUsuarioRN();
+
+		$idUsuario     = $objMdPetIntUsuarioRN->getObjUsuarioPeticionamento(true);
+		$objContatoDTO = $objMdPetIntUsuarioRN->retornaObjContatoPorIdUsuario(array($idUsuario));
+
+		$objAcessoExternoDTO = $this->_obterAcessoExternoSistema($idProcedimento, $objContatoDTO->getNumIdContato());
+
+		return $objAcessoExternoDTO;
+	}
+
+	private function _obterAcessoExternoSistema($dlbIdProcedimento, $idContato){
+
+			try {
+
+				$objAcessoExternoDTO = new AcessoExternoDTO();
+				$objAcessoExternoDTO->retNumIdAcessoExterno();
+				$objAcessoExternoDTO->setDblIdProtocoloAtividade($dlbIdProcedimento);
+				$objAcessoExternoDTO->setNumIdContatoParticipante($idContato);
+				$objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA);
+				$objAcessoExternoDTO->setNumMaxRegistrosRetorno(1);
+
+				$objAcessoExternoRN = new AcessoExternoRN();
+				$objAcessoExternoDTO = $objAcessoExternoRN->consultar($objAcessoExternoDTO);
+
+				if ($objAcessoExternoDTO == null) {
+
+					$objParticipanteDTO = new ParticipanteDTO();
+					$objParticipanteDTO->retNumIdParticipante();
+					$objParticipanteDTO->setNumIdContato($idContato);
+					$objParticipanteDTO->setStrStaParticipacao(ParticipanteRN::$TP_ACESSO_EXTERNO);
+					$objParticipanteDTO->setDblIdProtocolo($dlbIdProcedimento);
+
+					$objParticipanteRN = new ParticipanteRN();
+					$objParticipanteDTO = $objParticipanteRN->consultarRN1008($objParticipanteDTO);
+
+					if ($objParticipanteDTO == null) {
+						$objParticipanteDTO = new ParticipanteDTO();
+						$objParticipanteDTO->setDblIdProtocolo($dlbIdProcedimento);
+						$objParticipanteDTO->setNumIdContato($idContato);
+						$objParticipanteDTO->setStrStaParticipacao(ParticipanteRN::$TP_ACESSO_EXTERNO);
+						$objParticipanteDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+						$objParticipanteDTO->setNumSequencia(0);
+						$objParticipanteDTO = $objParticipanteRN->cadastrarRN0170($objParticipanteDTO);
 					}
+
+					$objAcessoExternoDTO = new AcessoExternoDTO();
+					$objAcessoExternoDTO->setNumIdParticipante($objParticipanteDTO->getNumIdParticipante());
+					$objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA);
+
+					$objAcessoExternoRN = new AcessoExternoRN();
+					$objAcessoExternoDTO = $objAcessoExternoRN->cadastrar($objAcessoExternoDTO);
 				}
-				if ($flagRemover){
-					$arrRemocao[] = $anexoAntigo;
-				}
-			}
-			 
-			foreach($arrRemocao as $anexoRemover){
-				if ($anexoRemover->getNumIdUnidade()<>SessaoSEI::getInstance()->getNumIdUnidadeAtual()){
-					$objUnidadeRN = new UnidadeRN();
-					$objUnidadeDTO = new UnidadeDTO();
-					$objUnidadeDTO->retStrSigla();
-					$objUnidadeDTO->setNumIdUnidade($anexoRemover->getNumIdUnidade());
-					$objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
-					$objInfraException->adicionarValidacao('O anexo "'.$anexoRemover->getStrNome().'" não pode ser excluído porque foi adicionado por outra unidade ('.$objUnidadeDTO->getStrSigla().').');
-				}
-			}
-			
-			$objMdPetIndisponibilidadeAnexoRN->excluir($arrRemocao);
-			 
-			
-			foreach($arrAnexosNovos as $anexoNovo){
-				if (!is_numeric($anexoNovo->getNumIdAnexoPeticionamento())){
-					$anexoNovo->setNumIdIndisponibilidade($objMdPetIndisponibilidadeDTO->getNumIdIndisponibilidade());
-					$anexoNovo->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
-					$anexoNovo->setStrSinAtivo('S');
-					$objMdPetIndisponibilidadeAnexoRN->cadastrar($anexoNovo);
-				}
+
+				return $objAcessoExternoDTO;
+
+			}catch(Exception $e){
+				throw new InfraException('Erro obtendo acesso externo no processo para o sistema.',$e);
 			}
 		}
-	}
-		
-		
+
+	
+
+    protected function lancarAndamentoProrrogacaoControlado($arrParams){
+
+		$idMdPetRelDest       = array_key_exists(0, $arrParams) ? $arrParams[0] : null;
+		$dtProrrogada         = array_key_exists(1, $arrParams) ? $arrParams[1] : null;
+		$arrDtSemHora         = !is_null($dtProrrogada) ? explode(' ',$dtProrrogada) : null;
+		$dtSemHora            = is_array($arrDtSemHora) ? current($arrDtSemHora) : '';
+		$idUsuarioPet         = array_key_exists(2, $arrParams) ? $arrParams[2] : null;
+		$objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
+        $objMdIntimacaoRN     = new MdPetIntimacaoRN();
+        $objMdPetIntAceiteRN  = new MdPetIntAceiteRN();
+        $idProcedimento       = null;
+		$objMdPetIntimacao    = $objMdPetIntRelDestRN->getObjIntimacaoPorIdPetIntRelDest($idMdPetRelDest);
+		$dtExpedicao          = $objMdPetIntimacao->getDthDataCadastro();
+        $docPrinc             = $objMdIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($objMdPetIntimacao->getNumIdMdPetIntimacao()));
+		$objUnidadeDTO        = $objMdIntimacaoRN->getUnidadeIntimacao(array($objMdPetIntimacao->getNumIdMdPetIntimacao()));
+
+		SessaoSEI::getInstance()->setBolHabilitada(false);
+		SessaoSEI::getInstance()->simularLogin(null, null, $idUsuarioPet , $objUnidadeDTO->getNumIdUnidade() );
+
+
+        if (count($docPrinc)>0){
+            $idDoc = $docPrinc[3];
+            $docForm = $docPrinc[0];
+            $idProcedimento = $docPrinc[2];
+        }
+
+         $objEntradaLancarAndamentoAPI = new EntradaLancarAndamentoAPI();
+         $objEntradaLancarAndamentoAPI->setIdProcedimento($idProcedimento);
+         $objEntradaLancarAndamentoAPI->setIdTarefaModulo(MdPetIndisponibilidadeRN::$ID_TAREFA_PRORROGACAO);
+         $arrObjAtributoAndamentoAPI[] = $objMdPetIntAceiteRN->retornaObjAtributoAndamentoAPI('DATA_EXPEDICAO_INTIMACAO', $dtExpedicao);
+         $arrObjAtributoAndamentoAPI[] = $objMdPetIntAceiteRN->retornaObjAtributoAndamentoAPI('DATA_LIMITE_RESPOSTAS', $dtSemHora);
+         $arrObjAtributoAndamentoAPI[] = $objMdPetIntAceiteRN->retornaObjAtributoAndamentoAPI('DOCUMENTO', $docForm, $idDoc);
+
+         $objEntradaLancarAndamentoAPI->setAtributos($arrObjAtributoAndamentoAPI);
+
+         $objSeiRN = new SeiRN();
+         $objSeiRN->lancarAndamento($objEntradaLancarAndamentoAPI);
+		 SessaoSEI::getInstance()->setBolHabilitada(true);
+		 SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEI::getInstance()->getNumIdUsuario() , SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+    }
+
 		/**
 		 * Short description of method desativarControlado
 		 *
@@ -348,17 +544,17 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 				SessaoSEI::getInstance ()->validarAuditarPermissao('md_pet_indisponibilidade_excluir', __METHOD__,$arrMdPetIndisponibilidadeDTO);
 
 				$objMdPetIndisponibilidadeBD = new MdPetIndisponibilidadeBD($this->getObjInfraIBanco());
-				$objMdPetIndisponibilidadeAnexoRN = new MdPetIndisponibilidadeAnexoRN();
+				$objMdPetIndisponibilidadeDocRN = new MdPetIndisponibilidadeDocRN();
 				
 				for($i = 0; $i < count($arrMdPetIndisponibilidadeDTO); $i ++) {
 					
 					//Excluindo anexos relacionados
-					$objMdPetIndisponibilidadeAnexoDTO = new MdPetIndisponibilidadeAnexoDTO();
-					$objMdPetIndisponibilidadeAnexoDTO->retTodos();
-					$objMdPetIndisponibilidadeAnexoDTO->setNumIdIndisponibilidade($arrMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade(), InfraDTO::$OPER_IGUAL);
-					$arrObjMdPetIndisponibilidadeAnexoDTO = $objMdPetIndisponibilidadeAnexoRN->listar($objMdPetIndisponibilidadeAnexoDTO);
+					$objMdPetIndisponibilidadeDocDTO = new MdPetIndisponibilidadeDocDTO();
+					$objMdPetIndisponibilidadeDocDTO->retTodos();
+					$objMdPetIndisponibilidadeDocDTO->setNumIdIndisponibilidade($arrMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade(), InfraDTO::$OPER_IGUAL);
+					$arrObjMdPetIndisponibilidadeDocDTO = $objMdPetIndisponibilidadeDocRN->listar($objMdPetIndisponibilidadeDocDTO);
 				    					
-					$objMdPetIndisponibilidadeAnexoRN->excluir($arrObjMdPetIndisponibilidadeAnexoDTO);
+					$objMdPetIndisponibilidadeDocRN->excluir($arrObjMdPetIndisponibilidadeDocDTO);
 				    
 				    //Excluindo Indisponibilidade
 					$objMdPetIndisponibilidadeBD->excluir($arrMdPetIndisponibilidadeDTO[$i]);
@@ -465,13 +661,8 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 												$ret = 'ERRO#Erro movendo arquivo para o diretório de upload.';
 											} else {
 												$ret = $strDirUpload . '/' . $strArquivo;
-												//$ret .= $strArquivo . '#';
-												//$ret .= $_FILES[$strCampoArquivo]["name"] . "#";
-												//$ret .= $_FILES[$strCampoArquivo]["type"] . '#';
-												//$ret .= $_FILES[$strCampoArquivo]["size"] . "#";
-												//$ret .= date('d/m/Y H:i:s', $numTimestamp);
 											}
-		
+
 										} catch (Exception $e) {
 											if (strpos(strtoupper($e->__toString()), 'PERMISSION DENIED') !== false) {
 												$ret = 'ERRO#Permissão negada tentando mover o arquivo para o diretório de upload.';
@@ -526,6 +717,59 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 			echo $ret;
 			
 		}
+
+	protected function buscarDadosDocumentoConectado($idDocumento){
+		$objDocumentoDTO = new DocumentoDTO();
+		$objDocumentoDTO->setDblIdDocumento($idDocumento);
+		$objDocumentoDTO->retDblIdDocumento();
+		$objDocumentoDTO->retStrProtocoloDocumentoFormatado();
+		$objDocumentoDTO->retArrObjAssinaturaDTO();
+		$objDocumentoDTO->retStrStaDocumento();
+		$objDocumentoDTO->retDtaGeracaoProtocolo();
+		$objDocumentoDTO->retStrNomeSerie();
+		$objDocumentoDTO->retNumIdSerie();
+		$objDocumentoDTO->retDblIdProcedimento();
+		$objDocumentoDTO->retStrNumero();
+		$objDocumentoDTO->setNumMaxRegistrosRetorno(1);
+
+		$objDocumentoRN = new DocumentoRN();
+		$objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+
+		$dtDocumento = $this->_getDataDocumento($objDocumentoDTO);
+
+		return $dtDocumento;
+	}
+
+	private function _getDataDocumento($objDocumentoDTO){
+		$dthDocumento = '';
+
+		if ($objDocumentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EDITOR_INTERNO) {
+			$arrAssinatura = $objDocumentoDTO->getArrObjAssinaturaDTO();
+			if (count($arrAssinatura) > 0) {
+				$objAssinaturaDTO = new AssinaturaDTO();
+				$objAssinaturaDTO->setDblIdDocumento($objDocumentoDTO->getDblIdDocumento());
+				$objAssinaturaDTO->retDthAberturaAtividade();
+				$objAssinaturaDTO->setOrdDthAberturaAtividade(InfraDTO::$TIPO_ORDENACAO_ASC);
+				$objAssinaturaRN = new AssinaturaRN();
+				$arrObjAssinaturaDTO = $objAssinaturaRN->listarRN1323($objAssinaturaDTO);
+				$countAss = $objAssinaturaRN->contarRN1324($objAssinaturaDTO);
+				if ($countAss > 0) {
+					$dthDocumento = $arrObjAssinaturaDTO[0]->getDthAberturaAtividade();
+				}
+			}
+
+			if($dthDocumento == ''){
+				$dthDocumento = $objDocumentoDTO->getDtaGeracaoProtocolo();
+			}
+
+		}
+
+		if ($objDocumentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EXTERNO) {
+			$dthDocumento = $objDocumentoDTO->getDtaGeracaoProtocolo();
+		}
+
+		return $dthDocumento;
+	}
 	
 }
 ?>

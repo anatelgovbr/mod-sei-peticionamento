@@ -17,14 +17,9 @@ class MdPetUnidadeRN extends UnidadeRN
 			
 			SessaoSEI::getInstance(false);				
 			SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() , $objUnidadeDTO->getNumIdUnidade() );
-			
-			//$objServicoDTO = $this->obterServico($SiglaSistema,$IdentificacaoServico);
-			//$objUnidadeDTO = $this->obterUnidade($IdUnidade);
-			//$this->validarAcessoAutorizado(explode(',',str_replace(' ','',$objServicoDTO->getStrServidor())));
-			//SessaoSEI::getInstance()->simularLogin(null, null, $objServicoDTO->getNumIdUsuario(), $IdUnidade);
-			
+
 			$strHierarquiaUnidade = SessaoSEI::getInstance()->getAtributo('HIERARQUIA_'.$objUnidadeDTO->getStrSiglaOrgao().'_'.$objUnidadeDTO->getStrSigla());
-			 
+
 			if (InfraString::isBolVazia($strHierarquiaUnidade)){
 				 
 				$objInfraSip = new InfraSip(SessaoSEI::getInstance());
@@ -35,10 +30,7 @@ class MdPetUnidadeRN extends UnidadeRN
 				foreach($ret as $uni){
 					$numIdUnidade = $uni[InfraSip::$WS_UNIDADE_ID];
 					$arrUnidadesSip[$numIdUnidade] = array();
-					//$arrUnidadesSip[$numIdUnidade][self::$POS_UNIDADE_ORGAO_ID] = $uni[InfraSip::$WS_UNIDADE_ORGAO_ID];
 					$arrUnidadesSip[$numIdUnidade][self::$POS_UNIDADE_SIGLA] = $uni[InfraSip::$WS_UNIDADE_SIGLA];
-					//$arrUnidadesSip[$numIdUnidade][self::$POS_UNIDADE_DESCRICAO] = $uni[InfraSip::$WS_UNIDADE_DESCRICAO];
-					//$arrUnidadesSip[$numIdUnidade][self::$POS_UNIDADE_SUBUNIDADES] = $uni[InfraSip::$WS_UNIDADE_SUBUNIDADES];
 					$arrUnidadesSip[$numIdUnidade][self::$POS_UNIDADE_UNIDADES_SUPERIORES] = $uni[InfraSip::$WS_UNIDADE_UNIDADES_SUPERIORES];
 				}
 	
@@ -60,7 +52,6 @@ class MdPetUnidadeRN extends UnidadeRN
 			return $strHierarquiaUnidade;
 	
 		}catch(Exception $e){
-			//var_dump($e->getTraceAsString());
 			throw new InfraException('Erro obtendo hierarquia da unidade.',$e);
 		}
 	}

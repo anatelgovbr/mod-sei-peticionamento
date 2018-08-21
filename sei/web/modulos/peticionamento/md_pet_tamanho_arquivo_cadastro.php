@@ -15,8 +15,6 @@ try {
 
   PaginaSEI::getInstance()->verificarSelecao('md_pet_tamanho_arquivo_cadastrar');
 
-  //SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
-
   $objMdPetTamanhoArquivoDTO = new MdPetTamanhoArquivoDTO();
   $strDesabilitar = '';
 

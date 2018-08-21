@@ -16,11 +16,14 @@ class MdPetReciboDTO extends InfraDTO  {
 	
 	public function getStrStaTipoPeticionamentoFormatado(){
 		
-		if( $this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == "N"  ){
+		if( $this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_NOVO ){
 			return "Processo Novo";
-		} else if( $this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == "I" ){
+		} else if( $this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_INTERCORRENTE ){
 			return "Intercorrente";
-		} else {
+		} else if( $this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ){
+		   return "Resposta a Intimação";
+	    }
+		else {
 			return "";
 		}
 	}
@@ -71,7 +74,19 @@ class MdPetReciboDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL,
 				'IdDocumento',
 				'id_documento');
-				
+		
+		//INICIO - atributos usados para exibir informaçoes da resposta a intimaçao
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+				'TextoDocumentoPrincipalIntimac',
+				'txt_doc_principal_intimacao');
+
+		//FIM - atributos usados para exibir informaçoes da resposta a intimaçao
+
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,
+				'IdProtocoloProcedimento',
+				'prot.id_protocolo',
+				'protocolo prot');
+
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
 				'NomeTipoPeticionamento',
 				'prot.IdTipoProcedimentoProcedimento',

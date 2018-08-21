@@ -23,8 +23,7 @@ try {
       try{
         $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
         $arrObjMdPetTipoProcessoDTO = array();
-     //   $arrobjMdPetRelTpProcessoUnidDTO = array();
-        
+
         // varrendo Tipos de Processos para Peticionamento selecionados
         for ($i=0;$i<count($arrStrIds);$i++){
           $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
@@ -109,7 +108,7 @@ try {
 
     case 'md_pet_tipo_processo_listar':
         
-      $strTitulo = 'Tipos de Processos para Peticionamento';
+      $strTitulo = 'Tipos de Processos para Peticionamento de Processo Novo';
       break;
 
     default:
@@ -203,7 +202,6 @@ try {
 
     if ($bolAcaoDesativar){
       $bolCheck = true;
-     //$arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
       $strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_desativar&acao_origem='.$_GET['acao']);
     }
 
@@ -211,15 +209,14 @@ try {
 
     if ($bolAcaoExcluir){
       $bolCheck = true;
-      //$arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
       $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_excluir&acao_origem='.$_GET['acao']);
     }
 
     $strResultado = '';
 
     if ($_GET['acao']!='md_pet_tipo_processo_reativar'){ 
-      $strSumarioTabela = 'Tabela de Tipo de Processos para Peticionamento';
-      $strCaptionTabela = 'Tipos de Processos para Peticionamento';
+      $strSumarioTabela = 'Tabela de Tipos de Processos para Peticionamento de Processo Novo';
+      $strCaptionTabela = 'Tipos de Processos para Peticionamento de Processo Novo';
     }else{
       $strSumarioTabela = 'Tabela de Tipo de Processos Inativos.';
       $strCaptionTabela = 'Tipos de Processos Inativos';
@@ -271,23 +268,17 @@ try {
       foreach($arrobjMdPetRelTpProcessoUnidDTO as $objDTO){
             $siglaUnidade = '';
             $siglaUnidade = $objDTO->getStrsiglaUnidade() != null ? $objDTO->getStrsiglaUnidade() : '';
-            /*if ($strUnidades!=''){
-				$strUnidades .= '<br/>';            	
-            }*/
             $tpUnidadeMult = $objDTO->getStrStaTipoUnidade() == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS ? true : false;
-            
+
             if($tpUnidadeMult){
             	$strUnidades  = 'Múltiplas';
             }else{
             $strUnidades = $siglaUnidade;
             }
       }
-      
-      //#6155 - removido. Agora serão n Unidades
-      //$strResultado .= '<td>'.$arrObjMdPetTipoProcessoDTO[$i]->getStrSiglaUnidade().'</td>';
-      
+
       $strResultado .= '<td valign="middle">'.$strUnidades.'</td>';
-      
+
       $strResultado .= '<td valign="middle">'.$indicacaoInteressado.'</td>';
       $strResultado .= '<td valign="middle">'.$docExterno.'</td>';
       $strResultado .= '<td align="center" valign="middle">';
@@ -333,8 +324,6 @@ try {
 	$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSei::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem='.$_GET['acao'])).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
   }
   
- // $strItensSelSinProrrogacaoAutomatica = MdPetIndisponibilidadeINT::montarSelectProrrogacaoAutomaticaPrazos('null','&nbsp;','');
- 
   $strItensSelIndicacaoInteressado = MdPetTipoProcessoINT::montarSelectIndicacaoInteressadoPeticionamento('','Todos',$_POST['selIndicacaoInteressado']);
   $strItensSelTipoDocumento        = MdPetTipoProcessoINT::montarSelectTipoDocumento('','Todos',$_POST['selDocumentoPrincipal']);
   

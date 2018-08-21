@@ -76,11 +76,6 @@ class MdPetRelReciboDocumentoAnexoDTO extends InfraDTO  {
 		
 		//anexo
 		$this->configurarFK('IdAnexo', 'anexo anex', 'anex.id_anexo', InfraDTO::$TIPO_FK_OPCIONAL);
-		
-		
-		//protocolo
-		//$this->configurarFK('IdDocumento', 'protocolo prot', 'id_', InfraDTO::$TIPO_FK_OPCIONAL);
-		
-	
+
 	}}
 ?>

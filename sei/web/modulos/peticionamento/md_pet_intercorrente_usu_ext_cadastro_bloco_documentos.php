@@ -14,7 +14,7 @@
 <fieldset id="field_documentos" class="infraFieldset sizeFieldset" style="display: none">
 	<legend class="infraLegend">&nbsp; Documentos &nbsp;</legend>
 	<div class="bloco">
-		<label>Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre os dados informados e os documentos. Os Níveis de Acesso que forem indicados abaixo estarão condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso.</label>
+		<label>Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre os dados informados e os documentos. Os Níveis de Acesso que forem indicados abaixo estarão condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso.</label>
     </div>
 
     <div class="bloco" style="margin-bottom: 10px;">
@@ -35,7 +35,7 @@
     </div>
 
     <div class="clear"></div>
-    <div class="bloco"  style="float: left;" id="divBlcNivelAcesso">
+    <div class="bloco" style="float: left;" id="divBlcNivelAcesso">
 		<label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso: <img id=imgNivelAcesso name=imgNivelAcesso src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"  onmouseover="" onmouseout="" alt="Ajuda" class="infraImg"/></label>
 		<div id="divNivelAcesso"></div>
     </div>
@@ -48,8 +48,8 @@
 			</div>
 		</div>
 	<?php endif; ?>
+    
     <div class="clear"></div>
-
 	<div class="bloco" style="width:290px; margin: 23px 0 11px 0;">
 		<label class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato) ?> class="infraImg"/></label>
         <input type="radio" class="infraRadio" id="rdoNatoDigital" name="rdoFormato" style="margin-left: 5%;" value="N" onclick="exibirTipoConferencia();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() +2; ?>">

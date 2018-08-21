@@ -11,10 +11,6 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 class MdPetTpCtxContatoINT extends InfraINT {
 
 	public static function montarSelectNome($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado){
-		
-		//SEIv2
-		//$objTipoContextoContatoDTO = new TipoContextoContatoDTO();
-		//$objTipoContextoContatoDTO->retNumIdTipoContextoContato();
 
 		//ajustes SEIv3
 		$objTipoContextoContatoDTO = new TipoContatoDTO();
@@ -38,9 +34,6 @@ class MdPetTpCtxContatoINT extends InfraINT {
 					array('N', 'S' ),
 					InfraDTO::$OPER_LOGICO_AND );			
 		}
-		
-		//SEIv2
-		//$objTipoContextoContatoRN = new TipoContextoContatoRN();
 		
 		//ajustes SEIv3
 		$objTipoContextoContatoRN = new TipoContatoRN();

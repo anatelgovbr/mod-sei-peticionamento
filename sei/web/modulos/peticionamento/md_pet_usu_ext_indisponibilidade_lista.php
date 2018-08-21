@@ -17,29 +17,12 @@ try {
   //InfraDebug::getInstance()->setBolDebugInfra(false);
   //InfraDebug::getInstance()->limpar();
   //////////////////////////////////////////////////////////////////////////////
-  //PaginaSEIExterna::getInstance()->setBolXHTML(false);
-  //SessaoSEIExterna::getInstance()->validarLink();
-  
-  //PaginaPeticionamentoExterna::getInstance()->prepararSelecao('indisponibilidade_peticionamento_usuario_externo_selecionar');
-  //SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
 
   PaginaPeticionamentoExterna::getInstance()->setTipoPagina(PaginaPeticionamentoExterna::$TIPO_PAGINA_SEM_MENU);
   PaginaPeticionamentoExterna::getInstance()->getBolAutoRedimensionar();
   
   switch($_GET['acao_externa']){
 
-    case 'indisponibilidade_peticionamento_usuario_externo_selecionar':
-      
-      $strTitulo = PaginaPeticionamentoExterna::getInstance()->getTituloSelecao('Selecionar Indisponibilidades','Selecionar Indisponibilidades');
-
-      // NÃO ENCONTRADO USO
-      //Se cadastrou alguem
-      //if ($_GET['acao_origem']=='indisponibilidade_peticionamento_usuario_externo_cadastrar'){
-      //  if (isset($_GET['id_indisponibilidade_peticionamento'])){
-      //    PaginaPeticionamentoExterna::getInstance()->adicionarSelecionado($_GET['id_indisponibilidade_peticionamento']);
-      //  }
-      //}
-      break;
 
     case 'md_pet_usu_ext_indisponibilidade_listar':
         
@@ -77,11 +60,9 @@ try {
   $numRegistros = count($arrObjMdPetIndisponibilidadeDTO);
 
   $strLinkPesquisar = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo=0' ) );
-  //$strLinkPesquisar = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] .'&acao_origem='.$_GET['acao']));
   $arrComandos[] = '<button type="button" accesskey="P" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
   $arrComandos[] = '<button type="button" accesskey="I" id="btnImprimir" value="Fechar" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
-  //$arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="fechar();" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
-  
+
   if ($numRegistros > 0){
   	
     $bolCheck = true;
@@ -330,7 +311,7 @@ $urlForm = 'modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?ac
   <div style="height:auto; width: 98%;" class="infraAreaDados" id="divInfraAreaDados">
   
   <label id="lblDescricao" class="infraLabelOpcional">
-  <br/>Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação automática dos prazos para a realização de atos processuais em meio eletrônico que venceriam no dia de sua ocorrência, prorrogando-os para o primeiro dia útil seguinte à resolução do problema. Na coluna "Prorrogação Automática dos Prazos", as indisponibilidades marcadas com "Sim" justificaram a referida prorrogação.<br/><br/><br/>
+  <br/>Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação automática dos prazos externos de Intimações Eletrônicas que venceriam durante o período da indisponibilidade, prorrogando-os para o primeiro dia útil seguinte ao fim da respectiva indisponibilidade. Na coluna "Prorrogação Automática dos Prazos", as indisponibilidades marcadas com "Sim" justificaram a referida prorrogação.<br/><br/><br/>
   </label>
   
   </div>   

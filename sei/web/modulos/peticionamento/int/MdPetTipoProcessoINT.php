@@ -83,7 +83,6 @@ class MdPetTipoProcessoINT extends InfraINT {
 
             $stringFim = '<option value=""> </option>';
             if(count($arrHipoteseLegalAPI) > 0 ){
-                /* @var $hipoteseLegalAPI HipoteseLegalAPI */
                 foreach($arrHipoteseLegalAPI as $hipoteseLegalAPI){
 
                     $idHipoteseLegal = $hipoteseLegalAPI->getIdHipoteseLegal();
@@ -173,7 +172,6 @@ class MdPetTipoProcessoINT extends InfraINT {
             }
         }
 
-		//listarRN0244Conectado
 		$arrObjNivelAcessoDTO = $objNivelAcessoRN->listar($objNivelAcessoDTO);
 
         // removendo as duplicidades na colecao de objetos
@@ -187,7 +185,6 @@ class MdPetTipoProcessoINT extends InfraINT {
 		$arrayDescricoes = array();
 		$arrayDescricoes[ProtocoloRN::$NA_PUBLICO] = 'Público';
 		$arrayDescricoes[ProtocoloRN::$NA_RESTRITO] = 'Restrito';
-		//$arrayDescricoes[ProtocoloRN::$NA_SIGILOSO] = 'Sigiloso';
 		$arrayDescricoes[''] = '';
 		
 		$stringFim = '<option value=""> </option>';
@@ -273,7 +270,6 @@ class MdPetTipoProcessoINT extends InfraINT {
             $ret = array();
             $strPalavrasPesquisa = strtolower($strPalavrasPesquisa);
             foreach($arrObjTipoProcedimentoDTO as $objTipoProcedimentoDTO){
-                /**@var $objTipoProcedimentoApi TipoProcedimentoAPI */
                 if($itensSelecionados != null && in_array($objTipoProcedimentoDTO->getNumIdTipoProcedimento(), $itensSelecionados)){
                 	continue;
                 }

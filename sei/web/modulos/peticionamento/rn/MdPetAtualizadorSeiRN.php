@@ -8,28 +8,25 @@
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
-class MdPetAtualizadorSeiRN extends InfraRN
-{
+class MdPetAtualizadorSeiRN extends InfraRN {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.1.0';
-    private $nomeDesteModulo = 'PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
+    private $versaoAtualDesteModulo = '2.0.0';
+    private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0');
+    
+    public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
 
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(){
+    	parent::__construct();
     }
 
-    protected function inicializarObjInfraIBanco()
-    {
+    protected function inicializarObjInfraIBanco(){
         return BancoSEI::getInstance();
     }
 
-    private function inicializar($strTitulo)
-    {
-
+    private function inicializar($strTitulo){
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '-1');
 
@@ -51,20 +48,18 @@ class MdPetAtualizadorSeiRN extends InfraRN
         $this->logar($strTitulo);
     }
 
-    private function logar($strMsg)
-    {
+    private function logar($strMsg){
         InfraDebug::getInstance()->gravar($strMsg);
         flush();
     }
 
-    private function finalizar($strMsg = null, $bolErro)
-    {
+    private function finalizar($strMsg=null, $bolErro){
 
         if (!$bolErro) {
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
-            $this->logar('TEMPO TOTAL DE EXECUÇÃO: ' . $this->numSeg . ' s');
+            $this->logar('TEMPO TOTAL DE EXECUÇÃO: '.$this->numSeg.' s');
         } else {
-            $strMsg = 'ERRO: ' . $strMsg;
+            $strMsg = 'ERRO: '.$strMsg;
         }
 
         if ($strMsg != null) {
@@ -77,16 +72,906 @@ class MdPetAtualizadorSeiRN extends InfraRN
         $this->numSeg = 0;
         die;
     }
+    
+    //Contem atualizações da versao 2.0.0
+    protected function instalarv200(){
+    	try {
+    		$objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+    		$this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.0 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+
+			//INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
+			$this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS NA TABELA email_sistema');
+
+    		//Parametrizar Email de Alerta às Unidades
+    		$conteudoRespostaFacultativa = "      :: Este é um e-mail automático ::
+
+Prezado(a) @nome_usuario_externo@,
+
+No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+
+Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+
+Caso tenha interesse, a resposta à Intimação Eletrônica deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação Responder Intimação Eletrônica.
+
+Lembramos que, independente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+
+Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+
+
+@sigla_orgao@
+@descricao_orgao@
+@sitio_internet_orgao@
+
+ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+
+    		$maxIdEmailSistemaRespostaFacultativa = $this->retornarMaxIdEmailSistema();
+
+    		$insertRespostaFacultativa = "INSERT INTO email_sistema
+			(id_email_sistema,
+  			descricao,
+  			de,
+  			para,
+  			assunto,
+  			conteudo,
+  			sin_ativo,
+			id_email_sistema_modulo
+			)
+		VALUES
+			(" . $maxIdEmailSistemaRespostaFacultativa . ",
+  			'Peticionamento Eletrônico - Intimação Eletrônica apenas com Respostas Facultativas',
+  			'@sigla_sistema@ <@email_sistema@>',
+  			'@email_usuario_externo@',
+  			'SEI - Intimação Eletrônica Gerada no Processo nº @processo@',
+  			'" . $conteudoRespostaFacultativa . "',
+  			'S',
+			'MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS'
+			)";
+
+    		//temporariamente comentado. Não encontrado motivo para comentário.
+    		BancoSEI::getInstance()->executarSql($insertRespostaFacultativa);
+
+
+    		$this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA NA TABELA email_sistema');
+
+    		//Parametrizar Email de Confirmação ao Usuario Externo
+    		$conteudoExigeResposta = "      :: Este é um e-mail automático ::
+
+Prezado(a) @nome_usuario_externo@,
+
+No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+
+A mencionada Intimação exige resposta para @tipo_resposta@, no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia útil seguinte ao da data de cumprimento da presente Intimação.
+
+Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+
+A resposta à Intimação Eletrônica que é exigida deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação Responder Intimação Eletrônica.
+
+Lembramos que, independente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+
+Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+
+
+@sigla_orgao@
+@descricao_orgao@
+@sitio_internet_orgao@
+
+ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+
+    		$maxIdEmailSistemaExigeResposta = $this->retornarMaxIdEmailSistema();
+
+    		$insertExigeResposta = "INSERT INTO email_sistema
+            (id_email_sistema,
+                descricao,
+                de,
+                para,
+                assunto,
+                conteudo,
+                sin_ativo,
+                id_email_sistema_modulo
+            )
+            VALUES
+            (" . $maxIdEmailSistemaExigeResposta . ",
+                'Peticionamento Eletrônico - Intimação Eletrônica que Exige Resposta',
+                '@sigla_sistema@ <@email_sistema@>',
+                '@email_usuario_externo@',
+                'SEI - Intimação Eletrônica que Exige Resposta no Processo nº @processo@',
+                '" . $conteudoExigeResposta . "',
+                'S',
+                'MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA'
+            )";
+    		BancoSEI::getInstance()->executarSql($insertExigeResposta);
+
+
+			$this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_SEM_RESPOSTA NA TABELA email_sistema');
+
+			//Parametrizar Email de Alerta às Unidades
+			$conteudoSemResposta = "      :: Este é um e-mail automático ::
+
+Prezado(a) @nome_usuario_externo@,
+
+No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+
+ATENÇÃO: A presente intimação não demanda qualquer tipo de resposta, por geralmente encaminhar documento para mero conhecimento, o que não dispensa a necessidade de acesso aos documentos para ciência de seu teor. Após o cumprimento da intimação, observar que neste caso não será disponibilizada a funcionalidade para Peticionamento de Resposta a Intimação Eletrônica, sem que isso impeça o uso do Peticionamento Intercorrente, caso ainda seja necessário protocolizar documento no processo acima indicado.
+
+Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+
+Lembramos que, independente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+
+Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+
+
+@sigla_orgao@
+@descricao_orgao@
+@sitio_internet_orgao@
+
+ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+
+			$maxIdEmailSistemaSemResposta = $this->retornarMaxIdEmailSistema();
+
+			$insertSemResposta = "INSERT INTO email_sistema
+			(id_email_sistema,
+			descricao,
+			de,
+			para,
+			assunto,
+			conteudo,
+			sin_ativo,
+			id_email_sistema_modulo
+			)
+		VALUES
+			(" . $maxIdEmailSistemaSemResposta . ",
+			'Peticionamento Eletrônico - Intimação Eletrônica Sem Resposta',
+			'@sigla_sistema@ <@email_sistema@>',
+			'@email_usuario_externo@',
+			'SEI - Intimação Eletrônica Gerada no Processo nº @processo@',
+			'" . $conteudoSemResposta . "',
+			'S',
+			'MD_PET_INTIMACAO_SEM_RESPOSTA'
+			)";
+
+			BancoSEI::getInstance()->executarSql($insertSemResposta);
+
+
+			$this->logar('INSERINDO EMAIL MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA NA TABELA email_sistema');
+
+    		//Parametrizar Email de Confirmação ao Usuario Externo
+    		$conteudoReiteracaoExigeResposta = "      :: Este é um e-mail automático ::
+
+Prezado(a) @nome_usuario_externo@,
+
+Reiteramos a necessidade de Resposta à Intimação Eletrônica expedida no SEI-@sigla_orgao@ referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+
+A mencionada Intimação exige resposta para @tipo_resposta@, no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia útil seguinte ao da data de cumprimento da Intimação, que ocorreu em @data_cumprimento_intimacao@.
+
+Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+
+A resposta à Intimação Eletrônica que é exigida deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação Responder Intimação Eletrônica.
+
+OBSERVAÇÃO: A presente reiteração ocorre quando a resposta ainda não tenha sido efetivada pelo Destinatário da Intimação, em 5 dias e 1 dia antes da Data Limite para Resposta. Caso a Intimação já tenha sido respondida, por favor, ignorar esta reiteração.
+
+
+@sigla_orgao@
+@descricao_orgao@
+@sitio_internet_orgao@
+
+ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+
+    		$maxIdEmailSistemaReiteracaoExigeResposta = $this->retornarMaxIdEmailSistema();
+
+    		$insertReiteracaoExigeResposta = "INSERT INTO email_sistema
+            (id_email_sistema,
+                descricao,
+                de,
+                para,
+                assunto,
+                conteudo,
+                sin_ativo,
+                id_email_sistema_modulo
+            )
+            VALUES
+            (" . $maxIdEmailSistemaReiteracaoExigeResposta . ",
+                'Peticionamento Eletrônico - Reiteração de Intimação Eletrônica que Exige Resposta',
+                '@sigla_sistema@ <@email_sistema@>',
+                '@email_usuario_externo@',
+                'SEI - Reiteração de Intimação Eletrônica que Exige Resposta no Processo nº @processo@',
+                '" . $conteudoReiteracaoExigeResposta . "',
+                'S',
+                'MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA'
+            )";
+
+    		BancoSEI::getInstance()->executarSql($insertReiteracaoExigeResposta);
+
+    		//Cria usuário para o Módulo de Peticionamento
+    		$objRN = new MdPetIntUsuarioRN();
+    		$objRN->realizarInsercoesUsuarioModuloPet();
+
+    		//EU8610 INICIO
+    		//Cria a tabela de prazo tácita
+    		$objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+    		$this->logar('CRIANDO A TABELA md_pet_int_prazo_tacita ');
+
+    		BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_int_prazo_tacita (
+				id_md_pet_int_prazo_tacita ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+				num_prazo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL) '
+    				);
+
+    		//Cria a seq de prazo tácita
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_prazo_tacita (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_prazo_tacita (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_prazo_tacita', 1);
+    		}
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_prazo_tacita','pk_md_pet_int_prazo_tacita',array('id_md_pet_int_prazo_tacita'));
+
+    		//Insere no banco o primeiro registro com o default 15 conforme especificado
+    		$objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
+    		$objMdPetIntPrazoTacitaDTO->setNumNumPrazo(15);
+    		$objMdPetIntPrazoTacitaDTO->setNumIdMdPetIntPrazoTacita(1);
+    		$objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
+    		$objMdPetIntPrazoTacitaRN->cadastrar($objMdPetIntPrazoTacitaDTO);
+
+    		//EU8610 FIM
+
+    		// EU8612 INICIO
+    		//Cria a tabela de tipo de intimação
+    		BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_int_tipo_intimacao  (
+				id_md_pet_int_tipo_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+				nome ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL,
+				tipo_resposta_aceita ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+				sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
+
+    		//Add pk de tipo de intimação
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_tipo_intimacao','pk_md_pet_int_tipo_intimacao',array('id_md_pet_int_tipo_intimacao'));
+
+    		//Cria a seq de tipo de intimação
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_tipo_intimacao (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_tipo_intimacao (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_tipo_intimacao', 1);
+    		}
+
+    		//Cria a tabela de tipo de resposta
+    		BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_int_tipo_resp (
+				id_md_pet_int_tipo_resp ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+				tipo_prazo_externo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+				valor_prazo_externo ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+				nome ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL,
+				tipo_resposta_aceita ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+				sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+				tipo_dia ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL )');
+
+    		//Add pk de tipo de resposta
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_tipo_resp','pk_md_pet_int_tipo_resp',array('id_md_pet_int_tipo_resp'));
+
+    		//Cria a seq de tipo de resposta
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_tipo_resp (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_tipo_resp (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_tipo_resp', 1);
+    		}
+
+    		//Cria tabela de Relacionamento de Tipo de Intimação e Tipo de Resposta
+    		BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_int_rel_intim_resp (
+				id_md_pet_int_tipo_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+				id_md_pet_int_tipo_resp ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+				sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
+
+    		//Add Pk de Tabela de Relacionamento
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_rel_intim_resp','pk_md_pet_int_rel_intim_resp',array('id_md_pet_int_tipo_intimacao','id_md_pet_int_tipo_resp'));
+
+    		//Add Fk da Tabela de Relacionamento
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_rel_intim_resp', 'md_pet_int_rel_intim_resp', array('id_md_pet_int_tipo_intimacao'), 'md_pet_int_tipo_intimacao', array('id_md_pet_int_tipo_intimacao'));
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_rel_intim_resp', 'md_pet_int_rel_intim_resp', array('id_md_pet_int_tipo_resp'), 'md_pet_int_tipo_resp', array('id_md_pet_int_tipo_resp'));
+
+    		//FIM 8612
+
+    		//INICIO 8611
+    		//Cria tabela de Serie Intercorrente
+    		BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_int_serie (
+				id_serie ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL )');
+
+    		//Add Pk Tabela de Serie Intercorrente
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_serie','pk_md_pet_int_serie',array('id_serie'));
+
+    		//Add Fk Tabela de Serie Intercorrente
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_serie', 'md_pet_int_serie', array('id_serie'), 'serie', array('id_serie'));
+
+    		//FIM 8611
+
+			// Inicio 9252
+			// Cria tabela md_pet_acesso_externo
+			BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_acesso_externo (
+				id_acesso_externo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,				
+				sin_proc_intercorrente ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ,
+				sin_proc_novo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ,
+				sin_intimacao ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ,
+				sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL )');
+
+			// Add pk na Tabela md_pet_acesso_externo
+			$objInfraMetaBD->adicionarChavePrimaria('md_pet_acesso_externo','fk_pet_acesso_externo_01',array('id_acesso_externo'));
+			// Add Fk na Tabela md_pet_acesso_externo
+			$objInfraMetaBD->adicionarChaveEstrangeira('fk1_pet_acesso_externo', 'md_pet_acesso_externo', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
+
+			//Fim 9252
+
+    		//========================================
+    		//INICIO EU 9250 - CRIAÇÃO DE HISTÓRICOS E GERAÇÃO DE ANDAMENTOS NO PROCESSO DA INTIMAÇÃO ELETRÔNICA
+    		//========================================
+
+    		$texto1 = " Intimação Eletrônica expedida em @DATA_EXPEDICAO_INTIMACAO@, sobre o Documento Principal @DOCUMENTO@, para @USUARIO_EXTERNO_NOME@";
+
+    		$texto2 = "Intimação cumprida em @DATA_CUMPRIMENTO_INTIMACAO@, conforme Certidão @DOC_CERTIDAO_INTIMACAO@, por @TIPO_CUMPRIMENTO_INTIMACAO@, sobre a Intimação expedida em @DATA_EXPEDICAO_INTIMACAO@ e Documento Principal @DOCUMENTO@ para @USUARIO_EXTERNO_NOME@";
+
+    		$texto3 = "O Usuário Externo @USUARIO_EXTERNO_NOME@ efetivou Peticionamento @TIPO_PETICIONAMENTO@, tendo gerado o recibo @DOCUMENTO@";
+
+    		$texto4 = "Prorrogação Automática do Prazo Externo de possível Resposta a Intimação, relativa à Intimação expedida em @DATA_EXPEDICAO_INTIMACAO@ e ao Documento Principal @DOCUMENTO@, para @DATA_LIMITE_RESPOSTAS@";
+
+    		//@todo incrementar a seq de um jeito diferente para cada modelo de SGBD (ver pagina 8 do manual)
+    		$numIdTarefaMax = BancoSEI::getInstance()->getValorSequencia('seq_tarefa');
+
+    		if( $numIdTarefaMax < 1000) {
+    			$numIdTarefaMax = 1000;
+    		}
+
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql( " alter table seq_tarefa AUTO_INCREMENT = " . $numIdTarefaMax ."; ");
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql( "DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numIdTarefaMax . ");");
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->executarSql( "DROP SEQUENCE seq_tarefa");
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_tarefa', $numIdTarefaMax);
+    		}
+
+    		//campo setStrSinFecharAndamentosAbertos de N para S por estar lançando andamento em processo que estara aberto na unidade (seguindo recomendação do manual do SEI)
+    		$tarefaDTO1 = new TarefaDTO();
+    		$tarefaDTO1->setNumIdTarefa( $numIdTarefaMax );
+    		$tarefaDTO1->setStrIdTarefaModulo('MD_PET_INTIMACAO_EXPEDIDA');
+    		$tarefaDTO1->setStrNome( $texto1 );
+    		$tarefaDTO1->setStrSinHistoricoResumido('S');
+    		$tarefaDTO1->setStrSinHistoricoCompleto('S');
+    		$tarefaDTO1->setStrSinFecharAndamentosAbertos('S');
+    		$tarefaDTO1->setStrSinLancarAndamentoFechado('N');
+    		$tarefaDTO1->setStrSinPermiteProcessoFechado('N');
+
+    		$numero = $numIdTarefaMax+1;
+
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql( " alter table seq_tarefa AUTO_INCREMENT = " . $numero."; ");
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql( "DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numero. ");");
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->executarSql( "DROP SEQUENCE seq_tarefa");
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_tarefa', $numero);
+    		}
+
+    		$tarefaDTO2 = new TarefaDTO();
+    		$tarefaDTO2->setNumIdTarefa( $numIdTarefaMax+1 );
+    		$tarefaDTO2->setStrIdTarefaModulo('MD_PET_INTIMACAO_CUMPRIDA');
+    		$tarefaDTO2->setStrNome( $texto2 );
+    		$tarefaDTO2->setStrSinHistoricoResumido('S');
+    		$tarefaDTO2->setStrSinHistoricoCompleto('S');
+    		$tarefaDTO2->setStrSinFecharAndamentosAbertos('S');
+    		$tarefaDTO2->setStrSinLancarAndamentoFechado('N');
+    		$tarefaDTO2->setStrSinPermiteProcessoFechado('N');
+
+    		$numero = $numIdTarefaMax+2;
+
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql( " alter table seq_tarefa AUTO_INCREMENT = " . $numero."; ");
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql( "DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numero. ");");
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->executarSql( "DROP SEQUENCE seq_tarefa");
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_tarefa', $numero);
+    		}
+
+    		$tarefaDTO3 = new TarefaDTO();
+    		$tarefaDTO3->setNumIdTarefa( $numIdTarefaMax+2);
+    		$tarefaDTO3->setStrIdTarefaModulo('MD_PET_PETICIONAMENTO_EFETIVADO');
+    		$tarefaDTO3->setStrNome( $texto3 );
+    		$tarefaDTO3->setStrSinHistoricoResumido('S');
+    		$tarefaDTO3->setStrSinHistoricoCompleto('S');
+    		$tarefaDTO3->setStrSinFecharAndamentosAbertos('S');
+    		$tarefaDTO3->setStrSinLancarAndamentoFechado('N');
+    		$tarefaDTO3->setStrSinPermiteProcessoFechado('N');
+
+    		$numero = $numIdTarefaMax+3;
+
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql( " alter table seq_tarefa AUTO_INCREMENT = " . $numero."; ");
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql( "DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numero. ");");
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->executarSql( "DROP SEQUENCE seq_tarefa");
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_tarefa', $numero);
+    		}
+
+    		$tarefaDTO4 = new TarefaDTO();
+    		$tarefaDTO4->setNumIdTarefa( $numIdTarefaMax+3);
+    		$tarefaDTO4->setStrIdTarefaModulo('MD_PET_INTIMACAO_PRORROGACAO_AUTOMATICA_PRAZO_EXT');
+    		$tarefaDTO4->setStrNome( $texto4 );
+    		$tarefaDTO4->setStrSinHistoricoResumido('S');
+    		$tarefaDTO4->setStrSinHistoricoCompleto('S');
+    		$tarefaDTO4->setStrSinFecharAndamentosAbertos('S');
+    		$tarefaDTO4->setStrSinLancarAndamentoFechado('N');
+    		$tarefaDTO4->setStrSinPermiteProcessoFechado('S');
+
+    		$tarefaRN = new TarefaRN();
+    		$tarefaRN->cadastrar( $tarefaDTO1 );
+    		$tarefaRN->cadastrar( $tarefaDTO2 );
+    		$tarefaRN->cadastrar( $tarefaDTO3 );
+    		$tarefaRN->cadastrar( $tarefaDTO4 );
+
+    		//========================================
+    		//FIM EU 9250 - CRIAÇÃO DE HISTÓRICOS E GERAÇÃO DE ANDAMENTOS NO PROCESSO DA INTIMAÇÃO ELETRÔNICA
+    		//========================================
+
+    		//=========================================
+    		//INICIO EU 9244 - GERIR TIPOS DE DOCUMENTOS PARA GERAÇÃO DE CERTIDÕES
+    		//==========================================
+
+    		//CRIANDO NOVO TIPO DE DOCUMENTO "Certidão"
+    		$this->logar('CRIANDO MODELO "Modulo_Peticionamento_Certidao"');
+    		$modeloRN = new ModeloRN();
+    		$modeloDTO = new ModeloDTO();
+    		$modeloDTO->setNumIdModelo(null);
+    		$modeloDTO->retTodos();
+    		$modeloDTO->setStrNome('Modulo_Peticionamento_Certidao');
+    		$modeloDTO->setStrSinAtivo('S');
+    		$modeloDTO = $modeloRN->cadastrar($modeloDTO);
+
+    		//adicionando as seções do modelo: Corpo de Texto e Rodapé
+    		$this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+    		$secaoModeloRN = new SecaoModeloRN();
+
+    		$secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
+    		$secaoModeloCorpoTextoDTO->retTodos();
+    		$secaoModeloCorpoTextoDTO->setNumIdSecaoModelo(null);
+    		$secaoModeloCorpoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
+    		$secaoModeloCorpoTextoDTO->setStrNome('Corpo do Texto');
+    		$secaoModeloCorpoTextoDTO->setStrConteudo(null);
+    		$secaoModeloCorpoTextoDTO->setNumOrdem(0);
+    		$secaoModeloCorpoTextoDTO->setStrSinSomenteLeitura('N');
+    		$secaoModeloCorpoTextoDTO->setStrSinAssinatura('N');
+    		$secaoModeloCorpoTextoDTO->setStrSinPrincipal('S');
+    		$secaoModeloCorpoTextoDTO->setStrSinDinamica('N');
+    		$secaoModeloCorpoTextoDTO->setStrSinHtml('N');
+    		$secaoModeloCorpoTextoDTO->setStrSinCabecalho('N');
+    		$secaoModeloCorpoTextoDTO->setStrSinRodape('N');
+    		$secaoModeloCorpoTextoDTO->setStrSinAtivo('S');
+
+    		$secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
+
+    		//secao do rodapé
+    		$this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+    		$secaoModeloRodapeDTO = new SecaoModeloDTO();
+    		$secaoModeloRodapeDTO->retTodos();
+    		$secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
+
+    		$htmlConteudo = '<hr style="border:none; padding:0; margin:5px 2px 0 2px; border-top:medium double #333" />
+    <table border="0" cellpadding="2" cellspacing="0" width="100%">
+	<tbody>
+		<tr>
+			<td align="left" style="font-family:Calibri;font-size:9pt;border:0;" width="50%"><strong>Refer&ecirc;ncia:</strong> Processo n&ordm; @processo@</td>
+			<td align="right" style="font-family:Calibri;font-size:9pt;border:0;" width="50%">SEI n&ordm; @documento@</td>
+		</tr>
+	</tbody>
+    </table>';
+
+    		$secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
+    		$secaoModeloRodapeDTO->setStrNome('Rodapé');
+    		$secaoModeloRodapeDTO->setStrConteudo($htmlConteudo);
+    		$secaoModeloRodapeDTO->setNumOrdem(1000);
+    		$secaoModeloRodapeDTO->setStrSinSomenteLeitura('S');
+    		$secaoModeloRodapeDTO->setStrSinAssinatura('N');
+    		$secaoModeloRodapeDTO->setStrSinPrincipal('N');
+    		$secaoModeloRodapeDTO->setStrSinDinamica('S');
+    		$secaoModeloRodapeDTO->setStrSinHtml('S');
+    		$secaoModeloRodapeDTO->setStrSinCabecalho('N');
+    		$secaoModeloRodapeDTO->setStrSinRodape('S');
+    		$secaoModeloRodapeDTO->setStrSinAtivo('S');
+
+    		$secaoModeloRodapeDTO = $secaoModeloRN->cadastrar($secaoModeloRodapeDTO);
+
+    		//Obter o Grupo de Tipo de Documento “Internos do Sistema”.
+    		$grupoSerieRN = new GrupoSerieRN();
+
+    		$this->logar('OBTER GRUPO DE TIPO DE DOCUMENTO "Internos do Sistema"');
+    		$grupoSerieDTO = new GrupoSerieDTO();
+    		$grupoSerieDTO->retTodos();
+    		$grupoSerieDTO->setStrNome('Internos do Sistema');
+    		$grupoSerieDTO->setStrSinAtivo('S');
+    		$grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
+
+    		//Criar o Tipo de Documento “Recibo Eletrônico de Protocolo”
+    		$this->logar('CRIANDO TIPO DE DOCUMENTO Certidao');
+    		$serieDTO = new SerieDTO();
+    		$serieDTO->retTodos();
+    		$serieRN = new SerieRN();
+
+    		$serieDTO->setNumIdSerie(null);
+    		$serieDTO->setNumIdGrupoSerie($grupoSerieDTO->getNumIdGrupoSerie());
+    		$serieDTO->setStrStaNumeracao(SerieRN::$TN_SEM_NUMERACAO);
+    		$serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
+    		$serieDTO->setNumIdModeloEdoc(null);
+    		$serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
+    		$serieDTO->setStrNome('Certidão de Intimação Cumprida');
+    		$serieDTO->setStrDescricao('Utilizado para a geração automática da Certidao em Intimações feitas pelo Peticionamentos Eletrônicos realizados por Usuário Externo.');
+    		$serieDTO->setStrSinInteressado('S');
+    		$serieDTO->setStrSinDestinatario('N');
+    		$serieDTO->setStrSinAssinaturaPublicacao('S');
+    		$serieDTO->setStrSinInterno('S');
+    		$serieDTO->setStrSinAtivo('S');
+    		$serieDTO->setArrObjRelSerieAssuntoDTO(array());
+    		$serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
+
+    		//adicoes SEIv3
+    		$serieDTO->setNumIdTipoFormulario(null);
+    		$serieDTO->setArrObjSerieRestricaoDTO(array());
+
+    		$serieDTO = $serieRN->cadastrarRN0642($serieDTO);
+
+    		$this->logar('ATUALIZANDO INFRA_PARAMETRO (MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA)');
+
+    		$nomeParamIdSerie = 'MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA';
+
+    		BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
+
+    		//=========================================
+    		//FIM EU 9244 - GERIR TIPOS DE DOCUMENTOS PARA GERAÇÃO DE CERTIDÕES
+    		//==========================================
+
+    		//===============================
+    		//INICIO - Tabelas e Colunas novas do Módulo Intimaçao Parte 2 (Pacote 13)
+    		//==============================
+
+    		$objInfraMetaBD->adicionarColuna('md_pet_rel_recibo_protoc', 'txt_doc_principal_intimacao',  $objInfraMetaBD->tipoTextoVariavel(250) , 'NULL');
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_intimacao (
+			  id_md_pet_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_md_pet_int_tipo_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  sin_tipo_acesso_processo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_intimacao', 'pk_md_pet_intimacao', array('id_md_pet_intimacao'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_rel_tipo_resp (
+			  id_md_pet_int_rel_tipo_resp ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ,
+			  id_md_pet_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_md_pet_int_tipo_resp ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_rel_tipo_resp', 'pk_md_pet_int_rel_tipo_resp', array('id_md_pet_int_rel_tipo_resp'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_rel_dest (
+			  id_md_pet_int_rel_dest ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL ,
+			  sin_pessoa_juridica ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL ,
+			  id_md_pet_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_contato ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_acesso_externo ' . $objInfraMetaBD->tipoNumero() . ' NULL ,
+			  id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  data_cadastro ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL,
+			  sta_situacao_intimacao ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_rel_dest', 'pk_md_pet_int_rel_dest', array('id_md_pet_int_rel_dest'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_protocolo (
+			  id_md_pet_int_protocolo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  sin_principal ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ,
+			  id_md_pet_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_protocolo ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_protocolo', 'pk_md_pet_int_protocolo', array('id_md_pet_int_protocolo'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_prot_disponivel (
+			  id_md_pet_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_protocolo ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_prot_disponivel', 'pk_md_pet_int_prot_disponivel', array('id_protocolo', 'id_md_pet_intimacao'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_dest_resposta (
+			  id_md_pet_int_dest_resposta ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_md_pet_int_rel_dest ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  ip ' . $objInfraMetaBD->tipoTextoVariavel(45) . ' NULL ,
+			  data ' . $objInfraMetaBD->tipoDataHora() . ' NULL ,
+			  id_md_pet_int_rel_tipo_resp ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_dest_resposta', 'pk_md_pet_int_dest_resposta', array('id_md_pet_int_dest_resposta'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_rel_resp_doc (
+			  id_md_pet_int_resp_documento ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_md_pet_int_dest_resposta ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_rel_resp_doc', 'pk_md_pet_int_rel_resp_doc', array('id_md_pet_int_resp_documento'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_aceite (
+			  id_md_pet_int_aceite ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  ip ' . $objInfraMetaBD->tipoTextoVariavel(45) . ' NULL ,
+			  data ' . $objInfraMetaBD->tipoDataHora() . ' NULL ,
+			  data_consulta_direta ' . $objInfraMetaBD->tipoDataHora() . ' NULL ,
+			  id_md_pet_int_rel_dest ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			  id_documento_certidao ' . $objInfraMetaBD->tipoNumeroGrande() . ' NULL ,
+           	  tipo_aceite ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_aceite', 'pk_md_pet_int_aceite', array('id_md_pet_int_aceite'));
+
+    		$sql_tabelas = 'CREATE TABLE md_pet_int_rel_tpo_res_des (
+    		  id_md_pet_int_rel_tipo_res_des ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+    		  id_md_pet_int_rel_tipo_resp ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+    		  id_md_pet_int_rel_dest ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+    		  data_limite ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL ,
+    		  data_prorrogada ' . $objInfraMetaBD->tipoDataHora() . ' NULL)';
+
+    		BancoSEI::getInstance()->executarSql( $sql_tabelas );
+    		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_rel_tpo_res_des', 'pk_md_pet_int_rel_tipo_res_des', array('id_md_pet_int_rel_tipo_res_des'));
+
+    		//==================================
+    		//FIM - Tabelas do Módulo
+    		//=================================
+
+    		//=================================
+    		//INICIO - Pks, FKS e Indices
+    		//=================================
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_int_aceite_doc1', 'md_pet_int_aceite', array('id_documento_certidao'), 'documento', array('id_documento'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_int_aceite_doc2', 'md_pet_int_aceite', array('id_md_pet_int_rel_dest'), 'md_pet_int_rel_dest', array('id_md_pet_int_rel_dest'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_dest_resposta', 'md_pet_int_dest_resposta', array('id_md_pet_int_rel_dest'), 'md_pet_int_rel_dest', array('id_md_pet_int_rel_dest'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_dest_resposta', 'md_pet_int_dest_resposta', array('id_md_pet_int_rel_tipo_resp'), 'md_pet_int_rel_tipo_resp', array('id_md_pet_int_rel_tipo_resp'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_prot_disponivel', 'md_pet_int_prot_disponivel', array('id_protocolo'), 'protocolo', array('id_protocolo'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_prot_disponivel', 'md_pet_int_prot_disponivel', array('id_md_pet_intimacao'), 'md_pet_intimacao', array('id_md_pet_intimacao'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_protocolo', 'md_pet_int_protocolo', array('id_protocolo'), 'protocolo', array('id_protocolo'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_protocolo', 'md_pet_int_protocolo', array('id_md_pet_intimacao'), 'md_pet_intimacao', array('id_md_pet_intimacao'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_rel_dest', 'md_pet_int_rel_dest', array('id_contato'), 'contato', array('id_contato'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_rel_dest', 'md_pet_int_rel_dest', array('id_md_pet_intimacao'), 'md_pet_intimacao', array('id_md_pet_intimacao'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk3_md_pet_int_rel_dest', 'md_pet_int_rel_dest', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
+
+			$objInfraMetaBD->adicionarChaveEstrangeira('fk4_md_pet_int_rel_dest', 'md_pet_int_rel_dest', array('id_unidade'), 'unidade', array('id_unidade'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_rel_resp_doc', 'md_pet_int_rel_resp_doc', array('id_documento'), 'documento', array('id_documento'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_rel_resp_doc', 'md_pet_int_rel_resp_doc', array('id_md_pet_int_dest_resposta'), 'md_pet_int_dest_resposta', array('id_md_pet_int_dest_resposta'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tipo_resp', array('id_md_pet_int_tipo_resp'), 'md_pet_int_tipo_resp', array('id_md_pet_int_tipo_resp'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tipo_resp', array('id_md_pet_intimacao'), 'md_pet_intimacao', array('id_md_pet_intimacao'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_intimacao', 'md_pet_intimacao', array('id_md_pet_int_tipo_intimacao'), 'md_pet_int_tipo_intimacao', array('id_md_pet_int_tipo_intimacao'));
+
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pt_it_rl_tp_rp_tp_rp_dt', 'md_pet_int_rel_tpo_res_des', array('id_md_pet_int_rel_tipo_resp'), 'md_pet_int_rel_tipo_resp', array('id_md_pet_int_rel_tipo_resp'));
+    		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_it_rl_dst_tp_rp_dst', 'md_pet_int_rel_tpo_res_des', array('id_md_pet_int_rel_dest'), 'md_pet_int_rel_dest', array('id_md_pet_int_rel_dest'));
+
+    		//============================================
+    		//INICIO - Tabelas SEQ do modulo
+    		//===========================================
+
+    		//seq_md_pet_int_protocolo
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_protocolo (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_protocolo (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_protocolo', 1);
+    		}
+
+    		//seq_md_pet_int_resp_documento
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_resp_documento (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_resp_documento (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_resp_documento', 1);
+    		}
+
+    		//seq_md_pet_int_rel_resp_doc
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_resp_doc (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_resp_doc (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_resp_doc', 1);
+    		}
+
+    		//seq_md_pet_intimacao
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_intimacao (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_intimacao (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_intimacao', 1);
+    		}
+
+    		//seq_md_pet_int_rel_tipo_resp
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_tipo_resp (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_tipo_resp (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_tipo_resp', 1);
+    		}
+
+    		//seq_md_pet_int_rel_dest
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_dest (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_dest (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_dest', 1);
+    		}
+
+    		//seq_md_pet_int_dest_resposta
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_dest_resposta (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_dest_resposta (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_dest_resposta', 1);
+    		}
+
+    		//seq_md_pet_int_aceite
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_aceite (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_aceite (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_aceite', 1);
+    		}
+
+    		//seq_md_pet_int_rel_tpo_res_des
+    		if (BancoSEI::getInstance() instanceof InfraMySql) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_tpo_res_des (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+    		} else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+    			BancoSEI::getInstance()->executarSql('create table seq_md_pet_int_rel_tpo_res_des (id bigint identity(1,1), campo char(1) null)');
+    		} else if (BancoSEI::getInstance() instanceof InfraOracle) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_tpo_res_des', 1);
+    		}
+
+    		//============================================
+    		//FIM - Tabelas SEQ do modulo
+    		//===========================================
+
+    		//===========================================
+    		//INICIO - Cadastrar "cronjob" para SCRIPT PARA CUMPRIMENTO AUTOMATICO DE INTIMACAO POR DECURSO DE PRAZO
+    		//===========================================
+
+    		$infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
+    		$infraAgendamentoDTO->retTodos();
+    		$infraAgendamentoDTO->setStrDescricao('Script para cumprimento automático de intimação por decurso de prazo');
+
+    		$infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::CumprirPorDecursoPrazoTacito');
+
+    		$infraAgendamentoDTO->setStrSinAtivo('S');
+    		$infraAgendamentoDTO->setStrStaPeriodicidadeExecucao( InfraAgendamentoTarefaRN::$PERIODICIDADEEXECUCAO_DIA );
+    		$infraAgendamentoDTO->setStrPeriodicidadeComplemento( 23 );
+    		$infraAgendamentoDTO->setStrParametro( null );
+    		$infraAgendamentoDTO->setDthUltimaExecucao( null );
+    		$infraAgendamentoDTO->setDthUltimaConclusao( null );
+    		$infraAgendamentoDTO->setStrSinSucesso( 'S' );
+    		$infraAgendamentoDTO->setStrEmailErro( null );
+
+    		$infraAgendamentoRN = new InfraAgendamentoTarefaRN();
+    		$infraAgendamentoDTO = $infraAgendamentoRN->cadastrar( $infraAgendamentoDTO );
+
+    		//===========================================
+    		//FIM - Cadastrar "cronjob" para SCRIPT PARA CUMPRIMENTO AUTOMATICO DE INTIMACAO POR DECURSO DE PRAZO
+    		//===========================================
+
+
+			//===========================================
+			//INICIO - Cadastrar "cronjob" para SCRIPT PARA ATUALIZAR O ESTADO DAS INTIMAÇÕES SEM RESPOSTA COM PRAZO EXTERNO VENCIDO
+			//===========================================
+
+			$infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
+			$infraAgendamentoDTO->retTodos();
+			$infraAgendamentoDTO->setStrDescricao('Script para atualizar os estados das Intimações com Prazo Externo Vencido');
+
+			$infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::atualizarEstadoIntimacoesPrazoExternoVencido');
+
+			$infraAgendamentoDTO->setStrSinAtivo('S');
+			$infraAgendamentoDTO->setStrStaPeriodicidadeExecucao( InfraAgendamentoTarefaRN::$PERIODICIDADEEXECUCAO_DIA );
+			$infraAgendamentoDTO->setStrPeriodicidadeComplemento( 0 );
+			$infraAgendamentoDTO->setStrParametro( null );
+			$infraAgendamentoDTO->setDthUltimaExecucao( null );
+			$infraAgendamentoDTO->setDthUltimaConclusao( null );
+			$infraAgendamentoDTO->setStrSinSucesso( 'S' );
+			$infraAgendamentoDTO->setStrEmailErro( null );
+
+			$infraAgendamentoRN = new InfraAgendamentoTarefaRN();
+			$infraAgendamentoDTO = $infraAgendamentoRN->cadastrar( $infraAgendamentoDTO );
+
+			//===========================================
+			//FIM - Cadastrar "cronjob" para SCRIPT PARA ATUALIZAR O ESTADO DAS INTIMAÇÕES SEM RESPOSTA COM PRAZO EXTERNO VENCIDO
+			//===========================================
+
+    		//===========================================
+    		//INICIO - Cadastrar "cronjob" para SCRIPT PARA REITERAÇÃO DE INTIMACAO EXIGE RESPOSTA
+    		//===========================================
+
+    		$infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
+    		$infraAgendamentoDTO->retTodos();
+    		$infraAgendamentoDTO->setStrDescricao('Dispara E-mails do Sistema do Módulo de Peticionamento e Intimação Eletrônicos de Reiteração de Intimação Eletrônica que Exige Resposta pendentes de Resposta pelo Usuário Externo');
+
+    		$infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::ReiterarIntimacaoExigeResposta');
+
+    		$infraAgendamentoDTO->setStrSinAtivo('S');
+    		$infraAgendamentoDTO->setStrStaPeriodicidadeExecucao( InfraAgendamentoTarefaRN::$PERIODICIDADEEXECUCAO_DIA );
+    		$infraAgendamentoDTO->setStrPeriodicidadeComplemento( 7 );
+    		$infraAgendamentoDTO->setStrParametro( null );
+    		$infraAgendamentoDTO->setDthUltimaExecucao( null );
+    		$infraAgendamentoDTO->setDthUltimaConclusao( null );
+    		$infraAgendamentoDTO->setStrSinSucesso( 'S' );
+    		$infraAgendamentoDTO->setStrEmailErro( null );
+
+    		$infraAgendamentoRN = new InfraAgendamentoTarefaRN();
+    		$infraAgendamentoDTO = $infraAgendamentoRN->cadastrar( $infraAgendamentoDTO );
+
+    		//===========================================
+    		//FIM - Cadastrar "cronjob" para SCRIPT PARA REITERAÇÃO DE INTIMACAO EXIGE RESPOSTA
+    		//===========================================
+
+    		//checar se precisa atualizar infra_parametro ID_SERIE_RECIBO_MODULO_PETICIONAMENTO
+    		$idParamAntigo = 'ID_SERIE_RECIBO_MODULO_PETICIONAMENTO';
+    		$objInfraParamRN = new InfraParametroRN();
+    		$objInfraParamDTO = new InfraParametroDTO();
+    		$objInfraParamDTO->retTodos();
+    		$objInfraParamDTO->setStrNome( $idParamAntigo );
+
+    		$arrObjInfraParamDTO = $objInfraParamRN->listar( $objInfraParamDTO );
+
+    		if( is_array( $arrObjInfraParamDTO ) && count( $arrObjInfraParamDTO ) > 0){
+    			BancoSEI::getInstance()->executarSql("UPDATE infra_parametro SET nome ='" . MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO. "'  WHERE nome = '" . $idParamAntigo . "'");
+    		}
+
+    		//Alteração na tarefa "Cancelada disponibilização de acesso externo", passando a permitir em PROCESSO FECHADO  
+    		$tarefaDTO = new TarefaDTO();
+    		$tarefaDTO->setNumIdTarefa(90);
+    		$tarefaDTO->setStrSinPermiteProcessoFechado('S');
+
+    		$tarefaRN = new TarefaRN();
+    		$tarefaRN->alterar( $tarefaDTO );
+
+    		//Atualizando parametro para controlar versao do modulo
+    		$this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+
+    		BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+    	} catch (Exception $e) {
+    		$this->logar($e->getTraceAsString());
+    		print_r($e);
+    		die();
+    	}
+    }
 
     //Contem atualizações da versao 1.1.0 (Intercorrente)
-    protected function instalarv110()
-    {
+    protected function instalarv110(){
         try {
-
             $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-            $this->logar('EXECUTANDO A INSTALACAO DA VERSAO 1.1.0 DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+            $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.1.0 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
 
-            // INICIO 7048
             //Cria a tabela de tipo de resposta
             BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_criterio (
 				id_md_pet_criterio ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -129,10 +1014,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 
             //Atualizando dados da tabela
             $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-            $ret = $objInfraParametro->listarValores(array('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO'), false);
+            $ret = $objInfraParametro->listarValores(array(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO), false);
             
             $arrObjInfraParametroDTO = NULL;
-            $idSeriePet = array_key_exists('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO' , $ret) ? $ret['ID_SERIE_RECIBO_MODULO_PETICIONAMENTO'] : null;
+            $idSeriePet = array_key_exists(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO , $ret) ? $ret[MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO] : null;
 
             if($idSeriePet){
                 $arrObjDocumentDTO = array();
@@ -162,12 +1047,8 @@ class MdPetAtualizadorSeiRN extends InfraRN
 
             }
 
-
-
-
-
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         } catch (Exception $e) {
@@ -178,12 +1059,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
     }
 
 //Contem atualizações da versao 1.0.4
-    protected function instalarv104()
-    {
+    protected function instalarv104(){
         try {
-        	
             $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-            $this->logar('EXECUTANDO A INSTALACAO DA VERSAO 1.0.4 DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+            $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.4 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
 
             //Caso exista a coluna na tabela a instalação é nova, então não é necessario executar a migração de dados
             $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_tp_ctx_contato', 'id_tipo_contato');
@@ -217,7 +1096,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
             $objTarjaAssinaturaDTO = $objTarjaAssinaturaBD->cadastrar( $objTarjaAssinaturaDTO );
             
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
             
         } catch (Exception $e) {
@@ -228,16 +1107,12 @@ class MdPetAtualizadorSeiRN extends InfraRN
     }
 
     //Contem atualizações da versao 1.0.0
-    protected function instalarv100()
-    {
-
+    protected function instalarv100(){
         try {
-
             $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-
-            $this->logar('EXECUTANDO A INSTALACAO DA VERSAO 1.0.3 DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+            $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.3 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+            
             $this->logar('CRIANDO A TABELA md_pet_hipotese_legal');
-
             BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_hipotese_legal (
 			id_md_pet_hipotese_legal ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL )');
 
@@ -426,13 +1301,14 @@ class MdPetAtualizadorSeiRN extends InfraRN
             $serieDTO->setArrObjSerieRestricaoDTO(array());
 
             $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
-
-            $this->logar('ATUALIZANDO INFRA_PARAMETRO (ID_SERIE_RECIBO_MODULO_PETICIONAMENTO)');
-            $nomeParamIdSerie = 'ID_SERIE_RECIBO_MODULO_PETICIONAMENTO';
+			
+            $this->logar('ATUALIZANDO INFRA_PARAMETRO (' . MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO . ')');
+            $nomeParamIdSerie = MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO;
+                        
             BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
 
             //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         } catch (Exception $e) {
@@ -444,13 +1320,11 @@ class MdPetAtualizadorSeiRN extends InfraRN
     }
 
     //Contem atualizações da versao 0.0.2
-    protected function instalarv002()
-    {
-
+    protected function instalarv002(){
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-        $this->logar('EXECUTANDO A INSTALACAO DA VERSAO 0.0.2 DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+        
         $this->logar('CRIANDO A TABELA md_pet_usu_externo_menu E SUA sequence');
-
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_usu_externo_menu( id_md_pet_usu_externo_menu ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() . ' NULL ,
 		nome ' . $objInfraMetaBD->tipoTextoVariavel(30) . ' NOT NULL ,
@@ -556,30 +1430,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         BancoSEI::getInstance()->executarSql($insert2);
 
-        $this->logar('CRIANDO A TABELA md_pet_usu_ext_processo E SUA sequence');
-
-        //Inserindo tabelas referentes ao Recibo Eletronico de Protocolo
-        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_usu_ext_processo (
-		id_md_pet_usu_externo_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-		id_md_pet_tipo_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-		especificacao ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' NULL,
-		tipo_interessado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
-		id_usuario_externo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-		data_hora_recebimento ' . $objInfraMetaBD->tipoDataHora() . ' NULL,
-		ip_usuario ' . $objInfraMetaBD->tipoTextoVariavel(60) . ' NULL,
-		numero_processo ' . $objInfraMetaBD->tipoTextoVariavel(40) . ' NULL,
-		sin_ativo  ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ) ');
-
-        $objInfraMetaBD->adicionarChavePrimaria('md_pet_usu_ext_processo', 'pk_md_pet_usu_externo_processo', array('id_md_pet_usu_externo_processo'));
-
-        if (BancoSEI::getInstance() instanceof InfraMySql) {
-            BancoSEI::getInstance()->executarSql('create table seq_md_pet_usu_ext_processo (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
-        } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
-            BancoSEI::getInstance()->executarSql('create table seq_md_pet_usu_ext_processo (id bigint identity(1,1), campo char(1) null)');
-        } else if (BancoSEI::getInstance() instanceof InfraOracle) {
-            BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_usu_ext_processo', 1);
-        }
-
         //Tabelas relacionais com Tipos de Contatos permitidos para Cadastro e para Seleção
         $this->logar('CRIANDO A TABELA md_pet_rel_tp_ctx_contato');
 
@@ -665,20 +1515,17 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         }
 
         //Atualizando parametro para controlar versao do modulo
-        $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
     }
 
     //Contem atualizações da versao 0.0.1
-    protected function instalarv001()
-    {
-
+    protected function instalarv001(){
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-
-        $this->logar('EXECUTANDO A INSTALACAO DA VERSAO 0.0.1 DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+        
         $this->logar('CRIANDO A TABELA md_pet_tipo_processo E SUA sequence');
-
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_tipo_processo( id_md_pet_tipo_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		id_tipo_procedimento ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
 		id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
@@ -789,42 +1636,42 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisponibilidade', 1);
         }
 
-        $this->logar('CRIANDO A TABELA md_pet_indisp_anexo E SUA sequence');
+        $this->logar('CRIANDO A TABELA md_pet_indisp_doc E SUA sequence');
 
-        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_indisp_anexo (
-		id_md_pet_anexo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_indisp_doc (
+		id_md_pet_indisp_doc ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		id_md_pet_indisponibilidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+		id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NULL,
+		id_acesso_externo ' . $objInfraMetaBD->tipoNumero() . ' NULL,
 		dth_inclusao ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL,
-		nome ' . $objInfraMetaBD->tipoTextoVariavel(255) . ' NOT NULL,
-		tamanho  ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-		sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
-		hash ' . $objInfraMetaBD->tipoTextoFixo(32) . ' NOT NULL ) ');
+		sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL ) ');
 
-        $objInfraMetaBD->adicionarChavePrimaria('md_pet_indisp_anexo', 'pk_pet_indisponibilidade_anexo', array('id_md_pet_anexo'));
-        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_01', 'md_pet_indisp_anexo', array('id_md_pet_indisponibilidade'), 'md_pet_indisponibilidade', array('id_md_pet_indisponibilidade'));
-        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_02', 'md_pet_indisp_anexo', array('id_unidade'), 'unidade', array('id_unidade'));
-        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_anexo_03', 'md_pet_indisp_anexo', array('id_usuario'), 'usuario', array('id_usuario'));
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_indisp_doc', 'pk_md_pet_indisp_doc', array('id_md_pet_indisp_doc'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_01', 'md_pet_indisp_doc', array('id_md_pet_indisponibilidade'), 'md_pet_indisponibilidade', array('id_md_pet_indisponibilidade'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_02', 'md_pet_indisp_doc', array('id_unidade'), 'unidade', array('id_unidade'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_03', 'md_pet_indisp_doc', array('id_usuario'), 'usuario', array('id_usuario'));
+		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_04', 'md_pet_indisp_doc', array('id_documento'), 'documento', array('id_documento'));
+		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_05', 'md_pet_indisp_doc', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
-            BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisp_anexo (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+            BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisp_doc (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
         } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
-            BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisp_anexo (id bigint identity(1,1), campo char(1) null)');
+            BancoSEI::getInstance()->executarSql('create table seq_md_pet_indisp_doc (id bigint identity(1,1), campo char(1) null)');
         } else if (BancoSEI::getInstance() instanceof InfraOracle) {
-            BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_anexo', 1);
+            BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
         }
 
         //Adicionando parametro para controlar versao do modulo
-        $this->logar('ADICIONANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ADICIONANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \'' . $this->nomeParametroModulo . '\' )');
     }
 
-    protected function atualizarVersaoConectado()
-    {
+    protected function atualizarVersaoConectado(){
 
         try {
-            $this->inicializar('INICIANDO ATUALIZACAO DO MODULO ' . $this->nomeDesteModulo . ' NO SEI VERSAO ' . SEI_VERSAO);
+            $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO '.$this->nomeDesteModulo.' NO SEI VERSÃO '.SEI_VERSAO);
             
             //testando versao do framework
             $numVersaoInfraRequerida = '1.385';
@@ -832,15 +1679,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $versaoInfraReqFormatada = (int) str_replace('.','', $numVersaoInfraRequerida);
             
             if ($versaoInfraFormatada < $versaoInfraReqFormatada){
-            	$this->finalizar('VERSAO DO FRAMEWORK PHP INCOMPATIVEL (VERSAO ATUAL '.VERSAO_INFRA.', SENDO REQUERIDA VERSAO IGUAL OU SUPERIOR A '.$numVersaoInfraRequerida.')',true);
+            	$this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL '.VERSAO_INFRA.', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A '.$numVersaoInfraRequerida.')',true);
             }
 
             //checando BDs suportados
             if (!(BancoSEI::getInstance() instanceof InfraMySql) &&
                 !(BancoSEI::getInstance() instanceof InfraSqlServer) &&
-                !(BancoSEI::getInstance() instanceof InfraOracle)
-            ) {
-                $this->finalizar('BANCO DE DADOS NAO SUPORTADO: ' . get_parent_class(BancoSEI::getInstance()), true);
+                !(BancoSEI::getInstance() instanceof InfraOracle)) {
+                $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSEI::getInstance()), true);
             }
 
             //checando permissoes na base de dados
@@ -864,37 +1710,58 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
                 $this->instalarv100();
                 $this->instalarv104();
                 $this->instalarv110();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO MODULO ' . $this->nomeDesteModulo . ' INSTALADAS COM SUCESSO NA BASE DO SEI');
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
-            } //se ja tem 001 instala apenas 002, 100, 104 e 110
+            } 
+            
+            //se ja tem 001 instala apenas 002, 100, 104 e 110
             else if ($strVersaoModuloPeticionamento == '0.0.1') {
                 $this->instalarv002();
                 $this->instalarv100();
                 $this->instalarv104();
                 $this->instalarv110();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO MÓDULO ' . $this->nomeDesteModulo . ' INSTALADAS COM SUCESSO NA BASE DO SEI');
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
-            } //se ja tem 002 instala apenas 100, 104, 110
+            } 
+            
+            //se ja tem 002 instala apenas 100, 104, 110
             else if ($strVersaoModuloPeticionamento == '0.0.2') {
                 $this->instalarv100();
                 $this->instalarv104();
                 $this->instalarv110();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO MÓDULO ' . $this->nomeDesteModulo . ' INSTALADAS COM SUCESSO NA BASE DO SEI');
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
-            } //se ja tem 100 ou 103 instala apenas a 104 e 110
+            } 
+            
+            //se ja tem 100 ou 103 instala apenas a 104 e 110
             else if (in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3'))) {
                 $this->instalarv104();
                 $this->instalarv110();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO MÓDULO ' . $this->nomeDesteModulo . ' INSTALADAS COM SUCESSO NA BASE DO SEI');
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
-            } //se ja tem 104 apenas a 110
+            } 
+            
+            //se ja tem 104 apenas a 110
             else if ($strVersaoModuloPeticionamento == '1.0.4') {
                 $this->instalarv110();
-                $this->logar('ATUALIZAÇÔES DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO MÓDULO ' . $this->nomeDesteModulo . ' INSTALADAS COM SUCESSO NA BASE DO SEI');
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             }
+            
+            //se ja tem 104 apenas a 110
             else if ($strVersaoModuloPeticionamento == '1.1.0') {
-                $this->logar('A VERSAO MAIS ATUAL DO MODULO ' . $this->nomeDesteModulo . ' (v ' . $this->versaoAtualDesteModulo . ') JA ESTA INSTALADA.');
+            	$this->instalarv200();
+            	$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+            	$this->finalizar('FIM', false);
+            }
+            
+            else if ($strVersaoModuloPeticionamento == '2.0.0') {
+                $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
                 $this->finalizar('FIM', false);
             }
 
@@ -910,13 +1777,12 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $this->finalizar('FIM', true);
             print_r($e);
             die;
-            throw new InfraException('Erro atualizando versão.', $e);
+            throw new InfraException('Erro instalando/atualizando versão.', $e);
         }
 
     }
 
-    private function existeIdEmailSistemaPecitionamento()
-    {
+    private function existeIdEmailSistemaPecitionamento(){
         $this->logar('VERIFICANDO A EXISTENCIA DE MODELOS DE EMAIL PARA PETICIONAMENTO');
         $sql = "select 
 			id_email_sistema 
@@ -927,22 +1793,19 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         return (count($rs) > 0) ? true : false;
     }
 
-    private function atualizarIdEmailSistemaAlertaPecitionamento()
-    {
+    private function atualizarIdEmailSistemaAlertaPecitionamento(){
         $this->logar('ATUALIZANDO O IDENTIFICADOR DO MODELO DE EMAIL PARA PETICIONAMENTO DA CONSTANTE MD_PET_ALERTA_PETICIONAMENTO_UNIDADES');
         $idEmailSistema = $this->retornarMaxIdEmailSistema();
         BancoSEI::getInstance()->executarSql('update email_sistema SET id_email_sistema = ' . $idEmailSistema . ', id_email_sistema_modulo = \'MD_PET_ALERTA_PETICIONAMENTO_UNIDADES\' WHERE id_email_sistema = 3002');
     }
 
-    private function atualizarIdEmailSistemaConfirmacaoPeticionamento()
-    {
+    private function atualizarIdEmailSistemaConfirmacaoPeticionamento(){
         $this->logar('ATUALIZANDO O IDENTIFICADOR DO MODELO DE EMAIL PARA PETICIONAMENTO DA CONSTANTE MD_PET_CONFIRMACAO_PETICIONAMENTO_USUARIO_EXTERNO');
         $idEmailSistema = $this->retornarMaxIdEmailSistema();
         BancoSEI::getInstance()->executarSql('update email_sistema SET id_email_sistema = ' . $idEmailSistema . ', id_email_sistema_modulo = \'MD_PET_CONFIRMACAO_PETICIONAMENTO_USUARIO_EXTERNO\' WHERE  id_email_sistema = 3001');
     }
 
-    private function retornarMaxIdEmailSistema()
-    {
+    private function retornarMaxIdEmailSistema(){
         $this->logar('BUSCANDO O PROXIMO ID DISPONIVEL NA TABELA EMAIL_SISTEMA ');
         $sql = "select id_email_sistema from email_sistema where id_email_sistema > 999";
         $rs = BancoSEI::getInstance()->consultarSql($sql);
@@ -965,5 +1828,4 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     }
 
 }
-
 ?>

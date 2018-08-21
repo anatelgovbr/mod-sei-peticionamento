@@ -31,10 +31,7 @@ class MdPetRelTpProcSerieDTO extends InfraDTO {
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
     								'StaTipoDoc',
     								'sta_tp_doc');
-        
- //   $this->configurarPK('IdTipoProcessoPeticionamento',InfraDTO::$TIPO_PK_INFORMADO);
-   // $this->configurarPK('IdSerie',InfraDTO::$TIPO_PK_INFORMADO);
-    
+
     $this->configurarPK('IdRelTipoProcessoSeriePeticionamento',InfraDTO::$TIPO_PK_NATIVA);
     
     $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeSerie', 's.nome', 'serie s');

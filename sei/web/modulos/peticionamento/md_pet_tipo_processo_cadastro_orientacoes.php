@@ -110,14 +110,8 @@
   		PaginaSEI::getInstance()->abrirJavaScript();
   		?>
   function inicializar(){
-  if ('<?=$_GET['acao']?>'=='md_pet_tipo_processo_cadastrar_orientacoes'){
-  
-    //window.onload = document.getElementById('cke_1_contents').style.height = '290px';
-    //document.getElementById('txtNome').focus();
-  } 
- //document.getElementById('btnCancelar').focus();
-  infraEfeitoTabelas(); 
-}
+    infraEfeitoTabelas(); 
+  }
   		<?php 
   		PaginaSEI::getInstance()->fecharJavaScript();
   		echo $retEditor->getStrInicializacao();
@@ -128,7 +122,6 @@
   <form id="frmTextoPadraoInternoCadastro" method="post" onsubmit="return OnSubmitForm();" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
   <?
 PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-//PaginaSEI::getInstance()->montarAreaValidacao();
 PaginaSEI::getInstance()->abrirAreaDados('3em');
 ?>
 

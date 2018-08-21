@@ -27,7 +27,7 @@ try {
      
   //preenche a combo Função
   $objMdPetCargoRN = new MdPetCargoRN();
-  $arrObjCargoDTO = $objMdPetCargoRN->listarDistintos();  
+  $arrObjCargoDTO = $objMdPetCargoRN->listarDistintos();
 
   //=====================================================
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
@@ -39,17 +39,56 @@ try {
     
   	case 'md_pet_intercorrente_usu_ext_assinar':
         break;
+        
+  	case 'md_pet_responder_intimacao_usu_ext_assinar':
+  		break;
+        
+    //INICIO - finalizacao do resposta a intimacao    
+  	case 'md_pet_responder_intimacao_usu_ext_concluir':
+  		
+  		$_POST['isRespostaIntimacao'] = true;
+  		$objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN();
+  		$resultado = $objMdPetIntercorrenteProcessoRN->cadastrar($_POST);
+  		
+  		if ($resultado===false){
+  			echo 'Erro ao cadastrar';
+  		}
+  		else{
+  		
+  			$objReciboDTO = $resultado['recibo'];
+  			$documentoDTO = $resultado['documento'];
+
+  			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar&id_orgao_acesso_externo=0";
+  			
+  			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
+  			
+  			echo "<script>";
+  			echo "window.opener.location = '" . $urlAssinada . "';";
+  			echo " window.opener.focus();";
+  			echo " window.close();";
+  			echo "</script>";
+  			die;
+  		}
+  		
+  		break;
+  	//FIM - finalizacao do resposta a intimacao
+  	
+    //INICIO - finalizacao do peticionamento intercorrente    
   	case 'md_pet_intercorrente_usu_ext_concluir':
-        $objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN();
+		$_POST['isRespostaIntercorrente'] = true;
+  		$objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN();
         $resultado = $objMdPetIntercorrenteProcessoRN->cadastrar($_POST);
+				
         if ($resultado===false){
-        	//PaginaSEIExterna::getInstance()->processarExcecao('Erro ao cadastrar');
         	echo 'Erro ao cadastrar';
         }else{
-	        $objReciboDTO = $resultado['recibo'];
+						
+        	$objReciboDTO = $resultado['recibo'];
 	        $documentoDTO = $resultado['documento'];
 
-	        $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() . "&id_documento=" . $documentoDTO->getDblIdDocumento() . "&acao=md_pet_intercorrente_usu_ext_recibo_consultar&acao_origem=md_pet_usu_ext_recibo_listar&acao_retorno=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=0";
+			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() . "&id_documento=" . $documentoDTO->getDblIdDocumento() . "&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_listar&acao_retorno=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=0";
+	        
+	        
 	        $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
 
 	        echo "<script>";
@@ -59,17 +98,14 @@ try {
 	        echo "</script>";
 	        die;
         }
+        
 	    break;
+	    
     default:
       throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
   }
 
 }catch(Exception $e){
-	
-	//removendo atributos da sessao
-	//if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
-		//SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
-	//}
 		
 	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
 		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
@@ -108,11 +144,31 @@ PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
 $arrComandos = array();
+
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="a" name="Assinar" value="Assinar" onclick="assinar()" class="infraButton"><span class="infraTeclaAtalho">A</span>ssinar</button>';
+
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+
+//url para assinar o intercorrente
 $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intercorrente_usu_ext_concluir&id_procedimento='.$_REQUEST['id_procedimento'].'&id_tipo_procedimento='.$_REQUEST['id_tipo_procedimento'].'&acao_origem='.$_GET['acao']);
+
+//url para assinar o resposta
+$urlAssinadaRespostaIntimacao = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_responder_intimacao_usu_ext_concluir&acao_origem='.$_GET['acao']);
+
+$urlFormAssinar = "";
+
+//intercorrente
+if( $_GET['acao'] == "md_pet_intercorrente_usu_ext_assinar"){
+	$urlFormAssinar = $urlAssinada;
+} 
+
+//resposta a intimacao
+else if( $_GET['acao'] == "md_pet_responder_intimacao_usu_ext_assinar" ) {
+	$urlFormAssinar = $urlAssinadaRespostaIntimacao;
+}
+
 ?>
-<form id="frmConcluir" method="post" onsubmit="return assinar();" action="<?=PaginaSEIExterna::getInstance()->formatarXHTML($urlAssinada)?>">
+<form id="frmConcluir" method="post" onsubmit="return assinar();" action="<?=PaginaSEIExterna::getInstance()->formatarXHTML( $urlFormAssinar )?>">
 <?
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
@@ -131,16 +187,17 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <label class="infraLabelObrigatorio">Cargo/Função:</label> <br/>
     <select id="selCargo" name="selCargo" class="infraSelect" style="width:60%;">
     <option value="">Selecione Cargo/Função</option>
-    <? foreach( $arrObjCargoDTO as $cargo ){
-    	
-    	if( $_POST['selCargo'] != $cargo->getNumIdCargo() ){
-    	   echo "<option value='" . $cargo->getNumIdCargo() . "'>";	
+    <? foreach( $arrObjCargoDTO as $expressao =>$cargo ){
+
+
+    	if( $_POST['selCargo'] != $cargo ){
+    	   echo "<option value='" . $cargo . "'>";
     	}
     	else{
-    	  echo "<option selected='selected' value='" . $cargo->getNumIdCargo() . "'>";
+    	  echo "<option selected='selected' value='" . $cargo . "'>";
     	}
     	
-    	echo $cargo->getStrExpressao();
+    	echo $expressao;
     	echo "</option>";
     	
     } ?>
@@ -154,6 +211,17 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
     <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $_REQUEST['id_tipo_procedimento'] ?>" />
     <input type="hidden" id="id_procedimento" name="id_procedimento" value="<?= $_REQUEST['id_procedimento'] ?>" />
+    
+    <?php 
+    //campos hidden especificos de uso do resposta a intimacao
+    if( $_GET['acao'] == "md_pet_responder_intimacao_usu_ext_assinar" || $_GET['acao']  == "md_pet_responder_intimacao_usu_ext_concluir") { ?>
+    
+    <input type="hidden" id="id_intimacao" name="id_intimacao" value="" />
+    <input type="hidden" id="id_aceite" name="id_aceite" value="" />
+    <input type="hidden" id="id_tipo_resposta" name="id_tipo_resposta" value="" />
+
+	<?php } ?>
+    
     <input type="hidden" id="hdnSubmit" name="hdnSubmit" value=""/>
     
     <!-- Listas de documentos principais (se for externo), essencial e complementar -->
@@ -195,7 +263,28 @@ function isValido(){
 }
 
 function assinar(){
+
 	if( isValido() ) {
+
+        //setando valor de campos hidden para o resposta a intimacao
+		<?php if( $_GET['acao'] == "md_pet_responder_intimacao_usu_ext_assinar" || $_GET['acao']  == "md_pet_responder_intimacao_usu_ext_concluir") { ?>
+
+		//pegando valores dos campos que ja existem na janela pai
+		var hdnIdProcedimentoJanelaPai = window.opener.document.getElementById('hdnIdProcedimento');
+		var hdnIdMdPetIntimacaoJanelaPai = window.opener.document.getElementById('hdnIdMdPetIntimacao');
+		var hdnIdMdPetIntAceiteJanelaPai = window.opener.document.getElementById('hdnIdMdPetIntAceite');
+		var hdnIdTipoProcedimentoJanelaPai  = window.opener.document.getElementById('hdnIdTipoProcedimento');
+		var selTipoResposta = window.opener.document.getElementById('selTipoResposta');
+
+		//setando nos campos hidden da janela local do assinar antes de submeter o formulario
+		document.getElementById('id_procedimento').value = hdnIdProcedimentoJanelaPai.value;
+		document.getElementById('id_tipo_procedimento').value = hdnIdTipoProcedimentoJanelaPai.value;
+		document.getElementById('id_aceite').value = hdnIdMdPetIntAceiteJanelaPai.value;
+		document.getElementById('id_intimacao').value = hdnIdMdPetIntimacaoJanelaPai.value;
+		document.getElementById('id_tipo_resposta').value = selTipoResposta.value;
+			
+		<?php } ?>
+		
         document.getElementById('hdnSubmit').value = '1';
         processando();
 		document.getElementById('frmConcluir').submit();
@@ -236,11 +325,14 @@ function inicializar(){
     infraEfeitoTabelas();
     //Carrega os valores da tabela documento da tela pai.
     carregarTabelaDocumento();
+    if (document.getElementById('selCargo')!=null){
+        document.getElementById('selCargo').focus();
+    }
 }
 
 function fecharJanela(){
-	
-	if (window.opener != null && !window.opener.closed) {
+
+    if (window.opener != null && !window.opener.closed) {
         window.opener.focus();
     }
 

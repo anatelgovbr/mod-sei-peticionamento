@@ -47,7 +47,6 @@ try {
 				for ($i=0;$i<count($arrStrIds);$i++){
 					$objMdPetMenuUsuarioExternoDTO = new MdPetMenuUsuarioExternoDTO();
 					$objMdPetMenuUsuarioExternoDTO->setNumIdMenuPeticionamentoUsuarioExterno($arrStrIds[$i]);
-					//$objMdPetMenuUsuarioExternoDTO->setNumIdMenuPeticionamentoUsuarioExterno($_GET['id_menu_peticionamento_usuario_externo']);
 					$arrObjMdPetMenuUsuarioExternoDTO[] = $objMdPetMenuUsuarioExternoDTO;
 				}
 				$objMdPetMenuUsuarioExternoRN = new MdPetMenuUsuarioExternoRN();
@@ -70,7 +69,6 @@ try {
 					for ($i=0;$i<count($arrStrIds);$i++){
 						$objMdPetMenuUsuarioExternoDTO = new MdPetMenuUsuarioExternoDTO();
 						$objMdPetMenuUsuarioExternoDTO->setNumIdMenuPeticionamentoUsuarioExterno($arrStrIds[$i]);
-						//$objMdPetMenuUsuarioExternoDTO->setNumIdTipoControleLitigioso($_GET['id_menu_peticionamento_usuario_externo']);
 						$arrObjMdPetMenuUsuarioExternoDTO[] = $objMdPetMenuUsuarioExternoDTO;
 					}
 					$objMdPetMenuUsuarioExternoRN = new MdPetMenuUsuarioExternoRN();
@@ -137,10 +135,6 @@ try {
 	PaginaSEI::getInstance()->prepararOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
 	PaginaSEI::getInstance()->prepararPaginacao($objMdPetMenuUsuarioExternoDTO, 200);
 
-	//if( isset( $_GET['id_menu_peticionamento_usuario_externo'] ) && $_GET['id_menu_peticionamento_usuario_externo'] != ""){
-		//$objMdPetMenuUsuarioExternoDTO->setNumIdMenuPeticionamentoUsuarioExterno($_GET['id_menu_peticionamento_usuario_externo']);
-	//}
-
 	if( isset( $_POST['id_menu_peticionamento_usuario_externo'] )){
 		$objMdPetMenuUsuarioExternoDTO->setNumIdTipoControleLitigioso( $_POST['id_menu_peticionamento_usuario_externo'] );
 	}
@@ -183,7 +177,6 @@ try {
 		//TODO: Marcelo, se não vai ter o botão de Desativar em lote, melhor retirar todo este bloco de código.
 		if ($bolAcaoDesativar){
 			$bolCheck = true;
-			//$arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
 			$strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo='. $_GET['id_menu_peticionamento_usuario_externo'] .'&acao=md_pet_menu_usu_ext_desativar&acao_origem='.$_GET['acao']);
 		}
 
@@ -192,7 +185,6 @@ try {
 		//TODO: Marcelo, se não vai ter o botão de Excluir em lote, melhor retirar todo este bloco de código.
 		if ($bolAcaoExcluir){
 			$bolCheck = true;
-			//$arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
 			$strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo='. $_GET['id_menu_peticionamento_usuario_externo'] .'&acao=md_pet_menu_usu_ext_excluir&acao_origem='.$_GET['acao']);
 		}
 

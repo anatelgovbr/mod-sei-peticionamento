@@ -60,20 +60,9 @@ class MdPetParticipanteRN extends InfraRN {
 		}
 
 
-		// documento_cadastro.php - criação de objeto	
-//		$objProtocoloInteressadoDTO = new ProtocoloDTO();
-		
-		// documento_cadastro.php linha 292	
-		//$arrObjParticipantesDTO = array();
-
 		$arrObjParticipantesDTO = $participantes;
 
-//		$objProtocoloInteressadoDTO->setDblIdProtocolo($protocolo);
-//		$objProtocoloInteressadoDTO->setArrObjParticipanteDTO($arrObjParticipantesDTO);
-
-		// ProtocoloRN.php linha 514 fazendo parte da protected function alterarRN0203Controlado(ProtocoloDTO $objProtocoloDTO){
-
-		// PROTOCOLO - participantes já cadastrados
+        // PROTOCOLO - participantes já cadastrados
         $objParticipanteDTO = new ParticipanteDTO();
         $objParticipanteDTO->retNumIdParticipante();
         $objParticipanteDTO->retNumIdContato();
@@ -86,9 +75,8 @@ class MdPetParticipanteRN extends InfraRN {
         $objParticipanteRN = new ParticipanteRN();
         $arrParticipantesAntigos = $objParticipanteRN->listarRN0189($objParticipanteDTO);
 
-//        $arrParticipantesNovos = $objProtocoloInteressadoDTO->getArrObjParticipanteDTO();
         $arrParticipantesNovos = $arrObjParticipantesDTO;        
-		
+
         foreach($arrParticipantesNovos as $participanteNovo){
           $flagCadastrar = true;
           $objParticipanteDTOAntigo = null;
@@ -103,8 +91,6 @@ class MdPetParticipanteRN extends InfraRN {
           }
 
           if ($flagCadastrar){
-          	//$participanteNovo->setDblIdProtocolo($objProtocoloInteressadoDTO->getDblIdProtocolo());
-          	//$participanteNovo->setNumIdUnidade(SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual());
           	$objParticipanteRN->cadastrarRN0170($participanteNovo);
           }else if ($participanteNovo->getNumSequencia()!=$objParticipanteDTOAntigo->getNumSequencia()){
             //altera sequencia

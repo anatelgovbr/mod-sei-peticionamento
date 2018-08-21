@@ -56,32 +56,19 @@ $strSelPrin2 = "";
 
 if( $numero > 0){
 	
-	//SEIv2
-	//$tipoContextoRN = new TipoContextoContatoRN();
-	
 	//SEIv3
 	$tipoContextoRN = new TipoContatoRN();
 	
 	foreach( $arrItens as $item ){
-		
-		//SEIv2
-		//$tipoContextoDTO = new TipoContextoContatoDTO();
-		//$tipoContextoDTO->retNumIdTipoContextoContato();
-		//$tipoContextoDTO->retStrNome();
-		//$tipoContextoDTO->setNumIdTipoContextoContato( $item->getNumIdTipoContextoContato() );
-		
+
 		//SEIv3
 		$tipoContextoDTO = new TipoContatoDTO();
 		$tipoContextoDTO->retNumIdTipoContato();
 		$tipoContextoDTO->retStrNome();
 		$tipoContextoDTO->setNumIdTipoContato( $item->getNumIdTipoContextoContato() );
-		
-		
+
 		$tipoContextoDTO = $tipoContextoRN->consultarRN0336( $tipoContextoDTO );
-		
-		//SEIv2
-		//$strSelPrin .= "<option value='" . $item->getNumIdTipoContextoContato() . "'>" . $tipoContextoDTO->getStrNome() . " </option>";
-		
+
 		//SEIv3
 		$strSelPrin .= "<option value='" . $item->getNumIdTipoContextoContato() . "'>" . $tipoContextoDTO->getStrNome() . " </option>";
 	
@@ -91,22 +78,11 @@ if( $numero > 0){
 
 if( $numero2 > 0){
 
-	//SEIv2
-	//$tipoContextoRN = new TipoContextoContatoRN();
-	
 	//SEIv3
 	$tipoContextoRN = new TipoContatoRN();
 
 	foreach( $arrItens2 as $item ){
-		
-		//SEIv2
-		//$tipoContextoDTO = new TipoContextoContatoDTO();
-		//$tipoContextoDTO->retNumIdTipoContextoContato();
-		//$tipoContextoDTO->retStrNome();
-		//$tipoContextoDTO->setNumIdTipoContextoContato( $item->getNumIdTipoContextoContato() );
-		//$tipoContextoDTO = $tipoContextoRN->consultarRN0336( $tipoContextoDTO );
-		//$strSelPrin2 .= "<option value='" . $item->getNumIdTipoContextoContato() . "'>" . $tipoContextoDTO->getStrNome() . " </option>";
-		
+
 		//SEIv3
 		$tipoContextoDTO = new TipoContatoDTO();
 		$tipoContextoDTO->retNumIdTipoContato();
@@ -118,8 +94,6 @@ if( $numero2 > 0){
 	}
 
 }
-
-//$strSelExtensoesPrin = TipoContextoContatoINT::montarSelectNomeRI0390(null,null,null);
 
 $strTitulo = "Peticionamento - Tipos de Contatos Permitidos";
 
@@ -172,8 +146,6 @@ var objAutoCompletarPrincipal2 = null;
      
     objAutoCompletarPrincipal = new infraAjaxAutoCompletar('hdnIdPrincipal','txtPrincipal','<?=$strLinkAjaxPrincipal?>');
     objAutoCompletarPrincipal.limparCampo = true;
-    
-    //objAutoCompletarPrincipal.tamanhoMinimo = 3;
 
     objAutoCompletarPrincipal.prepararExecucao = function(){
       return 'extensao='+document.getElementById('txtPrincipal').value;

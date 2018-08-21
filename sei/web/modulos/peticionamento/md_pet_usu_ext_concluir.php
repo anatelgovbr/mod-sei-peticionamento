@@ -74,10 +74,9 @@ try {
   			//UNIDADES MULTIPLAS - Pegar unidade selecionada na combo de UF
   			//==============================================================
   			if( $arrMdPetRelTpProcessoUnidDTO != null && count( $arrMdPetRelTpProcessoUnidDTO ) > 1 ) {
-  				$idUnidadeTipoProcesso = $arrMdPetRelTpProcessoUnidDTO[0]->getNumIdUnidade();
-  				//echo $idUnidadeTipoProcesso; die();
-  			}
-  			
+				$idUnidadeTipoProcesso = $arrMdPetRelTpProcessoUnidDTO[0]->getNumIdUnidade();
+			}
+
   			$arrParam = array();
   			$arrParam['senhaSEI'] = $_POST['senhaSEI'];
 			$objMdPetProcessoRN->validarSenha( $arrParam );
@@ -102,7 +101,8 @@ try {
 			}
 
 			//executar javascript para fechar janela filha e redirecionar janela pai para a tela de detalhes do recibo que foi gerado
-			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo . "&acao=md_pet_usu_ext_recibo_consultar&acao_origem=md_pet_usu_ext_recibo_listar&acao_retorno=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=0";
+			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+
 			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
 			
 			//removendo atributos da sessao
@@ -141,12 +141,7 @@ try {
   }
 
 }catch(Exception $e){
-	
-	//removendo atributos da sessao
-	//if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
-		//SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
-	//}
-		
+
 	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
 		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
 	}
@@ -207,19 +202,18 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <label class="infraLabelObrigatorio">Cargo/Função:</label> <br/>
     <select id="selCargo" name="selCargo" class="infraSelect" style="width: 60%;">
     <option value="">Selecione Cargo/Função</option>
-    <? foreach( $arrObjCargoDTO as $cargo ){
-    	
-    	if( $_POST['selCargo'] != $cargo->getNumIdCargo() ){
-    	   echo "<option value='" . $cargo->getNumIdCargo() . "'>";	
-    	}
-    	else{
-    	  echo "<option selected='selected' value='" . $cargo->getNumIdCargo() . "'>";
-    	}
-    	
-    	echo $cargo->getStrExpressao();
-    	echo "</option>";
-    	
-    } ?>
+      <? foreach( $arrObjCargoDTO as $expressao =>$cargo ){
+        if( $_POST['selCargo'] != $cargo ){
+          echo "<option value='" . $cargo . "'>";
+        }
+        else{
+          echo "<option selected='selected' value='" . $cargo . "'>";
+        }
+
+        echo $expressao;
+        echo "</option>";
+
+      } ?>
     </select>
     </p>
     

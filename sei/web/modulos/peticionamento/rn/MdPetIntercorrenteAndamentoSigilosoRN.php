@@ -829,14 +829,11 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	
     	 //ordenando pelo id da atividade, obtendo a ordem cronologica da tramitacao
     	 $objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_DESC);
-    	
-    	 //echo $objAtividadeBD->listar( $objAtividadeDTO, true ); die;
+
     	 $arrObjAtividadeDTO = $objAtividadeBD->listar( $objAtividadeDTO );
-    	 
-    	 // print_r( $arrObjAtividadeDTO ); die;
-    	
+
     	 if( is_array( $arrObjAtividadeDTO ) && count( $arrObjAtividadeDTO ) > 0){
-    	 	
+
     	 	foreach( $arrObjAtividadeDTO as $atividade ){
     	 		
     	 		//verificando se a unidade desta atividade está ativa
@@ -897,11 +894,9 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	$objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_DESC);
     	
     	$arrObjAtividadeDTO = $objAtividadeBD->listar($objAtividadeDTO);
-    	
-    	//print_r( $arrObjAtividadeDTO ); die;
-    	
+
     	if( is_array( $arrObjAtividadeDTO ) && count( $arrObjAtividadeDTO ) > 0){
-	    	    		
+
     		foreach( $arrObjAtividadeDTO as $atividade ){
 	    		
     			$idUnidade = $atividade->getNumIdUnidade();
@@ -987,37 +982,32 @@ protected function retornaUltimaUnidadeProcessoSigilosoAbertoConectado($idProced
 
 	//lista de unidades nas quais o processo ainda encontra-se aberto
 	$arrUnidadesAbertas = $saidaConsultarProcedimentoAPI->getUnidadesProcedimentoAberto();
-	//echo "Unidades em que está aberto";
-	//print_r( $arrUnidadesAbertas ); die; 
 	
 	//o processo encontra-se aberto em pelo menos uma unidade
 	if( is_array( $arrUnidadesAbertas ) && count( $arrUnidadesAbertas ) > 0 ){
+		$arrIdUnidade = array();
+		foreach( $arrUnidadesAbertas as $unidadeAberta ){
+			$arrIdUnidade[] = $unidadeAberta->getUnidade()->getIdUnidade();
+		}
+
+		//o processo nao esta aberto em nenhuma unidade, nao ha id para ser retornado
+		if (count($arrIdUnidade)<1){
+			return null;
+		}
 
 		$objEntradaAndamentos = new EntradaListarAndamentosAPI();
 		$objEntradaAndamentos->setIdProcedimento( $idProcedimento );
 		$objEntradaAndamentos->setTarefas( array( TarefaRN::$TI_GERACAO_PROCEDIMENTO , TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE, TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE ) );
 		$arrAndamentos = $objSEIRN->listarAndamentos( $objEntradaAndamentos );
-
-		$arrIdUnidade = array();
-		 
-		foreach( $arrUnidadesAbertas as $unidadeAberta ){
-			$arrIdUnidade[] = $unidadeAberta->getUnidade()->getIdUnidade();
-		}
-
 		foreach( $arrAndamentos as $andamento ){
-			 
 			$idUnidadeAndamento = $andamento->getUnidade()->getIdUnidade();
-
 			if( in_array( $idUnidadeAndamento, $arrIdUnidade ) ){
 				return $idUnidadeAndamento;
 			}
 			 
 		}
-
-	}
-	 
 	//o processo nao esta aberto em nenhuma unidade, nao ha id para ser retornado
-	else {
+	} else {
 		return null;
 	}
 

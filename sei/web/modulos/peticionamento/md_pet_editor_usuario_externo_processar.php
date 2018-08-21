@@ -64,35 +64,27 @@
   		$conjuntoEstilosDTO->setStrSinUltimo('S');
   		$conjuntoEstilosDTO->retTodos();
   		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar($conjuntoEstilosDTO);
-  		
-  		//recupera estilos padrão das seções do modelo
-  		//$objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
-  		//$objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
-  		//$objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
-  		//$objRelSecaoModCjEstilosItemDTO->setNumIdSecaoModelo(InfraArray::converterArrInfraDTO($arrObjSecaoModeloDTO, 'IdSecaoModelo'), InfraDTO::$OPER_IN);
-  		//$objRelSecaoModCjEstilosItemDTO->setNumIdConjuntoEstilos($conjuntoEstilosDTO->getNumIdConjuntoEstilos());
-      //$objRelSecaoModCjEstilosItemDTO->setStrSinPadrao('S');
 
-      //busca os estilos permitidos por seção-modelo
-      $objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
-      $objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
-      $objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
-      $objRelSecaoModCjEstilosItemDTO->retStrFormatacao();
-      $objRelSecaoModCjEstilosItemDTO->setNumIdSecaoModelo(InfraArray::converterArrInfraDTO($arrObjSecaoModeloDTO, 'IdSecaoModelo'), InfraDTO::$OPER_IN);
-      $objRelSecaoModCjEstilosItemDTO->setOrdStrNomeEstilo(InfraDTO::$TIPO_ORDENACAO_ASC);
-      $objRelSecaoModCjEstilosItemDTO->setNumIdConjuntoEstilos($conjuntoEstilosDTO->getNumIdConjuntoEstilos());
-      $objRelSecaoModCjEstilosItemRN = new RelSecaoModCjEstilosItemRN();
-      $arrObjRelSecaoModCjEstilosItemDTO = InfraArray::indexarArrInfraDTO($objRelSecaoModCjEstilosItemRN->listar($objRelSecaoModCjEstilosItemDTO), 'IdSecaoModelo', true);
-  		
-      $strFormatos = "";
-      foreach ($arrObjSecaoModeloDTO as $objSecaoModeloDTO) {
-        if (isset($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()])) {
-          foreach ($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()] as $objRelSecaoModCjEstilosItemDTO) {
-            $strFormatos .= $objRelSecaoModCjEstilosItemDTO->getStrNomeEstilo() . "|";
-          }
-        }
-        $strFormatos = rtrim($strFormatos, '|');
-      }
+  		//busca os estilos permitidos por seção-modelo
+  		$objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
+  		$objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
+  		$objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
+  		$objRelSecaoModCjEstilosItemDTO->retStrFormatacao();
+  		$objRelSecaoModCjEstilosItemDTO->setNumIdSecaoModelo(InfraArray::converterArrInfraDTO($arrObjSecaoModeloDTO, 'IdSecaoModelo'), InfraDTO::$OPER_IN);
+  		$objRelSecaoModCjEstilosItemDTO->setOrdStrNomeEstilo(InfraDTO::$TIPO_ORDENACAO_ASC);
+  		$objRelSecaoModCjEstilosItemDTO->setNumIdConjuntoEstilos($conjuntoEstilosDTO->getNumIdConjuntoEstilos());
+  		$objRelSecaoModCjEstilosItemRN = new RelSecaoModCjEstilosItemRN();
+  		$arrObjRelSecaoModCjEstilosItemDTO = InfraArray::indexarArrInfraDTO($objRelSecaoModCjEstilosItemRN->listar($objRelSecaoModCjEstilosItemDTO), 'IdSecaoModelo', true);
+
+  		$strFormatos = "";
+  		foreach ($arrObjSecaoModeloDTO as $objSecaoModeloDTO) {
+  		  if (isset($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()])) {
+  		    foreach ($arrObjRelSecaoModCjEstilosItemDTO[$objSecaoModeloDTO->getNumIdSecaoModelo()] as $objRelSecaoModCjEstilosItemDTO) {
+  		      $strFormatos .= $objRelSecaoModCjEstilosItemDTO->getStrNomeEstilo() . "|";
+  		    }
+  		  }
+          $strFormatos = rtrim($strFormatos, '|');
+  		}
 
   		$objImagemFormatoDTO = new ImagemFormatoDTO();
   		$objImagemFormatoDTO->retStrFormato();
@@ -134,17 +126,11 @@
   		$retEditor->setStrSinEstilos('S');
   		  		
   		if (isset($_POST['hdnSubmit'])) {
-  			
   			try{
-  				
-          //TODO: Possível risco de consumo excessivo de memória do servidor
+  				//TODO: Possível risco de consumo excessivo de memória do servidor
   				SessaoSEIExterna::getInstance()->setAtributo('docPrincipalConteudoHTML', $_POST['txaConteudo']);
   				SessaoSEIExterna::getInstance()->setAtributo('idConjuntoEstilo', $_POST['idConjuntoEstilo']);
   				$txtConteudo = $_POST['txaConteudo'];
-  				//echo "<script>";
-  				//echo " window.close();";
-  				//echo "</script>";
-  				//die;
   				
   			}catch(Exception $e){
   				PaginaSEIExterna::getInstance()->processarExcecao($e);

@@ -217,27 +217,12 @@ class MdPetProtocoloRN extends ProtocoloRN {
 		$peso = 2; // peso inicial
 	
 		for ($i = strlen($strValor) - 1; $i >= 0; $i--) {
-			//InfraDebug::getInstance()->gravar(substr($strValor, $i, 1).' * '.$peso.' = '.intval(substr($strValor, $i, 1)) * $peso);
 			$soma += intval(substr($strValor, $i, 1)) * $peso++;
 		}
-			
-		//InfraDebug::getInstance()->gravar('SOMA='.$soma);
-	
+
 		$resto = $soma % 11;
 		$dv = 11 - $resto;
-			
-		//11 - 10 =  1
-		//11 -  9 =  2
-		//11 -  8 =  3
-		//11 -  7 =  4
-		//11 -  6 =  5
-		//11 -  5 =  6
-		//11 -  4 =  7
-		//11 -  3 =  8
-		//11 -  2 =  9
-		//11 -  1 = 10
-		//11 -  0 = 11
-	
+
 		if ($dv == 10){
 			$dv = 0;
 		}elseif ($dv > 10){
@@ -292,15 +277,9 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			$this->validarNumIdHipoteseLegal($objProtocoloDTO, $objInfraException);
 	
 			$objProtocoloDTO->setStrStaEstado(self::$TE_NORMAL);
-			//seiv2 ( comentado por alteracoes no SEIv3 )
-			//$objProtocoloDTO->setStrStaArquivamento(ProtocoloRN::$TA_NAO_ARQUIVADO);
-			//$objProtocoloDTO->setNumIdLocalizador(null);
-			//$objProtocoloDTO->setNumIdUnidadeArquivamento(null);
-			//$objProtocoloDTO->setNumIdUsuarioArquivamento(null);
-			//$objProtocoloDTO->setDthArquivamento(null);
-	
+
 			$objProtocoloDTO->setDblIdProtocolo($this->gerarNumeracaoInterna());
-	
+
 			if (!InfraString::isBolVazia($objProtocoloDTO->getStrProtocoloFormatado())){
 				if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_PROCEDIMENTO){
 					$objProcedimentoRN = new ProcedimentoRN();
@@ -442,9 +421,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			$objAssuntoRN = new AssuntoRN();
 			$objAssuntoDTO = new AssuntoDTO();
 			$objAssuntoDTO->setNumIdAssunto(InfraArray::converterArrInfraDTO($objProtocoloDTO->getArrObjRelProtocoloAssuntoDTO(),'IdAssunto'),InfraDTO::$OPER_IN);
-			//seiv2 ( comentado por alteracoes SEIv3 )
-			//$objAssuntoDTO->setStrSinSuficiente('S');
-	
+
 			if ($objAssuntoRN->contarRN0249($objAssuntoDTO)==0){
 				$objInfraException->adicionarValidacao('Assuntos não são suficientes para classificação.');
 			}

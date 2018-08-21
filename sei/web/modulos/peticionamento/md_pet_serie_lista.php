@@ -25,7 +25,6 @@ try {
 
 	if (isset($_GET['id_grupo_serie'])){
 	  PaginaSEI::getInstance()->salvarCampo('selGrupoSerie',$_GET['id_grupo_serie']);
-	  //$_POST['hdnInfraTotalRegistros'] = 0;
 	}else{
 	  PaginaSEI::getInstance()->salvarCamposPost(array('selGrupoSerie'));
 	}
@@ -138,8 +137,14 @@ try {
   	$objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
   				array(InfraDTO::$OPER_IN),
   			    //alteracoes SEIv3
-  				//array(array(SerieRN::$TA_TODOS, $aplicalidade)));  	
   			    array(array(SerieRN::$TA_INTERNO_EXTERNO, $aplicalidade)));  	
+  }
+
+  if($filtro == '2'){
+  //Add filtro para Tipos de Documentos para Intimação Eletrônica
+    $objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
+        array(InfraDTO::$OPER_IN),
+        array(array(SerieRN::$TA_INTERNO, SerieRN::$TA_INTERNO_EXTERNO)));
   }
   
   $numIdGrupoSerie = PaginaSEI::getInstance()->recuperarCampo('selGrupoSerie');
@@ -248,7 +253,6 @@ try {
     }
     $strResultado .= '<th class="infraTh" width="10%">ID</th>'."\n";
     $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objSerieDTO,'Nome','Nome',$arrObjSerieDTO).'</th>'."\n";
-    //$strResultado .= '<th class="infraTh">Modelo</th>'."\n";
     $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objSerieDTO,'Grupo','NomeGrupoSerie',$arrObjSerieDTO).'</th>'."\n";
     $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
     $strResultado .= '</tr>'."\n";
@@ -263,7 +267,6 @@ try {
       }
       $strResultado .= '<td align="center">'.$arrObjSerieDTO[$i]->getNumIdSerie().'</td>';
       $strResultado .= '<td>'.PaginaSEI::getInstance()->formatarXHTML($arrObjSerieDTO[$i]->getStrNome()).'</td>';
-      //$strResultado .= '<td>'.$arrObjSerieDTO[$i]->getStrDescricaoModeloEdoc().'</td>';
       $strResultado .= '<td>'.$arrObjSerieDTO[$i]->getStrNomeGrupoSerie().'</td>';
       $strResultado .= '<td align="center">';
       
@@ -310,12 +313,6 @@ try {
   
   
   $strDisplaySelModeloEdoc = '';
-  //SEIv2
-  //if (ConfiguracaoSEI::getInstance()->getValor('Editor','Edoc')){
-    //$strItensSelModeloEdoc = EDocINT::montarConjuntoModelosRI1141('null','Todos',$numIdModeloEdoc);  
-  //}else{
-    //$strDisplaySelModeloEdoc = 'display:none;';
-  //}  
   
   //alteracoes SEIv3
   $strDisplaySelModeloEdoc = 'display:none;';
@@ -434,7 +431,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 ?>
 <form id="frmSerieLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&filtro='. $_GET['filtro'].'&tipoDoc='.$_GET['tipoDoc'].'&acao_origem='.$_GET['acao']))?>">
   <?
-  //PaginaSEI::getInstance()->montarBarraLocalizacao($strTitulo);
   PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
   PaginaSEI::getInstance()->abrirAreaDados('4.5em');
   ?>

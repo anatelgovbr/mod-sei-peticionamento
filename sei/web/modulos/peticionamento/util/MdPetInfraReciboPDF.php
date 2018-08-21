@@ -75,14 +75,10 @@ class MdPetInfraReciboPDF extends InfraPDF {
 				
 		//SpaceY - espaço vertical entre etiquetas
 		//SpaceX - espaço horizontal entre etiquetas
-		
-		/*
-		'contato'=>array('name'=>'teste',	'paper-size'=>'letter',	'metric'=>'mm',	'marginLeft'=>6,	'marginTop'=>0, 'NX'=>2,	'NY'=>10,	'SpaceX'=>5,	
-		'SpaceY'=>1,	'width'=>101.6,		'height'=>25.2,		'font-size'=>8, 'orientacao'=>'V', 'style'=>''),
-		*/
+
 		'contato'=>array('name'=>'teste',	'paper-size'=>'letter',	'metric'=>'mm',	'marginLeft'=>6,	'marginTop'=>0, 'NX'=>2,	'NY'=>10,	'SpaceX'=>5,	
 		'SpaceY'=>1,	'width'=>65,		'height'=>25.2,		'font-size'=>8, 'orientacao'=>'V', 'style'=>''),
-		
+
 		'localizador'=>array('name'=>'localizador',	'paper-size'=>'letter',	'metric'=>'mm',	'marginLeft'=>0,	'marginTop'=>10, 'NX'=>3,	'NY'=>2,	'SpaceX'=>0,	
 		'SpaceY'=>5,	'width'=>90.6,	'height'=>110.2,	'font-size'=>90, 'orientacao'=>'H', 'style'=>'B'),
 		
@@ -199,29 +195,12 @@ class MdPetInfraReciboPDF extends InfraPDF {
 			$_PosX = $this->_Margin_Left+($this->_COUNTY*($this->_Height+$this->_Y_Space));
 			$_PosY = $this->_Margin_Top+($this->_COUNTX*($this->_Width+$this->_X_Space));			
 		}
-								
-//		$this->SetXY($_PosX+3, $_PosY+3);
 
-//		$this->MultiCell($this->_Width, $this->_Line_Height, $texte,$border,$align);
 		$this->Cell     ($this->_Width, $this->_Line_Height*1.45, $texte,$border,1,$align,false,'',$quebra);
 		$this->_COUNTY++;
 
-		/*
-		if ($this->_COUNTY == $this->_Y_Number){
-			// End of column reached, we start a new one
-			$this->_COUNTX++;
-			$this->_COUNTY=0;
-		}
+	}
 
-		if ($this->_COUNTX == $this->_X_Number) {
-			// Page full, we start a new one
-			$this->_COUNTX=0;
-			$this->_COUNTY=0;
-		}
-		*/
-
-	}		
-	
 	//sobrescrevendo método original que não permite controlar quebra de linha
 	function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $quebra=0)
 	{
@@ -309,18 +288,7 @@ class MdPetInfraReciboPDF extends InfraPDF {
 		}
 		else
 			$this->x += $w;
-/*
-		if($ln>0)
-		{
-			// Go to next line
-			$this->y += $h;
-			if($ln==1)
-				$this->x = $this->lMargin;
-		}
-		else
-			$this->x += $w;
-*/
-	}	
-	
+	}
+
 }
 ?>

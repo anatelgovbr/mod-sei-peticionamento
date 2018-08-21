@@ -128,12 +128,9 @@ class MdPetAtividadeRN extends AtividadeRN {
 				}else{
 	
 					$objAtividadeDTO->setNumIdUsuario(null);
-	
-					//TESTE COMENTADO
-					//if (SessaoSEIExterna::getInstance()->isBolHabilitada()){
-	
+
 						if ($bolFlagReaberturaAutomaticaProtocolo || $numIdTarefa == TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE){
-	
+
 							//atribui para a última pessoa que trabalhou com o processo na unidade
 							$dto = new AtividadeDTO();
 							$dto->retNumIdUsuarioAtribuicao();
@@ -152,14 +149,11 @@ class MdPetAtividadeRN extends AtividadeRN {
 							if ($dto!=null){
 								$objAtividadeDTO->setNumIdUsuarioAtribuicao($dto->getNumIdUsuarioAtribuicao());
 							}
-	
-						}else if (/*$numIdTarefa == TarefaRN::$TI_GERACAO_PROCEDIMENTO ||*/ $numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE){
+
+						}else if ($numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE){
 							$objAtividadeDTO->setNumIdUsuarioAtribuicao(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 						}
-						
-					// }
-					//fim IF
-					
+
 				}
 			}
 	
@@ -317,6 +311,11 @@ class MdPetAtividadeRN extends AtividadeRN {
 			}
 	
 			$objAtividadeBD = new AtividadeBD($this->getObjInfraIBanco());
+			
+			if( !$objAtividadeDTO->isSetNumIdUsuarioOrigem() ||  $objAtividadeDTO->getNumIdUsuarioOrigem() == null ){
+			  $objAtividadeDTO->setNumIdUsuarioOrigem(SessaoSEI::getInstance()->getNumIdUsuario());
+			}
+			
 			$ret = $objAtividadeBD->cadastrar($objAtividadeDTO);
 	
 			//lança ícone de atenção para o processo em todas as unidades que possuam andamento aberto e já tenham visualizado
@@ -522,9 +521,31 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 		$this->statusPesquisa = $statusPesquisa;
 	}
-	
+
+
+	protected function alterarControlado(AtividadeDTO $objAtividadeDTO){
+      try {
+
+			//Valida Permissao
+			//SessaoSEI::getInstance()->validarPermissao('');
+
+			//Regras de Negocio
+			//$objInfraException = new InfraException();
+
+			//$objInfraException->lancarValidacoes();
+
+			$objAtividadeBD = new AtividadeBD($this->getObjInfraIBanco());
+			$objAtividadeBD->alterar($objAtividadeDTO);
+
+			//Auditoria
+
+      }catch(Exception $e){
+		throw new InfraException('Erro alterando Atividade.',$e);
+      }
+	}
+
 	protected function listarPendenciasRN0754Conectado(PesquisaPendenciaDTO $objPesquisaPendenciaDTO) {
-	
+
 		if ($this->statusPesquisa) {
 			if (!$objPesquisaPendenciaDTO->isSetStrStaEstadoProcedimento()) {
 				$objPesquisaPendenciaDTO->setStrStaEstadoProcedimento(ProtocoloRN::$TE_NORMAL);
@@ -542,20 +563,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 		if (!$objPesquisaPendenciaDTO->isSetStrSinMontandoArvore()) {
 			$objPesquisaPendenciaDTO->setStrSinMontandoArvore('N');
 		}
-	    
-		//sei2 ( comentado por alteracoes seiv3 )
-		//if (!$objPesquisaPendenciaDTO->isSetStrSinDocTodos()) {
-			//$objPesquisaPendenciaDTO->setStrSinDocTodos('N');
-		//}
-	
-		//if (!$objPesquisaPendenciaDTO->isSetStrSinDocAnexos()) {
-			//$objPesquisaPendenciaDTO->setStrSinDocAnexos('N');
-		//}
-	
-		//if (!$objPesquisaPendenciaDTO->isSetStrSinDocConteudo()) {
-			//$objPesquisaPendenciaDTO->setStrSinDocConteudo('N');
-		//}
-	
+
 		if (!$objPesquisaPendenciaDTO->isSetStrSinAnotacoes()) {
 			$objPesquisaPendenciaDTO->setStrSinAnotacoes('N');
 		}
@@ -571,12 +579,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 		if (!$objPesquisaPendenciaDTO->isSetStrSinCredenciais()) {
 			$objPesquisaPendenciaDTO->setStrSinCredenciais('N');
 		}
-	    
-		//sei2 ( comentado por alteracoes seiv3 )
-		//if (!$objPesquisaPendenciaDTO->isSetStrSinProcAnexados()) {
-			//$objPesquisaPendenciaDTO->setStrSinProcAnexados('N');
-		//}
-	
+
 		if (!$objPesquisaPendenciaDTO->isSetStrSinHoje()) {
 			$objPesquisaPendenciaDTO->setStrSinHoje('N');
 		}
@@ -671,24 +674,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			if ($objPesquisaPendenciaDTO->getStrSinMontandoArvore() == 'S') {
 				$objProcedimentoDTO->setStrSinMontandoArvore('S');
 			}
-	        
-			//seiv2
-			//if ($objPesquisaPendenciaDTO->getStrSinDocTodos() == 'S') {
-				//$objProcedimentoDTO->setStrSinDocTodos('S');
-			//}
-	
-			//if ($objPesquisaPendenciaDTO->getStrSinDocAnexos() == 'S') {
-				//$objProcedimentoDTO->setStrSinDocAnexos('S');
-			//}
-	
-			//if ($objPesquisaPendenciaDTO->getStrSinDocConteudo() == 'S') {
-				//$objProcedimentoDTO->setStrSinDocConteudo('S');
-			//}
-	
-			//if ($objPesquisaPendenciaDTO->getStrSinProcAnexados() == 'S') {
-				//$objProcedimentoDTO->setStrSinProcAnexados('S');
-			//}
-	
+
 			if ($objPesquisaPendenciaDTO->isSetDblIdDocumento()) {
 				$objProcedimentoDTO->setArrDblIdProtocoloAssociado(array($objPesquisaPendenciaDTO->getDblIdDocumento()));
 			}
@@ -838,14 +824,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 				$objAcessoRN = new AcessoRN();
 				$arrObjAcessoDTO = $objAcessoRN->listar($objAcessoDTO);
-	
-				/*
-				 foreach($arr as $objProcedimentoDTO){
-				$objProcedimentoDTO->setStrSinCredencialProcesso('N');
-				$objProcedimentoDTO->setStrSinCredencialAssinatura('N');
-				}
-				*/
-	
+
 				foreach ($arrObjAcessoDTO as $objAcessoDTO) {
 					if ($objAcessoDTO->getStrStaTipo() == AcessoRN::$TA_CREDENCIAL_PROCESSO) {
 						$arr[$objAcessoDTO->getDblIdProtocolo()]->setStrSinCredencialProcesso('S');
@@ -858,7 +837,58 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 		return $arrProcedimentos;
 	}
-	
+
+	// AtividadeRN.php -> listarUnidadesTramitacaoControlado - sem ordenação alfabética 
+	protected function listarUnidadesTramitacaoControlado(ProcedimentoDTO $objProcedimentoDTO){
+		try{
+
+			$objAtividadeDTO = new AtividadeDTO();
+			$objAtividadeDTO->setDistinct(true);
+			$objAtividadeDTO->retNumIdUnidade();
+			$objAtividadeDTO->retStrSiglaUnidade();
+			$objAtividadeDTO->retStrDescricaoUnidade();
+			$objAtividadeDTO->setNumIdTarefa(TarefaRN::getArrTarefasTramitacao(), InfraDTO::$OPER_IN);
+			$objAtividadeDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+			$objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual(),InfraDTO::$OPER_DIFERENTE);
+			$objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_ASC);
+
+			$objAtividadeRN = new AtividadeRN();
+			$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
+
+			foreach($arrObjAtividadeDTO as $objAtividadeDTO){
+				$objAtividadeDTO->setDtaPrazo(null);
+			}
+
+			if (count($arrObjAtividadeDTO)>0){
+				$arrObjAtividadeDTO = InfraArray::indexarArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
+
+				$arrIdUnidade=InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
+
+				//Acessar os retornos programados para a unidade atual
+				$objRetornoProgramadoDTO = new RetornoProgramadoDTO();
+				$objRetornoProgramadoDTO->setNumFiltroFkAtividadeRetorno(InfraDTO::$FILTRO_FK_WHERE);
+				$objRetornoProgramadoDTO->retNumIdUnidade();
+				$objRetornoProgramadoDTO->retDtaProgramada();
+				$objRetornoProgramadoDTO->setNumIdUnidade($arrIdUnidade,InfraDTO::$OPER_IN);
+				$objRetornoProgramadoDTO->setDblIdProtocoloAtividadeEnvio($objProcedimentoDTO->getDblIdProcedimento());
+				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeEnvio(null);
+				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeRetorno(null);
+
+				$objRetornoProgramadoRN = new RetornoProgramadoRN();
+				$arrObjRetornoProgramadoDTO = $objRetornoProgramadoRN->listar($objRetornoProgramadoDTO);
+
+				foreach ($arrObjRetornoProgramadoDTO as $objRetornoProgramadoDTO) {
+					$arrObjAtividadeDTO[$objRetornoProgramadoDTO->getNumIdUnidade()]->setDtaPrazo($objRetornoProgramadoDTO->getDtaProgramada());
+				}
+			}
+
+			return $arrObjAtividadeDTO;
+
+		}catch(Exception $e){
+			throw new InfraException('Erro listando unidades de tramitação.',$e);
+		}
+	}
+
 	protected function gerarInternaRN0727Controlado(AtividadeDTO $objAtividadeDTO){
 		
 		try {
@@ -907,24 +937,14 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objUnidadeDTO = new UnidadeDTO();
 			$objUnidadeDTO->setBolExclusaoLogica(false);
 			$objUnidadeDTO->retStrSinProtocolo();
-			
-			//$objUnidadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+
 			$objUnidadeDTO->setNumIdUnidade( $objAtividadeDTO->getNumIdUnidade() );
-	
+
 			$objUnidadeRN = new UnidadeRN();
 			$objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
 	
 			$bolFlagReaberturaAutomaticaProtocolo = false;
-			
-			//TESTE COMENTADO NAO SE APLICA AO USUARIO EXTERNO PETICIONAMENTO
-			/*
-			if ($objUnidadeDTO->getStrSinProtocolo()=='S' &&
-			$objAtividadeDTO->getNumIdUnidade() != SessaoSEI::getInstance()->getNumIdUnidadeAtual() &&
-			$numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE){
-				$bolFlagReaberturaAutomaticaProtocolo = true;
-			} 
-			*/
-	
+
 			$objProtocoloDTO = new ProtocoloDTO();
 			$objProtocoloDTO->retStrStaNivelAcessoGlobal();
 			$objProtocoloDTO->retStrProtocoloFormatado();
@@ -967,11 +987,9 @@ class MdPetAtividadeRN extends AtividadeRN {
 						$objAcessoDTO = new AcessoDTO();
 						$objAcessoDTO->setDblIdProtocolo($objAtividadeDTO->getDblIdProtocolo());
 						$objAcessoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-						
-						//TESTE COMENTAR
-						//$objAcessoDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+
 						$objAcessoDTO->setNumIdUnidade( $objAtividadeDTO->getNumIdUnidade() );
-						 
+
 						$objAcessoRN = new AcessoRN();
 						 
 						if ($objAcessoRN->contar($objAcessoDTO)){
@@ -1006,8 +1024,8 @@ class MdPetAtividadeRN extends AtividadeRN {
 							if ($dto!=null){
 								$objAtividadeDTO->setNumIdUsuarioAtribuicao($dto->getNumIdUsuarioAtribuicao());
 							}
-	
-						}else if (/*$numIdTarefa == TarefaRN::$TI_GERACAO_PROCEDIMENTO ||*/ $numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE){
+
+						}else if ($numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE){
 							$objAtividadeDTO->setNumIdUsuarioAtribuicao(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 						}
 					}
@@ -1017,8 +1035,6 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$strDataHoraAtual = InfraData::getStrDataHoraAtual();
 	
 			$objAtividadeDTO->setDthAbertura($strDataHoraAtual);
-			//TESTE COMENTAR
-			//$objAtividadeDTO->setNumIdUnidadeOrigem(SessaoSEI::getInstance()->getNumIdUnidadeAtual() );
 			$objAtividadeDTO->setNumIdUnidadeOrigem( $objAtividadeDTO->getNumIdUnidade() );
 			$objAtividadeDTO->setNumIdUsuarioOrigem(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 			$objAtividadeDTO->setNumTipoVisualizacao(self::$TV_VISUALIZADO);
@@ -1083,9 +1099,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 				 
 				//verifica se o processo não tramitou fora da unidade
 				$dto = new AtividadeDTO();
-				
-				//TESTE COMENTAR $objAtividadeDTO
-				//$dto->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+
 				$dto->setNumIdUnidade( $objAtividadeDTO->getNumIdUnidade() );
 				$dto->setDblIdProtocolo($objAtividadeDTO->getDblIdProtocolo());
 				$dto->setStrSinInicial('N');
@@ -1215,27 +1229,9 @@ class MdPetAtividadeRN extends AtividadeRN {
 				}
 	
 			}
-	 
-			/* TESTE COMENTADO
-			if (SessaoSEI::getInstance()->getNumIdUsuarioEmulador()!=null){
-	
-				if ($objAtividadeDTO->isSetArrObjAtributoAndamentoDTO()){
-					$arrObjAtributoAndamentoDTO = $objAtividadeDTO->getArrObjAtributoAndamentoDTO();
-				}else{
-					$arrObjAtributoAndamentoDTO = array();
-				}
-				 
-				$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
-				$objAtributoAndamentoDTO->setStrNome('USUARIO_EMULADOR');
-				$objAtributoAndamentoDTO->setStrValor(SessaoSEI::getInstance()->getStrSiglaUsuarioEmulador().'¥'.SessaoSEI::getInstance()->getStrNomeUsuarioEmulador().'±'.SessaoSEI::getInstance()->getStrSiglaOrgaoUsuarioEmulador().'¥'.SessaoSEI::getInstance()->getStrDescricaoOrgaoUsuarioEmulador());
-				$objAtributoAndamentoDTO->setStrIdOrigem(SessaoSEI::getInstance()->getNumIdUsuarioEmulador().'/'.SessaoSEI::getInstance()->getNumIdOrgaoUsuarioEmulador());
-				$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
-	
-				$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
-			} */
-	
+
 			if ($objAtividadeDTO->isSetArrObjAtributoAndamentoDTO()){
-				
+
 				$objAtributoAndamentoRN = new AtributoAndamentoRN();
 				$arrObjAtributoAndamentoDTO = $objAtividadeDTO->getArrObjAtributoAndamentoDTO();
 				

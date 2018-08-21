@@ -61,7 +61,7 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 			//$objInfraException = new InfraException();
 	
 			//$objInfraException->lancarValidacoes();
-			//var_dump($objCondutaLitigiosoDTO->getStrSinAtivo());exit;
+
 			$objMdPetIndisponibilidadeBD = new MdPetIndisponibilidadeBD($this->getObjInfraIBanco());
 			$ret = $objMdPetIndisponibilidadeBD->listar($objMdPetIndisponibilidadeDTO);
 			return $ret;
@@ -120,13 +120,7 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 			}
 			
 			$objInfraException->lancarValidacoes();
-	
-			//$sql  = "INSERT INTO md_pet_tamanho_arquivo (id_md_pet_tamanho_arquivo,valor_doc_principal,valor_doc_complementar,sin_ativo)"; 
-			//$sql .= "VALUES (".self::$ID_FIXO_TAMANHO_ARQUIVO.", ".$objTamanhoArquivoDTO->getNumValorDocPrincipal().", ";
-			//$sql .= $objTamanhoArquivoDTO->getNumValorDocComplementar().", 'S')";
-	
-			//$rs = $this->getObjInfraIBanco ()->executarSql ( $sql );
-			
+
 			$objMdPetTamanhoArquivoBD = new MdPetTamanhoArquivoBD ($this->getObjInfraIBanco ());
 			$objMdPetTamanhoArquivoDTO = $objMdPetTamanhoArquivoBD->cadastrar($objMdPetTamanhoArquivoDTO);
 	

@@ -11,7 +11,7 @@
   switch($_GET['acao']){
 
   	case 'md_pet_usu_ext_cadastrar':
-  		$strTitulo = 'Peticionar Processo Novo';
+  		$strTitulo = 'Peticionamento de Processo Novo';
   		break;
   		
     default:

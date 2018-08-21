@@ -100,7 +100,6 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
     private function simularLogin($idUnidade)
     {
         SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $idUnidade);
-        //$this->setUnidadeDTO($idUnidade);
     }
     
     /**
@@ -119,16 +118,15 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
     	$objAtividadeDTO->retNumIdUnidade();
     	$objAtividadeDTO->setOrdDthConclusao(InfraDTO::$TIPO_ORDENACAO_DESC);
     	
-    	// apenas considerar para reaburtura SE a tarefa do andamento for 28, 41 ou 63 a saber:
-    	//- 28: Conclusao do processo na unidade
-    	//- 41: Conclusao automtica de processo na unidade
-    	//- 63: Processo concluido
+    	//só considerar para reaburtura se a tarefa for 28, 41 ou 63 a saber:
+    	//- 28: Conclusão do processo na unidade
+    	//- 41: Conclusão automática de processo na unidade
+    	//- 63: Processo concluído
     	
     	$objAtividadeDTO->setNumIdTarefa( array( TarefaRN::$TI_CONCLUSAO_PROCESSO_UNIDADE , TarefaRN::$TI_CONCLUSAO_AUTOMATICA_UNIDADE, TarefaRN::$TI_CONCLUSAO_PROCESSO_USUARIO), InfraDTO::$OPER_IN );
-    	    	
+    	
     	$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
     	$objUltimaAtvProcesso = count($arrObjAtividadeDTO) > 0 ? current($arrObjAtividadeDTO) : null;
-    	
     	if(!is_null($objUltimaAtvProcesso)) {
     		$idUnidadeReabrirProcesso = $objUltimaAtvProcesso->getNumIdUnidade();
     	}

@@ -80,10 +80,6 @@ if( $_GET['acao'] != "md_pet_usu_ext_download"){
 
 	$jsonExtPermitidas =  count($arrExtPermitidas) > 0 ? json_encode($arrExtPermitidas) : null;
 	$jsonExtEssencialComplementarPermitidas =  count($arrExtPermitidasEssencialComplementar) > 0 ? json_encode($arrExtPermitidasEssencialComplementar) : null;
-	
-	//echo " Principal :: " . $jsonExtPermitidas;
-	//echo " Essencial Complementar :: " . $jsonExtEssencialComplementarPermitidas;
-	//die();
 }
 
 //tipo de processo escolhido
@@ -107,7 +103,7 @@ $strMsgTooltipTipoDocumentoPrincipal			= 'Como somente pode ter um Documento Pri
 $strMsgTooltipTipoDocumentoPrincipalFormulario	= 'O documento principal deste tipo de peticionamento possui modelo previamente definido, o qual deve ser acessado no Editor do SEI no link ao lado.';
 $strMsgTooltipTipoDocumento						= 'Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.';
 $strMsgTooltipComplementoTipoDocumento			= 'O Complemento do Tipo de Documento é o texto que completa a identificação do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo “Recurso” e Complemento “de 1ª Instância” identificará o documento como “Recurso de 1ª Instância”).\n\n\n Exemplos: O Complemento do Tipo “Nota” pode ser “Fiscal Eletrônica” ou “Fiscal nº 75/2016”. O Complemento do Tipo “Comprovante” pode ser “de Pagamento” ou “de Endereço”.';
-$strMsgTooltipNivelAcesso						= 'O Nível de Acesso que for indicado é de sua exclusiva responsabilidade e estará condicionado à análise por servidor público, que poderá, motivadamente, alterá-lo a qualquer momento sem necessidade de prévio aviso.\n\n\n Selecione "Público" se no teor do documento a ser carregado não existir informações restritas. Se no teor do documento existir informações restritas, selecione "Restrito".';
+$strMsgTooltipNivelAcesso						= 'O Nível de Acesso que for indicado é de sua exclusiva responsabilidade e estará condicionado à análise por servidor público, que poderá alterá-lo a qualquer momento sem necessidade de prévio aviso.\n\n\n Selecione "Público" se no teor do documento a ser carregado não existir informações restritas. Se no teor do documento existir informações restritas, selecione "Restrito".';
 $strMsgTooltipHipoteseLegal						= 'Para o Nível de Acesso "Restrito" é obrigatória a indicação da Hipótese Legal correspondente à informação restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indicação. Em caso de dúvidas, pesquise sobre a legislação indicada entre parênteses em cada Hipótese listada.';
 $strMsgTooltipNivelAcessoPadraoPreDefinido		= 'Para o Tipo de Processo escolhido o Nível de Acesso é previamente definido.';
 $strMsgTooltipHipoteseLegalPadraoPreDefinido	= 'Para o Tipo de Processo escolhido o Nível de Acesso é previamente definido como "Restrito" e, assim, a Hipótese Legal também é previamente definida.';
@@ -144,9 +140,7 @@ else if( $arrMdPetRelTpProcessoUnidDTO != null && count( $arrMdPetRelTpProcessoU
 	$objUnidadeDTO = new UnidadeDTO();
 	$objUnidadeDTO->retNumIdUnidade();
 	$objUnidadeDTO->retNumIdContato();
-	//seiv2
-	//$objUnidadeDTO->retStrSiglaUf();
-		
+
 	$objUnidadeDTO->adicionarCriterio(array('IdUnidade', 'SinAtivo'),
 			array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL),
 			array( $arrIdUnidade,'S'),
@@ -305,7 +299,6 @@ $numSeiTamMbDocExterno = ($numSeiTamMbDocExterno < 1024 ? $numSeiTamMbDocExterno
 //da janela de cadastro de interessado (quando é indicacao por nome)
 SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
 
-//$arrTipoConferencia = ;
 $urlBaseLink = "";
 $arrComandos = array();
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="p" name="Peticionar" id="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';

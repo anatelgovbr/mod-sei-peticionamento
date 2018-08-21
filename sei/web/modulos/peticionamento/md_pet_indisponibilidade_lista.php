@@ -180,7 +180,6 @@ try {
     //TODO: Marcelo, se não vai ter o botão de Desativação em lote, melhor retirar todo este bloco de código.
 	if ($bolAcaoDesativar){
       $bolCheck = true;
-    //  $arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
       $strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_desativar&acao_origem='.$_GET['acao']);
     }
 
@@ -189,7 +188,6 @@ try {
     //TODO: Marcelo, se não vai ter o botão de Excluir em lote, melhor retirar todo este bloco de código.
 	if ($bolAcaoExcluir){
       $bolCheck = true;
-      //$arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
       $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_excluir&acao_origem='.$_GET['acao']);
     }
 

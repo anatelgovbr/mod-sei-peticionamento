@@ -41,7 +41,15 @@ class MdPetRelTpProcSerieRN extends InfraRN{
 			throw new InfraException ('Erro listando Relacionamento de Tipo de Processo e Série Peticionamento.', $e);
 		}
 	}
-		
+
+	protected function contarConectado(MdPetRelTpProcSerieDTO $objMdPetRelTpProcSerieDTO){
+
+		$objMdPetRelTpProcSerieBD = new MdPetRelTpProcSerieBD($this->getObjInfraIBanco());
+		$ret = $objMdPetRelTpProcSerieBD->contar($objMdPetRelTpProcSerieDTO);
+
+		return $ret;
+
+	}
 /**
 	 * Short description of method consultarConectado
 	 *

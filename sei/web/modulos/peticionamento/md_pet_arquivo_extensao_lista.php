@@ -130,12 +130,10 @@ try {
   }
 
   PaginaSEI::getInstance()->prepararOrdenacao($objArquivoExtensaoDTO, 'Extensao', InfraDTO::$TIPO_ORDENACAO_ASC);
-  //PaginaSEI::getInstance()->prepararPaginacao($objArquivoExtensaoDTO);
 
   $objArquivoExtensaoRN = new ArquivoExtensaoRN();
   $arrObjArquivoExtensaoDTO = $objArquivoExtensaoRN->listar($objArquivoExtensaoDTO);
 
-  //PaginaSEI::getInstance()->processarPaginacao($objArquivoExtensaoDTO);
   $numRegistros = count($arrObjArquivoExtensaoDTO);
 
   if ($numRegistros > 0){
@@ -147,7 +145,6 @@ try {
       $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_consultar');
       $bolAcaoAlterar = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_alterar');
       $bolAcaoImprimir = false;
-      //$bolAcaoGerarPlanilha = false;
       $bolAcaoExcluir = false;
       $bolAcaoDesativar = false;
       $bolCheck = true;
@@ -156,7 +153,6 @@ try {
       $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_consultar');
       $bolAcaoAlterar = false;
       $bolAcaoImprimir = true;
-      //$bolAcaoGerarPlanilha = SessaoSEI::getInstance()->verificarPermissao('infra_gerar_planilha_tabela');
       $bolAcaoExcluir = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_excluir');
       $bolAcaoDesativar = false;
     }else{
@@ -164,7 +160,6 @@ try {
       $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_consultar');
       $bolAcaoAlterar = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_alterar');
       $bolAcaoImprimir = true;
-      //$bolAcaoGerarPlanilha = SessaoSEI::getInstance()->verificarPermissao('infra_gerar_planilha_tabela');
       $bolAcaoExcluir = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_excluir');
       $bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('arquivo_extensao_desativar');
     }
@@ -188,13 +183,6 @@ try {
       $arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
       $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_excluir&acao_origem='.$_GET['acao']);
     }
-
-    /*
-    if ($bolAcaoGerarPlanilha){
-      $bolCheck = true;
-      $arrComandos[] = '<button type="button" accesskey="P" id="btnGerarPlanilha" value="Gerar Planilha" onclick="infraGerarPlanilhaTabela(\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=infra_gerar_planilha_tabela')).'\');" class="infraButton">Gerar <span class="infraTeclaAtalho">P</span>lanilha</button>';
-    }
-    */
 
     $strResultado = '';
 
@@ -369,10 +357,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 <form id="frmArquivoExtensaoLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
   <?
   PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-  //PaginaSEI::getInstance()->abrirAreaDados('5em');
-  //PaginaSEI::getInstance()->fecharAreaDados();
   PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros);
-  //PaginaSEI::getInstance()->montarAreaDebug();
   PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
   ?>
 </form>

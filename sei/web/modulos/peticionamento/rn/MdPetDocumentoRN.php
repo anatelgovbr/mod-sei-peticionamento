@@ -289,15 +289,9 @@ class MdPetDocumentoRN extends InfraRN {
 		$objProtocoloDTO = new ProtocoloDTO();
 		$objProtocoloDTO->setDblIdProtocolo($objDocumentoDTO->getDblIdDocumento());
 	
-		//seiv2
-		//$objIndexacaoDTO->setArrObjProtocoloDTO(array($objProtocoloDTO));
-		
 		//alteracoes seiv3
 		$objIndexacaoDTO->setArrIdProtocolos( array( $objProtocoloDTO->getDblIdProtocolo() ) );
-		
-		//seiv2
-		//$objIndexacaoDTO->setStrStaOperacao(IndexacaoRN::$TO_GERACAO_PROTOCOLO);
-		
+
 		//alteracoes seiv3
 		$objIndexacaoDTO->setStrStaOperacao(IndexacaoRN::$TO_PROTOCOLO_METADADOS);
 		
@@ -403,11 +397,7 @@ class MdPetDocumentoRN extends InfraRN {
 			//Associar o documento nesta unidade e nas unidades que tem acesso ao processo
 			$objAssociarDTO = new AssociarDTO();
 			$objAssociarDTO->setDblIdProcedimento($objProtocoloDTO->getDblIdProcedimento());
-			//seiv2
-			//$objAssociarDTO->setDblIdDocumento($objDocumentoDTO->getDblIdDocumento());
 			$objAssociarDTO->setNumIdUnidade( $idUnidadeResponsavel );
-			//alteracoes seiv3
-			//$objAssociarDTO->setNumIdUnidade(null);
 			$objAssociarDTO->setNumIdUsuario(null);
 			$objAssociarDTO->setStrStaNivelAcessoGlobal($objProtocoloDTOGerado->getStrStaNivelAcessoGlobal());
 			$objMdPetProtocoloRN->associarRN0982($objAssociarDTO);
@@ -565,41 +555,7 @@ class MdPetDocumentoRN extends InfraRN {
 				$objMdPetAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
 				 
 			}
-	        
-			//seiv2
-			/* 
-			$strStaEditor = $objDocumentoDTO->getStrStaEditor();
-	
-			if ($strStaEditor == EditorRN::$TE_EDOC){
-				 
-				if (!InfraString::isBolVazia($objDocumentoDTO->getDblIdDocumentoEdocBase())){
-	
-					if (ConfiguracaoSEI::getInstance()->getValor('Editor','Edoc')){
-	
-						$objEDocRN = new EDocRN();
-						$dto = new DocumentoDTO();
-						$dto->setDblIdDocumento($objProtocoloDTOGerado->getDblIdProtocolo());
-						$dto->setDblIdDocumentoEdoc(null);
-						$dto->setDblIdDocumentoEdocBase($objDocumentoDTO->getDblIdDocumentoEdocBase());
-						$dto->setDblIdTextoPadraoEdoc(null);
-						$objEDocRN->processarDocumentoRN1143($dto);
-	
-					}else{
-	
-						$dto = new DocumentoDTO();
-						$dto->setStrStaEditor(EditorRN::$TE_INTERNO);
-						$dto->setDblIdDocumento($objProtocoloDTOGerado->getDblIdProtocolo());
-	
-						$objDocumentoBD->alterar($dto);
-	
-						$strStaEditor = EditorRN::$TE_INTERNO;
-	
-					}
-				}
-			}
-	
-			if ($strStaEditor == EditorRN::$TE_INTERNO){
-			*/	 
+
 				$objEditorDTO = new EditorDTO();
 				$objEditorDTO->setDblIdDocumento($objProtocoloDTOGerado->getDblIdProtocolo());
 				$objEditorDTO->setNumIdBaseConhecimento(null);
@@ -632,10 +588,7 @@ class MdPetDocumentoRN extends InfraRN {
 					
 				$objEditorRN = new MdPetEditorUsuarioExternoRN();
 				$objEditorRN->gerarVersaoInicial($objEditorDTO);
-			
-			//seiv2
-		    //}
-	
+
 			$objDocumentoDTO->setStrStaNivelAcessoGlobalProtocolo($objProtocoloDTOGerado->getStrStaNivelAcessoGlobal());
 			$this->lancarAcessoControleInterno($objDocumentoDTO);
 	
@@ -660,31 +613,11 @@ class MdPetDocumentoRN extends InfraRN {
 	}
 	
 	private function validarStrStaEditor(DocumentoDTO $objDocumentoDTO, InfraException $objInfraException){
-		
-		//seiv2
-		//if (InfraString::isBolVazia($objDocumentoDTO->getStrStaEditor())){
-			//$objInfraException->adicionarValidacao('Editor não informado.');
-		//}
-	
-		//if ($objDocumentoDTO->getStrStaEditor()!=EditorRN::$TE_EDOC && $objDocumentoDTO->getStrStaEditor()!=EditorRN::$TE_INTERNO && $objDocumentoDTO->getStrStaEditor()!=EditorRN::$TE_NENHUM){
-			//$objInfraException->adicionarValidacao('Editor ['.$objDocumentoDTO->getStrStaEditor().'] inválido.');
-		//}
-		
 	}
-	
+
 	private function validarStrSinFormulario(DocumentoDTO $objDocumentoDTO, InfraException $objInfraException){
-		
-		//seiv2
-		//if (InfraString::isBolVazia($objDocumentoDTO->getStrSinFormulario())){
-			//$objInfraException->adicionarValidacao('Sinalizador de Formulário não informado.');
-		//}else{
-			//if (!InfraUtil::isBolSinalizadorValido($objDocumentoDTO->getStrSinFormulario())){
-				//$objInfraException->adicionarValidacao('Sinalizador de Formulário inválido.');
-			//}
-		//}
-		
 	}
-	
+
 	private function validarNumIdUnidadeResponsavelRN0915(DocumentoDTO $objDocumentoDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objDocumentoDTO->getNumIdUnidadeResponsavel ())){
 			$objInfraException->adicionarValidacao('Unidade Responsável não informada.');
@@ -731,10 +664,7 @@ class MdPetDocumentoRN extends InfraRN {
 			if ($objSerieDTO==null){
 				throw new InfraException('Tipo do documento ['.$objDocumentoDTO->getNumIdSerie().'] não encontrado.');
 			}
-	        
-			//seiv2
-			//if ($objSerieDTO->getStrStaAplicabilidade()!=SerieRN::$TA_TODOS){
-			
+
 			//alteracoes seiv3
 			if ($objSerieDTO->getStrStaAplicabilidade()!=SerieRN::$TA_INTERNO_EXTERNO){
 				if ($objDocumentoDTO->getStrStaProtocoloProtocolo()==ProtocoloRN::$TP_DOCUMENTO_GERADO && $objSerieDTO->getStrStaAplicabilidade()==SerieRN::$TA_EXTERNO){
@@ -834,20 +764,12 @@ class MdPetDocumentoRN extends InfraRN {
 				
 				//alteracoes seiv3
 				$objControleInternoDTO->retNumIdUnidadeControle();
-				
-				//seiv2
-				//$objControleInternoDTO->retNumIdUnidadeRelControleInternoUnidade();
-				
+
 				//alteracoes seiv3
 				$objControleInternoDTO->setNumIdSerieControlada($objDocumentoDTO->getNumIdSerie());
 				$objControleInternoDTO->setNumIdOrgaoControlado(SessaoSEI::getInstance()->getNumIdOrgaoUnidadeAtual());
 				$objControleInternoDTO->setNumIdUnidadeControle(SessaoSEI::getInstance()->getNumIdUnidadeAtual(),InfraDTO::$OPER_DIFERENTE);
-								
-				//seiv2
-				//$objControleInternoDTO->setNumIdSerieRelControleInternoSerie($objDocumentoDTO->getNumIdSerie());
-				//$objControleInternoDTO->setNumIdOrgaoRelControleInternoOrgao(SessaoSEI::getInstance()->getNumIdOrgaoUnidadeAtual());
-				//$objControleInternoDTO->setNumIdUnidadeRelControleInternoUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual(),InfraDTO::$OPER_DIFERENTE);
-	
+
 				$objControleInternoRN = new ControleInternoRN();
 				$arrObjControleInternoDTO = $objControleInternoRN->listar($objControleInternoDTO);
 	
@@ -981,9 +903,7 @@ class MdPetDocumentoRN extends InfraRN {
 			//Associar o documento nesta unidade e nas unidades que tem acesso ao processo
 			$objAssociarDTO = new AssociarDTO();
 			$objAssociarDTO->setDblIdProcedimento($objProtocoloDTO->getDblIdProcedimento());
-			//seiv2
-			//$objAssociarDTO->setNumIdUnidade(null);
-			
+
 			//alteracoes seiv3
 			$objAssociarDTO->setNumIdUnidade( $objProtocoloDTO->getNumIdUnidadeGeradora() );
 			
@@ -1420,7 +1340,7 @@ class MdPetDocumentoRN extends InfraRN {
 							$objEditorDTO->setStrSinRodape('S');
 							$objEditorDTO->setStrSinIdentificacaoVersao('N');
 							$objEditorDTO->setStrSinCarimboPublicacao('S');
-	
+
 							$objEditorRN = new EditorRN();
 							$strDocumentoHTML = $objEditorRN->consultarHtmlVersao($objEditorDTO);
 	
@@ -1521,8 +1441,7 @@ class MdPetDocumentoRN extends InfraRN {
 				
 			$objTarjaAssinaturaRN = new TarjaAssinaturaRN();
 			$objTarjaAssinaturaDTO = $objTarjaAssinaturaRN->consultar($objTarjaAssinaturaDTO);
-//ini_set('xdebug.var_display_max_depth', 10); ini_set('xdebug.var_display_max_children', 256); ini_set('xdebug.var_display_max_data', 1024); echo '<pre>';
-//var_dump($objTarjaAssinaturaDTO); echo '</pre>'; exit;
+
 			$objAtividadeRN = new AtividadeRN();
 			$arrObjAssinaturaDTO = array();
 			$arrObjDocumentoDTOCredencialAssinatura = array();

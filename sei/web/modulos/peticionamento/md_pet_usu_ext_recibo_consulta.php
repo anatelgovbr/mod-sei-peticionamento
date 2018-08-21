@@ -83,7 +83,7 @@ try {
                 $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
                 
                 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-                $idSerieParam = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
+                $idSerieParam = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
                 
                 $documentoRN = new DocumentoRN();
                 $documentoReciboDTO = new DocumentoDTO();
@@ -105,7 +105,6 @@ try {
 
         $arrComandos   = array();
 		// Botão SALVAR EM PDF desativado temporariamente até resolver a falta de tratamento HTML
-		// $arrComandos[] = '<button type="button" accesskey="s" id="btnSalvarPDF" value="Salvar em PDF" onclick="salvarPDF();" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar em PDF</button>';
         $arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
         $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc=' . $_GET['id_md_pet_rel_recibo_protoc'] . '&acao=' . PaginaSEIExterna::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
@@ -173,6 +172,7 @@ try {
             $objContatoDTO = new ContatoDTO();
             $objContatoDTO->setNumIdContato($objParticipanteDTO->getNumIdContato());
             $objContatoDTO->retStrNome();
+            $objContatoDTO->setBolExclusaoLogica(false); // possivel e permitido usar aqui contato desativado!!!
             $objContatoRN      = new ContatoRN();
             $arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
         }
@@ -387,7 +387,7 @@ try {
         <br/>
         <br/>
         
-        <p><label>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</label></p>
+        <p><label>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</label></p>
 			<ul><label>
 				<li>a conformidade entre os dados informados e os documentos;</li>
 				<li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li>

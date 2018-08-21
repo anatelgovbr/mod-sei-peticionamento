@@ -24,7 +24,6 @@ class MdPetHipoteseLegalINT extends InfraINT {
     
     foreach($arrObjHipoteseLegalDTO as  $key=>$obj){
     	$arrObjHipoteseLegalDTO[$key]->setStrNome(MdPetHipoteseLegalINT::formatarStrNome($arrObjHipoteseLegalDTO[$key]->getStrNome(), $arrObjHipoteseLegalDTO[$key]->getStrBaseLegal()));
-    	//$arrObjHipoteseLegalDTO[$key]->setStrNome()
     }
     
     return $arrObjHipoteseLegalDTO;

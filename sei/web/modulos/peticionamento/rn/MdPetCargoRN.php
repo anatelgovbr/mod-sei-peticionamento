@@ -21,97 +21,53 @@ class MdPetCargoRN extends InfraRN {
 	protected function listarDistintosConectado() {
 			
 		try {
-	
-			//Regras de Negocio
-			$objInfraException = new InfraException();
+      //Regras de Negocio
+      $objInfraException = new InfraException();
 
-			// Masculinos
-			$objCargoMascDTO = new CargoDTO();
-			$objCargoMascDTO->setDistinct(true);
-			$objCargoMascDTO->setStrSinAtivo('S');
-			$objCargoMascDTO->retNumIdCargo();
-			$objCargoMascDTO->retStrExpressao();
-			$objCargoMascDTO->adicionarCriterio(
-				array('StaGenero')
-				, array(InfraDTO::$OPER_IGUAL)
-				, array('M')
-				, NULL
-			);
-  			$objCargoMascRN = new CargoRN();
-  			$arrObjCargoMascDTO = $objCargoMascRN->listarRN0302($objCargoMascDTO);
-			$arrCargoMasc = InfraArray::converterArrInfraDTO($arrObjCargoMascDTO,'Expressao');
-			$arrCargoIdMasc = InfraArray::converterArrInfraDTO($arrObjCargoMascDTO,'IdCargo');
+		  $usuarioRN = new UsuarioDTO();
+		  $idUsuario = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 
-			// Nulos
-			$objCargoNuloDTO = new CargoDTO();
-			$objCargoNuloDTO->setDistinct(true);
-			$objCargoNuloDTO->setStrSinAtivo('S');
-			$objCargoNuloDTO->retNumIdCargo();
-			$objCargoNuloDTO->retStrExpressao();
-			$objCargoNuloDTO->adicionarCriterio(
-				array('StaGenero')
-				, array(InfraDTO::$OPER_IGUAL)
-				, array(NULL)
-			);
-			if (count($arrCargoMasc)>0){
-				$objCargoNuloDTO->adicionarCriterio(
-					array('Expressao')
-					, array(InfraDTO::$OPER_NOT_IN)
-					, array($arrCargoMasc)
-				);
-			};
-			$objCargoNuloRN = new CargoRN();
-			$arrObjCargoNuloDTO = $objCargoNuloRN->listarRN0302($objCargoNuloDTO);  			
-			$arrCargoNulo = InfraArray::converterArrInfraDTO($arrObjCargoNuloDTO,'Expressao');
-			$arrCargoIdNulo = InfraArray::converterArrInfraDTO($arrObjCargoNuloDTO,'IdCargo');
+      $objUsuarioDTO = new UsuarioDTO();
+      $objUsuarioDTO->setBolExclusaoLogica(false);
+      $objUsuarioDTO->retNumIdContato();
+      $objUsuarioDTO->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO), InfraDTO::$OPER_IN);
+      $objUsuarioDTO->setNumIdUsuario($idUsuario);
+      $objUsuarioDTO->setNumMaxRegistrosRetorno(1);
 
-			// Femininos
-			$objCargoFemDTO = new CargoDTO();
-			$objCargoFemDTO->setDistinct(true);
-			$objCargoFemDTO->setStrSinAtivo('S');
-			$objCargoFemDTO->retNumIdCargo();
-			$objCargoFemDTO->retStrExpressao();
-			$objCargoFemDTO->adicionarCriterio(
-				array('StaGenero')
-				, array(InfraDTO::$OPER_IGUAL)
-				, array('F')
-			);
-			if (count($arrCargoMasc)>0){
-				$objCargoFemDTO->adicionarCriterio(
-					array('Expressao')
-					, array(InfraDTO::$OPER_NOT_IN)
-					, array($arrCargoMasc)
-				);
-			};
-			if (count($arrCargoNulo)>0){
-				$objCargoFemDTO->adicionarCriterio(
-					array('Expressao')
-					, array(InfraDTO::$OPER_NOT_IN)
-					, array($arrCargoNulo)
-				);
-			};
-			$objCargoFemRN = new CargoRN();
-			$arrObjCargoFemDTO = $objCargoFemRN->listarRN0302($objCargoFemDTO);  			
-			$arrCargoIdFem = InfraArray::converterArrInfraDTO($arrObjCargoFemDTO,'IdCargo');
+      $objUsuarioRN = new UsuarioRN();
+      $arrDadosUsuario = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 
-			// Resultado ordenado
-			$arrCargo = array_merge($arrCargoIdMasc,$arrCargoIdNulo); 
-			$arrCargo = array_merge($arrCargo,$arrCargoIdFem);
-  			
+      $contatoDTO = new ContatoDTO();
+      $contatoDTO->setBolExclusaoLogica(false);
+      $contatoDTO->retNumIdContato();
+      $contatoDTO->retStrNome();
+      $contatoDTO->retStrStaGenero();
+      $contatoDTO->setNumIdContato($arrDadosUsuario->getNumIdContato());
+
+      $objContatoRN = new ContatoRN();
+      $arrContato = $objContatoRN->consultarRN0324($contatoDTO);
+      $staGenero = $arrContato->getStrStaGenero();
+
 			$objCargoDTO = new CargoDTO();
+
+			$objCargoDTO->setDistinct(true);
+			$objCargoDTO->setStrSinAtivo('S');
 			$objCargoDTO->retNumIdCargo();
 			$objCargoDTO->retStrExpressao();
-			$objCargoDTO->adicionarCriterio(
-				array('IdCargo')
-				, array(InfraDTO::$OPER_IN)
-				, array($arrCargo)
-				, NULL
-			);
 			$objCargoDTO->setOrdStrExpressao(InfraDTO::$TIPO_ORDENACAO_ASC);
-  			$objCargoRN = new CargoRN();
-  			$arrObjCargoDTO = $objCargoRN->listarRN0302($objCargoDTO);
-			
-  			return $arrObjCargoDTO;	
+
+      if(is_null($staGenero)){
+        $objCargoDTO->setStrStaGenero( array('M', 'F', null), InfraDTO::$OPER_IN);
+      }else{
+        $objCargoDTO->setStrStaGenero(array($staGenero, null), InfraDTO::$OPER_IN);
+      }
+
+
+      $objCargoMascRN = new CargoRN();
+  		$arrObjCargoDTO = $objCargoMascRN->listarRN0302($objCargoDTO);
+      $arrCargoIdFem = InfraArray::converterArrInfraDTO($arrObjCargoDTO,'IdCargo', 'Expressao');
+
+  		return $arrCargoIdFem;
 			
 			//Auditoria
 		}catch(Exception $e){

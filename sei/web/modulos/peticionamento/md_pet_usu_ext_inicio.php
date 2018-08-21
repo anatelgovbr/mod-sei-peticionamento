@@ -74,7 +74,7 @@ try {
   switch($_GET['acao']){
     
   	case 'md_pet_usu_ext_iniciar':
-  		$strTitulo = 'Peticionar Processo Novo';
+  		$strTitulo = 'Peticionamento de Processo Novo';
   		break;
   		
     default:
@@ -183,21 +183,10 @@ function resizeIFramePorConteudo(){
 	doc = doc || document;
 	var body = doc.body, html = doc.documentElement;
 
-	///console.clear();
-
-	///var fieldset = document.getElementById('field1');
-	///console.log('field1');
-	///console.log(field1.scrollWidth+'-'+field1.offsetWidth+'-'+field1.clientWidth+'-'+field1.scrollWidth+'-'+field1.offsetWidth);
-
-	///console.log('body.scrollWidth-body.offsetWidth-html.clientWidth-html.scrollWidth-html.offsetWidth');
-	///console.log(body.scrollWidth+'-'+body.offsetWidth+'-'+html.clientWidth+'-'+html.scrollWidth+'-'+html.offsetWidth);
 	var width = Math.max( body.scrollWidth, body.offsetWidth, 
 	                      html.clientWidth, html.scrollWidth, html.offsetWidth );
-	///ifrm.style.width=width+'px';
 	ifrm.style.width='100%';
 
-	///console.log('body.scrollHeight-body.offsetHeight-html.clientHeight-html.scrollHeight-html.offsetHeight');
-	///console.log(body.scrollHeight+'-'+body.offsetHeight+'-'+html.clientHeight+'-'+html.scrollHeight+'-'+html.offsetHeight);
 	var height = Math.max( body.scrollHeight, body.offsetHeight, 
 	                       html.clientHeight, html.scrollHeight, html.offsetHeight );
 	ifrm.style.height=height+'px';

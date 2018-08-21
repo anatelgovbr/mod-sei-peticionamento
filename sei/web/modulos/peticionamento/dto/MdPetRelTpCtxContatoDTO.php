@@ -19,14 +19,9 @@ class MdPetRelTpCtxContatoDTO extends InfraDTO {
   	$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
   			'IdTipoContextoPeticionamento',
   			'id_md_pet_rel_tp_ctx_contato');
-  	
-  	//versao SEIv2
-    //$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
-    //                               'IdTipoContextoContato',
-    //                              'id_tipo_contexto_contato');
-    
-  	//versao SEIv3
-  	$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
+
+    //versao SEIv3
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
   	                               'IdTipoContextoContato',
   	                              'id_tipo_contato');
   	
@@ -37,13 +32,7 @@ class MdPetRelTpCtxContatoDTO extends InfraDTO {
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
     		'SinSelecaoInteressado',
     		'sin_selecao_interessado');
-    
-    //versao SEIv2
-    //$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
-    		//'NomeTipoContexto',
-    		//'tp.nome',
-    		//'tipo_contexto_contato tp');
-    
+
     //versao SEIv3
     $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
     'NomeTipoContexto',
@@ -56,10 +45,7 @@ class MdPetRelTpCtxContatoDTO extends InfraDTO {
     		'tipo_contato tp');
     
     $this->configurarPK('IdTipoContextoPeticionamento', InfraDTO::$TIPO_PK_NATIVA );
-    
-    //versao SEIv2
-    //$this->configurarFK('IdTipoContextoContato', 'tipo_contexto_contato tp', 'tp.id_tipo_contexto_contato');
-    
+
     //versao SEIv3
     $this->configurarFK('IdTipoContextoContato', 'tipo_contato tp', 'tp.id_tipo_contato');
   }

@@ -44,8 +44,18 @@ class MdPetRelTpProcessoUnidRN extends InfraRN{
 			throw new InfraException ('Erro listando Relacionamento de Tipo de Processo e Unidade Peticionamento.', $e);
 		}
 	}
-	
-	
+
+	protected function contarConectado(MdPetRelTpProcessoUnidDTO $objMdPetRelTpProcessoUnidDTO){
+		try {
+
+			$objMdPetRelTpProcessoUnidBD = new MdPetIntSerieBD($this->getObjInfraIBanco());
+			$ret = $objMdPetRelTpProcessoUnidBD->contar($objMdPetRelTpProcessoUnidDTO);
+
+			return $ret;
+		}catch(Exception $e){
+			throw new InfraException('Erro contando .',$e);
+		}
+	}
 /**
 	 * Short description of method consultarConectado
 	 *

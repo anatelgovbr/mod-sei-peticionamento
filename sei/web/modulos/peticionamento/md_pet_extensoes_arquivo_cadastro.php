@@ -116,8 +116,6 @@ var objAutoCompletarComplementar = null;
     objAutoCompletarComplementar = new infraAjaxAutoCompletar('hdnIdComplementar','txtComplementar','<?=$strLinkAjaxPrincipal?>');
     objAutoCompletarComplementar.limparCampo = true;
     
-    //objAutoCompletarPrincipal.tamanhoMinimo = 3;
-
     objAutoCompletarPrincipal.prepararExecucao = function(){
       return 'extensao='+document.getElementById('txtPrincipal').value;
     };

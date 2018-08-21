@@ -28,13 +28,11 @@ class MdPetUrlUtils extends InfraPDF {
 		if (!(InfraString::isBolVazia ($url))) {
 			// Valida Quantidade de Caracteres
 			if (strlen($url)>2083) {
-				//$objInfraException->adicionarValidacao($msgTamanho);
 				return $msgTamanho;
 			}
 			
 			// Validando
 			if(!filter_var($url, FILTER_VALIDATE_URL)) {
-				//$objInfraException->adicionarValidacao($msgInvalida);
 				return $msgInvalida;
 			}
 			

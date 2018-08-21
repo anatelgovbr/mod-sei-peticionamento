@@ -10,7 +10,7 @@ try {
 	
 	require_once dirname(__FILE__).'/../../SEI.php';
 
-	//Data
+	//Classe utilitaria para formataçao e calculo de Datas
 	require_once dirname(__FILE__).'/util/MdPetDataUtils.php';
 	
 	session_start();
@@ -30,15 +30,6 @@ try {
 		case 'recibo_peticionamento_usuario_externo_selecionar':
 			
 			$strTitulo = PaginaSEIExterna::getInstance()->getTituloSelecao('Selecionar Recibo','Selecionar Recibos');
-
-			// NÃO ENCONTRADO USO
-			//Se cadastrou alguem
-			//if ($_GET['acao_origem']=='recibo_peticionamento_usuario_externo_cadastrar'){
-			//	if (isset($_GET['id_md_pet_rel_recibo_protoc'])){
-			//		PaginaSEIExterna::getInstance()->adicionarSelecionado($_GET['id_md_pet_rel_recibo_protoc']);
-			//	}
-			//}
-
 			break;
 
 		case 'md_pet_usu_ext_recibo_listar':
@@ -50,12 +41,10 @@ try {
 			throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
 	}
 
+	$objMdPetCertidaoRN = new MdPetIntCertidaoRN();
 	$arrComandos = array();
 	$arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
 	$arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=usuario_externo_controle_acessos&acao_origem='.$_GET['acao'])).'\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
-
-	// NÃO ENCONTRADO USO
-	//$bolAcaoCadastrar = SessaoSEIExterna::getInstance()->verificarPermissao('recibo_peticionamento_usuario_externo_cadastrar');
 
 	$objMdPetReciboDTO = new MdPetReciboDTO();
 	$objMdPetReciboDTO->retTodos( );
@@ -83,11 +72,9 @@ try {
 	if( isset( $_POST['selTipo'] ) && $_POST['selTipo'] != ""){
 		$objMdPetReciboDTO->setStrStaTipoPeticionamento( $_POST['selTipo'] );
 	}
-	
-	//$objMdPetReciboDTO->setOrd('DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC );
-	//objMdPetReciboDTO->setOrdDthDataHoraRecebimentoFinal(InfraDTO::$TIPO_ORDENACAO_DESC);
 
 	PaginaSEIExterna::getInstance()->prepararOrdenacao($objMdPetReciboDTO, 'DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC);
+
 	PaginaSEIExterna::getInstance()->prepararPaginacao($objMdPetReciboDTO,200);
 
 	$objMdPetReciboRN = new MdPetReciboRN();
@@ -157,27 +144,32 @@ try {
 			
 			$strResultado .= '<td align="center">';
 
-			//$strResultado .= PaginaSEIExterna::getInstance()->getAcaoTransportarItem($i,$arrObjMdPetReciboDTO[$i]->getNumIdReciboPeticionamento());
-			$intercorrente = $arrObjMdPetReciboDTO[$i]->isSetStrStaTipoPeticionamento() && $arrObjMdPetReciboDTO[$i]->getStrStaTipoPeticionamento() == 'I' ? true : false;
+			$intercorrente = $arrObjMdPetReciboDTO[$i]->isSetStrStaTipoPeticionamento() && ( $arrObjMdPetReciboDTO[$i]->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_INTERCORRENTE ) ? true : false;
+			
+			$isResposta   = $arrObjMdPetReciboDTO[$i]->isSetStrStaTipoPeticionamento() && ( $arrObjMdPetReciboDTO[$i]->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ) ? true : false;
 
-			if($bolAcaoConsultar && $intercorrente)
-			 {
-				 $acao = $_GET['acao'];
-				 $urlLink = 'controlador_externo.php?&acao=md_pet_intercorrente_usu_ext_recibo_consultar&acao_origem='. $acao .'&acao_retorno='.$acao.'&id_md_pet_rel_recibo_protoc='. $arrObjMdPetReciboDTO[$i]->getNumIdReciboPeticionamento();
-				 $linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($urlLink ));
-				 $strResultado .= '<a href="'. $linkAssinado . '"><img src="'.PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Recibo" alt="Consultar Recibo" class="infraImg" /></a>';
-			 }
-			else
-			 {
-				if ($bolAcaoConsultar)
-				{
-					$acao = $_GET['acao'];
-					$urlLink = 'controlador_externo.php?id_md_pet_rel_recibo_protoc='. $arrObjMdPetReciboDTO[$i]->getNumIdReciboPeticionamento() .'&acao=md_pet_usu_ext_recibo_consultar&acao_origem='. $acao .'&acao_retorno='.$acao;
-					$linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($urlLink ));
-					$strResultado .= '<a href="'. $linkAssinado . '"><img src="'.PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Recibo" alt="Consultar Recibo" class="infraImg" /></a>';
+			$isValido     = $objMdPetCertidaoRN->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($arrObjMdPetReciboDTO[$i]->getDblIdDocumento(), false, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
+
+			$iconeConsulta = '<img src="' . PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal() . '/consultar.gif" title="Consultar Recibo" alt="Consultar Recibo" class="infraImg" />';
+
+			if($isValido) {
+				$linkAssinado = '';
+				if ($bolAcaoConsultar) {
+					$objMdPetReciboRN = new MdPetReciboRN();
+					$linkAssinado = $objMdPetReciboRN->getUrlRecibo(array($intercorrente, $arrObjMdPetReciboDTO[$i]));
 				}
-			 }
 
+				if ($linkAssinado != '') {
+					$strResultado .= '<a target="_blank" href="' . $linkAssinado . '">' . $iconeConsulta . '</a>';
+				}
+			}else {
+				
+				$linkAssinado = "javascript:;";
+				$msg          = 'Recibo Eletrônico bloqueado, pois está vinculado a uma Intimação ainda não Cumprida.';
+				$strResultado .= '<a onclick="alert(\''.$msg.'\')" href="' . $linkAssinado . '">'.$iconeConsulta.'</a>';
+			}
+
+			
 			$strResultado .= '</td></tr>'."\n";
 		}
 		
@@ -272,9 +264,15 @@ $strTipo = $_POST['selTipo'];
 <!--  Tipo do Menu -->
 <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Tipo de Peticionamento:</label>
 <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect" >
+  
   <option <? if( $_POST['selTipo'] == ""){ ?> selected="selected" <? } ?> value="">Todos</option>
-  <option <? if( $_POST['selTipo'] == "N"){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_NOVO ?>">Processo Novo</option>
-  <option <? if( $_POST['selTipo'] == "I"){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_INTERCORRENTE ?>">Intercorrente</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_NOVO ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_NOVO ?>">Processo Novo</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_INTERCORRENTE){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_INTERCORRENTE ?>">Intercorrente</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO?>">Resposta a Intimação</option>
+  
 </select> 
   
 <input type="submit" style="visibility: hidden;" />

@@ -129,9 +129,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $strInicializacao .= "CKEDITOR.config.scayt_autoStartup=true;\n";
     
     //altura automatica ajustado em relaçao ao conteudo dentro do editor
-    //$strInicializacao .= "CKEDITOR.config.extraPlugins = 'autogrow';\n";
     $strInicializacao .= "CKEDITOR.config.autoGrow_minHeight = 1;\n";
-    //$strInicializacao .= "CKEDITOR.config.autoGrow_maxHeight = 600;\n";
     $strInicializacao .= "CKEDITOR.config.autoGrow_bottomSpace = 5;\n";
 
     if ($objOrgaoDTO != null && $objOrgaoDTO->getStrStaCorretorOrtografico()==OrgaoRN::$TCO_LICENCIADO) {
@@ -143,14 +141,6 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       }
       $strInicializacao .= "CKEDITOR.config.scayt_uiTabs='0,0,0';\n";
     }
-    
-    //$strInicializacao .= "CKEDITOR.config.height=";
-    //if ($objEditorDTO->isSetNumTamanhoEditor()) {
-      //$strInicializacao .= $objEditorDTO->getNumTamanhoEditor();
-    //} else {
-      //$strInicializacao .= "500";
-    //}
-    //$strInicializacao .= ";\n";
 
     $strInicializacao .= "CKEDITOR.config.sharedSpaces= {'top':'divComandos'};\n";
     if ($objEditorDTO->getStrSinSomenteLeitura()=='S') {
@@ -169,8 +159,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $ret->setStrInicializacao($strInicializacao);
     $ret->setNumVersao(0);
     $ret->setStrToolbar($this->jsEncode($this->montarBarraFerramentas(true, false, ($objOrgaoDTO->getStrStaCorretorOrtografico()!=OrgaoRN::$TCO_NENHUM))));
-    //$ret->setStrToolbar( array() );
-    
+
     $bolValidacao = false;
     $strValidacoes = '';
         
@@ -196,20 +185,8 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     }
 
     $arrRetorno = array();
-    //if ($strBtnSource!='N' && ($strBtnSource=='S' || SessaoSEIExterna::getInstance()->verificarPermissao('editor_visualizar_codigo_fonte'))) {
-      //$arrRetorno[] = array('Source');
-    //}
-
-    //if ($bolAdicionarTextoPadrao) {
-      $arrRetorno[] = array('Save');
-    //}
-
+    $arrRetorno[] = array('Save');
     $arrRetorno[] = array('Find', 'Replace', '-', 'RemoveFormat', 'Bold', 'Italic', 'Underline', 'Strike','Subscript','Superscript', 'Maiuscula', 'Minuscula', 'TextColor', 'BGColor' /*,'PageBreak'*/);
-
-    //if (ConfiguracaoSEI::getInstance()->getValor('SEI','Producao')){
-    //  $bolBtnWSC=false;
-    //  $bolBtnScayt=false;
-    //}
 
     $temp = array('Cut', 'Copy', 'PasteFromWord', 'PasteText', '-', 'Undo', 'Redo', 'ShowBlocks','Symbol');
     if ($bolBtnWSC) $temp[] = 'SpellChecker';
@@ -527,9 +504,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
   public function filtrarTags($strConteudo)
   {
     $strConteudo = preg_replace("%<font[^>]*>%si", "", $strConteudo);
-    //$strConteudo = preg_replace("%<span style=\"[^(color|backgroung)][^>]*>%si", "", $strConteudo);
     $strConteudo = preg_replace("%</font>%si", "", $strConteudo);
-    //$strConteudo = preg_replace("%</span>%si", "", $strConteudo);
     return str_replace(array('<o:p>', '</o:p>'), '', $strConteudo);
   }
 
@@ -555,7 +530,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $objSecaoModeloRN = new SecaoModeloRN();
       $objSecaoDocumentoRN = new SecaoDocumentoRN();
       $objVersaoSecaoDocumentoRN = new VersaoSecaoDocumentoRN();
-      //$objRelSecaoModeloEstiloRN = new RelSecaoModeloEstiloRN();
+
       $objDocumentoRN = new DocumentoRN();
       $dthAtual = InfraData::getStrDataHoraAtual();
 
@@ -1210,13 +1185,6 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         }
         $this->atualizarConteudo($parObjEditorDTO);
       }
-      /*
-      else{
-        if ($_GET['acao']=='editor_salvar'){
-          LogSEI::getInstance()->gravar('Nenhuma alteração foi encontrada no conteúdo do documento: '.$parObjEditorDTO->getDblIdDocumento().' ['.SessaoSEIExterna::getInstance()->getStrSiglaUsuario().'/'.SessaoSEIExterna::getInstance()->getStrSiglaUnidadeAtual().']');
-        }
-      }
-      */
 
       return $numVersao;
 
@@ -1537,10 +1505,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $objDocumentoDTO->retObjPublicacaoDTO();
       $objDocumentoDTO->retNumIdConjuntoEstilos();
       $objDocumentoDTO->retStrSinBloqueado();
-      
-      //seiv2
-      //$objDocumentoDTO->retStrStaEditor();
-      
+
       $objDocumentoDTO->retStrStaProtocoloProtocolo();
       $objDocumentoDTO->retNumIdUnidadeGeradoraProtocolo();
 
@@ -1719,7 +1684,6 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     if ($parObjEditorDTO->isSetStrSinProcessarLinks() && $parObjEditorDTO->getStrSinProcessarLinks()=='S') {
 
       $strHtml=$this->processarLinksSei($strHtml);
-//      $strHtml=preg_replace(self::$REGEXP_LINK_ASSINADO,'$4',$strHtml);
 
       $posLinkSeiIni = 0;
       $strChaveBusca = 'id="lnkSei';
@@ -1837,22 +1801,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $objUnidadeDTO->retStrDescricao();
       $objUnidadeDTO->retStrSiglaOrgao();
       $objUnidadeDTO->retStrDescricaoOrgao();
-      //seiv2
-      //$objUnidadeDTO->retStrEndereco();
-      //$objUnidadeDTO->retStrComplemento();
-      //$objUnidadeDTO->retStrNomeCidade();
-      //$objUnidadeDTO->retStrBairro();
-      //$objUnidadeDTO->retStrTelefone();
-      //$objUnidadeDTO->retStrEmail();
-      //$objUnidadeDTO->retStrCep();
-      //$objUnidadeDTO->retStrSitioInternet();
-      //seiv2
-      //$objUnidadeDTO->retStrSiglaUf();
       $objUnidadeDTO->retStrTimbreOrgao();
-      //seiv2
-      //$objUnidadeDTO->retStrSitioInternetOrgao();
-      //$objUnidadeDTO->retStrTelefone();
-      //$objUnidadeDTO->retStrFax();
 
       $objUnidadeDTO->setNumIdUnidade($numIdUnidadeResponsavel);
 
@@ -1869,12 +1818,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $contatoAssociadoDTO->retStrSitioInternetContatoAssociado();
       $contatoAssociadoDTO->setNumIdContato( $idContatoAssociado );
       $objContatoAssociadoDTO = $contatoRN->consultarRN0324( $contatoAssociadoDTO );
-      
-      //seiv2
-      //if (InfraString::isBolVazia($objUnidadeDTO->getStrEndereco())) {
-        //throw new InfraException('Unidade ' . $objUnidadeDTO->getStrSigla() . ' não possui endereço cadastrado.');
-      //}
-      
+
       //seiv3
       if ( InfraString::isBolVazia( $objContatoAssociadoDTO->getStrEndereco()) ) {
         throw new InfraException('Unidade ' . $objUnidadeDTO->getStrSigla() . ' não possui endereço cadastrado.');
@@ -1903,12 +1847,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $arrConteudoTags[] = array('@descricao_orgao_maiusculas@', $strTag);
 
       $arrConteudoTags[] = array('@timbre_orgao@', '<img alt="Timbre" src="data:image/png;base64,' . $objUnidadeDTO->getStrTimbreOrgao() . '" />');
-      
-      //seiv2
-      //$arrConteudoTags[] = array('@endereco_unidade@', $objUnidadeDTO->getStrEndereco());
-      //$arrConteudoTags[] = array('@telefone_unidade@', $objUnidadeDTO->getStrTelefone());
-      //$arrConteudoTags[] = array('@fax_unidade@', $objUnidadeDTO->getStrFax());
-      
+
       //alteracoes seiv3
       $arrConteudoTags[] = array('@endereco_unidade@', $objContatoAssociadoDTO->getStrEndereco());
       
@@ -1917,48 +1856,27 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       //$arrConteudoTags[] = array('@fax_unidade@', $objContatoAssociadoDTO->getStrFax());
 
       $strTag = '';
-      
-      //seiv2
-      //if (!InfraString::isBolVazia($objUnidadeDTO->getStrBairro())) {
-        //$strTag = ' - Bairro ' . $objUnidadeDTO->getStrBairro();
-      //}
-      
+
       //alteracoes seiv3
       if (!InfraString::isBolVazia($objContatoAssociadoDTO->getStrBairro())) {
       	$strTag = ' - Bairro ' . $objContatoAssociadoDTO->getStrBairro();
       }
       
       $arrConteudoTags[] = array('@hifen_bairro_unidade@', $strTag);
-      
-      //seiv2
-      //$arrConteudoTags[] = array('@cep_unidade@', 'CEP ' . $objUnidadeDTO->getStrCep());
-      
+
       //alteracoes seiv3
       $arrConteudoTags[] = array('@cep_unidade@', 'CEP ' . $objContatoAssociadoDTO->getStrCep());
 
-      //seiv2
-      //if ($objUnidadeDTO->getStrNomeCidade()!='') {
-        //$arrConteudoTags[] = array('@cidade_unidade@', $objUnidadeDTO->getStrNomeCidade());
-      //}
-      
       //alteracoes seiv3
       if ( $objContatoAssociadoDTO->getStrNomeCidade()!='' ) {
       	$arrConteudoTags[] = array('@cidade_unidade@', $objContatoAssociadoDTO->getStrNomeCidade());
       }
-      
-      //seiv2
-      //$arrConteudoTags[] = array('@sigla_uf_unidade@', $objUnidadeDTO->getStrSiglaUf());
-      
+
       //alteracoes seiv3
       $arrConteudoTags[] = array('@sigla_uf_unidade@', $objContatoAssociadoDTO->getStrSiglaUf());
 
       $strTag = '';
-      
-      //seiv2
-      //if (!InfraString::isBolVazia($objUnidadeDTO->getStrSitioInternetOrgao())) {
-        //$strTag = ' - ' . $objUnidadeDTO->getStrSitioInternetOrgao();
-      //}
-      
+
       //alteracoes seiv3
       if ( !InfraString::isBolVazia( $objContatoAssociadoDTO->getStrSitioInternetContatoAssociado() ) ) {
       	$strTag = ' - ' . $objContatoAssociadoDTO->getStrSitioInternetContatoAssociado();
@@ -1967,12 +1885,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $arrConteudoTags[] = array('@hifen_sitio_internet_orgao@', $strTag);
 
       $strTag = '';
-      
-      //seiv2
-      //if (!InfraString::isBolVazia($objUnidadeDTO->getStrComplemento())) {
-        //$strTag .= $objUnidadeDTO->getStrComplemento();
-      //}
-      
+
       //alteracoes seiv3
       if (!InfraString::isBolVazia( $objContatoAssociadoDTO->getStrComplemento() )) {
       	$strTag .= $objContatoAssociadoDTO->getStrComplemento();
@@ -2049,10 +1962,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           $objContatoDTO->retNumIdContato();
           $objContatoDTO->retStrNome();
           $objContatoDTO->retDblCnpj();
-          
-          //seiv2
-          //$objContatoDTO->retNumMatricula();
-          
+
           //alteracoes seiv3
           $objContatoDTO->retStrMatricula();
           

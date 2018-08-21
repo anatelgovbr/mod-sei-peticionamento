@@ -12,6 +12,7 @@ class MdPetReciboRN extends InfraRN {
 	
 	public static $TP_RECIBO_NOVO = 'N';
 	public static $TP_RECIBO_INTERCORRENTE = 'I';
+	public static $TP_RECIBO_RESPOSTA_INTIMACAO = 'R';
 	
 	public function __construct() {
 		parent::__construct ();
@@ -97,7 +98,28 @@ class MdPetReciboRN extends InfraRN {
 			throw new InfraException ('Erro listando Recibo Peticionamento.', $e);
 		}
 	}
-	
+
+	/**
+	 * Short description of method contarConectado
+	 *
+	 * @access protected
+	 * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
+	 * @param $objDTO
+	 * @return mixed
+	 */
+	protected function contarConectado(MdPetReciboDTO $objDTO) {
+
+		try {
+
+			$objBD = new MdPetReciboBD($this->getObjInfraIBanco());
+			$ret = $objBD->contar( $objDTO );
+			return $ret;
+
+		} catch (Exception $e) {
+			throw new InfraException ('Erro contando Recibo Peticionamento.', $e);
+		}
+	}
+
 	/**
 	 * Short description of method consultarConectado
 	 *
@@ -172,6 +194,9 @@ class MdPetReciboRN extends InfraRN {
 	protected function montarReciboControlado( $arrParams ){
 		
 		$reciboDTO = $arrParams[4];
+
+		//Verifica se retorna o objeto antes ou depois da alteração - solução adaptada em decorrencia do trycatch
+		$returnObjDTO = array_key_exists(5, $arrParams) ? $arrParams[5] : false;
 		
 		//gerando documento recibo (nao assinado) dentro do processo do SEI
 		$objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
@@ -179,17 +204,14 @@ class MdPetReciboRN extends InfraRN {
 		$arrParametros = $arrParams[0]; //parametros adicionais fornecidos no formulario de peticionamento
 		$objUnidadeDTO = $arrParams[1]; //UnidadeDTO da unidade geradora do processo
 		$objProcedimentoDTO = $arrParams[2]; //ProcedimentoDTO para vincular o recibo ao processo correto
-		//seiv2
-		//$arrParticipantesParametro = $arrParams[3]; //array de ParticipanteDTO
 
 		//tentando simular sessao de usuario interno do SEI
 		SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $objUnidadeDTO->getNumIdUnidade() );
 				
 		$htmlRecibo = $this->gerarHTMLConteudoDocRecibo( $arrParams );
-				
-		//$numeroDocumento = $protocoloRN->gerarNumeracaoDocumento();
-		$idSerieRecibo = $objInfraParametro->getValor('ID_SERIE_RECIBO_MODULO_PETICIONAMENTO');
-						
+
+		$idSerieRecibo = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+
 		//==========================================================================
 		//incluindo doc recibo no processo via SEIRN
 		//==========================================================================
@@ -223,10 +245,13 @@ class MdPetReciboRN extends InfraRN {
 		$objDocumentoBD->alterar($parObjDocumentoDTO);
 		
 		$reciboDTO->setDblIdDocumento( $saidaDocExternoAPI->getIdDocumento() );
-				
+
 		$objBD = new MdPetReciboBD($this->getObjInfraIBanco());
-		$reciboDTO = $objBD->alterar( $reciboDTO );
-				
+
+		$reciboDTOAlterado = $objBD->alterar( $reciboDTO );
+
+		$reciboDTO = $returnObjDTO ? $reciboDTO :$reciboDTOAlterado;
+
 		return $reciboDTO;
 		
   }
@@ -249,13 +274,14 @@ class MdPetReciboRN extends InfraRN {
 	$html = '';
 	
     $html .= '<table align="center" style="width: 95%" border="0">';
-    $html .= '<tbody><tr>';
+    $html .= '<tbody>';
+    $html .= '<tr>';
     $html .= '<td style="font-weight: bold; width: 400px;">Usuário Externo (signatário):</td>';
     $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
     $html .= '</tr>';
     
     $html .= '<tr>';
-    $html .= '<td style="font-weight: bold;">IP utilizado: </td>';
+    $html .= '<td style="font-weight: bold;">IP utilizado:</td>';
     $html .= '<td>' . $reciboDTO->getStrIpUsuario() .'</td>';
     $html .= '</tr>';
     
@@ -291,11 +317,11 @@ class MdPetReciboRN extends InfraRN {
     	$arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
     }
         
-    $html .= '<tr>';
-    $html .= '<td colspan="2" style="font-weight: bold;">Interessados:</td>';
-    $html .= '</tr>';
-    
     if( $arrInteressados != null && count( $arrInteressados ) > 0 ){
+    
+    	$html .= '<tr>';
+    	$html .= '<td colspan="2" style="font-weight: bold;">Interessados:</td>';
+    	$html .= '</tr>';
     	
     	foreach ($arrInteressados as $interessado) {
            $html .= '<tr>';
@@ -328,10 +354,9 @@ class MdPetReciboRN extends InfraRN {
     	
     	if( $itemReciboAnexoDTO->getStrClassificacaoDocumento() == MdPetRelReciboDocumentoAnexoRN::$TP_PRINCIPAL ){
     		
-    		$idPrincipalGerado = $itemReciboAnexoDTO->getNumIdDocumento();
-    		//array_push( $arrIdPrincipal, $itemReciboAnexoDTO->getNumIdDocumento() );
+			$idPrincipalGerado = $itemReciboAnexoDTO->getNumIdDocumento();
     	}
-    	
+
     	else if( $itemReciboAnexoDTO->getStrClassificacaoDocumento() == MdPetRelReciboDocumentoAnexoRN::$TP_ESSENCIAL ){
     		 
     		array_push( $arrIdEssencial, $itemReciboAnexoDTO->getNumIdDocumento() );
@@ -343,13 +368,6 @@ class MdPetReciboRN extends InfraRN {
     	}
     	
     }
-        
-    //$idPrincipalGerado = SessaoSEIExterna::getInstance()->getAtributo('idDocPrincipalGerado');
-    //$arrIdPrincipal = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoPrincipal');
-    //$arrIdEssencial = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoEssencial');
-    //$arrIdComplementar = SessaoSEIExterna::getInstance()->getAtributo('arrIdAnexoComplementar');
-    
-    
     
     $anexoRN = new AnexoRN();
     $documentoRN = new DocumentoRN();
@@ -377,7 +395,6 @@ class MdPetReciboRN extends InfraRN {
     	$html .= '<td>' . $strNumeroSEI . '</td>';
     	$html .= '</tr>';
     	
-    	//SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
     }
     
     if( $arrIdPrincipal != null && count( $arrIdPrincipal ) > 0  ){
@@ -532,18 +549,20 @@ class MdPetReciboRN extends InfraRN {
     $objOrgaoDTO->setStrSinAtivo('S');
     $objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
     
-    $html .= '<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá, motivadamente, alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
+    $html .= '<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
 	
 	return $html;
 	
   }
-
 
 	protected function gerarReciboSimplificadoIntercorrenteControlado($arr) {
 		if(is_array($arr)){
 
 			$idProcedimento    = array_key_exists('idProcedimento', $arr) ? $arr['idProcedimento'] : null;
 			$idProcedimentoRel = array_key_exists('idProcedimentoRel', $arr) ? $arr['idProcedimentoRel'] : null;
+			$idProcedimentoProcesso = array_key_exists('idProcedimentoProcesso', $arr) ? $arr['idProcedimentoProcesso'] : null;
+
+			$stAnexado = $idProcedimento != $idProcedimentoProcesso;
 
 				if(!is_null($idProcedimento))
 				{
@@ -554,11 +573,40 @@ class MdPetReciboRN extends InfraRN {
                     $objMdPetReciboDTO->setDthDataHoraRecebimentoFinal( InfraData::getStrDataHoraAtual() );
                     $objMdPetReciboDTO->setStrIpUsuario( InfraUtil::getStrIpUsuario() );
                     $objMdPetReciboDTO->setStrSinAtivo('S');
-                    $objMdPetReciboDTO->setStrStaTipoPeticionamento('I');
+                                        
+                    //recibo intercorrente
+                    if( !isset( $arr['isRespostaIntimacao'] ) ){
+                      $objMdPetReciboDTO->setStrStaTipoPeticionamento( MdPetReciboRN::$TP_RECIBO_INTERCORRENTE );
+                    } 
+                    
+                    //recibo resposta a intimacao
+                    else { 
+                    	
+                    	$objDocIntimacaoRN = new MdPetIntProtocoloRN();
+                    	$objDocIntimacaoDTO = new MdPetIntProtocoloDTO();
+                    	$objDocIntimacaoDTO->setNumMaxRegistrosRetorno(1);
+                    	$objDocIntimacaoDTO->retTodos( true );
+                    	$objDocIntimacaoDTO->setNumIdMdPetIntimacao( $arr['id_intimacao'] );
+                    	$objDocIntimacaoDTO->setStrSinPrincipal('S');
+                    	
+                    	$objDocIntimacaoDTO = $objDocIntimacaoRN->consultar( $objDocIntimacaoDTO );
+                    	
+                    	//setar o numero do doc principal da intimacao
+                    	$objMdPetReciboDTO->setStrTextoDocumentoPrincipalIntimac( $objDocIntimacaoDTO->getStrProtocoloFormatadoDocumento() );
 
-					if(!is_null($idProcedimentoRel)){
-                        $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcedimentoRel);
-					}
+                    	//setando tipo de recibo
+                    	$objMdPetReciboDTO->setStrStaTipoPeticionamento( MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO );
+                    }
+
+            if ($stAnexado) {
+              $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcedimentoProcesso);
+            }
+
+            if (!is_null($idProcedimentoRel)) {
+              $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcedimentoRel);
+            }
+
+
 
 					$objBD = new MdPetReciboBD($this->getObjInfraIBanco());
 					$ret = $objBD->cadastrar( $objMdPetReciboDTO );
@@ -587,6 +635,57 @@ class MdPetReciboRN extends InfraRN {
 		} catch ( Exception $e ) {
 			throw new InfraException ('Erro alterando Recibo Peticionamento, ', $e);
 		}
+	}
+	
+	protected function getUrlReciboConectado($arrParams){
+		$intercorrente		  	 = $arrParams[0];
+		$objMdPetReciboDTO    	 = $arrParams[1];
+		$objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
+		$idDocumentoRecibo       = $objMdPetReciboDTO->getDblIdDocumento();
+		$linkAssinado            = '';
+
+		//Se não possui o documento do sei de Recibo salva, redireciona para antiga tela
+		if(is_null($idDocumentoRecibo))
+		{
+			$linkAssinado = $this->_retornaLinkAntigoRecibo($intercorrente,  $objMdPetReciboDTO->getNumIdReciboPeticionamento());
+		}else
+		{
+			$idAcessoExLink = $objMdPetAcessoExternoRN->getIdAcessoExternoRecibo($objMdPetReciboDTO);
+		
+			if(!is_null($idAcessoExLink))
+			{
+				$docLink = "documento_consulta_externa.php?id_acesso_externo=" . $idAcessoExLink . "&id_documento=" . $idDocumentoRecibo . "&id_orgao_acesso_externo=0";
+
+				//se nao configurar acesso externo ANTES, a assinatura do link falha
+				SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExLink);
+
+				$linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($docLink));
+
+				//necessario fazer isso para nao quebrar a navegaçao (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario é enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
+				SessaoSEIExterna::getInstance()->configurarAcessoExterno(0);
+			}else{
+				$linkAssinado = $this->_retornaLinkAntigoRecibo($intercorrente,  $objMdPetReciboDTO->getNumIdReciboPeticionamento());
+			}
+		}
+
+		return $linkAssinado;
+	}
+
+
+	private function _retornaLinkAntigoRecibo($intercorrente, $idRecibo){
+
+		$acao = $_GET['acao'];
+
+		if($intercorrente) {
+			$urlLink = 'controlador_externo.php?&acao=md_pet_intercorrente_usu_ext_recibo_consultar&acao_origem=' . $acao . '&acao_retorno=' . $acao . '&id_md_pet_rel_recibo_protoc=' . $idRecibo;
+		}else
+		{
+			$urlLink = 'controlador_externo.php?id_md_pet_rel_recibo_protoc='. $idRecibo .'&acao=md_pet_usu_ext_recibo_consultar&acao_origem='. $acao .'&acao_retorno='.$acao;
+		}
+
+		$linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($urlLink ));
+
+		return $linkAssinado;
 	}
 
 }

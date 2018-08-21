@@ -98,8 +98,7 @@ class MdPetAnexoRN extends InfraRN {
 					throw new InfraException('Erro criando diretório "' .$strDiretorio.'".');
 				}
 			}
-			 
-			//echo $strNomeUploadCompleto; die();
+
 			copy($strNomeUploadCompleto, $strDiretorio.'/'.$ret->getNumIdAnexo());
 
 			if (!$objAnexoDTO->isSetStrSinExclusaoAutomatica() || $objAnexoDTO->getStrSinExclusaoAutomatica() == 'S' ) {
@@ -114,35 +113,6 @@ class MdPetAnexoRN extends InfraRN {
 		}
 	}
 
-	/*
-	 protected function alterarControlado(AnexoDTO $objAnexoDTO){
-	 try {
-
-	 //Valida Permissao
-	 SessaoSEI::getInstance()->validarAuditarPermissao('anexo_alterar');
-
-	 //Regras de Negocio
-	 $objInfraException = new InfraException();
-
-	 if ($objAnexoDTO->isSetStrNome()){
-	 $this->validarStrNome($objAnexoDTO, $objInfraException);
-	 }
-	 if ($objAnexoDTO->isSetDblIdProtocolo()){
-	 $this->validarDblIdProtocolo($objAnexoDTO, $objInfraException);
-	 }
-
-	 $objInfraException->lancarValidacoes();
-
-	 $objAnexoBD = new AnexoBD($this->getObjInfraIBanco());
-	 $objAnexoBD->alterar($objAnexoDTO);
-
-	 //Auditoria
-
-	 }catch(Exception $e){
-	 throw new InfraException('Erro alterando Anexo.',$e);
-	 }
-	 }
-	 */
 	protected function excluirRN0226Controlado($arrObjAnexoDTO){
 		try {
 			//Valida Permissao

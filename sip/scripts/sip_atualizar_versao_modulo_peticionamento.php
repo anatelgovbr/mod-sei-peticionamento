@@ -141,7 +141,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
     		throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
     	}
     	
-    	//SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     	$this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
     	
     	$objRegraAuditoriaDTO = new RegraAuditoriaDTO();
@@ -332,8 +331,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
     			$objMenuListarDTO3->getNumIdRecurso(),
     			'Tipos de Documentos para Intimação',
     			30);
-    	
-    	//FIM 8610
 
         //recupera o ID do menu Relatorio EU9265
         $objItemMenuDTORelatorioDTO = new ItemMenuDTO();
@@ -460,7 +457,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
-        //SIP v 0.0.1 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_extensoes_arquivo_peticionamento_cadastrar', 'md_pet_extensoes_arquivo_cadastrar');
@@ -496,12 +492,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'serie_peticionamento_selecionar', 'md_pet_serie_selecionar');
 
-        //SIP v 0.0.1 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-        //SIP v 0.0.2 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
-
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_listar', 'md_pet_menu_usu_ext_listar');
 
         //Tipos de Contatos Permitidos
@@ -514,27 +504,10 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_consultar', 'md_pet_menu_usu_ext_consultar');
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'menu_peticionamento_usuario_externo_alterar', 'md_pet_menu_usu_ext_alterar');
 
-        //SIP v 0.0.2 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-        //SIP v 1.0.0 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
-
         //Hipoteses Legais Permitidas
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'hipotese_legal_nl_acesso_peticionamento_cadastrar', 'md_pet_hipotese_legal_nl_acesso_cadastrar');
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'hipotese_legal_peticionamento_selecionar', 'md_pet_hipotese_legal_selecionar');
 
-        //SIP v 1.0.0 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-        //SIP v 1.0.4 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
-
-        //SIP v 1.0.4 - FIM///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-        //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
         //criando os recursos e vinculando-os aos perfil Administrador
         //recursos que serao chamados via menus vem primeiro
         $objRecursoComMenuDTO1 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,'md_pet_intercorrente_criterio_listar');
@@ -689,7 +662,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
-        //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //criando os recursos e vinculando-os ao perfil Administrador
@@ -829,7 +801,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
-        //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //criando os recursos e vinculando-os aos perfil Administrador
@@ -991,7 +962,6 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
-        //SEI ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
 
         //criando os recursos e vinculando-os aos perfil Administrador
@@ -1380,17 +1350,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
         }
     }
 
-    private function adicionarItemMenu($numIdSistema, $numIdPerfil, $numIdMenu, $numIdItemMenuPai, $numIdRecurso, $strRotulo, $numSequencia ){
-/*
- *   	//add menu default
-    	$objItemMenuIntimacaoTacita = $this->adicionarItemMenu($numIdSistemaSei,
-    			$numIdPerfilSeiAdministrador,
-    			$numIdMenuSei,
-    			$objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
-    			'',
-    			'Intimação Eletrônica',
-    			70);
- * */
+    private function adicionarItemMenu($numIdSistema, $numIdPerfil, $numIdMenu, $numIdItemMenuPai, $numIdRecurso, $strRotulo, $numSequencia){
+
         $objItemMenuDTO = new ItemMenuDTO();
         $objItemMenuDTO->retNumIdItemMenu();
         $objItemMenuDTO->setNumIdMenu($numIdMenu);

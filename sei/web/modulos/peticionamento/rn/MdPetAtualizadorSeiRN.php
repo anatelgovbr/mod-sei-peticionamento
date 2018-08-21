@@ -231,7 +231,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
 			BancoSEI::getInstance()->executarSql($insertSemResposta);
 
-
 			$this->logar('INSERINDO EMAIL MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA NA TABELA email_sistema');
 
     		//Parametrizar Email de Confirmação ao Usuario Externo
@@ -285,7 +284,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$objRN = new MdPetIntUsuarioRN();
     		$objRN->realizarInsercoesUsuarioModuloPet();
 
-    		//EU8610 INICIO
     		//Cria a tabela de prazo tácita
     		$objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
     		$this->logar('CRIANDO A TABELA md_pet_int_prazo_tacita ');
@@ -312,9 +310,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
     		$objMdPetIntPrazoTacitaRN->cadastrar($objMdPetIntPrazoTacitaDTO);
 
-    		//EU8610 FIM
-
-    		// EU8612 INICIO
     		//Cria a tabela de tipo de intimação
     		BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_int_tipo_intimacao  (
 				id_md_pet_int_tipo_intimacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -369,9 +364,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_rel_intim_resp', 'md_pet_int_rel_intim_resp', array('id_md_pet_int_tipo_intimacao'), 'md_pet_int_tipo_intimacao', array('id_md_pet_int_tipo_intimacao'));
     		$objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_rel_intim_resp', 'md_pet_int_rel_intim_resp', array('id_md_pet_int_tipo_resp'), 'md_pet_int_tipo_resp', array('id_md_pet_int_tipo_resp'));
 
-    		//FIM 8612
-
-    		//INICIO 8611
     		//Cria tabela de Serie Intercorrente
     		BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_int_serie (
 				id_serie ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL )');
@@ -382,9 +374,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		//Add Fk Tabela de Serie Intercorrente
     		$objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_serie', 'md_pet_int_serie', array('id_serie'), 'serie', array('id_serie'));
 
-    		//FIM 8611
-
-			// Inicio 9252
 			// Cria tabela md_pet_acesso_externo
 			BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_acesso_externo (
 				id_acesso_externo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,				
@@ -398,11 +387,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 			// Add Fk na Tabela md_pet_acesso_externo
 			$objInfraMetaBD->adicionarChaveEstrangeira('fk1_pet_acesso_externo', 'md_pet_acesso_externo', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
 
-			//Fim 9252
-
-    		//========================================
-    		//INICIO EU 9250 - CRIAÇÃO DE HISTÓRICOS E GERAÇÃO DE ANDAMENTOS NO PROCESSO DA INTIMAÇÃO ELETRÔNICA
-    		//========================================
+			$this->logar('CRIAÇÃO DE HISTÓRICOS E GERAÇÃO DE ANDAMENTOS NO PROCESSO DA INTIMAÇÃO ELETRÔNICA');
 
     		$texto1 = " Intimação Eletrônica expedida em @DATA_EXPEDICAO_INTIMACAO@, sobre o Documento Principal @DOCUMENTO@, para @USUARIO_EXTERNO_NOME@";
 
@@ -508,14 +493,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$tarefaRN->cadastrar( $tarefaDTO3 );
     		$tarefaRN->cadastrar( $tarefaDTO4 );
 
-    		//========================================
-    		//FIM EU 9250 - CRIAÇÃO DE HISTÓRICOS E GERAÇÃO DE ANDAMENTOS NO PROCESSO DA INTIMAÇÃO ELETRÔNICA
-    		//========================================
-
-    		//=========================================
-    		//INICIO EU 9244 - GERIR TIPOS DE DOCUMENTOS PARA GERAÇÃO DE CERTIDÕES
-    		//==========================================
-
     		//CRIANDO NOVO TIPO DE DOCUMENTO "Certidão"
     		$this->logar('CRIANDO MODELO "Modulo_Peticionamento_Certidao"');
     		$modeloRN = new ModeloRN();
@@ -611,7 +588,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$serieDTO->setArrObjRelSerieAssuntoDTO(array());
     		$serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
 
-    		//adicoes SEIv3
     		$serieDTO->setNumIdTipoFormulario(null);
     		$serieDTO->setArrObjSerieRestricaoDTO(array());
 
@@ -622,14 +598,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$nomeParamIdSerie = 'MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA';
 
     		BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
-
-    		//=========================================
-    		//FIM EU 9244 - GERIR TIPOS DE DOCUMENTOS PARA GERAÇÃO DE CERTIDÕES
-    		//==========================================
-
-    		//===============================
-    		//INICIO - Tabelas e Colunas novas do Módulo Intimaçao Parte 2 (Pacote 13)
-    		//==============================
 
     		$objInfraMetaBD->adicionarColuna('md_pet_rel_recibo_protoc', 'txt_doc_principal_intimacao',  $objInfraMetaBD->tipoTextoVariavel(250) , 'NULL');
 
@@ -720,13 +688,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		BancoSEI::getInstance()->executarSql( $sql_tabelas );
     		$objInfraMetaBD->adicionarChavePrimaria('md_pet_int_rel_tpo_res_des', 'pk_md_pet_int_rel_tipo_res_des', array('id_md_pet_int_rel_tipo_res_des'));
 
-    		//==================================
-    		//FIM - Tabelas do Módulo
-    		//=================================
-
-    		//=================================
-    		//INICIO - Pks, FKS e Indices
-    		//=================================
+			$this->logar('FINALIZADA A CRIAÇÃO DAS TABELAS. INÍCIO DA CRIAÇÃO DAS PKs, FKs E ÍNDICES');
 
     		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_int_aceite_doc1', 'md_pet_int_aceite', array('id_documento_certidao'), 'documento', array('id_documento'));
 
@@ -765,9 +727,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pt_it_rl_tp_rp_tp_rp_dt', 'md_pet_int_rel_tpo_res_des', array('id_md_pet_int_rel_tipo_resp'), 'md_pet_int_rel_tipo_resp', array('id_md_pet_int_rel_tipo_resp'));
     		$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_it_rl_dst_tp_rp_dst', 'md_pet_int_rel_tpo_res_des', array('id_md_pet_int_rel_dest'), 'md_pet_int_rel_dest', array('id_md_pet_int_rel_dest'));
 
-    		//============================================
-    		//INICIO - Tabelas SEQ do modulo
-    		//===========================================
+			$this->logar('CRIAÇÃO DAS TABELAS DE SEQUENCIA');
 
     		//seq_md_pet_int_protocolo
     		if (BancoSEI::getInstance() instanceof InfraMySql) {
@@ -850,13 +810,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_tpo_res_des', 1);
     		}
 
-    		//============================================
-    		//FIM - Tabelas SEQ do modulo
-    		//===========================================
-
-    		//===========================================
-    		//INICIO - Cadastrar "cronjob" para SCRIPT PARA CUMPRIMENTO AUTOMATICO DE INTIMACAO POR DECURSO DE PRAZO
-    		//===========================================
+    		$this->logar('CRIAÇÃO DOS AGENDAMENTOS AUTOMÁTICOS DO MÓDULO');
 
     		$infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
     		$infraAgendamentoDTO->retTodos();
@@ -876,15 +830,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     		$infraAgendamentoRN = new InfraAgendamentoTarefaRN();
     		$infraAgendamentoDTO = $infraAgendamentoRN->cadastrar( $infraAgendamentoDTO );
 
-    		//===========================================
-    		//FIM - Cadastrar "cronjob" para SCRIPT PARA CUMPRIMENTO AUTOMATICO DE INTIMACAO POR DECURSO DE PRAZO
-    		//===========================================
-
-
-			//===========================================
-			//INICIO - Cadastrar "cronjob" para SCRIPT PARA ATUALIZAR O ESTADO DAS INTIMAÇÕES SEM RESPOSTA COM PRAZO EXTERNO VENCIDO
-			//===========================================
-
 			$infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
 			$infraAgendamentoDTO->retTodos();
 			$infraAgendamentoDTO->setStrDescricao('Script para atualizar os estados das Intimações com Prazo Externo Vencido');
@@ -903,14 +848,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 			$infraAgendamentoRN = new InfraAgendamentoTarefaRN();
 			$infraAgendamentoDTO = $infraAgendamentoRN->cadastrar( $infraAgendamentoDTO );
 
-			//===========================================
-			//FIM - Cadastrar "cronjob" para SCRIPT PARA ATUALIZAR O ESTADO DAS INTIMAÇÕES SEM RESPOSTA COM PRAZO EXTERNO VENCIDO
-			//===========================================
-
-    		//===========================================
-    		//INICIO - Cadastrar "cronjob" para SCRIPT PARA REITERAÇÃO DE INTIMACAO EXIGE RESPOSTA
-    		//===========================================
-
     		$infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
     		$infraAgendamentoDTO->retTodos();
     		$infraAgendamentoDTO->setStrDescricao('Dispara E-mails do Sistema do Módulo de Peticionamento e Intimação Eletrônicos de Reiteração de Intimação Eletrônica que Exige Resposta pendentes de Resposta pelo Usuário Externo');
@@ -928,10 +865,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
     		$infraAgendamentoRN = new InfraAgendamentoTarefaRN();
     		$infraAgendamentoDTO = $infraAgendamentoRN->cadastrar( $infraAgendamentoDTO );
-
-    		//===========================================
-    		//FIM - Cadastrar "cronjob" para SCRIPT PARA REITERAÇÃO DE INTIMACAO EXIGE RESPOSTA
-    		//===========================================
 
     		//checar se precisa atualizar infra_parametro ID_SERIE_RECIBO_MODULO_PETICIONAMENTO
     		$idParamAntigo = 'ID_SERIE_RECIBO_MODULO_PETICIONAMENTO';
@@ -995,7 +928,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             } else if (BancoSEI::getInstance() instanceof InfraOracle) {
                 BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_criterio', 1);
             }
-            // FIM 7048
             
             //Criando campo md_pet_rel_recibo_protoc.id_protocolo_relacionado caso ainda nao exista
             $coluna = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'id_protocolo_relacionado');
@@ -1005,7 +937,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             	$objInfraMetaBD->adicionarColuna('md_pet_rel_recibo_protoc', 'id_protocolo_relacionado', '' . $objInfraMetaBD->tipoNumeroGrande() , 'NULL');
             	
             	$objInfraMetaBD->adicionarChaveEstrangeira('fk5_md_pet_rel_recibo_protoc', 'md_pet_rel_recibo_protoc', array('id_protocolo_relacionado'), 'protocolo', array('id_protocolo'));
-            	
             }
             
             //coluna id_documento na tabela de recibo
@@ -1254,7 +1185,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
                         BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                     }
 
-
                 } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
                 else {
 
@@ -1316,7 +1246,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             print_r($e);
             die();
         }
-
     }
 
     //Contem atualizações da versao 0.0.2
@@ -1433,8 +1362,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //Tabelas relacionais com Tipos de Contatos permitidos para Cadastro e para Seleção
         $this->logar('CRIANDO A TABELA md_pet_rel_tp_ctx_contato');
 
-        //veraao SEIv2.6  id_tipo_contexto_contato ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-        //versao SEIv3.0
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_rel_tp_ctx_contato (
 		id_tipo_contato ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
 		sin_cadastro_interessado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
@@ -1444,12 +1371,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $objInfraMetaBD->adicionarChavePrimaria('md_pet_rel_tp_ctx_contato', 'pk1_md_pet_rel_tp_ctx_cont', array('id_md_pet_rel_tp_ctx_contato'));
 
-        //versao SEIv2.6
-        //$objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_rel_tp_ctx_cont_1','md_pet_rel_tp_ctx_contato',
-        //array('id_tipo_contexto_contato'),
-        //'tipo_contexto_contato',array('id_tipo_contexto_contato'));
-
-        //versao SEIv3.0
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_rel_tp_ctx_cont_1', 'md_pet_rel_tp_ctx_contato',
             array('id_tipo_contato'),
             'tipo_contato', array('id_tipo_contato'));

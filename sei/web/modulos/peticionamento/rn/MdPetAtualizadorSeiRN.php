@@ -177,7 +177,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
 
 
-        $this->logar('CRIANDO A TABELA md_pet_tipo_processo E SUA sequence');
+        $this->logar('CRIANDO A TABELA md_pet_tipo_processo');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_tipo_processo ( 
             id_md_pet_tipo_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -207,7 +207,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
 
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_tipo_processo');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_tipo_processo', 1);
 
 
@@ -251,7 +250,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
 
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_ext_arquivo_perm');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_ext_arquivo_perm', 1);
 
 
@@ -294,11 +292,10 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
 
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisponibilidade');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisponibilidade', 1);
 
 
-        $this->logar('CRIANDO A TABELA md_pet_indisp_doc E SUA sequence');
+        $this->logar('CRIANDO A TABELA md_pet_indisp_doc');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_indisp_doc (
             id_md_pet_indisp_doc ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -321,10 +318,9 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
 
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisp_doc');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
 
-        //Adicionando parametro para controlar versao do modulo
+
         $this->logar('ADICIONANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \'' . $this->nomeParametroModulo . '\' )');
     }
@@ -338,7 +334,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
 
 
-        $this->logar('CRIANDO A TABELA md_pet_usu_externo_menu E SUA sequence');
+        $this->logar('CRIANDO A TABELA md_pet_usu_externo_menu');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_usu_externo_menu (  
             id_md_pet_usu_externo_menu ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -356,7 +352,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
 
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_usu_externo_menu');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_usu_externo_menu', 1);
 
 
@@ -442,6 +437,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         BancoSEI::getInstance()->executarSql($insert2);
 
+
         //Tabelas relacionais com Tipos de Contatos permitidos para Cadastro e para Seleção
         $this->logar('CRIANDO A TABELA md_pet_rel_tp_ctx_contato');
 
@@ -458,7 +454,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
 
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_rel_tp_ctx_contato');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_rel_tp_ctx_contato', 1);
 
 
@@ -485,12 +480,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         //Tabelas referentes ao Recibo Eletronico de Protocolo
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_rel_recibo_protoc');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_rel_recibo_protoc', 1);
 
 
         //Tabelas de recibo X documentos
-        $this->logar('CRIANDO A TABELA md_pet_rel_recibo_docanexo E SUA sequence');
+        $this->logar('CRIANDO A TABELA md_pet_rel_recibo_docanexo');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_rel_recibo_docanexo (
             id_md_pet_rel_recibo_docanexo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -510,7 +504,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         //Tabelas de recibo X documentos
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_rel_recibo_docanexo');
-
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_rel_recibo_docanexo', 1);
 
 
@@ -581,7 +574,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
 
             $this->logar('CRIANDO A SEQUENCE seq_md_pet_rel_tp_proc_serie');
-
             BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_rel_tp_proc_serie', 1);
 
 
@@ -1505,7 +1497,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
 
             $this->logar('CRIANDO A SEQUENCE seq_md_pet_int_rel_resp_doc');
-
             BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_resp_doc', 1);
 
 

@@ -88,72 +88,72 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
             //checando BDs suportados
             if (!(BancoSEI::getInstance() instanceof InfraMySql) &&
-                    !(BancoSEI::getInstance() instanceof InfraSqlServer) &&
-                    !(BancoSEI::getInstance() instanceof InfraOracle)) {
-                        $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSEI::getInstance()), true);
-                    }
+                !(BancoSEI::getInstance() instanceof InfraSqlServer) &&
+                !(BancoSEI::getInstance() instanceof InfraOracle)) {
+                    $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSEI::getInstance()), true);
+            }
 
-                    //checando permissoes na base de dados
-                    $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+            //checando permissoes na base de dados
+            $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
-                    if (count($objInfraMetaBD->obterTabelas('sei_teste')) == 0) {
-                        BancoSEI::getInstance()->executarSql('CREATE TABLE sei_teste (id ' . $objInfraMetaBD->tipoNumero() . ' null)');
-                    }
+            if (count($objInfraMetaBD->obterTabelas('sei_teste')) == 0) {
+                BancoSEI::getInstance()->executarSql('CREATE TABLE sei_teste (id ' . $objInfraMetaBD->tipoNumero() . ' null)');
+            }
 
-                    BancoSEI::getInstance()->executarSql('DROP TABLE sei_teste');
+            BancoSEI::getInstance()->executarSql('DROP TABLE sei_teste');
 
-                    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+            $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
-                    $strVersaoModuloPeticionamento = $objInfraParametro->getValor($this->nomeParametroModulo, false);
+            $strVersaoModuloPeticionamento = $objInfraParametro->getValor($this->nomeParametroModulo, false);
 
-                    //VERIFICANDO QUAL VERSAO DEVE SER INSTALADA NESTA EXECUCAO
-                    if (InfraString::isBolVazia($strVersaoModuloPeticionamento)) {
-                        $this->instalarv001();
-                        $this->instalarv002();
-                        $this->instalarv100();
-                        $this->instalarv104();
-                        $this->instalarv110();
-                        $this->instalarv200();
-                        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
-                        $this->finalizar('FIM', false);
-                    } elseif ($strVersaoModuloPeticionamento == '0.0.1') {
-                        $this->instalarv002();
-                        $this->instalarv100();
-                        $this->instalarv104();
-                        $this->instalarv110();
-                        $this->instalarv200();
-                        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
-                        $this->finalizar('FIM', false);
-                    } elseif ($strVersaoModuloPeticionamento == '0.0.2') {
-                        $this->instalarv100();
-                        $this->instalarv104();
-                        $this->instalarv110();
-                        $this->instalarv200();
-                        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
-                        $this->finalizar('FIM', false);
-                    } elseif (in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3'))) {
-                        $this->instalarv104();
-                        $this->instalarv110();
-                        $this->instalarv200();
-                        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
-                        $this->finalizar('FIM', false);
-                    } elseif ($strVersaoModuloPeticionamento == '1.0.4') {
-                        $this->instalarv110();
-                        $this->instalarv200();
-                        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
-                        $this->finalizar('FIM', false);
-                    } elseif ($strVersaoModuloPeticionamento == '1.1.0') {
-                        $this->instalarv200();
-                        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
-                        $this->finalizar('FIM', false);
-                    } elseif ($strVersaoModuloPeticionamento == '2.0.0') {
-                        $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
-                        $this->finalizar('FIM', false);
-                    }
+            //VERIFICANDO QUAL VERSAO DEVE SER INSTALADA NESTA EXECUCAO
+            if (InfraString::isBolVazia($strVersaoModuloPeticionamento)) {
+                $this->instalarv001();
+                $this->instalarv002();
+                $this->instalarv100();
+                $this->instalarv104();
+                $this->instalarv110();
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif ($strVersaoModuloPeticionamento == '0.0.1') {
+                $this->instalarv002();
+                $this->instalarv100();
+                $this->instalarv104();
+                $this->instalarv110();
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif ($strVersaoModuloPeticionamento == '0.0.2') {
+                $this->instalarv100();
+                $this->instalarv104();
+                $this->instalarv110();
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif (in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3'))) {
+                $this->instalarv104();
+                $this->instalarv110();
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif ($strVersaoModuloPeticionamento == '1.0.4') {
+                $this->instalarv110();
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif ($strVersaoModuloPeticionamento == '1.1.0') {
+                $this->instalarv200();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif ($strVersaoModuloPeticionamento == '2.0.0') {
+                $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
+                $this->finalizar('FIM', false);
+            }
 
-                    InfraDebug::getInstance()->setBolLigado(false);
-                    InfraDebug::getInstance()->setBolDebugInfra(false);
-                    InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->setBolLigado(false);
+            InfraDebug::getInstance()->setBolDebugInfra(false);
+            InfraDebug::getInstance()->setBolEcho(false);
 
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(true);
@@ -165,17 +165,13 @@ class MdPetAtualizadorSeiRN extends InfraRN {
             die;
             throw new InfraException('Erro instalando/atualizando versão.', $e);
         }
-
     }
 
     //Contem atualizações da versao 0.0.1
     protected function instalarv001(){
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-
-
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
-
 
         $this->logar('CRIANDO A TABELA md_pet_tipo_processo');
 
@@ -205,10 +201,8 @@ class MdPetAtualizadorSeiRN extends InfraRN {
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_pet_tp_proc_serie_03', 'md_pet_tipo_processo', array('id_serie'), 'serie', array('id_serie'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_pet_tp_proc_hip_legal_04', 'md_pet_tipo_processo', array('id_hipotese_legal'), 'hipotese_legal', array('id_hipotese_legal'));
 
-
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_tipo_processo');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_tipo_processo', 1);
-
 
         $this->logar('CRIANDO A TABELA md_pet_rel_tp_processo_serie');
 
@@ -222,7 +216,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_serie', array('id_md_pet_tipo_processo'), 'md_pet_tipo_processo', array('id_md_pet_tipo_processo'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_serie', array('id_serie'), 'serie', array('id_serie'));
 
-
         $this->logar('CRIANDO A TABELA md_pet_tp_processo_orientacoes');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_tp_processo_orientacoes ( 
@@ -234,7 +227,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
 
         $objInfraMetaBD->adicionarChavePrimaria('md_pet_tp_processo_orientacoes', 'pk_md_pet_tp_proc_orient', array('id_md_pet_tp_proc_orientacoes'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_tp_proc_or_cj_est', 'md_pet_tp_processo_orientacoes', array('id_conjunto_estilos'), 'conjunto_estilos', array('id_conjunto_estilos'));
-
 
         $this->logar('CRIANDO A TABELA md_pet_ext_arquivo_perm');
 
@@ -316,23 +308,21 @@ class MdPetAtualizadorSeiRN extends InfraRN {
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_04', 'md_pet_indisp_doc', array('id_documento'), 'documento', array('id_documento'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_05', 'md_pet_indisp_doc', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
 
-
+        
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisp_doc');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
 
 
         $this->logar('ADICIONANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \'' . $this->nomeParametroModulo . '\' )');
+
     }
 
     //Contem atualizações da versao 0.0.2
     protected function instalarv002(){
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-
-
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
-
 
         $this->logar('CRIANDO A TABELA md_pet_usu_externo_menu');
 
@@ -507,7 +497,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_rel_recibo_docanexo', 1);
 
 
-        //Atualizando parametro para controlar versao do modulo
         $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
@@ -718,7 +707,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
             BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
 
-            //Atualizando parametro para controlar versao do modulo
+
             $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
@@ -764,7 +753,7 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
             $objTarjaAssinaturaBD = new TarjaAssinaturaBD($this->getObjInfraIBanco());
             $objTarjaAssinaturaDTO = $objTarjaAssinaturaBD->cadastrar( $objTarjaAssinaturaDTO );
 
-            //Atualizando parametro para controlar versao do modulo
+
             $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
@@ -853,7 +842,7 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 
             }
 
-            //Atualizando parametro para controlar versao do modulo
+
             $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
@@ -1623,9 +1612,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $tarefaRN = new TarefaRN();
             $tarefaRN->alterar( $tarefaDTO );
 
-            //Atualizando parametro para controlar versao do modulo
-            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
 
+            $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
             BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
     }

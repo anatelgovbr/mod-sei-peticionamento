@@ -254,21 +254,6 @@
             $objMdPetCriterioRN  = new MdPetCriterioRN();
             $arrMdPetCriterioDTO = $objMdPetCriterioRN->consultar($objMdPetCriterioDTO);
 
-            //Tipo de Procedimento ATIVO
-            if (!is_null($arrMdPetCriterioDTO)) {
-                $objTipoProcedimentoDTO = new TipoProcedimentoDTO();
-                $objTipoProcedimentoDTO->setNumIdTipoProcedimento($arrMdPetCriterioDTO->getNumIdTipoProcedimento());
-                $objTipoProcedimentoDTO->setStrSinAtivo('S');
-                $objTipoProcedimentoDTO->retTodos();
-                $objTipoProcedimentoRN = new TipoProcedimentoRN();
-                $arrObjTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
-
-                if (is_null($arrObjTipoProcedimentoDTO)){
-                   $arrMdPetCriterioDTO = null;
-                }
-            }
-
-
             //Se não tem criterio intercorrente cadastrado, verifica se tem interorrente padrão cadastrado.
             if (is_null($arrMdPetCriterioDTO)) {
                 $objMdPetCriterioDTO = new MdPetCriterioDTO();

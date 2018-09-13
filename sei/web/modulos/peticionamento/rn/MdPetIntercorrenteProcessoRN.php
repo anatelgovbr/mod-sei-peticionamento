@@ -802,6 +802,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			$objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
 		}
 
+		$params['sta_estado_protocolo'] = $objProcedimentoDTO->getStrStaEstadoProtocolo();
+
 		$objMdPetCriterioRN = new MdPetCriterioRN();
 		$objCriterioIntercorrenteDTO = $objMdPetCriterioRN->retornarCriterioPorTipoProcesso($params);
 

@@ -14,7 +14,7 @@
     <div class="bloco" style="width: 390px;">
         <label id="lblTipo" for="txtTipo" class="infraLabelObrigatorio">Tipo:</label>
         <input type="text" id="txtTipo" name="txtTipo" class="infraText" readonly="readonly" style="width: 318px;" value="<?= $txtTipo ?>" disabled/>
-        <button type="button" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" onclick="adicionarProcesso();" accesskey="a" id="btnAdicionar" class="infraButton" style="display: none"><span class="infraTeclaAtalho">A</span>dicionar</button>
+        <button type="button" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" onclick="adicionarProcesso();" id="btnAdicionar" class="infraButton" style="display: none">Adicionar</button>
     </div>
     <!-- FIM TIPO DO PROCESSO VALIDADO -->
 <div class="clear"></div>

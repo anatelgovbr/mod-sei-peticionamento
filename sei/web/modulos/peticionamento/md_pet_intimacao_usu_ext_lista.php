@@ -125,17 +125,17 @@ try {
 
                 //Documento Principal
                 $strResultado .= '<td>';
-                $strResultado .= $objRet->getStrDocumentoPrincipal();
+                $strResultado .= PaginaSEI::tratarHTML($objRet->getStrDocumentoPrincipal());
                 $strResultado .= '</td>';
 
                 //Tipo de Intimação
                 $strResultado .= '<td>';
-                $strResultado .= $objRet->getStrNomeTipoIntimacao();
+                $strResultado .= PaginaSEI::tratarHTML($objRet->getStrNomeTipoIntimacao());
                 $strResultado .= '</td>';
 
                 //Situação
                 $strResultado .= '<td>';
-                $strResultado .= $objRet->getStrSituacaoIntimacao();
+                $strResultado .= PaginaSEI::tratarHTML($objRet->getStrSituacaoIntimacao());
                 $strResultado .= '</td>';
 
                 $strResultado .= '<td align="center">';
@@ -361,7 +361,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     <div class="bloco">
         <label class="infraLabelOpcional" for="txtNumeroProcesso">Número do Processo:</label>
         <input type="text" name="txtNumeroProcesso" id="txtNumeroProcesso"
-               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" value="<?php  echo array_key_exists('txtNumeroProcesso', $_POST) ? $_POST['txtNumeroProcesso'] : '' ?>"/>
+               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" value="<?php  echo array_key_exists('txtNumeroProcesso', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtNumeroProcesso']) : '' ?>"/>
     </div>
     <!--FIM NUMERO PROCESSO-->
 
@@ -371,7 +371,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
         <!--DATA INICIAL-->
         <input type="text" name="txtDataInicio" id="txtDataInicio"
                onkeypress="return infraMascaraData(this, event);" maxlength="10"
-               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" value="<?php  echo array_key_exists('txtDataInicio', $_POST) ? $_POST['txtDataInicio'] : '' ?>"/>
+               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" value="<?php  echo array_key_exists('txtDataInicio', $_POST) ?  PaginaSEIExterna::tratarHTML($_POST['txtDataInicio']) : '' ?>"/>
 
         <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal() ?>/calendario.gif"
              id="imgDataInicio"
@@ -384,7 +384,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
         <!--DATA FINAL-->
         <input type="text" id="txtDataFim" name="txtDataFim"
-               value="<?php  echo array_key_exists('txtDataFim', $_POST) ? $_POST['txtDataFim'] : '' ?>"
+               value="<?php  echo array_key_exists('txtDataFim', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtDataFim']) : '' ?>"
                onkeypress="return infraMascaraData(this, event);" maxlength="10"
                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
 

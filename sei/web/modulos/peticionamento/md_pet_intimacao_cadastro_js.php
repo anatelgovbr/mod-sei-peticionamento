@@ -529,11 +529,11 @@
                     selectMultiple.multiple = '';
                   //  selectMultiple.style.width = '40%';
 
-                    var id = ids.split(",");
+                    var id = ids.split("¥");
 
                     for (var x=0;x<id.length;x++){
                         // TODO: refatorar este trecho, para nao usar este delimitador '-#-', retornar em formato XML usando atributos ou subtags na tags Ids retornada pelo ajax
-                        var montaCheck = id[x].split("-#-");
+                        var montaCheck = id[x].split("±");
 
                         var opt = document.createElement('option');
                         opt.value = montaCheck[0];

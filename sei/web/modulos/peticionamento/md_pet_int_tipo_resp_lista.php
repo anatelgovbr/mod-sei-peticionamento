@@ -283,7 +283,7 @@ try {
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
                 $strId = $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp();
-                $strDescricao = $arrObjMdPetIntTipoRespDTO[$i]->getStrNome();
+                $strDescricao = PaginaSEI::tratarHTML($arrObjMdPetIntTipoRespDTO[$i]->getStrNome(), true);
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIntTipoRespDTO[$i]->getStrSinAtivo() == 'S') {
@@ -352,6 +352,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
         <? if ($bolAcaoDesativar){ ?>
         function acaoDesativar(id, desc) {
+            desc = $('<pre>').html(desc).text();
             if (confirm("Confirma desativação do Tipo de Resposta \"" + desc + "\"?")) {
                 document.getElementById('hdnInfraItemId').value = id;
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkDesativar?>';
@@ -374,6 +375,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
         <? if ($bolAcaoReativar){ ?>
         function acaoReativar(id, desc) {
+            desc = $('<pre>').html(desc).text();
             if (confirm("Confirma reativação do Tipo de Resposta \"" + desc + "\"?")) {
                 document.getElementById('hdnInfraItemId').value = id;
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkReativar?>';
@@ -393,10 +395,10 @@ PaginaSEI::getInstance()->abrirJavaScript();
             }
         }
         <? } ?>
-
         <? if ($bolAcaoExcluir){ ?>
         function acaoExcluir(id, desc) {
-            if (confirm("Confirma exclusão do Tipo de Resposta \"" + desc + "\"?")) {
+            desc = $('<pre>').html(desc).text();
+            if (confirm("Confirma exclusão do Tipo de Resposta \"'" + desc + "'\"?")) {
                 document.getElementById('hdnInfraItemId').value = id;
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkExcluir?>';
                 document.getElementById('frmMdPetIntTipoRespLista').submit();
@@ -427,7 +429,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
            PaginaSEI::getInstance()->abrirAreaDados('6em');
         ?>
         <label id="lblTipoResposta" class="infraLabel" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">Tipo de Resposta:</label>
-        <input type="text" id="txtTipoResposta" name="txtTipoResposta" class="infraText" value="<? echo ($_POST['txtTipoResposta'] != '' ? $_POST['txtTipoResposta'] : '' )?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+        <input type="text" id="txtTipoResposta" name="txtTipoResposta" class="infraText" value="<? echo (PaginaSEI::tratarHTML($_POST['txtTipoResposta']) != '' ? PaginaSEI::tratarHTML($_POST['txtTipoResposta']) : '' )?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
         <input type="hidden" id="hdnTipoResposta" name="hdnTipoResposta" value="<?=$numIdContatoAssociadoPesquisa?>" />
 
         <label id="lblPrazoExterno" for="selPrazoExterno" class="infraLabelOpcional">Prazo Externo:</label>

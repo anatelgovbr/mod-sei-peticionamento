@@ -401,7 +401,7 @@ $strTipo = $_POST['selTipo'];;
   
   <!--  Nome do Menu -->
   	<label id="lblNome" for="txtNome" class="infraLabelOpcional">Nome do Menu:</label>
-    <input type="text" name="txtNome" id="txtNome" maxlength="30" value="<?= $strNome ?>" class="infraText" />
+    <input type="text" name="txtNome" id="txtNome" maxlength="30" value="<?= PaginaSEI::tratarHTML($strNome) ?>" class="infraText" />
 
 <!--  Tipo do Menu -->
  <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Tipo de Menu:</label>

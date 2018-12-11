@@ -392,7 +392,7 @@ else if( $tipo == 'H' ){
 ?>
 
 <label id="lblNome" for="txtNome" class="infraLabelObrigatorio">Nome do Menu:</label>
-<input type="text" id="txtNome" name="txtNome" class="infraText" maxlength="30" <?= $disabled ?> value="<?= $txtNome ?>">
+<input type="text" id="txtNome" name="txtNome" class="infraText" maxlength="30" <?= $disabled ?> value="<?= PaginaSEI::tratarHTML($txtNome) ?>">
 
  <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset">
  
@@ -404,7 +404,7 @@ else if( $tipo == 'H' ){
  </fieldset>
 
 <label id="lblUrl" for="txtUrl" class="infraLabelObrigatorio">URL do Link Externo:</label>
-<input type="text" id="txtUrl" name="txtUrl" maxlength="2083" class="infraText" <?= $disabled ?> value="<?= $txtUrl ?>">
+<input type="text" id="txtUrl" name="txtUrl" maxlength="2083" class="infraText" <?= $disabled ?> value="<?= PaginaSEI::tratarHTML($txtUrl) ?>">
 
 <label id="lblConteudo" for="txaConteudo" class="infraLabelObrigatorio">Conteúdo HTML:</label>
 
@@ -415,7 +415,7 @@ PaginaSEI::getInstance()->fecharAreaDados();
   <table id="tbConteudo" style="width: 100%; display: none;">
     <td style="width: 95%">
       <div id="divEditores" style="">
-        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> rows="20" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
+        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> rows="20" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
         <script type="text/javascript">
           <?=$retEditor->getStrEditores();?>
         </script>

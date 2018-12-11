@@ -180,8 +180,8 @@ var objAutoCompletarComplementar = null;
       document.getElementById('txtComplementar').focus();
     }};
 
-    objAutoCompletarPrincipal.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strDescricaoUnidade)?>');
-    objAutoCompletarComplementar.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strDescricaoUnidade)?>');
+    objAutoCompletarPrincipal.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strDescricaoUnidade))?>');
+    objAutoCompletarComplementar.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strDescricaoUnidade))?>');
 
     infraEfeitoTabelas();
 }

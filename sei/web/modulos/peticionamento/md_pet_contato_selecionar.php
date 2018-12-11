@@ -255,7 +255,7 @@ try {
       $strResultado .= PaginaSEIExterna::getInstance()->getAcaoTransportarItem($n++,$dto->getNumIdContato());
 
       $strId = $dto->getNumIdContato();
-      $strDescricao = PaginaSEIExterna::getInstance()->formatarParametrosJavaScript($strNomeSigla);
+      $strDescricao = PaginaSEIExterna::getInstance()->formatarParametrosJavaScript(PaginaSEIExterna::tratarHTML($strNomeSigla));
 
 	    if($_GET['acao']=='contato_selecionar' ||  $_GET['acao']=='peticionamento_contato_listar'){ 
 
@@ -426,7 +426,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
   ?>
   
   <label id="lblPalavrasPesquisaContatos" for="txtPalavrasPesquisaContatos" class="infraLabelOpcional">Palavras-chave para pesquisa:</label>
-  <input type="text" id="txtPalavrasPesquisaContatos" name="txtPalavrasPesquisaContatos" class="infraText" value="<?=$strPalavrasPesquisa;?>" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" />
+  <input type="text" id="txtPalavrasPesquisaContatos" name="txtPalavrasPesquisaContatos" class="infraText" value="<?=PaginaSEI::tratarHTML($strPalavrasPesquisa);?>" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>" />
 
   <label id="lblTipoContextoContato" for="selTipoContextoContato" class="infraLabelOpicional">Tipo de Interessado:</label>
   <select id="selTipoContextoContato" name="selTipoContextoContato" class="infraSelect" 

@@ -50,33 +50,6 @@ try {
     $strItensSelNivelAcesso = '';
     $strItensSelHipoteseLegal = '';
 
-    //Preencher Array de Unidades para buscar posteriormente
-    $objUnidadeDTO = new UnidadeDTO();
-    $objUnidadeDTO->retNumIdContato();
-    $objUnidadeDTO->retNumIdUnidade();
-    $objUnidadeDTO->retStrSigla();
-    $objUnidadeDTO->retStrDescricao();
-
-    $contatoRN = new ContatoRN();
-    $objUnidadeRN = new UnidadeRN();
-
-    $arrObjUnidadeDTO = $objUnidadeRN->listarTodasComFiltro($objUnidadeDTO);
-
-    foreach ($arrObjUnidadeDTO as $key => $objUnidadeDTO) {
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['sigla'] = $objUnidadeDTO->getStrSigla();
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricao'] = utf8_encode($objUnidadeDTO->getStrDescricao());
-        
-        $contatoDTO = new ContatoDTO();
-        $contatoDTO->retNumIdContato();
-        $contatoDTO->retStrSiglaUf();
-        $contatoDTO->setNumIdContato( $objUnidadeDTO->getNumIdContato() );
-        
-        $contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
-
-        //alteracoes seiv3
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = $contatoDTO->getStrSiglaUf();
-    }
-
     $objInfraParametroDTO = new InfraParametroDTO();
     $objMdPetParametroRN = new MdPetParametroRN();
     $objInfraParametroDTO->retTodos();
@@ -283,7 +256,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <!--  Tipo de Processo  -->
     <div class="fieldsetClear">
         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo: </label>
-        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo $nomeTipoProcesso; ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
         <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
         <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>"/>
         <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"/>
@@ -429,7 +402,7 @@ PaginaSEI::getInstance()->fecharHtml();
                 changeSelectNivelAcesso();
             }
         }
-        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
     }
 
     function removerProcessoAssociado(remover) {

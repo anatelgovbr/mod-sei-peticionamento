@@ -55,9 +55,9 @@
 		
   		if (isset($_POST['sbmCadastrarOrientacoesPetIndisp'])) {
   			try{
-  				
+  				$objEditorRN->validarTagsCriticas(array('jpg','png'), $_POST['txaConteudo']);
   				$objMdPetTpProcessoOrientacoesDTO2->setStrOrientacoesGerais($_POST['txaConteudo']);
-					
+
 				//Estilo
 				$conjuntoEstilosRN = new ConjuntoEstilosRN();
 		  		$conjuntoEstilosDTO = new ConjuntoEstilosDTO();
@@ -133,7 +133,7 @@ PaginaSEI::getInstance()->fecharAreaDados();
   <table style="width: 100%">
     <td style="width: 95%">
       <div id="divEditores" style="overflow: auto;">
-        <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
+        <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
         <script type="text/javascript">
           <?=$retEditor->getStrEditores();?>
         </script>

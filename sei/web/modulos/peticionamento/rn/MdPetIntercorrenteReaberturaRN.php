@@ -70,19 +70,28 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
 		$unidadeDTO->setNumIdUnidade($idUnidadeReabrirProcesso);
 		$unidadeRN = new UnidadeRN();
 		$objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
-		
+
 		if($objUnidadeDTO->getStrSinAtivo() == 'N'){
 			$idUnidadeReabrirProcesso = null;
-			$objAtividadeRN  = new AtividadeRN();
-			$arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
-			foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
-				if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
-					$idUnidadeReabrirProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
-					break;
+
+			$objMdPetAtividadeRN = new MdPetAtividadeRN();
+
+			$arrObjMdPetAtividadeDTO = $objMdPetAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
+
+			foreach ($arrObjMdPetAtividadeDTO as $itemObjMdPetAtividadeDTO) {
+				$unidadeDTO = new UnidadeDTO();
+				$unidadeDTO->retNumIdUnidade();
+				$unidadeDTO->retStrSinAtivo();
+				$unidadeDTO->setBolExclusaoLogica(false);
+				$unidadeDTO->setNumIdUnidade($itemObjMdPetAtividadeDTO->getNumIdUnidade());
+				$unidadeRN = new UnidadeRN();
+				$objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+				if (count($objUnidadeDTO)==1 && $objUnidadeDTO->getStrSinAtivo() == 'S') {
+					$idUnidadeReabrirProcesso = $objUnidadeDTO->getNumIdUnidade();
 				}
 			}
 		}
-	
+
 		if (!$idUnidadeReabrirProcesso) {
 			return false;
 		}

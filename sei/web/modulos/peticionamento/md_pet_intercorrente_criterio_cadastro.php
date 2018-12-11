@@ -257,7 +257,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <!--  Tipo de Processo  -->
     <div class="fieldsetClear">
         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipos de Processos: </label>
-        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText InfraAutoCompletar" value="<?= $nomeTipoProcesso ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText InfraAutoCompletar" value="<?= PaginaSEI::tratarHTML($nomeTipoProcesso) ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
         <?php if($_GET['acao'] != 'md_pet_intercorrente_criterio_consultar'){ ?>
         <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect" multiple="multiple" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
             <?= $strTipoProcesso; ?>
@@ -418,7 +418,7 @@ PaginaSEI::getInstance()->fecharHtml();
                 document.getElementById('txtTipoProcesso').focus();
             }
         }
-        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
     }
 
     function carregarComponenteTipoProcessoAlterar() {
@@ -441,7 +441,7 @@ PaginaSEI::getInstance()->fecharHtml();
                 document.getElementById('txtTipoProcesso').value = descricao;
             }
         }
-        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
     }
 
     function removerProcessoAssociado(remover) {

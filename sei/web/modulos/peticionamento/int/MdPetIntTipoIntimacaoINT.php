@@ -124,13 +124,13 @@ class MdPetIntTipoIntimacaoINT extends InfraINT
             $nome = $nomeTpResp . ' ' . $prazo . ' - ' . $resposta;
             
             // TODO: refatorar este trecho, para nao usar este delimitador '-#-', retornar em formato XML usando atributos ou subtags na tags Ids retornada pelo ajax
-            $tipoResposta[$i] = $arrMdPetIntRelIntimRespDTO[$i]->getNumIdMdPetIntTipoResp() . '-#-' . $nome . '-#-' . $arrMdPetIntRelIntimRespDTO[$i]->getStrTipoRespostaAceitaMdPetIntTipoResp();
+            $tipoResposta[$i] = $arrMdPetIntRelIntimRespDTO[$i]->getNumIdMdPetIntTipoResp() . '±' . $nome . '±' . $arrMdPetIntRelIntimRespDTO[$i]->getStrTipoRespostaAceitaMdPetIntTipoResp();
         }
 
         if($retornaXml){
             $xml = '<Documento>';
             $xml .= '<TipoRespostaAceita>'. $tipoRespostaAceita .'</TipoRespostaAceita>';
-            $xml .= '<Ids>'. implode(",", $tipoResposta) .'</Ids>';
+            $xml .= '<Ids>'. implode("¥", $tipoResposta) .'</Ids>';
             $xml .= '</Documento>';
         }else{
             $xml = $tipoResposta;

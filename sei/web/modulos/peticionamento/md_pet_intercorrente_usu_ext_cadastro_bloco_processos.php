@@ -6,14 +6,14 @@
     <!-- INICIO NUMERO DO PROCESSO -->
     <div class="bloco" style="width: 244px;">
         <label id="lblNumeroSei" for="txtNumeroProcesso" accesskey="n" class="infraLabelObrigatorio"><span class="infraTeclaAtalho">N</span>úmero:</label>
-        <input onchange="controlarChangeNumeroProcesso();" type="text" id="txtNumeroProcesso" name="txtNumeroProcesso" class="infraText" maxlength="100" style="width: 182px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtNumeroProcesso ?>"/>
+        <input onchange="controlarChangeNumeroProcesso();" type="text" id="txtNumeroProcesso" name="txtNumeroProcesso" class="infraText" maxlength="100" style="width: 182px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= PaginaSEI::tratarHTML($txtNumeroProcesso) ?>"/>
         <button tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" type="button" accesskey="v" id="btnValidar" onclick="validarNumeroProcesso()" class="infraButton"><span class="infraTeclaAtalho">V</span>alidar</button>
     </div>
     <!-- FIM NUMERO DO PROCESSO -->
     <!-- INICIO TIPO DO PROCESSO VALIDADO -->
     <div class="bloco" style="width: 390px;">
         <label id="lblTipo" for="txtTipo" class="infraLabelObrigatorio">Tipo:</label>
-        <input type="text" id="txtTipo" name="txtTipo" class="infraText" readonly="readonly" style="width: 318px;" value="<?= $txtTipo ?>" disabled/>
+        <input type="text" id="txtTipo" name="txtTipo" class="infraText" readonly="readonly" style="width: 318px;" value="<?= PaginaSEI::tratarHTML($txtTipo) ?>" disabled/>
         <button type="button" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" onclick="adicionarProcesso();" id="btnAdicionar" class="infraButton" style="display: none">Adicionar</button>
     </div>
     <!-- FIM TIPO DO PROCESSO VALIDADO -->

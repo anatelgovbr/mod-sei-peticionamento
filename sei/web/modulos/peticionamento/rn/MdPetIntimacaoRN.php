@@ -276,7 +276,7 @@ class MdPetIntimacaoRN extends InfraRN {
         $tiposResposta = MdPetIntTipoIntimacaoINT::montaSelectTipoRespostaIntimacao($objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(), false);
         $strSelect = '';
         foreach($tiposResposta as $id => $tipoResposta){
-            $tipoResposta = explode('-#-', $tipoResposta);
+            $tipoResposta = explode('±', $tipoResposta);
             $checked = '';
             foreach($objMdPetIntRelTipoRespDTO as $objTipoResposta){
                 if($tipoResposta[0] == $objTipoResposta->getNumIdMdPetIntTipoResp()){
@@ -1643,17 +1643,20 @@ class MdPetIntimacaoRN extends InfraRN {
             $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
             if($objUnidadeDTO->getStrSinAtivo() == 'N'){
-                $objAtividadeRN  = new AtividadeRN();
-                //VERIFICAR SE RETORNA ÚLTIMA OU QUALQUER UMA
-                $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
-                foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
+
+                $objMdPetAtividadeRN = new MdPetAtividadeRN();
+                $arrObjMdPetAtividadeDTO = $objMdPetAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
+
+                foreach ($arrObjMdPetAtividadeDTO as $itemObjMdPetAtividadeDTO) {
                     $unidadeDTO = new UnidadeDTO();
+                    $unidadeDTO->retNumIdUnidade();
                     $unidadeDTO->retStrSinAtivo();
-                    $unidadeDTO->setNumIdUnidade($itemObjUnidadeDTO->getNumIdUnidade());
+                    $unidadeDTO->setBolExclusaoLogica(false);
+                    $unidadeDTO->setNumIdUnidade($itemObjMdPetAtividadeDTO->getNumIdUnidade());
                     $unidadeRN = new UnidadeRN();
                     $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
                     if (count($objUnidadeDTO)==1 && $objUnidadeDTO->getStrSinAtivo() == 'S') {
-                        $idUnidadeAberta = $itemObjUnidadeDTO->getNumIdUnidade();
+                        $idUnidadeAberta = $objUnidadeDTO->getNumIdUnidade();
                         break;
                     }
                 }

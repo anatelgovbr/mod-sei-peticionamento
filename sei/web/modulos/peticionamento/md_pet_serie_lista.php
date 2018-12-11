@@ -282,7 +282,7 @@ try {
 
       if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
         $strId = $arrObjSerieDTO[$i]->getNumIdSerie();
-        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript($arrObjSerieDTO[$i]->getStrNome());
+        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjSerieDTO[$i]->getStrNome()));
       }
 
       if ($bolAcaoDesativar){
@@ -440,7 +440,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   </select>
  
   <label id="lblNomeSeriePesquisa" for="txtNomeSeriePesquisa" accesskey="" class="infraLabelOpcional">Nome:</label>
-  <input type="text" id="txtNomeSeriePesquisa" name="txtNomeSeriePesquisa" value="<?=$strNomeSeriePesquisa?>" class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+  <input type="text" id="txtNomeSeriePesquisa" name="txtNomeSeriePesquisa" value="<?=PaginaSEI::tratarHTML($strNomeSeriePesquisa)?>" class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
   <label id="lblModeloPesquisa" for="selModeloPesquisa" accesskey="" class="infraLabelOpcional" style="display:none!important">Modelo:</label>
   <select id="selModeloPesquisa" name="selModeloPesquisa" onchange="this.form.submit();" class="infraSelect" style="display:none!important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" >

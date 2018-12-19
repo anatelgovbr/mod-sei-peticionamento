@@ -180,10 +180,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(true);
             InfraDebug::getInstance()->setBolEcho(true);
-            $this->logar($e->getTraceAsString());
-            $this->finalizar('FIM', true);
-            print_r($e);
-            die;
             throw new InfraException('Erro instalando/atualizando versão.', $e);
         }
     }
@@ -1660,10 +1656,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         if (count($objInfraMetaBD->obterTabelas('md_pet_indisp_anexo')) > 0) {
             $this->logar('DELETANDO A TABELA md_pet_indisp_anexo');
             BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_indisp_anexo');
-        }
-        if (count($objInfraMetaBD->obterTabelas('seq_md_pet_indisp_anexo')) > 0) {
-            $this->logar('DELETANDO A TABELA seq_md_pet_indisp_anexo');
-            BancoSEI::getInstance()->executarSql('DROP TABLE seq_md_pet_indisp_anexo');
+
+            $this->logar('DELETANDO A SEQUENCE seq_md_pet_indisp_anexo');
+            if ( (BancoSEI::getInstance() instanceof InfraMySql) OR (BancoSEI::getInstance() instanceof InfraSqlServer) ) {
+                BancoSEI::getInstance()->executarSql( "DROP TABLE seq_md_pet_indisp_anexo");
+            } else if (BancoSEI::getInstance() instanceof InfraOracle) {
+                BancoSEI::getInstance()->executarSql( "DROP SEQUENCE seq_md_pet_indisp_anexo");
+            }
         }
 
         if (count($objInfraMetaBD->obterTabelas('md_pet_indisp_doc')) == 0) {
@@ -1687,8 +1686,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_03', 'md_pet_indisp_doc', array('id_usuario'), 'usuario', array('id_usuario'));
             $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_04', 'md_pet_indisp_doc', array('id_documento'), 'documento', array('id_documento'));
             $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_05', 'md_pet_indisp_doc', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
-        }
-        if (count($objInfraMetaBD->obterTabelas('seq_md_pet_indisp_doc')) == 0) {
+
             $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisp_doc');
             BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
         }

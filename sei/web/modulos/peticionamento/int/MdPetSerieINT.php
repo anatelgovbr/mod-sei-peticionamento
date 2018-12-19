@@ -48,7 +48,7 @@ class MdPetSerieINT extends SerieINT {
 			array(array(SerieRN::$TA_INTERNO_EXTERNO, $aplicalidade)));
 
   	$objSerieDTO->setNumMaxRegistrosRetorno(50);  
-  	$objSerieDTO->setStrSinAtivo('s');
+  	$objSerieDTO->setStrSinAtivo('S');
   	$objSerieDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
   
   	$objSerieRN = new SerieRN();

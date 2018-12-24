@@ -159,6 +159,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <button type="button" id="sbmGravarUsuario" accesskey="A" name="sbmGravarUsuario" class="infraButton" onclick="transportarUsuario();" value="Adicionar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><span class="infraTeclaAtalho">A</span>dicionar</button>
                     </div>
 
+					<!-- TODO: Mostrar avisos para os usuários com links para as páginas de Procurações Conhecidas da Anatel e da Wiki de como Gerar Intimação Eletrônica-->
+					<div class="grid" width="98%">
+						<br/>
+						<label class="infraLabelObrigatorio">Atenção: Consulte o <a href="https://sistemasnet/wiki/doku.php?id=artigos:processo_eletronico:sei_roteiro_usuario_gerar_intimacao_eletronica" target="_blank" title="Orientações sobre expedição de Intimações Eletrônicas">Artigo na Wiki</a> com orientações sobre expedição de Intimações Eletrônicas. Especialmente quando se tratar de Intimação de Pessoa Jurídica, verifique previamente a lista de <a href="http://integra/Lists/Procuraes%20Conhecidas%20na%20Anatel/AllItems.aspx" target="_blank" title="Acesse a Lista de Procurações Conhecidas">Procurações Conhecidas da Anatel</a> e confira se existe indicação formal para fins de recebimento de intimação.</label>
+					</div>
+
                 </div>
 
                 <div class="tabUsuario clear height_2" style="<?php echo $isAlterar ? '' : 'display:none' ?>"></div>

@@ -240,7 +240,7 @@ try {
 
       if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
         $strId = $arrObjHipoteseLegalDTO[$i]->getNumIdHipoteseLegal();
-        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript($arrObjHipoteseLegalDTO[$i]->getStrNome());
+        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjHipoteseLegalDTO[$i]->getStrNome()));
       }
 
       if ($bolAcaoDesativar){

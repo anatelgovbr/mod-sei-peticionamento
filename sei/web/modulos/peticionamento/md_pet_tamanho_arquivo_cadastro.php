@@ -101,9 +101,9 @@ PaginaSEI::getInstance()->abrirAreaDados('30em');
 <fieldset id="fieldsetTamanhoArquivo" class="infraFieldset">
  <legend class="infraLegend">&nbsp;Limite em Mb para carregamento de Arquivos&nbsp;</legend>
 	<label id="lblValorDocPrincipal" for="txtValorDocPrincipal" class="infraLabelObrigatorio">Documento Principal (Processo Novo):</label>
-	<input type="text" id="txtValorDocPrincipal" name="txtValorDocPrincipal" class="infraText" value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? $objMdPetTamanhoArquivoDTO->getNumValorDocPrincipal() : '' ?>" onkeypress="return validarCampo(this, event, 11)" maxlength="11" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+	<input type="text" id="txtValorDocPrincipal" name="txtValorDocPrincipal" class="infraText" value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocPrincipal()) : '' ?>" onkeypress="return validarCampo(this, event, 11)" maxlength="11" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 	<label id="lblValorDocComplementar" for="txtValorDocComplementar" class="infraLabelObrigatorio">Documentos Essenciais/Complementares (Processo Novo) e Intercorrente:</label>
-	<input type="text" id="txtValorDocComplementar" name="txtValorDocComplementar" class="infraText" value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? $objMdPetTamanhoArquivoDTO->getNumValorDocComplementar() : '' ?>" onkeypress="return validarCampo(this, event, 11);"  onkeydown="somenteNumeros(event)" maxlength="11" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+	<input type="text" id="txtValorDocComplementar" name="txtValorDocComplementar" class="infraText" value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocComplementar()) : '' ?>" onkeypress="return validarCampo(this, event, 11);"  onkeydown="somenteNumeros(event)" maxlength="11" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
  </fieldset> 
   
   <input type="hidden" id="hdnIdTamanhoArquivoPeticionamento" name="hdnIdTamanhoArquivoPeticionamento" value="<?=$_GET['id_tamanho_arquivo_peticionamento'];?>" />

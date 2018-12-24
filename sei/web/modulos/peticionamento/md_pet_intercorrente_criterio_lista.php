@@ -250,7 +250,7 @@ try {
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
-                $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript($arrObjMdPetCriterioDTO[$i]->getStrNomeProcesso());
+                $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjMdPetCriterioDTO[$i]->getStrNomeProcesso()));
                 if ($bolAcaoDesativar && $arrObjMdPetCriterioDTO[$i]->getStrSinAtivo() == 'S'){
                     $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/desativar.gif" title="Desativar Critério Intercorrente" alt="Desativar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
                 } else {
@@ -400,7 +400,7 @@ $arrNivelAcesso = array(
     <div style="height:4.5em; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
         <!--  Nome do Menu -->
         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelOpcional">Tipo de Processo:</label>
-        <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" value="<?= $txtTipoProcesso ?>" class="infraText" />
+        <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" value="<?= PaginaSEI::tratarHTML($txtTipoProcesso) ?>" class="infraText" />
         <!--  Tipo do Menu -->
         <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Nível de Acesso dos Documentos:</label>
         <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect" >

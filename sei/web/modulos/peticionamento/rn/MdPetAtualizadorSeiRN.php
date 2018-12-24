@@ -11,10 +11,10 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetAtualizadorSeiRN extends InfraRN {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '2.0.1';
+    private $versaoAtualDesteModulo = '2.0.2';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2');
 
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
 
@@ -115,6 +115,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv110();
                 $this->instalarv200();
                 $this->instalarv201();
+                $this->instalarv202();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '0.0.1') {
@@ -124,6 +125,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv110();
                 $this->instalarv200();
                 $this->instalarv201();
+                $this->instalarv202();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '0.0.2') {
@@ -132,6 +134,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv110();
                 $this->instalarv200();
                 $this->instalarv201();
+                $this->instalarv202();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif (in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3'))) {
@@ -139,25 +142,37 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv110();
                 $this->instalarv200();
                 $this->instalarv201();
+                $this->instalarv202();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '1.0.4') {
                 $this->instalarv110();
                 $this->instalarv200();
                 $this->instalarv201();
+                $this->instalarv202();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '1.1.0') {
                 $this->instalarv200();
                 $this->instalarv201();
+                $this->instalarv202();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '2.0.0') {
                 $this->instalarv201();
+                $this->instalarv202();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '2.0.1') {
+                $this->instalarv202();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif ($strVersaoModuloPeticionamento == '2.0.2') {
                 $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
+                $this->finalizar('FIM', false);
+            } else {
+                $this->logar('A VERSÃO DO '.$this->nomeDesteModulo.' INSTALADA NESTE AMBIENTE (v'.$strVersaoModuloPeticionamento.') NÃO É COMPATÍVEL COM A ATUALIZAÇÃO PARA A VERSÃO MAIS RECENTE (v'.$this->versaoAtualDesteModulo.').');
+                $this->instalarv202();
                 $this->finalizar('FIM', false);
             }
 
@@ -169,10 +184,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(true);
             InfraDebug::getInstance()->setBolEcho(true);
-            $this->logar($e->getTraceAsString());
-            $this->finalizar('FIM', true);
-            print_r($e);
-            die;
             throw new InfraException('Erro instalando/atualizando versão.', $e);
         }
     }
@@ -1635,6 +1646,74 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.1\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+    }
+
+    //Contem atualizações da versao 2.0.2
+    protected function instalarv202(){
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+
+        //checando permissoes na base de dados
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+
+        if (count($objInfraMetaBD->obterTabelas('md_pet_indisp_anexo')) > 0) {
+            $this->logar('DELETANDO A TABELA md_pet_indisp_anexo');
+            BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_indisp_anexo');
+
+            $this->logar('DELETANDO A SEQUENCE seq_md_pet_indisp_anexo');
+            if ( (BancoSEI::getInstance() instanceof InfraMySql) OR (BancoSEI::getInstance() instanceof InfraSqlServer) ) {
+                BancoSEI::getInstance()->executarSql( "DROP TABLE seq_md_pet_indisp_anexo");
+            } else if (BancoSEI::getInstance() instanceof InfraOracle) {
+                BancoSEI::getInstance()->executarSql( "DROP SEQUENCE seq_md_pet_indisp_anexo");
+            }
+        }
+
+        if (count($objInfraMetaBD->obterTabelas('md_pet_indisp_doc')) == 0) {
+            $this->logar('CRIANDO A TABELA md_pet_indisp_doc');
+
+            BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_indisp_doc (
+                id_md_pet_indisp_doc ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_md_pet_indisponibilidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NULL,
+                id_acesso_externo ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+                dth_inclusao ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL,
+                sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL
+                )'
+            );
+
+            $objInfraMetaBD->adicionarChavePrimaria('md_pet_indisp_doc', 'pk_md_pet_indisp_doc', array('id_md_pet_indisp_doc'));
+            $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_01', 'md_pet_indisp_doc', array('id_md_pet_indisponibilidade'), 'md_pet_indisponibilidade', array('id_md_pet_indisponibilidade'));
+            $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_02', 'md_pet_indisp_doc', array('id_unidade'), 'unidade', array('id_unidade'));
+            $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_03', 'md_pet_indisp_doc', array('id_usuario'), 'usuario', array('id_usuario'));
+            $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_04', 'md_pet_indisp_doc', array('id_documento'), 'documento', array('id_documento'));
+            $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_05', 'md_pet_indisp_doc', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
+
+            $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisp_doc');
+            BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
+        }
+
+        $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'nome_tipo_intimacao');
+        if (count($colunasTabela) == 1 || $colunasTabela[0]['column_name'] == 'nome_tipo_intimacao') {
+            $this->logar('DELETANDO A COLUNA md_pet_rel_recibo_protoc.nome_tipo_intimacao');
+            $objInfraMetaBD->excluirColuna('md_pet_rel_recibo_protoc', 'nome_tipo_intimacao');
+        }
+
+        $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'nome_tipo_resposta');
+        if (count($colunasTabela) == 1 || $colunasTabela[0]['column_name'] == 'nome_tipo_resposta') {
+            $this->logar('DELETANDO A COLUNA md_pet_rel_recibo_protoc.nome_tipo_resposta');
+            $objInfraMetaBD->excluirColuna('md_pet_rel_recibo_protoc', 'nome_tipo_resposta');
+        }
+
+        if (count($objInfraMetaBD->obterTabelas('md_pet_usu_ext_processo')) == 1) {
+            $this->logar('DELETANDO A TABELA md_pet_usu_ext_processo');
+            BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_usu_ext_processo');
+        }
+
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
     }
 

@@ -67,7 +67,7 @@
         <input class="inputData" style="margin-left: 1%" type="text" name="txtDataInicio" id="txtDataInicio"
                onkeypress="return infraMascaraData(this, event);" maxlength="10"
                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
-               value="<?php echo array_key_exists('txtDataInicio', $_POST) ? $_POST['txtDataInicio'] : '' ?>"/>
+               value="<?php echo array_key_exists('txtDataInicio', $_POST) ? PaginaSEI::tratarHTML($_POST['txtDataInicio']) : '' ?>"/>
 
         <img class="imgCalendario" src="<?= PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal() ?>/calendario.gif"
              id="imgDataInicio"
@@ -76,7 +76,7 @@
              onclick="infraCalendario('txtDataInicio',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
 
         <input class="inputData" style="margin-left: 12%" type="text" id="txtDataFim" name="txtDataFim"
-               value="<?php echo array_key_exists('txtDataFim', $_POST) ? $_POST['txtDataFim'] : '' ?>"
+               value="<?php echo array_key_exists('txtDataFim', $_POST) ? PaginaSEI::tratarHTML($_POST['txtDataFim']) : '' ?>"
                onkeypress="return infraMascaraData(this, event);" maxlength="10"
                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
 

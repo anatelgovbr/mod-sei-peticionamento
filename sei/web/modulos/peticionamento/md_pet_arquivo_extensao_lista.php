@@ -229,7 +229,7 @@ try {
 
       if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
         $strId = $arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao();
-        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript($arrObjArquivoExtensaoDTO[$i]->getStrExtensao());
+        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjArquivoExtensaoDTO[$i]->getStrExtensao()));
       }
 
       if ($bolAcaoDesativar){

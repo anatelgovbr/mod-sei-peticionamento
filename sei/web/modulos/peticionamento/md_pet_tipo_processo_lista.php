@@ -295,7 +295,7 @@ try {
 
       if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
         $strId = $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento();
-        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript($arrObjMdPetTipoProcessoDTO[$i]->getStrNomeProcesso());
+        $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjMdPetTipoProcessoDTO[$i]->getStrNomeProcesso()));
       }
  
       if ($bolAcaoDesativar && $arrObjMdPetTipoProcessoDTO[$i]->getStrSinAtivo() == 'S'){
@@ -454,7 +454,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   
   <!--  Tipo de Processo -->
   	<label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelOpcional">Tipo de Processo:</label>
-    <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" value="<?php echo isset($_POST['txtTipoProcesso']) ? $_POST['txtTipoProcesso'] : ''?>"  class="infraText" />
+    <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" value="<?php echo isset($_POST['txtTipoProcesso']) ? PaginaSEI::tratarHTML($_POST['txtTipoProcesso']) : ''?>"  class="infraText" />
     
   <!--  Indicação de Interessado -->
   	<label id="lblIndicacaoInteressado" for="selIndicacaoInteressado" class="infraLabelOpcional">Indicação de Interessado:</label>

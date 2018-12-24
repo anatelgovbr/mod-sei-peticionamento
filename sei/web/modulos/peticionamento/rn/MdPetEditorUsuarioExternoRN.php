@@ -301,7 +301,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           $strFormatos = rtrim($strFormatos, '|');
 
           $strTextareas .= '<textarea name="txaEditor_' . $objVersaoSecaoDocumentoDTO->getNumIdSecaoModeloSecaoDocumento() . '" style="display:none;">';
-          $strTextareas .= InfraString::formatarXML($this->filtrarTags($objVersaoSecaoDocumentoDTO->getStrConteudo()));
+          $strTextareas .= InfraString::formatarXML($this->filtrarTags(PaginaSEI::tratarHTML($objVersaoSecaoDocumentoDTO->getStrConteudo())));
           $strTextareas .= '</textarea>';
 
 
@@ -1482,9 +1482,9 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
     $html = '<hr style="border:1px solid #c0c0c0;" />';
     $html .= 'Criado por ';
-    $html .= '<a onclick="alert(\'' . PaginaSEIExterna::getInstance()->formatarParametrosJavascript($strNomeUsuarioGerador) . '\')" alt="' . $strNomeUsuarioGerador . '" title="' . $strNomeUsuarioGerador . '" style="color:#0066cc;text-decoration:none;cursor:pointer;">' . $strSiglaUsuarioGerador . '</a>';
+    $html .= '<a onclick="alert(\'' . PaginaSEIExterna::getInstance()->formatarParametrosJavascript(PaginaSEIExterna::tratarHTML($strNomeUsuarioGerador)) . '\')" alt="' . $strNomeUsuarioGerador . '" title="' . $strNomeUsuarioGerador . '" style="color:#0066cc;text-decoration:none;cursor:pointer;">' . $strSiglaUsuarioGerador . '</a>';
     $html .= ', versão ' . $numVersao . ' por ';
-    $html .= '<a onclick="alert(\'' . PaginaSEIExterna::getInstance()->formatarParametrosJavascript($strNomeUsuarioVersao) . '\')" alt="' . $strNomeUsuarioVersao . '" title="' . $strNomeUsuarioVersao . '" style="color:#0066cc;text-decoration:none;cursor:pointer;">' . $strSiglaUsuarioVersao . '</a>';
+    $html .= '<a onclick="alert(\'' . PaginaSEIExterna::getInstance()->formatarParametrosJavascript(PaginaSEIExterna::tratarHTML($strNomeUsuarioVersao)) . '\')" alt="' . $strNomeUsuarioVersao . '" title="' . $strNomeUsuarioVersao . '" style="color:#0066cc;text-decoration:none;cursor:pointer;">' . $strSiglaUsuarioVersao . '</a>';
     $html .= ' em ' . $dthVersao . '.' . "\n";
 
     return $html;

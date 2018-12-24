@@ -338,7 +338,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <input <?php echo $disabledAlterar ?> type="text" onchange="validDate('I')"
                                               onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
                                               name="txtDtInicio" id="txtDtInicio"
-                                              value="<?= $objMdPetIndisponibilidadeDTO->getDthDataInicioFormatada() ?>"
+                                              value="<?= PaginaSEI::tratarHTML($objMdPetIndisponibilidadeDTO->getDthDataInicioFormatada()) ?>"
                                               class="infraText"/>
         <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/calendario.gif" id="imgDtInicio"
              title="Selecionar Data/Hora Inicial" alt="Selecionar Data/Hora Inicial" class="infraImg"
@@ -349,7 +349,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <input <?php echo $disabledAlterar ?> type="text" onchange="validDate('F')"
                                               onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
                                               name="txtDtFim" id="txtDtFim"
-                                              value="<?= $objMdPetIndisponibilidadeDTO->getDthDataFimFormatada() ?>"
+                                              value="<?= PaginaSEI::tratarHTML($objMdPetIndisponibilidadeDTO->getDthDataFimFormatada()) ?>"
                                               class="infraText"/>
         <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/calendario.gif" id="imgDtFim"
              title="Selecionar Data/Hora Final"
@@ -365,7 +365,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             Indisponibilidade:</label>
         <textarea type="text" maxlength="500" id="txtResumoIndisponibilidade" rows="3" name="txtResumoIndisponibilidade"
                   class="infraText" onkeypress="return infraMascaraTexto(this,event,500);"
-                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?php echo isset($objMdPetIndisponibilidadeDTO) ? $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade() : '' ?></textarea>
+                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?php echo isset($objMdPetIndisponibilidadeDTO) ? PaginaSEI::tratarHTML($objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade()) : '' ?></textarea>
     </fieldset>
 
     <fieldset id="fldProrrogacao" class="infraFieldset">
@@ -400,7 +400,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                    class="infraText"
                    onkeyup="infraMascaraNumero(this, event, 100);" maxlength="100"
                    style="width:170px;"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtNumeroSei ?>"/>
+                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= PaginaSEI::tratarHTML($txtNumeroSei) ?>"/>
 
             <button type="button" <?php echo ($isConsultar) ? 'disabled="disabled"' : '' ?> accesskey="V"
                     id="btnValidar" onclick="controlarNumeroSEI();" class="infraButton">
@@ -416,7 +416,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <br/>
             <input type="text" id="txtTipo" name="txtTipo" class="infraText"
                    readonly="readonly"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtTipo ?>"/>
+                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= PaginaSEI::tratarHTML($txtTipo) ?>"/>
 
             <button type="button" id="btnAdicionar" style="display: none" accesskey="A" onclick="adicionarDocumento()"
                     class="infraButton">

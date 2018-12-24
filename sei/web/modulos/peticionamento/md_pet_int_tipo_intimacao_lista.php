@@ -320,7 +320,7 @@ try {
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
                 $strId = $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao();
-                $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript($arrObjMdPetIntTipoIntimacaoDTO[$i]->getStrNome());
+                $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjMdPetIntTipoIntimacaoDTO[$i]->getStrNome()));
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIntTipoIntimacaoDTO[$i]->getStrSinAtivo() == 'S') {
@@ -396,6 +396,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
 <? if ($bolAcaoDesativar){ ?>
     function acaoDesativar(id, desc) {
+    desc = $("<pre>").html(desc).text();
     if (confirm("Confirma desativação do Tipo de Intimação Eletrônica  \"" + desc + "\"?")) {
     document.getElementById('hdnInfraItemId').value = id;
     document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?=$strLinkDesativar?>';
@@ -418,6 +419,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
 <? if ($bolAcaoReativar){ ?>
     function acaoReativar(id, desc) {
+    desc = $("<pre>").html(desc).text();
     if (confirm("Confirma reativação do Tipo de Intimação Eletrônica  \"" + desc + "\"?")) {
     document.getElementById('hdnInfraItemId').value = id;
     document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?=$strLinkReativar?>';
@@ -440,6 +442,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
 <? if ($bolAcaoExcluir){ ?>
     function acaoExcluir(id, desc) {
+    desc = $("<pre>").html(desc).text();
     if (confirm("Confirma exclusão do Tipo de Intimação Eletrônica \"" + desc + "\"?")) {
     document.getElementById('hdnInfraItemId').value = id;
     document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?=$strLinkExcluir?>';
@@ -470,7 +473,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         PaginaSEI::getInstance()->abrirAreaDados('6em');
         ?>
         <label id="lblTipoIntimacao" for="txtTipoIntimacao" accesskey="" class="infraLabelOpcional">Tipo de Intimação:</label>
-        <input type="text" id="txtTipoIntimacao" name="txtTipoIntimacao" class="infraText" maxlength="100" value="<? echo ($_POST['txtTipoIntimacao'] != '' ? $_POST['txtTipoIntimacao'] : '' )?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="text" id="txtTipoIntimacao" name="txtTipoIntimacao" class="infraText" maxlength="100" value="<? echo (PaginaSEI::tratarHTML($_POST['txtTipoIntimacao']) != '' ? PaginaSEI::tratarHTML($_POST['txtTipoIntimacao']) : '' )?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
         <label id="lblTipodeResposta" for="lblTipodeResposta" accesskey="" class="infraLabelOpcional">Tipo de Resposta:</label>
         <select id="selTipoResposta" name="selTipoResposta" onchange="this.form.submit()" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">

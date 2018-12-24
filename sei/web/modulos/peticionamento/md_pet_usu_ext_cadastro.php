@@ -190,7 +190,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
          
          <input type="text" id="txtCPF" class="infraText" name="txtCPF" onkeyup="return alterandoCPF(this, event)" style="width:120px; display:none;" maxlength="14"/>
          
-         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeyup="return alterandoCNPJ(this, event)" style="width:120px; display:none;"/ maxlength="18"/>
+         <input type="text" id="txtCNPJ" class="infraText" name="txtCNPJ" onkeyup="return alterandoCNPJ(this, event)" style="width:120px; display:none;" maxlength="18"/>
          
          <input type="button" id="btValidarCPFCNPJ" class="infraText" value="Validar" style="visibility: hidden; margin-left: 2px;" onclick="abrirCadastroInteressado()"/>
                          

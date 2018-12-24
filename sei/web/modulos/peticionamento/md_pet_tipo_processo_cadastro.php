@@ -761,7 +761,7 @@ PaginaSEI::getInstance()->abrirAreaDados('98%');
   <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">
   Tipo de Processo:
   </label>
-  <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo $nomeTipoProcesso; ?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+  <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
   <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>" />
   <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>" />
   <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg" />
@@ -777,7 +777,7 @@ PaginaSEI::getInstance()->abrirAreaDados('98%');
   <label id="lblOrientacoes" for="txtOrientacoes" class="infraLabelObrigatorio">
   Orientações:
   </label>
-  <textarea type="text" id="txtOrientacoes" rows="3" name="txtOrientacoes" class="infraText" onkeypress="return infraMascaraTexto(this,event,500);" maxlength="500" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?php echo $orientacoes;?></textarea>
+  <textarea type="text" id="txtOrientacoes" rows="3" name="txtOrientacoes" class="infraText" onkeypress="return infraMascaraTexto(this,event,500);" maxlength="500" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?php echo PaginaSEI::tratarHTML($orientacoes);?></textarea>
   </div>
  <!--  Fim das Orientações  -->
 
@@ -797,7 +797,7 @@ PaginaSEI::getInstance()->abrirAreaDados('98%');
   <br/>
  
   <div id="divCpUnidadeUnica" <?php echo $divUnidadeUnica;?>>
-  <input type="text" id="txtUnidade" name="txtUnidade" class="infraText" value="<?=$nomeUnidade?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+  <input type="text" id="txtUnidade" name="txtUnidade" class="infraText" value="<?=PaginaSEI::tratarHTML($nomeUnidade)?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
   <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?=$idUnidade?>" />
   <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" />
   <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Unidade" title="Remover Unidade" class="infraImg" />
@@ -816,7 +816,7 @@ PaginaSEI::getInstance()->abrirAreaDados('98%');
   </label>
   
  <div id="divCpUnidadeMultipla" <?php echo $divUnidadeMultipla; ?>>
-   <input type="text" id="txtUnidadeMultipla" name="txtUnidadeMultipla" class="infraText" value="<?=$nomeUnidadeMultipla?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+   <input type="text" id="txtUnidadeMultipla" name="txtUnidadeMultipla" class="infraText" value="<?=PaginaSEI::tratarHTML($nomeUnidadeMultipla)?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
    <input type="hidden" id="hdnIdUnidadeMultipla" name="hdnIdUnidadeMultipla" value="<?=$idUnidadeMultipla?>" />
    <input type="hidden" id="hdnUfUnidadeMultipla" name="hdnUfUnidadeMultipla" value="" />
    
@@ -1004,7 +1004,7 @@ echo $contatoAssociadoDTO->getStrSiglaUf();
 	  Tipo do Documento Principal:
 	  </label>
 	  </div>
-	  <input type="text" id="txtTipoDocPrinc" name="txtTipoDocPrinc" class="infraText" value="<?=$nomeSerie?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+	  <input type="text" id="txtTipoDocPrinc" name="txtTipoDocPrinc" class="infraText" value="<?=PaginaSEI::tratarHTML($nomeSerie)?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 	   
 	  <input type="hidden" id="hdnIdTipoDocPrinc" name="hdnIdTipoDocPrinc" value="<?=$idSerie?>" />
 	  <img id="imgLupaTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('S');" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" />      
@@ -1409,7 +1409,7 @@ function carregarComponenteUnidadeMultipla(){
 	  document.getElementById('hdnUfUnidadeMultipla').value = uf;
 	  }
 	  }
-	  objAutoCompletarUnidadeMultipla.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript($nomeUnidadeMultipla);?>');
+	  objAutoCompletarUnidadeMultipla.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($nomeUnidadeMultipla));?>');
 }
 
 
@@ -1434,7 +1434,7 @@ function carregarComponenteUnidade(){
 	  document.getElementById('txtUnidade').value = descricao;
 	  }
 	  }
-	  objAutoCompletarUnidade.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+	  objAutoCompletarUnidade.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
 }
 
 function carregarComponenteLupaTpDocPrinc(acaoComponente){
@@ -1489,7 +1489,7 @@ function carregarComponenteAutoCompleteTpDocPrinc(tipo){
 	  document.getElementById('txtTipoDocPrinc').value = descricao;
 	  }
 	  }
-	  objAutoCompletarTipoDocPrinc.selecionar('<?=$strIdTipoDocPrinc?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+	  objAutoCompletarTipoDocPrinc.selecionar('<?=$strIdTipoDocPrinc?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
 }
 
 
@@ -1516,7 +1516,7 @@ function carregarComponenteTipoProcesso(){
 	  objAjaxIdNivelAcesso.executar();
 	  }
 	  }
-	  objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+	  objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
 	 
 }
 

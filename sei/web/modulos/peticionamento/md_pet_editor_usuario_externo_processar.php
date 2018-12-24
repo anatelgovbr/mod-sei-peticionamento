@@ -206,7 +206,7 @@ PaginaSEIExterna::getInstance()->fecharHead();
 
     <div id="divEditores" style="overflow: auto;border-top:2px solid;border-bottom:0px;">
         <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" 
-                 tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"><?=$txtConteudo?></textarea>
+                 tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
         <script type="text/javascript">
         CKEDITOR.replace('txaConteudo',{ 'autoGrow_onStartup':'true', "stylesheetParser_validSelectors":/^(p).(<?=$strFormatos?>)$/i, 
           'toolbar':[["Save"],["Find","Replace","-","RemoveFormat","Bold","Italic","Underline","Strike","Subscript","Superscript","Maiuscula","Minuscula","TextColor","BGColor"],["Cut","Copy","PasteFromWord","PasteText","-","Undo","Redo","ShowBlocks","Symbol","Scayt"],["NumberedList","BulletedList","-","Outdent","Indent","base64image"],["Table","SpecialChar","SimpleLink","Extenso","Zoom"],["Styles"]]});

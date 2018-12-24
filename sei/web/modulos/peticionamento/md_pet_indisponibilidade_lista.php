@@ -531,7 +531,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   <!--  Data Inicio  -->
   	<label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">Início:</label>
     <input type="text" name="txtDtInicio" id="txtDtInicio" onchange="validDate('I');" 
-    value="<?= $strDtInicio ?>" 
+    value="<?= PaginaSEI::tratarHTML($strDtInicio) ?>" 
     onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" class="infraText" />
  	<img src="<?=PaginaSEI::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtInicio" 
  	     title="Selecionar Data/Hora Inicial" 
@@ -541,7 +541,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   <!--  Data Fim  -->
   	<label id="lblDtFim" for="txtDtFim" class="infraLabelOpcional">Fim:</label>
     <input type="text" name="txtDtFim" onchange="validDate('F');" id="txtDtFim" 
-    value="<?= $strDtFim ?>"  
+    value="<?= PaginaSEI::tratarHTML($strDtFim) ?>"  
     onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');" maxlength="16" class="infraText"/>
     <img src="<?=PaginaSEI::getInstance()->getDiretorioImagensGlobal()?>/calendario.gif" id="imgDtFim" 
          title="Selecionar Data/Hora Final" 

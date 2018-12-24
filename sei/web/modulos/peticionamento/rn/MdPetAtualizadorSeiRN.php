@@ -170,6 +170,10 @@ class MdPetAtualizadorSeiRN extends InfraRN {
             } elseif ($strVersaoModuloPeticionamento == '2.0.2') {
                 $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
                 $this->finalizar('FIM', false);
+            } else {
+                $this->logar('A VERSÃO DO '.$this->nomeDesteModulo.' INSTALADA NESTE AMBIENTE (v'.$strVersaoModuloPeticionamento.') NÃO É COMPATÍVEL COM A ATUALIZAÇÃO PARA A VERSÃO MAIS RECENTE (v'.$this->versaoAtualDesteModulo.').');
+                $this->instalarv202();
+                $this->finalizar('FIM', false);
             }
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -1689,6 +1693,23 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
             $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisp_doc');
             BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
+        }
+
+        $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'nome_tipo_intimacao');
+        if (count($colunasTabela) == 1 || $colunasTabela[0]['column_name'] == 'nome_tipo_intimacao') {
+            $this->logar('DELETANDO A COLUNA md_pet_rel_recibo_protoc.nome_tipo_intimacao');
+            $objInfraMetaBD->excluirColuna('md_pet_rel_recibo_protoc', 'nome_tipo_intimacao');
+        }
+
+        $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'nome_tipo_resposta');
+        if (count($colunasTabela) == 1 || $colunasTabela[0]['column_name'] == 'nome_tipo_resposta') {
+            $this->logar('DELETANDO A COLUNA md_pet_rel_recibo_protoc.nome_tipo_resposta');
+            $objInfraMetaBD->excluirColuna('md_pet_rel_recibo_protoc', 'nome_tipo_resposta');
+        }
+
+        if (count($objInfraMetaBD->obterTabelas('md_pet_usu_ext_processo')) == 1) {
+            $this->logar('DELETANDO A TABELA md_pet_usu_ext_processo');
+            BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_usu_ext_processo');
         }
 
         $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');

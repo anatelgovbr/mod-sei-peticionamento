@@ -1696,13 +1696,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         }
 
         $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'nome_tipo_intimacao');
-        if (count($colunasTabela) == 1 || $colunasTabela[0]['column_name'] == 'nome_tipo_intimacao') {
+        if (count($colunasTabela) == 1 && $colunasTabela[0]['column_name'] == 'nome_tipo_intimacao') {
             $this->logar('DELETANDO A COLUNA md_pet_rel_recibo_protoc.nome_tipo_intimacao');
             $objInfraMetaBD->excluirColuna('md_pet_rel_recibo_protoc', 'nome_tipo_intimacao');
         }
 
         $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_recibo_protoc', 'nome_tipo_resposta');
-        if (count($colunasTabela) == 1 || $colunasTabela[0]['column_name'] == 'nome_tipo_resposta') {
+        if (count($colunasTabela) == 1 && $colunasTabela[0]['column_name'] == 'nome_tipo_resposta') {
             $this->logar('DELETANDO A COLUNA md_pet_rel_recibo_protoc.nome_tipo_resposta');
             $objInfraMetaBD->excluirColuna('md_pet_rel_recibo_protoc', 'nome_tipo_resposta');
         }

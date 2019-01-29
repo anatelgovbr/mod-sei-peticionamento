@@ -739,6 +739,7 @@ class MdPetIntimacaoRN extends InfraRN {
      * */
     private function _getDadosDocumentoIntimacao($idsDocs)
     {
+
         $arrRetorno = array();
 
         if (count($idsDocs > 0))
@@ -759,6 +760,7 @@ class MdPetIntimacaoRN extends InfraRN {
 
             //Array para pesquisar todas as Intimações
             $idsIntimacao = array();
+
             if (count($arrObjDTOAdd) > 0)
             {
                 $idsIntimacao = array_unique(InfraArray::converterArrInfraDTO($arrObjDTOAdd, 'IdMdPetIntimacao'));
@@ -768,7 +770,7 @@ class MdPetIntimacaoRN extends InfraRN {
             {
                 //Consulta todos os dados das Intimações dos Documentos Anexos
                 $objMdPetIntDestDTO2 = new MdPetIntRelDestinatarioDTO();
-                $objMdPetIntDestDTO1->setNumIdMdPetIntimacao($idsIntimacao, InfraDTO::$OPER_IN);
+                $objMdPetIntDestDTO2->setNumIdMdPetIntimacao($idsIntimacao, InfraDTO::$OPER_IN);
                 $objMdPetIntDestDTO2->setStrSinPrincipalDoc('S');
                 $objMdPetIntDestDTO2->retDblIdDocumento();
                 $objMdPetIntDestDTO2->retDblIdProtocolo();
@@ -777,7 +779,6 @@ class MdPetIntimacaoRN extends InfraRN {
                 $objMdPetIntDestDTO2->retStrProtocoloFormatadoDocumento();
                 $objMdPetIntDestDTO2->retNumIdMdPetIntimacao();
                 $objMdPetIntDestDTO2->retStrSinPrincipalDoc();
-
                 $arrObjDTOMain = $objMdPetIntDestRN->listar($objMdPetIntDestDTO2);
 
                 //Verifica a qual documento principal pertence cada documento adicionado
@@ -786,10 +787,10 @@ class MdPetIntimacaoRN extends InfraRN {
                     foreach ($arrObjDTOAdd as $objDTOAdd)
                     {
                         $isMesmaIntimacao = $objDTOMain->getNumIdMdPetIntimacao() == $objDTOAdd->getNumIdMdPetIntimacao();
+
                         if ($isMesmaIntimacao)
                         {
-                            $idMain = $objDTOAdd->getNumIdMdPetIntimacao().'_'.$objDTOAdd->getDblIdProtocolo();
-                            $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['idDocMain']   = $objDTOMain->getDblIdProtocolo();
+                            $idMain = $objDTOAdd->getNumIdMdPetIntimacao().'_'.$objDTOAdd->getDblIdProtocolo();                            $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['idDocMain']   = $objDTOMain->getDblIdProtocolo();
                             $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['nomeDocMain'] = $this->_formataNomeDocumentoParaIntimacao($objDTOMain);
                             $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['isPrincipal'] = $objDTOAdd->getDblIdProtocolo() == $objDTOMain->getDblIdProtocolo() ? 'S' : 'N';
                         }
@@ -813,12 +814,12 @@ class MdPetIntimacaoRN extends InfraRN {
         array_push($idsDocs, $idDocumentoPrinc);
 
         $arrDadosAllDocs = $this->_getDadosDocumentoIntimacao($idsDocs);
-
+        
         foreach ($hdnIdsUsuarios as $usuario)
         {
             $idContato = $usuario[0];
-            $nomeContato = $this->_getNomeContato($idContato);
-            $msgInicio   = "O Destinatário ". $nomeContato. " já possui protocolos indicados nesta Intimação a ser gerada vinculados a Intimação anterior neste processo. Veja a lista abaixo: \n\n";
+//            $nomeContato = $this->_getNomeContato($idContato);
+            $msgInicio   = "O Destinatário ". $usuario[1]. " já possui protocolos indicados nesta Intimação a ser gerada vinculados a Intimação anterior neste processo. Veja a lista abaixo: \n\n";
 
             $objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
             $objMdPetIntDestDTO->retNumIdMdPetIntimacao();
@@ -845,7 +846,6 @@ class MdPetIntimacaoRN extends InfraRN {
                 {
                     $arrDadosDocMain =  array_key_exists($objDTO->getDblIdProtocolo(), $arrDadosAllDocs) ? $arrDadosAllDocs[$objDTO->getDblIdProtocolo()] : null;
                     $dadosDoc        =  $this->_formatarNomeProtocolo($objDTO);
-
                     foreach($arrDadosDocMain as $idIntimacao=> $arrDadoDoc){
                     if (!is_null($arrDadoDoc))
                     {
@@ -945,7 +945,7 @@ class MdPetIntimacaoRN extends InfraRN {
         $tpAcessoSolicitado    = array_key_exists('1', $arr) ? $arr[1] : null;
         $idProcedimento        = array_key_exists('2', $arr) ? $arr[2] : null;
         $tpsAcessoAnterior     = $objMdPetAcessoExtRN->getUltimaConcAcessoExtModuloPorContatos(array($hdnIdsUsuarios, $idProcedimento));
-
+        
         $idDocumentoPrinc      = $arr[4];
         $arrIdsAnexo           = $arr[3] != '' ? explode('_', $arr[3]) : array();
 

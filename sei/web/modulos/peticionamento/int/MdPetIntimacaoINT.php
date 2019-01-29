@@ -23,7 +23,6 @@ class MdPetIntimacaoINT extends InfraINT {
         return $xml;
     }
 
-
     public static function montarSelectIdMdPetIntimacao($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntTipoIntimacao=''){
         $objMdPetIntimacaoDTO = new MdPetIntimacaoDTO();
         $objMdPetIntimacaoDTO->retNumIdMdPetIntimacao();

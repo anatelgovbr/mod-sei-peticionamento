@@ -26,7 +26,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '2.0.2';
+        return '2.0.3';
     }
 
     public function getInstituicao()
@@ -1092,7 +1092,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
     //pelo ponto de extensao dos documentos negados (ponto de ext novo, adicionado no SEI 3.0.7)
     private function montarBotaoAcessoExternoPeticionamento($arrObjProtocoloAPI2, $isProcedimento = false)
     {
-
+        
         $objMdPetIntProtocoloRN = new MdPetIntProtocoloRN();
 
         $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
@@ -1124,7 +1124,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
 
                 $count = $objMdPetIntProtocoloRN->contar($objMdPetIntDocumentoDTO);
-
+                
                 if ($count > 0) {
                     $listaDocs = $objMdPetIntProtocoloRN->listar($objMdPetIntDocumentoDTO);
                     $objMdPetIntRN = new MdPetIntimacaoRN();
@@ -1174,7 +1174,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         }
 
                         $objMdPetIntRelDestDTO = $objMdPetIntRelDestRN->consultar($objMdPetIntRelDestDTO);
-
+                        
                         if (!is_null($objMdPetIntRelDestDTO)) {
 
 
@@ -1237,13 +1237,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             $arr[2] = count($tooltip) > 0 ? $tooltip[0] : '';
                             $arr[3] = count($tooltip) > 0 ? $tooltip[1] : '';
                             $conteudoHtml = $objMdPetIntRN->retornaLinkCompletoIconeIntimacao($arr);
-
+                            
                             if ($existeInt) {
                                 $conteudoHtml .= $objMdPetCertidaoRN->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcessoExterno));
                                 $conteudoHtml .= $objMdPetRespostaRN->addIconeResposta(array($idIntimacao, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest));
                                 $sitIntimacao  = $objMdPetIntRelDestDTO->getStrStaSituacaoIntimacao();
-
+                                
                                 if ($sitIntimacao == MdPetIntimacaoRN::$INTIMACAO_RESPONDIDA) {
+//                                if ($sitIntimacao == 3) {
                                     $objMdPetReciboDTO = new MdPetReciboDTO();
                                     $objMdPetReciboDTO->retTodos();
 
@@ -1293,13 +1294,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                         $acessoExtDTO->setDblIdProtocoloAtividade($objMdPetReciboDTO->getNumIdProtocolo());
 
                                         $acessoExtDTO->setNumIdContatoParticipante($usuarioDTO->getNumIdContato());
-                                        $acessoExtDTO->setStrEmailDestinatario($emailDestinatario);
                                         $acessoExtDTO->setStrStaTipo(AcessoExternoRN::$TA_USUARIO_EXTERNO);
                                         $acessoExtDTO->setStrSinAtivo('S');
                                         $acessoExtDTO->setDtaValidade(InfraData::getStrDataHoraAtual(),InfraDTO::$OPER_MAIOR_IGUAL);
 
                                         $arrAcessosExternos = $acessoExtRN->listar($acessoExtDTO);
-
                                         $id_acesso_ext_link = $arrAcessosExternos[0]->getNumIdAcessoExterno();
 
                                         $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;

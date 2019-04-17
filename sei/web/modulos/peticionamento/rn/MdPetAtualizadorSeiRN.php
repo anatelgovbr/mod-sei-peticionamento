@@ -184,7 +184,6 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->finalizar('FIM', false);
             } else {
                 $this->logar('A VERSÃO DO '.$this->nomeDesteModulo.' INSTALADA NESTE AMBIENTE (v'.$strVersaoModuloPeticionamento.') NÃO É COMPATÍVEL COM A ATUALIZAÇÃO PARA A VERSÃO MAIS RECENTE (v'.$this->versaoAtualDesteModulo.').');
-                $this->instalarv202();
                 $this->finalizar('FIM', false);
             }
 

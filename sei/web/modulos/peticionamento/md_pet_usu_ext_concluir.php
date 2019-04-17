@@ -45,7 +45,7 @@ try {
 		$objMdPetProcessoRN = new MdPetProcessoRN();
   		$strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
   		
-  		if( isset( $_POST['senhaSEI'] ) ){
+  		if( isset( $_POST['pwdsenhaSEI'] ) ){
   			
   			//documento montado no editor rico do SEI
   			if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
@@ -78,7 +78,7 @@ try {
 			}
 
   			$arrParam = array();
-  			$arrParam['senhaSEI'] = $_POST['senhaSEI'];
+  			$arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
 			$objMdPetProcessoRN->validarSenha( $arrParam );
 			$arrDadosProcessoComRecibo = $objMdPetProcessoRN->gerarProcedimento( $_POST );			
 			$idRecibo = $arrDadosProcessoComRecibo[0]->getNumIdReciboPeticionamento();
@@ -219,7 +219,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     
     <p>
     <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label> <br/>
-    <input type="password" name="senhaSEI" id="senhaSEI" class="infraText" autocomplete="off" style="width: 60%;" />
+    <input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText" autocomplete="off" style="width: 60%;" />
     </p>
     
     <!--  Campos Hidden para preencher com valores da janela pai -->
@@ -257,7 +257,7 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 function isValido(){
 
 	var cargo = document.getElementById("selCargo").value;
-	var senha = document.getElementById("senhaSEI").value;
+	var senha = document.getElementById("pwdsenhaSEI").value;
 
 	if( cargo == ""){
 		alert('Favor informe o Cargo/Função.');
@@ -265,7 +265,7 @@ function isValido(){
 		return false;
 	} else if( senha == ""){
 		alert('Favor informe a Senha.');
-		document.getElementById("senhaSEI").focus();
+		document.getElementById("pwdsenhaSEI").focus();
 		return false;
 	} else {
 		return true;

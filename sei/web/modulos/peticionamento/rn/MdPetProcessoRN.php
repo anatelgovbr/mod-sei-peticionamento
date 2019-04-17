@@ -47,7 +47,7 @@ class MdPetProcessoRN extends InfraRN {
 		$senhaBanco=$objUsuarioDTO->getStrSenha();
 		$bcrypt = new InfraBcrypt();
 		
-		$senhaInformada=md5( $arrParametros['senhaSEI'] );
+		$senhaInformada=md5( $arrParametros['pwdsenhaSEI'] );
 
 		if (!$bcrypt->verificar($senhaInformada,$senhaBanco)) {
 			$objInfraException->adicionarValidacao("Senha inválida.");
@@ -944,7 +944,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objAssinaturaDTO = new AssinaturaDTO();
 				$objAssinaturaDTO->setStrStaFormaAutenticacao(AssinaturaRN::$TA_SENHA);
 				$objAssinaturaDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-				$objAssinaturaDTO->setStrSenhaUsuario( $arrParametros['senhaSEI'] );
+				$objAssinaturaDTO->setStrSenhaUsuario( $arrParametros['pwdsenhaSEI'] );
 				$objAssinaturaDTO->setStrCargoFuncao( "Usuário Externo - " . $cargoDTO->getStrExpressao() );
 				$documentoDTO->setStrDescricaoTipoConferencia("do próprio documento nato-digital");
 				$objAssinaturaDTO->setArrObjDocumentoDTO(array($documentoDTO));
@@ -954,7 +954,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objAssinaturaDTO = new AssinaturaDTO();
 				$objAssinaturaDTO->setStrStaFormaAutenticacao(AssinaturaRN::$TA_SENHA);
 				$objAssinaturaDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-				$objAssinaturaDTO->setStrSenhaUsuario( $arrParametros['senhaSEI'] );
+				$objAssinaturaDTO->setStrSenhaUsuario( $arrParametros['pwdsenhaSEI'] );
 				$objAssinaturaDTO->setStrCargoFuncao( "Usuário Externo - " . $cargoDTO->getStrExpressao() );
 				$objAssinaturaDTO->setArrObjDocumentoDTO(array($documentoDTO));		
 				

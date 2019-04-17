@@ -771,7 +771,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 		// setando atributos que serão utilizados em outros métodos
 		$this->setCargoDTO($params['selCargo']);
-		$this->setSenha($params['senhaSEI']);
+		$this->setSenha($params['pwdsenhaSEI']);
 
 		$idProcedimentoProcesso = $params['id_procedimento'];
 		//Busca o Procedimento Principal
@@ -1324,7 +1324,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 	private function validarCadastro($params){
 		// Bloco de validações
 		$objInfraException = new InfraException();
-		$this->validarSenhaSei($params['senhaSEI'], $objInfraException);
+		$this->validarSenhaSei($params['pwdsenhaSEI'], $objInfraException);
 		$this->validarDocumentos($params['hdnTbDocumento'], $objInfraException);
 		$this->validarNumIdProcedimento($params['id_procedimento'], $objInfraException);
 		$this->validarNumIdTipoProcedimento($params['id_tipo_procedimento'], $objInfraException);
@@ -1336,7 +1336,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			$objInfraException->adicionarValidacao('Senha não informada.');
 		}
 		$objMdPetProcessoRN = new MdPetProcessoRN();
-		$objMdPetProcessoRN->validarSenha(array('senhaSEI' => $senha));
+		$objMdPetProcessoRN->validarSenha(array('pwdsenhaSEI' => $senha));
 	}
 
 	private function validarDocumentos($hdnTbDocumento, InfraException $objInfraException){

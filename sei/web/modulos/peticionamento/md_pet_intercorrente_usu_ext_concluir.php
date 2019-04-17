@@ -206,7 +206,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     
     <p>
     <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label> <br/>
-    <input type="password" name="senhaSEI" id="senhaSEI" class="infraText" autocomplete="off" style="width: 60%;" />
+    <input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText" autocomplete="off" style="width: 60%;" />
     </p>
 
     <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $_REQUEST['id_tipo_procedimento'] ?>" />
@@ -246,7 +246,7 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 function isValido(){
 
 	var cargo = document.getElementById("selCargo").value;
-	var senha = document.getElementById("senhaSEI").value;
+	var senha = document.getElementById("pwdsenhaSEI").value;
 
 	if( cargo == ""){
 		alert('Favor informe o Cargo/Função.');
@@ -254,7 +254,7 @@ function isValido(){
 		return false;
 	} else if( senha == ""){
 		alert('Favor informe a Senha.');
-		document.getElementById("senhaSEI").focus();
+		document.getElementById("pwdsenhaSEI").focus();
 		return false;
 	} else {
 		return true;

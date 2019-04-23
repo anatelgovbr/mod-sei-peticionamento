@@ -127,7 +127,7 @@ class MdPetCriterioRN extends InfraRN
 
             //Cadastrar Indisponibilidade
             $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
-            $objMdPetCriterioDTO->setStrSinAtivo('S');
+
             $objInfraException = new InfraException();
 
             $this->_validarCamposObrigatorios($objMdPetCriterioDTO, $objInfraException);
@@ -164,6 +164,7 @@ class MdPetCriterioRN extends InfraRN
         }
 
         $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
+
         return $this->cadastrarControlado($objMdPetCriterioDTO);
     }
 

@@ -66,9 +66,11 @@ try {
 
             // cadastrando o critério intercorrente
             if (isset($_POST['sbmCadastrarTpProcessoPeticionamento'])) {
+
                 $objMdPetCriterioDTO = new MdPetCriterioDTO();
                 $objMdPetCriterioDTO->setNumIdTipoProcedimento($_POST['hdnIdTipoProcesso']);
                 $objMdPetCriterioDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
+                $objMdPetCriterioDTO->setStrSinAtivo($_POST['rdSinAtivo'][0]);
 
                 if (isset($_POST['selNivelAcesso']) && !empty($_POST['selNivelAcesso']) && $_POST['rdNivelAcesso'][0] == '2') {
                     $strStaTipoNivelAcesso = $_POST['selNivelAcesso'];
@@ -77,7 +79,7 @@ try {
                     }
                     $objMdPetCriterioDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
                 }
-
+                
                 $objMdPetCriterioRN = new MdPetCriterioRN();
                 $objMdPetCriterioRN->cadastrarPadrao($objMdPetCriterioDTO);
 
@@ -101,6 +103,8 @@ try {
                     $sinCriterioPadrao   = $objCriterioIntercorrentePadraoDTO->getStrSinCriterioPadrao() == 'S' ? 'checked = checked' : '';
                     $sinNAUsuExt         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
                     $sinNAPadrao         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
+                    $sinAtivoSim         = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'S' ? 'checked = checked' : '';
+                    $sinAtivoNao         = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'N' ? 'checked = checked' : '';
                     $hipoteseLegal       = $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
                     $strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $idTipoProcesso);
                     $strItensSelHipoteseLegal = MdPetTipoProcessoINT::montarSelectHipoteseLegal(null, null, $objCriterioIntercorrentePadraoDTO->getNumIdHipoteseLegal());
@@ -219,7 +223,13 @@ PaginaSEI::getInstance()->fecharJavaScript();
         left: 55.2%;
         top: 18px;
     }
-
+    
+    #imgAjuda2 {
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        padding: .1em 0;
+    }
     #lblNivelAcesso {
         width: 50%;
     }
@@ -261,7 +271,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>"/>
         <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"/>
         <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"/>
-        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n\n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; ou 3) Processo Bloqueado. \n\n\n\n\n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado.') ?> alt="Ajuda" class="infraImg"/>
+        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip(' Apenas após a parametrização do Intercorrente Padrão e selecionada a opção "Exibir no Acesso Externo" é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente no Acesso Externo do SEI. \n\n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo no Peticionamento Intercorrente ocorrerá quando o processo corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; ou 3) Processo Bloqueado. \n\n\n\n\n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado.') ?> alt="Ajuda" class="infraImg"/>
     </div>
     <!--  Fim do Tipo de Processo -->
 
@@ -291,10 +301,23 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <?= $strItensSelHipoteseLegal ?>
                     </select>
                 </div>
+                
             </div>
         </fieldset>
     </div>
+    <div style="margin-top: 15px!important;">
+        <fieldset class="infraFieldset" style="width:75%;">
+            <legend class="infraLegend">&nbsp;Exibir menu Peticionamento Intercorrente&nbsp; <img id="imgAjuda2" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Opção para tornar visível ou não o menu de Peticionamento > Intercorrente para os Usuários Externos no Acesso Externo do SEI.') ?> alt="Ajuda" class="infraImg"/></legend>
+            <div>
+                <input <?php echo $sinAtivoSim; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoSim" value="S">
+                <label for="rdSinAtivoSim" id="lblSinAtivoSim" class="infraLabelRadio">Exibir no Acesso Externo</label><br/>
 
+                <input <?php echo $sinAtivoNao; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoNao" value="N">
+                <label name="rdSinAtivoNao" id="lblSinAtivoNao" for="rdSinAtivoNao" class="infraLabelRadio">Não Exibir no Acesso Externo</label>
+
+            </div>
+        </fieldset>
+    </div>
     <div style="clear:both;">&nbsp;</div>
     <?
     PaginaSEI::getInstance()->fecharAreaDados();
@@ -454,6 +477,20 @@ PaginaSEI::getInstance()->fecharHtml();
             }
         }
 
+        var elemsSA = document.getElementsByName("rdSinAtivo[]");
+        var validoSA = false;
+
+        for (var i = 0; i < elemsSA.length; i++) {
+            if (elemsSA[i].checked === true) {
+                validoSA = true;
+            }
+        }
+
+        if (validoSA === false) {
+            alert('Indique a opção para exibição ou não do menu Peticionamento Intercorrente.');
+            return false;
+        }
+        
         return true;
     }
 

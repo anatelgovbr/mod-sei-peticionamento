@@ -177,7 +177,7 @@ try {
                     }
                     $objMdPetCriterioDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
                 }
-
+                $objMdPetCriterioDTO->setStrSinAtivo('S');
                 $objMdPetCriterioRN = new MdPetCriterioRN();
 				if ($_GET['acao'] == 'md_pet_intercorrente_criterio_padrao') {
 					$objMdPetCriterioRN->cadastrarPadrao($objMdPetCriterioDTO);

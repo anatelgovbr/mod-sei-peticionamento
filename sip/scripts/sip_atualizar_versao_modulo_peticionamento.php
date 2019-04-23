@@ -11,10 +11,10 @@ require_once dirname(__FILE__).'/../web/Sip.php';
 class MdPetAtualizadorSipRN extends InfraRN {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '2.0.3';
+    private $versaoAtualDesteModulo = '2.0.4';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4');
 
     public function __construct(){
         parent::__construct();
@@ -115,6 +115,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv201();
                         $this->instalarv202();
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '0.0.1' ){
@@ -126,6 +127,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv201();
                         $this->instalarv202();
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '0.0.2' ){
@@ -136,6 +138,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv201();
                         $this->instalarv202();
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif( in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3')) ){
@@ -145,6 +148,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv201();
                         $this->instalarv202();
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '1.0.4' ){
@@ -153,30 +157,40 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv201();
                         $this->instalarv202();
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '1.1.0' ){
                         $this->instalarv200();
                         $this->instalarv201();
                         $this->instalarv202();
+                        $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.0' ){
                         $this->instalarv201();
                         $this->instalarv202();
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.1' ){
                         $this->instalarv202();
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.2' ){
                         $this->instalarv203();
+                        $this->instalarv204();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.3' ){
+                        $this->instalarv204();
+                        $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
+                        $this->finalizar('FIM', false);
+                    } elseif ( $strVersaoModuloPeticionamento == '2.0.4' ){
                         $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
                         $this->finalizar('FIM', false);
                     } else {
@@ -1299,7 +1313,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.2\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
     
-    //Contem atualizações da versao 2.0.2
+    //Contem atualizações da versao 2.0.3
     protected function instalarv203(){
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.3 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
@@ -1307,6 +1321,16 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.3\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
+    
+    //Contem atualizações da versao 2.0.4
+    protected function instalarv204(){
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.4 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.4\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+    }
+    
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null){
 
         $objRecursoDTO = new RecursoDTO();

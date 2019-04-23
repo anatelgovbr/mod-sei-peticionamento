@@ -26,7 +26,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '2.0.3';
+        return '2.0.4';
     }
 
     public function getInstituicao()
@@ -747,7 +747,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         //utilizado para ordenação
         $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
         $arrMenusNomes = array();
-
+        
         $arrMenusNomes["Peticionamento"] = $urlBase . '/controlador_externo.php?acao=md_pet_usu_ext_iniciar';
 
         $arrMenusNomes["Recibos Eletrônicos de Protocolo"] = $urlBase . '/controlador_externo.php?acao=md_pet_usu_ext_recibo_listar';
@@ -779,16 +779,31 @@ class PeticionamentoIntegracao extends SeiIntegracao
             }
         }
 
+        $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
+        $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
+        $objMdPetTipoProcessoDTO->setStrSinAtivo('S');
+        $objMdPetTipoProcessoDTO->retTodos();
+        
+        $arrObjMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
+        
+        $objMdPetTipoProcessoDTO = count($arrObjMdPetTipoProcessoDTO) > 0 ? current($arrObjMdPetTipoProcessoDTO) : null;
+        
+
+        
         $arrLink = array();
         $numRegistrosMenu = count($arrMenusNomes);
 
         $objMdPetCriterioRN = new MdPetCriterioRN();
         $objMdPetCriterioDTO = new MdPetCriterioDTO();
         $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
+        $objMdPetCriterioDTO->setStrSinAtivo('S');
         $objMdPetCriterioDTO->retTodos();
         $arrObjMdPetCriterioDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
         $objMdPetCriterioDTO = count($arrObjMdPetCriterioDTO) > 0 ? current($arrObjMdPetCriterioDTO) : null;
 
+//        echo "<pre>";
+//        var_dump(count($arrObjMdPetCriterioDTO));
+//        die;
         if (is_array($arrMenusNomes) && $numRegistrosMenu > 0) {
 
             foreach ($arrMenusNomes as $key => $value) {
@@ -799,9 +814,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 if ($nomeMenu == 'Peticionamento') {
 
                     $urlLinkIntercorrente = $urlBase . '/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar';
-
-                    $arrLink[] = '-^#^^' . $nomeMenu . '^';
-                    $arrLink[] = '--^' . $urlLink . '^^' . 'Processo Novo' . '^';
+                    if ($objMdPetTipoProcessoDTO || !is_null($objMdPetCriterioDTO)){
+                        $arrLink[] = '-^#^^' . $nomeMenu . '^';
+                    }
+                    if($objMdPetTipoProcessoDTO) {
+                        $arrLink[] = '--^' . $urlLink . '^^' . 'Processo Novo' . '^';
+                    }
+                    
                     if (!is_null($objMdPetCriterioDTO)) {
                         $arrLink[] = '--^' . $urlLinkIntercorrente . '^^' . 'Intercorrente' . '^';
                     }

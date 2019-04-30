@@ -801,9 +801,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $arrObjMdPetCriterioDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
         $objMdPetCriterioDTO = count($arrObjMdPetCriterioDTO) > 0 ? current($arrObjMdPetCriterioDTO) : null;
 
-//        echo "<pre>";
-//        var_dump(count($arrObjMdPetCriterioDTO));
-//        die;
         if (is_array($arrMenusNomes) && $numRegistrosMenu > 0) {
 
             foreach ($arrMenusNomes as $key => $value) {
@@ -869,8 +866,18 @@ class PeticionamentoIntegracao extends SeiIntegracao
         document.getElementsByTagName('body')[0].appendChild(f);
         f.submit();
     }</script>";
-            $array[] = '<button type="button" accesskey="i" name="btnPetIntercorrente" value="Peticionamento Intercorrente" onclick="criarForm();" class="infraButton">Peticionamento <span class="infraTeclaAtalho">I</span>ntercorrente</button>';
-
+                        
+            $objMdPetCriterioRN = new MdPetCriterioRN();
+            $objMdPetCriterioDTO = new MdPetCriterioDTO();
+            $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
+            $objMdPetCriterioDTO->setStrSinAtivo('S');
+            $objMdPetCriterioDTO->retTodos();
+            $arrObjMdPetCriterioDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
+            $objMdPetCriterioDTO = count($arrObjMdPetCriterioDTO) > 0 ? current($arrObjMdPetCriterioDTO) : null;
+            
+            if($objMdPetCriterioDTO != null) {
+                $array[] = '<button type="button" accesskey="i" name="btnPetIntercorrente" value="Peticionamento Intercorrente" onclick="criarForm();" class="infraButton">Peticionamento <span class="infraTeclaAtalho">I</span>ntercorrente</button>';
+            }
         }
 
         return $array;

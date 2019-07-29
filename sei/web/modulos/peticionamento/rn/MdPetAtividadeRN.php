@@ -850,7 +850,6 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objAtividadeDTO->setNumIdTarefa(TarefaRN::getArrTarefasTramitacao(), InfraDTO::$OPER_IN);
 			$objAtividadeDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
 			$objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual(),InfraDTO::$OPER_DIFERENTE);
-			$objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_ASC);
 
 			$objAtividadeRN = new AtividadeRN();
 			$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);

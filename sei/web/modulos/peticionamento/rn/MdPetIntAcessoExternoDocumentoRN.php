@@ -242,10 +242,18 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 	
 	protected function controlarAcessoExternoIntimacaoConectado($arrParams)
 	{
+		
+		
 		//Preparar Variaveis
 		$dadosUsuario         = $arrParams[0];
 		$post				  = $arrParams[1];
-		$idContato    		  = $dadosUsuario[0];
+		if(is_array($arrParams[0])){
+			$idContato    		  = $arrParams[0][0];
+			
+		}else{
+			$idContato    		  = $arrParams[0];
+			
+		}
 		$idProcedimento       = $post['hdnIdProcedimento'];
 		
 		$objMdPetAcessoExtRN  = new MdPetAcessoExternoRN();
@@ -254,9 +262,30 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		$idDocumento = $post['hdnIdDocumento'];
 		$nomeDoc = $this->_getNomeDocCompleto($idDocumento);
 		$tpAcessoSolicitado   = array_key_exists('optIntegral', $post) && $post['optIntegral'] == static::$ACESSO_INTEGRAL ? static::$ACESSO_INTEGRAL : static::$ACESSO_PARCIAL;
-
+		
+		if($post['hdnTipoPessoa'] == "J"){
+		//Atribuindo acesso integral para jurídico
+		$objMdPetAcessoExtRN   = new MdPetAcessoExternoRN();
+		$tpAcessoAnterior =  $objMdPetAcessoExtRN->getUltimaConcAcessoExtModuloPorContatos(array(array($idContato), $idProcedimento));
+		
+		if($tpAcessoAnterior[$idContato] == "I"){
+			$tpAcessoSolicitado = static::$ACESSO_INTEGRAL;
+		}else if($tpAcessoAnterior[$idContato] == "P"){
+			if($tpAcessoSolicitado == "I"){
+				$tpAcessoSolicitado = static::$ACESSO_INTEGRAL;
+			}
+		}else if(empty($tpAcessoAnterior[$idContato])){
+			if($tpAcessoSolicitado == static::$ACESSO_PARCIAL){
+				$tpAcessoSolicitado = static::$ACESSO_PARCIAL;
+			}else{
+				$tpAcessoSolicitado = static::$ACESSO_INTEGRAL;
+				
+			}
+		}
+	}
+		
 		$idAcessoExterno = $objMdPetAcessoExtRN->aplicarRegrasGeraisAcessoExterno($idProcedimento, MdPetAcessoExternoRN::$MD_PET_INTIMACAO, $idContato,  $tpAcessoSolicitado, $nomeDoc);
-
+		
 		return $idAcessoExterno;
 	}
 
@@ -504,16 +533,19 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 	
 	public function verificarConcessaoAcessoExterno($job, $objDocumento, $objMdPetIntAceiteDTO)
 	{
-		$idAcessoExt  = $this->_getIdAcessoExternoRelacionado($objMdPetIntAceiteDTO);
-		$tpConcessao = $this->getTipoConcessaoAcesso($idAcessoExt);
-		if($tpConcessao == static::$ACESSO_PARCIAL)
-		{
-			$objRelProtAcessoExtRN  = new RelAcessoExtProtocoloRN();
-			$objRelProtAcessoExtDTO = new RelAcessoExtProtocoloDTO();
-			$objRelProtAcessoExtDTO->setNumIdAcessoExterno($idAcessoExt);
-			$objRelProtAcessoExtDTO->setDblIdProtocolo($objDocumento->getDblIdDocumento());
-			$objRelProtAcessoExtRN->cadastrar($objRelProtAcessoExtDTO);
-		}
+        $arrObjMdPetIntDestDTO  = $this->_getIdAcessoExternoRelacionado($objMdPetIntAceiteDTO);
+
+        foreach ($arrObjMdPetIntDestDTO as $objMdPetIntDestDTO) {
+
+            $tpConcessao = $this->getTipoConcessaoAcesso($objMdPetIntDestDTO->getNumIdAcessoExterno());
+            if ($tpConcessao == static::$ACESSO_PARCIAL) {
+                $objRelProtAcessoExtRN = new RelAcessoExtProtocoloRN();
+                $objRelProtAcessoExtDTO = new RelAcessoExtProtocoloDTO();
+                $objRelProtAcessoExtDTO->setNumIdAcessoExterno($objMdPetIntDestDTO->getNumIdAcessoExterno());
+                $objRelProtAcessoExtDTO->setDblIdProtocolo($objDocumento->getDblIdDocumento());
+                $objRelProtAcessoExtRN->cadastrar($objRelProtAcessoExtDTO);
+            }
+        }
 	}
 	
 	private function _getIdAcessoExternoRelacionado($objMdPetIntAceiteDTO){
@@ -523,12 +555,10 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		$objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
 		$objMdPetIntDestDTO->setNumIdMdPetIntRelDestinatario($idMdPetRelDest);
 		$objMdPetIntDestDTO->retNumIdAcessoExterno();
-		
-		$objMdPetIntDestDTO = $objMdPetIntDestRN->consultar($objMdPetIntDestDTO);
-		
-		$idAcessoExt = $objMdPetIntDestDTO->getNumIdAcessoExterno();
-		
-		return $idAcessoExt;
+
+		$arrObjMdPetIntDestDTO = $objMdPetIntDestRN->listar($objMdPetIntDestDTO);
+
+		return $arrObjMdPetIntDestDTO;
 	}
 	
 	public function getTipoConcessaoAcesso($idAcessoExt){

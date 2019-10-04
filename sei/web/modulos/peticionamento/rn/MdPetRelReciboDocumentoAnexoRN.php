@@ -17,7 +17,9 @@ class MdPetRelReciboDocumentoAnexoRN extends InfraRN {
 	public static $TP_PRINCIPAL = 'P';
     public static $TP_ESSENCIAL = 'E';
     public static $TP_COMPLEMENTAR = 'C';
-	
+    public static $TP_INTERCORRENTE_ANEXO = 'A';
+    public static $TP_VINCULACAO = 'V';
+
 	protected function inicializarObjInfraIBanco() {
 		return BancoSEI::getInstance ();
 	}

@@ -73,6 +73,9 @@ if ($numRegistros > 0) {
     //Anexos
     $strResultado .= '<th class="infraTh" width="50px">Anexos</th>';
 
+    //Tipo de Destinatário
+    $strResultado .= '<th class="infraTh">Tipo de Destinatário</th>';
+
     //Destinatário
     $strResultado .= '<th class="infraTh">Destinatário</th>';
 
@@ -114,6 +117,15 @@ if ($numRegistros > 0) {
         $strResultado .= PaginaSEI::tratarHTML($arrObjIntimacao[$i]->getStrAnexos());
         $strResultado .= '</td>';
 
+        //Tipo de Destinatário
+        $strResultado .= '<td>';
+        if($arrObjIntimacao[$i]->getStrSinPessoaJuridica() == "S"){
+        $strResultado .= PaginaSEI::tratarHTML("Pessoa Jurídica");
+        }else{
+          $strResultado .= PaginaSEI::tratarHTML("Pessoa Física");  
+        }
+        $strResultado .= '</td>';
+        
         //Destinatário
         $strResultado .= '<td>';
         $strResultado .= PaginaSEI::tratarHTML($arrObjIntimacao[$i]->getStrNomeContato());

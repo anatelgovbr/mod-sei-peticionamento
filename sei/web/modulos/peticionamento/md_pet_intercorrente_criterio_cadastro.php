@@ -136,9 +136,9 @@ try {
 		case 'md_pet_intercorrente_criterio_alterar':
 			$strTitulo = 'Alterar Critério para Intercorrente';
 			$arrComandos[] = '<button type="submit" accesskey="s" name="sbmAlterarCriterio" id="sbmAlterarCriterio" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-            $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+                        $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
-            if (isset($_POST['sbmAlterarCriterio'])) {
+                        if (isset($_POST['sbmAlterarCriterio'])) {
 				$objMdPetCriterioDTO = new MdPetCriterioDTO();
 				$objMdPetCriterioDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
 				$objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
@@ -169,15 +169,16 @@ try {
 				$objMdPetCriterioDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
 				$objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
 				$objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento('');
+				$objMdPetCriterioDTO->setStrSinAtivo('S');
 
-                if (isset($_POST['selNivelAcesso']) && !empty($_POST['selNivelAcesso']) && $_POST['rdNivelAcesso'][0] == '2') {
-                    $strStaTipoNivelAcesso = $_POST['selNivelAcesso'];
-                    if ($_POST['selNivelAcesso'] == 'I') {
-                        $objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
-                    }
-                    $objMdPetCriterioDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
-                }
-                $objMdPetCriterioDTO->setStrSinAtivo('S');
+                        if (isset($_POST['selNivelAcesso']) && !empty($_POST['selNivelAcesso']) && $_POST['rdNivelAcesso'][0] == '2') {
+                            $strStaTipoNivelAcesso = $_POST['selNivelAcesso'];
+                            if ($_POST['selNivelAcesso'] == 'I') {
+                                $objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
+                            }
+                            $objMdPetCriterioDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
+                        }
+
                 $objMdPetCriterioRN = new MdPetCriterioRN();
 				if ($_GET['acao'] == 'md_pet_intercorrente_criterio_padrao') {
 					$objMdPetCriterioRN->cadastrarPadrao($objMdPetCriterioDTO);
@@ -377,7 +378,7 @@ PaginaSEI::getInstance()->fecharHtml();
 
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
         objAutoCompletarTipoProcesso.limparCampo = false;
-
+        objAutoCompletarTipoProcesso.tamanhoMinimo = 3;
         objAutoCompletarTipoProcesso.prepararExecucao = function () {
             var itensSelecionados = '';
             var options = document.getElementById('selTipoProcesso').options;
@@ -430,7 +431,7 @@ PaginaSEI::getInstance()->fecharHtml();
 
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
         objAutoCompletarTipoProcesso.limparCampo = false;
-
+        objAutoCompletarTipoProcesso.tamanhoMinimo = 3;
         objAutoCompletarTipoProcesso.prepararExecucao = function () {
             return 'palavras_pesquisa=' + document.getElementById('txtTipoProcesso').value;
         };

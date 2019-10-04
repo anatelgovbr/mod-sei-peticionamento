@@ -88,6 +88,11 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
 
             $intimacoesExigeRespostaDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData( array(true,true) );
 
+            //Juridico DTO
+
+            $intimacoesExigeRespostaJuridicoDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemDataJuridico( array(true,true) );
+
+
             InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
 
             if(count($intimacoesExigeRespostaDTO) > 0){
@@ -99,12 +104,35 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
 
                 InfraDebug::getInstance()->gravar('REITERANDO INTIMAÇÕES PENDENTES EXIGE RESPOSTA');
                 InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
-
-                $qtdEnviadas = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacao(array($intimacoesExigeRespostaDTO));
+                
+                $qtdEnviadas = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacao(array($intimacoesExigeRespostaDTO,$pessoa = "F"));
                 if (is_numeric($qtdEnviadas)){
                     InfraDebug::getInstance()->gravar('Qtd. Intimações Reiteradas: ' . $qtdEnviadas);
                 }
             }
+
+
+            //Juridico
+            InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta Juridico: ' . count($intimacoesExigeRespostaJuridicoDTO));
+
+
+            if(count($intimacoesExigeRespostaJuridicoDTO) > 0){
+                $objMdPetIntEmailNotificacaoRN = new MdPetIntEmailNotificacaoRN();
+
+                InfraDebug::getInstance()->setBolLigado(true);
+                InfraDebug::getInstance()->setBolDebugInfra(false);
+                InfraDebug::getInstance()->setBolEcho(false);
+
+                InfraDebug::getInstance()->gravar('REITERANDO INTIMAÇÕES PENDENTES EXIGE RESPOSTA - JURIDICO');
+                InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta Juridico: ' . count($intimacoesExigeRespostaJuridicoDTO));
+                
+                $qtdEnviadasJuridico = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacaoJuridico(array($intimacoesExigeRespostaJuridicoDTO,$pessoa = "J"));
+                if (is_numeric($qtdEnviadas)){
+                    InfraDebug::getInstance()->gravar('Qtd. Intimações Reiteradas Juridico: ' . $qtdEnviadasJuridico);
+                }
+            }
+
+
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
             InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');

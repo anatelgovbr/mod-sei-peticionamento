@@ -264,14 +264,64 @@ class MdPetIntRelTipoRespRN extends InfraRN {
 
         $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
         $objMdPetIntRelTipoRespDTO->retTodos(true);
-        $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao);
+        
+        if(is_array($numIdMdPetIntimacao)){
+            $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao, InfraDTO::$OPER_IN);
+        }else{
+            $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao);
+        }        
 
         if (!is_null($numIdMdPetIntRelDest)){
-            $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntRelDest($numIdMdPetIntRelDest);
+            if(is_array($numIdMdPetIntRelDest)){
+                $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntRelDest($numIdMdPetIntRelDest, InfraDTO::$OPER_IN);
+            }else{
+                $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntRelDest($numIdMdPetIntRelDest);
+            }
         }
         $objMdPetIntRelTipoRespDTO->setStrSinAtivo('S');
         return $this->listar($objMdPetIntRelTipoRespDTO);
     }
+
+
+    protected function listarTipoRespostaExternoConectado($params)
+    {
+        
+        $numIdMdPetIntimacao   = $params[0];
+        $numIdMdPetIntRelDest  = $params[1];
+
+        $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
+        $objMdPetIntRelTipoRespDTO->retTodos(true);
+        
+        if(is_array($numIdMdPetIntimacao)){
+                
+                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($numIdMdPetIntRelDest);
+                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao,InfraDTO::$OPER_IN);
+                $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+                $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+                $objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
+                $intimacao = InfraArray::converterArrInfraDTO($objMdPetIntRelDestinatarioDTO, 'IdMdPetIntimacao');
+                
+
+            $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntimacao($intimacao, InfraDTO::$OPER_IN);
+        }else{
+            $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao);
+        }        
+
+        if (!is_null($numIdMdPetIntRelDest)){
+            if(is_array($numIdMdPetIntRelDest)){
+                $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntRelDest($numIdMdPetIntRelDest, InfraDTO::$OPER_IN);
+            }else{
+                $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntRelDest($numIdMdPetIntRelDest);
+            }
+        }
+        $objMdPetIntRelTipoRespDTO->setStrSinAtivo('S');
+        
+        return $this->listar($objMdPetIntRelTipoRespDTO);
+    }
+
+    
 
 
     protected function validarExclusaoTipoRespostaConectado($idTipoResposta)

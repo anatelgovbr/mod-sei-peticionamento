@@ -5,13 +5,13 @@
 
     session_start();
 		
-		SessaoSEI::getInstance(false);
+		SessaoSEI::getInstance(false);		
 		
 		$objVersaoRN = new MdPetAtualizadorSeiRN();
 		$objVersaoRN->atualizarVersao();
         exit;
 
-	}catch(Exception $e){
+	}catch(Exception $e){		
 		echo(InfraException::inspecionar($e));
 		try{LogSEI::getInstance()->gravar(InfraException::inspecionar($e));	}catch (Exception $e){}
 	}

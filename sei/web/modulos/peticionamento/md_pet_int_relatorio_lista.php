@@ -133,7 +133,7 @@ if ($numRegistros > 0) {
 
         $linkModal     =  SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_relatorio_ht_listar&md_pet_int_rel='.$strId);
         $strResultado .= '<td align="center">';
-        $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="abrirModalHistorico(\'' . $linkModal . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="imagens/documentos.gif" title="Exibir histórico da Intimação" alt="Exibir histórico da Intimação" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="abrirModalHistorico(\'' . $linkModal . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="imagens/documentos.gif" title="Histórico da Intimação" alt="Histórico da Intimação" class="infraImg" /></a>&nbsp;';
         $strResultado .= '</td>';
         $strResultado .= '</tr>';
 

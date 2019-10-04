@@ -369,7 +369,7 @@ SessaoSEIExterna::getInstance()->assinarLink( $strLinkBaseFormEdicao ));
               style="display: none; margin-left: 20px;"
               tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"
               onclick="selecionarPF1()" />
-            <label for="rdPF1" id="lblrdPF1" class="infraLabelRadio" style="display: none;">Sem vínculo com Pessoa Jurídica<br/></label>
+            <label for="rdPF1" id="lblrdPF1" class="infraLabelRadio" style="display: none;">Sem Vinculação com Pessoa Jurídica<br/></label>
 
             <input type="radio" name="tipoPessoaPF" value="1" id="rdPF2"
               style="display: none; margin-left: 20px;" onclick="selecionarPF2()"

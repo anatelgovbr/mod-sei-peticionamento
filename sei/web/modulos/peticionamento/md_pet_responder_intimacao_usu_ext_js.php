@@ -11,6 +11,7 @@
     var objTabelaDinamicaDocumento = null;
 
     function inicializar() {
+        
         infraEfeitoTabelas();
         if (EXIBIR_HIPOTESE_LEGAL) {
             verificarHipoteseLegal();
@@ -51,6 +52,31 @@
             divTipoConferencia.style.display = 'none';
         }
     }
+    
+    function alterarHidden(val){
+        
+        document.getElementById('hdnIdMdPetIntRelDest').value = val.value
+
+        $.ajax({
+             dataType: 'xml',
+             method: 'POST',
+             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_contato_intimacao');?>',
+             data: {
+                 'id': val.value
+             },
+             error: function (dados) {
+                 console.log(dados);
+             },
+             success: function (data) {
+                //console.log(data);
+                document.getElementById('hdnIdContato').value = $(data).find('idContato').text(); 
+                document.getElementById('hdnIdMdPetIntimacao').value = $(data).find('idIntimacao').text();
+                document.getElementById('hdnIdMdPetIntAceite').value = $(data).find('idAceite').text();
+             }
+             
+         });
+
+        }
 
     function exibirHipoteseLegal() {
         var selNivelAcesso = document.getElementById('selNivelAcesso');
@@ -76,11 +102,13 @@
 
     function responderIntimacao() {
 
+        var relDest = document.getElementById('selTipoResposta').value;
+        console.log(relDest);
         var frm = document.getElementById('frmResponderIntimacao');
 
         if (validarResposta()) {
             //@todo trocar url para a correta do intercorrente ou nova do resposta  
-            infraAbrirJanela('<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_responder_intimacao_usu_ext_assinar&tipo_selecao=2'))?>',
+            infraAbrirJanela('<?=$strResponderIntimacaoModel?>',
                'concluirPeticionamentoRespostaIntimacao',
                770,
                480,
@@ -344,6 +372,52 @@
         }
     }
 
+   function mudarSelect(val){
+    document.getElementById('selectTipoResp').style.display = '';
+        infraSelectLimpar('selTipoResposta');
+        validacaoAjaxTipoResp(val.value);
+
+    }
+
+    function validacaoAjaxTipoResp(valor){
+       
+        $.ajax({
+             dataType: 'xml',
+             method: 'POST',
+             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_resposta');?>',
+             data: {
+                 'id': valor
+             },
+             error: function (dados) {
+                 console.log(dados);
+             },
+             success: function (data) {
+                 console.log(data);
+                 //Mostrando label
+                // document.getElementById('selTipoRespostaDuplo').style.display = '';
+                document.getElementById('resp').style.display = '';
+                 
+                  var selectMultiple = document.getElementById('selTipoResposta');
+                   
+                   
+                $.each($(data).find('item'),function (i,j) {
+
+                   var opt = document.createElement('option');
+                        opt.value = $(j).attr("id");
+                       opt.innerHTML = $(j).attr("descricao");
+                       selectMultiple.appendChild(opt);
+                });
+                
+                var div = document.getElementById('selectTipoResp');
+                    div.appendChild(selectMultiple);  
+               
+             }
+             
+         });
+         
+    }
+
+    
     function verificarHipoteseLegal() {
         var selNivelAcesso = document.getElementById('selNivelAcesso');
 
@@ -398,12 +472,22 @@
     function validarResposta() {
         var selTipoResposta = document.getElementById('selTipoResposta');
         var tbDocumento = document.getElementById('tbDocumento');
+        
 
         if (selTipoResposta.value == 'null') {
             alert('Informe o Tipo de Resposta!');
             selTipoResposta.focus();
             return false;
         }
+        
+    var selRazaoSocial = document.getElementById('selRazaoSocial');
+    <?php if($contador == 2){ ?>
+        if (selRazaoSocial.value == 'null') {
+            alert('Informe a Razão Social!');
+            selRazaoSocial.focus();
+            return false;
+        }
+    <?php } ?>
 
         if (tbDocumento.rows.length <= 1) {
             alert('Informe ao menos um documento!');

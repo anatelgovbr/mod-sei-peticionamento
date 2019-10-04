@@ -223,7 +223,7 @@ function fechar(){
 function carregarComponenteUnidade(){
     objAutoCompletarUnidade = new infraAjaxAutoCompletar('hdnIdUnidade', 'txtUnidade', '<?=$strLinkAjaxUnidade?>');
     objAutoCompletarUnidade.limparCampo = true;
-
+    objAutoCompletarUnidade.tamanhoMinimo = 3;
     objAutoCompletarUnidade.prepararExecucao = function(){
         return 'palavras_pesquisa='+document.getElementById('txtUnidade').value;
     };
@@ -268,7 +268,7 @@ function carregarComponenteTipoIntimacao(){
 
     objAutoCompletarTpIntimacao = new infraAjaxAutoCompletar('hdnIdTpIntimacao', 'txtTpIntimacao', '<?=$strLinkAjaxTpIntimacao?>');
     objAutoCompletarTpIntimacao.limparCampo = true;
-
+    objAutoCompletarTpIntimacao.tamanhoMinimo = 3;
     objAutoCompletarTpIntimacao.prepararExecucao = function(){
         return 'palavras_pesquisa='+document.getElementById('txtTpIntimacao').value;
     };

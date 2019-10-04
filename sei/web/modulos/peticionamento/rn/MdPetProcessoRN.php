@@ -58,7 +58,7 @@ class MdPetProcessoRN extends InfraRN {
 
 	protected function gerarProcedimentoControlado( $arrParametros ){
 		try {
-
+			
 			$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
 			
 			//Remententes 
@@ -70,8 +70,8 @@ class MdPetProcessoRN extends InfraRN {
 			$objMdPetTipoProcessoDTO->retTodos(true);
 			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
 			$objTipoProcRN = new MdPetTipoProcessoRN();
-			$objMdPetTipoProcessoDTO = $objTipoProcRN->consultar( $objMdPetTipoProcessoDTO );
-			$txtTipoProcessoEscolhido = $objMdPetTipoProcessoDTO->getStrNomeProcesso();
+			$objMdPetTipoProcessoDTO = $objTipoProcRN->listar( $objMdPetTipoProcessoDTO );
+			$txtTipoProcessoEscolhido = $objMdPetTipoProcessoDTO[0]->getStrNomeProcesso();
 
 			//=============================================================================================================
 			//obtendo a unidade do tipo de processo selecionado - Pac 10 - pode ser uma ou MULTIPLAS unidades selecionadas
@@ -106,7 +106,7 @@ class MdPetProcessoRN extends InfraRN {
 			$unidadeDTO->setNumIdUnidade( $idUnidade );
 			$unidadeDTO = $unidadeRN->consultarRN0125( $unidadeDTO );				
 
-			if( $objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'S' ){
+			if( $objMdPetTipoProcessoDTO[0]->getStrSinIIProprioUsuarioExterno() == 'S' ){
 
 				$arrParametros['hdnListaInteressados'] = $contatoDTOUsuarioLogado->getNumIdContato();
 
@@ -119,7 +119,7 @@ class MdPetProcessoRN extends InfraRN {
 
 			//verificar se esta vindo o array de participantes
 			//participantes selecionados via pop up OU indicados diretamente por CPF/CNPJ
-			else if( $objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'N' && 
+			else if( $objMdPetTipoProcessoDTO[0]->getStrSinIIProprioUsuarioExterno() == 'N' && 
 				isset( $arrParametros['hdnListaInteressados'] ) && 
 				$arrParametros['hdnListaInteressados'] != "" ){			
 				
@@ -137,10 +137,10 @@ class MdPetProcessoRN extends InfraRN {
 			} 
 
 			$idsContatos = array_unique($idsContatos);
-
+			
 			//Gera um processo
 			$objProcedimentoAPI = new ProcedimentoAPI();
-			$objProcedimentoAPI->setIdTipoProcedimento( $objMdPetTipoProcessoDTO->getNumIdProcedimento() );
+			$objProcedimentoAPI->setIdTipoProcedimento( $objMdPetTipoProcessoDTO[0]->getNumIdProcedimento() );
 			$objProcedimentoAPI->setIdUnidadeGeradora( $unidadeDTO->getNumIdUnidade() );
 			$objProcedimentoAPI->setEspecificacao( $arrParametros['txtEspecificacaoDocPrincipal'] );
 			$objProcedimentoAPI->setNumeroProtocolo('');
@@ -150,11 +150,11 @@ class MdPetProcessoRN extends InfraRN {
 
             $objSeiRN = new SeiRN();
             SessaoSEI::getInstance()->simularLogin(null, null , SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() , $unidadeDTO->getNumIdUnidade() );
-
+			
             // Tipo de Procedimento - Nivel de Acesso e Hipótese Legal permitidos
             $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
             $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
-            $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($objMdPetTipoProcessoDTO->getNumIdProcedimento());
+            $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($objMdPetTipoProcessoDTO[0]->getNumIdProcedimento());
 
             $objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
             $arrObjNivelAcessoPermitidoDTO = $objNivelAcessoPermitidoRN->listar($objNivelAcessoPermitidoDTO);
@@ -198,10 +198,10 @@ class MdPetProcessoRN extends InfraRN {
                 $objInfraException->adicionarValidacao('Nível de Acesso não definido');
                 $objInfraException->lancarValidacoes();
             }
-
+			
 			$objSaidaGerarProcedimentoAPI = new SaidaGerarProcedimentoAPI();
 			$objSaidaGerarProcedimentoAPI = $objSeiRN->gerarProcedimento($objEntradaGerarProcedimentoAPI);
-
+			
 			//seiv3
 			$idsParticipantes = array();
 
@@ -241,9 +241,9 @@ class MdPetProcessoRN extends InfraRN {
 			$objProcedimentoDTO->setDblIdProcedimento( $objSaidaGerarProcedimentoAPI->getIdProcedimento() );
 			$objProcedimentoDTO->setStrProtocoloProcedimentoFormatado( $objSaidaConsultarProcedimentoAPI->getProcedimentoFormatado()  );
 			$objProcedimentoDTO->setNumIdTipoProcedimento( $objSaidaConsultarProcedimentoAPI->getTipoProcedimento()->getIdTipoProcedimento()  );
-
+			
 			$this->montarArrDocumentos( $arrParametros, $unidadeDTO, $objProcedimentoDTO, $reciboDTOBasico );
-
+			
 			$arrParams = array();
 			$arrParams[0] = $arrParametros;
 			$arrParams[1] = $unidadeDTO;
@@ -416,7 +416,7 @@ class MdPetProcessoRN extends InfraRN {
 		$saidaDocExternoAPI = $objSeiRN->incluirDocumento( $objDocumentoAPI );
 		$idDocumentoAnexo = $saidaDocExternoAPI->getIdDocumento();
 		$docDTO->setDblIdDocumento( $idDocumentoAnexo );
-		$this->assinarETravarDocumento( $objUnidadeDTO, $arrParametros, $docDTO, $objProcedimentoDTO );
+		$this->assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $docDTO, $objProcedimentoDTO );
 		
 		//adiciona o doc no recibo pesquisavel
 		//recibo do doc principal para consultar do usuario externo
@@ -450,7 +450,7 @@ class MdPetProcessoRN extends InfraRN {
 			$objMdPetTipoProcessoDTO->retTodos(true);
 			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
 			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->consultar( $objMdPetTipoProcessoDTO );
+			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
 						
 			//====================================
 			//gera no sistema as informações referentes ao documento principal
@@ -462,7 +462,7 @@ class MdPetProcessoRN extends InfraRN {
 			//====================================
 			//ASSINAR O DOCUMENTO PRINCIPAL
 			//====================================			
-			$this->assinarETravarDocumento( $objUnidadeDTO, $arrParametros, $documentoDTOPrincipal, $objProcedimentoDTO );
+			$this->assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTOPrincipal, $objProcedimentoDTO );
 			
 			//recibo do doc principal para consultar do usuario externo
 			$reciboDocAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
@@ -484,7 +484,7 @@ class MdPetProcessoRN extends InfraRN {
 			$objMdPetTipoProcessoDTO->retTodos(true);
 			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
 			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->consultar( $objMdPetTipoProcessoDTO );
+			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
 			
 		}
 				
@@ -812,7 +812,7 @@ class MdPetProcessoRN extends InfraRN {
 			$objDocumentoAPI->setTipo( ProtocoloRN::$TP_DOCUMENTO_GERADO );
 			$objDocumentoAPI->setIdHipoteseLegal( $hipoteseLegalDocPrincipal );
 			$objDocumentoAPI->setNivelAcesso( $nivelAcessoDocPrincipal );
-			$objDocumentoAPI->setIdSerie( $objMdPetTipoProcessoDTO->getNumIdSerie() );
+			$objDocumentoAPI->setIdSerie( $objMdPetTipoProcessoDTO[0]->getNumIdSerie() );
 			$objDocumentoAPI->setConteudo(base64_encode( $arrParametros['docPrincipalConteudoHTML'] ));
 			$objDocumentoAPI->setSinAssinado('S');
 			$objDocumentoAPI->setSinBloqueado('S');
@@ -826,8 +826,8 @@ class MdPetProcessoRN extends InfraRN {
 			return $documentoDTOPrincipal;
 		
 	}
-	
-	private function assinarETravarDocumento( $objUnidadeDTO, $arrParametros, $documentoDTO, $objProcedimentoDTO ){
+
+	public function assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTO, $objProcedimentoDTO ){
 			
 		    //consultar email da unidade (orgao)
 		    $orgaoRN = new OrgaoRN();
@@ -838,19 +838,27 @@ class MdPetProcessoRN extends InfraRN {
 			$orgaoDTO->setStrSinAtivo('S');
 			$orgaoDTO = $orgaoRN->consultarRN1352($orgaoDTO);
 
-			//consultar nome do cargao funcao selecionada na combo
-			$cargoRN = new CargoRN();
-			$cargoDTO = new CargoDTO();
+			if (!empty($arrParametros['selCargo'])){
+				//consultar nome do cargao funcao selecionada na combo
+				$cargoRN = new CargoRN();
+				$cargoDTO = new CargoDTO();
 
-			//alteracoes seiv3
-            $cargoDTO->retNumIdCargo();
-            $cargoDTO->retStrExpressao();
-            $cargoDTO->retStrSinAtivo();
-			
-			$cargoDTO->setNumIdCargo( $arrParametros['selCargo'] );
-			$cargoDTO->setStrSinAtivo('S');
-			$cargoDTO = $cargoRN->consultarRN0301($cargoDTO);
-						
+				//alteracoes seiv3
+				$cargoDTO->retNumIdCargo();
+				$cargoDTO->retStrExpressao();
+				$cargoDTO->retStrSinAtivo();
+
+				$cargoDTO->setNumIdCargo( $arrParametros['selCargo'] );
+				$cargoDTO->setStrSinAtivo('S');
+				$cargoDTO = $cargoRN->consultarRN0301($cargoDTO);
+
+				if (count($cargoDTO)>0){
+					$cargoExpressao = "Usuário Externo - " . $cargoDTO->getStrExpressao();
+				}
+			}else{
+				$cargoExpressao = $arrParametros['selCargoFuncao'];
+			}
+
 			//liberando assinatura externa para o documento
 			$objAcessoExternoDTO = new AcessoExternoDTO();
 			
@@ -860,8 +868,10 @@ class MdPetProcessoRN extends InfraRN {
 			//checar se o proprio usuario ja foi adicionado como interessado (participante) do processo
 			$objUsuarioDTO = new UsuarioDTO();
 			$objUsuarioDTO->retTodos();
-			$objUsuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-			
+
+			$idUsuario = !empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) ? SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() : SessaoSEI::getInstance()->getNumIdUsuario();
+			$objUsuarioDTO->setNumIdUsuario( $idUsuario );
+
 			$objUsuarioRN = new UsuarioRN();
 			$objUsuarioDTO = $objUsuarioRN->consultarRN0489( $objUsuarioDTO );
 			$idContato = $objUsuarioDTO->getNumIdContato();
@@ -897,19 +907,23 @@ class MdPetProcessoRN extends InfraRN {
 				$idParticipante = $arrObjParticipanteDTO[0]->getNumIdParticipante();
 			}
 
-			//alteracoes seiv3
-			$objAcessoExternoDTO->setStrEmailUnidade($orgaoDTO->getStrEmailContato() ); //informando o email do orgao associado a unidade
-			
-			$objAcessoExternoDTO->setDblIdDocumento( $documentoDTO->getDblIdDocumento() );
-			$objAcessoExternoDTO->setNumIdParticipante( $idParticipante );
-			$objAcessoExternoDTO->setNumIdUsuarioExterno( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-			$objAcessoExternoDTO->setStrSinProcesso('N'); //visualizacao integral do processo
-			
-			$objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
-			$objAcessoExternoDTO = $objMdPetAcessoExternoRN->cadastrarAcessoExternoCore($objAcessoExternoDTO);
-			
+			if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
+				//alteracoes seiv3
+				$objAcessoExternoDTO->setStrEmailUnidade($orgaoDTO->getStrEmailContato() ); //informando o email do orgao associado a unidade
+
+				$objAcessoExternoDTO->setDblIdDocumento( $documentoDTO->getDblIdDocumento() );
+				$objAcessoExternoDTO->setNumIdParticipante( $idParticipante );
+
+
+				$objAcessoExternoDTO->setNumIdUsuarioExterno( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
+				$objAcessoExternoDTO->setStrSinProcesso('N'); //visualizacao integral do processo
+
+				$objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
+				$objAcessoExternoDTO = $objMdPetAcessoExternoRN->cadastrarAcessoExternoCore($objAcessoExternoDTO);
+			}
+
 			//realmente assinando o documento depois da assinatura externa ser liberada
-			
+
 			//seiv3 - só permite assinar doc externo (upload) nato-digital se tiver o tipo de conferencia setado
 			//setar temporariamente e depois remover da entidade
 			$documentoRN = new DocumentoRN();
@@ -943,9 +957,16 @@ class MdPetProcessoRN extends InfraRN {
 				
 				$objAssinaturaDTO = new AssinaturaDTO();
 				$objAssinaturaDTO->setStrStaFormaAutenticacao(AssinaturaRN::$TA_SENHA);
-				$objAssinaturaDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
+				$objAssinaturaDTO->setNumIdUsuario($idUsuario);
+				$objAssinaturaDTO->setNumIdOrgaoUsuario( SessaoSEI::getInstance()->getNumIdOrgaoUsuario() );
+
 				$objAssinaturaDTO->setStrSenhaUsuario( $arrParametros['pwdsenhaSEI'] );
-				$objAssinaturaDTO->setStrCargoFuncao( "Usuário Externo - " . $cargoDTO->getStrExpressao() );
+				$objAssinaturaDTO->setStrCargoFuncao( $cargoExpressao );
+
+				if (empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
+					$objAssinaturaDTO->setNumIdContextoUsuario( null );	
+				}
+
 				$documentoDTO->setStrDescricaoTipoConferencia("do próprio documento nato-digital");
 				$objAssinaturaDTO->setArrObjDocumentoDTO(array($documentoDTO));
 				
@@ -955,9 +976,9 @@ class MdPetProcessoRN extends InfraRN {
 				$objAssinaturaDTO->setStrStaFormaAutenticacao(AssinaturaRN::$TA_SENHA);
 				$objAssinaturaDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 				$objAssinaturaDTO->setStrSenhaUsuario( $arrParametros['pwdsenhaSEI'] );
-				$objAssinaturaDTO->setStrCargoFuncao( "Usuário Externo - " . $cargoDTO->getStrExpressao() );
+				$objAssinaturaDTO->setStrCargoFuncao( $cargoExpressao );
 				$objAssinaturaDTO->setArrObjDocumentoDTO(array($documentoDTO));		
-				
+
 			}
 
 			$objAssinaturaDTO = $documentoPetRN->assinar($objAssinaturaDTO);
@@ -967,15 +988,16 @@ class MdPetProcessoRN extends InfraRN {
 				$documentoDTO->setNumIdTipoConferencia(null);
 				$documentoBD->alterar( $documentoDTO );
 			}
-			
+
 			//nao aplicando metodo alterar da RN de Documento por conta de regras de negocio muito especificas aplicadas ali
 			$documentoDTO->setStrSinBloqueado('S');
 			$documentoBD->alterar( $documentoDTO );
-			
-			//remover a liberação de acesso externo -> AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
-			$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
-			$objAcessoExternoBD->excluir( $objAcessoExternoDTO );
-		
+
+			if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
+				//remover a liberação de acesso externo -> AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
+				$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
+				$objAcessoExternoBD->excluir( $objAcessoExternoDTO );
+			}
 	}
 
 	private function atribuirParticipantes( $arrObjInteressados)

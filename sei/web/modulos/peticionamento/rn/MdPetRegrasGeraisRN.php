@@ -149,6 +149,17 @@ class MdPetRegrasGeraisRN extends InfraRN
             return $msg;
         }
 
+        $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
+        $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
+
+        $objMdPetVincTpProcessoDTO->setNumIdUnidade($arrIds, InfraDTO::$OPER_IN);
+        $existeVinculo = $objMdPetVincTpProcessoRN->contar($objMdPetVincTpProcessoDTO)>0;
+
+        if($existeVinculo){
+            $msg ="Não é permitido " . $acao . " esta Unidade, pois ela é utilizada pelo Módulo de Peticionamento e Intimação Eletrônicos em Vínculo de Usuário Externo.";
+            return $msg;
+        }
+
         return $msg;
         //return true;
 
@@ -243,10 +254,17 @@ class MdPetRegrasGeraisRN extends InfraRN
         $arrObjTipoProcessoDTO = $arrObjTipoProcessoDTO[0];
         $msg = '';
 
+
         $arrIds = array();
         foreach ($arrObjTipoProcessoDTO as $objTipoProcedimentoAPI) {
             $arrIds[] = $objTipoProcedimentoAPI->getIdTipoProcedimento();
         }
+
+        //Mensagem padrão de erro para 1 ou mais processos
+        if (count($arrIds) > 1)
+            $msgErro = 'Não é permitido ' . $acao . ' estes Tipos de Processos, pois eles são utilizados';
+        else
+            $msgErro = 'Não é permitido ' . $acao . ' este Tipo de Processo, pois ele é utilizado';
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrIds, InfraDTO::$OPER_IN);
@@ -274,21 +292,30 @@ class MdPetRegrasGeraisRN extends InfraRN
         //Condições para retornar a mensagem de erro
         if ($existeProcesso) {
 
-            if (count($arrIds) > 1)
-                $msg = 'Não é permitido ' . $acao . ' estes Tipos de Processos, pois eles são utilizados';
-            else
-                $msg = 'Não é permitido ' . $acao . ' este Tipo de Processo, pois ele é utilizado';
-
-            $msg .= ' pelo Módulo de Peticionamento e Intimação Eletrônicos. Verifique as parametrizações no menu';
+            $msgErro .= ' pelo Módulo de Peticionamento e Intimação Eletrônicos. Verifique as parametrizações no menu';
 
             if ($existeMdPetTipoProcesso)
-                $msg .= ' Administração > Peticionamento Eletrônico > Tipos para Peticionamento';
+                $msgErro .= ' Administração > Peticionamento Eletrônico > Tipos para Peticionamento';
             else
-                $msg .= ' Administração > Peticionamento Eletrônico > Critérios para Intercorrente .';
+                $msgErro .= ' Administração > Peticionamento Eletrônico > Critérios para Intercorrente .';
 
+            return $msgErro;
         }
+
+        $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
+        $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
+
+        $objMdPetVincTpProcessoDTO->setNumIdTipoProcedimento($arrIds, InfraDTO::$OPER_IN);
+        $existeVinculo = $objMdPetVincTpProcessoRN->contar($objMdPetVincTpProcessoDTO)>0;
+
+        if($existeVinculo){
+            $msgErro .=' pelo Módulo de Peticionamento e Intimação Eletrônicos em Vínculo de Usuário Externo.';
+            return $msgErro;
+        }
+
         return $msg;
     }
+
     private function _retornaMsgAnexoUnidade($objMdPetIndispDocDTO, $acao){
 
 
@@ -439,7 +466,7 @@ class MdPetRegrasGeraisRN extends InfraRN
     {
         $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($objDTO, 'IdTipoProcessoPeticionamento');
         $arrIdSerie = InfraArray::converterArrInfraDTO($objDTO, 'IdSerie');
-        $arrMdPetRelTpProcSerie = array();
+        
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, InfraDTO::$OPER_IN);
@@ -487,7 +514,6 @@ class MdPetRegrasGeraisRN extends InfraRN
     private function _retornaMsgTipoDocumento($arrObj, $acao)
     {
 
-        $arrMdPetRelTpProcSerie = array();
         $msg = 'Não é permitido ' . $acao . ' este Tipo de Documento, pois ele é utilizado pelo Módulo de Peticionamento e Intimação ';
         $msg .= 'Eletrônicos. Verifique as parametrizações no menu Administração > Peticionamento Eletrônico > Tipos para ';
         $msg .= "Peticionamento relativo aos Tipos de Processos:\n";
@@ -580,7 +606,7 @@ class MdPetRegrasGeraisRN extends InfraRN
 
         if ($existeDocumento) {
             $msg = $this->_retornaMsgTipoDocumento($arrDocumento, $acao);
-
+            return $msg;
         } else {
 
             $objMdPetIntSerieDTO = new MdPetIntSerieDTO();
@@ -594,7 +620,19 @@ class MdPetRegrasGeraisRN extends InfraRN
                 $msg = "Não é permitido " . $acao . " este Tipo de Documento, pois ele é utilizado pelo Módulo de Peticionamento e Intimação ";
                 $msg .= "Eletrônicos. Verifique as parametrizações no menu Administração > Peticionamento Eletrônico > Intimação Eletrônica > ";
                 $msg .= "Tipos de Documentos para Intimação.";
+                return $msg;
             }
+        }
+
+        $objMdPetVincRelSerieDTO = new MdPetVincRelSerieDTO();
+        $objMdPetVincRelSerieRN = new MdPetVincRelSerieRN();
+
+        $objMdPetVincRelSerieDTO->setNumIdSerie($arrIds, InfraDTO::$OPER_IN);
+        $numRegistros = $objMdPetVincRelSerieRN->contar($objMdPetVincRelSerieDTO);
+
+        if($numRegistros>0){
+            $msg ="Não é permitido " . $acao . " este Tipo de Documento, pois ele é utilizado pelo Módulo de Peticionamento e Intimação Eletrônicos em Vínculo de Usuário Externo.";
+            return $msg;
         }
 
         return $msg;

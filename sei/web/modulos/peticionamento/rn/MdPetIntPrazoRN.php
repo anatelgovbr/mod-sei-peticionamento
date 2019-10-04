@@ -21,24 +21,52 @@
 
         protected function retornarTipoRespostaValidoConectado($arrParams)
         {
+           
             $numIdMdPetIntimacao      = $arrParams[0];
             $idMdPetDest              = $arrParams[1];
             $retornaPrazoExpirado     = isset($arrParams[2]) && is_bool($arrParams[2]) ? $arrParams[2] : false;
+            
             $retornaNomeComposto      = isset($arrParams[3]) && is_bool($arrParams[3]) ? $arrParams[3] : true;
             $objMdPetIntAceiteRN      = new MdPetIntAceiteRN();
             $dataCumprimentoIntimacao = $objMdPetIntAceiteRN->retornaDataCumprimentoIntimacao($idMdPetDest);
-
             $objMdPetIntRelTipoRespRN     = new MdPetIntRelTipoRespRN();
+            
             $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listarTipoResposta(array($numIdMdPetIntimacao,$idMdPetDest));
-       //A contagem do Prazo Externo deve ser iniciada somente no dia útil seguinte ao da "Data de Cumprimento da Intimação",
-
+           //A contagem do Prazo Externo deve ser iniciada somente no dia útil seguinte ao da "Data de Cumprimento da Intimação",
+          
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
 
             $arrObjMdPetIntRelTipoRespValido = $this->_retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto);
-
+            
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'PrazoFinal', InfraArray::$TIPO_ORDENACAO_ASC);
             return $arrObjMdPetIntRelTipoRespValido;
         }
+
+
+        protected function retornarTipoRespostaValidoTelaRespostaConectado($arrParams)
+        {
+           
+            $numIdMdPetIntimacao      = $arrParams[0];
+            $idMdPetDest              = $arrParams[1];
+            $retornaPrazoExpirado     = isset($arrParams[2]) && is_bool($arrParams[2]) ? $arrParams[2] : false;
+            
+            $retornaNomeComposto      = isset($arrParams[3]) && is_bool($arrParams[3]) ? $arrParams[3] : true;
+            $objMdPetIntAceiteRN      = new MdPetIntAceiteRN();
+            $dataCumprimentoIntimacao = $objMdPetIntAceiteRN->retornaDataCumprimentoIntimacao($idMdPetDest);
+            $objMdPetIntRelTipoRespRN     = new MdPetIntRelTipoRespRN();
+            
+            $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listarTipoRespostaExterno(array($numIdMdPetIntimacao,$idMdPetDest));
+           //A contagem do Prazo Externo deve ser iniciada somente no dia útil seguinte ao da "Data de Cumprimento da Intimação",
+          
+            InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
+
+            $arrObjMdPetIntRelTipoRespValido = $this->_retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto);
+            
+            InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'PrazoFinal', InfraArray::$TIPO_ORDENACAO_ASC);
+            return $arrObjMdPetIntRelTipoRespValido;
+        }
+
+        
 
         private function _retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto){
             $dataAtual = InfraData::getStrDataAtual();
@@ -54,7 +82,7 @@
                     $dataFinal=explode(" ", $dataFinal);
                     $dataFinal=$dataFinal[0];
                 }
-
+                
                 $nome = $objMdPetIntRelTipoRespDTO->getStrNome();
 
                 if ($objMdPetIntRelTipoRespDTO->getStrTipoPrazoExterno() == 'D') {
@@ -114,6 +142,8 @@
             return $arrObjMdPetIntRelTipoRespValido;
         }
 
+
+        
 
         protected function retornarTipoRespostaDataLimiteConectado($arrParams)
         {

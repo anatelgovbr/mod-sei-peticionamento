@@ -218,7 +218,7 @@ function carregarComponenteHipoteseLegal(){
 
 	objAutoCompletarHipLegal = new infraAjaxAutoCompletar('hdnIdHipoteseLgl', 'txtHipoteseLgl', '<?=$strLinkAjaxHipLegal?>');
 	objAutoCompletarHipLegal.limparCampo = true;
-
+  objAutoCompletarHipLegal.tamanhoMinimo = 3;
 	objAutoCompletarHipLegal.prepararExecucao = function(){
 	    return 'palavras_pesquisa='+document.getElementById('txtHipoteseLgl').value;
 	};

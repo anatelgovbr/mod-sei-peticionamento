@@ -219,7 +219,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <input type="hidden" id="id_intimacao" name="id_intimacao" value="" />
     <input type="hidden" id="id_aceite" name="id_aceite" value="" />
     <input type="hidden" id="id_tipo_resposta" name="id_tipo_resposta" value="" />
-
+    <input type="hidden" id="id_int_rel_dest" name="id_int_rel_dest" value="" />
+    <input type="hidden" id="id_contato" name="id_contato" value="" />
 	<?php } ?>
     
     <input type="hidden" id="hdnSubmit" name="hdnSubmit" value=""/>
@@ -275,14 +276,16 @@ function assinar(){
 		var hdnIdMdPetIntAceiteJanelaPai = window.opener.document.getElementById('hdnIdMdPetIntAceite');
 		var hdnIdTipoProcedimentoJanelaPai  = window.opener.document.getElementById('hdnIdTipoProcedimento');
 		var selTipoResposta = window.opener.document.getElementById('selTipoResposta');
-
+        var selIntRelDest = window.opener.document.getElementById('hdnIdMdPetIntRelDest');
+        var selIdContato = window.opener.document.getElementById('hdnIdContato');
 		//setando nos campos hidden da janela local do assinar antes de submeter o formulario
 		document.getElementById('id_procedimento').value = hdnIdProcedimentoJanelaPai.value;
 		document.getElementById('id_tipo_procedimento').value = hdnIdTipoProcedimentoJanelaPai.value;
 		document.getElementById('id_aceite').value = hdnIdMdPetIntAceiteJanelaPai.value;
 		document.getElementById('id_intimacao').value = hdnIdMdPetIntimacaoJanelaPai.value;
-		document.getElementById('id_tipo_resposta').value = selTipoResposta.value;
-			
+        document.getElementById('id_tipo_resposta').value = selTipoResposta.value;
+        document.getElementById('id_contato').value = selIdContato.value;
+		document.getElementById('id_int_rel_dest').value = selIntRelDest.value;	
 		<?php } ?>
 		
         document.getElementById('hdnSubmit').value = '1';

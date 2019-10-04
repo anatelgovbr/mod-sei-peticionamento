@@ -146,7 +146,7 @@ var objAutoCompletarPrincipal2 = null;
      
     objAutoCompletarPrincipal = new infraAjaxAutoCompletar('hdnIdPrincipal','txtPrincipal','<?=$strLinkAjaxPrincipal?>');
     objAutoCompletarPrincipal.limparCampo = true;
-
+    objAutoCompletarPrincipal.tamanhoMinimo = 3;
     objAutoCompletarPrincipal.prepararExecucao = function(){
       return 'extensao='+document.getElementById('txtPrincipal').value;
     };
@@ -183,7 +183,7 @@ var objAutoCompletarPrincipal2 = null;
     objLupaPrincipal2 = new infraLupaSelect('selPrincipal2','hdnPrincipal2','<?=$strLinkPrincipalSelecao2?>');
     objAutoCompletarPrincipal2 = new infraAjaxAutoCompletar('hdnIdPrincipal2','txtPrincipal2','<?=$strLinkAjaxPrincipal2?>');
     objAutoCompletarPrincipal2.limparCampo = true;
-
+    objAutoCompletarPrincipal2.tamanhoMinimo = 3;
     objAutoCompletarPrincipal2.prepararExecucao = function(){
       return 'extensao='+document.getElementById('txtPrincipal2').value;
     };

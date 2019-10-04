@@ -12,5 +12,9 @@ class MdPetDataUtils extends InfraPDF {
 		return substr($valor, 0, $formatolargura-$datalargura);
 	}
 
+	public static function formatCep($valor) {
+		return substr($valor, 0, 5) . '-' . substr($valor, 5, 3);
+	}
+
 }
 ?>

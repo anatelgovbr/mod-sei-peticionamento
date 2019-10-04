@@ -54,12 +54,8 @@ try {
   			
   			//obtendo a unidade de abertura do processo
   			$idTipoProc = $_POST['id_tipo_procedimento'];
-  			$objTipoProcDTO = new MdPetTipoProcessoDTO();
-  			$objTipoProcDTO->retTodos(true);
-  			$objTipoProcDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
-  			$objTipoProcRN = new MdPetTipoProcessoRN();
-  			$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
   			
+			
   			//obtendo a unidade do tipo de processo selecionado - Pac 10 - pode ser uma ou MULTIPLAS unidades selecionadas
   			$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
   			$objMdPetRelTpProcessoUnidDTO->retTodos();

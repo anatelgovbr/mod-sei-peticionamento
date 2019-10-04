@@ -26,11 +26,13 @@ class MdPetIntDestRespostaDTO extends InfraDTO {
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'Data', 'data');
 
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdPetIntRelTipoResp', 'id_md_pet_int_rel_tipo_resp');
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdUsuario', 'id_usuario');
 
     $this->configurarPK('IdMdPetIntDestResposta',InfraDTO::$TIPO_PK_NATIVA);
     
     $this->configurarFK('IdMdPetIntRelDestinatario','md_pet_int_rel_dest','id_md_pet_int_rel_dest');
     $this->configurarFK('IdMdPetIntRelTipoResp','md_pet_int_rel_tipo_resp','id_md_pet_int_rel_tipo_resp');
+    $this->configurarFK('IdUsuario','usuario','id_usuario');
 
   }
 }

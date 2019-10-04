@@ -20,6 +20,15 @@ try {
     //InfraDebug::getInstance()->limpar();
     //////////////////////////////////////////////////////////////////////////////
 
+    //Pessoa Física
+    $strLinkTipoProcessoSelecaoF = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_fisica&tipo_selecao=1&id_object=objLupaTipoProcesso');
+
+    //Juridicos
+    $strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_juridica&tipo_selecao=1&id_object=objLupaJuridico');
+    $idDocumento = isset($_GET['id_documento']) ? $_GET['id_documento'] : $_POST['hdnIdDocumento'];
+
+    $strLinkAjaxUsuariosJuridicos = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_juridica&id_documento=' . $idDocumento);
+    $strLinkAjaxJuridicos = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=usuario_dados_tabela_juridica');
     $strParametros = '';
     if (isset($_GET['arvore'])) {
         PaginaSEI::getInstance()->setBolArvore($_GET['arvore']);
@@ -32,13 +41,12 @@ try {
     $idDocumento = isset($_GET['id_documento']) ? $_GET['id_documento'] : $_POST['hdnIdDocumento'];
     $strLinkAjaxUsuarios = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar&id_documento=' . $idDocumento);
     $strLinkAjaxTransportaUsuarios = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=usuario_dados_tabela');
-    $strTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', '0');
     $strLinkAjaxBuscaTiposRespostaTipoIntimacao = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=busca_tipo_resposta_intimacao');
     $strLinkAjaxValidacoesSubmit = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_validar_cadastro');
     $isAlterar = false;
     $countInt  = 0;
-
-
+    $urlTipoFisica = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_cadastro_fisica');
+    $urlTipoJuridica = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_cadastro_juridica');
 
     switch ($_GET['acao']) {
         case 'md_pet_intimacao_cadastrar':
@@ -62,18 +70,17 @@ try {
             $objDocumentoDTO->setDblIdDocumento($idDocumento);
             $objDocumentoRN = new DocumentoRN();
             $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
-
+            
             $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
 
 //            Buscar Intimações cadastradas.
             $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradas($idDocumento);
             $isAlterar = (!empty($arrIntimacoes)) ? true : false;
-
+            
             if (count($_POST) > 0) {
                 
             	try {
                     $objMdPetIntimacaoDTO = $objMdPetIntimacaoRN->cadastrarIntimacao($_POST);
-
                     if ($objMdPetIntimacaoDTO) {
                         $idProcedimento = $objDocumentoDTO->getDblIdProcedimento();
 
@@ -126,209 +133,34 @@ require_once 'md_pet_intimacao_cadastro_js.php';
 
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
-
 ?>
+<style type="text/css">
+#fldOrientacoesDestinatarios {height: auto; width: 96%; margin-bottom: 11px;}
+#fldDestinatarios {height: auto; width: 96%; margin-bottom: 11px;}
+.sizeFieldset {height:auto; width: 86%;}
+.fieldsetClear {border:none !important;}
+</style>
+
 <form id="frmMdPetIntimacaoCadastro" 
           method="post" 
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-        <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
+        
         <? PaginaSEI::getInstance()->abrirAreaDados(); ?>
-
-        <fieldset id="fldDestinatarios">
-            <legend class="infraLegend" class="infraLabelObrigatorio"> Destinatários</legend>
-
-                <!-- Usuario Externo -->
-                <div class="grid_12">
-                    <div class="grid grid_4-5">
-                        <label id="lblUsuario" for="txtUsuario"class="infraLabelObrigatorio">Usuário Externo: </label>
-                        <img style="margin-bottom:-3px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Usuários Externos liberados. A consulta pode ser efetuada pelo Nome, E-mail ou CPF do Usuário Externo.') ?> class="infraImg"/>
-                        <input style="margin-top:1px;" type="text" id="txtUsuario" name="txtUsuario" class="infraText campoPadrao" onkeypress="return infraMascaraTexto(this,event);" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    </div>
-
-                    <!-- Email -->
-                    <div class="grid grid_4-5">
-                        <label id="lblEmail" for="txtEmail"  class="infraLabelObrigatorio">E-mail do Usuário Externo:</label>
-                        <input type="text" id="txtEmail" name="txtEmail" class="infraText campoPadrao infraAutoCompletar" disabled="disabled" onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    </div>
-
-                    <div class="height_2"></div>
-
-                    <!-- Botao Adicionar -->
-                    <div class="grid grid_2">
-                        <!--<input type="button" id="sbmGravarUsuario" accesskey="A" name="sbmGravarUsuario" class="infraButton" onclick="transportarUsuario();" value="Adicionar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>-->
-                        <button type="button" id="sbmGravarUsuario" accesskey="A" name="sbmGravarUsuario" class="infraButton" onclick="transportarUsuario();" value="Adicionar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><span class="infraTeclaAtalho">A</span>dicionar</button>
-                    </div>
-
-                </div>
-
-                <div class="tabUsuario clear height_2" style="<?php echo $isAlterar ? '' : 'display:none' ?>"></div>
-                <!-- Tabela de Destinatários -->
-
-                <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="<?php echo $isAlterar ? '' : 'display:none' ?>">
-                    <table id="tblEnderecosEletronicos" width="100%" class="infraTable">
-                        <tr>
-                            <th style="display:none;">ID</th>
-                            <th class="infraTh">Destinatário</th>
-                            <th class="infraTh">E-mail</th>
-                            <th class="infraTh" width="90px">CPF</th>
-                            <th class="infraTh" width="66px">Data de Expedição</th>
-                            <th class="infraTh" width="215px">Situação da Intimação</th>
-                            <th class="infraTh" width="40px">Ações</th>
-                        </tr>
-                        <? if ($isAlterar) { ?>
-                            <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= $arrIntimacoes ?>"/>
-                            <? foreach ($arrIntimacoes as $key => $intimacao) {
-                                $countInt++;
-                                ?>
-                                <tr class="<?php echo $key % 2 == 0 ? 'infraTrClara' : 'infraTrEscura'; ?>">
-                                    <td style="display:none; width: 100px;  "> <?= $intimacao['Id'] ?></td>
-                                    <td> <?= $intimacao['Nome'] ?></td>
-                                    <td> <?= $intimacao['Email'] ?></td>
-                                    <td> <?= InfraUtil::formatarCpf($intimacao['Cpf']) ?></td>
-                                    <td align="center"> <?= $intimacao['DataIntimacao'] ?></td>
-                                    <td> <?= $intimacao['Situacao'] ?></td>
-                                    <td align="center"><a href='#'
-                                                          onclick="abrirIntimacaoCadastrada('<?= $intimacao['Url'] ?>')">
-                                            <img title='Consultar Destinatário' alt='Consultar Destinatário'
-                                                 src='/infra_css/imagens/consultar.gif' class='infraImg'/></a></td>
-                                </tr>
-                            <? }
-                        } ?>
-                    </table>
-                    <input type="hidden" id="hdnIdDadosUsuario" name="hdnIdDadosUsuario"
-                           value="<?= $_POST['hdnIdDadosUsuario'] ?>"/>
-                    <input type="hidden" id="hdnDadosUsuario" name="hdnDadosUsuario"
-                           value="<?= $_POST['hdnDadosUsuario'] ?>"/>
-
-                </div>
-        </fieldset>
-
-        <div class="clear height_1"></div>
-
-        <div id="conteudoHide" style="display: none;">
-
-        <div class="grid grid_9">
-            <!-- Tipo de Intimação -->
-            <div class="grid grid_6" style="margin-left:2px;">
-                <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de Intimação:</label>
-                <select style="width: 50%" id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)" class="campoPadrao infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                    <?= $strTipoIntimacao ?>
-                </select>
-                <input type=hidden name=hdnTipoIntimacao id=hdnTipoIntimacao>
+        <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?><br>
+        <fieldset id="fldOrientacoesDestinatarios" class="infraFieldset sizeFieldset" style="width:auto">
+            <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Destinatário</legend>
+            <?=PaginaSEI::tratarHTML($txtConteudo)?>            
+            <?php echo $txtConteudo; ?>
+            <?= '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_orientacoes_destinatario&iframe=S') . '"></iframe>'; ?> 
+            <div id="divTipoPessoa" class="infraDivRadio">
+                <input type="radio" id="tipoPessoaFisica" name="tipoPessoa" value="F" class="infraRadio" onclick="intimacaoTipoPessoa(this.value)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <label id="lblFisica" for="tipoPessoaFisica" accesskey="" class="infraLabelRadio">Pessoa Física</label><br>
+                <input type="radio" id="tipoPessoaJuridica" name="tipoPessoa" value="J" class="infraRadio" onclick="intimacaoTipoPessoa(this.value)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <label id="lblJuridica" for="tipoPessoaJuridica" accesskey="" class="infraLabelRadio">Pessoa Jurídica</label>
             </div>
-
-            <div class="clear height_1"></div>
-
-            <!-- Tipo de Resposta -->
-            <div class="grid grid_11" id="divTipoResposta" name="divTipoResposta">
-                <div class="grid grid_3">
-                    <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de Resposta:</label>
-                </div>
-                <div class="clear"></div>
-                <div class="grid grid_6" id="divSelectTipoResposta"></div>
-            </div>
-
-            <div style="display: none" id="divEspacoResposta" class="clear height_1"></div>
-
-        </div>
-
-        <div class="clear"></div>
-
-        <fieldset id="fldDocumentosIntimacao">
-            <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img style="margin-top:1px; margin-bottom: -3px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até ' . $numNumPrazo . ' dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n\n\n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.') ?> /></legend>
-
-            <!-- Documento Principal-->
-            <div class="grid grid_8" style="margin-top:5px">
-                <label id="lblDocPrincIntimacao" for="lblDocPrincIntimacao" class="infraLabelOpcional">Documento Principal da Intimação: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')'; ?></label>
-            </div>
-
-            <div class="clear height"></div>
-
-            <div id="divOptAno" class="grid_8 infraDivCheckbox">
-                <input type="checkbox" id="optPossuiAnexo" name="rdoPossuiAnexo" value="S"
-                       onclick="esconderAnexos(this)" class="infraCheckbox" <?= (false ? 'checked="checked"' : '') ?>
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelCheckbox">Intimação possui Anexos </label>
-            </div>
-
-            <div class="clear"></div>
-            <!-- Anexos -->
-            <div class="grid grid_10">
-                <label id="lblAnexosIntimacao" for="lblAnexosIntimacao" accesskey="" class="infraLabelObrigatorio">Protocolos dos Anexos da Intimação:</label>
-                <div style="display: -webkit-box;">
-                    <select onclick="controlarSelected(this);" id="selAnexosIntimacao" style="width: 90%" name="selAnexosIntimacao" size="7"
-                            class="infraSelect" multiple="multiple"></select>
-
-                    <img style="padding-left: 5px;" id="imgLupaAnexos" onclick="objLupaProtocolosIntimacao.selecionar(700,500);"
-                         src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif"
-                         alt="Selecionar Protocolos" title="Selecionar Protocolos" class="infraImg"/>
-                    </br>
-
-                    <img style="padding-left: 4px;" id="imgExcluirAnexos" onclick="objLupaProtocolosIntimacao.remover();"
-                         src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif"
-                         alt="Remover Protocolos Selecionados" title="Remover Protocolos Selecionados"
-                         class="infraImgNormal"/>
-
-                </div>
-                <input type="hidden" id="hdnAnexosIntimacao" name="hdnAnexosIntimacao"
-                       value="<?= $_POST['hdnAnexosIntimacao'] ?>"/>
-            </div>
-
-        </fieldset>
-
-        <div class="clear"></div>
-
-            <fieldset id="flTpAcesso" style="margin-top:17px">
-                <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Acesso Externo </legend>
-                <!-- Tipo de Acesso Externo -->
-                <div class="clear height"></div>
-                <div class="grid grid_8" style="margin-top:3px">
-                    <!-- Integral -->
-                    <div id="divOptAno" class="infraDivRadio">
-                        <input type="radio" id="optIntegral" name="optIntegral" value="I" class="infraRadio" onclick="mostrarProtocoloParcial(this)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        <label id="lblIntegral" for="optIntegral" accesskey="" class="infraLabelRadio">Integral </label> &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.') ?> class="infraImg"/>
-                    </div>
-
-                    <!-- Parcial -->
-                    <div id="divOptAno" class="infraDivRadio" style="margin-left: 16px;">
-                        <input type="radio" id="optParcial" name="optParcial" value="P" class="infraRadio" onclick="mostrarProtocoloParcial(this)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        <label id="lblParcial" for="optParcial" accesskey="" class="infraLabelRadio">Parcial </label> &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE serão disponibilizados ao Destinatário o Documento Principal, os Protocolos dos Anexos da Intimação (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos serão automaticamente incluídos no Acesso Parcial. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Parcial não poderá ser alterado nem cancelado. Todos os Protocolos incluídos no Acesso Externo Parcial poderão ser visualizados pelo Destinatário, independentemente de seus Níveis de Acesso, não abrangendo Protocolos futuros que forem adicionados ao processo.') ?> class="infraImg"/>
-                    </div>
-                </div>
-
-                <div class="clear height"></div>
-
-                <!-- Protocolos Disponíveis -->
-                <div class="grid grid_10">
-                    <label id="lblProtocolosDisponibilizados" for="lblProtocolosDisponibilizados" accesskey="" class="infraLabelObrigatorio">Protocolos Disponibilizados:</label>
-                    <div style="display: -webkit-box;">
-                        <select onclick="controlarSelected(this);" style="width: 90%" id="selProtocolosDisponibilizados" multiple="multiple" name="selProtocolosDisponibilizados" size="7" class="infraSelect"></select>
-
-                        <img style="padding-left: 5px;" id="imgLupaProtocolos" onclick="objLupaProtocolosDisponibilizados.selecionar(700,500);" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Protocolos" title="Selecionar Protocolos" class="infraImg"/>
-                        </br>
-                        <img style="padding-left: 4px;" id="imgExcluirProtocolos" onclick="objLupaProtocolosDisponibilizados.remover();" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Protocolos Selecionados" title="Remover Protocolos Selecionados" class="infraImgNormal"/>
-                    </div>
-                </div>
-            </fieldset>
-            </div>
-
-        <!-- Hiddens -->
-        <select style="display: none" multiple="multiple" id="selMainIntimacao" name="selMainIntimacao" size="12"/>
-        <input type="hidden" id="hdnIsAlterar" name="hdnIsAlterar" value="<?php echo $isAlterar ? '1' : '0' ?>"/>
-        <input type="hidden" id="hdnCountIntimacoes" name="hdnCountIntimacoes" value="<?php echo $countInt ?>"/>
-        <input type="hidden" id="hdnProtocolosDisponibilizados" name="hdnProtocolosDisponibilizados"
-               value="<?= $_POST['hdnProtocolosDisponibilizados'] ?>"/>
-        <input type="hidden" id="hdnIdDocumento" name="hdnIdDocumento" value="<?php echo $idDocumento ?>"/>
-        <input type="hidden" id="hndIdDocumento" name="hndIdDocumento" value="<?=$idDocumento?>" />
-        <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= array_key_exists('id_procedimento', $_GET) ? $_GET['id_procedimento'] : $_POST['hdnIdProcedimento'] ?>"/>
-        <input type="hidden" id="hdnIdsDocAnexo" name="hdnIdsDocAnexo" value=""/>
-        <input type="hidden" id="hdnIdsDocDisponivel" name="hdnIdsDocDisponivel" value=""/>
-
-        <!-- Hiddens das constantes do Acesso Parcial / Integral -->
-    <input type="hidden" id="hdnStaAcessoParcial" name="hdnStaAcessoParcial" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL ?>">
-    <input type="hidden" id="hdnStaAcessoIntegral" name="hdnStaAcessoIntegral" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL ?>">
-    <input type="hidden" id="hdnStaSemAcesso" name="hdnStaSemAcesso" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO ?>">
-
+        </fieldset>    
+        
+        <div id="div_tipo_destinatario"></div>
         <?php PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos); ?>
         <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
 
@@ -338,3 +170,119 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>
+<style>
+
+    #divTipoPessoa{
+        margin-left:20px;
+        
+    }
+
+    #lblFisica {
+        font-weight: bold;
+    }
+
+    #lblJuridica{
+        font-weight: bold;
+    }
+
+</style>
+
+<script type="text/javascript">
+
+
+function OnSubmitForm() {
+	return true;
+}
+
+function resizeIFramePorConteudo(){
+	var id = 'ifrConteudoHTML';
+	var ifrm = document.getElementById(id);
+	ifrm.style.visibility = 'hidden';
+	ifrm.style.height = "10px"; 
+
+	var doc = ifrm.contentDocument? ifrm.contentDocument : ifrm.contentWindow.document;
+	doc = doc || document;
+	var body = doc.body, html = doc.documentElement;
+
+	var width = Math.max( body.scrollWidth, body.offsetWidth, 
+	                      html.clientWidth, html.scrollWidth, html.offsetWidth );
+	ifrm.style.width='100%';
+
+	var height = Math.max( body.scrollHeight, body.offsetHeight, 
+	                       html.clientHeight, html.scrollHeight, html.offsetHeight );
+	ifrm.style.height=height+'px';
+
+	ifrm.style.visibility = 'visible';
+}
+
+document.getElementById('ifrConteudoHTML').onload = function() {
+	resizeIFramePorConteudo();
+}
+
+
+function intimacaoTipoPessoa(tipo){
+
+
+    try{
+
+    var tbUsuarios = document.getElementById('hdnDadosUsuario');
+    var tipoPessoa = null;
+    if(tbUsuarios.value != ""){
+         
+        if(document.getElementById('hdnTipoPessoa').value == "J"){
+        
+            tipoPessoa = "tipoPessoaJuridica";
+
+        }else{
+
+            tipoPessoa = "tipoPessoaFisica";   
+    }
+
+
+    var r = confirm("Os dados preenchidos serão desconsiderados. Deseja Continuar?");
+    if(r == false){
+        
+        document.getElementById(tipoPessoa).checked = true;
+        return;
+    }
+
+    }
+    }catch(err){
+        
+    }
+
+    
+    if(tipo == 'F'){
+        url = '<?=$urlTipoFisica?>';
+    }else{
+        url = '<?=$urlTipoJuridica?>';
+    }   
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: url ,
+        data: {
+                id_documento: <?= $idDocumento?>,
+                id_procedimento: <?= $_GET['id_procedimento'] ?>
+                <?php if($isAlterar){?>
+                    ,is_alterar: <?= $isAlterar ?>
+                <?php }?>                
+              },
+        success: function (result) {
+            $('#div_tipo_destinatario').html(result);
+            if(tipo == 'F'){                
+                preparaPessoaFisica();                
+            }else{
+                preparaPessoaJuridica(tipo);
+            }  
+        },
+        error: function (msgError) {
+        msgCommit = "Erro selecionar tipo de destinatário: " + msgError.responseText;
+        console.log(msgCommit);
+        },
+        complete: function (result) {
+            infraAvisoCancelar();
+        }
+    });
+}
+</script>

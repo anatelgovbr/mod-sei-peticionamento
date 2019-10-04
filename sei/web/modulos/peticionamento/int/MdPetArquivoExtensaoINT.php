@@ -24,7 +24,7 @@ class MdPetArquivoExtensaoINT extends InfraINT {
   	$objMdPetArquivoExtensaoDTO->retNumIdArquivoExtensao();
   	$objMdPetArquivoExtensaoDTO->retStrExtensao();
   	$objMdPetArquivoExtensaoDTO->retStrDescricao();
-  	  
+  	$objMdPetArquivoExtensaoDTO->setNumMaxRegistrosRetorno(50);
   	$objMdPetArquivoExtensaoDTO->setOrdStrExtensao(InfraDTO::$TIPO_ORDENACAO_ASC);
   
   	if ($strExtensao!=''){

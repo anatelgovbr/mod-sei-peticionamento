@@ -50,6 +50,65 @@ try {
 $hashAnexo = "";
 $idAnexo = "";
 
+$oragao = '';
+$uf = '';
+$cidadeHidden = '';
+
+if(isset($_GET['id_orgao'])){
+    $oragao = $_GET['id_orgao'];
+}
+if(isset($_GET['id_uf'])){
+    $uf = $_GET['id_uf'];
+}
+if(isset($_GET['id_cidade'])){
+    $cidadeHidden = $_GET['id_cidade'];
+
+    $objCidadeDTO = new CidadeDTO();
+    $objCidadeDTO->setNumIdCidade($cidadeHidden);
+    $objCidadeDTO->retStrNome();
+    $objCidadeRN = new CidadeRN();
+    $objCidadeDTO = $objCidadeRN->consultarRN0409($objCidadeDTO);
+    $cidadeHidden = $objCidadeDTO->getStrNome();
+}
+ 
+
+//combo disabled 
+$disabled = '';
+//Option vazio
+ //Recuperando Oragao
+ 
+ $selectOrgao        = MdPetTipoProcessoINT::montarSelectOrgaoTpProcesso($_GET['id_tipo_procedimento'],$oragao);
+ if(($cidadeHidden != "" || $uf != "") || ($oragao != "" && count($selectOrgao[0]) > 1 && $cidadeHidden != "" )){
+ $selectCidade        = MdPetTipoProcessoINT::montarSelectCidade($_GET['id_tipo_procedimento'],$oragao,$uf,$cidadeHidden);
+ }
+
+ if(count($selectOrgao[0]) < 2){
+  $disabled = "disabled";
+  $unicoOrgao =  $selectOrgao[0];
+  $orgaoDuplo = false; 
+} 
+
+ if(($uf != "" && $orgaoDuplo == false) || ($oragao != "" && count($selectOrgao[0]) > 1 )){
+ $selectUf        = MdPetTipoProcessoINT::montarSelectUf($_GET['id_tipo_procedimento'],$oragao,$uf,$cidadeHidden);
+ }
+
+ $hiddUF = "";
+ //Caso o usuário tenha selecionado na uf e retorne somente uma, esconder combo
+ if(count($selectUf[0]) < 2){
+   
+  $hiddUF = "display:none";
+
+ }
+ //Caso retorne somente uma cidade
+ $cidadeHidde = "";
+ if(count($selectCidade[0]) == 1 ){
+ 
+  $cidadeHidde = "display:none";
+
+ }else{
+  $cidadeHidde = "";
+ }
+
 PaginaSEIExterna::getInstance()->montarDocType();
 PaginaSEIExterna::getInstance()->abrirHtml();
 PaginaSEIExterna::getInstance()->abrirHead();
@@ -71,6 +130,7 @@ PaginaSEIExterna::getInstance()->fecharJavaScript();
 .fieldsetClear {border:none !important;}
 
 #lblPublico img[name=ajuda] {height: 1.3em; width: 1.3em; margin-bottom: -4px;}
+
 
 </style>
 <? 
@@ -102,61 +162,113 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
    <br/>
    <label class="infraLabelObrigatorio">Especificação (resumo limitado a 50 caracteres):</label>
    <br/>
-   <input type="text" class="infraText" name="txtEspecificacao" id="txtEspecificacao" style="width: 360px;" maxlength="50" /> <br/><br/>
-   
+   <input type="text" class="infraText" name="txtEspecificacao" id="txtEspecificacao" style="width: 337px;" maxlength="50" /> <br/><br/>
+  
+   <?php if(count($selectOrgao[0]) < 2){
+        $hiddenOrgao = "display:none;";
+        $unicoOrgao =  $selectOrgao[0];
+        $orgaoDuplo = false; 
+    } 
+
+    if(count($selectOrgao[0]) > 1){
+      $cidadeHidde = "display:none;";
+    }
+
+
+    ?>
+
+    
+    <!-- Settar unidade no lugar da idCidade -->
+    <!-- Validação para quando deve aparecer as 3 combos -->
    <? if( $arrUnidadeUFDTO != null && count( $arrUnidadeUFDTO ) > 1 ){ ?>
-   
-     <label class="infraLabelObrigatorio">UF em que o processo deve ser aberto:</label>
-     <br/>
-     
-     <select id="selUFAberturaProcesso" name="selUFAberturaProcesso">
-        <option value=""></option>
-        <?
-        function array_msort($array, $cols) {
-            $colarr = array();
-            foreach ($cols as $col => $order) {
-                $colarr[$col] = array();
-                foreach ($array as $k => $row) { $colarr[$col]['_'.$k] = strtolower($row[$col]); }
-            }
-            $eval = 'array_multisort(';
-            foreach ($cols as $col => $order) {
-               $eval .= '$colarr[\''.$col.'\'],'.$order.',';
-            }
-            $eval = substr($eval,0,-1).');';
-            eval($eval);
-            $ret = array();
-            foreach ($colarr as $col => $arr) {
-                foreach ($arr as $k => $v) {
-                    $k = substr($k,1);
-                    if (!isset($ret[$k])) $ret[$k] = $array[$k];
-                    $ret[$k][$col] = $array[$k][$col];
-                }
-            }
-            return $ret;
+<!-- Orgão -->
+<?php if($hiddenOrgao == "display:none;"){ ?>
+      <?php $display = "float: left;";  ?>
+<?php }else{
+      $display = "float: left;padding-right:10px;";
+} ?>
+
+
+   <div style="<?php echo $display ?>">
+		
+				<label id="lblPublico" style="<?php echo $hiddenOrgao; ?>" class="infraLabelObrigatorio">Orgão: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listados os Órgãos em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo o Órgão no qual deseja que este Processo seja aberto. ") ?> alt="Ajuda" class="infraImg"/></label> <br/>
+       <select onchange="pesquisarUF(this)"  style="width:140px;<?php echo $hiddenOrgao; ?>"  id="selOrgao" name="selOrgao" class="infraSelect" >
+       <?php if($orgaoDuplo){ ?>
+        <?php if(empty($oragao)){ ?>
+          <option value=""></option>
+        <?php } ?>
+        <?php } ?>
+        <?php if($orgaoDuplo == false && count($selectOrgao[0]) > 1 ){ ?>
+          <option value=""></option>
+        <?php } ?>
+        <?= 
+        $idOrgao = $selectOrgao[0];
+        $orgao = $selectOrgao[1];
+        for ($i=0; $i < count($idOrgao) ; $i++) { 
+          echo '<option value="' . $idOrgao[$i] . '">' . $orgao[$i] . '</option>';
         }
-        $arrUnidadeUF = array();
-        foreach( $arrUnidadeUFDTO as $itemUnidadeDTO ){
-            $contatoAssociadoDTO = new ContatoDTO();
-            $contatoAssociadoRN = new ContatoRN();
-            $contatoAssociadoDTO->retStrSiglaUf();
-            $contatoAssociadoDTO->retNumIdContato();
-            $contatoAssociadoDTO->setNumIdContato( $itemUnidadeDTO->getNumIdContato() );
+        
+        ?>
+        </select> 
+		</div>
+  
+   
+    <!-- UF -->
+    
+    <div style="float: left;padding-right:10px;<?php echo $hiddUF; ?>" id="ufHidden">
 
-            $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324( $contatoAssociadoDTO );
+				<label id="lblPublico" class="infraLabelObrigatorio">UF: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ") ?> alt="Ajuda" class="infraImg"/></label> <br/>
+          <select onchange="pesquisarCidade(this)"  style="width:60px;"  id="selUF" name="selUF" class="infraSelect" >
+          <?php if(count($selectUf[0]) > 1){ ?>
+          <option value=""></option>
+          <?php } ?>
+          <?= 
+          
+          $idUf = $selectUf[0];
+          $uf = $selectUf[1];
+            for ($i=0; $i < count($idUf) ; $i++) { 
+              echo '<option value="' . $idUf[$i] . '">' . $uf[$i] . '</option>';
+            }
+      
+          ?>
+          
+          </select>
 
-            $arrUnidadeUF[] = array ('IdUnidade' => $itemUnidadeDTO->getNumIdUnidade()
-                                     , 'IdContato' => $itemUnidadeDTO->getNumIdContato()
-                                     , 'SiglaUf' => $contatoAssociadoDTO->getStrSiglaUf()
-            );
-       }
-       $arrUnidadeUF = array_msort($arrUnidadeUF, array('name'=>SORT_DESC, 'SiglaUf'=>SORT_ASC));
-       foreach( $arrUnidadeUF as $itemUnidade ){
-           echo '<option value="' . $itemUnidade['IdUnidade'] . '">' . $itemUnidade['SiglaUf'] . '</option>';
-       }
-       ?>
-     </select> <br/><br/>
+    </div>
+
+    
+
+    <!-- Cidade -->
+    <div style="float: left;padding-right:10px;<?php echo $cidadeHidde; ?>" id="cidadeHidden">
+
+				<label id="lblPublico" class="infraLabelObrigatorio">Cidade: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as Cidades em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a Cidade na qual deseja que este Processo seja aberto.") ?> alt="Ajuda" class="infraImg"/></label> <br/>
+        <select onchange="pesquisarFinal(this)"  style="width:271px;"  id="selUFAberturaProcesso" name="selUFAberturaProcesso" class="infraSelect" >
+        <?php if(count($selectCidade[0]) > 1){ ?>
+          <option value=""></option>
+        <?php } ?>
+        <?= 
+          $unidade = $selectCidade[0];
+          $cidade = $selectCidade[1];
+
+          for ($i=0; $i < count($cidade) ; $i++) { 
+              echo '<option value="' . $unidade[$i] . '">' . $cidade[$i] . '</option>';
+          }
+        
+        ?>
+   
+  </select>
+
+    </div>
+
+  
+       <input type="hidden" name="hdnIdUfTelaAnterior" id="hdnIdUfTelaAnterior" value="<?php echo $_GET['id_uf'] ?>" />
+       <input type="hidden" name="hdnIdCidadeTelaAnterior" id="hdnIdCidadeTelaAnterior" value="<?php echo $cidadeHidden; ?>" />
+       <input type="hidden" name="hdnIdOrgaoTelaAnterior" id="hdnIdOrgaoTelaAnterior" value="<?php echo $_GET['id_orgao'] ?>" />
+       <input type="hidden" name="hdnIdUfUnico" id="hdnIdUfUnico" value="" />
+
+
    <? } ?>
-
+   <div style="clear: both;"> &nbsp; </div>
    <? if( $objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'S') { ?>
    
    <!--  CASO 1 -->
@@ -174,13 +286,13 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 		<span id="spnPublico0">
 			<label id="lblPublico" class="infraLabelObrigatorio">Interessados: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoInformandoCPFeCNPJ) ?> alt="Ajuda" class="infraImg"/></label>
 		</span>
-		<input name="rdoTipoPessoa" id="optTipoPessoaFisica" onclick="selecionarPF()" name="tipoPessoa" value="pf" class="infraRadio" type="radio"/>
-		<span id="spnPublico"><label id="lblPublico" for="optTipoPessoaFisica" class="infraLabelRadio">Pessoa Física</label></span>
-		<input name="rdoTipoPessoa" id="optTipoPessoaJuridica" onclick="selecionarPJ()" name="tipoPessoa" value="pj" class="infraRadio" type="radio"/>
+		<input name="rdoTipoPessoa" id="optTipoPessoaFisica" onclick="selecionarPF()" style="margin-right:0px;" name="tipoPessoa" value="pf" class="infraRadio" type="radio"/>
+		<span id="spnPublico"><label id="lblPublico" for="optTipoPessoaFisica" style="padding-right:10px;"  class="infraLabelRadio">Pessoa Física</label></span>
+		<input name="rdoTipoPessoa" id="optTipoPessoaJuridica" onclick="selecionarPJ()" style="margin-right:0px;" name="tipoPessoa" value="pj" class="infraRadio" type="radio"/>
 		<span id="spnPublico"><label id="lblPublico2" for="optTipoPessoaJuridica" class="infraLabelRadio">Pessoa Jurídica</label></span>
 	</div>
    
-   <br/><br/>
+   
    
    <div style="width: 98%;" id="divSel0">
        
@@ -214,7 +326,10 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
        <input type="hidden" name="hdnUsuarioCadastro" id="hdnUsuarioCadastro" value="" />
        <input type="hidden" name="hdnUsuarioLogado" id="hdnUsuarioLogado" value="<? echo SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(); ?>" />
        <input type="hidden" name="hdnIdEdicao" id="hdnIdEdicao" value="" />
-       
+           
+      
+
+
        <table id="tbInteressadosIndicados" class="infraTable" width="98%" align="left" summary="Lista de Interessados" >
           
           <caption class="infraCaption"> &nbsp; </caption>
@@ -303,7 +418,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
   
  <input type="hidden" id="hdnNomeArquivoDownload" name="hdnNomeArquivoDownload" value="" />
  <input type="hidden" id="hdnNomeArquivoDownloadReal" name="hdnNomeArquivoDownloadReal" value="" />
-
+ <input type="hidden" id="hdnIdOrgaoDisabled" name="hdnIdOrgaoDisabled" value="<?php echo $disabled ?>" />
+ <input type="hidden" id="hdnIdOrgaoUnico" name="hdnIdOrgaoUnico" value="<?php echo $unicoOrgao[0] ?>" />
 <?
 PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);  
 PaginaSEIExterna::getInstance()->montarAreaDebug();
@@ -314,3 +430,9 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 //inclusao de conteudos JavaScript adicionais
 require_once('md_pet_usu_ext_cadastro_js.php');
 ?>
+
+ <input type="hidden" id="hdnIdOrgao" name="hdnIdOrgao" value="" />
+ <input type="hidden" id="hdnIdUf" name="hdnIdUf" value="" />
+ <input type="hidden" id="hdnIdCidade" name="hdnIdCidade" value="" />
+ <input type="hidden" id="hdnTpProcesso" name="hdnTpProcesso" value="<?php echo $_GET['id_tipo_procedimento'] ?>" />
+ <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?php echo $_GET['id_tipo_procedimento'] ?>" />

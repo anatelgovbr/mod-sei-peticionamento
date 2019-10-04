@@ -310,6 +310,243 @@ class MdPetContatoRN extends InfraRN {
 		
 		return $objContatoDTO;
 	}
-	
+
+	protected function getIdTipoContatoUsExtConectado(){
+		$strOrgao          = !empty(SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioExterno()) ? SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioExterno() : SessaoSEI::getInstance()->getStrSiglaOrgaoUsuario();
+		$strOrgao          = trim($strOrgao);
+		$numIdTipoContato  = '';
+		$objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+		$strNomeParametro  = trim($strOrgao. '_ID_TIPO_CONTATO_USUARIOS_EXTERNOS');
+		$numIdTipoContato  = $objInfraParametro->getValor($strNomeParametro,false);
+
+		return $numIdTipoContato;
+	}
+
+
+	private function _formatarArrControle($arrContatoDTO){
+
+		$idsContato = array();
+
+		foreach ($arrContatoDTO as $objContato) {
+
+			if ($objContato->getNumIdUsuarioCadastro() != null) {
+				$idsContato[$objContato->getNumIdUsuarioCadastro()] = $objContato->getNumIdContato();
+			}
+		}
+
+
+		return $idsContato;
+	}
+
+	private function _formatarArrControleIdUsuario($arrControle, $arrObjUsuario){
+		$arrRetorno = array();
+
+		foreach($arrObjUsuario as $objUsuario){
+			$idContatoUs  = $objUsuario->getNumIdContato();
+			$idUsuarioCon = $objUsuario->getNumIdUsuario();
+			$novoArr      = $arrControle[$idUsuarioCon];
+			$arrRetorno[$idContatoUs] = $novoArr;
+		}
+
+		return $arrRetorno;
+	}
+
+	/**
+	 * Essa função é para filtrar pelos tipos de contatos 'pais' que possuem o tipo especifico.
+	 */
+	private function _formatarArrControleIdContTipo($arrControle, $arrObjDTOContato)
+	{
+		$retorno = null;
+		foreach ($arrObjDTOContato as $objContatoDTO) {
+		  	$idContatoPai  = $objContatoDTO->getNumIdContato();
+			$retorno = array_key_exists($idContatoPai, $arrControle) ? $arrControle[$idContatoPai] : null;
+		}
+
+		return $retorno;
+	}
+
+	/** Condições mapeadas dessa forma pois mapeamento atual do core impede que seja implementado de outras formas
+     *  Sql adaptado para forma menos custoza disponível com o modelo atual
+	 */
+	protected function getContatoInclusoModPetConectado($cnpj){
+
+		$arrControle  = array();
+		$arrFinal     = array();
+		$objContatoRN = new ContatoRN();
+		$objUsuarioRN = new UsuarioRN();
+		$objContatoDTORetorno = null;
+
+		$objContatoDTO = new ContatoDTO();
+		$objContatoDTO->retNumIdTipoContato();
+		$objContatoDTO->retStrNome();
+		$objContatoDTO->retStrSiglaUf();
+		$objContatoDTO->retNumIdUf();
+		$objContatoDTO->retNumIdCidade();
+		$objContatoDTO->retStrNomeCidade();
+		$objContatoDTO->retStrComplemento();
+		$objContatoDTO->retStrCep();
+		$objContatoDTO->retStrEndereco();
+		$objContatoDTO->retStrBairro();
+		$objContatoDTO->retNumIdUsuarioCadastro();
+		$objContatoDTO->setDblCnpj($cnpj);
+		$objContatoDTO->retNumIdContato();
+        $objContatoDTOUnico = $objContatoDTO;
+		$countContatosInicio = $objContatoRN->contarRN0327($objContatoDTO);
+
+//        return $objContatoRN->consultarRN0324($objContatoDTO);
+
+
+		if($countContatosInicio > 0)
+		{
+			//Get ids usuários que cadastraram esses Usuarios
+			$arrContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
+
+			$arrControle   = $this->_formatarArrControle($arrContatoDTO);
+
+			$idsUsuario    = InfraArray::converterArrInfraDTO($arrContatoDTO, 'IdUsuarioCadastro');
+
+			if(count($idsUsuario) > 0)
+			{
+				$objUsuarioDTO = new UsuarioDTO();
+				$objUsuarioDTO->setNumIdUsuario($idsUsuario, InfraDTO::$OPER_IN);
+				$objUsuarioDTO->retNumIdContato();
+				$objUsuarioDTO->retNumIdUsuario();
+				$countUsers = $objUsuarioRN->contarRN0492($objUsuarioDTO);
+
+				if($countUsers > 0)
+				{
+					$arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
+					$arrControle = $this->_formatarArrControleIdUsuario($arrControle, $arrObjUsuarioDTO);
+					$idsContatoUsers  =  InfraArray::converterArrInfraDTO($arrObjUsuarioDTO, 'IdContato');
+
+					$idTipoContatoUsExt = $this->getIdTipoContatoUsExt();
+
+					if(count($idsContatoUsers) && count($idTipoContatoUsExt) > 0 && !empty($idTipoContatoUsExt))
+					{
+
+						$objContatoDTO = new ContatoDTO();
+						$objContatoDTO->setNumIdContato($idsContatoUsers, InfraDTO::$OPER_IN);
+						$objContatoDTO->setNumIdTipoContato($idTipoContatoUsExt);
+						$objContatoDTO->retNumIdContato();
+						$countContatos = $objContatoRN->contarRN0327($objContatoDTO);
+
+						if($countContatos > 0) {
+							$arrObjDTOContato = $objContatoRN->listarRN0325($objContatoDTO);
+							$idContato = $this->_formatarArrControleIdContTipo($arrControle, $arrObjDTOContato);
+						}
+					}
+				}
+
+			}
+		}
+
+		if(!is_null($idContato)){
+			$objContatoDTO = new ContatoDTO();
+			$objContatoDTO->setNumIdContato($idContato);
+			$objContatoDTO->retStrNomeTipoContato();
+			$objContatoDTO->retNumIdTipoContato();
+			$objContatoDTO->retNumIdContato();
+            $objContatoDTO->retStrNome();
+            $objContatoDTO->retStrSiglaUf();
+            $objContatoDTO->retNumIdUf();
+            $objContatoDTO->retNumIdCidade();
+            $objContatoDTO->retStrNomeCidade();
+            $objContatoDTO->retStrComplemento();
+            $objContatoDTO->retStrCep();
+            $objContatoDTO->retStrEndereco();
+            $objContatoDTO->retStrBairro();
+			$objContatoDTO->setNumMaxRegistrosRetorno(1);
+			$objContatoDTORetorno = $objContatoRN->consultarRN0324($objContatoDTO);
+		} else {
+		    if($countContatosInicio == 1) {
+                $objContatoDTORetorno = $objContatoRN->consultarRN0324($objContatoDTOUnico);
+            }
+        }
+
+		return $objContatoDTORetorno;
+	}
+
+	protected function consultarContatoConectado($dados)
+	{
+		$cnpj = InfraUtil::retirarFormatacao($dados['txtNumeroCnpj']);
+		$xml = '<dados-pj>';
+
+		if (!InfraUtil::validarCnpj($cnpj)) {
+			$xml .= "<success>false</success>\n";
+			$xml .= "<msg>CNPJ informado é inválido.</msg>\n";
+			$xml .= '</dados-pj>';
+			return $xml;
+		}
+
+		$objContatoDTO = $this->getContatoInclusoModPet($cnpj);
+
+		$idUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+
+		$usuarioRN = new UsuarioRN();
+		$usuarioDTO = new UsuarioDTO();
+		$usuarioDTO->setNumIdUsuario($idUsuarioExterno);
+		$usuarioDTO->retStrNomeContato();
+		$usuarioDTO->retNumIdContato();
+
+		$arrUsuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
+
+		$contatoRN = new ContatoRN();
+		$objContatoLogadoDTO = new ContatoDTO();
+        $objContatoLogadoDTO->setNumIdContato($arrUsuarioDTO->getNumIdContato());
+        $objContatoLogadoDTO->retDblCpf();
+        $objContatoLogadoDTO->retStrNome();
+        $objContatoLogadoDTO = $contatoRN->consultarRN0324($objContatoLogadoDTO);
+
+		if (!is_null($objContatoDTO)) {
+
+		$xml .= '<txtNumeroCpfResponsavel>' . InfraUtil::formatarCpf($objContatoLogadoDTO->getDblCpf()) . '</txtNumeroCpfResponsavel>';
+		$xml .= '<txtNomeResponsavelLegal>' . $objContatoLogadoDTO->getStrNome() . '</txtNomeResponsavelLegal>';
+
+			$slTipoInteressado = '';
+			if (!is_null($objContatoDTO)) {
+				$slTipoInteressado = $objContatoDTO->getNumIdTipoContato();
+			}
+
+
+			$xml .= '<slTipoInteressado>' . $slTipoInteressado . '</slTipoInteressado>';
+			$xml .= '<txtNomeFantasia></txtNomeFantasia>';
+			$xml .= '<txtRazaoSocial>' . $objContatoDTO->getStrNome() . '</txtRazaoSocial>';
+			$xml .= '<slUf>' . $objContatoDTO->getStrSiglaUf() . '</slUf>';
+			$xml .= '<idUf>' . $objContatoDTO->getNumIdUf() . '</idUf>';
+			$xml .= '<idCidade>' . $objContatoDTO->getNumIdCidade() . '</idCidade>';
+			$xml .= '<txtCidade>' . $objContatoDTO->getStrNomeCidade() . '</txtCidade>';
+			$xml .= '<txtNumeroEndereco></txtNumeroEndereco>';
+			$xml .= '<txtComplementoEndereco>' . $objContatoDTO->getStrComplemento() . '</txtComplementoEndereco>';
+			$xml .= '<txtNumeroCEP>' . $objContatoDTO->getStrCep() . '</txtNumeroCEP>';
+			$xml .= '<txtLogradouro>' . $objContatoDTO->getStrEndereco() . '</txtLogradouro>';
+			$xml .= '<txtBairro>' . $objContatoDTO->getStrBairro() . '</txtBairro>';
+		}
+
+		$xml .= '</dados-pj>';
+
+		return $xml;
+
+	}
+
+	protected function consultarContatoVinculoControlado($params){
+
+		$idContato = $params[0];
+		$acao = $params[1];
+
+		$objMdPetVinculoRN = new MdPetVinculoRN();
+		$objMdPetVinculoDTO = new MdPetVinculoDTO();
+
+		$objMdPetVinculoDTO->setNumIdContato($idContato,InfraDTO::$OPER_IN);
+		$objMdPetVinculoDTO->retNumIdContato();
+
+		$numRegistros = $objMdPetVinculoRN->contar($objMdPetVinculoDTO);
+
+		if($numRegistros>0){
+			$objInfraException = new InfraException();
+			$objInfraException->lancarValidacao("Não é permitido ".$acao." este contato, pois ele esta sendo usado no módulo de Peticionamento e Intimação Eletrônicos.");
+		}
+		return true;
+	}
+
 }
 ?>

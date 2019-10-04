@@ -39,10 +39,26 @@ class MdPetIntRelTipoRespINT extends InfraINT {
 
     public static function montarSelectTipoResposta($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntimacao = '', $idMdPetIntRelDestinatario)
     {
+        
         $objMdPetIntPrazoTipoRespostaRN = new MdPetIntPrazoRN();
-        $arrObjMdPetIntRelTipoRespValido = $objMdPetIntPrazoTipoRespostaRN->retornarTipoRespostaValido(array($numIdMdPetIntimacao, $idMdPetIntRelDestinatario));
-
+        $arrObjMdPetIntRelTipoRespValido = $objMdPetIntPrazoTipoRespostaRN->retornarTipoRespostaValidoTelaResposta(array($numIdMdPetIntimacao, $idMdPetIntRelDestinatario));
+        
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntRelTipoRespValido, 'IdMdPetIntRelTipoResp', 'Nome');
+
+    }
+
+    public static function montarSelectTipoRespostaAjax($id){
+
+    $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($id['id']);
+    $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+    $objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+    $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
+
+    $objMdPetIntPrazoTipoRespostaRN = new MdPetIntPrazoRN();
+    $arrObjMdPetIntRelTipoRespValido = $objMdPetIntPrazoTipoRespostaRN->retornarTipoRespostaValido(array($objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntimacao(),$id['id']));
+    return $arrObjMdPetIntRelTipoRespValido;
+    //return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntRelTipoRespValido, 'IdMdPetIntRelTipoResp', 'Nome');
 
     }
 

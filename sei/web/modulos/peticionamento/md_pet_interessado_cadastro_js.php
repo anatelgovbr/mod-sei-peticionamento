@@ -420,7 +420,7 @@ function salvar(){
 	}
 
 	else if( interessado1 == 'pf' && interessado2 == ''){
-	  alert('Informe se o Interessado Pessoa Física a ser cadastrado possui ou não vínculo com Pessoa Jurídica.');
+	  alert('Informe se o Interessado Pessoa Física a ser cadastrado possui ou não Vinculação à Pessoa Jurídica.');
 	  return;
 	}
 	

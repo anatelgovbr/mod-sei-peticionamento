@@ -13,13 +13,13 @@ class MdPetAcessoExternoDTO extends InfraDTO  {
 	public function getStrNomeTabela() {
 		return 'md_pet_acesso_externo';
 	}
-	
+
 	public function montar() {
-		
+
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdAcessoExterno',
 				'id_acesso_externo');
-		
+
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinProcessoIntercorrente',
 				'sin_proc_intercorrente');
@@ -31,10 +31,14 @@ class MdPetAcessoExternoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinIntimacao',
 				'sin_intimacao');
-		
+
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinAtivo',
 				'sin_ativo');
+
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+				'SinVinculo',
+				'sin_vinculo');
 
 		$this->configurarPK('IdAcessoExterno',InfraDTO::$TIPO_PK_INFORMADO);
 		$this->configurarFK('IdAcessoExterno', 'acesso_externo a', 'a.id_acesso_externo');
@@ -52,6 +56,7 @@ class MdPetAcessoExternoDTO extends InfraDTO  {
 
 		//Protocolo do Acesso Externo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdParticipanteAcessoExterno','a.id_participante','acesso_externo a');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SinAtivoAcessoExterno','a.sin_ativo','acesso_externo a');
 
 		//Id Contato Participante
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdContatoAcessoExterno','pt.id_contato','participante pt');

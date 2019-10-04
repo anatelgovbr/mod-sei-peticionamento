@@ -2,6 +2,7 @@
 /**
  * ANATEL
  *
+ * 
  * 22/07/2016 - criado por marcelo.bezerra@cast.com.br - CAST
  * Arquivo para realizar controle requisição ajax de usuario externo no modulo peticionamento.
  */

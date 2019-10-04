@@ -13,7 +13,13 @@ class MdPetReciboRN extends InfraRN {
 	public static $TP_RECIBO_NOVO = 'N';
 	public static $TP_RECIBO_INTERCORRENTE = 'I';
 	public static $TP_RECIBO_RESPOSTA_INTIMACAO = 'R';
-	
+	public static $TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL = 'V';
+        public static $TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO = 'A';
+        public static $TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS = 'C';
+        public static $TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO = 'P';
+        public static $TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO = 'G';
+        public static $TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA = 'U';
+
 	public function __construct() {
 		parent::__construct ();
 	}
@@ -143,7 +149,7 @@ class MdPetReciboRN extends InfraRN {
 	}
 	
 	protected function gerarReciboSimplificadoControlado( $idProcedimento ) {
-		
+
 		$objMdPetReciboDTO = new MdPetReciboDTO();
         $objMdPetReciboDTO->retTodos();
 

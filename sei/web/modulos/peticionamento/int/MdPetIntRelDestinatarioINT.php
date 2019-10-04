@@ -37,6 +37,27 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntRelDestinatarioDTO, 'IdMdPetIntRelDestinatario', 'IdMdPetIntRelDestinatario');
     }
 
+    public static function montarSelectRazaoSocial($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntimacao = '', $idMdPetIntRelDestinatario,$idDocumento,$idAceite)
+    {
+            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+			//$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao);
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+            $objMdPetIntRelDestinatarioDTO->setDblIdProtocolo($idDocumento);
+            $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($idAceite,InfraDTO::$OPER_IN);
+            $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+            $objMdPetIntRelDestinatarioDTO->retStrSinPessoaJuridica();
+            $objMdPetIntRelDestinatarioDTO->retDblCnpjContato();
+            $objMdPetIntRelDestinatarioDTO->retDblCpfContato();
+            $objMdPetIntRelDestinatarioDTO->retStrEmailContato();
+            $objMdPetIntRelDestinatarioDTO->retStrNomeContato();
+			$objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+			$objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
+            
+
+        return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $objMdPetIntRelDestinatarioDTO, 'IdMdPetIntRelDestinatario', 'NomeEmailCnpjCpf');
+
+    }
 
     public static function getArraySituacaoRelatorio(){
         $arrSituacao = array();
@@ -48,6 +69,28 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
         $arrSituacao[MdPetIntimacaoRN::$INTIMACAO_PRAZO_VENCIDO]       = MdPetIntimacaoRN::$STR_INTIMACAO_PRAZO_VENCIDO;
 
         return $arrSituacao;
+    }
+
+    public function consultarIntimacao($idMdPetIntRelDestinatario){
+       
+            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+			$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idMdPetIntRelDestinatario['id']);
+            $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetAceite();
+			$objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+            $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
+            
+
+            $xml .= '<dados>';
+            $xml .= '<idContato>' . $objMdPetIntRelDestinatarioDTO->getNumIdContato() . '</idContato>';
+            $xml .= '<idIntimacao>' . $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntimacao() . '</idIntimacao>';
+            $xml .= '<idAceite>' . $objMdPetIntRelDestinatarioDTO->getNumIdMdPetAceite() . '</idAceite>';
+
+            $xml .= '</dados>';
+
+
+            return $xml;
     }
 }
 ?>

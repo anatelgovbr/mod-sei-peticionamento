@@ -18,7 +18,7 @@ class MdPetHipoteseLegalINT extends InfraINT {
     $objHipoteseLegalDTO->setStrNome('%'.$strPalavrasPesquisa. '%', InfraDTO::$OPER_LIKE);
     $objHipoteseLegalDTO->setStrStaNivelAcesso($nivelAcesso);
     $objHipoteseLegalDTO->setStrSinAtivo('S');
-
+    $objHipoteseLegalDTO->setNumMaxRegistrosRetorno(50);
     $objHipoteseLegalRN = new HipoteseLegalRN();
     $arrObjHipoteseLegalDTO = $objHipoteseLegalRN->listar($objHipoteseLegalDTO);
     

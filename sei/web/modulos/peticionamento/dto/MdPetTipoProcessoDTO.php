@@ -80,16 +80,25 @@ class MdPetTipoProcessoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeHipoteseLegal', 'hl.nome', 'hipotese_legal hl');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'BaseLegalHipoteseLegal', 'hl.base_legal', 'hipotese_legal hl');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeSerie', 's.nome', 'serie s');
-		
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUnidade', 'md.id_unidade', 'md_pet_rel_tp_processo_unid md');
+                $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdOrgaoUnidade', 'u.id_orgao', 'unidade u');
+                $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SiglaUnidade', 'u.sigla', 'unidade u');
+                $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SiglaOrgaoUnidade', 'o.sigla', 'orgao o');
+                $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaTipoUnidade', 'md.sta_tp_unidade', 'md_pet_rel_tp_processo_unid md');
+
 		$this->configurarPK('IdTipoProcessoPeticionamento',InfraDTO::$TIPO_PK_NATIVA);
 		
 		$this->configurarFK('IdProcedimento', 'tipo_procedimento tipo', 'tipo.id_tipo_procedimento');
 		$this->configurarFK('IdSerie', 'serie s', 's.id_serie', InfraDTO::$TIPO_FK_OPCIONAL);
-		
 		$this->configurarFK('IdHipoteseLegal', 'hipotese_legal hl', 'hl.id_hipotese_legal', InfraDTO::$TIPO_FK_OPCIONAL);
-				
+		$this->configurarFK('IdTipoProcessoPeticionamento', 'md_pet_rel_tp_processo_unid md', 'md.id_md_pet_tipo_processo');
+                $this->configurarFK('IdUnidade', 'unidade u', 'u.id_unidade');
+                $this->configurarFK('IdOrgaoUnidade', 'orgao o', 'o.id_orgao');
+
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_ARR,'ObjRelTipoProcessoSerieDTO');
 		
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_ARR,'ObjRelTipoProcessoSerieEssDTO');
+                
+                
 	}}
 ?>

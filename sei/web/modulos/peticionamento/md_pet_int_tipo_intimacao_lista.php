@@ -116,6 +116,7 @@ try {
     if ($_GET['acao'] == 'md_pet_int_tipo_intimacao_listar') {
         $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('md_pet_int_tipo_intimacao_cadastrar');
         $arrComandos[] = '<button type="submit" accesskey="P" id="sbmPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
+        $arrComandos[] = '<button type="button" accesskey="O" id="btnOrientacao" value="Orientacoes" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_orientacoes_tipo_destinatario&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">O</span>rientações Tipo de Destinatário</button>';
         $arrComandos[] = '<button type="button" accesskey="T" id="btnNovo" value="Novo" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_listar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">T</span>ipos de Resposta</button>';
         if ($bolAcaoCadastrar) {
             $arrComandos[] = '<button type="button" accesskey="N" id="btnNov" value="Nov" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo</button>';

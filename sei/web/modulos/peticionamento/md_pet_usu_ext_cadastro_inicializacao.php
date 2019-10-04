@@ -302,5 +302,5 @@ SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
 $urlBaseLink = "";
 $arrComandos = array();
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="p" name="Peticionar" id="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
-$arrComandos[] = '<button tabindex="-1" type="button" accesskey="v" name="btnVoltar" id="btnVoltar" value="Voltar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_iniciar&id_orgao_acesso_externo=0')).'\';" class="infraButton"><span class="infraTeclaAtalho">V</span>oltar</button>';
+$arrComandos[] = '<button tabindex="-1" type="button" accesskey="v" name="btnVoltar" id="btnVoltar" value="Voltar" onclick="location.href=\''.PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_iniciar&id_orgao_acesso_externo=0&id_tipo_procedimento='.$_GET['id_tipo_procedimento'].'')).'\';" class="infraButton"><span class="infraTeclaAtalho">V</span>oltar</button>';
 ?>

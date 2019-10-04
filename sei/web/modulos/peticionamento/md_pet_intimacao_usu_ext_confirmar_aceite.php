@@ -12,12 +12,12 @@ PaginaSEIExterna::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES
 
 $arrComandos = array();
 $texto = '';
-$objMdPetIntDestRN   = new MdPetIntRelDestinatarioRN();
+$objMdPetIntDestRN = new MdPetIntRelDestinatarioRN();
 $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
 $idIntimacao = $_GET['id_intimacao'];
 
-switch($_GET['acao']) {
-	
+switch ($_GET['acao']) {
+
     case 'md_pet_intimacao_usu_ext_confirmar_aceite':
         try {
             $strTitulo = 'Consultar Intimação Eletrônica';
@@ -25,25 +25,23 @@ switch($_GET['acao']) {
             $arrComandos[] = '<button type="submit" accesskey="I" name="sbmAceitarIntimacao" id="sbmAceitarIntimacao" value="Confirmar Consulta à Intimação" class="infraButton">Confirmar Consulta à <span class="infraTeclaAtalho">I</span>ntimação</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
-            $texto  = 'Para visualizar os documentos da Intimação Eletrônica referente ao ';
+            $texto = 'Para visualizar os documentos da Intimação Eletrônica referente ao ';
             $texto .= 'Documento Principal SEI nº @numero_documento@, além de poder efetivar sua resposta, se faz necessário confirmar a consulta à intimação.';
             $texto .= '<p>Lembramos que, considerar-se-á cumprida a intimação com a presente consulta no sistema ou, não efetuada a consulta, em ';
-            $texto .= '@prazo_intimacao_tacita@ dias após a data de sua expedição.';
+            $texto .= '@prazo_intimacao_tacita@ dias após a data de sua expedição.</p>';
             $texto .= '<p>Como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem ';
             $texto .= 'de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta acima indicada, a Intimação será ';
-            $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.';
+            $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.</p>';
 
 
             $idDoc = $_GET['id_documento'];
 
 
-            if(isset($idDoc) && !is_null($idDoc)){
-                
-
+            if (isset($idDoc) && !is_null($idDoc)) {
                 $idIntimacao = $_GET['id_intimacao'];
-
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                $idDocPrincipal = $objMdPetIntimacaoRN->retornaIdDocumentoPrincipalIntimacao(array($idIntimacao));
+                $idDocPrincipal = $objMdPetIntimacaoRN->retornaIdDocumentoPrincipalIntimacaoAcao($idIntimacao);
+
                 //Get Documento Formatado
                 $objDocumentoDTO = new DocumentoDTO();
                 $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
@@ -60,31 +58,51 @@ switch($_GET['acao']) {
                 $objPrazoTacitoDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;
                 $numPrazo = !is_null($objPrazoTacitoDTO) ? $objPrazoTacitoDTO->getNumNumPrazo() : null;
 
-                //Data Expedição Intimação
-                $dtHrIntimacao = $objMdPetIntDestRN->consultarDadosIntimacao($idIntimacao);
+                $possuiIntimacaoJuridica = FALSE;
+                if ($idIntimacao) {
+                    foreach ($idIntimacao as $id) {
+                        //Data Expedição Intimação
+                        $objMdPetIntDestDTO = $objMdPetIntDestRN->consultarDadosIntimacao($id, true);
+                        $dtHrIntimacao = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getDthDataCadastro() : null;
 
-                $dtIntimacao = !is_null($dtHrIntimacao) ? explode(' ', $dtHrIntimacao) : null;
-                $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
+                        $dtIntimacao = !is_null($dtHrIntimacao) ? explode(' ', $dtHrIntimacao) : null;
+                        $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
 
-                //Calcular Data Final do Prazo Tácito
-                $dataFimPrazoTacito = '';
-                $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-                $dataFimPrazoTacito = $objMdPetIntPrazoRN->calcularDataPrazo($numPrazo, $dtIntimacao);                
+                        //Calcular Data Final do Prazo Tácito
+                        $dataFimPrazoTacito = '';
+                        $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
+                        $dataFimPrazoTacito = $objMdPetIntPrazoRN->calcularDataPrazo($numPrazo, $dtIntimacao);
+
+                        if ($objMdPetIntDestDTO && $objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S') {
+                            $possuiIntimacaoJuridica = TRUE;
+                        }
+                    }
+                }
+                if ($possuiIntimacaoJuridica) {
+                    $texto = 'Para visualizar os documentos da Intimação Eletrônica referente ao ';
+                    $texto .= 'Documento Principal SEI nº @numero_documento@, além de poder efetivar sua resposta, se faz necessário confirmar a consulta à intimação.';
+                    $texto .= '<p>Lembramos que, considerar-se-á cumprida a intimação com a presente consulta no sistema ou, não efetuada a consulta, em ';
+                    $texto .= '@prazo_intimacao_tacita@ dias após a data de sua expedição.</p>';
+                    //se for pessoa Juridica será adicionado esse paragrafo a mais
+                    $texto .= '<p>Por se tratar de Intimação Eletrônica destinada a Pessoa Jurídica, esta será considerada cumprida caso seja confirmada a consulta por qualquer Representante formalmente vinculado à Pessoa Jurídica (Responsável Legal e, caso existam, Procuradores com poderes de receber Intimações por meio de Procurações Eletrônicas geradas no próprio SEI).</p>';
+                    $texto .= '<p>Como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem ';
+                    $texto .= 'de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta acima indicada, a Intimação será ';
+                    $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.</p>';
+                }
 
                 //Documento
-                $texto = str_replace('@numero_documento@', $numDocFormat , $texto);
+                $texto = str_replace('@numero_documento@', $numDocFormat, $texto);
                 $texto = str_replace('@prazo_intimacao_tacita@', $numPrazo, $texto);
                 $texto = str_replace('@data_expedicao_intimacao@', $dtIntimacao, $texto);
                 $texto = str_replace('@data_final_prazo_intimacao_tacita@', $dataFimPrazoTacito, $texto);
-
             }
             //Realizar o Aceite
-            if(isset($_POST['sbmAceitarIntimacao'])){
+            if (isset($_POST['sbmAceitarIntimacao'])) {
                 $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
                 try {
                     $objInfraException = new InfraException();
-                    if ( $objMdPetIntAceiteRN->existeAceiteIntimacoes( array($_POST['hdnIdIntimacao']) ) ){
-                        $objInfraException->adicionarValidacao( 'Já havia ocorrido o cumprimento da presente intimação.' );
+                    if ($objMdPetIntAceiteRN->existeAceiteIntimacoes($_POST['hdnIdIntimacao'])) {
+                        $objInfraException->adicionarValidacao('Já havia ocorrido o cumprimento da presente intimação.');
                     }
                     $objInfraException->lancarValidacoes();
 
@@ -93,9 +111,8 @@ switch($_GET['acao']) {
                     $arrParametrosAceite['id_documento'] = $_GET['id_documento'];
                     $arrParametrosAceite['id_acesso_externo'] = $_GET['id_acesso_externo'];
 
-                    $objAceiteDTO = $objMdPetIntAceiteRN->processarAceiteManual( $arrParametrosAceite );
-
-                } catch(Exception $e){
+                    $objAceiteDTO = $objMdPetIntAceiteRN->processarAceiteManual($arrParametrosAceite);
+                } catch (Exception $e) {
                     PaginaSEIExterna::getInstance()->processarExcecao($e);
                 }
 
@@ -105,14 +122,13 @@ switch($_GET['acao']) {
                 echo "</script>";
                 die;
             }
-
         } catch (Exception $e) {
             PaginaSEIExterna::getInstance()->processarExcecao($e);
         }
-        
-    break;
+
+        break;
     default:
-        throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+        throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
 }
 
 PaginaSEIExterna::getInstance()->montarDocType();
@@ -120,7 +136,7 @@ PaginaSEIExterna::getInstance()->abrirHtml();
 PaginaSEIExterna::getInstance()->abrirHead();
 PaginaSEIExterna::getInstance()->montarMeta();
 
-PaginaSEIExterna::getInstance()->montarTitle(':: '. PaginaSEIExterna::getInstance()->getStrNomeSistema() .' - '.$strTitulo.' ::');
+PaginaSEIExterna::getInstance()->montarTitle(':: ' . PaginaSEIExterna::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo . ' ::');
 
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
@@ -135,25 +151,31 @@ PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
-PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload=""');
-SessaoSEIExterna::getInstance()->configurarAcessoExterno( $_GET['id_acesso_externo'] );
+PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload=""');
+SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_externo']);
 ?>
-<form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento='.$_GET['id_procedimento'].'&id_acesso_externo='.$_GET['id_acesso_externo'].'&id_documento='.$_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
+<form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
 
     <div class="clear"></div>
     <div class="textoIntimacaoEletronica">
-    <h2>
-    <?php echo $texto; ?>
-    </h2>
+        <h2>
+            <?php echo $texto; ?>
+        </h2>
+        <?php
+        if ($idIntimacao) {
+            foreach ($idIntimacao as $id) {
+                echo '<input type="hidden" name="hdnIdIntimacao[]" id="hdnIdIntimacao" value="' . $id . '"/>';
+            }
+        }
+        ?>
 
-        <input type="hidden" name="hdnIdIntimacao" id="hdnIdIntimacao" value="<?php echo $idIntimacao ?>"/>
     </div>
     <div style="padding-right: 40%">
-<?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);  ?>
+        <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
     </div>
 </form>
 <?php
-SessaoSEIExterna::getInstance()->configurarAcessoExterno( $_GET['id_acesso_externo'] );
+SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_externo']);
 PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 SessaoSEIExterna::getInstance()->configurarAcessoExterno(0);

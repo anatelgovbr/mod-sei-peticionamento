@@ -764,6 +764,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 	 * */
 	protected function cadastrarControlado($params)
 	{
+		
 		// Bloco de validações
 		$this->validarCadastro($params);
 
@@ -871,9 +872,14 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 				if( $reaberturaRN->isNecessarioReabrirProcedimento( $objProcedimentoDTO ) ) {
 					$reaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
+					//$idUnidadeReabrirProcesso = $reaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
+
+					//if (!$idUnidadeReabrirProcesso) {
+					//	$objInfraException = new InfraException();
+					//	$objInfraException->lancarValidacao('O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
+					//}
 				}
 			}
-
 
 			$params['diretoProcessoIndicado']=true;
 			$this->setProcedimentoDTO($params['id_procedimento']);
@@ -952,10 +958,11 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$objParticipanteProcPrincRN = new ParticipanteRN();
 		$arrobjParticipanteProcPrinc = $objParticipanteProcPrincRN->listarRN0189($objParticipanteProcPrincDTO);
 		// Processo Principal - Interessados - FIM
-
+		
 		// Processo - Interessados
 		$i=0;
 		foreach($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc){
+			
 			$objParticipante  = new ParticipanteDTO();
 			$objParticipante->setDblIdProtocolo($this->getProcedimentoDTO()->getDblIdProcedimento());
 			$objParticipante->setNumIdContato($objParticipanteProcPrinc->getNumIdContato());
@@ -965,7 +972,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			$idsParticipantes[] = $objParticipante;
 			$i++;
 		}
-
+		
 		$objMdPetParticipanteRN = new MdPetParticipanteRN();
 		$arrInteressado = array();
 		$arrInteressado[0] = $this->getProcedimentoDTO()->getDblIdProcedimento();
@@ -978,23 +985,51 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$arrDocApi = MdPetIntercorrenteINT::montarArrDocumentoAPI($params['id_procedimento'],$params['hdnTbDocumento']);
 
 		$arrObjReciboDocPet = $this->incluirDocumentosApi($this->getProcedimentoDTO(), $arrDocApi, $idUnidadeRespostaIntimacao);
-
+		
 		if( isset( $params['isRespostaIntimacao'] ) ){
 			$arrDadosRecibo['isRespostaIntimacao'] = true;
 		}
 
+                $objUsuarioDTO = new UsuarioDTO();
+                $objUsuarioDTO->retNumIdContato();
+                $objUsuarioDTO->retStrNome();
+                $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+                $objUsuarioRN  = new UsuarioRN();
+                $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+				
+                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                $objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($objUsuarioDTO->getNumIdContato());
+                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($params['id_intimacao']);
+				$objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+				$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($params['id_int_rel_dest']);
+                $objMdPetIntRelDestinatarioDTO->retStrSinPessoaJuridica();
+                $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+                $objMdPetIntRelDestinatarioDTO->retStrNomeContato();
+                $objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
+                
 		$objMdPetReciboRN = new MdPetReciboRN();
 		$arrDadosRecibo['id_intimacao'] = $params['id_intimacao'];
 		$arrDadosRecibo['id_aceite'] = $params['id_aceite'];
 		$arrDadosRecibo['id_tipo_resposta'] = $params['id_tipo_resposta'];
 		$arrDadosRecibo['idProcedimentoProcesso'] = $idProcedimentoProcesso;
+                if($objMdPetIntRelDestinatarioDTO) {
+                    if($objMdPetIntRelDestinatarioDTO->getStrSinPessoaJuridica() == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA){
+                        $params['id_contato'] = $objMdPetIntRelDestinatarioDTO->getNumIdContato();
+                        $params['sin_pessoa_juridica'] = $objMdPetIntRelDestinatarioDTO->getStrSinPessoaJuridica();
+                        $params['nome_contato'] = $objMdPetIntRelDestinatarioDTO->getStrNomeContato();
+                        $params['nome_contato'] = $objMdPetIntRelDestinatarioDTO->getStrNomeContato();
+                        $params['nome_usuario'] = $objUsuarioDTO->getStrNome();
+                    }
+                }
+                
 		$objReciboDTO = $objMdPetReciboRN->gerarReciboSimplificadoIntercorrente($arrDadosRecibo);
 
 		if (count($objReciboDTO) > 0) {
 
 			$this->setReciboDTO($objReciboDTO);
 			$this->cadastrarReciboDocumentoAnexo(array($objReciboDTO, $arrObjReciboDocPet));
-
+			
 			$documentoReciboDTO = $this->montarReciboIntercorrente($params);
 
 			//Remetentes
@@ -1006,6 +1041,16 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
 			$objParticipante->setNumSequencia(0);
 			$idsParticipantes[] = $objParticipante;
+
+			$idsParticipantes = array();
+			$objParticipante  = new ParticipanteDTO();
+			$objParticipante->setDblIdProtocolo($documentoReciboDTO->getDblIdDocumento());
+			$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
+			$objParticipante->setNumIdUnidade($idUnidadeProcesso);
+			$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+			$objParticipante->setNumSequencia(0);
+			$idsParticipantes[] = $objParticipante;
+			
 
 			// Recibo - Interessados
 			$i=0;
@@ -1047,7 +1092,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			$unidadeDTO->setNumIdUnidade($idUnidadeProcesso);
 			$unidadeRN = new UnidadeRN();
 			$unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
-
+			
 			if( isset( $params['isRespostaIntimacao'] ) ){
 				$this->salvarResposta( $params, $arrObjReciboDocPet, $unidadeDTO, $documentoReciboDTO );
 			}else if(isset( $params['isRespostaIntercorrente'])){
@@ -1162,13 +1207,15 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 	//metodo responsavel por gravar todo conteudo da resposta a intimacao de pessoa fisica
 	private function salvarResposta( $params, $arrObjMdPetRelReciboDocumentoAnexoDTO, $unidadeDTO,  $documentoReciboDTO ){
-		$objMdPetIntDestRespostaRN  = new MdPetIntDestRespostaRN();
+			
+        $tipoPessoa = "";    
+        $objMdPetIntDestRespostaRN  = new MdPetIntDestRespostaRN();
 		$objMdPetIntRelDestRN       = new MdPetIntRelDestinatarioRN();
 		$objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
-		$id_intimacao = $params['id_intimacao'];
+		//$id_intimacao = $params['id_intimacao'];
 		$id_tipo_resposta = $params['id_tipo_resposta'];
 		$id_procedimento = $params['id_procedimento'];
-
+		
 		//o sistema nao retornou dados de usuario externo em consulta via SeiRN->listarUsuarios (motivo ainda desconhecido), apelando para o uso da classe UsuarioRN
 		$usuarioRN = new UsuarioRN();
 		$usuarioDTO = new UsuarioDTO();
@@ -1176,23 +1223,47 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$usuarioDTO->retStrNome();
 		$usuarioDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 		$usuarioDTO = $usuarioRN->consultarRN0489( $usuarioDTO );
+		
+
+		//Recuperando Id Intimação
+
+		$objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+		$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($params['id_int_rel_dest']);
+		$objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+		$objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+        $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
+
+		$id_intimacao = $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntimacao();
 
 		$rnDestinatario = new MdPetIntRelDestinatarioRN();
 		$dtoDestinatario = new MdPetIntRelDestinatarioDTO();
-		$dtoDestinatario->retTodos();
-		$dtoDestinatario->setNumIdContato( $usuarioDTO->getNumIdContato() );
-		$dtoDestinatario->setNumIdMdPetIntimacao( $id_intimacao );
+		$dtoDestinatario->retTodos(true);
+		$dtoDestinatario->setNumIdContatoParticipante( $usuarioDTO->getNumIdContato() );
+		//$dtoDestinatario->setNumIdMdPetIntimacao( $id_intimacao );
+		
+		$dtoDestinatario->setNumIdMdPetIntRelDestinatario($params['id_int_rel_dest']);
 
 		$arrDtoDestinatario = $rnDestinatario->listar( $dtoDestinatario );
 
 		$idRelDest       = $arrDtoDestinatario[0]->getNumIdMdPetIntRelDestinatario();
 		$idAcessoExterno = $arrDtoDestinatario[0]->getNumIdAcessoExterno();
-
-		$objMdPetIntDestRespostaDTO->setNumIdMdPetIntRelDestinatario(	$idRelDest );
+		
+//                $objUsuarioDTO = new UsuarioDTO();
+//                $objUsuarioDTO->retNumIdContato();
+//                $objUsuarioDTO->retNumIdUsuario();
+//                $objUsuarioDTO->retStrNome();
+//                $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+//                $objUsuarioRN  = new UsuarioRN();
+//                $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+//                echo "<pre>";
+//                var_dump($objUsuarioDTO);
+//                die;
+		$objMdPetIntDestRespostaDTO->setNumIdMdPetIntRelDestinatario( $idRelDest );
 
 		$objMdPetIntDestRespostaDTO->setStrIp( InfraUtil::getStrIpUsuario());
 		$objMdPetIntDestRespostaDTO->setDthData( InfraData::getStrDataHoraAtual() );
 		$objMdPetIntDestRespostaDTO->setNumIdMdPetIntRelTipoResp( $id_tipo_resposta );
+                $objMdPetIntDestRespostaDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 
 		//cadastrando a resposta do destinatario nesta intimação
 		$objMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->cadastrar( $objMdPetIntDestRespostaDTO );
@@ -1212,7 +1283,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$dtoIntimacao = $rnIntimacao->consultar( $dtoIntimacao );
 
 		$sinTipoAcesso = $this->_getTipoAcessoExterno($idAcessoExterno);
-
+              
 		if( is_array( $arrObjMdPetRelReciboDocumentoAnexoDTO ) && count( $arrObjMdPetRelReciboDocumentoAnexoDTO ) > 0 ){
 
 			$arrDocAcessoExt = array( $documentoReciboDTO->getDblIdDocumento() );
@@ -1220,8 +1291,15 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			foreach( $arrObjMdPetRelReciboDocumentoAnexoDTO as $docDTO ){
 				$arrDocAcessoExt[] = $docDTO->getNumIdDocumento();
 			}
-
-
+						
+            $mdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
+            $objMdPetIntRelDest = new MdPetIntRelDestinatarioDTO();
+            $objMdPetIntRelDest->retNumIdAcessoExterno();
+            $objMdPetIntRelDest->retNumIdUsuario();
+            $objMdPetIntRelDest->setNumIdMdPetIntimacao($id_intimacao);
+            $objMdPetIntRelDest->setNumIdContato($params['id_contato']);
+            $arrMdPetIntRelDest = $mdPetIntRelDestRN->listar($objMdPetIntRelDest);
+						
 			$id_contato = $usuarioDTO->getNumIdContato();
 			$contatoRN = new ContatoRN();
 			$contatoDTO = new ContatoDTO();
@@ -1232,29 +1310,63 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			$contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
 
 			//so precisa intervir no acesso externo (para adicionar docs a mais nele, ou seja, ampliar o acesso ext) caso se trate de acesso ext parcial, para acesso integral nao é necessário intervir
-
+			
+			
 			if(!is_null($sinTipoAcesso) && $sinTipoAcesso == MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL ){
-
+				
 				$objRelDestRN = new MdPetIntRelDestinatarioRN();
 				$objRelDestDTO = new MdPetIntRelDestinatarioDTO();
-				$objRelDestDTO->retTodos();
+				$objRelDestDTO->retTodos(true);
 				$objRelDestDTO->setStrSinAtivo('S');
-				$objRelDestDTO->setNumIdContato( $id_contato );
+				$objRelDestDTO->setNumIdContatoParticipante( $id_contato );
 				$objRelDestDTO->setNumIdMdPetIntimacao( $id_intimacao );
 				$objRelDestDTO->setNumMaxRegistrosRetorno(1);
 				$objRelDestDTO = $objRelDestRN->consultar( $objRelDestDTO );
-
+				
 				//recuperando o id do acesso ext parcial, para amplia-lo
 				$idAcessoExtParcial = $objRelDestDTO->getNumIdAcessoExterno();
 
 				$objRelAcessoExtProtocoloBD = new RelAcessoExtProtocoloBD( $this->getObjInfraIBanco() );
 
+				//Verifica o Tipo de Destinatário
+								
+								//Pessoa Juridica
+                                $mdPetVinculoRN = new MdPetVinculoRN();
+                                $mdPetVinculoDTO = new MdPetVinculoDTO();
+                                $mdPetVinculoDTO->setNumIdContato($params['id_contato']);
+                                $mdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                                $mdPetVinculoDTO->retNumIdContatoRepresentante();
+                                $mdPetVinculoDTO->retNumIdUsuario();
+                                $mdPetVinculoDTO->retStrStaEstado();
+                                $mdPetVinculoDTO->retDthDataEncerramento();
+                                $arrMdPetVinculoDTO = $mdPetVinculoRN->listar($mdPetVinculoDTO);
+                                $arrRepresentantes = InfraArray::converterArrInfraDTO($arrMdPetVinculoDTO, 'IdUsuario');
+								
+								if(count($arrRepresentantes)){
+									$tipoPessoa = "J";
+								}else{
+									$tipoPessoa = "F";
+								}
+								
 				foreach( $arrDocAcessoExt as $docResposta ){
-
-					$objRelAcessoExtProtocoloDTO = new RelAcessoExtProtocoloDTO();
-					$objRelAcessoExtProtocoloDTO->setNumIdAcessoExterno( $idAcessoExtParcial );
-					$objRelAcessoExtProtocoloDTO->setDblIdProtocolo( $docResposta );
-					$objRelAcessoExtProtocoloBD->cadastrar($objRelAcessoExtProtocoloDTO);
+					
+                                    foreach ( $arrMdPetIntRelDest as $objAcessoExterno ) {
+										//var_dump($objAcessoExterno->getNumIdUsuario(), $arrRepresentantes);die;
+										if($tipoPessoa == "J"){
+                                        if(in_array($objAcessoExterno->getNumIdUsuario(), $arrRepresentantes)) {
+											
+                                            $objRelAcessoExtProtocoloDTO = new RelAcessoExtProtocoloDTO();
+                                            $objRelAcessoExtProtocoloDTO->setNumIdAcessoExterno( $objAcessoExterno->getNumIdAcessoExterno() );
+                                            $objRelAcessoExtProtocoloDTO->setDblIdProtocolo( $docResposta );
+                                            $objRelAcessoExtProtocoloBD->cadastrar($objRelAcessoExtProtocoloDTO);
+										}
+									}else{
+											$objRelAcessoExtProtocoloDTO = new RelAcessoExtProtocoloDTO();
+											$objRelAcessoExtProtocoloDTO->setNumIdAcessoExterno( $objAcessoExterno->getNumIdAcessoExterno() );
+											$objRelAcessoExtProtocoloDTO->setDblIdProtocolo( $docResposta );
+											$objRelAcessoExtProtocoloBD->cadastrar($objRelAcessoExtProtocoloDTO);
+									}
+                                }
 				}
 
 			}

@@ -66,7 +66,6 @@ try {
 
             // cadastrando o critério intercorrente
             if (isset($_POST['sbmCadastrarTpProcessoPeticionamento'])) {
-
                 $objMdPetCriterioDTO = new MdPetCriterioDTO();
                 $objMdPetCriterioDTO->setNumIdTipoProcedimento($_POST['hdnIdTipoProcesso']);
                 $objMdPetCriterioDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
@@ -79,7 +78,7 @@ try {
                     }
                     $objMdPetCriterioDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
                 }
-                
+
                 $objMdPetCriterioRN = new MdPetCriterioRN();
                 $objMdPetCriterioRN->cadastrarPadrao($objMdPetCriterioDTO);
 
@@ -102,7 +101,7 @@ try {
                     $idTipoProcesso      = $objCriterioIntercorrentePadraoDTO->getNumIdTipoProcedimento();
                     $sinCriterioPadrao   = $objCriterioIntercorrentePadraoDTO->getStrSinCriterioPadrao() == 'S' ? 'checked = checked' : '';
                     $sinNAUsuExt         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
-                    $sinNAPadrao         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
+                    $sinNAPadrao         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';                    
                     $sinAtivoSim         = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'S' ? 'checked = checked' : '';
                     $sinAtivoNao         = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'N' ? 'checked = checked' : '';
                     $hipoteseLegal       = $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
@@ -223,7 +222,7 @@ PaginaSEI::getInstance()->fecharJavaScript();
         left: 55.2%;
         top: 18px;
     }
-    
+        
     #imgAjuda2 {
         width: 16px;
         height: 16px;
@@ -301,7 +300,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <?= $strItensSelHipoteseLegal ?>
                     </select>
                 </div>
-                
             </div>
         </fieldset>
     </div>
@@ -476,7 +474,7 @@ PaginaSEI::getInstance()->fecharHtml();
                 return false;
             }
         }
-
+        
         var elemsSA = document.getElementsByName("rdSinAtivo[]");
         var validoSA = false;
 
@@ -490,7 +488,6 @@ PaginaSEI::getInstance()->fecharHtml();
             alert('Indique a opção para exibição ou não do menu Peticionamento Intercorrente.');
             return false;
         }
-        
         return true;
     }
 

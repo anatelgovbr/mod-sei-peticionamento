@@ -17,7 +17,7 @@ class MdPetTpCtxContatoINT extends InfraINT {
 		$objTipoContextoContatoDTO->retNumIdTipoContato();
 		$objTipoContextoContatoDTO->retStrNome();
 		$objTipoContextoContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
-	
+	    $objTipoContextoContatoDTO->setNumMaxRegistrosRetorno(50);
 		if ($strValorItemSelecionado!=null){
 	
 			$objTipoContextoContatoDTO->setBolExclusaoLogica(false);
@@ -59,6 +59,7 @@ class MdPetTpCtxContatoINT extends InfraINT {
 		
 		$objMdPetTpCtxContatoRN = new MdPetTpCtxContatoRN();
 		$arrObjTipoContextoContatoDTO = $objMdPetTpCtxContatoRN->listar($objMdPetRelTpCtxContatoDTO);
+
 	   	return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjTipoContextoContatoDTO , 'IdTipoContextoContato', 'NomeTipoContexto');
 	}
 

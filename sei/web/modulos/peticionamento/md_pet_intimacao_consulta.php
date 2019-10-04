@@ -40,12 +40,39 @@ try {
 
             $strProtocoloDocumentoFormatado = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
 
-            //Cria Intimacao
+            
+
+
+            //Juridica
+
+            $dtoContato = new ContatoDTO();
+            $dtoContato->setNumIdContato($_GET['id_contato']);
+            $dtoContato->retDblCnpj();
+            $dtoContato->retDblCpf();
+            $dtoContato->retStrNome();
+            $rnContato = new ContatoRN();
+            $arr = $rnContato->listarRN0325($dtoContato);
+            
+            if($arr[0]->getDblCpf() == null){
+                $pessoa = "J";
+
+                //Cria Intimacao
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+            
+            $dadosIntimacao = $objMdPetIntimacaoRN->dadosIntimacaoByIDJuridico($_GET['id_intimacao'], $_GET['id_contato']);
+
+            $strTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', $dadosIntimacao['tipo_intimacao']);
+
+            }else{
+                
+                $pessoa = "F";
+
+                $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
             
             $dadosIntimacao = $objMdPetIntimacaoRN->dadosIntimacaoByID($_GET['id_intimacao'], $_GET['id_contato']);
 
             $strTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', $dadosIntimacao['tipo_intimacao']);
+            }
 
             break;
 
@@ -97,9 +124,12 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     <input type="hidden" name="hdnIdDestInt" id="hdnIdDestInt" value="<?php echo isset($dadosIntimacao['id_dest_int']) ? $dadosIntimacao['id_dest_int'] : '' ?>" />
     <input type="hidden" name="hdnIsListaInt" id="hdnIsListaInt" value="<?php echo isset($_GET['lista_int']) ? $_GET['lista_int'] : '0' ?>" />
 
-    <label class="infraLabelObrigatorio">Destinatário:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['nome']?></label><br>
-    <label class="infraLabelObrigatorio">E-mail:</label><label class="infraLabelOpcional"> <?= $dadosIntimacao['email']?></label><br>
-    <label class="infraLabelObrigatorio">CPF:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCpf($dadosIntimacao['cpf'])?></label><br>
+    <label class="infraLabelObrigatorio">Destinatário:</label> <label class="infraLabelOpcional"><?= PaginaSEI::tratarHTML($dadosIntimacao['nome'])?></label><br>
+    <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">E-mail:</label><label class="infraLabelOpcional"> <?= $dadosIntimacao['email']?></label><br><?php } ?>
+
+    <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">CPF:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCpf($dadosIntimacao['cpf'])?></label><br> <?php } ?>
+    <?php if($pessoa == "J"){ ?><label class="infraLabelObrigatorio">CNPJ:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCnpj($dadosIntimacao['cpf'])?></label><br> <?php } ?>
+
     <label class="infraLabelObrigatorio">Data de Expedição:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['data_geracao']?></label><br>
     <label class="infraLabelObrigatorio">Situação da Intimação:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['situacao']?></label><br>
         <br>

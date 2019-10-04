@@ -127,7 +127,7 @@ class MdPetCriterioRN extends InfraRN
 
             //Cadastrar Indisponibilidade
             $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
-
+            
             $objInfraException = new InfraException();
 
             $this->_validarCamposObrigatorios($objMdPetCriterioDTO, $objInfraException);
@@ -164,7 +164,6 @@ class MdPetCriterioRN extends InfraRN
         }
 
         $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
-
         return $this->cadastrarControlado($objMdPetCriterioDTO);
     }
 
@@ -425,7 +424,9 @@ class MdPetCriterioRN extends InfraRN
 
 
                 if (count($arrObjCriterioIntercorrenteDTO) <= 0) {
-                    throw new InfraException ('Nenhum critério para Intercorrente Foi encontrado para o Tipo de Processo informado.');
+                    $objInfraException = new InfraException();
+                    $objInfraException->lancarValidacao('Nenhum critério para Intercorrente Foi encontrado para o Tipo de Processo informado.');
+                    //throw new InfraException ('Nenhum critério para Intercorrente Foi encontrado para o Tipo de Processo informado.');
                 }
 
                 $ret = $arrObjCriterioIntercorrenteDTO[0];

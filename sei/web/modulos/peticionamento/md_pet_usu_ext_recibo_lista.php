@@ -273,6 +273,18 @@ $strTipo = $_POST['selTipo'];
   
   <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO?>">Resposta a Intimação</option>
   
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL?>">Responsável Legal - Inicial</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO?>">Responsável Legal - Alteração</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS?>">Atualização de Atos Constitutivos</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO?>">Procuração Eletrônica - Emissão</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA?>">Procuração Eletrônica - Renúncia</option>
+  
+  <option <? if( $_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO ){ ?> selected="selected" <? } ?> value="<?= MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO?>">Procuração Eletrônica - Revogação</option>
+  
 </select> 
   
 <input type="submit" style="visibility: hidden;" />

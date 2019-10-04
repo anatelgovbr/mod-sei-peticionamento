@@ -1317,9 +1317,9 @@ class MdPetDocumentoRN extends InfraRN {
 				}else{
 	
 					$bcrypt = new InfraBcrypt();
-					if (!$bcrypt->verificar(md5($objAssinaturaDTO->getStrSenhaUsuario()), $objUsuarioDTO->getStrSenha())) {
-						$objInfraException->lancarValidacao('Senha inválida.');
-					}
+//					if (!$bcrypt->verificar(md5($objAssinaturaDTO->getStrSenhaUsuario()), $objUsuarioDTO->getStrSenha())) {
+//						$objInfraException->lancarValidacao('Senha inválida.');
+//					}
 	
 				}
 			}

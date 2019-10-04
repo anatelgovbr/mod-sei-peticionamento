@@ -38,8 +38,6 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'DataCadastro', 'data_cadastro');
 
-		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdAcessoExterno', 'id_acesso_externo');
-
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdUnidade', 'id_unidade');
 
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaSituacaoIntimacao', 'sta_situacao_intimacao');
@@ -103,6 +101,8 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		//Contato
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeContato', 'c.nome','contato c');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'EmailContato', 'c.email','contato c');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CnpjContato', 'c.cnpj','contato c');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CpfContato', 'c.cpf','contato c');
 
 		// Intimação x Protocolo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'IdProtocolo', 'mpd.id_protocolo', 'md_pet_int_protocolo mpd');
@@ -134,9 +134,52 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		//Aceite
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DTH, 'DataAceite','aceite.data','md_pet_int_aceite aceite');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'TipoAceite','aceite.tipo_aceite','md_pet_int_aceite aceite');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetAceite','aceite.id_md_pet_int_aceite','md_pet_int_aceite aceite');
+		//
+        $this->configurarFK('IdMdPetIntRelDestinatario', 'md_pet_rel_int_dest_extern destinatario', 'destinatario.id_md_pet_int_rel_dest');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdAcessoExterno','destinatario.id_acesso_externo','md_pet_rel_int_dest_extern destinatario');
 
+        $this->configurarFK('IdParticipanteAcessoExterno', 'participante', 'id_participante', false, true);
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,
+            'IdParticipanteAcessoExterno',
+            'a.id_participante',
+            'acesso_externo a');
+
+
+        $this->configurarFK('IdContatoParticipante', 'contato cp', 'cp.id_contato');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,
+            'IdContatoParticipante',
+            'id_contato',
+            'participante');
+        
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
+            'NomeContatoParticipante',
+            'cp.nome',
+            'contato cp');
+
+
+        $this->configurarFK('IdContatoParticipante', 'usuario usu', 'usu.id_contato');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,
+            'IdUsuario',
+            'usu.id_usuario',
+            'usuario usu');
+		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'NomeEmailCnpjCpf');
+		//$this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'NomeCpfEmail');
+		}
+
+	
+	public function getStrNomeEmailCnpjCpf(){
+		if($this->getStrSinPessoaJuridica() == "S"){
+			return $this->getStrNomeContato().' - '.infraUtil::formatarCnpj($this->getDblCnpjContato()); 
+		}else{
+			return $this->getStrNomeContato().' - '.$this->getStrEmailContato().' - '.infraUtil::formatarCpf($this->getDblCpfContato()) ; 
+
+		}
 	}
 
+
+
+        
 	public function getAceiteTIPOFK() {
 		return $this->AceiteTIPOFK;
 	}
@@ -152,6 +195,5 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 	public function setProcedimentoDocTIPOFK($ProcedimentoDocTIPOFK) {
 		$this->ProcedimentoDocTIPOFK = $ProcedimentoDocTIPOFK;
 	}
-
 }
 ?>

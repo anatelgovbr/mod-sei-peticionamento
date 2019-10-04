@@ -52,7 +52,6 @@ class MdPetIntCertidaoRN extends InfraRN{
     		}
 
             $htmlCertidao  = $this->gerarHTMLConteudoCertidao(array($idIntimacao, $objMdPetIntRelDestinatarioDTO, $objContato, $job, $dataCumprimento));
-
             $idSerieCertidao = $objInfraParametro->getValor(static::$STR_ID_SERIE_CERTIDAO);
 
     		//=============================================
@@ -77,7 +76,8 @@ class MdPetIntCertidaoRN extends InfraRN{
 
     		//necessario forçar update da coluna sta_documento da tabela documento
     		//Add conteúdo atualizado com o nome do documento formatado gerado.
-    		//inclusao via SeiRN nao permitiu definir como documento de formulario automatico
+            //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
+      
     		$objDocumentoDTO = new DocumentoDTO();
 
     		$objDocumentoDTO->retTodos();
@@ -94,6 +94,18 @@ class MdPetIntCertidaoRN extends InfraRN{
 
     		$objMdPetIntDocAcessoExt->verificarConcessaoAcessoExterno($job, $objDocumentoDTO, $objMdPetIntAceiteDTO);
 
+            //Adicionando usuário no documento
+            $objParticipante  = new ParticipanteDTO();
+            $objParticipante->setDblIdProtocolo($objSaidaDocumentoAPI->getIdDocumento());
+            $objParticipante->setNumIdContato($objMdPetIntRelDestinatarioDTO->getNumIdContato());
+            $objParticipante->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+            $objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+            $objParticipante->setNumSequencia(0);
+
+            $objParticipanteRN  = new ParticipanteRN();
+            $objParticipanteRN->cadastrarRN0170($objParticipante);
+
+            return $objSaidaDocumentoAPI;
     	}catch (Exception $ex){
     		PaginaSEIExterna::getInstance()->processarExcecao($ex);
     	}
@@ -118,6 +130,13 @@ class MdPetIntCertidaoRN extends InfraRN{
             $objMdPetIntRelDestinatarioDTO = isset($arrParams[4]) ? $arrParams[4] : null;
             $job                           = isset($arrParams[5]) ? $arrParams[5] : false;
             $dataCumprimento               = isset($arrParams[6]) ? $arrParams[6] : null;
+
+            $dateCumprimento = strtotime(str_replace('/', '-', $dataCumprimento));
+            $dateAtual = strtotime(str_replace('/', '-', date('d/m/Y')));
+
+            if ($dateCumprimento < $dateAtual) {
+                $dataCumprimento = date('d/m/Y');
+            }
 
             $idUsuario = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
@@ -253,10 +272,18 @@ class MdPetIntCertidaoRN extends InfraRN{
 
         $objMdPetIntRN       = new MdPetIntimacaoRN();
         $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
-        $objMdPetIntDestRN   = new MdPetIntRelDestinatarioRN();
-
+        $objMdPetIntDestRN   = new MdPetIntRelDestinatarioRN();        
         $dadosDocPrinc     = $objMdPetIntRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
-        $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacao($idIntimacao, true, false, $objContato);
+//        if($job){
+//            $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacaoPorDestinario($idIntimacao, true, false, $objContato);
+//        }else{
+////            $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacao($idIntimacao, true, false, $objContato);
+//        $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacaoPorDestinario($idIntimacao, true, false, $objContato);
+//        }
+//        var_dump('akiii');die;
+
+        $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacaoPorDestinario($idIntimacao, true, false, $objContato);
+
         $situacaoInt       = $objIntimacao->getStrStaSituacaoIntimacao();
         $situacaoCertidao  = $situacaoInt == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO ? MdPetIntCertidaoRN::$STR_TP_CUMPRIMENTO_CERTIDAO_ACESSO_DIRETO : MdPetIntCertidaoRN::$STR_TP_CUMPRIMENTO_CERTIDAO_PRAZO_TACITO;
 
@@ -269,8 +296,17 @@ class MdPetIntCertidaoRN extends InfraRN{
         $html .= '<table align="center" style="width: 98%" border="0">';
         $html .= '<tbody>';
         $html .= '<tr>';
+        $html .= '<td style="font-weight: bold; width: 300px">Tipo de Destinatário:</td>';
+        if($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S'){
+            $html .= '<td>Pessoa Jurídica</td>';
+        }elseif($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'N'){
+            $html .= '<td>Pessoa Física</td>';
+        }
+        $html .= '</tr>';
+
+        $html .= '<tr>';
         $html .= '<td style="font-weight: bold; width: 300px">Destinatário:</td>';
-        $html .= '<td>' . $objContato->getStrNome() . '</td>';
+        $html .= '<td>' . $objMdPetIntDestDTO->getStrNomeContato() . '</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';
@@ -300,7 +336,7 @@ class MdPetIntCertidaoRN extends InfraRN{
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Tipo de Cumprimento:</td>';
+        $html .= '<td style="font-weight: bold;">Tipo de Cumprimento da Intimação:</td>';
         $html .= '<td>'.$situacaoCertidao.'</td>';
         $html .= '</tr>';
 
@@ -309,7 +345,7 @@ class MdPetIntCertidaoRN extends InfraRN{
         $dataAtual = count($arrDataAtual) > 0 ? current($arrDataAtual) : null;
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Data do Cumprimento da Intimação:</td>';
+        $html .= '<td style="font-weight: bold;">Data do Cumprimento:</td>';
         $html .= '<td>'.$dataCumprimento.'</td>';
         $html .= '</tr>';
 
@@ -318,7 +354,34 @@ class MdPetIntCertidaoRN extends InfraRN{
             $html .= '<td> &ensp;&nbsp; Data da Consulta em dia não útil:</td>';
             $html .= '<td>'.$dataAtual.'</td>';
             $html .= '</tr>';
-        } 
+        }
+        if($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S' && $situacaoInt == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO) {
+            //Recuperando o usuário que cumpriu a intimação;
+
+            $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+            $objMdPetIntAceiteDTO->retNumIdUsuario();
+            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario());
+            $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
+            $arrMdPetIntAceiteRN =  $objMdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+
+            $objUsuarioRN = new UsuarioRN();
+            $objUsuarioDTO = new UsuarioDTO();
+            $objUsuarioDTO->retNumIdContato();
+            $objUsuarioDTO->setNumIdUsuario($arrMdPetIntAceiteRN->getNumIdUsuario());
+            $arrObjUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+
+            $objContatoDTO = new ContatoDTO();
+            $objContatoDTO->retStrNome();
+            $objContatoDTO->setNumIdContato($arrObjUsuarioDTO->getNumIdContato());
+
+            $objContatoRN = new ContatoRN();
+            $objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
+
+            $html .= '<tr>';
+            $html .= '<td style="font-weight: bold;">Usuário Responsável pelo Cumprimento:</td>';
+            $html .= '<td>' . $objContatoDTO->getStrNome() . '</td>';
+            $html .= '</tr>';
+        }
 
         $html .= '</tbody></table>';
 
@@ -338,12 +401,12 @@ class MdPetIntCertidaoRN extends InfraRN{
             <ul>
                 <li>sempre é excluído da contagem o dia do começo e incluído o do vencimento;</li>
                 <li>o dia do começo e o do vencimento nunca ocorrem em dia não útil, prorrogando-o para o primeiro dia útil seguinte;</li>
-                <li>a consulta a intimação ocorrida em dia não útil tem a correspondente data apresentada em linha separada, sendo a "Data do Cumprimento da Intimação" a do primeiro dia útil seguinte.</li>
+                <li>a consulta a intimação ocorrida em dia não útil tem a correspondente data apresentada em linha separada, sendo a "Data do Cumprimento" a do primeiro dia útil seguinte.</li>
             </ul>
         </li>
-        <li>Para todos os efeitos legais, somente após a geração da presente Certidão e com base exclusivamente na "Data do Cumprimento da Intimação" é que o Destinatário, ou a Pessoa Jurídica ou Física por ele representada, é considerado efetivamente intimado e são iniciados os possíveis prazos externos para Peticionamento de Resposta.
+        <li>Para todos os efeitos legais, somente após a geração da presente Certidão e com base exclusivamente na "Data do Cumprimento" é que o Destinatário, ou a Pessoa Jurídica ou Física por ele representada, é considerado efetivamente intimado e são iniciados os possíveis prazos externos para Peticionamento de Resposta.
             <ul>
-                <li>Caso a intimação se dirija a Pessoa Jurídica, ela será considerada efetivamente intimada na "Data do Cumprimento da Intimação" correspondente à primeira Certidão gerada referente a Usuário Externo que possua poderes de representação.</li>
+                <li>Caso a intimação se dirija a Pessoa Jurídica, ela será considerada efetivamente intimada na "Data do Cumprimento" correspondente à primeira Certidão gerada referente a Usuário Externo que possua poderes de representação.</li>
             </ul>
         </li>
         </ul>';
@@ -371,10 +434,15 @@ class MdPetIntCertidaoRN extends InfraRN{
         $docPrinc    = $arr[0];
         $idIntimacao = $arr[1];
         $idAcessoExt = $arr[2];
+        $idCertidao = $arr[3];
+        $cnpjs = $arr[4];
         $objMdPetIntProtRN = new MdPetIntProtocoloRN();
 
-        $arrEnvio = array($idIntimacao);
-        $idCertidao = $this->retornaIdDocCertidaoPorIntimacaoConectado($arrEnvio);
+        if(!$idCertidao){
+            $arrEnvio = array($idIntimacao);
+            $idCertidao = $this->retornaIdDocCertidaoPorIntimacaoConectado($arrEnvio);
+        }
+        
         $strLink = $this->retornaLinkAcessoDocumento($idCertidao, $idAcessoExt);
 
         //Var que verifica se a certidão é anexo de uma Intimação que não está aceita
@@ -406,6 +474,13 @@ class MdPetIntCertidaoRN extends InfraRN{
         }
         $ToolTipTitle .= '(SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
+        if($cnpjs){
+            $ToolTipTitle .= '<br/><br/>';
+            foreach ($cnpjs as $emp) {
+                $ToolTipTitle .= 'Pessoa Jurídica: '.$emp.'<br/>';
+            }
+        }
+        
         $ToolTipText  = '';
         $ToolTipText .= 'Clique para visualizar a Certidão.';
 
@@ -417,6 +492,59 @@ class MdPetIntCertidaoRN extends InfraRN{
 
         return $conteudoHtml;
     }
+    
+//    public function addIconeAcessoCertidaoAcao($arr){
+//        $docPrinc    = $arr[0];
+//        $idIntimacao = $arr[1];
+//        $idAcessoExt = $arr[2];
+//        $idCertidao = $arr[3];
+//
+//        if(!$idCertidao){
+//            $arrEnvio = array($idIntimacao);
+//            $idCertidao = $this->retornaIdDocCertidaoPorIntimacaoConectado($arrEnvio);
+//        }
+//        $strLink = $this->retornaLinkAcessoDocumento($idCertidao, $idAcessoExt);
+//
+//        //Var que verifica se a certidão é anexo de uma Intimação que não está aceita
+//        $isValido = $this->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($idCertidao, $idAcessoExt));
+//
+//        $alertMsg = 'Documento bloqueado, pois está vinculado a uma Intimação ainda não Cumprida.';
+//        $js       = $isValido ? 'window.open(\''.$strLink.'\');' : 'alert(\''.$alertMsg.'\')';
+//
+//        $imgCertidao = '<img src="modulos/peticionamento/imagens/intimacao_certidao.png">';
+//
+//        //obter informacoes do doc principal da intimação
+//        $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
+//        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
+//        $objMdPetIntDocumentoDTO->retTodos();
+//        $objMdPetIntDocumentoDTO->retStrNumeroDocumento();
+//        $objMdPetIntDocumentoDTO->retNumIdSerie();
+//        $objMdPetIntDocumentoDTO->retStrNomeSerie();
+//        $objMdPetIntDocumentoDTO->retStrProtocoloFormatadoDocumento();
+//        $objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao( $idIntimacao );
+//        $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
+//        $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
+//        $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar( $objMdPetIntDocumentoDTO );
+//
+//        $ToolTipTitle = 'Certidão de Intimação Cumprida';
+//        $ToolTipTitle .= '<br/>Documento Principal: ';
+//        $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
+//        if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()){
+//            $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento(). ' ' ;
+//        }
+//        $ToolTipTitle .= '(SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+//
+//        $ToolTipText  = '';
+//        $ToolTipText .= 'Clique para visualizar a Certidão.';
+//
+//        $conteudoHtml  = '<a onclick="'.$js.'"';
+//        $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitle.'\')"';
+//        $conteudoHtml .= 'onmouseout="return infraTooltipOcultar()">';
+//        $conteudoHtml .= $imgCertidao;
+//        $conteudoHtml .= '</a>';
+//
+//        return $conteudoHtml;
+//    }
 
     public function retornaLinkAcessoDocumento($idProtocolo, $idAcessoEx, $isProcedimento = false){
         if($isProcedimento){
@@ -437,16 +565,21 @@ class MdPetIntCertidaoRN extends InfraRN{
         $objMdPetIntDestDTO =   $objMdPetIntDestRN->retornaRelIntDestinatario(array($idIntimacao, $IdUsuario));
 
         if($objMdPetIntDestDTO){
-        $idDest = $objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario();
+            $idDest = $objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario();
 
-        $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
-        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($idDest);
-        $objMdPetIntAceiteDTO->retDblIdDocumentoCertidao();
-        $lista = $objMdPetIntAceiteRN->listar($objMdPetIntAceiteDTO);
-        $objMdPetIntAceiteDTO = current($lista);
+            $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($idDest);
+            $objMdPetIntAceiteDTO->retDblIdDocumentoCertidao();
+            $lista = $objMdPetIntAceiteRN->listar($objMdPetIntAceiteDTO);
+            $objMdPetIntAceiteDTO = current($lista);
 
-        return $objMdPetIntAceiteDTO->getDblIdDocumentoCertidao();
+            if(!empty($lista)){
+                return $objMdPetIntAceiteDTO->getDblIdDocumentoCertidao();
+            }else{
+                return null;
+            }
         }
+        
         return null;
     }
 

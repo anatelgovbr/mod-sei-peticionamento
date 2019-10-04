@@ -21,6 +21,11 @@ class MdPetAcessoExternoRN extends InfraRN {
 	public static $MD_PET_PROCESSO_INTERCORRENTE = '2';
 	public static $MD_PET_INTIMACAO = '3';
 	public static $MD_PET_CORRECAO_CANCELAMENTO = '4';
+	public static $MD_PET_VINCULO = '5';
+	public static $MD_PET_VINC_PROCURACAO = '6';
+	public static $MD_PET_PROCURACAO_REVOGACAO = '7';
+	public static $MD_PET_PROCURACAO_RENUCIA = '8';
+
 
 	//Tipo Acesso
 	public static $ACESSO_PARCIAL    = 'P';
@@ -166,12 +171,12 @@ class MdPetAcessoExternoRN extends InfraRN {
 	protected function cadastrarAcessoExternoCoreControlado(AcessoExternoDTO $objAcessoExternoDTO)
 	{
 		try {
-				
+
 			//Regras de Negocio
 			$objInfraException = new InfraException();
 
 			$this->validarStrStaTipo($objAcessoExternoDTO, $objInfraException);
-				
+
 			$objInfraException->lancarValidacoes();
 
 			if ($objAcessoExternoDTO->getStrStaTipo() == self::$TA_INTERESSADO ||
@@ -641,9 +646,12 @@ class MdPetAcessoExternoRN extends InfraRN {
 							$objUnidadeDTO->retStrDescricao();
 							$objUnidadeDTO->retStrSiglaOrgao();
 							$objUnidadeDTO->retStrDescricaoOrgao();
-								
+
 							//alteracoes seiv3
 							$objUnidadeDTO->retStrSitioInternetOrgaoContato();
+
+							//seiv2
+							//$objUnidadeDTO->retStrSitioInternetOrgao();
 
 							$objUnidadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 
@@ -719,73 +727,73 @@ class MdPetAcessoExternoRN extends InfraRN {
 		} catch (Exception $e) {
 			throw new InfraException('Erro listando valores de Tipo de Acesso Externo.', $e);
 		}
-		
+
 	}
-	
+
 	protected function consultarConectado(MdPetAcessoExternoDTO $objAcessoExternoDTO)
 	{
 		try {
-	
+
 			//Valida Permissao
 			SessaoSEI::getInstance()->validarAuditarPermissao('acesso_externo_consultar', __METHOD__, $objAcessoExternoDTO);
-	
+
 			//Regras de Negocio
 			//$objInfraException = new InfraException();
-	
+
 			//$objInfraException->lancarValidacoes();
-	
+
 			$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
 			$ret = $objAcessoExternoBD->consultar($objAcessoExternoDTO);
-	
+
 			//Auditoria
-	
+
 			return $ret;
 		} catch (Exception $e) {
 			throw new InfraException('Erro consultando Acesso Externo.', $e);
 		}
 	}
-	
+
 	protected function listarConectado(MdPetAcessoExternoDTO $objAcessoExternoDTO)
 	{
 		try {
-	
+
 			//Valida Permissao
 			SessaoSEI::getInstance()->validarAuditarPermissao('acesso_externo_listar', __METHOD__, $objAcessoExternoDTO);
-	
+
 			//Regras de Negocio
 			//$objInfraException = new InfraException();
-	
+
 			//$objInfraException->lancarValidacoes();
-	
+
 			$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
 			$ret = $objAcessoExternoBD->listar($objAcessoExternoDTO);
 
 			//Auditoria
-	
+
 			return $ret;
-	
+
 		} catch (Exception $e) {
 			throw new InfraException('Erro listando Acessos Externos.', $e);
 		}
 	}
-	
+
 	protected function contarConectado(MdPetAcessoExternoDTO $objAcessoExternoDTO)
 	{
 		try {
-	
+
 			//Valida Permissao
 			SessaoSEI::getInstance()->validarAuditarPermissao('acesso_externo_listar', __METHOD__, $objAcessoExternoDTO);
-	
+
 			//Regras de Negocio
 			//$objInfraException = new InfraException();
-	
+
 			//$objInfraException->lancarValidacoes();
-	
+
 			$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
 			$ret = $objAcessoExternoBD->contar($objAcessoExternoDTO);
-	
+
 			//Auditoria
-	
+
 			return $ret;
 		} catch (Exception $e) {
 			throw new InfraException('Erro contando Acessos Externos.', $e);
@@ -852,6 +860,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 				{
 					$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('N');
 					$objMdPetAcessoExternoDTO->setStrSinIntimacao('N');
+					$objMdPetAcessoExternoDTO->setStrSinVinculo('N');
 				}
 
 				break;
@@ -863,6 +872,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 				{
 					$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('N');
 					$objMdPetAcessoExternoDTO->setStrSinIntimacao('N');
+					$objMdPetAcessoExternoDTO->setStrSinVinculo('N');
 				}
 
 				break;
@@ -872,12 +882,28 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 				if(!$existeCadastro)
 				{
+					$objMdPetAcessoExternoDTO->setStrSinVinculo('N');
 					$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('N');
 					$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('N');
+
 				}
 
 				break;
-		}
+
+			case static::$MD_PET_VINCULO:
+			case static::$MD_PET_VINC_PROCURACAO :
+			case static::$MD_PET_PROCURACAO_REVOGACAO :
+			case static::$MD_PET_PROCURACAO_RENUCIA :
+				$objMdPetAcessoExternoDTO->setStrSinVinculo('S');
+
+				if(!$existeCadastro){
+					$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('N');
+					$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('N');
+					$objMdPetAcessoExternoDTO->setStrSinIntimacao('N');
+
+                }
+                break;
+        }
 
 		$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
 
@@ -886,7 +912,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		}else{
 		  $objDTO = $this->cadastrar($objMdPetAcessoExternoDTO);
 		}
-		
+
 		return $objDTO;
 	}
 
@@ -1018,26 +1044,75 @@ class MdPetAcessoExternoRN extends InfraRN {
 		return $arrRetorno;
 	}
 
+    private function _preencherArrDocDisponibilizadosVinculo($arrIdsDoc, $isCadastroAcessoEx, $idAcessoEx){
 
-	private function _preencherArrDocDisponibilizados($tipoPeticionamento, $idProcedimento = null, $arrIdsDoc = null)
+        $arrRetorno = array();
+
+		if($isCadastroAcessoEx){
+			$arrRetorno = $arrIdsDoc;
+		}
+
+		if(!$isCadastroAcessoEx && !is_null($idAcessoEx)){
+			$idsDocAcessoAtual = $this->_getIdsDocsAtuaisAcessoExterno($idAcessoEx);
+			if(!is_null($idsDocAcessoAtual)){
+
+				$arrIdsRepetidos = array_intersect($arrIdsDoc, $idsDocAcessoAtual);
+
+				$arrRetorno    = array_diff($arrIdsDoc, $arrIdsRepetidos);
+
+			}
+		}
+
+        return $arrRetorno;
+    }
+
+	private function _getIdsDocsAtuaisAcessoExterno($idAcessoEx){
+		$idsProtocolo            = null;
+		$objAcessoExternoProtDTO = new RelAcessoExtProtocoloDTO();
+		$objAcessoExternoProtRN  = new RelAcessoExtProtocoloRN();
+
+		$objAcessoExternoProtDTO->setNumIdAcessoExterno($idAcessoEx);
+		$objAcessoExternoProtDTO->retDblIdProtocolo();
+
+		$count = $objAcessoExternoProtRN->contar($objAcessoExternoProtDTO);
+
+		if($count > 0){
+			$arrObjAcessoExtProtDTO = $objAcessoExternoProtRN->listar($objAcessoExternoProtDTO);
+			$idsProtocolo           = InfraArray::converterArrInfraDTO($arrObjAcessoExtProtDTO, 'IdProtocolo');
+		}
+
+		return $idsProtocolo;
+	}
+
+
+
+	private function _preencherArrDocDisponibilizados($tipoPeticionamento, $idProcedimento = null, $arrIdsDoc = null, $isCadastroAcessoEx, $idAcessoEx=  null)
 	{
    	  $arrRetorno = array();
 
 		switch ($tipoPeticionamento)
 		{
 			case static::$MD_PET_INTIMACAO:
+
 				$arrRetorno =  $this->_preencherArrDocDisponibilizadosIntimacao();
 				break;
 
 			case static::$MD_PET_PROCESSO_NOVO:
+
 				$arrRetorno =  $this->_preencherArrDocDisponibilizadosProcessoNovo($idProcedimento);
 				break;
 
-			case static::$MD_PET_PROCESSO_INTERCORRENTE || static::$MD_PET_CORRECAO_CANCELAMENTO:
-				return $arrIdsDoc;
+			case static::$MD_PET_VINCULO:
+			case static::$MD_PET_VINC_PROCURACAO :
+			case static::$MD_PET_PROCURACAO_REVOGACAO :
+			case static::$MD_PET_PROCURACAO_RENUCIA :
+				$arrRetorno = $this->_preencherArrDocDisponibilizadosVinculo($arrIdsDoc, $isCadastroAcessoEx, $idAcessoEx);
 				break;
 
+			case static::$MD_PET_PROCESSO_INTERCORRENTE || static::$MD_PET_CORRECAO_CANCELAMENTO:
 
+				return $arrIdsDoc;
+				break;
 		}
 
 	  return $arrRetorno;
@@ -1050,8 +1125,9 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$motivoAcessoEx       = $this->_getMotivoAcessoExterno($tipoPeticionamento, $nomeDoc);
 			$dadosContato    	  = $this->_getDadosContato($idContato);
 			$idParticipante  	  = $this->_getIdParticipantePorContato($idContato, $idProcesso, true);
-			$arrDocAcessoExt 	  = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, $idProcesso, $arrIdsDoc);
+			$arrDocAcessoExt 	  = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, $idProcesso, $arrIdsDoc, true);
 			$idTpConcessao  	  = $tpAcessoSolicitado == static::$ACESSO_INTEGRAL ? 'S' : 'N';
+
 
 			$objMdPetIntAcExDocRN 		= new MdPetIntAcessoExternoDocumentoRN();
 			$objMdPetIntAcessoExtDocDTO = new MdPetIntAcessoExternoDocumentoDTO();
@@ -1066,9 +1142,36 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$objMdPetIntAcessoExtDocDTO->setStrSinVisualizacaoIntegral($idTpConcessao);
 			$objMdPetIntAcessoExtDocDTO->setStrMotivo($motivoAcessoEx);
 
-			$retorno = $objMdPetIntAcExDocRN->concederAcessoExternoParaDocumentos($objMdPetIntAcessoExtDocDTO);;
+			$retorno = $objMdPetIntAcExDocRN->concederAcessoExternoParaDocumentos($objMdPetIntAcessoExtDocDTO);
 
 			return $retorno;
+	}
+
+	private function _incluirAcessoExternoVinculo($idProcesso, $idContato, $tipoPeticionamento, $tpAcessoSolicitado, $nomeDoc = null, $arrIdsDoc = null, $idDocumento)
+	{
+		$motivoAcessoEx  = $this->_getMotivoAcessoExterno($tipoPeticionamento, $nomeDoc);
+		$dadosContato    = $this->_getDadosContato($idContato);
+		$idParticipante  = $this->_getIdParticipantePorContato($idContato, $idProcesso, false);
+		$arrDocAcessoExt = array($idDocumento);//$this->_preencherArrDocDisponibilizados($tipoPeticionamento, $idProcesso, $arrIdsDoc);
+		$idTpConcessao   = $tpAcessoSolicitado == static::$ACESSO_INTEGRAL ? 'S' : 'N';
+
+		$objMdPetIntAcExDocRN 		= new MdPetIntAcessoExternoDocumentoRN();
+		$objMdPetIntAcessoExtDocDTO = new MdPetIntAcessoExternoDocumentoDTO();
+		$objMdPetIntAcessoExtDocDTO->setNumIdUsuarioExterno($dadosContato[1]);
+		$objMdPetIntAcessoExtDocDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+		$objMdPetIntAcessoExtDocDTO->setNumIdParticipante($idParticipante);
+		$objMdPetIntAcessoExtDocDTO->setDblIdProtocoloProcesso($idProcesso);
+		$objMdPetIntAcessoExtDocDTO->setArrIdDocumentos($arrDocAcessoExt);
+		$objMdPetIntAcessoExtDocDTO->setStrNomeUsuarioExterno($dadosContato[2]);
+		$objMdPetIntAcessoExtDocDTO->setStrEmailUsuarioExterno($dadosContato[3]);
+		$objMdPetIntAcessoExtDocDTO->setStrStaConcessao(MdPetIntAcessoExternoDocumentoRN::$STA_INTERNO);
+		$objMdPetIntAcessoExtDocDTO->setStrSinVisualizacaoIntegral($idTpConcessao);
+		$objMdPetIntAcessoExtDocDTO->setStrMotivo($motivoAcessoEx);
+
+
+		$retorno = $objMdPetIntAcExDocRN->concederAcessoExternoParaDocumentos($objMdPetIntAcessoExtDocDTO);
+
+		return $retorno;
 	}
 
 	protected function getUltimaConcAcessoExtModuloPorContatosConectado($arr){
@@ -1098,7 +1201,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 		if(count($arrDadosUsuarios)> 0) {
 			foreach ($arrDadosUsuarios as $arrUsuario) {
-				array_push($arrIdsUsuario, $arrUsuario[0]);
+				array_push($arrIdsUsuario, $arrUsuario);
 			}
 		}
 
@@ -1107,11 +1210,12 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 
 
-	private function _getUltimaConcessaoAcessoExternoModulo($idProcedimento, $idContato, $returnId = false){
+	public function _getUltimaConcessaoAcessoExternoModulo($idProcedimento, $idContato, $returnId = false){
 		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
 		$objMdPetAcessoExternoDTO->setDblIdProtocoloAcessoExterno($idProcedimento);
 		$objMdPetAcessoExternoDTO->setNumIdContatoAcessoExterno($idContato);
 		$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
+		$objMdPetAcessoExternoDTO->setStrSinAtivoAcessoExterno('S');
 		$objMdPetAcessoExternoDTO->setNumMaxRegistrosRetorno(1);
 		$objMdPetAcessoExternoDTO->retTodos(true);
 
@@ -1127,7 +1231,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		}
 
 		$objDTO = current($this->listar($objMdPetAcessoExternoDTO));
-		
+
 		$idAcessoExterno = $objDTO->getNumIdAcessoExterno();
 
 		 if($idAcessoExterno != ''){
@@ -1234,12 +1338,28 @@ class MdPetAcessoExternoRN extends InfraRN {
 			case static::$MD_PET_CORRECAO_CANCELAMENTO:
 				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a cancelamento de acesso integral para correta manutenção dos acessos externos necessários.';
 				break;
+			case static::$MD_PET_VINCULO:
+				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos em razão de Vinculação realizada.';
+				break;
+
+			case static::$MD_PET_VINC_PROCURACAO :
+				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos em razão da Procuração Eletrônica concedida a partir da Vinculação realizada.';
+				break;
+
+			case static::$MD_PET_PROCURACAO_REVOGACAO :
+				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a revogação realizada à Procuração Eletrônica concedida.';
+				break;
+
+			case static::$MD_PET_PROCURACAO_RENUCIA :
+				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a renúncia realizada à Procuração Eletrônica concebida.';
+				break;
+
 		}
 
 		return $strMotivo;
 	}
 
-	private function _retornaIdContatoUsuarioExterno()
+	public function _retornaIdContatoUsuarioExterno()
 	{
 		$idUsuario         = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 		$objMdPetUsuarioRN = new MdPetIntUsuarioRN();
@@ -1252,17 +1372,44 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 		return null;
 	}
+	
+	protected function gerarAcessoExternoVinculoConectado($arrParams){
 
+            
+		$idVinculo       = array_key_exists(0, $arrParams) ? $arrParams[0] : null;
+		$idProcedimento  = array_key_exists(1, $arrParams) ? $arrParams[1] : null;
+		
+		//Variável que auxilia onde precisar adicionar acesso externo para o contato que foi desativado.
+		$idContatoDesativado = array_key_exists(2, $arrParams) ? $arrParams[2] : null;
+
+		if(!is_null($idVinculo) && !is_null($idProcedimento)) {
+			$objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+			$idsContatosAtivos = $objMdPetVincRepresentantRN->getIdContatoTodosRepresentantesVinculo(array($idVinculo));
+			$idsRepresentantes = $objMdPetVincRepresentantRN->getIdRepresentantesVinculo(array($idVinculo, false));
+			$idsDocumentoVinculo = null;
+			$objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
+			$idsDocumentoVinculo = $objMdPetVincDocumentoRN->getDocumentosRepresentantes($idsRepresentantes);
+
+			if(!is_null($idContatoDesativado)){
+				array_push($idsContatosAtivos, $idContatoDesativado);
+			}
+
+			foreach ($idsContatosAtivos as $idContatoAtivo) {
+				$this->aplicarRegrasGeraisAcessoExterno($idProcedimento, MdPetAcessoExternoRN::$MD_PET_VINCULO, $idContatoAtivo, MdPetAcessoExternoRN::$ACESSO_PARCIAL, null, $idsDocumentoVinculo);
+			}
+		}
+	}
 
 	public function aplicarRegrasGeraisAcessoExterno($idProcedimento, $tipoPeticionamento, $idContato = null, $tpAcessoSolicitado = null, $nomeDoc = null, $arrIdsDocIntercorrente = null)
 	{
+
 		$idAcessoExternoMain = null;
 
 		if (is_null($idContato)) {
 			$idContato = $this->_retornaIdContatoUsuarioExterno();
 		}
 
-		if (!is_null($idContato)) 
+		if (!is_null($idContato))
 		{
 			$arrParams = array($idProcedimento, $idContato);
 			$tpAcessoAnterior = $this->_getUltimaConcessaoAcessoExternoModulo($idProcedimento, $idContato);
@@ -1270,9 +1417,10 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$tpAcessoSolicitado = is_null($tpAcessoSolicitado) ? static::$ACESSO_PARCIAL : $tpAcessoSolicitado;
 
 			//Se não existe acesso externo anterior criado, gerar um novo
-			if ($tpAcessoAnterior == MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO) 
+			if ($tpAcessoAnterior == MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO)
 			{
 				$arrDTO = $this->_cadastrarAcessoExterno($idProcedimento, $idContato, $tipoPeticionamento, $tpAcessoSolicitado, $nomeDoc, $arrIdsDocIntercorrente);
+
 				$objAcessoExtDTO = count($arrDTO) > 0 ? current($arrDTO) : null;
 				$idAcessoExt = $objAcessoExtDTO->getNumIdAcessoExterno();
 
@@ -1280,34 +1428,37 @@ class MdPetAcessoExternoRN extends InfraRN {
 			}
 
 			//Se existir acesso Integral
-			if ($tpAcessoAnterior == static::$ACESSO_INTEGRAL) 
+			if ($tpAcessoAnterior == static::$ACESSO_INTEGRAL)
 			{
 				//Se o solicitado for integral
-				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL) 
+				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL)
 				{
 					$arrObjs = $this->_retornaArrAcessoExtPorProcedimentoPorContato(array($idContato), $idProcedimento);
-					$objDTO = count($arrObjs) > 0 ? current($arrObjs) : false;
-					$idAcessoExt = $objDTO ? $objDTO->getNumIdAcessoExterno() : false;
+                    $objDTO = count($arrObjs) > 0 ? current($arrObjs) : false;
+                    $idAcessoExt = $objDTO ? $objDTO->getNumIdAcessoExterno() : false;
 
-					$idAcessoExternoMain = $idAcessoExt;
+                    $idAcessoExternoMain = $idAcessoExt;
 				}
 			}
 
 			//Se existir acesso Parcial
-			if ($tpAcessoAnterior == static::$ACESSO_PARCIAL) 
+			if ($tpAcessoAnterior == static::$ACESSO_PARCIAL)
 			{
-				//Se o solicitado for Integral
-				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL) 
+
+			   //Se o solicitado for Integral
+				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL)
 				{
 					$idAcessoExt = $this->_realizarProcessosCancelamentoCriacaoAcExterno($arrParams, $nomeDoc, $tpAcessoSolicitado, $tipoPeticionamento);
 					$idAcessoExternoMain =  $idAcessoExt;
 				}
 
+
 				//Se o solicitado for Parcial
-				if ($tpAcessoSolicitado == static::$ACESSO_PARCIAL) 
+				if ($tpAcessoSolicitado == static::$ACESSO_PARCIAL)
 				{
-					$idAcessoExt = $this->_realizarProcessosAdequacaoProcessoExternoParcial($idProcedimento, $idContato, $tipoPeticionamento, $arrIdsDocIntercorrente);
-					$idAcessoExternoMain = $idAcessoExt;
+                    $idAcessoExt = $this->_realizarProcessosAdequacaoProcessoExternoParcial($idProcedimento, $idContato, $tipoPeticionamento, $arrIdsDocIntercorrente);
+                    $idAcessoExternoMain = $idAcessoExt;
+
 				}
 			}
 		}
@@ -1361,7 +1512,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$arrObjsCancelar[] = $objAcessoExternoDTO;
 			$objAcessoExternoRN->cancelarDisponibilizacao($arrObjsCancelar);
 
-			// SIGILOSO - cassarcredencial 
+			// SIGILOSO - cassarcredencial
 			if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
 				|| $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
 				//if (is_numeric($idUsuarioModulo)){
@@ -1431,11 +1582,14 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$sinProcNovo = array_key_exists(static::$MD_PET_PROCESSO_INTERCORRENTE, $arrRetorno) && $arrRetorno[static::$MD_PET_PROCESSO_INTERCORRENTE] ? 'S' : 'N';
 			$sinIntercorr = array_key_exists(static::$MD_PET_PROCESSO_NOVO, $arrRetorno) && $arrRetorno[static::$MD_PET_PROCESSO_NOVO] ? 'S' : 'N';
 			$sinIntimacao = array_key_exists(static::$MD_PET_INTIMACAO, $arrRetorno) && $arrRetorno[static::$MD_PET_INTIMACAO] ? 'S' : 'N';
+			$sinVinculo = array_key_exists(static::$MD_PET_VINCULO, $arrRetorno) && $arrRetorno[static::$MD_PET_VINCULO] ? 'S' : 'N';
+
 
 			$objMdPetAcessoExternoDTO->setNumIdAcessoExterno($idAcessoEx);
 			$objMdPetAcessoExternoDTO->setStrSinProcessoNovo($sinProcNovo);
 			$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente($sinIntercorr);
 			$objMdPetAcessoExternoDTO->setStrSinIntimacao($sinIntimacao);
+			$objMdPetAcessoExternoDTO->setStrSinVinculo($sinVinculo);
 			$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
 
 			$this->cadastrar($objMdPetAcessoExternoDTO);
@@ -1449,6 +1603,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objRN                    = new MdPetAcessoExternoRN();
 		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
 		$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
+		$objMdPetAcessoExternoDTO->setStrSinAtivoAcessoExterno('S');
 		$objMdPetAcessoExternoDTO->setNumIdContatoAcessoExterno($arrIdsContato, InfraDTO::$OPER_IN);
 		$objMdPetAcessoExternoDTO->setDblIdProtocoloAcessoExterno($idProcedimento);
 
@@ -1473,30 +1628,45 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
 		$objMdPetIntDestRN  = new MdPetIntRelDestinatarioRN();
 
-		$objMdPetIntDestDTO->setNumIdContato($idContato);
+		$objMdPetIntDestDTO->setNumIdContatoParticipante($idContato);
 		$objMdPetIntDestDTO->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
 		$objMdPetIntDestDTO->setDblIdProtocoloProcedimento($idProcedimento);
+        $objMdPetIntDestDTO->retNumIdAcessoExterno();
 		$objMdPetIntDestDTO->retTodos();
 
 		$arrObjMdPetIntDestDTO = $objMdPetIntDestRN->listar($objMdPetIntDestDTO);
 
-		if (count($arrObjMdPetIntDestDTO) > 0)
-		{
-			foreach ($arrObjMdPetIntDestDTO as $objMdPetIntDestDTO)
-			{
-				$objMdPetIntDestDTO->setNumIdAcessoExterno($idAcessoExt);
-				$objMdPetIntDestDTO->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OPCIONAL);
-				$objMdPetIntDestRN->alterar($objMdPetIntDestDTO);
-			}
+		if (count($arrObjMdPetIntDestDTO) > 0){
+            $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestDTO,'IdMdPetIntRelDestinatario');
+            $arrIdAcessoExterno = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestDTO,'IdAcessoExterno');
+
+            $objMdPetIntRelDestExternoDTO = new MdPetRelIntDestExternoDTO();
+            $objMdPetIntRelDestExternoDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_IN);
+            $objMdPetIntRelDestExternoDTO->setNumIdAcessoExterno($arrIdAcessoExterno, InfraDTO::$OPER_IN);
+            $objMdPetIntRelDestExternoDTO->retTodos();
+
+            $objMdPetIntRelDestExternoRN = new MdPetRelIntDestExternoRN();
+            $arrObjMdPetRelIntDestExternoDTO = $objMdPetIntRelDestExternoRN->listar($objMdPetIntRelDestExternoDTO);
+
+            if(count($arrObjMdPetRelIntDestExternoDTO)){
+                foreach ($arrObjMdPetRelIntDestExternoDTO as $objMdPetRelIntDestExternoDTO){
+                    $objMdPetIntRelDestExternoRN->excluir(array($objMdPetRelIntDestExternoDTO));
+
+                    $objMdPetRelIntDestExternoDTO->setNumIdAcessoExterno($idAcessoExt);
+                    $objMdPetIntRelDestExternoRN->cadastrar($objMdPetRelIntDestExternoDTO);
+
+                }
+            }
 		}
 	}
 
 	private function _realizarProcessosAdequacaoProcessoExternoParcial($idProcedimento, $idContato, $tipoPeticionamento, $arrIdsDocIntercorrente)
 	{
+
 		$arrObjs     	 = $this->_retornaArrAcessoExtPorProcedimentoPorContato(array($idContato), $idProcedimento);
 		$objDTO      	 = count($arrObjs) > 0 ? current($arrObjs) : false;
 		$idAcessoExt 	 = $objDTO ? $objDTO->getNumIdAcessoExterno() : false;
-		$arrDocAcessoExt = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, null, $arrIdsDocIntercorrente);
+		$arrDocAcessoExt = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, $idProcedimento, $arrIdsDocIntercorrente, false, $idAcessoExt);
 
 		$objProtAcExRN   = new RelAcessoExtProtocoloRN();
 
@@ -1558,9 +1728,9 @@ class MdPetAcessoExternoRN extends InfraRN {
 				$objRelAcessoExtProtDTO->setDblIdProtocolo($idDocumentoRecibo);
 				$objRelAcessoExtProtDTO->setNumIdAcessoExterno($idsAcessoExterno, InfraDTO::$OPER_IN);
 				$objRelAcessoExtProtDTO->retNumIdAcessoExterno();
-				
+
 				$countIdAcEx = $objRelAcessExtProtRN->contar($objRelAcessoExtProtDTO);
-				
+
 				if($countIdAcEx > 0)
 				{
 					$objDTO  = current($objRelAcessExtProtRN->listar($objRelAcessoExtProtDTO));
@@ -1571,8 +1741,8 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 		return $idAcessoExterno;
 	}
-	
-	
+
+
 	protected function getIdAcessoExternoReciboConectado($objMdPetReciboDTO)
 	{
 		$objMdPetUsuarioRN    = new MdPetIntUsuarioRN();
@@ -1581,7 +1751,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$idProcedimentoRecibo = $objMdPetReciboDTO->getNumIdProtocolo();
 		$objContatoDTO        = $objMdPetUsuarioRN->retornaObjContatoPorIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
 		$idAcessoExterno      = null;
-		
+
 		//Get Id Acesso Externo Associado ao Módulo
 		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
 		$objMdPetAcessoExternoDTO->setNumIdContatoAcessoExterno($objContatoDTO->getNumIdContato() );
@@ -1601,10 +1771,10 @@ class MdPetAcessoExternoRN extends InfraRN {
 		{
 			$idAcessoExterno = $this->_verificarDocPossuiAcessoExternoAtivo($idProcedimentoRecibo, $objContatoDTO->getNumIdContato(), $idDocumentoRecibo);
 		}
-		
+
 		return $idAcessoExterno;
 	}
-	
+
 	protected function verificaIdAcessoExternoModuloConectado($idAcessoExterno){
 		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
 		$objMdPetAcessoExternoDTO->setNumIdAcessoExterno($idAcessoExterno);
@@ -1614,7 +1784,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 		$objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
 		$isModulo = $objMdPetAcessoExternoRN->contar($objMdPetAcessoExternoDTO) > 0;
-		
+
 		return $isModulo;
 
 	}
@@ -1699,6 +1869,36 @@ class MdPetAcessoExternoRN extends InfraRN {
 	return $arrRetorno;
 	}
 
+	private function _buscarDocumentosVinc($idAcessoExt,$arrParams){
+
+	    $arrRetorno = array();
+	    $mdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
+        $mdPetAcessoExternoRN =new  MdPetAcessoExternoRN();
+
+        $mdPetAcessoExternoDTO->setNumIdAcessoExterno($idAcessoExt);
+        $mdPetAcessoExternoDTO->setStrSinVinculo('S');
+        $mdPetAcessoExternoDTO->retNumIdAcessoExterno();
+
+
+        $mdPetAcessoExterno = $mdPetAcessoExternoRN->contar($mdPetAcessoExternoDTO);
+        if($mdPetAcessoExterno){
+
+           $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+           $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+
+           $objMdPetVincRepresentantDTO->setDblIdProcedimentoVinculo($arrParams['idProcedimento']);
+           $objMdPetVincRepresentantDTO->retDblIdDocumento();
+           $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+
+            $arrRetorno = array_unique(InfraArray::converterArrInfraDTO($objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO),'IdDocumento'));
+
+        }
+
+        return $arrRetorno;
+
+    }
+
+
 
 	private function _buscarDocumentosAcessoExterno($idAcessoExt, $arrParams){
 		//Buscar documentos envolvidos nas Intimações desse processo
@@ -1710,8 +1910,12 @@ class MdPetAcessoExternoRN extends InfraRN {
 		// Buscar os documentos envolvidos nas respostas por esse usuário neste processo
 		$arrDocResp = $this->_buscarDocumentosResposta($arrParams);
 
+        // Buscar os documento envolvidos durante o vinculo
+        $arrDocVinc = $this->_buscarDocumentosVinc($idAcessoExt,$arrParams);
+
+
 		// Juntar e unificar os ids do documento
-		$arrDocs   = array_unique(array_merge($arrDocPet, $arrDocInt, $arrDocResp));
+		$arrDocs   = array_unique(array_merge($arrDocPet, $arrDocInt, $arrDocResp, $arrDocVinc));
 
 		return $arrDocs;
 	}
@@ -1752,6 +1956,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objMdPetAcessExtDTO->retStrSinProcessoNovo();
 		$objMdPetAcessExtDTO->retStrSinIntimacao();
 		$objMdPetAcessExtDTO->retStrSinProcessoIntercorrente();
+		$objMdPetAcessExtDTO->retStrSinVinculo();
 
 		$objRN = new MdPetAcessoExternoRN();
 		$count = $objRN->contar($objMdPetAcessExtDTO);
@@ -1762,6 +1967,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$arrRetorno[static::$MD_PET_PROCESSO_NOVO] = $objMdPetAcessExtDTO->getStrSinProcessoNovo() == 'S' ? true : false;
 			$arrRetorno[static::$MD_PET_PROCESSO_INTERCORRENTE] = $objMdPetAcessExtDTO->getStrSinProcessoIntercorrente() == 'S' ? true : false;
 			$arrRetorno[static::$MD_PET_INTIMACAO] = $objMdPetAcessExtDTO->getStrSinIntimacao() == 'S' ? true : false;
+			$arrRetorno[static::$MD_PET_VINCULO] = $objMdPetAcessExtDTO->getStrSinVinculo() == 'S' ? true : false;
 		}
 
 		return $arrRetorno;

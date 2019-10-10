@@ -1215,7 +1215,6 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objMdPetAcessoExternoDTO->setDblIdProtocoloAcessoExterno($idProcedimento);
 		$objMdPetAcessoExternoDTO->setNumIdContatoAcessoExterno($idContato);
 		$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
-		$objMdPetAcessoExternoDTO->setStrSinAtivoAcessoExterno('S');
 		$objMdPetAcessoExternoDTO->setNumMaxRegistrosRetorno(1);
 		$objMdPetAcessoExternoDTO->retTodos(true);
 
@@ -1434,10 +1433,10 @@ class MdPetAcessoExternoRN extends InfraRN {
 				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL)
 				{
 					$arrObjs = $this->_retornaArrAcessoExtPorProcedimentoPorContato(array($idContato), $idProcedimento);
-                    $objDTO = count($arrObjs) > 0 ? current($arrObjs) : false;
-                    $idAcessoExt = $objDTO ? $objDTO->getNumIdAcessoExterno() : false;
+					$objDTO = count($arrObjs) > 0 ? current($arrObjs) : false;
+					$idAcessoExt = $objDTO ? $objDTO->getNumIdAcessoExterno() : false;
 
-                    $idAcessoExternoMain = $idAcessoExt;
+					$idAcessoExternoMain = $idAcessoExt;
 				}
 			}
 
@@ -1603,7 +1602,6 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objRN                    = new MdPetAcessoExternoRN();
 		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
 		$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
-		$objMdPetAcessoExternoDTO->setStrSinAtivoAcessoExterno('S');
 		$objMdPetAcessoExternoDTO->setNumIdContatoAcessoExterno($arrIdsContato, InfraDTO::$OPER_IN);
 		$objMdPetAcessoExternoDTO->setDblIdProtocoloAcessoExterno($idProcedimento);
 

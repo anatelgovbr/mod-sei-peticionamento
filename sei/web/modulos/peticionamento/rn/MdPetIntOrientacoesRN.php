@@ -42,7 +42,7 @@ class MdPetIntOrientacoesRN extends InfraRN {
 			
 		//	$rs = $this->getObjInfraIBanco ()->executarSql ( $sql );
 	
-			return $objMdPetTpProcessoOrientacoesDTO;
+			return $objMdPetIntOrientacoesDTO;
 		} catch ( Exception $e ) {
 			throw new InfraException ('Erro cadastrando Orientações do Tipo Destinatário Peticionamento.', $e );
 		}

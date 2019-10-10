@@ -571,7 +571,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
             //cassando credencial usuário externo
             $objAtividadeRN = new AtividadeRN();
             $objAtividadeRN->cassarCredenciais($arrObjAtividadeDTO);
-//            $objAtividadeRN->anularCredenciaisProcesso($ret);
+            //$objAtividadeRN->anularCredenciaisProcesso($ret);
             //$objAtividadeRN->renunciarCredenciaisProcesso($objAtividadeDTO);
 
             //retornando credencial sem recebido
@@ -705,25 +705,13 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                 $objAtividadeRN->excluirRN0034( $arrDTOAtividades );
             }
 
-//            processo recebido
+            //processo recebido
             $objAtividadeRN = new AtividadeRN();
             $objAtividadeDTOLiberacao = new AtividadeDTO();
             $objAtividadeDTOLiberacao->retTodos();
             $objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
             $objAtividadeDTOLiberacao->setNumIdTarefa( TarefaRN::$TI_PROCESSO_RECEBIMENTO_CREDENCIAL );
             $objAtividadeDTOLiberacao->setNumIdUsuario( $numIdUsuarioExterno );
-            $arrDTOAtividades = $objAtividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
-            if (count($arrDTOAtividades)>0){
-                $objAtividadeRN->excluirRN0034( $arrDTOAtividades );
-            }
-
-//            processo recebido
-            $objAtividadeRN = new AtividadeRN();
-            $objAtividadeDTOLiberacao = new AtividadeDTO();
-            $objAtividadeDTOLiberacao->retTodos();
-            $objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
-            $objAtividadeDTOLiberacao->setNumIdTarefa( TarefaRN::$TI_PROCESSO_RECEBIMENTO_CREDENCIAL );
-            $objAtividadeDTOLiberacao->setNumIdUsuario( $numIdUsuarioAcesso );
             $arrDTOAtividades = $objAtividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
             if (count($arrDTOAtividades)>0){
                 $objAtividadeRN->excluirRN0034( $arrDTOAtividades );

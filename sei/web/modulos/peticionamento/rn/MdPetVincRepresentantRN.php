@@ -423,40 +423,11 @@ class MdPetVincRepresentantRN extends InfraRN {
     	$objMdPetVincRepresentantDTO->retStrTipoRepresentante();
         $objMdPetVincRepresentantDTO->retNumIdContato();
         $objMdPetVincRepresentantDTO->retDthDataCadastro();
-        $objMdPetVincRepresentantDTO->retStrCpfProcurador();
     	$objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($arrIdRepresentantes,InfraDTO::$OPER_IN);
         $objMdPetVincRepresentantDTO->setStrStaEstado($situacao);
 
         $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
-
-        $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
-        $bolNaoReestabelecer = false;
-        foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
-            $objUsuarioDTO = new UsuarioDTO();
-            $objUsuarioDTO->setNumIdContato($objMdPetVincRepresentantDTO->getNumIdContato());
-            $objUsuarioDTO->retStrSinAtivo();
-            $objUsuarioDTO->retStrNome();
-            $objUsuarioDTO->setBolExclusaoLogica(false);
-            $objUsuarioDTO = (new UsuarioRN)->consultarRN0489($objUsuarioDTO);
-            if($objUsuarioDTO){
-                if($objUsuarioDTO->getStrSinAtivo() == 'N'){
-                    $bolNaoReestabelecer = true;
-                    $strMensagemNaoReestabelecer .= '    - ' . $objUsuarioDTO->getStrNome() . ' (' . InfraUtil::formatarCpf($objMdPetVincRepresentantDTO->getStrCpfProcurador()) . ') \n';
-
-
-                }
-            }
-        }
-
-        $strMensagemNaoReestabelecer .= '\n Caso necessário, primeiramente regularize os cadastros dos Usuários Externos acima.';
-
-        if($bolNaoReestabelecer){
-            $objInfraException = new InfraException();
-            $objInfraException->adicionarValidacao($strMensagemNaoReestabelecer);
-            $objInfraException->lancarValidacoes();
-        }
-
         $dtCadastroRespLegal = new DateTime();
         $idContatoResponsavelLegal = '';
         foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {

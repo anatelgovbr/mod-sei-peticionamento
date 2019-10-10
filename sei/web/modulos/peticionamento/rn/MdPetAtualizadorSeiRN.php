@@ -85,7 +85,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
             $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SEI VERSÃO ' . SEI_VERSAO);
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '1.502';
+            $numVersaoInfraRequerida = '1.532';
             $versaoInfraFormatada = (int) str_replace('.', '', VERSAO_INFRA);
             $versaoInfraReqFormatada = (int) str_replace('.', '', $numVersaoInfraRequerida);
 
@@ -127,6 +127,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '0.0.1') {
@@ -141,6 +142,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '0.0.2') {
@@ -154,6 +156,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif (in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3'))) {
@@ -166,6 +169,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '1.0.4') {
@@ -177,6 +181,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '1.1.0') {
@@ -187,6 +192,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '2.0.0') {
@@ -196,6 +202,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '2.0.1') {
@@ -204,6 +211,7 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '2.0.2') {
@@ -211,24 +219,32 @@ class MdPetAtualizadorSeiRN extends InfraRN {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '2.0.3') {
                 $this->instalarv204();
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             } elseif ($strVersaoModuloPeticionamento == '2.0.4') {
                 $this->instalarv205();
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
             }  elseif ($strVersaoModuloPeticionamento == '2.0.5') {
                 $this->instalarv300();
+                $this->instalarv301();
                 $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
                 $this->finalizar('FIM', false);
-            } elseif ($strVersaoModuloPeticionamento == '3.0.0') {
+            }   elseif ($strVersaoModuloPeticionamento == '3.0.0') {
+                $this->instalarv301();
+                $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+                $this->finalizar('FIM', false);
+            } elseif ($strVersaoModuloPeticionamento == '3.0.1') {
                 $this->logar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
                 $this->finalizar('FIM', false);
             } else {
@@ -2041,7 +2057,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objMdPetIntOrientacoesDTO = new MdPetIntOrientacoesDTO();
         $objMdPetIntOrientacoesRN = new MdPetIntOrientacoesRN();
         $objMdPetIntOrientacoesDTO->setStrOrientacoesTipoDestinatario('<p style="font-family:arial,verdana,helvetica,sans-serif; font-size:13px">Caso selecionada a op&ccedil;&atilde;o &quot;Pessoa Jur&iacute;dica&quot;, a Intima&ccedil;&atilde;o Eletr&ocirc;nica ser&aacute; encaminhada ao Respons&aacute;vel Legal e aos portadores de&nbsp;Procura&ccedil;&atilde;o Eletr&ocirc;nica Especial ou de Procura&ccedil;&atilde;o Eletr&ocirc;nica que inclua&nbsp;o poder legal para Recebimento e Cumprimento de Intima&ccedil;&atilde;o Eletr&ocirc;nica. Somente ser&atilde;o listados os CNPJs das Pessoas Jur&iacute;dicas que j&aacute; tenham vinculado pelo menos o Respons&aacute;vel Legal no &acirc;mbito do Acesso Externo do SEI. &Eacute;&nbsp;de responsabilidade exclusiva da Pessoa Jur&iacute;dica manter o Respons&aacute;vel Legal atualizado e&nbsp;a gest&atilde;o das Procura&ccedil;&otilde;es Eletr&ocirc;nicas emitidas.</p><p style="font-family:arial,verdana,helvetica,sans-serif; font-size:13px">Caso selecionada a op&ccedil;&atilde;o &quot;Pessoa F&iacute;sica&quot;, dever&aacute; indicar nominalmente o Usu&aacute;rio Externo destinat&aacute;rio da&nbsp;Intima&ccedil;&atilde;o Eletr&ocirc;nica, ficando sob a responsabilidade de quem gera a intima&ccedil;&atilde;o a confer&ecirc;ncia pr&eacute;via se o destinat&aacute;rio possui poderes de recebimento de intima&ccedil;&atilde;o.</p>');
-        $objMdPetIntOrientacoesDTO->setNumIdIntOrientacoesTipoDestinatario(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
+        $objMdPetIntOrientacoesDTO->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
         $objMdPetIntOrientacoesRN->cadastrar($objMdPetIntOrientacoesDTO);
 
         $this->logar('CRIANDO A TABELA md_pet_rel_int_dest_extern');
@@ -2402,6 +2418,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //Atualizando parametro para controlar versao do modulo
         $this->logar('ATUALIZANDO PARAMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+    }
+
+    //Contem atualizações da versao 3.0.1
+    protected function instalarv301(){
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SEI');
+
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.0.1\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
     }
 
     private function existeIdEmailSistemaPecitionamento() {

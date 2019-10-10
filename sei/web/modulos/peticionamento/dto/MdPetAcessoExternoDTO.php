@@ -56,7 +56,6 @@ class MdPetAcessoExternoDTO extends InfraDTO  {
 
 		//Protocolo do Acesso Externo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdParticipanteAcessoExterno','a.id_participante','acesso_externo a');
-		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SinAtivoAcessoExterno','a.sin_ativo','acesso_externo a');
 
 		//Id Contato Participante
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdContatoAcessoExterno','pt.id_contato','participante pt');

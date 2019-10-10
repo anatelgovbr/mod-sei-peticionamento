@@ -148,6 +148,8 @@ try {
               $objContatoDTO->setStrNomePais( $_POST['pais']);
               $objContatoDTO->setStrCep($_POST['cep']);
               $objContatoDTO->setStrObservacao('');
+              $objContatoDTO->setStrNumeroPassaporte(null);
+              $objContatoDTO->setNumIdPaisPassaporte(null);
 
               $paisDTO = new PaisDTO();
               $paisRN = new PaisRN();

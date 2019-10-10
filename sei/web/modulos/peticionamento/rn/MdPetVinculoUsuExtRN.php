@@ -226,19 +226,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objContatoDTO->setStrSigla($post['txtNumeroCnpj']);
         $objContatoDTO->setStrStaNatureza(ContatoRN::$TN_PESSOA_JURIDICA); // Identifica que o contato é CNPJ
         if (strlen($endereco) > 130) {
-            if(strlen($enderecoPadrao) > 130){
-                $strEnderecoPadraoTratado = substr($enderecoPadrao, 0, 130 );
-                $numEspacoBranco = strripos($strEnderecoPadraoTratado, ' ');
-                $enderecoPadrao = substr($strEnderecoPadraoTratado, 0, $numEspacoBranco);
-            }
             $objContatoDTO->setStrEndereco($enderecoPadrao);
         } else {
             $objContatoDTO->setStrEndereco($endereco);
-        }
-        if(strlen($complemento) > 130){
-            $strComplementoTratado = substr($complemento, 0, 130 );
-            $numEspacoBranco = strripos($strComplementoTratado, ' ');
-            $complemento = substr($strComplementoTratado, 0, $numEspacoBranco);
         }
         $objContatoDTO->setStrComplemento($complemento); // Array Complemento do Endereco
         $objContatoDTO->setStrCep($cep); // Array Cep
@@ -266,14 +256,18 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objContatoDTO->setStrEmail('');
         $objContatoDTO->setStrSitioInternet('');
         $objContatoDTO->setStrObservacao('');
+        $objContatoDTO->setStrNumeroPassaporte('');
+        $objContatoDTO->setNumIdPaisPassaporte('');
 
         SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $objMdPetVincTpProc->getNumIdUnidade());
 
         if (is_null($objContatoDTORetorno)) {
-            $objContatoDTO->setNumIdContato(null);
-            $objContatoDTO = $objContatoRN->cadastrarRN0322($objContatoDTO);
+            if($post['chkDeclaracao'] == 'S') {
+                $objContatoDTO->setNumIdContato(null);
+                $objContatoDTO = $objContatoRN->cadastrarRN0322($objContatoDTO);
+            }
         } else {
-            if ($post['hdnIdContatoNovo'] != '' || $post['isAlteracaoCrud'] || $post['hdnStaWebService']) {
+            if (($post['hdnIdContatoNovo'] != '' || $post['isAlteracaoCrud'] || $post['hdnStaWebService']) && $post['chkDeclaracao'] == 'S') {
                 $objContatoDTO->setNumIdContato($objContatoDTORetorno->getNumIdContato());
                 $objContatoRN->alterarRN0323($objContatoDTO);
             }

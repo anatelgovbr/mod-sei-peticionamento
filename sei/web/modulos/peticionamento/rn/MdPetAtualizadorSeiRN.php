@@ -1840,7 +1840,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
               endereco_wsdl ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NULL,
               operacao_wsdl ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' NULL,
               sin_cache ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
-              sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+              sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL
               )';
 
         BancoSEI::getInstance()->executarSql($sql_tabelas);
@@ -2926,7 +2926,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $secaoModeloTituloTextoDTO->setStrSinPrincipal('N');
         $secaoModeloTituloTextoDTO->setStrSinAssinatura('N');
         $secaoModeloTituloTextoDTO->setStrSinSomenteLeitura('S');
-        $secaoModeloTituloTextoDTO->setStrSinDinamica('N');
+        $secaoModeloTituloTextoDTO->setStrSinDinamica('S');
         $secaoModeloTituloTextoDTO->setStrSinHtml('S');
         $secaoModeloTituloTextoDTO->setStrSinAtivo('S');
 
@@ -3135,7 +3135,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $secaoModeloTituloTextoDTO->setStrSinPrincipal('N');
         $secaoModeloTituloTextoDTO->setStrSinAssinatura('N');
         $secaoModeloTituloTextoDTO->setStrSinSomenteLeitura('S');
-        $secaoModeloTituloTextoDTO->setStrSinDinamica('N');
+        $secaoModeloTituloTextoDTO->setStrSinDinamica('S');
         $secaoModeloTituloTextoDTO->setStrSinHtml('S');
         $secaoModeloTituloTextoDTO->setStrSinAtivo('S');
 

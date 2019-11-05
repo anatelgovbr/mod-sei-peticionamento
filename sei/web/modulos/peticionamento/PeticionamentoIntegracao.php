@@ -2779,6 +2779,29 @@ class PeticionamentoIntegracao extends SeiIntegracao
     }
 
     /**
+     * Valida se o Processo onde está realizando o bloqueio de processo possui Vínculo com Intimação
+     */
+    public function bloquearProcesso($objProcedimentoAPI)
+    {
+
+        $idProcedimento = $objProcedimentoAPI[0]->getIdProcedimento();
+
+        $objRN = new MdPetIntimacaoRN();
+        $isRespIntPeriodo = $objRN->existeIntimacaoPrazoValido($idProcedimento);
+
+        if ($isRespIntPeriodo) {
+            $msg = 'Não é permitido Bloquear este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
+
+
+            $objInfraException = new InfraException();
+            $objInfraException->adicionarValidacao($msg);
+            $objInfraException->lancarValidacoes();
+        }
+
+        return parent::bloquearProcesso($objProcedimentoAPI);
+    }
+
+    /**
      * Valida se o Processo que está sendo desanexado está como anexo de uma Intimação
      */
     public function desanexarProcesso(ProcedimentoAPI $objProcedimentoAPIPrincipal, ProcedimentoAPI $objProcedimentoAPIAnexado)

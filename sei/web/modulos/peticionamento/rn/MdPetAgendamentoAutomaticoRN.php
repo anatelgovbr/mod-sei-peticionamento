@@ -46,7 +46,14 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
             InfraDebug::getInstance()->gravar('Qtd. Intimações Pendentes: ' . count($intimacoesPendentes));
 
             if(count($intimacoesPendentes) > 0){
-                $objMdPetIntAceiteRN->realizarEtapasAceiteAgendado($intimacoesPendentes);
+                $arrIntimacoes = $objMdPetIntAceiteRN->realizarEtapasAceiteAgendado($intimacoesPendentes);
+            }
+
+            InfraDebug::getInstance()->gravar('Qtd. Intimações Cumpridas: ' . $arrIntimacoes['cumpridas']);
+            InfraDebug::getInstance()->gravar('Qtd. Intimações Não Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
+
+            foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
+                InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
             }
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);

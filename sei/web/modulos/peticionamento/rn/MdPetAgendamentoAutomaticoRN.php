@@ -7,25 +7,29 @@
  * Versão do Gerador de Código: 1.40.0
  */
 
-require_once dirname(__FILE__).'/../../../SEI.php';
+require_once dirname(__FILE__) . '/../../../SEI.php';
 
-class MdPetAgendamentoAutomaticoRN extends InfraRN {
+class MdPetAgendamentoAutomaticoRN extends InfraRN
+{
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
     }
 
-    protected function inicializarObjInfraIBanco(){
+    protected function inicializarObjInfraIBanco()
+    {
         return BancoSEI::getInstance();
     }
 
     /* Método que realiza cumprimento automático de intimações por decurso de prazo */
-    protected function CumprirPorDecursoPrazoTacitoControlado( ){
+    protected function CumprirPorDecursoPrazoTacitoControlado()
+    {
 
-        try{
-            
-            ini_set('max_execution_time','0');
-            ini_set('memory_limit','1024M');
+        try {
+
+            ini_set('max_execution_time', '0');
+            ini_set('memory_limit', '1024M');
 
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -33,9 +37,9 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
             InfraDebug::getInstance()->limpar();
 
 
-            $objUsuarioPetRN  = new MdPetIntUsuarioRN();
+            $objUsuarioPetRN = new MdPetIntUsuarioRN();
             $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
-            SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet , null);
+            SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
 
             $numSeg = InfraUtil::verificarTempoProcessamento();
             InfraDebug::getInstance()->gravar('CUMPRINDO INTIMAÇOES POR DECURSO DE PRAZO');
@@ -45,31 +49,31 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
 
             InfraDebug::getInstance()->gravar('Qtd. Intimações Pendentes: ' . count($intimacoesPendentes));
 
-            if(count($intimacoesPendentes) > 0){
+            if (count($intimacoesPendentes) > 0) {
                 $arrIntimacoes = $objMdPetIntAceiteRN->realizarEtapasAceiteAgendado($intimacoesPendentes);
+
+                InfraDebug::getInstance()->gravar('Qtd. Intimações Cumpridas: ' . $arrIntimacoes['cumpridas']);
+                InfraDebug::getInstance()->gravar('Qtd. Intimações Não Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
+
+                foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
+                    InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+                }
             }
-
-            InfraDebug::getInstance()->gravar('Qtd. Intimações Cumpridas: ' . $arrIntimacoes['cumpridas']);
-            InfraDebug::getInstance()->gravar('Qtd. Intimações Não Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
-
-            foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
-                InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
-            }
-
+            
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
-            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
+            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             SessaoSEI::getInstance()->setBolHabilitada(true);
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Erro cumprindo intimação por decurso de prazo.',$e);
+            throw new InfraException('Erro cumprindo intimação por decurso de prazo.', $e);
         }
 
     }
@@ -78,9 +82,10 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
      *    - Com Tipo de Resposta que Exige Resposta pelo Usuário Externo 
      *    e Pendente de Resposta após a Intimação ter sido Cumprida.
      */
-    protected function ReiterarIntimacaoExigeRespostaControlado( ){
+    protected function ReiterarIntimacaoExigeRespostaControlado()
+    {
 
-        try{
+        try {
 
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -93,16 +98,16 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
 
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
 
-            $intimacoesExigeRespostaDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData( array(true,true) );
+            $intimacoesExigeRespostaDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData(array(true, true));
 
             //Juridico DTO
 
-            $intimacoesExigeRespostaJuridicoDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemDataJuridico( array(true,true) );
+            $intimacoesExigeRespostaJuridicoDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemDataJuridico(array(true, true));
 
 
             InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
 
-            if(count($intimacoesExigeRespostaDTO) > 0){
+            if (count($intimacoesExigeRespostaDTO) > 0) {
                 $objMdPetIntEmailNotificacaoRN = new MdPetIntEmailNotificacaoRN();
 
                 InfraDebug::getInstance()->setBolLigado(true);
@@ -111,9 +116,9 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
 
                 InfraDebug::getInstance()->gravar('REITERANDO INTIMAÇÕES PENDENTES EXIGE RESPOSTA');
                 InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
-                
-                $qtdEnviadas = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacao(array($intimacoesExigeRespostaDTO,$pessoa = "F"));
-                if (is_numeric($qtdEnviadas)){
+
+                $qtdEnviadas = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacao(array($intimacoesExigeRespostaDTO, $pessoa = "F"));
+                if (is_numeric($qtdEnviadas)) {
                     InfraDebug::getInstance()->gravar('Qtd. Intimações Reiteradas: ' . $qtdEnviadas);
                 }
             }
@@ -123,7 +128,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
             InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta Juridico: ' . count($intimacoesExigeRespostaJuridicoDTO));
 
 
-            if(count($intimacoesExigeRespostaJuridicoDTO) > 0){
+            if (count($intimacoesExigeRespostaJuridicoDTO) > 0) {
                 $objMdPetIntEmailNotificacaoRN = new MdPetIntEmailNotificacaoRN();
 
                 InfraDebug::getInstance()->setBolLigado(true);
@@ -132,26 +137,25 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
 
                 InfraDebug::getInstance()->gravar('REITERANDO INTIMAÇÕES PENDENTES EXIGE RESPOSTA - JURIDICO');
                 InfraDebug::getInstance()->gravar('Qtd. Intimações Exige Resposta Juridico: ' . count($intimacoesExigeRespostaJuridicoDTO));
-                
-                $qtdEnviadasJuridico = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacaoJuridico(array($intimacoesExigeRespostaJuridicoDTO,$pessoa = "J"));
-                if (is_numeric($qtdEnviadas)){
+
+                $qtdEnviadasJuridico = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacaoJuridico(array($intimacoesExigeRespostaJuridicoDTO, $pessoa = "J"));
+                if (is_numeric($qtdEnviadas)) {
                     InfraDebug::getInstance()->gravar('Qtd. Intimações Reiteradas Juridico: ' . $qtdEnviadasJuridico);
                 }
             }
 
 
-
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
 
-            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
+            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
-        }catch(Exception $e){
+        } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Erro reiterando intimações pendentes exige resposta.',$e);
+            throw new InfraException('Erro reiterando intimações pendentes exige resposta.', $e);
         }
 
     }
@@ -161,9 +165,10 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
    *    - Com Tipo de Resposta que Exige Resposta pelo Usuário Externo
    *    e Pendente de Resposta após a Intimação ter sido Cumprida.
    */
-    protected function atualizarEstadoIntimacoesPrazoExternoVencidoControlado(){
+    protected function atualizarEstadoIntimacoesPrazoExternoVencidoControlado()
+    {
 
-        try{
+        try {
 
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -180,16 +185,16 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
             InfraDebug::getInstance()->gravar('Qtd. Intimações Vencidas e Sem Resposta: ' . $intimacoesVencidas);
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
 
-            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
+            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
-        }catch(Exception $e){
+        } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Erro atualizando o estado das intimações vencidas e sem resposta.',$e);
+            throw new InfraException('Erro atualizando o estado das intimações vencidas e sem resposta.', $e);
         }
 
     }
@@ -230,10 +235,10 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
             InfraDebug::getInstance()->gravar('Qtd. Intimações Atualizadas: ' . $count);
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
 
-            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
+            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
@@ -245,4 +250,5 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN {
 
     }
 }
+
 ?>

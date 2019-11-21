@@ -95,6 +95,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             foreach ($dadosProcuracao as $procuracao) {
                 $cpf = InfraUtil::retirarFormatacao($procuracao[0]);
                 $contatoDTO->setDblCpf($cpf);
+                $contatoDTO->setStrNome($procuracao[1]);
                 $arrContato = $contatoRN->listarRN0325($contatoDTO);
                 $arrIdContato[] = $arrContato[0]->getNumIdContato();
             }

@@ -113,10 +113,10 @@ require_once  'md_pet_procuracao_especial_cadastro_css.php';
             <button type="button" accesskey="V" name="btnValidar" id="btnValidar" class="infraButton btnProc" onclick="consultarUsuarioExternoValido();" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"> <span class="infraTeclaAtalho">V</span>alidar</button>
         </div>
 
-        <div class="bloco">
+        <div class="bloco" style="width: 30%">
             <label for="txtNomeProcurador" class="infraLabelObrigatorio">Nome do Usuário Externo:</label>
             <br/>
-            <input name="txtNomeProcurador" id="txtNomeProcurador" type="text" class="infraText campoPadrao" disabled="disabled"/>
+            <select name="txtNomeProcurador" id="txtNomeProcurador"class="infraText campoPadrao" disabled="disabled" style="width: 70%"></select>
             <button type="button" accesskey="A" class="infraButton btnProc" id="btnAdicionarProcurador" onclick="criarRegistroTabelaProcuracao();" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"> <span class="infraTeclaAtalho">A</span>dicionar</button>
         </div>
 

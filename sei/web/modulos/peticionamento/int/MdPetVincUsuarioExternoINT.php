@@ -162,6 +162,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $objUsuarioDTO->retStrStaTipo();
         $objUsuarioDTO->retStrNome();
         $objUsuarioDTO->retStrSinAtivo();
+        $objUsuarioDTO->retStrSigla();
         $objUsuarioDTO->retNumIdContato();
 
         $objUsuarioRN = new UsuarioRN();
@@ -169,18 +170,22 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
         if (count($arrObjUsuarioDTO)>0){
             foreach ($arrObjUsuarioDTO as $objUsuarioDTO){
+                $xml .= '<contato>';
                 if ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO && $objUsuarioDTO->getStrSinAtivo() == 'S'){
                     $xml .= '<nu-cpf>' . $params['cpf'] . '</nu-cpf>';
                     $xml .= '<no-usuario>' . $objUsuarioDTO->getStrNome() . '</no-usuario>';
                     $xml .= '<nu-contato>' . $objUsuarioDTO->getNumIdContato() . '</nu-contato>';
+                    $xml .= '<sg-contato>' . $objUsuarioDTO->getStrSigla() . '</sg-contato>';
                     $xml .= '<sucesso>1</sucesso>';
                 }elseif ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO_PENDENTE){  
                     $xml .= '<nu-cpf>' . $params['cpf'] . '</nu-cpf>';
                     $xml .= '<no-usuario>' . $objUsuarioDTO->getStrNome() . '</no-usuario>';
                     $xml .= '<nu-contato>' . $objUsuarioDTO->getNumIdContato() . '</nu-contato>';
+                    $xml .= '<sg-contato>' . $objUsuarioDTO->getStrSigla() . '</sg-contato>';
                     $xml .= '<mensagem>pendente</mensagem>';
                     $xml .= '<sucesso>1</sucesso>';
                 }
+                $xml .= '</contato>';
             }
         }
     }

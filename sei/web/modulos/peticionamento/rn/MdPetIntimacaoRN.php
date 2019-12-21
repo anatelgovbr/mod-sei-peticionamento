@@ -2358,7 +2358,7 @@ public function getIntimacoesPossuemDataJuridicoConectado($params){
             if (count($arrObjAcessoDTO)==0){
                 //último usuário da última independente da unidade informada
                 $objAcessoDTO = new AcessoDTO();
-                $objAcessoDTO->setDistinct(true);
+//                $objAcessoDTO->setDistinct(true);
                 $objAcessoDTO->retNumIdUsuario();
                 $objAcessoDTO->retNumIdUnidade();
                 $objAcessoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());

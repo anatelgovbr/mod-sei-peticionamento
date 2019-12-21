@@ -250,27 +250,18 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objContatoDTO->setNumIdTipoContato($idTipoContato); // IdBrasil
         $objContatoDTO->setNumIdUsuarioCadastro($idUsuario);
 
-        $objContatoDTO->setStrStaNaturezaContatoAssociado(null);
-        $objContatoDTO->setNumIdContatoAssociado('');
-        $objContatoDTO->setStrSinEnderecoAssociado('N');
-        $objContatoDTO->setStrStaGenero('');
-        $objContatoDTO->setDblCpf('');
-        $objContatoDTO->setDblRg('');
-        $objContatoDTO->setStrOrgaoExpedidor('');
-        $objContatoDTO->setStrMatricula('');
-        $objContatoDTO->setStrMatriculaOab('');
-        $objContatoDTO->setDtaNascimento('');
-        $objContatoDTO->setNumIdCargo('');
-        $objContatoDTO->setStrTelefoneFixo('');
-        $objContatoDTO->setStrTelefoneCelular('');
-        $objContatoDTO->setStrEmail('');
-        $objContatoDTO->setStrSitioInternet('');
-        $objContatoDTO->setStrObservacao('');
-
         SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $objMdPetVincTpProc->getNumIdUnidade());
 
         if (is_null($objContatoDTORetorno)) {
             $objContatoDTO->setNumIdContato(null);
+            $objContatoDTO->setStrStaNaturezaContatoAssociado(null);
+            $objContatoDTO->setNumIdContatoAssociado('');
+            $objContatoDTO->setStrSinEnderecoAssociado('N');
+            $objContatoDTO->setStrTelefoneFixo('');
+            $objContatoDTO->setStrTelefoneCelular('');
+            $objContatoDTO->setStrEmail('');
+            $objContatoDTO->setStrSitioInternet('');
+            $objContatoDTO->setStrObservacao('');
             $objContatoDTO = $objContatoRN->cadastrarRN0322($objContatoDTO);
         } else {
             if ($post['hdnIdContatoNovo'] != '' || $post['isAlteracaoCrud'] || $post['hdnStaWebService']) {

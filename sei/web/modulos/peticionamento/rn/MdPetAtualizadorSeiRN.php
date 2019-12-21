@@ -2508,7 +2508,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $secaoModeloTituloTextoDTO->setStrSinPrincipal('N');
         $secaoModeloTituloTextoDTO->setStrSinAssinatura('N');
         $secaoModeloTituloTextoDTO->setStrSinSomenteLeitura('S');
-        $secaoModeloTituloTextoDTO->setStrSinDinamica('N');
+        $secaoModeloTituloTextoDTO->setStrSinDinamica('S');
         $secaoModeloTituloTextoDTO->setStrSinHtml('S');
         $secaoModeloTituloTextoDTO->setStrSinAtivo('S');
 
@@ -3344,7 +3344,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $secaoModeloTituloTextoDTO->setStrSinPrincipal('N');
         $secaoModeloTituloTextoDTO->setStrSinAssinatura('N');
         $secaoModeloTituloTextoDTO->setStrSinSomenteLeitura('S');
-        $secaoModeloTituloTextoDTO->setStrSinDinamica('N');
+        $secaoModeloTituloTextoDTO->setStrSinDinamica('S');
         $secaoModeloTituloTextoDTO->setStrSinHtml('S');
         $secaoModeloTituloTextoDTO->setStrSinAtivo('S');
 
@@ -3553,7 +3553,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $secaoModeloTituloTextoDTO->setStrSinPrincipal('N');
         $secaoModeloTituloTextoDTO->setStrSinAssinatura('N');
         $secaoModeloTituloTextoDTO->setStrSinSomenteLeitura('S');
-        $secaoModeloTituloTextoDTO->setStrSinDinamica('N');
+        $secaoModeloTituloTextoDTO->setStrSinDinamica('S');
         $secaoModeloTituloTextoDTO->setStrSinHtml('S');
         $secaoModeloTituloTextoDTO->setStrSinAtivo('S');
 

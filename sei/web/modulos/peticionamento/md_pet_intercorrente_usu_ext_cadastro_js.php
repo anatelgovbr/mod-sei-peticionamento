@@ -320,6 +320,7 @@
             dataType: 'JSON',
             data: paramsAjax,
             success: function (r) {
+                console.log(r);
                 if (r.nivelAcesso) {
                     criarHiddenNivelAcesso(r.nivelAcesso);
                     if (EXIBIR_HIPOTESE_LEGAL && r.nivelAcesso.id == RESTRITO && r.hipoteseLegal) {

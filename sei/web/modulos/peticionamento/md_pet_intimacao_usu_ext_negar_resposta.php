@@ -12,8 +12,9 @@ PaginaSEIExterna::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES
 
 $arrComandos = array();
 $texto = '';
-$idMdPetIntRelDest = $_GET['id_md_pet_int_rel_dest'];
-$estado = $_GET['estado'];
+$idDestinatario = $_GET['id_destinatario'];
+$idContato = $_GET['id_contato'];
+
 switch ($_GET['acao']) {
 
     case 'md_pet_intimacao_usu_ext_negar_resposta':
@@ -22,26 +23,54 @@ switch ($_GET['acao']) {
             
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
-            if($estado == 1){
-                $estadoInt = "Revogada";
-            }else if($estado == 2){
-                $estadoInt = "Suspenso";
-            }else if($estado == 3){
-                $estadoInt = "Renunciada";
-            }else if($estado == 4){
-                $estadoInt = "Vencida";
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            if (count($idContato) == 1) {
+                $objMdPetVincRepresentantDTO->setNumIdContatoVinc(current($idContato));
+            } else {
+                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($idContato, InfraDTO::$OPER_IN);
             }
+            $objMdPetVincRepresentantDTO->setNumIdContato($idDestinatario);
+            $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+            $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
+            $objMdPetVincRepresentantDTO->retNumIdContato();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantDTO->retStrStaEstado();
+            $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+            $objMdPetVincRepresentantDTO->retStrCNPJ();
+            $objMdPetVincRepresentantDTO->retStrCPF();
+            $objMdPetVincRepresentantDTO->retDthDataLimite();
+            $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
+            $objMdPetVincRepresentantDTO->retStrStaEstado();
 
+            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
-            $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-            $objDestinatarioDTO->retStrNomeContato();
-            $objDestinatarioDTO->retDblCnpjContato();
-            $objDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idMdPetIntRelDest);
-            $objDestinatarioRN = new MdPetIntRelDestinatarioRN();
-            $arrDestinatarioDTO = $objDestinatarioRN->consultar($objDestinatarioDTO);
-            
-            $texto = 'Você não possui mais permissão para responder a Intimação destinada à '.PaginaSEI::tratarHTML($arrDestinatarioDTO->getStrNomeContato()).' ('.infraUtil::formatarCnpj($arrDestinatarioDTO->getDblCnpjContato()).'), pois sua Procuração Eletrônica está '.$estadoInt.'.';
-            
+            if ($arrObjMdPetVincRepresentantDTO) {
+                $arrPessoaJuridica = array();
+                $arrPessoaFisica = array();
+                $texto = 'Você não possui mais permissão para responder a Intimação Eletrônica conforme abaixo:<br><br>Destinatários não permitidos:';
+                foreach ($arrObjMdPetVincRepresentantDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
+                    $procuracaoValida = true;
+                    if ($itemObjMdPetVinculoDTO->getStrStaEstado() != MdPetVincRepresentantRN::$RP_ATIVO) {
+                        $procuracaoValida = false;
+                    }elseif($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
+                        $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
+                        $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($itemObjMdPetVinculoDTO->getNumIdMdPetVinculoRepresent(), $itemObjMdPetVinculoDTO->getStrStaEstado(), $itemObjMdPetVinculoDTO->getDthDataLimite(), $idDocumento, $itemObjMdPetVinculoDTO->getStrStaAbrangencia());
+                        if (!$verificacaoCriteriosProcuracaoSimples) {
+                            $procuracaoValida = false;
+                        }
+                    }                    
+                    if(!$procuracaoValida){
+                        if(!is_null($itemObjMdPetVinculoDTO->getStrCPF())){
+                            $arrPessoaFisica[] = '&nbsp;&nbsp;&nbsp;&nbsp;- '.$itemObjMdPetVinculoDTO->getStrRazaoSocialNomeVinc() . ' (' . InfraUtil::formatarCpfCnpj($itemObjMdPetVinculoDTO->getStrCPF()) . '), verifique seus Poderes de Representação.';
+                        }else{
+                            $arrPessoaJuridica[] = '&nbsp;&nbsp;&nbsp;&nbsp;- '.$itemObjMdPetVinculoDTO->getStrRazaoSocialNomeVinc() . ' (' . InfraUtil::formatarCpfCnpj($itemObjMdPetVinculoDTO->getStrCNPJ()) . '), verifique seus Poderes de Representação.';
+                        }
+                    }
+                }
+                $texto .= implode('<br>',$arrPessoaJuridica)."<br>".implode('<br>',$arrPessoaFisica);
+            }
+ 
         } catch (Exception $e) {
             PaginaSEIExterna::getInstance()->processarExcecao($e);
         }
@@ -71,7 +100,7 @@ PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
-PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload=""');
+PaginaSEIExterna::getInstance()->abrirBody('<b>'.$strTitulo.'</b>', 'onload=""');
 
 ?>
 <form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">

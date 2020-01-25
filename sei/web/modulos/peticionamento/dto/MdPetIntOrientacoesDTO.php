@@ -17,7 +17,7 @@ class MdPetIntOrientacoesDTO extends InfraDTO  {
 	public function montar() {
 	
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
-				'IdIntOrientacoesTipoDestinatario',
+				'IdIntOrientTpDest',
 				'id_md_pet_int_tp_int_orient');
 	
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
@@ -28,7 +28,7 @@ class MdPetIntOrientacoesDTO extends InfraDTO  {
 				'IdConjuntoEstilos',
 				'id_conjunto_estilos');
 				
-		$this->configurarPK('IdIntOrientacoesTipoDestinatario', InfraDTO::$TIPO_PK_INFORMADO);
+		$this->configurarPK('IdIntOrientTpDest', InfraDTO::$TIPO_PK_INFORMADO);
 	
 	}}
 ?>

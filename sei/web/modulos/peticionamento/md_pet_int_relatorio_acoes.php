@@ -105,7 +105,7 @@ PaginaSEI::getInstance()->abrirAreaDados('50em');
         <div id="divGraficos" style="display:none" >
             <?php require_once 'md_pet_int_relatorio_graficos.php'; ?>
         </div>
-
+        <br><br><br>
         <?php PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
         ?>
 

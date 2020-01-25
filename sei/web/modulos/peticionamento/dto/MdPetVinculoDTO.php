@@ -32,7 +32,7 @@ class MdPetVinculoDTO extends InfraDTO
         //Procedimento
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'ProtocoloFormatado', 'protocolo_formatado', 'protocolo prot');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'ProtocoloFormatadoPesquisa', 'protocolo_formatado_pesquisa', 'protocolo prot');
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'IdTipoProcedimento', 'proced.id_tipo_procedimento', 'procedimento proced');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'IdTipoProcedimento', 'proced.id_tipo_procedimento', 'procedimento proced');        
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeTipoProcedimento', 'tpro.nome', 'tipo_procedimento tpro');
 
         //Representante
@@ -51,6 +51,10 @@ class MdPetVinculoDTO extends InfraDTO
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DTH, 'DataVinculo', 'repr.data_cadastro', 'md_pet_vinculo_represent repr');
         
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DTH, 'DataEncerramento', 'repr.data_encerramento', 'md_pet_vinculo_represent repr');
+
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DTH, 'DataLimite', 'repr.data_limite', 'md_pet_vinculo_represent repr');
+
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaAbrangencia', 'repr.sta_abrangencia', 'md_pet_vinculo_represent repr');
 
         //representante - contato
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeContatoRepresentante', 'contrep.nome', 'contato contrep');

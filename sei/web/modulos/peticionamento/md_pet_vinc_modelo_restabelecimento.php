@@ -31,7 +31,7 @@
 </style>
 
 <div>
-    <table align="center" style="width: 90%" class="Tabela_Justificado_Negrito" border=0>
+    <table align="center" style="width: 98%" class="Tabela_Justificado_Negrito" border=0>
         <tbody>
         <tr class="trEspaco">
             <td colspan=2>Dados da Vinculação de Responsável Legal a Pessoa Jurídica:</td>
@@ -43,10 +43,6 @@
         <tr>
             <td class="tdTabulacao">Número do Processo:</td>
             <td style="font-weight: normal">@numProcessoVinc</td>
-        </tr>
-        <tr>
-            <td class="tdTabulacao">Número do Documento:</td>
-            <td style="font-weight: normal">@numDocVinc</td>
         </tr>
 
         <tr><tr><td class="clear">&nbsp;</td></tr></tr>
@@ -71,10 +67,6 @@
         <tr>
             <td class="tdTabulacao">Nome:</td>
             <td style="font-weight: normal">@nomeRespLegal</td>
-        </tr>
-        <tr>
-            <td class="tdTabulacao">CPF:</td>
-            <td style="font-weight: normal">@cpfRespLegal</td>
         </tr>
 
         <tr><tr><td class="clear">&nbsp;</td></tr></tr>

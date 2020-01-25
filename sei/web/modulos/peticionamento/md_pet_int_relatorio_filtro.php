@@ -86,16 +86,39 @@
              alt="Selecionar Data Final" class="infraImg"
              onclick="infraCalendario('txtDataFim',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
     </div>
+    
 
 </div>
 <!--  FIM PERÍODO DE GERAÇÃO  -->
 
 <div class="clear altura2"></div>
 
+<!--  Tipo Destinatario  -->
+<label  id="lblTpDest" name="lblTpDest" style="position: absolute;top: 74%;" class="infraLabelObrigatorio">Tipo de Destinatário</label>
+<select id="selTipoDest"  name="selTipoDest" style="position: absolute;top: 78%;"  class="infraSelect" tabindex="504">
+<?php if($_POST['selTipoDest'] == ""){ ?>
+<option value="" selected>Todos</option>
+<option value="N"> Pessoa Física </option>
+<option value="S"> Pessoa Jurídica </option>
+<?php } ?>
+<?php if($_POST['selTipoDest'] == "N"){ ?>
+<option value="" selected>Todos</option>
+<option value="N" selected> Pessoa Física </option>
+<option value="S"> Pessoa Jurídica </option>
+<?php } ?>
+<?php if($_POST['selTipoDest'] == "S"){ ?>
+<option value="" selected>Todos</option>
+<option value="N"> Pessoa Física </option>
+<option value="S" selected> Pessoa Jurídica </option>
+<?php } ?>
+
+</select>
+<!--  Tipo Destinatario - FIM  -->
+
 <div id="divSituacao" class="">
 
     <div class="">
-        <label style="position:absolute;" id="lblSituacao" name="lblSituacao" for="selSituacao" class="infraLabelObrigatorio">Situação da Intimação:</label>
+        <label  id="lblSituacao" name="lblSituacao" for="selSituacao" class="infraLabelObrigatorio">Situação da Intimação:</label>
         <select size="6" id="selSituacao" name="selSituacao" class="infraSelect selectPadrao" multiple="" rows="7" tabindex="502">
             <?php echo $strSelSituacao; ?>
         </select>

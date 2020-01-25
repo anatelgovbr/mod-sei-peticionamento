@@ -173,7 +173,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
      */
     protected function salvarDadosContatoCnpjControlado($post)
     {
-
         $cnpj = InfraUtil::retirarFormatacao($post['txtNumeroCnpj']);
         $objMdPetVincTpProc = $this->getConfiguracaoVinculo();
 
@@ -189,34 +188,26 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetIntegracaoDTO->setNumIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
         $objMdPetIntegracaoDTO->retStrStaUtilizarWs();
         $objMdPetIntegracaoDTO = (new MdPetIntegracaoRN)->consultar($objMdPetIntegracaoDTO);
-        $strUtilizarWs = $objMdPetIntegracaoDTO->getStrStaUtilizarWs() == 'N' ? true : false;
+        $strUtilizarWs = $objMdPetIntegracaoDTO->getStrStaUtilizarWs() == 'S' ? true : false;
 //  SÓ CADASTRO. FALTA ALTERAÇÃO
+
+        if($strUtilizarWs){
+            $novosDadosPj = array();
+            unset($dadosPj[1]);
+            foreach($dadosPj as $item){
+                $novosDadosPj[] = $item;
+            }
+            $dadosPj = $novosDadosPj;
+        }
+
         $nomeContato = $dadosPj[0];
-
-//    $endereco             = $isAlteracao ? $dadosPj[7] . ', ' . $dadosPj[8] : $dadosPj[6] . ', ' . $dadosPj[7];
-    $endereco             = $strUtilizarWs ? $dadosPj[3] : $dadosPj[4];
-//        $endereco = $dadosPj[4];
-
-//    $complemento          = $isAlteracao ? $dadosPj[5] : $dadosPj[8];
-//    $complemento          = $isAlteracao ? $dadosPj[5] : $dadosPj[5];
-        $enderecoPadrao = str_replace($dadosPj[5], "", $endereco);
+        $endereco             = $dadosPj[3];
+        $enderecoPadrao = str_replace($dadosPj[4], "", $endereco);
         $complemento = $dadosPj[5];
-
-//    $cep                  = $isAlteracao ? $dadosPj[6] : $dadosPj[4];
-    $cep                  = $strUtilizarWs ? str_replace('-', '', $dadosPj[9]) : str_replace('-', '', $dadosPj[10]);
-//        $cep = str_replace('-', '', $dadosPj[10]);
-
-//    $bairro               = $dadosPj[9];
-    $bairro               = $strUtilizarWs ? $dadosPj[6] : $dadosPj[7];
-//        $bairro = $dadosPj[7];
-
-//    $idUf                 = $isAlteracao ? $dadosPj[3] : $dadosPj[2];
-    $idUf                 = $strUtilizarWs ? $dadosPj[7] : $dadosPj[8];
-//        $idUf = $dadosPj[8];
-
-//    $idCidade             = $isAlteracao ? $dadosPj[4] : $dadosPj[3];
-    $idCidade             = $strUtilizarWs ? $dadosPj[8] : $dadosPj[9];
-//        $idCidade = $dadosPj[9];
+        $cep                  = $dadosPj[9];
+        $bairro               = $dadosPj[6];
+        $idUf                 = $dadosPj[7];
+        $idCidade             = $dadosPj[8];
 
         $idTipoContato = $post['slTipoInteressado'];
 
@@ -244,7 +235,17 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objContatoDTO->setStrCep($cep); // Array Cep
         $objContatoDTO->setStrBairro($bairro); // Array Bairro
         $objContatoDTO->setStrSinAtivo('S');
-        $objContatoDTO->setNumIdPais(76); // IdBrasil
+        $objContatoDTO->setStrStaGenero(null);
+		$objContatoDTO->setDblCpf(null);
+		$objContatoDTO->setDblRg(null);
+		$objContatoDTO->setStrOrgaoExpedidor(null);
+		$objContatoDTO->setStrMatricula(null);
+		$objContatoDTO->setStrMatriculaOab(null);
+		$objContatoDTO->setDtaNascimento(null);
+		$objContatoDTO->setNumIdCargo(null);
+		//$objContatoDTO->setStrNumeroPassaporte(null);
+		//$objContatoDTO->setNumIdPaisPassaporte(null);
+		$objContatoDTO->setNumIdPais(76); // IdBrasil
         $objContatoDTO->setNumIdUf($idUf); // Array UF
         $objContatoDTO->setNumIdCidade($idCidade);
         $objContatoDTO->setNumIdTipoContato($idTipoContato); // IdBrasil
@@ -259,12 +260,51 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objContatoDTO->setStrSinEnderecoAssociado('N');
             $objContatoDTO->setStrTelefoneFixo('');
             $objContatoDTO->setStrTelefoneCelular('');
+            $objContatoDTO->setStrStaGenero(null);
             $objContatoDTO->setStrEmail('');
+            $objContatoDTO->setDblCpf(null);
+            $objContatoDTO->setDblRg(null);
+            $objContatoDTO->setStrOrgaoExpedidor(null);
+            $objContatoDTO->setStrMatricula(null);
+            $objContatoDTO->setStrMatriculaOab(null);
+            $objContatoDTO->setDtaNascimento(null);
+            $objContatoDTO->setNumIdCargo(null);
             $objContatoDTO->setStrSitioInternet('');
             $objContatoDTO->setStrObservacao('');
+            //$objContatoDTO->setStrNumeroPassaporte(null);
+            //$objContatoDTO->setNumIdPaisPassaporte(null);
             $objContatoDTO = $objContatoRN->cadastrarRN0322($objContatoDTO);
         } else {
-            if ($post['hdnIdContatoNovo'] != '' || $post['isAlteracaoCrud'] || $post['hdnStaWebService']) {
+
+            $mdPetVinculoRN = new MdPetVinculoRN();
+            $objMdPetVinculoDTO = new MdPetVinculoDTO();
+            $objMdPetVinculoDTO->setNumIdMdPetVinculo($post['hdnIdVinculo']);
+            $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+            $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+            $objMdPetVinculoDTO->retNumIdContatoRepresentante();
+            $objMdPetVinculoDTO = $mdPetVinculoRN->consultar($objMdPetVinculoDTO);
+
+            $idUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+
+            $usuarioRN = new UsuarioRN();
+            $objUsuarioDTO = new UsuarioDTO();
+            $objUsuarioDTO->setNumIdUsuario($idUsuarioExterno);
+            $objUsuarioDTO->retNumIdContato();
+            $objUsuarioDTO = $usuarioRN->consultarRN0489($objUsuarioDTO);
+
+            if($objMdPetVinculoDTO){
+                if($objUsuarioDTO->getNumIdContato() != $objMdPetVinculoDTO->getNumIdContatoRepresentante()){
+                    $flag = true;
+                } else {
+                    $flag = false;
+                }
+            } else {
+                $flag = true;
+            }
+
+            if (($post['hdnIdContatoNovo'] != '' || $flag)&& ($post['isAlteracaoCrud'] || $post['hdnStaWebService'])) {
+                $objContatoDTO->setNumIdCargo('');
+                $objContatoDTO->setStrStaGenero('');
                 $objContatoDTO->setNumIdContato($objContatoDTORetorno->getNumIdContato());
                 $objContatoRN->alterarRN0323($objContatoDTO);
             }
@@ -337,12 +377,24 @@ class MdPetVinculoUsuExtRN extends InfraRN
         return $arrIdContato;
     }
 
-    private function _gerarProcedimento($idTipoProcesso, $objUnidadeDTO)
-    {
+    private function _gerarProcedimento($idTipoProcesso, $objUnidadeDTO,$arrObjMdPetVincTpProcesso,$dados){
+
         $objProcedimentoAPI = new ProcedimentoAPI();
         $objProcedimentoAPI->setIdTipoProcedimento($idTipoProcesso);
         $objProcedimentoAPI->setIdUnidadeGeradora($objUnidadeDTO->getNumIdUnidade());
-        $objProcedimentoAPI->setEspecificacao('');
+        //ESPECIFICAÇÃO
+        $contatoDTO = new ContatoDTO();
+        $contatoDTO->retStrNome();
+        $contatoDTO->retDblCnpj();
+        $contatoDTO->setNumIdContato($dados['idContato']);
+        $contatoRN = new ContatoRN();
+        $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+
+        $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
+        $nomeModificado = str_replace("@razao_social@",$objContatoRN->getStrNome(),$especificacao);
+        $nome_cpf = str_replace("@cnpj@",InfraUtil::formatarCnpj($objContatoRN->getDblCnpj()),$nomeModificado);
+
+        $objProcedimentoAPI->setEspecificacao($nome_cpf);
         $objProcedimentoAPI->setNumeroProtocolo('');
         $objProcedimentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
         $objProcedimentoAPI->setIdHipoteseLegal(null);
@@ -357,8 +409,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         return $objSaidaGerarProcedimentoAPI;
     }
-
-    private function _gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, &$dados)
+    private function _gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, &$dados,$arrObjMdPetVincTpProcesso)
     {
 
         $arrDados = array();
@@ -367,7 +418,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $usuarioRN = new UsuarioRN();
 
         //Gera um processo
-        $objSaidaGerarProcedimentoAPI = $this->_gerarProcedimento($idTipoProcesso, $objUnidadeDTO);
+        $objSaidaGerarProcedimentoAPI = $this->_gerarProcedimento($idTipoProcesso, $objUnidadeDTO,$arrObjMdPetVincTpProcesso,$dados);
 
         //Processo - Interessado somente a PJ
         $objParticipante = new ParticipanteDTO();
@@ -570,7 +621,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             }
 
             if (is_null($idVinculo)) {
-                $arrDados = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados);
+                $arrDados = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados,$arrObjMdPetVincTpProcesso);
                 $existePeticionamento = true;
                 $idRepresentant = $arrDados['idRepresentante'];
             } else {
@@ -677,8 +728,11 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $mdPetProcessoRN->assinarETravarDocumentoProcesso($objUnidadeDTO, $dados, $parObjDocumentoDTO, $objProcedimentoDTO);
             }
 
-            $tipoPeticionamento = $isAlteracao ? MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO : MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS;
-            $this->gerarAndamentoVinculo(array($idProcedimento, $tipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
+            $objMdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
+
+            $tipoPeticionamento = !is_null($reciboDTOBasico) ? $reciboDTOBasico->getStrStaTipoPeticionamento() : null;
+            $strTipoPeticionamento = $objMdPetRegrasGeraisRN->getTipoPeticionamento($tipoPeticionamento, true);
+            $this->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
 
             if ($isAlteradoRespLegal) {
                 $this->_atualizarProcuradoresVinculo($idVinculo, $dados);
@@ -745,8 +799,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
     {
 
         if (!is_null($objArquivoPrincipal)) {
+            $isWebService = $_POST['hdnIsWebServiceHabilitado'] == 1;
 
-            $htmlModeloFormulario = $this->_getModeloFormulario($idVinculo, $dados, $arrSeries, $isAlteracao);
+            $htmlModeloFormulario = $this->_getModeloFormulario($idVinculo, $dados, $arrSeries, $isAlteracao, $isWebService);
 
             // Atualização de conteúdo sem versão
             //$parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
@@ -1053,7 +1108,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         return $orgao;
     }
 
-    private function _getModeloFormulario($idVinculo, $dados, $arrSeries, $isAlteracao)
+    private function _getModeloFormulario($idVinculo, $dados, $arrSeries, $isAlteracao, $isWebService)
     {
 
         $serieDocs = count($arrSeries) > 0 ? $this->_getNomesSeriesDocsIncluidos($arrSeries) : '';
@@ -1063,24 +1118,33 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $objMdPetVincDTO = $this->_getDadosContatoVinculoPJ($idVinculo);
 
+
         $url = dirname(__FILE__) . '/../md_pet_vinc_usu_ext_modelo_formulario.php';
         $htmlModeloFormulario = file_get_contents($url);
 
         $dadosPj = current(PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnInformacaoPj']));
 
-        $noUsuario = $isAlteracao ? $dadosPj[1] : SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno();
+
+        $noUsuario =  SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno();
         $cpf = InfraUtil::formatarCpf(InfraUtil::retirarFormatacao($dados['txtNumeroCpfResponsavel']));
 
         $nomeSubstituido = $isAlteracao ? $dados['NomeProcurador'] : '';
         $cpfSubstituido = $isAlteracao ? InfraUtil::formatarCpf(InfraUtil::retirarFormatacao($dados['CpfProcurador'])) : '';
-
         $numeroSEI = $dados['hdnNumeroSei'];
-        $razaoSocial = $dadosPj[0];
-        $endereco = $dadosPj[4];
+       
+        if($isWebService) {
+            $razaoSocial = $dadosPj[0];
+            $endereco = $dadosPj[4];
 //    $numero      = $isAlteracao ? $dadosPj[7] : $dadosPj[7];
 //    $complemento = $isAlteracao ? $dadosPj[4] : $dadosPj[8];
-        $bairro = $dadosPj[5];
-        $cep = $dadosPj[8];
+            $bairro = $dadosPj[5];
+            $cep = $dadosPj[8];
+        }else{
+            $razaoSocial = $dadosPj[0];
+            $endereco = $dadosPj[3];
+            $bairro = $dadosPj[6];
+            $cep = $dadosPj[9];
+        }
 
         if (!$isAlteracao) {
             $htmlModeloFormulario = str_replace('@p_estilo_substituido', 'display: none;', $htmlModeloFormulario); //p mostra/oculta
@@ -1136,6 +1200,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retNumIdUnidade();
+        $objMdPetVincTpProcessoDTO->setStrTipoVinculo(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+
         $objMdPetVincTpProcessoDTO->retStrDescricaoUnidade();
         $objMdPetVincTpProcessoDTO->retStrSiglaUnidade();
 
@@ -1146,7 +1212,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         //==========================================================================
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
-        $idSerieFormulario = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_FORMULARIO);
+        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_FORMULARIO);
 
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
@@ -1363,6 +1429,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objDocumentoDTO->setNumIdSerie($idSerieAnexo);
 
             /***/
+
             $objDocumentoAPI = new DocumentoAPI();
             $objDocumentoAPI->setIdProcedimento($idProcedimento);
             $objDocumentoAPI->setTipo(ProtocoloRN::$TP_DOCUMENTO_RECEBIDO);
@@ -1570,7 +1637,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         //incluindo doc recibo no processo via SEIRN
         //==========================================================================
 
-        $idSerieRecibo = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_FORMULARIO);
+        $idSerieRecibo = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_FORMULARIO);
 
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
@@ -1596,7 +1663,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 //    $parObjDocumentoDTO->retStrProtocoloDocumentoFormatado();
 //    $parObjDocumentoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
 //
-//    $idSerieRecibo2 = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+//    $idSerieRecibo2 = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
 //    $docRN = new DocumentoRN();
 //    $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
 //    $strConteudoRecibo = $parObjDocumentoDTO->getStrConteudo();
@@ -1640,7 +1707,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $parObjDocumentoDTO->retStrProtocoloDocumentoFormatado();
         $parObjDocumentoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
 
-        $idSerieRecibo2 = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+        $idSerieRecibo2 = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
 
         $docRN = new DocumentoRN();
         $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
@@ -1832,12 +1899,17 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
     }
 
-    static public function getUnidade()
+    static public function getUnidade($tipoPessoa = null)
     {
+        
         $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retTodos();
-        $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+        if($tipoPessoa != null){
+            $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso($tipoPessoa);
+        }else{
+            $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+        }
         $objMdPetVincTpProcessoDTO = $mdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
         $unidadeRN = new UnidadeRN();
@@ -1864,7 +1936,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
     public function retornaSeriesInfraParamentro($idSerie){
         $objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
         $arrIdsSeries = array(
-            $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_PROCURACAOE)
+            $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOE)
         );
 
         return $arrIdsSeries;

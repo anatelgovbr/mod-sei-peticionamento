@@ -76,9 +76,7 @@ class MdPetParticipanteRN extends InfraRN {
         $arrParticipantesAntigos = $objParticipanteRN->listarRN0189($objParticipanteDTO);
 
         $arrParticipantesNovos = $arrObjParticipantesDTO;        
-        $arrParticipantesCadastradosStaParticipacao = array();
-        $arrParticipantesCadastradosIdContato = array();
-        $arrParticipantesCadastradosIdProtocolo = array();
+
         foreach($arrParticipantesNovos as $participanteNovo){
           $flagCadastrar = true;
           $objParticipanteDTOAntigo = null;
@@ -96,15 +94,7 @@ class MdPetParticipanteRN extends InfraRN {
               $participanteNovo->retDblIdProtocolo();
               $arrObjParticipanteNovo = $objParticipanteRN->listarRN0189($participanteNovo);
               if(!$arrObjParticipanteNovo) {
-                  if(!in_array($participanteNovo->getStrStaParticipacao(), $arrParticipantesCadastradosStaParticipacao) &&
-                      !in_array($participanteNovo->getNumIdContato(), $arrParticipantesCadastradosIdContato) &&
-                      !in_array($participanteNovo->getDblIdProtocolo(), $arrParticipantesCadastradosIdProtocolo)
-                  ) {
-                      $arrParticipantesCadastradosStaParticipacao[] = $participanteNovo->getStrStaParticipacao();
-                      $arrParticipantesCadastradosIdContato[] = $participanteNovo->getNumIdContato();
-                      $arrParticipantesCadastradosIdProtocolo[] = $participanteNovo->getDblIdProtocolo();
-                      $objParticipanteRN->cadastrarRN0170($participanteNovo);
-                  }
+                  $objParticipanteRN->cadastrarRN0170($participanteNovo);
               }
           }else if ($participanteNovo->getNumSequencia()!=$objParticipanteDTOAntigo->getNumSequencia()){
             //altera sequencia

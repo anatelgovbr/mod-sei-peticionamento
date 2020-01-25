@@ -31,17 +31,26 @@ try {
     $strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcesso');
     $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tipo_processo_auto_completar');
 
-
+    //Tipo Processo PF
+    $strLinkTipoProcessoPFSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcessoPF');
+    
     //Unidade
     $strLinkUnidadeSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidade');
     $strLinkUnidadeMultiplaSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidadeMultipla');
     $strLinkAjaxUnidade = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_unidade_auto_completar');
 
+    //Unidade PF
+    $strLinkUnidadePFSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidadePF');
+    
     //Tipo Documento Principal
     $strLinkTipoDocPrincExternoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=E&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
     $strLinkTipoDocPrincGeradoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=G&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
     $strLinkAjaxTipoDocPrinc = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_serie_auto_completar');
 
+    //Verificar webservice 
+    $strLinkAjaxWebServiceSalvar = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=confirmar_webservice_consultarCnpj');
+    //Verificar Tipos de PRocessos para Peticionamento
+    //$strLinkAjaxTipoProcessoPeticionamento = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=confirmar_tipo_processo_pet');
     $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
     $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
 
@@ -49,24 +58,44 @@ try {
     $objMdPetVincTpProcessoDTO->retStrNomeProcedimento();
     $objMdPetVincTpProcessoDTO->retStrSiglaUnidade();
     $objMdPetVincTpProcessoDTO->retStrDescricaoUnidade();
-    $objMdPetVincTpProcessoDTO->setNumMaxRegistrosRetorno(1);
-    $objMdPetVincTpProcessoDTO = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
+    $objMdPetVincTpProcessoDTO->retStrTipoVinculo();
+    $objMdPetVincTpProcessoDTO->retStrSinAtivo();
+    $objMdPetVincTpProcessoDTO = $objMdPetVincTpProcessoRN->listar($objMdPetVincTpProcessoDTO);
 
     //Preparar Preenchimento Alteração
     if (count($objMdPetVincTpProcessoDTO) > 0 && !isset($_POST['sbmCadastrarTpProcessoVinculacao'])) {
 
-        $idTipoProcesso = $objMdPetVincTpProcessoDTO->getNumIdTipoProcedimento();
-        $orientacoes = $objMdPetVincTpProcessoDTO->getStrOrientacoes();
-        $idUnidade = $objMdPetVincTpProcessoDTO->getNumIdUnidade();
-        $sinNAUsuExt = $objMdPetVincTpProcessoDTO->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
-        $sinNAPadrao = $objMdPetVincTpProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
-        $idhipoteseLegal = $objMdPetVincTpProcessoDTO->getNumIdHipoteseLegal();
-        $nomeTipoProcesso = $objMdPetVincTpProcessoDTO->getStrNomeProcedimento();
-        $nomeUnidade = $objMdPetVincTpProcessoDTO->getStrSiglaUnidade() . ' - ' . $objMdPetVincTpProcessoDTO->getStrDescricaoUnidade();
-        $staNivelAcesso = $objMdPetVincTpProcessoDTO->getStrStaNivelAcesso();
-        if ($objMdPetVincTpProcessoDTO->getStrSinNaPadrao() == 'S' && $staNivelAcesso == ProtocoloRN::$NA_RESTRITO) {
-            $valorParametroHipoteseLegal = $idhipoteseLegal;
-        }
+        foreach ($objMdPetVincTpProcessoDTO as $obj) {
+            if($obj->getStrTipoVinculo() == 'F'){
+                $idTipoProcessoPF = $obj->getNumIdTipoProcedimento();
+                $idUnidadePF = $obj->getNumIdUnidade();
+                $nomeTipoProcessoPF = $obj->getStrNomeProcedimento();
+                $especificacaoPF = $obj->getStrEspecificacao();
+                if($obj->getStrSiglaUnidade()){
+                    $nomeUnidadePF = $obj->getStrSiglaUnidade() . ' - ' . $obj->getStrDescricaoUnidade();
+                }
+                $exibirMenuAcessoExternoPF = $obj->getStrSinAtivo();                
+            }else{
+                $idTipoProcesso = $obj->getNumIdTipoProcedimento();
+                $orientacoes = $obj->getStrOrientacoes();
+                $idUnidade = $obj->getNumIdUnidade();
+                $sinNAUsuExt = $obj->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
+                $sinNAPadrao = $obj->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
+                $idhipoteseLegal = $obj->getNumIdHipoteseLegal();
+                $nomeTipoProcesso = $obj->getStrNomeProcedimento();
+                $especificacaoPJ = $obj->getStrEspecificacao();
+                if($obj->getStrSiglaUnidade()){
+                    $nomeUnidade = $obj->getStrSiglaUnidade() . ' - ' . $obj->getStrDescricaoUnidade();
+                }
+                $staNivelAcesso = $obj->getStrStaNivelAcesso();
+                $exibirMenuAcessoExterno = $obj->getStrSinAtivo();
+                
+                if ($obj->getStrSinNaPadrao() == 'S' && $staNivelAcesso == ProtocoloRN::$NA_RESTRITO) {
+                    $valorParametroHipoteseLegal = $idhipoteseLegal;
+                }
+            }           
+        }        
+              
         $strItensSelNivelAcesso = '';
 
         $hipoteseLegal = '';
@@ -92,6 +121,7 @@ try {
 
         $nomeTipoProcesso = '';
         $idTipoProcesso = $_POST['hdnIdTipoProcesso'];
+        $idTipoProcessoPF = $_POST['hdnIdTipoProcessoPF'];
         $staNivelAcesso = $_POST['selNivelAcesso'];
         $orientacoes = $_POST['txtOrientacoes'];
         $idUnidade = '';
@@ -120,7 +150,7 @@ try {
     switch ($_GET['acao']) {
 
         case 'md_pet_vinc_tp_processo_cadastrar':
-            $strTitulo = 'Tipo de Processo para Vinculação de Usuário Externo a PJ';
+            $strTitulo = 'Parâmetros para Vinculação a Usuário Externo';
             $arrComandos[] = '<button type="submit" accesskey="S" id="sbmCadastrarTpProcessoVinculacao" name="sbmCadastrarTpProcessoVinculacao" value="Salvar"  class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -128,6 +158,12 @@ try {
             $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
 
             $objMdPetVincTpProcessoDTO->setNumIdTipoProcedimento($idTipoProcesso);
+            
+            // Vinculo do tipo PF
+            if($_POST['rdMenuAcessoExternoPF']){
+                $objMdPetVincTpProcessoPFDTO = new MdPetVincTpProcessoDTO();
+                $objMdPetVincTpProcessoPFDTO->setNumIdTipoProcedimento($idTipoProcessoPF);
+            }
 
             if (isset($_POST['hdnIdTipoProcesso']) || $idTipoProcesso != '') {
                 $strItensSelNivelAcesso = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, $staNivelAcesso, $idTipoProcesso);
@@ -151,28 +187,84 @@ try {
                     $objMdPetVincTpProcessoDTO->setNumIdHipoteseLegal($idhipoteseLegal);
                     $hipoteseLegal = 'style="display: inherit;"';
                 }
-            }
-
-            $objMdPetVincTpProcessoDTO->setStrSinAtivo('S');
+            }         
 
             if (isset($_POST['sbmCadastrarTpProcessoVinculacao'])) {
                 try {
 
-                    $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
-                    $arrIdTipoDocumentoEssencial = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
+                    //Pessoa jurídica
+                    if($_POST['rdMenuAcessoExterno']){
 
-                    $nomeTipoProcesso = $_POST['txtTipoProcesso'];
-                    $idTipoProcesso = $objMdPetVincTpProcessoDTO->getNumIdTipoProcedimento();
-                    $orientacoes = $objMdPetVincTpProcessoDTO->getStrOrientacoes();
-                    $nomeUnidade = $_POST['txtUnidade'];
-                    $sinNAUsuExt = $objMdPetVincTpProcessoDTO->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
-                    $sinNAPadrao = $objMdPetVincTpProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
-                    $nomeSerie = $_POST['txtTipoDocPrinc'];
+                        $relTipoProcedimentoAssuntoRN = new RelTipoProcedimentoAssuntoRN();
+                        $tipoProcedimentoRN = new TipoProcedimentoRN();
+                        $objTipoProcedimentoDTO = new TipoProcedimentoDTO();
+                        $objRelTipoProcedimentoAssuntoDTO = new RelTipoProcedimentoAssuntoDTO();
+                        $objTipoProcedimentoDTO->setNumIdTipoProcedimento($_POST['hdnIdTipoProcesso']);
+                        $objTipoProcedimentoDTO->retNumIdTipoProcedimento();
+                        $objTipoProcedimentoDTO = $tipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
+                        $objRelTipoProcedimentoAssuntoDTO->setNumIdTipoProcedimento($objTipoProcedimentoDTO->getNumIdTipoProcedimento());
+                        $objRelTipoProcedimentoAssuntoDTO->retTodos();
+                        $objRelTipoProcedimentoAssuntoDTO = $relTipoProcedimentoAssuntoRN->listarRN0192($objRelTipoProcedimentoAssuntoDTO);
+                        if(!$objRelTipoProcedimentoAssuntoDTO){
+                            $msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
+                            PaginaSEI::getInstance()->setStrMensagem($msg,InfraPagina::$TIPO_MSG_AVISO);
+                            header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao_origem'].'&acao_origem='.$_GET['acao']));
+                            die;
+                        }
 
-                    $idUnidade = $_POST['hdnIdUnidade'];
-                    $objMdPetVincTpProcessoDTO->setNumIdUnidade($idUnidade);
+                        $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
+                        $arrIdTipoDocumentoEssencial = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
 
-                    $objMdPetVincTpProcessoRN->cadastrar($objMdPetVincTpProcessoDTO);
+                        $nomeTipoProcesso = $_POST['txtTipoProcesso'];
+                        $idTipoProcesso = $objMdPetVincTpProcessoDTO->getNumIdTipoProcedimento();
+                        $orientacoes = $objMdPetVincTpProcessoDTO->getStrOrientacoes();
+                        $nomeUnidade = $_POST['txtUnidade'];
+                        $sinNAUsuExt = $objMdPetVincTpProcessoDTO->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
+                        $sinNAPadrao = $objMdPetVincTpProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
+                        $nomeSerie = $_POST['txtTipoDocPrinc'];
+
+                        $idUnidade = $_POST['hdnIdUnidade'];
+                        $especificacaoPJ = $_POST['txtEspecProcPJ'];
+                        $objMdPetVincTpProcessoDTO->setStrEspecificacao($especificacaoPJ);
+                        $objMdPetVincTpProcessoDTO->setNumIdUnidade($idUnidade);
+                        $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
+
+                        $objMdPetVincTpProcessoDTO->setStrSinAtivo($_POST['rdMenuAcessoExterno']);
+                        $exibirMenuAcessoExterno = $_POST['rdMenuAcessoExterno'];                  
+                        $objMdPetVincTpProcessoRN->cadastrar($objMdPetVincTpProcessoDTO);
+                    }                   
+                    
+                    //Pessoa física
+                    if($_POST['rdMenuAcessoExternoPF']){
+                        $relTipoProcedimentoAssuntoRN = new RelTipoProcedimentoAssuntoRN();
+                        $tipoProcedimentoRN = new TipoProcedimentoRN();
+                        $objTipoProcedimentoDTO = new TipoProcedimentoDTO();
+                        $objRelTipoProcedimentoAssuntoDTO = new RelTipoProcedimentoAssuntoDTO();
+                        $objTipoProcedimentoDTO->setNumIdTipoProcedimento($_POST['hdnIdTipoProcessoPF']);
+                        $objTipoProcedimentoDTO->retNumIdTipoProcedimento();
+                        $objTipoProcedimentoDTO = $tipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
+                        $objRelTipoProcedimentoAssuntoDTO->setNumIdTipoProcedimento($objTipoProcedimentoDTO->getNumIdTipoProcedimento());
+                        $objRelTipoProcedimentoAssuntoDTO->retTodos();
+                        $objRelTipoProcedimentoAssuntoDTO = $relTipoProcedimentoAssuntoRN->listarRN0192($objRelTipoProcedimentoAssuntoDTO);
+                        if(!$objRelTipoProcedimentoAssuntoDTO){
+                            $msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
+                            PaginaSEI::getInstance()->setStrMensagem($msg,InfraPagina::$TIPO_MSG_AVISO);
+                            header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao_origem'].'&acao_origem='.$_GET['acao']));
+                            die;
+                        }
+                            $nomeTipoProcessoPF = $_POST['txtTipoProcessoPF'];
+                            $idTipoProcessoPF = $objMdPetVincTpProcessoPFDTO->getNumIdTipoProcedimento();
+                            $nomeUnidadePF = $_POST['txtUnidadePF'];
+                            $idUnidadePF = $_POST['hdnIdUnidadePF'];
+                            $objMdPetVincTpProcessoPFDTO->setNumIdUnidade($idUnidadePF);
+                            $especificacaoPF = $_POST['txtEspecProcPF'];
+                            $objMdPetVincTpProcessoPFDTO->setStrEspecificacao($especificacaoPF);
+                            $objMdPetVincTpProcessoPFDTO->setStrTipoVinculo('F');
+                            $objMdPetVincTpProcessoPFDTO->setStrSinAtivo($_POST['rdMenuAcessoExternoPF']);
+                            $exibirMenuAcessoExternoPF = $_POST['rdMenuAcessoExternoPF'];
+                            $objMdPetVincTpProcessoRN->cadastrar($objMdPetVincTpProcessoPFDTO);
+
+                    }
 
                     $objMdPetVincRelSerieDTO = new MdPetVincRelSerieDTO();
                     $objMdPetVincRelSerieDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
@@ -280,7 +372,13 @@ img[name=ajuda] {
 #txtTipoProcesso{
   width:66.3%;
 }
+#txtTipoProcessoPF{
+  width:66.3%;
+}
 #txtUnidade {
+  width: 66.3%;
+}
+#txtUnidadePF {
   width: 66.3%;
 }
 #txtSerieEssencial {
@@ -305,6 +403,15 @@ img[name=ajuda] {
   height: auto;
   width: 100%;
 }
+#txtEspecProc{
+    width:30%;
+}
+#txtEspecProcPF{
+    width:30%;
+}
+#txtEspecProcPJ{
+    width:30%;
+}
 
 
 </style>
@@ -325,162 +432,248 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
            value="<?php echo $valorParametroHipoteseLegal; ?>"/>
 
-    <!--  Tipo de Processo  -->
-    <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo Associado:</label>
-    <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
-           class="infraText" value="<?php echo $nomeTipoProcesso; ?>"
-           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-    <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
-    <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-         src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo Associado"
-         title="Selecionar Tipo de Processo Associado" class="infraImg"/>
-    <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-         src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo Associado"
-         title="Remover Tipo de Processo Associado" class="infraImg"/>
-    <!--  Fim do Tipo de Processo -->
-    <div class="clear">&nbsp;</div>
-    <!--  Unidade --> 
-    <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do Processo:</label>
-    <input type="text"  id="txtUnidade" name="txtUnidade" class="infraText"
-           value="<?php echo $nomeUnidade; ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-    <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?= $idUnidade ?>"/>
-    <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);" src="/infra_css/imagens/lupa.gif"
-             alt="Selecionar  Unidade para Abertura do Processo" title="Selecionar  Unidade para Abertura do Processo"
-             class="infraImg"/>
-    <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();"
-             src="/infra_css/imagens/remover.gif" alt="Remover  Unidade para Abertura do Processo"
-             title="Remover  Unidade para Abertura do Processo" class="infraImg"/>
-    <!--Fim da Unidade -->
-
-    <div class="clear">&nbsp;</div>
-    <div class="clear">&nbsp;</div>
-    <fieldset class="infraFieldset" style="width:65%">
-        <legend class="infraLegend">Nível de Acesso dos Documentos</legend>
-        <div class="bloco"> 
-            <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
-                                               id="rdUsuExternoIndicarEntrePermitidos"
-                                               onclick="changeNivelAcesso();" value="1">
-
-            <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário Externo indica diretamente</label>
-            <br/>
-            <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
-                                               onclick="changeNivelAcesso();" value="2">
-            <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido</label>
-                        </div>
+    <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset">
+        <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Física
+            <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir o Usuário Externo logado emitir Procurações Eletrônicas para representar determinada Pessoa Física.\n\n\n\n\n Defina o Tipo de Processo centralizador e a Unidade de Abertura para qual o Processo que conterá a Procuração Eletrônica deva ser enviado.') ?> class="infraImg"/>
+        </legend>
+        <!--  Tipo de Processo  -->
+        <label id="lblTipoProcesso" for="txtTipoProcessoPF" class="infraLabelObrigatorio">Tipo de Processo Associado:</label>
+        <input type="text" onchange="removerProcessoAssociadoPF(0);" id="txtTipoProcessoPF" name="txtTipoProcessoPF"
+               class="infraText" value="<?php echo $nomeTipoProcessoPF; ?>"
+               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="hidden" id="hdnIdTipoProcessoPF" name="hdnIdTipoProcessoPF" value="<?php echo $idTipoProcessoPF ?>"/>
+        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcessoPF.selecionar(700,500);"
+             src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo Associado"
+             title="Selecionar Tipo de Processo Associado" class="infraImg"/>
+        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociadoPF(0);objLupaTipoProcessoPF.remover();"
+             src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo Associado"
+             title="Remover Tipo de Processo Associado" class="infraImg"/>           
+        <!--  Fim do Tipo de Processo -->
         <div class="clear">&nbsp;</div>
-        <div class=bloco id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
-                <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
-                       class="infraLabelObrigatorio">Nível de Acesso:</label>
-                <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()">
-                    <?= $strItensSelNivelAcesso ?>
-                </select>
-        </div>
-        <div class="bloco" id="divHipoteseLegal" <?php echo $hipoteseLegal ?> >
-                <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
-                       class="infraLabelObrigatorio">Hipótese Legal:</label>
-                <select id="selHipoteseLegal" name="selHipoteseLegal">
-                    <?= $strItensSelHipoteseLegal ?>
-                </select>
-        </div>
+
+        <!--Especificação do Processo -->
+         
+         <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do Processo: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cpf@ - CPF da Pessoa Física Outorgante @nome_completo@ - Nome Completo da Pessoa Física Outorgante. ') ?> class="infraImg"/></label>
+        <input type="text"  id="txtEspecProcPF" name="txtEspecProcPF" onkeypress="return infraMascaraTexto(this,event,100);"
+               class="infraText" value="<?php echo $especificacaoPF ?>"
+               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        
+        <!--Especificação do Processo - FIM -->
+        <div class="clear">&nbsp;</div>
+        <!--  Unidade --> 
+        <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do Processo:</label>
+        <input type="text"  id="txtUnidadePF" name="txtUnidadePF" class="infraText"
+               value="<?php echo $nomeUnidadePF; ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="hidden" id="hdnIdUnidadePF" name="hdnIdUnidadePF" value="<?= $idUnidadePF ?>"/>
+        <img id="imgLupaUnidade" onclick="objLupaUnidadePF.selecionar(700,500);" src="/infra_css/imagens/lupa.gif"
+                 alt="Selecionar Unidade para Abertura do Processo" title="Selecionar Unidade para Abertura do Processo"
+                 class="infraImg"/>
+        <img id="imgExcluirUnidade" onclick="objLupaUnidadePF.remover();"
+                 src="/infra_css/imagens/remover.gif" alt="Remover  Unidade para Abertura do Processo"
+                 title="Remover Unidade para Abertura do Processo" class="infraImg"/>
+        <!--Fim da Unidade -->
+        <div class="clear">&nbsp;</div>
+        
+        <!--   Exibir menu Procuração Eletrônica --> 
+        <label id="lblMenuAcessoExternoPF" for="" class="infraLabelObrigatorio">Exibir menu Procuração Eletrônica :</label>
+        <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Procuração Eletrônica" para os Usuários Externos.') ?> class="infraImg"/>
+        <br/>
+        <input <?php if($exibirMenuAcessoExternoPF == 'S'){ echo 'checked = checked';} ?> type="radio" name="rdMenuAcessoExternoPF" id="rdExibirMenuAcessoExternoPF" value="S">
+        <label for="rdExibirMenuAcessoExternoPF" id="lblMenuAcessoExternoPF" class="infraLabelRadio">Exibir no Acesso Externo</label>
+        <br/>
+        <input <?php if($exibirMenuAcessoExternoPF == 'N'){ echo 'checked = checked';} ?>  type="radio" name="rdMenuAcessoExternoPF" id="rdNaoExibirMenuAcessoExternoPF" value="N">
+        <label name="lblMenuAcessoExternoPF" id="lblPadrao" for="rdNaoExibirMenuAcessoExternoPF" class="infraLabelRadio">Não exibir no Acesso Externo</label>
+        <!--  Fim Exibir menu Procuração Eletrônica --> 
     </fieldset>
-   
-        <!--  Documento Obrigatório -->
-        <?
-        //$divDocs = $alterar || $gerado || $externo ? 'style="display: inherit;"' : 'style="display: none;"'
-        $divDocs = 'style="display: inherit; margin-left: -5px; margin-top: -3px"';
-        ?>
-    <fieldset <?php echo $divDocs; ?> id="fldDocObrigatorio" class="fieldsetClear">
-        <div>
-            <div style="clear:both;">&nbsp;</div>
-            <div>
-                <label id="lblDescricaoEssencial" for="selDescricaoEssencial" class="infraLabelObrigatorio">
-                    Tipos dos Documentos de Atos Constitutivos Obrigatórios:
-                </label>
-            </div>
-            <div>
-                <input type="text" id="txtSerieEssencial" name="txtSerieEssencial"  class="infraText"
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-
-            </div>
-            <div style="margin-top: 5px;">
-                <select style="float: left;" id="selDescricaoEssencial" name="selDescricaoEssencial" size="8"
-                        multiple="multiple" class="infraSelect">
-                    <?= $strItensSelSeriesEss; ?>
-                </select>
-
-                <img id="imgLupaTipoDocumentoObrigatorio"
-                     onclick="objLupaTipoDocumentoEssencial.selecionar(700,500)"
-                     src="/infra_css/imagens/lupa.gif"
-                     alt="Localizar Tipo de Documento"
-                     title="Localizar Tipo de Documento" class="infraImg"/>
-                <br>
-                <img id="imgExcluirTipoDocumentoObrigatorio" onclick="objLupaTipoDocumentoEssencial.remover();"
-                     src="/infra_css/imagens/remover.gif"
-                     alt="Remover Tipos de Documentos"
-                     title="Remover Tipos de Documentos" class="infraImg"/>
-
-            </div>
-
-        </div>
-    </fieldset>
-            <!--  Fim do Documento Obrigatorio -->
-
-            <!--  Documento Não Obrigatorio  -->
-    <fieldset <?php echo $divDocs; ?> id="fldDocComplementar" class="fieldsetClear">
-        <div>
-            <div style="clear:both;">&nbsp;</div>
-            <div>
-                <label id="lblDescricao" for="txtDescricao" class="infraLabelOpcional">
-                    Tipos dos Documentos de Atos Constitutivos não Obrigatórios:
-                </label>
-            </div>
-            <div>
-                <input type="text" id="txtSerie" name="txtSerie" class="infraText"
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-
-            </div>
-            <div style="margin-top: 5px;">
-                <select style="float: left;" id="selDescricao" name="selDescricao" size="8" multiple="multiple"
-                        class="infraSelect">
-                    <?= $strItensSelSeries ?>
-                </select>
-
-                <img id="imgLupaTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('S');"
-                     src="/infra_css/imagens/lupa.gif"
-                     alt="Localizar Tipo de Documento"
-                     title="Localizar Tipo de Documento" class="infraImg"/>
-                <br>
-                <img id="imgExcluirTipoDocumentoNaoObrigatorio"
-                     onclick="carregarComponenteLupaTpDocComplementar('R');"
-                     src="/infra_css/imagens/remover.gif"
-                     alt="Remover Tipos de Documentos"
-                     title="Remover Tipos de Documentos" class="infraImg"/>
-
-            </div>
-
-        </div>
-    </fieldset>
-        <!--  Fim do Documento Complementar -->
-
-    <input type="hidden" id="hdnCorpoTabela" name="hdnCorpoTabela" value=""/>
-    <input type="hidden" id="hdnUnidadesSelecionadas" name="hdnUnidadesSelecionadas" value=""/>
-    <input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades" value='<?= json_encode($arrObjUnidadeDTOFormatado); ?>'/>
-    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value=""/>
-    <input type="hidden" id="hdnSerie" name="hdnSerie" value="<?= $_POST['hdnSerie'] ?>"/>
-    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>"/>
-    <input type="hidden" id="hdnIdIndisponibilidadePeticionamento" name="hdnIdIndisponibilidadePeticionamento" value=""/>
-    <input type="hidden" id="hdnIdSerie" name="hdnIdSerie" value="<?= $_POST['hdnIdSerie'] ?>"/>
-    <input type="hidden" id="hdnIdSerieEssencial" name="hdnIdSerieEssencial" value="<?= $_POST['hdnIdSerieEssencial'] ?>"/>
-    <input type="hidden" id="hdnSerieEssencial" name="hdnSerieEssencial" value="<?= $_POST['hdnSerieEssencial'] ?>"/>
-
     <div class="clear">&nbsp;</div>
-
-    <!-- Orientações -->
-    <label id="lblOrientacoes" for="txaConteudo" class="infraLabelOpcional">Orientações:</label>
-    <?php require_once 'md_pet_vinc_cadastro_orientacao.php'; ?>
-    <!--  Fim das Orientações  -->
-
     <div class="clear">&nbsp;</div>
+    <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset">
+        <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Jurídica
+            <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir o Usuário Externo logado emitir Procurações Eletrônicas ou Procurações Eletrônicas Especiais para representar determinada Pessoa Jurídica.\n\n\n\n\n Defina o  Tipo de Processo centralizador e a Unidade de Abertura para qual o Processo que conterá a Procuração Eletrônica ou a Procuração Eletrônica Especial deva ser enviado.') ?> class="infraImg"/>
+        </legend>        <!--  Tipo de Processo  -->
+        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo Associado:</label>
+        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
+               class="infraText" value="<?php echo $nomeTipoProcesso; ?>"
+               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
+        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
+             src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo Associado"
+             title="Selecionar Tipo de Processo Associado" class="infraImg"/>
+        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+             src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo Associado"
+             title="Remover Tipo de Processo Associado" class="infraImg"/>
+        <!--  Fim do Tipo de Processo -->
+        <div class="clear">&nbsp;</div>
+
+        <!--Especificação do Processo -->
+         
+        <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do Processo: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cnpj@ - CNPJ da Pessoa Jurídica Outorgante @razao_social@ - Razão Social da Pessoa Jurídica Outorgante.') ?> class="infraImg"/></label>
+        <input type="text"  id="txtEspecProcPJ" name="txtEspecProcPJ" onkeypress="return infraMascaraTexto(this,event,100);"
+               class="infraText" value="<?php echo $especificacaoPJ ?>"
+               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        
+        <!--Especificação do Processo - FIM -->
+        <div class="clear">&nbsp;</div>
+        <!--  Unidade --> 
+        <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do Processo:</label>
+        <input type="text"  id="txtUnidade" name="txtUnidade" class="infraText"
+               value="<?php echo $nomeUnidade; ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?= $idUnidade ?>"/>
+        <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);" src="/infra_css/imagens/lupa.gif"
+                 alt="Selecionar  Unidade para Abertura do Processo" title="Selecionar Unidade para Abertura do Processo"
+                 class="infraImg"/>
+        <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();"
+                 src="/infra_css/imagens/remover.gif" alt="Remover  Unidade para Abertura do Processo"
+                 title="Remover  Unidade para Abertura do Processo" class="infraImg"/>
+        <!--Fim da Unidade -->  
+        <div class="clear">&nbsp;</div>
+        
+        <!--   Exibir menu Procuração Eletrônica --> 
+        <label id="lblMenuAcessoExterno" for="" class="infraLabelObrigatorio">Exibir menu Responsavel Legal de Pessoa Jurídica:</label>
+        <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externo. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.   ') ?> class="infraImg"/>
+        <br/>
+        <input <?php if($exibirMenuAcessoExterno == 'S'){ echo 'checked = checked';}?> type="radio" name="rdMenuAcessoExterno" id="rdExibirMenuAcessoExterno" value="S">
+        <label for="rdExibirMenuAcessoExterno" id="lblMenuAcessoExternoPF" class="infraLabelRadio">Exibir no Acesso Externo</label>
+        <br/>
+        <input <?php if($exibirMenuAcessoExterno == 'N'){ echo 'checked = checked';}?> type="radio" name="rdMenuAcessoExterno" id="rdNaoExibirMenuAcessoExterno" value="N">
+        <label name="lblMenuAcessoExternoPF" id="lblPadrao" for="rdNaoExibirMenuAcessoExterno" class="infraLabelRadio">Não exibir no Acesso Externo</label>
+        <!--  Fim Exibir menu Procuração Eletrônica --> 
+
+        <div class="clear">&nbsp;</div>
+        <fieldset class="infraFieldset" style="width:65%">
+            <legend class="infraLegend">Nível de Acesso dos Documentos Peticionados
+                <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Indique o comportamento ser adotado pelo SEI referente ao Nível de acesso dos Atos Constitutivos ao Peticionar a Vinculação do Usuário Externo como Responsável Legal a uma Pessoa Jurídica. \n\n Utilize a opção "Usuário Externo indica diretamente" para permitir ao Usuário Externo selecionar o Nível de Acesso dos Atos Constitutivos.\n\n\n\n\n  Utilize a opção "Padrão pré definido" para que os Atos Constitutivos sejam peticionados com o Nível de Acesso indicado.') ?> class="infraImg"/>
+            </legend>
+            <div class="bloco"> 
+                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
+                                                   id="rdUsuExternoIndicarEntrePermitidos"
+                                                   onclick="changeNivelAcesso();" value="1">
+
+                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário Externo indica diretamente</label>
+                <br/>
+                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
+                                                   onclick="changeNivelAcesso();" value="2">
+                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido</label>
+                            </div>
+            <div class="clear">&nbsp;</div>
+            <div class=bloco id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
+                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
+                           class="infraLabelObrigatorio">Nível de Acesso:</label>
+                    <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()">
+                        <?= $strItensSelNivelAcesso ?>
+                    </select>
+            </div>
+            <div class="bloco" id="divHipoteseLegal" <?php echo $hipoteseLegal ?> >
+                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
+                           class="infraLabelObrigatorio">Hipótese Legal:</label>
+                    <select id="selHipoteseLegal" name="selHipoteseLegal">
+                        <?= $strItensSelHipoteseLegal ?>
+                    </select>
+            </div>
+        </fieldset>
+
+            <!--  Documento Obrigatório -->
+            <?
+            //$divDocs = $alterar || $gerado || $externo ? 'style="display: inherit;"' : 'style="display: none;"'
+            $divDocs = 'style="display: inherit; margin-left: -5px; margin-top: -3px"';
+            ?>
+        <fieldset <?php echo $divDocs; ?> id="fldDocObrigatorio" class="fieldsetClear">
+            <div>
+                <div style="clear:both;">&nbsp;</div>
+                <div>
+                    <label id="lblDescricaoEssencial" for="selDescricaoEssencial" class="infraLabelObrigatorio">
+                        Tipos dos Documentos de Atos Constitutivos Obrigatórios:
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina os Atos Constitutivos que obrigatoriamente o Usuário Externo deverá adicionar ao Peticionar a vinculação dele como Responsável Legal a uma Pessoa Jurídica.') ?> class="infraImg"/>
+                    </label>
+                </div>
+                <div>
+                    <input type="text" id="txtSerieEssencial" name="txtSerieEssencial"  class="infraText"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+
+                </div>
+                <div style="margin-top: 5px;">
+                    <select style="float: left;" id="selDescricaoEssencial" name="selDescricaoEssencial" size="8"
+                            multiple="multiple" class="infraSelect">
+                        <?= $strItensSelSeriesEss; ?>
+                    </select>
+
+                    <img id="imgLupaTipoDocumentoObrigatorio"
+                         onclick="objLupaTipoDocumentoEssencial.selecionar(700,500)"
+                         src="/infra_css/imagens/lupa.gif"
+                         alt="Localizar Tipo de Documento"
+                         title="Localizar Tipo de Documento" class="infraImg"/>
+                    <br>
+                    <img id="imgExcluirTipoDocumentoObrigatorio" onclick="objLupaTipoDocumentoEssencial.remover();"
+                         src="/infra_css/imagens/remover.gif"
+                         alt="Remover Tipos de Documentos"
+                         title="Remover Tipos de Documentos" class="infraImg"/>
+
+                </div>
+
+            </div>
+        </fieldset>
+                <!--  Fim do Documento Obrigatorio -->
+
+                <!--  Documento Não Obrigatorio  -->
+        <fieldset <?php echo $divDocs; ?> id="fldDocComplementar" class="fieldsetClear">
+            <div>
+                <div style="clear:both;">&nbsp;</div>
+                <div>
+                    <label id="lblDescricao" for="txtDescricao" class="infraLabelOpcional">
+                        Tipos dos Documentos de Atos Constitutivos não Obrigatórios:
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina os Atos Constitutivos que serão listados de forma não obrigatória para o Usuário Externo ao Peticionar a vinculação dele como Responsável Legal a uma Pessoa Jurídica.') ?> class="infraImg"/>
+                    </label>
+                </div>
+                <div>
+                    <input type="text" id="txtSerie" name="txtSerie" class="infraText"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+
+                </div>
+                <div style="margin-top: 5px;">
+                    <select style="float: left;" id="selDescricao" name="selDescricao" size="8" multiple="multiple"
+                            class="infraSelect">
+                        <?= $strItensSelSeries ?>
+                    </select>
+
+                    <img id="imgLupaTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('S');"
+                         src="/infra_css/imagens/lupa.gif"
+                         alt="Localizar Tipo de Documento"
+                         title="Localizar Tipo de Documento" class="infraImg"/>
+                    <br>
+                    <img id="imgExcluirTipoDocumentoNaoObrigatorio"
+                         onclick="carregarComponenteLupaTpDocComplementar('R');"
+                         src="/infra_css/imagens/remover.gif"
+                         alt="Remover Tipos de Documentos"
+                         title="Remover Tipos de Documentos" class="infraImg"/>
+
+                </div>
+
+            </div>
+        </fieldset>
+            <!--  Fim do Documento Complementar -->
+
+        <input type="hidden" id="hdnCorpoTabela" name="hdnCorpoTabela" value=""/>
+        <input type="hidden" id="hdnUnidadesSelecionadas" name="hdnUnidadesSelecionadas" value=""/>
+        <input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades" value='<?= json_encode($arrObjUnidadeDTOFormatado); ?>'/>
+        <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value=""/>
+        <input type="hidden" id="hdnSerie" name="hdnSerie" value="<?= $_POST['hdnSerie'] ?>"/>
+        <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>"/>
+        <input type="hidden" id="hdnIdIndisponibilidadePeticionamento" name="hdnIdIndisponibilidadePeticionamento" value=""/>
+        <input type="hidden" id="hdnIdSerie" name="hdnIdSerie" value="<?= $_POST['hdnIdSerie'] ?>"/>
+        <input type="hidden" id="hdnIdSerieEssencial" name="hdnIdSerieEssencial" value="<?= $_POST['hdnIdSerieEssencial'] ?>"/>
+        <input type="hidden" id="hdnSerieEssencial" name="hdnSerieEssencial" value="<?= $_POST['hdnSerieEssencial'] ?>"/>
+
+        <div class="clear">&nbsp;</div>
+
+        <!-- Orientações -->
+        <label id="lblOrientacoes" for="txaConteudo" class="infraLabelOpcional">Orientações:
+            <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina as Orientações que devem ser apresentadas para o Usuário Externo na funcionalidade que permite a vinculação dele como Responsável Legal a uma Pessoa Jurídica.') ?> class="infraImg"/>
+        </label>
+        <?php require_once 'md_pet_vinc_cadastro_orientacao.php'; ?>
+        <!--  Fim das Orientações  -->
+
+        <div class="clear">&nbsp;</div>
+    </fieldset>
         <?
         PaginaSEI::getInstance()->fecharAreaDados();
         PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
@@ -497,6 +690,10 @@ PaginaSEI::getInstance()->fecharHtml();
     //Processo
     var objLupaTipoProcesso = null;
     var objAutoCompletarTipoProcesso = null;
+    
+    //Processo PF
+    var objLupaTipoProcessoPF = null;
+    var objAutoCompletarTipoProcessoPF = null;
 
     //Docs
     var objLupaTipoDocumento = null;
@@ -514,6 +711,10 @@ PaginaSEI::getInstance()->fecharHtml();
 
     var objLupaUnidadeMultipla = null;
     var objAutoCompletarUnidadeMutipla = null;
+    
+    //Unidades PF
+    var objLupaUnidadePF = null;
+    var objAutoCompletarUnidadePF = null;
 
 
     function removerUnidade(idObj) {
@@ -553,6 +754,16 @@ PaginaSEI::getInstance()->fecharHtml();
         console.log(remover);
         if (remover === '1') {
             objLupaTipoProcesso.remover();
+        }
+    }
+    
+    function removerProcessoAssociadoPF(remover) {
+
+        document.getElementById('selNivelAcesso').innerHTML = '';
+        document.getElementById('divHipoteseLegal').style.display = "none";
+        console.log(remover);
+        if (remover === '1') {
+            objLupaTipoProcessoPF.remover();
         }
     }
 
@@ -643,7 +854,9 @@ PaginaSEI::getInstance()->fecharHtml();
 
         carregarComponenteTipoDocumento(); //Doc Complementares - Seleção Múltipla
         carregarComponenteTipoProcesso(); // Seleção Única
+        carregarComponenteTipoProcessoPF();
         carregarComponenteUnidade();  // Seleção Única
+        carregarComponenteUnidadePF();
         carregarComponenteTipoDocumentoEssencial(); // Seleção Múltipla
         carregarDependenciaNivelAcesso();
         carregarHipoteseLegal();
@@ -691,6 +904,30 @@ PaginaSEI::getInstance()->fecharHtml();
             }
         }
         objAutoCompletarUnidade.selecionar('<?=$strIdUnidade?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+    }
+    
+    function carregarComponenteUnidadePF() {
+        objLupaUnidadePF = new infraLupaText('txtUnidadePF', 'hdnIdUnidadePF', '<?=$strLinkUnidadePFSelecao?>');
+
+        objLupaUnidadePF.finalizarSelecao = function () {
+            objAutoCompletarUnidadePF.selecionar(document.getElementById('hdnIdUnidadePF').value, document.getElementById('txtUnidadePF').value);
+        };
+
+
+        objAutoCompletarUnidadePF = new infraAjaxAutoCompletar('hdnIdUnidadePF', 'txtUnidadePF', '<?=$strLinkAjaxUnidade?>');
+        objAutoCompletarUnidadePF.limparCampo = false;
+        objAutoCompletarUnidadePF.tamanhoMinimo = 3;
+        objAutoCompletarUnidadePF.prepararExecucao = function () {
+            return 'palavras_pesquisa=' + document.getElementById('txtUnidadePF').value;
+        };
+
+        objAutoCompletarUnidadePF.processarResultado = function (id, descricao, complemento) {
+            if (id != '') {
+                document.getElementById('hdnIdUnidadePF').value = id;
+                document.getElementById('txtUnidadePF').value = descricao;
+            }
+        }
+        objAutoCompletarUnidadePF.selecionar('<?=$strIdUnidade?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
     }
 
     function carregarComponenteLupaTpDocPrinc(acaoComponente) {
@@ -774,6 +1011,34 @@ PaginaSEI::getInstance()->fecharHtml();
         };
 
         objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
+
+    }
+    
+    function carregarComponenteTipoProcessoPF() {
+
+        objLupaTipoProcessoPF = new infraLupaText('txtTipoProcessoPF', 'hdnIdTipoProcessoPF', '<?=$strLinkTipoProcessoPFSelecao?>');
+
+        objLupaTipoProcessoPF.finalizarSelecao = function () {
+            objAutoCompletarTipoProcessoPF.selecionar(document.getElementById('hdnIdTipoProcessoPF').value, document.getElementById('txtTipoProcessoPF').value);
+            objAjaxIdNivelAcesso.executar();
+        }
+        objAutoCompletarTipoProcessoPF = new infraAjaxAutoCompletar('hdnIdTipoProcessoPF', 'txtTipoProcessoPF', '<?=$strLinkAjaxTipoProcesso?>');
+        objAutoCompletarTipoProcessoPF.tamanhoMinimo = 3;
+        objAutoCompletarTipoProcessoPF.limparCampo = false;
+
+        objAutoCompletarTipoProcessoPF.prepararExecucao = function () {
+            return 'palavras_pesquisa=' + document.getElementById('txtTipoProcessoPF').value;
+        };
+
+        objAutoCompletarTipoProcessoPF.processarResultado = function (id, descricao, complemento) {
+            if (id != '') {
+                document.getElementById('hdnIdTipoProcessoPF').value = id;
+                document.getElementById('txtTipoProcessoPF').value = descricao;
+                objAjaxIdNivelAcesso.executar();
+            }
+        };
+
+        objAutoCompletarTipoProcessoPF.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript($strNomeRemetente);?>');
 
     }
 
@@ -878,54 +1143,140 @@ PaginaSEI::getInstance()->fecharHtml();
 
         var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
 
-        if (infraTrim(document.getElementById('txtTipoProcesso').value) == '') {
-            alert('Informe o Tipo de Processo.');
-            document.getElementById('txtTipoProcesso').focus();
+        //Pessoa Física
+        var exibirMenuAcessoExternoPF = document.getElementById('rdExibirMenuAcessoExternoPF').checked;
+        var naoExibirMenuAcessoExternoPF = document.getElementById('rdNaoExibirMenuAcessoExternoPF').checked;
+        
+        //Pessoa Jurídica
+        var exibirMenuAcessoExterno = document.getElementById('rdExibirMenuAcessoExterno').checked;
+        var naoExibirMenuAcessoExterno = document.getElementById('rdNaoExibirMenuAcessoExterno').checked;
+       
+        if (exibirMenuAcessoExternoPF == false && naoExibirMenuAcessoExternoPF == false) {
+            alert('Informe sobre o menu Procuração Eletrônica da Pessoa Física.');
+            document.getElementById('rdExibirMenuAcessoExternoPF').focus();
             return false;
         }
+        
+        if (exibirMenuAcessoExterno == false && naoExibirMenuAcessoExterno == false) {
+            alert('Informe sobre o menu Procuração Eletrônica.');
+            document.getElementById('rdNaoExibirMenuAcessoExterno').focus();
+            return false;
+        }
+        
+        //tratamento dos campos obrigatórios pessoa física
+       /* if(exibirMenuAcessoExternoPF == true){
+            if (infraTrim(document.getElementById('txtTipoProcessoPF').value) == '') {
+                alert('Informe o Tipo de Processo para abertura do processo para Pessoa Física.');
+                document.getElementById('txtTipoProcessoPF').focus();
+                return false;
+            }
+            if(document.getElementById('txtEspecProcPF').value == ""){
+                alert('Informe a Especificação do Processo.');
+                document.getElementById('txtTipoProcessoPF').focus();
+                return false;
+            }
+            vlUnidadePF = infraTrim(document.getElementById('hdnIdUnidadePF').value);
+            if (vlUnidadePF == '' || vlUnidadePF == null) {
+                alert('Informe a Unidade para abertura do processo para Pessoa Física.');
+                document.getElementById('txtUnidadePF').focus();
+                return false;
+            }
+        }*/
+        
+        
+        //tratamento dos campos obrigatórios pessoa jurídic
+        //Validação para verificação no webservice
+       
+        
+           //Validação Pessoa Física
+           //var aviso = "Não foi possível habilitar a exibição do menu Responsável Legal no Acesso Externo. \n Para exibir o menu Responsável Legal de Pessoa Jurídica no Acesso Externo é necessário preencher os campos obrigatórios contidos em Configurações para Vinculação de Usuário Externo a Pessoa Jurídica e Configurações para Vinculação de Usuário Externo a Pessoa Física. Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica. ";
+                       
+            if (infraTrim(document.getElementById('txtTipoProcessoPF').value) == '') {
+                alert('Informe o Tipo de Processo para abertura do processo para Pessoa Física.');
+                document.getElementById('txtTipoProcessoPF').focus();
+                return false;
+            }
+            if(document.getElementById('txtEspecProcPF').value == ""){
+                alert('Informe a Especificação do processo para Pessoa Física.');
+                document.getElementById('txtTipoProcessoPF').focus();
+                return false;
+            }
+            vlUnidadePF = infraTrim(document.getElementById('hdnIdUnidadePF').value);
+            if (vlUnidadePF == '' || vlUnidadePF == null) {
+                alert('Informe a Unidade para abertura do processo para Pessoa Física.');
+                document.getElementById('txtUnidadePF').focus();
+                return false;
+            }
 
-        vlUnidade = infraTrim(document.getElementById('hdnIdUnidade').value);
+            if (infraTrim(document.getElementById('txtTipoProcesso').value) == '') {
+                alert('Informe o Tipo de Processo para abertura do processo para Pessoa Jurídica.');
+                document.getElementById('txtTipoProcesso').focus();
+                return false;
+            }
+            if(document.getElementById('txtEspecProcPJ').value == ""){
+                alert('Informe a Especificação do processo para Pessoa Jurídica.');
+                document.getElementById('txtTipoProcessoPF').focus();
+                return false;
+            }
+            vlUnidade = infraTrim(document.getElementById('hdnIdUnidade').value);
             if (vlUnidade == '' || vlUnidade == null) {
-                alert('Informe a Unidade para abertura do processo.');
+                alert('Informe a Unidade para abertura do processo para Pessoa Jurídica.');
                 document.getElementById('txtUnidade').focus();
                 return false;
             }
 
+            //Validar Nível Acesso
+            var elemsNA = document.getElementsByName("rdNivelAcesso[]");
 
-//Validar Nível Acesso
-        var elemsNA = document.getElementsByName("rdNivelAcesso[]");
-
-        validoNA = false;
-        for (var i = 0; i < elemsNA.length; i++) {
-            if (elemsNA[i].checked === true) {
-                validoNA = true;
-            }
-        }
-
-        if (((infraTrim(document.getElementById('selNivelAcesso').value) == '') && document.getElementById('rdPadrao').checked) || (!validoNA)) {
-            alert('Informe o Nível de Acesso.');
-            document.getElementById('rdUsuExternoIndicarEntrePermitidos').focus();
-            return false;
-        }else {
-            if (document.getElementById('selNivelAcesso').value == <?= ProtocoloRN::$NA_RESTRITO ?> && valorHipoteseLegal != '0') {
-
-                //validar hipotese legal
-                if (document.getElementById('selHipoteseLegal').value == '') {
-                    alert('Informe a Hipótese legal padrão.');
-                    document.getElementById('selHipoteseLegal').focus();
-                    return false;
+            validoNA = false;
+            for (var i = 0; i < elemsNA.length; i++) {
+                if (elemsNA[i].checked === true) {
+                    validoNA = true;
                 }
-
             }
-        }
 
-         vlDocObrigatorio = document.getElementById('selDescricaoEssencial').options.length;
-         if (vlDocObrigatorio == 0  ) {
-             alert('Informe os Tipos dos Documentos de Atos Constitutivos Obrigatórios.');
-             document.getElementById('selDescricaoEssencial').focus();
-             return false;
-         }
-        
+            if (((infraTrim(document.getElementById('selNivelAcesso').value) == '') && document.getElementById('rdPadrao').checked) || (!validoNA)) {
+                alert('Informe o Nível de Acesso para abertura do processo para Pessoa Jurídica.');
+                document.getElementById('rdUsuExternoIndicarEntrePermitidos').focus();
+                return false;
+            }else {
+                if (document.getElementById('selNivelAcesso').value == <?= ProtocoloRN::$NA_RESTRITO ?> && valorHipoteseLegal != '0') {
+
+                    //validar hipotese legal
+                    if (document.getElementById('selHipoteseLegal').value == '') {
+                        alert('Informe a Hipótese legal padrão para abertura do processo para Pessoa Jurídica.');
+                        document.getElementById('selHipoteseLegal').focus();
+                        return false;
+                    }
+
+                }
+            }
+
+            vlDocObrigatorio = document.getElementById('selDescricaoEssencial').options.length;
+            if (vlDocObrigatorio == 0  ) {
+                alert('Informe os Tipos dos Documentos de Atos Constitutivos Obrigatórios para abertura do processo para Pessoa Jurídica.');
+                document.getElementById('selDescricaoEssencial').focus();
+                return false;
+            }
+            
+        if(exibirMenuAcessoExterno == true){            
+            $.ajax({
+            url: '<?=$strLinkAjaxWebServiceSalvar?>',
+                    type: 'POST',
+                    dataType: 'XML',
+                    async: false,
+                    success: function (result) {
+                         
+                        if($(result).find('valor').text() == 'N'){
+                            alert('Não foi possível habilitar a exibição do menu Responsável Legal de Pessoa Jurídica no Acesso Externo.\n\n Acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal e preencha o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ.');
+                        }
+                    },
+                    error: function (e) {
+                        console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+                    }
+            }); 
+        }  
+       
         return true;
     }
 

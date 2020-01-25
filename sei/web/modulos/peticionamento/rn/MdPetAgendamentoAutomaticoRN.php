@@ -78,6 +78,68 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
     }
 
+    protected function AtualizarSituacaoProcuracaoSimplesVencidaControlado( ){
+
+        try{
+            
+            ini_set('max_execution_time','0');
+            ini_set('memory_limit','1024M');
+
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(false);
+            InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->limpar();
+
+            
+           
+            $numSeg = InfraUtil::verificarTempoProcessamento();
+            InfraDebug::getInstance()->gravar('ALTERANDO SITUAÇÃO DE PROCURAÇÕE VENCIDAS');
+
+            //Alterando o Status das Procurações Eletrônicas
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->retDthDataLimite();
+            $objMdPetVincRepresentantDTO->retStrStaEstado();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $objMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+            $contador = 0;
+            foreach ($objMdPetVincRepresentantRN as $dto) {
+
+                if($dto->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO){
+                    if(infraData::compararDatas(infraData::getStrDataAtual(),$dto->getDthDataLimite()) < 0){
+                        
+                        $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                        $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($dto->getNumIdMdPetVinculoRepresent());
+                        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_VENCIDA);
+                        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+                        $objMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentantDTO);
+                        $contador += 1;
+
+                }
+            }
+        }
+           
+            InfraDebug::getInstance()->gravar('Qtd. Procurações Vencidas: '.$contador.' ');
+
+            $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
+            InfraDebug::getInstance()->gravar('FIM');
+            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
+
+            InfraDebug::getInstance()->setBolLigado(false);
+            InfraDebug::getInstance()->setBolDebugInfra(false);
+            InfraDebug::getInstance()->setBolEcho(false);
+        }catch(Exception $e){
+            SessaoSEI::getInstance()->setBolHabilitada(true);
+            InfraDebug::getInstance()->setBolLigado(false);
+            InfraDebug::getInstance()->setBolDebugInfra(false);
+            InfraDebug::getInstance()->setBolEcho(false);
+            throw new InfraException('Erro alterando situação da procuração eletrônica.',$e);
+        }
+
+    }
+
+
     /* Método que reintera via email acerca de Intimação Eletrônica:
      *    - Com Tipo de Resposta que Exige Resposta pelo Usuário Externo 
      *    e Pendente de Resposta após a Intimação ter sido Cumprida.

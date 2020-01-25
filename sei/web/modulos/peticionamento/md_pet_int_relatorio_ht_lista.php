@@ -60,7 +60,7 @@ $numRegistros = count($arrDados);
 //Tabela de resultado.
 if ($numRegistros > 0) {
 
-    $strResultado .= '<table id="tabelaIntimacaoEletronica"  width="99%" class="infraTable" summary="Intimação Eletrônica">';
+    $strResultado .= '<table id="tabelaIntimacaoEletronica"  class="infraTable" summary="Intimação Eletrônica">';
     $strResultado .= '<caption class="infraCaption">';
     $pluralOrSing  = $numRegistros == 1 ? 'registro' : 'registros';
     $strResultado .=  'Histórico da Intimação Eletrônica ('.$numRegistros.' '.$pluralOrSing.'):';
@@ -68,19 +68,25 @@ if ($numRegistros > 0) {
 
     $strResultado .= '<tr>';
     //Data/Hora que alterou pra essa Situação
-    $strResultado .= '<th class="infraTh" width="auto">Data/Hora </th>';
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="140px;">Data/Hora </th>';
 
     //Usuário  Responsável pela Ação
-    $strResultado .= '<th class="infraTh" width="auto">Usuário </th>';
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto">Usuário </th>';
 
     //Unidade da Intimação
-    $strResultado .= '<th class="infraTh" width="auto"> Unidade </th>';
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto"> Unidade </th>';
+
+    //Destinatario
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto"> Destinatário </th>';
+
+    //Tipo de Destinatario
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto">Tipo de Destinatário </th>';
 
     //Situação
-    $strResultado .= '<th class="infraTh" width="auto">Situação da Intimação </th>';
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="240px;">Situação da Intimação </th>';
 
     //Tipo de Resposta
-    $strResultado .= '<th class="infraTh" width="auto">Tipo de Resposta</th>';
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto">Tipo de Resposta</th>';
 
     $strResultado .= '</tr>';
 
@@ -119,6 +125,20 @@ if ($numRegistros > 0) {
         //Unidade Geradora da Intimação
         $strResultado .= '<td>';
         $strResultado .=  $hrefUnidade;
+        $strResultado .= '</td>';
+
+        //Destinatario - Pessoa
+        $strResultado .= '<td>';
+        $strResultado .=  PaginaSEI::tratarHTML($dado['usuarioNome']);
+        $strResultado .= '</td>';
+
+        //Tipo Destinatario
+        $strResultado .= '<td>';
+        if($dado['tipoPessoa'] == "S"){
+        $strResultado .=  "Pessoa Jurídica";
+        }else{
+            $strResultado .=  "Pessoa Física";
+        }
         $strResultado .= '</td>';
 
         //Coluna Situação da Intimação

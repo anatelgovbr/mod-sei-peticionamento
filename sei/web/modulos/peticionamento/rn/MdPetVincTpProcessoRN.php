@@ -11,7 +11,8 @@ class MdPetVincTpProcessoRN extends InfraRN
 {
 
     public static $ID_FIXO_MD_PET_VINCULO_USU_EXT = '1';
-
+    public static $ID_FIXO_MD_PET_VINCULO_USU_EXT_PF = '2';
+    
     public function __construct()
     {
         parent::__construct();
@@ -29,13 +30,19 @@ class MdPetVincTpProcessoRN extends InfraRN
 
             SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincTpProcessoDTO);
 
-            if ($this->_validarExistenciaVinculoCadastrado() > 0) {
-
+            //Para cada vinculo é setado um id fixo
+            if($objMdPetVincTpProcessoDTO->getStrTipoVinculo() == 'F'){
+                $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(self::$ID_FIXO_MD_PET_VINCULO_USU_EXT_PF);
+            }else{
+                $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(self::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+            }
+                
+            if ($this->_validarExistenciaVinculoCadastrado($objMdPetVincTpProcessoDTO->getStrTipoVinculo()) > 0) {
+          
             	$objMdPetVincTpProcesso = $this->alterar($objMdPetVincTpProcessoDTO);
 
             } else {
-
-                $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(self::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+                
                 $objMdPetVincTpProcessoBD = new MdPetVincTpProcessoBD($this->getObjInfraIBanco());
                 $objMdPetVincTpProcesso = $objMdPetVincTpProcessoBD->cadastrar($objMdPetVincTpProcessoDTO);
             }
@@ -45,10 +52,11 @@ class MdPetVincTpProcessoRN extends InfraRN
         }
     }
 
-    private function _validarExistenciaVinculoCadastrado()
+    private function _validarExistenciaVinculoCadastrado($tipoVinculo)
     {
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
-        $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(self::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+        //$objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(self::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+        $objMdPetVincTpProcessoDTO->setStrTipoVinculo($tipoVinculo);
         $objMdPetVincTpProcessoDTO->retNumIdMdPetVincTpProcesso();
         return $this->consultarConectado($objMdPetVincTpProcessoDTO);
 
@@ -119,7 +127,7 @@ class MdPetVincTpProcessoRN extends InfraRN
 
         try {
 
-            $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(self::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
+            $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso($objMdPetVincTpProcessoDTO->getNumIdMdPetVincTpProcesso());
             $objMdPetVincTpProcessoBD = new MdPetVincTpProcessoBD($this->getObjInfraIBanco());
             $objMdPetVincTpProcesso = $objMdPetVincTpProcessoBD->alterar($objMdPetVincTpProcessoDTO);
             return $objMdPetVincTpProcesso;

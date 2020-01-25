@@ -106,10 +106,22 @@ class MdPetVinculoINT extends InfraINT {
 
   public static function validarExistenciaVinculoCnpj($dados){
 
+
+      $dadosCaptcha = hash('SHA512',$dados['txtCaptcha']);
+      $strCaptcha   =  PaginaSEIExterna::getInstance()->recuperarCampo('captchaPeticionamentoRL');
       $cnpj = InfraUtil::retirarFormatacao($dados['txtNumeroCnpj']);
       $idUsuarioLogado = isset($dados['idUsuarioLogado']) ? $dados['idUsuarioLogado'] : SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 
       $xml = "";
+
+      if($strCaptcha != $dadosCaptcha){
+          $xml = "<dados-pj>";
+          $xml .= "<success>false</success>\n";
+          $xml .= "<procuracao>false</procuracao>\n";
+          $xml .= "<msg>Código de confirmação inválido.</msg>\n";
+          $xml .= "</dados-pj>";
+          return $xml;
+      }
 
       $contatoRN = new ContatoRN();
       $contatoDTO = new ContatoDTO();
@@ -142,36 +154,58 @@ class MdPetVinculoINT extends InfraINT {
               $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
               $objMdPetVincRepresentantDTO->setStrStaEstado(array(MdPetVincRepresentantRN::$RP_ATIVO), InfraDTO::$OPER_IN);
               $objMdPetVincRepresentantDTO->retStrCpfProcurador();
+              $objMdPetVincRepresentantDTO->retDthDataLimite();
+              $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
               $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
-              if (count($arrObjMdPetVincRepresentantDTO)>0){
-                  foreach($arrObjMdPetVincRepresentantDTO as $itemObjMdPetVincRepresentantDTO) {
-                      $objUsuarioRN = new UsuarioRN();
-                      $objUsuarioDTO = new UsuarioDTO();
-                      $objUsuarioDTO->retNumIdUsuario();
-                      $objUsuarioDTO->setNumIdContato($itemObjMdPetVincRepresentantDTO->getNumIdContato());
+              if (count($arrObjMdPetVincRepresentantDTO) > 0) {
+                    foreach ($arrObjMdPetVincRepresentantDTO as $itemObjMdPetVincRepresentantDTO) {
+                        $objUsuarioRN = new UsuarioRN();
+                        $objUsuarioDTO = new UsuarioDTO();
+                        $objUsuarioDTO->retNumIdUsuario();
+                        $objUsuarioDTO->setNumIdContato($itemObjMdPetVincRepresentantDTO->getNumIdContato());
 
-                      $arrObjUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-                      if (count($arrObjUsuarioDTO) > 0) {
-                          if ($idUsuarioLogado == $arrObjUsuarioDTO->getNumIdUsuario() && $itemObjMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
-                              $xml = "<dados-pj>";
-                              $xml .= "<success>false</success>\n";
-                              $xml .= "<procuracao>false</procuracao>\n";
-                              $xml .= "<msg>Este CNPJ já está vinculado a um Responsável Legal.</msg>\n";
-                              $xml .= "</dados-pj>";
-                          }
+                        $arrObjUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+                        if (count($arrObjUsuarioDTO) > 0) {
+                            if ($idUsuarioLogado == $arrObjUsuarioDTO->getNumIdUsuario() && $itemObjMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
+                                $xml = "<dados-pj>";
+                                $xml .= "<success>false</success>\n";
+                                $xml .= "<procuracao>false</procuracao>\n";
+                                $xml .= "<msg>Este CNPJ já está vinculado a um Responsável Legal.</msg>\n";
+                                $xml .= "</dados-pj>";
+                            }
+                            
+                            if(!is_null($itemObjMdPetVincRepresentantDTO->getDthDataLimite())){
+                                $dataAtual = date("Y-m-d");
+                                $dataLimite = explode(' ',$itemObjMdPetVincRepresentantDTO->getDthDataLimite());
+                                $dataLimite = $dataLimite[0];
+                                $anoLimite = substr($dataLimite, 6);
+                                $mesLimite = substr($dataLimite, 3, -5);
+                                $diaLimite = substr($dataLimite, 0, -8);
+                                $dataLimite = $anoLimite . "-" . $mesLimite . "-" . $diaLimite;
+                            }                    
 
-                          if ($idUsuarioLogado == $arrObjUsuarioDTO->getNumIdUsuario() && $itemObjMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL) {
-                              $xml = "<dados-pj>";
-                              $xml .= "<success>false</success>\n";
-                              $xml .= "<procuracao>true</procuracao>\n";
-                              $xml .= "<url>" . base64_encode(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_negado&idVinculo=' . $idVinculo)) . "</url>\n";
-                              $xml .= "</dados-pj>";
-                          }
-                      }
-                  }
-              }
-          }
+                            if  ($idUsuarioLogado == $arrObjUsuarioDTO->getNumIdUsuario() &&
+                                    ($itemObjMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ||
+                                        ($itemObjMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && (!$dataLimite || ($dataLimite && strtotime($dataAtual) <= strtotime($dataLimite))))
+                                    )
+                                ) {
+                                $xml = "<dados-pj>";
+                                $xml .= "<success>false</success>\n";
+                                $xml .= "<procuracao>true</procuracao>\n";
+                                $xml .= "<url>" . base64_encode(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_negado&idVinculo=' . $idVinculo)) . "</url>\n";
+                                $xml .= "</dados-pj>";
+                            }elseif($idUsuarioLogado == $arrObjUsuarioDTO->getNumIdUsuario() && $itemObjMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dataLimite && strtotime($dataAtual) > strtotime($dataLimite)){
+                                $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
+                                $dtoMdPetVincReptDTO->setNumIdMdPetVinculoRepresent($itemObjMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent());
+                                $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_VENCIDA);
+                                $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
+                                $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->alterar($dtoMdPetVincReptDTO);
+                            }
+                        }
+                    }
+                }
+            }
       }
 
       return $xml;

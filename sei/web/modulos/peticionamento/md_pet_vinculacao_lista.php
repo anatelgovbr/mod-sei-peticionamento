@@ -154,15 +154,15 @@ if ($numRegistros > 0) {
     MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
     MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsável Legal'
   ];
-
+  
   $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
   
   foreach ($arrRegistro as $registro) {
 
     if (!($objMdPetVincRepresentantDTO instanceof MdPetVincRepresentantDTO)) {
-        $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->getResponsavelLegal(array('idVinculo' => $registro->getNumIdMdPetVinculo())); 
+        //$objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->getResponsavelLegal(array('idVinculo' => $registro->getNumIdMdPetVinculo())); 
     }
-
+    
     //Acesso Externo
     $objUsuarioDTO = new UsuarioDTO();
     $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
@@ -174,12 +174,12 @@ if ($numRegistros > 0) {
     if (count($arrObjUsuarioDTO)>0){
          $idContato = $arrObjUsuarioDTO[0]->getNumIdContato();
     }
-
+    
     $idProcedimento = $registro->getDblIdProtocolo();
     $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
     $idAcessoExterno = $objMdPetAcessoExternoRN->_getUltimaConcessaoAcessoExternoModulo($idProcedimento, $idContato, true);
     SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
-
+    
     $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $idAcessoExterno . '&id_procedimento=' . $idProcedimento);
     //Acesso Externo - fim
 

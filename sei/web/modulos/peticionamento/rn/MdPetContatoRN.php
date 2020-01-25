@@ -508,6 +508,9 @@ class MdPetContatoRN extends InfraRN {
 			}
 
 
+            $cepObj = $objContatoDTO->getStrCep();
+            $cep = strpos($cepObj, '-') ? $cepObj :  substr($cepObj, 0, 5) . '-' . substr($cepObj, 5, 3);
+
 			$xml .= '<slTipoInteressado>' . $slTipoInteressado . '</slTipoInteressado>';
 			$xml .= '<txtNomeFantasia></txtNomeFantasia>';
 			$xml .= '<txtRazaoSocial>' . $objContatoDTO->getStrNome() . '</txtRazaoSocial>';
@@ -517,7 +520,7 @@ class MdPetContatoRN extends InfraRN {
 			$xml .= '<txtCidade>' . $objContatoDTO->getStrNomeCidade() . '</txtCidade>';
 			$xml .= '<txtNumeroEndereco></txtNumeroEndereco>';
 			$xml .= '<txtComplementoEndereco>' . $objContatoDTO->getStrComplemento() . '</txtComplementoEndereco>';
-			$xml .= '<txtNumeroCEP>' . $objContatoDTO->getStrCep() . '</txtNumeroCEP>';
+			$xml .= '<txtNumeroCEP>' .  $cep . '</txtNumeroCEP>';
 			$xml .= '<txtLogradouro>' . $objContatoDTO->getStrEndereco() . '</txtLogradouro>';
 			$xml .= '<txtBairro>' . $objContatoDTO->getStrBairro() . '</txtBairro>';
 		}

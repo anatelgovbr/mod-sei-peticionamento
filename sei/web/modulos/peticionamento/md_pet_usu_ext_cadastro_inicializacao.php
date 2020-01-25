@@ -189,12 +189,14 @@ $isNivelAcessoPadrao = $objTipoProcDTO->getStrSinNaPadrao();
 $nivelAcessoPadrao = $objTipoProcDTO->getStrStaNivelAcesso();
 
 if( $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"){
-	
-	$objTipoProcDTO->retTodos(true);
-	$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
-	$idHipoteseLegalPadrao = $objTipoProcDTO->getNumIdHipoteseLegal();
-    $strHipoteseLegalPadrao = $objTipoProcDTO->getStrNomeHipoteseLegal();
-    $strHipoteseLegalPadrao .= " (".$objTipoProcDTO->getStrBaseLegalHipoteseLegal().")";
+    $objTipoProcDTOHp = clone($objTipoProcDTO);
+	$objTipoProcDTOHp->retNumIdHipoteseLegal();
+	$objTipoProcDTOHp->retStrNomeHipoteseLegal();
+    $objTipoProcDTOHp->retStrBaseLegalHipoteseLegal();
+    $objTipoProcDTOHp = $objTipoProcRN->consultar( $objTipoProcDTOHp );
+	$idHipoteseLegalPadrao = $objTipoProcDTOHp->getNumIdHipoteseLegal();
+    $strHipoteseLegalPadrao = $objTipoProcDTOHp->getStrNomeHipoteseLegal();
+    $strHipoteseLegalPadrao .= " (".$objTipoProcDTOHp->getStrBaseLegalHipoteseLegal().")";
 }
 
 $isUsuarioExternoPodeIndicarNivelAcesso = $objTipoProcDTO->getStrSinNaUsuarioExterno();

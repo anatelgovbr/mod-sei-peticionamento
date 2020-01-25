@@ -28,13 +28,15 @@ $strLinkRetorno = SessaoSEIExterna::getInstance()->assinarLink('controlador_exte
 $arrComandos = array();
 $arrComandos[] = '<button type="button" accesskey="P" name="btnPeticionar" onclick="onSubmitForm()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
 $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="window.close();" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
-
+$id_contato_vin = $_GET['id_contato_vinc'];
 $id_procedimento = $_GET['id_procedimento'];
 $cpfProcurador = $_GET['cpf'];
 $idProcuracao = $_GET['id_documento'];
 $id_vinculacao = $_GET['id_vinculacao'];
 $tpDocumento = $_GET['tpDocumento'];
 $motivoOk=false;
+$tipoVinculo = $_GET['tpVinculo'];
+$tipoProcuracao = $_GET['tpProc'];
 if(isset($_POST['txtJustificativa']) && $_POST['txtJustificativa']!=''){
 
     /*$mdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
@@ -66,7 +68,7 @@ if(0){?>
             return false;
         }else{
 
-            infraAbrirJanela('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_pe_desvinculo_concluir&tipoDocumento='.$tpDocumento.'&acao_origem='.$_GET['acao']))?>',
+            infraAbrirJanela('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_pe_desvinculo_concluir&tipoDocumento='.$tpDocumento.'&tpVinc='.$tipoVinculo.'&acao_origem='.$_GET['acao']))?>',
                 'concluirPeticionamento',
                 770,
                 480,
@@ -104,12 +106,14 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
 
 <label id="lblJustificativa" for="txtJustificativa" class="infraLabelObrigatorio"><?=$strMotivo?></label>
 <textarea name="txtJustificativa" id="txtJustificativa" maxlength=250 type="text" class="infraText" rows="5" onkeypress="return infraMascaraTexto(this,event,250);"></textarea>
-
+    <input type="hidden" id="hdnIdContatoVinc" name="hdnIdContatoVinc" value="<?= $id_contato_vin?>">
     <input type="hidden" id="hdnCpfProcurador" name="hdnCpfProcurador" value="<?=$cpfProcurador?>">
     <input type="hidden" id="hdnIdProcuracao" name="hdnIdProcuracao" value="<?=$idProcuracao?>">
     <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?=$id_procedimento?>">
     <input type="hidden" id="hdnIdVinculacao" name="hdnIdVinculacao" value="<?=$id_vinculacao?>">
     <input type="hidden" id="hdnTpDocumento" name="hdnTpDocumento" value="<?=$tpDocumento?>">
+    <input type="hidden" id="hdnTpVinculo" name="hdnTpVinculo" value="<?=$tipoVinculo?>">
+    <input type="hidden" id="hdnTpProcuracao" name="hdnTpProcuracao" value="<?=$tipoProcuracao?>">
 <?
 PaginaSEIExterna::getInstance()->fecharAreaDados();
 ?>

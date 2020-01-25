@@ -43,11 +43,14 @@ try {
             $objUsuarioDTO->retNumIdContato();
             $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
 
+            $arrTipoRepresentante = array(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL,MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES);
+            $arrTipoDocumento = array(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO,MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL);
+        
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->setNumIdContato($objUsuarioDTO->getNumIdContato());
-            $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL);
+            $objMdPetVincRepresentantDTO->setStrTipoRepresentante($arrTipoRepresentante, InfraDTO::$OPER_IN);
+            $objMdPetVincRepresentantDTO->setStrTipoDocumento($arrTipoDocumento, InfraDTO::$OPER_IN);
             $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-            $objMdPetVincRepresentantDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL);
             $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($_GET['idVinculo']);
             $objMdPetVincRepresentantDTO->retDblIdDocumento();
             $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
@@ -55,6 +58,7 @@ try {
             $objMdPetVincRepresentantDTO->retStrNomeProcurador();
             $objMdPetVincRepresentantDTO->retStrCpfProcurador();
             $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
+            $objMdPetVincRepresentantDTO->retDthDataLimite();
             $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN)->listar($objMdPetVincRepresentantDTO);
             $numRegistros = count($arrObjMdPetVincRepresentantDTO);
             if ($numRegistros > 0) {
@@ -69,27 +73,59 @@ try {
                 //$strResultado .= '<th class="infraTh" width="1%">' . PaginaSEIExterna::getInstance()->getThCheck() . '</th>' . "\n";
                 //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'N° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
                 $strResultado .= '<th class="infraTh" style="width:30%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Processo', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</th>';
-                $strResultado .= '<th class="infraTh" style="width:35%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Procuracao', 'DblIdDocumento', $arrObjMdPetVincRepresentantDTO) . '</th>';
-                $strResultado .= '<th class="infraTh" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo Procuracao', 'StrTipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</th>';
+                $strResultado .= '<th class="infraTh" style="width:35%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Procuração', 'DblIdDocumento', $arrObjMdPetVincRepresentantDTO) . '</th>';
+                $strResultado .= '<th class="infraTh" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo Procuração', 'StrTipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</th>';
                 $strResultado .= '</tr>';
 
                 $arrSelectTipoVinculo = array();
                 //Populando obj para tabela
-                for ($i = 0; $i < $numRegistros; $i++) {
-                    $srtCnpj = InfraUtil::formatarCnpj($arrObjMdPetVincRepresentantDTO[$i]->getStrCNPJ());
-                    $strRazaoSocial = $arrObjMdPetVincRepresentantDTO[$i]->getStrRazaoSocialNomeVinc();
-                    $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
-                    $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($arrObjMdPetVincRepresentantDTO[$i]->getDblIdDocumento());
-                    $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
-                    $objRelProtocoloProtocoloDTO = (new RelProtocoloProtocoloRN())->consultarRN0841($objRelProtocoloProtocoloDTO);
-                    $strResultado .= '<tr class="infraTrClara" id="tr-' . $i . '">';
-                    // $strResultado .= '<td valign="top">' . PaginaSEIExterna::getInstance()->getTrCheck($i, $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent(), $idDocumento) . '</td>';
-                    //$strResultado .= '<td>' . $idDocumentoFormatado . '</td>';
-                    $strResultado .= '<td>' . $objRelProtocoloProtocoloDTO->getStrProtocoloFormatadoProtocolo1() . '</td>';
-                    $strResultado .= '<td>' . PaginaSEI::tratarHTML($arrObjMdPetVincRepresentantDTO[$i]->getDblIdDocumento()) . '</td>';
-                    $strResultado .= '<td>' . PaginaSEI::tratarHTML((new MdPetVincRepresentantDTO())->getStrNomeTipoRepresentante($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante())) . '</td>';
-                    $strResultado .= '</tr>';
+                
+                $qntProcuracao = 0;
+                foreach ($arrObjMdPetVincRepresentantDTO as $itemObjMdPetVinculoDTO) {
+                    //verifica se a procuração é do tipo simples, caso seja existe mais uma validação a ser feita
+                    if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
+                        // verifica se existe data limite, caso tenha existe mais uma validação a ser feita
+                        if (!is_null($itemObjMdPetVinculoDTO->getDthDataLimite())) {
+                            $dataAtual = date("Y-m-d");
+                            $anoLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 6);
+                            $mesLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 3, -5);
+                            $diaLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 0, -8);
+                            $dataLimite = $anoLimite . "-" . $mesLimite . "-" . $diaLimite;
+                            //se a data estiver vigente a procuração é informada ao usuário
+                            if (strtotime($dataAtual) <= strtotime($dataLimite)) {
+                                $informaProcuracao = true;
+                            //se a data não estiver vigente a procuração
+                            } else {
+                                $informaProcuracao = false;
+                                
+                            }
+                        // caso não tenha data limite a procuração é informada ao usuário
+                        } else {
+                            $informaProcuracao = true;
+                        }
+                    //se for especial é informada a procuração é informada ao usuário
+                    } else {
+                        $informaProcuracao = true;
+                    }
+                    
+                    if($informaProcuracao == true){
+                        $srtCnpj = InfraUtil::formatarCnpj($itemObjMdPetVinculoDTO->getStrCNPJ());
+                        $strRazaoSocial = $itemObjMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
+                        $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+                        $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($itemObjMdPetVinculoDTO->getDblIdDocumento());
+                        $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
+                        $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo2();
+                        $objRelProtocoloProtocoloDTO = (new RelProtocoloProtocoloRN())->consultarRN0841($objRelProtocoloProtocoloDTO);
+                        $strResultado .= '<tr class="infraTrClara" id="tr-' . $qntProcuracao . '">';
+
+                        $strResultado .= '<td>' . $objRelProtocoloProtocoloDTO->getStrProtocoloFormatadoProtocolo1() . '</td>';
+                        $strResultado .= '<td>' . $objRelProtocoloProtocoloDTO->getStrProtocoloFormatadoProtocolo2() . '</td>';
+                        $strResultado .= '<td>' . PaginaSEI::tratarHTML((new MdPetVincRepresentantDTO())->getStrNomeTipoRepresentante($itemObjMdPetVinculoDTO->getStrTipoRepresentante())) . '</td>';
+                        $strResultado .= '</tr>';
+                        $qntProcuracao++;
+                    }
                 }
+
                 $strResultado .= '</table>';
             }
 

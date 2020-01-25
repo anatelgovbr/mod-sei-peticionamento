@@ -64,7 +64,6 @@ switch ($_GET['acao']) {
                         //Data Expedição Intimação
                         $objMdPetIntDestDTO = $objMdPetIntDestRN->consultarDadosIntimacao($id, true);
                         $dtHrIntimacao = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getDthDataCadastro() : null;
-
                         $dtIntimacao = !is_null($dtHrIntimacao) ? explode(' ', $dtHrIntimacao) : null;
                         $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
 
@@ -76,7 +75,7 @@ switch ($_GET['acao']) {
                         if ($objMdPetIntDestDTO && $objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S') {
                             $possuiIntimacaoJuridica = TRUE;
                         }
-                    }
+                    }                   
                 }
                 if ($possuiIntimacaoJuridica) {
                     $texto = 'Para visualizar os documentos da Intimação Eletrônica referente ao ';
@@ -101,8 +100,13 @@ switch ($_GET['acao']) {
                 $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
                 try {
                     $objInfraException = new InfraException();
-                    if ($objMdPetIntAceiteRN->existeAceiteIntimacoes($_POST['hdnIdIntimacao'])) {
-                        $objInfraException->adicionarValidacao('Já havia ocorrido o cumprimento da presente intimação.');
+                    $todasIntimacoesAceitas = $objMdPetIntAceiteRN->todasIntimacoesAceitas($_POST['hdnIdIntimacao']);
+                    if ($todasIntimacoesAceitas['todasAceitas']) {
+                        if($todasIntimacoesAceitas['qntDestinatario'] == 0){
+                            $objInfraException->adicionarValidacao('Você não possui mais permissão para cumprir a Intimação Eletrônica.');
+                        }else{
+                            $objInfraException->adicionarValidacao('Já havia ocorrido o cumprimento da presente intimação.');
+                        }
                     }
                     $objInfraException->lancarValidacoes();
 

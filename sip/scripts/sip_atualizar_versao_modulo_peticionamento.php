@@ -11,10 +11,10 @@ require_once dirname(__FILE__).'/../web/Sip.php';
 class MdPetAtualizadorSipRN extends InfraRN {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '3.0.0';
+    private $versaoAtualDesteModulo = '3.1.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1','0.0.2','1.0.3','1.0.4','1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0');
+    private $historicoVersoes = array('0.0.1','0.0.2','1.0.3','1.0.4','1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.1.0');
 
     public function __construct(){
         parent::__construct();
@@ -118,6 +118,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '0.0.1' ){
@@ -132,6 +133,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '0.0.2' ){
@@ -145,6 +147,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif( in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3')) ){
@@ -157,6 +160,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '1.0.4' ){
@@ -168,6 +172,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '1.1.0' ){
@@ -178,6 +183,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.0' ){
@@ -187,6 +193,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.1' ){
@@ -195,6 +202,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204();
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.2' ){                        
@@ -208,18 +216,25 @@ class MdPetAtualizadorSipRN extends InfraRN {
                         $this->instalarv204(); 
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     } elseif ( $strVersaoModuloPeticionamento == '2.0.4' ){
                         $this->instalarv205();
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
                     }  elseif ( $strVersaoModuloPeticionamento == '2.0.5' ){
                         $this->instalarv300();
+                        $this->instalarv310();
                         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
                         $this->finalizar('FIM', false);
-                    } elseif ($strVersaoModuloPeticionamento == '3.0.0') {                    
+                    }  elseif ( $strVersaoModuloPeticionamento == '3.0.0' ){
+                        $this->instalarv310();
+                        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
+                        $this->finalizar('FIM', false);
+                    } elseif ($strVersaoModuloPeticionamento == '3.1.0') {
                         $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
                         $this->finalizar('FIM', false);
                     } else {
@@ -1726,7 +1741,101 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
     }
-    
+
+    //Contem atualizaes da verso 3.1.0
+    protected function instalarv310(){
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.1.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+
+        $arrAuditoria = array();
+
+        //criar novo grupo de auditoria
+        $objSistemaRN = new SistemaRN();
+        $objPerfilRN = new PerfilRN();
+        $objMenuRN = new MenuRN();
+        $objItemMenuRN = new ItemMenuRN();
+        $objRecursoRN = new RecursoRN();
+
+        $objSistemaDTO = new SistemaDTO();
+        $objSistemaDTO->retNumIdSistema();
+        $objSistemaDTO->setStrSigla('SEI');
+
+        $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
+
+        if ($objSistemaDTO == null){
+            throw new InfraException('Sistema SEI no encontrado.');
+        }
+
+        $numIdSistemaSei = $objSistemaDTO->getNumIdSistema();
+
+        $objPerfilDTO = new PerfilDTO();
+        $objPerfilDTO->retNumIdPerfil();
+        $objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilDTO->setStrNome('Administrador');
+        $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
+
+        if ($objPerfilDTO == null){
+            throw new InfraException('Perfil Administrador do sistema SEI no encontrado.');
+        }
+
+        $numIdPerfilSeiAdministrador = $objPerfilDTO->getNumIdPerfil();
+
+        $objPerfilBasicoDTO = new PerfilDTO();
+        $objPerfilBasicoDTO->retNumIdPerfil();
+        $objPerfilBasicoDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilBasicoDTO->setStrNome('Básico');
+        $objPerfilBasicoDTO = $objPerfilRN->consultar( $objPerfilBasicoDTO );
+
+        if ($objPerfilBasicoDTO== null){
+            throw new InfraException('Perfil Básico do sistema SEI no encontrado.');
+        }
+
+        $numIdPerfilSeiBasico = $objPerfilBasicoDTO->getNumIdPerfil();
+
+        $objMenuDTO = new MenuDTO();
+        $objMenuDTO->retNumIdMenu();
+        $objMenuDTO->setNumIdSistema($numIdSistemaSei);
+        $objMenuDTO->setStrNome('Principal');
+        $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
+
+        if ($objMenuDTO == null){
+            throw new InfraException('Menu do sistema SEI no encontrado.');
+        }
+
+        $numIdMenuSei = $objMenuDTO->getNumIdMenu();
+
+
+        $this->logar('ADICIONANDO RECURSOS, MENUS DO TIPO DE PODER '. $this->nomeDesteModulo .' NA BASE DO SIP..');
+        $objItemRecursoDTOMenu = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_listar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_desativar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_reativar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_excluir');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_cadastrar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_consultar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_alterar');
+
+        $objItemMenuDTOPeticionamentoEletronico = new ItemMenuDTO();
+        $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
+        $objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
+        $objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
+        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+
+        $this->adicionarItemMenu($numIdSistemaSei,
+            $numIdPerfilSeiAdministrador,
+            $numIdMenuSei,
+            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
+            $objItemRecursoDTOMenu->getNumIdRecurso(),
+            'Tipos de Poderes Legais',
+            120);
+
+        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.1.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+
+    }
+
+
+
+
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null){
 
         $objRecursoDTO = new RecursoDTO();

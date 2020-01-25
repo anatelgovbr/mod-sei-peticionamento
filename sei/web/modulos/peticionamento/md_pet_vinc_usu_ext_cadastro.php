@@ -75,6 +75,8 @@ if(!$stConsultar) {
 <input type="hidden" name="hdnIdDocumento" id="hdnIdDocumento" value="0"/>
 <input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?php echo $idMdPetVinculo?>"/>
 <input type="hidden" name="hdnStaWebService" id="hdnStaWebService" value="<?= $stWebService ?>"/>
+<input type="hidden" name="hdnIsWebServiceHabilitado" id="hdnIsWebServiceHabilitado" value=""/>
+
 <?php
 PaginaSEIExterna::getInstance()->fecharAreaDados();
 PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);

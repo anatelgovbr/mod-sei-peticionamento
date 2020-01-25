@@ -16,25 +16,24 @@ class MdPetReciboDTO extends InfraDTO  {
 
   public function getStrStaTipoPeticionamentoFormatado()
   {      
-      
     if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_NOVO) {
-      return "Processo Novo";
+      return  MdPetReciboRN::$STR_TP_RECIBO_NOVO;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_INTERCORRENTE) {
-      return "Intercorrente";
+      return  MdPetReciboRN::$STR_TP_RECIBO_INTERCORRENTE;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO) {
-      return "Resposta a Intimação";
+      return MdPetReciboRN::$STR_TP_RECIBO_RESPOSTA_INTIMACAO;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL) {
-      return "Responsável Legal - Inicial";
+      return MdPetReciboRN::$STR_TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO) {
-      return "Responsável Legal - Alteração";
+      return MdPetReciboRN::$STR_TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS) {
-      return "Atualização de Atos Constitutivos";
+        return MdPetReciboRN::$STR_TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO) {
-      return "Procuração Eletrônica - Emissão";
+      return MdPetReciboRN::$STR_TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA) {
-      return "Procuração Eletrônica - Renúncia";
+        return MdPetReciboRN::$STR_TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA;
     } else if ($this->isSetStrStaTipoPeticionamento() && $this->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO) {
-      return "Procuração Eletrônica - Revogação";
+        return MdPetReciboRN::$STR_TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO;
     } else {
       return "";
     }

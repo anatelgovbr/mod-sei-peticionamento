@@ -32,6 +32,7 @@ $extensoesPermitidas = MdPetExtensoesArquivoINT::recuperaExtensoes(null, null, n
 
 //Geração do Captcha
 $strCodigoParaGeracaoCaptcha = InfraCaptcha::obterCodigo();
+PaginaSEIExterna::getInstance()->salvarCampo('captchaPeticionamentoRL', hash('SHA512',InfraCaptcha::gerar($strCodigoParaGeracaoCaptcha)));
 
 $objMdPetVincRelSerieRN = new MdPetVincRelSerieRN();
 $strDocsObrigatorios = $objMdPetVincRelSerieRN->buscarDocumentosObrigatorios();

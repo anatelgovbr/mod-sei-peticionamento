@@ -131,7 +131,7 @@ try {
 //    $objMdPetTipoProcessoOrgaoDTO->retNumIdOrgaoUnidade();
 //    $objMdPetTipoProcessoOrgaoDTO->retStrSiglaOrgaoUnidade();
 //    $arrFiltroOrgao = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoOrgaoDTO);
-    
+
     $objOrgaoDTO = new OrgaoDTO();
     $objOrgaoRN = new OrgaoRN();
     $objOrgaoDTO->retNumIdOrgao();
@@ -191,7 +191,7 @@ try {
                     $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
                     $nomeUnidade = $objUnidadeDTO->getStrSigla() . ' - ' . $objUnidadeDTO->getStrDescricao();
                     $arrObjUnidadesMultiplas[] = $objUnidadeDTO;
-                    
+
                     //Verifica se existe restrição para este tipo de processo
                     $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
                     $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
@@ -202,7 +202,7 @@ try {
                     $idOrgaoRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdOrgao');
                     $idUnidadeRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdUnidade');
                     $tipoProcessoRestricaoErroUU = false;
-                    
+
                     foreach ($arrObjUnidadesMultiplas as $cadaObjUnidadeDTO) {
                         //Verifica se tem algum órgão diferente dos restritos, caso exista restrições para o tipo de processo
                         if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($cadaObjUnidadeDTO->getNumIdOrgao(), $idOrgaoRestricao)) {
@@ -512,7 +512,7 @@ try {
             if (isset($_POST['sbmAlterarTipoPeticionamento'])) {
 
                 try {
-                  
+
                     $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
                     $arrIdTipoDocumentoEssencial = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
                     $arrIdUnidadesSelecionadas = $_POST['hdnUnidadesSelecionadas'] != '' ? json_decode($_POST['hdnUnidadesSelecionadas']) : array();
@@ -540,8 +540,8 @@ try {
                     $unica = $tipoUnidade == 'U' ? true : false;
                     $hdnCorpoTabela = isset($_POST['hdnCorpoTabela']) ? $_POST['hdnCorpoTabela'] : '';
 
-                    $objMdPetTipoProcessoDTO->setNumIdHipoteseLegal(null);             
-                                       
+                    $objMdPetTipoProcessoDTO->setNumIdHipoteseLegal(null);
+
                     if ($_POST['selNivelAcesso'] != '') {
 
                         $objMdPetTipoProcessoDTO->setStrStaNivelAcesso($_POST['selNivelAcesso']);
@@ -711,7 +711,7 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
         #txtUnidade {left:12px;width:65%;margin-top: 0.5%;}
         #imgExcluirUnidade {position:absolute;left:52.2%;margin-top: 0.2%;}
         #alertaRestricaoUU {position:absolute;left:54%;margin-top: -2.1%;}
-        
+
         #lblOrientacoes {position:absolute;left:0%;top:50px;width:20%;}
         #txtOrientacoes {position:absolute;left:0%;top:66px;width:75%;}
 
@@ -742,7 +742,7 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
         .fieldNone{border:none !important;}
 
         .sizeFieldset#fldDocPrincipal {height: 50%!important;}
-                
+
 
 <?php } else { ?>
         .sizeFieldset {height: 30%; width: 86%;}
@@ -758,7 +758,7 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
         #imgLupaUnidade {position:absolute;left:50.5%;margin-top: 0.4%;}
         #imgExcluirUnidade {position:absolute;left:52.3%;margin-top: 0.4%;}
         #alertaRestricaoUU {position:absolute;left:54%;margin-top: -1.9%;}
-                                                       
+
         #lblOrientacoes {position:absolute;left:0%;top:50px;width:20%;}
         #txtOrientacoes {position:absolute;left:0%;top:66px;width:75%;}
 
@@ -779,8 +779,8 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
         #lblDescricao {width:50%;}
         #selDescricao {width:75%;}
 
-        #imgLupaTipoDocumento { 
-            margin-top: 2px; 
+        #imgLupaTipoDocumento {
+            margin-top: 2px;
             margin-left: 4px;
         }
 
@@ -800,7 +800,7 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
 
     .fieldsetClear {border:none !important;}
     .rdIndicacaoIndiretaHide  {margin-left:2.8%!important;}
-    
+
     #lblOrgaos {position:absolute;left:0%;top:0%;width:20%;}
     #txtOrgaoUnidadeMultipla {position:absolute;left:0%;top:33%;width:19.5%;}
     #selOrgaos {position:absolute;left:0%;top:45%;width:20%;}
@@ -810,14 +810,14 @@ $firefox = strpos($browser, 'Firefox') ? true : false;
     #txtUnidadeMultipla {position:absolute;left:24%;top:33%;width:54.5%;}
     #selUnidades {position:absolute;left:25%;top:47%;width:55%;}
     #divOpcoesUnidades {position:absolute;left:79.5%;top:33%;}
-    
+
     #sbmAdicionarUnidade {position:absolute;left:83%;top:33%;}
 </style>
 <?php
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-<form id="frmTipoProcessoCadastro" method="post" onsubmit="return OnSubmitForm();" 
+<form id="frmTipoProcessoCadastro" method="post" onsubmit="return OnSubmitForm();"
       action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
           <?
           PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
@@ -850,11 +850,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     </div>
     <!--  Fim das Orientações  -->
 
-    <!--  Unidade -->  
+    <!--  Unidade -->
     <div id="divUnidade">
         <fieldset class="infraFieldset" style="width:75%;">
             <legend class="infraLegend">&nbsp;Unidade para Abertura do Processo&nbsp;</legend>
-            <!-- Unidade única --> 
+            <!-- Unidade única -->
             <?php
             $divUnidadeUnica = $unica ? 'style="display:inherit;margin-bottom: 6px"' : 'style="display:none;margin-bottom: 6px"';
             $checkUnidadeUnica = $unica ? 'checked="checked";' : '';
@@ -877,7 +877,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </div>
                 <?php } ?>
             </div>
-            <!--  Fim da Unidade Única --> 
+            <!--  Fim da Unidade Única -->
 
             <!--  Múltiplas Unidades -->
             <?php
@@ -909,9 +909,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </div>
                     <?php if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
                         <button type="button" accesskey="a" name="sbmAdicionarUnidade" onclick="addUnidade();" id="sbmAdicionarUnidade" value="Adicionar" class="infraButton" style="font-size: 10px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><span class="infraTeclaAtalho">A</span>dicionar</button>
-                    <?php } ?> 
-                </div>                 
-                
+                    <?php } ?>
+                </div>
+
 
                 <!-- Tabela Múltiplas Unidades -->
 
@@ -934,7 +934,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <table class="infraTableOrdenacao">
                             <tbody>
                                 <tr>
-                                    <td valign="center" class="infraTdRotuloOrdenacao">  
+                                    <td valign="center" class="infraTdRotuloOrdenacao">
                                         Unidade
                                     </td>
                                 </tr>
@@ -1032,7 +1032,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <td valign="middle">
                                     <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>" title="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>" class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSiglaOrgao(); ?>
                                 </td>
-                                <td  id="tabNomeUnidade" > 
+                                <td  id="tabNomeUnidade" >
                                     <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>" title="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>" class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSigla(); ?>
                                     </a>
                                 </td>
@@ -1058,7 +1058,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             <img class="infraImg" title="Remover Unidade" alt="Remover Unidade" src="/infra_css/imagens/remover.gif" onclick="removerUnidade('<?php echo $idTabela; ?>');" id="imgExcluirProcessoSobrestado">
                                         </a>
                                     <?php } ?>
-                                </td>                                        
+                                </td>
                                 </tr>
                                 <?php
                             }
@@ -1087,19 +1087,19 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <fieldset class="infraFieldset" style="width:75%;">
             <legend class="infraLegend">&nbsp;Indicação de Interessado&nbsp;</legend>
 
-            <input onclick="changeIndicacaoInteressado()" type="radio" id="rdUsuExterno" name="indicacaoInteressado[]" value="1" <?php echo $sinIndIntUsExt ?>> 
+            <input onclick="changeIndicacaoInteressado()" type="radio" id="rdUsuExterno" name="indicacaoInteressado[]" value="1" <?php echo $sinIndIntUsExt ?>>
             <label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">Próprio Usuário Externo</label>
             <br/>
-            <input onclick="changeIndicacaoInteressado()" type="radio" name="indicacaoInteressado[]" id="rdIndicacaoIndireta" value="2"  <?php echo $sinIndIntIndIndir ?>> 
+            <input onclick="changeIndicacaoInteressado()" type="radio" name="indicacaoInteressado[]" id="rdIndicacaoIndireta" value="2"  <?php echo $sinIndIntIndIndir ?>>
             <label name="lblIndicacaoIndireta" id="lblIndicacaoIndireta" for="rdIndicacaoIndireta" class="infraLabelRadio">Indicação Direta</label>
             <br/>
 
             <div id="divRdIndicacaoIndiretaHide" <?php echo $sinIndIntIndIndir != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?> >
-                <input <?php echo $sinIndIntIndCpfCn; ?>  type="radio" name="indicacaoIndireta[]" id="indicacaoIndireta1" class="rdIndicacaoIndiretaHide" value="3"> 
+                <input <?php echo $sinIndIntIndCpfCn; ?>  type="radio" name="indicacaoIndireta[]" id="indicacaoIndireta1" class="rdIndicacaoIndiretaHide" value="3">
                 <label  name="lblInformandoCpfCnpj" for="indicacaoIndireta1" id="lblInformandoCpfCnpj" class="lblIndicacaoIndiretaHide infraLabelRadio">Informando CPF ou CNPJ</label>
                 <br/>
 
-                <input <?php echo $sinIndIntIndConta; ?> type="radio" name="indicacaoIndireta[]"  id="indicacaoIndireta2" class="rdIndicacaoIndiretaHide" value="4"> 
+                <input <?php echo $sinIndIntIndConta; ?> type="radio" name="indicacaoIndireta[]"  id="indicacaoIndireta2" class="rdIndicacaoIndiretaHide" value="4">
                 <label for="indicacaoIndireta2" id="lblContatosJaExistentes" name="lblContatosJaExistentes" class="lblIndicacaoIndiretaHide infraLabelRadio">Digitando nome de Contatos já existentes</label>
             </div>
 
@@ -1113,12 +1113,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <fieldset class="infraFieldset" style="width:75%;">
             <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos&nbsp;</legend>
             <div>
-                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]" id="rdUsuExternoIndicarEntrePermitidos" onclick="changeNivelAcesso();" value="1"> 
+                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]" id="rdUsuExternoIndicarEntrePermitidos" onclick="changeNivelAcesso();" value="1">
 
                 <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário Externo indica diretamente</label>
                 <br/>
 
-                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]"  id="rdPadrao" onclick="changeNivelAcesso();" value="2"> 
+                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]"  id="rdPadrao" onclick="changeNivelAcesso();" value="2">
                 <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido</label>
 
                 <div id="divNivelAcesso"  <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
@@ -1150,13 +1150,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
         <legend class="infraLegend">&nbsp;Documento Principal&nbsp;</legend>
 
-        <input type="radio" name="rdDocPrincipal[]" id="rdDocGerado" onclick="changeDocPrincipal();" value="1" <?php echo $gerado ?>> 
+        <input type="radio" name="rdDocPrincipal[]" id="rdDocGerado" onclick="changeDocPrincipal();" value="1" <?php echo $gerado ?>>
         <label for="rdDocGerado" id="lblDocGerado" class="infraLabelRadio">
             Gerado (Editor e Modelo)
         </label>
         <br/>
 
-        <input type="radio" name="rdDocPrincipal[]"  id="rdDocExterno" onclick="changeDocPrincipal();" value="2" <?php echo $externo ?>> 
+        <input type="radio" name="rdDocPrincipal[]"  id="rdDocExterno" onclick="changeDocPrincipal();" value="2" <?php echo $externo ?>>
         <label name="lblDocExterno" id="lblDocExterno" for="rdDocExterno" class="infraLabelRadio">
             Externo (Anexação de Arquivo)
         </label>
@@ -1172,8 +1172,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <input type="text" id="txtTipoDocPrinc" name="txtTipoDocPrinc" class="infraText" value="<?= PaginaSEI::tratarHTML($nomeSerie) ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
 
             <input type="hidden" id="hdnIdTipoDocPrinc" name="hdnIdTipoDocPrinc" value="<?= $idSerie ?>" />
-            <img id="imgLupaTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('S');" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" />      
-            <img id="imgExcluirTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('R')" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Documento" title="Remover Tipo de Documento" class="infraImg" />   
+            <img id="imgLupaTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('S');" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" />
+            <img id="imgExcluirTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('R')" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Documento" title="Remover Tipo de Documento" class="infraImg" />
 
         </div>
 
@@ -1181,7 +1181,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <!--  Documento Essencial -->
     <?
     $divDocs = 'style="display: inherit;"';
-    ?> 
+    ?>
     <fieldset <?php echo $divDocs; ?> id="fldDocEssenciais" class="sizeFieldset tamanhoFieldset fieldNone">
         <div>
             <div style="clear:both;">&nbsp;</div>
@@ -1199,12 +1199,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <?= $strItensSelSeriesEss; ?>
                 </select>
 
-                <img id="imgLupaTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.selecionar(700, 500)" src="/infra_css/imagens/lupa.gif" 
-                     alt="Localizar Tipo de Documento" 
-                     title="Localizar Tipo de Documento" class="infraImg" />	
+                <img id="imgLupaTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.selecionar(700, 500)" src="/infra_css/imagens/lupa.gif"
+                     alt="Localizar Tipo de Documento"
+                     title="Localizar Tipo de Documento" class="infraImg" />
 
-                <img id="imgExcluirTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.remover();" src="/infra_css/imagens/remover.gif" 
-                     alt="Remover Tipos de Documentos" 
+                <img id="imgExcluirTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.remover();" src="/infra_css/imagens/remover.gif"
+                     alt="Remover Tipos de Documentos"
                      title="Remover Tipos de Documentos" class="infraImg" />
 
             </div>
@@ -1231,12 +1231,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <?= $strItensSelSeries ?>
                 </select>
 
-                <img id="imgLupaTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('S');" src="/infra_css/imagens/lupa.gif" 
-                     alt="Localizar Tipo de Documento" 
-                     title="Localizar Tipo de Documento" class="infraImg" />	
+                <img id="imgLupaTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('S');" src="/infra_css/imagens/lupa.gif"
+                     alt="Localizar Tipo de Documento"
+                     title="Localizar Tipo de Documento" class="infraImg" />
 
-                <img id="imgExcluirTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('R');" src="/infra_css/imagens/remover.gif" 
-                     alt="Remover Tipos de Documentos" 
+                <img id="imgExcluirTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('R');" src="/infra_css/imagens/remover.gif"
+                     alt="Remover Tipos de Documentos"
                      title="Remover Tipos de Documentos" class="infraImg" />
 
             </div>
@@ -1250,11 +1250,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades" value='<?= json_encode($arrObjUnidadeDTOFormatado); ?>' />
     <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="" />
     <input type="hidden" id="hdnSerie" name="hdnSerie" value="<?= $_POST['hdnSerie'] ?>" />
-    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>" />  
+    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>" />
     <input type="hidden" id="hdnIdIndisponibilidadePeticionamento" name="hdnIdIndisponibilidadePeticionamento" value="" />
     <input type="hidden" id="hdnIdSerie" name="hdnIdSerie" value="<?= $_POST['hdnIdSerie'] ?>" />
     <input type="hidden" id="hdnIdSerieEssencial" name="hdnIdSerieEssencial" value="<?= $_POST['hdnIdSerieEssencial'] ?>" />
-    <input type="hidden" id="hdnSerieEssencial" name="hdnSerieEssencial" value="<?= $_POST['hdnSerieEssencial'] ?>" /> 
+    <input type="hidden" id="hdnSerieEssencial" name="hdnSerieEssencial" value="<?= $_POST['hdnSerieEssencial'] ?>" />
 
     <?
     PaginaSEI::getInstance()->fecharAreaDados();
@@ -1346,7 +1346,7 @@ PaginaSEI::getInstance()->fecharHtml();
                         var idLinhaTabela = 'tabNomeUnidade_' + idUnidadeSelect;
                         var existeUnidade = document.getElementById(idLinhaTabela);
                         var valueCodUnidades = document.getElementById('hdnTodasUnidades').value;
-                        
+
                         if (valueCodUnidades != '') {
                             var objUnidades = $.parseJSON(valueCodUnidades);
 
@@ -1390,7 +1390,7 @@ PaginaSEI::getInstance()->fecharHtml();
                 error: function (e) {
                     console.error('Erro ao processar o XML do SEI: ' + e.responseText);
                 }
-            });            
+            });
         }
     }
 
@@ -1449,7 +1449,7 @@ PaginaSEI::getInstance()->fecharHtml();
 
         unidUnic ? document.getElementById("divCpUnidadeUnica").style.display = "inherit" : document.getElementById("divCpUnidadeMultipla").style.display = "inherit";
     }
-    
+
      function changeUnidadeTipoProcesso() {
         //Limpando tabela de unidades Múltiplas e campos vinculados as unidades multiplas
         document.getElementById("corpoTabela").innerHTML = '';
@@ -1462,7 +1462,7 @@ PaginaSEI::getInstance()->fecharHtml();
         //Limpando campos vinculados a unidade Única
         document.getElementById("txtUnidade").value = '';
         document.getElementById("hdnIdUnidade").value = '';
-        
+
         document.getElementById("rdUnidadeUnica").checked = false;
         document.getElementById("rdUnidadeMultipla").checked = false;
 
@@ -1604,11 +1604,11 @@ PaginaSEI::getInstance()->fecharHtml();
         } else if ('<?= $_GET['acao'] ?>' == 'md_pet_tipo_processo_consultar') {
             infraDesabilitarCamposAreaDados();
             var itemRestricao = document.getElementsByClassName('alertaRestricao');
-            for (i = 0; i < itemRestricao.length; i++) { 
+            for (i = 0; i < itemRestricao.length; i++) {
                 itemRestricao[i].removeAttribute('style');
             }
             var itemDivergencia = document.getElementsByClassName('alertaDivergencia');
-            for (i = 0; i < itemDivergencia.length; i++) { 
+            for (i = 0; i < itemDivergencia.length; i++) {
                 itemDivergencia[i].removeAttribute('style');
             }
         } else {
@@ -1799,9 +1799,9 @@ PaginaSEI::getInstance()->fecharHtml();
 
         objLupaTipoProcesso.finalizarSelecao = function () {
             objAutoCompletarTipoProcesso.selecionar(document.getElementById('hdnIdTipoProcesso').value, document.getElementById('txtTipoProcesso').value);
-            objAjaxIdNivelAcesso.executar();            
+            objAjaxIdNivelAcesso.executar();
             changeUnidadeTipoProcesso();
-      
+
         }
 
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?= $strLinkAjaxTipoProcesso ?>');
@@ -2052,40 +2052,43 @@ PaginaSEI::getInstance()->fecharHtml();
             document.getElementById('txtOrientacoes').focus();
             return false;
         }
-        
-        var multiplasUnidades = document.getElementById('rdUnidadeMultipla').checked;        
-        
+
+        var multiplasUnidades = document.getElementById('rdUnidadeMultipla').checked;
+
         if(multiplasUnidades){
             var paramsAjax = {
                 idTipoProcesso: document.getElementById('hdnIdTipoProcesso').value,
                 idUnidadeMultipla: document.getElementById('hdnUnidadesSelecionadas').value
             };
-        }else{            
+        }else{
             var paramsAjax = {
                 idTipoProcesso: document.getElementById('hdnIdTipoProcesso').value,
                 idUnidadeMultipla: "["+document.getElementById('hdnIdUnidade').value+"]"
 
             };
         }
-            
+
         var restricao = false;
-        
-        $.ajax({
-            url: '<?= $strLinkAjaxConfirmaRestricaoSalvar ?>',
-            type: 'POST',
-            dataType: 'XML',
-            async: false,
-            data: paramsAjax,
-            success: function (result) {  
-                if($(result).find('valor').text() == 'R'){
-                    alert('Existem conflitos de parametrização na seção Unidade para Abertura do Processo. \n\n Resolva os conflitos antes de salvar.');
-                     restricao = true;
-                }
-            },
-            error: function (e) {
-                console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+
+            $.ajax({
+                    url: '<?=$strLinkAjaxConfirmaRestricaoSalvar?>',
+                    type: 'POST',
+                    dataType: 'XML',
+                    async: false,
+                    data: paramsAjax,
+                    success: function (result) {
+                        if($(result).find('valor').text() == 'R'){
+                            alert('Existem conflitos de parametrização na seção Unidade para Abertura do Processo. \n\n Resolva os conflitos antes de salvar.');
+                            restricao = true;
+                        }
+                    },
+                    error: function (e) {
+                        console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+                    }
+            });
+            if(restricao){
+                return false;
             }
-        }); 
 
         //Verifica a Qtd de Unidades
         var tbUnidades = document.getElementById('tableTipoUnidade');
@@ -2096,7 +2099,7 @@ PaginaSEI::getInstance()->fecharHtml();
         if(restricao){
             return false;
         }
-        
+
         return true;
     }
 
@@ -2134,7 +2137,7 @@ PaginaSEI::getInstance()->fecharHtml();
 
         return false;
     }
-    
+
     function removerIconeRestricao(){
         document.getElementById('divRestricaoUU').innerHTML = "";
     }

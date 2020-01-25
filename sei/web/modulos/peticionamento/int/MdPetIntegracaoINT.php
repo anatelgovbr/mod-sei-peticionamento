@@ -196,4 +196,31 @@ class MdPetIntegracaoINT extends InfraINT {
     $xml .= '</parametros>';
     return $xml;
   }  
+  
+  public static function confirmarWsConsultaDadosCNPJReceitaFederal() {
+        
+        //Caso não exista a integração do tipo 'consultarCnpj' ativo é exibido um alerta para usuário
+        $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
+        $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
+        $objMdPetVincTpProcessoDTO->retNumIdMdPetVincTpProcesso();
+        $objMdPetVincTpProcessoDTO->setNumMaxRegistrosRetorno(1);
+        $objMdPetVincUsuExtPj = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
+
+        //Configurado: "Integração" com funcionalidade "Consultar Dados CNPJ Receita Federal"
+        $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
+        $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado(null, null, 'Consultar Dados CNPJ Receita Federal');
+
+        $xml = '';
+        $xml .= '<resposta>';        
+       
+        if (!is_null($arrIdMdPetIntegFuncionalidUtilizado)) {
+            $xml .= "<valor>S</valor>";
+        }else{
+            $xml .= "<valor>N</valor>";
+        }     
+        
+        $xml .= "</resposta>";
+        
+        return $xml;
+    }
 }

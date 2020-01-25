@@ -83,7 +83,7 @@ try {
                 $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
                 
                 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-                $idSerieParam = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+                $idSerieParam = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
                 
                 $documentoRN = new DocumentoRN();
                 $documentoReciboDTO = new DocumentoDTO();

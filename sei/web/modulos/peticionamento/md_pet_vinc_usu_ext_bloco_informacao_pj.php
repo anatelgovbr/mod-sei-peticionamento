@@ -4,11 +4,11 @@
 .fieldsetClear {border:none !important;}
 </style>
 <fieldset id="informacaoPJ" class="infraFieldset sizeFieldset" style="display: none;width: auto;" >
-    <legend class="infraLegend">&nbsp; Informações sobre a Pessoa Jurídica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; Informações da Pessoa Jurídica &nbsp;</legend>
     <div class="container">
         <div class="bloco">
             <label class="infraLabelObrigatorio" for="slTipoInteressado" id="lblTipoInteressado">
-                Tipo de Interessado:
+                Tipo:
             </label>
             <select class="infraSelect" id="slTipoInteressado" name="slTipoInteressado" 
             <?php echo !is_null($readOnly) ? 'disabled="disabled"' : null?>
@@ -47,7 +47,7 @@
                 <label class="infraLabelObrigatorio" for="txtLogradouro">
                     Endereço:
                 </label>
-                <input type="text" class="infraText blocInformacaoPj" id="txtLogradouro" name="txtLogradouro" maxlength="130"
+                <input onkeypress="return infraMascaraTexto(this,event,130);" type="text" class="infraText blocInformacaoPj" id="txtLogradouro" name="txtLogradouro" maxlength="130"
                 readonly 
                 tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 <input type="hidden" class="infraText blocInformacaoPj" id="txtLogradouroPadrao" name="txtLogradouroPadrao" maxlength="130"
@@ -91,7 +91,7 @@
                     CEP:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtNumeroCEP" name="txtNumeroCEP" maxlength="15"
-                    onkeypress="return infraMascaraTexto(this,event, 15);"
+                    onkeypress="return infraMascaraNumero(this,event, 9);" onchange="return controlarMascaraCep(this);"
                     onkeyup="return infraMascara(this, event, '#####-###');"
                     readonly 
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>

@@ -59,6 +59,7 @@ try {
   }
   $objDTOVinculo->setStrStaEstado('A');
   $objDTOVinculo->setStrSinAtivo('S');
+  $objDTOVinculo->setStrTpVinc('J');
   $objDTOVinculo->setDistinct(true);
   $objDTOVinculo->retStrRazaoSocialNomeVinc();
   $objDTOVinculo->retStrCNPJ();

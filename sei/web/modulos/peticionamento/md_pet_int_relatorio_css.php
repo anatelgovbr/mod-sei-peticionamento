@@ -248,13 +248,13 @@ width: 100%
 #lblSituacao
 {
 position: absolute;
-top: 77%;
+top: 83%;
 }
 
 #selSituacao
 {
 position: absolute;
-top: 81%;
+top: 87%;
 }
 
 #lblPeriodo

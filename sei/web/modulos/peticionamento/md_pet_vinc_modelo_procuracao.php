@@ -48,36 +48,38 @@
     <table align="center" style="width: 90%;" class="Tabela_Justificado_Negrito" border=0>
         <tbody>
         <tr>
-            <td style="width: 220px" class="tdTabulacao">Pessoa Jurídica Outorgante:</td>
-            <td style="font-weight: normal;">@RazaoSocial</td>
+            <td style="width: 220px;" class="tdTabulacao">Pessoa Jurídica Outorgante:</td>
+            <td style="font-weight: normal;"> @RazaoSocial </td>
         </tr>
         <tr>
             <td class="tdTabulacao">CNPJ:</td>
-            <td style="font-weight: normal;">@Cnpj</td>
+            <td style="font-weight: normal;"> @Cnpj </td>
         </tr>
         <tr>
             <td class="tdTabulacao">Responsável Legal:</td>
-			<td style="font-weight: normal;">@nomeRespLegal</td>
+            <td style="font-weight: normal;">  @nomeRespLegal </td>
         </tr>
-        <tr><tr><td class="clear">&nbsp;</td></tr></tr>
+       
         <tr>
             <td class="tdTabulacao">Outorgado:</td>
-			<td style="font-weight: normal;">@nomeOutorgado</td>
+            <td style="font-weight: normal;"> @nomeOutorgado </td>
         </tr>
-        <tr><tr><td class="clear">&nbsp;</td></tr></tr>
         </tbody>
     </table>
 </div>
+
 <div>
-<p class="Texto_Justificado">No âmbito do(a) @sigla_orgao@, a presente Procuração Eletrônica Especial concede ao Outorgado poderes para:</p>
+<p class="Texto_Justificado">A presente Procuração Eletrônica Especial concede, no âmbito do(a) @sigla_orgao@, ao Usuário Externo acima indicado como Outorgado poderes para:</p>
 <label>
     <ol>
-        <li><p class="Texto_Justificado" style="margin: 0">Gerenciar o cadastro da Pessoa Jurídica Outorgante;</p></li>
-        <li><p class="Texto_Justificado" style="margin: 0">Receber Intimações Eletrônicas e realizar Peticionamento Eletrônico em nome da Pessoa Jurídica Outorgante, com todos os poderes previstos no sistema;</p></li>
-        <li><p class="Texto_Justificado" style="margin: 0">Conceder Procurações Eletrônicas a outros Usuários Externos, em âmbito geral ou para processos específicos, conforme poderes estabelecidos, para representação da Pessoa Jurídica Outorgante, bem como revogá-las quando lhe convier.</p></li>
+        <li><p class="Texto_Justificado" style="margin: 0">Gerenciar o cadastro da Pessoa Jurídica Outorgante.</p></li>
+        <li><p class="Texto_Justificado" style="margin: 0">Receber, Cumprir e Responder Intimações Eletrônicas e realizar Peticionamento Eletrônico em nome da Pessoa Jurídica Outorgante.</p></li>
+        <li><p class="Texto_Justificado" style="margin: 0">Representar a Pessoa Jurídica Outorgante com todos os poderes previstos no sistema, inclusive no substabelecimento ao emitir Procurações Eletrônicas.</p></li>
+        <li><p class="Texto_Justificado" style="margin: 0">Substabelecer os poderes outorgados pela presente Procuração, ao conceder Procurações Eletrônicas a outros Usuários Externos, em âmbito geral ou para processos específicos, conforme poderes definidos, para representação da Pessoa Jurídica Outorgante.</p></li>
     </ol>
 </label>
 </div>
+
 <div>
 <p class="Texto_Justificado">O Responsável Legal da Pessoa Jurídica Outorgante se declarou ciente de que:</p>
 <label>
@@ -88,4 +90,5 @@
     </ul>
 </label>
 </div>
-<p class="Texto_Justificado">A existência desta Procuração Eletrônica Especial pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>
+
+<p class="Texto_Justificado">A existência e validade desta Procuração Eletrônica Especial pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>

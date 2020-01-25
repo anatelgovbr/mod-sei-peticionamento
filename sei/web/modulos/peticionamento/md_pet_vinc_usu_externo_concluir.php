@@ -64,7 +64,7 @@ try {
         $dados = $_POST;
         $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
         $dados['idContato'] = $idContato;
-
+        
         $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
 //        $vincularProcuracao = $objMdPetVinculoUsuExtRN->gerarProcuracao($_POST);
 

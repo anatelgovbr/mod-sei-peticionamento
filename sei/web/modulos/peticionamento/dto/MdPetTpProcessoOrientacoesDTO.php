@@ -16,9 +16,10 @@ class MdPetTpProcessoOrientacoesDTO extends InfraDTO  {
 	
 	
 	public function montar() {
-	
+
+
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
-				'IdTipoProcessoOrientacoesPeticionamento',
+				'IdTipoProcessoOrientacoesPet',
 				'id_md_pet_tp_proc_orientacoes');
 	
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
@@ -29,7 +30,7 @@ class MdPetTpProcessoOrientacoesDTO extends InfraDTO  {
 				'IdConjuntoEstilos',
 				'id_conjunto_estilos');
 		
-		$this->configurarPK('IdTipoProcessoOrientacoesPeticionamento', InfraDTO::$TIPO_PK_INFORMADO);
+		$this->configurarPK('IdTipoProcessoOrientacoesPet', InfraDTO::$TIPO_PK_INFORMADO);
 	
 	}}
 ?>

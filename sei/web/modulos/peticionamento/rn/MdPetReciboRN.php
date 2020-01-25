@@ -9,21 +9,38 @@
 require_once dirname(__FILE__).'/../../../SEI.php';
 
 class MdPetReciboRN extends InfraRN {
-	
-	public static $TP_RECIBO_NOVO = 'N';
-	public static $TP_RECIBO_INTERCORRENTE = 'I';
-	public static $TP_RECIBO_RESPOSTA_INTIMACAO = 'R';
-	public static $TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL = 'V';
-        public static $TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO = 'A';
-        public static $TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS = 'C';
-        public static $TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO = 'P';
-        public static $TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO = 'G';
-        public static $TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA = 'U';
+
+    public static $TP_RECIBO_NOVO = 'N';
+    public static $STR_TP_RECIBO_NOVO = 'Processo Novo';
+
+    public static $TP_RECIBO_INTERCORRENTE = 'I';
+    public static $STR_TP_RECIBO_INTERCORRENTE = 'Intercorrente';
+
+    public static $TP_RECIBO_RESPOSTA_INTIMACAO = 'R';
+    public static $STR_TP_RECIBO_RESPOSTA_INTIMACAO = 'Resposta a Intimação';
+
+    public static $TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL = 'V';
+    public static $STR_TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL = 'Responsável Legal - Inicial';
+
+    public static $TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO = 'A';
+    public static $STR_TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO = 'Responsável Legal - Alteração';
+
+    public static $TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS = 'C';
+    public static $STR_TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS = 'Atualização de Atos Constitutivos';
+
+    public static $TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO = 'P';
+    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO = 'Procuração Eletrônica - Emissão';
+
+    public static $TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO = 'G';
+    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO = 'Procuração Eletrônica - Revogação';
+
+    public static $TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA = 'U';
+    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA = 'Procuração Eletrônica - Renúncia';
 
 	public function __construct() {
 		parent::__construct ();
 	}
-	
+
 	protected function inicializarObjInfraIBanco() {
 		return BancoSEI::getInstance ();
 	}
@@ -216,7 +233,7 @@ class MdPetReciboRN extends InfraRN {
 				
 		$htmlRecibo = $this->gerarHTMLConteudoDocRecibo( $arrParams );
 
-		$idSerieRecibo = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+		$idSerieRecibo = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
 
 		//==========================================================================
 		//incluindo doc recibo no processo via SEIRN

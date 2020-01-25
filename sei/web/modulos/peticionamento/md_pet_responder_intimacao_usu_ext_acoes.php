@@ -8,11 +8,13 @@ switch ($_GET['acao']) {
             $arrComandos[] = '<button type="button" accesskey="P" name="btnResponder"  onclick = "responderIntimacao()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" id="btnFechar" class="infraButton" onclick="fechar()">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
-            $idProcedimento   = $_GET['id_procedimento'];
             $idMdPetIntimacao = $_GET['id_intimacao'][0];
+
+            $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+            $idProcedimento = $objMdPetIntimacaoRN->getIdProcedimentoPorIntimacao($idMdPetIntimacao);
             $idMdPetIntAceite = $_GET['id_aceite'][0];
             $idAceite = $_GET['id_aceite'];
-            
+
             $objProcedimentoDTO = new ProcedimentoDTO();
             $objProcedimentoDTO->setDblIdProcedimento($idProcedimento);
             $objProcedimentoDTO->retNumIdTipoProcedimento();
@@ -35,7 +37,6 @@ switch ($_GET['acao']) {
 
             $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
             $exibirHipoteseLegal = $objMdPetIntDestRespostaRN->verificarHipoteseLegal();
-            
             $arrHipoteseNivel = $objMdPetIntDestRespostaRN->verificarCriterioIntercorrente($idTipoProcedimento);
            
             $selHipoteseLegal = MdPetIntercorrenteINT::montarSelectHipoteseLegalRespostaIntimacao();

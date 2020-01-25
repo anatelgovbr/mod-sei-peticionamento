@@ -15,7 +15,7 @@ class MdPetVincRepresentantRN extends InfraRN {
   public static $PE_RESPONSAVEL_LEGAL = 'L';
   public static $PE_PROCURADOR_ESPECIAL = 'E';
   public static $PE_PROCURADOR = 'C';
-  public static $PE_PROCURADOR_SUBSTALECIDO = 'S';
+  public static $PE_PROCURADOR_SIMPLES = 'S';
 
   //Representação - Estado
   public static $RP_ATIVO = 'A';
@@ -24,6 +24,10 @@ class MdPetVincRepresentantRN extends InfraRN {
   public static $RP_RENUNCIADA = 'C';
   public static $RP_VENCIDA = 'V';
   public static $RP_SUBSTITUIDA = 'T';
+
+  //Abrangência
+  public static $PR_ESPECIFICO = 'E';
+  public static $PR_QUALQUER = 'Q';
 
   public function __construct(){
     parent::__construct();
@@ -641,7 +645,7 @@ class MdPetVincRepresentantRN extends InfraRN {
     $idVinculo = array_key_exists(0, $arrParam) ? $arrParam[0] : null;
     $ativo     = array_key_exists(1, $arrParam) ? $arrParam[1] : true; //true=Ativo false=Ativo e Inativo
     $estado    = array_key_exists(2, $arrParam) ? $arrParam[2] : true; //true=Ativo false=Suspenso
-
+    
     $idRepresentantes = null;
     $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
     $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
@@ -681,7 +685,7 @@ class MdPetVincRepresentantRN extends InfraRN {
     if(count($arrObj)>0){
       $idRepresentantes = InfraArray::converterArrInfraDTO($arrObj, 'IdMdPetVinculoRepresent');
     }
-
+    
     return $idRepresentantes;
   }
 
@@ -711,6 +715,7 @@ class MdPetVincRepresentantRN extends InfraRN {
     
     return $idsContatos;
   }
+
 
   public function getResponsavelLegalConectado($arrParam){
 

@@ -518,12 +518,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN {
 					if($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR){
 						$arrDadosEmail['tpVinc']         = "Procurador";
 					}
-					if($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SUBSTALECIDO){
-						$arrDadosEmail['tpVinc']         = "Procurador Substalecido";
-					}
 					
 					
-
 					//Recuperando a pessoa relacionada a empresa // FIM
 					
 					$objUsuarioDTO = new UsuarioDTO();

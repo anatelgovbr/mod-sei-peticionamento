@@ -2458,12 +2458,12 @@ try {
 			$this->logar('CRIANDO A TABELA md_pet_adm_tipo_poder');
 
 			$sql_tabelas = 'CREATE TABLE md_pet_adm_tipo_poder (
-				  id_md_pet_tipo_poder ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
-				  nome ' . $objInfraMetaBD->tipoTextoVariavel(255) . ' NOT NULL,
-				  sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ',
-				  data_cadastro ' . $objInfraMetaBD->tipoDataHora() . ',
-				  sta_sistema ' . $objInfraMetaBD->tipoTextoFixo(1) . '
-				  )';
+			id_md_pet_tipo_poder ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL ,
+			nome ' . $objInfraMetaBD->tipoTextoVariavel(255) . ' NOT NULL,
+			sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ',
+			data_cadastro ' . $objInfraMetaBD->tipoDataHora() . ',
+			sta_sistema ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL
+			)';
 
 			BancoSEI::getInstance()->executarSql($sql_tabelas);
 			$objInfraMetaBD->adicionarChavePrimaria('md_pet_adm_tipo_poder', 'pk_md_pet_adm_tipo_poder', array('id_md_pet_tipo_poder'));

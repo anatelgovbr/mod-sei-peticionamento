@@ -372,106 +372,79 @@ class MdPetCriterioRN extends InfraRN
         }
     }
 
+    private function _getCriterioTipoDeProcessoValidado($idTpProcedimento){
+        $objMdPetCriterioDTO = new MdPetCriterioDTO();
+        $objMdPetCriterioDTO->setNumIdTipoProcedimento($idTpProcedimento);
+        $objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
+        $objMdPetCriterioDTO->setStrSinAtivo('S');
+        $objMdPetCriterioDTO->retTodos();
+        $objMdPetCriterioDTO->setNumMaxRegistrosRetorno(1);
+
+        if($this->contar($objMdPetCriterioDTO) > 0 ) {
+            $objMdPetCriterioDTO = $this->consultar($objMdPetCriterioDTO);
+            return $objMdPetCriterioDTO;
+        }
+
+        return null;
+    }
+
+    private function _validarRetornarExistenciaCriterioPadrao(){
+        $objMdPetCriterioPadraoDTO = new MdPetCriterioDTO();
+        $objMdPetCriterioPadraoDTO->setStrSinCriterioPadrao('S');
+        $objMdPetCriterioPadraoDTO->retTodos();
+
+        if($this->contar($objMdPetCriterioPadraoDTO) == 0) {
+            $objInfraException = new InfraException();
+            $objInfraException->lancarValidacao('Nenhum critério para Intercorrente foi encontrado para o Tipo de Processo informado.');
+        }else{
+            $objMdPetCriterioPadraoDTO->setNumMaxRegistrosRetorno(1);
+            return $this->consultar($objMdPetCriterioPadraoDTO);
+        }
+    }
+
     protected function retornarCriterioPorTipoProcessoConectado($arrParametro)
     {
         try {
-            
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_consultar', __METHOD__, $objMdPetCriterioDTO);
+
+            $isNovoRelacionado = false;
             $idTpProcedimento = $arrParametro['id_tipo_procedimento'];
-            $isRespostaIntercorrente = $arrParametro['isRespostaIntercorrente'];
-            $sta_estado_protocolo = $arrParametro['sta_estado_protocolo'];
+            $isIntercorrente = $arrParametro['isRespostaIntercorrente'];
+            $staEstadoProtocolo = $arrParametro['sta_estado_protocolo'];
 
-            $objMdPetCriterioDTO = new MdPetCriterioDTO();
-            $objMdPetCriterioRN = new MdPetCriterioRN();
-           
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_consultar', __METHOD__, $objCriterioIntercorrenteDTO);
+            $idsEstadosProcessosImpedidos = array(ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO, ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO);
 
-            //Restrição de PRocesso
-            
-            $objProtocoloDTO = new ProtocoloDTO();
-            $objProtocoloDTO->setDblIdProtocolo($arrParametro['id_procedimento']);
-            $objProtocoloDTO->retNumIdUnidadeGeradora();
-            $objProtocoloRN = new ProtocoloRN();
-            $objProtocoloRN = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
-            $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
-            $objTipoProcedRestricaoDTO->setNumIdTipoProcedimento($idTpProcedimento);
-            $objTipoProcedRestricaoDTO->retNumIdUnidade();
-            $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
-            $objTipoProcedRestricaoRN = $objTipoProcedRestricaoRN->listar($objTipoProcedRestricaoDTO);
-            $objTipoProcedRestricaoRN = InfraArray::converterArrInfraDTO($objTipoProcedRestricaoRN,'IdUnidade');
-          
-            if(count(array_filter($objTipoProcedRestricaoRN))){
-                if(in_array($objProtocoloRN->getNumIdUnidadeGeradora(),$objTipoProcedRestricaoRN)){
-                    //Não Aplica Restrição
-                    $acesso = "I";
-            
-                }else{
-                    //Aplica Restrição
-                    $acesso = "true";
-                
-                }
-            }else{
-                $acesso = "I";
-            }
-            
-            
-            //FIM - Restrição de PRocesso
-            // Verifica se o processo possui critério intercorrente cadastrado
-            $objMdPetCriterioDTO->retTodos();
-            $objMdPetCriterioDTO->retStrTipoProcessoSinAtivo();
-            $objMdPetCriterioDTO->setNumIdTipoProcedimento($idTpProcedimento);
-            $objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
-            $objMdPetCriterioDTO->setStrSinAtivo('S');
+            //Se o protocolo do processo está com estado BLOQUEADO ou SOBRESTADO é novo relacionado
+            if (in_array($staEstadoProtocolo, $idsEstadosProcessosImpedidos)) {
+                $isNovoRelacionado = true;
+            } else {
 
-            if(!$isRespostaIntercorrente) {
-                // se o criterio estiver apontando para um tipo de processo que foi desativado nao trazer ele
-                $objMdPetCriterioDTO->setStrTipoProcessoSinAtivo('S');
-
-                $arrObjCriterioIntercorrenteDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
-            }else{
-
-                $arrObjCriterioIntercorrenteDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
-
-                //Se possui critério mas o estado é BLOQUEADO ou SOBRESTADO + Tipo de Procedimento está INATIVO
-                if (count($arrObjCriterioIntercorrenteDTO)>=0) {
-                    $ret = $arrObjCriterioIntercorrenteDTO[0];
-
-                    if( ($sta_estado_protocolo == ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO || $sta_estado_protocolo == ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO)
-                        && $ret->getStrTipoProcessoSinAtivo() == 'N'
-                    ){
-                        $arrObjCriterioIntercorrenteDTO = null;
-                    }
-                }
-            }
-        
-            //Se não possui busca o padrão e cria um processo relacionado ao processo selecionado
-            if (count($arrObjCriterioIntercorrenteDTO) > 0 && $acesso == "I") {
-             
-                $ret = $arrObjCriterioIntercorrenteDTO[0];
-            }
-             else if(count($arrObjCriterioIntercorrenteDTO) >= 0 || $acesso == "true") {
-              
-                $objMdPetCriterioPadraoDTO = new MdPetCriterioDTO();
-                $objMdPetCriterioPadraoDTO->setStrSinCriterioPadrao('S');
-                $objMdPetCriterioPadraoDTO->retTodos();
-                $arrObjCriterioIntercorrenteDTO = $objMdPetCriterioRN->listar($objMdPetCriterioPadraoDTO);
-               
-                
-                if (count($arrObjCriterioIntercorrenteDTO) <= 0) {
-                    $objInfraException = new InfraException();
-                    $objInfraException->lancarValidacao('Nenhum critério para Intercorrente Foi encontrado para o Tipo de Processo informado.');
-                    //throw new InfraException ('Nenhum critério para Intercorrente Foi encontrado para o Tipo de Processo informado.');
+                //Se o protocolo está com outro estado será utilizado o Critério para Intercorrente Configurado(quando não for RESPOSTA)
+                if ($isIntercorrente) {
+                    $objCriterioConfiguradoDTO = $this->_getCriterioTipoDeProcessoValidado($idTpProcedimento);
                 }
 
-                $ret = $arrObjCriterioIntercorrenteDTO[0];
-
+                //Se NÃO existe critério intercorrente configurado para o tipo de processo
+                //ou se for resposta da intimação deve realizar o processo em novo relacionado
+                if (is_null($objCriterioConfiguradoDTO)) {
+                    $isNovoRelacionado = true;
+                }
             }
-            
-            return $ret;
+
+            if ($isNovoRelacionado) {
+                $objCriterioPadraoDTO = $this->_validarRetornarExistenciaCriterioPadrao();
+                return $objCriterioPadraoDTO;
+            }
+
+            return $objCriterioConfiguradoDTO;
 
         } catch (Exception $e) {
             throw new InfraException('Erro consultando', $e);
         }
     }
+
+
+
 
     protected function retornarCriterioPorTipoProcessoEPadraoConectado($idTpProcedimento, $padrao = 'N')
     {

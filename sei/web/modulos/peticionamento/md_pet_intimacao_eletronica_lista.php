@@ -11,6 +11,8 @@ require_once dirname(__FILE__) . '/../../SEI.php';
 session_start();
 SessaoSEI::getInstance()->validarLink();
 PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
+ini_set('max_execution_time', '0');
+ini_set('memory_limit', '1024M');
 
 //Acao única
 $acaoPrincipal = 'md_pet_intimacao_eletronica_listar';

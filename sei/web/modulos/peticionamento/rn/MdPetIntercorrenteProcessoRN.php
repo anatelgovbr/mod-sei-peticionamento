@@ -125,6 +125,19 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		return $idUnidadeReabrirProcesso;
 	}
 
+	private function _getObjUnidadePorId($idUnidade, $getUndInativas = true){
+        $objUnidadeDTO = new UnidadeDTO();
+        $objUnidadeDTO->retTodos();
+        if($getUndInativas) {
+            $objUnidadeDTO->setBolExclusaoLogica(false);
+        }
+        $objUnidadeDTO->setNumIdUnidade($idUnidade);
+        $objUnidadeRN = new UnidadeRN();
+        $objDTORetorno = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+
+        return $objDTORetorno;
+    }
+
 	protected function gerarProcedimentoApi($params)
 	{
 
@@ -160,26 +173,27 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 		}else{
 			$idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
+			//var_dump('aqui');
 		}
 
-		// inicio da verificação da unidade ativa, caso não esteja tenta buscar uma unidade ativa para reabrir o processo.
-		$unidadeDTO = new UnidadeDTO();
-		$unidadeDTO->retTodos();
-		$unidadeDTO->setBolExclusaoLogica(false);
-		$unidadeDTO->setNumIdUnidade($idUnidadeAbrirNovoProcesso);
-		$unidadeRN = new UnidadeRN();
-		$objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+		//Se não existe Unidade em Aberto, busca pelas Concluídas
+		if(is_null($idUnidadeAbrirNovoProcesso)) {
+                $idUnidadeAbrirNovoProcesso =  $this->_getUnidadesProcessoConcluido($objProcedimentoDTO->getDblIdProcedimento());
+        }else{
+            // inicio da verificação da unidade ativa, caso não esteja tenta buscar uma unidade ativa para reabrir o processo.
+            $objUnidadeDTO = $this->_getObjUnidadePorId($idUnidadeAbrirNovoProcesso);
 
-		if(!$objUnidadeDTO || $objUnidadeDTO->getStrSinAtivo() == 'N'){
-			$idUnidadeAbrirNovoProcesso = null;
-			$objAtividadeRN  = new MdPetIntercorrenteAtividadeRN();
-			$arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
+            if ($objUnidadeDTO->getStrSinAtivo() == 'N') {
+                $idUnidadeAbrirNovoProcesso = null;
+                $objAtividadeRN = new MdPetIntercorrenteAtividadeRN();
+                $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
 
-			foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
-				if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
-					$idUnidadeAbrirNovoProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
-				}
-			}
+                foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
+                    if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
+                        $idUnidadeAbrirNovoProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
+                    }
+                }
+            }
 		}
 
 
@@ -205,21 +219,13 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$objTipoProcedimentoDTO->setDistinct(true);
 		$objTipoProcedimentoDTO->retStrSinAtivo();
 		$objTipoProcedimentoDTO->setNumIdTipoProcedimento($objProcedimentoDTO->getNumIdTipoProcedimento());
-
+        $objTipoProcedimentoDTO->setNumMaxRegistrosRetorno(1);
 		$objTipoProcedimentoRN = new TipoProcedimentoRN();
-		$arrObjTipoProcedimentoDTO = $objTipoProcedimentoRN->listarRN0244($objTipoProcedimentoDTO);
+		$objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
 
-		if (count($arrObjTipoProcedimentoDTO)==1 && $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao()!='S') {
-			$objTipoProcedimentoDTO = $arrObjTipoProcedimentoDTO[0];
-			if ($objTipoProcedimentoDTO->getStrSinAtivo()=='S'){
-				$objProcedimentoAPI->setIdTipoProcedimento($objProcedimentoDTO->getNumIdTipoProcedimento());
-			}else{
-				$objProcedimentoAPI->setIdTipoProcedimento($objCriterioIntercorrenteDTO->getNumIdTipoProcedimento());
-			}
-		}else{
-			$objProcedimentoAPI->setIdTipoProcedimento($objCriterioIntercorrenteDTO->getNumIdTipoProcedimento());
-		}
-		// Tipo Procedimento - fim
+		$intTipoProcesso = $this->_definirTipoProcesso($objTipoProcedimentoDTO, $objCriterioIntercorrenteDTO, $objProcedimentoDTO, $idUnidadeAbrirNovoProcesso);
+
+        $objProcedimentoAPI->setIdTipoProcedimento($intTipoProcesso);
 
 		if ($especificacao!=null){
 			$objProcedimentoAPI->setEspecificacao( $especificacao );
@@ -231,6 +237,74 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 		$objSEIRN = new SeiRN();
 		return $objSEIRN->gerarProcedimento($objEntradaGerarProcedimentoAPI);
 	}
+
+    private function _getUnidadesProcessoConcluido($idProcedimento)
+    {
+
+        $idUnidadeReabrirProcesso = null;
+        $objAtividadeRN = new AtividadeRN();
+        $objAtividadeDTO = new MdPetAtividadeIntercorrenteDTO();
+        $objAtividadeDTO->setDblIdProcedimentoProtocolo($idProcedimento);
+        $objAtividadeDTO->retDthConclusao();
+        $objAtividadeDTO->retNumIdUnidade();
+
+        //Busca somente as Unidades Ativas
+        $objAtividadeDTO->setStrSinAtivoUnidade('S');
+        $objAtividadeDTO->setOrdDthConclusao(InfraDTO::$TIPO_ORDENACAO_DESC);
+        $objAtividadeDTO->setNumIdTarefa(array(TarefaRN::$TI_CONCLUSAO_PROCESSO_UNIDADE, TarefaRN::$TI_CONCLUSAO_AUTOMATICA_UNIDADE, TarefaRN::$TI_CONCLUSAO_PROCESSO_USUARIO), InfraDTO::$OPER_IN);
+        $objAtividadeDTO->setNumMaxRegistrosRetorno(1);
+
+        if($objAtividadeRN->contarRN0035($objAtividadeDTO) > 0) {
+            $objDTO = $objAtividadeRN->consultarRN0033($objAtividadeDTO);
+            $idUnidadeReabrirProcesso = $objDTO->getNumIdUnidade();
+        }
+
+        return $idUnidadeReabrirProcesso;
+    }
+
+	private function _verifUnidadePossuiPermissaoAberturaTipoProcesso($idTpProcedimento, $idUnidadeAbertura){
+
+
+        $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
+        $objTipoProcedRestricaoDTO->setNumIdTipoProcedimento($idTpProcedimento);
+        $objTipoProcedRestricaoDTO->retNumIdUnidade();
+        $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
+
+        //Se não encontrar nenhuma restrição é porque está liberado para todas.
+        if($objTipoProcedRestricaoRN->contar($objTipoProcedRestricaoDTO) == 0){
+            return true;
+        }
+
+        //Se a Unidade estiver nula é porque pode ser Utilizada em qualquer uma do orgão em questão
+        $objTipoProcedRestricaoDTO->setNumMaxRegistrosRetorno(1);
+        $objDTO = $objTipoProcedRestricaoRN->consultar($objTipoProcedRestricaoDTO);
+        if(is_null($objDTO->getNumIdUnidade())){
+            return true;
+        }
+
+        //Se não, verifica se a Unidade em Questão possui autorização para o Tipo de Processo
+        $objTipoProcedRestricaoDTO->setNumIdUnidade($idUnidadeAbertura);
+        if($objTipoProcedRestricaoRN->contar($objTipoProcedRestricaoDTO) > 0){
+            return true;
+        }
+
+        return false;
+    }
+
+	private function _definirTipoProcesso($objTipoProcedimentoDTO, $objCriterioIntercorrenteDTO, $objProcedimentoDTO, $idUnidade){
+	    $intIdProcedimento        = null;
+        $idTipoProcCriterioPadrao = $objCriterioIntercorrenteDTO->getNumIdTipoProcedimento();
+        $idTipoProcIgualIndicado  =  $objProcedimentoDTO->getNumIdTipoProcedimento();
+        $isTipoProcessoLiberado   = $this->_verifUnidadePossuiPermissaoAberturaTipoProcesso($idTipoProcIgualIndicado, $idUnidade);
+
+        if ($objTipoProcedimentoDTO->getStrSinAtivo() == 'S') {
+            $intIdProcedimento = $isTipoProcessoLiberado ? $idTipoProcIgualIndicado : $idTipoProcCriterioPadrao;
+        } else {
+            $intIdProcedimento = $idTipoProcCriterioPadrao;
+        }
+
+	    return $intIdProcedimento;
+    }
 
 	/**
 	 * Função responsável por Retornar a última unidade em que o processo ESTÁ aberto agora
@@ -323,6 +397,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 						$arrUnidadeAndamento[1] = $arrIdUsuarioAtribuicao[$idUnidadeAndamento];
 						$idUnidadeAndamento = $arrUnidadeAndamento;
 					}
+
+
 					return $idUnidadeAndamento;
 				}
 			}
@@ -831,7 +907,6 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 		if (!$params['isRespostaIntimacao'] == true && (($params['isRespostaIntercorrente'] == true  && $objCriterioIntercorrenteDTO->getStrSinAtivo() == "N") || $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S'
 			|| in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado))) {
-		
 			$especificacao = 'Peticionamento Intercorrente relacionado ao Processo nº ' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
 			$objSaidaGerarProcedimentoAPI = $this->gerarProcedimentoApi(array($objProcedimentoDTO, $objCriterioIntercorrenteDTO, $especificacao));
 
@@ -843,7 +918,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 			//SE o criterio existe, e NAO é o criterio padrao, tenta incluir documento no proprio processo (caso o mesmo esteja aberto) ou reabrir o processo (caso o mesmo esteja fechado)
 		}else if( $params['isRespostaIntimacao'] == true || ($objCriterioIntercorrenteDTO != null && $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'N')) {
-		
+
 			//se for intimação
 			if( isset($params['isRespostaIntimacao']) ){
 				$objMdPetIntimacaoRN = new MdPetIntimacaoRN();
@@ -868,6 +943,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 				}
 				//se for necessario, executar reabertura do processo
 			}else{
+
 				$reaberturaRN = new MdPetIntercorrenteReaberturaRN();
 
 				if( $reaberturaRN->isNecessarioReabrirProcedimento( $objProcedimentoDTO ) ) {
@@ -915,8 +991,10 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 			}
 			// 2) Última aberta
 		}else if (count($arrUnidadeProcesso)==0){
+
 			$arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto( array($this->getProcedimentoDTO()->getDblIdProcedimento()) );
 		}
+
 
 		$idUnidadeProcesso = null;
 		$idUsuarioAtribuicao = null;

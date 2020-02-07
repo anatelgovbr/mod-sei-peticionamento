@@ -34,7 +34,7 @@ if ($numRegistros > 0) {
     $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Anexos', 'Anexos', $arrObjResultDTO). '</th>';
 
     //Destinatario
-    $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo Destinatário', 'SinPessoaJuridica', $arrObjResultDTO). '</th>';
+    $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo de Destinatário', 'SinPessoaJuridica', $arrObjResultDTO). '</th>';
 
     //Tipo Destinatario
     $strResultado .= '<th class="infraTh" width="300px;">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Destinatário', 'NomeContato', $arrObjResultDTO). '</th>';

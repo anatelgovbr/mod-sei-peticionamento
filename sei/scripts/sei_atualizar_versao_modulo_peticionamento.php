@@ -2483,7 +2483,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             nome ' . $objInfraMetaBD->tipoTextoVariavel(255) . ' NOT NULL,
             sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ',
             data_cadastro ' . $objInfraMetaBD->tipoDataHora() . ',
-            sta_sistema ' . $objInfraMetaBD->tipoTextoFixo(1) . '
+            sta_sistema ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL
             )';
 
             BancoSEI::getInstance()->executarSql($sql_tabelas);

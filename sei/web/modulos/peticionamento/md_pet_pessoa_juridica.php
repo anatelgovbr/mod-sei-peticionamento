@@ -64,19 +64,18 @@ try {
   $objDTOVinculo->retStrRazaoSocialNomeVinc();
   $objDTOVinculo->retStrCNPJ();
   $objRNVinculo = new MdPetVincRepresentantRN();
-  $arrJuridicas = $objRNVinculo->listar($objDTOVinculo);
-
-
-  //Ordenação
 
   PaginaSEI::getInstance()->prepararOrdenacao($objDTOVinculo, 'RazaoSocialNomeVinc', InfraDTO::$TIPO_ORDENACAO_ASC);
-  
+
   PaginaSEI::getInstance()->prepararPaginacao($objDTOVinculo);
+
+  $arrJuridicas = $objRNVinculo->listar($objDTOVinculo);
+
+  //Ordenação
 
   PaginaSEI::getInstance()->processarPaginacao($objDTOVinculo);
   
   $numRegistros = count($arrJuridicas);
-
 
 
   if ($numRegistros > 0){
@@ -165,10 +164,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   ?>
   
   <label id="lblRazao" for="txtRazao" accesskey="" class="infraLabelOpcional">Razão Social:</label>
-  <input type="text" id="txtRazao" name="txtRazao"  class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+  <input type="text" id="txtRazao" name="txtRazao"  class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"  value="<?php echo array_key_exists('txtRazao', $_POST) ? $_POST['txtRazao'] : '' ?>"/>
 
    <label id="lblCnpj" for="txtCnpj" accesskey="" class="infraLabelOpcional">CNPJ:</label>
-  <input type="text" id="txtCnpj" name="txtCnpj" onkeypress="return infraMascaraCnpj(this, event)"  class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+  <input type="text" value="<?php echo array_key_exists('txtCnpj', $_POST) ? $_POST['txtCnpj'] : '' ?>" id="txtCnpj" name="txtCnpj" onkeypress="return infraMascaraCnpj(this, event)"  class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
   <?
   PaginaSEI::getInstance()->fecharAreaDados();

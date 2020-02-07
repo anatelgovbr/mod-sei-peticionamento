@@ -25,9 +25,10 @@ class MdPetIntercorrenteAtividadeRN extends AtividadeRN {
 			$objAtividadeDTO->retStrDescricaoUnidade();
 
 			$objAtividadeDTO->setNumIdTarefa(array(TarefaRN::$TI_GERACAO_PROCEDIMENTO,
-                                                 TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE,
-                                                 TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL,
-                                                 TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL_ANULADA),InfraDTO::$OPER_IN);
+                                                   TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE,
+                                                   TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE,
+                                                   TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL,
+                                                   TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL_ANULADA),InfraDTO::$OPER_IN);
 
             if($objProcedimentoDTO->getStrStaEstadoProtocolo() == 3){
                 $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();

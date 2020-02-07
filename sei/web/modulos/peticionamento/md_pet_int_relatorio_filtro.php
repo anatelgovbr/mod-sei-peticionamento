@@ -94,8 +94,8 @@
 <div class="clear altura2"></div>
 
 <!--  Tipo Destinatario  -->
-<label  id="lblTpDest" name="lblTpDest" style="position: absolute;top: 74%;" class="infraLabelObrigatorio">Tipo de Destinatário</label>
-<select id="selTipoDest"  name="selTipoDest" style="position: absolute;top: 78%;"  class="infraSelect" tabindex="504">
+<label  id="lblTpDest" name="lblTpDest" style="position: absolute; top: 75%;" class="infraLabelObrigatorio">Tipo de Destinatário:</label>
+<select id="selTipoDest"  name="selTipoDest" style="position: absolute; top: 79%; width: 142px;"  class="infraSelect" tabindex="504">
 <?php if($_POST['selTipoDest'] == ""){ ?>
 <option value="" selected>Todos</option>
 <option value="N"> Pessoa Física </option>

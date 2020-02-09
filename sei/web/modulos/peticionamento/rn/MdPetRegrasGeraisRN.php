@@ -909,5 +909,24 @@ class MdPetRegrasGeraisRN extends InfraRN
         return $strRetorno;
     }
 
+    public function getObjUnidadePorId($idUnidade, $getUndInativas = true){
+        try {
+            if(!is_null($idUnidade)) {
+                $objUnidadeDTO = new UnidadeDTO();
+                $objUnidadeDTO->retTodos();
+                if ($getUndInativas) {
+                    $objUnidadeDTO->setBolExclusaoLogica(false);
+                }
+                $objUnidadeDTO->setNumIdUnidade($idUnidade);
+                $objUnidadeRN = new UnidadeRN();
+                $objDTORetorno = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+
+                return $objDTORetorno;
+            }
+        }catch(Exception $e){
+            throw new InfraException('Não foi consultar a Unidade.',$e);
+        }
+    }
+
 
 }

@@ -41,7 +41,7 @@ try {
 				
 			$objEditorDTO->setStrNomeCampo('txaConteudo');
 			$objEditorDTO->setStrSinSomenteLeitura('N');
-			$objEditorDTO->setNumTamanhoEditor(220);
+			$objEditorDTO->setNumTamanhoEditor(400);
 			$retEditor = $objEditorRN->montarSimples($objEditorDTO);
 			
 			$txtConteudo = $_POST['txaConteudo'];
@@ -102,7 +102,7 @@ try {
 			
 			$objEditorDTO->setStrNomeCampo('txaConteudo');
 			$objEditorDTO->setStrSinSomenteLeitura('N');
-			$objEditorDTO->setNumTamanhoEditor(220);
+			$objEditorDTO->setNumTamanhoEditor(400);
 			$retEditor = $objEditorRN->montarSimples($objEditorDTO);			
 			
 			$objMdPetMenuUsuarioExternoDTO2 = new MdPetMenuUsuarioExternoDTO();
@@ -182,7 +182,7 @@ try {
 			
 			$objEditorDTO->setStrNomeCampo('txaConteudo');
 			$objEditorDTO->setStrSinSomenteLeitura('N');
-			$objEditorDTO->setNumTamanhoEditor(220);
+			$objEditorDTO->setNumTamanhoEditor(400);
 			$retEditor = $objEditorRN->montarSimples($objEditorDTO);			
 			
 			$objMdPetMenuUsuarioExternoDTO2 = new MdPetMenuUsuarioExternoDTO();
@@ -415,7 +415,7 @@ PaginaSEI::getInstance()->fecharAreaDados();
   <table id="tbConteudo" style="width: 100%; display: none;">
     <td style="width: 95%">
       <div id="divEditores" style="">
-        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> rows="20" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
+        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
         <script type="text/javascript">
           <?=$retEditor->getStrEditores();?>
         </script>

@@ -345,8 +345,6 @@ class MdPetCriterioRN extends InfraRN
         return $valorParametroHipoteseLegal;
     }
 
-
-
     /**
      * Short description of method consultarConectado
      *
@@ -442,9 +440,6 @@ class MdPetCriterioRN extends InfraRN
             throw new InfraException('Erro consultando', $e);
         }
     }
-
-
-
 
     protected function retornarCriterioPorTipoProcessoEPadraoConectado($idTpProcedimento, $padrao = 'N')
     {

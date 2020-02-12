@@ -49,6 +49,9 @@ $objRN = new MdPetIntRelDestinatarioRN();
 $arrDados = $objRN->listarDadosUsuInterno($idProcedimento);
 $arrObjIntimacao    = $arrDados[0];
 $objMdPetIntDestDTO = $arrDados[1];
+.$arrDadosAnexo      = $arrDados[2];
+$arrIds             = InfraArray::converterArrInfraDTO($arrObjIntimacao, 'IdMdPetIntRelDestinatario');
+$arrStrSituacao     = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
 
 //Configuração da Paginação
 
@@ -115,8 +118,9 @@ if ($numRegistros > 0) {
         $strResultado .= '</td>';
 
         //Linha Anexo
+        $strAnexo     =  count($arrDadosAnexo) > 0 && in_array($strId, $arrDadosAnexo) ? MdPetIntRelDestinatarioRN::$SIM_ANEXO : MdPetIntRelDestinatarioRN::$NAO_ANEXO;
         $strResultado .= '<td align="center">';
-        $strResultado .= PaginaSEI::tratarHTML($arrObjIntimacao[$i]->getStrAnexos());
+        $strResultado .= $strAnexo;
         $strResultado .= '</td>';
 
         //Tipo de Destinatário
@@ -145,8 +149,9 @@ if ($numRegistros > 0) {
         $strResultado .= '</td>';
 
         //Situação da Intimação
+        $strSituacao =   !is_null($arrObjIntimacao[$i]->getStrStaSituacaoIntimacao()) && $arrObjIntimacao[$i]->getStrStaSituacaoIntimacao() != 0 ? $arrStrSituacao[$arrObjIntimacao[$i]->getStrStaSituacaoIntimacao()] : MdPetIntimacaoRN::$STR_SITUACAO_NAO_CADASTRADA;
         $strResultado .= '<td>';
-        $strResultado .= PaginaSEI::tratarHTML($arrObjIntimacao[$i]->getStrSituacaoIntimacao());
+        $strResultado .= PaginaSEI::tratarHTML($strSituacao);
         $strResultado .= '</td>';
 
         $strResultado .= '<td align="center">';

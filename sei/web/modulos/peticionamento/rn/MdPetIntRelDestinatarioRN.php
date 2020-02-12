@@ -370,20 +370,12 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         $objMdPetRelDestDTO->setStrSinPrincipalDoc('S');
         $objMdPetRelDestDTO->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
 
-        $dados = $this->listar($objMdPetRelDestDTO);
+        $arrObjDTORetorno = $this->listar($objMdPetRelDestDTO);
 
         //Cria um array de Ids do Rel destinatário que possuem anexos.
         $arrDadosAnexo = $this->_retornaIdsRelIntDestPossuiAnexo($idProcedimento);
 
-        //Formata o Array de Dto com a Resposta do Anexo
-        $this->_formatarArrPrincipalDadosAnexo($dados, $arrDadosAnexo);
-
-        $arrIds      = InfraArray::converterArrInfraDTO($dados, 'IdMdPetIntRelDestinatario');
-        $arrSituacao = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
-
-        $this->_formatarArrPrincipalDadosSituacao($dados, $arrSituacao);
-
-        $arrRetorno = array($dados, $objMdPetRelDestDTO);
+        $arrRetorno = array($arrObjDTORetorno, $objMdPetRelDestDTO, $arrDadosAnexo);
 
         return $arrRetorno;
     }

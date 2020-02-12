@@ -490,7 +490,7 @@ O mencionado processo se encontra aberto em sua Unidade (@sigla_unidade_abertura
 
 ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
-            $maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+            $maxIdEmailSistemaAlertaUnidades = $this->retornarMaxIdEmailSistema();
 
             $insert1 = "INSERT INTO email_sistema
             (id_email_sistema,
@@ -503,7 +503,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             id_email_sistema_modulo
             )
         VALUES
-            (" . $maxIdEmailSistemaUnidades . ",
+            (" . $maxIdEmailSistemaAlertaUnidades . ",
               'Peticionamento Eletrônico - Alerta às Unidades',
               '@sigla_sistema@ <@email_sistema@>',
               '@emails_unidade@',
@@ -530,7 +530,7 @@ Caso no futuro precise realizar novo peticionamento, sempre acesse a área destin
 
 ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
-            $maxIdEmailSistemaUsuario = $this->retornarMaxIdEmailSistema();
+            $maxIdEmailSistemaConfirmacaoUsuarioExterno = $this->retornarMaxIdEmailSistema();
 
             $insert2 = "INSERT INTO email_sistema
         (id_email_sistema,
@@ -543,7 +543,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             id_email_sistema_modulo
         )
         VALUES
-        (" . $maxIdEmailSistemaUsuario . ",
+        (" . $maxIdEmailSistemaConfirmacaoUsuarioExterno . ",
               'Peticionamento Eletrônico - Confirmação ao Usuário Externo',
               '@sigla_sistema@ <@email_sistema@>',
               '@email_usuario_externo@',
@@ -2234,7 +2234,7 @@ Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao
 
 ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-            $maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+            $maxIdEmailSistemaExigeRespostaPJ = $this->retornarMaxIdEmailSistema();
             $objEmailSistemaDTO = new EmailSistemaDTO();
             $objEmailSistemaRN = new EmailSistemaRN();
             $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica que Exige Resposta - Pessoa Jurídica');
@@ -2244,7 +2244,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objEmailSistemaDTO->setStrConteudo($textoEmailExigeResposta);
             $objEmailSistemaDTO->setStrSinAtivo('S');
             $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA_J');
-            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaExigeRespostaPJ);
             $objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
             $this->logar('INSERINDO texto padrão para e-mail com respostas facultativas para pessoa juridica da tabela email_sistema');
@@ -2271,7 +2271,7 @@ Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao
 
 ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-            $maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+            $maxIdEmailSistemaRespostaFacultativaPJ = $this->retornarMaxIdEmailSistema();
             $objEmailSistemaDTO = new EmailSistemaDTO();
             $objEmailSistemaRN = new EmailSistemaRN();
             $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica apenas com Respostas Facultativas - Pessoa Jurídica');
@@ -2281,7 +2281,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objEmailSistemaDTO->setStrConteudo($textoEmailRespostasFacultativas);
             $objEmailSistemaDTO->setStrSinAtivo('S');
             $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS_J');
-            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaRespostaFacultativaPJ);
             $objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
             $this->logar('INSERINDO texto padrão para e-mail reiteração para pessoa juridica da tabela email_sistema');
@@ -2306,7 +2306,7 @@ OBSERVAÇÃO: A presente reiteração ocorre quando a resposta ainda não tenha sido 
 
 ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-            $maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+            $maxIdEmailSistemaReiteracaoExigeRespostaPJ = $this->retornarMaxIdEmailSistema();
             $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Reiteração de Intimação Eletrônica que Exige Resposta - Pessoa Jurídica');
             $objEmailSistemaDTO->setStrDe('@sigla_sistema@ <@email_sistema@>');
             $objEmailSistemaDTO->setStrPara('@email_usuario_externo@');
@@ -2314,7 +2314,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objEmailSistemaDTO->setStrConteudo($textoEmailReiteracao);
             $objEmailSistemaDTO->setStrSinAtivo('S');
             $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA_J');
-            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaReiteracaoExigeRespostaPJ);
             $objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
             $this->logar('INSERINDO texto padrão para e-mail sem resposta para pessoa juridica da tabela email_sistema');
@@ -2341,7 +2341,7 @@ Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao
 
 ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-            $maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+            $maxIdEmailSistemaSemRespostaPJ = $this->retornarMaxIdEmailSistema();
             $objEmailSistemaDTO = new EmailSistemaDTO();
             $objEmailSistemaRN = new EmailSistemaRN();
             $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica Sem Resposta - Pessoa Jurídica');
@@ -2351,7 +2351,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objEmailSistemaDTO->setStrConteudo($textoEmailSemResposta);
             $objEmailSistemaDTO->setStrSinAtivo('S');
             $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_SEM_RESPOSTA_J');
-            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+            $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaSemRespostaPJ);
             $objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
             //INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
@@ -2596,10 +2596,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         private function existeIdEmailSistemaPecitionamento() {
             $this->logar('VERIFICANDO A EXISTENCIA DE MODELOS DE EMAIL PARA PETICIONAMENTO');
             $sql = "select 
-            id_email_sistema 
-            from email_sistema 
-            where 
-                id_email_sistema in (3001,3002)";
+				id_email_sistema 
+				from email_sistema 
+				where 
+					id_email_sistema in (3001,3002)";
             $rs = BancoSEI::getInstance()->consultarSql($sql);
             return (count($rs) > 0) ? true : false;
         }

@@ -49,7 +49,7 @@ $objRN = new MdPetIntRelDestinatarioRN();
 $arrDados = $objRN->listarDadosUsuInterno($idProcedimento);
 $arrObjIntimacao    = $arrDados[0];
 $objMdPetIntDestDTO = $arrDados[1];
-.$arrDadosAnexo      = $arrDados[2];
+$arrDadosAnexo      = $arrDados[2];
 $arrIds             = InfraArray::converterArrInfraDTO($arrObjIntimacao, 'IdMdPetIntRelDestinatario');
 $arrStrSituacao     = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
 

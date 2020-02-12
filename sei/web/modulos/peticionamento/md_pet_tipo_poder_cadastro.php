@@ -32,8 +32,9 @@ try {
         function inicializar(){
             preencherCampo();
             infraEfeitoTabelas();
-
+            addEventoEnter();
         }
+
     </script>
     <?php
 	switch($_GET['acao']){
@@ -41,7 +42,7 @@ try {
 		case 'md_pet_tipo_poder_cadastrar':
 			
 			$strTitulo = 'Novo Tipo de Poder Legal';
-			$arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarTpPoder" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+			$arrComandos[] = '<button type="submit" accesskey="s" id="sbmCadastrarTpPoder" name="sbmCadastrarTpPoder" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 			$arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
 			$objEditorRN=new EditorRN();
@@ -102,7 +103,7 @@ try {
 			$strTitulo = 'Alterar Tipo de Poder Legal';
             $idPoder = $_GET['IdTipoPoderLegal'];
 
-			$arrComandos[] = '<button type="submit" accesskey="s" name="sbmAlterarTpPoder" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
+			$arrComandos[] = '<button type="submit" accesskey="s" id="sbmAlterarTpPoder" name="sbmAlterarTpPoder" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['IdTipoPoderLegal'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 			
 			$objEditorRN=new EditorRN();
@@ -134,9 +135,7 @@ try {
                 $objMdPetTipoPoderLegalDTO->setStrStaSistema(null);
                 $objMdPetTipoPoderLegalRN = new MdPetTipoPoderLegalRN();
                 $arrObjMdPetTipoPoderLegalDTO = $objMdPetTipoPoderLegalRN->alterar($objMdPetTipoPoderLegalDTO);
-                if($arrObjMdPetTipoPoderLegalDTO) {
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_POST['hdnIdTpPoder'])));
-                }
+                header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_POST['hdnIdTpPoder'])));
             }
 			
 			
@@ -181,7 +180,7 @@ PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 ?>
-
+<?if(0){?><script><?}?>
 
 function preencherCampo(){
     if(document.getElementById('txtNome').value == ''){
@@ -189,16 +188,42 @@ function preencherCampo(){
     }
 }
 
-function OnSubmitForm(){
-	var txtNome = document.getElementById('txtNome').value;
-	if( txtNome == ''){
-		alert('Informe o Nome.');
-		document.getElementById('txtNome').focus();
-		return false;
-		
-	}
-	return true;
-}
+    function OnSubmitForm() {
+        var txtNome = document.getElementById('txtNome').value;
+        if (txtNome == '') {
+            alert('Informe o Nome.');
+            document.getElementById('txtNome').focus();
+            return false;
+
+        }
+        return true;
+    }
+
+    function addEventoEnter() {
+        var form = document.getElementById('frmTextoPadraoInternoCadastro');
+        document.addEventListener("keypress", function (evt) {
+            var key_code = evt.keyCode ? evt.keyCode :
+                evt.charCode ? evt.charCode :
+                    evt.which ? evt.which : void 0;
+
+
+            if (key_code == 13) {
+
+                if ('<?=$_GET['acao']?>' == 'md_pet_tipo_poder_alterar') {
+                    $('#sbmAlterarTpPoder').click();
+                } else {
+                    $('#sbmCadastrarTpPoder').click();
+                }
+            }
+
+        });
+    }
+
+
+
+
+    <?if(0){?></script><?}?>
+
 <?php 
 PaginaSEI::getInstance()->fecharJavaScript();
 echo $retEditor->getStrInicializacao();

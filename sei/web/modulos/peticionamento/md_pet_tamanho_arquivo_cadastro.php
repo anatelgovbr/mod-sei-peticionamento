@@ -128,12 +128,30 @@ function validarCampo(obj, event, tamanho){
 }
 
 function inicializar(){
+
   if ('<?=$_GET['acao']?>'=='md_pet_tamanho_arquivo_cadastrar'){
+      addEventoEnter();
     document.getElementById('txtValorDocPrincipal').focus();
   }else{
     document.getElementById('btnFechar').focus();
   }
   infraEfeitoTabelas();
+}
+
+function addEventoEnter(){
+    var form = document.getElementById('frmCadastroTamanhoArquivo');
+    document.addEventListener("keypress", function(evt){
+        var key_code = evt.keyCode  ? evt.keyCode  :
+            evt.charCode ? evt.charCode :
+                evt.which    ? evt.which    : void 0;
+
+
+        if (key_code == 13)
+        {
+            $('#sbmCadastrarTamanhoArquivo').click();
+        }
+
+    });
 }
 
 function validarCadastro() {

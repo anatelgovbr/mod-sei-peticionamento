@@ -472,7 +472,7 @@ try {
 
 	ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
-			$maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+			$maxIdEmailSistemaAlertaUnidades = $this->retornarMaxIdEmailSistema();
 
 			$insert1 = "INSERT INTO email_sistema
 				(id_email_sistema,
@@ -485,7 +485,7 @@ try {
 				id_email_sistema_modulo
 				)
 			VALUES
-				(" . $maxIdEmailSistemaUnidades . ",
+				(" . $maxIdEmailSistemaAlertaUnidades . ",
 				  'Peticionamento Eletrônico - Alerta às Unidades',
 				  '@sigla_sistema@ <@email_sistema@>',
 				  '@emails_unidade@',
@@ -512,7 +512,7 @@ try {
 
 	ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
-			$maxIdEmailSistemaUsuario = $this->retornarMaxIdEmailSistema();
+			$maxIdEmailSistemaConfirmacaoUsuarioExterno = $this->retornarMaxIdEmailSistema();
 
 			$insert2 = "INSERT INTO email_sistema
 			(id_email_sistema,
@@ -525,7 +525,7 @@ try {
 				id_email_sistema_modulo
 			)
 			VALUES
-			(" . $maxIdEmailSistemaUsuario . ",
+			(" . $maxIdEmailSistemaConfirmacaoUsuarioExterno . ",
 				  'Peticionamento Eletrônico - Confirmação ao Usuário Externo',
 				  '@sigla_sistema@ <@email_sistema@>',
 				  '@email_usuario_externo@',
@@ -2213,7 +2213,7 @@ try {
 
 	ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-			$maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+			$maxIdEmailSistemaExigeRespostaPJ = $this->retornarMaxIdEmailSistema();
 			$objEmailSistemaDTO = new EmailSistemaDTO();
 			$objEmailSistemaRN = new EmailSistemaRN();
 			$objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica que Exige Resposta - Pessoa Jurídica');
@@ -2223,7 +2223,7 @@ try {
 			$objEmailSistemaDTO->setStrConteudo($textoEmailExigeResposta);
 			$objEmailSistemaDTO->setStrSinAtivo('S');
 			$objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA_J');
-			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaExigeRespostaPJ);
 			$objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
 			$this->logar('INSERINDO texto padrão para e-mail com respostas facultativas para pessoa juridica da tabela email_sistema');
@@ -2250,7 +2250,7 @@ try {
 
 	ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-			$maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+			$maxIdEmailSistemaRespostaFacultativaPJ = $this->retornarMaxIdEmailSistema();
 			$objEmailSistemaDTO = new EmailSistemaDTO();
 			$objEmailSistemaRN = new EmailSistemaRN();
 			$objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica apenas com Respostas Facultativas - Pessoa Jurídica');
@@ -2260,7 +2260,7 @@ try {
 			$objEmailSistemaDTO->setStrConteudo($textoEmailRespostasFacultativas);
 			$objEmailSistemaDTO->setStrSinAtivo('S');
 			$objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS_J');
-			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaRespostaFacultativaPJ);
 			$objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
 			$this->logar('INSERINDO texto padrão para e-mail reiteração para pessoa juridica da tabela email_sistema');
@@ -2285,7 +2285,7 @@ try {
 
 	ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-			$maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+			$maxIdEmailSistemaReiteracaoExigeRespostaPJ = $this->retornarMaxIdEmailSistema();
 			$objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Reiteração de Intimação Eletrônica que Exige Resposta - Pessoa Jurídica');
 			$objEmailSistemaDTO->setStrDe('@sigla_sistema@ <@email_sistema@>');
 			$objEmailSistemaDTO->setStrPara('@email_usuario_externo@');
@@ -2293,7 +2293,7 @@ try {
 			$objEmailSistemaDTO->setStrConteudo($textoEmailReiteracao);
 			$objEmailSistemaDTO->setStrSinAtivo('S');
 			$objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA_J');
-			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaReiteracaoExigeRespostaPJ);
 			$objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
 			$this->logar('INSERINDO texto padrão para e-mail sem resposta para pessoa juridica da tabela email_sistema');
@@ -2320,7 +2320,7 @@ try {
 
 	ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
-			$maxIdEmailSistemaUnidades = $this->retornarMaxIdEmailSistema();
+			$maxIdEmailSistemaSemRespostaPJ = $this->retornarMaxIdEmailSistema();
 			$objEmailSistemaDTO = new EmailSistemaDTO();
 			$objEmailSistemaRN = new EmailSistemaRN();
 			$objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica Sem Resposta - Pessoa Jurídica');
@@ -2330,7 +2330,7 @@ try {
 			$objEmailSistemaDTO->setStrConteudo($textoEmailSemResposta);
 			$objEmailSistemaDTO->setStrSinAtivo('S');
 			$objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_SEM_RESPOSTA_J');
-			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaUnidades);
+			$objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaSemRespostaPJ);
 			$objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
 			//INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA

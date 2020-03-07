@@ -19,7 +19,6 @@ try {
 		public static $MD_PET_ID_SERIE_ENCERRAMENTO = 'MODULO_PETICIONAMENTO_ID_SERIE_ENCERRAMENTO';
 		public static $MD_PET_ID_SERIE_VINC_SUSPENSAO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO';
 		public static $MD_PET_ID_SERIE_VINC_RESTABELECIMENTO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO';
-		public $maxIdEmailSistemas = 0;
 
 		
 		
@@ -2581,33 +2580,18 @@ try {
 			BancoSEI::getInstance()->executarSql('update email_sistema SET id_email_sistema = ' . $idEmailSistema . ', id_email_sistema_modulo = \'MD_PET_CONFIRMACAO_PETICIONAMENTO_USUARIO_EXTERNO\' WHERE  id_email_sistema = 3001');
 		}
 
-		private function retornarMaxIdEmailSistema() {
-			$this->logar('BUSCANDO O PROXIMO ID DISPONIVEL NA TABELA EMAIL_SISTEMA ');
-			$sql = "select id_email_sistema from email_sistema where id_email_sistema > 999";
-			$rs = BancoSEI::getInstance()->consultarSql($sql);
+        private function retornarMaxIdEmailSistema() {
+            $this->logar('BUSCANDO O PROXIMO ID DISPONIVEL NA TABELA EMAIL_SISTEMA');
+            $arrMaxIdEmailSistemaSelect = BancoSEI::getInstance()->consultarSql('SELECT MAX(id_email_sistema) as MAX FROM email_sistema');
+            $numMaxIdEmailSistemaSelect = $arrMaxIdEmailSistemaSelect[0]['MAX'];
 
-			$quantidade = (1000 + count($rs));
-			if ($this->maxIdEmailSistemas == $quantidade)  {
-				$this->maxIdEmailSistemas = $quantidade+1;
-			} else {
-				$this->maxIdEmailSistemas = $quantidade;
-			}
-
-			$indiceAnterior = 0;
-			foreach ($rs as $i => $r) {
-				if ($i == 0 && $r['id_email_sistema'] > 1000) {
-					$this->maxIdEmailSistemas = 1000;
-					break;
-				}
-
-				if (($r['id_email_sistema'] - $rs[$indiceAnterior]['id_email_sistema']) > 1) {
-					$this->maxIdEmailSistemas = $rs[$indiceAnterior]['id_email_sistema'] + 1;
-					break;
-				}
-				$indiceAnterior = $i;
-			}
-			return $this->maxIdEmailSistemas;
-		}
+            if ($numMaxIdEmailSistemaSelect >= 1000) {
+                $this->$numMaxIdEmailSistemaSelect = $numMaxIdEmailSistemaSelect+1;
+            } else {
+                $this->$numMaxIdEmailSistemaSelect = 1000;
+            }
+            return $this->$numMaxIdEmailSistemaSelect;
+        }
 
 		private function _gerarModeloFormularioVinculo() {
 

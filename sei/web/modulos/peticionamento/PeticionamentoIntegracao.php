@@ -1971,7 +1971,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                         $acessoExtDTO->setDtaValidade(InfraData::getStrDataHoraAtual(), InfraDTO::$OPER_MAIOR_IGUAL);
                                         $arrAcessosExternos = $acessoExtRN->listar($acessoExtDTO);
 
-                                        $id_acesso_ext_link = $arrAcessosExternos[0]->getNumIdAcessoExterno();
+                                        $id_acesso_ext_link = $idAcessoExterno;
                                         $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
                                         $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
                                         $docLink .= "&id_orgao_acesso_externo=0";

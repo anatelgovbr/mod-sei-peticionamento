@@ -3513,12 +3513,15 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $ret = null;
         $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
         $arrDocsLiberados = array(
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_FORMULARIO_PETICIONAMENTO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAOE_PETICIONAMENTO', false),
             $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RENUNCIA', false),
+            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA', false),
+            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO', false),
+            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL', false),
             $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_REVOGACAO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA', false)
+            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RENUNCIA', false),
+            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO', false),
+            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO', false),
+            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES', false)
         );
 
         $arrTipoDocumento = array(

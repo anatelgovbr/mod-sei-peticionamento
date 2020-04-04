@@ -621,7 +621,7 @@
 
     textoProcEsp += '<div class="margemConteudo">';
     textoProcEsp += '3. Representar a Pessoa Jurídica Outorgante com todos os poderes previstos no sistema, ';
-    textoProcEsp += 'inclusive no substabelecimento ao emitir Procurações Eletrônicas.';
+    textoProcEsp += 'inclusive no substabelecimento ao emitir Procurações Eletrônicas, habilitando-o a praticar todos os atos processuais, inclusive confessar, reconhecer a procedência do pedido, transigir, desistir, renunciar, receber, dar quitação e firmar compromisso.';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';

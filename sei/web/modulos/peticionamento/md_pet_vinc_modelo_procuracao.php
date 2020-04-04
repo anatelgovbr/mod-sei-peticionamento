@@ -74,7 +74,7 @@
     <ol>
         <li><p class="Texto_Justificado" style="margin: 0">Gerenciar o cadastro da Pessoa Jurídica Outorgante.</p></li>
         <li><p class="Texto_Justificado" style="margin: 0">Receber, Cumprir e Responder Intimações Eletrônicas e realizar Peticionamento Eletrônico em nome da Pessoa Jurídica Outorgante.</p></li>
-        <li><p class="Texto_Justificado" style="margin: 0">Representar a Pessoa Jurídica Outorgante com todos os poderes previstos no sistema, inclusive no substabelecimento ao emitir Procurações Eletrônicas.</p></li>
+        <li><p class="Texto_Justificado" style="margin: 0">Representar a Pessoa Jurídica Outorgante com todos os poderes previstos no sistema, inclusive no substabelecimento ao emitir Procurações Eletrônicas, habilitando-o a praticar todos os atos processuais, inclusive confessar, reconhecer a procedência do pedido, transigir, desistir, renunciar, receber, dar quitação e firmar compromisso.</p></li>
         <li><p class="Texto_Justificado" style="margin: 0">Substabelecer os poderes outorgados pela presente Procuração, ao conceder Procurações Eletrônicas a outros Usuários Externos, em âmbito geral ou para processos específicos, conforme poderes definidos, para representação da Pessoa Jurídica Outorgante.</p></li>
     </ol>
 </label>

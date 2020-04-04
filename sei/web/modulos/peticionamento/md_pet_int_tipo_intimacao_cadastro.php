@@ -190,16 +190,14 @@ PaginaSEI::getInstance()->abrirStyle();
 <? if (0){ ?>
     <style><?}?>
         #lblNome { position: absolute; left: 0%; top: 0%; width: 30%; }
-        #txtNome { position: absolute; left: 0%; top: 45%; width: 40%; }
+        #txtNome { position: absolute; left: 0%; top: 50%; width: 40%; }
         #nomeAjuda { position: absolute; left: 31%; top: 45%; width: 2%; }
         #imgAjudaUsuario {position:absolute;left:40px;top:0%; }
-        #imgAjudaInputUsuario {position:absolute;left:41%;top:45%; }
 
-        #fldResposta { position: absolute; left: 0%; top: 11%; width: 65%; }
-        #selTipoResposta { position: absolute; left: 0%; top: 5%; width: 45%; }
-        #imgAjudaTipoResposta {position:absolute;left:115px;top:0%; }
+        #fldResposta { position: absolute; left: 0%; top: 11%; width: 85%; }
+        #selTipoResposta { position: absolute; left: 0%; top: 6%; width: 45%; }
 
-        #sbmGravarTipoResposta { position: absolute; left: 45.5%; top: 5%; width: 55px; }
+        #sbmGravarTipoResposta { position: absolute; left: 45.5%; top: 6%; width: 55px; }
         #divTabelaTipoResposta { position: absolute; left: 0%; top: 10%; width: 100%; }
         <? if (0){ ?></style><? } ?>
 <?
@@ -367,9 +365,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('4em'); ?>
-        <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:</label>
+        <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decisão que motiva a intimação e não a possível resposta do Usuário Externo. \n \n Exemplos: Descisão de 1ª Instância, Decisão de Inadmissibilidade de Recurso, Exigência para Complementação de Informações, Decisão sobre Recurso.') ?> class="infraImg"/></label>
         <input type="text" id="txtNome" name="txtNome" class="infraText" value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoIntimacaoDTO->getStrNome()); ?>" onkeypress="return infraMascaraTexto(this,event,70);" maxlength="70" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-        <img style="padding-left: 2px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaInputUsuario" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decisão que motiva a intimação e não a possível resposta do Usuário Externo. Exemplos: Descisão de 1ª Instância, Decisão de Inadmissibilidade de Recurso, Exigência para Complementação de Informações, Decisão sobre Recurso.') ?> class="infraImg"/>
         <? PaginaSEI::getInstance()->fecharAreaDados();
         PaginaSEI::getInstance()->abrirAreaDados('11em'); ?>
         <fieldset id="fldResposta">
@@ -394,13 +391,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </fieldset>
         <? PaginaSEI::getInstance()->fecharAreaDados();
         PaginaSEI::getInstance()->abrirAreaDados('50em'); ?>
-        <label id="lblTipoResposta" for="txtTipoResposta" accesskey="" class="infraLabelObrigatorio">Tipos de Resposta:</label>
-        <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaTipoResposta" <?= PaginaSEI::montarTitleTooltip('É possível indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usuário Externo. Somente é possível indicar um Tipo de Resposta que Exige Resposta pelo Usuário Externo.') ?> class="infraImg"/>
+        <br>
+        <label id="lblTipoResposta" for="txtTipoResposta" accesskey="" class="infraLabelObrigatorio">Tipos de Resposta: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('É possível indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usuário Externo. \n \n Somente é possível indicar um Tipo de Resposta que Exige Resposta pelo Usuário Externo.') ?> class="infraImg"/></label>
         <br>
         <select id="selTipoResposta" name="selTipoResposta" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"> <option id=""></option> <?=$strItenSelPrazoExterno ?> </select>
         <button type="button" accesskey="A" name="sbmGravarTipoResposta" id="sbmGravarTipoResposta" value="Adicionar Tipo Resposta" onclick="transportarTipoResposta();" class="infraButton"><span class="infraTeclaAtalho">A</span>dicionar</button>
         <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>
-
 
         <div id="divTabelaTipoResposta" class="infraAreaTabela" style="<?php echo ($strTipoResposta == '') ? 'display: none' : '';?>" />
             <table id="tblTipoResposta" width="85%" class="infraTable" summary="Lista de Tipos de Respostas">

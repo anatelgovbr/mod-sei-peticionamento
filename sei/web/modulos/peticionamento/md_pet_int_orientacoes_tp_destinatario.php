@@ -25,7 +25,7 @@ try {
   
     //Orientações Tipo de Destinatário
     $objMdPetIntOrientacoesDTO2 = new MdPetIntOrientacoesDTO();
-    $objMdPetIntOrientacoesDTO2->setNumIdIntOrientacoesTipoDestinatario(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
+    $objMdPetIntOrientacoesDTO2->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
     $objMdPetIntOrientacoesDTO2->retTodos();
     
     $objMdPetIntOrientacoesRN  = new MdPetIntOrientacoesRN();

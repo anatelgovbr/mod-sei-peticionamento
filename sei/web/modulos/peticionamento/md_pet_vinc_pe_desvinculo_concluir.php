@@ -64,6 +64,8 @@ try {
               $dados['idContato']= $idContatoVinc;
               $dados['chkDeclaracao'] = 'S';
               $dados['idContatoExterno']= $_POST['hdnIdContExterno'];
+              $dados['tpVinc'] = $_POST['hdnTpVinculo'];
+              $dados['tpProc'] = $_POST['hdnTpProcuracao'];  
 
               $mdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
               $mdPetVinUsuExtProc = $mdPetVinUsuExtProcRN->gerarProcedimentoVinculoProcuracaoMotivo($dados);
@@ -189,7 +191,9 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
     <input type="hidden" id="hdnIdVinculacaoPai" name="hdnIdVinculacao">
     <input type="hidden" id="hdnTpDocumentoPai" name="hdnTpDocumento">
     <input type="hidden" id="txtJustificativaPai" name="txtJustificativa">
-
+    <input type="hidden" id="hdnTpVinculo" name="hdnTpVinculo">
+    <input type="hidden" id="hdnTpProcuracao" name="hdnTpProcuracao">
+    <input type="hidden" id="hdnIdContatoVinc" name="hdnIdContatoVinc">
 
     <input type="submit" name="btSubMit" value="Salvar" style="display:none;"/>
 
@@ -229,7 +233,9 @@ PaginaSEIExterna::getInstance()->fecharHtml();
             document.getElementById('hdnIdVinculacaoPai').value = window.opener.document.getElementById('hdnIdVinculacao').value;
             document.getElementById('hdnTpDocumentoPai').value = window.opener.document.getElementById('hdnTpDocumento').value;
             document.getElementById('txtJustificativaPai').value = window.opener.document.getElementById('txtJustificativa').value;
-
+            document.getElementById('hdnTpVinculo').value = window.opener.document.getElementById('hdnTpVinculo').value;
+            document.getElementById('hdnTpProcuracao').value = window.opener.document.getElementById('hdnTpProcuracao').value;
+            document.getElementById('hdnIdContatoVinc').value = window.opener.document.getElementById('hdnIdContatoVinc').value;
             processando();
             document.getElementById('frmConcluir').submit();
             return true;

@@ -104,7 +104,11 @@ try {
     }
 
     if ($intCnpj > 0) {
-        $objMdPetVincRepresentantDTO->setStrCNPJ('%'.$intCnpj.'%',InfraDTO::$OPER_LIKE);
+        if(strlen($intCnpj) <= 11){
+            $objMdPetVincRepresentantDTO->setStrCPF('%' . $intCnpj . '%', InfraDTO::$OPER_LIKE);
+        } else {
+            $objMdPetVincRepresentantDTO->setStrCNPJ('%' . $intCnpj . '%', InfraDTO::$OPER_LIKE);
+        }
     }
 
     if($strStatus != '' && $strStatus != 'null'){
@@ -141,6 +145,7 @@ try {
     $objMdPetVincRepresentantDTO->retStrCpfProcurador();
     $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
     $objMdPetVincRepresentantDTO->retStrCNPJ();
+    $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
     $objMdPetVincRepresentantDTO->retStrNomeProcurador();
     $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
 
@@ -254,13 +259,25 @@ if ($numRegistros > 0) {
         //Buscar documento da procuração
         $idVinculacao = $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo();
         //$idDocumentoFormatado = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getStrProtocoloFormatadoProtocolo();
-
+        
         $idDocumento = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getDblIdDocumento();
         if (!in_array($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante(), $arrSelectTipoVinculo)){
             $arrSelectTipoVinculo[$arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante()] = $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante();
         }
         $strResultado .= '<tr class="infraTrClara">';
-        $strResultado .= '<td>'. InfraUtil::formatarCnpj($arrObjMdPetVincRepresentantDTO[$i]->getStrCNPJ()) . '</td>';
+        //Recuperando Contato do Vinculo
+        $objContatoDTO = new ContatoDTO();
+        $objContatoDTO->setNumIdContato($arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc());
+        $objContatoDTO->setBolExclusaoLogica(false);
+        $objContatoDTO->retDblCnpj();
+        $objContatoDTO->retDblCpf();
+        $objContatoRN = new ContatoRN();
+        $objContatoRN = $objContatoRN->consultarRN0324($objContatoDTO);
+        if($objContatoRN->getDblCpf() == null){
+        $strResultado .= '<td>'. InfraUtil::formatarCnpj($objContatoRN->getDblCnpj()) . '</td>';
+        }else{
+        $strResultado .= '<td>'. InfraUtil::formatarCpf($objContatoRN->getDblCpf()) . '</td>';
+        }
         $strResultado .= '<td>'. PaginaSEI::tratarHTML($arrObjMdPetVincRepresentantDTO[$i]->getStrRazaoSocialNomeVinc()) . '</td>';
         $strResultado .= '<td>'. InfraUtil::formatarCpf($arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador()) . '</td>';
         $strResultado .= '<td>'. $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeProcurador() .'</td>';
@@ -399,9 +416,10 @@ p{
         <div class="bloco" style="min-width:140px; width:10%">
             <label id="lblCnpj" for="txtCnpj" class="infraLabelOpcional"><?= $strColuna10?>:</label>
             <input type="text" id="txtCnpj" name="txtCnpj" class="infraText"
-                   value="<?= $strCnpj ?>" maxlength="100"
+                   value="<?= $strCnpj ?>" maxlength="18"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
-                   onkeypress="return infraMascaraCnpj(this,event,250);"/>
+                   onkeydown="return mascararCampoCnpjCpf(this);"
+            />
         </div>
 
         <div class="bloco" style="min-width:190px; width:10%">

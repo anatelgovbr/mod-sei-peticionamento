@@ -31,7 +31,7 @@ try {
   
   //texto de orientacoes
   $objMdPetTpProcessoOrientacoesDTO2 = new MdPetTpProcessoOrientacoesDTO();
-  $objMdPetTpProcessoOrientacoesDTO2->setNumIdTipoProcessoOrientacoesPeticionamento(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
+  $objMdPetTpProcessoOrientacoesDTO2->setNumIdTipoProcessoOrientacoesPet(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
   $objMdPetTpProcessoOrientacoesDTO2->retTodos();
   
   $objMdPetTpProcessoOrientacoesRN  = new MdPetTpProcessoOrientacoesRN();
@@ -484,6 +484,7 @@ function pesquisarUF(idOrgao){
   
   //Setando orgão
   if(document.getElementById("selOrgao").value != ""){
+  
   $.ajax({
              dataType: 'xml',
              method: 'POST',

@@ -250,42 +250,30 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEI::getInstance()->abrirAreaDados('45em');
     ?>
-        
+
     <!-- //////////////////////////////////// CAMPO 1 //////////////////////////////////// -->
-    <label id="lblPrincipal" for="txtPrincipal" class="infraLabelObrigatorio">Cadastro de Interessado:</label>
+    <label id="lblPrincipal" for="txtPrincipal" class="infraLabelObrigatorio">Cadastro de Interessado: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Nos casos em que o Usuário Externo tiver que cadastrar Contato, o campo de Tipo apresentado para ele será restringido aos Tipos de Contatos indicados aqui.')?> class="infraImg"/></label>
     
-    <input type="text" id="txtPrincipal" name="txtPrincipal" class="infraText"  
-    onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" 
-    tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
+    <input type="text" id="txtPrincipal" name="txtPrincipal" class="infraText" onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
     <select id="selPrincipal" name="selPrincipal" size="8" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-    <?=$strSelPrin; ?>
+      <?=$strSelPrin; ?>
     </select>
     
-    <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" 
-    alt="Selecionar Tipos de Contatos" title="Selecionar Tipos de Contatos" class="infraImg" 
-    tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);" onkeypress="objLupaPrincipal.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipos de Contatos" title="Selecionar Tipos de Contatos" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
     
-    <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();" src="/infra_css/imagens/remover.gif" 
-    alt="Remover Tipos de Contatos Selecionadas" title="Remover Tipos de Contatos Selecionados" 
-    class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();" onkeypress="objLupaPrincipal.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipos de Contatos Selecionadas" title="Remover Tipos de Contatos Selecionados" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
     
     <!--  //////////////////////////////////// CAMPO 2 //////////////////////////////////// -->
-    <label id="lblPrincipal2" for="txtPrincipal2" class="infraLabelObrigatorio">Seleção de Interessado:</label>
+    <label id="lblPrincipal2" for="txtPrincipal2" class="infraLabelObrigatorio">Seleção de Interessado: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Nos casos em que o Usuário Externo tiver que selecionar Contato, os Contatos disponíveis para ele selecionar estarão restringidos aos Tipos de Contatos indicados aqui.')?> class="infraImg"/></label>
     
-    <input type="text" id="txtPrincipal2" name="txtPrincipal2" class="infraText"  
-    onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" 
-    tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
+    <input type="text" id="txtPrincipal2" name="txtPrincipal2" class="infraText" onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
     <select id="selPrincipal2" name="selPrincipal2" size="8" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-    <?=$strSelPrin2; ?>
+      <?=$strSelPrin2; ?>
     </select>
     
-    <img id="imgLupaPrincipal2" onclick="objLupaPrincipal2.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" 
-    alt="Selecionar Tipos de Contatos" title="Selecionar Tipos de Contatos" class="infraImg" 
-    tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgLupaPrincipal2" onclick="objLupaPrincipal2.selecionar(700,500);" onkeypress="objLupaPrincipal2.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipos de Contatos" title="Selecionar Tipos de Contatos" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
     
-    <img id="imgExcluirPrincipal2" onclick="objLupaPrincipal2.remover();" src="/infra_css/imagens/remover.gif" 
-    alt="Remover Tipos de Contatos Selecionadas" title="Remover Tipos de Contatos Selecionados" 
-    class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgExcluirPrincipal2" onclick="objLupaPrincipal2.remover();" onkeypress="objLupaPrincipal2.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipos de Contatos Selecionadas" title="Remover Tipos de Contatos Selecionados" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 	
 	<!--  //////////////////////////////////// CAMPOS HIDDEN ////////////////////////////////////  -->
     <input type="hidden" id="hdnIdPrincipal" name="hdnIdPrincipal" class="infraText" value="" />

@@ -37,7 +37,7 @@
   		
   		
   		$objMdPetIntOrientacoesDTO2 = new MdPetIntOrientacoesDTO();
-  		$objMdPetIntOrientacoesDTO2->setNumIdIntOrientacoesTipoDestinatario(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
+  		$objMdPetIntOrientacoesDTO2->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
   		$objMdPetIntOrientacoesDTO2->retTodos();
  
   		$objMdPetIntOrientacoesRN  = new MdPetIntOrientacoesRN();
@@ -51,7 +51,7 @@
   		
 		$objMdPetIntOrientacoesDTO = new MdPetIntOrientacoesDTO();
 		$objMdPetIntOrientacoesDTO->setStrOrientacoesTipoDestinatario($_POST['txaConteudo']);  				
-		$objMdPetIntOrientacoesDTO->setNumIdIntOrientacoesTipoDestinatario(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
+		$objMdPetIntOrientacoesDTO->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
 		
   		if (isset($_POST['sbmCadastrarOrientacoesPetIndisp'])) {
   			try{

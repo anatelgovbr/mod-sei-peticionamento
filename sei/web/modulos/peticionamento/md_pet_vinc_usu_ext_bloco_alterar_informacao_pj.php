@@ -1,5 +1,5 @@
 <?php
-    $readOnly = $stWebService || $stConsultar ? 'readonly="readonly"' : null;
+    $readOnly =  'readonly="readonly"';
 ?>
 <style type="text/css">
 #informacaoPJAlterar {height: auto; width: 96%; margin-bottom: 11px;}
@@ -7,11 +7,11 @@
 .fieldsetClear {border:none !important;}
 </style>
 <fieldset id="informacaoPJAlterar" class="infraFieldset sizeFieldset" style="width: auto;">
-    <legend class="infraLegend">&nbsp; Informações sobre a Pessoa Jurídica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; Informações da Pessoa Jurídica &nbsp;</legend>
     <div class="container">
         <div class="bloco">
             <label class="infraLabelObrigatorio" for="slTipoInteressado" id="lblTipoInteressado">
-                Tipo de Interessado:
+                Tipo:
             </label>
             <select class="infraSelect" id="slTipoInteressado" name="slTipoInteressado" 
             <?php echo !is_null($readOnly) ? 'disabled="disabled"' : null?>
@@ -60,7 +60,7 @@
                 <label class="infraLabelObrigatorio" for="txtLogradouro">
                     Endereço:
                 </label>
-                <input type="text" class="infraText blocInformacaoPj" id="txtLogradouro" name="txtLogradouro" maxlength="115"
+                <input onkeypress="return infraMascaraTexto(this,event,130)"  type="text" class="infraText blocInformacaoPj" id="txtLogradouro" name="txtLogradouro" maxlength="130"
                 <?php echo $readOnly?>
                 value="<?php echo $strEndereco;?>"
                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
@@ -108,8 +108,8 @@
                     CEP:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtNumeroCEP" name="txtNumeroCEP" maxlength="15"
-                    onkeypress="return infraMascaraTexto(this,event, 15);"
-                    onkeyup="return infraMascara(this, event, '########');"
+                       onkeypress="return infraMascaraNumero(this,event, 9);"
+                       onkeyup="return infraMascara(this, event, '#####-###');" onchange="return controlarMascaraCep(this);"
                     <?php echo $readOnly?>
                     value="<?php echo !is_null($arrContatoDTO) ? $arrContatoDTO->getStrCep() : null?>"
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>

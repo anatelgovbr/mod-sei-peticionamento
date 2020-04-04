@@ -878,6 +878,55 @@ class MdPetRegrasGeraisRN extends InfraRN
         return $arrRetorno;
     }
 
+    public function retornarArrTiposPeticionamento(){
+        $arrRetorno = array();
+
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_NOVO] = MdPetReciboRN::$STR_TP_RECIBO_NOVO;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_INTERCORRENTE] = MdPetReciboRN::$STR_TP_RECIBO_INTERCORRENTE;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO] = MdPetReciboRN::$STR_TP_RECIBO_RESPOSTA_INTIMACAO;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL] = MdPetReciboRN::$STR_TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO] = MdPetReciboRN::$STR_TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS] = MdPetReciboRN::$STR_TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO] = MdPetReciboRN::$STR_TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO] = MdPetReciboRN::$STR_TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO;
+        $arrRetorno[MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA] = MdPetReciboRN::$STR_TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA;
+
+        return $arrRetorno;
+    }
+
+    public function getTipoPeticionamento($chave, $addPreposicao = false){
+        $strRetorno = '';
+        $arr = $this->retornarArrTiposPeticionamento();
+
+        if(!is_null($chave)) {
+            $strRetorno = array_key_exists($chave, $arr) ? $arr[$chave] : null;
+
+            if (!is_null($strRetorno) && $addPreposicao) {
+                $strRetorno = 'de ' . $strRetorno;
+            }
+        }
+
+        return $strRetorno;
+    }
+
+    public function getObjUnidadePorId($idUnidade, $getUndInativas = true){
+        try {
+            if(!is_null($idUnidade)) {
+                $objUnidadeDTO = new UnidadeDTO();
+                $objUnidadeDTO->retTodos();
+                if ($getUndInativas) {
+                    $objUnidadeDTO->setBolExclusaoLogica(false);
+                }
+                $objUnidadeDTO->setNumIdUnidade($idUnidade);
+                $objUnidadeRN = new UnidadeRN();
+                $objDTORetorno = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+
+                return $objDTORetorno;
+            }
+        }catch(Exception $e){
+            throw new InfraException('Não foi consultar a Unidade.',$e);
+        }
+    }
 
 
 }

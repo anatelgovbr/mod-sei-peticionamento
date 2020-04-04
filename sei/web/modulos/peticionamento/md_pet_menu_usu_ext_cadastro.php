@@ -41,7 +41,7 @@ try {
 				
 			$objEditorDTO->setStrNomeCampo('txaConteudo');
 			$objEditorDTO->setStrSinSomenteLeitura('N');
-			$objEditorDTO->setNumTamanhoEditor(220);
+			$objEditorDTO->setNumTamanhoEditor(400);
 			$retEditor = $objEditorRN->montarSimples($objEditorDTO);
 			
 			$txtConteudo = $_POST['txaConteudo'];
@@ -102,7 +102,7 @@ try {
 			
 			$objEditorDTO->setStrNomeCampo('txaConteudo');
 			$objEditorDTO->setStrSinSomenteLeitura('N');
-			$objEditorDTO->setNumTamanhoEditor(220);
+			$objEditorDTO->setNumTamanhoEditor(400);
 			$retEditor = $objEditorRN->montarSimples($objEditorDTO);			
 			
 			$objMdPetMenuUsuarioExternoDTO2 = new MdPetMenuUsuarioExternoDTO();
@@ -182,7 +182,7 @@ try {
 			
 			$objEditorDTO->setStrNomeCampo('txaConteudo');
 			$objEditorDTO->setStrSinSomenteLeitura('N');
-			$objEditorDTO->setNumTamanhoEditor(220);
+			$objEditorDTO->setNumTamanhoEditor(400);
 			$retEditor = $objEditorRN->montarSimples($objEditorDTO);			
 			
 			$objMdPetMenuUsuarioExternoDTO2 = new MdPetMenuUsuarioExternoDTO();
@@ -391,15 +391,15 @@ else if( $tipo == 'H' ){
 }
 ?>
 
-<label id="lblNome" for="txtNome" class="infraLabelObrigatorio">Nome do Menu:</label>
+<label id="lblNome" for="txtNome" class="infraLabelObrigatorio">Nome do Menu: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O menu será listado para o Usuário Externo depois que ele fizer login no Acesso Externo do SEI.')?> class="infraImg"/></label>
 <input type="text" id="txtNome" name="txtNome" class="infraText" maxlength="30" <?= $disabled ?> value="<?= PaginaSEI::tratarHTML($txtNome) ?>">
 
  <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset">
  
   	<legend class="infraLegend">&nbsp;Tipo de Menu &nbsp;</legend>
   	
-  	<input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?> > <label for="tipoExterno" class="infraLabelRadio"> Link externo</label> <br/>
-  	<input type="radio" id="tipoHTML" name="tipo" <?= $disabled ?> value="H" onclick="rdTipo()" <?php if( $tipo == 'H' ){ echo " checked='checked' "; } ?> > <label for="tipoHTML" class="infraLabelRadio"> Conteúdo HTML</label> <br/>
+  	<input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?> > <label for="tipoExterno" class="infraLabelRadio"> Link Externo <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O menu abrirá o link externo sempre em nova janela do navegador do Usuário Externo logado.')?> class="infraImg"/></label> <br/>
+  	<input type="radio" id="tipoHTML" name="tipo" <?= $disabled ?> value="H" onclick="rdTipo()" <?php if( $tipo == 'H' ){ echo " checked='checked' "; } ?> > <label for="tipoHTML" class="infraLabelRadio"> Conteúdo HTML <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O menu abrirá tela no próprio SEI para o Usuário Externo logado com o texto HTML parametrizado.')?> class="infraImg"/></label> <br/>
      
  </fieldset>
 
@@ -415,7 +415,7 @@ PaginaSEI::getInstance()->fecharAreaDados();
   <table id="tbConteudo" style="width: 100%; display: none;">
     <td style="width: 95%">
       <div id="divEditores" style="">
-        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> rows="20" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
+        <textarea id="txaConteudo" name="txaConteudo" <?= $disabled ?> class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
         <script type="text/javascript">
           <?=$retEditor->getStrEditores();?>
         </script>

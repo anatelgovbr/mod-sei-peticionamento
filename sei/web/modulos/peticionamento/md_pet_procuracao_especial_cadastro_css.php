@@ -9,13 +9,15 @@
         margin-bottom: 10px;
     }
 
-    input {
-        width: 260px
-    }
+    .blocoTopo {
+  float: left;
+  margin-top: 1%;
+  margin-right: 1%;
+}
 
     #txtExplicativo {
         font-size: 13px;
-        padding-top: 40px;
+        
         padding-bottom: 20px;
         padding-left: 15px;
         padding-right: 15px;

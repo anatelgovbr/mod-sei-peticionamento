@@ -355,7 +355,7 @@ class MdPetIntCertidaoRN extends InfraRN{
             $html .= '<td>'.$dataAtual.'</td>';
             $html .= '</tr>';
         }
-        if($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S' && $situacaoInt == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO) {
+        if($situacaoInt == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO) {
             //Recuperando o usuário que cumpriu a intimação;
 
             $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();

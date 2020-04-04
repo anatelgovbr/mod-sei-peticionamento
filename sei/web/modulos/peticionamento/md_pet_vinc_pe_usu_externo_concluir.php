@@ -40,19 +40,38 @@ try {
       $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
 
       if (isset($_POST['pwdsenhaSEI'])) {
-
+        
           if(isset($_POST['hdnIdUsuario'])&& $_POST['hdnIdUsuario']!=''){
-
+              
               $arrParam = array();
               $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
               $objMdPetProcessoRN->validarSenha($arrParam);
 
               $dados= $_POST;
+              $contatoRN = new ContatoRN();
+              $contatoDTO =  new ContatoDTO();
+              $contatoDTO->setNumIdContato($_POST['selPessoaJuridica']);
+              $contatoDTO->retStrNome();
+              $contatoDTO->retStrSinAtivo();
+              $contatoDTO->setBolExclusaoLogica(false);
+              $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
+
+              if($arrContatoDTO){
+                  if($arrContatoDTO->getStrSinAtivo() == 'N') {
+                      $contatoDTO->setStrSinAtivo('S');
+                      $contatoRN->reativarRN0452(array($contatoDTO));
+                      $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
+                  }
+              }
 
               $idsUsuarios=$_POST['hdnIdUsuario'];
+              
               $id = explode('+',$idsUsuarios);
-
+             if($_POST['selTipoProcuracao'] == "E"){
               $idContatoVinc = $_POST['selPessoaJuridica'];
+             }else{
+                $idContatoVinc = $_POST['hdnSelPJSimples'];  
+             }
               $dados['idContato']= $idContatoVinc;
               $dados['chkDeclaracao'] = 'S';
               $dados['idContatoExterno']= $_POST['hdnIdContExterno'];
@@ -147,7 +166,7 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
   PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
   ?>
 
-    <p>
+    <p style="text-align: justify">
         <label>A confirmação de sua senha de acesso iniciará o peticionamento e importa na aceitação dos termos e
             condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos
             documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal
@@ -201,6 +220,13 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
 
     <input type="submit" name="btSubMit" value="Salvar" style="display:none;"/>
 
+    <!--  Campos Hidden para preencher com valores da Procuração Simples -->
+    <input type="hidden" id="hdnValidade" name="hdnValidade"/>
+    <input type="hidden" id="hdnTbProcessos" name="hdnTbProcessos"/>
+    <input type="hidden" id="hdnSelPJSimples" name="hdnSelPJSimples"/>
+    <input type="hidden" id="hdnCpf" name="hdnCpf"/>
+    <input type="hidden" id="hdnOutorgante" name="hdnOutorgante"/>
+    <input type="hidden" id="hdnTipoPoder" name="hdnTipoPoder"/>
 </form>
 
 <?
@@ -231,8 +257,24 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 
     function assinar() {
         if (isValido()) {
-            document.getElementById('hdnSelPessoaJuridicaPai').value = window.opener.document.getElementById('selPessoaJuridica').value;
-            document.getElementById('hdnSelTipoProcuracaoPai').value = window.opener.document.getElementById('selTipoProcuracao').value;            
+           
+            if(window.opener.document.getElementById('selTipoProcuracao').value == "S"){
+                //Tabela Processo / Abrangencia
+            document.getElementById('hdnTbProcessos').value = window.opener.document.getElementById('hdnTbProcessos').value
+                //Abrangencia
+            document.getElementById('hdnValidade').value = window.opener.document.getElementById('txtDt').value
+                //Pessoa Juridica / Física
+            document.getElementById('hdnSelPJSimples').value = window.opener.document.getElementById('selPessoaJuridicaProcSimples').value
+                //Cpf
+            document.getElementById('hdnCpf').value = window.opener.document.getElementById('hdnCpf').value
+                //Tipo de Poder
+            document.getElementById('hdnTipoPoder').value = window.opener.document.getElementById('hdnTpPoderes').value
+                //Outorgante
+            document.getElementById('hdnOutorgante').value = window.opener.document.getElementById('hdnRbOutorgante').value
+
+            }
+            document.getElementById('hdnSelTipoProcuracaoPai').value = window.opener.document.getElementById('selTipoProcuracao').value;
+            document.getElementById('hdnSelPessoaJuridicaPai').value = window.opener.document.getElementById('selPessoaJuridica').value;            
             document.getElementById('hdnIdUsuarioPai').value = window.opener.document.getElementById('hdnIdUsuario').value;
             document.getElementById('hdnTbUsuarioProcuracaoPai').value = window.opener.document.getElementById('hdnTbUsuarioProcuracao').value;
             document.getElementById('hdnIdContExternoPai').value = window.opener.document.getElementById('hdnIdContExterno').value;

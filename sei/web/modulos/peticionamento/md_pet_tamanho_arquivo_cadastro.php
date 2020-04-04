@@ -100,9 +100,9 @@ PaginaSEI::getInstance()->abrirAreaDados('30em');
 
 <fieldset id="fieldsetTamanhoArquivo" class="infraFieldset">
  <legend class="infraLegend">&nbsp;Limite em Mb para carregamento de Arquivos&nbsp;</legend>
-	<label id="lblValorDocPrincipal" for="txtValorDocPrincipal" class="infraLabelObrigatorio">Documento Principal (Processo Novo):</label>
+	<label id="lblValorDocPrincipal" for="txtValorDocPrincipal" class="infraLabelObrigatorio">Documento Principal (Processo Novo): <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo somente do Documento Principal, que geralmente é de tamanho menor que os demais documentos, pois tende a ser Nato Digital.')?> class="infraImg"/></label>
 	<input type="text" id="txtValorDocPrincipal" name="txtValorDocPrincipal" class="infraText" value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocPrincipal()) : '' ?>" onkeypress="return validarCampo(this, event, 11)" maxlength="11" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-	<label id="lblValorDocComplementar" for="txtValorDocComplementar" class="infraLabelObrigatorio">Documentos Essenciais/Complementares (Processo Novo) e Intercorrente:</label>
+	<label id="lblValorDocComplementar" for="txtValorDocComplementar" class="infraLabelObrigatorio">Demais Documentos: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intimação e no Peticionamento de Responsável Legal de Pessoa Jurídica.')?> class="infraImg"/></label>
 	<input type="text" id="txtValorDocComplementar" name="txtValorDocComplementar" class="infraText" value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocComplementar()) : '' ?>" onkeypress="return validarCampo(this, event, 11);"  onkeydown="somenteNumeros(event)" maxlength="11" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
  </fieldset> 
   
@@ -128,12 +128,30 @@ function validarCampo(obj, event, tamanho){
 }
 
 function inicializar(){
+
   if ('<?=$_GET['acao']?>'=='md_pet_tamanho_arquivo_cadastrar'){
+      addEventoEnter();
     document.getElementById('txtValorDocPrincipal').focus();
   }else{
     document.getElementById('btnFechar').focus();
   }
   infraEfeitoTabelas();
+}
+
+function addEventoEnter(){
+    var form = document.getElementById('frmCadastroTamanhoArquivo');
+    document.addEventListener("keypress", function(evt){
+        var key_code = evt.keyCode  ? evt.keyCode  :
+            evt.charCode ? evt.charCode :
+                evt.which    ? evt.which    : void 0;
+
+
+        if (key_code == 13)
+        {
+            $('#sbmCadastrarTamanhoArquivo').click();
+        }
+
+    });
 }
 
 function validarCadastro() {

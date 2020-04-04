@@ -30,6 +30,7 @@ try {
     $objMdPetVincTpProcessoDTO->retStrSinNaUsuarioExterno();
     $objMdPetVincTpProcessoDTO->retStrSinNaPadrao();
     $objMdPetVincTpProcessoDTO->retStrStaNivelAcesso();
+    $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
     $objMdPetVincTpProcessoDTO->retNumIdHipoteseLegal();
     $objMdPetVincTpProcessoDTO->retStrOrientacoes();
 

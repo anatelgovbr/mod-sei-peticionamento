@@ -453,6 +453,21 @@ class MdPetAcessoExternoRN extends InfraRN {
 						$objAtributoAndamentoDTO->setStrIdOrigem($objDocumentoDTO->getDblIdDocumento());
 						$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
+                        $objParticipanteDTO = new ParticipanteDTO();
+                        $objParticipanteDTO->retStrSiglaContato();
+                        $objParticipanteDTO->retStrNomeContato();
+                        $objParticipanteDTO->retDblIdProtocolo();
+                        $objParticipanteDTO->setNumIdParticipante($objAcessoExternoDTO->getNumIdParticipante());
+
+                        $objParticipanteRN = new ParticipanteRN();
+                        $objParticipanteDTO = $objParticipanteRN->consultarRN1008($objParticipanteDTO);
+
+                        $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
+                        $objAtributoAndamentoDTO->setStrNome('INTERESSADO');
+                        $objAtributoAndamentoDTO->setStrValor($objParticipanteDTO->getStrSiglaContato() . '¥' . $objParticipanteDTO->getStrNomeContato());
+                        $objAtributoAndamentoDTO->setStrIdOrigem($objAcessoExternoDTO->getNumIdParticipante());
+                        $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
+
 						$objAtividadeDTO = new AtividadeDTO();
 						$objAtividadeDTO->setDblIdProtocolo($objParticipanteDTO->getDblIdProtocolo());
 						$objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());

@@ -172,7 +172,7 @@ class MdPetIntRelatorioINT extends InfraINT {
         $arrRetorno = array();
         //obs : a key não foi reutilizada, pois a pesquisa  não segue uma ordem correta .
 
-        $arrCabecalho = array('Processo', 'Documento Principal', 'Anexos', 'Destinatário', 'Tipo de Intimação', 'Unidade Geradora', 'Data de Expedição', 'Situação da Intimação','Data de Cumprimento');
+        $arrCabecalho = array('Processo', 'Documento Principal', 'Anexos', 'Destinatário','Tipo de Destinatário', 'Tipo de Intimação', 'Unidade Geradora', 'Data de Expedição', 'Situação da Intimação','Data de Cumprimento');
 
         //Cabecalho
         $contador = 0;
@@ -188,12 +188,17 @@ class MdPetIntRelatorioINT extends InfraINT {
             $arrRetorno[$linhaExcel][$arrAlfabeto[0]] = $objDTO->getStrProtocoloFormatadoProcedimento();
             $arrRetorno[$linhaExcel][$arrAlfabeto[1]] = $objDTO->getStrDocumentoPrincipal();
             $arrRetorno[$linhaExcel][$arrAlfabeto[2]] = $objDTO->getStrAnexos();
-            $arrRetorno[$linhaExcel][$arrAlfabeto[3]] = $objDTO->getStrEmailContato();
-            $arrRetorno[$linhaExcel][$arrAlfabeto[4]] = $objDTO->getStrNomeTipoIntimacao();
-            $arrRetorno[$linhaExcel][$arrAlfabeto[5]] = $objDTO->getStrSiglaUnidadeIntimacao();
-            $arrRetorno[$linhaExcel][$arrAlfabeto[6]] = $objDTO->getDthDataCadastro();
-            $arrRetorno[$linhaExcel][$arrAlfabeto[7]] = $objDTO->getStrSituacaoIntimacao();
-            $arrRetorno[$linhaExcel][$arrAlfabeto[8]] = $objDTO->getDthDataAceite();
+            $arrRetorno[$linhaExcel][$arrAlfabeto[3]] = $objDTO->getStrNomeContato();
+            if($objDTO->getStrSinPessoaJuridica() == "S"){
+                $arrRetorno[$linhaExcel][$arrAlfabeto[4]] = "Pessoa Jurídica";
+            }else{
+                $arrRetorno[$linhaExcel][$arrAlfabeto[4]] = "Pessoa Física";
+            }
+            $arrRetorno[$linhaExcel][$arrAlfabeto[5]] = $objDTO->getStrNomeTipoIntimacao();
+            $arrRetorno[$linhaExcel][$arrAlfabeto[6]] = $objDTO->getStrSiglaUnidadeIntimacao();
+            $arrRetorno[$linhaExcel][$arrAlfabeto[7]] = $objDTO->getDthDataCadastro();
+            $arrRetorno[$linhaExcel][$arrAlfabeto[8]] = $objDTO->getStrSituacaoIntimacao();
+            $arrRetorno[$linhaExcel][$arrAlfabeto[9]] = $objDTO->getDthDataAceite();
             $contador++;
         }
 

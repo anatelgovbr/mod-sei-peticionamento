@@ -82,10 +82,11 @@ class MdPetIntRespostaRN extends InfraRN {
             $idAceite                       = $arrParams[3];
             $idMdPetDest                    = $arrParams[4];
             $cnpjs                          = $arrParams[5];
+            $cpfs                           = $arrParams[6];
             
             $objMdPetIntPrazoTipoRespostaRN = new MdPetIntPrazoRN();
             $arr                            = $objMdPetIntPrazoTipoRespostaRN->retornarTipoRespostaValido(array($idIntimacao,$idMdPetDest));
-           if(count($arr) > 0) {
+            if(count($arr) > 0) {
                 foreach ($idAceite as $id) {
                    $linkIdAceite .= '&id_aceite[]='.$id;
                 } 
@@ -122,12 +123,20 @@ class MdPetIntRespostaRN extends InfraRN {
                 
                 $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
                 
-                if($cnpjs){
-                    $ToolTipTitle .= '<br/><br/>';
-                    foreach ($cnpjs as $emp) {
-                        $ToolTipTitle .= 'Pessoa Jurídica: '.$emp.'<br/>';
+                if($cnpjs || $cpfs){
+                    $ToolTipTitle .= '<br/><br/>Destinatários:<br/>';
+                    if($cnpjs){
+                        foreach ($cnpjs as $emp) {
+                            $ToolTipTitle .= $emp.'<br/>';
+                        }
+                    }
+                    if($cpfs){
+                        foreach ($cpfs as $pes) {
+                            $ToolTipTitle .= $pes.'<br/>';
+                        }
                     }
                 }
+                
                 
                 $ToolTipText = 'Clique para Peticionar Resposta a Intimação.';
 
@@ -153,51 +162,68 @@ class MdPetIntRespostaRN extends InfraRN {
         $razao = $arrParams[5];
         $cnpj = $arrParams[6];
         $estado = $arrParams[7];
+        $idDestinatario = $arrParams[8];
+        $idContato = $arrParams[9];
+        $cnpjs = $arrParams[10];
+        $cpfs = $arrParams[11];
+
         $objMdPetIntPrazoTipoRespostaRN = new MdPetIntPrazoRN();
         $arr = $objMdPetIntPrazoTipoRespostaRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetDest));
-        
+
         if (count($arr) > 0) {
 
-            if($estado == MdPetVincRepresentantRN::$RP_REVOGADA){
-                $estado = 1;
-            }else if($estado == MdPetVincRepresentantRN::$RP_SUSPENSO){
-                $estado = 2;
-            }else if($estado == MdPetVincRepresentantRN::$RP_RENUNCIADA){
-                $estado = 3;
-            }else if($estado == MdPetVincRepresentantRN::$RP_VENCIDA){
-                $estado = 4;
+            if (count($idContato) >= 1) {
+                foreach ($idContato as $id) {
+                    $linkIdDestinatario .= '&id_contato[]=' . $id;
+                }
             }
 
-
             $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
-                        
-            $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_resposta&id_procedimento=' . $idProcedimento . '&id_acesso_externo=' . $idAcessoEx .'&id_md_pet_int_rel_dest=' . $idMdPetDest[0].'&estado='.$estado);
+
+            //$strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_resposta&id_procedimento=' . $idProcedimento . '&id_acesso_externo=' . $idAcessoEx .'&id_md_pet_int_rel_dest=' . $idMdPetDest[0].'&estado='.$estado);
+            $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_resposta&id_procedimento=' . $idProcedimento . '&id_acesso_externo=' . $idAcessoEx . $linkIdDestinatario . '&id_destinatario=' . $idDestinatario);
 
             $js = "infraAbrirJanela('" . $strLink . "', 'janelaConsultarIntimacao', 900, 350);";
 
 
-          //  $js = 'alert(\'Você não pode mais responder a intimação destinada á '.$razao.' ('.infraUtil::formatarCnpj($cnpj).') pois sua vinculação á Pessoa Jurídica está '.$estado.'.\')';
+            //  $js = 'alert(\'Você não pode mais responder a intimação destinada á '.$razao.' ('.infraUtil::formatarCnpj($cnpj).') pois sua vinculação á Pessoa Jurídica está '.$estado.'.\')';
             $imgResposta = '<img src="modulos/peticionamento/imagens/intimacao_peticionar_resposta_negada.png">';
             $ToolTipTitle = 'Responder Intimação Eletrônica';
             $ToolTipTitle .= '<br/>Documento Principal: ';
-			
-			//obter informacoes do doc principal da intimação
-			$objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
-			$objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-			$objMdPetIntDocumentoDTO->retTodos();
-			$objMdPetIntDocumentoDTO->retStrNumeroDocumento();
-			$objMdPetIntDocumentoDTO->retNumIdSerie();
-			$objMdPetIntDocumentoDTO->retStrNomeSerie();
-			$objMdPetIntDocumentoDTO->retStrProtocoloFormatadoDocumento();
-			$objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao( $idIntimacao, InfraDTO::$OPER_IN );
-			$objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
-			$objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
-			$objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar( $objMdPetIntDocumentoDTO );
-			
-			$ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
-            $ToolTipText = 'Clique para Peticionar Resposta a Intimação.';
+            //obter informacoes do doc principal da intimação
+            $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
+            $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
+            $objMdPetIntDocumentoDTO->retTodos();
+            $objMdPetIntDocumentoDTO->retStrNumeroDocumento();
+            $objMdPetIntDocumentoDTO->retNumIdSerie();
+            $objMdPetIntDocumentoDTO->retStrNomeSerie();
+            $objMdPetIntDocumentoDTO->retStrProtocoloFormatadoDocumento();
+            $objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao($idIntimacao, InfraDTO::$OPER_IN);
+            $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
+            $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
+            $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
 
+            $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+
+            //$ToolTipText = 'Você não possui mais permissão para responder a Intimação Eletrônica, conforme abaixo:';
+
+            if ($cnpjs || $cpfs) {
+                $ToolTipTitle .= '<br/><br/>Destinatários:<br/>';
+                if ($cnpjs) {
+                    foreach ($cnpjs as $emp) {
+                        $ToolTipTitle .= $emp . '<br/>';
+                    }
+                }
+                if ($cpfs) {
+                    foreach ($cpfs as $pes) {
+                        $ToolTipTitle .= $pes . '<br/>';
+                    }
+                }
+            }
+           
+            $ToolTipText .= "Você não possui mais permissão para responder a Intimação Eletrônica. Verifique seus Poderes de Representação.";
+                            
             $conteudoHtml = '<a onclick="' . $js . '"';
             $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitle . '\')"';
             $conteudoHtml .= 'onmouseout="return infraTooltipOcultar()">';
@@ -207,4 +233,5 @@ class MdPetIntRespostaRN extends InfraRN {
 
         return $conteudoHtml;
     }
+
 }

@@ -34,7 +34,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
 
         $protocoloRN = new MdPetProtocoloRN();
 
-        $idSerieRecibo = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+        $idSerieRecibo = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
 
         //=============================================
         //MONTAGEM DO DOCUMENTO VIA SEI RN

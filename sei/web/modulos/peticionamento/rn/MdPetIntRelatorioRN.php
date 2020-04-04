@@ -53,6 +53,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $objMdPetIntRelDestDTO->retNumIdSerie();
         $objMdPetIntRelDestDTO->retStrNomeTipoIntimacao();
         $objMdPetIntRelDestDTO->retStrSinPrincipalDoc();
+        $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
         $objMdPetIntRelDestDTO->retNumIdMdPetIntimacaoMdPetIntimacao();
         $objMdPetIntRelDestDTO->retNumIdContato();
         $objMdPetIntRelDestDTO->retStrNomeContato();
@@ -81,7 +82,7 @@ class MdPetIntRelatorioRN extends InfraRN {
     }
 
     private function _addFiltroListagem($objDTO){
-
+        
         //Tipo de Intimação
         $arrTipoIntimacao = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnTpIntimacao']);
         if(count($arrTipoIntimacao) > 0) {
@@ -94,6 +95,12 @@ class MdPetIntRelatorioRN extends InfraRN {
 
         if(count($arrTpIntSession) > 0) {
             $objDTO->setNumIdMdPetTipoIntimacao($arrTpIntSession, InfraDTO::$OPER_IN);
+        }
+
+        //Settando Tipo de Destinatario
+        if($_POST['selTipoDest'] != ""){
+            $objDTO->setStrSinPessoaJuridica($_POST['selTipoDest']);
+
         }
 
         //Unidade
@@ -340,6 +347,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $row['usuarioEmail']  = $objMdPetIntRelDestDTO->getStrEmailContato();
         $row['unidadeSigla']  = $objMdPetIntRelDestDTO->getStrSiglaUnidadeIntimacao();
         $row['unidadeDescricao']  = $objMdPetIntRelDestDTO->getStrDescricaoUnidadeIntimacao();
+        $row['tipoPessoa']  = $objMdPetIntRelDestDTO->getStrSinPessoaJuridica();
         $row['situacao'] = MdPetIntimacaoRN::$STR_INTIMACAO_PENDENTE_ACEITE;
         $row['tipoResp'] = $this->_getTiposRespostaIntimacao($idIntimacao);;
 
@@ -362,6 +370,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $row['usuarioEmail'] = $idSituacao == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO ? $objMdPetIntRelDestDTO->getStrEmailContato() : $objUsuarioPetDTO->getStrSigla();
         $row['unidadeSigla']  = $objMdPetIntRelDestDTO->getStrSiglaUnidadeIntimacao();
         $row['unidadeDescricao']  = $objMdPetIntRelDestDTO->getStrDescricaoUnidadeIntimacao();
+        $row['tipoPessoa']  = $objMdPetIntRelDestDTO->getStrSinPessoaJuridica();
         $row['situacao'] = $arrDescricaoSituacao[$idSituacao];
         $row['tipoResp']=  '';
 
@@ -379,6 +388,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $row['usuarioEmail']  = $objMdPetIntRelDestDTO->getStrEmailContato();
         $row['unidadeSigla']  = $objMdPetIntRelDestDTO->getStrSiglaUnidadeIntimacao();
         $row['unidadeDescricao']  = $objMdPetIntRelDestDTO->getStrDescricaoUnidadeIntimacao();
+        $row['tipoPessoa']  = $objMdPetIntRelDestDTO->getStrSinPessoaJuridica();
         $row['situacao'] = MdPetIntimacaoRN::$STR_INTIMACAO_RESPONDIDA_ACEITE;
         $row['tipoResp'] = $this->_getTiposRespostaResp($objMdPetIntRelDestDTO);
 
@@ -396,6 +406,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $row['usuarioEmail']  = $objMdPetIntRelDestDTO->getStrEmailContato();
         $row['unidadeSigla']  = $objMdPetIntRelDestDTO->getStrSiglaUnidadeIntimacao();
         $row['unidadeDescricao']  = $objMdPetIntRelDestDTO->getStrDescricaoUnidadeIntimacao();
+        $row['tipoPessoa']  = $objMdPetIntRelDestDTO->getStrSinPessoaJuridica();
         $row['situacao'] = MdPetIntimacaoRN::$STR_INTIMACAO_PRAZO_VENCIDO_ACEITE;
         $row['tipoResp'] = '';
 
@@ -549,6 +560,9 @@ class MdPetIntRelatorioRN extends InfraRN {
      *
      */
     protected function getArrGraficosIntimacaoConectado($tipoGrafico){
+
+        ini_set('max_execution_time', '0');
+        ini_set('memory_limit', '1024M');
         $arrRetorno = array();
         $arrObjDTOs = $this->_getTiposIntimacaoDasIntimacoes();
 

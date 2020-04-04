@@ -269,20 +269,18 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div>
                 <div style="clear:both;">&nbsp;</div>
                 <div>
-                    <label id="lblSerie" for="selSerie" class="infraLabelOpcional">Tipos dos Documentos:</label>
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Selecionar Tipos de Documentos com Aplicabilidade Documentos Internos ou Internos e Externos. Por exemplo, Ofício são documentos tradicionalmente de comunicação externa e serve para ser documento principal de Intimação Eletrônica.\n\n\n Em documentos gerados dos Tipos aqui indicados e após assinado aparecerá o botão Gerar Intimação Eletrônica.') ?> class="infraImg"/>
+                    <label id="lblSerie" for="selSerie" class="infraLabelObrigatorio">Tipos dos Documentos: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione Tipos de Documentos parametrizados na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n Por exemplo, Ofício são documentos tradicionalmente de comunicação externa e serve para ser documento principal de Intimação Eletrônica. \n \n Em Documentos Gerados dos Tipos aqui indicados, após assinado, aparecerá o botão Gerar Intimação Eletrônica.')?> class="infraImg"/></label>
                 </div>
                 <div>
-                    <input type="text" id="txtSerie" name="txtSerie" class="infraText"
-                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <input type="text" id="txtSerie" name="txtSerie" class="infraText" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
                 <div style="margin-top: 5px;">
-                    <select style="float: left;" id="selSerie" name="selSerie" size="8" multiple="multiple" class="infraSelect">
+                    <select style="float: left;" id="selSerie" name="selSerie" size="8" multiple="multiple" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <?= $strItensSelSeriesEss; ?>
                     </select>
-                    <img id="imgLupaTipoDocumento" onclick="objLupaTipoDocumentoEssencial.selecionar(700,500)" src="/infra_css/imagens/lupa.gif" alt="Localizar Tipo de Documento" title="Localizar Tipo de Documento" class="infraImg"/>
+                    <img id="imgLupaTipoDocumento" onclick="objLupaTipoDocumentoEssencial.selecionar(700,500);" onkeypress="objLupaTipoDocumentoEssencial.selecionar(700,500);" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                     <br/>
-                    <img id="imgExcluirTipoDocumento" onclick="objLupaTipoDocumentoEssencial.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipos de Documentos" title="Remover Tipos de Documentos" class="infraImg"/>
+                    <img id="imgExcluirTipoDocumento" onclick="objLupaTipoDocumentoEssencial.remover();" onkeypress="objLupaTipoDocumentoEssencial.remover();" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Tipos de Documentos Selecionados" title="Remover Tipos de Documentos Selecionados" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                 </div>
             </div>
         </fieldset>

@@ -37,7 +37,7 @@
   		
   		
   		$objMdPetTpProcessoOrientacoesDTO2 = new MdPetTpProcessoOrientacoesDTO();
-  		$objMdPetTpProcessoOrientacoesDTO2->setNumIdTipoProcessoOrientacoesPeticionamento(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
+  		$objMdPetTpProcessoOrientacoesDTO2->setNumIdTipoProcessoOrientacoesPet(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
   		$objMdPetTpProcessoOrientacoesDTO2->retTodos();
  
   		$objMdPetTpProcessoOrientacoesRN  = new MdPetTpProcessoOrientacoesRN();
@@ -51,10 +51,12 @@
   		
 		$objMdPetTpProcessoOrientacoesDTO = new MdPetTpProcessoOrientacoesDTO();
 		$objMdPetTpProcessoOrientacoesDTO->setStrOrientacoesGerais($_POST['txaConteudo']);  				
-		$objMdPetTpProcessoOrientacoesDTO->setNumIdTipoProcessoOrientacoesPeticionamento(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
+		$objMdPetTpProcessoOrientacoesDTO->setNumIdTipoProcessoOrientacoesPet(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
 		
   		if (isset($_POST['sbmCadastrarOrientacoesPetIndisp'])) {
   			try{
+                $strConteudoSalvar = trim($_POST['txaConteudo']);
+                if($strConteudoSalvar != '') {
   				$objEditorRN->validarTagsCriticas(array('jpg','png'), $_POST['txaConteudo']);
   				$objMdPetTpProcessoOrientacoesDTO2->setStrOrientacoesGerais($_POST['txaConteudo']);
 
@@ -65,10 +67,14 @@
 		  		$conjuntoEstilosDTO->retNumIdConjuntoEstilos();
 		  		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar( $conjuntoEstilosDTO );
 		  		$objMdPetTpProcessoOrientacoesDTO2->setNumIdConjuntoEstilos( $conjuntoEstilosDTO->getNumIdConjuntoEstilos() );
-					
+
                 $objMdPetTpProcessoOrientacoesDTO =  $alterar ? $objMdPetTpProcessoOrientacoesRN->alterar($objMdPetTpProcessoOrientacoesDTO2) : $objMdPetTpProcessoOrientacoesRN->cadastrar($objMdPetTpProcessoOrientacoesDTO);
   				header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao']));
   				die;
+                }else{
+                    $objInfraException = new InfraException();
+                    $objInfraException->lancarValidacao('Informe o campo Conteúdo!');
+                }
   			}catch(Exception $e){
   				PaginaSEI::getInstance()->processarExcecao($e);
   			}
@@ -107,19 +113,34 @@
   		<?
   		PaginaSEI::getInstance()->fecharStyle();
   		PaginaSEI::getInstance()->montarJavaScript();
-  		PaginaSEI::getInstance()->abrirJavaScript();
-  		?>
-  function inicializar(){
-    infraEfeitoTabelas(); 
+        PaginaSEI::getInstance()->abrirJavaScript();
+        if (0){ ?>
+  <script type="text/javascript">
+      <?php } ?>
+
+      function inicializar() {
+          infraEfeitoTabelas();
+      }
+
+      function onSubmitForm() {
+          if (infraTrim(CKEDITOR.instances['txaConteudo'].getData())=='') {
+              alert('Informe o Conteúdo.');
+              document.getElementById('txaConteudo').focus();
+              return false;
+          }
+      }
+
+      <?php if (0){ ?>
+  </script>
+  <?php
   }
-  		<?php 
-  		PaginaSEI::getInstance()->fecharJavaScript();
+  PaginaSEI::getInstance()->fecharJavaScript();
   		echo $retEditor->getStrInicializacao();
   		PaginaSEI::getInstance()->fecharHead();
   		PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   ?>
   
-  <form id="frmTextoPadraoInternoCadastro" method="post" onsubmit="return OnSubmitForm();" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
+  <form id="frmTextoPadraoInternoCadastro" method="post" onsubmit="return onSubmitForm();" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
   <?
 PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEI::getInstance()->abrirAreaDados('3em');

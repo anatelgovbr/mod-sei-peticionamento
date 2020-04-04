@@ -150,22 +150,18 @@ PaginaSEI::getInstance()->abrirAreaDados('40em');
 
   <div id="hipLegalNvlAcessoAssociada" class="infraAreaDados">
 
-   <label id="lblHipoteseLgl" for="txtHipoteseLgl" accesskey="n" class="infraLabelObrigatorio">Hipóteses Legais:</label>
+   <label id="lblHipoteseLgl" for="txtHipoteseLgl" accesskey="n" class="infraLabelObrigatorio">Hipóteses Legais: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Nos casos em que o Usuário Externo indicar Nível de Acesso Restrito para Documentos que adicionar, as Hipóteses Legais disponíveis para ele selecionar estarão restringidas às Hipóteses Legais indicadas aqui.')?> class="infraImg"/></label>
   <input type="text" id="txtHipoteseLgl" name="txtHipoteseLgl" class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
   <br/>
 
-  <select id="selDescricaoHpLegalNvAcesso" name="selDescricaoHpLegalNvAcesso" size="16" multiple="multiple" class="infraSelect">
-   <?=$strItensSelHipLegal?>
+  <select id="selDescricaoHpLegalNvAcesso" name="selDescricaoHpLegalNvAcesso" size="16" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+    <?=$strItensSelHipLegal?>
   </select>
 
-  <img id="imgLupaHipoteseLgl" onclick="objLupaHipLegal.selecionar(700,500);" src="/infra_css/imagens/lupa.gif"
-	    alt="Selecionar Hipóteses Legais"
-	    title="Selecionar Hipóteses Legais" class="infraImg" />
+  <img id="imgLupaHipoteseLgl" onclick="objLupaHipLegal.selecionar(700,500);" onkeypress="objLupaHipLegal.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Hipóteses Legais" title="Selecionar Hipóteses Legais" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
-  <img id="imgExcluirHipoteseLgl" onclick="objLupaHipLegal.remover();" src="/infra_css/imagens/remover.gif"
-	    alt="Remover Hipóteses Legais Selecionadas"
-	    title="Remover Hipóteses Legais Selecionados" class="infraImg" />
+  <img id="imgExcluirHipoteseLgl" onclick="objLupaHipLegal.remover();" onkeypress="objLupaHipLegal.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Hipóteses Legais Selecionadas" title="Remover Hipóteses Legais Selecionados" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
   <input type="hidden" id="hdnHipoteseLgl" name="hdnHipoteseLgl" value="<?=$_POST['hdnHipoteseLgl']?>" />
   <input type="hidden" id="hdnIdHipoteseLgl" name="hdnIdHipoteseLgl" value="<?=$_POST['hdnIdHipoteseLgl']?>" />

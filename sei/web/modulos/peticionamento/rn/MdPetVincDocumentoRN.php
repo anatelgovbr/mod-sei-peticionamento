@@ -16,6 +16,7 @@ class MdPetVincDocumentoRN extends InfraRN {
   public static $TP_PROTOCOLO_PRINCIPAL = 'P';
   public static $TP_PROTOCOLO_RECIBO = 'R';
   public static $TP_PROTOCOLO_PROCURACAO_ESPECIAL = 'E';
+  public static $TP_PROTOCOLO_PROCURACAO = 'N';
 
   public static $TP_PROTOCOLO_SUSPENSAO = 'S';
   public static $TP_PROTOCOLO_RESTABELECIMENTO = 'T';

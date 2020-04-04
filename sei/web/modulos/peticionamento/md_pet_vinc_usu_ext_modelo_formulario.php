@@ -109,18 +109,6 @@
         <td class="cinza" style="padding-left: 35px;">Cidade:</td>
         <td>@cidade</td>
     </tr>
-    <tr >
-        <td class="cinza" style="padding-left: 35px;">Endereco:</td>
-        <td>@endereco</td>
-    </tr>
-    <tr >
-        <td class="cinza" style="padding-left: 35px;">Bairro:</td>
-        <td>@bairro</td>
-    </tr>
-    <tr >
-        <td class="cinza" style="padding-left: 35px;">CEP:</td>
-        <td>@cep</td>
-    </tr>
     </tbody>
 </table>
 <p class="Texto_Justificado">Os atos constitutivos anexados ao presente documento de Vinculação pelo o Usuário Externo para comprovação dos poderes a ele concedidos para atuar em nome da Pessoa Jurídica constam no correspondente Recibo Eletrônico de Protocolo gerado.</p>

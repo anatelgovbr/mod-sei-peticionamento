@@ -91,7 +91,7 @@ PaginaSEI::getInstance()->abrirAreaDados('50em');
         <!-- Lista de Dados -->
         <?php
         PaginaSEI::getInstance()->fecharAreaDados(); ?>
-        <div id="divTabelaIntimacao">
+        <div id="divTabelaIntimacao" style="margin:24px auto 0 auto;">
             <div class="grid grid-13 alturaPadrao"></div>
 
         <?php
@@ -102,10 +102,10 @@ PaginaSEI::getInstance()->abrirAreaDados('50em');
 
         </div>
 
-        <div id="divGraficos" style="display:none" >
+        <div id="divGraficos" style="display:none; margin:30px auto 0 auto;">
             <?php require_once 'md_pet_int_relatorio_graficos.php'; ?>
         </div>
-
+        <br><br><br>
         <?php PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
         ?>
 

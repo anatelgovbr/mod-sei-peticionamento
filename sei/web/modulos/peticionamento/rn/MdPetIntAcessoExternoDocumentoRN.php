@@ -254,6 +254,9 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 			$idContato    		  = $arrParams[0];
 			
 		}
+
+                $procuradorSimplesValido = isset($arrParams[2]) ? $arrParams[2] : NULL;
+                
 		$idProcedimento       = $post['hdnIdProcedimento'];
 		
 		$objMdPetAcessoExtRN  = new MdPetAcessoExternoRN();
@@ -283,10 +286,12 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 			}
 		}
 	}
+        
+        if(is_null($procuradorSimplesValido) || (!is_null($procuradorSimplesValido) && $procuradorSimplesValido)){
+            $idAcessoExterno = $objMdPetAcessoExtRN->aplicarRegrasGeraisAcessoExterno($idProcedimento, MdPetAcessoExternoRN::$MD_PET_INTIMACAO, $idContato,  $tpAcessoSolicitado, $nomeDoc);
+        }		
 		
-		$idAcessoExterno = $objMdPetAcessoExtRN->aplicarRegrasGeraisAcessoExterno($idProcedimento, MdPetAcessoExternoRN::$MD_PET_INTIMACAO, $idContato,  $tpAcessoSolicitado, $nomeDoc);
-		
-		return $idAcessoExterno;
+            return $idAcessoExterno;
 	}
 
 
@@ -578,6 +583,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		$objMdPetIntRelDestRN  = new MdPetIntRelDestinatarioRN();
 		$objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
 		$objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($idIntimacao);
+                $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoEx);
 		$objMdPetIntRelDestDTO->retNumIdAcessoExterno();
 		$objMdPetIntRelDestDTO->setNumIdContato($idContato);
 		$objMdPetIntRelDestDTO = $objMdPetIntRelDestRN->consultar($objMdPetIntRelDestDTO);

@@ -25,7 +25,7 @@ if ($numRegistros > 0) {
     $strResultado .= '<tr>';
 
     //Processo
-    $strResultado .= '<th class="infraTh" width="130px">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Processo', 'ProtocoloFormatadoProcedimento', $arrObjResultDTO). '</th>';
+    $strResultado .= '<th class="infraTh" width="130px" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Processo', 'ProtocoloFormatadoProcedimento', $arrObjResultDTO). '</th>';
 
     //Documento Principal
     $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Documento Principal', 'DocumentoPrincipal', $arrObjResultDTO). '</th>';
@@ -34,7 +34,10 @@ if ($numRegistros > 0) {
     $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Anexos', 'Anexos', $arrObjResultDTO). '</th>';
 
     //Destinatario
-    $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Destinatário', 'EmailContato', $arrObjResultDTO). '</th>';
+    $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo de Destinatário', 'SinPessoaJuridica', $arrObjResultDTO). '</th>';
+
+    //Tipo Destinatario
+    $strResultado .= '<th class="infraTh" width="300px;">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Destinatário', 'NomeContato', $arrObjResultDTO). '</th>';
 
     //Tipo de Intimação
     $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo de Intimação', 'NomeTipoIntimacao', $arrObjResultDTO). '</th>';
@@ -43,7 +46,7 @@ if ($numRegistros > 0) {
     $strResultado .= '<th class="infraTh" width="auto"> '.PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Unidade Geradora', 'SiglaUnidadeIntimacao', $arrObjResultDTO).' </th>';
 
     //Data de Expedicao
-    $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Data de Expedição', 'DataCadastro', $arrObjResultDTO). '</th>';
+    $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Data da Geração', 'DataCadastro', $arrObjResultDTO). '</th>';
 
     //Situação
     $strResultado .= '<th class="infraTh" width="auto">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Situação da Intimação', 'SituacaoIntimacao', $arrObjResultDTO).' </th>';
@@ -76,7 +79,7 @@ if ($numRegistros > 0) {
         $hrefProcesso .= '</a>';
 
         //Linha Processo
-        $strResultado .= '<td align="center">';
+        $strResultado .= '<td align="left">';
         $strResultado .= $hrefProcesso;
         $strResultado .= '</td>';
 
@@ -93,11 +96,16 @@ if ($numRegistros > 0) {
 
         //Href Destinatário
         $hrefDest  = '<a class="ancoraSigla" style="font-size: 1.0em;" title="'.PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrNomeContato()).'" >';
-        $hrefDest .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrEmailContato());
+        $hrefDest .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrNomeContato());
         $hrefDest .= '</a>';
 
+        //Tipo de Destinatário
+        $strResultado .= '<td align="left">';
+        $strResultado .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrTipoDestinatario());
+        $strResultado .= '</td>';
+
         //Destinatário
-        $strResultado .= '<td align="center">';
+        $strResultado .= '<td align="left">';
         $strResultado .=  $hrefDest;
         $strResultado .= '</td>';
 

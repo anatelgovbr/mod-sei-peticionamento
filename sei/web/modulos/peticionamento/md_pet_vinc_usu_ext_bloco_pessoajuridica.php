@@ -27,7 +27,7 @@
                         alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>"/></label>
         </div>
         <div class="bloco" id="">
-            <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Digite o Código:</label>
+            <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de Confirmação:</label>
             <input style="width: 90px" type="text" id="txtCaptcha" name="txtCaptcha" class="infraText" value="" maxlength="4"
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
 
@@ -45,7 +45,7 @@
       <?php }else {?>
 
               &nbsp;&nbsp;<button type="button" accesskey="V" name="btnValidarSemWS" id="btnValidarSemWS" value="Validar"
-                      onclick="carregarTelaNovoCnpj();"
+                      onclick=""
                       class="infraButton"><span class="infraTeclaAtalho">V</span>alidar
               </button>
           </div>

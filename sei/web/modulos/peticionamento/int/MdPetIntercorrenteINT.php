@@ -489,4 +489,21 @@
         	return $strOptions;
         }
 
+
+        public static function removerNullsArr($ids){
+            if(count($ids)>0 ) {
+                foreach ($ids as $key => $valor) {
+
+                    if (is_null($valor)) {
+                        unset($ids[$key]);
+                    }
+                }
+
+                return $ids;
+            }
+            return array();
+        }
+
     }
+
+

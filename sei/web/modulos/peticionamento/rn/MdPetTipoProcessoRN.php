@@ -762,7 +762,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 	 * @param  $objInfraException
 	 * @return mixed
 	 */
-	private function _validarTipoProcessoAssociado(MdPetTipoProcessoDTO $objMdPetTipoProcessoDTO, InfraException $objInfraException){
+	public function _validarTipoProcessoAssociado(MdPetTipoProcessoDTO $objMdPetTipoProcessoDTO, InfraException $objInfraException){
 
 		//VALIDA NOVA REGRA ADICIONADA
 		// somente aceita tipo de processo que na parametrização do SEI tenha

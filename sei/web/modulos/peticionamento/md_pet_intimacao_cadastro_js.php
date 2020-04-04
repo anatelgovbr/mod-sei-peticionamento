@@ -38,7 +38,22 @@
             }
             return duplicado;
         };
-    
+
+            objTabelaDinamicaUsuarios.registroDuplicadoPorId = function (id) {
+                var duplicado = false;
+                var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
+
+                for (var i = 1; i < tbUsuarios.rows.length; i++) {
+                    var idTab = tbUsuarios.rows[i].cells[0].innerText.trim();
+
+                    if (id == idTab) {
+                        duplicado = true;
+                        break;
+                    }
+                }
+                return duplicado;
+            };
+
 
         infraEfeitoTabelas();
         document.getElementById('txtUsuario').focus();
@@ -106,6 +121,21 @@
                 var cpfTab = tbUsuarios.rows[i].cells[3].innerText.trim();
 
                 if (cpf == cpfTab) {
+                    duplicado = true;
+                    break;
+                }
+            }
+            return duplicado;
+        };
+
+        objTabelaDinamicaUsuarios.registroDuplicadoPorId = function (id) {
+            var duplicado = false;
+            var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
+
+            for (var i = 1; i < tbUsuarios.rows.length; i++) {
+                var idTab = tbUsuarios.rows[i].cells[0].innerText.trim();
+
+                if (id == idTab) {
                     duplicado = true;
                     break;
                 }
@@ -580,7 +610,8 @@ objLupaJuridico.processarSelecao = function (itens) {
 
                     cpf = cpf.substr(0, 3) + '.' + cpf.substr(3, 3) + '.' + cpf.substr(6, 3) + '-' + cpf.substr(9, 2);
 
-                    var registroDuplicado = objTabelaDinamicaUsuarios.registroDuplicado(cpf);
+                    var idContato =  $(r).find('Id').text().trim();
+                    var registroDuplicado = objTabelaDinamicaUsuarios.registroDuplicadoPorId(idContato);
 
                     if (registroDuplicado) {
                         alert("O usuário externo informado já possui intimação gerada para este documento.");

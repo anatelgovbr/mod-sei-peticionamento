@@ -214,21 +214,21 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     PaginaSEI::getInstance()->abrirAreaDados('45em');
     ?>
     
-    <label id="lblPrincipal" for="txtPrincipal" accesskey="P" class="infraLabelObrigatorio">Documento Principal (Processo Novo):</label>
+    <label id="lblPrincipal" for="txtPrincipal" accesskey="P" class="infraLabelObrigatorio">Documento Principal (Processo Novo): <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Define as Extensões de Arquivos Permitidas no Peticionamento de Processo Novo somente do Documento Principal, que geralmente é de tamanho menor que os demais documentos, pois tende a ser Nato Digital. \n \n ATENÇÃO: permitir apenas extensões que comportem texto, evitando, por exemplo. zip, mp4 ou mp3 para Documento Principal.')?> class="infraImg"/></label>
     <input type="text" id="txtPrincipal" name="txtPrincipal" class="infraText"  onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
     <select id="selPrincipal" name="selPrincipal" size="8" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-    <?=$strSelExtensoesPrin; ?>
+      <?=$strSelExtensoesPrin; ?>
     </select>
-    <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-    <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);" onkeypress="objLupaPrincipal.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();" onkeypress="objLupaPrincipal.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
-	<label id="lblComplementar" for="txtComplementar" class="infraLabelObrigatorio">Documentos Essenciais/Complementares (Processo Novo) e Intercorrente:</label>
+	<label id="lblComplementar" for="txtComplementar" class="infraLabelObrigatorio">Demais Documentos: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Define as Extensões de Arquivos Permitidas no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intimação e no Peticionamento de Responsável Legal de Pessoa Jurídica.')?> class="infraImg"/></label>
     <input type="text" id="txtComplementar" name="txtComplementar" class="infraText"  onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
     <select id="selComplementar" name="selComplementar" size="12" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-    <?=$strSelExtensoesComp; ?>
+      <?=$strSelExtensoesComp; ?>
     </select>
-    <img id="imgLupaComplementar" onclick="objLupaComplementar.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-    <img id="imgExcluirComplementar" onclick="objLupaComplementar.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgLupaComplementar" onclick="objLupaComplementar.selecionar(700,500);" onkeypress="objLupaComplementar.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+    <img id="imgExcluirComplementar" onclick="objLupaComplementar.remover();" onkeypress="objLupaComplementar.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 	
     <input type="hidden" id="hdnIdPrincipal" name="hdnIdPrincipal" class="infraText" value="" />
     <input type="hidden" id="hdnPrincipal" name="hdnPrincipal" value="" />

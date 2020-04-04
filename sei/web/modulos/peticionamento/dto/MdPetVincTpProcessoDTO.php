@@ -39,6 +39,9 @@ class MdPetVincTpProcessoDTO extends InfraDTO
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
             'SinNaPadrao',
             'sin_na_padrao');
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+            'Especificacao',
+            'especificacao');
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
             'StaNivelAcesso',
@@ -52,6 +55,10 @@ class MdPetVincTpProcessoDTO extends InfraDTO
             'SinAtivo',
             'sin_ativo');
 
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+            'TipoVinculo',
+            'tipo_vinculo');
+        
         // Nome processo
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR ,'NomeProcedimento', 'tipo.nome','tipo_procedimento tipo');
 
@@ -61,8 +68,8 @@ class MdPetVincTpProcessoDTO extends InfraDTO
 
         $this->configurarPK('IdMdPetVincTpProcesso', InfraDTO::$TIPO_PK_INFORMADO);
 
-        $this->configurarFK('IdTipoProcedimento', 'tipo_procedimento tipo', 'tipo.id_tipo_procedimento');
-        $this->configurarFK('IdUnidade', 'unidade u','u.id_unidade');
+        $this->configurarFK('IdTipoProcedimento', 'tipo_procedimento tipo', 'tipo.id_tipo_procedimento', InfraDTO::$TIPO_FK_OPCIONAL);
+        $this->configurarFK('IdUnidade', 'unidade u','u.id_unidade', InfraDTO::$TIPO_FK_OPCIONAL);
         $this->configurarFK('IdHipoteseLegal', 'hipotese_legal hl', 'hl.id_hipotese_legal');
 
 

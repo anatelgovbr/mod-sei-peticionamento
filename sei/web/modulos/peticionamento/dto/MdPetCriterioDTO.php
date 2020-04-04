@@ -59,6 +59,7 @@ class MdPetCriterioDTO extends InfraDTO  {
 		$this->configurarFK('IdTipoProcedimento', 'tipo_procedimento tipo_proc', 'tipo_proc.id_tipo_procedimento');
         $this->configurarFK('IdHipoteseLegal', 'hipotese_legal hl', 'hl.id_hipotese_legal', InfraDTO::$TIPO_FK_OPCIONAL);
 
+        $this->adicionarAtributo(InfraDTO::$PREFIXO_ARR,'IdsUnidadesLiberadas');
 	}
 
 }

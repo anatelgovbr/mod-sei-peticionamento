@@ -12,6 +12,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 {
 //    public static $TIPO_PETICIONAMENTO_RECIBO_VINC_PJ = 'Vinculação à Pessoa Jurídica';
     public static $TIPO_PETICIONAMENTO_RECIBO_PROCURACAOE_VINC_PJ = 'Procuração Eletrônica - Emissão';
+    public static $TIPO_PETICIONAMENTO_RECIBO_PROCURACAOE_VINC_PF = 'Procuração Eletrônica';
     public static $TIPO_PETICIONAMENTO_RECIBO_RENUNCIA_VINC_PJ = 'Procuração Eletrônica - Renúncia';
     public static $TIPO_PETICIONAMENTO_RECIBO_REVOGACAO_VINC_PJ = 'Procuração Eletrônica - Revogação';
 //    public static $TIPO_PETICIONAMENTO_PROC_VINC_PJ = 'Procuração Especial da Vinculação à Pessoa Jurídica';
@@ -35,22 +36,61 @@ class MdPetVinUsuExtProcRN extends InfraRN
      */
     public function gerarProcedimentoVinculoProcuracaoControlado($dados)
     {   
-
+        $existeProc = false;
+        
         try {
-
+            if($dados['hdnOutorgante'] != ""){
+                $outorgant = $dados['hdnOutorgante'];
+            }
+           
             $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
             $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
             $objMdPetVincTpProcessoDTO->retTodos();
-
+            if($dados['hdnOutorgante'] == "PJ" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+            $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
+            }else if($dados['hdnOutorgante'] == "PF" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+            $objMdPetVincTpProcessoDTO->setStrTipoVinculo('F');
+            }else if($dados['selTipoProcuracao'] == "E"){
+            $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
+            }
+            
             $arrObjMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
-
+            
             if (is_null($arrObjMdPetVincTpProcesso)) {
                 throw new InfraException('Vinculação não configurada');
             }
-
-            //obtendo a unidade de abertura do processo
-            $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
-
+            
+            //Recuperando Vinculo já existente
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+            if($dados['hdnOutorgante'] == "PJ" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPJSimples']);
+                $objMdPetVincRepresentantDTO->setStrTpVinc("J");
+            }else if($dados['hdnOutorgante'] == "PF" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['idContatoExterno']);
+                $objMdPetVincRepresentantDTO->setStrTpVinc("F");
+            }
+            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+            $arrProcessos = InfraArray::converterArrInfraDTO($arrObjMdPetVincRepresentantDTO,'IdProcedimentoVinculo');
+            
+            if(count(array_unique($arrProcessos))){
+                $objProtocoloDTO = new ProtocoloDTO();
+                $objProtocoloDTO->setDblIdProtocolo($arrProcessos[0]);
+                $objProtocoloDTO->retNumIdUnidadeGeradora();
+                $objProtocoloRN = new ProtocoloRN();
+                $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
+                if($objUnidadeGeradora->getNumIdUnidadeGeradora() == $arrObjMdPetVincTpProcesso->getNumIdUnidade()){
+                    $idTipoUnidadeAberturaProcesso = $objUnidadeGeradora->getNumIdUnidadeGeradora();
+                } else {
+                    $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+                }                
+            }else{
+                $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+            }
+           // var_dump($idTipoUnidadeAberturaProcesso);die;
+           // $idTipoUnidadeAberturaProcesso = 110000909;
+           //110000909
             //Obtendo tipo do processo
             $idTipoProcesso = $arrObjMdPetVincTpProcesso->getNumIdTipoProcedimento();
 
@@ -66,8 +106,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 throw new InfraException('Tipo de processo não encontrado.');
             }
 
-            $txtTipoProcessoEscolhido = $objTipoProcedimentoDTO->getStrNome();
-
+           
+            
             //obter unidade configurada no "Tipo de Processo para peticionamento"
             $unidadeRN = new UnidadeRN();
             $unidadeDTO = new UnidadeDTO();
@@ -79,9 +119,10 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 throw new InfraException('Tipo de unidade não encontrada.');
             }
 
-            if(isset($_POST['hdnTbUsuarioProcuracao'])) {
+            if(isset($_POST['hdnTbUsuarioProcuracao']) && $_POST['hdnTbUsuarioProcuracao'] != "") {
                 $dadosProcuracao = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbUsuarioProcuracao']);
             }
+
 
             $objMdPetContatoRN = new MdPetContatoRN();
             $idTipoContatoUsExt = $objMdPetContatoRN->getIdTipoContatoUsExt();
@@ -92,51 +133,160 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $contatoDTO->setNumIdTipoContato($idTipoContatoUsExt);
             $arrIdContato = [];
 
+            //Caso venha da tela de especial
+            if(isset($_POST['hdnTbUsuarioProcuracao']) && $_POST['hdnTbUsuarioProcuracao'] != "" ) {
             foreach ($dadosProcuracao as $procuracao) {
-                $cpf = InfraUtil::retirarFormatacao($procuracao[0]);
+                $cpf = InfraUtil::retirarFormatacao($procuracao[1]);
                 $contatoDTO->setDblCpf($cpf);
-                $contatoDTO->setStrNome($procuracao[1]);
+                $contatoDTO->setNumIdContato($procuracao[0]);
+                $arrContato = $contatoRN->listarRN0325($contatoDTO);
+                $arrIdContato[] = $arrContato[0]->getNumIdContato();
+                
+            }
+            }else{
+                $contatoDTO->setNumIdContato($dados['hdnIdUsuario']);
                 $arrContato = $contatoRN->listarRN0325($contatoDTO);
                 $arrIdContato[] = $arrContato[0]->getNumIdContato();
             }
-
+            
             //$arrIdContato = $dados['hdnIdContExterno'];
             SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $unidadeDTO->getNumIdUnidade());
-
+            
             // Recupera o idProcedimento(Processo) referente ao cnpj informado (idContato)
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
             $objMdPetVinculoRN = new MdPetVinculoRN();
-
+            if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ"){
             $objMdPetVinculoDTO->setNumIdContato($dados['idContato']);
+            }
+            //Caso seja outorgante pessoa física
+            if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF"){
+            $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);
+            }
+            if($dados['selTipoProcuracao'] == "E"){
+            $objMdPetVinculoDTO->setNumIdContato($dados['idContato']);
+            }
             $objMdPetVinculoDTO->retTodos();
 
             $mdPetVinculacao = $objMdPetVinculoRN->listar($objMdPetVinculoDTO);
 
+            $qtd = $objMdPetVinculoRN->contar($objMdPetVinculoDTO);
+            
+            //Verifica se existe o idContato na tabela MdPetVinculoDTO
+            if($qtd == 0){
+            
+            //Criando Processo Novo Caso seja o primeiro acesso
+            //Recuperando Configuração Estabelecida de Pessoa Jurídica
+            
+            $arrObjMdPetVincTpProcesso   = $this->getConfiguracaoVinculo();
+            
+            $objTipoProcedimentoDTO   = $this->_getTipoProcesso($arrObjMdPetVincTpProcesso);
+            //obtendo a unidade de abertura do processo
+            $objUnidadeDTO = $this->_getUnidade($arrObjMdPetVincTpProcesso);
+            //Criação do PRocess
+            $idProc = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados,$arrObjMdPetVincTpProcesso);
 
+            $id_vinc = $this->_adicionarVinculoPF($dados,$idProc);
+            
+            }else{
+
+            $idProc = $mdPetVinculacao[0]->getDblIdProtocolo();
+      
+               // $arrObjMdPetVincTpProcesso   = $this->getConfiguracaoVinculo();
+                //Remetendo PRocesso
+                $objTipoProcedimentoDTO   = $this->_getTipoProcesso($arrObjMdPetVincTpProcesso);
+                //obtendo a unidade de abertura do processo
+                $objUnidadeDTO = $this->_getUnidade($arrObjMdPetVincTpProcesso);
+                //Unidade Atual do Processo Diferente do Parametrizado
+                //Busca Unidade do Processo já Existente
+
+                $objProtocoloDTO = new ProtocoloDTO();
+                $objProtocoloDTO->setDblIdProtocolo($idProc);
+                $objProtocoloDTO->retNumIdUnidadeGeradora();
+                $objProtocoloRN = new ProtocoloRN();
+                $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
+              
+                
+                if(($objUnidadeDTO->getNumIdUnidade() != $objUnidadeGeradora->getNumIdUnidadeGeradora())){
+                   // var_dump($objUnidadeDTO->getNumIdUnidade());die;
+                    //Realiza Tramitação
+                    $arrObjAtributoAndamentoDTO = array();
+                    $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
+                    $objAtributoAndamentoDTO->setStrNome('UNIDADE');
+                    $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla().' ¥ '.$objUnidadeDTO->getStrDescricao());
+                    $objAtributoAndamentoDTO->setStrIdOrigem($objUnidadeGeradora->getNumIdUnidadeGeradora());
+                    $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
+                   
+                    $objAtividadeDTO = new AtividadeDTO();
+                    $objAtividadeDTO->setDblIdProtocolo( $idProc );
+                    $objAtividadeDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+                    $objAtividadeDTO->setNumIdUnidadeOrigem( $objUnidadeGeradora->getNumIdUnidadeGeradora() );
+                    $objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
+                    $objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
+
+                    $objAtividadeRN = new AtividadeRN();
+                    $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
+                    
+                }
+
+            }
+            
             $objProcedimentoDTO = new ProcedimentoDTO();
             $objProcedimentoRN = new ProcedimentoRN();
             $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
             $objProcedimentoDTO->retDblIdProcedimento();
-            $objProcedimentoDTO->setDblIdProcedimento($mdPetVinculacao[0]->getDblIdProtocolo());
+            $objProcedimentoDTO->setDblIdProcedimento($idProc);
 
             $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
 
             $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
+            
 
+            
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
             $mdPetVinculacaoRN = new MdPetVinculoRN();
-
+            
+            //Caso a Pessoa Seja Juridica da Tela de Procuração Especial
+            if($dados['selTipoProcuracao'] == "E"){
             $objMdPetVinculoDTO->setNumIdContato($dados['selPessoaJuridica']);
+            }
+            if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ"){
+            $objMdPetVinculoDTO->setNumIdContato($dados['hdnSelPJSimples']);   
+            }
+            if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF"){
+            $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);   
+            }
             $objMdPetVinculoDTO->retNumIdMdPetVinculo();
             $objMdPetVinculoDTO->setDblIdProtocolo($idProcedimento);
 
             $objMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
             $idVinculo = $objMdPetVinculoDTO->getNumIdMdPetVinculo();
-
-            //RECUPERANDO DADOS DO REP-lEGAL E PESSOA jURIDICA
+            
+            
+            if($dados['selTipoProcuracao'] == "E"){
             $idContatoVinc = $dados['selPessoaJuridica'];
-            $idResponsavelLegal = $dados['idContatoExterno'];
+            }if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF" ){
+            $idContatoVinc = $dados['idContatoExterno'];   
+            }
+            if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ" ){
+            $idContatoVinc = $dados['hdnSelPJSimples'];   
+            }
+            
 
+           if(($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ") || ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF") ||  ($dados['selTipoProcuracao'] == "E")){
+               if($dados['selTipoProcuracao'] == "E"){
+
+                $idPessoa = $dados['selPessoaJuridica'];
+
+               }else if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ"){
+
+                $idPessoa = $dados['hdnSelPJSimples'];
+
+               }else if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF"){
+
+                $idPessoa = $dados['idContatoExterno'];
+
+               }
+           
             // consultar dados Pj
             $contatoDTO = new ContatoDTO();
             $contatoDTO->retDblCnpj();
@@ -151,13 +301,19 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $contatoDTO = new ContatoDTO();
             $contatoDTO->retDblCpf();
             $contatoDTO->retStrNome();
-            $contatoDTO->setNumIdContato($idResponsavelLegal);
+            $contatoDTO->setNumIdContato($idPessoa);
 
             $contatoRN = new ContatoRN();
             $Replegal = $contatoRN->consultarRN0324($contatoDTO);
             $dadosRetornoProcuracao['RepLegal'] = $Replegal;
+         
+           }
 
             $numRegistro = count($arrIdContato);
+            
+            //Caso seja Procuração Especial
+            if($dados['selTipoProcuracao'] == "E"){
+           
             for($i= 0 ;$i <$numRegistro;$i++) {
                 $dados['IdOutorgado']=$arrIdContato[$i];
 
@@ -168,13 +324,36 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     'RepLegal'=>$Replegal,
                     'contatoPj'=>$contatoPj,
                     'idContato'=>$dados['idContato'],
-                    'unidadeDTO'=>$unidadeDTO);
+                    'tipoProcuracao'=>$dados['selTipoProcuracao'],
+                    'outorgante'=>$dados['hdnOutorgante'],
+                    'unidadeDTO'=>$unidadeDTO,
+                    'idProc' => $idProc);
                 $dadosRetornoProcuracao['Procuracao'][] = $this->gerarFormularioProcuracao($params);
 
             }
 
+            }else if(($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ") ||  ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF") ){
+               
+                //Gerar Documento Nova Procuracao
+                $params = array('dados'=>$dados,
+                    'procedimento'=>$objProcedimentoDTO,
+                    'idVinculo'=>$idVinculo,
+                    'RepLegal'=>$Replegal,
+                    'contatoPj'=>$contatoPj,
+                    'idContato'=>$dados['idContato'],
+                    'tipoProcuracao'=>$dados['selTipoProcuracao'],
+                    'outorgante'=>$dados['hdnOutorgante'],
+                    'unidadeDTO'=>$unidadeDTO,
+                    'idProc' => $idProc);
+                    
+                $dadosRetornoProcuracao['Procuracao'][] = $this->gerarFormularioProcuracaoSimples($params);
+
+            }
+           
             //RECUPERA ID_MD_PET_REPRESENTANT DO VINCULO PRINCIPAL CASO TENHA MAIS DE UMA PROCURAÇÃO
+            
             if($numRegistro>1) {
+                $idResponsavelLegal = $dados['idContatoExterno'];
                 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
                 $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
@@ -187,27 +366,63 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
                 $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
                 $idMdPetVinculoRepresent = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
+                
             }else{
+                
                 $idMdPetVinculoRepresent = $dadosRetornoProcuracao['Procuracao'][0]['IdMdPetVinculoRepresent'];
             }
+            //Tratanto Tipo de Poderes
+            if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnTipoPoder'] != ""){
+                $tipoPoderes = explode("-",$dados['hdnTipoPoder']);
+                
+                foreach ($tipoPoderes as $poder) {
+                    $objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
+                    $objMdPetRelVincRepTpPoderDTO->setNumIdTipoPoderLegal($poder);
+                    $objMdPetRelVincRepTpPoderDTO->setNumIdVinculoRepresent($idMdPetVinculoRepresent);
+                    $objMdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
+                    $objMdPetRelVincRepTpPoderRN->cadastrar($objMdPetRelVincRepTpPoderDTO);
+                }
 
+            }
+            //Caso seja Simples a Procuração, inserir dinamicamente os Processos
+            if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+                //Caso os Dados Venha da tela de Procuração Simples
+            if(isset($_POST['hdnTbProcessos']) && $_POST['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $_POST['hdnTbProcessos'] != "") {
+                $dadosProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbProcessos']);
+                foreach ($dadosProcesso as $key => $idProtocolo) {
+                   
+                $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
+                $objMdPetRelVincRepProtocRN = new MdPetRelVincRepProtocRN();
+                $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($idMdPetVinculoRepresent);
+                $objMdPetRelVincRepProtocDTO->setNumIdProtocolo($idProtocolo[0]);
+                $objMdPetRelVincRepProtocRN->cadastrar($objMdPetRelVincRepProtocDTO);
+
+                }
+             }
+            }
+            //Peticionamento Eletrônico - Alerta às Unidades
+            //Peticionamento Eletrônico - Confirmação ao Usuário Externo
             if(!isset($params['tela'])) {
-
-                //GERAR RECIBO
-                //if(!(boolean)$params['dados']['selTipoProcuracao']){
-                      $tipoPeticionamento = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO;
-                //}
+               
+                if($dados['hdnOutorgante'] == "PF"){
+                    $tipoPessoa = MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT_PF;
+                }else if($dados['hdnOutorgante'] == "PJ"){
+                    $tipoPessoa = MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT;
+                }
+                
+                $tipoPeticionamento = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO;
+                
                 $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
-
+              
                 $reciboDTOBasico = $objMdPetVinculoUsuExtRN->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' => $tipoPeticionamento));
-
+                
                 $recibo = $this->gerarReciboProcuracao(array($dadosRetornoProcuracao, $objProcedimentoDTO, $reciboDTOBasico, $idMdPetVinculoRepresent, $tipoPeticionamento, $unidadeDTO, $dados));
                 $idDocumentoRecibo = $reciboDTOBasico->getDblIdDocumento();
-
+               
                 $mdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
                 $objProcedimentoDTO = $mdPetVinculoUsuExtRN->getProcedimento($idProcedimento);
-                $objUnidadeDTO = $mdPetVinculoUsuExtRN->getUnidade();
+                $objUnidadeDTO = $mdPetVinculoUsuExtRN->getUnidade($tipoPessoa);
                 $arrParams = array();
                 $arrParams[0] = $dados;
                 $arrParams[1] = $objUnidadeDTO;
@@ -215,19 +430,26 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $arrParams[3] = array();
                 $arrParams[4] = $reciboDTOBasico;
                 $arrParams[5] = $reciboDTOBasico;
-                
-                $objMdPetVinculoUsuExtRN->gerarAndamentoVinculo(array($idProcedimento, ' de ' . $tipoPeticionamento, $idDocumentoRecibo, $unidadeDTO->getNumIdUnidade()));
-                
+
+                $objMdRegrasGeraisRN = new MdPetRegrasGeraisRN();
+                $strTipoPeticionamento =  $objMdRegrasGeraisRN->getTipoPeticionamento($tipoPeticionamento, true);
+
+                $objMdPetVinculoUsuExtRN->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $unidadeDTO->getNumIdUnidade()));
+               
                 if($objUnidadeDTO->getStrSinAtivo()=='S'){
+                    
                     $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta( array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()) );
+                   
                     if (count($arrUnidadeProcesso)==0){
                             $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade( array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()) );
+                            
                             if (is_numeric($idUnidadeAberta)){
+                               
                                     $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta( array($objProcedimentoDTO, $idUnidadeAberta) );
                             }
                     }
                 }
-                
+            
                 // 1) ANEXADO, vai pegar do ANEXADOR/PRINCIPAL
 		if($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO){
 			$objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
@@ -267,14 +489,56 @@ class MdPetVinUsuExtProcRN extends InfraRN
 			$mdPetAndamentoSigilosoRN = new MdPetIntercorrenteAndamentoSigilosoRN();
 			$idUnidadeProcesso = $mdPetAndamentoSigilosoRN->retornaIdUnidadeAberturaProcesso( $this->getProcedimentoDTO()->getDblIdProcedimento() );
 		}
-                
+
+            $objAtividadeDTOExclusao = new AtividadeDTO();
+            $atividadeRN = new AtividadeRN();
+            $objAtividadeDTOExclusao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+            $objAtividadeDTOExclusao->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+            $objAtividadeDTOExclusao->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
+            $objAtividadeDTOExclusao->setOrd('IdAtividade', InfraDTO::$TIPO_ORDENACAO_DESC);
+            $objAtividadeDTOExclusao->retTodos();
+            $objAtividadeDTOExclusao = $atividadeRN->listarRN0036($objAtividadeDTOExclusao);
+
+            if($objAtividadeDTOExclusao) {
+                //apagando andamentos do tipo "Disponibilizado acesso externo para @INTERESSADO@"
+                $objAtividadeDTOLiberacao = new AtividadeDTO();
+                $objAtividadeDTOLiberacao->retTodos();
+                $objAtividadeDTOLiberacao->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+                $objAtividadeDTOLiberacao->setNumIdAtividade(current($objAtividadeDTOExclusao)->getNumIdAtividade());
+                $objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
+
+                $arrDTOAtividades = $atividadeRN->listarRN0036($objAtividadeDTOLiberacao);
+                $atividadeRN->excluirRN0034($arrDTOAtividades);
+            }
+
+            $objAtividadeDTOExclusao = new AtividadeDTO();
+            $atividadeRN = new AtividadeRN();
+            $objAtividadeDTOExclusao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+            $objAtividadeDTOExclusao->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
+            $objAtividadeDTOExclusao->setNumIdTarefa(TarefaRN::$TI_PROCESSO_RECEBIDO_UNIDADE);
+            $objAtividadeDTOExclusao->setOrd('IdAtividade', InfraDTO::$TIPO_ORDENACAO_DESC);
+            $objAtividadeDTOExclusao->retTodos();
+            $objAtividadeDTOExclusao = $atividadeRN->listarRN0036($objAtividadeDTOExclusao);
+
+            if($objAtividadeDTOExclusao) {
+                //apagando andamentos do tipo "Disponibilizado acesso externo para @INTERESSADO@"
+                $objAtividadeDTOLiberacao = new AtividadeDTO();
+                $objAtividadeDTOLiberacao->retTodos();
+                $objAtividadeDTOLiberacao->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+                $objAtividadeDTOLiberacao->setNumIdAtividade(current($objAtividadeDTOExclusao)->getNumIdAtividade());
+                $objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_PROCESSO_RECEBIDO_UNIDADE);
+
+                $arrDTOAtividades = $atividadeRN->listarRN0036($objAtividadeDTOLiberacao);
+                $atividadeRN->excluirRN0034($arrDTOAtividades);
+            }
+
                 $arrObjAtributoAndamentoDTO = array();
                 $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                 $objAtributoAndamentoDTO->setStrNome('UNIDADE');
                 $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla().' ¥ '.$objUnidadeDTO->getStrDescricao());
                 $objAtributoAndamentoDTO->setStrIdOrigem($objUnidadeDTO->getNumIdUnidade());
                 $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
-                
+               
                 $objAtividadeDTO = new AtividadeDTO();
                 $objAtividadeDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
                 $objAtividadeDTO->setNumIdUnidade( $objUnidadeDTO->getNumIdUnidade() );
@@ -285,16 +549,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
                 $objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
 
-
-                
                 $mdPetVinculoUsuExtRN->enviarEmail($arrParams);
                 
-                
-
-
                 //Disponibilazando Acesso Externo ao Responsável Legal
                 $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
-                $objMdPetAcessoExternoRN->gerarAcessoExternoVinculo(array($idVinculo, $objProcedimentoDTO->getDblIdProcedimento()));
+                $objMdPetAcessoExternoRN->gerarAcessoExternoVinculo(array($idVinculo, $idProcedimento));
                 
                 $objAtividadeRN = new AtividadeRN();
                 $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
@@ -310,14 +569,170 @@ class MdPetVinUsuExtProcRN extends InfraRN
     /**
      *
      */
+
+    
+    private function _adicionarVinculoPF($dados, $idProcedimento)
+    {
+      
+  
+      $objMdPetVinculoRN = new MdPetVinculoRN();
+      $objMdPetVinculoDTO = new MdPetVinculoDTO();
+      $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);
+      $objMdPetVinculoDTO->setStrSinValidado("N");
+      $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+      $objMdPetVinculoDTO->setDblIdProtocolo($idProcedimento);
+      $objMdPetVinculoDTO->setStrTpVinculo('F');
+      $objMdPetVinculoDTO->setStrSinWebService("N");
+  
+      $objMdPetVinculoDTO = $objMdPetVinculoRN->cadastrar($objMdPetVinculoDTO);
+  
+      return $objMdPetVinculoDTO->getNumIdMdPetVinculo();
+  
+  
+    }
+
+    protected function getConfiguracaoVinculoConectado(){
+        
+        $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
+        $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
+        $objMdPetVincTpProcessoDTO->retTodos();
+        $objMdPetVincTpProcessoDTO->setStrTipoVinculo('F');
+        $arrObjMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
+
+        if (is_null($arrObjMdPetVincTpProcesso)) {
+          throw new InfraException('Vinculação não configurada');
+        }
+    
+        return $arrObjMdPetVincTpProcesso;
+      }
+
+
+      private function _getTipoProcesso($arrObjMdPetVincTpProcesso){
+        $idTipoProcesso = $arrObjMdPetVincTpProcesso->getNumIdTipoProcedimento();
+    
+        $objTipoProcedimentoDTO = new TipoProcedimentoDTO();
+        $objTipoProcedimentoDTO->retNumIdTipoProcedimento();
+        $objTipoProcedimentoDTO->retStrNome();
+        $objTipoProcedimentoDTO->setNumIdTipoProcedimento($idTipoProcesso);
+    
+        $objTipoProcedimentoRN = new TipoProcedimentoRN();
+        $objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
+    
+        if ($objTipoProcedimentoDTO == null) {
+          throw new InfraException('Tipo de processo não encontrado.');
+        }
+    
+    
+        return $objTipoProcedimentoDTO;
+      }
+
+      private function _gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, &$dados,$arrObjMdPetVincTpProcesso)
+  {
+   
+    $arrDados = array();
+    $objSeiRN = new SeiRN();
+    $objMdPetReciboRN = new MdPetReciboRN();
+    $usuarioRN = new UsuarioRN();
+
+    //Gera um processo
+    $objSaidaGerarProcedimentoAPI = $this->_gerarProcedimento($idTipoProcesso, $objUnidadeDTO,$arrObjMdPetVincTpProcesso,$dados);
+
+    //Processo - Interessado somente a PJ
+    $objParticipante = new ParticipanteDTO();
+    $objParticipante->setDblIdProtocolo($objSaidaGerarProcedimentoAPI->getIdProcedimento());
+    if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF"){
+    $objParticipante->setNumIdContato($dados['idContatoExterno']);
+    }else{
+    $objParticipante->setNumIdContato($dados['idContato']);   
+    }
+    $objParticipante->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
+    $objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+    $objParticipante->setNumSequencia(0);
+    $idsParticipantes[] = $objParticipante;
+
+    $objMdPetParticipanteRN = new MdPetParticipanteRN();
+    $arrInteressado = array();
+    $arrInteressado[0] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
+    $arrInteressado[1] = $idsParticipantes;
+    $objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento($arrInteressado);
+    // Processo - Interessado somente a PJ - FIM
+
+    $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
+    $objEntradaConsultarProcedimentoAPI->setIdProcedimento($objSaidaGerarProcedimentoAPI->getIdProcedimento());
+    $objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
+
+    $nomeTipo = $objSaidaConsultarProcedimentoAPI->getTipoProcedimento()->getNome();
+
+    $objProcedimentoDTO = new ProcedimentoDTO();
+    $objProcedimentoDTO->setStrNomeTipoProcedimento($nomeTipo);
+    $objProcedimentoDTO->setDblIdProcedimento($objSaidaGerarProcedimentoAPI->getIdProcedimento());
+    $objProcedimentoDTO->setStrProtocoloProcedimentoFormatado($objSaidaConsultarProcedimentoAPI->getProcedimentoFormatado());
+    $objProcedimentoDTO->setNumIdTipoProcedimento($objSaidaConsultarProcedimentoAPI->getTipoProcedimento()->getIdTipoProcedimento());
+    $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
+
+
+    return $idProcedimento;
+  }
+
+  private function _gerarProcedimento($idTipoProcesso, $objUnidadeDTO,$arrObjMdPetVincTpProcesso,$dados){
+    $objProcedimentoAPI = new ProcedimentoAPI();
+    $objProcedimentoAPI->setIdTipoProcedimento($idTipoProcesso);
+    $objProcedimentoAPI->setIdUnidadeGeradora($objUnidadeDTO->getNumIdUnidade());
+    //ESPECIFICAÇÃO
+    $contatoDTO = new ContatoDTO();
+    $contatoDTO->retStrNome();
+    $contatoDTO->retDblCpf();
+    $contatoDTO->setNumIdContato($dados['hdnIdContExterno']);
+    $contatoRN = new ContatoRN();
+    $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+    
+    $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
+    $nomeModificado = str_replace("@nome_completo@",$objContatoRN->getStrNome(),$especificacao);
+    $nome_cpf = str_replace("@cpf@",InfraUtil::formatarCpf($objContatoRN->getDblCpf()),$nomeModificado);
+    
+    $objProcedimentoAPI->setEspecificacao($nome_cpf);
+    $objProcedimentoAPI->setNumeroProtocolo('');
+    $objProcedimentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
+    $objProcedimentoAPI->setIdHipoteseLegal(null);
+
+    $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
+    $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
+
+    $objSeiRN = new SeiRN();
+    SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $objUnidadeDTO->getNumIdUnidade());
+    $objSaidaGerarProcedimentoAPI = new SaidaGerarProcedimentoAPI();
+    $objSaidaGerarProcedimentoAPI = $objSeiRN->gerarProcedimento($objEntradaGerarProcedimentoAPI);
+
+    return $objSaidaGerarProcedimentoAPI;
+}
+
+
+      private function _getUnidade($arrObjMdPetVincTpProcesso){
+        $idUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+    
+        //obter unidade configurada no "Tipo de Processo para peticionamento"
+        $unidadeRN = new UnidadeRN();
+        $unidadeDTO = new UnidadeDTO();
+        $unidadeDTO->retTodos();
+        $unidadeDTO->setNumIdUnidade($idUnidadeAberturaProcesso);
+        $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+    
+        if (is_null($unidadeDTO)) {
+          throw new InfraException('Tipo de unidade não encontrada.');
+        }
+    
+        return $unidadeDTO;
+      }
+
     public function gerarProcedimentoVinculoProcuracaoMotivoControlado($dados)
     {
 
         try {
+            
             $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
             $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
             $objMdPetVincTpProcessoDTO->retTodos();
-
+            $objMdPetVincTpProcessoDTO->setStrTipoVinculo($dados['tpVinc']);
             $arrObjMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
             if (is_null($arrObjMdPetVincTpProcesso)) {
@@ -325,7 +740,30 @@ class MdPetVinUsuExtProcRN extends InfraRN
             }
 
             //obtendo a unidade de abertura do processo
-            $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+            //Recuperando Vinculo já existente
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+            if($dados['tpVinc'] == "J" && $dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnIdContatoVinc']);
+                $objMdPetVincRepresentantDTO->setStrTpVinc("J");
+            }else if($dados['tpVinc'] == "F" && $dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnIdContatoVinc']);
+                $objMdPetVincRepresentantDTO->setStrTpVinc("F");
+            }
+            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $objMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+            $arrProcessos = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantRN,'IdProcedimentoVinculo');
+            
+            if(count(array_unique($arrProcessos))){
+                $objProtocoloDTO = new ProtocoloDTO();
+                $objProtocoloDTO->setDblIdProtocolo($arrProcessos[0]);
+                $objProtocoloDTO->retNumIdUnidadeGeradora();
+                $objProtocoloRN = new ProtocoloRN();
+                $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
+                $idTipoUnidadeAberturaProcesso = $objUnidadeGeradora->getNumIdUnidadeGeradora();
+            }else{
+                $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+            }
 
             //Obtendo tipo do processo
             $idTipoProcesso = $arrObjMdPetVincTpProcesso->getNumIdTipoProcedimento();
@@ -341,8 +779,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
             if ($objTipoProcedimentoDTO == null) {
                 throw new InfraException('Tipo de processo não encontrado.');
             }
-
-            $txtTipoProcessoEscolhido = $objTipoProcedimentoDTO->getStrNome();
 
             //obter unidade configurada no "Tipo de Processo para peticionamento"
             $unidadeRN = new UnidadeRN();
@@ -402,7 +838,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
             //gerar modelo de Revogação
             $objMdPetVincRepresentantDTO = $this->_gerarModeloDesvinculoProcuracao($dados, $objProcedimentoDTO, $objMdPetVincRepresentantDTO, $unidadeDTO);
 
-
             return true;
 
         } catch (Exception $e) {
@@ -416,7 +851,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
      */
 
     private function _gerarModeloDesvinculoProcuracao($dados, $objProcedimentoDTO, $objMdPetVincRepresentantDTO, $objUnidadeDTO){
-
+        
         $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
         //$idResponsavelLegal = $dados['IdOutorgante'];
         $idOutorgado = $objMdPetVincRepresentantDTO->getNumIdContatoProcurador();
@@ -425,6 +860,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $idContatoVinculo = $objMdPetVincRepresentantDTO->getNumIdContatoVinc();
         
         $objInfraParametro= new InfraParametro($this->getObjInfraIBanco());
+        
+        if($dados['tpProc'] == "E"){
         if($dados['hdnTpDocumento']=='renunciar') {
             $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_renuncia.php';
             //$tipoPeticionamento = MdPetAcessoExternoRN::$MD_PET_PROCURACAO_RENUCIA;
@@ -440,6 +877,163 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $tipoRecibo = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO;
         }
 
+        }
+        //Revogar procuração simples
+        if($dados['hdnTpDocumento']=='revogar' || $dados['hdnTpDocumento']=='renunciar') {
+            if($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J"){
+                //Caso seja procuração simples com outorgante PJ
+                if($dados['hdnTpDocumento']=='revogar'){
+                $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_revogacao_pessoa_juridica.php';
+                }else if($dados['hdnTpDocumento']=='renunciar'){
+                $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_renuncia_pessoa_juridica.php';
+                }
+
+                if($dados['hdnTpDocumento']=='revogar'){
+
+                    $tipoAto = MdPetVincDocumentoRN::$TP_ATO_REVOGACAO;
+                    $tipoPeticionamento = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO;
+                    $tipoRecibo = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO;
+
+
+                }else if($dados['hdnTpDocumento']=='renunciar'){
+
+                    $tipoAto = MdPetVincDocumentoRN::$TP_ATO_RENUNCIA;
+                    $tipoPeticionamento = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA;
+                    $tipoRecibo = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA;
+
+                }
+
+
+                $objMdPetVincRepresentantOutorganteRN = new MdPetVincRepresentantRN();
+                $objMdPetVincRepresentantOutorganteDTO = new MdPetVincRepresentantDTO();
+                $objMdPetVincRepresentantOutorganteDTO->setNumIdMdPetVinculoRepresent($idMdPetVinculoRepresent);
+                $objMdPetVincRepresentantOutorganteDTO->retNumIdMdPetVinculo();
+                $objMdPetVincRepresentantOutorganteDTO->retNumIdContato();
+                $objMdPetVincRepresentantOutorganteDTO->retNumIdContatoOutorg();
+                $objMdPetVincRepresentantOutorganteDTO->setStrTipoRepresentante(array('L'),InfraDTO::$OPER_NOT_IN);
+                $objMdPetVincRepresentantOutorganteRN =  $objMdPetVincRepresentantOutorganteRN->consultar($objMdPetVincRepresentantOutorganteDTO);
+
+                //Recuperando responsave legal
+                //Recuperando Pessoa Jurídica Outorgante
+                $contatoDTO = new ContatoDTO();
+                $contatoDTO->setNumIdContato($objMdPetVincRepresentantOutorganteRN->getNumIdContatoOutorg());
+                $contatoDTO->retStrNome();
+                $contatoDTO->retNumIdContato();
+                $contatoDTO->retDblCnpj();
+                $contatoRN = new ContatoRN();
+                $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+                $nomeResponsavelLegal = $objContatoRN->getStrNome();
+                
+            
+                $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                $objMdPetVinculoDTO->setNumIdMdPetVinculo($objMdPetVincRepresentantOutorganteRN->getNumIdMdPetVinculo());
+                $objMdPetVinculoDTO->retNumIdContato();
+                $objMdPetVinculoRN = new MdPetVinculoRN();
+                $objMdPetVinculoRN = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
+
+
+                //Recuperando Pessoa Jurídica Outorgante
+                $contatoDTO = new ContatoDTO();
+                $contatoDTO->setNumIdContato($objMdPetVinculoRN->getNumIdContato());
+                $contatoDTO->retStrNome();
+                $contatoDTO->retNumIdContato();
+                $contatoDTO->retDblCnpj();
+                $contatoRN = new ContatoRN();
+                $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+                $nomeOutorgante = $objContatoRN->getStrNome();
+                $cnpjOutorgante = $objContatoRN->getDblCnpj();
+
+                //Recuperando Outorgado
+                $contatoDTO = new ContatoDTO();
+                $contatoDTO->setNumIdContato($objMdPetVincRepresentantOutorganteRN->getNumIdContato());
+                $contatoDTO->retStrNome();
+                $contatoDTO->retNumIdContato();
+                $contatoDTO->retDblCnpj();
+                $contatoRN = new ContatoRN();
+                $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+                $nomeOutorgado = $objContatoRN->getStrNome();
+            }
+            
+            if($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F"){
+                //Caso seja procuração simples com outorgante PJ
+                if($dados['hdnTpDocumento']=='revogar'){
+                    $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_revogacao_pessoa_fisica.php';
+                    }else if($dados['hdnTpDocumento']=='renunciar'){
+                    $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_renuncia_pessoa_fisica.php';
+                    }
+
+                if($dados['hdnTpDocumento']=='revogar'){
+
+                        $tipoAto = MdPetVincDocumentoRN::$TP_ATO_REVOGACAO;
+                        $tipoPeticionamento = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO;
+                        $tipoRecibo = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO;
+    
+                    }else if($dados['hdnTpDocumento']=='renunciar'){
+    
+                        $tipoAto = MdPetVincDocumentoRN::$TP_ATO_RENUNCIA;
+                        $tipoPeticionamento = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA;
+                        $tipoRecibo = MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA;
+    
+                    }
+
+                $objMdPetVincRepresentantOutorganteRN = new MdPetVincRepresentantRN();
+                $objMdPetVincRepresentantOutorganteDTO = new MdPetVincRepresentantDTO();
+                $objMdPetVincRepresentantOutorganteDTO->setNumIdMdPetVinculoRepresent($idMdPetVinculoRepresent);
+                $objMdPetVincRepresentantOutorganteDTO->retNumIdMdPetVinculo();
+                $objMdPetVincRepresentantOutorganteDTO->retNumIdContato();
+                $objMdPetVincRepresentantOutorganteDTO->setStrTipoRepresentante(array('L'),InfraDTO::$OPER_NOT_IN);
+                $objMdPetVincRepresentantOutorganteRN =  $objMdPetVincRepresentantOutorganteRN->consultar($objMdPetVincRepresentantOutorganteDTO);
+
+            
+                $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                $objMdPetVinculoDTO->setNumIdMdPetVinculo($objMdPetVincRepresentantOutorganteRN->getNumIdMdPetVinculo());
+                $objMdPetVinculoDTO->retNumIdContato();
+                $objMdPetVinculoRN = new MdPetVinculoRN();
+                $objMdPetVinculoRN = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
+
+                
+                //Recuperando Pessoa Física Outorgante
+                $contatoDTO = new ContatoDTO();
+                $contatoDTO->setNumIdContato($objMdPetVinculoRN->getNumIdContato());
+                $contatoDTO->retStrNome();
+                $contatoDTO->retNumIdContato();
+                $contatoDTO->retDblCnpj();
+                $contatoRN = new ContatoRN();
+                $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+                $nomeOutorgante = $objContatoRN->getStrNome();
+
+                //Outorgado
+                $contatoDTO = new ContatoDTO();
+                $contatoDTO->setNumIdContato($objMdPetVincRepresentantOutorganteRN->getNumIdContato());
+                $contatoDTO->retStrNome();
+                $contatoDTO->retNumIdContato();
+                $contatoDTO->retDblCnpj();
+                $contatoRN = new ContatoRN();
+                $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+                $nomeOutorgado = $objContatoRN->getStrNome();
+
+            }
+        }
+
+            //Procuração Dados
+            $docRN = new DocumentoRN();
+            $parObjDocumentoDTO = new DocumentoDTO();
+            $parObjDocumentoDTO->retStrProtocoloProcedimentoFormatado();
+            $parObjDocumentoDTO->retStrProtocoloDocumentoFormatado();
+            $parObjDocumentoDTO->retStrNomeSerie();
+            $parObjDocumentoDTO->setDblIdDocumento($dados['hdnIdProcuracao']);
+            $parObjDocumentoDTO->setNumMaxRegistrosRetorno(1);
+            $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
+
+
+            $numProcuracao='';
+            $numProcesso='';
+            if (count($parObjDocumentoDTO)>0){
+                  $tipoProcuracao = $parObjDocumentoDTO->getStrNomeSerie();
+                  $numProcuracao = $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado();
+                  $numProcesso = $parObjDocumentoDTO->getStrProtocoloProcedimentoFormatado();
+                }
+ 
         $htmlModeloRevogacao = file_get_contents($url);
         $dataAtual = InfraData::getStrDataAtual();
         $horaAtual = InfraData::getStrHoraAtual();
@@ -467,7 +1061,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         $contatoRN = new ContatoRN();
         $Outorgante = $contatoRN->consultarRN0324($contatoDTO);
-
+        if($dados['tpProc'] == "E"){
         $htmlModeloRevogacao = str_replace('@razaoSocial',$objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc(),$htmlModeloRevogacao);
         $htmlModeloRevogacao = str_replace('@cnpj',InfraUtil::formatarCnpj($objMdPetVincRepresentantDTO->getStrCNPJ()),$htmlModeloRevogacao);
         $htmlModeloRevogacao = str_replace('@nomeOutorgante',$Outorgante->getStrNome(),$htmlModeloRevogacao);
@@ -477,38 +1071,52 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $htmlModeloRevogacao = str_replace('@motivo',$dados['txtJustificativa'],$htmlModeloRevogacao);
         $htmlModeloRevogacao = str_replace('@data',$dataAtual,$htmlModeloRevogacao);
         $htmlModeloRevogacao = str_replace('@descricao_orgao@',$orgao->getStrDescricao(),$htmlModeloRevogacao);
-
-        //==========================================================================
-        //incluindo doc recibo no processo via SEIRN
-        //===========================================================
-        if($dados['hdnTpDocumento']=='renunciar')
-            $idSerieFormulario = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RENUNCIA);
-        else
-            $idSerieFormulario = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_REVOGACAO);
-
-        //Procuração Dados
-        $docRN = new DocumentoRN();
-        $parObjDocumentoDTO = new DocumentoDTO();
-        $parObjDocumentoDTO->retStrProtocoloProcedimentoFormatado();
-        $parObjDocumentoDTO->retStrProtocoloDocumentoFormatado();
-        $parObjDocumentoDTO->retStrNomeSerie();
-        $parObjDocumentoDTO->setDblIdDocumento($dados['hdnIdProcuracao']);
-        $parObjDocumentoDTO->setNumMaxRegistrosRetorno(1);
-        $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
-
-        $numProcuracao='';
-        $numProcesso='';
-        if (count($parObjDocumentoDTO)>0){
-            $tipoProcuracao = $parObjDocumentoDTO->getStrNomeSerie();
-            $numProcuracao = $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado();
-            $numProcesso = $parObjDocumentoDTO->getStrProtocoloProcedimentoFormatado();
-        }
-
         $htmlModeloRevogacao = str_replace('@tipoProcuracao',$tipoProcuracao,$htmlModeloRevogacao);
         $htmlModeloRevogacao = str_replace('@numProcuracao',$numProcuracao,$htmlModeloRevogacao);
         //$htmlModeloRevogacao = str_replace('@numDoc',$numProcuracao,$htmlModeloRevogacao);
         $htmlModeloRevogacao = str_replace('@numProcesso',$numProcesso,$htmlModeloRevogacao);
 
+        }else if($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J"){
+            $htmlModeloRevogacao = str_replace('@motivo',$dados['txtJustificativa'],$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@Outorgante',$nomeOutorgante,$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@cnpj',InfraUtil::formatarCnpj($cnpjOutorgante),$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@outorgado',$nomeOutorgado,$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@respLegal',$nomeResponsavelLegal,$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@numProcesso',$numProcesso,$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@descricao_orgao@',$orgao->getStrDescricao(),$htmlModeloRevogacao);
+        }else if($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F"){
+            $htmlModeloRevogacao = str_replace('@motivo',$dados['txtJustificativa'],$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@Outorgante',$nomeOutorgante,$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@outorgado',$nomeOutorgado,$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@numProcesso',$numProcesso,$htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@descricao_orgao@',$orgao->getStrDescricao(),$htmlModeloRevogacao);
+        }
+        //==========================================================================
+        //incluindo doc recibo no processo via SEIRN
+        //===========================================================
+        if($dados['hdnTpDocumento']=='renunciar')
+            $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RENUNCIA);
+        else
+            $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_REVOGACAO);
+
+        
+        
+        if($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J"){
+
+        $htmlModeloRevogacao = str_replace('@tipoProcuracao',"Procuração Eletrônica",$htmlModeloRevogacao);
+        $htmlModeloRevogacao = str_replace('@numProcuracao',$numProcuracao,$htmlModeloRevogacao);
+        $htmlModeloRevogacao = str_replace('@numProcesso',$numProcesso,$htmlModeloRevogacao);    
+        }else if($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F"){
+
+        $htmlModeloRevogacao = str_replace('@tipoProcuracao',"Procuração Eletrônica",$htmlModeloRevogacao);
+        $htmlModeloRevogacao = str_replace('@numProcuracao',$numProcuracao,$htmlModeloRevogacao);
+        $htmlModeloRevogacao = str_replace('@numProcesso',$numProcesso,$htmlModeloRevogacao);
+        }else if($dados['tpProc'] == "E"){
+        $htmlModeloRevogacao = str_replace('@tipoProcuracao',"Procuração Especial",$htmlModeloRevogacao);
+        $htmlModeloRevogacao = str_replace('@numProcuracao',$numProcuracao,$htmlModeloRevogacao);
+        $htmlModeloRevogacao = str_replace('@numProcesso',$numProcesso,$htmlModeloRevogacao);
+        }
+        
         //Incluindo documento
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
@@ -629,25 +1237,33 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $dadosRetornoDesvinculo['RepLegal'] = $Outorgante;
         $dadosRetornoDesvinculo['Procuracao'] = $objMdPetVincRepresentantDTO;
         $dadosRetornoDesvinculo['Documento'] = $saidaDocExternoAPI;
-
+       
         $tpProtocolo = $tipoAto;
         $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idMdPetVinculoRepresent, $tpProtocolo);
         $objMdPetVincRepresentantDTO = $this->_encerramentoProcuracaoEspecial($idMdPetVinculoRepresent,$dados);
-
+        
         $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
-
+        
         $reciboDTOBasico = $objMdPetVinculoUsuExtRN->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' =>$tipoRecibo));
-
+        
 
         $idMdPetVinculoRepresent = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
 
         $recibo = $this->gerarReciboDesvinculo(array($dadosRetornoDesvinculo, $objProcedimentoDTO, $reciboDTOBasico, $idMdPetVinculoRepresent,$tipoRecibo, $idContatoVinculo,$objUnidadeDTO));
         $idDocumentoRecibo = $reciboDTOBasico->getDblIdDocumento();
 
+     
+        if($dados['tpVinc'] == "F"){
+            $tipoPessoa = MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT_PF;
+        }else if($dados['tpVinc'] == "J"){
+            $tipoPessoa = MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT;
+        }
+
+        
         $mdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
         $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
         $objProcedimentoDTO = $mdPetVinculoUsuExtRN->getProcedimento($idProcedimento);
-        $objUnidadeDTO = $mdPetVinculoUsuExtRN->getUnidade();
+        $objUnidadeDTO = $mdPetVinculoUsuExtRN->getUnidade($tipoPessoa);
         $arrParams = array();
         $arrParams[0] = $dados;
         $arrParams[1] = $objUnidadeDTO;
@@ -725,8 +1341,12 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
 
         $mdPetVinculoUsuExtRN->enviarEmail($arrParams);
-        
-        $objMdPetVinculoUsuExtRN->gerarAndamentoVinculo(array($idProcedimento, $tipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
+
+
+        $objMdRegrasGeraisRN = new MdPetRegrasGeraisRN();
+        $strTipoPeticionamento =  $objMdRegrasGeraisRN->getTipoPeticionamento($tipoPeticionamento, true);
+
+        $objMdPetVinculoUsuExtRN->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
 
         //Disponibilazando Acesso Externo ao outros representantes
         $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
@@ -737,14 +1357,14 @@ class MdPetVinUsuExtProcRN extends InfraRN
         return $objMdPetVincRepresentantDTO;
     }
 
-    /*
-     * gerar modelo Procuração Especial
+     /*
+     * gerar modelo Procuração Simples
      */
 
-    protected function gerarFormularioProcuracaoControlado($params){
-
+    protected function gerarFormularioProcuracaoSimplesControlado($params){
+   
         if(!(boolean)$params['dados']['selTipoProcuracao']){
-            $params['dados']['selTipoProcuracao'] = MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL;
+            $params['dados']['selTipoProcuracao'] = MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES;
         }
         
         $objProcedimentoDTO = $params['procedimento'];
@@ -752,51 +1372,68 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
         $isProcuracao       = false;
 
-       
-        // Caso a chamada venha da tela de Vinculação
-        if(isset($params['tela'])){
-            $idContatoVinc      = $params['dados']['idContato'];
-            $idResponsavelLegal = $params['dados']['IdRepresentanteLegal'];
-            $idOutorgado        = $params['dados']['IdOutorgado'];
-            $idVinculo          = $params['idVinculo'];
-            $idContato          = $params['idContato'];
-            $unidadeDTO         = $params['unidadeDTO'];
-        }else{
-            $idContatoVinc      = $params['dados']['selPessoaJuridica'];
-            $idResponsavelLegal = $params['dados']['idContatoExterno'];
-            $idOutorgado        = $params['dados']['IdOutorgado'];
+            //Caso o outorgante seja pj
+            if($params['dados']['hdnOutorgante'] == "PJ"){
+                if($params['dados']['selTipoProcuracao'] == 'S') {
+                    $idContatoVinc      = $params['dados']['hdnSelPJSimples'];
+                } else {
+                    $idContatoVinc      = $params['dados']['selPessoaJuridica'];
+                }
+            }
+            //caso o outorgante seja pf
+            else{
+            $idContatoVinc      = $params['dados']['idContatoExterno']; 
+            }
+            $id = $params['dados']['idContatoExterno'];
+            //Id do Outorgado
+            $idOutorgado        = $params['dados']['hdnIdUsuario'];
+            //Fim Id Outorgado
             $idVinculo          = $params['idVinculo'];
             $Replegal           = $params['RepLegal'];
             $contatoPj          = $params['contatoPj'];
-            $idContato          = $params['idContato'];
+
+            if($params['dados']['hdnOutorgante'] == "PF"){
+            $idContato          = $params['dados']['idContatoExterno'];
+            }else{
+            $idContato          = $params['dados']['idContato'];
+            }
             $unidadeDTO         = $params['unidadeDTO'];
             $isProcuracao       = true;
-        }
-
+            
+        
         $objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
-        $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_procuracao.php';
-        $htmlModeloProcuracao = file_get_contents($url);
 
-        if(!$isProcuracao) {
+        if($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PF" ){
+
+            $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_procuracao_simples_pessoa_fisica.php';
+
+        }else if($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PJ" ){
+
+            $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_procuracao_simples_pessoa_juridica.php';
+
+        }
+        $htmlModeloProcuracao = file_get_contents($url);
+       
+        
             // consultar dados Pj
+            
             $contatoDTO = new ContatoDTO();
             $contatoDTO->retDblCnpj();
             $contatoDTO->retStrNome();
             $contatoDTO->setNumIdContato($idContatoVinc);
 
             $contatoRN = new ContatoRN();
-            $contatoPj = $contatoRN->consultarRN0324($contatoDTO);
+            $contatoPjPf = $contatoRN->consultarRN0324($contatoDTO);
 
             // consultar dados Responsável Legal
             $contatoDTO = new ContatoDTO();
             $contatoDTO->retDblCpf();
             $contatoDTO->retStrNome();
-            $contatoDTO->setNumIdContato($idResponsavelLegal);
+            $contatoDTO->setNumIdContato($id);
 
             $contatoRN = new ContatoRN();
             $Replegal = $contatoRN->consultarRN0324($contatoDTO);
-        }
-
+        
         // consultar dados Outorgado
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retDblCpf();
@@ -824,23 +1461,79 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $orgaoDTO->retStrDescricao();
         $orgao = $orgaoRN->consultarRN1352($orgaoDTO);
 
-        $htmlModeloProcuracao = str_replace('@RazaoSocial',$contatoPj->getStrNome(),$htmlModeloProcuracao);
+        //Recuperando Tipo de Poderes
+
+        $arrTipoPoderes = explode("-",$params['dados']['hdnTipoPoder']);
+        $objMdPetTipoPoderDTO = new MdPetTipoPoderLegalDTO();
+        $objMdPetTipoPoderDTO->setNumIdTipoPoderLegal($arrTipoPoderes,infraDTO::$OPER_IN);
+        $objMdPetTipoPoderDTO->retStrNome();
+        $objMdPetTipoPoderRN = new MdPetTipoPoderLegalRN();
+        $arrObjMdPetTipoPoderRN = $objMdPetTipoPoderRN->listar($objMdPetTipoPoderDTO);
+        $arrNome =  InfraArray::converterArrInfraDTO($arrObjMdPetTipoPoderRN,'Nome');
+
+        $poder = '';
+        $poder .='<ul style="padding-left:17px;margin:0">';
+        foreach (array_unique($arrNome) as $poderes) {
+        $poder .='<li><p style="margin: 0">'.$poderes.'</p></li>';
+        }
+        $poder .='</ul>';
+        // Fim Tipo Poderes
+       
+        
+        //Tabela de abrangência
+        if($params['dados']['hdnTbProcessos'] != ""){
+        $dadosProcessos = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($params['dados']['hdnTbProcessos']);
+        $tblAbrangencia = '';
+        $tblAbrangencia .= '<ul style="margin-top: 0px">';
+        foreach ($dadosProcessos as $key => $value) {
+            $tblAbrangencia .='<li><p style="margin: 0" class="Texto_Justificado" >'.$value[1].'</p></li>';
+        }
+        $tblAbrangencia .= '</ul>';
+      
+        
+    }
+
+        //Verificando se o outorgante é PF ou PJ
+        
+        if($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PJ" ){
+        //Outorgante Pessoa Jurídica
+        $htmlModeloProcuracao = str_replace('@RazaoSocial',$contatoPjPf->getStrNome(),$htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@Cnpj',InfraUtil::formatarCnpj($contatoPj->getDblCnpj()),$htmlModeloProcuracao);
+
+        }else if($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PF" ){
+        //Outorgante Pessoa Física
+        $htmlModeloProcuracao = str_replace('@pessoaFisica',$contatoPjPf->getStrNome(),$htmlModeloProcuracao);
+        //$htmlModeloProcuracao = str_replace('@nomeOutorgado',InfraUtil::formatarCnpj($contatoPj->getDblCnpj()),$htmlModeloProcuracao);  
+
+        }
         $htmlModeloProcuracao = str_replace('@nomeRespLegal',$Replegal->getStrNome(),$htmlModeloProcuracao);
-        $htmlModeloProcuracao = str_replace('@cpfRespLegal',InfraUtil::formatarCpf($Replegal->getDblCpf()),$htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@nomeOutorgado',$Outorgante->getStrNome(),$htmlModeloProcuracao);
-        $htmlModeloProcuracao = str_replace('@cpfOutorgado',InfraUtil::formatarCpf($Outorgante->getDblCpf()),$htmlModeloProcuracao);
-        $htmlModeloProcuracao = str_replace('@data',$dataAtual,$htmlModeloProcuracao);
-        $htmlModeloProcuracao = str_replace('@cpfOutorgado',InfraUtil::formatarCpf($Outorgante->getDblCpf()),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@tpPoderes',$poder,$htmlModeloProcuracao);
+        //Validade
+        if($params['dados']['hdnValidade'] == ""){
+        $htmlModeloProcuracao = str_replace('@validade',"Indeterminado",$htmlModeloProcuracao);
+        }else{
+        $htmlModeloProcuracao = str_replace('@validade',"Determinado (Data Limite: ".$params['dados']['hdnValidade'].")",$htmlModeloProcuracao);
+        }
+        //Abrangencia
+        if($params['dados']['hdnTbProcessos'] == ""){
+        $htmlModeloProcuracao = str_replace('@abrangencia',"Qualquer Processo em nome do Outorgante.",$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@tabela_processos_procuracao',"",$htmlModeloProcuracao);  
+
+        }else{
+        $htmlModeloProcuracao = str_replace('@abrangencia',"Processos especificados abaixo:",$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@tabela_processos_procuracao',$tblAbrangencia,$htmlModeloProcuracao);  
+        }
+        //$htmlModeloProcuracao = str_replace('@cpfOutorgado',InfraUtil::formatarCpf($Outorgante->getDblCpf()),$htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@sigla_orgao@',$orgao->getStrSigla(),$htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@descricao_orgao@',$orgao->getStrDescricao(),$htmlModeloProcuracao);
-
+        
         //==========================================================================
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
-
-        $idSerieFormulario = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_PROCURACAOE);
-
+        //Definindo o Tipo de Documento a ser cadastrado atraves da constante abaixo
+        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOS);
+        
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
         $objDocumentoAPI->setTipo(ProtocoloRN::$TP_DOCUMENTO_GERADO);
@@ -854,6 +1547,253 @@ class MdPetVinUsuExtProcRN extends InfraRN
 //        $objDocumentoAPI->setConteudo(null);
 
 
+        $objSeiRN = new SeiRN();
+        $saidaDocExternoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
+      
+        $participanteRN = new ParticipanteRN();
+        $objParticipante = new ParticipanteDTO();
+        $objParticipante->setDblIdProtocolo($saidaDocExternoAPI->getIdDocumento());
+        $objParticipante->setNumIdContato($idContato);
+        $objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
+        $objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+        $objParticipante->setNumSequencia(0);      
+        $participanteRN->cadastrarRN0170($objParticipante);
+        $dadosProcuracacao['Outorgado']['Documento'] = $saidaDocExternoAPI;
+
+        
+        // Alterando Valores do Documento //
+        $docRN = new DocumentoRN();
+        $parObjDocumentoDTO = new DocumentoDTO();
+        $parObjDocumentoDTO->retStrProtocoloProcedimentoFormatado();
+        $parObjDocumentoDTO->retStrProtocoloDocumentoFormatado();
+        $parObjDocumentoDTO->retStrStaDocumento();
+        $parObjDocumentoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
+        $parObjDocumentoDTO->retDblIdDocumento();
+        $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
+
+        //Setando os parâmetros no Documento
+        $htmlModeloProcuracao = str_replace('@numProcuracao',$parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@numDoc',$parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@numProcesso',$parObjDocumentoDTO->getStrProtocoloProcedimentoFormatado(),$htmlModeloProcuracao);
+        
+        //$parObjDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_FORMULARIO_AUTOMATICO);
+        $parObjDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EDITOR_INTERNO);
+
+        $objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
+        $objDocumentoBD->alterar($parObjDocumentoDTO);
+        
+        //Alterando Conteudo do Documento com as Informções atualizadas
+//        $parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
+//        $parObjDocumentoConteudoDTO->setStrConteudo($htmlModeloProcuracao);
+//        $parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
+
+//        $objDocumentoConteudoBD = new DocumentoConteudoBD($this->getObjInfraIBanco());
+//        $objDocumentoConteudoBD->alterar($parObjDocumentoConteudoDTO);
+
+        $objEditorDTO = new EditorDTO();
+
+        $objEditorDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
+        $objEditorDTO->setNumIdBaseConhecimento(null);
+        $objEditorDTO->setNumVersao(1);
+        $objEditorDTO->setStrSinIgnorarNovaVersao('S');
+
+        $objSecaoDocumentoDTO = new SecaoDocumentoDTO();
+        $objSecaoDocumentoDTO->retNumIdSecaoModelo();
+        $objSecaoDocumentoDTO->retStrNomeSecaoModelo();
+        $objSecaoDocumentoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
+        //    $objSecaoDocumentoDTO->setNumIdBaseConhecimento($parObjEditorDTO->getNumIdBaseConhecimento());
+        $objSecaoDocumentoDTO->setStrSinAssinatura('N');
+
+        $objSecaoDocumentoRN = new SecaoDocumentoRN();
+        $arrObjSecaoDocumentoDTOBanco = $objSecaoDocumentoRN->listar($objSecaoDocumentoDTO);
+        
+        if (count($arrObjSecaoDocumentoDTOBanco)){
+
+            $arrObjSecaoDocumentoDTO = array();
+
+            foreach($arrObjSecaoDocumentoDTOBanco as $item){
+                $objSecaoDocumentoDTO = new SecaoDocumentoDTO();
+                $objSecaoDocumentoDTO->setNumIdSecaoModelo($item->getNumIdSecaoModelo());
+
+                if ($item->getStrNomeSecaoModelo()=='Corpo do Texto'){
+                    $objSecaoDocumentoDTO->setStrConteudo($htmlModeloProcuracao);
+                }
+                $arrObjSecaoDocumentoDTO[] = $objSecaoDocumentoDTO;
+            }
+
+            $objEditorDTO->setArrObjSecaoDocumentoDTO($arrObjSecaoDocumentoDTO);
+            
+            try{
+                $objEditorRN = new EditorRN();
+                $numVersao = $objEditorRN->adicionarVersao($objEditorDTO);
+            }catch(Exception $e){
+                if ($e instanceof InfraException && $e->contemValidacoes()){
+                    die("INFRA_VALIDACAO\n".$e->__toString()); //retorna para o iframe exibir o alert
+                }
+
+                PaginaSEI::getInstance()->processarExcecao($e); //vai para a página de erro padrão
+            }
+           
+        }
+        
+        //RECUPERANDO DADOS PARA ASSINATURA
+        
+        $mdPetProcessoRN = new mdPetProcessoRN();
+        $idUnidade = $unidadeDTO->getNumIdUnidade();
+        //$dados['dados']['idProc']
+       
+        //Recuperando unidade origem
+        $objProtocoloDTO = new ProtocoloDTO();
+        $objProtocoloDTO->setDblIdProtocolo($params['idProc']);
+        $objProtocoloDTO->retNumIdUnidadeGeradora();
+        $objProtocoloRN = new ProtocoloRN();
+        $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
+        
+        //Unidade Origem
+        $objUnidadeDTO = new UnidadeDTO();
+        $objUnidadeRN = new UnidadeRN();
+        $objUnidadeDTO->setNumIdUnidade($objUnidadeGeradora->getNumIdUnidadeGeradora());
+        $objUnidadeDTO->retTodos();
+
+        $objUnidadeDTO= $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+
+        $mdPetProcessoRN->assinarETravarDocumentoProcesso($objUnidadeDTO, $params['dados'], $parObjDocumentoDTO, $objProcedimentoDTO);
+
+       
+        //Adicionar Procuracao especial caso tenha sido selecionado.
+        $dados = array('IdOutorgado'=>$idOutorgado,
+                       'idContatoExterno'=>$id,
+                       'selTipoProcuracao'=>$params['dados']['selTipoProcuracao'],
+                       'tabelaProcessos'=>$params['dados']['hdnTbProcessos'],
+                       'validade'=>$params['dados']['hdnValidade']
+                 );
+        
+        $idMdPetVinculoRepresent = $this->_adicionarProcuracaoEspecial($dados, $idVinculo ,$saidaDocExternoAPI->getIdDocumento());
+        
+        $tpDocumento = MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL;
+        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idMdPetVinculoRepresent, $tpDocumento);
+                
+        $dadosProcuracacao['idVinculo'] = $idVinculo;
+        $dadosProcuracacao['IdMdPetVinculoRepresent']= $idMdPetVinculoRepresent;
+        if($isProcuracao) {
+            return $dadosProcuracacao;
+        }
+        return $saidaDocExternoAPI;
+    }
+
+    /*
+     * gerar modelo Procuração Especial
+     */
+
+    protected function gerarFormularioProcuracaoControlado($params){
+       
+        if(!(boolean)$params['dados']['selTipoProcuracao']){
+            $params['dados']['selTipoProcuracao'] = MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL;
+        }
+        
+        $objProcedimentoDTO = $params['procedimento'];
+
+        $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
+        $isProcuracao       = false;
+
+      
+        // Caso a chamada venha da tela de Vinculação
+        if(isset($params['tela'])){
+            $idContatoVinc      = $params['dados']['idContato'];
+            $idResponsavelLegal = $params['dados']['IdRepresentanteLegal'];
+            $idOutorgado        = $params['dados']['IdOutorgado'];
+            $idVinculo          = $params['idVinculo'];
+            $idContato          = $params['idContato'];
+            $unidadeDTO         = $params['unidadeDTO'];
+        }else{
+            $idContatoVinc      = $params['dados']['selPessoaJuridica'];
+            $idResponsavelLegal = $params['dados']['idContatoExterno'];
+            $idOutorgado        = $params['dados']['IdOutorgado'];
+            $idVinculo          = $params['idVinculo'];
+            $contatoPj          = $params['contatoPj'];
+            $idContato          = $params['idContato'];
+            $unidadeDTO         = $params['unidadeDTO'];
+            $isProcuracao       = true;
+        }
+        
+        $objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
+        $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_procuracao.php';
+        $htmlModeloProcuracao = file_get_contents($url);
+       
+        
+            // consultar dados Pj
+            
+            $contatoDTO = new ContatoDTO();
+            $contatoDTO->retDblCnpj();
+            $contatoDTO->retStrNome();
+            $contatoDTO->setNumIdContato($idContatoVinc);
+
+            $contatoRN = new ContatoRN();
+            $contatoPj = $contatoRN->consultarRN0324($contatoDTO);
+
+            // consultar dados Responsável Legal
+            $contatoDTO = new ContatoDTO();
+            $contatoDTO->retDblCpf();
+            $contatoDTO->retStrNome();
+            $contatoDTO->setNumIdContato($idResponsavelLegal);
+
+            $contatoRN = new ContatoRN();
+            $Replegal = $contatoRN->consultarRN0324($contatoDTO);
+        
+        
+        // consultar dados Outorgado
+        $contatoDTO = new ContatoDTO();
+        $contatoDTO->retDblCpf();
+        $contatoDTO->retStrNome();
+        $contatoDTO->retNumIdContato();
+        $contatoDTO->setNumMaxRegistrosRetorno(1);
+        $contatoDTO->setNumIdContato($idOutorgado);
+
+        $contatoRN = new ContatoRN();
+        $Outorgante = $contatoRN->consultarRN0324($contatoDTO);
+        $dadosProcuracacao['Outorgado']['dadosOutorgado'] = $Outorgante;
+
+        // Recuperando data e Hora atual
+        $dataAtual = InfraData::getStrDataAtual();
+        $horaAtual = InfraData::getStrHoraAtual();
+        $dataAtual .= '  '.$horaAtual;
+
+        //consultar orgão
+        $idOrgao = SessaoSEIExterna::getInstance()->getNumIdOrgaoUsuarioExterno();
+        $orgaoDTO = new  OrgaoDTO();
+        $orgaoRN = new  OrgaoRN();
+        $orgaoDTO->setNumIdOrgao($idOrgao);
+        $orgaoDTO->retNumIdOrgao();
+        $orgaoDTO->retStrSigla();
+        $orgaoDTO->retStrDescricao();
+        $orgao = $orgaoRN->consultarRN1352($orgaoDTO);
+    
+        $htmlModeloProcuracao = str_replace('@RazaoSocial',$contatoPj->getStrNome(),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@Cnpj',InfraUtil::formatarCnpj($contatoPj->getDblCnpj()),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@nomeRespLegal',$Replegal->getStrNome(),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@nomeOutorgado',$Outorgante->getStrNome(),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@sigla_orgao@',$orgao->getStrSigla(),$htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@descricao_orgao@',$orgao->getStrDescricao(),$htmlModeloProcuracao);
+
+        //==========================================================================
+        //incluindo doc recibo no processo via SEIRN
+        //===========================================================
+
+        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOE);
+
+        $objDocumentoAPI = new DocumentoAPI();
+        $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
+        $objDocumentoAPI->setTipo(ProtocoloRN::$TP_DOCUMENTO_GERADO);
+        $objDocumentoAPI->setSubTipo(DocumentoRN::$TD_EDITOR_INTERNO /*DocumentoRN::$TD_FORMULARIO_AUTOMATICO*/);
+//        $objDocumentoAPI->setSinAssinado('S');
+//        $objDocumentoAPI->setSinBloqueado('S');
+        $objDocumentoAPI->setIdSerie($idSerieFormulario);
+//        $objDocumentoAPI->setIdHipoteseLegal(null);
+//        $objDocumentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
+//        $objDocumentoAPI->setIdTipoConferencia(null);
+//        $objDocumentoAPI->setConteudo(null);
+
+        
         $objSeiRN = new SeiRN();
         $saidaDocExternoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
 
@@ -898,12 +1838,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
 //        $objDocumentoConteudoBD->alterar($parObjDocumentoConteudoDTO);
 
         $objEditorDTO = new EditorDTO();
-
+      
         $objEditorDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
         $objEditorDTO->setNumIdBaseConhecimento(null);
         $objEditorDTO->setNumVersao(1);
         $objEditorDTO->setStrSinIgnorarNovaVersao('S');
-
         $objSecaoDocumentoDTO = new SecaoDocumentoDTO();
         $objSecaoDocumentoDTO->retNumIdSecaoModelo();
         $objSecaoDocumentoDTO->retStrNomeSecaoModelo();
@@ -915,21 +1854,23 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $arrObjSecaoDocumentoDTOBanco = $objSecaoDocumentoRN->listar($objSecaoDocumentoDTO);
 
         if (count($arrObjSecaoDocumentoDTOBanco)){
-
+            
             $arrObjSecaoDocumentoDTO = array();
 
             foreach($arrObjSecaoDocumentoDTOBanco as $item){
+               
                 $objSecaoDocumentoDTO = new SecaoDocumentoDTO();
                 $objSecaoDocumentoDTO->setNumIdSecaoModelo($item->getNumIdSecaoModelo());
-
+                
                 if ($item->getStrNomeSecaoModelo()=='Corpo do Texto'){
+                    
                     $objSecaoDocumentoDTO->setStrConteudo($htmlModeloProcuracao);
                 }
                 $arrObjSecaoDocumentoDTO[] = $objSecaoDocumentoDTO;
             }
-
+        
             $objEditorDTO->setArrObjSecaoDocumentoDTO($arrObjSecaoDocumentoDTO);
-
+            
             try{
                 $objEditorRN = new EditorRN();
                 $numVersao = $objEditorRN->adicionarVersao($objEditorDTO);
@@ -946,22 +1887,19 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //RECUPERANDO DADOS PARA ASSINATURA
 
         $mdPetProcessoRN = new mdPetProcessoRN();
-
-        $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
-        $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
-        $objMdPetVincTpProcessoDTO->retTodos();
-
-        $objMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
-
-        $idUnidade = null;
-        if (count($objMdPetVincTpProcesso)>0){
-            $idUnidade = $objMdPetVincTpProcesso->getNumIdUnidade();
-        }
-
+        $idUnidade = $unidadeDTO->getNumIdUnidade();
         //Unidade
+
+        //Recuperando unidade origem
+        $objProtocoloDTO = new ProtocoloDTO();
+        $objProtocoloDTO->setDblIdProtocolo($params['idProc']);
+        $objProtocoloDTO->retNumIdUnidadeGeradora();
+        $objProtocoloRN = new ProtocoloRN();
+        $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
+
         $objUnidadeDTO = new UnidadeDTO();
         $objUnidadeRN = new UnidadeRN();
-        $objUnidadeDTO->setNumIdUnidade($idUnidade);
+        $objUnidadeDTO->setNumIdUnidade($objUnidadeGeradora->getNumIdUnidadeGeradora());
         $objUnidadeDTO->retTodos();
 
         $objUnidadeDTO= $objUnidadeRN->consultarRN0125($objUnidadeDTO);
@@ -972,8 +1910,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //Adicionar Procuracao especial caso tenha sido selecionado.
         $dados = array('IdOutorgado'=>$idOutorgado,
                        'idContatoExterno'=>$idResponsavelLegal,
-                       'selTipoProcuracao'=>$params['dados']['selTipoProcuracao']
+                       'selTipoProcuracao'=>$params['dados']['selTipoProcuracao'],
+                       'tabelaProcessos'=>$params['dados']['hdnTbProcessos'],
+                       'validade'=>$params['dados']['hdnValidade']
                  );
+        
         $idMdPetVinculoRepresent = $this->_adicionarProcuracaoEspecial($dados, $idVinculo ,$saidaDocExternoAPI->getIdDocumento());
         
         $tpDocumento = MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL;
@@ -1009,15 +1950,31 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     private function _adicionarProcuracaoEspecial($dados, $idVinculo,$idDocumento)
     {
+        
         $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
         $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-
+        
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
         $objMdPetVincRepresentantDTO->setNumIdContato($dados['IdOutorgado']);
         $objMdPetVincRepresentantDTO->setNumIdContatoOutorg($dados['idContatoExterno']);
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante($dados['selTipoProcuracao']);
         $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
         $objMdPetVincRepresentantDTO->setStrStaEstado('A');
+        //Novas Colunas
+        //Data Validade
+        if($dados['validade'] != ""){
+            $objMdPetVincRepresentantDTO->setDthDataLimite($dados['validade'] . " 23:59:59");
+        }else{
+            $objMdPetVincRepresentantDTO->setDthDataLimite(null);
+        }
+        //Colocar POST
+        if($dados['tabelaProcessos'] != ""){
+            $objMdPetVincRepresentantDTO->setStrStaAbrangencia("E");
+        }else{
+            $objMdPetVincRepresentantDTO->setStrStaAbrangencia("Q");
+        }
+        
+        //Fim Novas Colunas
         $objMdPetVincRepresentantDTO->setDthDataCadastro(InfraData::getStrDataHoraAtual());
         $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
 
@@ -1028,7 +1985,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     private function _encerramentoProcuracaoEspecial($idMdPetVinculoRepresent,$dados)
     {
-
+        
     	$objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
         $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 
@@ -1163,7 +2120,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
 
-        $idSerieFormulario = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO);
+        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO);
 
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
@@ -1265,7 +2222,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retTodos();
-
+        $objMdPetVincTpProcessoDTO->setStrTipoVinculo("J");
         $objMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
         $idUnidade = null;
@@ -1383,7 +2340,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
 
-        $idSerieFormulario = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_VINC_RESTABELECIMENTO);
+        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_RESTABELECIMENTO);
 
         
         $objDocumentoAPI = new DocumentoAPI();
@@ -1484,7 +2441,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retTodos();
-
+        $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
         $objMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
         $idUnidade = null;
@@ -1545,10 +2502,18 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $url = dirname(__FILE__) . '/../md_pet_vinc_usu_ext_recibo_eletronico.php';
         $htmlModeloRecibo = file_get_contents($url);
 
-
+        
+        if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF"){
+            $idContato          = $dados['hdnIdContExterno'];
+        }else if($dados['selTipoProcuracao'] == "E"){
+            $idContato          = $dados['selPessoaJuridica'];
+        }else if($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ" ){
+            $idContato          = $dados['hdnSelPJSimples'];
+        }
+        
         $dadosPj = $dadosProcuracao['contatoPj'];
         $dadosRepresentante = $dadosProcuracao['RepLegal'];
-
+        
         $htmlModeloRecibo = str_replace('@usuarioExterno', $dadosRepresentante->getStrNome(), $htmlModeloRecibo); //Nome do responsavel
         $htmlModeloRecibo = str_replace('@numRecibo', $reciboDTOBasico->getNumIdReciboPeticionamento(), $htmlModeloRecibo); //Nome do responsavel
         $htmlModeloRecibo = str_replace('@responsavelLegal', $dadosRepresentante->getStrNome(), $htmlModeloRecibo); //Nome do responsavel
@@ -1606,7 +2571,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //incluindo doc recibo no processo via SEIRN
         //==========================================================================
 
-        $idSerieRecibo = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+        $idSerieRecibo = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
 
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
@@ -1627,7 +2592,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $participanteRN = new ParticipanteRN();
         $objParticipante = new ParticipanteDTO();
         $objParticipante->setDblIdProtocolo($saidaDocExternoAPI->getIdDocumento());
-        $objParticipante->setNumIdContato($dados['idContato']);
+        $objParticipante->setNumIdContato($idContato);
         $objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
         $objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
         $objParticipante->setNumSequencia(0);      
@@ -1752,7 +2717,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //incluindo doc recibo no processo via SEIRN
         //==========================================================================
 
-        $idSerieRecibo = $objInfraParametro->getValor(MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_RECIBO);
+        $idSerieRecibo = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
 
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());

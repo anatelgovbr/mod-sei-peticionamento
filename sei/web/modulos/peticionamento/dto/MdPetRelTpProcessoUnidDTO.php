@@ -49,6 +49,7 @@ class MdPetRelTpProcessoUnidDTO extends InfraDTO {
     $this->configurarFK('IdContato', 'contato c', 'c.id_contato');
     $this->configurarFK('IdCidadeContato', 'cidade c1', 'c1.id_cidade');
     $this->configurarFK('IdUf', 'uf u1', 'u1.id_uf', InfraDTO::$TIPO_FK_OPCIONAL);
+
     
 
   }

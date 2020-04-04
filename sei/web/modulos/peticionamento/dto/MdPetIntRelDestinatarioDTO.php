@@ -178,6 +178,15 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 	}
 
 
+	public function getStrTipoDestinatario(){
+			if($this->getStrSinPessoaJuridica() == "S"){
+				return "Pessoa Jurídica"; 
+			}else{
+				return "Pessoa Física"; 
+
+			}
+		}
+
 
         
 	public function getAceiteTIPOFK() {

@@ -32,10 +32,10 @@ switch ($_GET['acao']) {
   case 'md_pet_vinc_usu_ext_alterar' :
 
     if ($_GET['acao']=='md_pet_vinc_usu_ext_consultar'){
-      $strTitulo = "Consultar Vinculação à Pessoa Jurídica";
+      $strTitulo = "Consultar Cadastro da Pessoa Jurídica";
       $stConsultar = true;
     }else{
-      $strTitulo = "Alterar Cadastro da Pessoa Jurídica";
+      $strTitulo = "Atualizar Atos Constitutivos da Pessoa Jurídica";
       $stAlterar = true;
       $strTipo = 'Alteração';
     }
@@ -92,6 +92,16 @@ switch ($_GET['acao']) {
     $contatoDTO->setNumIdContato($idContatoRepresentante);
     $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
 
+    if(is_null($arrContatoDTO)){
+        $contatoDTO->setStrSinAtivo('S');
+        $contatoRN->reativarRN0452(array($contatoDTO));
+        $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
+    }
+
+    $cepObj = $arrContatoDTO->getStrCep();
+    $cep = strpos($cepObj, '-') ? $cepObj :  substr($cepObj, 0, 5) . '-' . substr($cepObj, 5, 3);
+    $arrContatoDTO->setStrCep($cep);
+
     $slUf = UfINT::montarSelectSiglaRI0416(null,  $arrContatoDTO->getNumIdUf(), $arrContatoDTO->getNumIdUf());
 
     //Montar Select Cidade
@@ -141,18 +151,18 @@ switch ($_GET['acao']) {
     $strVlultimaPosition = !is_null($intUltimaPosition) ? trim($arrEndereco[$intUltimaPosition]) : null;
 
     $strEndereco = '';
-    if(!is_null($intUltimaPosition)) {
-      for ($i = 0; $i < $intUltimaPosition; $i++) {
-        $strEndereco .= $arrEndereco[$i];
-        if ($intUltimaPosition != ($i + 1)) {
-          $strEndereco .= ',';
-        }
-      }
+        /*if(!is_null($intUltimaPosition)) {
+            for ($i = 0; $i < $intUltimaPosition; $i++) {
+                $strEndereco .= $arrEndereco[$i];
+                if ($intUltimaPosition != ($i + 1)) {
+                    $strEndereco .= ',';
+                }
+            }
 
       $strNumero = !is_null($strVlultimaPosition) ? $strVlultimaPosition : '';
-    }else{
+    }else{*/
       $strEndereco = $strEnderecoCompleto;
-    }
+   // }
 
     $arrDescricaoNivelAcesso = ['0' => 'Público', '1' => 'Restrito', '2' => 'Sigiloso'];
     if(!$stConsultar){
@@ -195,6 +205,7 @@ $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
 $objMdPetVincTpProcessoDTO->retNumIdTipoProcedimento();
 $objMdPetVincTpProcessoDTO->retStrSinNaUsuarioExterno();
 $objMdPetVincTpProcessoDTO->retStrSinNaPadrao();
+$objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
 $objMdPetVincTpProcessoDTO->retStrStaNivelAcesso();
 $objMdPetVincTpProcessoDTO->retNumIdHipoteseLegal();
 $objMdPetVincTpProcessoDTO->retStrOrientacoes();

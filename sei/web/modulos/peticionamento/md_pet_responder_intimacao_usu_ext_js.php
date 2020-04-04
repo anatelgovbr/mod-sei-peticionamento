@@ -1,17 +1,17 @@
 <script type="text/javascript">
     "use strict";
 
-    var RESTRITO = '<?= ProtocoloRN::$NA_RESTRITO?>';
-    var TAMANHO_MAXIMO = '<?=$tamanhoMaximo?>';
-    var EXIBIR_HIPOTESE_LEGAL = '<?=$exibirHipoteseLegal?>';
-    var arrExtensoesPermitidas = [<?=$extensoesPermitidas?>];
+    var RESTRITO = '<?= ProtocoloRN::$NA_RESTRITO ?>';
+    var TAMANHO_MAXIMO = '<?= $tamanhoMaximo ?>';
+    var EXIBIR_HIPOTESE_LEGAL = '<?= $exibirHipoteseLegal ?>';
+    var arrExtensoesPermitidas = [<?= $extensoesPermitidas ?>];
     var objAjaxSelectTipoDocumento = null;
     var objAjaxSelectHipoteseLegal = null;
     var objUploadArquivo = null;
     var objTabelaDinamicaDocumento = null;
 
     function inicializar() {
-        
+
         infraEfeitoTabelas();
         if (EXIBIR_HIPOTESE_LEGAL) {
             verificarHipoteseLegal();
@@ -25,7 +25,7 @@
     }
 
     function iniciarObjAjaxSelectHipoteseLegal() {
-        objAjaxSelectHipoteseLegal = new infraAjaxMontarSelect('selHipoteseLegal', '<?= $strUrlAjaxMontarHipoteseLegal?>');
+        objAjaxSelectHipoteseLegal = new infraAjaxMontarSelect('selHipoteseLegal', '<?= $strUrlAjaxMontarHipoteseLegal ?>');
         objAjaxSelectHipoteseLegal.processarResultado = function () {
             return 'nivelAcesso=' + RESTRITO;
         }
@@ -52,31 +52,31 @@
             divTipoConferencia.style.display = 'none';
         }
     }
-    
-    function alterarHidden(val){
-        
+
+    function alterarHidden(val) {
+
         document.getElementById('hdnIdMdPetIntRelDest').value = val.value
 
         $.ajax({
-             dataType: 'xml',
-             method: 'POST',
-             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_contato_intimacao');?>',
-             data: {
-                 'id': val.value
-             },
-             error: function (dados) {
-                 console.log(dados);
-             },
-             success: function (data) {
+            dataType: 'xml',
+            method: 'POST',
+            url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_contato_intimacao'); ?>',
+            data: {
+                'id': val.value
+            },
+            error: function (dados) {
+                console.log(dados);
+            },
+            success: function (data) {
                 //console.log(data);
-                document.getElementById('hdnIdContato').value = $(data).find('idContato').text(); 
+                document.getElementById('hdnIdContato').value = $(data).find('idContato').text();
                 document.getElementById('hdnIdMdPetIntimacao').value = $(data).find('idIntimacao').text();
                 document.getElementById('hdnIdMdPetIntAceite').value = $(data).find('idAceite').text();
-             }
-             
-         });
+            }
 
-        }
+        });
+
+    }
 
     function exibirHipoteseLegal() {
         var selNivelAcesso = document.getElementById('selNivelAcesso');
@@ -102,25 +102,51 @@
 
     function responderIntimacao() {
 
-        var relDest = document.getElementById('selTipoResposta').value;
-        console.log(relDest);
+        var relDest = document.getElementById('hdnIdMdPetIntRelDest').value;
         var frm = document.getElementById('frmResponderIntimacao');
 
-        if (validarResposta()) {
-            //@todo trocar url para a correta do intercorrente ou nova do resposta  
-            infraAbrirJanela('<?=$strResponderIntimacaoModel?>',
-               'concluirPeticionamentoRespostaIntimacao',
-               770,
-               480,
-               '', //options
-               false); //modal 
+        if (validarResposta()) {     
+            
+            var paramsAjax = {
+                idRelDest: relDest,
+                idProcedimento: document.getElementById('hdnIdProcedimento').value
+            };
+            
+            //verifica caso o usuário logado seja procurador se a procuração do mesmo está vigente
+            $.ajax({
+                url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_procuracao')?>',
+                type: 'POST',
+                dataType: 'XML',
+                data: paramsAjax,
+                async: false,
+                success: function (result) {
+                    if($(result).find('valor').text() == 'T'){
+                        //@todo trocar url para a correta do intercorrente ou nova do resposta  
+                        infraAbrirJanela('<?= $strResponderIntimacaoModel ?>',
+                            'concluirPeticionamentoRespostaIntimacao',
+                            770,
+                            480,
+                            '', //options
+                            false); //modal
+                    }else{                
+//                        var texto = 'Você não possui mais permissão para responder a Intimação Eletrônica, conforme abaixo:\n\n';
+//                        
+//                        if($(result).find('tipo').text() == 'F'){
+//                            texto = texto + 'Pessoa Física: '+$(result).find('nome').text()+' ('+$(result).find('documento').text()+'), verifique seus Poderes de Representação.';
+//                        }else{
+//                            texto = texto + 'Pessoa Jurídica: '+$(result).find('nome').text()+' ('+$(result).find('documento').text()+'), verifique seus Poderes de Representação.';
+//                        }
+                        infraAbrirJanela(atob($(result).find('contato').text()), 'janelaConsultarIntimacao', 900, 350)
+                        return false;
+                    }
+                }
+            });
         }
-
     }
 
     function iniciarObjUploadArquivo() {
         var tbDocumento = document.getElementById('tbDocumento');
-        objUploadArquivo = new infraUpload('frmResponderIntimacao', '<?=$strUrlUploadArquivo?>');
+        objUploadArquivo = new infraUpload('frmResponderIntimacao', '<?= $strUrlUploadArquivo ?>');
         objUploadArquivo.finalizou = function (arr) {
 
             //Tamanho do Arquivo
@@ -139,7 +165,7 @@
             for (var i = 0; i < tbDocumento.rows.length; i++) {
 
                 var tr = tbDocumento.getElementsByTagName('tr')[i];
-                
+
                 if (arr['nome'].toLowerCase().trim() == tr.cells[9].innerText.toLowerCase().trim()) {
                     alert('Não é permitido adicionar documento com o mesmo nome de arquivo.');
                     fileArquivo.value = '';
@@ -147,7 +173,7 @@
                     verificarTabelaVazia(1);
                     return false;
                 }
-                
+
             }
 
             criarRegistroTabelaDocumento(arr);
@@ -178,8 +204,8 @@
             var arquivoPermitido = arrExtensoesPermitidas.indexOf(ext) != -1;
             if (!arquivoPermitido) {
                 alert("O arquivo selecionado não é permitido.\n" +
-                    "Somente são permitidos arquivos com as extensões:\n" +
-                    arrExtensoesPermitidas.join().replace(/,/g, ' '));
+                        "Somente são permitidos arquivos com as extensões:\n" +
+                        arrExtensoesPermitidas.join().replace(/,/g, ' '));
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 return false;
@@ -204,7 +230,7 @@
 
         document.getElementById('selNivelAcesso').value = '';
         document.getElementById('hdnNivelAcesso').value = '';
-        if (EXIBIR_HIPOTESE_LEGAL){
+        if (EXIBIR_HIPOTESE_LEGAL) {
             document.getElementById('selHipoteseLegal').value = '';
             document.getElementById('hdnHipoteseLegal').value = '';
         }
@@ -318,7 +344,7 @@
         var rdoNatoDigital = document.getElementById('rdoNatoDigital');
         var rdoDigitalizado = document.getElementById('rdoDigitalizado');
         var formato = rdoNatoDigital.checked ? rdoNatoDigital.nextSibling.nextSibling.innerHTML.trim() :
-            rdoDigitalizado.nextSibling.nextSibling.innerHTML.trim();
+                rdoDigitalizado.nextSibling.nextSibling.innerHTML.trim();
 
         var tipoDocumento = document.getElementById('selTipoDocumento');
         tipoDocumento = tipoDocumento.options[tipoDocumento.selectedIndex].text;
@@ -366,58 +392,58 @@
     }
 
     function salvarValorHipoteseLegal(el) {
-        if (EXIBIR_HIPOTESE_LEGAL){
-           var hdnHipoteseLegal = document.getElementById('hdnHipoteseLegal');
-           hdnHipoteseLegal.value = el.value;
+        if (EXIBIR_HIPOTESE_LEGAL) {
+            var hdnHipoteseLegal = document.getElementById('hdnHipoteseLegal');
+            hdnHipoteseLegal.value = el.value;
         }
     }
 
-   function mudarSelect(val){
-    document.getElementById('selectTipoResp').style.display = '';
+    function mudarSelect(val) {
+        document.getElementById('selectTipoResp').style.display = '';
         infraSelectLimpar('selTipoResposta');
         validacaoAjaxTipoResp(val.value);
 
     }
 
-    function validacaoAjaxTipoResp(valor){
-       
+    function validacaoAjaxTipoResp(valor) {
+
         $.ajax({
-             dataType: 'xml',
-             method: 'POST',
-             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_resposta');?>',
-             data: {
-                 'id': valor
-             },
-             error: function (dados) {
-                 console.log(dados);
-             },
-             success: function (data) {
-                 console.log(data);
-                 //Mostrando label
+            dataType: 'xml',
+            method: 'POST',
+            url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_resposta'); ?>',
+            data: {
+                'id': valor
+            },
+            error: function (dados) {
+                console.log(dados);
+            },
+            success: function (data) {
+                console.log(data);
+                //Mostrando label
                 // document.getElementById('selTipoRespostaDuplo').style.display = '';
                 document.getElementById('resp').style.display = '';
-                 
-                  var selectMultiple = document.getElementById('selTipoResposta');
-                   
-                   
-                $.each($(data).find('item'),function (i,j) {
 
-                   var opt = document.createElement('option');
-                        opt.value = $(j).attr("id");
-                       opt.innerHTML = $(j).attr("descricao");
-                       selectMultiple.appendChild(opt);
+                var selectMultiple = document.getElementById('selTipoResposta');
+
+
+                $.each($(data).find('item'), function (i, j) {
+
+                    var opt = document.createElement('option');
+                    opt.value = $(j).attr("id");
+                    opt.innerHTML = $(j).attr("descricao");
+                    selectMultiple.appendChild(opt);
                 });
-                
+
                 var div = document.getElementById('selectTipoResp');
-                    div.appendChild(selectMultiple);  
-               
-             }
-             
-         });
-         
+                div.appendChild(selectMultiple);
+
+            }
+
+        });
+
     }
 
-    
+
     function verificarHipoteseLegal() {
         var selNivelAcesso = document.getElementById('selNivelAcesso');
 
@@ -433,61 +459,61 @@
         fieldDocumentos.style.display = 'none';
 
         if (el.value != 'null') {
-            
+
             fieldDocumentos.style.display = '';
             hdnNomeTipoResposta.value = el.options[el.selectedIndex].text.trim();
             objTabelaDinamicaDocumento.limpar();
-            document.getElementById('tbDocumento').style.display='none';
+            document.getElementById('tbDocumento').style.display = 'none';
 
             //fileArquivo
             document.getElementById('fileArquivo').value = '';
-            
+
             //rdoDigitalizado
             document.getElementById('rdoDigitalizado').checked = false;
-            
+
             //rdoNatoDigital
             document.getElementById('rdoNatoDigital').click();
             document.getElementById('rdoNatoDigital').checked = false;
-            
+
             //selHipoteseLegal
-            if (EXIBIR_HIPOTESE_LEGAL){
+            if (EXIBIR_HIPOTESE_LEGAL) {
                 document.getElementById('selHipoteseLegal').selectedIndex = 0;
             }
 
             //selTipoConferencia
             document.getElementById('selTipoConferencia').selectedIndex = 0;
-            
+
             //selNivelAcesso
             document.getElementById('selNivelAcesso').selectedIndex = 0;
-            
+
             //txtComplementoTipoDocumento
             document.getElementById('txtComplementoTipoDocumento').value = '';
-            
+
             //selTipoDocumento
             document.getElementById('selTipoDocumento').selectedIndex = 0;
         }
-        
+
     }
 
     function validarResposta() {
         var selTipoResposta = document.getElementById('selTipoResposta');
         var tbDocumento = document.getElementById('tbDocumento');
-        
+
 
         if (selTipoResposta.value == 'null') {
             alert('Informe o Tipo de Resposta!');
             selTipoResposta.focus();
             return false;
         }
-        
-    var selRazaoSocial = document.getElementById('selRazaoSocial');
-    <?php if($contador == 2){ ?>
-        if (selRazaoSocial.value == 'null') {
-            alert('Informe a Razão Social!');
-            selRazaoSocial.focus();
-            return false;
-        }
-    <?php } ?>
+
+        var selRazaoSocial = document.getElementById('selRazaoSocial');
+<?php if ($contador == 2) { ?>
+            if (selRazaoSocial.value == 'null') {
+                alert('Informe a Razão Social!');
+                selRazaoSocial.focus();
+                return false;
+            }
+<?php } ?>
 
         if (tbDocumento.rows.length <= 1) {
             alert('Informe ao menos um documento!');

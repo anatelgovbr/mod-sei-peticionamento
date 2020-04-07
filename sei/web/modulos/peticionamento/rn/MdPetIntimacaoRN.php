@@ -1178,7 +1178,18 @@ class MdPetIntimacaoRN extends InfraRN {
             $dtoRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
             $rnRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
             $dtoRelProtocoloProtocoloDTO->setDblIdProtocolo2($documento);
+
+            $arrAssociacao = array(
+                RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO,
+                RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO,
+                RelProtocoloProtocoloRN::$TA_DOCUMENTO_CIRCULAR
+            );
+
+            $dtoRelProtocoloProtocoloDTO->setStrStaAssociacao($arrAssociacao, InfraDTO::$OPER_IN);
             $dtoRelProtocoloProtocoloDTO->retDblIdProtocolo1();
+            $dtoRelProtocoloProtocoloDTO->setOrdDblIdProtocolo1(InfraDTO::$TIPO_ORDENACAO_DESC);
+            $dtoRelProtocoloProtocoloDTO->setNumMaxRegistrosRetorno(1);
+
             $objRelProtocoloProtocoloDTO = $rnRelProtocoloProtocoloRN->consultarRN0841($dtoRelProtocoloProtocoloDTO);
             $idProcesso = $objRelProtocoloProtocoloDTO->getDblIdProtocolo1();
         }else{

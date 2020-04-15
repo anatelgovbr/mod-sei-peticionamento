@@ -2617,8 +2617,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         private function retornarMaxIdEmailSistema() {
             $this->logar('BUSCANDO O PROXIMO ID DISPONIVEL NA TABELA EMAIL_SISTEMA');
-            $arrMaxIdEmailSistemaSelect = BancoSEI::getInstance()->consultarSql('SELECT MAX(id_email_sistema) as MAX FROM email_sistema');
-            $numMaxIdEmailSistemaSelect = $arrMaxIdEmailSistemaSelect[0]['MAX'];
+            $arrMaxIdEmailSistemaSelect = BancoSEI::getInstance()->consultarSql('SELECT MAX(id_email_sistema) as max FROM email_sistema');
+            $numMaxIdEmailSistemaSelect = $arrMaxIdEmailSistemaSelect[0]['max'];
 
             if ($numMaxIdEmailSistemaSelect >= 1000) {
                 $this->$numMaxIdEmailSistemaSelect = $numMaxIdEmailSistemaSelect+1;

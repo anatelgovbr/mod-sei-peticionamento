@@ -95,10 +95,10 @@ try {
 
     foreach ($arrObjUnidadeDTO as $key => $objUnidadeDTO) {
 
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaUnidade'] = utf8_encode($objUnidadeDTO->getStrSigla());
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoUnidade'] = utf8_encode($objUnidadeDTO->getStrDescricao());
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaOrgao'] = utf8_encode($objUnidadeDTO->getStrSiglaOrgao());
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoOrgao'] = utf8_encode($objUnidadeDTO->getStrDescricaoOrgao());
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaUnidade'] = htmlentities($objUnidadeDTO->getStrSigla(), ENT_QUOTES);
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoUnidade'] = htmlentities($objUnidadeDTO->getStrDescricao(), ENT_QUOTES);
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaOrgao'] = htmlentities($objUnidadeDTO->getStrSiglaOrgao(), ENT_QUOTES);
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoOrgao'] = htmlentities($objUnidadeDTO->getStrDescricaoOrgao(), ENT_QUOTES);
         $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['idOrgao'] = $objUnidadeDTO->getNumIdOrgao();
 
         $contatoAssociadoDTO = new ContatoDTO();
@@ -111,8 +111,8 @@ try {
         $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324($contatoAssociadoDTO);
         //so recuperar caso se trata de unidade que possua UF configurada]
         if ($contatoAssociadoDTO != null && $contatoAssociadoDTO->isSetStrSiglaUf() && $contatoAssociadoDTO->getStrSiglaUf() != null) {
-            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = utf8_encode($contatoAssociadoDTO->getStrSiglaUf());
-            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['cidade'] = utf8_encode($contatoAssociadoDTO->getStrNomeCidade());
+            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = htmlentities($contatoAssociadoDTO->getStrSiglaUf(), ENT_QUOTES);
+            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['cidade'] = htmlentities($contatoAssociadoDTO->getStrNomeCidade(), ENT_QUOTES);
             $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['idCidade'] = $contatoAssociadoDTO->getNumIdCidade();
         }
     }
@@ -523,7 +523,8 @@ try {
                     $tipoUnidade = is_array($_POST['rdUnidade']) ? current($_POST['rdUnidade']) : array();
                     $idTipoProcesso = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
                     $orientacoes = $objMdPetTipoProcessoDTO->getStrOrientacoes();
-                    $idUnidade = null /* $objMdPetTipoProcessoDTO->getNumIdUnidade() */;
+                    $idUnidade = null /* $objMdPetTipoProcessoDTO->getNumIdUnidade() */
+                    ;
                     $nomeUnidade = $_POST['txtUnidade'];
                     $sinIndIntUsExt = $objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'S' ? 'checked = checked' : '';
                     $sinIndIntIndIndir = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'S' ? 'checked = checked' : '';
@@ -687,131 +688,402 @@ PaginaSEI::getInstance()->fecharJavaScript();
 
 
 <style type="text/css">
-<?php
-$browser = $_SERVER['HTTP_USER_AGENT'];
-$firefox = strpos($browser, 'Firefox') ? true : false;
-?>
+    <?php
+    $browser = $_SERVER['HTTP_USER_AGENT'];
+    $firefox = strpos($browser, 'Firefox') ? true : false;
+    ?>
 
-    #lblTipoProcesso {position:absolute;left:0%;top:2px;width:50%;}
-    #txtTipoProcesso {position:absolute;left:0%;top:18px;width:50%;}
+    #lblTipoProcesso {
+        position: absolute;
+        left: 0%;
+        top: 2px;
+        width: 50%;
+    }
 
-    #fldProrrogacao {height: 20%; width: 86%;}
+    #txtTipoProcesso {
+        position: absolute;
+        left: 0%;
+        top: 18px;
+        width: 50%;
+    }
 
-<?php if ($firefox) { ?>
+    #fldProrrogacao {
+        height: 20%;
+        width: 86%;
+    }
 
-        .sizeFieldset {height: 30%; width: 86%;}
-        .tamanhoFieldset{height:auto; width:86%;}
+    <?php if ($firefox) { ?>
 
-        #divIndicacaoInteressado {}
-        #divUnidade {margin-top:138px!important;}
+    .sizeFieldset {
+        height: 30%;
+        width: 86%;
+    }
 
-        #imgLupaTipoProcesso {position:absolute;left:50.8%;top:18px;}
-        #imgExcluirTipoProcesso {position:absolute;left:52.6%;top:18px;}
+    .tamanhoFieldset {
+        height: auto;
+        width: 86%;
+    }
 
-        #txtUnidade {left:12px;width:65%;margin-top: 0.5%;}
-        #imgExcluirUnidade {position:absolute;left:52.2%;margin-top: 0.2%;}
-        #alertaRestricaoUU {position:absolute;left:54%;margin-top: -2.1%;}
+    #divIndicacaoInteressado {
+    }
 
-        #lblOrientacoes {position:absolute;left:0%;top:50px;width:20%;}
-        #txtOrientacoes {position:absolute;left:0%;top:66px;width:75%;}
+    #divUnidade {
+        margin-top: 138px !important;
+    }
 
-        #lblNivelAcesso {width:50%;}
-        #selNivelAcesso {width:20%;}
+    #imgLupaTipoProcesso {
+        position: absolute;
+        left: 50.8%;
+        top: 18px;
+    }
 
-        #lblHipoteseLegal {width:50%;}
-        #selHipoteseLegal {width:50%;}
+    #imgExcluirTipoProcesso {
+        position: absolute;
+        left: 52.6%;
+        top: 18px;
+    }
 
-        #lblModelo {width:50%;}
-        #selModelo {width:40%;}
+    #txtUnidade {
+        left: 12px;
+        width: 65%;
+        margin-top: 0.5%;
+    }
 
-        #lblTipoDocPrincipal {width:50%;}
-        #txtTipoDocPrinc {width:39.5%;}
-        #imgLupaTipoDocPrinc {top:198%}
-        #imgExcluirTipoDocPrinc {top:198%}
+    #imgExcluirUnidade {
+        position: absolute;
+        left: 52.2%;
+        margin-top: 0.2%;
+    }
 
-        #txtSerie {width:50%;}
-        #lblDescricao {width:50%;}
-        #selDescricao {width:75%;}
-        #imgLupaTipoDocumento { margin-top: 2px; margin-left: 4px;}
+    #alertaRestricaoUU {
+        position: absolute;
+        left: 54%;
+        margin-top: -2.1%;
+    }
 
-        #txtSerieEssencial {width:50%;}
-        #lblDescricaoEssencial {width:50%;}
-        #selDescricaoEssencial {width:75%;}
-        #imgLupaTipoDocumentoEssencial { margin-top: 2px; margin-left: 4px;}
+    #lblOrientacoes {
+        position: absolute;
+        left: 0%;
+        top: 50px;
+        width: 20%;
+    }
 
-        .fieldNone{border:none !important;}
+    #txtOrientacoes {
+        position: absolute;
+        left: 0%;
+        top: 66px;
+        width: 75%;
+    }
 
-        .sizeFieldset#fldDocPrincipal {height: 50%!important;}
+    #lblNivelAcesso {
+        width: 50%;
+    }
+
+    #selNivelAcesso {
+        width: 20%;
+    }
+
+    #lblHipoteseLegal {
+        width: 50%;
+    }
+
+    #selHipoteseLegal {
+        width: 50%;
+    }
+
+    #lblModelo {
+        width: 50%;
+    }
+
+    #selModelo {
+        width: 40%;
+    }
+
+    #lblTipoDocPrincipal {
+        width: 50%;
+    }
+
+    #txtTipoDocPrinc {
+        width: 39.5%;
+    }
+
+    #imgLupaTipoDocPrinc {
+        top: 198%
+    }
+
+    #imgExcluirTipoDocPrinc {
+        top: 198%
+    }
+
+    #txtSerie {
+        width: 50%;
+    }
+
+    #lblDescricao {
+        width: 50%;
+    }
+
+    #selDescricao {
+        width: 75%;
+    }
+
+    #imgLupaTipoDocumento {
+        margin-top: 2px;
+        margin-left: 4px;
+    }
+
+    #txtSerieEssencial {
+        width: 50%;
+    }
+
+    #lblDescricaoEssencial {
+        width: 50%;
+    }
+
+    #selDescricaoEssencial {
+        width: 75%;
+    }
+
+    #imgLupaTipoDocumentoEssencial {
+        margin-top: 2px;
+        margin-left: 4px;
+    }
+
+    .fieldNone {
+        border: none !important;
+    }
+
+    .sizeFieldset#fldDocPrincipal {
+        height: 50% !important;
+    }
 
 
-<?php } else { ?>
-        .sizeFieldset {height: 30%; width: 86%;}
-        .tamanhoFieldset{height:auto; width:86%;}
+    <?php } else { ?>
+    .sizeFieldset {
+        height: 30%;
+        width: 86%;
+    }
 
-        #divIndicacaoInteressado {}
-        #imgLupaTipoProcesso {position:absolute;left:50.6%;top:18px;}
-        #imgExcluirTipoProcesso {position:absolute;left:52.4%;top:18px;}
+    .tamanhoFieldset {
+        height: auto;
+        width: 86%;
+    }
 
-        #divUnidade {margin-top:111px!important;}
+    #divIndicacaoInteressado {
+    }
 
-        #txtUnidade {left:0%;top:17.6%;width:65%;margin-top:0.5%}
-        #imgLupaUnidade {position:absolute;left:50.5%;margin-top: 0.4%;}
-        #imgExcluirUnidade {position:absolute;left:52.3%;margin-top: 0.4%;}
-        #alertaRestricaoUU {position:absolute;left:54%;margin-top: -1.9%;}
+    #imgLupaTipoProcesso {
+        position: absolute;
+        left: 50.6%;
+        top: 18px;
+    }
 
-        #lblOrientacoes {position:absolute;left:0%;top:50px;width:20%;}
-        #txtOrientacoes {position:absolute;left:0%;top:66px;width:75%;}
+    #imgExcluirTipoProcesso {
+        position: absolute;
+        left: 52.4%;
+        top: 18px;
+    }
 
-        #lblNivelAcesso {width:50%;}
-        #selNivelAcesso {width:20%;}
+    #divUnidade {
+        margin-top: 111px !important;
+    }
 
-        #lblHipoteseLegal {width:50%;}
-        #selHipoteseLegal {width:50%;}
+    #txtUnidade {
+        left: 0%;
+        top: 17.6%;
+        width: 65%;
+        margin-top: 0.5%
+    }
 
-        #lblModelo {width:50%;}
-        #selModelo {width:40%;}
+    #imgLupaUnidade {
+        position: absolute;
+        left: 50.5%;
+        margin-top: 0.4%;
+    }
 
-        #lblTipoDocPrincipal {width:50%;}
-        #txtTipoDocPrinc {width:39.5%;}
-        #imgLupaTipoDocPrinc {position:absolute;left:31.2%;margin-top: -0.01%;}
-        #imgExcluirTipoDocPrinc {position:absolute;left:33%;margin-top: -0.01%;}
-        #txtSerie {width:50%;}
-        #lblDescricao {width:50%;}
-        #selDescricao {width:75%;}
+    #imgExcluirUnidade {
+        position: absolute;
+        left: 52.3%;
+        margin-top: 0.4%;
+    }
 
-        #imgLupaTipoDocumento {
-            margin-top: 2px;
-            margin-left: 4px;
-        }
+    #alertaRestricaoUU {
+        position: absolute;
+        left: 54%;
+        margin-top: -1.9%;
+    }
 
-        #imgExcluirTipoDocumento {
-        }
+    #lblOrientacoes {
+        position: absolute;
+        left: 0%;
+        top: 50px;
+        width: 20%;
+    }
 
-        .fieldNone{border:none !important;}
+    #txtOrientacoes {
+        position: absolute;
+        left: 0%;
+        top: 66px;
+        width: 75%;
+    }
 
-        .sizeFieldset#fldDocPrincipal {height: 50%!important;}
+    #lblNivelAcesso {
+        width: 50%;
+    }
 
-        #txtSerieEssencial {width:50%;}
-        #lblDescricaoEssencial {width:50%;}
-        #selDescricaoEssencial {width:75%;}
-        #imgLupaTipoDocumentoEssencial { margin-top: 2px; margin-left: 4px;}
+    #selNivelAcesso {
+        width: 20%;
+    }
 
-<?php } ?>
+    #lblHipoteseLegal {
+        width: 50%;
+    }
 
-    .fieldsetClear {border:none !important;}
-    .rdIndicacaoIndiretaHide  {margin-left:2.8%!important;}
+    #selHipoteseLegal {
+        width: 50%;
+    }
 
-    #lblOrgaos {position:absolute;left:0%;top:0%;width:20%;}
-    #txtOrgaoUnidadeMultipla {position:absolute;left:0%;top:33%;width:19.5%;}
-    #selOrgaos {position:absolute;left:0%;top:45%;width:20%;}
-    #divOpcoesOrgaos {position:absolute;left:20.5%;top:33%;}
+    #lblModelo {
+        width: 50%;
+    }
 
-    #lblUnidades {position:absolute;left:24%;top:0%;}
-    #txtUnidadeMultipla {position:absolute;left:24%;top:33%;width:54.5%;}
-    #selUnidades {position:absolute;left:25%;top:47%;width:55%;}
-    #divOpcoesUnidades {position:absolute;left:79.5%;top:33%;}
+    #selModelo {
+        width: 40%;
+    }
 
-    #sbmAdicionarUnidade {position:absolute;left:83%;top:33%;}
+    #lblTipoDocPrincipal {
+        width: 50%;
+    }
+
+    #txtTipoDocPrinc {
+        width: 39.5%;
+    }
+
+    #imgLupaTipoDocPrinc {
+        position: absolute;
+        left: 31.2%;
+        margin-top: -0.01%;
+    }
+
+    #imgExcluirTipoDocPrinc {
+        position: absolute;
+        left: 33%;
+        margin-top: -0.01%;
+    }
+
+    #txtSerie {
+        width: 50%;
+    }
+
+    #lblDescricao {
+        width: 50%;
+    }
+
+    #selDescricao {
+        width: 75%;
+    }
+
+    #imgLupaTipoDocumento {
+        margin-top: 2px;
+        margin-left: 4px;
+    }
+
+    #imgExcluirTipoDocumento {
+    }
+
+    .fieldNone {
+        border: none !important;
+    }
+
+    .sizeFieldset#fldDocPrincipal {
+        height: 50% !important;
+    }
+
+    #txtSerieEssencial {
+        width: 50%;
+    }
+
+    #lblDescricaoEssencial {
+        width: 50%;
+    }
+
+    #selDescricaoEssencial {
+        width: 75%;
+    }
+
+    #imgLupaTipoDocumentoEssencial {
+        margin-top: 2px;
+        margin-left: 4px;
+    }
+
+    <?php } ?>
+
+    .fieldsetClear {
+        border: none !important;
+    }
+
+    .rdIndicacaoIndiretaHide {
+        margin-left: 2.8% !important;
+    }
+
+    #lblOrgaos {
+        position: absolute;
+        left: 0%;
+        top: 0%;
+        width: 20%;
+    }
+
+    #txtOrgaoUnidadeMultipla {
+        position: absolute;
+        left: 0%;
+        top: 33%;
+        width: 19.5%;
+    }
+
+    #selOrgaos {
+        position: absolute;
+        left: 0%;
+        top: 45%;
+        width: 20%;
+    }
+
+    #divOpcoesOrgaos {
+        position: absolute;
+        left: 20.5%;
+        top: 33%;
+    }
+
+    #lblUnidades {
+        position: absolute;
+        left: 24%;
+        top: 0%;
+    }
+
+    #txtUnidadeMultipla {
+        position: absolute;
+        left: 24%;
+        top: 33%;
+        width: 54.5%;
+    }
+
+    #selUnidades {
+        position: absolute;
+        left: 25%;
+        top: 47%;
+        width: 55%;
+    }
+
+    #divOpcoesUnidades {
+        position: absolute;
+        left: 79.5%;
+        top: 33%;
+    }
+
+    #sbmAdicionarUnidade {
+        position: absolute;
+        left: 83%;
+        top: 33%;
+    }
 </style>
 <?php
 PaginaSEI::getInstance()->fecharHead();
@@ -819,22 +1091,34 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
 <form id="frmTipoProcessoCadastro" method="post" onsubmit="return OnSubmitForm();"
       action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
-          <?
-          PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-          PaginaSEI::getInstance()->abrirAreaDados('98%');
-          ?>
+    <?
+    PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+    PaginaSEI::getInstance()->abrirAreaDados('98%');
+    ?>
 
-    <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal" value="<?php echo $valorParametroHipoteseLegal; ?>"/>
+    <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
+           value="<?php echo $valorParametroHipoteseLegal; ?>"/>
     <!--  Tipo de Processo  -->
     <div class="fieldsetClear">
         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">
             Tipo de Processo:
         </label>
-        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
-        <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>" />
-        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>" />
-        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700, 500);" onkeypress="objLupaTipoProcesso.selecionar(700, 500);" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
+               class="infraText" value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>"
+               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
+        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
+               value="<?php echo $idMdPetTipoProcesso ?>"/>
+        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700, 500);"
+             onkeypress="objLupaTipoProcesso.selecionar(700, 500);"
+             src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif"
+             alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"
+             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+             onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+             src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif"
+             alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"
+             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
     </div>
     <!--  Fim do Tipo de Processo -->
@@ -843,8 +1127,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
     <!-- Orientações -->
     <div class="fieldsetClear">
-        <label id="lblOrientacoes" for="txtOrientacoes" class="infraLabelObrigatorio">Orientações: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientações descritas abaixo serão exibidas na tela de Peticionamento de Processo Novo depois que o Usuário Externo tiver selecionado este Tipo de Processo para peticionar.')?> class="infraImg"/></label>
-        <textarea type="text" id="txtOrientacoes" rows="3" name="txtOrientacoes" class="infraText" onkeypress="return infraMascaraTexto(this, event, 500);" maxlength="500" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?php echo PaginaSEI::tratarHTML($orientacoes); ?></textarea>
+        <label id="lblOrientacoes" for="txtOrientacoes" class="infraLabelObrigatorio">Orientações: <img align="top"
+                                                                                                        style="height:16px; width:16px;"
+                                                                                                        src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientações descritas abaixo serão exibidas na tela de Peticionamento de Processo Novo depois que o Usuário Externo tiver selecionado este Tipo de Processo para peticionar.') ?>
+                                                                                                        class="infraImg"/></label>
+        <textarea type="text" id="txtOrientacoes" rows="3" name="txtOrientacoes" class="infraText"
+                  onkeypress="return infraMascaraTexto(this, event, 500);" maxlength="500"
+                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?php echo PaginaSEI::tratarHTML($orientacoes); ?></textarea>
     </div>
     <!--  Fim das Orientações  -->
 
@@ -858,18 +1148,38 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             $checkUnidadeUnica = $unica ? 'checked="checked";' : '';
             ?>
 
-            <input <?php echo $checkUnidadeUnica; ?> type="radio" id="rdUnidadeUnica" name="rdUnidade[]" onchange="changeUnidade()" value="U" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-            <label id="lblUnidadeUnica" name="lblUnidadeUnica" for="rdUnidadeUnica" class="infraLabelOpcional infraLabelRadio">Unidade Única <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha para a abertura do Processo Novo, sendo sempre aberto na Unidade pré definida aqui.')?> class="infraImg"/></label>
+            <input <?php echo $checkUnidadeUnica; ?> type="radio" id="rdUnidadeUnica" name="rdUnidade[]"
+                                                     onchange="changeUnidade()" value="U"
+                                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+            <label id="lblUnidadeUnica" name="lblUnidadeUnica" for="rdUnidadeUnica"
+                   class="infraLabelOpcional infraLabelRadio">Unidade Única <img align="top"
+                                                                                 style="height:16px; width:16px;"
+                                                                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha para a abertura do Processo Novo, sendo sempre aberto na Unidade pré definida aqui.') ?>
+                                                                                 class="infraImg"/></label>
             <br/>
 
             <div id="divCpUnidadeUnica" <?php echo $divUnidadeUnica; ?>>
-                <input type="text" id="txtUnidade" name="txtUnidade" class="infraText" value="<?= PaginaSEI::tratarHTML($nomeUnidade) ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
-                <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?= $idUnidade ?>" />
-                <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700, 500);" onkeypress="objLupaUnidade.selecionar(700, 500);" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-                <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();removerIconeRestricao();" onkeypress="objLupaUnidade.remover();removerIconeRestricao();" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Unidade" title="Remover Unidade" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                <input type="text" id="txtUnidade" name="txtUnidade" class="infraText"
+                       value="<?= PaginaSEI::tratarHTML($nomeUnidade) ?>"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?= $idUnidade ?>"/>
+                <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700, 500);"
+                     onkeypress="objLupaUnidade.selecionar(700, 500);"
+                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif"
+                     alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg"
+                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();removerIconeRestricao();"
+                     onkeypress="objLupaUnidade.remover();removerIconeRestricao();"
+                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif"
+                     alt="Remover Unidade" title="Remover Unidade" class="infraImg"
+                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 <?php if ($tipoProcessoRestricaoErroUU) { ?>
                     <div id="divRestricaoUU">
-                        <img id='alertaRestricaoUU' class='alertaRestricao' src='modulos/peticionamento/imagens/icone_contato.png' onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "");' onmouseout='return infraTooltipOcultar();'/>&nbsp;
+                        <img id='alertaRestricaoUU' class='alertaRestricao'
+                             src='modulos/peticionamento/imagens/icone_contato.png'
+                             onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "");'
+                             onmouseout='return infraTooltipOcultar();'/>&nbsp;
                     </div>
                 <?php } ?>
             </div>
@@ -881,28 +1191,50 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             $checkUnidadeMultipla = $multipla ? 'checked="checked;"' : '';
             ?>
 
-            <input <?php echo $checkUnidadeMultipla; ?> type="radio" id="rdUnidadeMultipla" name="rdUnidade[]" onchange="changeUnidade()" value="M" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-            <label id="lblUnidadeMultipla" name="lblUnidadeMultipla" for="rdUnidadeMultipla" class="infraLabelOpcional infraLabelRadio">Múltiplas Unidades <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo terá opção de escolha do Órgão, da UF ou da Cidade onde quer que o Processo Novo seja aberto. \n \n As três opções de escolha que o Usuário Externo verá depende das Unidades aqui adicionadas, quando possuirem diferentes Órgãos, UFs ou Cidades.')?> class="infraImg"/></label>
+            <input <?php echo $checkUnidadeMultipla; ?> type="radio" id="rdUnidadeMultipla" name="rdUnidade[]"
+                                                        onchange="changeUnidade()" value="M"
+                                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+            <label id="lblUnidadeMultipla" name="lblUnidadeMultipla" for="rdUnidadeMultipla"
+                   class="infraLabelOpcional infraLabelRadio">Múltiplas Unidades <img align="top"
+                                                                                      style="height:16px; width:16px;"
+                                                                                      src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                                                      name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo terá opção de escolha do Órgão, da UF ou da Cidade onde quer que o Processo Novo seja aberto. \n \n As três opções de escolha que o Usuário Externo verá depende das Unidades aqui adicionadas, quando possuirem diferentes Órgãos, UFs ou Cidades.') ?>
+                                                                                      class="infraImg"/></label>
 
             <div id="divCpUnidadeMultipla" <?php echo $divUnidadeMultipla; ?>>
                 <br>
                 <div id="divOrgaoUnidadeMultipla" class="infraAreaDados" style="height:5em;">
                     <label id="lblOrgaos" for="selOrgaos" class="infraLabelObrigatorio">Órgão:</label>
-                    <input type="text" id="txtOrgaoUnidadeMultipla" name="txtOrgaoUnidadeMultipla" class="infraText" onchange='criarLupaUnidade(this.value)'/>
-                    <input type="hidden" id="hdnIdOrgaoUnidadeMultipla" name="hdnIdOrgaoUnidadeMultipla" class="infraText" value="" />
+                    <input type="text" id="txtOrgaoUnidadeMultipla" name="txtOrgaoUnidadeMultipla" class="infraText"
+                           onchange='criarLupaUnidade(this.value)'/>
+                    <input type="hidden" id="hdnIdOrgaoUnidadeMultipla" name="hdnIdOrgaoUnidadeMultipla"
+                           class="infraText" value=""/>
                     <?= $strHtmlOrgaoUnidades; ?>
                     <div id="divOpcoesOrgaos">
-                        <img id="imgLupaOrgaos" onclick="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);" onkeypress="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal(); ?>/lupa.gif" alt="Selecionar Órgão" title="Selecionar Órgão" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                        <img id="imgLupaOrgaos" onclick="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);"
+                             onkeypress="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal(); ?>/lupa.gif"
+                             alt="Selecionar Órgão" title="Selecionar Órgão" class="infraImg"
+                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
                     <label id="lblUnidades" for="selUnidades" class="infraLabelObrigatorio">Unidade:</label>
                     <input type="text" id="txtUnidadeMultipla" name="txtUnidadeMultipla" class="infraText"/>
-                    <input type="hidden" id="hdnIdUnidadeMultipla" name="hdnIdUnidadeMultipla" value="<?= $idUnidadeMultipla ?>" />
-                    <input type="hidden" id="hdnUfUnidadeMultipla" name="hdnUfUnidadeMultipla" value="" />
+                    <input type="hidden" id="hdnIdUnidadeMultipla" name="hdnIdUnidadeMultipla"
+                           value="<?= $idUnidadeMultipla ?>"/>
+                    <input type="hidden" id="hdnUfUnidadeMultipla" name="hdnUfUnidadeMultipla" value=""/>
                     <div id="divOpcoesUnidades">
-                        <img id="imgLupaUnidadeMultipla" onclick="verificarOrgaoSelecionado();" onkeypress="verificarOrgaoSelecionado();" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal(); ?>/lupa.gif" alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                        <img id="imgLupaUnidadeMultipla" onclick="verificarOrgaoSelecionado();"
+                             onkeypress="verificarOrgaoSelecionado();"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal(); ?>/lupa.gif"
+                             alt="Selecionar Unidade" title="Selecionar Unidade" class="infraImg"
+                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
                     <?php if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
-                        <button type="button" accesskey="A" name="sbmAdicionarUnidade" onclick="addUnidade();" id="sbmAdicionarUnidade" value="Adicionar" class="infraButton" style="font-size: 10px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><span class="infraTeclaAtalho">A</span>dicionar</button>
+                        <button type="button" accesskey="A" name="sbmAdicionarUnidade" onclick="addUnidade();"
+                                id="sbmAdicionarUnidade" value="Adicionar" class="infraButton" style="font-size: 10px;"
+                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><span
+                                    class="infraTeclaAtalho">A</span>dicionar
+                        </button>
                     <?php } ?>
                 </div>
 
@@ -911,53 +1243,60 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <div class="infraAreaTabela" id="divTableMultiplasUnidades" <?php echo $divUnidadeMultipla; ?>>
                     <table width="99%" summary="Tabela de Unidades" class="infraTable" id="tableTipoUnidade">
-                        <caption class="infraCaption">Lista de Unidades (<span id="qtdRegistros"><?php echo count($arrObjUnidadesMultiplas) > 0 ? count($arrObjUnidadesMultiplas) : '0'; ?> </span> registros):</caption>
+                        <caption class="infraCaption">Lista de Unidades (<span
+                                    id="qtdRegistros"><?php echo count($arrObjUnidadesMultiplas) > 0 ? count($arrObjUnidadesMultiplas) : '0'; ?> </span>
+                            registros):
+                        </caption>
                         <tbody>
-                            <tr>
-                                <th width="15%" class="infraTh"><table class="infraTableOrdenacao">
-                                        <tbody>
-                                            <tr>
-                                                <td valign="center" class="infraTdRotuloOrdenacao">
-                                                    Órgão
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                </th>
-                    </table>
-                    <th class="infraTh">
-                        <table class="infraTableOrdenacao">
-                            <tbody>
-                                <tr>
-                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                        Unidade
-                                    </td>
-                                </tr>
-                            </tbody></table>
-                    </th>
-                    <th width="15%" class="infraTh">
-                        <table class="infraTableOrdenacao">
-                            <tbody>
-                                <tr>
-                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                        UF da Unidade
-                                    </td>
-                                </tr>
-                            </tbody></table>
-                    </th>
-                    <th class="infraTh">
-                        <table class="infraTableOrdenacao">
-                            <tbody>
-                                <tr>
-                                    <td width="6%" valign="center" class="infraTdRotuloOrdenacao">
-                                        Cidade da Unidade
-                                    </td>
-                                </tr>
-                            </tbody></table>
-                    </th>
-                    <?php //if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
-                        <th width="80px" class="infraTh">Ações</th>
-                    <?php //} ?>
-                    <tbody id="corpoTabela">
+                        <tr>
+                            <th width="15%" class="infraTh">
+                                <table class="infraTableOrdenacao">
+                                    <tbody>
+                                    <tr>
+                                        <td valign="center" class="infraTdRotuloOrdenacao">
+                                            Órgão
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    </th>
+                                </table>
+                            <th class="infraTh">
+                                <table class="infraTableOrdenacao">
+                                    <tbody>
+                                    <tr>
+                                        <td valign="center" class="infraTdRotuloOrdenacao">
+                                            Unidade
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </th>
+                            <th width="15%" class="infraTh">
+                                <table class="infraTableOrdenacao">
+                                    <tbody>
+                                    <tr>
+                                        <td valign="center" class="infraTdRotuloOrdenacao">
+                                            UF da Unidade
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </th>
+                            <th class="infraTh">
+                                <table class="infraTableOrdenacao">
+                                    <tbody>
+                                    <tr>
+                                        <td width="6%" valign="center" class="infraTdRotuloOrdenacao">
+                                            Cidade da Unidade
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </th>
+                            <?php //if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
+                            <th width="80px" class="infraTh">Ações</th>
+                            <?php //} ?>
+                        <tbody id="corpoTabela">
                         <?php
                         if ($multipla && isset($hdnCorpoTabela)) {
                             echo $hdnCorpoTabela;
@@ -1023,44 +1362,59 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     }
                                     //alteracoes seiv3
                                     ?>
-                                <td valign="middle">
-                                    <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>" title="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>" class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSiglaOrgao(); ?>
-                                </td>
-                                <td  id="tabNomeUnidade" >
-                                    <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>" title="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>" class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSigla(); ?>
-                                    </a>
-                                </td>
-                                <td class="ufsSelecionadas">
-                                    <?php
-//alteracoes seiv3
-                                    echo $contatoAssociadoDTO->getStrSiglaUf();
-                                    ?>
-                                </td>
-                                <td class="cidadesSelecionadas">
-                                    <?php
-//alteracoes seiv3
-                                    echo $contatoAssociadoDTO->getStrNomeCidade();
-                                    ?>
-                                </td>
-                                <td align="center">
-                                    <?php if ($tipoProcessoRestricaoErro) { ?>
-                                        <img id='alertaRestricao' class='alertaRestricao' src='modulos/peticionamento/imagens/icone_contato.png' onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "");' onmouseout='return infraTooltipOcultar();'/>&nbsp;
-                                    <?php } if ($tipoProcessoDivergencia) { ?>
-                                        <img id='alertaDivergencia' class='alertaDivergencia' src='modulos/peticionamento/imagens/icone_principal.png' onmouseover='return infraTooltipMostrar("Posteriormente à parametrização original deste Peticionamento devem ter ocorrido alterações no cadastro das Unidades, de forma que constam conflitos de Unidades com mesma UF ou mesma Cidade. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente às Unidades com tais conflitos.<br><br>Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, corrija o cadastro das Unidades para ficar com a UF ou a Cidade corretos, no menu Administração > Unidades > Listar.", "");' onmouseout='return infraTooltipOcultar();'/>&nbsp;
-                                    <?php }if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
-                                        <a>
-                                            <img class="infraImg" title="Remover Unidade" alt="Remover Unidade" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" onclick="removerUnidade('<?php echo $idTabela; ?>');" id="imgExcluirProcessoSobrestado">
+                                    <td valign="middle">
+                                        <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>"
+                                           title="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>"
+                                           class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSiglaOrgao(); ?>
+                                    </td>
+                                    <td id="tabNomeUnidade">
+                                        <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>"
+                                           title="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>"
+                                           class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSigla(); ?>
                                         </a>
-                                    <?php } ?>
-                                </td>
-                                </tr>
-                                <?php
+                                    </td>
+                                    <td class="ufsSelecionadas">
+                                        <?php
+                                        //alteracoes seiv3
+                                        echo $contatoAssociadoDTO->getStrSiglaUf();
+                                        ?>
+                                    </td>
+                                    <td class="cidadesSelecionadas">
+                                        <?php
+                                        //alteracoes seiv3
+                                        echo $contatoAssociadoDTO->getStrNomeCidade();
+                                        ?>
+                                    </td>
+                                    <td align="center">
+                                        <?php if ($tipoProcessoRestricaoErro) { ?>
+                                            <img id='alertaRestricao' class='alertaRestricao'
+                                                 src='modulos/peticionamento/imagens/icone_contato.png'
+                                                 onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "");'
+                                                 onmouseout='return infraTooltipOcultar();'/>&nbsp;
+                                        <?php }
+                                        if ($tipoProcessoDivergencia) { ?>
+                                            <img id='alertaDivergencia' class='alertaDivergencia'
+                                                 src='modulos/peticionamento/imagens/icone_principal.png'
+                                                 onmouseover='return infraTooltipMostrar("Posteriormente à parametrização original deste Peticionamento devem ter ocorrido alterações no cadastro das Unidades, de forma que constam conflitos de Unidades com mesma UF ou mesma Cidade. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente às Unidades com tais conflitos.<br><br>Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, corrija o cadastro das Unidades para ficar com a UF ou a Cidade corretos, no menu Administração > Unidades > Listar.", "");'
+                                                 onmouseout='return infraTooltipOcultar();'/>&nbsp;
+                                        <?php }
+                                        if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
+                                            <a>
+                                                <img class="infraImg" title="Remover Unidade" alt="Remover Unidade"
+                                                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif"
+                                                     onclick="removerUnidade('<?php echo $idTabela; ?>');"
+                                                     id="imgExcluirProcessoSobrestado">
+                                            </a>
+                                        <?php } ?>
+                                    </td>
+                                    </tr>
+                                    <?php
+                                }
                             }
                         }
-                    }
-                    ?>
+                        ?>
 
-                    </tbody>
+                        </tbody>
                     </table>
                 </div>
 
@@ -1081,20 +1435,46 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <fieldset class="infraFieldset" style="width:75%;">
             <legend class="infraLegend">&nbsp;Indicação de Interessado&nbsp;</legend>
 
-            <input onclick="changeIndicacaoInteressado()" type="radio" id="rdUsuExterno" name="indicacaoInteressado[]" value="1" <?php echo $sinIndIntUsExt ?> tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-            <label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">Próprio Usuário Externo <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo logado sempre será o Interessado do processo a ser aberto, sem opção de escolha.')?> class="infraImg"/></label>
+            <input onclick="changeIndicacaoInteressado()" type="radio" id="rdUsuExterno" name="indicacaoInteressado[]"
+                   value="1" <?php echo $sinIndIntUsExt ?>
+                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+            <label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">Próprio Usuário Externo <img
+                        align="top" style="height:16px; width:16px;"
+                        src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo logado sempre será o Interessado do processo a ser aberto, sem opção de escolha.') ?>
+                        class="infraImg"/></label>
             <br/>
-            <input onclick="changeIndicacaoInteressado()" type="radio" name="indicacaoInteressado[]" id="rdIndicacaoIndireta" value="2"  <?php echo $sinIndIntIndIndir ?> tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-            <label name="lblIndicacaoIndireta" id="lblIndicacaoIndireta" for="rdIndicacaoIndireta" class="infraLabelRadio">Indicação Direta <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá indicar manualmente o Interessado do processo a ser aberto.')?> class="infraImg"/></label>
+            <input onclick="changeIndicacaoInteressado()" type="radio" name="indicacaoInteressado[]"
+                   id="rdIndicacaoIndireta" value="2" <?php echo $sinIndIntIndIndir ?>
+                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+            <label name="lblIndicacaoIndireta" id="lblIndicacaoIndireta" for="rdIndicacaoIndireta"
+                   class="infraLabelRadio">Indicação Direta <img align="top" style="height:16px; width:16px;"
+                                                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá indicar manualmente o Interessado do processo a ser aberto.') ?>
+                                                                 class="infraImg"/></label>
             <br/>
 
             <div id="divRdIndicacaoIndiretaHide" <?php echo $sinIndIntIndIndir != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?> >
-                <input <?php echo $sinIndIntIndCpfCn; ?>  type="radio" name="indicacaoIndireta[]" id="indicacaoIndireta1" class="rdIndicacaoIndiretaHide" value="3" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-                <label  name="lblInformandoCpfCnpj" for="indicacaoIndireta1" id="lblInformandoCpfCnpj" class="lblIndicacaoIndiretaHide infraLabelRadio">Informando CPF ou CNPJ <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo indicará o Interessado digitando um CPF ou CNPJ válido. \n \n Se o CPF ou CNPJ digitado não constar na lista de Contatos do SEI ou se existir duplicado, então o Usuário Externo será direcionado a uma janela de Cadastro do Contato que será de fato utilizado como Interessado do processo.')?> class="infraImg"/></label>
+                <input <?php echo $sinIndIntIndCpfCn; ?> type="radio" name="indicacaoIndireta[]" id="indicacaoIndireta1"
+                                                         class="rdIndicacaoIndiretaHide" value="3"
+                                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                <label name="lblInformandoCpfCnpj" for="indicacaoIndireta1" id="lblInformandoCpfCnpj"
+                       class="lblIndicacaoIndiretaHide infraLabelRadio">Informando CPF ou CNPJ <img align="top"
+                                                                                                    style="height:16px; width:16px;"
+                                                                                                    src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo indicará o Interessado digitando um CPF ou CNPJ válido. \n \n Se o CPF ou CNPJ digitado não constar na lista de Contatos do SEI ou se existir duplicado, então o Usuário Externo será direcionado a uma janela de Cadastro do Contato que será de fato utilizado como Interessado do processo.') ?>
+                                                                                                    class="infraImg"/></label>
                 <br/>
 
-                <input <?php echo $sinIndIntIndConta; ?> type="radio" name="indicacaoIndireta[]"  id="indicacaoIndireta2" class="rdIndicacaoIndiretaHide" value="4" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-                <label for="indicacaoIndireta2" id="lblContatosJaExistentes" name="lblContatosJaExistentes" class="lblIndicacaoIndiretaHide infraLabelRadio">Digitando nome de Contatos já existentes <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo indicará o Interessado digitando o Nome ou clicando na Lupa para selecioná-lo dentre os Contatos do SEI, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Tipos de Contatos Permitidos. \n \n ATENÇÃO: Com esta opção, os Usuários Externos poderão acessar toda a lista de Contatos do SEI do Órgão.')?> class="infraImg"/></label>
+                <input <?php echo $sinIndIntIndConta; ?> type="radio" name="indicacaoIndireta[]" id="indicacaoIndireta2"
+                                                         class="rdIndicacaoIndiretaHide" value="4"
+                                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                <label for="indicacaoIndireta2" id="lblContatosJaExistentes" name="lblContatosJaExistentes"
+                       class="lblIndicacaoIndiretaHide infraLabelRadio">Digitando nome de Contatos já existentes <img
+                            align="top" style="height:16px; width:16px;"
+                            src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo indicará o Interessado digitando o Nome ou clicando na Lupa para selecioná-lo dentre os Contatos do SEI, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Tipos de Contatos Permitidos. \n \n ATENÇÃO: Com esta opção, os Usuários Externos poderão acessar toda a lista de Contatos do SEI do Órgão.') ?>
+                            class="infraImg"/></label>
             </div>
 
         </fieldset>
@@ -1107,17 +1487,34 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <fieldset class="infraFieldset" style="width:75%;">
             <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos&nbsp;</legend>
             <div>
-                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]" id="rdUsuExternoIndicarEntrePermitidos" onclick="changeNivelAcesso();" value="1" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
+                                                   id="rdUsuExternoIndicarEntrePermitidos"
+                                                   onclick="changeNivelAcesso();" value="1"
+                                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
 
-                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário Externo indica diretamente <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo terá opção de escolha do Nível de Acesso para cada Documento que adicionar.')?> class="infraImg"/></label>
+                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário
+                    Externo indica diretamente <img align="top" style="height:16px; width:16px;"
+                                                    src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo terá opção de escolha do Nível de Acesso para cada Documento que adicionar.') ?>
+                                                    class="infraImg"/></label>
                 <br/>
 
-                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]"  id="rdPadrao" onclick="changeNivelAcesso();" value="2" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha do Nível de Acesso para os Documentos, sendo sempre adicionados com o Nível de Acesso pré definido aqui.')?> class="infraImg"/></label>
+                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
+                                                   onclick="changeNivelAcesso();" value="2"
+                                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido <img
+                            align="top" style="height:16px; width:16px;"
+                            src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha do Nível de Acesso para os Documentos, sendo sempre adicionados com o Nível de Acesso pré definido aqui.') ?>
+                            class="infraImg"/></label>
 
-                <div id="divNivelAcesso"  <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
+                <div id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
                     <div style="clear:both;">&nbsp;</div>
-                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">Nível de Acesso: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('As opções abaixo dependem dos Níveis de Acesso Permitidos para o Tipo de Processo escolhido acima. \n \n A opção Sigiloso não é suportada para o Peticionamento de Processo Novo.')?> class="infraImg"/></label>
+                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">Nível
+                        de Acesso: <img align="top" style="height:16px; width:16px;"
+                                        src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('As opções abaixo dependem dos Níveis de Acesso Permitidos para o Tipo de Processo escolhido acima. \n \n A opção Sigiloso não é suportada para o Peticionamento de Processo Novo.') ?>
+                                        class="infraImg"/></label>
                     <br/>
                     <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()">
                         <?= $strItensSelNivelAcesso ?>
@@ -1126,7 +1523,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <div id="divHipoteseLegal" <?php echo $hipoteseLegal //$sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"'                  ?> >
                     <div style="clear:both;">&nbsp;</div>
-                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal" class="infraLabelObrigatorio">Hipótese Legal: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('As opções abaixo dependem da parametrização na Administração > Peticionamento Eletrônico > Hipóteses Legais Permitidas.')?> class="infraImg"/></label>
+                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
+                           class="infraLabelObrigatorio">Hipótese Legal: <img align="top"
+                                                                              style="height:16px; width:16px;"
+                                                                              src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                                              name="ajuda" <?= PaginaSEI::montarTitleTooltip('As opções abaixo dependem da parametrização na Administração > Peticionamento Eletrônico > Hipóteses Legais Permitidas.') ?>
+                                                                              class="infraImg"/></label>
                     <br/>
                     <select id="selHipoteseLegal" name="selHipoteseLegal">
                         <?= $strItensSelHipoteseLegal ?>
@@ -1144,24 +1546,46 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
         <legend class="infraLegend">&nbsp;Documento Principal&nbsp;</legend>
 
-        <input type="radio" name="rdDocPrincipal[]" id="rdDocGerado" onclick="changeDocPrincipal();" value="1" <?php echo $gerado ?> tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-        <label for="rdDocGerado" id="lblDocGerado" class="infraLabelRadio">Gerado (Editor e Modelo) <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá preencher um Documento de modelo pré definido, utilizando o Editor HTML do SEI. \n \n Neste caso, selecione Tipo de Documento parametrizado na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n ATENÇÃO: por limitações técnicas, o Usuário Externo somente visualizará e editará a seção Princial (Corpo do Texto) do modelo do Documento.')?> class="infraImg"/></label>
+        <input type="radio" name="rdDocPrincipal[]" id="rdDocGerado" onclick="changeDocPrincipal();"
+               value="1" <?php echo $gerado ?> tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+        <label for="rdDocGerado" id="lblDocGerado" class="infraLabelRadio">Gerado (Editor e Modelo) <img align="top"
+                                                                                                         style="height:16px; width:16px;"
+                                                                                                         src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                                                                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá preencher um Documento de modelo pré definido, utilizando o Editor HTML do SEI. \n \n Neste caso, selecione Tipo de Documento parametrizado na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n ATENÇÃO: por limitações técnicas, o Usuário Externo somente visualizará e editará a seção Princial (Corpo do Texto) do modelo do Documento.') ?>
+                                                                                                         class="infraImg"/></label>
         <br/>
 
-        <input type="radio" name="rdDocPrincipal[]"  id="rdDocExterno" onclick="changeDocPrincipal();" value="2" <?php echo $externo ?> tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-        <label name="lblDocExterno" id="lblDocExterno" for="rdDocExterno" class="infraLabelRadio">Externo (Anexação de Arquivo) <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá anexar um Arquivo como Documento Principal, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Extensão de Arquivos Permitidos e Tamanho Máximo de Arquivos.')?> class="infraImg"/></label>
+        <input type="radio" name="rdDocPrincipal[]" id="rdDocExterno" onclick="changeDocPrincipal();"
+               value="2" <?php echo $externo ?> tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+        <label name="lblDocExterno" id="lblDocExterno" for="rdDocExterno" class="infraLabelRadio">Externo (Anexação de
+            Arquivo) <img align="top" style="height:16px; width:16px;"
+                          src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                          name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá anexar um Arquivo como Documento Principal, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Extensão de Arquivos Permitidos e Tamanho Máximo de Arquivos.') ?>
+                          class="infraImg"/></label>
         <br/>
 
-        <div  <?php echo $gerado != '' || $externo != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>  id="divDocPrincipal">
+        <div <?php echo $gerado != '' || $externo != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>
+                id="divDocPrincipal">
             <div class="clear:both;">&nbsp;</div>
             <div>
-                <label name="lblTipoDocPrincipal" id="lblTipoDocPrincipal" for="txtTipoDocPrinc" class="infraLabelObrigatorio">Tipo do Documento Principal:</label>
+                <label name="lblTipoDocPrincipal" id="lblTipoDocPrincipal" for="txtTipoDocPrinc"
+                       class="infraLabelObrigatorio">Tipo do Documento Principal:</label>
             </div>
-            <input type="text" id="txtTipoDocPrinc" name="txtTipoDocPrinc" class="infraText" value="<?= PaginaSEI::tratarHTML($nomeSerie) ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
+            <input type="text" id="txtTipoDocPrinc" name="txtTipoDocPrinc" class="infraText"
+                   value="<?= PaginaSEI::tratarHTML($nomeSerie) ?>"
+                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-            <input type="hidden" id="hdnIdTipoDocPrinc" name="hdnIdTipoDocPrinc" value="<?= $idSerie ?>" />
-            <img id="imgLupaTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('S');" onkeypress="carregarComponenteLupaTpDocPrinc('S');" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-            <img id="imgExcluirTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('R')" onkeypress="carregarComponenteLupaTpDocPrinc('R')" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Tipo de Documento" title="Remover Tipo de Documento" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+            <input type="hidden" id="hdnIdTipoDocPrinc" name="hdnIdTipoDocPrinc" value="<?= $idSerie ?>"/>
+            <img id="imgLupaTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('S');"
+                 onkeypress="carregarComponenteLupaTpDocPrinc('S');"
+                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif"
+                 alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg"
+                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            <img id="imgExcluirTipoDocPrinc" onclick="carregarComponenteLupaTpDocPrinc('R')"
+                 onkeypress="carregarComponenteLupaTpDocPrinc('R')"
+                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif"
+                 alt="Remover Tipo de Documento" title="Remover Tipo de Documento" class="infraImg"
+                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
         </div>
 
@@ -1174,20 +1598,35 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div>
             <div style="clear:both;">&nbsp;</div>
             <div>
-                <label id="lblDescricaoEssencial" for="selDescricaoEssencial" class="infraLabelOpcional">Tipos dos Documentos Essenciais: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta opção não é obrigatória na parametrização, mas se for utilizada o Usuário Externo será obrigado a anexar um Arquivo como Documento Essencial para cada Tipo de Documento que for indicado aqui, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Extensão de Arquivos Permitidos e Tamanho Máximo de Arquivos.')?> class="infraImg"/></label>
+                <label id="lblDescricaoEssencial" for="selDescricaoEssencial" class="infraLabelOpcional">Tipos dos
+                    Documentos Essenciais: <img align="top" style="height:16px; width:16px;"
+                                                src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta opção não é obrigatória na parametrização, mas se for utilizada o Usuário Externo será obrigado a anexar um Arquivo como Documento Essencial para cada Tipo de Documento que for indicado aqui, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Extensão de Arquivos Permitidos e Tamanho Máximo de Arquivos.') ?>
+                                                class="infraImg"/></label>
             </div>
             <div>
-                <input type="text" id="txtSerieEssencial" name="txtSerieEssencial" class="infraText" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
+                <input type="text" id="txtSerieEssencial" name="txtSerieEssencial" class="infraText"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
             </div>
             <div style="margin-top: 5px;">
-                <select style="float: left;" id="selDescricaoEssencial" name="selDescricaoEssencial" size="8" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                <select style="float: left;" id="selDescricaoEssencial" name="selDescricaoEssencial" size="8"
+                        multiple="multiple" class="infraSelect"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strItensSelSeriesEss; ?>
                 </select>
 
-                <img id="imgLupaTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.selecionar(700, 500)" onkeypress="objLupaTipoDocumentoEssencial.selecionar(700, 500)" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                <img id="imgLupaTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.selecionar(700, 500)"
+                     onkeypress="objLupaTipoDocumentoEssencial.selecionar(700, 500)"
+                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif"
+                     alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg"
+                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-                <img id="imgExcluirTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.remover();" onkeypress="objLupaTipoDocumentoEssencial.remover();" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Tipos de Documentos Selecionados" title="Remover Tipos de Documentos Selecionados" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                <img id="imgExcluirTipoDocumentoEssencial" onclick="objLupaTipoDocumentoEssencial.remover();"
+                     onkeypress="objLupaTipoDocumentoEssencial.remover();"
+                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif"
+                     alt="Remover Tipos de Documentos Selecionados" title="Remover Tipos de Documentos Selecionados"
+                     class="infraImg" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
             </div>
 
@@ -1200,18 +1639,32 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div>
             <div style="clear:both;">&nbsp;</div>
             <div>
-                <label id="lblDescricao" for="txtDescricao" class="infraLabelOpcional">Tipos dos Documentos Complementares: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não será obrigado a anexar nenhum Documento Complementar, utilizando-os para anexar Documentos que podem variar conforme cada caso, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Extensão de Arquivos Permitidos e Tamanho Máximo de Arquivos. \n \n É boa prática indicar o máximo de Tipos de Documentos neste campo.')?> class="infraImg"/></label>
+                <label id="lblDescricao" for="txtDescricao" class="infraLabelOpcional">Tipos dos Documentos
+                    Complementares: <img align="top" style="height:16px; width:16px;"
+                                         src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não será obrigado a anexar nenhum Documento Complementar, utilizando-os para anexar Documentos que podem variar conforme cada caso, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Extensão de Arquivos Permitidos e Tamanho Máximo de Arquivos. \n \n É boa prática indicar o máximo de Tipos de Documentos neste campo.') ?>
+                                         class="infraImg"/></label>
             </div>
             <div>
-                <input type="text" id="txtSerie" name="txtSerie" class="infraText" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
+                <input type="text" id="txtSerie" name="txtSerie" class="infraText"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
             </div>
             <div style="margin-top: 5px;">
-                <select style="float: left;" id="selDescricao" name="selDescricao" size="16" multiple="multiple" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                <select style="float: left;" id="selDescricao" name="selDescricao" size="16" multiple="multiple"
+                        class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strItensSelSeries ?>
                 </select>
-                <img id="imgLupaTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('S');" onkeypress="carregarComponenteLupaTpDocComplementar('S');" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-                <img id="imgExcluirTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('R');" onkeypress="carregarComponenteLupaTpDocComplementar('R');" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Tipos de Documentos Selecionados" title="Remover Tipos de Documentos Selecionados" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                <img id="imgLupaTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('S');"
+                     onkeypress="carregarComponenteLupaTpDocComplementar('S');"
+                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif"
+                     alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg"
+                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <img id="imgExcluirTipoDocumento" onclick="carregarComponenteLupaTpDocComplementar('R');"
+                     onkeypress="carregarComponenteLupaTpDocComplementar('R');"
+                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif"
+                     alt="Remover Tipos de Documentos Selecionados" title="Remover Tipos de Documentos Selecionados"
+                     class="infraImg" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
 
         </div>
@@ -1220,14 +1673,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
     <input type="hidden" id="hdnCorpoTabela" name="hdnCorpoTabela" value=""/>
     <input type="hidden" id="hdnUnidadesSelecionadas" name="hdnUnidadesSelecionadas" value=""/>
-    <input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades" value='<?= json_encode($arrObjUnidadeDTOFormatado); ?>' />
-    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="" />
-    <input type="hidden" id="hdnSerie" name="hdnSerie" value="<?= $_POST['hdnSerie'] ?>" />
-    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>" />
-    <input type="hidden" id="hdnIdIndisponibilidadePeticionamento" name="hdnIdIndisponibilidadePeticionamento" value="" />
-    <input type="hidden" id="hdnIdSerie" name="hdnIdSerie" value="<?= $_POST['hdnIdSerie'] ?>" />
-    <input type="hidden" id="hdnIdSerieEssencial" name="hdnIdSerieEssencial" value="<?= $_POST['hdnIdSerieEssencial'] ?>" />
-    <input type="hidden" id="hdnSerieEssencial" name="hdnSerieEssencial" value="<?= $_POST['hdnSerieEssencial'] ?>" />
+    <input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades"
+           value='<?= json_encode($arrObjUnidadeDTOFormatado); ?>'/>
+    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value=""/>
+    <input type="hidden" id="hdnSerie" name="hdnSerie" value="<?= $_POST['hdnSerie'] ?>"/>
+    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>"/>
+    <input type="hidden" id="hdnIdIndisponibilidadePeticionamento" name="hdnIdIndisponibilidadePeticionamento"
+           value=""/>
+    <input type="hidden" id="hdnIdSerie" name="hdnIdSerie" value="<?= $_POST['hdnIdSerie'] ?>"/>
+    <input type="hidden" id="hdnIdSerieEssencial" name="hdnIdSerieEssencial"
+           value="<?= $_POST['hdnIdSerieEssencial'] ?>"/>
+    <input type="hidden" id="hdnSerieEssencial" name="hdnSerieEssencial" value="<?= $_POST['hdnSerieEssencial'] ?>"/>
 
     <?
     PaginaSEI::getInstance()->fecharAreaDados();
@@ -1243,7 +1699,7 @@ PaginaSEI::getInstance()->fecharHtml();
     var objLupaTipoProcesso = null;
     var objAutoCompletarTipoProcesso = null;
 
-//Docs
+    //Docs
     var objLupaTipoDocumento = null;
     var objAutoCompletarTipoDocumento = null;
 
@@ -1253,7 +1709,7 @@ PaginaSEI::getInstance()->fecharHtml();
     var objLupaTipoDocumentoEssencial = null
     var objAutoCompletarTipoDocumentoEssencial = null;
 
-//Unidades
+    //Unidades
     var objLupaUnidade = null;
     var objAutoCompletarUnidade = null;
 
@@ -1264,11 +1720,11 @@ PaginaSEI::getInstance()->fecharHtml();
     var objLupaOrgaoUnidadeMultipla = null;
     var objAutoCompletarOrgaoUnidadeMutipla = null;
 
-    function criarLupaUnidade(){
-        if(document.getElementById('hdnIdOrgaoUnidadeMultipla').value != ''){
+    function criarLupaUnidade() {
+        if (document.getElementById('hdnIdOrgaoUnidadeMultipla').value != '') {
             objLupaUnidadeMultipla = null;
             objAutoCompletarUnidadeMutipla = null;
-            var link  = document.getElementById('lnkOrgao' + document.getElementById('hdnIdOrgaoUnidadeMultipla').value).value;
+            var link = document.getElementById('lnkOrgao' + document.getElementById('hdnIdOrgaoUnidadeMultipla').value).value;
             objLupaUnidadeMultipla = new infraLupaText('txtUnidadeMultipla', 'hdnIdUnidadeMultipla', link);
 
             objLupaUnidadeMultipla.finalizarSelecao = function () {
@@ -1279,7 +1735,7 @@ PaginaSEI::getInstance()->fecharHtml();
             objAutoCompletarUnidadeMultipla.limparCampo = false;
             objAutoCompletarUnidadeMultipla.tamanhoMinimo = 3;
             objAutoCompletarUnidadeMultipla.prepararExecucao = function () {
-                return 'palavras_pesquisa='+document.getElementById('txtUnidadeMultipla').value+'&id_orgao='+document.getElementById('hdnIdOrgaoUnidadeMultipla').value;
+                return 'palavras_pesquisa=' + document.getElementById('txtUnidadeMultipla').value + '&id_orgao=' + document.getElementById('hdnIdOrgaoUnidadeMultipla').value;
 
             };
 
@@ -1290,7 +1746,7 @@ PaginaSEI::getInstance()->fecharHtml();
                     document.getElementById('hdnUfUnidadeMultipla').value = uf;
                 }
             }
-        }else{
+        } else {
             objLupaUnidadeMultipla = null;
             objAutoCompletarUnidadeMutipla = null;
         }
@@ -1315,14 +1771,13 @@ PaginaSEI::getInstance()->fecharHtml();
                 dataType: 'XML',
                 data: paramsAjax,
                 success: function (result) {
-                    if($(result).find('valor').text() == 'A'){
+                    if ($(result).find('valor').text() == 'A') {
                         var idLinhaTabela = 'tabNomeUnidade_' + idUnidadeSelect;
                         var existeUnidade = document.getElementById(idLinhaTabela);
                         var valueCodUnidades = document.getElementById('hdnTodasUnidades').value;
 
                         if (valueCodUnidades != '') {
                             var objUnidades = $.parseJSON(valueCodUnidades);
-
                             if (!registroDuplicado(objUnidades[idUnidadeSelect].siglaOrgao, objUnidades[idUnidadeSelect].cidade)) {
                                 qtdLinhas = document.getElementsByClassName('linhas').length;
                                 var html = '';
@@ -1355,7 +1810,7 @@ PaginaSEI::getInstance()->fecharHtml();
                                 document.getElementById('qtdRegistros').innerHTML = qtdLinhas + 1;
                             }
                         }
-                    }else{
+                    } else {
                         alert('Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. \n\nCaso seja pertinente, antes deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.');
                         return false;
                     }
@@ -1392,14 +1847,13 @@ PaginaSEI::getInstance()->fecharHtml();
         for (var i = 0; i < document.getElementById('corpoTabela').rows.length; i++) {
             var linha = document.getElementById('corpoTabela').rows[i];
             if (linha.cells[0].innerText.toLowerCase().trim() == orgao.toLowerCase().trim()
-                    && linha.cells[3].innerText.toLowerCase().trim() == cidade.toLowerCase().trim()) {
+                && linha.cells[3].innerText.toLowerCase().trim() == cidade.toLowerCase().trim()) {
                 alert('Não é permitido adicionar mais de uma Unidade para abertura do mesmo Órgão e para a mesma Cidade.');
                 return true;
             }
         }
         return false;
     }
-
 
 
     function changeUnidade() {
@@ -1423,7 +1877,7 @@ PaginaSEI::getInstance()->fecharHtml();
         unidUnic ? document.getElementById("divCpUnidadeUnica").style.display = "inherit" : document.getElementById("divCpUnidadeMultipla").style.display = "inherit";
     }
 
-     function changeUnidadeTipoProcesso() {
+    function changeUnidadeTipoProcesso() {
         //Limpando tabela de unidades Múltiplas e campos vinculados as unidades multiplas
         document.getElementById("corpoTabela").innerHTML = '';
         document.getElementById('txtUnidadeMultipla').value = '';
@@ -1456,8 +1910,7 @@ PaginaSEI::getInstance()->fecharHtml();
         var elementLupa = document.getElementById('imgLupaTipoDocumento');
         var percentLupa = getPercentTopStyle(elementLupa);
 
-        if (indIndireta)
-        {
+        if (indIndireta) {
             document.getElementById('divRdIndicacaoIndiretaHide').style.display = "inherit";
         }
 
@@ -1601,8 +2054,7 @@ PaginaSEI::getInstance()->fecharHtml();
         if (multiplasUnidades) {
             var qtdRegistros = document.getElementById('qtdRegistros').innerHTML;
             var linhas = (document.getElementsByClassName('linhas')).length;
-            if (qtdRegistros != linhas)
-            {
+            if (qtdRegistros != linhas) {
                 document.getElementById('qtdRegistros').innerHTML = linhas;
             }
         }
@@ -1620,7 +2072,7 @@ PaginaSEI::getInstance()->fecharHtml();
     function inicializarTela() {
     }
 
-   function carregarComponenteUnidadeMultipla() {
+    function carregarComponenteUnidadeMultipla() {
         objLupaUnidadeMultipla = new infraLupaText('txtUnidadeMultipla', 'hdnIdUnidadeMultipla', '');
 
         objLupaUnidadeMultipla.finalizarSelecao = function () {
@@ -1636,7 +2088,7 @@ PaginaSEI::getInstance()->fecharHtml();
                 document.getElementById('txtUnidadeMultipla').value = '';
                 return false;
             }
-            return 'palavras_pesquisa='+document.getElementById('txtUnidadeMultipla').value+'&id_orgao='+document.getElementById('hdnIdOrgaoUnidadeMultipla').value;
+            return 'palavras_pesquisa=' + document.getElementById('txtUnidadeMultipla').value + '&id_orgao=' + document.getElementById('hdnIdOrgaoUnidadeMultipla').value;
         };
 
         objAutoCompletarUnidadeMultipla.processarResultado = function (id, descricao, uf) {
@@ -1649,7 +2101,7 @@ PaginaSEI::getInstance()->fecharHtml();
     }
 
     function carregarComponenteOrgaoMultiplo() {
-        objLupaOrgaoUnidadeMultipla = new infraLupaText('txtOrgaoUnidadeMultipla', 'hdnIdOrgaoUnidadeMultipla','<?= $strLinkOrgaoMultiplaSelecao ?>');
+        objLupaOrgaoUnidadeMultipla = new infraLupaText('txtOrgaoUnidadeMultipla', 'hdnIdOrgaoUnidadeMultipla', '<?= $strLinkOrgaoMultiplaSelecao ?>');
 
         objLupaOrgaoUnidadeMultipla.validarSelecionar = function () {
             objLupaOrgaoUnidadeMultipla.limpar();
@@ -1672,7 +2124,7 @@ PaginaSEI::getInstance()->fecharHtml();
             criarLupaUnidade();
         }
 
-        objAutoCompletarUnidadeOrgaoMultipla = new infraAjaxAutoCompletar('hdnIdOrgaoUnidadeMultipla', 'txtOrgaoUnidadeMultipla','<?= $strLinkAjaxOrgao ?>');
+        objAutoCompletarUnidadeOrgaoMultipla = new infraAjaxAutoCompletar('hdnIdOrgaoUnidadeMultipla', 'txtOrgaoUnidadeMultipla', '<?= $strLinkAjaxOrgao ?>');
         objAutoCompletarUnidadeOrgaoMultipla.limparCampo = true;
         objAutoCompletarUnidadeOrgaoMultipla.prepararExecucao = function () {
             return 'palavras_pesquisa=' + document.getElementById('txtOrgaoUnidadeMultipla').value;
@@ -1766,7 +2218,6 @@ PaginaSEI::getInstance()->fecharHtml();
     }
 
 
-
     function carregarComponenteTipoProcesso() {
         objLupaTipoProcesso = new infraLupaText('txtTipoProcesso', 'hdnIdTipoProcesso', '<?= $strLinkTipoProcessoSelecao ?>');
 
@@ -1796,7 +2247,7 @@ PaginaSEI::getInstance()->fecharHtml();
 
     }
 
-//Carrega o documento para o documento complementar
+    //Carrega o documento para o documento complementar
     function carregarComponenteTipoDocumento() {
 
         objAutoCompletarTipoDocumento = new infraAjaxAutoCompletar('hdnIdSerie', 'txtSerie', '<?= $strLinkAjaxTipoDocumento ?>');
@@ -1844,7 +2295,7 @@ PaginaSEI::getInstance()->fecharHtml();
         objLupaTipoDocumento = new infraLupaSelect('selDescricao', 'hdnSerie', '<?= $strLinkTipoDocumentoSelecao ?>');
     }
 
-//Carrega o documento para o documento essencial
+    //Carrega o documento para o documento essencial
     function carregarComponenteTipoDocumentoEssencial() {
 
         objAutoCompletarTipoDocumentoEssencial = new infraAjaxAutoCompletar('hdnIdSerieEssencial', 'txtSerieEssencial', '<?= $strLinkAjaxTipoDocumento ?>');
@@ -1956,15 +2407,12 @@ PaginaSEI::getInstance()->fecharHtml();
 //Validar Rádio Indicação de Interessado
         var indicacaoIndireta = document.getElementById('rdIndicacaoIndireta').checked;
 
-        if (indicacaoIndireta)
-        {
+        if (indicacaoIndireta) {
             var elemsIndInd = document.getElementsByName("indicacaoIndireta[]");
 
             validoIndInd = false;
-            for (var i = 0; i < elemsIndInd.length; i++)
-            {
-                if (elemsIndInd[i].checked === true)
-                {
+            for (var i = 0; i < elemsIndInd.length; i++) {
+                if (elemsIndInd[i].checked === true) {
                     validoIndInd = true;
                 }
             }
@@ -2028,48 +2476,48 @@ PaginaSEI::getInstance()->fecharHtml();
 
         var multiplasUnidades = document.getElementById('rdUnidadeMultipla').checked;
 
-        if(multiplasUnidades){
+        if (multiplasUnidades) {
             var paramsAjax = {
                 idTipoProcesso: document.getElementById('hdnIdTipoProcesso').value,
                 idUnidadeMultipla: document.getElementById('hdnUnidadesSelecionadas').value
             };
-        }else{
+        } else {
             var paramsAjax = {
                 idTipoProcesso: document.getElementById('hdnIdTipoProcesso').value,
-                idUnidadeMultipla: "["+document.getElementById('hdnIdUnidade').value+"]"
+                idUnidadeMultipla: "[" + document.getElementById('hdnIdUnidade').value + "]"
 
             };
         }
 
         var restricao = false;
 
-            $.ajax({
-                    url: '<?=$strLinkAjaxConfirmaRestricaoSalvar?>',
-                    type: 'POST',
-                    dataType: 'XML',
-                    async: false,
-                    data: paramsAjax,
-                    success: function (result) {
-                        if($(result).find('valor').text() == 'R'){
-                            alert('Existem conflitos de parametrização na seção Unidade para Abertura do Processo. \n\n Resolva os conflitos antes de salvar.');
-                            restricao = true;
-                        }
-                    },
-                    error: function (e) {
-                        console.error('Erro ao processar o XML do SEI: ' + e.responseText);
-                    }
-            });
-            if(restricao){
-                return false;
+        $.ajax({
+            url: '<?=$strLinkAjaxConfirmaRestricaoSalvar?>',
+            type: 'POST',
+            dataType: 'XML',
+            async: false,
+            data: paramsAjax,
+            success: function (result) {
+                if ($(result).find('valor').text() == 'R') {
+                    alert('Existem conflitos de parametrização na seção Unidade para Abertura do Processo. \n\n Resolva os conflitos antes de salvar.');
+                    restricao = true;
+                }
+            },
+            error: function (e) {
+                console.error('Erro ao processar o XML do SEI: ' + e.responseText);
             }
+        });
+        if (restricao) {
+            return false;
+        }
 
         //Verifica a Qtd de Unidades
         var tbUnidades = document.getElementById('tableTipoUnidade');
-        if(tbUnidades.rows.length < 3 && multiplasUnidades){
+        if (tbUnidades.rows.length < 3 && multiplasUnidades) {
             alert(" Como foi selecionada a opção Múltiplas Unidades para Abertura do Processo, é necessário adicionar mais de uma Unidade na lista");
             restricao = true;
         }
-        if(restricao){
+        if (restricao) {
             return false;
         }
 
@@ -2085,8 +2533,7 @@ PaginaSEI::getInstance()->fecharHtml();
         var arrayIdsBd = new Array();
         var objUndSelecionadas = document.getElementsByClassName('linhas');
 
-        for (var i = 0; i < objUndSelecionadas.length; i++)
-        {
+        for (var i = 0; i < objUndSelecionadas.length; i++) {
             idTabela = (objUndSelecionadas[i].id).split('_')[1];
             arrayIdsBd.push(idTabela);
         }
@@ -2097,8 +2544,8 @@ PaginaSEI::getInstance()->fecharHtml();
 
     function getPercentTopStyle(element) {
         var parent = element.parentNode,
-                computedStyle = getComputedStyle(element),
-                value;
+            computedStyle = getComputedStyle(element),
+            value;
         parent.style.display = 'none';
         value = computedStyle.getPropertyValue('top');
         parent.style.removeProperty('display');
@@ -2111,7 +2558,7 @@ PaginaSEI::getInstance()->fecharHtml();
         return false;
     }
 
-    function removerIconeRestricao(){
+    function removerIconeRestricao() {
         document.getElementById('divRestricaoUU').innerHTML = "";
     }
 

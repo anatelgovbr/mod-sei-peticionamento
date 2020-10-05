@@ -197,7 +197,7 @@ require_once  'md_pet_procuracao_especial_cadastro_css.php';
                 <?php }?>
                 <option value="<?php echo MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES?>"
                         >
-                    Procuração Eletronica
+                    Procuração Eletronica Simples
                 </option>
             </select>
            
@@ -240,7 +240,7 @@ require_once  'md_pet_procuracao_especial_cadastro_css.php';
           <label  <?php echo $bloqueioRadioPF ? "style='display:none'" : ""; ?> for="rbOutorgante1" id="lvbFisica" class="infraLabelRadio">Pessoa Física </label><img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
                  name="ajuda"
                  style="width:16px;height:16px; <?php echo $bloqueioRadioPF ? "display:none" : ""; ?>"
-                 <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opção Pessoa Física, a Procuração Eletrônica terá como objetivo definir alguém para representar você, enquanto Pessoa Física. \n \n Ou seja, será uma Procuração de Usuário Externo para Usuário Externo.')?> 
+                 <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opção Pessoa Física, a Procuração Eletrônica Simples terá como objetivo definir alguém para representar você, enquanto Pessoa Física. \n \n Ou seja, será uma Procuração de Usuário Externo para Usuário Externo.')?>
                  class="infraImg"/>
        <input type="radio" onchange="showPessoaOutorgante();" name="Outorgante"
         id="rbOutorgante2"
@@ -249,7 +249,7 @@ require_once  'md_pet_procuracao_especial_cadastro_css.php';
          <label for="rbOutorgante2" id="lvbJuridica" class="infraLabelRadio">Pessoa Jurídica </label><img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" 
                  name="ajuda"
                  style="width:16px;height:16px;margin-right:17px;"
-                 <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opção Pessoa Jurídica, a Procuração Eletrônica terá como objetivo definir alguém para representar a Pessoa Jurídica que você já representa como Responsável Legal ou como Procurador Especial.')?> 
+                 <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opção Pessoa Jurídica, a Procuração Eletrônica terá como objetivo definir alguém para representar a Pessoa Jurídica que você já representa como Responsável Legal ou como Procurador Especial.')?>
                  class="infraImg" id="ajudaPJ"/>
 
                     <select style="width: 370px;"
@@ -307,8 +307,7 @@ require_once  'md_pet_procuracao_especial_cadastro_css.php';
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
                    onkeypress="return infraMascaraCPF(this);" 
                    onkeyup="return infraMascaraCPF(this);" 
-                   onkeydown="return infraMascaraCPF(this);" 
-                   onchange="validaCpf(this)"/>
+                   onkeydown="return infraMascaraCPF(this);"/>
 
             <button type="button" 
                     accesskey="l" 
@@ -380,8 +379,7 @@ require_once  'md_pet_procuracao_especial_cadastro_css.php';
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
                    onkeypress="return infraMascaraCPF(this);" 
                    onkeyup="return infraMascaraCPF(this);" 
-                   onkeydown="return infraMascaraCPF(this);" 
-                   onchange="validaCpf(this)"/>
+                   onkeydown="return infraMascaraCPF(this);"/>
 
             <button type="button" 
                     accesskey="V" 

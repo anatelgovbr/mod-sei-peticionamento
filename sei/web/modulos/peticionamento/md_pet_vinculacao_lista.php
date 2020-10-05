@@ -180,7 +180,7 @@ if ($numRegistros > 0) {
     $idAcessoExterno = $objMdPetAcessoExternoRN->_getUltimaConcessaoAcessoExternoModulo($idProcedimento, $idContato, true);
     SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
     
-    $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $idAcessoExterno . '&id_procedimento=' . $idProcedimento);
+    $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $idAcessoExterno);
     //Acesso Externo - fim
 
     SessaoSEIExterna::getInstance()->configurarAcessoExterno(null);

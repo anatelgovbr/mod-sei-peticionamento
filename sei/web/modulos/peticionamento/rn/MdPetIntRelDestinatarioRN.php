@@ -729,7 +729,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         $total = $objAcessoExternoRN->contar($objAcessoExternoDTO);
         
         if( $total > 0 ) {
-          $strLinkProcesso = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $idAcessoExt.'&id_procedimento='.$idProcesso);
+          $strLinkProcesso = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $idAcessoExt);
         } else {
             $strLinkProcesso = "#";
         } 

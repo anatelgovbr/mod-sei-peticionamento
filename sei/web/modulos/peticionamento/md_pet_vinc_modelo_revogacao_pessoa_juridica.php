@@ -44,7 +44,7 @@
     }
 </style>
 
-<p class="Texto_Justificado">Pela presente Revogação de Procuração Eletrônica, o Outorgante abaixo indicado revoga os poderes concedidos ao Outorgado por meio da Procuração Eletrônica referenciada.</p> 
+<p class="Texto_Justificado">O Outorgante abaixo indicado revoga os poderes concedidos ao Outorgado por meio da Procuração Eletrônica referenciada.</p> 
 
 <p class="Texto_Justificado">Os poderes de representação constantes na Procuração Eletrônica ora revogada cessam a partir da data do presente documento.</p>
 

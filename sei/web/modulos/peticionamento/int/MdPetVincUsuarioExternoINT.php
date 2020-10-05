@@ -375,23 +375,49 @@ class MdPetVincUsuarioExternoINT extends InfraINT
   }
 
 
-  public static function consultarUsuarioValidoProcuracao($params){
-
-    $cpf = array_key_exists('cpf', $params) ? $params['cpf'] : null;
+    public static function consultarUsuarioValidoProcuracao($params)
+    {
+        $xml = '<resultado>';
+        $cpf = array_key_exists('cpf', $params) ? $params['cpf'] : null;
 
         $objUsuarioDTO = new UsuarioDTO();
         $objUsuarioDTO->setDblCpfContato(InfraUtil::retirarFormatacao($cpf));
-        $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
+        $objUsuarioDTO->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO_PENDENTE, UsuarioRN::$TU_EXTERNO), InfraDTO::$OPER_IN);
+//        $objUsuarioDTO->setStrSinAtivo(array('N', 'S'), InfraDTO::$OPER_IN);
+        $objUsuarioDTO->setBolExclusaoLogica(false);
         $objUsuarioDTO->retStrNome();
         $objUsuarioDTO->retDblCpfContato();
         $objUsuarioDTO->retNumIdContato();
+        $objUsuarioDTO->retStrStaTipo();
+        $objUsuarioDTO->retStrSinAtivo();
 
         $objUsuarioRN = new UsuarioRN();
         $arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
 
-    return $arrObjUsuarioDTO;
+        if (count($arrObjUsuarioDTO) > 0) {
+            foreach ($arrObjUsuarioDTO as $usuarioDTO) {
+                $xml .= '<contato';
+                if ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO && $usuarioDTO->getStrSinAtivo() == 'S') {
+                    $xml .= ' sucesso="1" ';
+                    $xml .= ' id="' . $usuarioDTO->getNumIdContato().'"';
+                    $xml .= ' descricao="' . $usuarioDTO->getStrNome().'"';
+                    $xml .= ' complemento="' . $params['cpf'].'"';
+                } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
+                    $xml .= ' sucesso="false" ';
+                    $xml .= ' mensagem="Usuário Externo com pendência de liberação de cadastro" ';
+                } elseif ($usuarioDTO->getStrSinAtivo() == 'N') {
+                    $xml .= ' sucesso="false" ';
+                    $xml .= ' mensagem="Usuário Externo está com o cadastro desativado" ';
+                }
+                $xml .= '></contato>';
+            }
+        }
 
-  }
+        $xml .= '</resultado>';
+
+        return $xml;
+
+    }
 
 
 }

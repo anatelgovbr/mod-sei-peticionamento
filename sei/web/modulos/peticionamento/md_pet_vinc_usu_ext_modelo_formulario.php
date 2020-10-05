@@ -69,7 +69,7 @@
         <li><p class="Texto_Justificado">Gerenciar o cadastro da Pessoa Jurídica;</p></li>
 		<li><p class="Texto_Justificado">Receber Intimações Eletrônicas e realizar Peticionamento Eletrônico em nome da Pessoa Jurídica, com todos os poderes previstos no sistema;</p></li>
         <li><p class="Texto_Justificado">Conceder Procurações Eletrônicas Especiais a outros Usuários Externos, bem como revogá-las quando lhe convier;</p></li>
-        <li><p class="Texto_Justificado">Conceder Procurações Eletrônicas a outros Usuários Externos, em âmbito geral ou para processos específicos, conforme poderes estabelecidos, para representação da Pessoa Jurídica Outorgante, bem como revogá-las quando lhe convier.</p></li>
+        <li><p class="Texto_Justificado">Conceder Procurações Eletrônicas Simples a outros Usuários Externos, em âmbito geral ou para processos específicos, conforme poderes estabelecidos, para representação da Pessoa Jurídica Outorgante, bem como revogá-las quando lhe convier.</p></li>
     </ol>
 </label>
 </div>

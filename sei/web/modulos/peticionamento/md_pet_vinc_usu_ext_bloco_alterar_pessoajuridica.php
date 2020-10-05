@@ -92,7 +92,7 @@
                     <li class="Numerada">Gerenciar o cadastro da Pessoa Jurídica;</li>
                     <li class="Numerada">Receber Intimações Eletrônicas e realizar Peticionamento Eletrônico em nome da Pessoa Jurídica, com todos os poderes previstos no sistema;</li>
                     <li class="Numerada">Conceder Procurações Eletrônicas Especiais a outros Usuários Externos, bem como revogá-las quando lhe convier;</li>
-                    <li class="Numerada">Conceder Procurações Eletrônicas a outros Usuários Externos, em âmbito geral ou para processos específicos, conforme poderes estabelecidos, para representação da Pessoa Jurídica Outorgante, bem como revogá-las quando lhe convier.</li>
+                    <li class="Numerada">Conceder Procurações Eletrônicas Simples a outros Usuários Externos, em âmbito geral ou para processos específicos, conforme poderes estabelecidos, para representação da Pessoa Jurídica Outorgante, bem como revogá-las quando lhe convier.</li>
                 </ol>
                 </li>
                 <li class="Numerada">É sua responsabilidade zelar pela veracidade e validade dos dados sobre a Pessoa Jurídica à qual se vincula no âmbito do SEI-<?=$siglaOrgao?>.</li>

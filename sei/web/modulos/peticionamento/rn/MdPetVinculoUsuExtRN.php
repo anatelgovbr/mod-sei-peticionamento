@@ -243,8 +243,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objContatoDTO->setStrMatriculaOab(null);
         $objContatoDTO->setDtaNascimento(null);
         $objContatoDTO->setNumIdCargo(null);
-        //$objContatoDTO->setStrNumeroPassaporte(null);
-        //$objContatoDTO->setNumIdPaisPassaporte(null);
+        $objContatoDTO->setStrNumeroPassaporte(null);
+        $objContatoDTO->setNumIdPaisPassaporte(null);
         $objContatoDTO->setNumIdPais(76); // IdBrasil
         $objContatoDTO->setNumIdUf($idUf); // Array UF
         $objContatoDTO->setNumIdCidade($idCidade);
@@ -271,8 +271,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objContatoDTO->setNumIdCargo(null);
             $objContatoDTO->setStrSitioInternet('');
             $objContatoDTO->setStrObservacao('');
-            //$objContatoDTO->setStrNumeroPassaporte(null);
-            //$objContatoDTO->setNumIdPaisPassaporte(null);
+            $objContatoDTO->setStrNumeroPassaporte(null);
+            $objContatoDTO->setNumIdPaisPassaporte(null);
             $objContatoDTO = $objContatoRN->cadastrarRN0322($objContatoDTO);
         } else {
 

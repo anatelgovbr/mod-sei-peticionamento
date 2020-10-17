@@ -11,23 +11,27 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdPetVincRepresentantRN extends InfraRN {
 
-  //Procuração Eletrônica
-  public static $PE_RESPONSAVEL_LEGAL = 'L';
-  public static $PE_PROCURADOR_ESPECIAL = 'E';
-  public static $PE_PROCURADOR = 'C';
-  public static $PE_PROCURADOR_SIMPLES = 'S';
+    //Procuração Eletrônica
+    public static $PE_RESPONSAVEL_LEGAL = 'L';
+    public static $PE_PROCURADOR_ESPECIAL = 'E';
+    public static $PE_PROCURADOR = 'C';
+    public static $PE_PROCURADOR_SIMPLES = 'S';
 
-  //Representação - Estado
-  public static $RP_ATIVO = 'A';
-  public static $RP_SUSPENSO = 'S';
-  public static $RP_REVOGADA = 'R';
-  public static $RP_RENUNCIADA = 'C';
-  public static $RP_VENCIDA = 'V';
-  public static $RP_SUBSTITUIDA = 'T';
+    //Representação - Estado
+    public static $RP_ATIVO = 'A';
+    public static $RP_SUSPENSO = 'S';
+    public static $RP_REVOGADA = 'R';
+    public static $RP_RENUNCIADA = 'C';
+    public static $RP_VENCIDA = 'V';
+    public static $RP_SUBSTITUIDA = 'T';
 
-  //Abrangência
-  public static $PR_ESPECIFICO = 'E';
-  public static $PR_QUALQUER = 'Q';
+    //Abrangência
+    public static $PR_ESPECIFICO = 'E';
+    public static $PR_QUALQUER = 'Q';
+
+    public static $STR_PROCURADOR_ESPECIAL = 'Procurador Especial';
+    public static $STR_RESPONSAVEL_LEGAL = 'Responsável Legal';
+    public static $STR_PROCURADOR_SIMPLES = 'Procurador Simples';
 
   public function __construct(){
     parent::__construct();

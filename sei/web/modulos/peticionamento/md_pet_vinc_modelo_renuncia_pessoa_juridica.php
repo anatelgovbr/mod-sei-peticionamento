@@ -44,7 +44,7 @@
     }
 </style>
 
-<p class="Texto_Justificado">Pela presente Renúncia de Procuração Eletrônica, o Outorgado abaixo indicado renuncia os poderes recebidos do Outorgante por meio da Procuração Eletrônica referenciada.</p> 
+<p class="Texto_Justificado">O Outorgado abaixo indicado renuncia os poderes recebidos do Outorgante por meio da Procuração Eletrônica referenciada.</p> 
 
 <p class="Texto_Justificado">Os poderes de representação constantes na Procuração Eletrônica ora renunciada cessam a partir da data do presente documento.</p>
 
@@ -52,7 +52,7 @@
     <table align="center" style="width: 90%" class="Tabela_Justificado_Negrito" border=0>
     <tbody>
         <tr class="trEspaco">
-            <td style="width: 400px">Motivo da Revogação:</td>
+            <td style="width: 400px">Motivo da Renúncia:</td>
         </tr>
         <tr>
             <td colspan=2 class="tdTabulacao" style="font-weight: normal;word-break: break-all;">@motivo</td>

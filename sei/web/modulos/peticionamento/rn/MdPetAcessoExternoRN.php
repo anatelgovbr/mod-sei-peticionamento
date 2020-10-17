@@ -2074,11 +2074,6 @@ class MdPetAcessoExternoRN extends InfraRN {
 		return $arrRetorno;
 	}
 
-
-
-
-
-
 }
 
 ?>

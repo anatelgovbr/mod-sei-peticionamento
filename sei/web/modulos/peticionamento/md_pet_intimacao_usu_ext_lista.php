@@ -388,15 +388,15 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 25px"'); ?>
 
     <!--NUMERO PROCESSO-->
-    <div class="bloco" style="min-width:130px; width:12%">
+    <div class="bloco" style="min-width:145px; width:11%">
         <label class="infraLabelOpcional" for="txtNumeroProcesso">Número do Processo:</label>
-        <input type="text" name="txtNumeroProcesso" id="txtNumeroProcesso" style="width: 130px"
+        <input type="text" name="txtNumeroProcesso" id="txtNumeroProcesso" style="width: 142px"
                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" value="<?php  echo array_key_exists('txtNumeroProcesso', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtNumeroProcesso']) : '' ?>"/>
     </div>
     <!--FIM NUMERO PROCESSO-->
 
     <!-- PERIODO DE EXPEDICAO-->
-    <div class="bloco" style="min-width:205px; width:20%">
+    <div class="bloco" style="min-width:214px; width:16%">
         <label class="infraLabelOpcional" for="txtPeriodoExpedicao">Período de Expedição:</label>
         <!--DATA INICIAL-->
         <input type="text" name="txtDataInicio" id="txtDataInicio"
@@ -440,7 +440,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     <!--FIM TIPO DE DESTINATÁRIO-->
     
     <!--TIPO DE INTIMACAO-->
-    <div class="bloco" style="min-width:160px; width:14%">
+    <div class="bloco" style="min-width:158px; width:12%">
         <label class="infraLabelOpcional" for="selTipoIntimacao">Tipo de Intimação:</label>
         <select onchange="pesquisar();" class="infraSelect " name="selTipoIntimacao"  style="width: 160px" id="selTipoIntimacao" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
           <?php echo $selTipoIntimacao; ?>

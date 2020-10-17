@@ -6,7 +6,7 @@
 *
 * Versão do Gerador de Código: 1.41.0
 */
-
+ 
 try {
   require_once dirname(__FILE__).'/../../SEI.php';
 
@@ -134,6 +134,8 @@ try {
   //$objMdPetIntegracaoDTO->retStrOperacaoWsdl();
   //$objMdPetIntegracaoDTO->retStrSinCache();
   $objMdPetIntegracaoDTO->retStrSinAtivo();
+  $objMdPetIntegracaoDTO->retStrTpClienteWs();
+  $objMdPetIntegracaoDTO->retStrSinAtivo();
   $objMdPetIntegracaoDTO->retStrNomeMdPetIntegFuncionalid();
   $numIdMdPetIntegFuncionalid = PaginaSEI::getInstance()->recuperarCampo('selMdPetIntegFuncionalid');
   if ($numIdMdPetIntegFuncionalid!==''){
@@ -243,6 +245,7 @@ try {
     //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Operação','OperacaoWsdl',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
     //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Marque caso seu Webservice tenha controle de expiração de cache','SinCache',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
     $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Funcionalidade','NomeMdPetIntegFuncionalid',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
+      $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Tipo Cliente WS','TpClienteWs',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
     $strResultado .= '<th class="infraTh" style="width:120px">Ações</th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
@@ -259,11 +262,13 @@ try {
       if ($bolCheck){
         $strResultado .= '<td valign="top">'.PaginaSEI::getInstance()->getTrCheck($i,$arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao(),$arrObjMdPetIntegracaoDTO[$i]->getStrNome()).'</td>';
       }
+        $strTpClienteWs = $arrObjMdPetIntegracaoDTO[$i]->getStrTpClienteWs() == 'S' ? 'SOAP' : 'REST';
       $strResultado .= '<td>'.PaginaSEI::tratarHTML($arrObjMdPetIntegracaoDTO[$i]->getStrNome()).'</td>';
       //$strResultado .= '<td>'.PaginaSEI::tratarHTML($arrObjMdPetIntegracaoDTO[$i]->getStrEnderecoWsdl()).'</td>';
       //$strResultado .= '<td>'.PaginaSEI::tratarHTML($arrObjMdPetIntegracaoDTO[$i]->getStrOperacaoWsdl()).'</td>';
       //$strResultado .= '<td>'.PaginaSEI::tratarHTML($arrObjMdPetIntegracaoDTO[$i]->getStrSinCache()).'</td>';
       $strResultado .= '<td align="center">'.PaginaSEI::tratarHTML($arrObjMdPetIntegracaoDTO[$i]->getStrNomeMdPetIntegFuncionalid()).'</td>';
+      $strResultado .= '<td align="center">'. $strTpClienteWs .'</td>';
       $strResultado .= '<td align="center">';
 
       $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i,$arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao());

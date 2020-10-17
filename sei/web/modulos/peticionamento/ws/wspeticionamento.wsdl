@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wsdl:definitions
+        name="PeticionamentoWS"
+        targetNamespace="SeiPeticionamento"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+        xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+        xmlns:tns="SeiPeticionamento">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="SeiPeticionamento">
+            <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+
+            <xsd:complexType name="TipoPoderLegal">
+                <xsd:all>
+                    <xsd:element name="IdTipoPoderLegal" type="xsd:string" minOccurs="0"/>
+                </xsd:all>
+            </xsd:complexType>
+
+            <xsd:complexType name="ArrayOfTipoPoderLegal">
+                <xsd:complexContent>
+                    <xsd:restriction base="SOAP-ENC:Array">
+                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TipoPoderLegal[]"/>
+                    </xsd:restriction>
+                </xsd:complexContent>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="listarPoderesLegaisRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarPoderesLegaisResponse">
+        <wsdl:part name="parametros" type="tns:RetornoListarPoderesLegais"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarTiposRepresentacaoRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarTiposRepresentacaoResponse">
+        <wsdl:part name="parametros" type="tns:RetornoListarTiposRepresentacao"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarSituacoesRepresentacaoRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarSituacoesRepresentacaoResponse">
+        <wsdl:part name="parametros" type="tns:RetornoListarSituacoesRepresentacao"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarRepresentacaoPessoaJuridicaRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+        <wsdl:part name="CnpjOutorgante" type="xsd:string"/>
+        <!--Opcional-->
+        <wsdl:part name="StrSituacao" type="xsd:string"/>
+        <wsdl:part name="IdsTipoPoderLegal" type="tns:ArrayOfTipoPoderLegal"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarRepresentacaoPessoaJuridicaResponse">
+        <wsdl:part name="parametros" type="tns:RetornoListarRepresentacaoPessoaJuridica"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarRepresentacaoPessoaFisicaRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+        <wsdl:part name="CpfOutorgante" type="xsd:string"/>
+        <!--Opcional-->
+        <wsdl:part name="StrSituacao" type="xsd:string"/>
+        <wsdl:part name="IdsTipoPoderLegal" type="tns:ArrayOfTipoPoderLegal"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarRepresentacaoPessoaFisicaResponse">
+        <wsdl:part name="parametros" type="tns:RetornoListarRepresentacaoPessoaFisica"/>
+    </wsdl:message>
+
+    <wsdl:message name="consultarUsuarioExternoRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+        <wsdl:part name="Email" type="xsd:string"/>
+        <wsdl:part name="Cpf" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="consultarUsuarioExternoResponse">
+        <wsdl:part name="parametros" type="tns:RetornoConsultarUsuarioExterno"/>
+    </wsdl:message>
+
+    <wsdl:portType name="SeiPeticionamentoPortType">
+        <wsdl:operation name="listarPoderesLegais">
+            <wsdl:documentation>Listar Poderes Legais</wsdl:documentation>
+            <wsdl:input message="tns:listarPoderesLegaisRequest"/>
+            <wsdl:output message="tns:listarPoderesLegaisResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarTiposRepresentacao">
+            <wsdl:documentation>Listar Tipos de Representações</wsdl:documentation>
+            <wsdl:input message="tns:listarTiposRepresentacaoRequest"/>
+            <wsdl:output message="tns:listarTiposRepresentacaoResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarSituacoesRepresentacao">
+            <wsdl:documentation>Listar Situações de Representações</wsdl:documentation>
+            <wsdl:input message="tns:listarSituacoesRepresentacaoRequest"/>
+            <wsdl:output message="tns:listarSituacoesRepresentacaoResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarRepresentacaoPessoaJuridica">
+            <wsdl:documentation>Listar Representações de Pessoa Jurídica</wsdl:documentation>
+            <wsdl:input message="tns:listarRepresentacaoPessoaJuridicaRequest"/>
+            <wsdl:output message="tns:listarRepresentacaoPessoaJuridicaResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarRepresentacaoPessoaFisica">
+            <wsdl:documentation>Listar Representações de Pessoa Física</wsdl:documentation>
+            <wsdl:input message="tns:listarRepresentacaoPessoaFisicaRequest"/>
+            <wsdl:output message="tns:listarRepresentacaoPessoaFisicaResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="consultarUsuarioExterno">
+            <wsdl:documentation>Consulta Usuário Externo</wsdl:documentation>
+            <wsdl:input message="tns:consultarUsuarioExternoRequest"/>
+            <wsdl:output message="tns:consultarUsuarioExternoResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="SeiPeticionamentoBinding" type="tns:SeiPeticionamentoPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="listarPoderesLegais">
+            <soap:operation soapAction="SeiPeticionamentoWSAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiPeticionamentoWS" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiPeticionamentoWS" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarTiposRepresentacao">
+            <soap:operation soapAction="SeiPeticionamentoWSAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiPeticionamentoWS" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiPeticionamentoWS" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarSituacoesRepresentacao">
+            <soap:operation soapAction="SeiPeticionamentoWSAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiPeticionamentoWS" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiPeticionamentoWS" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarRepresentacaoPessoaJuridica">
+            <soap:operation soapAction="SeiPeticionamentoAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiPeticionamento" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiPeticionamento" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarRepresentacaoPessoaFisica">
+            <soap:operation soapAction="SeiPeticionamentoAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiPeticionamento" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiPeticionamento" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="consultarUsuarioExterno">
+            <soap:operation soapAction="SeiWScomplementarAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiWScomplementar" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiWScomplementar" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+    </wsdl:binding>
+
+    <wsdl:service name="SeiPeticionamentoService">
+        <wsdl:port name="SeiPeticionamentoPortService" binding="tns:SeiPeticionamentoBinding">
+            <soap:address location="[servidor]/modulos/peticionamento/ws/PeticionamentoWS.php"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

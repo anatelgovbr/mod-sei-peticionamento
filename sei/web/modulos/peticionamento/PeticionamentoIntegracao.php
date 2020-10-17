@@ -28,7 +28,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '3.1.0';
+        return '3.3.0';
     }
 
     public function getInstituicao()
@@ -553,7 +553,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
             case 'md_pet_vinc_consulta_usuext_valido_procuracao' :
                 $xml = MdPetVincUsuarioExternoINT::consultarUsuarioValidoProcuracao($_POST);
-                $xml = InfraAjax::gerarXMLItensArrInfraDTO($xml, 'IdContato', 'Nome', 'CpfContato');
                 break;
             case 'md_pet_validar_resposta':
                 $xml = MdPetIntRelTipoRespINT::montarSelectTipoRespostaAjax($_POST);
@@ -875,6 +874,28 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
 
         return false;
+    }
+
+    public function processarControladorWebServices($strServico)
+    {
+
+        $strArq = null;
+
+        switch ($strServico) {
+
+            case 'wspeticionamento':
+                $strArq = 'wspeticionamento.wsdl';
+                break;
+
+            default:
+                break;
+        }
+
+        if ($strArq != null) {
+            $strArq = dirname(__FILE__) . '/ws/' . $strArq;
+        }
+
+        return $strArq;
     }
 
     public function montarIconeProcesso(ProcedimentoAPI $objProcedimentoAPI)
@@ -1483,11 +1504,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
     {
 
         $array = array();
+        $idAcessoExterno = $_GET['id_acesso_externo'];
 
         $id_usuario_externo = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 
         //o botao so aparece se houver usuario externo logado (usuario de acesso externo avulso nao visualiza o botao)
-        if ($id_usuario_externo != null && $id_usuario_externo != "") {
+        if ($id_usuario_externo != null && $id_usuario_externo != "" && $idAcessoExterno) {
 
             $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0';
             $hash = md5($strParam . '#' . SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() . '@' . SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
@@ -1717,7 +1739,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 $strMsgTooltipTextoSinalizadorProcesso = 'Clique para acessar o processo e consultar a Intimação.';
 
-                $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $objAcessoExternoAPI->getIdAcessoExterno() . '&id_procedimento=' . $objAcessoExternoAPI->getProcedimento()->getIdProcedimento());
+                $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $objAcessoExternoAPI->getIdAcessoExterno());
 
                 $strLink = '<a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');"><img src="modulos/peticionamento/imagens/intimacao_controle_de_acessos_externos_destaque.png" class="infraImg" ';
                 $strLink .= str_replace('\n', '<br/>', PaginaSEI::montarTitleTooltip($strMsgTooltipTextoSinalizadorProcesso, $strMsgTooltipSinalizadorProcesso));
@@ -1785,7 +1807,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $id_usuario_externo = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 
         //os botoes so aparecem se houver usuario externo logado (usuario de acesso externo avulso nao visualiza esses botoes)
-        if ($id_usuario_externo != null && $id_usuario_externo != "") {
+        if ($id_usuario_externo != null && $id_usuario_externo != "" && $idAcessoExterno) {
             //lista os documentos do SEI
             $arrIdsProtocolo = $objMdPetAcessoExtDocRN->getArrDocumentosAPI(array($idAcessoExterno, $idProcAnex, $isProcedimento));
             if ($arrIdsProtocolo) {
@@ -2263,7 +2285,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         foreach ($idIntimacaoBotao as $id) {
                             $linkIdIntimacao .= '&id_intimacao[]=' . $id;
                         }
-                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $idProcedimento . '&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo . $linkIdIntimacao);
+                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo . $linkIdIntimacao);
 
                         $js = "infraAbrirJanela('" . $strLink . "', 'janelaConsultarIntimacao', 900, 350);";
                         if ($objRelIntDoc->getStrSinPrincipal() == 'S') {
@@ -2458,7 +2480,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         //Atualizando para Modal
                         $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
 
-                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_cumprir&id_documento='.$idDocumento.'&id_procedimento=' . $idProcedimento . '&id_acesso_externo=' . $idAcessoExterno . $linkIdDestinatario . '&id_destinatario=' . $objContato->getNumIdContato());
+                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_cumprir&id_documento=' . $idDocumento . '&id_acesso_externo=' . $idAcessoExterno . $linkIdDestinatario . '&id_destinatario=' . $objContato->getNumIdContato());
 
                         $js = "infraAbrirJanela('" . $strLink . "', 'janelaConsultarIntimacao', 900, 350);";
                     } else {
@@ -2700,7 +2722,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         //Verifica se a situação da vinculação/intimacao é diferente de ativa
                         if ((!$procuracaoSimplesValida || $contarobjMdPetVincRepresentantDTO == 0) && $objContato->getNumIdContato() != $obj->getNumIdContato()) {
                             $qntDestRevogado++;
-                        } //else {
+                        }
                         if ($obj->getStrSinPessoaJuridica() == 'S') {
                             if (!in_array($obj->getDblCnpjContato(), $arrPessoaJuridica)) {
                                 $arrPessoaJuridica[$obj->getDblCnpjContato()] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato()) . ')';
@@ -2710,7 +2732,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 $arrPessoaFisica[$obj->getDblCpfContato()] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()) . ')';
                             }
                         }
-                        //}
 
                         //data para exibir na modal do cumprir
                         if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
@@ -2773,11 +2794,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         }
                     }
                 }
-                $qntAceiteCorrente = count($arrDados);
-                $qntDestinatarioCorrente = count($objMdPetIntRelDestDTOTratado);
-
-                $validacaoAceite = false;
-                $qntDestinatario = count($objMdPetIntRelDestDTO);
 
                 if (!empty($objMdPetIntRelDestDTO)) {
                     $arrDados = array($objRelIntDoc->getNumIdMdPetIntimacao());
@@ -2870,10 +2886,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
 
         $id_usuario_externo = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+        $idAcessoExterno = $_GET['id_acesso_externo'];
 
         //so verifica o acesso se houver usuario externo logado (usuario de acesso externo avulso nao verifica nada)
-        if ($id_usuario_externo == null || $id_usuario_externo == "") {
-
+        if ($id_usuario_externo == null || $id_usuario_externo == "" || is_null($idAcessoExterno)) {
             //retorna array vazio para nao interferir na verificacao de nenhum protocolo/documento
             return array();
         } else {
@@ -3464,6 +3480,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
     public function desativarContato($objContatoAPI)
     {
         if (count($objContatoAPI) > 0) {
+            $objInfraException = new InfraException();
+
             $objContatoAPI = $objContatoAPI[0];
             $isMesmaUnidade = false;
 
@@ -3494,11 +3512,33 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             if (count($objMdPetVinculoDTO) > 0) {
 //                if ($isMesmaUnidade == false) {
-                $objInfraException = new InfraException();
-                $objInfraException->adicionarValidacao('Este Contato não pode ser Desativado porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');
-                $objInfraException->lancarValidacoes();
+                $objInfraException->lancarValidacao('Este Contato não pode ser Desativado porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');
 //                }
             }
+
+            //Verifica se o contato tem intimação em curso
+            $mdPetIntimacaoRN = new MdPetIntimacaoRN();
+            $intimacoesEmCurso = $mdPetIntimacaoRN->existeIntimacoesEmCursoPorContato($idContato);
+
+            if ($intimacoesEmCurso) {
+                $objInfraException->lancarValidacao('Não é permitido Desativar este Contato, pois o mesmo está associado a Usuário Externo com Intimação Eletrônica ainda em curso.');
+            }
+
+            $idContatoAssociado = $objContatoAPI->getIdContatoAssociado();
+
+            if ($idContatoAssociado) {
+                $intimacoesEmCurso = $mdPetIntimacaoRN->existeIntimacoesEmCursoPorContato($idContatoAssociado);
+                if ($intimacoesEmCurso) {
+                    $objInfraException->lancarValidacao('Não é permitido Desativar este Contato, pois o mesmo está associado a Usuário Externo com Intimação Eletrônica ainda em curso.');
+                }
+            }
+
+            $intimacoesEmCurso = $mdPetIntimacaoRN->verificarVinculoComIntimacoesEmCurso($idContato);
+
+            if ($intimacoesEmCurso) {
+                $objInfraException->lancarValidacao('Não é permitido Desativar este Contato, pois o mesmo está associado a Usuário Externo com Intimação Eletrônica ainda em curso.');
+            }
+
         }
     }
 

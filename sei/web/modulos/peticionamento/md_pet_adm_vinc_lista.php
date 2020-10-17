@@ -300,7 +300,7 @@ if ($numRegistros > 0) {
                 $acaoResponsavel = '';
                 if($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) {
                     $strLinkSuspenderVinc = 'javascript:suspenderRestabelecerPE(\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno='.$_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_SUSPENSO) . '\')';
-                    $iconeResponsavel = '<img style="width:16px;" src="imagens/sei_bloqueado.png" title="Suspender Responsável Legal" alt="Suspender Responsável Legal" class="infraImg" />';
+                    $iconeResponsavel = '<img style="width:16px;" src="modulos/peticionamento/imagens/suspender_responsavel_legal.png" title="Suspender Responsável Legal" alt="Suspender Responsável Legal" class="infraImg" />';
                     
                     $acaoResponsavel  = '<a href="' . $strLinkSuspenderVinc . '">'. $iconeResponsavel . '</a>';
                     if($bolAcoes) {
@@ -402,14 +402,14 @@ p{
     PaginaSEI::getInstance()->abrirAreaDados("auto");
     ?>
     <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?=$idProcedimento?>">
-    <p>A tabela abaixo exibe as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador Especial e Procurador relacionados aos Interessados do presente processo.</p>
+    <p>A tabela abaixo exibe as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador Especial e Procurador Simples relacionados aos Interessados do presente processo.</p>
     <?}else {
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
 
         if ($isAdm){ ?>
         <p>A Vinculação a Pessoa Jurídica como Responsável Legal pode ser Suspensa, a partir de indício de falsidade ou de prática de ato ilícito, devendo indicar o Número SEI de documento com registro do indício e da diligência para sua investigação, afetando o vínculo do Usuário Externo com a Pessoa Jurídica e Procurações Eletrônicas por ele geradas em sua representação. Em situações que o Usuário Externo não consiga realizar diretamente, também é possível Alterar o Responsável Legal.</p>
         <? } else { ?>
-        <p>Este relatório permite visualizar as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador Especial e Procurador concedidas no âmbito do SEI.</p>
+        <p>Este relatório permite visualizar as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador Especial e Procurador Simples concedidas no âmbito do SEI.</p>
         <? } ?>
         <div id="camposForm">
 

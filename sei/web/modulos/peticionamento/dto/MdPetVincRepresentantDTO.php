@@ -153,7 +153,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
             $retorno = 'Procurador';
             break;
           case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES :
-            $retorno = 'Procuração Eletrônica';
+            $retorno = 'Procuração Eletrônica Simples';
             break;
         }
 

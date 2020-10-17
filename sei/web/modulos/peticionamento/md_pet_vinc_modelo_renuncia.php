@@ -44,7 +44,7 @@
     }
 </style>
 
-<p class="Texto_Justificado">Pela presente Renúncia de Procuração Eletrônica, o Outorgado abaixo indicado renunciou aos poderes recebidos do Outorgante por meio da Procuração Eletrônica referenciada.</p>
+<p class="Texto_Justificado">O Outorgado abaixo indicado renuncia aos poderes recebidos do Outorgante por meio da Procuração Eletrônica referenciada.</p>
 <p class="Texto_Justificado">Os poderes de representação constantes na Procuração Eletrônica ora renunciada cessam a partir da data do presente documento.</p>
 <div>
     <table align="center" style="width: 90%" class="Tabela_Justificado_Negrito" border=0>

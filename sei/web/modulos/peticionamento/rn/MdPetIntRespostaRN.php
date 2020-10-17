@@ -181,7 +181,7 @@ class MdPetIntRespostaRN extends InfraRN {
             $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
 
             //$strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_resposta&id_procedimento=' . $idProcedimento . '&id_acesso_externo=' . $idAcessoEx .'&id_md_pet_int_rel_dest=' . $idMdPetDest[0].'&estado='.$estado);
-            $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_resposta&id_procedimento=' . $idProcedimento . '&id_acesso_externo=' . $idAcessoEx . $linkIdDestinatario . '&id_destinatario=' . $idDestinatario);
+            $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_resposta&id_acesso_externo=' . $idAcessoEx . $linkIdDestinatario . '&id_destinatario=' . $idDestinatario);
 
             $js = "infraAbrirJanela('" . $strLink . "', 'janelaConsultarIntimacao', 900, 350);";
 

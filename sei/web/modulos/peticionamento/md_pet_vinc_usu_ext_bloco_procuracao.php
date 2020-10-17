@@ -28,7 +28,7 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
             </ol>
         </label>
         <label class="infraLabel">Caso concorde com os termos apresentados, indique abaixo o Usuário Externo para o qual deseja conceder Procuração Eletrônica Especial.</label>
-        <label class="infraLabelObrigatorio"><br><br>Atenção: </label><label class="infraLabel">Para poder receber uma Procuração Eletrônica Especial o Usuário Externo já deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.</label>
+        <label class="infraLabelObrigatorio"><br><br>Atenção: </label><label class="infraLabel">Para poder receber uma Procuração Eletrônica o Usuário Externo já deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.</label>
     </div>
 
     <div class="clear"></div>

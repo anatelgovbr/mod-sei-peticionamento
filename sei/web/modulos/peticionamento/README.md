@@ -4,7 +4,7 @@
 - SEI 3.1.5 instalado/atualizado.
    - Verificar valor da constante de versão no arquivo /sei/web/SEI.php ou, após logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
 - Antes de executar os scripts de instalação/atualização, o usuário de acesso aos bancos de dados do SEI e do SIP, constante nos arquivos ConfiguracaoSEI.php e ConfiguracaoSip.php, deverá ter permissão de acesso total ao banco de dados, permitindo, por exemplo, criação e exclusão de tabelas.
-- Os códigos-fonte do Módulo podem ser baixados a partir do link a seguir, devendo sempre utilizar a versão mais recente: [https://softwarepublico.gov.br/gitlab/anatel/mod-sei-peticionamento/tags](https://softwarepublico.gov.br/gitlab/anatel/mod-sei-peticionamento/tags "Clique e acesse")
+- Os códigos-fonte do Módulo podem ser baixados a partir do link a seguir, devendo sempre utilizar a versão mais recente: [https://github.com/anatelgovbr/mod-sei-peticionamento/releases](https://github.com/anatelgovbr/mod-sei-peticionamento/releases "Clique e acesse")
 - Solicitamos que os Órgãos que tenham instalado o Módulo preencham a pesquisa a seguir, para termos um feedback sobre sua utilização: [https://goo.gl/gubYLL](https://goo.gl/gubYLL "Clique e acesse")
 
 ## Procedimentos para Instalação
@@ -49,7 +49,8 @@
 	- O SIP não controla Perfil próprio para os Usuários Externos, cabendo diretamente ao código do Módulo o controle devido junto aos Recursos e Menus criados pelo Módulo para os Usuários Externos.
 	- Tão quanto ocorre com as atualizações do SEI, versões futuras deste Módulo continuarão a atualizar e criar Recursos e associá-los apenas aos Perfis "Básico" e "Administrador".
 	- Todos os recursos do Módulo iniciam pelo sufix **"md_pet_"**.
-3. Acesse no link a seguir o Manual de Administração: http://bit.ly/SEI_Mod_Pet_Admin
-4. Acesse no link a seguir o Manual do Usuário Interno: http://bit.ly/SEI_Mod_Pet_Interno
-5. Acesse no link a seguir o Manual do Usuário Externo: http://bit.ly/SEI_Usuario_Externo
+3. Manual do Webservice do Módulo Peticionamento: https://github.com/anatelgovbr/mod-sei-wscomplementar/wiki
+4. Acesse no link a seguir o Manual de Administração: http://bit.ly/SEI_Mod_Pet_Admin
+5. Acesse no link a seguir o Manual do Usuário Interno: http://bit.ly/SEI_Mod_Pet_Interno
+6. Acesse no link a seguir o Manual do Usuário Externo: http://bit.ly/SEI_Usuario_Externo
 	- Não foi possível fazer um Manual do Usuário Externo genérico para qualquer órgão, em razão das especificidades de cada órgão quanto aos procedimentos de credenciamento dos Usuários Externos e até mesmo de parametrização do Módulo. De qualquer forma, o Manual do Usuário Externo do SEI elaborado pela Anatel, acima, que pode ser quase que completamente aproveitado.

@@ -1,61 +1,79 @@
 <?
-try {
+require_once dirname(__FILE__) . '/../web/Sip.php';
 
-require_once dirname(__FILE__).'/../web/Sip.php';
+set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(__DIR__ . '/../../infra/infra_php'),
+    get_include_path(),
+)));
 
-class MdPetAtualizadorSipRN extends InfraRN {
+
+class MdPetAtualizadorSipRN extends InfraRN
+{
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '3.1.0';
+    private $versaoAtualDesteModulo = '3.3.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0');
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
-    protected function inicializarObjInfraIBanco() {
+    protected function inicializarObjInfraIBanco()
+    {
         return BancoSip::getInstance();
     }
 
-    private function inicializar($strTitulo) {
+    /**
+     * Inicia o script criando um contator interno do tempo de execução
+     *
+     * @return null
+     */
+    protected function inicializar($strTitulo)
+    {
+        session_start();
+        SessaoSip::getInstance(false);
+
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '-1');
-
-        try {
-            @ini_set('zlib.output_compression', '0');
-            @ini_set('implicit_flush', '1');
-        } catch (Exception $e) {
-		}
-
+        @ini_set('zlib.output_compression', '0');
+        @ini_set('implicit_flush', '1');
         ob_implicit_flush();
 
-        InfraDebug::getInstance()->setBolLigado(true);
-        InfraDebug::getInstance()->setBolDebugInfra(true);
-        InfraDebug::getInstance()->setBolEcho(true);
-        InfraDebug::getInstance()->limpar();
+        $this->objDebug = InfraDebug::getInstance();
+        $this->objDebug->setBolLigado(true);
+        $this->objDebug->setBolDebugInfra(true);
+        $this->objDebug->setBolEcho(true);
+        $this->objDebug->limpar();
 
         $this->numSeg = InfraUtil::verificarTempoProcessamento();
-
         $this->logar($strTitulo);
+
     }
 
-    private function logar($strMsg){
-        InfraDebug::getInstance()->gravar($strMsg);
+    protected function logar($strMsg)
+    {
+        $this->objDebug->gravar($strMsg);
         flush();
     }
 
-    private function finalizar($strMsg=null, $bolErro){
-
+    /**
+     * Finaliza o script informando o tempo de execução.
+     *
+     * @return null
+     */
+    protected function finalizar($strMsg = null, $bolErro = false)
+    {
         if (!$bolErro) {
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
-            $this->logar('TEMPO TOTAL DE EXECUÇÃO: '.$this->numSeg.' s');
-        }else{
-            $strMsg = 'ERRO: '.$strMsg;
+            $this->logar('TEMPO TOTAL DE EXECUÇÃO: ' . $this->numSeg . ' s');
+        } else {
+            $strMsg = 'ERRO: ' . $strMsg;
         }
 
-        if ($strMsg!=null){
+        if ($strMsg != null) {
             $this->logar($strMsg);
         }
 
@@ -66,13 +84,21 @@ class MdPetAtualizadorSipRN extends InfraRN {
         die;
     }
 
-    protected function atualizarVersaoConectado() {
-
+    protected function atualizarVersaoConectado()
+    {
         try {
             $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SIP VERSÃO ' . SIP_VERSAO);
 
+            //checando BDs suportados
+            if (!(BancoSip::getInstance() instanceof InfraMySql) &&
+                !(BancoSip::getInstance() instanceof InfraSqlServer) &&
+                !(BancoSip::getInstance() instanceof InfraOracle)) {
+
+                $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSip::getInstance()), true);
+            }
+
             //testando versao do framework
-            $numVersaoInfraRequerida = '1.502';
+            $numVersaoInfraRequerida = '1.532.1';
             $versaoInfraFormatada = (int)str_replace('.', '', VERSAO_INFRA);
             $versaoInfraReqFormatada = (int)str_replace('.', '', $numVersaoInfraRequerida);
 
@@ -80,187 +106,64 @@ class MdPetAtualizadorSipRN extends InfraRN {
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
 
-            //checando BDs suportados
-            if (!(BancoSip::getInstance() instanceof InfraMySql) &&
-                !(BancoSip::getInstance() instanceof InfraSqlServer) &&
-                !(BancoSip::getInstance() instanceof InfraOracle)) {
-                    $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSip::getInstance()), true);
-                }
 
-                //checando permissoes na base de dados
-                $objInfraMetaBD = new InfraMetaBD(BancoSip::getInstance());
+            //checando permissoes na base de dados
+            $objInfraMetaBD = new InfraMetaBD(BancoSip::getInstance());
 
-                if (count($objInfraMetaBD->obterTabelas('sip_teste'))==0){
-                    BancoSip::getInstance()->executarSql('CREATE TABLE sip_teste (id '.$objInfraMetaBD->tipoNumero().' null)');
-                }
+            if (count($objInfraMetaBD->obterTabelas('sip_teste')) == 0) {
+                BancoSip::getInstance()->executarSql('CREATE TABLE sip_teste (id ' . $objInfraMetaBD->tipoNumero() . ' null)');
+            }
+            BancoSip::getInstance()->executarSql('DROP TABLE sip_teste');
 
-                BancoSip::getInstance()->executarSql('DROP TABLE sip_teste');
+            $objInfraParametro = new InfraParametro(BancoSip::getInstance());
 
-                $objInfraParametro = new InfraParametro(BancoSip::getInstance());
+            $strVersaoModuloPeticionamento = $objInfraParametro->getValor($this->nomeParametroModulo, false);
 
-                $strVersaoModuloPeticionamento = $objInfraParametro->getValor($this->nomeParametroModulo, false);
-
-                //VERIFICANDO QUAL VERSAO DEVE SER INSTALADA NESTA EXECUCAO
-                if (InfraString::isBolVazia($strVersaoModuloPeticionamento)){
+            switch ($strVersaoModuloPeticionamento) {
+                //case '' - Nenhuma versão instalada
+                case '':
                     $this->instalarv001();
+                case '0.0.1':
                     $this->instalarv002();
+                case '0.0.2':
                     $this->instalarv100();
+                case '1.0.0':
                     $this->instalarv104();
+                case '1.0.4':
                     $this->instalarv110();
+                case '1.1.0':
                     $this->instalarv200();
+                case '2.0.0':
                     $this->instalarv201();
+                case '2.0.1':
                     $this->instalarv202();
+                case '2.0.2':
                     $this->instalarv203();
+                case '2.0.3':
                     $this->instalarv204();
+                case '2.0.4':
                     $this->instalarv205();
+                case '2.0.5':
                     $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '0.0.1' ){
-                    $this->instalarv002();
-                    $this->instalarv100();
-                    $this->instalarv104();
-                    $this->instalarv110();
-                    $this->instalarv200();
-                    $this->instalarv201();
-                    $this->instalarv202();
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '0.0.2' ){
-                    $this->instalarv100();
-                    $this->instalarv104();
-                    $this->instalarv110();
-                    $this->instalarv200();
-                    $this->instalarv201();
-                    $this->instalarv202();
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif( in_array($strVersaoModuloPeticionamento, array('1.0.0', '1.0.3')) ){
-                    $this->instalarv104();
-                    $this->instalarv110();
-                    $this->instalarv200();
-                    $this->instalarv201();
-                    $this->instalarv202();
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '1.0.4' ){
-                    $this->instalarv110();
-                    $this->instalarv200();
-                    $this->instalarv201();
-                    $this->instalarv202();
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '1.1.0' ){
-                    $this->instalarv200();
-                    $this->instalarv201();
-                    $this->instalarv202();
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '2.0.0' ){
-                    $this->instalarv201();
-                    $this->instalarv202();
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '2.0.1' ){
-                    $this->instalarv202();
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '2.0.2' ){                        
-                    $this->instalarv203();
-                    $this->instalarv204();
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-					$this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '2.0.3' ){ 
-                    $this->instalarv204(); 
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ( $strVersaoModuloPeticionamento == '2.0.4' ){
-                    $this->instalarv205();
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                }  elseif ( $strVersaoModuloPeticionamento == '2.0.5' ){
-                    $this->instalarv300();
-					$this->instalarv301();
-                    $this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                }  elseif ( $strVersaoModuloPeticionamento == '3.0.0' ){
+                case '3.0.0':
                     $this->instalarv301();
-					$this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-					}  elseif ( $strVersaoModuloPeticionamento == '3.0.1' ){
-					$this->instalarv310();
-                    $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$this->versaoAtualDesteModulo.' DO '.$this->nomeDesteModulo.' REALIZADA COM SUCESSO NA BASE DO SIP');
-                    $this->finalizar('FIM', false);
-                } elseif ($strVersaoModuloPeticionamento == '3.1.0') {
-                    $this->logar('A VERSÃO MAIS ATUAL DO '.$this->nomeDesteModulo.' (v'.$this->versaoAtualDesteModulo.') JÁ ESTÁ INSTALADA.');
-                    $this->finalizar('FIM', false);
-                } else {
-                    $this->logar('A VERSÃO DO '.$this->nomeDesteModulo.' INSTALADA NESTE AMBIENTE (v'.$strVersaoModuloPeticionamento.') NÃO É COMPATÍVEL COM A ATUALIZAÇÃO PARA A VERSÃO MAIS RECENTE (v'.$this->versaoAtualDesteModulo.').');
-                    $this->finalizar('FIM', false);
-                }
+                case '3.0.1':
+                    $this->instalarv310();
+                case '3.1.0':
+                    $this->instalarv320();
+                case '3.2.0':
+                    $this->instalarv330();
+                    break;
 
-                InfraDebug::getInstance()->setBolLigado(false);
-                InfraDebug::getInstance()->setBolDebugInfra(false);
-                InfraDebug::getInstance()->setBolEcho(false);
+                default:
+                    $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
+                    break;
 
-        } catch(Exception $e){
+            }
+
+            $this->finalizar('FIM');
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+        } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
@@ -268,9 +171,10 @@ class MdPetAtualizadorSipRN extends InfraRN {
         }
     }
 
-    protected function instalarv001() {
+    protected function instalarv001()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.1 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         $objSistemaRN = new SistemaRN();
         $objPerfilRN = new PerfilRN();
@@ -284,7 +188,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -296,7 +200,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
         }
 
@@ -308,7 +212,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Informática');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Informática do sistema SEI não encontrado.');
         }
 
@@ -320,7 +224,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuDTO->setStrNome('Principal');
         $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
 
-        if ($objMenuDTO == null){
+        if ($objMenuDTO == null) {
             throw new InfraException('Menu do sistema SEI não encontrado.');
         }
 
@@ -332,7 +236,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Administração');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
         }
 
@@ -344,14 +248,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Usuários');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração/Usuários do sistema SEI não encontrado.');
         }
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
 
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO DE MENU A PERFIL - gerir extensao/tamanho de arquivo EM Administrador');
@@ -364,7 +268,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO DE MENU A PERFIL - tipo processo peticionamento EM Administrador');
-        $objTipoProcessoListarDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,'tipo_processo_peticionamento_listar');
+        $objTipoProcessoListarDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'tipo_processo_peticionamento_listar');
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - gerir extensao/tamanho de arquivo EM Administrador');
@@ -399,7 +303,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - serie peticionamento selecionar EM Administrador');
-        $objRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,'serie_peticionamento_selecionar');
+        $objRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'serie_peticionamento_selecionar');
 
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Peticionamento Eletrônico EM Administrador');
@@ -410,7 +314,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
-            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu() ,
+            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
             $objTipoProcessoListarDTO->getNumIdRecurso(),
             'Tipos para Peticionamento',
             10);
@@ -420,7 +324,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
-            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu() ,
+            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
             $objTamanhoArquivoDTO->getNumIdRecurso(),
             'Tamanho Máximo de Arquivos',
             30);
@@ -430,7 +334,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
-            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu() ,
+            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
             $objExtensoesArquivosDTO->getNumIdRecurso(),
             'Extensão de Arquivos Permitidos',
             40);
@@ -440,7 +344,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
-            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu() ,
+            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
             $objIndisponibilidadeListarDTO->getNumIdRecurso(),
             'Indisponibilidades do SEI',
             120);
@@ -453,13 +357,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaDTO->setNumIdRegraAuditoria(null);
         $objRegraAuditoriaDTO->setStrSinAtivo('S');
         $objRegraAuditoriaDTO->setNumIdSistema($numIdSistemaSei);
-        $objRegraAuditoriaDTO->setArrObjRelRegraAuditoriaRecursoDTO( array() );
+        $objRegraAuditoriaDTO->setArrObjRelRegraAuditoriaRecursoDTO(array());
         $objRegraAuditoriaDTO->setStrDescricao('Modulo_Peticionamento_Eletronico');
 
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->cadastrar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
         \'gerir_extensoes_arquivo_peticionamento_cadastrar\',
         \'gerir_tamanho_arquivo_peticionamento_cadastrar\',
         \'indisponibilidade_peticionamento_desativar\',
@@ -479,8 +383,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
         );
 
         //CRIANDO REGRA DE AUDITORIA PARA NOVOS RECURSOS RECEM ADICIONADOS
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -491,13 +395,16 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
 
-        $this->logar('ADICIONANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \''. $this->nomeParametroModulo .'\' )' );
+        $this->logar('ADICIONANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('INSERT INTO infra_parametro (valor, nome ) VALUES( \'0.0.1\',  \'' . $this->nomeParametroModulo . '\' )');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv002() {
+    protected function instalarv002()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 0.0.2 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         $objSistemaRN = new SistemaRN();
         $objPerfilRN = new PerfilRN();
@@ -511,7 +418,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -523,7 +430,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
         }
 
@@ -535,7 +442,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Informática');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Informática do sistema SEI não encontrado.');
         }
 
@@ -547,7 +454,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuDTO->setStrNome('Principal');
         $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
 
-        if ($objMenuDTO == null){
+        if ($objMenuDTO == null) {
             throw new InfraException('Menu do sistema SEI não encontrado.');
         }
 
@@ -559,7 +466,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Administração');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
         }
 
@@ -571,13 +478,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Usuários');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração/Usuários do sistema SEI não encontrado.');
         }
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO DE MENU A PERFIL - menu listar EM Administrador');
@@ -602,14 +509,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
         $objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
         $objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
-        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar($objItemMenuDTOPeticionamentoEletronico);
 
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Peticionamento Eletrônico->Cadastro de Menus EM Administrador');
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
-            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu() ,
+            $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
             $objMenuListarDTO->getNumIdRecurso(),
             'Cadastro de Menus',
             20);
@@ -635,7 +542,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           \'gerir_tipo_contexto_peticionamento_cadastrar\',
           \'menu_peticionamento_usuario_externo_desativar\',
           \'menu_peticionamento_usuario_externo_reativar\',
@@ -645,8 +552,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
         );
 
         //CRIANDO REGRA DE AUDITORIA PARA NOVOS RECURSOS RECEM ADICIONADOS
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -657,13 +564,16 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'0.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv100() {
+    protected function instalarv100()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         //criar novo grupo de auditoria
         $objSistemaRN = new SistemaRN();
@@ -678,7 +588,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -690,7 +600,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
         }
 
@@ -702,7 +612,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Informática');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Informática do sistema SEI não encontrado.');
         }
 
@@ -714,7 +624,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuDTO->setStrNome('Principal');
         $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
 
-        if ($objMenuDTO == null){
+        if ($objMenuDTO == null) {
             throw new InfraException('Menu do sistema SEI não encontrado.');
         }
 
@@ -726,7 +636,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Administração');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
         }
 
@@ -738,13 +648,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Usuários');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração/Usuários do sistema SEI não encontrado.');
         }
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO DE MENU A PERFIL - hipoteses legais permitidas EM Administrador');
@@ -760,7 +670,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
         $objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
         $objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
-        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar($objItemMenuDTOPeticionamentoEletronico);
 
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Peticionamento Eletrônico->Hipótese Legais Permitidas EM Administrador');
@@ -782,13 +692,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           \'hipotese_legal_nl_acesso_peticionamento_cadastrar\')'
         );
 
         //CRIANDO REGRA DE AUDITORIA PARA NOVOS RECURSOS RECEM ADICIONADOS
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -799,21 +709,27 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv104() {
+    protected function instalarv104()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.4 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.0.4 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.0.4\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv110() {
+    protected function instalarv110()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.1.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 1.1.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         //criar novo grupo de auditoria
         $objSistemaRN = new SistemaRN();
@@ -828,7 +744,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -840,7 +756,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
         }
 
@@ -852,7 +768,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Informática');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Informática do sistema SEI não encontrado.');
         }
 
@@ -864,7 +780,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuDTO->setStrNome('Principal');
         $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
 
-        if ($objMenuDTO == null){
+        if ($objMenuDTO == null) {
             throw new InfraException('Menu do sistema SEI não encontrado.');
         }
 
@@ -876,7 +792,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Administração');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
         }
 
@@ -888,13 +804,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Usuários');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração/Usuários do sistema SEI não encontrado.');
         }
 
         $numIdItemMenuSeiUsuarios = $objItemMenuDTO->getNumIdItemMenu();
 
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
         $this->logar('RENOMEANDO RECURSO DE MENU EM PERFIL - gerir extensao/tamanho de arquivo EM Administrador');
         $objDTO = $this->renomearRecurso($numIdSistemaSei, 'gerir_extensoes_arquivo_peticionamento_cadastrar', 'md_pet_extensoes_arquivo_cadastrar');
@@ -967,7 +883,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - hipoteses legais selecionar EM Administrador');
-        $objRecursoComMenuDTO1 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador,'md_pet_intercorrente_criterio_listar');
+        $objRecursoComMenuDTO1 = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_listar');
         $objRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_desativar');
         $objRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_reativar');
         $objRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_intercorrente_criterio_excluir');
@@ -982,7 +898,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
         $objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
         $objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
-        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar($objItemMenuDTOPeticionamentoEletronico);
 
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Peticionamento Eletrônico->Critérios para Intercorrente EM Administrador');
@@ -1004,13 +920,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           \'criterio_intercorrente_peticionamento_listar\')'
         );
 
         //CRIANDO REGRA DE AUDITORIA PARA NOVOS RECURSOS RECEM ADICIONADOS
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -1021,13 +937,16 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'1.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv200() {
+    protected function instalarv200()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
         $arrAuditoria = array();
 
         //criar novo grupo de auditoria
@@ -1043,7 +962,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -1055,7 +974,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
         }
 
@@ -1065,9 +984,9 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilBasicoDTO->retNumIdPerfil();
         $objPerfilBasicoDTO->setNumIdSistema($numIdSistemaSei);
         $objPerfilBasicoDTO->setStrNome('Básico');
-        $objPerfilBasicoDTO = $objPerfilRN->consultar( $objPerfilBasicoDTO );
+        $objPerfilBasicoDTO = $objPerfilRN->consultar($objPerfilBasicoDTO);
 
-        if ($objPerfilBasicoDTO== null){
+        if ($objPerfilBasicoDTO == null) {
             throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
         }
 
@@ -1079,7 +998,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuDTO->setStrNome('Principal');
         $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
 
-        if ($objMenuDTO == null){
+        if ($objMenuDTO == null) {
             throw new InfraException('Menu do sistema SEI não encontrado.');
         }
 
@@ -1091,11 +1010,11 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Administração');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
         }
 
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
 
         $this->logar('RECUPERANDO MENU DE PETICIONAMENTO');
@@ -1103,7 +1022,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
         $objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
         $objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
-        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar($objItemMenuDTOPeticionamentoEletronico);
 
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Peticionamento Eletrônico->Intimação Eletrônica EM Administrador');
@@ -1151,7 +1070,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - tipo resposta EM Básico');
         $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_tipo_resp_consultar');
-        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico , 'md_pet_int_tipo_intimacao_selecionar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_tipo_intimacao_selecionar');
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - tipo intimacao EM Administrador');
         $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_int_tipo_intimacao_cadastrar');
@@ -1274,13 +1193,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTORelatorioDTO->retNumIdItemMenu();
         $objItemMenuDTORelatorioDTO->setNumIdSistema($numIdSistemaSei);
         $objItemMenuDTORelatorioDTO->setStrRotulo('Relatórios');
-        $objItemMenuDTORelatorioDTO = $objItemMenuRN->consultar( $objItemMenuDTORelatorioDTO );
+        $objItemMenuDTORelatorioDTO = $objItemMenuRN->consultar($objItemMenuDTORelatorioDTO);
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - Relatorio EM Básico');
         $objItemRecursoIntRelaListarDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_listar');
-        $objItemRecursoDTO              = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_ht_listar');
-        $objItemRecursoDTO              = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_exp_excel');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_ht_listar');
+        $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_int_relatorio_exp_excel');
 
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Relatórios->Intimações Eletrônicas EM Básico');
@@ -1321,13 +1240,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
             '\'md_pet_int_tipo_intimacao_excluir\'',
             '\'md_pet_intimacao_cadastrar\'');
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
-          '.implode(', ', $arrAuditoria).')'
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
+          ' . implode(', ', $arrAuditoria) . ')'
         );
 
         //CRIANDO REGRA DE AUDITORIA PARA NOVOS RECURSOS RECEM ADICIONADOS
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -1338,54 +1257,72 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv201() {
+    protected function instalarv201()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.1 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.1\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.1\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv202() {
+    protected function instalarv202()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.2 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.2 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.2\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
-    }
-    
-    protected function instalarv203() {
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.3 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
-
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.3\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
-    }
-    
-    protected function instalarv204() {
-
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.4 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
-
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.4\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv205() {
+    protected function instalarv203()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.5 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.3 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.5\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv300() {
+    protected function instalarv204()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.0.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
-        
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.4 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.4\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    protected function instalarv205()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 2.0.5 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.5\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    protected function instalarv300()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.0.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
         $arrAuditoria = array();
 
         //criar novo grupo de auditoria
@@ -1401,7 +1338,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -1413,7 +1350,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
         }
 
@@ -1423,9 +1360,9 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilBasicoDTO->retNumIdPerfil();
         $objPerfilBasicoDTO->setNumIdSistema($numIdSistemaSei);
         $objPerfilBasicoDTO->setStrNome('Básico');
-        $objPerfilBasicoDTO = $objPerfilRN->consultar( $objPerfilBasicoDTO );
+        $objPerfilBasicoDTO = $objPerfilRN->consultar($objPerfilBasicoDTO);
 
-        if ($objPerfilBasicoDTO== null){
+        if ($objPerfilBasicoDTO == null) {
             throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
         }
 
@@ -1435,12 +1372,12 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilColaboradorBasicoDTO->retNumIdPerfil();
         $objPerfilColaboradorBasicoDTO->setNumIdSistema($numIdSistemaSei);
         $objPerfilColaboradorBasicoDTO->setStrNome('Colaborador (Básico sem Assinatura)');
-        $objPerfilColaboradorBasicoDTO = $objPerfilRN->consultar( $objPerfilColaboradorBasicoDTO );
+        $objPerfilColaboradorBasicoDTO = $objPerfilRN->consultar($objPerfilColaboradorBasicoDTO);
 
         //if ($objPerfilColaboradorBasicoDTO== null){
         //    throw new InfraException('Perfil Colaborador Básico do sistema SEI não encontrado.');
         //}
-        if ($objPerfilColaboradorBasicoDTO != null){
+        if ($objPerfilColaboradorBasicoDTO != null) {
             $numIdPerfilSeiColaboradorBasico = $objPerfilColaboradorBasicoDTO->getNumIdPerfil();
         }
 
@@ -1450,7 +1387,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuDTO->setStrNome('Principal');
         $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
 
-        if ($objMenuDTO == null){
+        if ($objMenuDTO == null) {
             throw new InfraException('Menu do sistema SEI não encontrado.');
         }
 
@@ -1462,18 +1399,18 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTO->setStrRotulo('Administração');
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO == null){
+        if ($objItemMenuDTO == null) {
             throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
         }
 
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
         //recupera o ID do menu Peticionamento Eletronico
         $objItemMenuDTOPeticionamentoEletronico = new ItemMenuDTO();
         $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
         $objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
         $objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
-        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar($objItemMenuDTOPeticionamentoEletronico);
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - integração EM Administrador');
@@ -1579,13 +1516,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           \'md_pet_vinc_tp_processo_cadastrar\',
           \'md_pet_vinc_tp_processo_alterar\')'
         );
-        
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -1610,7 +1547,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -1622,13 +1559,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
         }
 
-        $numIdPerfilSeiAdministrador = $objPerfilDTO->getNumIdPerfil();        
+        $numIdPerfilSeiAdministrador = $objPerfilDTO->getNumIdPerfil();
 
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - integração EM Administrador');
         $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_orientacoes_tipo_destinatario');
@@ -1642,12 +1579,12 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           \'md_pet_orientacoes_tipo_destinatario\')'
         );
 
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -1664,14 +1601,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuRN = new MenuRN();
         $objItemMenuRN = new ItemMenuRN();
         $objRecursoRN = new RecursoRN();
-        
+
         $objSistemaDTO = new SistemaDTO();
         $objSistemaDTO->retNumIdSistema();
         $objSistemaDTO->setStrSigla('SEI');
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI não encontrado.');
         }
 
@@ -1683,14 +1620,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Básico');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
         }
 
-        $numIdPerfilSeiBasico = $objPerfilDTO->getNumIdPerfil();        
+        $numIdPerfilSeiBasico = $objPerfilDTO->getNumIdPerfil();
 
         //pessoa fisica
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - integração EM básico');
         $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_pessoa_fisica');
@@ -1704,12 +1641,12 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           \'md_pet_pessoa_fisica\')'
         );
 
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -1718,9 +1655,9 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaRN = new SistemaRN();
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
-        
+
         //pessoa juridica
-        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO '. $this->nomeDesteModulo .' NA BASE DO SIP...');
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO MODULO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
 
         $this->logar('CRIANDO e VINCULANDO RECURSO A PERFIL - integração EM básico');
         $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_pessoa_juridica');
@@ -1734,12 +1671,12 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRegraAuditoriaRN = new RegraAuditoriaRN();
         $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema='.$numIdSistemaSei.' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           \'md_pet_pessoa_juridica\')'
         );
 
-        foreach($rs as $recurso){
-            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values ('.$objRegraAuditoriaDTO->getNumIdRegraAuditoria().', '.$numIdSistemaSei.', '.$recurso['id_recurso'].')');
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
         }
 
         $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
@@ -1749,21 +1686,27 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objSistemaRN = new SistemaRN();
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.0.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv301() {
+    protected function instalarv301()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.0.1 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.0.1 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.0.1\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.0.1\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
-    protected function instalarv310() {
+    protected function instalarv310()
+    {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.1.0 DO '.$this->nomeDesteModulo.' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.1.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         $arrAuditoria = array();
 
@@ -1780,7 +1723,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
         $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
 
-        if ($objSistemaDTO == null){
+        if ($objSistemaDTO == null) {
             throw new InfraException('Sistema SEI no encontrado.');
         }
 
@@ -1792,7 +1735,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilDTO->setStrNome('Administrador');
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO == null){
+        if ($objPerfilDTO == null) {
             throw new InfraException('Perfil Administrador do sistema SEI no encontrado.');
         }
 
@@ -1802,9 +1745,9 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilBasicoDTO->retNumIdPerfil();
         $objPerfilBasicoDTO->setNumIdSistema($numIdSistemaSei);
         $objPerfilBasicoDTO->setStrNome('Básico');
-        $objPerfilBasicoDTO = $objPerfilRN->consultar( $objPerfilBasicoDTO );
+        $objPerfilBasicoDTO = $objPerfilRN->consultar($objPerfilBasicoDTO);
 
-        if ($objPerfilBasicoDTO== null){
+        if ($objPerfilBasicoDTO == null) {
             throw new InfraException('Perfil Básico do sistema SEI no encontrado.');
         }
 
@@ -1816,14 +1759,14 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objMenuDTO->setStrNome('Principal');
         $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
 
-        if ($objMenuDTO == null){
+        if ($objMenuDTO == null) {
             throw new InfraException('Menu do sistema SEI no encontrado.');
         }
 
         $numIdMenuSei = $objMenuDTO->getNumIdMenu();
 
 
-        $this->logar('ADICIONANDO RECURSOS, MENUS DO TIPO DE PODER '. $this->nomeDesteModulo .' NA BASE DO SIP..');
+        $this->logar('ADICIONANDO RECURSOS, MENUS DO TIPO DE PODER ' . $this->nomeDesteModulo . ' NA BASE DO SIP..');
         $objItemRecursoDTOMenu = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_listar');
         $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_desativar');
         $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_pet_tipo_poder_reativar');
@@ -1836,7 +1779,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuDTOPeticionamentoEletronico->retNumIdItemMenu();
         $objItemMenuDTOPeticionamentoEletronico->setNumIdSistema($numIdSistemaSei);
         $objItemMenuDTOPeticionamentoEletronico->setStrRotulo('Peticionamento Eletrônico');
-        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar( $objItemMenuDTOPeticionamentoEletronico );
+        $objItemMenuDTOPeticionamentoEletronico = $objItemMenuRN->consultar($objItemMenuDTOPeticionamentoEletronico);
 
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
@@ -1846,15 +1789,37 @@ class MdPetAtualizadorSipRN extends InfraRN {
             'Tipos de Poderes Legais',
             120);
 
-        $this->logar('ATUALIZANDO PARÂMETRO '.$this->nomeParametroModulo.' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.1.0\' WHERE nome = \''. $this->nomeParametroModulo .'\' ' );
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
 
     }
 
+    protected function instalarv320()
+    {
 
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.2.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.2.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
-    private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null){
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    protected function instalarv330()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.3.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)
+    {
 
         $objRecursoDTO = new RecursoDTO();
         $objRecursoDTO->retNumIdRecurso();
@@ -1864,23 +1829,23 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRecursoRN = new RecursoRN();
         $objRecursoDTO = $objRecursoRN->consultar($objRecursoDTO);
 
-        if ($objRecursoDTO==null){
+        if ($objRecursoDTO == null) {
             $objRecursoDTO = new RecursoDTO();
             $objRecursoDTO->setNumIdRecurso(null);
             $objRecursoDTO->setNumIdSistema($numIdSistema);
             $objRecursoDTO->setStrNome($strNome);
             $objRecursoDTO->setStrDescricao(null);
 
-            if ($strCaminho == null){
-                $objRecursoDTO->setStrCaminho('controlador.php?acao='.$strNome);
-            }else{
+            if ($strCaminho == null) {
+                $objRecursoDTO->setStrCaminho('controlador.php?acao=' . $strNome);
+            } else {
                 $objRecursoDTO->setStrCaminho($strCaminho);
             }
             $objRecursoDTO->setStrSinAtivo('S');
             $objRecursoDTO = $objRecursoRN->cadastrar($objRecursoDTO);
         }
 
-        if ($numIdPerfil!=null){
+        if ($numIdPerfil != null) {
             $objRelPerfilRecursoDTO = new RelPerfilRecursoDTO();
             $objRelPerfilRecursoDTO->setNumIdSistema($numIdSistema);
             $objRelPerfilRecursoDTO->setNumIdPerfil($numIdPerfil);
@@ -1888,7 +1853,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
             $objRelPerfilRecursoRN = new RelPerfilRecursoRN();
 
-            if ($objRelPerfilRecursoRN->contar($objRelPerfilRecursoDTO)==0){
+            if ($objRelPerfilRecursoRN->contar($objRelPerfilRecursoDTO) == 0) {
                 $objRelPerfilRecursoRN->cadastrar($objRelPerfilRecursoDTO);
             }
         }
@@ -1897,8 +1862,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
     }
 
-
-    private function removerRecursoPerfil($numIdSistema, $strNome, $numIdPerfil){
+    private function removerRecursoPerfil($numIdSistema, $strNome, $numIdPerfil)
+    {
         $objRecursoDTO = new RecursoDTO();
         $objRecursoDTO->setBolExclusaoLogica(false);
         $objRecursoDTO->retNumIdRecurso();
@@ -1908,7 +1873,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRecursoRN = new RecursoRN();
         $objRecursoDTO = $objRecursoRN->consultar($objRecursoDTO);
 
-        if ($objRecursoDTO!=null){
+        if ($objRecursoDTO != null) {
             $objRelPerfilRecursoDTO = new RelPerfilRecursoDTO();
             $objRelPerfilRecursoDTO->retTodos();
             $objRelPerfilRecursoDTO->setNumIdSistema($numIdSistema);
@@ -1929,7 +1894,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
         }
     }
 
-    private function desativarRecurso($numIdSistema, $strNome){
+    private function desativarRecurso($numIdSistema, $strNome)
+    {
         $objRecursoDTO = new RecursoDTO();
         $objRecursoDTO->retNumIdRecurso();
         $objRecursoDTO->setNumIdSistema($numIdSistema);
@@ -1938,12 +1904,13 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRecursoRN = new RecursoRN();
         $objRecursoDTO = $objRecursoRN->consultar($objRecursoDTO);
 
-        if ($objRecursoDTO!=null){
+        if ($objRecursoDTO != null) {
             $objRecursoRN->desativar(array($objRecursoDTO));
         }
     }
 
-    private function removerRecurso($numIdSistema, $strNome){
+    private function removerRecurso($numIdSistema, $strNome)
+    {
         $objRecursoDTO = new RecursoDTO();
         $objRecursoDTO->setBolExclusaoLogica(false);
         $objRecursoDTO->retNumIdRecurso();
@@ -1953,7 +1920,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRecursoRN = new RecursoRN();
         $objRecursoDTO = $objRecursoRN->consultar($objRecursoDTO);
 
-        if ($objRecursoDTO!=null){
+        if ($objRecursoDTO != null) {
             $objRelPerfilRecursoDTO = new RelPerfilRecursoDTO();
             $objRelPerfilRecursoDTO->retTodos();
             $objRelPerfilRecursoDTO->setNumIdSistema($numIdSistema);
@@ -1973,7 +1940,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
             $objRelPerfilItemMenuRN = new RelPerfilItemMenuRN();
 
-            foreach($arrObjItemMenuDTO as $objItemMenuDTO){
+            foreach ($arrObjItemMenuDTO as $objItemMenuDTO) {
                 $objRelPerfilItemMenuDTO = new RelPerfilItemMenuDTO();
                 $objRelPerfilItemMenuDTO->retTodos();
                 $objRelPerfilItemMenuDTO->setNumIdSistema($numIdSistema);
@@ -1988,7 +1955,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
         }
     }
 
-    private function renomearRecurso($numIdSistema, $strNomeAtual, $strNomeNovo){
+    private function renomearRecurso($numIdSistema, $strNomeAtual, $strNomeNovo)
+    {
         $objRecursoDTO = new RecursoDTO();
         $objRecursoDTO->setBolExclusaoLogica(false);
         $objRecursoDTO->retNumIdRecurso();
@@ -1999,23 +1967,24 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objRecursoRN = new RecursoRN();
         $objRecursoDTO = $objRecursoRN->consultar($objRecursoDTO);
 
-        if ($objRecursoDTO!=null){
+        if ($objRecursoDTO != null) {
             $objRecursoDTO->setStrNome($strNomeNovo);
-            $objRecursoDTO->setStrCaminho(str_replace($strNomeAtual,$strNomeNovo,$objRecursoDTO->getStrCaminho()));
+            $objRecursoDTO->setStrCaminho(str_replace($strNomeAtual, $strNomeNovo, $objRecursoDTO->getStrCaminho()));
             $objRecursoRN->alterar($objRecursoDTO);
         }
     }
 
-    private function adicionarItemMenu($numIdSistema, $numIdPerfil, $numIdMenu, $numIdItemMenuPai, $numIdRecurso, $strRotulo, $numSequencia){
+    private function adicionarItemMenu($numIdSistema, $numIdPerfil, $numIdMenu, $numIdItemMenuPai, $numIdRecurso, $strRotulo, $numSequencia)
+    {
 
         $objItemMenuDTO = new ItemMenuDTO();
         $objItemMenuDTO->retNumIdItemMenu();
         $objItemMenuDTO->setNumIdMenu($numIdMenu);
 
-        if ($numIdItemMenuPai==null){
+        if ($numIdItemMenuPai == null) {
             $objItemMenuDTO->setNumIdMenuPai(null);
             $objItemMenuDTO->setNumIdItemMenuPai(null);
-        }else{
+        } else {
             $objItemMenuDTO->setNumIdMenuPai($numIdMenu);
             $objItemMenuDTO->setNumIdItemMenuPai($numIdItemMenuPai);
         }
@@ -2027,15 +1996,15 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuRN = new ItemMenuRN();
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO==null){
+        if ($objItemMenuDTO == null) {
             $objItemMenuDTO = new ItemMenuDTO();
             $objItemMenuDTO->setNumIdItemMenu(null);
             $objItemMenuDTO->setNumIdMenu($numIdMenu);
 
-            if ($numIdItemMenuPai==null){
+            if ($numIdItemMenuPai == null) {
                 $objItemMenuDTO->setNumIdMenuPai(null);
                 $objItemMenuDTO->setNumIdItemMenuPai(null);
-            }else{
+            } else {
                 $objItemMenuDTO->setNumIdMenuPai($numIdMenu);
                 $objItemMenuDTO->setNumIdItemMenuPai($numIdItemMenuPai);
             }
@@ -2051,7 +2020,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
             $objItemMenuDTO = $objItemMenuRN->cadastrar($objItemMenuDTO);
         }
 
-        if ($numIdPerfil!=null && $numIdRecurso!=null){
+        if ($numIdPerfil != null && $numIdRecurso != null) {
             $objRelPerfilRecursoDTO = new RelPerfilRecursoDTO();
             $objRelPerfilRecursoDTO->setNumIdSistema($numIdSistema);
             $objRelPerfilRecursoDTO->setNumIdPerfil($numIdPerfil);
@@ -2059,7 +2028,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
             $objRelPerfilRecursoRN = new RelPerfilRecursoRN();
 
-            if ($objRelPerfilRecursoRN->contar($objRelPerfilRecursoDTO)==0){
+            if ($objRelPerfilRecursoRN->contar($objRelPerfilRecursoDTO) == 0) {
                 $objRelPerfilRecursoRN->cadastrar($objRelPerfilRecursoDTO);
             }
 
@@ -2072,7 +2041,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
             $objRelPerfilItemMenuRN = new RelPerfilItemMenuRN();
 
-            if ($objRelPerfilItemMenuRN->contar($objRelPerfilItemMenuDTO)==0){
+            if ($objRelPerfilItemMenuRN->contar($objRelPerfilItemMenuDTO) == 0) {
                 $objRelPerfilItemMenuRN->cadastrar($objRelPerfilItemMenuDTO);
             }
         }
@@ -2081,7 +2050,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
     }
 
-    private function removerItemMenu($numIdSistema, $numIdMenu, $numIdItemMenu){
+    private function removerItemMenu($numIdSistema, $numIdMenu, $numIdItemMenu)
+    {
 
         $objItemMenuDTO = new ItemMenuDTO();
         $objItemMenuDTO->retNumIdMenu();
@@ -2093,7 +2063,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objItemMenuRN = new ItemMenuRN();
         $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
 
-        if ($objItemMenuDTO!=null) {
+        if ($objItemMenuDTO != null) {
             $objRelPerfilItemMenuDTO = new RelPerfilItemMenuDTO();
             $objRelPerfilItemMenuDTO->retTodos();
             $objRelPerfilItemMenuDTO->setNumIdSistema($numIdSistema);
@@ -2107,7 +2077,8 @@ class MdPetAtualizadorSipRN extends InfraRN {
         }
     }
 
-    private function removerPerfil($numIdSistema, $strNome){
+    private function removerPerfil($numIdSistema, $strNome)
+    {
 
         $objPerfilDTO = new PerfilDTO();
         $objPerfilDTO->retNumIdPerfil();
@@ -2117,7 +2088,7 @@ class MdPetAtualizadorSipRN extends InfraRN {
         $objPerfilRN = new PerfilRN();
         $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
 
-        if ($objPerfilDTO!=null){
+        if ($objPerfilDTO != null) {
             $objPermissaoDTO = new PermissaoDTO();
             $objPermissaoDTO->retNumIdSistema();
             $objPermissaoDTO->retNumIdUsuario();
@@ -2160,27 +2131,40 @@ class MdPetAtualizadorSipRN extends InfraRN {
 
 }
 
-}catch(Exception $e){
-    echo(InfraException::inspecionar($e));
-    try{LogSip::getInstance()->gravar(InfraException::inspecionar($e));	}catch (Exception $e){}
-    exit(1);
-}
-
 //========================= INICIO SCRIPT EXECUÇAO =============
 
 try {
 
     session_start();
     SessaoSip::getInstance(false);
+    BancoSip::getInstance()->setBolScript(true);
+
+    if (!ConfiguracaoSip::getInstance()->isSetValor('BancoSip', 'UsuarioScript')) {
+        throw new InfraException('Chave BancoSip/UsuarioScript não encontrada.');
+    }
+
+    if (InfraString::isBolVazia(ConfiguracaoSip::getInstance()->getValor('BancoSip', 'UsuarioScript'))) {
+        throw new InfraException('Chave BancoSip/UsuarioScript não possui valor.');
+    }
+
+    if (!ConfiguracaoSip::getInstance()->isSetValor('BancoSip', 'SenhaScript')) {
+        throw new InfraException('Chave BancoSip/SenhaScript não encontrada.');
+    }
+
+    if (InfraString::isBolVazia(ConfiguracaoSip::getInstance()->getValor('BancoSip', 'SenhaScript'))) {
+        throw new InfraException('Chave BancoSip/SenhaScript não possui valor.');
+    }
 
     $objVersaoRN = new MdPetAtualizadorSipRN();
     $objVersaoRN->atualizarVersao();
 
-}catch(Exception $e){
+} catch (Exception $e) {
     echo(InfraException::inspecionar($e));
-    try{LogSip::getInstance()->gravar(InfraException::inspecionar($e));	}catch (Exception $e){}
+    try {
+        LogSip::getInstance()->gravar(InfraException::inspecionar($e));
+    } catch (Exception $e) {
+    }
     exit(1);
 }
 
-//========================== FIM SCRIPT EXECUÇÂO ====================
-?>
+print PHP_EOL;

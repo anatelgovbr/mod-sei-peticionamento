@@ -52,7 +52,7 @@
     <table align="center" style="width: 90%" class="Tabela_Justificado_Negrito" border=0>
     <tbody>
         <tr class="trEspaco">
-            <td style="width: 400px">Motivo da Revogação:</td>
+            <td style="width: 400px">Motivo da Renúncia:</td>
         </tr>
         <tr>
             <td colspan=2 class="tdTabulacao" style="font-weight: normal;word-break: break-all;">@motivo</td>

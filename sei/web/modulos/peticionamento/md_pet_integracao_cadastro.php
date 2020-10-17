@@ -185,19 +185,19 @@ try {
 
         if ($objMdPetIntegracaoDTO->isSetStrSinTpLogradouro()) {
             $tpLogradouro = $objMdPetIntegracaoDTO->getStrSinTpLogradouro() == 'S' ? $objMdPetIntegracaoDTO->getStrSinTpLogradouro() : '';
-        }else{
+        } else {
             $objMdPetIntegracaoDTO->setStrSinTpLogradouro('N');
         }
 
         if ($objMdPetIntegracaoDTO->isSetStrSinNuLogradouro()) {
             $nuLogradouro = $objMdPetIntegracaoDTO->getStrSinNuLogradouro() == 'S' ? $objMdPetIntegracaoDTO->getStrSinNuLogradouro() : '';
-        }else{
+        } else {
             $objMdPetIntegracaoDTO->setStrSinNuLogradouro('N');
         }
 
         if ($objMdPetIntegracaoDTO->isSetStrSinCompLogradouro()) {
             $compLogradouro = $objMdPetIntegracaoDTO->getStrSinCompLogradouro() == 'S' ? $objMdPetIntegracaoDTO->getStrSinCompLogradouro() : '';
-        }else{
+        } else {
             $objMdPetIntegracaoDTO->setStrSinCompLogradouro('N');
         }
 
@@ -208,12 +208,12 @@ try {
         $objMdPetIntegParametroDTO->retTodos();
         $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
         $arrObjMdPetIntegParametroDTO = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
-        foreach($arrObjMdPetIntegParametroDTO as $item) {
-            if(trim($item->getStrNomeCampo()) == 'PrazoExpiracao'){
+        foreach ($arrObjMdPetIntegParametroDTO as $item) {
+            if (trim($item->getStrNomeCampo()) == 'PrazoExpiracao') {
                 $strItensSelCachePrazoExpiracao = $item->getStrNome();
                 $strItensSelCacheDataArmazenamento = $item->getStrNome();
             }
-            if(trim($item->getStrNome()) == 'cnpjEmpresa' && $item->getStrTpParametro() == 'E'){
+            if (trim($item->getStrNome()) == 'cnpjEmpresa' && $item->getStrTpParametro() == 'E') {
                 $strItensSelCnpjEmpresa = $item->getStrNomeCampo();
             }
         }
@@ -226,13 +226,13 @@ try {
         $arrObjMdPetIntegParametroDTO = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
         $arrParametrosCadastrados = array();
         if (count($arrObjMdPetIntegParametroDTO) > 0) {
-            foreach($arrObjMdPetIntegParametroDTO as $item) {
+            foreach ($arrObjMdPetIntegParametroDTO as $item) {
                 $arrParametrosCadastrados[] = array(
                     'nome' => $item->getStrNome(),
                     'campo_nome' => $item->getStrNomeCampo(),
                     'valor' => $item->getStrValorPadrao()
                 );
-                if(trim($item->getStrNomeCampo()) == 'PrazoExpiracao'){
+                if (trim($item->getStrNomeCampo()) == 'PrazoExpiracao') {
                     $strItensSelCachePrazoExpiracao = $item->getStrNome();
                     $strItensSelCacheDataArmazenamento = $item->getStrNome();
                 }
@@ -251,6 +251,7 @@ try {
 
     $arrParametrosEntradas = array(
         'cnpjEmpresa' => 'CNPJ da Pessoa Jurídica',
+        'identificacaoOrigem' => 'Identificação Origem',
         'periodoCache' => 'Período de Expiração do Cache'
     );
 
@@ -290,13 +291,13 @@ try {
 
         $strResultadoParamEntrada .= $strCssTr;
         $strResultadoParamEntrada .= "<td id='campo_{$chave}'  style='padding: 8px;' >";
-        $strResultadoParamEntrada .= "<input type='hidden' name='hdnArrayDadosEntrada[" . $chave ."]' value='" . $itemParametroEntrada . "' />";
+        $strResultadoParamEntrada .= "<input type='hidden' name='hdnArrayDadosEntrada[" . $chave . "]' value='" . $itemParametroEntrada . "' />";
         $strResultadoParamEntrada .= PaginaSEI::tratarHTML($itemParametroEntrada);
         $strResultadoParamEntrada .= "</td>";
         $strResultadoParamEntrada .= "<td align='left'  style='padding: 8px;' >";
-        if($chave == 'periodoCache'){
-            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:53%; float: left' name='selCachePrazoExpiracao' class='infraSelect' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() ."'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . "/ajuda.gif' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.") . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImg' />";
-            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $mes[1] . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='". PaginaSEI::getInstance()->getProxTabDados() ."'/><img src='" . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . "/ajuda.gif' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.') . " alt='Ajuda' class='infraImg' />";
+        if ($chave == 'periodoCache') {
+            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:53%; float: left' name='selCachePrazoExpiracao' class='infraSelect' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . "/ajuda.gif' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.") . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImg' />";
+            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $mes[2] . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . "/ajuda.gif' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.') . " alt='Ajuda' class='infraImg' />";
         } else {
             $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS' name='nomeFuncionalDadosEntrada[$chave]' style='width: 80%;'></select>";
         }
@@ -322,12 +323,18 @@ try {
     foreach ($arrParametrosSaida as $chave => $itemParametroSaida) {
 
 
-
         switch ($chave) {
-            case 'tpLogradouro' : $mostrar = $tpLogradouro == "" ? "display: none" : ""; break;
-            case 'numero' : $mostrar = $nuLogradouro == "" ? "display: none" : ""; break;
-            case 'complemento' : $mostrar = $compLogradouro == "" ? "display: none" : ""; break;
-            default: $mostrar = "";
+            case 'tpLogradouro' :
+                $mostrar = $tpLogradouro == "" ? "display: none" : "";
+                break;
+            case 'numero' :
+                $mostrar = $nuLogradouro == "" ? "display: none" : "";
+                break;
+            case 'complemento' :
+                $mostrar = $compLogradouro == "" ? "display: none" : "";
+                break;
+            default:
+                $mostrar = "";
         }
 
 
@@ -337,7 +344,7 @@ try {
 
         $strResultadoParamSaida .= $strCssTr;
         $strResultadoParamSaida .= "<td id='campo_{$chave}' style='padding: 8px;' >";
-        $strResultadoParamSaida .= "<input type='hidden' name='hdnArrayDadosSaida[" . $chave ."]' value='" . $itemParametroSaida . "' />";
+        $strResultadoParamSaida .= "<input type='hidden' name='hdnArrayDadosSaida[" . $chave . "]' value='" . $itemParametroSaida . "' />";
         $strResultadoParamSaida .= PaginaSEI::tratarHTML($itemParametroSaida);
         $strResultadoParamSaida .= "</td>";
         $strResultadoParamSaida .= "<td align='left' style='padding: 8px;' ><select id='nomeFuncionalDadosSaida_$chave' class='infraSelect selParametrosS' name='nomeFuncionalDadosSaida[$chave]' style='width: 80%;'></select></td>";
@@ -645,6 +652,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     if (tipo_parametro == 'e') {
                         arraySelect.push('selParametrosE');
                         arraySelect.push('nomeFuncionalDadosEntrada_cnpjEmpresa');
+                        arraySelect.push('nomeFuncionalDadosEntrada_identificacaoOrigem');
                     } else {
                         arraySelect.push('nomeFuncionalDadosSaida_cnpjEmpresa');
                         arraySelect.push('nomeFuncionalDadosSaida_razaoSocial');
@@ -714,7 +722,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     infraExibirAviso(false);
                 },
                 success: function (result) {
-
+                    console.log(result);
                     if (tipo_parametro == 'e') {
                         var select = document.getElementById('selCachePrazoExpiracao');
                         var selectedValor = '<?= $strItensSelCachePrazoExpiracao;?>';
@@ -815,7 +823,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             buscarParametroWsdl('s');
         }
 
-        function popularSelect(tipo_parametro, select, arrayValores){
+        function popularSelect(tipo_parametro, select, arrayValores) {
 
             var selectRetorno = document.getElementById(select);
             selectRetorno.options.length = 0;
@@ -829,22 +837,22 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 var dados = <?php echo json_encode($arrParametrosCadastrados); ?>;
                 var selectedValor = "";
 
-                if(select == 'nomeFuncionalDadosEntrada_cnpjEmpresa' && tipo_parametro == 'e'){
+                if (select == 'nomeFuncionalDadosEntrada_cnpjEmpresa' && tipo_parametro == 'e') {
                     selectedValor = '<?php echo $strItensSelCnpjEmpresa; ?>';
                 } else {
                     var arrayNome = select.split('_');
-                    $.each(dados, function(chave, item){
-                        if(item['nome'] == arrayNome[1]){
+                    $.each(dados, function (chave, item) {
+                        if (item['nome'] == arrayNome[1]) {
                             selectedValor = item['campo_nome'];
                         }
                     });
                 }
                 console.log(selectedValor);
-                if(key != "endereco"){
+                if (key != "endereco") {
 
                     if (tipo_parametro == 'e') {
                         var opt = document.createElement('option');
-                        if(key > 99){
+                        if (key > 99) {
                             opt.value = 'endereco.' + $(value).text();
                             opt.innerHTML = 'endereco.' + $(value).text();
                         } else {
@@ -859,7 +867,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                         selectRetorno.appendChild(opt);
                     } else {
                         var opt = document.createElement('option');
-                        if(key > 99){
+                        if (key > 99) {
                             opt.value = 'endereco.' + $(value).text();
                             opt.innerHTML = 'endereco.' + $(value).text();
                         } else {
@@ -920,13 +928,24 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('É extremamente recomendado que se utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jurídica e Procuração Eletrônica para os Usuários Externos Sem Integração com a base da Receita Federal, os Usuários Externos continuarão a declarar a responsabilidade, até penal, sobre as informações prestadas, mas poderão ocorrer contradição e, caso necessite, Suspensão e Alteração da vinculação podem ser efetivadas pelo menu Administração > Peticionamento Eletrônico > Vinculações e Procurações Eletrônicas.') ?>
                                 alt="Ajuda" class="infraImg"/></legend>
                     <div>
-                        <input <?php echo $staUtilizarWsNao; ?> type="radio" name="rdStaUtilizarWs" id="rdStaUtilizarWsNao" value="N" onclick="habilitaWs()">
-                        <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração 
-                            <img id="imgAjuda2" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.') ?> alt="Ajuda" class="infraImg"/></label>
+                        <input <?php echo $staUtilizarWsNao; ?> type="radio" name="rdStaUtilizarWs"
+                                                                id="rdStaUtilizarWsNao" value="N"
+                                                                onclick="habilitaWs()">
+                        <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração
+                            <img id="imgAjuda2"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.') ?>
+                                 alt="Ajuda" class="infraImg"/></label>
 
-                        <input <?php echo $staUtilizarWsSim; ?> type="radio" name="rdStaUtilizarWs" id="rdStaUtilizarWsSim" value="S" onclick="habilitaWs()">
-                        <label name="rdStaUtilizarWsSim" id="lblStaUtilizarWsSim" for="rdStaUtilizarWsSim" class="infraLabelRadio">Com Integração 
-                            <img id="imgAjuda2" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica será validado por integração configurada abaixo se é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Se não ocorrer a validação o Usuário Externo não poderá prosseguir com o Peticionamento inicial de Responsável Legal de Pessoa Jurídica.') ?> alt="Ajuda" class="infraImg"/></label>
+                        <input <?php echo $staUtilizarWsSim; ?> type="radio" name="rdStaUtilizarWs"
+                                                                id="rdStaUtilizarWsSim" value="S"
+                                                                onclick="habilitaWs()">
+                        <label name="rdStaUtilizarWsSim" id="lblStaUtilizarWsSim" for="rdStaUtilizarWsSim"
+                               class="infraLabelRadio">Com Integração
+                            <img id="imgAjuda2"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica será validado por integração configurada abaixo se é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Se não ocorrer a validação o Usuário Externo não poderá prosseguir com o Peticionamento inicial de Responsável Legal de Pessoa Jurídica.') ?>
+                                 alt="Ajuda" class="infraImg"/></label>
                     </div>
                 </fieldset>
             </div>

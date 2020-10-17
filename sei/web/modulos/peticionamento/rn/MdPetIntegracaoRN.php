@@ -6,7 +6,7 @@
  *
  * Versão do Gerador de Código: 1.41.0
  */
- 
+
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdPetIntegracaoRN extends InfraRN
@@ -122,6 +122,7 @@ class MdPetIntegracaoRN extends InfraRN
         $objMdPetIntegParametroDTO->retStrValorPadrao();
         $objMdPetIntegParametroDTO->retStrTpParametro();
         $objMdPetIntegParametroDTO->retStrNome();
+        $objMdPetIntegParametroDTO->retStrNomeCampo();
         $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao());
         $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
         $arrObjMdPetIntegParametroRN = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
@@ -129,34 +130,65 @@ class MdPetIntegracaoRN extends InfraRN
         if (count($arrObjMdPetIntegParametroRN)) {
             $mes = 0;
             $chaveMes = '';
-            foreach($arrObjMdPetIntegParametroRN as $itemParam){
-                if($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'mesesExpiraCache'){
+            foreach ($arrObjMdPetIntegParametroRN as $itemParam) {
+                if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'mesesExpiraCache') {
                     $mes = (int)$itemParam->getStrValorPadrao();
                     $chaveMes = $itemParam->getStrNome();
                 }
+
+                if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'identificacaoOrigem' && $itemParam->getStrNomeCampo() == 'origem') {
+                    //Verificação da Origem
+                    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+                    $idUsuario = $objInfraParametro->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
+
+                    if ($idUsuario != '' && !is_null($idUsuario)) {
+                        $objUsuarioRN = new UsuarioRN();
+                        $objUsuarioDTO = new UsuarioDTO();
+
+                        $objUsuarioDTO->setNumIdUsuario($idUsuario);
+                        $objUsuarioDTO->retStrSigla();
+
+                        $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+
+                        if ($objUsuarioDTO) {
+                            $siglaContato = $objUsuarioDTO->getStrSigla();
+                        }
+                    }
+                }
             }
-            $parametro = [
-                $strMetodoWebservice => [
-                    'cnpj' => $cnpj
-                    , 'cpfUsuario' => $cpfUsuarioLogado
-                    , $chaveMes => $mes
-                ]
-            ];
+
+            if ($siglaContato) {
+                $parametro = [
+                    $strMetodoWebservice => [
+                        'cnpj' => $cnpj,
+                        'cpfUsuario' => $cpfUsuarioLogado,
+                        $chaveMes => $mes,
+                        'origem' => $siglaContato
+                    ]
+                ];
+            } else {
+                $parametro = [
+                    $strMetodoWebservice => [
+                        'cnpj' => $cnpj,
+                        'cpfUsuario' => $cpfUsuarioLogado,
+                        $chaveMes => $mes
+                    ]
+                ];
+            }
 
         } else {
 
             $parametro = [
                 $strMetodoWebservice => [
-                    'cnpj' => $cnpj
-                    , 'cpfUsuario' => $cpfUsuarioLogado
-
+                    'cnpj' => $cnpj,
+                    'cpfUsuario' => $cpfUsuarioLogado
                 ]
             ];
 
         }
         $consulta = $objMdPetSoapClienteRN->consultarWsdl($strMetodoWebservice, $parametro);
 
-        if($consulta['PessoaJuridica']['situacaoCadastral']['codigo'] == '03'){
+        if ($consulta['PessoaJuridica']['situacaoCadastral']['codigo'] == '03') {
             $xml .= "<success>false</success>\n";
             $xml .= "<msg>Empresa Suspensa junto a Receita Federal, não podendo ser vinculada a Pessoa Jurídica.</msg>\n";
             $xml .= '</dados-pj>';
@@ -222,7 +254,7 @@ class MdPetIntegracaoRN extends InfraRN
         $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($arrObjMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
         $arrObjMdPetIntegParametroDTO = $mdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
 
-        if($arrObjMdPetIntegParametroDTO) {
+        if ($arrObjMdPetIntegParametroDTO) {
             $txtLogradouro = '';
             foreach ($arrObjMdPetIntegParametroDTO as $itemParametro) {
 

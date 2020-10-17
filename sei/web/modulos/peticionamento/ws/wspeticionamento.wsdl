@@ -85,6 +85,17 @@
         <wsdl:part name="parametros" type="tns:RetornoListarRepresentacaoPessoaFisica"/>
     </wsdl:message>
 
+    <wsdl:message name="consultarUsuarioExternoRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+        <wsdl:part name="Email" type="xsd:string"/>
+        <wsdl:part name="Cpf" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="consultarUsuarioExternoResponse">
+        <wsdl:part name="parametros" type="tns:RetornoConsultarUsuarioExterno"/>
+    </wsdl:message>
+
     <wsdl:portType name="SeiPeticionamentoPortType">
         <wsdl:operation name="listarPoderesLegais">
             <wsdl:documentation>Listar Poderes Legais</wsdl:documentation>
@@ -114,6 +125,12 @@
             <wsdl:documentation>Listar Representações de Pessoa Física</wsdl:documentation>
             <wsdl:input message="tns:listarRepresentacaoPessoaFisicaRequest"/>
             <wsdl:output message="tns:listarRepresentacaoPessoaFisicaResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="consultarUsuarioExterno">
+            <wsdl:documentation>Consulta Usuário Externo</wsdl:documentation>
+            <wsdl:input message="tns:consultarUsuarioExternoRequest"/>
+            <wsdl:output message="tns:consultarUsuarioExternoResponse"/>
         </wsdl:operation>
     </wsdl:portType>
 
@@ -176,6 +193,18 @@
             </wsdl:input>
             <wsdl:output>
                 <soap:body namespace="SeiPeticionamento" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="consultarUsuarioExterno">
+            <soap:operation soapAction="SeiWScomplementarAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiWScomplementar" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiWScomplementar" use="encoded"
                            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
             </wsdl:output>
         </wsdl:operation>

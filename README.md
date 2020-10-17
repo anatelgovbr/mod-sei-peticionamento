@@ -49,7 +49,7 @@
 	- O SIP não controla Perfil próprio para os Usuários Externos, cabendo diretamente ao código do Módulo o controle devido junto aos Recursos e Menus criados pelo Módulo para os Usuários Externos.
 	- Tão quanto ocorre com as atualizações do SEI, versões futuras deste Módulo continuarão a atualizar e criar Recursos e associá-los apenas aos Perfis "Básico" e "Administrador".
 	- Todos os recursos do Módulo iniciam pelo sufix **"md_pet_"**.
-3. Manual do Webservice do Módulo Peticionamento: https://github.com/anatelgovbr/mod-sei-wscomplementar/wiki
+3. Acesse no link a seguir o Manual do Webservice do Módulo Peticionamento: https://github.com/anatelgovbr/mod-sei-peticionamento/blob/master/sei/web/modulos/peticionamento/ws/manual_ws_peticionamento.md
 4. Acesse no link a seguir o Manual de Administração: http://bit.ly/SEI_Mod_Pet_Admin
 5. Acesse no link a seguir o Manual do Usuário Interno: http://bit.ly/SEI_Mod_Pet_Interno
 6. Acesse no link a seguir o Manual do Usuário Externo: http://bit.ly/SEI_Usuario_Externo

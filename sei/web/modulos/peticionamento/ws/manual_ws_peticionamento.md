@@ -1,8 +1,7 @@
-# Manual do Módulo de Webservice Peticionamento do SEI
+# Manual do Webservice do Módulo Peticionamento
 
- * Para instalar, acesse o arquivo "README.md" localizado junto com o código do módulo ou pelo link a seguir: https://softwarepublico.gov.br/gitlab/anatel/mod-sei-wspeticionamento/tree/master
- * Endereço do WSDL do módulo: http://[dominio_servidor]/sei/controlador_ws.php?servico=wspeticionamento
- * Recomendado utilizar o [software SOAP-UI](http://sourceforge.net/projects/soapui/files/soapui/ Clique aqui para baixar) para testes do módulo.
+ * Endereço do WSDL: http://[dominio_servidor]/sei/controlador_ws.php?servico=wspeticionamento 
+ * Recomendado utilizar o [software SOAP-UI](http://sourceforge.net/projects/soapui/files/soapui/ Clique aqui para baixar) para testes.
 
 ## 1. Consultar Usuário Externo
 
@@ -50,3 +49,43 @@
 | DataCadastro | Data na qual o Usuário Externo efetivou o cadastro no SEI |
 | SituacaoAtivo | Estado do cadastro do Usuário Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro é independente de sua liberação, ou seja, mesmo liberado, se o cadastro estiver desativado o usuário não consegue mais ter acesso externo ao SEI) |
 | LiberacaoCadastro | Estado da aprovação do cadastro do Usuário Externo (L=Liberado e P=Pendente) |
+
+## 2. Listar Poderes Legais
+
+### Método “listarPoderesLegais”:
+
+### Regras de Negócio:
+
+### Estrutura de Dados "PoderesLegais":
+
+## 3. Listar Tipos de Representação
+
+### Método “listarTiposRepresentacao”:
+
+### Regras de Negócio:
+
+### Estrutura de Dados "TiposRepresentacao":
+
+## 4. Listar Situações de Representação
+
+### Método “listarSituacoesRepresentacao”:
+
+### Regras de Negócio:
+
+### Estrutura de Dados "SituacoesRepresentacao":
+
+## 5. Listar Representação de Pessoa Jurídica
+
+### Método “listarRepresentacaoPessoaJuridica”:
+
+### Regras de Negócio:
+
+### Estrutura de Dados "RepresentacaoPessoaJuridica":
+
+## 6. Listar Representação de Pessoa Física
+
+### Método “listarRepresentacaoPessoaFisica”:
+
+### Regras de Negócio:
+
+### Estrutura de Dados "RepresentacaoPessoaFisica":

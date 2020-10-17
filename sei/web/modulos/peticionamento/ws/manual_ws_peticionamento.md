@@ -1,7 +1,7 @@
 # Manual do Webservice do Módulo Peticionamento
 
  * Endereço do WSDL: http://[dominio_servidor]/sei/controlador_ws.php?servico=wspeticionamento 
- * Recomendado utilizar o [software SOAP-UI](http://sourceforge.net/projects/soapui/files/soapui/ Clique aqui para baixar) para testes.
+ * Recomendado utilizar o software SOAP-UI para testes: http://sourceforge.net/projects/soapui/files/soapui/
 
 ## 1. Consultar Usuário Externo
 

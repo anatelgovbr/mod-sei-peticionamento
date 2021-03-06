@@ -96,6 +96,16 @@
         <wsdl:part name="parametros" type="tns:RetornoConsultarUsuarioExterno"/>
     </wsdl:message>
 
+    <wsdl:message name="listarRepresentadosRequest">
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
+        <wsdl:part name="Cpf" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="listarRepresentadosResponse">
+        <wsdl:part name="parametros" type="tns:RetornoListarRepresentados"/>
+    </wsdl:message>
+
     <wsdl:portType name="SeiPeticionamentoPortType">
         <wsdl:operation name="listarPoderesLegais">
             <wsdl:documentation>Listar Poderes Legais</wsdl:documentation>
@@ -131,6 +141,12 @@
             <wsdl:documentation>Consulta Usuário Externo</wsdl:documentation>
             <wsdl:input message="tns:consultarUsuarioExternoRequest"/>
             <wsdl:output message="tns:consultarUsuarioExternoResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="listarRepresentados">
+            <wsdl:documentation>Listar Representados</wsdl:documentation>
+            <wsdl:input message="tns:listarRepresentadosRequest"/>
+            <wsdl:output message="tns:listarRepresentadosResponse"/>
         </wsdl:operation>
     </wsdl:portType>
 
@@ -209,6 +225,17 @@
             </wsdl:output>
         </wsdl:operation>
 
+        <wsdl:operation name="listarRepresentados">
+            <soap:operation soapAction="SeiPeticionamentoAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiPeticionamento" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiPeticionamento" use="encoded"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:binding>
 
     <wsdl:service name="SeiPeticionamentoService">

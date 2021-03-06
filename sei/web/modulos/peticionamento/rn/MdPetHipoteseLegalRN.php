@@ -20,6 +20,8 @@ class MdPetHipoteseLegalRN extends InfraRN {
 	
 	protected function cadastrarControlado($arrObjHipoteseLegalPeticionamento){
 		try {
+            // Valida Permissao
+            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_hipotese_legal_nl_acesso_cadastrar', __METHOD__, $arrObjHipoteseLegalPeticionamento );
 			if(is_array($arrObjHipoteseLegalPeticionamento)){
 				$objMdPetHipoteseLegalBD = new MdPetHipoteseLegalBD($this->getObjInfraIBanco());
 				foreach($arrObjHipoteseLegalPeticionamento as $obj){

@@ -250,12 +250,23 @@ if ($verificaNivelAcessoTipoProcesso == 'S') {
           $objHipoteseLegalRN = new HipoteseLegalRN();
           $objHipoteseLegalDTO = new HipoteseLegalDTO();
           $objHipoteseLegalDTO->retStrNome();
+          $objHipoteseLegalDTO->retStrBaseLegal();
+          $objHipoteseLegalDTO->retStrStaNivelAcesso();
           $objHipoteseLegalDTO->setNumIdHipoteseLegal($idHipoteseLegal);
 
           $arrObjHipoteseLegal = $objHipoteseLegalRN->consultar($objHipoteseLegalDTO);
 
-          $arrHipoteseNivel['hipoteseLegal']['descricao'] = $arrObjHipoteseLegal->getStrNome();
+
           $arrHipoteseNivel['hipoteseLegal']['id'] = $idHipoteseLegal;
+
+          if ($arrObjHipoteseLegal->getStrStaNivelAcesso() == ProtocoloRN::$NA_RESTRITO) {// Restrito
+              $descricaoHipotese = $arrObjHipoteseLegal->getStrNome() .
+                  ' (' . $arrObjHipoteseLegal->getStrBaseLegal() . ')';
+
+              $arrHipoteseNivel['hipoteseLegal']['descricao'] = $descricaoHipotese;
+          }
+        }else{
+          $arrHipoteseNivel['hipoteseLegal']['descricao'] = $arrObjHipoteseLegal->getStrNome();
         }
 
 }

@@ -355,7 +355,6 @@ class PeticionamentoWS extends InfraWS
 
             $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-            $mdPetVincRepresentantDTO->setStrSinAtivo('S');
             $mdPetVincRepresentantDTO->setStrCPF($cpfSemFormato);
 
             if (!empty($strSituacao)) {
@@ -458,23 +457,23 @@ class PeticionamentoWS extends InfraWS
 
             return $ret;
 
-        } catch
-        (Exception $e) {
+        } catch (Exception $e) {
             $this->processarExcecao($e);
         }
     }
 
-    public function consultarUsuarioExterno($SiglaSistema, $IdentificacaoServico, $Email, $Cpf = "") {
+    public function consultarUsuarioExterno($SiglaSistema, $IdentificacaoServico, $Email, $Cpf = "")
+    {
         try {
             $InfraException = new InfraException();
 
             // Valida E-mail.
-            if (! InfraUtil::validarEmail($Email)) {
+            if (!InfraUtil::validarEmail($Email)) {
                 $InfraException->lancarValidacao('E-mail inválido.');
             }
 
             // Valida CPF se informado.
-            if (strlen(trim($Cpf)) > 0 && ! InfraUtil::validarCpf($Cpf)) {
+            if (strlen(trim($Cpf)) > 0 && !InfraUtil::validarCpf($Cpf)) {
                 $InfraException->lancarValidacao('Número de CPF inválido.');
             }
 
@@ -494,12 +493,12 @@ class PeticionamentoWS extends InfraWS
             $UsuarioExternoDTO = $UsuarioExternoRN->consultarExterno($Email);
 
             $contatoDTO = new ContatoDTO();
-            $contatoDTO->retTodos( true );
-            $contatoDTO->setNumIdContato( $UsuarioExternoDTO->getNumIdContato() );
+            $contatoDTO->retTodos(true);
+            $contatoDTO->setNumIdContato($UsuarioExternoDTO->getNumIdContato());
             $contatoRN = new ContatoRN();
-            $contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+            $contatoDTO = $contatoRN->consultarRN0324($contatoDTO);
 
-            if (strlen(trim($Cpf)) > 0 && (InfraUtil::formatarCpf( $contatoDTO->getDblCpf() ) !== InfraUtil::formatarCpf($Cpf))) {
+            if (strlen(trim($Cpf)) > 0 && (InfraUtil::formatarCpf($contatoDTO->getDblCpf()) !== InfraUtil::formatarCpf($Cpf))) {
                 $InfraException->lancarValidacao('CPF informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
             }
 
@@ -519,11 +518,10 @@ class PeticionamentoWS extends InfraWS
             }
 
 
-            $ret = array ();
+            $ret = array();
 
 
-
-            $ret[] = (object) array(
+            $ret[] = (object)array(
                 'IdUsuario' => $UsuarioExternoDTO->getNumIdUsuario(),
                 'E-mail' => $UsuarioExternoDTO->getStrSigla(),
                 'Nome' => $UsuarioExternoDTO->getStrNome(),
@@ -542,22 +540,23 @@ class PeticionamentoWS extends InfraWS
 
             return $ret;
 
-        } catch ( Exception $e ) {
-            $this->processarExcecao ( $e );
+        } catch (Exception $e) {
+            $this->processarExcecao($e);
         }
     }
 
-    public function listarRepresentacaoUsuarioExterno($cpf) {
+    public function listarRepresentados($siglaSistema, $identificacaoServico, $cpfOutorgado)
+    {
         try {
-            $InfraException = new InfraException();
+            $infraException = new InfraException();
 
-            if (empty($Cpf) || $Cpf == null) {
+            if (empty($cpfOutorgado) || $cpfOutorgado == null) {
                 throw new InfraException('CPF não informado.');
             }
 
             // Valida CPF se informado.
-            if (strlen(trim($Cpf)) > 0 && ! InfraUtil::validarCpf($Cpf)) {
-                $InfraException->lancarValidacao('Número de CPF inválido.');
+            if (strlen(trim($cpfOutorgado)) > 0 && !InfraUtil::validarCpf($cpfOutorgado)) {
+                $infraException->lancarValidacao('Número de CPF inválido.');
             }
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -566,66 +565,84 @@ class PeticionamentoWS extends InfraWS
 
             SessaoSEI::getInstance(false);
 
-//            $objServicoDTO = self::obterServico($SiglaSistema, $IdentificacaoServico);
+            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
 
-//            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
+            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
-            $UsuarioExternoDTO = new MdPetWsUsuarioExternoDTO();
-            $UsuarioExternoRN = new MdPetWsUsuarioExternoRN();
+            $this->validarUsuarioExterno($cpfOutorgado);
 
-            $UsuarioExternoDTO = $UsuarioExternoRN->consultarExterno($cpf);
+            $cpfSemFormato = InfraUtil::retirarFormatacao($cpfOutorgado);
 
-            $contatoDTO = new ContatoDTO();
-            $contatoDTO->retTodos( true );
-            $contatoDTO->setNumIdContato( $UsuarioExternoDTO->getNumIdContato() );
-            $contatoRN = new ContatoRN();
-            $contatoDTO = $contatoRN->consultarRN0324( $contatoDTO );
+            $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 
-            if (strlen(trim($Cpf)) > 0 && (InfraUtil::formatarCpf( $contatoDTO->getDblCpf() ) !== InfraUtil::formatarCpf($Cpf))) {
-                $InfraException->lancarValidacao('CPF informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
+            $mdPetVincRepresentantDTO->setStrCpfProcurador($cpfSemFormato);
+            $mdPetVincRepresentantDTO->retStrSinAtivo();
+            $mdPetVincRepresentantDTO->retNumIdContatoVinc();
+            $mdPetVincRepresentantDTO->retNumIdContato();
+            $mdPetVincRepresentantDTO->retNumIdContatoOutorg();
+            $mdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $mdPetVincRepresentantDTO->retStrStaEstado();
+            $mdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+            $mdPetVincRepresentantDTO->retStrCNPJ();
+            $mdPetVincRepresentantDTO->retStrCPF();
+            $mdPetVincRepresentantDTO->retStrCpfProcurador();
+            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
+            $mdPetVincRepresentantDTO->retDthDataLimite();
+            $mdPetVincRepresentantDTO->retStrStaAbrangencia();
+            $mdPetVincRepresentantDTO->retStrStaEstado();
+            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
+            $mdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+
+            $arrRepres = $mdPetVincRepresentantRN->listar($mdPetVincRepresentantDTO);
+
+            $ret = array();
+            if ($arrRepres) {
+                foreach ($arrRepres as $item) {
+                    $contatoRN = new ContatoRN();
+                    $contatoDTO = new ContatoDTO();
+                    $contatoDTO->setNumIdContato($item->getNumIdContatoVinc());
+                    $contatoDTO->retStrSinAtivo();
+                    $arrRepresentadoAtivo = $contatoRN->consultarRN0324($contatoDTO);
+
+                    if ($arrRepresentadoAtivo) {
+                        $contatoVincRN = new ContatoRN();
+                        $contatoVincDTO = new ContatoDTO();
+                        $contatoVincDTO->setNumIdContato($item->getNumIdContato());
+                        $contatoVincDTO->retStrSinAtivo();
+                        $contatoVincDTO->retStrNome();
+                        $contatoVincDTO->retStrEmail();
+                        $contatoVincDTO->retDblCpf();
+                        $arrContatoVincDTO = $contatoVincRN->consultarRN0324($contatoVincDTO);
+
+                        $cnpjCpf = is_null($item->getStrCNPJ()) ? InfraUtil::formatarCpf($item->getStrCPF()) : InfraUtil::formatarCnpj($item->getStrCNPJ());
+
+                        $ret[] = (object)array(
+                            'Representado' => (object)array(
+                                'CNPJ-CPF' => $cnpjCpf,
+                                'RazaoSocial' => $item->getStrRazaoSocialNomeVinc(),
+                                'Representante' => (object)array(
+                                    'Nome' => $arrContatoVincDTO->getStrNome(),
+                                    'Cpf' => InfraUtil::formatarCpf($arrContatoVincDTO->getDblCpf()),
+                                    'Email' => $arrContatoVincDTO->getStrEmail(),
+                                    'StaSituacao' => $item->getStrStaEstado(),
+                                    'StaTipoRepresentacao' => $item->getStrTipoRepresentante(),
+                                )
+                            ),
+                        );
+                    }
+                }
+                if (!$ret) {
+                    $infraException->lancarValidacao('Nenhum Representante encontrato para o CPF informado com os filtros utilizados.');
+                }
+            } else {
+                $infraException->lancarValidacao('O CPF informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
             }
-
-            // Usuário Externo Liberado = L, Pendente = P
-            switch ($UsuarioExternoDTO->getStrStaTipo()) {
-                case UsuarioRN::$TU_EXTERNO_PENDENTE :
-                    $UsuarioExternoDTO->setStrStaTipo('P');
-                    break;
-
-                case UsuarioRN::$TU_EXTERNO :
-                    $UsuarioExternoDTO->setStrStaTipo('L');
-                    break;
-
-                default :
-                    $InfraException->lancarValidacao('Erro ao consultar o cadastro do Usuário Externo no SEI.');
-                    break;
-            }
-
-
-            $ret = array ();
-
-
-
-            $ret[] = (object) array(
-                'IdUsuario' => $UsuarioExternoDTO->getNumIdUsuario(),
-                'E-mail' => $UsuarioExternoDTO->getStrSigla(),
-                'Nome' => $UsuarioExternoDTO->getStrNome(),
-                'Cpf' => InfraUtil::formatarCpf($contatoDTO->getDblCpf()),
-                'SituacaoAtivo' => $UsuarioExternoDTO->getStrSinAtivo(),
-                'LiberacaoCadastro' => $UsuarioExternoDTO->getStrStaTipo(),
-                'Rg' => $UsuarioExternoDTO->getDblRgContato(),
-                'OrgaoExpedidor' => $UsuarioExternoDTO->getStrOrgaoExpedidorContato(),
-                'Telefone' => $UsuarioExternoDTO->getStrTelefoneFixo(),
-                'Endereco' => $UsuarioExternoDTO->getStrEnderecoContato(),
-                'Bairro' => $contatoDTO->getStrBairro(),
-                'SiglaUf' => $contatoDTO->getStrSiglaUf(),
-                'NomeCidade' => $contatoDTO->getStrNomeCidade(),
-                'Cep' => $contatoDTO->getStrCep(),
-                'DataCadastro' => $UsuarioExternoDTO->getDthDataCadastroContato());
 
             return $ret;
 
-        } catch ( Exception $e ) {
-            $this->processarExcecao ( $e );
+        } catch (Exception $e) {
+            $this->processarExcecao($e);
         }
     }
 

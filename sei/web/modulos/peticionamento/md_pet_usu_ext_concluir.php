@@ -28,6 +28,7 @@ try {
   //preenche a combo Função
   $objMdPetCargoRN = new MdPetCargoRN();
   $arrObjCargoDTO = $objMdPetCargoRN->listarDistintos();
+  $strLinkAjaxVerificarSenha = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_assinatura');
 
   //=====================================================
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
@@ -76,6 +77,8 @@ try {
   			$arrParam = array();
   			$arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
 			$objMdPetProcessoRN->validarSenha( $arrParam );
+            $params['pwdsenhaSEI'] = '***********';
+            $_POST['pwdsenhaSEI'] = '***********';
 			$arrDadosProcessoComRecibo = $objMdPetProcessoRN->gerarProcedimento( $_POST );			
 			$idRecibo = $arrDadosProcessoComRecibo[0]->getNumIdReciboPeticionamento();
 
@@ -264,6 +267,26 @@ function isValido(){
 		document.getElementById("pwdsenhaSEI").focus();
 		return false;
 	} else {
+        $.ajax({
+            async: false,
+            type: "POST",
+            url: "<?= $strLinkAjaxVerificarSenha ?>",
+            dataType: "json",
+            data: {
+                strSenha: btoa(senha)
+            },
+            success: function (result) {
+                var strRetorno = result.responseText;
+                var retorno = strRetorno.split('"?>\n');
+                document.getElementById("pwdsenhaSEI").value = retorno[1];
+            },
+            error: function (msgError) {},
+            complete: function (result) {
+                var strRetorno = result.responseText;
+                var retorno = strRetorno.split('"?>\n');
+                document.getElementById("pwdsenhaSEI").value = retorno[1];
+            }
+        });
 		return true;
 	}
 	

@@ -859,8 +859,9 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 		// setando atributos que serão utilizados em outros métodos
 		$this->setCargoDTO($params['selCargo']);
-		$this->setSenha($params['pwdsenhaSEI']);
-
+//		$this->setSenha($params['pwdsenhaSEI']);
+        $params['pwdsenhaSEI'] = '***********';
+        $_POST['pwdsenhaSEI'] = '***********';
 		$idProcedimentoProcesso = $params['id_procedimento'];
 		//Busca o Procedimento Principal
 

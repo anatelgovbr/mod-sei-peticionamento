@@ -444,7 +444,8 @@ class MdPetIntegracaoRN extends InfraRN
         try {
 
             //Valida Permissao
-            SessaoSEI::getInstance()->validarPermissao('md_pet_integracao_cadastrar');
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_integracao_cadastrar', __METHOD__, $objMdPetIntegracaoDTO);
+
 
             //Regras de Negocio
             $objInfraException = new InfraException();
@@ -477,7 +478,7 @@ class MdPetIntegracaoRN extends InfraRN
         try {
 
             //Valida Permissao
-            SessaoSEI::getInstance()->validarPermissao('md_pet_integracao_alterar');
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_integracao_alterar', __METHOD__, $objMdPetIntegracaoDTO);
 
             //Regras de Negocio
             $objInfraException = new InfraException();
@@ -529,7 +530,7 @@ class MdPetIntegracaoRN extends InfraRN
         try {
 
             //Valida Permissao
-            SessaoSEI::getInstance()->validarPermissao('md_pet_integracao_excluir');
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_integracao_excluir', __METHOD__, $arrObjMdPetIntegracaoDTO);
 
             //Regras de Negocio
             //$objInfraException = new InfraException();
@@ -622,8 +623,8 @@ class MdPetIntegracaoRN extends InfraRN
     {
         try {
 
-            //Valida Permissao
-            SessaoSEI::getInstance()->validarPermissao('md_pet_integracao_desativar');
+            //Valida
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_integracao_desativar', __METHOD__, $arrObjMdPetIntegracaoDTO);
 
             //Regras de Negocio
             //$objInfraException = new InfraException();
@@ -647,7 +648,7 @@ class MdPetIntegracaoRN extends InfraRN
         try {
 
             //Valida Permissao
-            SessaoSEI::getInstance()->validarPermissao('md_pet_integracao_reativar');
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_integracao_reativar', __METHOD__, $arrObjMdPetIntegracaoDTO);
 
             $objMdPetIntegracaoBD = new MdPetIntegracaoBD($this->getObjInfraIBanco());
             for ($i = 0; $i < count($arrObjMdPetIntegracaoDTO); $i++) {
@@ -810,7 +811,7 @@ class MdPetIntegracaoRN extends InfraRN
         try {
 
             //Valida Permissao
-            SessaoSEI::getInstance()->validarPermissao('md_pet_integracao_excluir');
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_integracao_excluir', __METHOD__, $arrObjMdPetIntegracaoDTO);
 
             //Regras de Negocio
             //$objInfraException = new InfraException();

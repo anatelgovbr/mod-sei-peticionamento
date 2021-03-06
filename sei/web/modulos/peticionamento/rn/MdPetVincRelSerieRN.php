@@ -19,17 +19,22 @@ class MdPetVincRelSerieRN extends InfraRN
         return BancoSEI::getInstance();
     }
 
-    protected function cadastrarControlado(MdPetVincRelSerieDTO $objMdPetVincRelSerieDTO)
+    protected function cadastrarControlado($arrObjMdPetVincRelSerieDTO)
     {
 
-        SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincRelSerieDTO );
+        SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $arrObjMdPetVincRelSerieDTO );
 
         try {
-
-            $objMdPetVincRelSerieBD = new MdPetVincRelSerieBD ($this->getObjInfraIBanco());
-            $objMdPetVincRelSerie = $objMdPetVincRelSerieBD->cadastrar($objMdPetVincRelSerieDTO);
-
-            return $objMdPetVincRelSerie;
+            if (is_array($arrObjMdPetVincRelSerieDTO)) {
+                $arrRetorno = array();
+                foreach ($arrObjMdPetVincRelSerieDTO as $chave => $objMdPetVincRelSerieDTO) {
+                    if (is_a($objMdPetVincRelSerieDTO, 'MdPetVincRelSerieDTO')) {
+                        $objMdPetVincRelSerieBD = new MdPetVincRelSerieBD($this->getObjInfraIBanco());
+                        $arrRetorno[$chave] = $objMdPetVincRelSerieBD->cadastrar($objMdPetVincRelSerieDTO);
+                    }
+                }
+            }
+            return $arrRetorno;
         } catch (Exception $e) {
             throw  new InfraException('Erro cadastrando tipo documento relacionado ao tipo processo da vinculação.', $e);
         }
@@ -37,7 +42,8 @@ class MdPetVincRelSerieRN extends InfraRN
 
     protected function excluirControlado($arrObjMdPetVincRelSerieDTO){
 
-        SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincRelSerieDTO );
+        // TODO refatorar a tela para retitar a exclusão desnecessária
+//        SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $arrObjMdPetVincRelSerieDTO );
 
         try {
             $objMdPetVincRelSerieBD = new MdPetVincRelSerieBD ($this->getObjInfraIBanco());
@@ -53,7 +59,7 @@ class MdPetVincRelSerieRN extends InfraRN
     {
         try {
             // Valida Permissao
-            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincRelSerieDTO );
+            // SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincRelSerieDTO );
 
             $objMdPetVincRelSerieBD = new MdPetVincRelSerieBD($this->getObjInfraIBanco());
             $ret = $objMdPetVincRelSerieBD->listar($objMdPetVincRelSerieDTO);
@@ -68,7 +74,7 @@ class MdPetVincRelSerieRN extends InfraRN
     {
         try {
             // Valida Permissao
-            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincRelSerieDTO );
+            // SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincRelSerieDTO );
 
             $objMdPetVincRelSerieBD = new MdPetVincRelSerieBD($this->getObjInfraIBanco());
             $ret = $objMdPetVincRelSerieBD->contar($objMdPetVincRelSerieDTO);

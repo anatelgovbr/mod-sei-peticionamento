@@ -23,7 +23,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 	protected function listarConectado(MdPetTipoPoderLegalDTO $objDTO) {
 	
 		try {
-							
+
 			$objInfraException = new InfraException();						
 			$objBD = new MdPetTipoPoderLegalBD($this->getObjInfraIBanco());
 			$ret = $objBD->listar($objDTO);	
@@ -51,6 +51,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 	protected function cadastrarControlado(MdPetTipoPoderLegalDTO $objDTO) {
 		
 		try {
+            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_poder_cadastrar', __METHOD__, $objDTO );
 			//Regras de Negocio
             $objInfraException = new InfraException();
 			//Validação de nome já existente
@@ -106,6 +107,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 	protected function alterarControlado(MdPetTipoPoderLegalDTO $objDTO) {
 		
 		try {
+            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_poder_alterar', __METHOD__, $objDTO );
             //Regras de Negocio
             $objInfraException = new InfraException();
             //Validação de nome já existente
@@ -135,9 +137,9 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 	protected function excluirConectado(MdPetTipoPoderLegalDTO $objDTO) {
 
 		try {
-			//Regra de Negocio
-			$objInfraException     = new InfraException();
-			
+            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_poder_excluir', __METHOD__, $objDTO );
+            //Regra de Negocio
+            $objInfraException     = new InfraException();
 			$objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
              $objMdPetRelVincRepTpPoderDTO->setNumIdTipoPoderLegal($objDTO->getNumIdTipoPoderLegal());
              $objMdPetRelVincRepTpPoderDTO->retNumIdVinculoRepresent();
@@ -163,6 +165,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 	protected function desativarConectado(MdPetTipoPoderLegalDTO $objDTO) {
 
 		try {
+            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_poder_desativar', __METHOD__, $objDTO );
 			$objBD = new MdPetTipoPoderLegalBD($this->getObjInfraIBanco());
 			return $objBD->desativar($objDTO);
 
@@ -174,6 +177,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 	protected function reativarConectado(MdPetTipoPoderLegalDTO $objDTO) {
 
 		try {
+            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_poder_reativar', __METHOD__, $objDTO );
 			$objBD = new MdPetTipoPoderLegalBD($this->getObjInfraIBanco());
 			return $objBD->reativar($objDTO);
 

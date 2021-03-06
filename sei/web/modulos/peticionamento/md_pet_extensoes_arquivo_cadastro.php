@@ -28,10 +28,7 @@ if($_POST) {
 	$objMdPetExtensoesArquivoDTO->retTodos();
 	$objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
 	$objMdPetExtensoesArquivoRN->excluir($objMdPetExtensoesArquivoRN->listar($objMdPetExtensoesArquivoDTO));
-	
-	// criando os novos
-	$objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
-	
+
 	$arrPrincipal = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal']);
 	$arrComplementar = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnComplementar']);
 	
@@ -44,21 +41,27 @@ if($_POST) {
 	}
 	
 	$objInfraException->lancarValidacoes();
-	
+
+	$arrObjMdPetExtensoesArquivoDTO = array();
+
 	foreach($arrPrincipal as $numPrincipal){
+        // criando os novos
+        $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
+        $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
 		$objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numPrincipal);
 		$objMdPetExtensoesArquivoDTO->setStrSinPrincipal('S');
-
-		$objMdPetExtensoesArquivoDTO = $objMdPetExtensoesArquivoRN->cadastrar($objMdPetExtensoesArquivoDTO);
+		array_push($arrObjMdPetExtensoesArquivoDTO, $objMdPetExtensoesArquivoDTO);
 	}
 	
 	foreach($arrComplementar as $numComplementar){
-		$objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numComplementar);
-		$objMdPetExtensoesArquivoDTO->setStrSinPrincipal('N');
-
-		$objMdPetExtensoesArquivoDTO = $objMdPetExtensoesArquivoRN->cadastrar($objMdPetExtensoesArquivoDTO);
+        $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
+        $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
+        $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numComplementar);
+        $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('N');
+        array_push($arrObjMdPetExtensoesArquivoDTO, $objMdPetExtensoesArquivoDTO);
 	}
-	
+
+    $objMdPetExtensoesArquivoDTO = $objMdPetExtensoesArquivoRN->cadastrar($arrObjMdPetExtensoesArquivoDTO);
 }
 
 $strSelExtensoesPrin = MdPetExtensoesArquivoINT::montarSelectExtensoes(null,null,null,'S');

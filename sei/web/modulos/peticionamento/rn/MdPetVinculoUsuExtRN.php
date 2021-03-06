@@ -245,7 +245,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objContatoDTO->setNumIdCargo(null);
         $objContatoDTO->setStrNumeroPassaporte(null);
         $objContatoDTO->setNumIdPaisPassaporte(null);
-        $objContatoDTO->setNumIdPais(76); // IdBrasil
+        $objContatoDTO->setNumIdPais(ID_BRASIL); // IdBrasil
         $objContatoDTO->setNumIdUf($idUf); // Array UF
         $objContatoDTO->setNumIdCidade($idCidade);
         $objContatoDTO->setNumIdTipoContato($idTipoContato); // IdBrasil
@@ -302,11 +302,19 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $flag = true;
             }
 
-            if (($post['hdnIdContatoNovo'] != '' || $flag)&& ($post['isAlteracaoCrud'] || $post['hdnStaWebService'])) {
+            $tipoPeticionamento = $this->_getTipoPeticionamento($post);
+
+            if ( ( ($post['hdnIdContatoNovo'] != '' || $flag) && ($post['isAlteracaoCrud'] || $post['hdnStaWebService']) ) || !$strUtilizarWs && $tipoPeticionamento == MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO ) {
                 $objContatoDTO->setNumIdCargo('');
                 $objContatoDTO->setStrStaGenero('');
                 $objContatoDTO->setNumIdContato($objContatoDTORetorno->getNumIdContato());
-                $objContatoRN->alterarRN0323($objContatoDTO);
+
+                $validarContatoComExpedicaoAndamento = $this->_validarContatoComExpedicaoAndamento($objContatoDTORetorno);
+
+                if(is_null($validarContatoComExpedicaoAndamento)){
+                    $objContatoRN->alterarRN0323($objContatoDTO);
+                }
+
             }
             $objContatoDTO = $objContatoDTORetorno;
         }
@@ -392,9 +400,18 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
         $nomeModificado = str_replace("@razao_social@",$objContatoRN->getStrNome(),$especificacao);
-        $nome_cpf = str_replace("@cnpj@",InfraUtil::formatarCnpj($objContatoRN->getDblCnpj()),$nomeModificado);
+        $nome_cnpj = str_replace("@cnpj@",InfraUtil::formatarCnpj($objContatoRN->getDblCnpj()),$nomeModificado);
 
-        $objProcedimentoAPI->setEspecificacao($nome_cpf);
+        //trata campo especificacao limite de 100 caracteres
+        //Se o conteúdo for superior a 100 caracteres, deve ser considerado somente o conteúdo até a última palavra inteira antes do 100º caracter.
+        $nome_cnpj = trim($nome_cnpj);
+        if(strlen($nome_cnpj) > 100){
+            $nome_cnpj = substr($nome_cnpj, 0, 100);
+            $arrNomeCnpj =  explode(" ", $nome_cnpj, -1);
+            $nome_cnpj =  implode(" ", $arrNomeCnpj);
+        }
+
+        $objProcedimentoAPI->setEspecificacao($nome_cnpj);
         $objProcedimentoAPI->setNumeroProtocolo('');
         $objProcedimentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
         $objProcedimentoAPI->setIdHipoteseLegal(null);
@@ -1108,6 +1125,22 @@ class MdPetVinculoUsuExtRN extends InfraRN
         return $orgao;
     }
 
+    private function _getOrgaoInterno($idOrgao)
+    {
+        $orgaoDTO = new  OrgaoDTO();
+        $orgaoRN = new  OrgaoRN();
+        $orgaoDTO->setNumIdOrgao($idOrgao);
+        $orgaoDTO->retNumIdOrgao();
+        $orgaoDTO->retStrSigla();
+        $orgaoDTO->retStrDescricao();
+        $orgaoDTO->retStrTimbre();
+
+        $orgao = $orgaoRN->consultarRN1352($orgaoDTO);
+
+        return $orgao;
+    }
+
+
     private function _getModeloFormulario($idVinculo, $dados, $arrSeries, $isAlteracao, $isWebService)
     {
 
@@ -1115,6 +1148,10 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         //consultar orgão
         $orgao = $this->_getOrgaoUsuarioExterno();
+
+        if ($orgao == null){
+            $orgao = $this->_getOrgaoInterno($dados['selOrgao']);
+        }
 
         $objMdPetVincDTO = $this->_getDadosContatoVinculoPJ($idVinculo);
 
@@ -1126,6 +1163,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
 
         $noUsuario =  SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno();
+        if($noUsuario == null){
+            $noUsuario = $dados['hdnNomeNovo'];
+        }
         $cpf = InfraUtil::formatarCpf(InfraUtil::retirarFormatacao($dados['txtNumeroCpfResponsavel']));
 
         $nomeSubstituido = $isAlteracao ? $dados['NomeProcurador'] : '';
@@ -1144,6 +1184,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $endereco = $dadosPj[3];
             $bairro = $dadosPj[6];
             $cep = $dadosPj[9];
+            $uf = $dadosPj[7];
+            $cidade = $dadosPj[8];
         }
 
         if (!$isAlteracao) {
@@ -1375,7 +1417,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $contador = 0;
         $mdPetProcessoRN = new mdPetProcessoRN();
-
+        $idHipoteseLegal = null;
         foreach ($arrLinhasAnexos as $itemAnexo) {
 
             $idSerieAnexo = $itemAnexo[1];
@@ -1391,7 +1433,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $idHipoteseLegal = null;
             } else if ($itemAnexo[13] == "Restrito") {
                 $idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
-                $idHipoteseLegal = $arrLinhasAnexos[$contador][4];
+                if($arrLinhasAnexos[$contador][4] != '') {
+                    $idHipoteseLegal = $arrLinhasAnexos[$contador][4];
+                }
             }
 
             $idGrauSigilo = null;
@@ -1940,5 +1984,67 @@ class MdPetVinculoUsuExtRN extends InfraRN
         );
 
         return $arrIdsSeries;
+    }
+
+    private function _getTipoPeticionamento($dados){
+        $mdPetVinculoRepresentant = new MdPetVincRepresentantRN();
+        $objMdPetVinculoRepresentantDTORL = new MdPetVincRepresentantDTO();
+        $objMdPetVinculoRepresentantDTORL->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
+        $objMdPetVinculoRepresentantDTORL->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+        $objMdPetVinculoRepresentantDTORL->setStrSinAtivo('S');
+        $objMdPetVinculoRepresentantDTORL->retStrCpfProcurador();
+        $arrObjMdPetVinculoRepresentantDTORL = $mdPetVinculoRepresentant->consultar($objMdPetVinculoRepresentantDTORL);
+
+        $strCpfRespLegalAntigo = "";
+        if ($arrObjMdPetVinculoRepresentantDTORL) {
+            $strCpfRespLegalAntigo = $arrObjMdPetVinculoRepresentantDTORL->getStrCpfProcurador();
+        } else {
+            $strCpfRespLegalAntigo = $dados['txtCpfResponsavelAntigo'];
+        }
+
+        return $strCpfRespLegalAntigo != InfraUtil::retirarFormatacao($dados['txtNumeroCpfResponsavel']) ? MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO : MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS;
+    }
+
+    private function _validarContatoComExpedicaoAndamento($objContato)
+    {
+        $arrModulos = ConfiguracaoSEI::getInstance()->getValor('SEI','Modulos');
+        if(is_array($arrModulos) && array_key_exists('CorreiosIntegracao', $arrModulos)) {
+
+            $objInfraParametroDTO = new InfraParametroDTO();
+            $objInfraParametroDTO->setStrNome('VERSAO_MODULO_CORREIOS');
+            $objInfraParametroDTO->retStrValor();
+
+            $objInfraParametroBD = new InfraParametroBD($this->getObjInfraIBanco());
+            $arrObjInfraParametroDTO = $objInfraParametroBD->consultar($objInfraParametroDTO);
+
+            if($arrObjInfraParametroDTO){
+
+                $mdCorExpedicaoSolicitadaRN = new MdCorExpedicaoSolicitadaRN();
+                $mdCorExpedicaoSolicitadaDTO = new MdCorExpedicaoSolicitadaDTO();
+
+                $mdCorExpedicaoSolicitadaDTO->setNumIdContatoDestinatario($objContato->getNumIdContato(), InfraDTO::$OPER_IGUAL);
+                $mdCorExpedicaoSolicitadaDTO->retNumIdMdCorExpedicaoSolicitada();
+                $mdCorExpedicaoSolicitadaDTO->retStrStaPlp();
+                $mdCorExpedicaoSolicitadaDTO->retNumCodigoPlp();
+                $mdCorExpedicaoSolicitadaDTO->setDistinct(true);
+
+                $arrMdCorExpedicaoSolicitadaDTO = $mdCorExpedicaoSolicitadaRN->listar($mdCorExpedicaoSolicitadaDTO);
+
+                $arrCorPlp = array(
+                    MdCorPlpRN::$STA_GERADA,
+                    MdCorPlpRN::$STA_PENDENTE,
+                    MdCorPlpRN::$STA_RETORNO_AR_PENDENTE
+                );
+
+                if (count($arrMdCorExpedicaoSolicitadaDTO) > 0) {
+                    foreach ($arrMdCorExpedicaoSolicitadaDTO as $mdCorExpedicaoSolicitadaDTO) {
+                        if (in_array($mdCorExpedicaoSolicitadaDTO->getStrStaPlp(), $arrCorPlp)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

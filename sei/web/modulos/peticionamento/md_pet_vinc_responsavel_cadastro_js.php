@@ -71,6 +71,18 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
             return false;
         }
 
+        var validarNumeroSeiPreenchido  = document.getElementById('txtNumeroSei').value.trim();
+        if(validarNumeroSeiPreenchido.length == 0){
+           alert('Número SEI não Informado.');
+           return false;
+        }
+
+        var validarNumeroSeiCorreto  = document.getElementById('hdnValidarNumSEI').value.trim();
+        if(validarNumeroSeiCorreto != 'true'){
+            alert('Número SEI inválido.');
+            return false;
+        }
+
         //var motivo  = document.getElementById('txtMotivo').value.trim();
         //if(motivo.length == 0){
         //    alert('Motivo não Informado.');
@@ -101,7 +113,7 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
 
     	if (document.getElementById('txtNumeroSei').value!=''){
 	        objAjax = new infraAjaxComplementar(null, '<?=$strLinkAjaxValidacoesNumeroSEI?>');
-	        objAjax.limparCampo = false;
+	        objAjax.limparCampo = true;
 	        objAjax.mostrarAviso = false;
 	        objAjax.tempoAviso = 1000;
 	        objAjax.async = false;
@@ -119,6 +131,7 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
 	            } else {
 	                document.getElementById('hdnIdDocumento').value = arr['IdProtocolo'];
 	                document.getElementById('txtTipo').value = arr['Identificacao'];
+                    document.getElementById('hdnValidarNumSEI').value = 'true';
 	                //document.getElementById('hdnDataAtualGrid').value = arr['DataAtual'];
 	                //document.getElementById('hdnUnidadeAtualGrid').value = arr['UnidadeAtual'];
 	                //document.getElementById('txtNumeroSei').value = arr['ProtocoloFormatado'];
@@ -131,7 +144,8 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
 	
 	        objAjax.executar();
     	}else{
-    		document.getElementById('txtTipo').value='';        	
+    		document.getElementById('txtTipo').value='';
+            document.getElementById('hdnValidarNumSEI').value = 'false';
     	}
 
     }

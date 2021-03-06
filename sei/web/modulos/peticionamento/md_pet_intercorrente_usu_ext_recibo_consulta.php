@@ -274,11 +274,6 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
                 </tr>
 
                 <tr>
-                    <td style="font-weight: bold;">IP utilizado:</td>
-                    <td><?= $objMdPetReciboDTO->getStrIpUsuario() ?></td>
-                </tr>
-
-                <tr>
                     <td style="font-weight: bold;">Data e Horário:</td>
                     <td><?= $objMdPetReciboDTO->getDthDataHoraRecebimentoFinal() ?></td>
                 </tr>

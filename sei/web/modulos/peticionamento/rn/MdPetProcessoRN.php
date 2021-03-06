@@ -46,10 +46,10 @@ class MdPetProcessoRN extends InfraRN {
 		$objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 		$senhaBanco=$objUsuarioDTO->getStrSenha();
 		$bcrypt = new InfraBcrypt();
-		
-		$senhaInformada=md5( $arrParametros['pwdsenhaSEI'] );
 
-		if (!$bcrypt->verificar($senhaInformada,$senhaBanco)) {
+		$stringSenha = base64_decode($arrParametros['pwdsenhaSEI']);
+
+		if (!$bcrypt->verificar($stringSenha,$senhaBanco)) {
 			$objInfraException->adicionarValidacao("Senha inválida.");
 			$objInfraException->lancarValidacoes();
 		} 

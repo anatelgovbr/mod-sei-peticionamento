@@ -5,10 +5,6 @@
         <td>@usuarioExterno</td>
     </tr>
     <tr>
-        <td style="font-weight: bold;">IP utilizado:</td>
-        <td>@ipUtilizado</td>
-    </tr>
-    <tr>
         <td style="font-weight: bold;">Data e Horário:</td>
         <td>@dataHorario</td>
     </tr>

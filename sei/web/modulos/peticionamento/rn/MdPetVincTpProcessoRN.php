@@ -68,10 +68,6 @@ class MdPetVincTpProcessoRN extends InfraRN
     {
         try {
 
-            // Valida Permissao
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincTpProcessoDTO);
-
-
             $objMdPetVincTpProcessoBD = new MdPetVincTpProcessoBD($this->getObjInfraIBanco());
             $objMdPetVincTpProcesso = $objMdPetVincTpProcessoBD->consultar($objMdPetVincTpProcessoDTO);
 
@@ -85,9 +81,6 @@ class MdPetVincTpProcessoRN extends InfraRN
     protected function listarConectado(MdPetVincTpProcessoDTO $objMdPetVincTpProcessoDTO)
     {
         try {
-            // Valida Permissao
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincTpProcessoDTO);
-
 
             $objMdPetVincTpProcessoBD = new MdPetVincTpProcessoBD($this->getObjInfraIBanco());
             $objMdPetVincTpProcesso = $objMdPetVincTpProcessoBD->listar($objMdPetVincTpProcessoDTO);
@@ -103,18 +96,8 @@ class MdPetVincTpProcessoRN extends InfraRN
     {
         try {
 
-            //Valida Permissao
-
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincTpProcessoDTO);
-
-            //Regras de Negocio
-            //$objInfraException = new InfraException();
-
-            //$objInfraException->lancarValidacoes();
-
             $objMdPetVincTpProcessoBD = new MdPetVincTpProcessoBD($this->getObjInfraIBanco());
             $ret = $objMdPetVincTpProcessoBD->contar($objMdPetVincTpProcessoDTO);
-
 
             return $ret;
         } catch (Exception $e) {

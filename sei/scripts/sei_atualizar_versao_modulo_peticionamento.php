@@ -2029,7 +2029,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
 
         $this->logar('DELETANDO O INDICE md_pet_int_rel_dest.fk3_md_pet_int_rel_dest');
-        $objInfraMetaBD->excluirIndice('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
+        $arrIndices = $objInfraMetaBD->obterIndices(null, md_pet_int_rel_dest);
+        if($arrIndices) {
+            foreach ($arrIndices['md_pet_int_rel_dest'] as $indice => $valor) {
+                if ($indice == 'fk3_md_pet_int_rel_dest') {
+                    $objInfraMetaBD->excluirIndice('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
+                }
+            }
+        }
 
         $this->logar('DELETANDO A COLUNA md_pet_int_rel_dest.id_acesso_externo');
         $objInfraMetaBD->excluirColuna('md_pet_int_rel_dest', 'id_acesso_externo');

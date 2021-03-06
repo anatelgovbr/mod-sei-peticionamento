@@ -39,8 +39,6 @@ class MdPetCriterioRN extends InfraRN
 
         try {
 
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_listar', __METHOD__, $objMdPetCriterioDTO);
-
             $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
             $ret = $objMdPetCriterioBD->listar($objMdPetCriterioDTO);
 
@@ -220,7 +218,7 @@ class MdPetCriterioRN extends InfraRN
 
         try {
 
-            SessaoSEI::getInstance ()->validarAuditarPermissao('md_pet_intercorrente_criterio_desativar', __METHOD__, $arrMdPetCriterioDTO);
+            SessaoSEI::getInstance ()->validarAuditarPermissao('md_pet_intercorrente_criterio_reativar', __METHOD__, $arrMdPetCriterioDTO);
 
             $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
             for($i = 0; $i < count($arrMdPetCriterioDTO); $i ++) {
@@ -245,8 +243,8 @@ class MdPetCriterioRN extends InfraRN
     {
 
         try {
-
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_excluir', __METHOD__, $arrMdPetCriterioDTO);
+            // TODO Ajustar para não deletar e cadastrar, apenas alterar
+            //SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_excluir', __METHOD__, $arrMdPetCriterioDTO);
             $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
             for($i = 0; $i < count($arrMdPetCriterioDTO); $i ++) {
                 $objMdPetCriterioBD->excluir($arrMdPetCriterioDTO[$i]);

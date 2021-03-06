@@ -30,8 +30,8 @@ class MdPetTpCtxContatoRN extends InfraRN {
 		
 		try {
 	
-			//Valida Permissao
-			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tp_ctx_contato_cadastrar', __METHOD__, $objDTO );
+			//Valida Permissao TO DO revisar a tela para não deixar o log duplicado
+//			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tp_ctx_contato_cadastrar', __METHOD__, $objDTO );
 
 			$objExtArqPermBD = new MdPetRelTpCtxContatoBD($this->getObjInfraIBanco());
 			for($i=0;$i<count($objDTO);$i++){
@@ -97,14 +97,19 @@ class MdPetTpCtxContatoRN extends InfraRN {
 	 * @param  $objDTO
 	 * @return mixed
 	 */
-	protected function cadastrarControlado(MdPetRelTpCtxContatoDTO $objDTO) {
+	protected function cadastrarControlado($arrObjMdPetRelTpCtxContatoDTO) {
 		
 		try {
-			// Valida Permissao
-			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tp_ctx_contato_cadastrar', __METHOD__, $objDTO );	
-			$objExtArqPermBD = new MdPetRelTpCtxContatoBD($this->getObjInfraIBanco());
-			$ret = $objExtArqPermBD->cadastrar($objDTO);
-			return $ret;
+            // Valida Permissao
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_tp_ctx_contato_cadastrar', __METHOD__, $arrObjMdPetRelTpCtxContatoDTO);
+            $retorno = array();
+            foreach ($arrObjMdPetRelTpCtxContatoDTO as $chave => $objMdPetRelTpCtxContatoDTO) {
+                if( is_a($objMdPetRelTpCtxContatoDTO, 'MdPetRelTpCtxContatoDTO')) {
+                    $objExtArqPermBD = new MdPetRelTpCtxContatoBD($this->getObjInfraIBanco());
+                    $retorno[$chave] = $objExtArqPermBD->cadastrar($objMdPetRelTpCtxContatoDTO);
+                }
+            }
+			return $retorno;
 			
 		} catch ( Exception $e ) {
 			throw new InfraException ('Erro cadastrando Tipo de Interessado.', $e );
@@ -150,58 +155,61 @@ class MdPetTpCtxContatoRN extends InfraRN {
 
 	}
 	
-	protected function cadastrarMultiploControlado( $arrPrincipal ){
+	protected function cadastrarMultiploControlado( $arrContatos ){
 		
 		$objInfraException = new InfraException();
-					
-		// excluindo registros anteriores
-		$objDTO = new MdPetRelTpCtxContatoDTO();
-		$objDTO->retTodos();
-		$cadastro = $arrPrincipal['cadastro'];
-		
-		if( $cadastro == 'S'){
-		  $objDTO->setStrSinCadastroInteressado('S');
-		  $objDTO->setStrSinSelecaoInteressado('N');
-		
-		} else if( $cadastro == 'N'){
-		  $objDTO->setStrSinCadastroInteressado('N');
-		  $objDTO->setStrSinSelecaoInteressado('S');
-		}
-						
-		unset( $arrPrincipal['cadastro'] );
-		
-		$lista = $this->listar($objDTO);
+		$listaExclusao = array();
+        $arrObjMdPetRelTpCtxContatoDTO = array();
+		foreach ($arrContatos as $arrPrincipal) {
+            // excluindo registros anteriores
+            $objDTO = new MdPetRelTpCtxContatoDTO();
+            $objDTO->retTodos();
+            $cadastro = $arrPrincipal['cadastro'];
 
-		//quando for Cadastro, impedir tipos reservados, quando for seleçao, nao deve impedir
-		if( $cadastro == 'S'){
-		  $this->validarTiposReservados( $arrPrincipal, $objInfraException );
-		}
-		
-		$this->excluir( $lista );
+            if ($cadastro == 'S') {
+                $objDTO->setStrSinCadastroInteressado('S');
+                $objDTO->setStrSinSelecaoInteressado('N');
 
-		if(!$arrPrincipal) {
-			$objInfraException->adicionarValidacao('Informe pelo menos um Tipo de Contato.');
-		}
-		
-		$objInfraException->lancarValidacoes();
-		
-		foreach($arrPrincipal as $numPrincipal){
+            } else if ($cadastro == 'N') {
+                $objDTO->setStrSinCadastroInteressado('N');
+                $objDTO->setStrSinSelecaoInteressado('S');
+            }
 
-			$objDTO = new MdPetRelTpCtxContatoDTO();
-			$objDTO->setNumIdTipoContextoContato($numPrincipal);
+            unset($arrPrincipal['cadastro']);
 
-			if( $cadastro == 'S'){
-				$objDTO->setStrSinCadastroInteressado('S');
-				$objDTO->setStrSinSelecaoInteressado('N');
-			
-			} else if( $cadastro == 'N'){
-				$objDTO->setStrSinCadastroInteressado('N');
-				$objDTO->setStrSinSelecaoInteressado('S');
-			}
-			
-			$objDTO = $this->cadastrar($objDTO);
-		}
-		
+            $lista = $this->listar($objDTO);
+            $listaExclusao = array_merge($listaExclusao, $lista);
+            //quando for Cadastro, impedir tipos reservados, quando for seleçao, nao deve impedir
+            if ($cadastro == 'S') {
+                $this->validarTiposReservados($arrPrincipal, $objInfraException);
+            }
+
+            if (!$arrPrincipal) {
+                $objInfraException->adicionarValidacao('Informe pelo menos um Tipo de Contato.');
+            }
+
+            $objInfraException->lancarValidacoes();
+
+
+            foreach ($arrPrincipal as $numPrincipal) {
+
+                $objDTO = new MdPetRelTpCtxContatoDTO();
+                $objDTO->setNumIdTipoContextoContato($numPrincipal);
+
+                if ($cadastro == 'S') {
+                    $objDTO->setStrSinCadastroInteressado('S');
+                    $objDTO->setStrSinSelecaoInteressado('N');
+
+                } else if ($cadastro == 'N') {
+                    $objDTO->setStrSinCadastroInteressado('N');
+                    $objDTO->setStrSinSelecaoInteressado('S');
+                }
+                array_push($arrObjMdPetRelTpCtxContatoDTO, $objDTO);
+
+            }
+        }
+        $this->excluir($listaExclusao);
+        $objDTO = $this->cadastrar($arrObjMdPetRelTpCtxContatoDTO);
 	}
 	
 }

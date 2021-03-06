@@ -89,3 +89,11 @@
 ### Regras de Negócio:
 
 ### Estrutura de Dados "RepresentacaoPessoaFisica":
+
+## 7. Listar Representados por Pessoa Física ou Jurídica
+
+### Método “listarRepresentados”:
+
+### Regras de Negócio:
+
+### Estrutura de Dados "Representados":

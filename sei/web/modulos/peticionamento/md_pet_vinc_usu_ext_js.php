@@ -203,6 +203,26 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         var qtdCaracteres = obj.value.length;
         var valido        = true;
 
+        //trata mascara
+        var cnpjUsuExt = infraTrim(obj.value);
+        if(cnpjUsuExt != '') {
+            cnpjUsuExt = infraRetirarFormatacao(cnpjUsuExt);
+            cnpjUsuExt = infraLPad(cnpjUsuExt, 14, '0');
+            cnpjUsuExt = cnpjUsuExt.substring(0, 14);
+            obj.value = cnpjUsuExt;
+
+            //Coloca ponto entre o segundo e o terceiro dígitos
+            cnpjUsuExt=cnpjUsuExt.replace(/^(\d{2})(\d)/,"$1.$2");
+            //Coloca ponto entre o quinto e o sexto dígitos
+            cnpjUsuExt=cnpjUsuExt.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
+            //Coloca uma barra entre o oitavo e o nono dígitos
+            cnpjUsuExt=cnpjUsuExt.replace(/\.(\d{3})(\d)/,".$1/$2");
+            //Coloca um hífen depois do bloco de quatro dígitos
+            cnpjUsuExt=cnpjUsuExt.replace(/(\d{4})(\d)/,"$1-$2");
+            
+            obj.value = cnpjUsuExt;
+        }
+
         if(qtdCaracteres == 18) {
             var validCnpj = infraValidarCnpj(obj.value);
             if(!validCnpj){
@@ -639,7 +659,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             document.getElementById('selHipoteseLegal').value = '';
             document.getElementById('hdnHipoteseLegal').value = '';
         }
-        document.getElementById('divBlcHipoteseLegal').style.display = 'none';
+        //document.getElementById('divBlcHipoteseLegal').style.display = 'none';
 
         document.getElementById('rdoNatoDigital').checked = false;
         document.getElementById('rdoDigitalizado').checked = false;

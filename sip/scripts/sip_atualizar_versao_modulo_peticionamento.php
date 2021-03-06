@@ -1812,6 +1812,75 @@ class MdPetAtualizadorSipRN extends InfraRN
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
+        $this->logar('EXCLUINDO RECURSOS DA REGRA DE AUDITORIA DO MÓDULO ' . $this->nomeDesteModulo . ' NA BASE DO SIP..');
+
+        $objSistemaRN = new SistemaRN();
+        $objSistemaDTO = new SistemaDTO();
+        $objSistemaDTO->retNumIdSistema();
+        $objSistemaDTO->setStrSigla('SEI');
+
+        $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
+
+        if ($objSistemaDTO == null) {
+            throw new InfraException('Sistema SEI não encontrado.');
+        }
+
+        $numIdSistemaSei = $objSistemaDTO->getNumIdSistema();
+
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
+          \'md_pet_intercorrente_criterio_listar\',
+          \'md_pet_indisponibilidade_consultar\',
+          \'md_pet_pessoa_fisica\',
+          \'md_pet_pessoa_juridica\'          
+          )'
+        );
+
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('DELETE FROM rel_regra_auditoria_recurso WHERE id_recurso = ' . $recurso['id_recurso']);
+        }
+
+        $this->logar('CRIANDO REGRA DE AUDITORIA PARA NOVOS RECURSOS RECEM ADICIONADOS');
+        $objRegraAuditoriaDTO = new RegraAuditoriaDTO();
+        $objRegraAuditoriaDTO->retNumIdRegraAuditoria();
+        $objRegraAuditoriaDTO->setNumIdSistema($numIdSistemaSei);
+        $objRegraAuditoriaDTO->setStrDescricao('Modulo_Peticionamento_Eletronico');
+
+        $objRegraAuditoriaRN = new RegraAuditoriaRN();
+        $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
+
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
+          \'md_pet_intercorrente_criterio_cadastrar\',
+          \'md_pet_intercorrente_criterio_alterar\',
+          \'md_pet_intercorrente_criterio_excluir\',
+          \'md_pet_intercorrente_criterio_desativar\',
+          \'md_pet_intercorrente_criterio_reativar\',       
+          \'md_pet_int_serie_cadastrar\',    
+          \'md_pet_int_serie_alterar\',    
+          \'md_pet_int_serie_excluir\',
+          \'md_pet_integracao_cadastrar\',
+          \'md_pet_integracao_alterar\',
+          \'md_pet_integracao_excluir\',
+          \'md_pet_integracao_desativar\',
+          \'md_pet_integracao_reativar\',
+          \'md_pet_tipo_poder_cadastrar\',
+          \'md_pet_tipo_poder_alterar\',
+          \'md_pet_tipo_poder_excluir\',
+          \'md_pet_tipo_poder_desativar\',
+          \'md_pet_tipo_poder_reativar\'
+          )'
+        );
+
+        foreach ($rs as $recurso) {
+            BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
+        }
+
+        $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
+        $objReplicacaoRegraAuditoriaDTO->setStrStaOperacao('A');
+        $objReplicacaoRegraAuditoriaDTO->setNumIdRegraAuditoria($objRegraAuditoriaDTO->getNumIdRegraAuditoria());
+
+        $objSistemaRN = new SistemaRN();
+        $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
+
         $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.3.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 

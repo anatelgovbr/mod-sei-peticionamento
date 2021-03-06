@@ -322,6 +322,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
             <input type="hidden" name="hdnIdContatoNovo" id="hdnIdContatoNovo"  value=""/>
             <input type="hidden" name="hdnIdContato" id="hdnIdContato"  value="<?= $objMdPetVinculoDTO->getNumIdContatoRepresentante() ?>"/>
             <input type="hidden" name="hdnIdDocumento" id="hdnIdDocumento"  value=""/>
+            <input type="hidden" name="hdnValidarNumSEI" id="hdnValidarNumSEI"  value=""/>
     </form>
 
 <?php

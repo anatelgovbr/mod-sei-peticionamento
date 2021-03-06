@@ -276,7 +276,7 @@ try {
                     if (count($objMdPetVincRelSerieDTO) > 0) {
                         $objMdPetVincRelSerieRN->excluir($objMdPetVincRelSerieDTO);
                     }
-
+                    $arrObjMdPetVincRelSerieDTO = array();
                     //Tipo de Documento Essencial
                     foreach ($arrIdTipoDocumentoEssencial as $numIdTipoDocumentoEss) {
                         $objMdPetVincRelSerieDTO = new MdPetVincRelSerieDTO();
@@ -284,8 +284,7 @@ try {
                         $objMdPetVincRelSerieDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
                         $objMdPetVincRelSerieDTO->setNumIdSerie($numIdTipoDocumentoEss);
                         $objMdPetVincRelSerieDTO->setStrSinObrigatorio('S');
-
-                        $objMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->cadastrar($objMdPetVincRelSerieDTO);
+                        array_push($arrObjMdPetVincRelSerieDTO, $objMdPetVincRelSerieDTO);
                     }
 
                     //Tipo de Documento Complementar
@@ -295,10 +294,9 @@ try {
                         $objMdPetVincRelSerieDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
                         $objMdPetVincRelSerieDTO->setNumIdSerie($numIdTipoDocumento);
                         $objMdPetVincRelSerieDTO->setStrSinObrigatorio('N');
-
-                        $objMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->cadastrar($objMdPetVincRelSerieDTO);
+                        array_push($arrObjMdPetVincRelSerieDTO, $objMdPetVincRelSerieDTO);
                     }
-
+                    $objMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->cadastrar($arrObjMdPetVincRelSerieDTO);
 
                     //header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento() . PaginaSEI::getInstance()->montarAncora($objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento())));
 
@@ -1138,8 +1136,14 @@ PaginaSEI::getInstance()->fecharHtml();
             }
             if(document.getElementById('txtEspecProcPF').value == ""){
                 alert('Informe a Especificação do processo para Pessoa Física.');
-                document.getElementById('txtTipoProcessoPF').focus();
+                document.getElementById('txtEspecProcPF').focus();
                 return false;
+            }else{
+                if(document.getElementById('txtEspecProcPF').value.length > 100){
+                    alert('Tamanho do campo Especificação do Processo Pessoa Física excedido (máximo 100 caracteres).');
+                    document.getElementById('txtEspecProcPF').focus();
+                    return false;
+                }
             }
             vlUnidadePF = infraTrim(document.getElementById('hdnIdUnidadePF').value);
             if (vlUnidadePF == '' || vlUnidadePF == null) {
@@ -1155,8 +1159,14 @@ PaginaSEI::getInstance()->fecharHtml();
             }
             if(document.getElementById('txtEspecProcPJ').value == ""){
                 alert('Informe a Especificação do processo para Pessoa Jurídica.');
-                document.getElementById('txtTipoProcessoPF').focus();
+                document.getElementById('txtEspecProcPJ').focus();
                 return false;
+            }else{
+                if(document.getElementById('txtEspecProcPJ').value.length > 100){
+                    alert('Tamanho do campo Especificação do Processo Pessoa Jurídica excedido (máximo 100 caracteres).');
+                    document.getElementById('txtEspecProcPJ').focus();
+                    return false;
+                }
             }
             vlUnidade = infraTrim(document.getElementById('hdnIdUnidade').value);
             if (vlUnidade == '' || vlUnidade == null) {

@@ -689,6 +689,15 @@ class MdPetVinUsuExtProcRN extends InfraRN
     $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
     $nomeModificado = str_replace("@nome_completo@",$objContatoRN->getStrNome(),$especificacao);
     $nome_cpf = str_replace("@cpf@",InfraUtil::formatarCpf($objContatoRN->getDblCpf()),$nomeModificado);
+
+    //trata campo especificacao limite de 100 caracteres
+    //Se o conteúdo for superior a 100 caracteres, deve ser considerado somente o conteúdo até a última palavra inteira antes do 100º caracter.
+    $nome_cpf = trim($nome_cpf);
+    if(strlen($nome_cpf) > 100){
+        $nome_cpf = substr($nome_cpf, 0, 100);
+        $arrNomeCpf =  explode(" ", $nome_cpf, -1);
+        $nome_cpf =  implode(" ", $arrNomeCpf);
+    }
     
     $objProcedimentoAPI->setEspecificacao($nome_cpf);
     $objProcedimentoAPI->setNumeroProtocolo('');

@@ -34,6 +34,7 @@ try {
   //=====================================================
 
   $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
+  $strLinkAjaxVerificarSenha = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_assinatura');
 
   switch($_GET['acao']){
     
@@ -258,7 +259,27 @@ function isValido(){
 		document.getElementById("pwdsenhaSEI").focus();
 		return false;
 	} else {
-		return true;
+        $.ajax({
+            async: false,
+            type: "POST",
+            url: "<?= $strLinkAjaxVerificarSenha ?>",
+            dataType: "json",
+            data: {
+                strSenha: btoa(senha)
+            },
+            success: function (result) {
+                var strRetorno = result.responseText;
+                var retorno = strRetorno.split('"?>\n');
+                document.getElementById("pwdsenhaSEI").value = retorno[1];
+            },
+            error: function (msgError) {},
+            complete: function (result) {
+                var strRetorno = result.responseText;
+                var retorno = strRetorno.split('"?>\n');
+                document.getElementById("pwdsenhaSEI").value = retorno[1];
+            }
+        });
+        return true;
 	}
 	
 }

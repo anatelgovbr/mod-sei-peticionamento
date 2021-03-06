@@ -562,7 +562,7 @@
                 return false;
             }
         } else {
-            nivelAcesso = document.getElementById('hdnNivelAcesso');
+            nivelAcesso = document.getElementsByClassName('hdnNivelAcesso');
         }
 
         var selHipoteseLegal = document.getElementById('selHipoteseLegal');
@@ -572,6 +572,8 @@
                 alert('Informe a Hipótese Legal');
                 selHipoteseLegal.focus();
                 return false;
+            } else {
+                selHipoteseLegal = document.getElementsByClassName('hdnHipoteseLegal');
             }
         }
 

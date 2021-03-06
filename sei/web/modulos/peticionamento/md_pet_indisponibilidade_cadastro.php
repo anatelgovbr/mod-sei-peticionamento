@@ -107,8 +107,8 @@ try {
                     $linkDocumento = "window.open('" . $objDTO->getStrUrlDocumento() . "')";
                     $serieNumero = $objDTO->getStrNomeSerie();
                     $serieNumero .= $objDTO->getStrNumero() != '' ? ' ' . $objDTO->getStrNumero() : '';
-                    $html = "<div style=\"text-align:center\"> <a title=\"" . $serieNumero . "\" style=\"font-size:12.4px\" class=\"ancoraPadraoAzul\" onclick=\"" . $linkDocumento . "\"> " . $objDTO->getStrNomeDocFormatado() . " </a></div>";
-                    $arrGrid[] = array($objDTO->getNumIdProtPeticionamento(), $objDTO->getDblIdDocumento(), htmlentities($html), $objDTO->getStrNomeUnidadeFormatada(), $objDTO->getDtaInclusaoDta());
+                    $html = '<div style="text-align:center"> <a title="' . $serieNumero . '" style="font-size:12.4px" class="ancoraPadraoAzul" onclick="' . $linkDocumento . '"> ' . $objDTO->getStrNomeDocFormatado() . ' </a></div>';
+                    $arrGrid[] = array($objDTO->getNumIdProtPeticionamento(), $objDTO->getDblIdDocumento(), $html, $objDTO->getStrNomeUnidadeFormatada(), $objDTO->getDtaInclusaoDta());
                     $strGrid = PaginaSEI::getInstance()->gerarItensTabelaDinamica($arrGrid);
                     $idDocumento = $objDTO->getDblIdDocumento();
                     $idIndspDoc = $objDTO->getNumIdProtPeticionamento();
@@ -192,9 +192,9 @@ try {
                 $linkDocumento = "window.open('" . $objDTO->getStrUrlDocumento() . "')";
                 $serieNumero = $objDTO->getStrNomeSerie();
                 $serieNumero .= $objDTO->getStrNumero() != '' ? ' ' . $objDTO->getStrNumero() : '';
-                $html = "<div style=\"text-align:center\"> <a title=\"" . $serieNumero . "\" style=\"font-size:12.4px\" class=\"ancoraPadraoAzul\" onclick=\"" . $linkDocumento . "\"> " . $objDTO->getStrNomeDocFormatado() . " </a></div>";
+                $html = '<div style="text-align:center"> <a title="' . $serieNumero . '" style="font-size:12.4px" class="ancoraPadraoAzul" onclick="' . $linkDocumento . '"> ' . $objDTO->getStrNomeDocFormatado() . ' </a></div>';
 
-                $arrGrid[] = array($objDTO->getNumIdProtPeticionamento(), $objDTO->getDblIdDocumento(), htmlentities($html), $objDTO->getStrNomeUnidadeFormatada(), $objDTO->getDtaInclusaoDta());
+                $arrGrid[] = array($objDTO->getNumIdProtPeticionamento(), $objDTO->getDblIdDocumento(), $html, $objDTO->getStrNomeUnidadeFormatada(), $objDTO->getDtaInclusaoDta());
                 $strGrid = PaginaSEI::getInstance()->gerarItensTabelaDinamica($arrGrid);
                 $idDocumento = $objDTO->getDblIdDocumento();
                 $idIndspDoc = $objDTO->getNumIdProtPeticionamento();

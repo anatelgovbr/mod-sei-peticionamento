@@ -1144,9 +1144,12 @@ class MdPetIntimacaoRN extends InfraRN
                         $objMdPetIntRelDestExternoDTO = new MdPetRelIntDestExternoDTO();
                         $objMdPetIntRelDestExternoDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntRelDestinatario->getNumIdMdPetIntRelDestinatario());
                         $objMdPetIntRelDestExternoDTO->setNumIdAcessoExterno($idAcessoExt);
+                        $objMdPetIntRelDestExternoDTO->retNumIdMdPetIntRelDestinatario();
                         $objMdPetIntRelDestExternoRN = new MdPetRelIntDestExternoRN();
-                        $objMdPetIntRelDestExternoRN->cadastrarJuridico($objMdPetIntRelDestExternoDTO);
-
+                        $arrObjMdPetIntRelDestExternoDTO = $objMdPetIntRelDestExternoRN->consultar($objMdPetIntRelDestExternoDTO);
+                        if (count($arrObjMdPetIntRelDestExternoDTO) == 0) {
+                            $objMdPetIntRelDestExternoRN->cadastrarJuridico($objMdPetIntRelDestExternoDTO);
+                        }
                         $objMdPetAcessoExtRN->atualizarIdAcessoExternoModulo($idAcessoExt, MdPetAcessoExternoRN::$MD_PET_INTIMACAO);
 
                         $this->_enviaEmailJuridico($dadosCadastro, $value, $dataHoraGeracao, $procedimentoFormatado, $idIntimacao);
@@ -2866,7 +2869,18 @@ class MdPetIntimacaoRN extends InfraRN
             $objContatoDTO->retDblCnpj();
             $objContatoDTO->setStrSinAtivoTipoContato('S');
             $objContatoDTO->setNumIdContato($idsContatoUsuarioExterno, InfraDTO::$OPER_IN);
-            $objContatoDTO->setStrIdxContato('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
+
+            $conta = "^[a-zA-Z0-9\._-]+@";
+            $domino = "[a-zA-Z0-9\._-]+.";
+            $extensao = "([a-zA-Z]{2,4})$";
+            $pattern = $conta.$domino.$extensao;
+            $isEmail = ereg($pattern, $post['txtUsuario']);
+            if($isEmail){
+                $objContatoDTO->setStrEmail('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
+            } else {
+                $txtPesquisa = preg_replace('/[^A-Za-z0-9 \-\+\&]/','', $post['txtUsuario']);
+                $objContatoDTO->setStrIdxContato('%' . $txtPesquisa . '%', InfraDTO::$OPER_LIKE);
+            }
             $objContatoDTO->setNumMaxRegistrosRetorno(50);
             $objContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
 

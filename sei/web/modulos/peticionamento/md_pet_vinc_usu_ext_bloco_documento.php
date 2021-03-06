@@ -63,7 +63,7 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
             <div class="clear"></div>
 
             <div class="bloco" id="divBlcNivelAcesso">
-                <label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso: 
+                <label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso:
                    <img src="<?php echo PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
                         name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso) ?> alt="Ajuda"
                         class="infraImg"/></label>
@@ -80,7 +80,7 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
                     <?php echo $arrHipoteseNivel['nivelAcesso']['descricao'] ?>
                   </label>
               <?php } ?>
-                <input type="hidden" name="hdnNivelAcesso" id="hdnNivelAcesso"
+                <input type="hidden" name="hdnNivelAcesso" id="hdnNivelAcesso" class="hdnNivelAcesso"
                   <?php echo $disabledConsultar?>
                        value="<?php echo isset($arrHipoteseNivel['nivelAcesso']) ? $arrHipoteseNivel['nivelAcesso']['id'] : '' ?>"/>
             </div>
@@ -98,11 +98,11 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
                     </div>
                 <?php else: ?>
                     <label class="infraLabelRadio" id="selHipoteseLegal">
-                      <?php echo utf8_decode($arrHipoteseNivel['hipoteseLegal']['descricao']) ?>
+                      <?php echo $arrHipoteseNivel['hipoteseLegal']['descricao'] ?>
                     </label>
 
                 <?php endif; ?>
-                  <input type="hidden" name="hdnHipoteseLegal" id="hdnHipoteseLegal"
+                  <input type="hidden" name="hdnHipoteseLegal" id="hdnHipoteseLegal" class="hdnHipoteseLegal"
                          value="<?php echo isset($arrHipoteseNivel['hipoteseLegal']) ? $arrHipoteseNivel['hipoteseLegal']['id'] : '' ?>"/>
               </div>
           <?php endif; ?>
@@ -142,7 +142,7 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
                 </button>
             </div>
 <?php   $arrArquivo = null; ?>
-            <table width="99%" class="infraTable" summary="Documento" id="tbDocumento" <?php echo is_null($arrArquivo) ? 'style="display: none"' : null?>>
+            <table width="99%" class="infraTable" summary="Documento" id="tbDocumento">
                 <caption class="infraCaption">&nbsp;</caption>
                 <tr>
                     <th class="infraTh" width="0" style="display: none;">ID Linha</th> <!--0-->

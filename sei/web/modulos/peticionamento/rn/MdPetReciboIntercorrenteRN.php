@@ -112,10 +112,10 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
             $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
             $html .= '</tr>';
         }
-        $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">IP utilizado:</td>';
-        $html .= '<td>' . $reciboDTO->getStrIpUsuario() . '</td>';
-        $html .= '</tr>';
+        //$html .= '<tr>';
+        //$html .= '<td style="font-weight: bold;">IP utilizado:</td>';
+        //$html .= '<td>' . $reciboDTO->getStrIpUsuario() . '</td>';
+        //$html .= '</tr>';
 
         $html .= '<tr>';
         $html .= '<td style="font-weight: bold;">Data e Horário:</td>';

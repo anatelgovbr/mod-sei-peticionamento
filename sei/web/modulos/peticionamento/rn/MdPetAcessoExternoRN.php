@@ -820,7 +820,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		try {
 
 			//Valida Permissao
-			SessaoSEI::getInstance()->validarAuditarPermissao('acesso_externo_cadastrar', __METHOD__, $objAcessoExternoDTO);
+//			SessaoSEI::getInstance()->validarAuditarPermissao('acesso_externo_cadastrar', __METHOD__, $objAcessoExternoDTO);
 
 			//Regras de Negocio
 			//$objInfraException = new InfraException();
@@ -843,7 +843,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		try {
 
 			//Valida Permissao
-			SessaoSEI::getInstance()->validarAuditarPermissao('acesso_externo_cadastrar', __METHOD__, $objAcessoExternoDTO);
+//			SessaoSEI::getInstance()->validarAuditarPermissao('acesso_externo_cadastrar', __METHOD__, $objAcessoExternoDTO);
 
 			//Regras de Negocio
 			//$objInfraException = new InfraException();

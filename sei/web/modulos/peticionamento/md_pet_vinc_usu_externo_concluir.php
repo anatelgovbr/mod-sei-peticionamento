@@ -30,6 +30,7 @@ try {
   $arrObjCargoDTO             = $objMdPetCargoRN->listarDistintos();
   $objMdPetVinculoUsuExtRN    = new MdPetVinculoUsuExtRN();
   $objMdPetVinculoRepresentRN = new MdPetVincRepresentantRN();
+  $strLinkAjaxVerificarSenha = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_assinatura');
 
   //=====================================================
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
@@ -45,7 +46,8 @@ try {
         $arrParam = array();
         $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
         $objMdPetProcessoRN->validarSenha($arrParam);
-
+        $params['pwdsenhaSEI'] = '***********';
+        $_POST['pwdsenhaSEI'] = '***********';
         // organizando tabela procuradores
         if ($_POST['hdnTbUsuarioProcuracao']!=''){
             $dadosProcuradorTemp = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbUsuarioProcuracao']);
@@ -336,6 +338,26 @@ function isValido() {
             document.getElementById("pwdsenhaSEI").focus();
             return false;
         } else {
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: "<?= $strLinkAjaxVerificarSenha ?>",
+                dataType: "json",
+                data: {
+                    strSenha: btoa(senha)
+                },
+                success: function (result) {
+                    var strRetorno = result.responseText;
+                    var retorno = strRetorno.split('"?>\n');
+                    document.getElementById("pwdsenhaSEI").value = retorno[1];
+                },
+                error: function (msgError) {},
+                complete: function (result) {
+                    var strRetorno = result.responseText;
+                    var retorno = strRetorno.split('"?>\n');
+                    document.getElementById("pwdsenhaSEI").value = retorno[1];
+                }
+            });
             return true;
         }
 

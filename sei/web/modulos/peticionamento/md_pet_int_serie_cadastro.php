@@ -78,12 +78,15 @@ try {
 
                 try {
                     $objMdPetIntSerieRN = new MdPetIntSerieRN();
+                    $arrObjMdPetIntSerieDTO = array();
                     foreach ($arrValuesHdnSerie as $itemHdnSerie) {
+                        $objMdPetIntSerieDTO = new MdPetIntSerieDTO();
                         $objMdPetIntSerieDTO->setNumIdSerie($itemHdnSerie);
-                        $objMdPetIntSerieDTO = $objMdPetIntSerieRN->cadastrar($objMdPetIntSerieDTO);
+                        array_push($arrObjMdPetIntSerieDTO, $objMdPetIntSerieDTO);
                     }
-                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntSerieDTO->getNumIdSerie() . '" cadastrado com sucesso.');
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&id_serie=' . $objMdPetIntSerieDTO->getNumIdSerie() . PaginaSEI::getInstance()->montarAncora($objMdPetIntSerieDTO->getNumIdSerie())));
+                    $objMdPetIntSerieDTO = $objMdPetIntSerieRN->cadastrar($arrObjMdPetIntSerieDTO);
+                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntSerieDTO[0]->getNumIdSerie() . '" cadastrado com sucesso.');
+                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&id_serie=' . $objMdPetIntSerieDTO[0]->getNumIdSerie() . PaginaSEI::getInstance()->montarAncora($objMdPetIntSerieDTO[0]->getNumIdSerie())));
                     die;
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);

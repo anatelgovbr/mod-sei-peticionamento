@@ -13,7 +13,7 @@ class MdPetRepresentanteAPIWS
     private $Nome;
     private $Cpf;
     private $Email;
-    private $StaSituacao;
+    private $StrSituacao;
     private $StaTipoRepresentacao;
     private $TipoPoderesLegais;
     private $ProcessosAbrangencia;
@@ -70,17 +70,17 @@ class MdPetRepresentanteAPIWS
     /**
      * @return mixed
      */
-    public function getStaSituacao()
+    public function getStrSituacao()
     {
-        return $this->StaSituacao;
+        return $this->StrSituacao;
     }
 
     /**
-     * @param mixed $StaSituacao
+     * @param mixed $StrSituacao
      */
-    public function setStaSituacao($StaSituacao)
+    public function setStrSituacao($StrSituacao)
     {
-        $this->StaSituacao = $StaSituacao;
+        $this->StrSituacao = $StrSituacao;
     }
 
     /**

@@ -83,8 +83,8 @@ try {
               $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar&acao_origem='.$_GET['acao']);
 
               echo "<script>";
-              echo "window.opener.location = '" . $urlAssinada . "';";
-              echo " window.opener.focus();";
+              echo "window.parent.location = '" . $urlAssinada . "';";
+              echo " window.parent.focus();";
               echo " window.close();";
               echo "</script>";
               die;
@@ -280,26 +280,26 @@ PaginaSEIExterna::getInstance()->fecharHtml();
     function assinar() {
         if (isValido()) {
            
-            if(window.opener.document.getElementById('selTipoProcuracao').value == "S"){
+            if(window.parent.document.getElementById('selTipoProcuracao').value == "S"){
                 //Tabela Processo / Abrangencia
-            document.getElementById('hdnTbProcessos').value = window.opener.document.getElementById('hdnTbProcessos').value
+            document.getElementById('hdnTbProcessos').value = window.parent.document.getElementById('hdnTbProcessos').value
                 //Abrangencia
-            document.getElementById('hdnValidade').value = window.opener.document.getElementById('txtDt').value
+            document.getElementById('hdnValidade').value = window.parent.document.getElementById('txtDt').value
                 //Pessoa Juridica / Física
-            document.getElementById('hdnSelPJSimples').value = window.opener.document.getElementById('selPessoaJuridicaProcSimples').value
+            document.getElementById('hdnSelPJSimples').value = window.parent.document.getElementById('selPessoaJuridicaProcSimples').value
                 //Cpf
-            document.getElementById('hdnCpf').value = window.opener.document.getElementById('hdnCpf').value
+            document.getElementById('hdnCpf').value = window.parent.document.getElementById('hdnCpf').value
                 //Tipo de Poder
-            document.getElementById('hdnTipoPoder').value = window.opener.document.getElementById('hdnTpPoderes').value
+            document.getElementById('hdnTipoPoder').value = window.parent.document.getElementById('hdnTpPoderes').value
                 //Outorgante
-            document.getElementById('hdnOutorgante').value = window.opener.document.getElementById('hdnRbOutorgante').value
+            document.getElementById('hdnOutorgante').value = window.parent.document.getElementById('hdnRbOutorgante').value
 
             }
-            document.getElementById('hdnSelTipoProcuracaoPai').value = window.opener.document.getElementById('selTipoProcuracao').value;
-            document.getElementById('hdnSelPessoaJuridicaPai').value = window.opener.document.getElementById('selPessoaJuridica').value;            
-            document.getElementById('hdnIdUsuarioPai').value = window.opener.document.getElementById('hdnIdUsuario').value;
-            document.getElementById('hdnTbUsuarioProcuracaoPai').value = window.opener.document.getElementById('hdnTbUsuarioProcuracao').value;
-            document.getElementById('hdnIdContExternoPai').value = window.opener.document.getElementById('hdnIdContExterno').value;
+            document.getElementById('hdnSelTipoProcuracaoPai').value = window.parent.document.getElementById('selTipoProcuracao').value;
+            document.getElementById('hdnSelPessoaJuridicaPai').value = window.parent.document.getElementById('selPessoaJuridica').value;
+            document.getElementById('hdnIdUsuarioPai').value = window.parent.document.getElementById('hdnIdUsuario').value;
+            document.getElementById('hdnTbUsuarioProcuracaoPai').value = window.parent.document.getElementById('hdnTbUsuarioProcuracao').value;
+            document.getElementById('hdnIdContExternoPai').value = window.parent.document.getElementById('hdnIdContExterno').value;
 
             processando();
             document.getElementById('frmConcluir').submit();

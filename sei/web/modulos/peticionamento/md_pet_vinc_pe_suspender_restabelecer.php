@@ -133,73 +133,88 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
         <br/><br/>
             <fieldset>
             <legend>ATENÇÃO</legend>
-            <p id=txtInformativo><?
-            if ($_GET['operacao']==MdPetVincRepresentantRN::$RP_ATIVO){?>
-            O Restabelecimento do Responsável Legal deve ser motivado em documento específico, a ser indicado no campo abaixo. Todas as Procurações Eletrônicas geradas serão restabelecidas, o Usuário Externo será notificado e este ato constará no processo referente à Pessoa Jurídica.</p>
-            <? }else{ ?>
-            A Suspensão do Responsável Legal deve ser motivado em documento específico, a ser indicado no campo abaixo. Todas as Procurações Eletrônicas geradas pelo Responsável Legal serão suspensas, o Usuário Externo será notificado e este ato constará no processo referente à Pessoa Jurídica. A suspensão como Responsável Legal não impede o Usuário Externo de peticionar em próprio nome.</p>
-            <? } ?>
-            </fieldset>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <p id=txtInformativo><?
+                        if ($_GET['operacao'] == MdPetVincRepresentantRN::$RP_ATIVO){
+                        ?>
+                        O Restabelecimento do Responsável Legal deve ser motivado em documento específico, a ser
+                        indicado no
+                        campo abaixo. Todas as Procurações Eletrônicas geradas serão restabelecidas, o Usuário Externo
+                        será
+                        notificado e este ato constará no processo referente à Pessoa Jurídica.</p>
+                    <? } else { ?>
+                        A Suspensão do Responsável Legal deve ser motivado em documento específico, a ser indicado no campo abaixo. Todas as Procurações Eletrônicas geradas pelo Responsável Legal serão suspensas, o Usuário Externo será notificado e este ato constará no processo referente à Pessoa Jurídica. A suspensão como Responsável Legal não impede o Usuário Externo de peticionar em próprio nome.</p>
+                    <? } ?>
+                </div>
+            </div>
 
-            <br/><br/>
-            <label id="lblCnpj" class="infraLabelObrigatorio" style="display: inline-block;  min-width:180px;  width: 16.5%">CNPJ:<br/>
+        </fieldset>
+        <div class="row">
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                <label id="lblCnpj" class="infraLabelObrigatorio">CNPJ:</label><br/>
                 <input type="text" id="txtCnpj" name="txtCnpj"
-                       class="infraText"
+                       class="infraText form-control"
                        disabled="disabled"
                        value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objMdPetVinculoDTO->getDblCNPJ())) ?>"
                        onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                <br/><br/>
-            </label>
-            <label id="lblRazaoSocial" class="infraLabelObrigatorio" style="display: inline-block; min-width:120px;  width: 60%">Razão Social:<br/>
+            </div>
+            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                <label id="lblRazaoSocial" class="infraLabelObrigatorio">Razão Social:</label><br/>
                 <input type="text" id="txtRazaoSocial" name="txtRazaoSocial"
-                       class="infraText" style="min-width:300px;  width: 123.5%"
+                       class="infraText form-control"
                        disabled="disabled"
                        value="<?= PaginaSEI::tratarHTML($objMdPetVinculoDTO->getStrRazaoSocialNomeVinc()) ?>"
                        onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                <br/><br/>
-            </label>
-
-            <br/>
-            <label id="lblCnpj" class="infraLabelObrigatorio" style="display: inline-block; min-width:180px;  width: 16.5%">CPF do Responsável Legal:<br/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                <label id="lblCnpj" class="infraLabelObrigatorio">CPF do Responsável Legal:</label><br/>
                 <input type="text" id="txtCpf" name="txtCpf"
-                       class="infraText"
+                       class="infraText form-control"
                        disabled="disabled"
                        value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCpf($objMdPetVinculoDTO->getStrCpfContatoRepresentante())) ?>"
                        onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                <br/><br/>
-            </label>
-            <label id="txtRazaoSocial" class="infraLabelObrigatorio" style="display: inline-block; min-width:120px;  width: 60%">Nome do Responsável Legal:<br/>
+
+            </div>
+            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                <label id="txtRazaoSocial" class="infraLabelObrigatorio">Nome do Responsável Legal:</label><br/>
                 <input type="text" id="txtNome" name="txtNome"
                        disabled="disabled"
-                       class="infraText" style="min-width:300px;  width: 123.5%"
+                       class="infraText form-control"
                        value="<?= PaginaSEI::tratarHTML($objMdPetVinculoDTO->getStrNomeContatoRepresentante()) ?>"
                        onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                <br/><br/>
-            </label>
 
-            <br/>
-            <label class="infraLabelObrigatorio" style="display: inline-block; min-width:180px;  width: 16.5%">Número SEI da Justificativa:<br/>
-                <input type="text" id="txtNumeroSei" name="txtNumeroSei" onblur="validarNumeroSEI();" 
-                       class="infraText"
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                <label class="infraLabelObrigatorio">Número
+                    SEI da Justificativa: </label><br/>
+                <input type="text" id="txtNumeroSei" name="txtNumeroSei" onblur="validarNumeroSEI();"
+                       class="infraText form-control"
                        value=""
                        onkeypress="return infraMascaraTexto(this,event,250);" maxlength="10"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            </label>
-            <label class="infraLabelObrigatorio" style="display: inline-block; width: 60% "><br/>
-                <input type="text" id="txtTipo" name="txtTipo" class="infraText" style="min-width:300px;  width: 123.5%"
+            </div>
+            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                <label class="infraLabelObrigatorio"></label><br/>
+                <input type="text" id="txtTipo" name="txtTipo" class="infraText form-control"
                        readonly="readonly"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtTipo ?>"/>
-            </label>
-            <br/><br/>
-            <input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?php echo $idVinculo?>"/>
-            <input type="hidden" name="hdnOperacao" id="hdnOperacao" value="<?php echo $operacao?>"/>
-            <input type="hidden" name="hdnIdContatoNovo" id="hdnIdContatoNovo"  value=""/>
-            <input type="hidden" name="hdnIdContato" id="hdnIdContato"  value="<?= $objMdPetVinculoDTO->getNumIdContatoRepresentante() ?>"/>
-            <input type="hidden" name="hdnIdDocumento" id="hdnIdDocumento"  value=""/>
+            </div>
+        </div>
+        <input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?php echo $idVinculo ?>"/>
+        <input type="hidden" name="hdnOperacao" id="hdnOperacao" value="<?php echo $operacao ?>"/>
+        <input type="hidden" name="hdnIdContatoNovo" id="hdnIdContatoNovo" value=""/>
+        <input type="hidden" name="hdnIdContato" id="hdnIdContato"
+               value="<?= $objMdPetVinculoDTO->getNumIdContatoRepresentante() ?>"/>
+        <input type="hidden" name="hdnIdDocumento" id="hdnIdDocumento" value=""/>
     </form>
 
 <?php

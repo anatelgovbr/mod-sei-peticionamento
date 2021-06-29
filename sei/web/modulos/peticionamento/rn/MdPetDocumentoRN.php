@@ -1310,7 +1310,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 					$objInfraSip = new InfraSip(SessaoSEI::getInstance());
 					$objInfraSip->autenticar($objAssinaturaDTO->getNumIdOrgaoUsuario(),
-							$objAssinaturaDTO->getNumIdContextoUsuario(),
+							$objAssinaturaDTO->getNumIdUsuario(),
 							$objUsuarioDTO->getStrSigla(),
 							$objAssinaturaDTO->getStrSenhaUsuario());
 	

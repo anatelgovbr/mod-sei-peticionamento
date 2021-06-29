@@ -41,7 +41,7 @@ class MdPetIntRespostaRN extends InfraRN {
             	$strLink = $urlBase . '/controlador_externo.php?' . $strParam . '&infra_hash=' . $hash;
                       
                 $js = 'window.location = \''.$strLink.'\';';
-                $imgResposta = '<img src="modulos/peticionamento/imagens/intimacao_peticionar_resposta.png">';
+                $imgResposta = '<img src="modulos/peticionamento/imagens/png/intimacao_peticionar_resposta.png" style="width: 24px">';
                 $ToolTipTitle = 'Responder Intimação Eletrônica';
                 $ToolTipTitle .= '<br/>Documento Principal: ';
                 
@@ -86,6 +86,7 @@ class MdPetIntRespostaRN extends InfraRN {
             
             $objMdPetIntPrazoTipoRespostaRN = new MdPetIntPrazoRN();
             $arr                            = $objMdPetIntPrazoTipoRespostaRN->retornarTipoRespostaValido(array($idIntimacao,$idMdPetDest));
+
             if(count($arr) > 0) {
                 foreach ($idAceite as $id) {
                    $linkIdAceite .= '&id_aceite[]='.$id;
@@ -104,7 +105,7 @@ class MdPetIntRespostaRN extends InfraRN {
             	$strLink = $urlBase . '/controlador_externo.php?' . $strParam . '&infra_hash=' . $hash;
                       
                 $js = 'window.location = \''.$strLink.'\';';
-                $imgResposta = '<img src="modulos/peticionamento/imagens/intimacao_peticionar_resposta.png">';
+                $imgResposta = '<img src="modulos/peticionamento/imagens/png/intimacao_peticionar_resposta.png" style="width: 24px">';
                 $ToolTipTitle = 'Responder Intimação Eletrônica';
                 $ToolTipTitle .= '<br/>Documento Principal: ';
                 
@@ -187,7 +188,7 @@ class MdPetIntRespostaRN extends InfraRN {
 
 
             //  $js = 'alert(\'Você não pode mais responder a intimação destinada á '.$razao.' ('.infraUtil::formatarCnpj($cnpj).') pois sua vinculação á Pessoa Jurídica está '.$estado.'.\')';
-            $imgResposta = '<img src="modulos/peticionamento/imagens/intimacao_peticionar_resposta_negada.png">';
+            $imgResposta = '<img src="modulos/peticionamento/imagens/png/intimacao_peticionar_resposta_negada.png" style="width: 24px">';
             $ToolTipTitle = 'Responder Intimação Eletrônica';
             $ToolTipTitle .= '<br/>Documento Principal: ';
 

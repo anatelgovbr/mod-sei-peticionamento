@@ -5,10 +5,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '3.4.0';
+    private $versaoAtualDesteModulo = '4.0.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '4.0.0');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -92,7 +92,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '1.532.3';
+            $numVersaoInfraRequerida = '1.583.4';
             $versaoInfraFormatada = (int)str_replace('.', '', VERSAO_INFRA);
             $versaoInfraReqFormatada = (int)str_replace('.', '', $numVersaoInfraRequerida);
 
@@ -148,7 +148,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
                 case '3.2.0':
                     $this->instalarv330();
                 case '3.3.0':
-                    $this->instalarv340();
+                    $this->instalarv400();
                     break;
 
                 default:
@@ -695,6 +695,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -1173,8 +1174,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         } elseif (BancoSEI::getInstance() instanceof InfraOracle) {
             BancoSEI::getInstance()->executarSql("drop sequence seq_tarefa");
             BancoSEI::getInstance()->executarSql("CREATE SEQUENCE seq_tarefa START WITH " . $numIdTarefaMax . " INCREMENT BY 1 NOCACHE NOCYCLE");
-        } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
-            BancoSEI::getInstance()->executarSql("DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numIdTarefaMax . ");");
         }
 
         //campo setStrSinFecharAndamentosAbertos de N para S por estar lançando andamento em processo que estara aberto na unidade (seguindo recomendação do manual do SEI)
@@ -1196,8 +1195,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         } elseif (BancoSEI::getInstance() instanceof InfraOracle) {
             BancoSEI::getInstance()->executarSql("drop sequence seq_tarefa");
             BancoSEI::getInstance()->executarSql("CREATE SEQUENCE seq_tarefa START WITH " . $numIdTarefaMax . " INCREMENT BY 1 NOCACHE NOCYCLE");
-        } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
-            BancoSEI::getInstance()->executarSql("DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numIdTarefaMax . ");");
         }
 
         $tarefaDTO2 = new TarefaDTO();
@@ -1218,8 +1215,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         } elseif (BancoSEI::getInstance() instanceof InfraOracle) {
             BancoSEI::getInstance()->executarSql("drop sequence seq_tarefa");
             BancoSEI::getInstance()->executarSql("CREATE SEQUENCE seq_tarefa START WITH " . $numIdTarefaMax . " INCREMENT BY 1 NOCACHE NOCYCLE");
-        } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
-            BancoSEI::getInstance()->executarSql("DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numIdTarefaMax . ");");
         }
 
         $tarefaDTO3 = new TarefaDTO();
@@ -1240,8 +1235,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         } elseif (BancoSEI::getInstance() instanceof InfraOracle) {
             BancoSEI::getInstance()->executarSql("drop sequence seq_tarefa");
             BancoSEI::getInstance()->executarSql("CREATE SEQUENCE seq_tarefa START WITH " . $numIdTarefaMax . " INCREMENT BY 1 NOCACHE NOCYCLE");
-        } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
-            BancoSEI::getInstance()->executarSql("DBCC CHECKIDENT ('seq_tarefa', RESEED, " . $numIdTarefaMax . ");");
         }
 
         $tarefaDTO4 = new TarefaDTO();
@@ -1354,7 +1347,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrSinAtivo('S');
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
-
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setNumIdTipoFormulario(null);
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
@@ -1648,7 +1641,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_indisp_anexo');
 
             $this->logar('DELETANDO A SEQUENCE seq_md_pet_indisp_anexo');
-            if ((BancoSEI::getInstance() instanceof InfraMySql) OR (BancoSEI::getInstance() instanceof InfraSqlServer)) {
+            if ((BancoSEI::getInstance() instanceof InfraMySql) or (BancoSEI::getInstance() instanceof InfraSqlServer)) {
                 BancoSEI::getInstance()->executarSql("DROP TABLE seq_md_pet_indisp_anexo");
             } else if (BancoSEI::getInstance() instanceof InfraOracle) {
                 BancoSEI::getInstance()->executarSql("DROP SEQUENCE seq_md_pet_indisp_anexo");
@@ -2026,18 +2019,18 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             }
         }
 
-        $this->logar('DELETANDO A CHAVE ESTRANGEIRA md_pet_int_rel_dest.fk3_md_pet_int_rel_dest');
-        $objInfraMetaBD->excluirChaveEstrangeira('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
 
-
-        $this->logar('DELETANDO O INDICE md_pet_int_rel_dest.fk3_md_pet_int_rel_dest');
-        $arrIndices = $objInfraMetaBD->obterIndices(null, md_pet_int_rel_dest);
-        if($arrIndices) {
-            foreach ($arrIndices['md_pet_int_rel_dest'] as $indice => $valor) {
-                if ($indice == 'fk3_md_pet_int_rel_dest') {
-                    $objInfraMetaBD->excluirIndice('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
-                }
-            }
+        if (BancoSEI::getInstance() instanceof InfraMySql) {
+            $this->logar('DELETANDO O INDICE md_pet_int_rel_dest.fk3_md_pet_int_rel_dest');
+            $objInfraMetaBD->excluirChaveEstrangeira('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
+            $objInfraMetaBD->excluirIndice('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
+        } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+            $this->logar('DELETANDO O INDICE md_pet_int_rel_dest.fk3_md_pet_int_rel_dest');
+            $objInfraMetaBD->excluirChaveEstrangeira('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
+            $objInfraMetaBD->excluirIndice('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
+        } else if (BancoSEI::getInstance() instanceof InfraOracle)  {
+            $this->logar('DELETANDO A CHAVE ESTRANGEIRA md_pet_int_rel_dest.fk3_md_pet_int_rel_dest');
+            $objInfraMetaBD->excluirChaveEstrangeira('md_pet_int_rel_dest', 'fk3_md_pet_int_rel_dest');
         }
 
         $this->logar('DELETANDO A COLUNA md_pet_int_rel_dest.id_acesso_externo');
@@ -2535,14 +2528,24 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
     }
 
-    protected function instalarv340()
+    protected function instalarv400()
     {
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.4.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.0.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+        $objInfraMetaBD->setBolValidarIdentificador(true);
+
+        $arrTabelas = array('md_pet_acesso_externo', 'md_pet_criterio', 'md_pet_ext_arquivo_perm', 'md_pet_hipotese_legal', 'md_pet_indisp_doc', 'md_pet_indisponibilidade', 'md_pet_int_aceite', 'md_pet_int_dest_resposta', 'md_pet_int_prazo_tacita', 'md_pet_int_prot_disponivel', 'md_pet_int_protocolo', 'md_pet_int_rel_dest', 'md_pet_int_rel_intim_resp', 'md_pet_int_rel_resp_doc', 'md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tpo_res_des', 'md_pet_int_serie', 'md_pet_int_tipo_intimacao', 'md_pet_int_tipo_resp', 'md_pet_intimacao', 'md_pet_rel_recibo_docanexo', 'md_pet_rel_recibo_protoc', 'md_pet_rel_tp_ctx_contato', 'md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_unid', 'md_pet_tamanho_arquivo', 'md_pet_tipo_processo', 'md_pet_tp_processo_orientacoes', 'md_pet_usu_externo_menu',
+            //Lista de 13 tabelas que faltou processar o indice na versao 3.0.1
+            'md_pet_adm_integ_funcion', 'md_pet_adm_integ_param', 'md_pet_adm_integracao', 'md_pet_adm_tipo_poder', 'md_pet_adm_vinc_rel_serie', 'md_pet_adm_vinc_tp_proced', 'md_pet_int_tp_int_orient', 'md_pet_rel_int_dest_extern', 'md_pet_rel_vincrep_protoc', 'md_pet_rel_vincrep_tipo_poder', 'md_pet_vinculo', 'md_pet_vinculo_documento', 'md_pet_vinculo_represent');
+
+        $this->fixIndices($objInfraMetaBD, $arrTabelas);
 
         $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.4.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+        BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+
     }
 
     private function existeIdEmailSistemaPecitionamento()
@@ -2785,6 +2788,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -2996,6 +3000,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -3208,6 +3213,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -3418,6 +3424,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -3628,6 +3635,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -3838,6 +3846,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -4048,6 +4057,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setArrObjRelSerieAssuntoDTO(array());
         $serieDTO->setArrObjRelSerieVeiculoPublicacaoDTO(array());
         $serieDTO->setNumIdTipoFormulario(null);
+        $serieDTO->setStrSinUsuarioExterno('N');
         $serieDTO->setArrObjSerieRestricaoDTO(array());
 
         $serieDTO = $serieRN->cadastrarRN0642($serieDTO);
@@ -4058,15 +4068,18 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
     }
 
-    protected function fixIndices(InfraMetaBD $objInfraMetaBD, $arrTabelas)
+    protected function fixIndices(InfraMetaBD $objInfraMetaBD, $arrTabelas, $debug = false)
     {
-        InfraDebug::getInstance()->setBolDebugInfra(true);
-
+        if(!$debug) {
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+        }
         $this->logar('ATUALIZANDO INDICES...');
 
         $objInfraMetaBD->processarIndicesChavesEstrangeiras($arrTabelas);
 
-        InfraDebug::getInstance()->setBolDebugInfra(false);
+        if(!$debug) {
+            InfraDebug::getInstance()->setBolDebugInfra(false);
+        }
     }
 
 }

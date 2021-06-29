@@ -674,7 +674,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $usuarioRN = new UsuarioRN();
             $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
 
-            if (count($usuarioDTO) > 0) {
+            if ($usuarioDTO) {
                 if (!empty(SessaoSEI::getInstance()->getNumIdUnidadeAtual())) {
                     $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
                 } else {
@@ -690,7 +690,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                 $UnidadeRN = new UnidadeRN();
                 $arrObjUnidadeDTO = $UnidadeRN->consultarRN0125($objUnidadeDTO);
-                if (count($arrObjUnidadeDTO) > 0) {
+                if ($arrObjUnidadeDTO) {
                     $arrDadosEmail['sitio_internet_orgao'] = $arrObjUnidadeDTO->getStrSitioInternetOrgaoContato();
                 }
             }
@@ -766,7 +766,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $usuarioRN = new UsuarioRN();
             $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
 
-            if (count($usuarioDTO) > 0) {
+            if ($usuarioDTO) {
                 if (!empty(SessaoSEI::getInstance()->getNumIdUnidadeAtual())) {
                     $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
                 } else {
@@ -782,7 +782,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                 $UnidadeRN = new UnidadeRN();
                 $arrObjUnidadeDTO = $UnidadeRN->consultarRN0125($objUnidadeDTO);
-                if (count($arrObjUnidadeDTO) > 0) {
+                if ($arrObjUnidadeDTO) {
                     $arrDadosEmail['sitio_internet_orgao'] = $arrObjUnidadeDTO->getStrSitioInternetOrgaoContato();
                 }
             }
@@ -1248,7 +1248,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaRN = new EmailSistemaRN();
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
-        if (count($objEmailSistemaDTO) == 0) {
+        if (is_null($objEmailSistemaDTO)) {
             throw new InfraException('Tipo de email MD_PET_VINC_SUSPENSAO não encontrado');
         }
 
@@ -1308,7 +1308,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaRN = new EmailSistemaRN();
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
-        if (count($objEmailSistemaDTO) == 0) {
+        if (is_null($objEmailSistemaDTO)) {
             throw new InfraException('Tipo de email MD_PET_VINC_RESTABELECIMENTO não encontrado');
         }
 

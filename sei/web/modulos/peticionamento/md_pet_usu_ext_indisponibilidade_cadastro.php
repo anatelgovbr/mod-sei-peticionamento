@@ -109,8 +109,8 @@ PaginaPeticionamentoExterna::getInstance()->fecharJavaScript();
 PaginaPeticionamentoExterna::getInstance()->fecharHead();
 PaginaPeticionamentoExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 $urlBaseLink = "";
-
-if (count($arrAcoesRemover) > 0 || $_POST['hdnAnexos'] != "") {
+$qtdArrAcoesRemover = (is_array($arrAcoesRemover) ? count($arrAcoesRemover) : 0);
+if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
 
     if ($_GET['acao_externa'] == 'md_pet_usu_ext_indisponibilidade_consultar') {
         $arrDados = split("±", $_POST['hdnAnexos'], 3);

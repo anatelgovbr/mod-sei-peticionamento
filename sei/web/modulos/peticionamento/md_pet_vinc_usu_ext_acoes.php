@@ -255,7 +255,7 @@ if ($verificaNivelAcessoTipoProcesso == 'S') {
 
     $arrObjHipoteseLegal = $objHipoteseLegalRN->consultar($objHipoteseLegalDTO);
 
-    if (count($arrObjHipoteseLegal)) {
+    if ($arrObjHipoteseLegal) {
         if ($staNivelAcesso > 0) {
             $arrHipoteseNivel['hipoteseLegal']['id'] = $idHipoteseLegal;
             if ($arrObjHipoteseLegal->getStrStaNivelAcesso() == ProtocoloRN::$NA_RESTRITO) {// Restrito

@@ -26,7 +26,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
  <input type="hidden" id="hdnDocPrincipal" name="hdnDocPrincipal" value="<?=$_POST['hdnDocPrincipal']?>"/>
  <input type="hidden" id="hdnDocPrincipalInicial" name="hdnDocPrincipalInicial" value="<?=$_POST['hdnDocPrincipalInicial']?>"/>
  
- <fieldset id="field3" class="infraFieldset sizeFieldset">
+ <fieldset id="field3" class="infraFieldset sizeFieldset form-control">
  <legend class="infraLegend">&nbsp; Documentos &nbsp;</legend>
 	<br/>
 	<label>Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre os dados informados e os documentos. Os Níveis de Acesso que forem indicados abaixo estarão condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso.</label>
@@ -73,7 +73,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
    <? if( $externo == 'S' ) { ?>	   
 	   
 		<div style="float: left; height: 42px; margin-right: 10px;">
-			<label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipal) ?> alt="Ajuda" class="infraImg"/></label>
+			<label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipal, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label>
 			<br/>
 			<label class="infraLabel">
 			<?= $strTipoDocumentoPrincipal ?>
@@ -84,7 +84,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 		</div>
 
 		<div style="float: left; height: 42px;">
-			<label id="lblPublico" class="infraLabelObrigatorio">Complemento do Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipComplementoTipoDocumento) ?> alt="Ajuda" class="infraImg"/></label>
+			<label id="lblPublico" class="infraLabelObrigatorio">Complemento do Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipComplementoTipoDocumento, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label>
 			<br/>
 			<input type="text" class="infraText" name="complementoPrincipal" id="complementoPrincipal" style="width: 240px;" maxlength="40" />
 		</div>
@@ -104,12 +104,12 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 
 		<div style="float: left;">
 			<? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
-				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 				<select class="infraSelect" id="nivelAcesso1" name="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" style="width: 120px; margin-right: 10px;">
 				<?=$strItensSelNivelAcesso?>
 				</select>
 			<? } else if( $isNivelAcessoPadrao == 'S' ) { ?>
-				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 				<label class="infraLabel"><?= $strNomeNivelAcessoPadrao ?></label>
 				<input type="hidden" name="nivelAcesso1" id="nivelAcesso1" value="<?= $nivelAcessoPadrao ?>" />
 			<? } ?>
@@ -123,7 +123,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	         
 	    <?if($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S' ) { ?>  
 	         
-	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         <select class="infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" style="width: 95%; float: left; margin-right: 5px;">
 	            <option value=""></option>
 	            <?
@@ -139,7 +139,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	         
 	         <? } else if($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1" ) { ?>
 	         
-	          <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+	          <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         <label class="infraLabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?= $strHipoteseLegalPadrao ?> </label>
 	         <input type="hidden" name="hipoteseLegal1" id="hipoteseLegal1" value="<?= $idHipoteseLegalPadrao ?>" />   
 	         	         
@@ -159,12 +159,12 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 
 	<div style="float: left;">
 		<? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
-			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 			<select class="infraSelect" id="nivelAcesso1" name="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" style="width: 120px; margin-right: 10px;">
 			<?=$strItensSelNivelAcesso?>
 			</select>
 		<? } else if( $isNivelAcessoPadrao == 'S' ) { ?>
-			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 			<label class="infraLabel"><?= $strNomeNivelAcessoPadrao ?></label>
 			<input type="hidden" name="nivelAcesso1" id="nivelAcesso1" value="<?= $nivelAcessoPadrao ?>" />
 		<? } ?>
@@ -179,7 +179,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	         
 	         <?if($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S' ) { ?>  
 	         
-	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         <select class="infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" style="width: 95%; float: left; margin-right: 5px;">
 	            <option value=""></option>
 	            <?
@@ -195,7 +195,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	         
 	          <? } else if($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1" ) { ?>
 	         
-	          <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+	          <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         <label class="infraLabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?= $strHipoteseLegalPadrao ?> </label>
 	         <input type="hidden" name="hipoteseLegal1" id="hipoteseLegal1" value="<?= $idHipoteseLegalPadrao ?>" />   
 	         	         
@@ -206,10 +206,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	<div style="clear: both;">&nbsp;</div>
 
 	<div style="float: left; margin-right: 20px;">
-		<label id="lblPublico" class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato) ?> alt="Ajuda" class="infraImg"/></label>
-		<input type="radio" name="formatoDocumentoPrincipal" value="nato" id="rdNato1_1" onclick="selecionarFormatoNatoDigitalPrincipal()" />
+		<label id="lblPublico" class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label><br />
+		<input type="radio" class="infraRadio" name="formatoDocumentoPrincipal" value="nato" id="rdNato1_1" onclick="selecionarFormatoNatoDigitalPrincipal()" />
 		<label for="rdNato1_1" class="infraLabelRadio">Nato-digital</label>
-	    <input type="radio" name="formatoDocumentoPrincipal" value="digitalizado" id="rdDigitalizado1_2" onclick="selecionarFormatoDigitalizadoPrincipal()" />
+	    <input type="radio" class="infraRadio" name="formatoDocumentoPrincipal" value="digitalizado" id="rdDigitalizado1_2" onclick="selecionarFormatoDigitalizadoPrincipal()" />
 	    <label for="rdDigitalizado1_2" class="infraLabelRadio">Digitalizado</label>
 	</div>
      
@@ -228,7 +228,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 		</div>
 	</div>
 
-	<div id="camposDigitalizadoPrincipalBotao" style="float: left; width: 15%;">
+	<div id="camposDigitalizadoPrincipalBotao" style="float: left; width: 15%; margin-top: 26px">
 		<input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('1')">
 	</div>
 
@@ -292,7 +292,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
        <input style="margin-top:0.3%" type="file" id="fileArquivoEssencial" name="fileArquivoEssencial" size="50" /> <br/><br/>
    
 		<div style="float: left; height: 42px;">
-			<label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento) ?> alt="Ajuda" class="infraImg"/></label>
+			<label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label>
 			<br/>
        	 
 			<select class="infraSelect" style="width: 200px; margin-right: 10px;" name="tipoDocumentoEssencial" id="tipoDocumentoEssencial" >
@@ -319,7 +319,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 		</div>
 
 		<div style="float: left; height: 42px;">
-			<label id="lblPublico" class="infraLabelObrigatorio">Complemento do Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipComplementoTipoDocumento) ?> alt="Ajuda" class="infraImg"/></label>
+			<label id="lblPublico" class="infraLabelObrigatorio">Complemento do Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipComplementoTipoDocumento, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label>
 			<br/>
 			<input type="text" class="infraText" name="complementoEssencial" id="complementoEssencial" style="width: 240px;" maxlength="40" />
 		</div>
@@ -328,12 +328,12 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 
 	<div style="float: left;">
 			<? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
-				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 				<select class="infraSelect" id="nivelAcesso2" name="nivelAcesso2" onchange="selectNivelAcesso('nivelAcesso2', 'hipoteseLegal2')" style="width: 120px; margin-right: 10px;">
 				<?=$strItensSelNivelAcesso?>
 				</select>
 			<? } else {?>
-				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+				<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 				<label class="infraLabelRadio"><?= $strNomeNivelAcessoPadrao ?></label>
 				<input type="hidden" value="<?= $nivelAcessoPadrao ?>" id="nivelAcesso2" name="nivelAcesso2" />
 			<?} ?>
@@ -347,7 +347,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
     
          <? if($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
 	         
-	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         
 	         <select class="infraSelect" id="hipoteseLegal2" name="hipoteseLegal2" style="width: 95%; float: left; margin-right: 5px;">
 	            <option value=""></option>
@@ -364,7 +364,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
          
          <? } else if($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1" ){ ?>
          	
-         	<label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+         	<label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         <label class="infraLabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?= $strHipoteseLegalPadrao ?> </label>
 	         <input type="hidden" name="hipoteseLegal2" id="hipoteseLegal2" value="<?= $idHipoteseLegalPadrao ?>" />   
          
@@ -375,10 +375,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	<div style="clear: both;">&nbsp;</div>
 
 	<div style="float: left; margin-right: 20px;">
-		<label id="lblPublico" class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato) ?> alt="Ajuda" class="infraImg"/></label>
-		<input type="radio" name="formatoDocumentoEssencial" value="nato" id="rdNato2_1" onclick="selecionarFormatoNatoDigitalEssencial()" />
+		<label id="lblPublico" class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label><br />
+		<input type="radio" class="infraRadio" name="formatoDocumentoEssencial" value="nato" id="rdNato2_1" onclick="selecionarFormatoNatoDigitalEssencial()" />
 		<label for="rdNato2_1" class="infraLabelRadio">Nato-digital</label>
-		<input type="radio" name="formatoDocumentoEssencial" value="digitalizado" id="rdDigitalizado2_2" onclick="selecionarFormatoDigitalizadoEssencial()" />
+		<input type="radio" class="infraRadio" name="formatoDocumentoEssencial" value="digitalizado" id="rdDigitalizado2_2" onclick="selecionarFormatoDigitalizadoEssencial()" />
 		<label for="rdDigitalizado2_2" class="infraLabelRadio">Digitalizado</label>
 	</div>
 
@@ -397,7 +397,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 		</div>
 	</div>
       
-	<div id="camposDigitalizadoEssencialBotao" style="float: left; width: 15%;">
+	<div id="camposDigitalizadoEssencialBotao" style="float: left; width: 15%; margin-top: 26px">
 		<input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('2')">
 	</div>
       
@@ -459,7 +459,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	     <input style="margin-top:0.3%" type="file" id="fileArquivoComplementar" name="fileArquivoComplementar" size="50" /> <br/><br/>
    
 		<div style="float: left; height: 42px;">
-			<label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento) ?> alt="Ajuda" class="infraImg"/></label>
+			<label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label>
 			<br/>
 			
 			<select class="infraSelect" style="width: 200px; margin-right: 10px;" name="tipoDocumentoComplementar" id="tipoDocumentoComplementar" >
@@ -486,7 +486,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 		</div>
 
 		<div style="float: left; height: 42px;">
-			<label id="lblPublico" class="infraLabelObrigatorio">Complemento do Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipComplementoTipoDocumento) ?> alt="Ajuda" class="infraImg"/></label>
+			<label id="lblPublico" class="infraLabelObrigatorio">Complemento do Tipo de Documento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipComplementoTipoDocumento, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label>
 			<br/>
 			<input type="text" class="infraText" name="complementoComplementar" id="complementoComplementar" style="width: 240px;" maxlength="40" />
 		</div>
@@ -495,12 +495,12 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 
 	<div style="float: left;">
 		<? if( $isUsuarioExternoPodeIndicarNivelAcesso == 'S') { ?>
-			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 			<select class="infraSelect" id="nivelAcesso3" name="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" style="width: 120px; margin-right: 10px;">
 			<?=$strItensSelNivelAcesso?>
 			</select>
 		<? } else {?>
-			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+			<label id="lblPublico" class="infraLabelObrigatorio">Nível de Acesso: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcessoPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 			<label class="infraLabelRadio"><?= $strNomeNivelAcessoPadrao ?></label>
 			<input type="hidden" value="<?= $nivelAcessoPadrao ?>" id="nivelAcesso3" name="nivelAcesso3" />
 		<?} ?>
@@ -514,7 +514,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
        
          <? if($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
 	         
-	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+	         <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         
 	         <select class="infraSelect" id="hipoteseLegal3" name="hipoteseLegal3" style="width: 95%; float: left; margin-right: 5px;">
 	            <option value=""></option>
@@ -531,7 +531,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
          
          <? } else if($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1" ){ ?>
          	
-         	 <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?> alt="Ajuda" class="infraImg"/></label> <br/>
+         	 <label id="lblPublico" class="infraLabelObrigatorio">Hipótese Legal: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label> <br/>
 	         <label class="infraLabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?= $strHipoteseLegalPadrao ?> </label>
 	         <input type="hidden" name="hipoteseLegal3" id="hipoteseLegal3" value="<?= $idHipoteseLegalPadrao ?>" />   
          
@@ -542,10 +542,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 	<div style="clear: both;">&nbsp;</div>
 
 	<div style="float: left; margin-right: 20px;">
-		<label id="lblPublico" class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato) ?> alt="Ajuda" class="infraImg"/></label>
-		<input type="radio" name="formatoDocumentoComplementar" value="nato" id="rdNato3_1" onclick="selecionarFormatoNatoDigitalComplementar()" />
+		<label id="lblPublico" class="infraLabelObrigatorio">Formato: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato, 'Ajuda') ?> alt="Ajuda" class="infraImg"/></label><br />
+        <input type="radio" class="infraRadio" name="formatoDocumentoComplementar" value="nato" id="rdNato3_1" onclick="selecionarFormatoNatoDigitalComplementar()" />
 		<label for="rdNato3_1" class="infraLabelRadio">Nato-digital</label>
-		<input type="radio" name="formatoDocumentoComplementar" value="digitalizado" id="rdDigitalizado3_2" onclick="selecionarFormatoDigitalizadoComplementar()" />
+        <input type="radio" class="infraRadio" name="formatoDocumentoComplementar" value="digitalizado" id="rdDigitalizado3_2" onclick="selecionarFormatoDigitalizadoComplementar()" />
 		<label for="rdDigitalizado3_2" class="infraLabelRadio">Digitalizado</label>
 	</div>
 
@@ -564,7 +564,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
 		</div>
 	</div>
      
-     <div id="camposDigitalizadoComplementarBotao" style="float: left; width: 15%;">
+     <div id="camposDigitalizadoComplementarBotao" style="float: left; width: 15%; margin-top: 26px">
         <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('3')">
      </div>
       

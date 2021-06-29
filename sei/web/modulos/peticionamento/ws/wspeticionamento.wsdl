@@ -110,7 +110,7 @@
                     <xsd:element name="Nome" type="xsd:string"/>
                     <xsd:element name="Cpf" type="xsd:string"/>
                     <xsd:element name="Email" type="xsd:string"/>
-                    <xsd:element name="StaSituacao" type="xsd:string"/>
+                    <xsd:element name="StrSituacao" type="xsd:string"/>
                     <xsd:element name="StaTipoRepresentacao" type="xsd:string"/>
                     <xsd:element name="TipoPoderesLegais" type="tns:ArrayOfPoderesLegaisSimpes"/>
                     <xsd:element name="ProcessosAbrangencia" type="tns:ArrayOfProcessosAbrangencia"/>
@@ -138,7 +138,7 @@
                 <xsd:all>
                     <xsd:element name="Cpf" type="xsd:string"/>
                     <xsd:element name="Nome" type="xsd:string"/>
-                    <xsd:element name="StaSituacao" type="xsd:string"/>
+                    <xsd:element name="StrSituacao" type="xsd:string"/>
                     <xsd:element name="StaTipoRepresentacao" type="xsd:string"/>
                     <xsd:element name="DataLimite" type="xsd:string"/>
                     <xsd:element name="ProcessosAbrangencia" type="tns:ArrayOfProcessosAbrangencia"/>
@@ -205,7 +205,7 @@
         <wsdl:part name="SiglaSistema" type="xsd:string"/>
         <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
         <wsdl:part name="Cpf" type="xsd:string"/>
-        <wsdl:part name="StaSituacao" type="xsd:string"/>
+        <wsdl:part name="StrSituacao" type="xsd:string"/>
     </wsdl:message>
 
     <wsdl:message name="listarRepresentadosResponse">
@@ -217,7 +217,7 @@
         <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
         <wsdl:part name="CpfOutorgante" type="xsd:string"/>
         <!--Opcional-->
-        <wsdl:part name="StaSituacao" type="xsd:string"/>
+        <wsdl:part name="StrSituacao" type="xsd:string"/>
         <wsdl:part name="IdsTipoPoderLegal" type="tns:ArrayOfPoderesLegais"/>
     </wsdl:message>
 
@@ -230,7 +230,7 @@
         <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
         <wsdl:part name="CnpjOutorgante" type="xsd:string"/>
         <!--Opcional-->
-        <wsdl:part name="StaSituacao" type="xsd:string"/>
+        <wsdl:part name="StrSituacao" type="xsd:string"/>
         <wsdl:part name="IdsTipoPoderLegal" type="tns:ArrayOfPoderesLegais"/>
     </wsdl:message>
 

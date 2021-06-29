@@ -69,12 +69,6 @@ try {
       }else{
         $objAssinaturaDTO->setNumIdOrgaoUsuario($_POST['selOrgao']);
       }
-
-      if (!isset($_POST['hdnFlagAssinatura'])){
-        $objAssinaturaDTO->setNumIdContextoUsuario(SessaoSEI::getInstance()->getNumIdContextoUsuario());
-      }else{
-        $objAssinaturaDTO->setNumIdContextoUsuario($_POST['selContexto']);
-      }
       
       $objAssinaturaDTO->setNumIdUsuario($_POST['hdnIdUsuario']);
       $objAssinaturaDTO->setStrSenhaUsuario($_POST['pwdSenha']);
@@ -221,12 +215,6 @@ try {
         $objAssinaturaDTO->setNumIdOrgaoUsuario($_POST['selOrgao']);
       }
 
-      if (!isset($_POST['hdnFlagAssinatura'])){
-        $objAssinaturaDTO->setNumIdContextoUsuario(SessaoSEI::getInstance()->getNumIdContextoUsuario());
-      }else{
-        $objAssinaturaDTO->setNumIdContextoUsuario($_POST['selContexto']);
-      }
-      
       $objAssinaturaDTO->setNumIdUsuario($_POST['hdnIdUsuario']);
       $objAssinaturaDTO->setStrSenhaUsuario($_POST['pwdSenha']);
       
@@ -310,19 +298,10 @@ try {
     $strDisplayAutenticacao = '';
   }
 
-  $strDisplayContexto = '';
-  $objContextoDTO = new ContextoDTO();
-  $objContextoDTO->setNumIdOrgao($objAssinaturaDTO->getNumIdOrgaoUsuario());
-
-  $objContextoRN = new ContextoRN();
-  if ($objContextoRN->contar($objContextoDTO) == 0){
-    $strDisplayContexto = 'display:none;';  
-  }
 
   $strLinkAjaxUsuarios = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=usuario_assinatura_auto_completar');
   $strItensSelOrgaos = OrgaoINT::montarSelectSiglaRI1358('null','&nbsp;',$objAssinaturaDTO->getNumIdOrgaoUsuario());
   $strLinkAjaxContexto = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=contexto_carregar_nome');
-  $strItensSelContextos = ContextoINT::montarSelectNome('null','&nbsp;',$objAssinaturaDTO->getNumIdContextoUsuario(),$objAssinaturaDTO->getNumIdOrgaoUsuario());
   $strItensSelCargoFuncao = AssinanteINT::montarSelectCargoFuncaoUnidadeUsuarioRI1344('null','&nbsp;', $objAssinaturaDTO->getStrCargoFuncao(), $strIdUsuario);
   $strLinkAjaxCargoFuncao = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=assinante_carregar_cargo_funcao');
 
@@ -409,19 +388,6 @@ function inicializar(){
       document.getElementById('selCargoFuncao').options[1].selected = true;
     }
 
-    objAjaxContexto = new infraAjaxMontarSelect('selContexto','<?=$strLinkAjaxContexto?>');
-    objAjaxContexto.mostrarAviso = false;
-    objAjaxContexto.prepararExecucao = function(){
-      return 'id_orgao=' + document.getElementById('selOrgao').value;
-    }
-    objAjaxContexto.processarResultado = function(numItens){
-      if (numItens){
-        document.getElementById('divContexto').style.display = 'block';
-      }else{
-        document.getElementById('divContexto').style.display = 'none';
-      }
-    }
-
     objAjaxCargoFuncao = new infraAjaxMontarSelect('selCargoFuncao','<?=$strLinkAjaxCargoFuncao?>');
     //objAjaxCargoFuncao.mostrarAviso = true;
     //objAjaxCargoFuncao.tempoAviso = 2000;
@@ -484,12 +450,6 @@ function OnSubmitForm() {
   if (!infraSelectSelecionado(document.getElementById('selOrgao'))){
     alert('Selecione um Órgão.');
     document.getElementById('selOrgao').focus();
-    return false;
-  }
-
-  if (document.getElementById('selContexto').options.length > 0 &&  !infraSelectSelecionado(document.getElementById('selContexto'))){
-    alert('Selecione um Contexto.');
-    document.getElementById('selContexto').focus();
     return false;
   }
   
@@ -585,14 +545,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
       <?=$strItensSelOrgaos?>
       </select>
     </div>
-    	  
-    <div id="divContexto" class="infraAreaDados" style="height:4.5em;">
-      <label id="lblContexto" for="selContexto" accesskey=""  class="infraLabelObrigatorio">Contexto do Assinante:</label>
-      <select id="selContexto" name="selContexto" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-      <?=$strItensSelContextos?>
-      </select>
-    </div>
-    
+
     <div id="divUsuario" class="infraAreaDados" style="height:4.5em;">
       <label id="lblUsuario" for="txtUsuario" accesskey="e" class="infraLabelObrigatorio">Assinant<span class="infraTeclaAtalho">e</span>:</label>
       <input type="text" id="txtUsuario" name="txtUsuario" class="infraText" value="<?=$strNomeUsuario?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />

@@ -73,8 +73,12 @@
         numeroProcesso.value = '';
         tipoProcesso.value = '';
 
+        var minHeightFieldSetProcessos = document.getElementById('field_processos').style.minHeight;
+        minHeightFieldSetProcessos = parseInt(minHeightFieldSetProcessos.replace("px", ""));
+        document.getElementById('field_processos').style.minHeight = (minHeightFieldSetProcessos + 125) + "px";
         //Carrega os campos de documento junto com suas RN's
         carregarFieldDocumentos();
+
     }
 
     /**
@@ -84,8 +88,7 @@
         if (validarCamposObrigatorios()) {
             var urlValida = document.getElementById('urlValidaAssinaturaProcesso');
 
-            infraAbrirJanela(urlValida.value,
-                'concluirPeticionamento',
+            parent.infraAbrirJanelaModal(urlValida.value,
                 770,
                 480,
                 '', //options
@@ -345,7 +348,7 @@
         divNivelAcesso.innerHTML = '';
         selNivelAcesso.name = 'selNivelAcesso';
         selNivelAcesso.id = 'selNivelAcesso';
-        selNivelAcesso.className = 'infraSelect';
+        selNivelAcesso.className = 'infraSelect form-control';
         selNivelAcesso.tabIndex = txtComplementoTipoDocumento.tabIndex + 1;
 
         selNivelAcesso.addEventListener('change', function () {
@@ -441,7 +444,7 @@
         }
 
         if (formato == DIGITAL) {
-            divTipoConferencia.style.marginTop = '-5px';
+            divTipoConferencia.style.marginTop = '15px';
             divTipoConferencia.style.display = '';
         }
     }
@@ -759,6 +762,9 @@
         if (validarDocumento()) {
             objUploadArquivo.executar();
             document.getElementById('tbDocumento').style.display = '';
+            var minHeightFieldSetDocumentos = document.getElementById("field_documentos").style.minHeight;
+            minHeightFieldSetDocumentos = parseInt(minHeightFieldSetDocumentos.replace("px", ""));
+            document.getElementById("field_documentos").style.minHeight = minHeightFieldSetDocumentos + 50 + "px"
         }
     }
 

@@ -429,7 +429,8 @@ class MdPetIntAceiteRN extends InfraRN
                 $objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($idContato);
                 $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
                 $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
-                if (count($objMdPetIntRelDestinatarioDTO) > 0) {
+                $qtdObjMdPetIntRelDestinatarioDTO = is_array($objMdPetIntRelDestinatarioDTO) ? count($objMdPetIntRelDestinatarioDTO) : 0;
+                if ($qtdObjMdPetIntRelDestinatarioDTO > 0) {
                     $idContato = $objMdPetIntRelDestinatarioDTO->getNumIdContatoParticipante();
                     $nomeContato = $objMdPetIntRelDestinatarioDTO->getStrNomeContatoParticipante();
                 }
@@ -938,8 +939,8 @@ class MdPetIntAceiteRN extends InfraRN
                     }
                 }
 
-                $qntDestinatarioAntes = count($objMdPetIntDestDTO);
-                $qntDestinatario = count($arrObjMdPetIntRelDestDTOTratadoFinal);
+                $qntDestinatarioAntes = is_array($objMdPetIntDestDTO) ? count($objMdPetIntDestDTO) : 0;
+                $qntDestinatario = is_array($arrObjMdPetIntRelDestDTOTratadoFinal) ? count($arrObjMdPetIntRelDestDTOTratadoFinal) : 0;
                 $todasAceitas = ($countAceites == $qntDestinatario);
                 $retorno = array('todasAceitas' => $todasAceitas, 'qntDestinatario' => $qntDestinatario);
             }

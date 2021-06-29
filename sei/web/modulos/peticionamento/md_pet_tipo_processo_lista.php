@@ -139,7 +139,7 @@ try {
             $objMdPetTipoProcessoOrgaoMultiploDTO->retStrSiglaOrgaoUnidade();
             $objMdPetTipoProcessoOrgaoMultiploDTO->retNumIdTipoProcessoPeticionamento();
             $objMdPetTipoProcessoOrgaoMultiploDTO->retNumIdProcedimento();
-            
+
             $arrTipoProcessoOrgao = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoOrgaoMultiploDTO);
 
             //Se tiver tipo de processo cadastrado eu crio array para verificar os tipos de processos e orgaos cadastrados
@@ -316,7 +316,7 @@ try {
 
             $idOrgaoRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdOrgao');
             $idUnidadeRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdUnidade');
-            
+
             $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
             $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
             $objMdPetRelTpProcessoUnidDTO->retTodos();
@@ -359,7 +359,7 @@ try {
                 //Criação do array de orgao para filtro
                 if (!in_array($objDTO->getStrSiglaOrgao(), $arrOrgao)) {
                     $arrOrgao[$objDTO->getNumIdOrgaoUnidade()] = $objDTO->getStrSiglaOrgao();
-                }           
+                }
 
                 //Criação do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
                 if (!key_exists($objDTO->getNumIdOrgaoUnidade(), $arrTipoProcessoOrgaoCidade)) {
@@ -370,12 +370,12 @@ try {
                 } else {
                     $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] = $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] + 1;
                 }
-                
+
                 //Verifica se tem alguma unidade ou órgão diferente dos restritos
-                if(($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)){
+                if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)) {
                     $tipoProcessoRestricaoErro = true;
                 }
-                if(($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($objDTO->getNumIdUnidade(), $idUnidadeRestricao)){
+                if (($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($objDTO->getNumIdUnidade(), $idUnidadeRestricao)) {
                     $tipoProcessoRestricaoErro = true;
                 }
             }
@@ -426,16 +426,16 @@ try {
             $strResultado .= '<td align="center" valign="middle">';
 
             if ($tipoProcessoDivergencia || $tipoProcessoRestricaoErro) {
-                $strResultado .= "<img src='modulos/peticionamento/imagens/icone_restricao.png' onmouseover='return infraTooltipMostrar(\"Neste Tipo de Peticionamento para Processo Novo constam Unidades que não podem utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente à Unidade do conflito.<br><br> Clique na Ação Editar para ver detalhes e sugestões de providências.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+                $strResultado .= "<img src='modulos/peticionamento/imagens/png/icone_restricao.png' style='width: 24px' onmouseover='return infraTooltipMostrar(\"Neste Tipo de Peticionamento para Processo Novo constam Unidades que não podem utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente à Unidade do conflito.<br><br> Clique na Ação Editar para ver detalhes e sugestões de providências.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/consultar.gif" title="Consultar Tipo de Processo" alt="Consultar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar Tipo de Processo" alt="Consultar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
 
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/alterar.gif" title="Alterar Tipo de Processo" alt="Alterar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar Tipo de Processo" alt="Alterar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -444,13 +444,13 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetTipoProcessoDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/desativar.gif" title="Desativar Tipo de Processo" alt="Desativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg" title="Desativar Tipo de Processo" alt="Desativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             } else {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/reativar.gif" title="Reativar Tipo de Processo" alt="Reativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg" title="Reativar Tipo de Processo" alt="Reativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/excluir.gif" title="Excluir Tipo de Processo" alt="Excluir Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg" title="Excluir Tipo de Processo" alt="Excluir Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             $strResultado .= '</td></tr>' . "\n";
@@ -545,15 +545,15 @@ PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 ?>
 
-function inicializar(){
-if ('<?= $_GET['acao'] ?>'=='tipo_processo_peticionamento_selecionar'){
-infraReceberSelecao();
-document.getElementById('btnFecharSelecao').focus();
-}else{
-document.getElementById('btnFechar').focus();
-}
-infraEfeitoTabelas();
-}
+    function inicializar(){
+    if ('<?= $_GET['acao'] ?>'=='tipo_processo_peticionamento_selecionar'){
+    infraReceberSelecao();
+    document.getElementById('btnFecharSelecao').focus();
+    }else{
+    document.getElementById('btnFechar').focus();
+    }
+    infraEfeitoTabelas();
+    }
 
 <? if ($bolAcaoDesativar) { ?>
     function acaoDesativar(id,desc){
@@ -577,25 +577,25 @@ infraEfeitoTabelas();
     }
 <? } ?>
 
-function acaoReativar(id,desc){
-if (confirm("Confirma reativação do Tipo de Processo para Peticionamento \""+desc+"\"?")){
-document.getElementById('hdnInfraItemId').value=id;
-document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkReativar ?>';
-document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
-}
-}
+    function acaoReativar(id,desc){
+    if (confirm("Confirma reativação do Tipo de Processo para Peticionamento \""+desc+"\"?")){
+    document.getElementById('hdnInfraItemId').value=id;
+    document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkReativar ?>';
+    document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
+    }
+    }
 
-function acaoReativacaoMultipla(){
-if (document.getElementById('hdnInfraItensSelecionados').value==''){
-alert('Nenhum Tipo de Processo selecionado.');
-return;
-}
-if (confirm("Confirma a reativação dos Tipo de Processos selecionadas?")){
-document.getElementById('hdnInfraItemId').value='';
-document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkReativar ?>';
-document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
-}
-}
+    function acaoReativacaoMultipla(){
+    if (document.getElementById('hdnInfraItensSelecionados').value==''){
+    alert('Nenhum Tipo de Processo selecionado.');
+    return;
+    }
+    if (confirm("Confirma a reativação dos Tipo de Processos selecionadas?")){
+    document.getElementById('hdnInfraItemId').value='';
+    document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkReativar ?>';
+    document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
+    }
+    }
 
 <? if ($bolAcaoExcluir) { ?>
     function acaoExcluir(id,desc){
@@ -621,131 +621,110 @@ document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
 
 <? } ?>
 
-function pesquisar(){
-document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkPesquisar ?>';
-document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
-}
+    function pesquisar(){
+    document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkPesquisar ?>';
+    document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
+    }
 <?
 PaginaSEI::getInstance()->fecharJavaScript();
 
 //var_dump(count($arrFiltroUnidade),$numRegistrosOrgao,$_POST['selOrgao']);
-
-if (!$numRegistrosOrgao || $numRegistrosOrgao == 1) {
-    ?>
+?>
     <style type="text/css">
-        #lblTipoProcesso {position:absolute;left:0%;top:0%;width:20%;}
-        #txtTipoProcesso {position:absolute;left:0%;top:40%;width:20%;}
-
-        #lblUnidade {position:absolute;left:21%;top:0%;width:16%;}
-        #selUnidade {position:absolute;left:21%;top:40%;width:16%;}
-
-        #lblIndicacaoInteressado {position:absolute;left:38%;top:0%;width:16%;}
-        #selIndicacaoInteressado {position:absolute;left:38%;top:40%;width:16%;}
-
-        #lblDocumentoPrincipal {position:absolute;left:55%;top:0%;width:20%;}
-        #selDocumentoPrincipal {position:absolute;left:55%;top:40%;width:20%;}
+        .row div{margin-top: 5px;}
     </style>
-<? } elseif ($numRegistrosOrgao && $numRegistrosOrgao > 1) {
-    ?>
-    <style type="text/css">
-        #lblTipoProcesso {position:absolute;left:0%;top:0%;width:20%;}
-        #txtTipoProcesso {position:absolute;left:0%;top:40%;width:20%;}
-
-        #lblOrgao {position:absolute;left:21%;top:0%;width:16%;}
-        #selOrgao {position:absolute;left:21%;top:40%;width:16%;}
-
-        #lblUnidade {position:absolute;left:38%;top:0%;width:16%;}
-        #selUnidade {position:absolute;left:38%;top:40%;width:16%;}
-
-        #lblIndicacaoInteressado {position:absolute;left:55%;top:0%;width:20%;}
-        #selIndicacaoInteressado {position:absolute;left:55%;top:40%;width:20%;}
-
-        #lblDocumentoPrincipal {position:absolute;left:76%;top:0%;width:20%;}
-        #selDocumentoPrincipal {position:absolute;left:76%;top:40%;width:20%;}
-    </style>
-    <?
-}
+<?php
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-<form id="frmTipoProcessoPeticionamentoLista" method="post" action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
+    <form id="frmTipoProcessoPeticionamentoLista" method="post"
+          action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
 
-    <?php PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-    <div style="height:4.5em; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
-
+        <?php PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
         <!--  Tipo de Processo -->
-        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelOpcional">Tipo de Processo:</label>
-        <input type="text" name="txtTipoProcesso" id="txtTipoProcesso" value="<?php echo isset($_POST['txtTipoProcesso']) ? PaginaSEI::tratarHTML($_POST['txtTipoProcesso']) : '' ?>"  class="infraText" />
+        <div class="row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2">
+                <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelOpcional">Tipo de
+                    Processo:</label>
+                <input type="text" name="txtTipoProcesso" id="txtTipoProcesso"
+                       value="<?php echo isset($_POST['txtTipoProcesso']) ? PaginaSEI::tratarHTML($_POST['txtTipoProcesso']) : '' ?>"
+                       class="infraText form-control"/>
 
-        <?php if ($numRegistrosOrgao > 1) { ?>
-            <!-- Órgão -->
-            <label id="lblOrgao" for="txtOrgao"class="infraLabelOpcional">Órgão:</label>
-            <select id="selOrgao" name="selOrgao" onchange="pesquisar();" class="infraSelect" >
-                <?php
-                echo "<option value='null'>&nbsp;</option>";
-                echo "<option value='null' selected='selected'>Todos</option>";
-                if ($filtroOrgaoMultiplo) {
-                    if ($_POST['selOrgao'] == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
-                        echo "<option value='M' selected='selected'>Múltiplos</option>";
-                    } else {
-                        echo "<option value='M'>Múltiplos</option>";
+            </div>
+            <?php if ($numRegistrosOrgao > 1) { ?>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
+                    <label id="lblOrgao" for="txtOrgao" class="infraLabelOpcional">Órgão:</label>
+                    <select id="selOrgao" name="selOrgao" onchange="pesquisar();" class="infraSelect form-control">
+                        <?php
+                        echo "<option value='null'>&nbsp;</option>";
+                        echo "<option value='null' selected='selected'>Todos</option>";
+                        if ($filtroOrgaoMultiplo) {
+                            if ($_POST['selOrgao'] == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
+                                echo "<option value='M' selected='selected'>Múltiplos</option>";
+                            } else {
+                                echo "<option value='M'>Múltiplos</option>";
+                            }
+                        }
+                        foreach ($arrFiltroOrgao as $objOrgaoDTO) {
+                            $selected = "";
+                            if ($objOrgaoDTO->getNumIdOrgaoUnidade() == $_POST['selOrgao']) {
+                                $selected = "selected='selected'";
+                            }
+                            echo "<option value=" . $objOrgaoDTO->getNumIdOrgaoUnidade() . " " . $selected . ">" . $objOrgaoDTO->getStrSiglaOrgaoUnidade() . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            <?php } ?>
+            <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                <label id="lblUnidade" for="txtUnidade" class="infraLabelOpcional">Unidade para Abertura:</label>
+                <select id="selUnidade" name="selUnidade" onchange="pesquisar();" class="infraSelect form-control">
+                    <?php
+                    if ((count($arrFiltroUnidade) >= 1 && $numRegistrosOrgao == 1) || ($numRegistrosOrgao > 1 && ($_POST['selOrgao'] != '') && $_POST['selOrgao'] != 'null' && $_POST['selOrgao'] != 'M')) {
+                        echo "<option value='null'>&nbsp;</option>";
+                        echo "<option value='' selected='selected'>Todos</option>";
+                        if ($filtroUnidadeMultiplo) {
+                            if ($_POST['selUnidade'] == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
+                                echo "<option value='M' selected='selected'>Múltiplas</option>";
+                            } else {
+                                echo "<option value='M'>Múltiplas</option>";
+                            }
+                        }
+                        foreach ($arrFiltroUnidade as $objUnidadeDTO) {
+                            $selected = "";
+                            if ($objUnidadeDTO->getNumIdUnidade() == $_POST['selUnidade']) {
+                                $selected = "selected='selected'";
+                            }
+                            echo "<option value=" . $objUnidadeDTO->getNumIdUnidade() . " " . $selected . ">" . $objUnidadeDTO->getStrSiglaUnidade() . "</option>";
+                        }
                     }
-                }
-                foreach ($arrFiltroOrgao as $objOrgaoDTO) {
-                    $selected = "";
-                    if ($objOrgaoDTO->getNumIdOrgaoUnidade() == $_POST['selOrgao']) {
-                        $selected = "selected='selected'";
-                    }
-                    echo "<option value=" . $objOrgaoDTO->getNumIdOrgaoUnidade() . " " . $selected . ">" . $objOrgaoDTO->getStrSiglaOrgaoUnidade() . "</option>";
-                }
-                ?>
-            </select>
-        <?php } ?>
+                    ?>
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                <label id="lblIndicacaoInteressado" for="selIndicacaoInteressado" class="infraLabelOpcional">Indicação
+                    de
+                    Interessado:</label>
+                <select onchange="pesquisar();" id="selIndicacaoInteressado" name="selIndicacaoInteressado"
+                        class="infraSelect form-control">
+                    <?= $strItensSelIndicacaoInteressado ?>
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
+                <label id="lblDocumentoPrincipal" for="selDocumentoPrincipal" class="infraLabelOpcional">Documento
+                    Principal:</label>
+                <select onchange="pesquisar();" id="selDocumentoPrincipal" name="selDocumentoPrincipal"
+                        class="infraSelect form-control">
+                    <?= $strItensSelTipoDocumento ?>
+                </select>
+            </div>
+        </div>
+        <?
+        PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+        PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+        ?>
 
-        <!-- Unidade -->
-        <label id="lblUnidade" for="txtUnidade" class="infraLabelOpcional">Unidade para Abertura:</label>
-        <select id="selUnidade" name="selUnidade" onchange="pesquisar();" class="infraSelect">
-            <?php
-            if ((count($arrFiltroUnidade) >= 1 && $numRegistrosOrgao == 1) || ($numRegistrosOrgao > 1 && ($_POST['selOrgao'] != '') && $_POST['selOrgao'] != 'null' && $_POST['selOrgao'] != 'M')) {
-                echo "<option value='null'>&nbsp;</option>";
-                echo "<option value='' selected='selected'>Todos</option>";
-                if ($filtroUnidadeMultiplo) {
-                    if ($_POST['selUnidade'] == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
-                        echo "<option value='M' selected='selected'>Múltiplas</option>";
-                    } else {
-                        echo "<option value='M'>Múltiplas</option>";
-                    }
-                }
-                foreach ($arrFiltroUnidade as $objUnidadeDTO) {
-                    $selected = "";
-                    if ($objUnidadeDTO->getNumIdUnidade() == $_POST['selUnidade']) {
-                        $selected = "selected='selected'";
-                    }
-                    echo "<option value=" . $objUnidadeDTO->getNumIdUnidade() . " " . $selected . ">" . $objUnidadeDTO->getStrSiglaUnidade() . "</option>";
-                }
-            }
-            ?>
-        </select> 
-
-        <!--  Indicação de Interessado -->
-        <label id="lblIndicacaoInteressado" for="selIndicacaoInteressado" class="infraLabelOpcional">Indicação de Interessado:</label>
-        <select onchange="pesquisar();" id="selIndicacaoInteressado" name="selIndicacaoInteressado" class="infraSelect" >
-            <?= $strItensSelIndicacaoInteressado ?>
-        </select> 
-
-        <!--  Select Documento Principal -->
-        <label id="lblDocumentoPrincipal" for="selDocumentoPrincipal" class="infraLabelOpcional">Documento Principal:</label>
-        <select onchange="pesquisar();"  id="selDocumentoPrincipal" name="selDocumentoPrincipal" class="infraSelect" >
-            <?= $strItensSelTipoDocumento ?>
-        </select> 
-
-    </div>   
-    <?
-    PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-    PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
-    ?>
-
-</form>
+    </form>
 <?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

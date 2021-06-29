@@ -388,7 +388,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 				if ($unidadeIncluir){
 					$arrIdUnidade[] = $unidadeAberta->getUnidade()->getIdUnidade();
 					if ($retornarUsuarioAtribuicao) {
-						if ( count($unidadeAberta->getUsuarioAtribuicao())>0 ) {
+					    $qtdUnidadeAberta = is_array($unidadeAberta->getUsuarioAtribuicao()) ? count($unidadeAberta->getUsuarioAtribuicao()) : 0;
+						if ( $qtdUnidadeAberta > 0 ) {
 							$arrIdUsuarioAtribuicao[$unidadeAberta->getUnidade()->getIdUnidade()] = $unidadeAberta->getUsuarioAtribuicao()->getIdUsuario();
 						}
 					}
@@ -946,10 +947,12 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 				if($objUnidadeDTO->getStrSinAtivo()=='S'){
 					$arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta( array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()) );
-					if (count($arrUnidadeProcesso)==0){
+					$qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
+					if ($qtdArrUnidadeProcesso==0){
 						$idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade( array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()) );
 						if (is_numeric($idUnidadeAberta)){
 							$arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta( array($objProcedimentoDTO, $idUnidadeAberta) );
+                            $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
 						}
 					}
 				}
@@ -988,6 +991,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 		}
 		// 1) ANEXADO, vai pegar do ANEXADOR/PRINCIPAL
+
 		if($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO){
 			$objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
 			$objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
@@ -997,20 +1001,21 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
 
 			$objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
 			$objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
-
-			if ( count($objRelProtocoloProtocoloDTO)==1 ){
+            $qtdObjRelProtocoloProtocoloDTO = isset($objRelProtocoloProtocoloDTO) ? count($objRelProtocoloProtocoloDTO) : 0;
+			if ( $qtdObjRelProtocoloProtocoloDTO==1 ){
 				$arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto( array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()) );
+                $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
 			}
 			// 2) Última aberta
-		}else if (count($arrUnidadeProcesso)==0){
-
+		}else if ($qtdArrUnidadeProcesso==0){
 			$arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto( array($this->getProcedimentoDTO()->getDblIdProcedimento()) );
+            $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
 		}
 
 
 		$idUnidadeProcesso = null;
 		$idUsuarioAtribuicao = null;
-		if ( count($arrUnidadeProcesso)>0 ){
+		if ( $qtdArrUnidadeProcesso>0 ){
 			if( is_numeric($arrUnidadeProcesso[0]) ){
 				$idUnidadeProcesso = $arrUnidadeProcesso[0];
 				if( is_numeric($arrUnidadeProcesso[1]) ){
@@ -1114,8 +1119,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN {
                 }
                 
 		$objReciboDTO = $objMdPetReciboRN->gerarReciboSimplificadoIntercorrente($arrDadosRecibo);
-
-		if (count($objReciboDTO) > 0) {
+		if (!is_null($objReciboDTO)) {
 
 			$this->setReciboDTO($objReciboDTO);
 			$this->cadastrarReciboDocumentoAnexo(array($objReciboDTO, $arrObjReciboDocPet));

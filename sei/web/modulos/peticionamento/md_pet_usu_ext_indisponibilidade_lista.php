@@ -118,7 +118,7 @@ try {
 	  
       if ($bolAcaoConsultar){
       	$urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
-        $strResultado .= '<a href="'. $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_cadastro.php?id_orgao_acesso_externo=0&acao_externa=md_pet_usu_ext_indisponibilidade_consultar&id_indisponibilidade_peticionamento='.$arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade().'" tabindex="'.PaginaPeticionamentoExterna::getInstance()->getProxTabTabela().'"><img src="'.PaginaPeticionamentoExterna::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'. $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_cadastro.php?id_orgao_acesso_externo=0&acao_externa=md_pet_usu_ext_indisponibilidade_consultar&id_indisponibilidade_peticionamento='.$arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade().'" tabindex="'.PaginaPeticionamentoExterna::getInstance()->getProxTabTabela().'"><img src="/infra_css/svg/consultar.svg" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
       }        
 
       $strResultado .= '</td></tr>'."\n";

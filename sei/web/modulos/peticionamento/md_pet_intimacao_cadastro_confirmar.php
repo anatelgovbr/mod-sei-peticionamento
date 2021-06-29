@@ -29,13 +29,15 @@ switch($_GET['acao']) {
 
             $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
             $objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
-            if (count($objMdPetIntPrazoTacitaDTO)>0) {
+            $qtdObjMdPetIntPrazoTacitaDTO = is_array($objMdPetIntPrazoTacitaDTO) ? count($objMdPetIntPrazoTacitaDTO) : 0;
+            if ($qtdObjMdPetIntPrazoTacitaDTO > 0) {
             	$numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
             }
+            $divParcial = ($_GET["tipo"] == 'parcial') ? 'block' : 'none';
+            $divIntegral = ($_GET["tipo"]== 'integral') ? 'block' : 'none';
 
-            
             //Integral
-            $texto  = "<div id=divIntegral style='display:none'>";
+            $texto  = "<div id=divIntegral style='display: " . $divIntegral . " '>";
             $texto .= "<p style='text-align:justify'> ";
             $texto .= "Após a geração da Intimação Eletrônica, esta ficará imediatamente disponível para que o ";
             $texto .= "Destinatário realize o seu cumprimento com a consulta ao Documento Principal ou, se indicados, "; 
@@ -66,7 +68,7 @@ switch($_GET['acao']) {
             $texto .= "</div>";
             
 			// Parcial
-            $texto .= "<div id=divParcial style='display:none'>";
+            $texto .= "<div id=divParcial style='display:" . $divParcial . "'>";
             $texto .= "<p style='text-align:justify'> ";
             $texto .= "Após a geração da Intimação Eletrônica, esta ficará imediatamente disponível para que o "; 
             $texto .= "Destinatário realize o seu cumprimento com a consulta ao Documento Principal ou, se indicados, "; 
@@ -121,20 +123,13 @@ PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 ?>
+
 function inicializar(){
-	if (window.opener!=null){
-		if(window.opener.document.getElementById('optIntegral').checked){
-			document.getElementById('divIntegral').style.display='';
-		}
-		if(window.opener.document.getElementById('optParcial').checked){
-			document.getElementById('divParcial').style.display='';
-		}
-	}
+
 }
 function gerarIntimacao(){
-	if (window.opener!=null){
-		window.opener.document.getElementById('frmMdPetIntimacaoCadastro').submit();
-		window.close();		
+	if (window.parent!=null){
+        window.parent.ifrVisualizacao.document.getElementById('frmMdPetIntimacaoCadastro').submit();
 	}
 }
 <?php

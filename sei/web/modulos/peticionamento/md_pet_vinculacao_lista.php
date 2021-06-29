@@ -141,12 +141,12 @@ if ($numRegistros > 0) {
   $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
 
   $strResultado .= '<tr>';
-  $strResultado .= '<th class="infraTh" style="width:170px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Número do Processo', 'ProtocoloFormatado', $arrRegistro) . '</th>';
-  $strResultado .= '<th class="infraTh" style="width:130px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'CNPJ', 'CNPJ', $arrRegistro) . '</th>';
+  $strResultado .= '<th class="infraTh" style="width:15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Número do Processo', 'ProtocoloFormatado', $arrRegistro) . '</th>';
+  $strResultado .= '<th class="infraTh" style="width:15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'CNPJ', 'CNPJ', $arrRegistro) . '</th>';
   $strResultado .= '<th class="infraTh">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Razão Social', 'RazaoSocialNomeVinc', $arrRegistro) . '</th>';
   $strResultado .= '<th class="infraTh">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Responsável Legal', 'NomeContatoRepresentante', $arrRegistro) .'</th>';
   $strResultado .= '<th class="infraTh" style="width:80px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Situação', 'StaEstado', $arrRegistro) .'</th>';
-  $strResultado .= '<th class="infraTh" style="width:50px">Ações</th>';
+  $strResultado .= '<th class="infraTh" style="width:60px">Ações</th>';
   $strResultado .= '</tr>';
 //Populando obj para tabela
 
@@ -207,9 +207,9 @@ if ($numRegistros > 0) {
     $strResultado .= '<td>' . $strSituacao . '</td>';
 
     $strResultado .= '<input type="hidden" value="'.$url.'" id="urlLinkDesativar'.$registro->getNumIdMdPetVinculoRepresent().'"/>';
-    $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo()) . '"><img style="width:16px;"  src="' . PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal() . '/consultar.gif" title="Consultar Cadastro da Pessoa Jurídica" alt="Consultar Cadastro da Pessoa Jurídica" class="infraImg" /></a>';
+    $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar Cadastro da Pessoa Jurídica" alt="Consultar Cadastro da Pessoa Jurídica" class="infraImg" /></a>';
     if($registro->getStrTipoRepresentante()==MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL && $registro->getStrStaEstado()==MdPetVincRepresentantRN::$RP_ATIVO) {
-        $iconeAlterar = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_vinculo=' . $registro->getNumIdMdPetVinculo()) . '"><img style="width:16px;"  src="' . PaginaSEIExterna::getInstance()->getDiretorioImagensGlobal() . '/alterar.gif" title="Atualizar Atos Constitutivos da Pessoa Jurídica" alt="Atualizar Atos Constitutivos da Pessoa Jurídica" class="infraImg" /></a>';
+        $iconeAlterar = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_vinculo=' . $registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Atualizar Atos Constitutivos da Pessoa Jurídica" alt="Atualizar Atos Constitutivos da Pessoa Jurídica" class="infraImg" /></a>';
     }
     $strResultado .= '<td align="center">' . $iconeConsulta . $iconeAlterar . '</td>';
     $strResultado .= '</tr>';

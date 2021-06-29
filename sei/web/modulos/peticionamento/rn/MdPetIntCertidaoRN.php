@@ -465,7 +465,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $alertMsg = 'Documento bloqueado, pois está vinculado a uma Intimação ainda não Cumprida.';
         $js = $isValido ? 'window.open(\'' . $strLink . '\');' : 'alert(\'' . $alertMsg . '\')';
 
-        $imgCertidao = '<img src="modulos/peticionamento/imagens/intimacao_certidao.png">';
+        $imgCertidao = '<img src="modulos/peticionamento/imagens/png/intimacao_certidao.png" style="height: 24px">';
 
         //obter informacoes do doc principal da intimação
         $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();

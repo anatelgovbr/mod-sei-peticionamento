@@ -41,9 +41,10 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
                     }
 
                     $('dados-pf', data).children().each(function () {
-                        var idCampo = $(this).context.localName;
+
+                        var idCampo = $(this)[0].tagName;
                         if(idCampo != '') {
-                            var valor = $(this).context.innerHTML;
+                            var valor = $(this)[0].innerHTML;
                             var campo = $("#" + idCampo);
                             $(campo).val(valor);
                         }

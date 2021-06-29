@@ -258,7 +258,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objContatoDTO->setStrStaNaturezaContatoAssociado(null);
             $objContatoDTO->setNumIdContatoAssociado('');
             $objContatoDTO->setStrSinEnderecoAssociado('N');
-            $objContatoDTO->setStrTelefoneFixo('');
+            $objContatoDTO->setStrTelefoneComercial('');
             $objContatoDTO->setStrTelefoneCelular('');
             $objContatoDTO->setStrStaGenero(null);
             $objContatoDTO->setStrEmail('');
@@ -394,14 +394,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retStrNome();
         $contatoDTO->retDblCnpj();
-        $contatoDTO->retStrSigla();
         $contatoDTO->setNumIdContato($dados['idContato']);
         $contatoRN = new ContatoRN();
         $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
-
-        $contatoAPI = new ContatoAPI();
-        $contatoAPI->setSigla($objContatoRN->getStrSigla());
-        $contatoAPI->setNome($objContatoRN->getStrNome());
 
         $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
         $nomeModificado = str_replace("@razao_social@",$objContatoRN->getStrNome(),$especificacao);
@@ -420,7 +415,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objProcedimentoAPI->setNumeroProtocolo('');
         $objProcedimentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
         $objProcedimentoAPI->setIdHipoteseLegal(null);
-        $objProcedimentoAPI->setInteressados(array($contatoAPI));
 
         $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
         $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
@@ -1326,7 +1320,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
-        if (count($objMdPetVincRepresentantDTO) > 0) {
+        if ($objMdPetVincRepresentantDTO) {
             return $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
         } else {
             return null;

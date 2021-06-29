@@ -28,7 +28,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '3.4.0';
+        return '4.0.0';
     }
 
     public function getInstituicao()
@@ -276,7 +276,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 return true;
 
             case 'md_pet_vinc_usu_ext_pe_cadastrar':
-                die('Erro PeticionamentoIntegracao line: 274');
                 require_once dirname(__FILE__) . '/md_pet_vinc_responsavel_cadastro.php';
                 return true;
 
@@ -727,7 +726,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 $objContextoContatoDTO = MdPetContatoINT::getTotalContatoByCPFCNPJ($cpfcnpj);
 
-                if (count($objContextoContatoDTO) > 0) {
+                $qtdObjContextoContatoDTO = (is_array($objContextoContatoDTO) ? count($objContextoContatoDTO) : 0);
+                if ($qtdObjContextoContatoDTO > 0) {
                     $objContato = new stdClass();
                     $objContato->usuario = $objContextoContatoDTO[0]->getNumIdUsuarioCadastro();
                     $objContato->nome = utf8_encode($objContextoContatoDTO[0]->getStrNome());
@@ -909,8 +909,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $dblIdProcedimento = $objProcedimentoAPI->getIdProcedimento();
         $arrRetDadosIcones = $this->retornarArrDadosParaIcones($dblIdProcedimento);
 
-
-        if (is_array($arrRetDadosIcones) && count($arrRetDadosIcones) > 0) {
+        $qtdArrRetDadosIcones = (is_array($arrRetDadosIcones) ? count($arrRetDadosIcones) : 0);
+        if ($qtdArrRetDadosIcones > 0) {
             $recibo = $arrRetDadosIcones['recibo'];
 
             $title = "";
@@ -938,7 +938,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $tipoRESP = 'PETICIONAMENTO';
                 $idRESP = 'PET' . $dblIdProcedimento;
                 $titleRESP = 'Peticionamento Eletrônico\nResposta a Intimação: ' . $data . '\n(Documento Principal: SEI nº ' . $numeroDocPrincipal . ')';
-                $iconeRESP = 'modulos/peticionamento/imagens/peticionamento_resposta_a_intimacao.png';
+                $iconeRESP = 'modulos/peticionamento/imagens/png/peticionamento_resposta_a_intimacao.png';
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoRESP);
@@ -946,7 +946,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objArvoreAcaoItemAPI->setIdPai($dblIdProcedimento);
                 $objArvoreAcaoItemAPI->setTitle($titleRESP);
                 $objArvoreAcaoItemAPI->setIcone($iconeRESP);
-                $objArvoreAcaoItemAPI->setTarget(null);
+                $objArvoreAcaoItemAPI->setTarget('style');
                 $objArvoreAcaoItemAPI->setHref('javascript:;');
                 $objArvoreAcaoItemAPI->setSinHabilitado('S');
                 $arrObjArvoreAcaoItemAPI[] = $objArvoreAcaoItemAPI;
@@ -971,7 +971,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $titleINT = 'Peticionamento Eletrônico\nIntercorrente: ' . $data;
                 $tipoINT = 'PETICIONAMENTO';
                 $idINT = 'PET' . $dblIdProcedimento;
-                $iconeINT = 'modulos/peticionamento/imagens/peticionamento_intercorrente.png';
+                $iconeINT = 'modulos/peticionamento/imagens/png/peticionamento_intercorrente.png';
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoINT);
@@ -1002,7 +1002,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $titleNOVO = 'Peticionamento Eletrônico\nProcesso Novo: ' . $data;
                 $tipoNOVO = 'PETICIONAMENTO';
                 $idNOVO = 'PET' . $dblIdProcedimento;
-                $iconeNOVO = 'modulos/peticionamento/imagens/peticionamento_processo_novo.png';
+                $iconeNOVO = 'modulos/peticionamento/imagens/png/peticionamento_processo_novo.png';
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoNOVO);
@@ -1015,13 +1015,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objArvoreAcaoItemAPI->setSinHabilitado('S');
                 $arrObjArvoreAcaoItemAPI[] = $objArvoreAcaoItemAPI;
             }
-
-            if (count($arrRetDadosIcones['arrMdPetVincRepresentantPJRN'])) {
+            $qtdArrRetDadosIcones = (is_array($arrRetDadosIcones['arrMdPetVincRepresentantPJRN']) ? count($arrRetDadosIcones['arrMdPetVincRepresentantPJRN']) : 0);
+            if ($qtdArrRetDadosIcones > 0) {
 
                 $titlePJ = $arrRetDadosIcones['textoSeparado'];
                 $tipoPJ = 'PETICIONAMENTO';
                 $idPJ = 'PET' . $dblIdProcedimento;
-                $iconePJ = 'modulos/peticionamento/imagens/peticionamento_processo_novo_azul.png';
+                $iconePJ = 'modulos/peticionamento/imagens/png/peticionamento_processo_novo_azul.png';
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoPJ);
@@ -1041,7 +1041,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $titlePF = $arrRetDadosIcones['textoSeparado'];
                 $tipoPF = 'PETICIONAMENTO';
                 $idPF = 'PET' . $dblIdProcedimento;
-                $iconePF = 'modulos/peticionamento/imagens/peticionamento_processo_novo_cinza.png';
+                $iconePF = 'modulos/peticionamento/imagens/png/peticionamento_processo_novo_cinza.png';
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoPF);
@@ -1081,13 +1081,16 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $reciboIntercorrenteDTO->setNumIdProtocolo($idProcedimento);
         $reciboIntercorrenteDTO->setOrd('DataHoraRecebimentoFinal', InfraDTO::$TIPO_ORDENACAO_DESC);
         $arrRecibosResposta = $reciboRN->listar($reciboIntercorrenteDTO);
+
         $tipoPetTodos = InfraArray::converterArrInfraDTO($arrRecibosResposta, 'StaTipoPeticionamento');
         $tipoPet = array($tipoPetTodos[0]);
         $textoSeparado = '';
 
         $documentos = InfraArray::converterArrInfraDTO($arrRecibosResposta, 'IdDocumento');
 
-        if ($arrRecibosResposta != null && count($arrRecibosResposta) > 0) {
+        $qtdArrRecibosResposta = (is_array($arrRecibosResposta) ? count($arrRecibosResposta) : 0);
+
+        if ($arrRecibosResposta != null && $qtdArrRecibosResposta > 0) {
 
             //Vinculo com PF
             $acesso = false;
@@ -1101,7 +1104,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $arrMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
-            if (count($arrMdPetVincRepresentantRN)) {
+
+            if ($arrMdPetVincRepresentantRN) {
 
                 $reciboIntercorrentePFDTO = new MdPetReciboDTO();
                 $reciboPFRN = new MdPetReciboRN();
@@ -1120,11 +1124,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objContatoDTO->retDblCpf();
                 $objContatoDTO->retStrNome();
                 $objContatoDTO->retDblCnpj();
-                $objContatoDTO->retStrStaNatureza();
                 $objContatoRN = new ContatoRN();
                 $arrObjContatoRN = $objContatoRN->consultarRN0324($objContatoDTO);
 
-                if ( $arrObjContatoRN->getStrStaNatureza()==ContatoRN::$TN_PESSOA_FISICA ) {
+                if (!is_null($arrObjContatoRN->getDblCpf())) {
                     $dataPF = MdPetDataUtils::setFormat($arrRecibosRespostaPF->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
                     $cpf = $arrObjContatoRN->getDblCpf();
                     $nome = $arrObjContatoRN->getStrNome();
@@ -1170,7 +1173,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Resposta a Intimação: ' . $data . ' (Documento Principal: SEI nº ' . $numeroDocPrincipal . ')"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/peticionamento_resposta_a_intimacao.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_resposta_a_intimacao.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-left: 5px' />";
             } //recibo mais atual é de peticionamento intercorrente
             if (in_array(MdPetReciboRN::$TP_RECIBO_INTERCORRENTE, $tipoPet)) {
 
@@ -1190,7 +1193,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Intercorrente: ' . $data . '"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/peticionamento_intercorrente.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_intercorrente.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-left: 5px' />";
             } //recibo mais atual é de peticionamento de processo novo
             if (in_array(MdPetReciboRN::$TP_RECIBO_NOVO, $tipoPet)) {
 
@@ -1207,7 +1210,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Processo Novo: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy') . '"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/peticionamento_processo_novo.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width: 24px; padding-left: 5px'  />";
             }
             if (in_array(MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL, $tipoPetTodos)) {
 
@@ -1233,8 +1236,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetVincRepresentantPJRN = new MdPetVincRepresentantRN();
                 $arrMdPetVincRepresentantPJRN = $objMdPetVincRepresentantPJRN->listar($objMdPetVincRepresentantPJDTO);
 
-
-                if (count($arrMdPetVincRepresentantPJRN)) {
+                $qtdArrMdPetVincRepresentantPJRN = (is_array($arrMdPetVincRepresentantPJRN) ? count($arrMdPetVincRepresentantPJRN) : 0);
+                if ($qtdArrMdPetVincRepresentantPJRN > 0) {
                     $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
                     $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
                     $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent(InfraArray::converterArrInfraDTO($arrMdPetVincRepresentantPJRN, 'IdMdPetVinculoRepresent'), infraDTO::$OPER_IN);
@@ -1248,8 +1251,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $objMdPetVincDocumentoDTO->retNumIdMdPetVinculoRepresent();
                     $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
 
-
-                    if (count($arrMdPetVincRepresentantPJRN)) {
+                    $qtdArrMdPetVincRepresentantPJRN = (is_array($arrMdPetVincRepresentantPJRN) ? count($arrMdPetVincRepresentantPJRN) : 0);
+                    if ($qtdArrMdPetVincRepresentantPJRN > 0) {
 
                         $reciboIntercorrenteDTO = new MdPetReciboDTO();
                         $reciboIntercorrenteDTO->retNumIdProtocolo();
@@ -1263,7 +1266,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $reciboIntercorrenteDTO->setNumIdProtocolo($idProcedimento);
                         $arrRecibosResposta = $reciboRN->consultar($reciboIntercorrenteDTO);
 
-                        if(count($arrRecibosResposta) > 0) {
+                        $qtdArrRecibosResposta = (is_array($arrRecibosResposta) ? count($arrRecibosResposta) : 0);
+                        if($qtdArrRecibosResposta > 0) {
                             $dataPJ = MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
                         } else {
                             $dataPJ = MdPetDataUtils::setFormat($arrMdPetVincRepresentantPJRN[0]->getDthDataCadastro(), 'dd/mm/yyyy Y:i:s');
@@ -1288,7 +1292,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $textoSeparado = $linhaDeCimaTxt . ' \n' . $linhaDeBaixoTxt;
 
                     }
-                    $img .= "<img src='modulos/peticionamento/imagens/peticionamento_processo_novo_azul.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPJ . "," . $linhaDeCimaPJ . ");' />";
+                    $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo_azul.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPJ . "," . $linhaDeCimaPJ . ");' style='width:24px; padding-left: 5px' />";
                 }
 
             }
@@ -1306,15 +1310,15 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $reciboIntercorrenteDTO->setNumIdProtocolo($idProcedimento);
                 $arrRecibosResposta = $reciboRN->consultar($reciboIntercorrenteDTO);
 
-                $cpfFormatado = ($cpf) ? ' (' . infraUtil::formatarCpf($cpf) . ')' : '';
-                $linhaDeCimaPF = '"Controle de Representação de Pessoa Física:<br><br> ' . PaginaSEI::tratarHTML($nome) . $cpfFormatado . '"';
+
+                $linhaDeCimaPF = '"Controle de Representação de Pessoa Física:<br><br> ' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')"';
                 $linhaDeBaixoPF .= '"Último Peticionamento de Atualização: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s') . '"';
 
-                $linhaDeCimaTexto = 'Controle de Representação de Pessoa Física: \n' . PaginaSEI::tratarHTML($nome). $cpfFormatado;
+                $linhaDeCimaTexto = 'Controle de Representação de Pessoa Física: \n' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')';
                 $linhaDeBaixoTexto .= 'Último Peticionamento de Atualização: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
                 $textoSeparado = $linhaDeCimaTexto . ' \n' . $linhaDeBaixoTexto;
 
-                $img .= "<img src='modulos/peticionamento/imagens/peticionamento_processo_novo_cinza.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPF . "," . $linhaDeCimaPF . ");' />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo_cinza.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPF . "," . $linhaDeCimaPF . ");' style='width:24px; padding-left: 5px' />";
 
             }
             $arrDados['dataPJ'] = $dataPJ;
@@ -1339,14 +1343,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
     {
 
         $arrParam = array();
-
-        if ($arrObjProcedimentoDTO != null && count($arrObjProcedimentoDTO) > 0) {
+        $qtdArrObjProcedimentoDTO = (is_array($arrObjProcedimentoDTO) ? count($arrObjProcedimentoDTO) : 0);
+        if ($arrObjProcedimentoDTO != null && $qtdArrObjProcedimentoDTO > 0) {
 
             foreach ($arrObjProcedimentoDTO as $objProcedimentoAPI) {
 
                 $arrRetDadosIcones = $this->retornarArrDadosParaIcones($objProcedimentoAPI->getIdProcedimento());
-
-                if (is_array($arrRetDadosIcones) && count($arrRetDadosIcones) > 0) {
+                $qtdArrRetDadosIcones = (is_array($arrRetDadosIcones) ? count($arrRetDadosIcones) : 0);
+                if ($qtdArrRetDadosIcones > 0) {
                     $arrParam[$objProcedimentoAPI->getIdProcedimento()] = array($arrRetDadosIcones['img']);
                 }
             }
@@ -1360,14 +1364,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
     {
 
         $arrParam = array();
-
-        if ($arrObjProcedimentoDTO != null && count($arrObjProcedimentoDTO) > 0) {
+        $qtdArrObjProcedimentoDTO = (is_array($arrObjProcedimentoDTO) ? count($arrObjProcedimentoDTO) : 0);
+        if ($arrObjProcedimentoDTO != null && $qtdArrObjProcedimentoDTO > 0) {
 
             foreach ($arrObjProcedimentoDTO as $procDTO) {
 
                 $arrRetDadosIcones = $this->retornarArrDadosParaIcones($procDTO->getIdProcedimento());
-
-                if (is_array($arrRetDadosIcones) && count($arrRetDadosIcones) > 0) {
+                $qtdArrRetDadosIcones = (is_array($arrRetDadosIcones) ? count($arrRetDadosIcones) : 0);
+                if ($qtdArrRetDadosIcones > 0) {
                     $arrParam[$procDTO->getIdProcedimento()] = array($arrRetDadosIcones['img']);
                 }
             }
@@ -1386,7 +1390,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $menuExternoDTO->setOrd("Nome", InfraDTO::$TIPO_ORDENACAO_ASC);
 
         $objLista = $menuExternoRN->listar($menuExternoDTO);
-        $numRegistros = count($objLista);
+        $numRegistros = (is_array($objLista) ? count($objLista) : 0);
 
         //utilizado para ordenação
         $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
@@ -1428,8 +1432,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objTipoProcedimentoRN = new MdPetTipoProcessoRN();
         $arrObjTipoProcedimentoFiltroDTO = $objTipoProcedimentoRN->listar($objTipoProcessoDTO);
         $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrObjTipoProcedimentoFiltroDTO, 'IdTipoProcessoPeticionamento');
-
-        if (count($arrIdTipoProcessoPeticionamento)) {
+        $qtdArrIdTipoProcessoPeticionamento = (is_array($arrIdTipoProcessoPeticionamento) ? count($arrIdTipoProcessoPeticionamento) : 0);
+        if ($qtdArrIdTipoProcessoPeticionamento > 0) {
             $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
             $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
             $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, InfraDTO::$OPER_IN);
@@ -1475,7 +1479,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
 
         $arrLink = array();
-        $numRegistrosMenu = count($arrMenusNomes);
+        $numRegistrosMenu = (is_array($arrMenusNomes) ? count($arrMenusNomes) : 0);
 
         $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
@@ -1484,7 +1488,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $arrObjMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
 
-        $objMdPetTipoProcessoDTO = count($arrObjMdPetTipoProcessoDTO) > 0 ? current($arrObjMdPetTipoProcessoDTO) : null;
+        $qtdArrObjMdPetTipoProcessoDTO = (is_array($arrObjMdPetTipoProcessoDTO) ? count($arrObjMdPetTipoProcessoDTO) : 0);
+        $objMdPetTipoProcessoDTO = $qtdArrObjMdPetTipoProcessoDTO > 0 ? current($arrObjMdPetTipoProcessoDTO) : null;
 
         $objMdPetCriterioRN = new MdPetCriterioRN();
         $objMdPetCriterioDTO = new MdPetCriterioDTO();
@@ -1492,7 +1497,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objMdPetCriterioDTO->setStrSinAtivo('S');
         $objMdPetCriterioDTO->retTodos();
         $arrObjMdPetCriterioDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
-        $objMdPetCriterioDTO = count($arrObjMdPetCriterioDTO) > 0 ? current($arrObjMdPetCriterioDTO) : null;
+        $qtdArrObjMdPetCriterioDTO = (is_array($arrObjMdPetCriterioDTO) ? count($arrObjMdPetCriterioDTO) : 0);
+        $objMdPetCriterioDTO = $qtdArrObjMdPetCriterioDTO > 0 ? current($arrObjMdPetCriterioDTO) : null;
 
         if (is_array($arrMenusNomes) && $numRegistrosMenu > 0) {
 
@@ -1507,8 +1513,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         if ($objMdPetTipoProcessoDTO || !is_null($objMdPetCriterioDTO)) {
                             $arrLink[] = '-^#^^' . $nomeMenu . '^';
                         };
-
-                        if ($objMdPetTipoProcessoDTO && count($arrIdsUnidade) != 0) {
+                        $qtdArrIdsUnidade = (is_array($arrIdsUnidade) ? count($arrIdsUnidade) : 0);
+                        if ($objMdPetTipoProcessoDTO && $qtdArrIdsUnidade != 0) {
                             $arrLink[] = '--^' . $urlLink . '^^' . 'Processo Novo' . '^';
                         }
 
@@ -1517,10 +1523,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         }
                         break;
                     case 'Pessoas Jurídicas' :
-                        if (count($objMdPetVincUsuExtPj) > 0 && !is_null($arrIdMdPetIntegFuncionalidUtilizado)) {
+                        if (!is_null($objMdPetVincUsuExtPj) > 0 && !is_null($arrIdMdPetIntegFuncionalidUtilizado)) {
                             $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinculacao_listar' . '^^' . 'Responsável Legal de Pessoa Jurídica' . '^';
                             $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar' . '^^' . 'Procurações Eletrônicas' . '^';
-                        } elseif (count($objMdPetVincUsuExtPf) > 0) {
+                        } elseif (!is_null($objMdPetVincUsuExtPf)) {
                             $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar' . '^^' . 'Procurações Eletrônicas' . '^';
                         }
                         break;
@@ -1575,7 +1581,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $objMdPetCriterioDTO->setStrSinAtivo('S');
             $objMdPetCriterioDTO->retTodos();
             $arrObjMdPetCriterioDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
-            $objMdPetCriterioDTO = count($arrObjMdPetCriterioDTO) > 0 ? current($arrObjMdPetCriterioDTO) : null;
+            $qtdArrObjMdPetCriterioDTO = (is_array($arrObjMdPetCriterioDTO) ? count($arrObjMdPetCriterioDTO) : 0);
+            $objMdPetCriterioDTO = $qtdArrObjMdPetCriterioDTO > 0 ? current($arrObjMdPetCriterioDTO) : null;
             if ($objMdPetCriterioDTO != null) {
                 $array[] = '<button type="button" accesskey="i" name="btnPetIntercorrente" value="Peticionamento Intercorrente" onclick="criarForm();" class="infraButton">Peticionamento <span class="infraTeclaAtalho">I</span>ntercorrente</button>';
             }
@@ -1775,7 +1782,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $objAcessoExternoAPI->getIdAcessoExterno());
 
-                $strLink = '<a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');"><img src="modulos/peticionamento/imagens/intimacao_controle_de_acessos_externos_destaque.png" class="infraImg" ';
+                $strLink = '<a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');"><img src="modulos/peticionamento/imagens/png/intimacao_controle_de_acessos_externos_destaque.png" class="infraImg" style="width:24px" ';
                 $strLink .= str_replace('\n', '<br/>', PaginaSEI::montarTitleTooltip($strMsgTooltipTextoSinalizadorProcesso, $strMsgTooltipSinalizadorProcesso));
                 $strLink .= '/></a>&nbsp;';
 
@@ -1808,7 +1815,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
         if ($intQntdIntimacao > 0 && SessaoSEI::getInstance()->verificarPermissao('md_pet_intimacao_eletronica_listar')) {
-            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/intimacao_eletronica_ver.svg" class="infraCorBarraSistema" alt="Ver Intimações Eletrônicas" title="Ver Intimações Eletrônicas"/></a>';
+            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/png/intimacao_eletronica_ver.png" class="infraCorBarraSistema" alt="Ver Intimações Eletrônicas" title="Ver Intimações Eletrônicas" style="width: 38px;"/></a>';
         }
 
         if (!SessaoSEI::getInstance()->verificarPermissao('md_pet_adm_vinc_consultar') && $objProcedimentoAPI->getCodigoAcesso() > 0)
@@ -1817,9 +1824,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
         // Vinculação à Pessoa Jurídica
         $objMdPetVinculoRN = new MdPetVinculoRN();
         $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->consultarProcedimentoVinculo(array($objProcedimentoAPI->getIdProcedimento(), 'retornoDTO' => true, 'isAtivos' => false));
-
-        if ($arrObjMdPetVinculoDTO && count($arrObjMdPetVinculoDTO) > 0) {
-            $arrBotoes [] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_consultar&acao_origem=procedimento_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento() . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/VinculoPJ.png" alt="Visualizar Vinculações e Procurações Eletrônicas" title="Visualizar Vinculações e Procurações Eletrônicas" /></a>';
+        $qtdArrObjMdPetVinculoDTO = (is_array($arrObjMdPetVinculoDTO) ? count($arrObjMdPetVinculoDTO) : 0);
+        if ($arrObjMdPetVinculoDTO && $qtdArrObjMdPetVinculoDTO > 0) {
+            $arrBotoes [] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_consultar&acao_origem=procedimento_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento() . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/png/VinculoPJ.png" alt="Visualizar Vinculações e Procurações Eletrônicas" title="Visualizar Vinculações e Procurações Eletrônicas" style="width: 38px;" /></a>';
         }
 
         return $arrBotoes;
@@ -1893,7 +1900,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
             $arrDados = null;
             $arrDados = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
-            if (count($arrDados) > 0) {
+            $qtdArrDados = (is_array($arrDados) ? count($arrDados) : 0);
+            if ($qtdArrDados > 0) {
                 foreach ($arrDados as $aceite) {
                     $existeInt = $aceite['INT'];
 
@@ -1990,8 +1998,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                     $objMdPetReciboDTO->unSetDblIdProtocoloRelacionado();
 
                                     $arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
-
-                                    if (count($arrObjMdPetReciboDTO) == 0) {
+                                    $qtdArrObjMdPetReciboDTO = (is_array($arrObjMdPetReciboDTO) ? count($arrObjMdPetReciboDTO) : 0);
+                                    if ($qtdArrObjMdPetReciboDTO == 0) {
                                         //Relacionado
                                         $objMdPetReciboDTO->unSetNumIdProtocolo();
                                         $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcedimento);
@@ -2072,14 +2080,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarAcaoBotaoCumprir($idProtocolo, $idAcessoExterno, $idProcedimento, $isProcedimento)
     {
-        $htmlImgIntCumpridaPrinc = '<img src="modulos/peticionamento/imagens/intimacao_cumprida_doc_principal.png">';
-        $htmlImgIntNaoCumpPrinc = '<img src="modulos/peticionamento/imagens/intimacao_nao_cumprida_doc_principal.png">';
-        $htmlImgIntCumpridaAnex = '<img src="modulos/peticionamento/imagens/intimacao_cumprida_doc_anexo.png">';
-        $htmlImgIntNaoCumprAnex = '<img src="modulos/peticionamento/imagens/intimacao_nao_cumprida_doc_anexo.png">';
-        $htmlImgIntAguardandoCumprGeralPrinc = '<img src="modulos/peticionamento/imagens/intimacao_aguardando_cumprimento_geral.png">';
-        $htmlImgIntAguardandoCumprGeralAnex = '<img src="modulos/peticionamento/imagens/intimacao_aguardando_cumprimento_geral_anexo.png">';
-        $htmlImgIntNaoCumprVinculoInativoPrinc = '<img src="modulos/peticionamento/imagens/intimacao_nao_cumprida_vinculo_inativo.png">';
-        $htmlImgIntNaoCumprVinculoInativoAnex = '<img src="modulos/peticionamento/imagens/intimacao_nao_cumprida_vinculo_inativo_anexo.png">';
+        $htmlImgIntCumpridaPrinc = '<img src="modulos/peticionamento/imagens/png/intimacao_cumprida_doc_principal.png" style="width: 24px;">';
+        $htmlImgIntNaoCumpPrinc = '<img src="modulos/peticionamento/imagens/png/intimacao_nao_cumprida_doc_principal.png" style="width: 24px;">';
+        $htmlImgIntCumpridaAnex = '<img src="modulos/peticionamento/imagens/png/intimacao_cumprida_doc_anexo.png" style="width: 24px;">';
+        $htmlImgIntNaoCumprAnex = '<img src="modulos/peticionamento/imagens/png/intimacao_nao_cumprida_doc_anexo.png" style="width: 24px;">';
+        $htmlImgIntAguardandoCumprGeralPrinc = '<img src="modulos/peticionamento/imagens/png/intimacao_aguardando_cumprimento_geral.png" style="width: 24px;">';
+        $htmlImgIntAguardandoCumprGeralAnex = '<img src="modulos/peticionamento/imagens/png/intimacao_aguardando_cumprimento_geral_anexo.png" style="width: 24px;">';
+        $htmlImgIntNaoCumprVinculoInativoPrinc = '<img src="modulos/peticionamento/imagens/png/intimacao_nao_cumprida_vinculo_inativo.png" style="width: 24px;">';
+        $htmlImgIntNaoCumprVinculoInativoAnex = '<img src="modulos/peticionamento/imagens/png/intimacao_nao_cumprida_vinculo_inativo_anexo.png" style="width: 24px;">';
 
         $objMdPetIntRN = new MdPetIntimacaoRN();
         $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
@@ -2098,8 +2106,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objMdPetIntDocumentoDTO->retStrSinPrincipal();
         $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
         $listaDocs = $objMdPetIntProtocoloRN->listar($objMdPetIntDocumentoDTO);
-
-        if (count($listaDocs) > 0) {
+        $qtdListaDocs = (is_array($listaDocs) ? count($listaDocs) : 0);
+        if ($qtdListaDocs > 0) {
             $idIntimacaoBotao = InfraArray::converterArrInfraDTO($listaDocs, 'IdMdPetIntimacao');
             foreach ($listaDocs as $objRelIntDoc) {
                 $img = '';
@@ -2191,7 +2199,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         unset($objMdPetIntRelDestDTOTratado[$chave]);
                     }
                 }
-                $qntAceite = count($arrDados);
+                $qntAceite = (is_array($arrDados) ? count($arrDados) : 0);
                 if ($arrDados) {
                     foreach ($arrDados as $chaveAceite => $itemAceite) {
                         $removerAceite = true;
@@ -2211,10 +2219,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $arrObjMdPetIntRelDestDTOTratadoFinal[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
                     }
                 }
-
-                $qntAceiteCorrente = count($arrDados);
-                $qntDestinatarioCorrente = count($arrObjMdPetIntRelDestDTOTratadoFinal);
-                $qntDestinatario = count($objMdPetIntRelDestDTO);
+                $qntAceiteCorrente = (is_array($arrDados) ? count($arrDados) : 0);
+                $qntDestinatarioCorrente = (is_array($arrObjMdPetIntRelDestDTOTratadoFinal) ? count($arrObjMdPetIntRelDestDTOTratadoFinal) : 0);
+                $qntDestinatario = (is_array($objMdPetIntRelDestDTO) ? count($objMdPetIntRelDestDTO) : 0);
                 //Se a quantidade de aceites for diferente da quantidade de intimação quer dizer que ainda tem intimação para ser cumprida
                 if ($qntAceite > 0 && $qntAceite != $qntDestinatarioCorrente) {
                     $existeInt = false;
@@ -2241,8 +2248,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             $dtIntimacao = '';
                             $arrPessoaJuridica = array();
                             $arrPessoaFisica = array();
-
-                            $qntDest = count($arrObjMdPetIntRelDestDTOTratadoFinal);
+                            $qntDest = (is_array($arrObjMdPetIntRelDestDTOTratadoFinal) ? count($arrObjMdPetIntRelDestDTOTratadoFinal) : 0);
                             $qntDestRevogado = 0;
                             foreach ($objMdPetIntRelDestDTO2 as $obj) {
                                 $existeAceite = false;
@@ -2321,7 +2327,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         }
                         $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo . $linkIdIntimacao);
 
-                        $js = "infraAbrirJanela('" . $strLink . "', 'janelaConsultarIntimacao', 900, 350);";
+                        $js = "parent.infraAbrirJanelaModal('" . $strLink . "', 900, 350);";
                         if ($objRelIntDoc->getStrSinPrincipal() == 'S') {
 
                             $informeTooltipACG = null;
@@ -2341,8 +2347,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 $dtIntimacao = '';
                                 $arrPessoaJuridica = array();
                                 $arrPessoaFisica = array();
-
-                                $qntDest = count($objMdPetIntRelDestDTO2);
+                                $qntDest = (is_array($objMdPetIntRelDestDTO2) ? count($objMdPetIntRelDestDTO2) : 0);
                                 $qntDestRevogado = 0;
                                 foreach ($objMdPetIntRelDestDTO2 as $obj) {
                                     $existeAceite = false;
@@ -2422,8 +2427,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                             if (is_array($objMdPetIntRelDestDTO)) {
                                 $objMdPetIntRelDestDTO2 = $objMdPetIntRelDestDTO;
-
-                                $qntDest = count($objMdPetIntRelDestDTO2);
+                                $qntDest = (is_array($objMdPetIntRelDestDTO2) ? count($objMdPetIntRelDestDTO2) : 0);
                                 $qntDestRevogado = 0;
 
                                 foreach ($objMdPetIntRelDestDTO2 as $obj) {
@@ -2516,16 +2520,16 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                         $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_cumprir&id_documento=' . $idDocumento . '&id_acesso_externo=' . $idAcessoExterno . $linkIdDestinatario . '&id_destinatario=' . $objContato->getNumIdContato());
 
-                        $js = "infraAbrirJanela('" . $strLink . "', 'janelaConsultarIntimacao', 900, 350);";
+                        $js = "parent.infraAbrirJanelaModal('" . $strLink . "', 900, 350);";
                     } else {
                         $tooltip = $objMdPetIntRN->getTextoTolTipIntimacaoEletronica(array($dtIntimacao, $docPrinc, $docTipo, $docNum, $objRelIntDoc->getStrSinPrincipal(), $arrPessoaJuridica, $arrPessoaFisica, $informeTooltipACG));
                     }
-
+                    $qtdTooltip = (is_array($tooltip) ? count($tooltip) : 0);
                     $arr = array();
                     $arr[0] = $js;
                     $arr[1] = $img;
-                    $arr[2] = count($tooltip) > 0 ? $tooltip[0] : '';
-                    $arr[3] = count($tooltip) > 0 ? $tooltip[1] : '';
+                    $arr[2] = $qtdTooltip > 0 ? $tooltip[0] : '';
+                    $arr[3] = $qtdTooltip > 0 ? $tooltip[1] : '';
                     $conteudoHtml = $objMdPetIntRN->retornaLinkCompletoIconeIntimacao($arr);
                 }
             }
@@ -2549,8 +2553,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objMdPetIntDocumentoDTO->retStrSinPrincipal();
         $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
         $listaDocs = $objMdPetIntProtocoloRN->listar($objMdPetIntDocumentoDTO);
-
-        if (count($listaDocs) > 0) {
+        $qtdListaDocs = (is_array($listaDocs) ? count($listaDocs) : 0);
+        if ($qtdListaDocs > 0) {
             foreach ($listaDocs as $objRelIntDoc) {
                 $existeInt = false;
                 $arrDados = null;
@@ -2585,8 +2589,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             $objMdPetIntRelDestDTO2 = $objMdPetIntRelDestDTO;
                             $dtIntimacao = '';
                             $arrPessoaJuridica = array();
-
-                            $qntDest = count($objMdPetIntRelDestDTO2);
+                            $qntDest = (is_array($objMdPetIntRelDestDTO2) ? count($objMdPetIntRelDestDTO2) : 0);
                             $qntDestRevogado = 0;
 
                             foreach ($objMdPetIntRelDestDTO2 as $obj) {
@@ -2667,9 +2670,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $listaDocs = $objMdPetIntProtocoloRN->listar($objMdPetIntDocumentoDTO);
 
         $existeInt = false;
-        if (count($listaDocs) > 0) {
+        $qtdListaDocs = (is_array($listaDocs) ? count($listaDocs) : 0);
+        if ($qtdListaDocs > 0) {
             $idIntimacaoBotao = InfraArray::converterArrInfraDTO($listaDocs, 'IdMdPetIntimacao');
-            $qntDoc = count($listaDocs);
+            $qntDoc = (is_array($listaDocs) ? count($listaDocs) : 0);
             $documentos = 0;
             $idAceite = null;
             $idDestinatario = null;
@@ -2717,8 +2721,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $dtIntimacao = '';
                     $arrPessoaJuridica = array();
                     $arrPessoaFisica = array();
-
-                    $qntDest = count($objMdPetIntRelDestDTO2);
+                    $qntDest = (is_array($objMdPetIntRelDestDTO2) ? count($objMdPetIntRelDestDTO2) : 0);
                     $qntDestRevogado = 0;
 
                     foreach ($objMdPetIntRelDestDTO2 as $obj) {
@@ -2814,7 +2817,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         unset($objMdPetIntRelDestDTOTratado[$chave]);
                     }
                 }
-                $qntAceite = count($arrDados);
+                $qntAceite = (is_array($arrDados) ? count($arrDados) : 0);
                 if ($arrDados) {
                     foreach ($arrDados as $chaveAceite => $itemAceite) {
                         $removerAceite = true;
@@ -2872,8 +2875,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             $dtoMdPetVincReptDTO->retStrStaEstado();
                             $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
                             $arrMdPetVincRepRN = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
-
-                            if (count($arrMdPetVincRepRN) > 0) {
+                            $qtdArrMdPetVincRepRN = (is_array($arrMdPetVincRepRN) ? count($arrMdPetVincRepRN) : 0);
+                            if ($qtdArrMdPetVincRepRN > 0) {
                                 foreach ($arrMdPetVincRepRN as $vinculo) {
                                     if ($vinculo->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) {
                                         $bolRevogada = false;
@@ -2947,7 +2950,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             }
 
             //se o processo nao tiver documentos ja pode passar direto a verificação
-            if (!is_array($idProtocoloDoProcesso) || count($idProtocoloDoProcesso) == 0) {
+            $qtdIdProtocoloDoProcesso = (is_array($idProtocoloDoProcesso) ? count($idProtocoloDoProcesso) : 0);
+            if (!is_array($idProtocoloDoProcesso) || $qtdIdProtocoloDoProcesso == 0) {
                 return array();
             }
 
@@ -3023,7 +3027,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $isCertidao = $isDocumento ? $objProtocoloAPIComIntimacao->getIdSerie() == $idSerieCertidao : false;
 
                     //Se possui intimação realiza verificações
-                    if (count($arrIntimacao) > 0) {
+                    $qtdArrIntimacao = (is_array($arrIntimacao) ? count($arrIntimacao) : 0);
+                    if ($qtdArrIntimacao > 0) {
 
                         $isAnexoDisponib = $arrRetIntimacao['T'] == 2;
                         $disp = $arrRetIntimacao['T'] == 1;
@@ -3123,7 +3128,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     $objProcedimentoRN = new ProcedimentoRN();
                     $arrObjProcedimentoDTO = $objProcedimentoRN->listarCompleto($dto);
-                    if (count($arrObjProcedimentoDTO) > 0) {
+                    $qtdArrObjProcedimentoDTO = (is_array($arrObjProcedimentoDTO) ? count($arrObjProcedimentoDTO) : 0);
+                    if ($qtdArrObjProcedimentoDTO > 0) {
                         $objProcedimentoDTO = $arrObjProcedimentoDTO[0];
 
                         $arrObjRelProtocoloProtocoloDTO = $objProcedimentoDTO->getArrObjRelProtocoloProtocoloDTO();
@@ -3151,8 +3157,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                     $arrDtoPetIntSerie = $rnPetIntSerie->listar($dtoPetIntSerie);
 
                                     //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
-                                    if (is_array($arrDtoPetIntSerie) && count($arrDtoPetIntSerie) > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
-                                        $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/intimacao_eletronica_gerar.svg" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" /></a>';
+                                    $qtdArrDtoPetIntSerie = (is_array($arrDtoPetIntSerie) ? count($arrDtoPetIntSerie) : 0);
+                                    if ($qtdArrDtoPetIntSerie > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
+                                        $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" style="width: 38px" /></a>';
                                     }
                                 }
                             }
@@ -3161,7 +3168,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 }
             }
         }
-
         return $arrBotoes;
     }
 
@@ -3172,7 +3178,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         // botao pelo ponto de extensao do acesso externo autorizado (o que deixaria em alguns casos
         // a coluna "Ações" sem quaisquer icones
         // Exemplo: Processo com apenas 1 documento assinado, com intimaçao gerada do tipo integral e sem anexos
-        if (count($this->arrDocumentosLiberados) == 0) {
+        $qtdArrDocumentosLiberados = (is_array($this->arrDocumentosLiberados) ? count($this->arrDocumentosLiberados) : 0);
+        if ($qtdArrDocumentosLiberados == 0) {
             return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
         } else {
             return null;
@@ -3186,7 +3193,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         // botao pelo ponto de extensao do acesso externo autorizado (o que deixaria em alguns casos
         // a coluna "Ações" sem quaisquer icones
         // Exemplo: Processo com apenas 1 documento assinado, com intimaçao gerada do tipo integral e sem anexos
-        if (count($this->arrProcessosLiberados) == 0) {
+        $qtdArrProcessosLiberados = (is_array($this->arrProcessosLiberados) ? count($this->arrProcessosLiberados) : 0);
+        if ($qtdArrProcessosLiberados == 0) {
             return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentoAPI, true);
         } else {
             return null;
@@ -3459,7 +3467,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function excluirContato($objContatoAPI)
     {
-        if (count($objContatoAPI) > 0) {
+        $qtdObjContatoAPI = (is_array($objContatoAPI) ? count($objContatoAPI) : 0);
+        if ($qtdObjContatoAPI > 0) {
             $objContatoAPI = $objContatoAPI[0];
             $isMesmaUnidade = false;
 
@@ -3472,7 +3481,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $objMdPetVincTpProcessoDTO->retNumIdUnidade();
             $objMdPetVincTpProcessoDTO = $mdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
-            if (count($objMdPetVincTpProcessoDTO) > 0) {
+            $qtdObjMdPetVincTpProcessoDTO = (is_array($objMdPetVincTpProcessoDTO) ? count($objMdPetVincTpProcessoDTO) : 0);
+            if ($qtdObjMdPetVincTpProcessoDTO > 0) {
                 if ($objMdPetVincTpProcessoDTO->getNumIdUnidade() == $idUnidade) {
                     $isMesmaUnidade = true;
                 }
@@ -3488,7 +3498,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
 
-            if (count($objMdPetVinculoDTO) > 0) {
+            $qtdObjMdPetVinculoDTO = (is_array($objMdPetVinculoDTO) ? count($objMdPetVinculoDTO) : 0);
+            if ($qtdObjMdPetVinculoDTO > 0) {
                 if ($isMesmaUnidade == false) {
                     $objInfraException = new InfraException();
                     $objInfraException->adicionarValidacao('Este Contato não pode ser Excluído porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');
@@ -3500,7 +3511,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function desativarContato($objContatoAPI)
     {
-        if (count($objContatoAPI) > 0) {
+        $qtdObjContatoAPI = (is_array($objContatoAPI) ? count($objContatoAPI) : 0);
+        if ($qtdObjContatoAPI > 0) {
             $objInfraException = new InfraException();
 
             $objContatoAPI = $objContatoAPI[0];
@@ -3515,7 +3527,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $objMdPetVincTpProcessoDTO->retNumIdUnidade();
             $objMdPetVincTpProcessoDTO = $mdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
-            if (count($objMdPetVincTpProcessoDTO) > 0) {
+            $qtdObjMdPetVincTpProcessoDTO = (is_array($objMdPetVincTpProcessoDTO) ? count($objMdPetVincTpProcessoDTO) : 0);
+            if ($qtdObjMdPetVincTpProcessoDTO > 0) {
                 if ($objMdPetVincTpProcessoDTO->getNumIdUnidade() == $idUnidade) {
                     $isMesmaUnidade = true;
                 }
@@ -3531,7 +3544,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
 
-            if (count($objMdPetVinculoDTO) > 0) {
+            $qtdObjMdPetVinculoDTO = (is_array($objMdPetVinculoDTO) ? count($objMdPetVinculoDTO) : 0);
+            if ($qtdObjMdPetVinculoDTO > 0) {
 //                if ($isMesmaUnidade == false) {
                 $objInfraException->lancarValidacao('Este Contato não pode ser Desativado porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');
 //                }
@@ -3607,7 +3621,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objMdPetVincTpProcessoDTO->retNumIdUnidade();
         $objMdPetVincTpProcessoDTO = $mdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
-        if (count($objMdPetVincTpProcessoDTO) > 0) {
+        $qtdObjMdPetVincTpProcessoDTO = (is_array($objMdPetVincTpProcessoDTO) ? count($objMdPetVincTpProcessoDTO) : 0);
+        if ($qtdObjMdPetVincTpProcessoDTO > 0) {
             if ($objMdPetVincTpProcessoDTO->getNumIdUnidade() == $idUnidade) {
                 $isMesmaUnidade = true;
             }
@@ -3623,7 +3638,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
 
-        if (count($objMdPetVinculoDTO) > 0) {
+        $qtdObjMdPetVinculoDTO = (is_array($objMdPetVinculoDTO) ? count($objMdPetVinculoDTO) : 0);
+        if ($qtdObjMdPetVinculoDTO > 0) {
             if ($isMesmaUnidade == false) {
                 $objInfraException = new InfraException();
                 $objInfraException->adicionarValidacao('Este Contato não pode ser Alterado porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');

@@ -27,18 +27,18 @@ try {
     $arrComandos = array();
 
     switch ($_GET['acao']) {
-        
-    	case 'md_pet_int_tipo_resp_cadastrar':
-            
+
+        case 'md_pet_int_tipo_resp_cadastrar':
+
             $strTitulo = 'Novo Tipo de Resposta';
-            
+
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarMdPetIntTipoResp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-            
+
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             $objMdPetIntTipoRespDTO->setNumIdMdPetIntTipoResp(null);
 
-           $tipoDia = 'C';
+            $tipoDia = 'C';
             switch ($_POST['rdoPrazo']) {
                 case 'N':
                     $valorPrazo = 0;
@@ -65,7 +65,7 @@ try {
 
             if (isset($_POST['sbmCadastrarMdPetIntTipoResp'])) {
                 try {
-                
+
                     $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
                     $objMdPetIntTipoRespDTO = $objMdPetIntTipoRespRN->cadastrar($objMdPetIntTipoRespDTO);
                     PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntTipoRespDTO->getNumIdMdPetIntTipoResp() . '" cadastrado com sucesso.');
@@ -74,17 +74,17 @@ try {
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
-                
+
             }
-            
+
             break;
 
         case 'md_pet_int_tipo_resp_alterar':
-            
+
             $strTitulo = 'Alterar Tipo de Resposta';
-            
+
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarMdPetIntTipoResp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-            
+
             $strDesabilitar = 'disabled="disabled"';
 
             if (isset($_GET['id_md_pet_int_tipo_resp'])) {
@@ -127,36 +127,36 @@ try {
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdPetIntTipoRespDTO->getNumIdMdPetIntTipoResp())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             if (isset($_POST['sbmAlterarMdPetIntTipoResp'])) {
-                
-            	try {
+
+                try {
                     $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
                     $objMdPetIntTipoRespRN->alterar($objMdPetIntTipoRespDTO);
                     PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntTipoRespDTO->getNumIdMdPetIntTipoResp() . '" alterado com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdPetIntTipoRespDTO->getNumIdMdPetIntTipoResp())));
                     die;
-                    
+
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
-                
+
             }
             break;
 
         case 'md_pet_int_tipo_resp_consultar':
-            
+
             $strTitulo = 'Consultar Tipo de Resposta';
-            
+
             $arrComandos[] = '<button type="button" accesskey="C" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_md_pet_int_tipo_resp'])) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
             $objMdPetIntTipoRespDTO->setNumIdMdPetIntTipoResp($_GET['id_md_pet_int_tipo_resp']);
             $objMdPetIntTipoRespDTO->setBolExclusaoLogica(false);
             $objMdPetIntTipoRespDTO->retTodos();
             $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
             $objMdPetIntTipoRespDTO = $objMdPetIntTipoRespRN->consultar($objMdPetIntTipoRespDTO);
-            
+
             if ($objMdPetIntTipoRespDTO === null) {
                 throw new InfraException("Registro não encontrado.");
             }
-            
+
             break;
 
         default:
@@ -174,155 +174,143 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-?>
-#divGeral{height:50em;}
-#fldPrazo {position:absolute;left:0%;top:10%;height:20%;width:80%;}
-#fldResposta {position:absolute;left:0%;top:35%;height:13%;width:80%;}
-
-#txtValorPrazoExternoDia {position: absolute;left: 8%;top: 25%;width: 6%;}
-#txtValorPrazoExternoMes {position: absolute;left: 8%;top: 45%;width: 6%;}
-#txtValorPrazoExternoAno {position: absolute;left: 8%;top: 67%;width: 6%;}
-
-#lblNome {position: absolute;left: 0%;top: 0%;width: 50%;}
-#txtNome {position: absolute;left: 0%;top: 4%;width: 40%;}
-#tipoAjuda {position:absolute;left:41%;top:4%;}
-
-#spnTipoDias {position:absolute;left:15%;top:25%;}
-<?
+require_once "md_pet_int_tipo_resp_cadastro_css.php";
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-?>
-        function inicializar() {
-            <? if ($_GET['acao'] == 'md_pet_int_tipo_resp_cadastrar') {?>
-            document.getElementById('txtNome').focus();
-            <? } else if ($_GET['acao'] == 'md_pet_int_tipo_resp_consultar'){?>
-            infraDesabilitarCamposAreaDados();
-            <?}else{?>
-            document.getElementById('btnCancelar').focus();
-            <?}?>
-
-            <?if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() != 'D'){ ?>
-            document.getElementById('txtValorPrazoExternoDia').style.display = "none";
-            document.getElementById('spnTipoDias').style.display = "none";
-            <? }
-            if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() != 'M') { ?>
-            document.getElementById('txtValorPrazoExternoMes').style.display = "none";
-            <? }
-            if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() != 'A') { ?>
-            document.getElementById('txtValorPrazoExternoAno').style.display = "none";
-            <?}?>
-        }
-        function verificaPrazo(id){
-            document.getElementById('txtValorPrazoExternoDia').style.display = "none";
-            document.getElementById('txtValorPrazoExternoMes').style.display = "none";
-            document.getElementById('txtValorPrazoExternoAno').style.display = "none";
-            document.getElementById('spnTipoDias').style.display = "none";
-            if(id != 'D'){
-                document.getElementById('rdTipoDiaU').checked = false;
-                document.getElementById('rdTipoDiaC').checked = false;
-            }
-            if (id == 'N') {
-                document.getElementById('optTipoRespostaFacultativa').checked = true;
-                document.getElementById('optTipoRespostaExige').disabled = true;
-            }else{
-                document.getElementById('optTipoRespostaFacultativa').disabled = false;
-                document.getElementById('optTipoRespostaExige').disabled = false;
-                document.getElementById('optTipoRespostaFacultativa').checked = false;
-                if(id == 'D'){
-                    document.getElementById('rdTipoDiaC').checked = true;
-                    document.getElementById('txtValorPrazoExternoDia').style.display = "block";
-                    document.getElementById('spnTipoDias').style.display = "block";
-                    document.getElementById('txtValorPrazoExternoDia').value = "";
-                }else if(id == 'M'){
-                    document.getElementById('txtValorPrazoExternoMes').style.display = "block";
-                    document.getElementById('txtValorPrazoExternoMes').value = "";
-                }else if(id == 'A'){
-                    document.getElementById('txtValorPrazoExternoAno').style.display = "block";
-                    document.getElementById('txtValorPrazoExternoAno').value = "";
-                }
-            }
-        }
-<?
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 $title = '';
 ?>
-<form id="frmMdPetIntTipoRespCadastro" method="post" onsubmit="return OnSubmitForm();"action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
+    <form id="frmMdPetIntTipoRespCadastro" method="post" onsubmit="return OnSubmitForm();"
+          action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-        <div id="divGeral" class="infraAreaDados">
-            <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:</label>
-            <a href="javascript:void(0);" id="tipoAjuda" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" <?=PaginaSEI::montarTitleTooltip('Escrever nome que reflita a possível Resposta do Usuário Externo a ser intimado. Exemplos: Recurso de 1ª Instância, Embargos de Declaração, Pedido de Reconsideração.')?>><img src="<?=PaginaSEI::getInstance()->getDiretorioImagensGlobal()?>/ajuda.gif" class="infraImg"/></a>
-            <input type="text" id="txtNome" name="txtNome" class="infraText" value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoRespDTO->getStrNome()); ?>" onkeypress="return infraMascaraTexto(this,event,70);" maxlength="70" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-            <fieldset id="fldPrazo" >
-                <legend class="infraLegend"> Prazo Externo </legend>
-                <br>
-                <div id="divOptDias" class="infraDivRadio">
-                    <?  $checked = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'D' ? 'checked="checked"' : ''; ?>
-                    <?  $valor = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'D' ? $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() : ''; ?>
-                    <span id="spnDias"><label id="lblDias" class="infraLabelRadio"><input type="radio" name="rdoPrazo" id="optPrazoDia" <? echo $checked ?> value="D"  class="infraRadio" onclick="verificaPrazo('D')" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
-                    Dias</label></span>
-                    <input type="text" id="txtValorPrazoExternoDia" onkeypress="return infraMascaraTexto(this,event,3);" name="txtValorPrazoExternoDia" class="infraText" value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    <span id="spnTipoDias">
-                        <label for="rdTipoDiaC" class="infraLabelRadio">
-                        <input
-                          <?php  echo ($objMdPetIntTipoRespDTO->getStrTipoDia() == 'C' || $objMdPetIntTipoRespDTO->getStrTipoDia() == '') ? 'checked="checked"' : ''; ?>
-                               type="radio" id="rdTipoDiaC" name="rdTipoDia" class="infraText"
-                               value="C"
-                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/> Corridos
-                        </label>
-                        <label for="rdTipoDiaU" class="infraLabelRadio">
-                        <input
-                          <?php  echo $objMdPetIntTipoRespDTO->getStrTipoDia() == 'U' ? 'checked="checked"' : ''; ?>
-                                type="radio" id="rdTipoDiaU" name="rdTipoDia" class="infraText"
-                                value="U"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/> Úteis
-                        </label>
-                    </span>
-                </div>
-                <br>
-                <div id="divOptMes" class="infraDivRadio">
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'M' ? 'checked="checked"' : ''; ?>
-                    <?  $valor = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'M' ? $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() : ''; ?>
-                    <span id="spnMes"><label id="lblMes" class="infraLabelRadio"><input type="radio" name="rdoPrazo" id="optPrazoMes" <? echo $checked ?> value="M" class="infraRadio" onclick="verificaPrazo('M')" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
-                    Mês</label></span>
-                    <input type="text" id="txtValorPrazoExternoMes" name="txtValorPrazoExternoMes" onkeypress="return infraMascaraTexto(this,event,2);" class="infraText" value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                </div>
-                <br>
-                <div id="divOptAno" class="infraDivRadio">
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'A' ? 'checked="checked"' : ''; ?>
-                    <?  $valor = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'A' ? $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() : ''; ?>
-                    <span id="spnAno"><label id="lblAno" class="infraLabelRadio"><input type="radio" name="rdoPrazo" id="optPrazoAno" <? echo $checked ?> value="A" class="infraRadio" onclick="verificaPrazo('A')" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
-                    Ano</label></span>
-                    <input type="text" id="txtValorPrazoExternoAno" name="txtValorPrazoExternoAno" onkeypress="return infraMascaraTexto(this,event,1);" class="infraText" value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                </div>
-            </fieldset>
-
-            <fieldset id="fldResposta" >
-                <legend class="infraLegend"> Resposta do Usuário Externo </legend>
-                <div id="divOptAno" class="infraDivRadio">
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'F' ? 'checked="checked"' : ''; ?>
-                    <span id="spnAno"><label id="lblAno" class="infraLabelRadio">
-                    <input type="radio" name="rdoResposta" id="optTipoRespostaFacultativa" <? echo $checked ?> value="F" class="infraRadio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
-                    Resposta Facultativa</label></span>
-                </div>
-                <br>
-                <div id="divOptAno" class="infraDivRadio">
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'E' ? 'checked="checked"' : ''; ?>
-                    <span id="spnExige"><label id="lblExige" class="infraLabelRadio">
-                    <input type="radio" name="rdoResposta" id="optTipoRespostaExige" <? echo $checked ?> value="E" class="infraRadio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
-                    Exige Resposta (intimação destacará o Tipo de Resposta e Prazo Externo esperado e emitirá reiterações por e-mail) </span> <br>
-                </div>
-                <br>
-            </fieldset>
-            <input type="hidden" id="hdnIdMdPetIntTipoResp" name="hdnIdMdPetIntTipoResp" value="<?= $objMdPetIntTipoRespDTO->getNumIdMdPetIntTipoResp(); ?>"/>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:</label>
+                <a href="javascript:void(0);" id="tipoAjuda"
+                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita a possível Resposta do Usuário Externo a ser intimado. Exemplos: Recurso de 1ª Instância, Embargos de Declaração, Pedido de Reconsideração.', 'Ajuda') ?>>
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" class="infraImgModulo"/></a>
+                <input type="text" id="txtNome" name="txtNome" class="infraText form-control"
+                       value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoRespDTO->getStrNome()); ?>"
+                       onkeypress="return infraMascaraTexto(this,event,70);" maxlength="70"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            </div>
         </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
+                <fieldset id="fldPrazo" class="form-control">
+                    <legend class="infraLegend"> Prazo Externo</legend>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2" style="padding-top: 5px; padding-bottom: 5px">
+                            <? $checked = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'D' ? 'checked="checked"' : ''; ?>
+                            <? $valor = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'D' ? $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() : ''; ?>
+                            <input type="radio" name="rdoPrazo"
+                                   id="optPrazoDia" <? echo $checked ?> value="D"
+                                   class="infraRadio"
+                                   onclick="verificaPrazo('D')"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblDias" for="optPrazoDia" class="infraLabelRadio">Dias</label>
+                        </div>
+                        <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
+                            <input type="text" id="txtValorPrazoExternoDia"
+                                   onkeypress="return infraMascaraTexto(this,event,3);"
+                                   name="txtValorPrazoExternoDia" class="infraText form-control"
+                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        </div>
+                        <div class="col-sm-6 col-md-6 col-lg-5 col-xl-4" id="spnTipoDias">
+                            <input
+                                <?php echo ($objMdPetIntTipoRespDTO->getStrTipoDia() == 'C' || $objMdPetIntTipoRespDTO->getStrTipoDia() == '') ? 'checked="checked"' : ''; ?>
+                                    type="radio" id="rdTipoDiaC" name="rdTipoDia" class="infraRadio"
+                                    value="C"
+                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label for="rdTipoDiaC" class="infraLabelRadio">
+                                Corridos
+                            </label>
+                            <input
+                                <?php echo $objMdPetIntTipoRespDTO->getStrTipoDia() == 'U' ? 'checked="checked"' : ''; ?>
+                                    type="radio" id="rdTipoDiaU" name="rdTipoDia" class="infraRadio"
+                                    value="U"
+                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label for="rdTipoDiaU" class="infraLabelRadio">
+                                Úteis
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2" style="padding-top: 5px; padding-bottom: 5px">
+                            <? $checked = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'M' ? 'checked="checked"' : ''; ?>
+                            <? $valor = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'M' ? $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() : ''; ?>
 
-</form>
+                            <input type="radio" name="rdoPrazo"
+                                   id="optPrazoMes" <? echo $checked ?> value="M"
+                                   class="infraRadio"
+                                   onclick="verificaPrazo('M')"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblMes" for="optPrazoMes" class="infraLabelRadio">Mês</label>
+                        </div>
+                        <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
+                            <input type="text" id="txtValorPrazoExternoMes" name="txtValorPrazoExternoMes"
+                                   onkeypress="return infraMascaraTexto(this,event,2);" class="infraText form-control"
+                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2" style="padding-top: 5px; padding-bottom: 5px">
+                            <? $checked = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'A' ? 'checked="checked"' : ''; ?>
+                            <? $valor = $objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'A' ? $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() : ''; ?>
+                            <input type="radio" name="rdoPrazo"
+                                   id="optPrazoAno" <? echo $checked ?> value="A"
+                                   class="infraRadio"
+                                   onclick="verificaPrazo('A')"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblAno" for="optPrazoAno" class="infraLabelRadio">Ano</label>
+                        </div>
+                        <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
+                            <input type="text" id="txtValorPrazoExternoAno" name="txtValorPrazoExternoAno"
+                                   onkeypress="return infraMascaraTexto(this,event,1);" class="infraText form-control"
+                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
+                <fieldset id="fldResposta" class="form-control">
+                    <legend class="infraLegend"> Resposta do Usuário Externo</legend>
+
+                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'F' ? 'checked="checked"' : ''; ?>
+
+                    <input type="radio" name="rdoResposta" id="optTipoRespostaFacultativa" <? echo $checked ?>
+                           value="F"
+                           class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <label id="lblAno" for="optTipoRespostaFacultativa" class="infraLabelRadio">Resposta Facultativa</label>
+                    <br/>
+                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'E' ? 'checked="checked"' : ''; ?>
+
+                    <input type="radio" name="rdoResposta" id="optTipoRespostaExige" <? echo $checked ?> value="E"
+                           class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <label id="lblExige" for="optTipoRespostaExige" class="infraLabelRadio">
+                        Exige Resposta (intimação destacará o Tipo de Resposta e Prazo Externo esperado e emitirá
+                        reiterações por e-mail) </label>
+
+                </fieldset>
+            </div>
+        </div>
+        <input type="hidden" id="hdnIdMdPetIntTipoResp" name="hdnIdMdPetIntTipoResp"
+               value="<?= $objMdPetIntTipoRespDTO->getNumIdMdPetIntTipoResp(); ?>"/>
+
+
+    </form>
 <?
-PaginaSEI::getInstance()->montarAreaDebug(); 
+PaginaSEI::getInstance()->montarAreaDebug();
+require_once "md_pet_int_tipo_resp_cadastro_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

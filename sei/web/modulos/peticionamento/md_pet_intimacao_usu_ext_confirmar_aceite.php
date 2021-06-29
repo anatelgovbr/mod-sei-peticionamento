@@ -65,8 +65,11 @@ switch ($_GET['acao']) {
                         $objMdPetIntDestDTO = $objMdPetIntDestRN->consultarDadosIntimacao($id, true);
                         $dtHrIntimacao = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getDthDataCadastro() : null;
                         $dtIntimacao = !is_null($dtHrIntimacao) ? explode(' ', $dtHrIntimacao) : null;
-                        $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
-
+                        if(isset($dtIntimacao)){
+                            $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
+                        } else {
+                            $dtIntimacao = null;
+                        }
                         //Calcular Data Final do Prazo Tácito
                         $dataFimPrazoTacito = '';
                         $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
@@ -121,7 +124,7 @@ switch ($_GET['acao']) {
                 }
 
                 echo "<script>";
-                echo "window.opener.location.reload();";
+                echo "window.parent.location.reload();";
                 echo "window.close();";
                 echo "</script>";
                 die;
@@ -162,9 +165,9 @@ SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_extern
 
     <div class="clear"></div>
     <div class="textoIntimacaoEletronica">
-        <h2>
+        <h4>
             <?php echo $texto; ?>
-        </h2>
+        </h4>
         <?php
         if ($idIntimacao) {
             foreach ($idIntimacao as $id) {

@@ -73,7 +73,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $arrImagemPermitida = InfraArray::converterArrInfraDTO($objImagemFormatoRN->listar($objImagemFormatoDTO), 'Formato');
     if (in_array('jpg', $arrImagemPermitida) && !in_array('jpeg', $arrImagemPermitida)) $arrImagemPermitida[] = 'jpeg';
 
-    $includePlugins = array('autogrow', 'sharedspace','simpleLink','extenso', 'maiuscula', 'stylesheetparser', 'tableresize', 'tableclean', 'symbol','pastesei');
+    $includePlugins = array('autogrow', 'sharedspace','simpleLink','extenso', 'maiuscula', 'stylesheetparser', 'tableresize', 'tableclean', 'symbol');
     if ($bolAutotexto) $includePlugins[]='autotexto';
     $removePlugins = array('resize', 'maximize', 'link','wsc');
 
@@ -339,7 +339,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       if (in_array('jpg', $arrImagemPermitida) && !in_array('jpeg', $arrImagemPermitida)) $arrImagemPermitida[] = 'jpeg';
 
 
-      $includePlugins = array('autogrow', 'linksei', 'sharedspace', 'autotexto', 'simpleLink', 'extenso', 'maiuscula', 'stylesheetparser', 'stylesdefault', 'tableresize', 'symbol', 'tableclean','pastesei');
+      $includePlugins = array('autogrow', 'linksei', 'sharedspace', 'autotexto', 'simpleLink', 'extenso', 'maiuscula', 'stylesheetparser', 'stylesdefault', 'tableresize', 'symbol', 'tableclean');
       $removePlugins = array('resize', 'maximize', 'link', 'wsc');
 
 

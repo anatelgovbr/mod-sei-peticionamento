@@ -19,7 +19,7 @@ try {
     switch ($_GET['acao']) {
 
         case 'md_pet_adm_vinc_listar':
-            $strTitulo = 'Administrar Vinculações a Pessoas Jurídicas e Procurações Eletrônicas';
+            $strTitulo = 'Administrar Vinculações e Procurações Eletrônicas';
             $strColuna10 = 'CPF/CNPJ do Outorgante';
             $strColuna11 = 'CNPJ';
             $strColuna20 = 'Nome/Razão Social do Outorgante';
@@ -28,7 +28,7 @@ try {
             break;
 
         case 'md_pet_adm_vinc_consultar':
-            $strTitulo = 'Vinculações a Pessoas Jurídicas e Procurações Eletrônicas';
+            $strTitulo = 'Vinculações e Procurações Eletrônicas';
             $strColuna10 = 'CPF/CNPJ do Outorgante';
             $strColuna11 = 'CNPJ';
             $strColuna20 = 'Nome/Razão Social do Outorgante';
@@ -157,7 +157,7 @@ try {
         $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->consultarProcedimentoVinculo( array($idProcedimento, 'retornoDTO' => true) );
 
         // PJ - Representantes
-        if (count($arrObjMdPetVinculoDTO)>0){
+        if ($arrObjMdPetVinculoDTO){
 
             $idRepresentantes = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoDTO,'IdMdPetVinculoRepresent');
 
@@ -231,12 +231,12 @@ $numRegistros = count($arrObjMdPetVincRepresentantDTO);
 if ($numRegistros > 0) {
 
     $strResultado = '';
-    $strSumarioTabela = 'Vinculações a Pessoas Jurídicas e Procurações Eletrônicas';
-    $strCaptionTabela = 'Vinculações a Pessoas Jurídicas e Procurações Eletrônicas';
+    $strSumarioTabela = 'Vinculações e Procurações Eletrônicas';
+    $strCaptionTabela = 'Vinculações e Procurações Eletrônicas';
     $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">';
     $strResultado .= '<caption class="infraCaption">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
     $strResultado .= '<tr>';
-    $strResultado .= '<th class="infraTh" style="width:140px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna10, $strColuna11, $arrObjMdPetVincRepresentantDTO) . '</th>';
+    $strResultado .= '<th class="infraTh" style="width:150px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna10, $strColuna11, $arrObjMdPetVincRepresentantDTO) . '</th>';
     $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna20, $strColuna21, $arrObjMdPetVincRepresentantDTO) . '</th>';
     $strResultado .= '<th class="infraTh" style="width:120px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna30, $strColuna31, $arrObjMdPetVincRepresentantDTO) . '</th>';
     $strResultado .= '<th class="infraTh" style="width:150px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna40, $strColuna41, $arrObjMdPetVincRepresentantDTO) . '</th>';
@@ -402,7 +402,7 @@ p{
     PaginaSEI::getInstance()->abrirAreaDados("auto");
     ?>
     <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?=$idProcedimento?>">
-    <p>A tabela abaixo exibe as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador Especial e Procurador Simples relacionados aos Interessados do presente processo.</p>
+    <p>A tabela abaixo exibe as vinculações ativas aos Interessados do presente processo como Responsável Legal, Procurador Especial e Procurador Simples.</p>
     <?}else {
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
 

@@ -28,7 +28,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '3.3.0';
+        return '3.4.0';
     }
 
     public function getInstituicao()
@@ -1120,10 +1120,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objContatoDTO->retDblCpf();
                 $objContatoDTO->retStrNome();
                 $objContatoDTO->retDblCnpj();
+                $objContatoDTO->retStrStaNatureza();
                 $objContatoRN = new ContatoRN();
                 $arrObjContatoRN = $objContatoRN->consultarRN0324($objContatoDTO);
 
-                if (!is_null($arrObjContatoRN->getDblCpf())) {
+                if ( $arrObjContatoRN->getStrStaNatureza()==ContatoRN::$TN_PESSOA_FISICA ) {
                     $dataPF = MdPetDataUtils::setFormat($arrRecibosRespostaPF->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
                     $cpf = $arrObjContatoRN->getDblCpf();
                     $nome = $arrObjContatoRN->getStrNome();
@@ -1305,11 +1306,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $reciboIntercorrenteDTO->setNumIdProtocolo($idProcedimento);
                 $arrRecibosResposta = $reciboRN->consultar($reciboIntercorrenteDTO);
 
-
-                $linhaDeCimaPF = '"Controle de Representação de Pessoa Física:<br><br> ' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')"';
+                $cpfFormatado = ($cpf) ? ' (' . infraUtil::formatarCpf($cpf) . ')' : '';
+                $linhaDeCimaPF = '"Controle de Representação de Pessoa Física:<br><br> ' . PaginaSEI::tratarHTML($nome) . $cpfFormatado . '"';
                 $linhaDeBaixoPF .= '"Último Peticionamento de Atualização: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s') . '"';
 
-                $linhaDeCimaTexto = 'Controle de Representação de Pessoa Física: \n' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')';
+                $linhaDeCimaTexto = 'Controle de Representação de Pessoa Física: \n' . PaginaSEI::tratarHTML($nome). $cpfFormatado;
                 $linhaDeBaixoTexto .= 'Último Peticionamento de Atualização: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
                 $textoSeparado = $linhaDeCimaTexto . ' \n' . $linhaDeBaixoTexto;
 
@@ -1815,7 +1816,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         // Vinculação à Pessoa Jurídica
         $objMdPetVinculoRN = new MdPetVinculoRN();
-        $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->consultarProcedimentoVinculo(array($objProcedimentoAPI->getIdProcedimento(), 'retornoDTO' => true));
+        $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->consultarProcedimentoVinculo(array($objProcedimentoAPI->getIdProcedimento(), 'retornoDTO' => true, 'isAtivos' => false));
 
         if ($arrObjMdPetVinculoDTO && count($arrObjMdPetVinculoDTO) > 0) {
             $arrBotoes [] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_consultar&acao_origem=procedimento_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento() . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/VinculoPJ.png" alt="Visualizar Vinculações e Procurações Eletrônicas" title="Visualizar Vinculações e Procurações Eletrônicas" /></a>';
@@ -3157,19 +3158,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             }
                         }
                     }
-                }
-            }
-
-            // Vinculação à Pessoa Jurídica
-            $objMdPetVinculoRN = new MdPetVinculoRN();
-            $arrObjMdPetVincDocumentoDTO = $objMdPetVinculoRN->consultarDocumentoVinculo(array($dblIdProcedimento, $dblIdDocumento, 'retornoDTO' => true));
-
-            if ($arrObjMdPetVincDocumentoDTO && count($arrObjMdPetVincDocumentoDTO) > 0) {
-                $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-                $idRepresentantes = $objMdPetVincRepresentantRN->getIdRepresentantesVinculo(array($arrObjMdPetVincDocumentoDTO[0]->getNumIdMdPetVinculo()));
-
-                if (count($idRepresentantes) > 0) {
-                    $arrBotoes[$dblIdDocumento][] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_consultar&acao_origem=procedimento_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento() . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/VinculoPJ.png" alt="Visualizar Vinculações e Procurações Eletrônicas" title="Visualizar Vinculações e Procurações Eletrônicas" /></a>';
                 }
             }
         }

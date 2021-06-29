@@ -2878,7 +2878,10 @@ class MdPetIntimacaoRN extends InfraRN
             if($isEmail){
                 $objContatoDTO->setStrEmail('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
             } else {
-                $txtPesquisa = preg_replace('/[^A-Za-z0-9 \-\+\&]/','', $post['txtUsuario']);
+                $txtPesquisa = preg_replace('/[^0-9]/', '',  $post['txtUsuario']);
+                if($txtPesquisa == ""){
+                    $txtPesquisa = $post['txtUsuario'];
+                }
                 $objContatoDTO->setStrIdxContato('%' . $txtPesquisa . '%', InfraDTO::$OPER_LIKE);
             }
             $objContatoDTO->setNumMaxRegistrosRetorno(50);

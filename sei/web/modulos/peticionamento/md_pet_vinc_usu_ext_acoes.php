@@ -224,52 +224,50 @@ $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
 $exibirHipoteseLegal = $objMdPetIntDestRespostaRN->verificarHipoteseLegal();
 
 if ($verificaNivelAcessoTipoProcesso == 'S') {
-  $objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
-  $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
-  $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
-  $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($idTipoProcesso);
+    $objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
+    $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
+    $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
+    $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($idTipoProcesso);
 
-  $arrObjNivelAcesso = $objNivelAcessoPermitidoRN->listar($objNivelAcessoPermitidoDTO);
+    $arrObjNivelAcesso = $objNivelAcessoPermitidoRN->listar($objNivelAcessoPermitidoDTO);
 
-  $strSelectNivelAcesso = [];
-  foreach ($arrObjNivelAcesso as $dadosNivelAcesso) {
-    $nivelAcesso = $dadosNivelAcesso->getStrStaNivelAcesso();
-    $strSelectNivelAcesso[$nivelAcesso] = $arrDescricaoNivelAcesso[$nivelAcesso];
-  }
+    $strSelectNivelAcesso = [];
+    foreach ($arrObjNivelAcesso as $dadosNivelAcesso) {
+        $nivelAcesso = $dadosNivelAcesso->getStrStaNivelAcesso();
+        $strSelectNivelAcesso[$nivelAcesso] = $arrDescricaoNivelAcesso[$nivelAcesso];
+    }
 
 } else if ($verificaNivelAcessoPadrao == 'S') { // Padrao
-  $idHipoteseLegal = $objMdPetVincUsuExtPj->getNumIdHipoteseLegal();
-  $staNivelAcesso = $objMdPetVincUsuExtPj->getStrStaNivelAcesso();
+    $idHipoteseLegal = $objMdPetVincUsuExtPj->getNumIdHipoteseLegal();
+    $staNivelAcesso = $objMdPetVincUsuExtPj->getStrStaNivelAcesso();
 
+    $arrHipoteseNivel = [];
 
-      $arrHipoteseNivel = [];
+    $arrHipoteseNivel['nivelAcesso']['id'] = $staNivelAcesso;
+    $arrHipoteseNivel['nivelAcesso']['descricao'] = $arrDescricaoNivelAcesso[$staNivelAcesso];
 
-      $arrHipoteseNivel['nivelAcesso']['id'] = $staNivelAcesso;
-      $arrHipoteseNivel['nivelAcesso']['descricao'] = $arrDescricaoNivelAcesso[$staNivelAcesso];
-      if($staNivelAcesso>0) {
-          $objHipoteseLegalRN = new HipoteseLegalRN();
-          $objHipoteseLegalDTO = new HipoteseLegalDTO();
-          $objHipoteseLegalDTO->retStrNome();
-          $objHipoteseLegalDTO->retStrBaseLegal();
-          $objHipoteseLegalDTO->retStrStaNivelAcesso();
-          $objHipoteseLegalDTO->setNumIdHipoteseLegal($idHipoteseLegal);
+    $objHipoteseLegalRN = new HipoteseLegalRN();
+    $objHipoteseLegalDTO = new HipoteseLegalDTO();
+    $objHipoteseLegalDTO->retStrNome();
+    $objHipoteseLegalDTO->retStrBaseLegal();
+    $objHipoteseLegalDTO->retStrStaNivelAcesso();
+    $objHipoteseLegalDTO->setNumIdHipoteseLegal($idHipoteseLegal);
 
-          $arrObjHipoteseLegal = $objHipoteseLegalRN->consultar($objHipoteseLegalDTO);
+    $arrObjHipoteseLegal = $objHipoteseLegalRN->consultar($objHipoteseLegalDTO);
 
-
-          $arrHipoteseNivel['hipoteseLegal']['id'] = $idHipoteseLegal;
-
-          if ($arrObjHipoteseLegal->getStrStaNivelAcesso() == ProtocoloRN::$NA_RESTRITO) {// Restrito
-              $descricaoHipotese = $arrObjHipoteseLegal->getStrNome() .
-                  ' (' . $arrObjHipoteseLegal->getStrBaseLegal() . ')';
-
-              $arrHipoteseNivel['hipoteseLegal']['descricao'] = $descricaoHipotese;
-          }
-        }else{
-          $arrHipoteseNivel['hipoteseLegal']['descricao'] = $arrObjHipoteseLegal->getStrNome();
+    if (count($arrObjHipoteseLegal)) {
+        if ($staNivelAcesso > 0) {
+            $arrHipoteseNivel['hipoteseLegal']['id'] = $idHipoteseLegal;
+            if ($arrObjHipoteseLegal->getStrStaNivelAcesso() == ProtocoloRN::$NA_RESTRITO) {// Restrito
+                $descricaoHipotese = $arrObjHipoteseLegal->getStrNome() . ' (' . $arrObjHipoteseLegal->getStrBaseLegal() . ')';
+            }
+        } else {
+            $descricaoHipotese = $arrObjHipoteseLegal->getStrNome();
         }
-
+        $arrHipoteseNivel['hipoteseLegal']['descricao'] = $descricaoHipotese;
+    }
 }
+
 $orientacoes = $objMdPetVincUsuExtPj->getStrOrientacoes();
 
 

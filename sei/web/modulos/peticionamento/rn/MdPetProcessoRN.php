@@ -137,13 +137,27 @@ class MdPetProcessoRN extends InfraRN {
 			} 
 
 			$idsContatos = array_unique($idsContatos);
-			
+
+			$arrInteressados = array();
+			foreach ($idsContatos as $contato){
+			    $objContatoDTO = new ContatoDTO();
+			    $objContatoDTO->setNumIdContato($contato);
+                $objContatoDTO->retTodos(true);
+			    $objContato = (new ContatoRN())->consultarRN0324($objContatoDTO);
+			    $objParticipanteContato = new ContatoAPI();
+                $objParticipanteContato->setIdContato($objContato->getNumIdContato());
+                $objParticipanteContato->setSigla($objContato->getStrSigla());
+                $objParticipanteContato->setNome($objContato->getStrNome());
+			    array_push($arrInteressados, $objParticipanteContato);
+            }
+
 			//Gera um processo
 			$objProcedimentoAPI = new ProcedimentoAPI();
 			$objProcedimentoAPI->setIdTipoProcedimento( $objMdPetTipoProcessoDTO[0]->getNumIdProcedimento() );
 			$objProcedimentoAPI->setIdUnidadeGeradora( $unidadeDTO->getNumIdUnidade() );
 			$objProcedimentoAPI->setEspecificacao( $arrParametros['txtEspecificacaoDocPrincipal'] );
 			$objProcedimentoAPI->setNumeroProtocolo('');
+            $objProcedimentoAPI->setInteressados($arrInteressados);
 
             $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
             $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);

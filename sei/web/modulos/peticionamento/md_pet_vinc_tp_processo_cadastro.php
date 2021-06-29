@@ -62,6 +62,10 @@ try {
     $objMdPetVincTpProcessoDTO->retStrSinAtivo();
     $objMdPetVincTpProcessoDTO = $objMdPetVincTpProcessoRN->listar($objMdPetVincTpProcessoDTO);
 
+    //Recupera o valor do Parâmetro SEI_HABILITAR_HIPOTESE_LEGAL
+    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+    $strValor = $objInfraParametro->getValor('SEI_HABILITAR_HIPOTESE_LEGAL');
+
     //Preparar Preenchimento Alteração
     if (count($objMdPetVincTpProcessoDTO) > 0 && !isset($_POST['sbmCadastrarTpProcessoVinculacao'])) {
 
@@ -183,9 +187,11 @@ try {
             if ($_POST['selNivelAcesso'] != '') {
                 $objMdPetVincTpProcessoDTO->setStrStaNivelAcesso($staNivelAcesso);
 
-                if ($_POST['selNivelAcesso'] == ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0') {
+                if ($_POST['selNivelAcesso'] == ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0' && $strValor > 0) {
                     $objMdPetVincTpProcessoDTO->setNumIdHipoteseLegal($idhipoteseLegal);
                     $hipoteseLegal = 'style="display: inherit;"';
+                } else{
+                    $objMdPetVincTpProcessoDTO->setNumIdHipoteseLegal(null);
                 }
             }         
 
@@ -686,7 +692,6 @@ PaginaSEI::getInstance()->fecharHtml();
 
 
     function removerProcessoAssociado(remover) {
-
         document.getElementById('selNivelAcesso').innerHTML = '';
         document.getElementById('divHipoteseLegal').style.display = "none";
         console.log(remover);
@@ -706,7 +711,6 @@ PaginaSEI::getInstance()->fecharHtml();
     }
 
     function changeNivelAcesso() {
-
         document.getElementById('divNivelAcesso').style.display = "none";
         var padrao = document.getElementsByName('rdNivelAcesso[]')[1].checked;
 
@@ -715,27 +719,30 @@ PaginaSEI::getInstance()->fecharHtml();
         //document.getElementById('divHipoteseLegal').style.display = 'none';
 
         if (padrao) {
-            document.getElementById('divNivelAcesso').style.display = "inherit";
-        }
-        else{
+             document.getElementById('divNivelAcesso').style.display = "inherit";
+        }else{
             document.getElementById('divHipoteseLegal').style.display = 'none';
         }
 
     }
 
     function changeSelectNivelAcesso() {
+        var strValorHipoteseLegal = <?= isset($strValor) ? $strValor : 2; ?>;
+        var visibilidade = "none";
         document.getElementById('selHipoteseLegal').value = '';
-
+        console.log(visibilidade);
         var valorSelectNivelAcesso = document.getElementById('selNivelAcesso').value;
         var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
 
         if (valorSelectNivelAcesso == '<?= ProtocoloRN::$NA_RESTRITO ?>' && valorHipoteseLegal != '0') {
-            document.getElementById('divHipoteseLegal').style.display = 'inherit';
-
+            visibilidade = "inherit";
+            if(strValorHipoteseLegal == 0){
+                visibilidade = "none";
+            }
         } else {
-            document.getElementById('divHipoteseLegal').style.display = 'none';
-
+            visibilidade = "none";
         }
+        document.getElementById('divHipoteseLegal').style.display = visibilidade;
     }
 
 
@@ -805,9 +812,18 @@ PaginaSEI::getInstance()->fecharHtml();
 
     function carregarHipoteseLegal() {
         var parametroHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
-        if (parametroHipoteseLegal == '' || parametroHipoteseLegal == 0) {
-            document.getElementById('divHipoteseLegal').style.display = 'none';
+        var padrao = document.getElementById('selNivelAcesso').value;
+        var strValorHipoteseLegal = <?= $strValor; ?>;
+        var visibilidade = "none"
+        console.log((parametroHipoteseLegal == '' || parametroHipoteseLegal == 0));
+        console.log(padrao != 1);
+        if ((parametroHipoteseLegal == '' || parametroHipoteseLegal == 0)) {
+             visibilidade = "none";
         }
+        if(padrao == 1 && strValorHipoteseLegal > 0){
+            visibilidade = 'inherit';
+        }
+        document.getElementById('divHipoteseLegal').style.display = visibilidade
     }
 
     function carregarDependenciaNivelAcesso() {
@@ -1191,9 +1207,9 @@ PaginaSEI::getInstance()->fecharHtml();
                 return false;
             }else {
                 if (document.getElementById('selNivelAcesso').value == <?= ProtocoloRN::$NA_RESTRITO ?> && valorHipoteseLegal != '0') {
-
+                    var strValorHipoteseLegal = <?= $strValor ?>;
                     //validar hipotese legal
-                    if (document.getElementById('selHipoteseLegal').value == '') {
+                    if (document.getElementById('selHipoteseLegal').value == '' && strValorHipoteseLegal > 0) {
                         alert('Informe a Hipótese legal padrão para abertura do processo para Pessoa Jurídica.');
                         document.getElementById('selHipoteseLegal').focus();
                         return false;

@@ -1056,6 +1056,8 @@ foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
 		$objNivelAcessoDTO->retTodos();
 		$objNivelAcessoDTO->setOrd('StaNivelAcesso', InfraDTO::$TIPO_ORDENACAO_ASC);
 
+
+
         if($idTipoProcedimento != null ){
             if(!is_int($idTipoProcedimento)){
                 $arrTipoProcedimento = PaginaSEI::getInstance()->getArrItensTabelaDinamica($idTipoProcedimento);
@@ -1083,26 +1085,25 @@ foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
 		$stringFim = '';
 		$arrayDescricoes = array();
 		$arrayDescricoes[ProtocoloRN::$NA_PUBLICO] = 'Público';
-		$arrayDescricoes[ProtocoloRN::$NA_RESTRITO] = 'Restrito';
+        $arrayDescricoes[ProtocoloRN::$NA_RESTRITO] = 'Restrito';
 		$arrayDescricoes[''] = '';
 		
 		$stringFim = '<option value=""> </option>';
-		
+
 		if(count($arrObjNivelAcessoUnicoDTO) > 0 ){
 			foreach($arrObjNivelAcessoUnicoDTO as $objNivelAcessoDTO){
 			  
-			  if( $objNivelAcessoDTO->getStrStaNivelAcesso() != ProtocoloRN::$NA_SIGILOSO ){	
-			  	
-				  $stringFim .= '<option value="'.$objNivelAcessoDTO->getStrStaNivelAcesso().'"';
-				  
-				  if(!is_null($strValorItemSelecionado) &&  ($strValorItemSelecionado == $objNivelAcessoDTO->getStrStaNivelAcesso())){
-				  	$stringFim .= 'selected = selected';
-				  }
-				  
-				  $stringFim .= '>';
-				  $stringFim .= $arrayDescricoes[$objNivelAcessoDTO->getStrStaNivelAcesso()];
-				  
-				  $stringFim .= '</option>';
+			  if( $objNivelAcessoDTO->getStrStaNivelAcesso() != ProtocoloRN::$NA_SIGILOSO){
+                  $stringFim .= '<option value="' . $objNivelAcessoDTO->getStrStaNivelAcesso() . '"';
+
+                  if (!is_null($strValorItemSelecionado) && ($strValorItemSelecionado == $objNivelAcessoDTO->getStrStaNivelAcesso())) {
+                      $stringFim .= 'selected = selected';
+                  }
+
+                  $stringFim .= '>';
+                  $stringFim .= $arrayDescricoes[$objNivelAcessoDTO->getStrStaNivelAcesso()];
+
+                  $stringFim .= '</option>';
 			  }
 			  
 			}

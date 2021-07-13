@@ -8,60 +8,60 @@
 
 try {
 
-  require_once dirname(__FILE__) . '/../../SEI.php';
+    require_once dirname(__FILE__) . '/../../SEI.php';
 
-  session_start();
+    session_start();
 
-  //////////////////////////////////////////////////////////////////////////////
-  InfraDebug::getInstance()->setBolLigado(false);
-  InfraDebug::getInstance()->setBolDebugInfra(false);
-  InfraDebug::getInstance()->limpar();
-  //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    InfraDebug::getInstance()->setBolLigado(false);
+    InfraDebug::getInstance()->setBolDebugInfra(false);
+    InfraDebug::getInstance()->limpar();
+    //////////////////////////////////////////////////////////////////////////////
 
-  PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
-  $strLinkAjaxValidacoesNumeroSEI = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_validar_num_sei');
-  
-  switch ($_GET['acao']) {
+//  PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
+    $strLinkAjaxValidacoesNumeroSEI = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_validar_num_sei');
 
-  	case 'md_pet_vinc_suspender_restabelecer':
+    switch ($_GET['acao']) {
 
-      $strTitulo = $_GET['operacao']=='A'?'Restabelecer':'Suspender';
-      $strTitulo .= ' Responsável Legal';
-      $strAtenção = $_GET['operacao']=='A'?'O Restabelecimento':'A Suspensão';
-      $janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
-      $strPrimeiroItemValor = 'null';
-      $strPrimeiroItemDescricao = '&nbsp;';
-      $strValorItemSelecionado = null;
-      $strTipo = 'Cadastro';
+        case 'md_pet_vinc_suspender_restabelecer':
 
-      $operacao = isset($_GET['operacao']) ? $_GET['operacao'] : $_POST['hdnOperacao'];
-      $idVinculo = isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo'];
+            $strTitulo = $_GET['operacao'] == 'A' ? 'Restabelecer' : 'Suspender';
+            $strTitulo .= ' Responsável Legal';
+            $strAtenção = $_GET['operacao'] == 'A' ? 'O Restabelecimento' : 'A Suspensão';
+            $janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
+            $strPrimeiroItemValor = 'null';
+            $strPrimeiroItemDescricao = '&nbsp;';
+            $strValorItemSelecionado = null;
+            $strTipo = 'Cadastro';
 
-      //Recuperar dados da Pessoa Juridica
-      $objMdPetVinculoRN = new MdPetVinculoRN();
-      $objMdPetVinculoDTO = new MdPetVinculoDTO();
-      $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-      $objMdPetVinculoDTO->retDblCNPJ();
-      $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
-      $objMdPetVinculoDTO->retNumIdContatoRepresentante();
-      $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
-      $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
-      $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
-      $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-      $objMdPetVinculoDTO->setStrStaResponsavelLegal('S');
-      $objMdPetVinculoDTO->setDistinct(true);
-      $objMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
+            $operacao = isset($_GET['operacao']) ? $_GET['operacao'] : $_POST['hdnOperacao'];
+            $idVinculo = isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo'];
 
-      if (!empty($_POST)) {
-      }
-      break;
+            //Recuperar dados da Pessoa Juridica
+            $objMdPetVinculoRN = new MdPetVinculoRN();
+            $objMdPetVinculoDTO = new MdPetVinculoDTO();
+            $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+            $objMdPetVinculoDTO->retDblCNPJ();
+            $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
+            $objMdPetVinculoDTO->retNumIdContatoRepresentante();
+            $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
+            $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
+            $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
+            $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+            $objMdPetVinculoDTO->setStrStaResponsavelLegal('S');
+            $objMdPetVinculoDTO->setDistinct(true);
+            $objMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
 
-    default:
-      throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
-  }
+            if (!empty($_POST)) {
+            }
+            break;
+
+        default:
+            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+    }
 
 } catch (Exception $e) {
-  PaginaSEI::getInstance()->processarExcecao($e);
+    PaginaSEI::getInstance()->processarExcecao($e);
 }
 
 $hashAnexo = "";
@@ -77,7 +77,6 @@ PaginaSEI::getInstance()->abrirStyle();
 
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
-require_once 'md_pet_vinc_pe_suspender_restabelecer_js.php';
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
@@ -113,7 +112,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 $urlBaseLink = "";
 $arrComandos = array();
 $arrComandos[] = '<button type="button" accesskey="s" name="Salvar" value="Salvar" onclick="salvar()" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="window.close();" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
 //$strLinkBaseFormEdicao = 'controlador_externo.php?edicaoExibir=true&acao=' . $_GET['acao'];
 $strLinkBaseFormEdicao = 'controlador.php?edicaoExibir=true&acao=' . $_GET['acao'];
@@ -127,14 +126,15 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
           method="post"
           action="<?= $strLinkEdicaHash ?>">
 
-      <?php
-      PaginaSEI::getInstance()->abrirAreaDados('auto');
-      ?>
+        <?php
+        PaginaSEI::getInstance()->abrirAreaDados('auto');
+        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+        ?>
         <br/><br/>
-            <fieldset>
+        <fieldset>
             <legend>ATENÇÃO</legend>
             <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9">
                     <p id=txtInformativo><?
                         if ($_GET['operacao'] == MdPetVincRepresentantRN::$RP_ATIVO){
                         ?>
@@ -151,7 +151,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
 
         </fieldset>
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+            <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <label id="lblCnpj" class="infraLabelObrigatorio">CNPJ:</label><br/>
                 <input type="text" id="txtCnpj" name="txtCnpj"
                        class="infraText form-control"
@@ -160,7 +160,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
                        onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+            <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
                 <label id="lblRazaoSocial" class="infraLabelObrigatorio">Razão Social:</label><br/>
                 <input type="text" id="txtRazaoSocial" name="txtRazaoSocial"
                        class="infraText form-control"
@@ -171,7 +171,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+            <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <label id="lblCnpj" class="infraLabelObrigatorio">CPF do Responsável Legal:</label><br/>
                 <input type="text" id="txtCpf" name="txtCpf"
                        class="infraText form-control"
@@ -181,7 +181,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
             </div>
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+            <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
                 <label id="txtRazaoSocial" class="infraLabelObrigatorio">Nome do Responsável Legal:</label><br/>
                 <input type="text" id="txtNome" name="txtNome"
                        disabled="disabled"
@@ -193,16 +193,22 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+            <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <label class="infraLabelObrigatorio">Número
                     SEI da Justificativa: </label><br/>
-                <input type="text" id="txtNumeroSei" name="txtNumeroSei" onblur="validarNumeroSEI();"
-                       class="infraText form-control"
-                       value=""
-                       onkeypress="return infraMascaraTexto(this,event,250);" maxlength="10"
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <div class="input-group mb-3">
+                    <input type="text" id="txtNumeroSei" name="txtNumeroSei" style="width: 70%"
+                           class="infraText form-control"
+                           value=""
+                           onkeypress="return infraMascaraTexto(this,event,250);" maxlength="10"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <button type="button" accesskey="V" style="margin-left: 5px"
+                            id="btnValidar" onclick="controlarNumeroSEI();" class="infraButton">
+                        <span class="infraTeclaAtalho">V</span>alidar
+                    </button>
+                </div>
             </div>
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+            <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
                 <label class="infraLabelObrigatorio"></label><br/>
                 <input type="text" id="txtTipo" name="txtTipo" class="infraText form-control"
                        readonly="readonly"
@@ -221,6 +227,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
 PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
 //PaginaSEI::getInstance()->montarAreaDebug();
 PaginaSEI::getInstance()->fecharAreaDados();
+require_once 'md_pet_vinc_pe_suspender_restabelecer_js.php';
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

@@ -68,7 +68,7 @@ try {
                     $objMdPetIntPrazoTacitaDTO->setNumNumPrazo($_POST['txtNumPrazo']);
                     $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
                     $objMdPetIntPrazoTacitaRN->alterar($objMdPetIntPrazoTacitaDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() . '" alterado com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora('')));
                     die;
                 } catch (Exception $e) {

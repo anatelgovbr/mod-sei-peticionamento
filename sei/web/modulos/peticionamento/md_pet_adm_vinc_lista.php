@@ -298,8 +298,8 @@ if ($numRegistros > 0) {
         if ($isAdm) {
             if ($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
                 $acaoResponsavel = '';
-                if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) {
-                    $strLinkSuspenderVinc = 'javascript:suspenderRestabelecerPE(\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_SUSPENSO) . '\')';
+                if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) { //
+                    $strLinkSuspenderVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_SUSPENSO);
                     $iconeResponsavel = '<img style="width:24px;" src="modulos/peticionamento/imagens/png/suspender_responsavel_legal.png" title="Suspender Responsável Legal" alt="Suspender Responsável Legal" class="infraImg" />';
 
                     $acaoResponsavel = '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>';
@@ -316,7 +316,7 @@ if ($numRegistros > 0) {
                         $acaoResponsavel .= '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
                     }
                 } else if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO) {
-                    $strLinkRestabelecerVinc = 'javascript:suspenderRestabelecerPE(\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_ATIVO) . '\')';
+                    $strLinkRestabelecerVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_ATIVO);
                     $iconeResponsavel = '<img style="width:24px;" src="modulos/peticionamento/imagens/png/retirarSuspensao.png" title="Restabelecer Responsável Legal" alt="Restabelecer Responsável Legal" class="infraImg" />';
                     if ($bolAcoes) {
                         $acaoResponsavel = '<a href="' . $strLinkRestabelecerVinc . '">' . $iconeResponsavel . '</a>';
@@ -346,7 +346,6 @@ PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
-require_once 'md_pet_adm_vinc_lista_js.php';
 PaginaSEI::getInstance()->abrirJavaScript();
 ?>
 function desvincularProcuracao(link){
@@ -406,7 +405,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <? } ?>
     <div class="row">
         <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
-            <label id="lblCnpj" for="txtCnpj" class="infraLabelOpcional"><?= $strColuna10 ?>:</label><br />
+            <label id="lblCnpj" for="txtCnpj" class="infraLabelOpcional"><?= $strColuna10 ?>:</label>
             <input type="text" id="txtCnpj" name="txtCnpj" class="infraText form-control"
                    value="<?= $strCnpj ?>" maxlength="18"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
@@ -414,13 +413,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             />
         </div>
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-4">
-            <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelOpcional"><?= $strColuna20 ?>:</label><br />
+            <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelOpcional"><?= $strColuna20 ?>:</label>
             <input type="text" id="txtRazaoSocial" name="txtRazaoSocial" class="infraText form-control"
                    value="<?= PaginaSEI::tratarHTML($strRazaoSocial) ?>" maxlength="100"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
         </div>
         <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label id="lblCpf" for="txtCpf" class="infraLabelOpcional"><?= $strColuna30 ?>:</label><br />
+            <label id="lblCpf" for="txtCpf" class="infraLabelOpcional"><?= $strColuna30 ?>:</label>
             <input type="text" id="txtCpf" name="txtCpf" class="infraText form-control"
                    value="<?= $strCpf ?>" maxlength="100"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
@@ -428,7 +427,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
         <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
             <label id="lblNomeProcurador" for="txtNomeProcurador" class="infraLabelOpcional"><?= $strColuna40 ?>
-                :</label><br />
+                :</label>
             <input type="text" id="txtNomeProcurador" name="txtNomeProcurador" class="infraText form-control"
                    value="<?= PaginaSEI::tratarHTML($strNome) ?>" maxlength="100"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -471,6 +470,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         ?>
 </form>
 <?
+require_once 'md_pet_adm_vinc_lista_js.php';
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

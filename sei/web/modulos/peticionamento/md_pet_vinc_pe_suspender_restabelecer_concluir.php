@@ -254,10 +254,10 @@ try {
           $params['dados'] = $dados;
 
           $objMdPetVinculoRepresentRN->realizarProcessoSuspensaoRestabelecimentoVinculo($params);
-
+          $urlAssinada = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_listar&acao_origem='.$_GET['acao']);
           echo "<script>";
-          echo " window.opener.opener.location.reload();";
-          echo " window.opener.close();";
+          echo " window.parent.location = '" . $urlAssinada . "';";
+          echo " window.parent.close();";
           echo " window.close();";
           echo "</script>";
           die();       	
@@ -433,14 +433,14 @@ function inicializar(){
     <? if($bolPermiteAssinaturaLogin) { ?>
     document.getElementById('pwdSenha').focus();
     <?}?>
-	document.getElementById('hdnNumeroSei').value=window.opener.document.getElementById('txtNumeroSei').value;
-    if (window.opener.document.getElementById('txtCpfNovo')!=null){
-    	document.getElementById('txtNumeroCpfResponsavel').value=window.opener.document.getElementById('txtCpfNovo').value;
-    	document.getElementById('hdnNomeNovo').value=window.opener.document.getElementById('txtNomeNovo').value;    	
-    	document.getElementById('hdnIdContato').value=window.opener.document.getElementById('hdnIdContato').value;
+	$('#hdnNumeroSei').val(window.parent.document.getElementById('txtNumeroSei').value);
+    if (window.parent.document.getElementById('txtCpfNovo')!=null){
+    	$('#txtNumeroCpfResponsavel').val(window.parent.document.getElementById('txtCpfNovo').value);
+    	$('#hdnNomeNovo').val(window.parent.document.getElementById('txtNomeNovo').value);
+    	$('#hdnIdContato').val(window.parent.document.getElementById('hdnIdContato').value);
     }            
-    if (window.opener.document.getElementById('hdnOperacao')!=null){
-        document.getElementById('hdnOperacao').value=window.opener.document.getElementById('hdnOperacao').value;
+    if (window.parent.document.getElementById('hdnOperacao')!=null){
+        $('#hdnOperacao').val(window.parent.document.getElementById('hdnOperacao').value);
     }
   <?}?>
 }

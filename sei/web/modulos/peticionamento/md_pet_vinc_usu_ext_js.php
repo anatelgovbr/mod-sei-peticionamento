@@ -45,7 +45,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         $("#txtNomeResponsavelLegalAlt").val($("#txtNomeResponsavelLegal").val());
         $("#txtNumeroCpfResponsavelAlt").val($("#txtNumeroCpfResponsavel").val());
         <?php if(!$stAlterar): ?>
-        document.getElementById("txtCaptcha").addEventListener("keyup", controlarEnterValidarProcesso, false);    
+        //document.getElementById("txtCaptcha").addEventListener("keyup", controlarEnterValidarProcesso, false);
         <?php endif; ?>
         <?php if($stWebService): ?>
        //  document.getElementById("txtNumeroCpfProcurador").addEventListener("keyup", controlarEnterValidarUsuario, false);

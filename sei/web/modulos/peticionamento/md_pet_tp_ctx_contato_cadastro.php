@@ -37,7 +37,7 @@ try {
         }
 
         $objRN->cadastrarMultiplo($arrContatosPrincipais);
-
+        PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
     }
    
    }catch(Exception $e){

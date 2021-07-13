@@ -206,91 +206,102 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
 
         <?php
         PaginaSEI::getInstance()->abrirAreaDados('auto');
+        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         ?>
-        <br/><br/>
-        <fieldset style="min-width:400px; width:70%">
-            <legend>ATENÇÃO</legend>
-            <p id="txtInformativo1">Os dados aqui dispostos dizem respeito ao Responsável Legal pela Pessoa Jurídica
-                indicada, conforme constante no SEI.</p>
-            <p id="txtInformativo1">Informe abaixo o CPF do Usuário Externo que deseja indicar como novo Responsável
-                Legal por esta Pessoa Jurídica.</p>
-        </fieldset>
-        <br/><br/>
-        <label id="lblCnpj" class="infraLabelObrigatorio" style="display: inline-block; min-width:180px;  width: 16.5%">CNPJ:<br/>
-            <input type="text" id="txtCnpj" name="txtCnpj"
-                   class="infraText"
-                   disabled="disabled"
-                   value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objMdPetVinculoDTO->getDblCNPJ())) ?>"
-                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            <br/><br/>
-        </label>
-        <label id="lblRazaoSocial" class="infraLabelObrigatorio"
-               style="display: inline-block; min-width:120px;  width: 60%">Razão Social:<br/>
-            <input type="text" id="txtRazaoSocial" name="txtRazaoSocial"
-                   class="infraText" style="min-width:300px;  width: 91.5%"
-                   disabled="disabled"
-                   value="<?= PaginaSEI::tratarHTML($objMdPetVinculoDTO->getStrRazaoSocialNomeVinc()) ?>"
-                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            <br/><br/>
-        </label>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                ATENÇÃO
+                <p id="txtInformativo1">Os dados aqui dispostos dizem respeito ao Responsável Legal pela Pessoa Jurídica
+                    indicada, conforme constante no SEI.<br/>
+                    Informe abaixo o CPF do Usuário Externo que deseja indicar como novo Responsável
+                    Legal por esta Pessoa Jurídica.</p>
 
-        <br/>
-        <label id="lblCnpj" class="infraLabelObrigatorio"
-               style="display: inline-block;  min-width:180px;  width: 16.5%">CPF do Responsável Legal:<br/>
-            <input type="text" id="txtCpf" name="txtCpf"
-                   class="infraText"
-                   disabled="disabled"
-                   value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCpf($objMdPetVinculoDTO->getStrCpfContatoRepresentante())) ?>"
-                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            <br/><br/>
-        </label>
-        <label id="txtRazaoSocial" class="infraLabelObrigatorio"
-               style="display: inline-block;  min-width:120px;  width: 60%">Nome do Responsável Legal:<br/>
-            <input type="text" id="txtNome" name="txtNome"
-                   disabled="disabled"
-                   class="infraText" style="min-width:300px;  width: 91.5%"
-                   value="<?= PaginaSEI::tratarHTML($objMdPetVinculoDTO->getStrNomeContatoRepresentante()) ?>"
-                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            <br/><br/>
-        </label>
-        <br/>
-
-        <label class="infraLabelObrigatorio" style="display: inline-block;  min-width:180px;  width: 16.5%">CPF do
-            Usuário Externo:<br/>
-            <input type="text" id="txtCpfNovo" name="txtCpfNovo"
-                   class="infraText"
-                   onfocusout="buscarCpf(this)"
-                   onkeypress="return infraMascaraCPF(this,event);" maxlength="14"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            <br/><br/>
-        </label>
-        <label class="infraLabelObrigatorio" style="display: inline-block; width: 60% ">Nome do Usuário Externo:<br/>
-            <input type="text" id="txtNomeNovo" name="txtNomeNovo"
-                   class="infraText" style="min-width:300px;  width: 91.5%"
-                   readonly="readonly"
-                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            <br/><br/>
-        </label>
-        <br/>
-        <label class="infraLabelObrigatorio" style="display: inline-block; min-width:180px;  width: 16.5%">Número SEI da
-            Justificativa:<br/>
-            <input type="text" id="txtNumeroSei" name="txtNumeroSei" onblur="validarNumeroSEI();"
-                   class="infraText"
-                   value=""
-                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="10"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-        </label>
-        <label class="infraLabelObrigatorio" style="display: inline-block; width: 60% "><br/>
-            <input type="text" id="txtTipo" name="txtTipo" class="infraText" style="min-width:300px;  width: 91.5%"
-                   readonly="readonly"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtTipo ?>"/>
-        </label>
-        <br/><br/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                <label id="lblCnpj" class="infraLabelObrigatorio">CNPJ:</label>
+                <input type="text" id="txtCnpj" name="txtCnpj"
+                       class="infraText form-control"
+                       disabled="disabled"
+                       value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objMdPetVinculoDTO->getDblCNPJ())) ?>"
+                       onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
+                <label id="lblRazaoSocial" class="infraLabelObrigatorio">Razão Social:</label>
+                <input type="text" id="txtRazaoSocial" name="txtRazaoSocial"
+                       class="infraText form-control"
+                       disabled="disabled"
+                       value="<?= PaginaSEI::tratarHTML($objMdPetVinculoDTO->getStrRazaoSocialNomeVinc()) ?>"
+                       onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                <label id="lblCnpj" class="infraLabelObrigatorio">CPF do Responsável Legal:</label>
+                <input type="text" id="txtCpf" name="txtCpf"
+                       class="infraText form-control"
+                       disabled="disabled"
+                       value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCpf($objMdPetVinculoDTO->getStrCpfContatoRepresentante())) ?>"
+                       onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
+                <label id="txtRazaoSocial" class="infraLabelObrigatorio">Nome do Responsável Legal:</label>
+                <input type="text" id="txtNome" name="txtNome"
+                       disabled="disabled"
+                       class="infraText form-control"
+                       value="<?= PaginaSEI::tratarHTML($objMdPetVinculoDTO->getStrNomeContatoRepresentante()) ?>"
+                       onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                <label class="infraLabelObrigatorio">CPF do Usuário Externo:</label>
+                <div class="input-group mb-3 zerarFormatacao">
+                    <input type="text" id="txtCpfNovo" name="txtCpfNovo" style="width: 60%"
+                           class="infraText form-control"
+                           onkeypress="return infraMascaraCPF(this,event);" maxlength="14"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <button type="button" accesskey="V" style="margin-left: 5px"
+                            id="btnValidar" onclick="buscarCpf()" class="infraButton">
+                        <span class="infraTeclaAtalho">V</span>alidar CPF
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
+                <label class="infraLabelObrigatorio">Nome do Usuário Externo:</label>
+                <input type="text" id="txtNomeNovo" name="txtNomeNovo"
+                       class="infraText form-control"
+                       readonly="readonly"
+                       onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                <label class="infraLabelObrigatorio">Número SEI da Justificativa: </label>
+                <div class="input-group mb-3 zerarFormatacao">
+                    <input type="text" id="txtNumeroSei" name="txtNumeroSei"
+                           class="infraText form-control"
+                           value=""
+                           onkeypress="return infraMascaraTexto(this,event,250);" maxlength="10"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <button type="button" accesskey="V" style="margin-left: 5px"
+                            id="btnValidar" onclick="validarNumeroSEI();" class="infraButton">
+                        <span class="infraTeclaAtalho">V</span>alidar
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
+                <label class="infraLabelObrigatorio" style="display: inline-block; width: 60% "></label>
+                <input type="text" id="txtTipo" name="txtTipo" class="infraText form-control" readonly="readonly"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" value="<?= $txtTipo ?>"/>
+            </div>
+        </div>
         <input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?php echo $idVinculo ?>"/>
         <input type="hidden" name="hdnIdContatoNovo" id="hdnIdContatoNovo" value=""/>
         <input type="hidden" name="hdnIdContato" id="hdnIdContato"

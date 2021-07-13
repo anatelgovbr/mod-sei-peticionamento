@@ -31,12 +31,12 @@ if ($_POST) {
     $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
     $arrExtensoes = $objMdPetExtensoesArquivoRN->listar($objMdPetExtensoesArquivoDTO);
 
-    if($arrExtensoes){
-        foreach($arrExtensoes as $extensoes){
-            if($extensoes->getStrSinPrincipal() == 'S')
-                $arrExtPrincipalBD[] =  $extensoes->getNumIdArquivoExtensao();
+    if ($arrExtensoes) {
+        foreach ($arrExtensoes as $extensoes) {
+            if ($extensoes->getStrSinPrincipal() == 'S')
+                $arrExtPrincipalBD[] = $extensoes->getNumIdArquivoExtensao();
             else
-                $arrExtComplementarBD[] =  $extensoes->getNumIdArquivoExtensao();
+                $arrExtComplementarBD[] = $extensoes->getNumIdArquivoExtensao();
         }
     }
 
@@ -44,18 +44,18 @@ if ($_POST) {
     $arrComplementar = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnComplementar']);
 
     if (!$arrPrincipal) {
-        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento principal.');
+        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento principal.', PaginaSEI::$TIPO_MSG_ERRO);
     }
 
     if (!$arrComplementar) {
-        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento complementar.');
+        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento complementar.', PaginaSEI::$TIPO_MSG_ERRO);
     }
 
     $objInfraException->lancarValidacoes();
 
     $arrObjMdPetExtensoesArquivoDTO = array();
 
-    if($arrPrincipal){
+    if ($arrPrincipal) {
         $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
         $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
         $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrPrincipal, infraDTO::$OPER_NOT_IN);
@@ -63,13 +63,13 @@ if ($_POST) {
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
         $listaExtensoesPrincipal = $objMdPetExtensoesArquivoRN->listar($objMdPetExtensoesArquivoDTO);
-        if(count($listaExtensoesPrincipal)){
+        if (count($listaExtensoesPrincipal)) {
             $objMdPetExtensoesArquivoRN->excluir($listaExtensoesPrincipal);
         }
     }
 
     foreach ($arrPrincipal as $numPrincipal) {
-        if(!in_array($numPrincipal, $arrExtPrincipalBD)){
+        if (!in_array($numPrincipal, $arrExtPrincipalBD)) {
             // criando os novos
             $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
             $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
@@ -80,7 +80,7 @@ if ($_POST) {
         }
     }
 
-    if($arrComplementar){
+    if ($arrComplementar) {
         $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
         $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
         $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrComplementar, infraDTO::$OPER_NOT_IN);
@@ -88,13 +88,13 @@ if ($_POST) {
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
         $listaExtensoesComplementar = $objMdPetExtensoesArquivoRN->listar($objMdPetExtensoesArquivoDTO);
-        if(count($listaExtensoesComplementar)){
+        if (count($listaExtensoesComplementar)) {
             $objMdPetExtensoesArquivoRN->excluir($listaExtensoesComplementar);
         }
     }
 
     foreach ($arrComplementar as $numComplementar) {
-        if(!in_array($numComplementar, $arrExtComplementarBD)){
+        if (!in_array($numComplementar, $arrExtComplementarBD)) {
             $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
             $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
             $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numComplementar);
@@ -104,10 +104,11 @@ if ($_POST) {
         }
     }
 
-    if($sinCadastrar){
+    if ($sinCadastrar) {
         $objMdPetExtensoesArquivoDTO = $objMdPetExtensoesArquivoRN->cadastrar($arrObjMdPetExtensoesArquivoDTO);
     }
 
+    PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
 }
 
 $strSelExtensoesPrin = MdPetExtensoesArquivoINT::montarSelectExtensoes(null, null, null, 'S');
@@ -145,7 +146,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblPrincipal" for="txtPrincipal" accesskey="P" class="infraLabelObrigatorio">Documento
                         Principal (Processo Novo):
                         <img id="imgAjudaTxtPrincipal"
-                             src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg" alt=""
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" alt=""
                              onmouseover="return infraTooltipMostrar('Define as Extensões de Arquivos Permitidas no Peticionamento de Processo Novo somente do Documento Principal, que geralmente é de tamanho menor que os demais documentos, pois tende a ser Nato Digital. \n \n ATENÇÃO: permitir apenas extensões que comportem texto, evitando, por exemplo. zip, mp4 ou mp3 para Documento Principal', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     </label>
@@ -157,17 +158,21 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="row">
                 <div id="divSelPrincipal" class="col-sm-10 col-md-10 col-lg-8 col-xl-6">
                     <div class="input-group mb-3">
-                        <select id="selPrincipal" name="selPrincipal" size="8" multiple="multiple" class="infraSelect form-control"
+                        <select id="selPrincipal" name="selPrincipal" size="8" multiple="multiple"
+                                class="infraSelect form-control"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <?= $strSelExtensoesPrin; ?>
                         </select>
                         <div id="divIconesPrincipal">
                             <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);"
-                                 onkeypress="objLupaPrincipal.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg"
+                                 onkeypress="objLupaPrincipal.selecionar(700,500);"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
                                  alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();" onkeypress="objLupaPrincipal.remover();"
-                                 src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/remover.svg" alt="Remover Extensões Selecionadas"
+                            <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();"
+                                 onkeypress="objLupaPrincipal.remover();"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 alt="Remover Extensões Selecionadas"
                                  title="Remover Extensões Selecionadas" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
@@ -179,7 +184,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div id="divLblComplementar" class="col-sm-6 col-md-7 col-lg-6 col-xl-4">
                     <label id="lblComplementar" for="txtComplementar" class="infraLabelObrigatorio">Demais Documentos:
                         <img id="imgAjudaTxtComplementar"
-                             src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg" alt=""
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" alt=""
                              onmouseover="return infraTooltipMostrar('Define as Extensões de Arquivos Permitidas no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intimação e no Peticionamento de Responsável Legal de Pessoa Jurídica', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     </label>
@@ -191,18 +196,22 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="row">
                 <div id="divSelComplementar" class="col-sm-10 col-md-10 col-lg-8 col-xl-6">
                     <div class="input-group mb-3">
-                        <select id="selComplementar" name="selComplementar" size="12" multiple="multiple" class="infraSelect form-control"
+                        <select id="selComplementar" name="selComplementar" size="12" multiple="multiple"
+                                class="infraSelect form-control"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <?= $strSelExtensoesComp; ?>
                         </select>
                         <div id="divIconesComplementar">
                             <img id="imgLupaComplementar" onclick="objLupaComplementar.selecionar(700,500);"
-                                 onkeypress="objLupaComplementar.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg"
+                                 onkeypress="objLupaComplementar.selecionar(700,500);"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
                                  alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirComplementar" onclick="objLupaComplementar.remover();"
-                                 onkeypress="objLupaComplementar.remover();" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/remover.svg"
-                                 alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas" class="infraImg"
+                                 onkeypress="objLupaComplementar.remover();"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas"
+                                 class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
                     </div>

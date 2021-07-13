@@ -75,10 +75,9 @@ try {
               $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar&acao_origem='.$_GET['acao']);
 
               echo "<script>";
-              echo " window.opener.location = '" . $urlAssinada . "';";
-              echo " window.opener.focus();";
-              echo " window.opener.parent.opener.parent.location.reload();";
-              echo " window.opener.close();";
+              echo " window.parent.location = '" . $urlAssinada . "';";
+              echo " window.parent.focus();";
+              echo " window.parent.close();";
               echo " window.close();";
               echo "</script>";
               die;
@@ -248,15 +247,15 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 
     function assinar() {
         if (isValido()) {
-            document.getElementById('hdnCpfProcuradorPai').value = window.opener.document.getElementById('hdnCpfProcurador').value;
-            document.getElementById('hdnIdProcuracao').value = window.opener.document.getElementById('hdnIdProcuracao').value;
-            document.getElementById('hdnIdProcedimentoPai').value = window.opener.document.getElementById('hdnIdProcedimento').value;
-            document.getElementById('hdnIdVinculacaoPai').value = window.opener.document.getElementById('hdnIdVinculacao').value;
-            document.getElementById('hdnTpDocumentoPai').value = window.opener.document.getElementById('hdnTpDocumento').value;
-            document.getElementById('txtJustificativaPai').value = window.opener.document.getElementById('txtJustificativa').value;
-            document.getElementById('hdnTpVinculo').value = window.opener.document.getElementById('hdnTpVinculo').value;
-            document.getElementById('hdnTpProcuracao').value = window.opener.document.getElementById('hdnTpProcuracao').value;
-            document.getElementById('hdnIdContatoVinc').value = window.opener.document.getElementById('hdnIdContatoVinc').value;
+            $('#hdnCpfProcuradorPai').val(window.parent.document.getElementById('hdnCpfProcurador').value);
+            $('#hdnIdProcuracao').val(window.parent.document.getElementById('hdnIdProcuracao').value);
+            $('#hdnIdProcedimentoPai').val(window.parent.document.getElementById('hdnIdProcedimento').value);
+            $('#hdnIdVinculacaoPai').val(window.parent.document.getElementById('hdnIdVinculacao').value);
+            $('#hdnTpDocumentoPai').val(window.parent.document.getElementById('hdnTpDocumento').value);
+            $('#txtJustificativaPai').val(window.parent.document.getElementById('txtJustificativa').value);
+            $('#hdnTpVinculo').val(window.parent.document.getElementById('hdnTpVinculo').value);
+            $('#hdnTpProcuracao').val(window.parent.document.getElementById('hdnTpProcuracao').value);
+            $('#hdnIdContatoVinc').val(window.parent.document.getElementById('hdnIdContatoVinc').value);
             processando();
             document.getElementById('frmConcluir').submit();
             return true;

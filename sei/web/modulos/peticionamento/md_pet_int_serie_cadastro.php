@@ -85,7 +85,7 @@ try {
                         array_push($arrObjMdPetIntSerieDTO, $objMdPetIntSerieDTO);
                     }
                     $objMdPetIntSerieDTO = $objMdPetIntSerieRN->cadastrar($arrObjMdPetIntSerieDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntSerieDTO[0]->getNumIdSerie() . '" cadastrado com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&id_serie=' . $objMdPetIntSerieDTO[0]->getNumIdSerie() . PaginaSEI::getInstance()->montarAncora($objMdPetIntSerieDTO[0]->getNumIdSerie())));
                     die;
                 } catch (Exception $e) {

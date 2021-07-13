@@ -2535,9 +2535,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
 
-        $arrTabelas = array('md_pet_acesso_externo', 'md_pet_criterio', 'md_pet_ext_arquivo_perm', 'md_pet_hipotese_legal', 'md_pet_indisp_doc', 'md_pet_indisponibilidade', 'md_pet_int_aceite', 'md_pet_int_dest_resposta', 'md_pet_int_prazo_tacita', 'md_pet_int_prot_disponivel', 'md_pet_int_protocolo', 'md_pet_int_rel_dest', 'md_pet_int_rel_intim_resp', 'md_pet_int_rel_resp_doc', 'md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tpo_res_des', 'md_pet_int_serie', 'md_pet_int_tipo_intimacao', 'md_pet_int_tipo_resp', 'md_pet_intimacao', 'md_pet_rel_recibo_docanexo', 'md_pet_rel_recibo_protoc', 'md_pet_rel_tp_ctx_contato', 'md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_unid', 'md_pet_tamanho_arquivo', 'md_pet_tipo_processo', 'md_pet_tp_processo_orientacoes', 'md_pet_usu_externo_menu',
-            //Lista de 13 tabelas que faltou processar o indice na versao 3.0.1
-            'md_pet_adm_integ_funcion', 'md_pet_adm_integ_param', 'md_pet_adm_integracao', 'md_pet_adm_tipo_poder', 'md_pet_adm_vinc_rel_serie', 'md_pet_adm_vinc_tp_proced', 'md_pet_int_tp_int_orient', 'md_pet_rel_int_dest_extern', 'md_pet_rel_vincrep_protoc', 'md_pet_rel_vincrep_tipo_poder', 'md_pet_vinculo', 'md_pet_vinculo_documento', 'md_pet_vinculo_represent');
+        $arrTabelas = array('md_pesq_parametro');
 
         $this->fixIndices($objInfraMetaBD, $arrTabelas);
 

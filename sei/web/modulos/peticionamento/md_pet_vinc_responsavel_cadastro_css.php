@@ -29,3 +29,7 @@
         margin-left: 2%;
         font-weight: bold;
     }
+
+    .mb-3{margin-bottom: 0px !important;}
+    .row div{ margin-top:10px;}
+    .zerarFormatacao{margin-top:0px !important;}

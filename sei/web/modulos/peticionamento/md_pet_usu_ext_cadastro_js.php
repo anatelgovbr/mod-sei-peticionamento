@@ -941,7 +941,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             var conteudoDocumento = "";
 
-            $(document).ready(function () {
+            // $(document).ready(function () {
 
                 //var  formData = "";
 
@@ -966,7 +966,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         return;
                     }
                 });
-            });
+            // });
 
         }
 
@@ -1034,7 +1034,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             return true;
 
         } else {
-
+            console.log('error');
             return false;
 
         }
@@ -1045,10 +1045,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     function abrirPeticionar() {
 
         if (validarFormulario()) {
-
+            console.log(1234);
             parent.infraAbrirJanelaModal('<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&acao=peticionamento_usuario_externo_concluir&tipo_selecao=2'))?>',
-                770,
-                480,
+                800,
+                520,
                 '', //options
                 false); //modal
         }

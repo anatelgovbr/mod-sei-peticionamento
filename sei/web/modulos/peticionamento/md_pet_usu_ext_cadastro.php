@@ -304,12 +304,12 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                            style="margin-right:0px;"
                            name="tipoPessoa" value="pf" class="infraRadio" type="radio"/>
                     <span id="spnPublico"><label id="lblPublico" for="optTipoPessoaFisica"
-                                                 style="padding-right:10px;"
+                                                 style="padding-right:10px; top: 10px"
                                                  class="infraLabelRadio">Pessoa Física</label></span>
                     <input name="rdoTipoPessoa" id="optTipoPessoaJuridica" onclick="selecionarPJ()"
                            style="margin-right:0px;"
                            name="tipoPessoa" value="pj" class="infraRadio" type="radio"/>
-                    <span id="spnPublico"><label id="lblPublico2" for="optTipoPessoaJuridica"
+                    <span id="spnPublico"><label id="lblPublico2" for="optTipoPessoaJuridica" style="top: 10px"
                                                  class="infraLabelRadio">Pessoa Jurídica</label></span>
                     <div class="row">
                         <div class="col-sm-12 col-md-6 col-lg-6 col-lx-4" id="divSel1" style="display: none;">
@@ -343,19 +343,6 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-lx-12" id="divSel0">
-                            <input type="hidden" name="txtNomeRazaoSocialTratadoHTML" id="txtNomeRazaoSocialTratadoHTML"
-                                   value=""/>
-                            <input type="hidden" name="hdnIdInteressadoCadastrado" id="hdnIdInteressadoCadastrado"
-                                   value=""/>
-                            <input type="hidden" name="hdnListaInteressadosIndicados" id="hdnListaInteressadosIndicados"
-                                   value=""/>
-                            <input type="hidden" name="hdnCustomizado" id="hdnCustomizado" value=""/>
-                            <input type="hidden" name="hdnUsuarioCadastro" id="hdnUsuarioCadastro" value=""/>
-                            <input type="hidden" name="hdnUsuarioLogado" id="hdnUsuarioLogado"
-                                   value="<? echo SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(); ?>"/>
-                            <input type="hidden" name="hdnIdEdicao" id="hdnIdEdicao" value=""/>
-
-
                             <table id="tbInteressadosIndicados" class="infraTable" width="98%" align="left"
                                    summary="Lista de Interessados">
                                 <caption class="infraCaption"> &nbsp;</caption>
@@ -369,7 +356,17 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                                 <tbody>
                                 </tbody>
                             </table>
-
+                            <input type="hidden" name="txtNomeRazaoSocialTratadoHTML" id="txtNomeRazaoSocialTratadoHTML"
+                                   value=""/>
+                            <input type="hidden" name="hdnIdInteressadoCadastrado" id="hdnIdInteressadoCadastrado"
+                                   value=""/>
+                            <input type="hidden" name="hdnListaInteressadosIndicados" id="hdnListaInteressadosIndicados"
+                                   value=""/>
+                            <input type="hidden" name="hdnCustomizado" id="hdnCustomizado" value=""/>
+                            <input type="hidden" name="hdnUsuarioCadastro" id="hdnUsuarioCadastro" value=""/>
+                            <input type="hidden" name="hdnUsuarioLogado" id="hdnUsuarioLogado"
+                                   value="<? echo SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(); ?>"/>
+                            <input type="hidden" name="hdnIdEdicao" id="hdnIdEdicao" value=""/>
                         </div>
 
                     </div>

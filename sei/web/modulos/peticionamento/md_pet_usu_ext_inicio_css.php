@@ -3,8 +3,8 @@
     .sizeFieldset {height: auto; width: 86%;}
     .fieldsetClear { border: none !important;}
     td.tdOpcaoSigiloso a {background-color: red; color: white; width: 100%;}
-    #tblTipoProcedimento {border-spacing: 0px 5px; border-collapse: separate;}
-    #tblTipoProcedimento, #tblTipoProcedimento td {border: none; border-radius: 5px; padding: 0px;}
+    #tblTipoProcedimento {border-spacing: 0px 5px; border-collapse: separate; }
+    #tblTipoProcedimento, #tblTipoProcedimento td {border: none; border-radius: 5px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px;}
     tr.infraTrSelecionada, tr.infraTrSelecionada td, td.infraTdSelecionada {background-color: unset !important;}
     #tblTipoProcedimento td a:hover, #tblTipoProcedimento td a:focus {background-color: #b0b0b0; color: black;}
     #tblTipoProcedimento .ancoraOpcao {font-size: 14.5px; border-radius: 3px; padding: 4px;}

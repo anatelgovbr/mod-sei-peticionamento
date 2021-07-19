@@ -377,8 +377,6 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <br />
-                <br />
                 <label class="infraLabelObrigatorio" style="font-size:1.7em;">Escolha o Tipo do Processo que deseja
                     iniciar:</label>
             </div>
@@ -387,34 +385,32 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <table class="infraTable" id="tblTipoProcedimento" style="background-color:white;"
                        summary="Tabela de Tipos de Processo">
-                    <div id="hiddeTable">
+                    <?php
+                    $qtdArrObjTipoProcedimentoFiltroDTO = isset($arrObjTipoProcedimentoFiltroDTO) ? count($arrObjTipoProcedimentoFiltroDTO) : 0;
+                    if ($qtdArrObjTipoProcedimentoFiltroDTO > 0) {
 
-                        <?php
-                        $qtdArrObjTipoProcedimentoFiltroDTO = isset($arrObjTipoProcedimentoFiltroDTO) ? count($arrObjTipoProcedimentoFiltroDTO) : 0;
-                        if ($qtdArrObjTipoProcedimentoFiltroDTO > 0) {
-                            ?>
-                            <? foreach ($arrObjTipoProcedimentoFiltroDTO as $itemDTO) { ?>
+                        ?>
+                        <? foreach ($arrObjTipoProcedimentoFiltroDTO as $itemDTO) { ?>
 
-                                <? if ($_GET['id_tipo_procedimento'] == $itemDTO->getNumIdTipoProcessoPeticionamento()) { ?>
-                                    <? $classe = 'infraTrClara infraTrAcessada'; ?>
-                                <? } else {
-                                    $classe = 'infraTrClara';
-                                } ?>
+                            <? if ($_GET['id_tipo_procedimento'] == $itemDTO->getNumIdTipoProcessoPeticionamento()) { ?>
+                                <? $classe = 'infraTrClara infraTrAcessada'; ?>
+                            <? } else {
+                                $classe = 'infraTrClara';
+                            } ?>
 
-                                <tr class="<? echo $classe; ?>"
-                                    data-desc="'<?php echo strtolower(InfraString::excluirAcentos($itemDTO->getStrNomeProcesso())); ?>'">
-                                    <td>
-                                        <? $link = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_cadastrar&id_tipo_procedimento=' . $itemDTO->getNumIdTipoProcessoPeticionamento())); ?>
-                                        <a href="<?= $link ?>"
-                                           title="<?= $itemDTO->getStrOrientacoes() ?>"
-                                           class="ancoraOpcao">
-                                            <?= $itemDTO->getStrNomeProcesso() ?>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <? } ?>
-                        <?php } ?>
-                        <div>
+                            <tr class="<? echo $classe; ?>"
+                                data-desc="'<?php echo strtolower(InfraString::excluirAcentos($itemDTO->getStrNomeProcesso())); ?>'">
+                                <td>
+                                    <? $link = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_cadastrar&id_tipo_procedimento=' . $itemDTO->getNumIdTipoProcessoPeticionamento())); ?>
+                                    <a href="<?= $link ?>"
+                                       title="<?= $itemDTO->getStrOrientacoes() ?>"
+                                       class="ancoraOpcao">
+                                        <?= $itemDTO->getStrNomeProcesso() ?>
+                                    </a>
+                                </td>
+                            </tr>
+                        <? } ?>
+                    <?php } ?>
                 </table>
             </div>
         </div>

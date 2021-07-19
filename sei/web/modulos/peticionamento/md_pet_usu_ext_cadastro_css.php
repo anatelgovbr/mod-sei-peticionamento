@@ -27,5 +27,5 @@
     .infraImgModulo{width: 20px; height: 20px}
     input[type=button]{margin-left: 5px;}
     .divClean{margin-top: 0px !important;}
-    .infraLabelRadio{top: 10px;}
+    #tbInteressadosIndicados{margin-top: -50px}
 </style>

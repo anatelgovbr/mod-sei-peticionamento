@@ -153,7 +153,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <fieldset id="formularioPeticionamento" class="infraFieldset sizeFieldset form-control">
         <legend class="infraLegend">&nbsp; Formulário de Peticionamento &nbsp;</legend>
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+            <div class="col-sm-12 col-md-8 col-lg-7 col-xl-5">
                 <label class="infraLabelObrigatorio">Especificação (resumo limitado a 50 caracteres):</label>
                 <br/>
                 <input type="text" class="infraText form-control" name="txtEspecificacao" id="txtEspecificacao"

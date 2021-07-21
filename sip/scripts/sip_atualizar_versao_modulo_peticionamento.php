@@ -1,12 +1,6 @@
 <?
 require_once dirname(__FILE__) . '/../web/Sip.php';
 
-set_include_path(implode(PATH_SEPARATOR, array(
-    realpath(__DIR__ . '/../../infra/infra_php'),
-    get_include_path(),
-)));
-
-
 class MdPetAtualizadorSipRN extends InfraRN
 {
 
@@ -21,16 +15,16 @@ class MdPetAtualizadorSipRN extends InfraRN
         parent::__construct();
     }
 
+    protected function getHistoricoVersoes()
+    {
+        return $this->historicoVersoes;
+    }
+
     protected function inicializarObjInfraIBanco()
     {
         return BancoSip::getInstance();
     }
 
-    /**
-     * Inicia o script criando um contator interno do tempo de execução
-     *
-     * @return null
-     */
     protected function inicializar($strTitulo)
     {
         session_start();
@@ -38,32 +32,25 @@ class MdPetAtualizadorSipRN extends InfraRN
 
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '-1');
-        @ini_set('zlib.output_compression', '0');
         @ini_set('implicit_flush', '1');
         ob_implicit_flush();
 
-        $this->objDebug = InfraDebug::getInstance();
-        $this->objDebug->setBolLigado(true);
-        $this->objDebug->setBolDebugInfra(true);
-        $this->objDebug->setBolEcho(true);
-        $this->objDebug->limpar();
+        InfraDebug::getInstance()->setBolLigado(true);
+        InfraDebug::getInstance()->setBolDebugInfra(true);
+        InfraDebug::getInstance()->setBolEcho(true);
+        InfraDebug::getInstance()->limpar();
 
         $this->numSeg = InfraUtil::verificarTempoProcessamento();
-        $this->logar($strTitulo);
 
+        $this->logar($strTitulo);
     }
 
     protected function logar($strMsg)
     {
-        $this->objDebug->gravar($strMsg);
+        InfraDebug::getInstance()->gravar($strMsg);
         flush();
     }
 
-    /**
-     * Finaliza o script informando o tempo de execução.
-     *
-     * @return null
-     */
     protected function finalizar($strMsg = null, $bolErro = false)
     {
         if (!$bolErro) {
@@ -169,7 +156,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Erro atualizando versão.', $e);
+            throw new InfraException('Erro instalando/atualizando versão.', $e);
         }
     }
 
@@ -2214,29 +2201,10 @@ class MdPetAtualizadorSipRN extends InfraRN
 
 }
 
-//========================= INICIO SCRIPT EXECUÇAO =============
-
 try {
 
-    session_start();
     SessaoSip::getInstance(false);
     BancoSip::getInstance()->setBolScript(true);
-
-    if (!ConfiguracaoSip::getInstance()->isSetValor('BancoSip', 'UsuarioScript')) {
-        throw new InfraException('Chave BancoSip/UsuarioScript não encontrada.');
-    }
-
-    if (InfraString::isBolVazia(ConfiguracaoSip::getInstance()->getValor('BancoSip', 'UsuarioScript'))) {
-        throw new InfraException('Chave BancoSip/UsuarioScript não possui valor.');
-    }
-
-    if (!ConfiguracaoSip::getInstance()->isSetValor('BancoSip', 'SenhaScript')) {
-        throw new InfraException('Chave BancoSip/SenhaScript não encontrada.');
-    }
-
-    if (InfraString::isBolVazia(ConfiguracaoSip::getInstance()->getValor('BancoSip', 'SenhaScript'))) {
-        throw new InfraException('Chave BancoSip/SenhaScript não possui valor.');
-    }
 
     $objVersaoRN = new MdPetAtualizadorSipRN();
     $objVersaoRN->atualizarVersao();
@@ -2249,5 +2217,3 @@ try {
     }
     exit(1);
 }
-
-print PHP_EOL;

@@ -1627,7 +1627,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     //campo de upload de documentos essenciais
     function carregarCamposDocEssencialUpload() {
 
-        objEssencialUpload = new infraUpload('frmDocumentosEssenciais', '<?=$strLinkUploadDocEssencial?>', true);
+        objEssencialUpload = new infraUpload('frmDocumentosEssenciais', '<?=$strLinkUploadDocEssencial?>');
 
         objEssencialUpload.finalizou = function (arr) {
 

@@ -19,14 +19,14 @@ class MdPetAtualizadorSeiRN extends InfraRN
     public static $MD_PET_ID_SERIE_VINC_SUSPENSAO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO';
     public static $MD_PET_ID_SERIE_VINC_RESTABELECIMENTO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO';
 
-    protected function getHistoricoVersoes()
-    {
-        return $this->historicoVersoes;
-    }
-
     public function __construct()
     {
         parent::__construct();
+    }
+
+    protected function getHistoricoVersoes()
+    {
+        return $this->historicoVersoes;
     }
 
     protected function inicializarObjInfraIBanco()
@@ -36,9 +36,11 @@ class MdPetAtualizadorSeiRN extends InfraRN
 
     private function inicializar($strTitulo)
     {
+        session_start();
+        SessaoSEI::getInstance(false);
+
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '-1');
-        @ini_set('zlib.output_compression', '0');
         @ini_set('implicit_flush', '1');
         ob_implicit_flush();
 
@@ -4083,24 +4085,9 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 }
 
 try {
+
     SessaoSEI::getInstance(false);
     BancoSEI::getInstance()->setBolScript(true);
-
-    if (!ConfiguracaoSEI::getInstance()->isSetValor('BancoSEI', 'UsuarioScript')) {
-        throw new InfraException('Chave BancoSEI/UsuarioScript não encontrada.');
-    }
-
-    if (InfraString::isBolVazia(ConfiguracaoSEI::getInstance()->getValor('BancoSEI', 'UsuarioScript'))) {
-        throw new InfraException('Chave BancoSEI/UsuarioScript não possui valor.');
-    }
-
-    if (!ConfiguracaoSEI::getInstance()->isSetValor('BancoSEI', 'SenhaScript')) {
-        throw new InfraException('Chave BancoSEI/SenhaScript não encontrada.');
-    }
-
-    if (InfraString::isBolVazia(ConfiguracaoSEI::getInstance()->getValor('BancoSEI', 'SenhaScript'))) {
-        throw new InfraException('Chave BancoSEI/SenhaScript não possui valor.');
-    }
 
     $configuracaoSEI = new ConfiguracaoSEI();
     $arrConfig = $configuracaoSEI->getInstance()->getArrConfiguracoes();
@@ -4130,4 +4117,3 @@ try {
     }
     exit(1);
 }
-?>

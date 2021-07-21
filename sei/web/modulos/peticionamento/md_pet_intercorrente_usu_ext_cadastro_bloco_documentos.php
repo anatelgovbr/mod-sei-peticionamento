@@ -12,7 +12,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
 
 ?>
 <fieldset id="field_documentos" class="infraFieldset sizeFieldset form-control"
-          style="display: none; min-height: 530px">
+          style="display: none; height: auto">
     <legend class="infraLegend">&nbsp; Documentos &nbsp;</legend>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 texto">
@@ -23,7 +23,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 infraAreaDados" id="divArquivo">
             <label class="infraLabelObrigatorio" for="fileArquivo">Documento (tamanho
                 máximo: <?= is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):</label>
             <input type="file" name="fileArquivo" id="fileArquivo"
@@ -31,7 +31,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-5 col-lg-3 col-xl-2">
+        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
             <label class="infraLabelObrigatorio" for="selTipoDocumento">Tipo de Documento: <img
                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                         name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, "Ajuda") ?>
@@ -40,7 +40,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             <select id="selTipoDocumento" class="infraSelect form-control"
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"></select>
         </div>
-        <div class="col-sm-12 col-md-5 col-lg-3 col-xl-3">
+        <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
             <label class="infraLabelObrigatorio" for="txtComplementoTipoDocumento">Complemento do Tipo de Documento:
                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                      name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipComplementoTipoDocumento, "Ajuda") ?>
@@ -52,7 +52,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2" id="divBlcNivelAcesso">
+        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3" id="divBlcNivelAcesso">
             <label class="infraLabelObrigatorio" for="selNivelAcesso">
                 Nível de Acesso:
                 <img id=imgNivelAcesso name=imgNivelAcesso
@@ -62,7 +62,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             <div id="divNivelAcesso"></div>
         </div>
         <?php if ($exibirHipoteseLegal): ?>
-            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3" id="divBlcHipoteseLegal" style="display: none;">
+            <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6" id="divBlcHipoteseLegal" style="display: none;">
                 <label class="infraLabelObrigatorio" for="selHipoteseLegal">
                     Hipótese Legal:
                     <img id=imgHipoteseLegal name=imgHipoteseLegal
@@ -76,7 +76,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         <?php endif; ?>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
             <label class="infraLabelObrigatorio">Formato: <img
                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                         name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato, "Ajuda") ?>
@@ -90,13 +90,13 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() + 2; ?>">
             <label for="rdoDigitalizado" class="infraLabelRadio">Digitalizado</label>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-4" id="divTipoConferencia" style="display: none">
+        <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6" id="divTipoConferencia" style="display: none">
             <label class="infraLabelObrigatorio" for="selTipoConferencia">Conferência com o documento
                 digitalizado:</label>
             <select id="selTipoConferencia" name="selTipoConferencia" class="infraSelect form-control"
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() + 2; ?>"><?= $strSelectTipoConferencia ?></select>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
+        <div class="col-sm-12 col-md-3 col-lg-2 col-xl-2">
             <button type="button" class="infraButton" id="btnAdicionarDocumento" onclick="adicionarDocumento();"
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() + 2; ?>">Adicionar
             </button>

@@ -66,12 +66,15 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
         $externo = $ObjMdPetTipoProcessoDTO->getStrSinDocExterno();
 
         if ($externo == 'S') { ?>
-            <label class="infraLabelObrigatorio" for="fileArquivoPrincipal">Documento Principal (<?
-                echo $strTamanhoMaximoPrincipal;
-                echo "<input type=hidden name=hdnTamArquivoPrincipal id=hdnTamArquivoPrincipal value='" . $strTamanhoMaximoPrincipal . "'>";
-                ?>):</label><br/>
-            <input style="margin-top:0.3%" type="file" name="fileArquivoPrincipal" id="fileArquivoPrincipal"/> <br/>
+            <div id="divArquivo" class="infraAreaDados">
+                <label class="infraLabelObrigatorio" for="fileArquivoPrincipal">Documento Principal (<?
+                    echo $strTamanhoMaximoPrincipal;
+                    echo "<input type=hidden name=hdnTamArquivoPrincipal id=hdnTamArquivoPrincipal value='" . $strTamanhoMaximoPrincipal . "'>";
+                    ?>):</label><br/>
+                <input style="margin-top:0.3%" type="file" name="fileArquivoPrincipal" id="fileArquivoPrincipal"/>
+            </div>
             <br/>
+            <br />
         <? } ?>
 
         <!-- Quando é EXTERNO exibir "Tipo" e "Complemento" -->
@@ -113,7 +116,8 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgLocal() ?>/documento_formulario2.svg"
                      name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?>
                      alt="Formulário"/>&nbsp;&nbsp;
-                <label onclick="abrirJanelaDocumento()" style="margin-top: 10px; cursor: pointer" on><?= $strTipoDocumentoPrincipal ?> &nbsp;&nbsp;(clique aqui para
+                <label onclick="abrirJanelaDocumento()" style="margin-top: 10px; cursor: pointer"
+                       on><?= $strTipoDocumentoPrincipal ?> &nbsp;&nbsp;(clique aqui para
                     editar conteúdo)</label>
             </div>
         </div>
@@ -248,7 +252,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegalPadraoPreDefinido, 'Ajuda') ?>
                                     alt="Ajuda" class="infraImg"/></label> <br/>
-                        <label class="infraLabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?= $strHipoteseLegalPadrao ?> </label>
+                        <label class="infraLabel" style="" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?= $strHipoteseLegalPadrao ?> </label>
                         <input type="hidden" name="hipoteseLegal1" id="hipoteseLegal1"
                                value="<?= $idHipoteseLegalPadrao ?>"/>
 
@@ -284,7 +288,7 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
                             } ?>
                         </select>
                         <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('1')">
-                    </div>
+                    </div>]
                 </div>
 
                 <div id="camposDigitalizadoPrincipalBotao" style="float: left; width: 15%; margin-top: 26px">
@@ -345,14 +349,16 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
     if (is_array($arrMdPetRelTpProcSerieDTO) && count($arrMdPetRelTpProcSerieDTO) > 0){ ?>
 
     <hr style="border:none; padding:0; margin:5px 6px 12px 6px; border-top:medium double #333"/>
-    <label class="infraLabelObrigatorio" for="fileArquivoEssencial">Documentos Essenciais (<?
-        echo $strTamanhoMaximoComplementar;
-        echo "<input type=hidden name=hdnTamArquivoEssencial id=hdnTamArquivoEssencial value='" . $strTamanhoMaximoComplementar . "'>";
-        ?>):</label><br/>
+    <div id="divArquivo" class="infraAreaDados">
+        <label class="infraLabelObrigatorio" for="fileArquivoEssencial">Documentos Essenciais (<?
+            echo $strTamanhoMaximoComplementar;
+            echo "<input type=hidden name=hdnTamArquivoEssencial id=hdnTamArquivoEssencial value='" . $strTamanhoMaximoComplementar . "'>";
+            ?>):</label><br/>
 
-    <input style="margin-top:0.3%" type="file" id="fileArquivoEssencial" name="fileArquivoEssencial" size="50"/>
-    <br/><br/>
-
+        <input style="margin-top:0.3%" type="file" id="fileArquivoEssencial" name="fileArquivoEssencial" size="50"/>
+    </div>
+    <br />
+    <br />
     <div style="float: left; height: 42px;">
         <label id="lblPublico" class="infraLabelObrigatorio">Tipo de Documento: <img
                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
@@ -550,8 +556,10 @@ $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('co
         echo $strTamanhoMaximoComplementar;
         echo "<input type=hidden name=hdnTamArquivoComplementar id=hdnTamArquivoComplementar value='" . $strTamanhoMaximoComplementar . "'>";
         ?>):</label><br/>
-
-    <input style="margin-top:0.3%" type="file" id="fileArquivoComplementar" name="fileArquivoComplementar" size="50"/>
+    <div id="divArquivo" class="infraAreaDados">
+        <input style="margin-top:0.3%" type="file" id="fileArquivoComplementar" name="fileArquivoComplementar"
+               size="50"/>
+    </div>
     <br/><br/>
 
     <div style="float: left; height: 42px;">

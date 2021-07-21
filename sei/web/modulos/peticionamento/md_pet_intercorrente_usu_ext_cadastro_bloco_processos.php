@@ -1,9 +1,9 @@
 <!-- INICIO FIELDSET PROCESSOS -->
 
-<fieldset id="field_processos" class="infraFieldset sizeFieldset form-control" style="min-height: 125px;">
+<fieldset id="field_processos" class="infraFieldset sizeFieldset form-control" style="height: auto">
     <legend class="infraLegend">&nbsp; Processo &nbsp;</legend>
     <div class="row">
-        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
             <label id="lblNumeroSei" for="txtNumeroProcesso" accesskey="n" class="infraLabelObrigatorio"><span
                         class="infraTeclaAtalho">N</span>úmero:</label>
             <div class="input-group mb-3">
@@ -18,7 +18,7 @@
                 </button>
             </div>
         </div>
-        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-5">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-5">
             <label id="lblTipo" for="txtTipo" class="infraLabelObrigatorio">Tipo:</label>
             <div class="input-group mb-3">
                 <input type="text" id="txtTipo" name="txtTipo" class="infraText form-control" readonly="readonly"

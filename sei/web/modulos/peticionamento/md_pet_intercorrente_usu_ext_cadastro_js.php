@@ -309,6 +309,12 @@
         verificarCriterioIntercorrente();
 
         document.getElementById('field_documentos').style.display = 'block';
+
+        setTimeout(function (){
+            var div = $('#divArquivo');
+            $('#btnUploadCancelarfrmPeticionamentoIntercorrente')[0].style.left = div[0].offsetLeft + div[0].offsetWidth - 60 + "px";
+        },3000);
+
     }
 
     function verificarCriterioIntercorrente() {

@@ -2197,7 +2197,7 @@ class MdPetIntimacaoRN extends InfraRN
                 $objProtocoloRN = new ProtocoloRN();
                 $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 
-                if (count($objProtocoloDTO) > 0) {
+                if ($objProtocoloDTO) {
                     $strStaNivelAcessoLocal = $objProtocoloDTO->getStrStaNivelAcessoLocal();
                     $strStaNivelAcessoGlobal = $objProtocoloDTO->getStrStaNivelAcessoGlobal();
                 } else {

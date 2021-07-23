@@ -37,7 +37,7 @@ switch($_GET['acao']) {
             $divIntegral = ($_GET["tipo"]== 'integral') ? 'block' : 'none';
 
             //Integral
-            $texto  = "<div id=divIntegral style='display: " . $divIntegral . " '>";
+            $texto  = "<div id=divIntegral style='display: " . $divIntegral . "; padding-top: 15px; padding-bottom: 15px; '>";
             $texto .= "<p style='text-align:justify'> ";
             $texto .= "Após a geração da Intimação Eletrônica, esta ficará imediatamente disponível para que o ";
             $texto .= "Destinatário realize o seu cumprimento com a consulta ao Documento Principal ou, se indicados, "; 
@@ -118,6 +118,9 @@ PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
 ?>
 .clear {clear: both;}
+p{
+    font-size: 0.875rem;
+}
 <?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();

@@ -50,7 +50,7 @@ switch ($_GET['acao']) {
             if ($arrObjMdPetVincRepresentantDTO) {
                 $arrPessoaJuridica = array();
                 $arrPessoaFisica = array();
-                $texto = 'Você não possui mais permissão para cumprir a Intimação Eletrônica conforme abaixo:<br><br>Destinatários não permitidos:';
+                $texto = '<div style="padding-top: 10px; padding-bottom: 10px"><p>Você não possui mais permissão para cumprir a Intimação Eletrônica conforme abaixo:<br><br>Destinatários não permitidos:';
                 foreach ($arrObjMdPetVincRepresentantDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
                     $procuracaoValida = true;
                     if ($itemObjMdPetVinculoDTO->getStrStaEstado() != MdPetVincRepresentantRN::$RP_ATIVO) {
@@ -72,7 +72,7 @@ switch ($_GET['acao']) {
                 }
                 $texto .= implode('<br>',$arrPessoaJuridica)."<br>".implode('<br>',$arrPessoaFisica);
             }
-
+            $texto .= '</p></div>';
         } catch (Exception $e) {
             PaginaSEIExterna::getInstance()->processarExcecao($e);
         }
@@ -95,14 +95,16 @@ PaginaSEIExterna::getInstance()->abrirStyle();
 
 .textoIntimacaoEletronica {}
 .clear {clear: both;}
-
+    p{
+    font-size: 0.875rem;
+    }
 <?php
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
-PaginaSEIExterna::getInstance()->abrirBody('<b>'.$strTitulo.'</b>', 'onload=""');
+PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
 ?>
 <form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
 

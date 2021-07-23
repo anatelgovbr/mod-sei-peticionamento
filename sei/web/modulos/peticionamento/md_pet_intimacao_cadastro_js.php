@@ -1005,7 +1005,7 @@
                     } else {
                         configurarSelectSingle();
                     }
-
+                    $("#selTipoResposta").multipleSelect('uncheckAll');
                     document.getElementById('lblTipodeResposta').style.display = '';
 
                 } else {

@@ -2181,7 +2181,7 @@ class MdPetIntimacaoRN extends InfraRN
                 //       ate a resolucao do item 22.2 da lista de correções
                 $idIntimacao = $objRelDestIntimacao->getNumIdMdPetIntimacao();
                 $docPrinc = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
-                if (count($docPrinc) > 0) {
+                if ($docPrinc) {
                     $idProcedimento = $docPrinc[2];
                 } else {
                     $idProcedimento = 0;

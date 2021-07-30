@@ -5,3 +5,4 @@
 #txtTipoProcesso{width:85%}
 .rowFieldSet2{ margin-top: 10px}
 .row div .mb-3{ margin-bottom: 0px !important}
+#selTipoProcesso{width: calc(100% - 90px);}

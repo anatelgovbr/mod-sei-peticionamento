@@ -194,9 +194,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="row">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="input-group mb-3">
-                        <select style="float: left; width: 50%" id="selSerie" name="selSerie" size="8"
+                        <select id="selSerie" name="selSerie" size="8"
                                 multiple="multiple"
-                                class="infraSelect form-control"
+                                class="infraSelect"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <?= $strItensSelSeriesEss; ?>
                         </select>

@@ -197,7 +197,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
                 <div class="input-group mb-3" id="divIcones">
                     <?php if ($_GET['acao'] != 'md_pet_intercorrente_criterio_consultar') { ?>
-                        <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect form-control" multiple="multiple"
+                        <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect" multiple="multiple"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <?= $strTipoProcesso; ?>
                         </select>

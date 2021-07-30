@@ -653,7 +653,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            value="<?php echo $idMdPetTipoProcesso ?>"/>
                     <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700, 500);"
                          onkeypress="objLupaTipoProcesso.selecionar(700, 500);"
-                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/consultar.svg"
+                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
                          alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     <img id="imgExcluirTipoProcesso"
@@ -710,7 +710,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                            value="<?= $idUnidade ?>"/>
                                     <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700, 500);"
                                          onkeypress="objLupaUnidade.selecionar(700, 500);"
-                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/consultar.svg"
+                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
                                          alt="Selecionar Unidade" title="Selecionar Unidade"
                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                     <img id="imgExcluirUnidade"
@@ -767,7 +767,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                     <img id="imgLupaOrgaos"
                                                          onclick="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);"
                                                          onkeypress="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);"
-                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/consultar.svg"
+                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
                                                          alt="Selecionar Órgão" title="Selecionar Órgão"
                                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                                 </div>
@@ -789,7 +789,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                     <img id="imgLupaUnidadeMultipla"
                                                          onclick="verificarOrgaoSelecionado();"
                                                          onkeypress="verificarOrgaoSelecionado();"
-                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/consultar.svg"
+                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
                                                          alt="Selecionar Unidade" title="Selecionar Unidade"
                                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                                 </div>
@@ -1176,7 +1176,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             <img id="imgLupaTipoDocPrinc"
                                                  onclick="carregarComponenteLupaTpDocPrinc('S');"
                                                  onkeypress="carregarComponenteLupaTpDocPrinc('S');"
-                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/consultar.svg"
+                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
                                                  alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento"
                                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                             <img id="imgExcluirTipoDocPrinc"
@@ -1233,7 +1233,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         <img id="imgLupaTipoDocumentoEssencial"
                                              onclick="objLupaTipoDocumentoEssencial.selecionar(700, 500)"
                                              onkeypress="objLupaTipoDocumentoEssencial.selecionar(700, 500)"
-                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/consultar.svg"
+                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
                                              alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento"
                                              tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                     </div>
@@ -1285,7 +1285,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <img id="imgLupaTipoDocumento"
                                          onclick="carregarComponenteLupaTpDocComplementar('S');"
                                          onkeypress="carregarComponenteLupaTpDocComplementar('S');"
-                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/consultar.svg"
+                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
                                          alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento"
                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                 </div>

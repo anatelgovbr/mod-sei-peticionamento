@@ -159,7 +159,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div id="divSelPrincipal" class="col-sm-10 col-md-10 col-lg-8 col-xl-6">
                     <div class="input-group mb-3">
                         <select id="selPrincipal" name="selPrincipal" size="8" multiple="multiple"
-                                class="infraSelect form-control"
+                                class="infraSelect"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <?= $strSelExtensoesPrin; ?>
                         </select>
@@ -197,7 +197,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div id="divSelComplementar" class="col-sm-10 col-md-10 col-lg-8 col-xl-6">
                     <div class="input-group mb-3">
                         <select id="selComplementar" name="selComplementar" size="12" multiple="multiple"
-                                class="infraSelect form-control"
+                                class="infraSelect"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <?= $strSelExtensoesComp; ?>
                         </select>

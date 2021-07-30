@@ -156,11 +156,10 @@ require_once('md_pet_tp_ctx_contato_cadastro_inicializacao.php');
           <div class="row">
               <div id="divSelPrincipal" class="col-sm-10 col-md-10 col-lg-8 col-xl-6">
                   <div class="input-group mb-3">
-                      <select id="selPrincipal" name="selPrincipal" size="8" multiple="multiple" class="infraSelect form-control"
+                      <select id="selPrincipal" name="selPrincipal" size="8" multiple="multiple" class="infraSelect"
                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                           <?= $strSelPrin; ?>
                       </select>
-
                       <div id="divIconesPrincipal">
                           <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);"
                                onkeypress="objLupaPrincipal.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg"
@@ -195,7 +194,7 @@ require_once('md_pet_tp_ctx_contato_cadastro_inicializacao.php');
           <div class="row">
               <div id="divSelPrincipal2" class="col-sm-10 col-md-10 col-lg-8 col-xl-6">
                   <div class="input-group mb-3">
-                      <select id="selPrincipal2" name="selPrincipal2" size="8" multiple="multiple" class="infraSelect form-control"
+                      <select id="selPrincipal2" name="selPrincipal2" size="8" multiple="multiple" class="infraSelect"
                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                           <?= $strSelPrin2; ?>
                       </select>

@@ -146,7 +146,7 @@ PaginaSEI::getInstance()->abrirAreaDados('40em');
             <div id="divSelDescricaoHpLegalNvAcesso" class="col-sm-10 col-md-12 col-lg-10 col-xl-10">
                 <div class="input-group mb-3">
                     <select id="selDescricaoHpLegalNvAcesso" name="selDescricaoHpLegalNvAcesso" size="16"
-                            multiple="multiple" class="infraSelect form-control"
+                            multiple="multiple" class="infraSelect"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <?= $strItensSelHipLegal ?>
                     </select>

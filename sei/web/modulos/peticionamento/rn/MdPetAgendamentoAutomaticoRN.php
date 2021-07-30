@@ -55,8 +55,15 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Cumpridas: ' . $arrIntimacoes['cumpridas']);
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Nao Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
 
-                foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
-                    InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+                if(isset($arrIntimacoes['procedimentos'])) {
+                    foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
+                        InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+                    }
+                }
+                if($arrIntimacoes['erros']){
+                    foreach ($arrIntimacoes['erros'] as $procedimentos) {
+                        InfraDebug::getInstance()->gravar($procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+                    }
                 }
             }
             

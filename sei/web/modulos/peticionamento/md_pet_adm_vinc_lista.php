@@ -20,7 +20,7 @@ try {
 
         case 'md_pet_adm_vinc_listar':
             $strTitulo = 'Administrar Vinculações e Procurações Eletrônicas';
-            $strColuna10 = 'CPF/CNPJ do Outorgante';
+            $strColuna10 = 'CPF/CNPJ Outorgante';
             $strColuna11 = 'CNPJ';
             $strColuna20 = 'Nome/Razão Social do Outorgante';
             $strColuna21 = 'RazaoSocialNomeVinc';

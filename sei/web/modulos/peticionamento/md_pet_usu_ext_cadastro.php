@@ -110,6 +110,13 @@ if ($qtdSelectCidade == 1) {
     $cidadeHidde = "";
 }
 
+$objInfraParametroDTO = new InfraParametroDTO();
+$objMdPetParametroRN = new MdPetParametroRN();
+$objInfraParametroDTO->retTodos();
+$objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
+$objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
+$valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
+
 PaginaSEIExterna::getInstance()->montarDocType();
 PaginaSEIExterna::getInstance()->abrirHtml();
 PaginaSEIExterna::getInstance()->abrirHead();
@@ -423,11 +430,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                              class="infraImg">
                         <br/>
                         <img id="imgAssuntosAcima" onclick="objLupaInteressados.moverAcima();"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/seta_acima_select.svg"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/mover_acima.svg"
                              alt="Mover Acima Assunto Selecionado" title="Mover Acima Selecionado" class="infraImg"
                              tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         <img id="imgAssuntosAbaixo" onclick="objLupaInteressados.moverAbaixo();"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/seta_abaixo_select.svg"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/mover_abaixo.svg"
                              alt="Mover Abaixo Assunto Selecionado" title="Mover Abaixo Selecionado" class="infraImg"
                              tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>

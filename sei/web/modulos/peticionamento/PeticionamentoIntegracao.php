@@ -1173,7 +1173,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Resposta a Intimação: ' . $data . ' (Documento Principal: SEI nº ' . $numeroDocPrincipal . ')"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_resposta_a_intimacao.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-left: 5px' />";
+                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_resposta_a_intimacao.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-top: 1px' />";
             } //recibo mais atual é de peticionamento intercorrente
             if (in_array(MdPetReciboRN::$TP_RECIBO_INTERCORRENTE, $tipoPet)) {
 
@@ -1193,7 +1193,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Intercorrente: ' . $data . '"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_intercorrente.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-left: 5px' />";
+                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_intercorrente.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-top: 1px' />";
             } //recibo mais atual é de peticionamento de processo novo
             if (in_array(MdPetReciboRN::$TP_RECIBO_NOVO, $tipoPet)) {
 
@@ -1210,7 +1210,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Processo Novo: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy') . '"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width: 24px; padding-left: 5px'  />";
+                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_processo_novo.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-top: 1px'  />";
             }
             if (in_array(MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL, $tipoPetTodos)) {
 
@@ -1292,7 +1292,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $textoSeparado = $linhaDeCimaTxt . ' \n' . $linhaDeBaixoTxt;
 
                     }
-                    $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo_azul.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPJ . "," . $linhaDeCimaPJ . ");' style='width:24px; padding-left: 5px' />";
+                    $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_processo_novo_azul.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPJ . "," . $linhaDeCimaPJ . ");' style='width:24px; padding-top: 1px' />";
                 }
 
             }
@@ -1318,7 +1318,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeBaixoTexto .= 'Último Peticionamento de Atualização: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
                 $textoSeparado = $linhaDeCimaTexto . ' \n' . $linhaDeBaixoTexto;
 
-                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo_cinza.svg' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPF . "," . $linhaDeCimaPF . ");' style='width:24px; padding-left: 5px' />";
+                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_processo_novo_cinza.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPF . "," . $linhaDeCimaPF . ");' style='width:24px; padding-top: 1px' />";
 
             }
             $arrDados['dataPJ'] = $dataPJ;

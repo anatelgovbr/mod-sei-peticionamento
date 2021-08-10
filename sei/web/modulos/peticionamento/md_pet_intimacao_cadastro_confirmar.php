@@ -21,7 +21,7 @@ switch($_GET['acao']) {
             $strTitulo = 'Gerar Intimação Eletrônica - Confirmação';
 
             $arrComandos[] = '<button type="button" accesskey="G" name="sbmConfirmarIntimacao" id="sbmConfirmarIntimacao" onclick="gerarIntimacao();" value="Ciente e Gerar Intimação" class="infraButton">Ciente e <span class="infraTeclaAtalho">G</span>erar Intimação</button>';
-            $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar" onclick="window.close();" value="Cancelar" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+            $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar" onclick="infraFecharJanelaModal();" value="Cancelar" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
             $objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);

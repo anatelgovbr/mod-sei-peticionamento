@@ -1466,7 +1466,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                                 $objRelAcessoExtProtocoloDTO->setDblIdProtocolo($docResposta);
                                 $objRelAcessoExtProtocoloDTO->retTodos();
                                 $arrObjRelAcessoExtProtocoloDTO = $objRelAcessoExtProtocoloBD->consultar($objRelAcessoExtProtocoloDTO);
-                                if($arrObjRelAcessoExtProtocoloDTO) {
+                                if(!$arrObjRelAcessoExtProtocoloDTO) {
                                     $objRelAcessoExtProtocoloBD->cadastrar($objRelAcessoExtProtocoloDTO);
                                 }
                             }
@@ -1476,7 +1476,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                             $objRelAcessoExtProtocoloDTO->setDblIdProtocolo($docResposta);
                             $objRelAcessoExtProtocoloDTO->retTodos();
                             $arrObjRelAcessoExtProtocoloDTO = $objRelAcessoExtProtocoloBD->consultar($objRelAcessoExtProtocoloDTO);
-                            if($arrObjRelAcessoExtProtocoloDTO) {
+                            if(!$arrObjRelAcessoExtProtocoloDTO) {
                                 $objRelAcessoExtProtocoloBD->cadastrar($objRelAcessoExtProtocoloDTO);
                             }
                         }

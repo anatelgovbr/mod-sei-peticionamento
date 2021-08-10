@@ -1464,21 +1464,21 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                                 $objRelAcessoExtProtocoloDTO = new RelAcessoExtProtocoloDTO();
                                 $objRelAcessoExtProtocoloDTO->setNumIdAcessoExterno($objAcessoExterno->getNumIdAcessoExterno());
                                 $objRelAcessoExtProtocoloDTO->setDblIdProtocolo($docResposta);
-                                $objRelAcessoExtProtocoloDTO->retTodos();
-                                $arrObjRelAcessoExtProtocoloDTO = $objRelAcessoExtProtocoloBD->consultar($objRelAcessoExtProtocoloDTO);
-                                if(!$arrObjRelAcessoExtProtocoloDTO) {
+//                                $objRelAcessoExtProtocoloDTO->retTodos();
+//                                $arrObjRelAcessoExtProtocoloDTO = $objRelAcessoExtProtocoloBD->consultar($objRelAcessoExtProtocoloDTO);
+//                                if(!$arrObjRelAcessoExtProtocoloDTO) {
                                     $objRelAcessoExtProtocoloBD->cadastrar($objRelAcessoExtProtocoloDTO);
-                                }
+//                                }
                             }
                         } else {
                             $objRelAcessoExtProtocoloDTO = new RelAcessoExtProtocoloDTO();
                             $objRelAcessoExtProtocoloDTO->setNumIdAcessoExterno($objAcessoExterno->getNumIdAcessoExterno());
                             $objRelAcessoExtProtocoloDTO->setDblIdProtocolo($docResposta);
-                            $objRelAcessoExtProtocoloDTO->retTodos();
-                            $arrObjRelAcessoExtProtocoloDTO = $objRelAcessoExtProtocoloBD->consultar($objRelAcessoExtProtocoloDTO);
-                            if(!$arrObjRelAcessoExtProtocoloDTO) {
+//                            $objRelAcessoExtProtocoloDTO->retTodos();
+//                            $arrObjRelAcessoExtProtocoloDTO = $objRelAcessoExtProtocoloBD->consultar($objRelAcessoExtProtocoloDTO);
+//                            if(!$arrObjRelAcessoExtProtocoloDTO) {
                                 $objRelAcessoExtProtocoloBD->cadastrar($objRelAcessoExtProtocoloDTO);
-                            }
+//                            }
                         }
                     }
                 }

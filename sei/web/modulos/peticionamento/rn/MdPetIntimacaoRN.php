@@ -1934,7 +1934,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
             $arrObjMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->listar($objMdPetIntDestRespostaDTO);
 
-            if (count($arrObjMdPetIntDestRespostaDTO) > 0) {
+            if ($arrObjMdPetIntDestRespostaDTO) {
                 $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
                 //SEM RESPOSTA
                 $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
@@ -1951,7 +1951,7 @@ class MdPetIntimacaoRN extends InfraRN
         $objMdPetIntRelTipoRespRN = new MdPetIntRelTipoRespRN();
         $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listar($objMdPetIntRelTipoRespDTO);
 
-        if (count($arrObjMdPetIntRelTipoRespDTO) > 0) {
+        if ($arrObjMdPetIntRelTipoRespDTO) {
             $arrIdMdPetIntimacao = InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao');
             $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
         }

@@ -23,7 +23,7 @@ switch ($_GET['acao']) {
             $strTitulo = 'Consultar Intimação Eletrônica';
 
             $arrComandos[] = '<button type="submit" accesskey="I" name="sbmAceitarIntimacao" id="sbmAceitarIntimacao" value="Confirmar Consulta à Intimação" class="infraButton">Confirmar Consulta à <span class="infraTeclaAtalho">I</span>ntimação</button>';
-            $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+            $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="infraFecharJanelaModal();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
             $texto = '<div style="padding-top: 10px; padding-bottom: 10px;"><p>Para visualizar os documentos da Intimação Eletrônica referente ao ';
             $texto .= 'Documento Principal SEI nº @numero_documento@, além de poder efetivar sua resposta, se faz necessário confirmar a consulta à intimação.</p>';

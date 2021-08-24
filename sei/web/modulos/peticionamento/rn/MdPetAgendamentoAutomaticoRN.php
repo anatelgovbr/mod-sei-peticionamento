@@ -196,7 +196,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 if (is_numeric($qtdEnviadas['qtdNãoEnviadas'])) {
                     InfraDebug::getInstance()->gravar('Qtd. Intimacoes Não Reiteradas: ' . $qtdEnviadas['qtdNãoEnviadas']);
                 }
-                if (is_array($qtdEnviadas['arrDadosEmailNaoEnviados'])) {
+                if (is_array($qtdEnviadas['arrDadosEmailNaoEnviados']) && count($qtdEnviadas['arrDadosEmailNaoEnviados']) > 0) {
                     foreach($qtdEnviadas['arrDadosEmailNaoEnviados'] as $email) {
                         InfraDebug::getInstance()->gravar('Nº Processo: ' . $email['processo'] . ' - Usuário Externo: ' . $email['nome_usuario_externo'] . ' - E-mail Usuário Externo: ' . $email['email_usuario_externo']);
                     }
@@ -225,7 +225,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 if (is_numeric($qtdEnviadasJuridico['qtdNãoEnviadas'])) {
                     InfraDebug::getInstance()->gravar('Qtd. Intimacoes Não Reiteradas: ' . $qtdEnviadasJuridico['qtdNãoEnviadas']);
                 }
-                if (is_array($qtdEnviadasJuridico['arrDadosEmailNaoEnviados'])) {
+                if (is_array($qtdEnviadasJuridico['arrDadosEmailNaoEnviados']) && count($qtdEnviadasJuridico['arrDadosEmailNaoEnviados']) > 0) {
                     foreach($qtdEnviadasJuridico['arrDadosEmailNaoEnviados'] as $email) {
                         InfraDebug::getInstance()->gravar('Nº Processo: ' . $email['processo'] . ' - Usuário Externo: ' . $email['nome_usuario_externo'] . ' - E-mail Usuário Externo: ' . $email['email_usuario_externo']);
                     }

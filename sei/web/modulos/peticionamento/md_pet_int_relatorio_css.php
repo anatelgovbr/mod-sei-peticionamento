@@ -1,4 +1,4 @@
-.row div {padding-top:5px;}
+.linha {padding-top:10px;}
 
 .grid
 {
@@ -169,6 +169,16 @@ margin-top: 8px;
 height: 24px
 }
 
+#selSituacao{
+    width: 100%;
+}
 
+#selDescricaoUnidade{
+    width: calc(100% - 40px);
+}
+
+#selDescricaoTpIntimacao{
+    width: calc(100% - 40px);
+}
 
 

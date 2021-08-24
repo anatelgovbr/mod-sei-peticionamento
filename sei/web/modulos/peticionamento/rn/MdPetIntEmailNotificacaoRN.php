@@ -208,7 +208,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
     {
 
         $arrObjMdPetIntRelDestinatarioDTO = $params[0];
-        $arrDadosEmailNaoEnviados = null;
+        $arrDadosEmailNaoEnviados = array();
         $qtdNaoEnviadas = 0;
         $qtdEnviadas = 0;
         $arrDadosEmail = array();

@@ -1,5 +1,5 @@
 <!-- DIV TIPO DE INTIMAÇÃO  -->
-<div class="row">
+<div class="row linha">
     <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
         <label id="lblTpIntimacao" name="lblTpIntimacao" for="txtTpIntimacao" class="infraLabelObrigatorio inputSelect">Tipos
             de Intimação:</label>
@@ -11,7 +11,7 @@
     <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
         <div class="input-group mb-3">
             <select size="6" id="selDescricaoTpIntimacao" name="selDescricaoTpIntimacao" multiple="multiple"
-                    class="infraSelect form-control">
+                    class="infraSelect">
                 <?= $strItensSelTpIntimacao ?>
             </select>
             <div id="divOpcoesTpIntimacao">
@@ -35,7 +35,7 @@
 
 
 <!-- DIV UNIDADE -->
-<div class="row">
+<div class="row linha">
     <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
         <label id="lblUnidade" name="lblUnidade" for="txtUnidade"
                class="inputSelect infraLabelObrigatorio">Unidades:</label>
@@ -47,7 +47,7 @@
     <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
         <div class="input-group mb-3">
             <select id="selDescricaoUnidade" name="selDescricaoUnidade" size="6" multiple="multiple"
-                    class="infraSelect form-control">
+                    class="infraSelect">
                 <?= $strItensSelTpUnidade ?>
             </select>
 
@@ -70,7 +70,7 @@
 </div>
 <!-- FIM DIV UNIDADE -->
 <!--  DIV PERÍODO DE GERAÇÃO  -->
-<div class="row">
+<div class="row linha">
     <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
         <label id="lblPeriodo" name="lblPeriodo" class="infraLabelObrigatorio">Período de Expedição:</label>
         <div class="input-group mb-3" style="float: left">
@@ -103,7 +103,7 @@
 </div>
 <!--  FIM PERÍODO DE GERAÇÃO  -->
 <!--  Tipo Destinatario  -->
-<div class="row">
+<div class="row linha">
     <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
         <label id="lblTpDest" name="lblTpDest" class="infraLabelObrigatorio">Tipo
             de
@@ -131,11 +131,11 @@
     </div>
 </div>
 <!--  Tipo Destinatario - FIM  -->
-<div class="row">
+<div class="row linha">
     <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
         <label id="lblSituacao" name="lblSituacao" for="selSituacao" class="infraLabelObrigatorio">Situação da
             Intimação:</label>
-        <select size="6" id="selSituacao" name="selSituacao" class="infraSelect form-control" multiple="" rows="7"
+        <select size="6" id="selSituacao" name="selSituacao" class="infraSelect" multiple="" rows="7"
                 tabindex="502">
             <?php echo $strSelSituacao; ?>
         </select>

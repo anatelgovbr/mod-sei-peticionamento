@@ -198,8 +198,8 @@ class MdPetContatoINT extends ContatoINT {
 				
 				$objDocumentoRN = new MdPetIntProtocoloRN();
 				$arrDocumentoIntimacao = $objDocumentoRN->consultar($objDocumentoIntimacaoDTO);
-                $qtdArrDocumentoIntimacao = is_array($arrDocumentoIntimacao) ? count($arrDocumentoIntimacao) : 0;
-				if($qtdArrDocumentoIntimacao > 0){
+
+				if(is_object($arrDocumentoIntimacao)){
 					$possuiIntimacao = $destinatario->getNumIdMdPetIntimacao();
 					$situacao = !is_null($destinatario->getStrStaSituacaoIntimacao()) && $destinatario->getStrStaSituacaoIntimacao() != 0 ? $arrSituacao[$destinatario->getStrStaSituacaoIntimacao()] :MdPetIntimacaoRN::$STR_SITUACAO_NAO_CADASTRADA;
 					$dataIntimacao = $destinatario->getDthDataCadastro() ? substr($destinatario->getDthDataCadastro(),0,10) : '';

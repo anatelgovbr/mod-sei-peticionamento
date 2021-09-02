@@ -1267,7 +1267,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $arrRecibosResposta = $reciboRN->consultar($reciboIntercorrenteDTO);
 
                         $qtdArrRecibosResposta = (is_array($arrRecibosResposta) ? count($arrRecibosResposta) : 0);
-                        if($qtdArrRecibosResposta > 0) {
+                        if ($qtdArrRecibosResposta > 0) {
                             $dataPJ = MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
                         } else {
                             $dataPJ = MdPetDataUtils::setFormat($arrMdPetVincRepresentantPJRN[0]->getDthDataCadastro(), 'dd/mm/yyyy Y:i:s');
@@ -2295,13 +2295,20 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 }
                                 //}
 
-                                //data para exibir na modal do cumprir
-                                if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
-                                    if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
-                                        $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
-                                        $dtIntimacao = $dtIntimacao[0];
-                                    } else {
-                                        $dtIntimacao = $obj->getDthDataCadastro();
+                                $mdPetIntAceiteRN = new MdPetIntAceiteRN();
+                                $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+                                $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($obj->getNumIdMdPetIntRelDestinatario());
+                                $objMdPetIntAceiteDTO->retTodos();
+                                $objMdPetIntAceiteDTO = $mdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+                                if (is_null($objMdPetIntAceiteDTO)) {
+                                    //data para exibir na modal do cumprir
+                                    if ($dtIntimacao === "") {
+                                        if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
+                                            $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                                            $dtIntimacao = $dtIntimacao[0];
+                                        } else {
+                                            $dtIntimacao = $obj->getDthDataCadastro();
+                                        }
                                     }
                                 }
                             }
@@ -2395,13 +2402,20 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                     }
                                     //}
 
-                                    //data para exibir na modal do cumprir
-                                    if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
-                                        if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
-                                            $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
-                                            $dtIntimacao = $dtIntimacao[0];
-                                        } else {
-                                            $dtIntimacao = $obj->getDthDataCadastro();
+                                    $mdPetIntAceiteRN = new MdPetIntAceiteRN();
+                                    $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+                                    $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($obj->getNumIdMdPetIntRelDestinatario());
+                                    $objMdPetIntAceiteDTO->retTodos();
+                                    $objMdPetIntAceiteDTO = $mdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+                                    if (is_null($objMdPetIntAceiteDTO)) {
+                                        //data para exibir na modal do cumprir
+                                        if ($dtIntimacao === "") {
+                                            if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
+                                                $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                                                $dtIntimacao = $dtIntimacao[0];
+                                            } else {
+                                                $dtIntimacao = $obj->getDthDataCadastro();
+                                            }
                                         }
                                     }
                                 }
@@ -2475,13 +2489,20 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                         }
                                     }
 
-                                    //data para exibir na modal do cumprir
-                                    if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
-                                        if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
-                                            $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
-                                            $dtIntimacao = $dtIntimacao[0];
-                                        } else {
-                                            $dtIntimacao = $obj->getDthDataCadastro();
+                                    $mdPetIntAceiteRN = new MdPetIntAceiteRN();
+                                    $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+                                    $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($obj->getNumIdMdPetIntRelDestinatario());
+                                    $objMdPetIntAceiteDTO->retTodos();
+                                    $objMdPetIntAceiteDTO = $mdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+                                    if (is_null($objMdPetIntAceiteDTO)) {
+                                        //data para exibir na modal do cumprir
+                                        if ($dtIntimacao === "") {
+                                            if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
+                                                $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                                                $dtIntimacao = $dtIntimacao[0];
+                                            } else {
+                                                $dtIntimacao = $obj->getDthDataCadastro();
+                                            }
                                         }
                                     }
                                 }

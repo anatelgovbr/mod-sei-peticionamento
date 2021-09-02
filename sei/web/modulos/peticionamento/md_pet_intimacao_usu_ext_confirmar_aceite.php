@@ -40,7 +40,7 @@ switch ($_GET['acao']) {
             if (isset($idDoc) && !is_null($idDoc)) {
                 $idIntimacao = $_GET['id_intimacao'];
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                $idDocPrincipal = $objMdPetIntimacaoRN->retornaIdDocumentoPrincipalIntimacaoAcao($idIntimacao);
+                $idDocPrincipal = $idDoc;
 
                 //Get Documento Formatado
                 $objDocumentoDTO = new DocumentoDTO();
@@ -60,15 +60,23 @@ switch ($_GET['acao']) {
 
                 $possuiIntimacaoJuridica = FALSE;
                 if ($idIntimacao) {
+                    $dtIntimacao = null;
                     foreach ($idIntimacao as $id) {
                         //Data Expedição Intimação
                         $objMdPetIntDestDTO = $objMdPetIntDestRN->consultarDadosIntimacao($id, true);
-                        $dtHrIntimacao = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getDthDataCadastro() : null;
-                        $dtIntimacao = !is_null($dtHrIntimacao) ? explode(' ', $dtHrIntimacao) : null;
-                        if(isset($dtIntimacao)){
-                            $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
-                        } else {
-                            $dtIntimacao = null;
+                        if(!is_null($objMdPetIntDestDTO)) {
+                            $mdPetIntAceiteRN = new MdPetIntAceiteRN();
+                            $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+                            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario());
+                            $objMdPetIntAceiteDTO->retTodos();
+                            $objMdPetIntAceiteDTO = $mdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+                            if (is_null($objMdPetIntAceiteDTO)) {
+                                $dtHrIntimacao = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getDthDataCadastro() : null;
+                                if (is_null($dtIntimacao)) {
+                                    $dtIntimacao = !is_null($dtHrIntimacao) ? explode(' ', $dtHrIntimacao) : null;
+                                    $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
+                                }
+                            }
                         }
                         //Calcular Data Final do Prazo Tácito
                         $dataFimPrazoTacito = '';
@@ -111,6 +119,21 @@ switch ($_GET['acao']) {
                         }
                     }
                     $objInfraException->lancarValidacoes();
+
+                    $mdPetIntProtocoloRN = new MdPetIntProtocoloRN();
+                    $objMdPetIntProtocoloDTO = new MdPetIntProtocoloDTO();
+                    $objMdPetIntProtocoloDTO->setDblIdProtocolo($_POST['hdnIdDocumento']);
+                    $objMdPetIntProtocoloDTO->setNumIdMdPetIntimacao($_POST['hdnIdIntimacao'], InfraDTO::$OPER_IN);
+                    $objMdPetIntProtocoloDTO->setStrSinPrincipal('S');
+                    $objMdPetIntProtocoloDTO->retTodos();
+                    $objMdPetIntProtocoloDTO = $mdPetIntProtocoloRN->listar($objMdPetIntProtocoloDTO);
+
+                    if ($objMdPetIntProtocoloDTO) {
+                        $_POST['hdnIdIntimacao'] = [];
+                        foreach ($objMdPetIntProtocoloDTO as $item) {
+                            $_POST['hdnIdIntimacao'][] = $item->getNumIdMdPetIntimacao();
+                        }
+                    }
 
                     //chamando a RN que executa os processos de aceite manual da intimação
                     $arrParametrosAceite = $_POST;
@@ -177,7 +200,7 @@ SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_extern
             }
         }
         ?>
-
+        <input type="hidden" name="hdnIdDocumento" value="<?= $idDocPrincipal; ?>">
     </div>
         <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
 

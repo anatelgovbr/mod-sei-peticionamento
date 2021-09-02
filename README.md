@@ -1,7 +1,7 @@
 # Módulo Peticionamento e Intimação Eletrônicos
 
 ## Requisitos
-- SEI 4.0.0 instalado/atualizado.
+- SEI 4.0.2 instalado/atualizado.
    - Verificar valor da constante de versão no arquivo /sei/web/SEI.php ou, após logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
 - Antes de executar os scripts de instalação/atualização, o usuário de acesso aos bancos de dados do SEI e do SIP, constante nos arquivos ConfiguracaoSEI.php e ConfiguracaoSip.php, deverá ter permissão de acesso total ao banco de dados, permitindo, por exemplo, criação e exclusão de tabelas.
 - Os códigos-fonte do Módulo podem ser baixados a partir do link a seguir, devendo sempre utilizar a versão mais recente: [https://github.com/anatelgovbr/mod-sei-peticionamento/releases](https://github.com/anatelgovbr/mod-sei-peticionamento/releases "Clique e acesse")

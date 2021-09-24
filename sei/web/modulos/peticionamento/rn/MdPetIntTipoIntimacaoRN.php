@@ -39,7 +39,7 @@ class MdPetIntTipoIntimacaoRN extends InfraRN {
             $dto->retTodos(true);
 
             $dto = $this->consultar($dto);
-            if(count($dto) > 0){
+            if($dto){
                 $objInfraException->adicionarValidacao('Nome já existente.');
             }
         }

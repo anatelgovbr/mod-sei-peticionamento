@@ -55,8 +55,15 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Cumpridas: ' . $arrIntimacoes['cumpridas']);
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Nao Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
 
-                foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
-                    InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+                if(isset($arrIntimacoes['procedimentos'])) {
+                    foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
+                        InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+                    }
+                }
+                if($arrIntimacoes['erros']){
+                    foreach ($arrIntimacoes['erros'] as $procedimentos) {
+                        InfraDebug::getInstance()->gravar($procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+                    }
                 }
             }
             
@@ -149,6 +156,9 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
         try {
 
+            ini_set('max_execution_time', '0');
+            ini_set('memory_limit', '1024M');
+
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
@@ -180,8 +190,16 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
 
                 $qtdEnviadas = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacao(array($intimacoesExigeRespostaDTO, $pessoa = "F"));
-                if (is_numeric($qtdEnviadas)) {
-                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Reiteradas: ' . $qtdEnviadas);
+                if (is_numeric($qtdEnviadas['qtdEnviadas'])) {
+                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Reiteradas: ' . $qtdEnviadas['qtdEnviadas']);
+                }
+                if (is_numeric($qtdEnviadas['qtdNãoEnviadas'])) {
+                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Não Reiteradas: ' . $qtdEnviadas['qtdNãoEnviadas']);
+                }
+                if (is_array($qtdEnviadas['arrDadosEmailNaoEnviados']) && count($qtdEnviadas['arrDadosEmailNaoEnviados']) > 0) {
+                    foreach($qtdEnviadas['arrDadosEmailNaoEnviados'] as $email) {
+                        InfraDebug::getInstance()->gravar('Nº Processo: ' . $email['processo'] . ' - Usuário Externo: ' . $email['nome_usuario_externo'] . ' - E-mail Usuário Externo: ' . $email['email_usuario_externo']);
+                    }
                 }
             }
 
@@ -201,8 +219,16 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaJuridicoDTO));
 
                 $qtdEnviadasJuridico = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacaoJuridico(array($intimacoesExigeRespostaJuridicoDTO, $pessoa = "J"));
-                if (is_numeric($qtdEnviadas)) {
-                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Reiteradas: ' . $qtdEnviadasJuridico);
+                if (is_numeric($qtdEnviadasJuridico['qtdEnviadas'])) {
+                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Reiteradas: ' . $qtdEnviadasJuridico['qtdEnviadas']);
+                }
+                if (is_numeric($qtdEnviadasJuridico['qtdNãoEnviadas'])) {
+                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Não Reiteradas: ' . $qtdEnviadasJuridico['qtdNãoEnviadas']);
+                }
+                if (is_array($qtdEnviadasJuridico['arrDadosEmailNaoEnviados']) && count($qtdEnviadasJuridico['arrDadosEmailNaoEnviados']) > 0) {
+                    foreach($qtdEnviadasJuridico['arrDadosEmailNaoEnviados'] as $email) {
+                        InfraDebug::getInstance()->gravar('Nº Processo: ' . $email['processo'] . ' - Usuário Externo: ' . $email['nome_usuario_externo'] . ' - E-mail Usuário Externo: ' . $email['email_usuario_externo']);
+                    }
                 }
             }
 

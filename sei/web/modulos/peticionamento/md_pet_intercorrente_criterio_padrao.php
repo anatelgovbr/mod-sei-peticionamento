@@ -22,7 +22,7 @@ try {
     //Tipo Processo
     $strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcesso');
     $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_intercorrente_tipo_processo_auto_completar');
-    
+
     //Preparar Preenchimento Alteração
     $idMdPetTipoProcesso = '';
     $nomeTipoProcesso = '';
@@ -82,7 +82,7 @@ try {
                 $objMdPetCriterioRN = new MdPetCriterioRN();
                 $objMdPetCriterioRN->cadastrarPadrao($objMdPetCriterioDTO);
 
-                header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']));
+                header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']));
                 die;
             } else {
                 $objCriterioIntercorrentePadraoConsultaDTO = new MdPetCriterioDTO();
@@ -96,15 +96,15 @@ try {
                 //Carregando campos select
                 $strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
 
-                if($objCriterioIntercorrentePadraoDTO){
-                    $nomeTipoProcesso    = $objCriterioIntercorrentePadraoDTO->getStrNomeProcesso();
-                    $idTipoProcesso      = $objCriterioIntercorrentePadraoDTO->getNumIdTipoProcedimento();
-                    $sinCriterioPadrao   = $objCriterioIntercorrentePadraoDTO->getStrSinCriterioPadrao() == 'S' ? 'checked = checked' : '';
-                    $sinNAUsuExt         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
-                    $sinNAPadrao         = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';                    
-                    $sinAtivoSim         = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'S' ? 'checked = checked' : '';
-                    $sinAtivoNao         = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'N' ? 'checked = checked' : '';
-                    $hipoteseLegal       = $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
+                if ($objCriterioIntercorrentePadraoDTO) {
+                    $nomeTipoProcesso = $objCriterioIntercorrentePadraoDTO->getStrNomeProcesso();
+                    $idTipoProcesso = $objCriterioIntercorrentePadraoDTO->getNumIdTipoProcedimento();
+                    $sinCriterioPadrao = $objCriterioIntercorrentePadraoDTO->getStrSinCriterioPadrao() == 'S' ? 'checked = checked' : '';
+                    $sinNAUsuExt = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
+                    $sinNAPadrao = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
+                    $sinAtivoSim = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'S' ? 'checked = checked' : '';
+                    $sinAtivoNao = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'N' ? 'checked = checked' : '';
+                    $hipoteseLegal = $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
                     $strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $idTipoProcesso);
                     $strItensSelHipoteseLegal = MdPetTipoProcessoINT::montarSelectHipoteseLegal(null, null, $objCriterioIntercorrentePadraoDTO->getNumIdHipoteseLegal());
                     $nivelAcessoTemplate = '<option value="%s" %s>%s</option>';
@@ -116,8 +116,8 @@ try {
                     $strTipoProcesso = sprintf($nivelAcessoTemplate, $idTipoProcesso, 'selected="selected"', $nomeTipoProcesso);
 
                     $strItensSelNivelAcesso = '';
-                    foreach($arrNivelAcesso as $i => $nivelAcesso){
-                        $selected = ($i == $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso()) ? ' selected="selected" ': '';
+                    foreach ($arrNivelAcesso as $i => $nivelAcesso) {
+                        $selected = ($i == $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso()) ? ' selected="selected" ' : '';
                         $strItensSelNivelAcesso .= sprintf($nivelAcessoTemplate, $i, $selected, $nivelAcesso);
                     }
 
@@ -127,7 +127,7 @@ try {
         default:
             throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecidas.");
     }
-}catch(Exception $e){
+} catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
 
@@ -138,377 +138,134 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(':: ' . PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo . ' ::');
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-
+require_once 'md_pet_intercorrente_criterio_padrao_css.php';
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 //javascript
 PaginaSEI::getInstance()->fecharJavaScript();
-?>
-
-
-<style type="text/css">
-    <?php
-    $browser = $_SERVER['HTTP_USER_AGENT'];
-    $firefox = strpos($browser, 'Firefox') ? true : false;
-    ?>
-
-    #lblTipoProcesso {
-        position: absolute;
-        left: 0%;
-        top: 2px;
-        width: 50%;
-    }
-
-    #txtTipoProcesso {
-        position: absolute;
-        left: 0%;
-        top: 18px;
-        width: 50%;
-    }
-
-    <?php if($firefox): ?>
-
-    #imgLupaTipoProcesso {
-        position: absolute;
-        left: 51%;
-        top: 18px;
-    }
-
-    #imgExcluirTipoProcesso {
-        position: absolute;
-        left: 53%;
-        top: 18px;
-    }
-
-    #imgAjuda {
-        position: absolute;
-        left: 55%;
-        top: 18px;
-    }
-
-    #lblNivelAcesso {
-        width: 50%;
-    }
-
-    #selNivelAcesso {
-        width: 20%;
-    }
-
-    #lblHipoteseLegal {
-        width: 50%;
-    }
-
-    #selHipoteseLegal {
-        width: 50%;
-    }
-
-    <?php else: ?>
-
-    #imgLupaTipoProcesso {
-        position: absolute;
-        left: 51%;
-        top: 18px;
-    }
-
-    #imgExcluirTipoProcesso {
-        position: absolute;
-        left: 53.1%;
-        top: 18px;
-    }
-
-    #imgAjuda {
-        position: absolute;
-        left: 55.2%;
-        top: 18px;
-    }
-        
-    #imgAjuda2 {
-        width: 16px;
-        height: 16px;
-        vertical-align: middle;
-        padding: .1em 0;
-    }
-    #lblNivelAcesso {
-        width: 50%;
-    }
-
-    #selNivelAcesso {
-        width: 20%;
-    }
-
-    #lblHipoteseLegal {
-        width: 50%;
-    }
-
-    #selHipoteseLegal {
-        width: 50%;
-    }
-
-    <?php endif; ?>
-
-    .fieldsetClear {
-        border: none !important;
-    }
-</style>
-<?php
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-<form id="frmCriterioCadastro" method="post" onsubmit="return OnSubmitForm();" action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
-    <?
-    PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-    PaginaSEI::getInstance()->abrirAreaDados('98%');
-    ?>
+    <form id="frmCriterioCadastro" method="post" onsubmit="return OnSubmitForm();"
+          action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
+        <?
+        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+        PaginaSEI::getInstance()->abrirAreaDados('98%');
+        ?>
 
-    <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal" value="<?php echo $valorParametroHipoteseLegal; ?>"/>
-    <!--  Tipo de Processo  -->
-    <div class="fieldsetClear">
-        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo: </label>
-        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso" class="infraText" value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-        <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
-        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso" value="<?php echo $idMdPetTipoProcesso ?>"/>
-        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);" src="/infra_css/imagens/lupa.gif" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"/>
-        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();" src="/infra_css/imagens/remover.gif" alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"/>
-        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; ou 3) Processo Bloqueado. \n \n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrerá o peticionamento não tiver permissão de uso do Tipo de Processo do processo indicado. ') ?> alt="Ajuda" class="infraImg"/>
-    </div>
-    <!--  Fim do Tipo de Processo -->
+        <div class="infraAreaDados" id="divInfraAreaDados">
+            <!--  Tipo de Processo  -->
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-10 col-xl-6">
+                    <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de
+                        Processo: </label>
+                    <div class="input-group mb-3" id="divIcones">
+                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso"
+                               name="txtTipoProcesso"
+                               class="infraText form-control"
+                               value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>"
+                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-    <div style="clear:both;">&nbsp;</div>
-    <div style="margin-top: 40px!important;">
-        <fieldset class="infraFieldset" style="width:75%;">
-            <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos&nbsp;</legend>
-            <div>
-                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]" id="rdUsuExternoIndicarEntrePermitidos" onclick="changeNivelAcesso();" value="1">
-                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário Externo indicar diretamente</label><br/>
-
-                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao" onclick="changeNivelAcesso();" value="2">
-                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré definido</label>
-
-                <div id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
-                    <div style="clear:both;">&nbsp;</div>
-                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
-                    <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()">
-                        <?= $strItensSelNivelAcesso ?>
-                    </select>
-                </div>
-
-                <div id="divHipoteseLegal" <?php echo $hipoteseLegal; ?>>
-                    <div style="clear:both;">&nbsp;</div>
-                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal" class="infraLabelObrigatorio">Hipótese Legal:</label><br/>
-                    <select id="selHipoteseLegal" name="selHipoteseLegal">
-                        <?= $strItensSelHipoteseLegal ?>
-                    </select>
+                        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                             alt="Selecionar Tipo de Processo"
+                             title="Selecionar Tipo de Processo"
+                             class="infraImg"/>
+                        <img id="imgExcluirTipoProcesso"
+                             onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                             alt="Remover Tipo de Processo"
+                             title="Remover Tipo de Processo"
+                             class="infraImginfraImgModulo"/>
+                        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                             onmouseover="return infraTooltipMostrar('Apenas após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; ou 3) Processo Bloqueado. \n \n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrerá o peticionamento não tiver permissão de uso do Tipo de Processo do processo indicado.', 'Ajuda');"
+                             onmouseout="return infraTooltipOcultar();"
+                             alt="Ajuda" class="infraImgModulo"/>
+                    </div>
+                    <div id="divHidden">
+                        <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
+                               value="<?php echo $valorParametroHipoteseLegal; ?>"/>
+                        <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
+                               value="<?php echo $idTipoProcesso ?>"/>
+                        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
+                               value="<?php echo $idMdPetTipoProcesso ?>"/>
+                    </div>
                 </div>
             </div>
-        </fieldset>
-    </div>
-    <div style="margin-top: 15px!important;">
-        <fieldset class="infraFieldset" style="width:75%;">
-            <legend class="infraLegend">&nbsp;Exibir menu Peticionamento Intercorrente&nbsp; <img id="imgAjuda2" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Opção para tornar visível ou não o menu de Peticionamento > Intercorrente para os Usuários Externos no Acesso Externo do SEI.') ?> alt="Ajuda" class="infraImg"/></legend>
-            <div>
-                <input <?php echo $sinAtivoSim; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoSim" value="S">
-                <label for="rdSinAtivoSim" id="lblSinAtivoSim" class="infraLabelRadio">Exibir no Acesso Externo</label><br/>
+            <!--  Fim do Tipo de Processo -->
+            <div class="row rowFieldSet1 rowFieldSet">
+                <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+                    <fieldset class="infraFieldset form-control">
 
-                <input <?php echo $sinAtivoNao; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoNao" value="N">
-                <label name="rdSinAtivoNao" id="lblSinAtivoNao" for="rdSinAtivoNao" class="infraLabelRadio">Não Exibir no Acesso Externo</label>
+                        <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos</legend>
 
+                            <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
+                                                               id="rdUsuExternoIndicarEntrePermitidos"
+                                                               onclick="changeNivelAcesso();" value="1" class="infraRadio">
+                            <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário
+                                Externo indicar diretamente</label><br/>
+
+                            <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
+                                                               onclick="changeNivelAcesso();" value="2" class="infraRadio">
+                            <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
+                                definido</label>
+
+                        <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
+                            <div class="col-sm-5 col-md-5 col-lg-5 col-xl-3">
+                                <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
+                                       class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
+                                <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()"
+                                        class="infraSelect">
+                                    <?= $strItensSelNivelAcesso ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" id="divHipoteseLegal" <?php echo $hipoteseLegal ?> >
+                            <div class="col-sm-8 col-md-8 col-lg-8 col-xl-5">
+                                <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
+                                       class="infraLabelObrigatorio">Hipótese Legal:</label>
+                                <select id="selHipoteseLegal" name="selHipoteseLegal"
+                                        class="infraSelect form-control"
+                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                    <?= $strItensSelHipoteseLegal ?>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
-        </fieldset>
-    </div>
-    <div style="clear:both;">&nbsp;</div>
-    <?
-    PaginaSEI::getInstance()->fecharAreaDados();
-    ?>
-</form>
+        </div>
+        <div class="row rowFieldSet2 rowFieldSet">
+            <div class="col-sm-12 col-md-10 col-lg-10">
+                <fieldset class="infraFieldset form-control">
+                    <legend class="infraLegend">Exibir menu Peticionamento Intercorrente
+                        <img id="imgAjuda2"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                             name="ajuda"
+                             onmouseover="return infraTooltipMostrar('Opção para tornar visível ou não o menu de Peticionamento > Intercorrente para os Usuários Externos no Acesso Externo do SEI.', 'Ajuda');"
+                             onmouseout="return infraTooltipOcultar();"
+                             class="infraImg"/>
+                    </legend>
+                        <input <?php echo $sinAtivoSim; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoSim" value="S" class="infraRadio">
+                        <label for="rdSinAtivoSim" id="lblSinAtivoSim" class="infraLabelRadio">Exibir no Acesso
+                            Externo</label><br/>
+                        <input <?php echo $sinAtivoNao; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoNao" value="N" class="infraRadio">
+                        <label name="rdSinAtivoNao" id="lblSinAtivoNao" for="rdSinAtivoNao" class="infraLabelRadio">Não
+                            Exibir no Acesso Externo</label>
+
+
+                </fieldset>
+            </div>
+        </div>
+        </div>
+
+        <?
+        PaginaSEI::getInstance()->fecharAreaDados();
+        ?>
+    </form>
 <?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
+require_once 'md_pet_intercorrente_criterio_padrao_js.php';
 ?>
-
-<script type="text/javascript">
-    //Processo
-    var objLupaTipoProcesso = null;
-    var objAutoCompletarTipoProcesso = null;
-
-    function changeNivelAcesso() {
-        document.getElementById('divNivelAcesso').style.display = "none";
-        var padrao = document.getElementsByName('rdNivelAcesso[]')[1].checked;
-
-        document.getElementById('selHipoteseLegal').value = '';
-        document.getElementById('divHipoteseLegal').style.display = 'none';
-        document.getElementById('selNivelAcesso').value = '';
-
-        if (padrao) {
-            document.getElementById('divNivelAcesso').style.display = "inherit";
-        }
-    }
-
-    function changeSelectNivelAcesso() {
-        document.getElementById('selHipoteseLegal').value = '';
-
-        var valorSelectNivelAcesso = document.getElementById('selNivelAcesso').value;
-        var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
-
-        if (valorSelectNivelAcesso == 'I' && valorHipoteseLegal != '0') {
-            document.getElementById('divHipoteseLegal').style.display = 'inherit';
-        } else {
-            document.getElementById('divHipoteseLegal').style.display = 'none';
-        }
-    }
-
-    function inicializar() {
-        inicializarTela();
-
-        if ('<?=$_GET['acao']?>' == 'md_pet_intercorrente_criterio_padrao') {
-            carregarComponenteTipoProcesso();
-            carregarDependenciaNivelAcesso();
-        }
-
-        if ('<?=$_GET['acao']?>' == 'md_pet_intercorrente_criterio_padrao') {
-            document.getElementById('txtTipoProcesso').focus();
-        }
-        infraEfeitoTabelas();
-    }
-
-    function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?=$strLinkAjaxNivelAcesso?>');
-        objAjaxIdNivelAcesso.prepararExecucao = function () {
-            document.getElementById('selNivelAcesso').innerHTML = '';
-            return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idTipoProcesso=' + document.getElementById('hdnIdTipoProcesso').value;
-        }
-    }
-
-    function inicializarTela() {
-    }
-
-    function carregarComponenteLupaTpDocComplementar(acaoComponente) {
-        acaoComponente == 'S' ? objLupaTipoDocumento.selecionar(700, 500) : objLupaTipoDocumento.remover();
-    }
-
-    function returnLinkModificado(link, tipo) {
-        var arrayLink = link.split('&filtro=1');
-
-        var linkFim = '';
-        if (arrayLink.length == 2) {
-            linkFim = arrayLink[0] + '&filtro=1&tipoDoc=' + tipo + arrayLink[1];
-        } else {
-            linkFim = link;
-        }
-
-        return linkFim;
-    }
-
-    function carregarComponenteTipoProcesso() {
-        objLupaTipoProcesso = new infraLupaText('txtTipoProcesso', 'hdnIdTipoProcesso', '<?=$strLinkTipoProcessoSelecao?>');
-
-        objLupaTipoProcesso.finalizarSelecao = function () {
-            objAutoCompletarTipoProcesso.selecionar(document.getElementById('hdnIdTipoProcesso').value, document.getElementById('txtTipoProcesso').value);
-            objAjaxIdNivelAcesso.executar();
-        }
-
-        objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
-        objAutoCompletarTipoProcesso.limparCampo = false;
-
-        objAutoCompletarTipoProcesso.prepararExecucao = function () {
-            return 'palavras_pesquisa=' + document.getElementById('txtTipoProcesso').value;
-        };
-
-        objAutoCompletarTipoProcesso.processarResultado = function (id, descricao, complemento) {
-            if (id != '') {
-                document.getElementById('hdnIdTipoProcesso').value = id;
-                document.getElementById('txtTipoProcesso').value = descricao;
-                document.getElementById('selNivelAcesso').value = '';
-                changeSelectNivelAcesso();
-            }
-        }
-        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
-    }
-
-    function removerProcessoAssociado(remover) {
-        document.getElementById('selNivelAcesso').innerHTML = '';
-        document.getElementById('divHipoteseLegal').style.display = "none";
-        if (remover === '1') {
-            objLupaTipoProcesso.remover();
-        }
-    }
-
-    function validarCadastro() {
-
-        var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
-
-        if (infraTrim(document.getElementById('txtTipoProcesso').value) == '') {
-            alert('Informe o Tipo de Processo.');
-            document.getElementById('txtTipoProcesso').focus();
-            return false;
-        }
-
-        //Validar Nível Acesso
-        var elemsNA = document.getElementsByName("rdNivelAcesso[]");
-
-        var validoNA = false, valorNA = 0;
-
-        for (var i = 0; i < elemsNA.length; i++) {
-            if (elemsNA[i].checked === true) {
-                validoNA = true;
-                valorNA = parseInt(elemsNA[i].value);
-            }
-        }
-
-        if (validoNA === false) {
-            alert('Informe o Nível de Acesso.');
-            return false;
-        }
-
-        if (infraTrim(document.getElementById('selNivelAcesso').value) == '' && valorNA != 1) {
-            alert('Informe o Nível de Acesso.');
-            document.getElementById('selNivelAcesso').focus();
-            return false;
-        } else if (document.getElementById('selNivelAcesso').value == 'I' && valorHipoteseLegal != '0') {
-
-            //validar hipotese legal
-            if (document.getElementById('selHipoteseLegal').value == '') {
-                alert('Informe a Hipótese legal padrão.');
-                document.getElementById('selHipoteseLegal').focus();
-                return false;
-            }
-        }
-        
-        var elemsSA = document.getElementsByName("rdSinAtivo[]");
-        var validoSA = false;
-
-        for (var i = 0; i < elemsSA.length; i++) {
-            if (elemsSA[i].checked === true) {
-                validoSA = true;
-            }
-        }
-
-        if (validoSA === false) {
-            alert('Indique a opção para exibição ou não do menu Peticionamento Intercorrente.');
-            return false;
-        }
-        return true;
-    }
-
-    function OnSubmitForm() {
-        return validarCadastro();
-    }
-
-    function getPercentTopStyle(element) {
-        var parent = element.parentNode,
-            computedStyle = getComputedStyle(element),
-            value;
-
-        parent.style.display = 'none';
-        value = computedStyle.getPropertyValue('top');
-        parent.style.removeProperty('display');
-
-        if (value != '') {
-            valor = value.replace('%', '');
-            return parseInt(valor);
-        }
-
-        return false;
-    }
-</script>

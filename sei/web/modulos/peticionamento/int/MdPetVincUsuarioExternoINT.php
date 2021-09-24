@@ -15,236 +15,271 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 {
 
 //
-    public static function validarExistenciaProcuracao($dados){
-      
-       
-        if($dados['tipoProc'] == "S"){
-      $poderes = explode('-',$dados['poderes']);
-       //Validação para Procuração Especial
-      $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-      $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-      $objMdPetVincRepresentantDTO->setStrStaEstado('A');
-      //$objMdPetVincRepresentantDTO->retStrDataCadastro();   
-      $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
-      $objMdPetVincRepresentantDTO->adicionarCriterio(
-      array('IdContato','IdContatoVinc','TipoRepresentante'),
-      array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),
-      array($dados['idOutorgado'],$dados['idOutorgante'],'E'),
-      array(InfraDTO::$OPER_LOGICO_AND,InfraDTO::$OPER_LOGICO_AND));
+    public static function validarExistenciaProcuracao($dados)
+    {
 
-      $objMdPetVincRepresentantDTO->retNumIdContato();
-      $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
-      $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
-      $objMdPetVincRepresentantDTO =  InfraArray::converterArrInfraDTO($objMdPetVincRepresentantDTO,'IdMdPetVinculoRepresent');
 
-      //Validação para Procuração Simples
-      //DAta
-   
-      if($dados['validade'] != "Indeterminada"){
-      $data = explode('/',$dados['validade']);
-      $dados['validade'] = $data[0].'-'.$data[1].'-'.$data[2];
-      $operador = InfraDTO::$OPER_MAIOR_IGUAL;
-      }else{
-      $dados['validade'] = null;
-      $operador = InfraDTO::$OPER_IGUAL;
-      }
-      //PRocessos
-    
-      if($dados['processos'] != ""){
-       $operadorProc = infraDTO::$OPER_IN;
-       $coluna = "IdMdPetRelProtocolo"; 
-       $processos = array();
-       $tpProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($dados['processos']);
-        foreach ($tpProcesso as $value) {
-            $processos[] = $value[0];
+        if ($dados['tipoProc'] == "S") {
+            $poderes = explode('-', $dados['poderes']);
+            //Validação para Procuração Especial
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $objMdPetVincRepresentantDTO->setStrStaEstado('A');
+            //$objMdPetVincRepresentantDTO->retStrDataCadastro();
+            $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+            $objMdPetVincRepresentantDTO->adicionarCriterio(
+                array('IdContato', 'IdContatoVinc', 'TipoRepresentante'),
+                array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
+                array($dados['idOutorgado'], $dados['idOutorgante'], 'E'),
+                array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
+
+            $objMdPetVincRepresentantDTO->retNumIdContato();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+            $objMdPetVincRepresentantDTO = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantDTO, 'IdMdPetVinculoRepresent');
+
+            //Validação para Procuração Simples
+            //DAta
+
+            if ($dados['validade'] != "Indeterminada") {
+                $data = explode('/', $dados['validade']);
+                $dados['validade'] = $data[0] . '-' . $data[1] . '-' . $data[2];
+                $operador = InfraDTO::$OPER_MAIOR_IGUAL;
+            } else {
+                $dados['validade'] = null;
+                $operador = InfraDTO::$OPER_IGUAL;
+            }
+            //PRocessos
+
+            if ($dados['processos'] != "") {
+                $operadorProc = infraDTO::$OPER_IN;
+                $coluna = "IdMdPetRelProtocolo";
+                $processos = array();
+                $tpProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($dados['processos']);
+                foreach ($tpProcesso as $value) {
+                    $processos[] = $value[0];
+                }
+
+            } else {
+                $operadorProc = infraDTO::$OPER_IGUAL;
+                $coluna = "StaAbrangencia";
+                $processos = "";
+                $processos = "Q";
+            }
+
+            $objMdPetVincRepresentantSimplesDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantSimplesRN = new MdPetVincRepresentantRN();
+            $objMdPetVincRepresentantSimplesDTO->setStrStaEstado('A');
+            $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetRelPoder();
+            $objMdPetVincRepresentantSimplesDTO->setStrSinAtivo('S');
+            $objMdPetVincRepresentantSimplesDTO->retDthDataCadastro();
+            //$objMdPetVincRepresentantSimplesDTO->setDthDataLimite($dados['validade'],$operador);
+            $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
+                array('IdContato', 'IdContatoVinc', 'TipoRepresentante', 'IdMdPetRelPoder', $coluna),
+                array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IN, $operadorProc),
+                array($dados['idOutorgado'], $dados['idOutorgante'], MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES, $poderes, $processos),
+                array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
+
+            //Validação da DAta Liimite e Cadastro
+            $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
+                array('DataCadastro', 'DataLimite'),
+                array(InfraDTO::$OPER_MENOR_IGUAL, InfraDTO::$OPER_MAIOR_IGUAL),
+                array(InfraData::getStrDataHoraAtual(), InfraData::getStrDataHoraAtual()),
+                InfraDTO::$OPER_LOGICO_AND, 'ativo');
+            //Validação da DAta Limite
+            $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
+                array('DataLimite'),
+                array($operador),
+                array($dados['validade']),
+                null, 'dataValidade');
+
+            $objMdPetVincRepresentantSimplesDTO->agruparCriterios(array('ativo', 'dataValidade'), InfraDTO::$OPER_LOGICO_OR);
+
+
+            $objMdPetVincRepresentantSimplesDTO->retNumIdContato();
+            $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantSimplesDTO = $objMdPetVincRepresentantSimplesRN->listar($objMdPetVincRepresentantSimplesDTO);
+            $objMdPetVincRepresentantSimplesDTO = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantSimplesDTO, 'IdMdPetVinculoRepresent');
+
+            $qtdObjMdPetVincRepresentantDTO = isset($objMdPetVincRepresentantDTO) ? count($objMdPetVincRepresentantDTO) : 0;
+            $qtdObjMdPetVincRepresentantSimplesDTO = isset($objMdPetVincRepresentantSimplesDTO) ? count($objMdPetVincRepresentantSimplesDTO) : 0;
+            if ($qtdObjMdPetVincRepresentantDTO > 0 || $qtdObjMdPetVincRepresentantSimplesDTO > 0) {
+                $objMdPetVincRepresentantDTO = array_unique(array_merge($objMdPetVincRepresentantDTO, $objMdPetVincRepresentantSimplesDTO));
+                $arrImplode = implode("-", $objMdPetVincRepresentantDTO);
+                $xml = '';
+                $xml .= '<itens>';
+                $xml .= '<item id="' . InfraString::formatarXML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_validacao_procuracao&id_represent=' . $arrImplode)) . '"';
+                $xml .= '></item>';
+                $xml .= '</itens>';
+
+                return $xml;
+            } else {
+
+                $xml = '';
+                $xml .= '<itens>';
+                $xml .= '<item id="0"';
+                $xml .= '></item>';
+                $xml .= '</itens>';
+                return $xml;
+
+            }
+            //Caso seja Procuração Especial
+        } else {
+
+            $xml = '';
+            $xml .= '<itens>';
+            $xml .= '<item id="0"';
+            $xml .= '></item>';
+            $xml .= '</itens>';
+            return $xml;
+
         }
 
-      }else{
-        $operadorProc = infraDTO::$OPER_IGUAL;
-        $coluna = "StaAbrangencia";
-        $processos = "";
-        $processos = "Q";
-      }
-      
-      $objMdPetVincRepresentantSimplesDTO = new MdPetVincRepresentantDTO();
-      $objMdPetVincRepresentantSimplesRN = new MdPetVincRepresentantRN();
-      $objMdPetVincRepresentantSimplesDTO->setStrStaEstado('A');
-      $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetRelPoder();   
-      $objMdPetVincRepresentantSimplesDTO->setStrSinAtivo('S');
-      $objMdPetVincRepresentantSimplesDTO->retDthDataCadastro(); 
-      //$objMdPetVincRepresentantSimplesDTO->setDthDataLimite($dados['validade'],$operador);
-      $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
-      array('IdContato','IdContatoVinc','TipoRepresentante','IdMdPetRelPoder',$coluna),
-      array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IN,$operadorProc),
-      array($dados['idOutorgado'],$dados['idOutorgante'],MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES,$poderes,$processos),
-      array(InfraDTO::$OPER_LOGICO_AND,InfraDTO::$OPER_LOGICO_AND,InfraDTO::$OPER_LOGICO_AND,InfraDTO::$OPER_LOGICO_AND));
-
-      //Validação da DAta Liimite e Cadastro
-      $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
-      array('DataCadastro','DataLimite'),
-      array(InfraDTO::$OPER_MENOR_IGUAL,InfraDTO::$OPER_MAIOR_IGUAL),
-      array(InfraData::getStrDataHoraAtual(),InfraData::getStrDataHoraAtual()),
-      InfraDTO::$OPER_LOGICO_AND,'ativo');
-      //Validação da DAta Limite
-      $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
-        array('DataLimite'),
-        array($operador),
-        array($dados['validade']),
-        null,'dataValidade');
-        
-      $objMdPetVincRepresentantSimplesDTO->agruparCriterios(array('ativo','dataValidade'),InfraDTO::$OPER_LOGICO_OR);
-
-
-    
-      $objMdPetVincRepresentantSimplesDTO->retNumIdContato();
-      $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetVinculoRepresent();
-      $objMdPetVincRepresentantSimplesDTO = $objMdPetVincRepresentantSimplesRN->listar($objMdPetVincRepresentantSimplesDTO);
-      $objMdPetVincRepresentantSimplesDTO =  InfraArray::converterArrInfraDTO($objMdPetVincRepresentantSimplesDTO,'IdMdPetVinculoRepresent');
-      
-
-      if(count($objMdPetVincRepresentantDTO) > 0 || count($objMdPetVincRepresentantSimplesDTO) > 0){
-      $objMdPetVincRepresentantDTO = array_unique(array_merge($objMdPetVincRepresentantDTO,$objMdPetVincRepresentantSimplesDTO));
-      $arrImplode = implode("-",$objMdPetVincRepresentantDTO);
-      $xml = '';
-      $xml .= '<itens>';
-      $xml .= '<item id="'.InfraString::formatarXML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_validacao_procuracao&id_represent='.$arrImplode)).'"';
-      $xml .= '></item>';
-      $xml .= '</itens>';
-
-      return $xml;
-      }else{
-
-      $xml = '';
-      $xml .= '<itens>';
-      $xml .= '<item id="0"';
-      $xml .= '></item>';
-      $xml .= '</itens>';
-      return $xml;
-
-      }
-    //Caso seja Procuração Especial
-    }else{
-
-      $xml = '';
-      $xml .= '<itens>';
-      $xml .= '<item id="0"';
-      $xml .= '></item>';
-      $xml .= '</itens>';
-      return $xml;
-
     }
-       
-}
-  public static function verificarUsuarioValido($dados){
-        
+
+    public static function verificarUsuarioValido($dados)
+    {
+
         $usuarioDTO = new UsuarioDTO();
         $usuarioDTO->setNumIdContato($dados['idContato']);
         $usuarioDTO->retStrStaTipo();
         $usuarioRN = new UsuarioRN();
-        $objUsuarioRN =  $usuarioRN->consultarRN0489($usuarioDTO);
+        $objUsuarioRN = $usuarioRN->consultarRN0489($usuarioDTO);
         // Igual a 2 é Pendente
-        if($objUsuarioRN->getStrStaTipo() == "2"){
+        if ($objUsuarioRN->getStrStaTipo() == "2") {
             $xml .= '<dados>';
             $xml .= '<existe>0</existe>';
             $xml .= '</dados>';
-        }else{
+        } else {
             $xml .= '<dados>';
             $xml .= '<existe>1</existe>';
             $xml .= '</dados>';
         }
 
         return $xml;
-  }
-
-  public static function consultarDadosUsuario($dados)
-  {
-      $existeVinculo = false;
-      $xml = '';
-
-      if(isset($dados['hdnSelPessoaJuridica'])) {
-          //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
-          $existeVinculo = self::_consultarExistenciaVinculo($dados);
-
-          if($existeVinculo) {
-              $xml .= '<dados>';
-              $xml .= '<sucesso>0</sucesso>';
-              $xml .= '</dados>';
-              return $xml;
-          }
-      }
-
-      $idContato = $dados['hdnIdUsuarioProcuracao'];
-
-      $objUsuarioRN = new UsuarioRN();
-      $objUsuarioDTO = new UsuarioDTO();
-      $objUsuarioDTO->retNumIdContato();
-      $objUsuarioDTO->retStrNomeContato();
-      $objUsuarioDTO->retStrSigla();
-      $objUsuarioDTO->retDblCpfContato();
-      $objUsuarioDTO->setNumIdContato($idContato);
-
-      $arrContato = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-
-      if (count($arrContato) > 0) {
-          $xml .= '<dados>';
-          $xml .= '<no-usuario>' . $arrContato->getStrNomeContato() . '</no-usuario>';
-          $xml .= '<ds-email>' . $arrContato->getStrSigla() . '</ds-email>';
-          $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($arrContato->getDblCpfContato()) . '</nu-cpf>';
-          $xml .= '<sucesso>1</sucesso>';
-          $xml .= '</dados>';
-      }
-
-      return $xml;
-  }
-
-  public static function consultarDadosUsuarioExternoProcuracao($dados)
-  {
-    $existeVinculo = false;
-    $xml = '';
-
-   /* if(isset($dados['hdnSelPessoaJuridica'])) {
-        //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
-        $existeVinculo = self::_consultarExistenciaVinculo($dados);
-
-       if($existeVinculo) {
-            $xml .= '<dados>';
-            $xml .= '<sucesso>0</sucesso>';
-            $xml .= '</dados>';
-            return $xml;
-       }
-    }*/
-
-    $idContato = $dados['hdnIdUsuarioProcuracao'];
-
-    $objUsuarioRN = new UsuarioRN();
-    $objUsuarioDTO = new UsuarioDTO();
-    $objUsuarioDTO->retNumIdContato();
-    $objUsuarioDTO->retStrNomeContato();
-    $objUsuarioDTO->retStrSigla();
-    $objUsuarioDTO->retDblCpfContato();
-    $objUsuarioDTO->setNumIdContato($idContato);
-
-    $arrContato = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-
-    if (count($arrContato) > 0) {
-        $xml .= '<dados>';
-        $xml .= '<nu-id>' . $arrContato->getNumIdContato() . '</nu-id>';
-        $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($arrContato->getDblCpfContato()) . '</nu-cpf>';
-        $xml .= '<no-usuario>' . $arrContato->getStrNomeContato() . '</no-usuario>';
-        $xml .= '<sucesso>1</sucesso>';
-        $xml .= '</dados>';
     }
 
-    return $xml;
-  }
+    public static function consultarDadosUsuario($dados)
+    {
+        $existeVinculo = false;
+        $xml = '';
 
-  public static function consultarDadosUsuarioExterno($dados)
-  {
-    $existeVinculo = false;
-    $xml = '';
+        if (isset($dados['hdnSelPessoaJuridica'])) {
+            //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
+            $existeVinculo = self::_consultarExistenciaVinculo($dados);
 
-    if(isset($dados['hdnSelPessoaJuridica'])) {
-        //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
+            if ($existeVinculo) {
+                $xml .= '<dados>';
+                $xml .= '<sucesso>0</sucesso>';
+                $xml .= '</dados>';
+                return $xml;
+            }
+        }
+
+        $idContato = $dados['hdnIdUsuarioProcuracao'];
+
+        $objUsuarioRN = new UsuarioRN();
+        $objUsuarioDTO = new UsuarioDTO();
+        $objUsuarioDTO->retNumIdContato();
+        $objUsuarioDTO->retStrNomeContato();
+        $objUsuarioDTO->retStrSigla();
+        $objUsuarioDTO->retDblCpfContato();
+        $objUsuarioDTO->setNumIdContato($idContato);
+
+        $arrContato = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+
+        if (count($arrContato) > 0) {
+            $xml .= '<dados>';
+            $xml .= '<no-usuario>' . $arrContato->getStrNomeContato() . '</no-usuario>';
+            $xml .= '<ds-email>' . $arrContato->getStrSigla() . '</ds-email>';
+            $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($arrContato->getDblCpfContato()) . '</nu-cpf>';
+            $xml .= '<sucesso>1</sucesso>';
+            $xml .= '</dados>';
+        }
+
+        return $xml;
+    }
+
+    public static function consultarDadosUsuarioExternoProcuracao($dados)
+    {
+        $existeVinculo = false;
+        $xml = '';
+
+        /* if(isset($dados['hdnSelPessoaJuridica'])) {
+             //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
+             $existeVinculo = self::_consultarExistenciaVinculo($dados);
+
+            if($existeVinculo) {
+                 $xml .= '<dados>';
+                 $xml .= '<sucesso>0</sucesso>';
+                 $xml .= '</dados>';
+                 return $xml;
+            }
+         }*/
+
+        $idContato = $dados['hdnIdUsuarioProcuracao'];
+
+        $objUsuarioRN = new UsuarioRN();
+        $objUsuarioDTO = new UsuarioDTO();
+        $objUsuarioDTO->retNumIdContato();
+        $objUsuarioDTO->retStrNomeContato();
+        $objUsuarioDTO->retStrSigla();
+        $objUsuarioDTO->retDblCpfContato();
+        $objUsuarioDTO->setNumIdContato($idContato);
+
+        $arrContato = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+
+        if (!is_null($arrContato)) {
+            $xml .= '<dados>';
+            $xml .= '<nu-id>' . $arrContato->getNumIdContato() . '</nu-id>';
+            $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($arrContato->getDblCpfContato()) . '</nu-cpf>';
+            $xml .= '<no-usuario>' . $arrContato->getStrNomeContato() . '</no-usuario>';
+            $xml .= '<sucesso>1</sucesso>';
+            $xml .= '</dados>';
+        }
+
+        return $xml;
+    }
+
+    public static function consultarDadosUsuarioExterno($dados)
+    {
+        $existeVinculo = false;
+        $xml = '';
+
+        if (isset($dados['hdnSelPessoaJuridica'])) {
+            //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+
+            $objMdPetVincRepresentantDTO->setNumIdContato($dados['hdnIdUsuarioProcuracao']);
+            $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPessoaJuridica']);
+            $objMdPetVincRepresentantDTO->setStrStaEstado('A');
+            $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+            $objMdPetVincRepresentantDTO->setStrTipoRepresentante('E');
+            $objMdPetVincRepresentantDTO->retNumIdContato();
+
+            $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO) > 0;
+
+            if ($objMdPetVincRepresentantDTO) {
+                $xml .= '<dados>';
+                $xml .= '<sucesso>1</sucesso>';
+                $xml .= '</dados>';
+                return $xml;
+            } else {
+                $xml .= '<dados>';
+                $xml .= '<sucesso>0</sucesso>';
+                $xml .= '</dados>';
+                return $xml;
+            }
+        }
+
+
+    }
+
+
+    private static function _consultarExistenciaVinculo($dados)
+    {
+
         $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
         $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
@@ -252,60 +287,29 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPessoaJuridica']);
         $objMdPetVincRepresentantDTO->setStrStaEstado('A');
         $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
-        $objMdPetVincRepresentantDTO->setStrTipoRepresentante('E');
         $objMdPetVincRepresentantDTO->retNumIdContato();
 
-        $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO)>0;
-    
-       if($objMdPetVincRepresentantDTO) {
-            $xml .= '<dados>';
-            $xml .= '<sucesso>1</sucesso>';
-            $xml .= '</dados>';
-            return $xml;
-       }else{
-            $xml .= '<dados>';
-            $xml .= '<sucesso>0</sucesso>';
-            $xml .= '</dados>';
-            return $xml;
-       }
+        $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO) > 0;
+
+        return $objMdPetVincRepresentantDTO;
     }
 
-    
-  }
 
+    public static function consultarUsuarioValido($params)
+    {
 
-  private static function _consultarExistenciaVinculo($dados)
-  {
+        $xml = '<dados>';
 
-      $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-      $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+        $cpf = array_key_exists('cpf', $params) ? $params['cpf'] : null;
 
-      $objMdPetVincRepresentantDTO->setNumIdContato($dados['hdnIdUsuarioProcuracao']);
-      $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPessoaJuridica']);
-      $objMdPetVincRepresentantDTO->setStrStaEstado('A');
-      $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
-      $objMdPetVincRepresentantDTO->retNumIdContato();
+        $objContatoDTO = new ContatoDTO();
+        $objContatoDTO->retNumIdUsuarioCadastro();
+        $objContatoDTO->retNumIdContato();
+        $objContatoDTO->retStrNome();
 
-      $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO)>0;
-
-      return $objMdPetVincRepresentantDTO;
-  }
-
-
-  public static function consultarUsuarioValido($params){
-	
-    $xml  = '<dados>';
-
-    $cpf = array_key_exists('cpf', $params) ? $params['cpf'] : null;
-
-    $objContatoDTO = new ContatoDTO();
-    $objContatoDTO->retNumIdUsuarioCadastro();
-    $objContatoDTO->retNumIdContato();
-    $objContatoDTO->retStrNome();
-
-    $objMdPetContatoRN = new MdPetContatoRN();
+        $objMdPetContatoRN = new MdPetContatoRN();
 //    $objContatoDTO->setNumIdTipoContato($objMdPetContatoRN->getIdTipoContatoUsExt());
-    $objContatoDTO->setDblCpf(InfraUtil::retirarFormatacao($cpf));
+        $objContatoDTO->setDblCpf(InfraUtil::retirarFormatacao($cpf));
 //    if($cpf) {        
 //        if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
 //            $objUsuarioRN = new UsuarioRN();
@@ -327,52 +331,52 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 //    }
 
 
-    $objContatoRN = new ContatoRN();
-    $arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
+        $objContatoRN = new ContatoRN();
+        $arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
 
-    if (count($arrObjContatoDTO)>0){
+        if (count($arrObjContatoDTO) > 0) {
 
-        
-        $arrIdContato = InfraArray::converterArrInfraDTO($arrObjContatoDTO, 'IdContato');
 
-        $objUsuarioDTO = new UsuarioDTO();
-        $objUsuarioDTO->setNumIdContato($arrIdContato, InfraDTO::$OPER_IN);
-        $objUsuarioDTO->retStrStaTipo();
-        $objUsuarioDTO->retStrNome();
-        $objUsuarioDTO->retStrSinAtivo();
-        $objUsuarioDTO->retStrSigla();
-        $objUsuarioDTO->retNumIdContato();
+            $arrIdContato = InfraArray::converterArrInfraDTO($arrObjContatoDTO, 'IdContato');
 
-        $objUsuarioRN = new UsuarioRN();
-        $arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
+            $objUsuarioDTO = new UsuarioDTO();
+            $objUsuarioDTO->setNumIdContato($arrIdContato, InfraDTO::$OPER_IN);
+            $objUsuarioDTO->retStrStaTipo();
+            $objUsuarioDTO->retStrNome();
+            $objUsuarioDTO->retStrSinAtivo();
+            $objUsuarioDTO->retStrSigla();
+            $objUsuarioDTO->retNumIdContato();
 
-        if (count($arrObjUsuarioDTO)>0){
-            foreach ($arrObjUsuarioDTO as $objUsuarioDTO){
-                $xml .= '<contato>';
-                if ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO && $objUsuarioDTO->getStrSinAtivo() == 'S'){
-                    $xml .= '<nu-cpf>' . $params['cpf'] . '</nu-cpf>';
-                    $xml .= '<no-usuario>' . $objUsuarioDTO->getStrNome() . '</no-usuario>';
-                    $xml .= '<nu-contato>' . $objUsuarioDTO->getNumIdContato() . '</nu-contato>';
-                    $xml .= '<sg-contato>' . $objUsuarioDTO->getStrSigla() . '</sg-contato>';
-                    $xml .= '<sucesso>1</sucesso>';
-                }elseif ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO_PENDENTE){  
-                    $xml .= '<nu-cpf>' . $params['cpf'] . '</nu-cpf>';
-                    $xml .= '<no-usuario>' . $objUsuarioDTO->getStrNome() . '</no-usuario>';
-                    $xml .= '<nu-contato>' . $objUsuarioDTO->getNumIdContato() . '</nu-contato>';
-                    $xml .= '<sg-contato>' . $objUsuarioDTO->getStrSigla() . '</sg-contato>';
-                    $xml .= '<mensagem>pendente</mensagem>';
-                    $xml .= '<sucesso>1</sucesso>';
+            $objUsuarioRN = new UsuarioRN();
+            $arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
+
+            if (count($arrObjUsuarioDTO) > 0) {
+                foreach ($arrObjUsuarioDTO as $objUsuarioDTO) {
+                    $xml .= '<contato>';
+                    if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO && $objUsuarioDTO->getStrSinAtivo() == 'S') {
+                        $xml .= '<nu-cpf>' . $params['cpf'] . '</nu-cpf>';
+                        $xml .= '<no-usuario>' . $objUsuarioDTO->getStrNome() . '</no-usuario>';
+                        $xml .= '<nu-contato>' . $objUsuarioDTO->getNumIdContato() . '</nu-contato>';
+                        $xml .= '<sg-contato>' . $objUsuarioDTO->getStrSigla() . '</sg-contato>';
+                        $xml .= '<sucesso>1</sucesso>';
+                    } elseif ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
+                        $xml .= '<nu-cpf>' . $params['cpf'] . '</nu-cpf>';
+                        $xml .= '<no-usuario>' . $objUsuarioDTO->getStrNome() . '</no-usuario>';
+                        $xml .= '<nu-contato>' . $objUsuarioDTO->getNumIdContato() . '</nu-contato>';
+                        $xml .= '<sg-contato>' . $objUsuarioDTO->getStrSigla() . '</sg-contato>';
+                        $xml .= '<mensagem>pendente</mensagem>';
+                        $xml .= '<sucesso>1</sucesso>';
+                    }
+                    $xml .= '</contato>';
                 }
-                $xml .= '</contato>';
             }
         }
+
+        $xml .= '</dados>';
+
+        return $xml;
+
     }
-
-    $xml .= '</dados>';
-
-    return $xml;
-
-  }
 
 
     public static function consultarUsuarioValidoProcuracao($params)
@@ -399,9 +403,9 @@ class MdPetVincUsuarioExternoINT extends InfraINT
                 $xml .= '<contato';
                 if ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO && $usuarioDTO->getStrSinAtivo() == 'S') {
                     $xml .= ' sucesso="1" ';
-                    $xml .= ' id="' . $usuarioDTO->getNumIdContato().'"';
-                    $xml .= ' descricao="' . $usuarioDTO->getStrNome().'"';
-                    $xml .= ' complemento="' . $params['cpf'].'"';
+                    $xml .= ' id="' . $usuarioDTO->getNumIdContato() . '"';
+                    $xml .= ' descricao="' . $usuarioDTO->getStrNome() . '"';
+                    $xml .= ' complemento="' . $params['cpf'] . '"';
                 } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
                     $xml .= ' sucesso="false" ';
                     $xml .= ' mensagem="Usuário Externo com pendência de liberação de cadastro" ';

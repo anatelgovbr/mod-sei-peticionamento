@@ -80,7 +80,7 @@ try {
             throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
     }
 
-    $arrComandos[] = '<button type="button" accesskey="C" id="btnFechar" name="btnFechar" value="Fechar" onclick=" window.close();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+    $arrComandos[] = '<button type="button" accesskey="C" id="btnFechar" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 }catch(Exception $e){
     PaginaSEI::getInstance()->processarExcecao($e);

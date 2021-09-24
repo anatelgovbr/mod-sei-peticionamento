@@ -37,7 +37,7 @@ class MdPetVinculoINT extends InfraINT {
 
     $arrObjHipoteseLegal = $objMdPetHipoteseLegalRN->listar($objMdPetHipoteseLegalDTO);
 
-    $strOptions  = '<select id="selHipoteseLegal" class="infraSelect" onchange="salvarValorHipoteseLegal(this)"
+    $strOptions  = '<select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)"
                         tabindex="'. PaginaSEIExterna::getInstance()->getProxTabDados() . '"><option value=""> </option>';
 
     if( is_array( $arrObjHipoteseLegal ) && count( $arrObjHipoteseLegal ) > 0){

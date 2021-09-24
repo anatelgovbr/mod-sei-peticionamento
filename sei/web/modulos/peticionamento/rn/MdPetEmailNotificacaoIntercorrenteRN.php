@@ -43,7 +43,8 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
         //consultar email da unidade (orgao)
         $orgaoRN = new OrgaoRN();
         $objOrgaoDTO = new OrgaoDTO();
-        $objOrgaoDTO->retTodos(true);
+        $objOrgaoDTO->retTodos();
+        $objOrgaoDTO->retStrSitioInternetContato();
         $objOrgaoDTO->setNumIdOrgao( $objUnidadeDTO->getNumIdOrgao() );
         $objOrgaoDTO->setStrSinAtivo('S');
         $objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
@@ -230,8 +231,8 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 	                $objUnidadeProcIndicDTO->setNumIdUnidade($mail->getNumIdUnidade());
 	                $objUnidadeProcIndicDTO->setBolExclusaoLogica(false);
 	                $arrObjUnidadeProcIndicDTO = $objUnidadeProcIndicRN->consultarRN0125($objUnidadeProcIndicDTO);
-		
-	                if (count($arrObjUnidadeProcIndicDTO)>0){
+
+	                if (is_object($arrObjUnidadeProcIndicDTO)){
 	                	$enviaemail = true;
 	                	$strConteudo = str_replace('@sigla_unidade_abertura_do_processo@' , $arrObjUnidadeProcIndicDTO->getStrSigla() , $strConteudo);
 	                	$strConteudo = str_replace('@descricao_unidade_abertura_do_processo@' , $arrObjUnidadeProcIndicDTO->getStrDescricao() , $strConteudo);

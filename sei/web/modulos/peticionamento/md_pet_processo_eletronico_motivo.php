@@ -126,7 +126,7 @@ if (0){
                 800,
                 500,
                 '', //options
-                true); //modal
+                false); //modal
             //document.getElementById('frmPesquisa').submit();
         }
     }

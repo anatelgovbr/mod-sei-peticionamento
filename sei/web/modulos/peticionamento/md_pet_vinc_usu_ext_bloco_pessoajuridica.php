@@ -51,12 +51,25 @@
                     </div>
                 </div>
             <?php } else { ?>
-                <div class="col-sm-12 col-md-4 col-lg-4">
-                    &nbsp;&nbsp;<button type="button" accesskey="V" name="btnValidarSemWS" id="btnValidarSemWS"
-                                        value="Validar"
-                                        onclick=""
-                                        class="infraButton"><span class="infraTeclaAtalho">V</span>alidar
-                    </button>
+                <div class="col-sm-12 col-md-8 col-lg-7 col-xl-5">
+                    <div class="bloco" id="blc">
+                        <label id="lblCaptcha" for="txtCaptcha" class="infraLabelObrigatorio"><img
+                                    valign=bottom
+                                    src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>"
+                                    alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>"/></label>
+                    </div>
+                    <div class="bloco" id="">
+                        <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de
+                            Confirmação:</label>
+                        <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText"
+                               value="" maxlength="4"
+                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                        <button type="button" accesskey="V" name="btnValidarSemWS" id="btnValidarSemWS"
+                                value="Validar"
+                                onclick=""
+                                class="infraButton"><span class="infraTeclaAtalho">V</span>alidar
+                        </button>
+                    </div>
                 </div>
             <?php } ?>
         </div>

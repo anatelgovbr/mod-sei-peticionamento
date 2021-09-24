@@ -1806,7 +1806,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
         $objMdPetIntDocumentoDTO->setDblIdProcedimento($objProcedimentoAPI->getIdProcedimento());
-        $objMdPetIntDocumentoDTO->retTodos(true);
+        $objMdPetIntDocumentoDTO->retTodos();
         $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
         $intQntdIntimacao = $objMdPetIntDocumentoRN->contar($objMdPetIntDocumentoDTO);
 
@@ -3132,57 +3132,34 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $arrIdRelProtocoloProtocolo[] = $objRelProtocoloProtocolo->getDblIdRelProtocoloProtocolo();
                     }
 
-                    $dto = new ProcedimentoDTO();
-                    $dto->setDblIdProcedimento($dblIdProcedimento);
-                    $dto->setArrObjRelProtocoloProtocoloDTO(InfraArray::gerarArrInfraDTO('RelProtocoloProtocoloDTO', 'IdRelProtocoloProtocolo', $arrIdRelProtocoloProtocolo));
-                    $dto->setStrSinDocTodos('S');
-                    $dto->setStrSinDocAnexos('S');
-                    $dto->setStrSinConteudoEmail('S');
-                    $dto->setStrSinProcAnexados('S');
-                    $dto->setStrSinDocCircular('S');
-                    $dto->setStrSinArquivamento('S');
+                    $RelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+                    $RelProtocoloProtocoloDTO->setDblIdProtocolo2($dblIdDocumento);
+                    $RelProtocoloProtocoloDTO->retStrStaAssociacao();
+                    $objRelProtocoloProtocoloDTO = (new RelProtocoloProtocoloRN())->consultarRN0841($RelProtocoloProtocoloDTO);
 
-                    // TODO: if para NAO apresentar o botao Gerar Intimacao Eletronica em processo Sigiloso (Nivel de Acesso local OU Global 2)
-                    //       , ate a resolucao do item 22.2 da lista de correcoes
-//                    $dto->setStrStaNivelAcessoLocalProtocolo(ProtocoloRN::$NA_SIGILOSO, InfraDTO::$OPER_DIFERENTE);
-//                    $dto->setStrStaNivelAcessoGlobalProtocolo(ProtocoloRN::$NA_SIGILOSO, InfraDTO::$OPER_DIFERENTE);
+                    if ($objRelProtocoloProtocoloDTO->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO) {
 
-                    $objProcedimentoRN = new ProcedimentoRN();
-                    $arrObjProcedimentoDTO = $objProcedimentoRN->listarCompleto($dto);
-                    $qtdArrObjProcedimentoDTO = (is_array($arrObjProcedimentoDTO) ? count($arrObjProcedimentoDTO) : 0);
-                    if ($qtdArrObjProcedimentoDTO > 0) {
-                        $objProcedimentoDTO = $arrObjProcedimentoDTO[0];
+                        $strSinAssinado = $objDocumentoAPI->getSinAssinado();
 
-                        $arrObjRelProtocoloProtocoloDTO = $objProcedimentoDTO->getArrObjRelProtocoloProtocoloDTO();
+                        $arrBotoes[$dblIdDocumento] = array();
 
-                        foreach ($arrObjRelProtocoloProtocoloDTO as $objRelProtocoloProtocoloDTO) {
+                        $strStaDocumento = $objDocumentoAPI->getTipo();
+                        $idSerie = $objDocumentoAPI->getIdSerie();
 
-                            if ($objRelProtocoloProtocoloDTO->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO) {
+                        //TODO: Ajuste local para a Anatel no if acima para exibir o botão da Gerar Intimação para os tipos de documento de id 184 (Comunicado de Cobrança) e 186 (Notificação de Lançamento). Para ativar, descomentar a linha abaixo e comentar a linha acima
+                        if (($strSinAssinado == 'S' && $strStaDocumento <> 'X') || $idSerie == 184 || $idSerie == 186) {
 
-                                $objDocumentoDTO = $objRelProtocoloProtocoloDTO->getObjProtocoloDTO2();
-                                $strSinAssinado = $objDocumentoDTO->getStrSinAssinado();
+                            $rnPetIntSerie = new MdPetIntSerieRN();
+                            $dtoPetIntSerie = new MdPetIntSerieDTO();
+                            $dtoPetIntSerie->retTodos();
+                            $dtoPetIntSerie->setNumIdSerie($idSerie);
 
-                                $arrBotoes[$dblIdDocumento] = array();
+                            $arrDtoPetIntSerie = $rnPetIntSerie->listar($dtoPetIntSerie);
 
-                                $strStaDocumento = $objDocumentoDTO->getStrStaDocumento();
-                                $idSerie = $objDocumentoDTO->getNumIdSerie();
-
-                                //TODO: Ajuste local para a Anatel no if acima para exibir o botão da Gerar Intimação para os tipos de documento de id 184 (Comunicado de Cobrança) e 186 (Notificação de Lançamento). Para ativar, descomentar a linha abaixo e comentar a linha acima
-                                if (($strSinAssinado == 'S' && $strStaDocumento <> 'X') || $idSerie == 184 || $idSerie == 186) {
-
-                                    $rnPetIntSerie = new MdPetIntSerieRN();
-                                    $dtoPetIntSerie = new MdPetIntSerieDTO();
-                                    $dtoPetIntSerie->retTodos();
-                                    $dtoPetIntSerie->setNumIdSerie($idSerie);
-
-                                    $arrDtoPetIntSerie = $rnPetIntSerie->listar($dtoPetIntSerie);
-
-                                    //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
-                                    $qtdArrDtoPetIntSerie = (is_array($arrDtoPetIntSerie) ? count($arrDtoPetIntSerie) : 0);
-                                    if ($qtdArrDtoPetIntSerie > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
-                                        $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" style="width: 38px" /></a>';
-                                    }
-                                }
+                            //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
+                            $qtdArrDtoPetIntSerie = (is_array($arrDtoPetIntSerie) ? count($arrDtoPetIntSerie) : 0);
+                            if ($qtdArrDtoPetIntSerie > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
+                                $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" style="width: 38px" /></a>';
                             }
                         }
                     }
@@ -3603,17 +3580,28 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $ret = null;
         $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-        $arrDocsLiberados = array(
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_REVOGACAO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RENUNCIA', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO', false),
-            $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES', false)
+
+        $arrObjInfraParametro = $objInfraParametro->listarValores();
+
+        $arrParametros = array(
+            'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO',
+            'MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA',
+            'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO',
+            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL',
+            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_REVOGACAO',
+            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RENUNCIA',
+            'MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO',
+            'MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO',
+            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES'
         );
+
+        $arrDocsLiberados = array();
+
+        foreach($arrObjInfraParametro as $chave => $objInfra){
+            if(in_array($chave, $arrParametros)){
+                $arrDocsLiberados[] = $objInfra;
+            }
+        }
 
         $arrTipoDocumento = array(
             DocumentoRN::$TD_EDITOR_INTERNO,
@@ -3669,6 +3657,24 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
     }
 
+    public static function validarXssFormulario($arrPost, $arrayCampos, $objInfraException)
+    {
+        //Validação Xss
+        $retorno = false;
+        foreach ($arrPost as $chave => $elemento) {
+            try {
+                SeiINT::validarXss($elemento);
+            } catch (Exception $e) {
+                $retorno = true;
+                if (strpos($e->__toString(), SeiINT::$MSG_ERRO_XSS) !== false) {
+                    $objInfraException->adicionarValidacao('O texto do campo ' . $arrayCampos[$chave] . ' possui conteúdo não permitido.');
+                } else {
+                    throw $e;
+                }
+            }
+        }
+        return $retorno;
+    }
 
 }
 

@@ -483,6 +483,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 }
                 $("#hdnValorCaptcha").val($("#txtCaptcha").val());
             }
+
         });
 
     }

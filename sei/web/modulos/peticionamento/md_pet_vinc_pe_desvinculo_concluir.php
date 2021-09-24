@@ -51,6 +51,22 @@ try {
       if (isset($_POST['pwdsenhaSEI'])) {
           if(isset($_POST['txtJustificativa']) && $_POST['txtJustificativa']!=''){
 
+              if($_POST['hdnTpDocumento'] == 'revogar'){
+                  $arrCampos = [
+                      'txtJustificativa' => "'Motivo da Revogação (constará no teor do documento de Revogação que será gerado)'"
+                  ];
+              } else {
+                  $arrCampos = [
+                      'txtJustificativa' => "'Motivo da Renúncia (constará no teor do documento de Renúncia que será gerado)'"
+                  ];
+              }
+
+              $objInfraException = new InfraException();
+
+              if(PeticionamentoIntegracao::validarXssFormulario($_POST, $arrCampos, $objInfraException)) {
+                  $objInfraException->lancarValidacoes();
+              }
+
               $arrParam = array();
               $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
               $objMdPetProcessoRN->validarSenha($arrParam);
@@ -130,7 +146,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
 $arrComandos = array();
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="a" name="Assinar" value="Assinar" onclick="assinar()" class="infraButton"><span class="infraTeclaAtalho">A</span>ssinar</button>';
-$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 ?>
 <form id="frmConcluir" method="post" onsubmit="return assinar();"
       action="<?= PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">

@@ -58,6 +58,7 @@ try {
                 $objMdPetTipoPoderLegalDTO->setNumIdTipoPoderLegal($value);
                 $objMdPetTipoPoderLegalDTO->setDtaDtaCadastro(InfraData::getStrDataHoraAtual());
                 $objMdPetTipoPoderLegalDTO->setStrStaSistema(null);
+                $objMdPetTipoPoderLegalDTO->setStrSinAtivo('N');
                 $objMdPetTipoPoderLegalRN = new MdPetTipoPoderLegalRN();
                 $arrObjMdPetTipoPoderLegalDTO = $objMdPetTipoPoderLegalRN->desativar($objMdPetTipoPoderLegalDTO);
                 header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_listar&acao_origem=' . $_GET['acao']));
@@ -79,6 +80,7 @@ try {
                 $objMdPetTipoPoderLegalDTO->setNumIdTipoPoderLegal($value);
                 $objMdPetTipoPoderLegalDTO->setDtaDtaCadastro(InfraData::getStrDataHoraAtual());
                 $objMdPetTipoPoderLegalDTO->setStrStaSistema(null);
+                $objMdPetTipoPoderLegalDTO->setStrSinAtivo('N');
                 $objMdPetTipoPoderLegalRN = new MdPetTipoPoderLegalRN();
                 $arrObjMdPetTipoPoderLegalDTO = $objMdPetTipoPoderLegalRN->reativar($objMdPetTipoPoderLegalDTO);
                 header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_listar&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($value)));

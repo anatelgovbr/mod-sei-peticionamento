@@ -47,6 +47,7 @@ try {
                 for ($i = 0; $i < count($arrStrIds); $i++) {
                     $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
                     $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($arrStrIds[$i]);
+                    $objMdPetTipoProcessoDTO->setStrSinAtivo('N');
                     $arrObjMdPetTipoProcessoDTO[] = $objMdPetTipoProcessoDTO;
                 }
                 $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
@@ -71,6 +72,7 @@ try {
                     for ($i = 0; $i < count($arrStrIds); $i++) {
                         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
                         $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($arrStrIds[$i]);
+                        $objMdPetTipoProcessoDTO->setStrSinAtivo('S');
                         $idReativado = $arrStrIds[$i];
                         $arrObjMdPetTipoProcessoDTO[] = $objMdPetTipoProcessoDTO;
                     }

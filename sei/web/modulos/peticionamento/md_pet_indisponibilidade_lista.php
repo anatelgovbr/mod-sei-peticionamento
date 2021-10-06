@@ -44,6 +44,7 @@ try {
                 for ($i = 0; $i < count($arrStrIds); $i++) {
                     $objMdPetIndisponibilidadeDTO = new MdPetIndisponibilidadeDTO();
                     $objMdPetIndisponibilidadeDTO->setNumIdIndisponibilidade($arrStrIds[$i]);
+                    $objMdPetIndisponibilidadeDTO->setStrSinAtivo('N');
                     $arrObjMdPetIndisponibilidadeDTO[] = $objMdPetIndisponibilidadeDTO;
                 }
                 $objMdPetIndisponibilidadeRN = new MdPetIndisponibilidadeRN();
@@ -67,6 +68,7 @@ try {
                     for ($i = 0; $i < count($arrStrIds); $i++) {
                         $objMdPetIndisponibilidadeDTO = new MdPetIndisponibilidadeDTO();
                         $objMdPetIndisponibilidadeDTO->setNumIdIndisponibilidade($arrStrIds[$i]);
+                        $objMdPetIndisponibilidadeDTO->setStrSinAtivo('S');
                         $idReativado = $arrStrIds[$i];
                         $arrObjMdPetIndisponibilidadeDTO[] = $objMdPetIndisponibilidadeDTO;
                     }

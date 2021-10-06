@@ -52,6 +52,7 @@ try {
                 for ($i = 0; $i < count($arrStrIds); $i++) {
                     $objMdPetIntegracaoDTO = new MdPetIntegracaoDTO();
                     $objMdPetIntegracaoDTO->setNumIdMdPetIntegracao($arrStrIds[$i]);
+                    $objMdPetIntegracaoDTO->setStrSinAtivo('N');
                     $arrObjMdPetIntegracaoDTO[] = $objMdPetIntegracaoDTO;
                 }
                 $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
@@ -78,7 +79,7 @@ try {
                         $objMdPetIntegracaoDTO->retNumIdMdPetIntegFuncionalid();
                         $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
                         $objMdPetIntegracaoDTO = $objMdPetIntegracaoRN->consultar($objMdPetIntegracaoDTO);
-
+                        $objMdPetIntegracaoDTO->setStrSinAtivo('S');
                         $arrObjMdPetIntegracaoDTO[] = $objMdPetIntegracaoDTO;
                     }
 

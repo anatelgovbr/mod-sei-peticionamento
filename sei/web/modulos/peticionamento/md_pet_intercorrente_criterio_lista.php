@@ -48,6 +48,7 @@ try {
 				for ($i=0;$i<count($arrStrIds);$i++){
 					$objMdPetCriterioDTO = new MdPetCriterioDTO();
 					$objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento($arrStrIds[$i]);
+					$objMdPetCriterioDTO->setStrSinAtivo('N');
 					$arrObjMdPetCriterioDTO[] = $objMdPetCriterioDTO;
 				}
 				$objMdPetCriterioRN = new MdPetCriterioRN();
@@ -70,6 +71,7 @@ try {
                     for ($i=0;$i<count($arrStrIds);$i++){
                         $objMdPetCriterioDTO = new MdPetCriterioDTO();
                         $objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento($arrStrIds[$i]);
+                        $objMdPetCriterioDTO->setStrSinAtivo('S');
                         $arrObjMdPetCriterioDTO[] = $objMdPetCriterioDTO;
                     }
                     $objMdPetCriterioRN = new MdPetCriterioRN();

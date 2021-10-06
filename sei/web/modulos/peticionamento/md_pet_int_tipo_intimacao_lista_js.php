@@ -35,8 +35,7 @@
 
     <? if ($bolAcaoReativar){ ?>
     function acaoReativar(id, desc) {
-        desc = $("
-            < pre > ").html(desc).text();
+        desc = $("<pre>").html(desc).text();
         if (confirm("Confirma reativação do Tipo de Intimação Eletrônica  \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkReativar ?>';
@@ -59,8 +58,7 @@
 
     <? if ($bolAcaoExcluir){ ?>
     function acaoExcluir(id, desc) {
-        desc = $("
-            < pre > ").html(desc).text();
+        desc = $("<pre>").html(desc).text();
         if (confirm("Confirma exclusão do Tipo de Intimação Eletrônica \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkExcluir ?>';

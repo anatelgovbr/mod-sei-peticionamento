@@ -47,6 +47,7 @@ try {
                 for ($i = 0; $i < count($arrStrIds); $i++) {
                     $objMdPetMenuUsuarioExternoDTO = new MdPetMenuUsuarioExternoDTO();
                     $objMdPetMenuUsuarioExternoDTO->setNumIdMenuPeticionamentoUsuarioExterno($arrStrIds[$i]);
+                    $objMdPetMenuUsuarioExternoDTO->setStrSinAtivo('N');
                     $arrObjMdPetMenuUsuarioExternoDTO[] = $objMdPetMenuUsuarioExternoDTO;
                 }
                 $objMdPetMenuUsuarioExternoRN = new MdPetMenuUsuarioExternoRN();
@@ -69,6 +70,7 @@ try {
                     for ($i = 0; $i < count($arrStrIds); $i++) {
                         $objMdPetMenuUsuarioExternoDTO = new MdPetMenuUsuarioExternoDTO();
                         $objMdPetMenuUsuarioExternoDTO->setNumIdMenuPeticionamentoUsuarioExterno($arrStrIds[$i]);
+                        $objMdPetMenuUsuarioExternoDTO->setStrSinAtivo('S');
                         $arrObjMdPetMenuUsuarioExternoDTO[] = $objMdPetMenuUsuarioExternoDTO;
                     }
                     $objMdPetMenuUsuarioExternoRN = new MdPetMenuUsuarioExternoRN();

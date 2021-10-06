@@ -657,7 +657,7 @@ class MdPetIntegracaoRN extends InfraRN
                 $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
                 $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado($arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao(), $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegFuncionalid());
 
-                if (count($arrIdMdPetIntegFuncionalidUtilizado) > 0) {
+                if ($arrIdMdPetIntegFuncionalidUtilizado) {
                     //Regras de Negocio
                     $objInfraException = new InfraException();
 

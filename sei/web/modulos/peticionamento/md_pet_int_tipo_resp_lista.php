@@ -51,6 +51,7 @@ try {
                 for ($i = 0; $i < count($arrStrIds); $i++) {
                     $objMdPetIntTipoRespDTO = new MdPetIntTipoRespDTO();
                     $objMdPetIntTipoRespDTO->setNumIdMdPetIntTipoResp($arrStrIds[$i]);
+                    $objMdPetIntTipoRespDTO->setStrSinAtivo('N');
                     $arrObjMdPetIntTipoRespDTO[] = $objMdPetIntTipoRespDTO;
                 }
                 $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
@@ -72,6 +73,7 @@ try {
                     for ($i = 0; $i < count($arrStrIds); $i++) {
                         $objMdPetIntTipoRespDTO = new MdPetIntTipoRespDTO();
                         $objMdPetIntTipoRespDTO->setNumIdMdPetIntTipoResp($arrStrIds[$i]);
+                        $objMdPetIntTipoRespDTO->setStrSinAtivo('S');
                         $idReativado = $arrStrIds[$i];
                         $arrObjMdPetIntTipoRespDTO[] = $objMdPetIntTipoRespDTO;
                     }

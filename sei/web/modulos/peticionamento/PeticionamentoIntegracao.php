@@ -28,7 +28,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.0.0';
+        return '4.0.1';
     }
 
     public function getInstituicao()
@@ -3135,31 +3135,32 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $RelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
                     $RelProtocoloProtocoloDTO->setDblIdProtocolo2($dblIdDocumento);
                     $RelProtocoloProtocoloDTO->retStrStaAssociacao();
-                    $objRelProtocoloProtocoloDTO = (new RelProtocoloProtocoloRN())->consultarRN0841($RelProtocoloProtocoloDTO);
+                    $arrRelProtocoloProtocoloDTO = (new RelProtocoloProtocoloRN())->listarRN0187($RelProtocoloProtocoloDTO);
+                    foreach ($arrRelProtocoloProtocoloDTO as $objRelProtocoloProtocoloDTO) {
+                        if ($objRelProtocoloProtocoloDTO->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO) {
 
-                    if ($objRelProtocoloProtocoloDTO->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO) {
+                            $strSinAssinado = $objDocumentoAPI->getSinAssinado();
 
-                        $strSinAssinado = $objDocumentoAPI->getSinAssinado();
+                            $arrBotoes[$dblIdDocumento] = array();
 
-                        $arrBotoes[$dblIdDocumento] = array();
+                            $strStaDocumento = $objDocumentoAPI->getTipo();
+                            $idSerie = $objDocumentoAPI->getIdSerie();
 
-                        $strStaDocumento = $objDocumentoAPI->getTipo();
-                        $idSerie = $objDocumentoAPI->getIdSerie();
+                            //TODO: Ajuste local para a Anatel no if acima para exibir o botão da Gerar Intimação para os tipos de documento de id 184 (Comunicado de Cobrança) e 186 (Notificação de Lançamento). Para ativar, descomentar a linha abaixo e comentar a linha acima
+                            if (($strSinAssinado == 'S' && $strStaDocumento <> 'X') || $idSerie == 184 || $idSerie == 186) {
 
-                        //TODO: Ajuste local para a Anatel no if acima para exibir o botão da Gerar Intimação para os tipos de documento de id 184 (Comunicado de Cobrança) e 186 (Notificação de Lançamento). Para ativar, descomentar a linha abaixo e comentar a linha acima
-                        if (($strSinAssinado == 'S' && $strStaDocumento <> 'X') || $idSerie == 184 || $idSerie == 186) {
+                                $rnPetIntSerie = new MdPetIntSerieRN();
+                                $dtoPetIntSerie = new MdPetIntSerieDTO();
+                                $dtoPetIntSerie->retTodos();
+                                $dtoPetIntSerie->setNumIdSerie($idSerie);
 
-                            $rnPetIntSerie = new MdPetIntSerieRN();
-                            $dtoPetIntSerie = new MdPetIntSerieDTO();
-                            $dtoPetIntSerie->retTodos();
-                            $dtoPetIntSerie->setNumIdSerie($idSerie);
+                                $arrDtoPetIntSerie = $rnPetIntSerie->listar($dtoPetIntSerie);
 
-                            $arrDtoPetIntSerie = $rnPetIntSerie->listar($dtoPetIntSerie);
-
-                            //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
-                            $qtdArrDtoPetIntSerie = (is_array($arrDtoPetIntSerie) ? count($arrDtoPetIntSerie) : 0);
-                            if ($qtdArrDtoPetIntSerie > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
-                                $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" style="width: 38px" /></a>';
+                                //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
+                                $qtdArrDtoPetIntSerie = (is_array($arrDtoPetIntSerie) ? count($arrDtoPetIntSerie) : 0);
+                                if ($qtdArrDtoPetIntSerie > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
+                                    $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" style="width: 38px" /></a>';
+                                }
                             }
                         }
                     }
@@ -3597,8 +3598,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $arrDocsLiberados = array();
 
-        foreach($arrObjInfraParametro as $chave => $objInfra){
-            if(in_array($chave, $arrParametros)){
+        foreach ($arrObjInfraParametro as $chave => $objInfra) {
+            if (in_array($chave, $arrParametros)) {
                 $arrDocsLiberados[] = $objInfra;
             }
         }

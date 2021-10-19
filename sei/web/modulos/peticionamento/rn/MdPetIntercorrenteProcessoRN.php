@@ -224,6 +224,27 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $objProcedimentoAPI->setEspecificacao($especificacao);
         }
 
+        $objParticipanteDTO = new ParticipanteDTO();
+        $objParticipanteDTO->retNumIdContato();
+        $objParticipanteDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+        $objParticipanteDTO->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+        $arrObjParticipanteDTO = (new ParticipanteRN())->listarRN0189($objParticipanteDTO);
+
+        $arrInteressados = array();
+        foreach ($arrObjParticipanteDTO as $contato){
+            $objContatoDTO = new ContatoDTO();
+            $objContatoDTO->setNumIdContato($contato->getNumIdContato());
+            $objContatoDTO->retTodos(true);
+            $objContato = (new ContatoRN())->consultarRN0324($objContatoDTO);
+            $objParticipanteContato = new ContatoAPI();
+            $objParticipanteContato->setIdContato($objContato->getNumIdContato());
+            $objParticipanteContato->setSigla($objContato->getStrSigla());
+            $objParticipanteContato->setNome($objContato->getStrNome());
+            array_push($arrInteressados, $objParticipanteContato);
+        }
+
+        $objProcedimentoAPI->setInteressados($arrInteressados);
+
         $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
         $objEntradaGerarProcedimentoAPI->setProcedimentosRelacionados($arrProcedimentoRelacionado);
 

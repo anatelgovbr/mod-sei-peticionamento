@@ -28,7 +28,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.0.1';
+        return '4.0.2';
     }
 
     public function getInstituicao()

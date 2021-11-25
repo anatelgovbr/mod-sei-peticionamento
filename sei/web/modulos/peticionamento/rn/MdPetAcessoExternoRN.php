@@ -529,7 +529,6 @@ class MdPetAcessoExternoRN extends InfraRN {
 					//gera da mesma forma independente do tipo
 					$objAcessoExternoDTO->setStrHashInterno(md5(time()));
 					$objAcessoExternoDTO->setStrSinAtivo('S');
-					$objAcessoExternoDTO->setStrSinInclusao('N');
 
 					$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
 					$ret = $objAcessoExternoBD->cadastrar($objAcessoExternoDTO);
@@ -1325,8 +1324,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			}
 
 			foreach ($idsAcessoExterno as $idAcessoExterno) {
-			    $qtdArrAcessoExtTp = isset($arrAcessoExtTp) ? count($arrAcessoExtTp) : 0;
-				if ($qtdArrAcessoExtTp == 0 || !(array_key_exists($idAcessoExterno, $arrAcessoExtTp))) {
+				if (count($arrAcessoExtTp) == 0 || !(array_key_exists($idAcessoExterno, $arrAcessoExtTp))) {
 					$arrAcessoExtTp[$idAcessoExterno] = static::$ACESSO_INTEGRAL;
 				}
 			}

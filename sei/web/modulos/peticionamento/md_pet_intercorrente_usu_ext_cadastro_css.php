@@ -1,27 +1,73 @@
 <style>
-
-    .fieldSetOrientacoes{
-        min-height: 125px;
-        padding-top: 15px;
-        padding-bottom: 15px;
+    #frmPeticionamentoIntercorrente label[for^=txt] {
+        display: block;
+        white-space: nowrap;
     }
 
-    #field_processos{
-        min-height: 125px;
+    #frmPeticionamentoIntercorrente label[for^=sel] {
+        display: block;
+        white-space: nowrap;
+
     }
 
-    #divBlocoNumero{
-        min-width: 30%;
+    #frmPeticionamentoIntercorrente label[for^=file] {
+        display: block;
+        white-space: nowrap;
     }
 
-    #divBlocoTipoProcesso{
-        min-width: 50%;
+    #frmPeticionamentoIntercorrente select {
+        min-width: 200px;
+        max-width: 330px;
+        border: .1em solid #666;
     }
 
-    .texto{padding-top: 15px; padding-bottom: 15px;}
-    button{margin-left: 5px;}
-    .infraImgModulo{width: 20px; height: 20px;}
-    .row div{padding-top: 10px;}
-    #btnAdicionarDocumento{margin-top: 38px;}
-    .infraLabelRadio{top: 10px}
+    #frmPeticionamentoIntercorrente input[type=checkbox] {
+        position: relative;
+        top: 2px;
+    }
+
+    #frmPeticionamentoIntercorrente input[type=radio] {
+        position: relative;
+        top: 2px;
+    }
+
+    #frmPeticionamentoIntercorrente input[type=text] {
+        border: .1em solid #666;
+        width: 230px;
+    }
+
+    #frmPeticionamentoIntercorrente input[type=file] {
+        margin-top: 0.3%;
+    }
+
+    #frmPeticionamentoIntercorrente img[name=ajuda] {
+        margin-bottom: -4px;
+        width: 1.3em;
+        height: 1.3em;
+    }
+
+    #frmPeticionamentoIntercorrente .bloco {
+        float: left;
+        margin-top: 1%;
+        margin-right: 1%;
+    }
+
+    #frmPeticionamentoIntercorrente .clear {
+        clear: both;
+    }
+
+    #frmPeticionamentoIntercorrente #divTipoConferencia {
+        display: inline-block;
+    }
+
+    #frmPeticionamentoIntercorrente #btnAdicionarDocumento {
+        margin-top: 15px;
+        margin-left: -5px;
+    }
+
+	#imgNivelAcesso {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
+	#selNivelAcesso {min-width: 120px !important; max-width: 120px !important;}
+	#imgHipoteseLegal {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
+	#selHipoteseLegal {float: left; max-width:100% !important;}
+
 </style>

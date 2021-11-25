@@ -38,6 +38,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdContatoOutorg', 'id_contato_outorg');
 
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'TipoRepresentante', 'tipo_representante');
+
     $this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'NomeTipoRepresentante');
 
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinAtivo', 'sin_ativo');

@@ -51,22 +51,6 @@ try {
       if (isset($_POST['pwdsenhaSEI'])) {
           if(isset($_POST['txtJustificativa']) && $_POST['txtJustificativa']!=''){
 
-              if($_POST['hdnTpDocumento'] == 'revogar'){
-                  $arrCampos = [
-                      'txtJustificativa' => "'Motivo da Revogação (constará no teor do documento de Revogação que será gerado)'"
-                  ];
-              } else {
-                  $arrCampos = [
-                      'txtJustificativa' => "'Motivo da Renúncia (constará no teor do documento de Renúncia que será gerado)'"
-                  ];
-              }
-
-              $objInfraException = new InfraException();
-
-              if(PeticionamentoIntegracao::validarXssFormulario($_POST, $arrCampos, $objInfraException)) {
-                  $objInfraException->lancarValidacoes();
-              }
-
               $arrParam = array();
               $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
               $objMdPetProcessoRN->validarSenha($arrParam);
@@ -91,9 +75,10 @@ try {
               $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar&acao_origem='.$_GET['acao']);
 
               echo "<script>";
-              echo " window.parent.location = '" . $urlAssinada . "';";
-              echo " window.parent.focus();";
-              echo " window.parent.close();";
+              echo " window.opener.location = '" . $urlAssinada . "';";
+              echo " window.opener.focus();";
+              echo " window.opener.parent.opener.parent.location.reload();";
+              echo " window.opener.close();";
               echo " window.close();";
               echo "</script>";
               die;
@@ -146,7 +131,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
 $arrComandos = array();
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="a" name="Assinar" value="Assinar" onclick="assinar()" class="infraButton"><span class="infraTeclaAtalho">A</span>ssinar</button>';
-$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 ?>
 <form id="frmConcluir" method="post" onsubmit="return assinar();"
       action="<?= PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
@@ -263,15 +248,15 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 
     function assinar() {
         if (isValido()) {
-            $('#hdnCpfProcuradorPai').val(window.parent.document.getElementById('hdnCpfProcurador').value);
-            $('#hdnIdProcuracao').val(window.parent.document.getElementById('hdnIdProcuracao').value);
-            $('#hdnIdProcedimentoPai').val(window.parent.document.getElementById('hdnIdProcedimento').value);
-            $('#hdnIdVinculacaoPai').val(window.parent.document.getElementById('hdnIdVinculacao').value);
-            $('#hdnTpDocumentoPai').val(window.parent.document.getElementById('hdnTpDocumento').value);
-            $('#txtJustificativaPai').val(window.parent.document.getElementById('txtJustificativa').value);
-            $('#hdnTpVinculo').val(window.parent.document.getElementById('hdnTpVinculo').value);
-            $('#hdnTpProcuracao').val(window.parent.document.getElementById('hdnTpProcuracao').value);
-            $('#hdnIdContatoVinc').val(window.parent.document.getElementById('hdnIdContatoVinc').value);
+            document.getElementById('hdnCpfProcuradorPai').value = window.opener.document.getElementById('hdnCpfProcurador').value;
+            document.getElementById('hdnIdProcuracao').value = window.opener.document.getElementById('hdnIdProcuracao').value;
+            document.getElementById('hdnIdProcedimentoPai').value = window.opener.document.getElementById('hdnIdProcedimento').value;
+            document.getElementById('hdnIdVinculacaoPai').value = window.opener.document.getElementById('hdnIdVinculacao').value;
+            document.getElementById('hdnTpDocumentoPai').value = window.opener.document.getElementById('hdnTpDocumento').value;
+            document.getElementById('txtJustificativaPai').value = window.opener.document.getElementById('txtJustificativa').value;
+            document.getElementById('hdnTpVinculo').value = window.opener.document.getElementById('hdnTpVinculo').value;
+            document.getElementById('hdnTpProcuracao').value = window.opener.document.getElementById('hdnTpProcuracao').value;
+            document.getElementById('hdnIdContatoVinc').value = window.opener.document.getElementById('hdnIdContatoVinc').value;
             processando();
             document.getElementById('frmConcluir').submit();
             return true;

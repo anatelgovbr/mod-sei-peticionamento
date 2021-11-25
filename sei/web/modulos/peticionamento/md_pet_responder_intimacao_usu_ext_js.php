@@ -88,7 +88,6 @@
         if (selNivelAcesso.value == RESTRITO && EXIBIR_HIPOTESE_LEGAL) {
             divBlcHipoteseLegal.style.display = '';
             selHipoteseLegal.value = '';
-            selHipoteseLegal.class = 'infraSelect form-control';
         } else {
             divBlcHipoteseLegal.style.display = 'none';
         }
@@ -123,7 +122,8 @@
                 success: function (result) {
                     if($(result).find('valor').text() == 'T'){
                         //@todo trocar url para a correta do intercorrente ou nova do resposta  
-                        parent.infraAbrirJanelaModal('<?= $strResponderIntimacaoModel ?>',
+                        infraAbrirJanela('<?= $strResponderIntimacaoModel ?>',
+                            'concluirPeticionamentoRespostaIntimacao',
                             770,
                             480,
                             '', //options
@@ -175,7 +175,7 @@
                 }
 
             }
-            console.log(arr);
+
             criarRegistroTabelaDocumento(arr);
             corrigirPosicaoAcaoExcluir();
             limparCampoDocumento();
@@ -343,8 +343,8 @@
 
         var rdoNatoDigital = document.getElementById('rdoNatoDigital');
         var rdoDigitalizado = document.getElementById('rdoDigitalizado');
-        var formato = rdoNatoDigital.checked ? document.getElementById('labelrdoNatoDigital').innerHTML :
-            document.getElementById('labelrdoDigitalizado').innerHTML;
+        var formato = rdoNatoDigital.checked ? rdoNatoDigital.nextSibling.nextSibling.innerHTML.trim() :
+                rdoDigitalizado.nextSibling.nextSibling.innerHTML.trim();
 
         var tipoDocumento = document.getElementById('selTipoDocumento');
         tipoDocumento = tipoDocumento.options[tipoDocumento.selectedIndex].text;

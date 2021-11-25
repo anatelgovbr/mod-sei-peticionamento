@@ -36,19 +36,16 @@ function controlarVisualizacao(){
     if(isGrafico){
         document.getElementById('divTabelaIntimacao').style.display = 'none';
         document.getElementById('divGraficos').style.display = '';
-        document.getElementById('espacamento').style.marginTop = '0px';
     }
 
     if(isPesquisa){
         document.getElementById('divTabelaIntimacao').style.display = '';
         document.getElementById('divGraficos').style.display = 'none';
-        document.getElementById('espacamento').style.marginTop = '0px';
     }
 
     if(!chamadaPosterior && !isGrafico && !isPesquisa){
         document.getElementById('divGraficos').style.display = 'none';
         document.getElementById('divTabelaIntimacao').style.display = 'none';
-        document.getElementById('espacamento').style.marginTop = '200px';
     }
 
     setBotoesInferior('');
@@ -187,9 +184,9 @@ function limparCriterios(){
 
     document.getElementById('divTabelaIntimacao').style.display = 'none';
     document.getElementById('divGraficos').style.display = 'none';
-    document.getElementById('espacamento').style.marginTop = '200px';
-    document.getElementById('divInfraAreaTela').style.height = '100%';
 
+    document.getElementById('divInfraAreaTela').style.height = '100%';
+    setBotoesInferior('none');
 }
 
 function setBotoesInferior(valorDisplay){

@@ -315,6 +315,8 @@ class MdPetVinculoRN extends InfraRN {
       return $arrIds;
   }
 
+
+
 /* 
   protected function desativarControlado($arrObjMdPetVinculoDTO){
     try {

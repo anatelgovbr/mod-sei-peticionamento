@@ -766,5 +766,83 @@ class MdPetVincRepresentantRN extends InfraRN
 
     }
 
+    /**
+     * @param int $idContatoDestinatario
+     * @param int $idDocumento
+     * @param int $idContatoRepresentante (optional)
+     * return mixed
+     */
+    public function retornarProcuradoresComPoderCumprirResponder($idContatoDestinatario, $idDocumento, $idContatoRepresentante = null)
+    {
+
+        $relProtocoloProtocolo = new RelProtocoloProtocoloRN();
+        $objRelProtocoloProtocolo = new RelProtocoloProtocoloDTO();
+        $objRelProtocoloProtocolo->setDblIdProtocolo2($idDocumento);
+        $objRelProtocoloProtocolo->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO);
+        $objRelProtocoloProtocolo->retDblIdProtocolo1();
+        $objRelProtocoloProtocolo = $relProtocoloProtocolo->consultarRN0841($objRelProtocoloProtocolo);
+        $idProcesso = null;
+        $arrObjMdPetVincRepresentante = null;
+        if($objRelProtocoloProtocolo){
+            $idProcesso = $objRelProtocoloProtocolo->getDblIdProtocolo1();
+        }
+
+        $mdPetVinculoRN = new MdPetVinculoRN();
+        $objMdPetVinculo = new MdPetVinculoDTO();
+        $objMdPetVinculo->setNumIdContato($idContatoDestinatario);
+        $objMdPetVinculo->retNumIdMdPetVinculo();
+        $objMdPetVinculo = $mdPetVinculoRN->consultar($objMdPetVinculo);
+        if ($objMdPetVinculo) {
+            $objMdPetVincRepresentante = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentante->setNumIdMdPetVinculo($objMdPetVinculo->getNumIdMdPetVinculo());
+
+            if (!is_null($idContatoRepresentante)) {
+                $objMdPetVincRepresentante->setNumIdContato($idContatoRepresentante);
+            }
+
+            $objMdPetVincRepresentante->setStrStaEstado($this::$RP_ATIVO);
+
+            $objMdPetVincRepresentante->retTodos();
+            $arrObjMdPetVincRepresentante = $this->listar($objMdPetVincRepresentante);
+            if ($arrObjMdPetVincRepresentante) {
+                foreach ($arrObjMdPetVincRepresentante as $chave => $objVincRepresentante){
+                    if($objVincRepresentante->getStrTipoRepresentante() == $this::$PE_PROCURADOR_SIMPLES){
+                        $mdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
+                        $objMdPetRelVincRepTpPoder = new MdPetRelVincRepTpPoderDTO();
+                        $objMdPetRelVincRepTpPoder->setNumIdVinculoRepresent($objVincRepresentante->getNumIdMdPetVinculoRepresent());
+                        $objMdPetRelVincRepTpPoder->setNumIdTipoPoderLegal(MdPetTipoPoderLegalRN::$PODER_LEGAL_CUMPRIMENTO);
+                        $objMdPetRelVincRepTpPoder->retTodos();
+                        $arrObjMdPetRelVincRepTpPoder = $mdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoder);
+                        if($arrObjMdPetRelVincRepTpPoder){
+
+                        } else {
+                            unset($arrObjMdPetVincRepresentante[$chave]);
+                        }
+                    }
+
+                    if(!is_null($objVincRepresentante->getDthDataLimite())){
+                        $dataHoje = date('d/m/Y 23:59:59');
+                        $strToTimeHoje = strtotime($dataHoje);
+                        $strToTimeDataLimite = strtotime($objVincRepresentante->getDthDataLimite());
+                        if($strToTimeHoje > $strToTimeDataLimite){
+                            unset($arrObjMdPetVincRepresentante[$chave]);
+                        }
+                    }
+                    if($objVincRepresentante->getStrStaAbrangencia() == $this::$PR_ESPECIFICO){
+                        $mdPetRelVincRepProtocolo = new MdPetRelVincRepProtocRN();
+                        $objMdPetRelVincRepProtocolo = new MdPetRelVincRepProtocDTO();
+                        $objMdPetRelVincRepProtocolo->setNumIdVincRepresent($objVincRepresentante->getNumIdMdPetVinculoRepresent());
+                        $objMdPetRelVincRepProtocolo->setNumIdProtocolo($idProcesso);
+                        $objMdPetRelVincRepProtocolo->retTodos();
+                        $objMdPetRelVincRepProtocolo = $mdPetRelVincRepProtocolo->consultar($objMdPetRelVincRepProtocolo);
+                        if(is_null($objMdPetRelVincRepProtocolo)){
+                            unset($arrObjMdPetVincRepresentante[$chave]);
+                        }
+                    }
+                }
+            }
+        }
+        return $arrObjMdPetVincRepresentante;
+    }
 
 }

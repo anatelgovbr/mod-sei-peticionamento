@@ -68,7 +68,7 @@ try {
                     $objMdPetIntPrazoTacitaDTO->setNumNumPrazo($_POST['txtNumPrazo']);
                     $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
                     $objMdPetIntPrazoTacitaRN->alterar($objMdPetIntPrazoTacitaDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
+                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() . '" alterado com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora('')));
                     die;
                 } catch (Exception $e) {
@@ -113,9 +113,28 @@ PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistem
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
 ?>
-.infraImgModulo{width:20px;}
-#txtNumPrazo{width:40%;}
-<?php
+<? if (0){ ?>
+    <style>
+<?}?>
+        #lblNumPrazo {
+            position: absolute;
+            left: 0%;
+            top: 0%;
+            width: 100px;
+        }
+
+        #txtNumPrazo {
+            position: absolute;
+            left: 0%;
+            top: 45%;
+            width: 50px;
+        }
+        #imgAjuda { position:absolute;left:88px;top:0%; }
+
+<? if (0){ ?>
+    </style>
+<? } ?>
+<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -149,9 +168,9 @@ PaginaSEI::getInstance()->abrirJavaScript();
             }
 
 
-            if (confirm('ATENÇÃO: Após iniciado o uso em produção, não alterar o prazo, pois afetará intimações em curso. Deseja continuar?')) {
+            if(confirm('ATENÇÃO: Após iniciado o uso em produção, não alterar o prazo, pois afetará intimações em curso. Deseja continuar?')){
                 return true;
-            } else {
+            }else{
                 return false;
             }
 
@@ -175,26 +194,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('4em');
         ?>
-        <div class="row">
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2">
-                <input type="hidden" id="txtIdMdPetIntPrazoTacita" name="txtIdMdPetIntPrazoTacita"
-                       onkeypress="return infraMascaraNumero(this, event)" class="infraText"
-                       value="<?= PaginaSEI::tratarHTML($objMdPetIntPrazoTacitaDTO->getNumIdMdPetIntPrazoTacita()); ?>"
-                       maxlength="11" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <input type="hidden" id="txtIdMdPetIntPrazoTacita" name="txtIdMdPetIntPrazoTacita" onkeypress="return infraMascaraNumero(this, event)" class="infraText" value="<?= PaginaSEI::tratarHTML($objMdPetIntPrazoTacitaDTO->getNumIdMdPetIntPrazoTacita()); ?>" maxlength="11" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-                <label id="lblNumPrazo" for="txtNumPrazo" accesskey="" class="infraLabelObrigatorio">Prazo em
-                    Dias:</label>
-                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                     id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O Prazo para Intimação Tácita é aquele que, a partir da data de expedição, caso o Destinatário não consulte os documentos diretamente no sistema, a intimação será considerada automaticamente cumprida por Decurso do Prazo Tácito.\n\n Para órgãos do Poder Executivo recomenda-se 15 dias (art. 23, § 2º, inciso III, alínea "a", do Decreto nº 70.235/1972) e para órgãos do Poder Judiciário recomenda-se 10 dias (art. 5º, § 3º, da Lei nº 11.419/2006).\n\n\n\n\n ATENÇÃO: Após iniciado o uso em produção, não alterar o prazo, pois afetará intimações em curso.', 'Ajuda') ?>
-                     class="infraImgModulo"/>
-                <input type="text" id="txtNumPrazo" name="txtNumPrazo"
-                       onkeypress="return infraMascaraNumero(this, event)"
-                       class="infraText form-control"
-                       value="<?= PaginaSEI::tratarHTML($objMdPetIntPrazoTacitaDTO->getNumNumPrazo()); ?>"
-                       maxlength="2" size="15" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            </div>
-        </div>
-
+        <label id="lblNumPrazo" for="txtNumPrazo" accesskey="" class="infraLabelObrigatorio">Prazo em Dias:</label>
+        <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O Prazo para Intimação Tácita é aquele que, a partir da data de expedição, caso o Destinatário não consulte os documentos diretamente no sistema, a intimação será considerada automaticamente cumprida por Decurso do Prazo Tácito.\n\n Para órgãos do Poder Executivo recomenda-se 15 dias (art. 23, § 2º, inciso III, alínea "a", do Decreto nº 70.235/1972) e para órgãos do Poder Judiciário recomenda-se 10 dias (art. 5º, § 3º, da Lei nº 11.419/2006).\n\n\n\n\n ATENÇÃO: Após iniciado o uso em produção, não alterar o prazo, pois afetará intimações em curso.') ?> class="infraImg"/>
+        <input type="text" id="txtNumPrazo" name="txtNumPrazo" onkeypress="return infraMascaraNumero(this, event)" class="infraText" value="<?= PaginaSEI::tratarHTML($objMdPetIntPrazoTacitaDTO->getNumNumPrazo()); ?>" maxlength="2" size="15" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
         <?
         PaginaSEI::getInstance()->fecharAreaDados();
         ?>

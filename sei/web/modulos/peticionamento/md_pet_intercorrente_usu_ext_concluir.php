@@ -64,8 +64,8 @@ try {
   			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
   			
   			echo "<script>";
-  			echo "window.parent.location = '" . $urlAssinada . "';";
-  			echo " window.parent.focus();";
+  			echo "window.opener.location = '" . $urlAssinada . "';";
+  			echo " window.opener.focus();";
   			echo " window.close();";
   			echo "</script>";
   			die;
@@ -93,8 +93,8 @@ try {
 	        $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
 
 	        echo "<script>";
-	        echo "window.parent.location = '" . $urlAssinada . "';";
-	        echo " window.parent.focus();";
+	        echo "window.opener.location = '" . $urlAssinada . "';";
+	        echo " window.opener.focus();";
 	        echo " window.close();";
 	        echo "</script>";
 	        die;
@@ -292,13 +292,13 @@ function assinar(){
 		<?php if( $_GET['acao'] == "md_pet_responder_intimacao_usu_ext_assinar" || $_GET['acao']  == "md_pet_responder_intimacao_usu_ext_concluir") { ?>
 
 		//pegando valores dos campos que ja existem na janela pai
-		var hdnIdProcedimentoJanelaPai = window.parent.document.getElementById('hdnIdProcedimento');
-		var hdnIdMdPetIntimacaoJanelaPai = window.parent.document.getElementById('hdnIdMdPetIntimacao');
-		var hdnIdMdPetIntAceiteJanelaPai = window.parent.document.getElementById('hdnIdMdPetIntAceite');
-		var hdnIdTipoProcedimentoJanelaPai  = window.parent.document.getElementById('hdnIdTipoProcedimento');
-		var selTipoResposta = window.parent.document.getElementById('selTipoResposta');
-        var selIntRelDest = window.parent.document.getElementById('hdnIdMdPetIntRelDest');
-        var selIdContato = window.parent.document.getElementById('hdnIdContato');
+		var hdnIdProcedimentoJanelaPai = window.opener.document.getElementById('hdnIdProcedimento');
+		var hdnIdMdPetIntimacaoJanelaPai = window.opener.document.getElementById('hdnIdMdPetIntimacao');
+		var hdnIdMdPetIntAceiteJanelaPai = window.opener.document.getElementById('hdnIdMdPetIntAceite');
+		var hdnIdTipoProcedimentoJanelaPai  = window.opener.document.getElementById('hdnIdTipoProcedimento');
+		var selTipoResposta = window.opener.document.getElementById('selTipoResposta');
+        var selIntRelDest = window.opener.document.getElementById('hdnIdMdPetIntRelDest');
+        var selIdContato = window.opener.document.getElementById('hdnIdContato');
 		//setando nos campos hidden da janela local do assinar antes de submeter o formulario
 		document.getElementById('id_procedimento').value = hdnIdProcedimentoJanelaPai.value;
 		document.getElementById('id_tipo_procedimento').value = hdnIdTipoProcedimentoJanelaPai.value;
@@ -356,8 +356,8 @@ function inicializar(){
 
 function fecharJanela(){
 
-    if (window.parent != null && !window.parent.closed) {
-        window.parent.focus();
+    if (window.opener != null && !window.opener.closed) {
+        window.opener.focus();
     }
 
     window.close();
@@ -370,7 +370,7 @@ function OnSubmitForm() {
 function carregarTabelaDocumento() {
     var hdnTbDocumento = document.createElement('input');
     var frm = document.getElementById('frmConcluir');
-    var hdnTbDocumentoPai = window.parent.document.getElementById('hdnTbDocumento');
+    var hdnTbDocumentoPai = window.opener.document.getElementById('hdnTbDocumento');
 
     hdnTbDocumento.type = 'hidden';
     hdnTbDocumento.id = 'hdnTbDocumento';

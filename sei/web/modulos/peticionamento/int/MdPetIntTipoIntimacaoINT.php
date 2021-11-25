@@ -17,8 +17,8 @@ class MdPetIntTipoIntimacaoINT extends InfraINT
         $arrIntimacao = $objMdPetRelDestRN->listarDadosComboIntimacaoExterno();
 
         $select =  '<option value="0"> </option>' ;
-        $qtdArrIntimacao = (is_array($arrIntimacao) ? count($arrIntimacao) : 0);
-        if ($qtdArrIntimacao > 0)
+
+        if (count($arrIntimacao) > 0)
         {
             foreach ($arrIntimacao as $key => $item)
             {

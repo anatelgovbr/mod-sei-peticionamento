@@ -44,11 +44,11 @@ try {
 
             $objMdPetIntSerieRN = new MdPetIntSerieRN();
             $objMdPetIntSerieDTO->retTodos(true);
-            $arrSeriesEss = $objMdPetIntSerieRN->listar($objMdPetIntSerieDTO);
+            $arrSeriesEss = $objMdPetIntSerieRN->listar( $objMdPetIntSerieDTO );
 
             $strItensSelSeriesEss = "";
-            for ($x = 0; $x < count($arrSeriesEss); $x++) {
-                $strItensSelSeriesEss .= "<option value='" . $arrSeriesEss[$x]->getNumIdSerie() . "'>" . $arrSeriesEss[$x]->getStrNomeSerie() . "</option>";
+            for($x = 0;$x<count($arrSeriesEss);$x++){
+                $strItensSelSeriesEss .= "<option value='" . $arrSeriesEss[$x]->getNumIdSerie() .  "'>" . $arrSeriesEss[$x]->getStrNomeSerie(). "</option>";
             }
 
             $strTitulo = 'Tipos de Documentos para Intimação Eletrônica';
@@ -70,8 +70,8 @@ try {
                 $arrMdPetIntSerieDTO = array();
                 $arrListarMdPetIntSerieDTO = $objMdPetIntSerieRN->listar($objMdPetIntSerieDTO);
 
-                if (is_array($arrListarMdPetIntSerieDTO) && count($arrListarMdPetIntSerieDTO) > 0) {
-                    $objMdPetIntSerieRN->excluir($arrListarMdPetIntSerieDTO);
+                if( is_array( $arrListarMdPetIntSerieDTO ) && count( $arrListarMdPetIntSerieDTO ) > 0 ){
+                    $objMdPetIntSerieRN->excluir( $arrListarMdPetIntSerieDTO );
                 }
 
                 $arrValuesHdnSerie = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
@@ -85,7 +85,7 @@ try {
                         array_push($arrObjMdPetIntSerieDTO, $objMdPetIntSerieDTO);
                     }
                     $objMdPetIntSerieDTO = $objMdPetIntSerieRN->cadastrar($arrObjMdPetIntSerieDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
+                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntSerieDTO[0]->getNumIdSerie() . '" cadastrado com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&id_serie=' . $objMdPetIntSerieDTO[0]->getNumIdSerie() . PaginaSEI::getInstance()->montarAncora($objMdPetIntSerieDTO[0]->getNumIdSerie())));
                     die;
                 } catch (Exception $e) {
@@ -114,12 +114,12 @@ try {
             $objMdPetIntSerieRN = new MdPetIntSerieRN();
             $objMdPetIntSerieDTO = new MdPetIntSerieDTO();
             $objMdPetIntSerieDTO->retTodos();
-            $arrSeriesEss = $objMdPetIntSerieRN->listar($objMdPetIntSerieDTO);
+            $arrSeriesEss = $objMdPetIntSerieRN->listar( $objMdPetIntSerieDTO );
 
 
             $strItensSelSeriesEss = "";
-            for ($x = 0; $x < count($arrSeriesEss); $x++) {
-                $strItensSelSeriesEss .= "<option value='" . $arrSeriesEss[$x]->getNumIdSerie() . "'>" . $arrSeriesEss[$x]->getStrNomeSerie() . "</option>";
+            for($x = 0;$x<count($arrSeriesEss);$x++){
+                $strItensSelSeriesEss .= "<option value='" . $arrSeriesEss[$x]->getNumIdSerie() .  "'>" . $arrSeriesEss[$x]->getStrNomeSerie(). "</option>";
             }
 
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
@@ -164,10 +164,100 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-require_once("md_pet_int_serie_cadastro_css.php");
+?>
+<? if (0){ ?>
+    <style><?}?>
+        #lblSerie { left: 0%; top: 0%; width: 25%; }
+        #selSerie { left: 0%; top: 40%; width: 85%; }
+        #txtSerie { width: 50%; }
+        #lblSerie { width: 50%; }
+        #selSerie { width: 75%; }
+
+        #imgLupaTipoDocumento { margin-top: 2px; margin-left: 4px; }
+        #imgExcluirTipoDocumento { margin-top: 2px; margin-left: 4px; }
+        .fieldNone { border: none !important; }
+
+        #imgAjuda { left:290px;top:190px; }
+
+        <? if (0){ ?></style><? } ?>
+<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
+?>
+<? if (0){ ?>
+    <script type="text/javascript"><?}?>
+
+        var objLupaTipoDocumentoEssencial = null
+        var objAutoCompletarTipoDocumentoEssencial = null;
+
+        function inicializar() {
+            if ('<?=$_GET['acao']?>' == 'md_pet_int_serie_cadastrar') {
+            } else if ('<?=$_GET['acao']?>' == 'md_pet_int_serie_consultar') {
+                infraDesabilitarCamposAreaDados();
+            } else {
+                document.getElementById('btnCancelar').focus();
+            }
+            infraEfeitoTabelas();
+            carregarComponenteTipoDocumentoEssencial();
+        }
+
+        function validarCadastro() {
+            if (!infraSelectSelecionado('selSerie')) {
+                alert('Selecione um Tipo de Documento.');
+                document.getElementById('selSerie').focus();
+                return false;
+            }
+            return true;
+        }
+
+        function OnSubmitForm() {
+            return validarCadastro();
+        }
+
+        //Carrega o documento
+        function carregarComponenteTipoDocumentoEssencial() {
+
+            objAutoCompletarTipoDocumentoEssencial = new infraAjaxAutoCompletar('hdnIdSerie', 'txtSerie', '<?=$strLinkAjaxTipoDocumento?>');
+            objAutoCompletarTipoDocumentoEssencial.limparCampo = true;
+
+            objAutoCompletarTipoDocumentoEssencial.prepararExecucao = function () {
+                var tipo = 'E';
+                return 'palavras_pesquisa=' + document.getElementById('txtSerie').value + '&tipoDoc=' + tipo;
+            };
+
+            objAutoCompletarTipoDocumentoEssencial.processarResultado = function (id, nome, complemento) {
+
+                if (id != '') {
+                    var options = document.getElementById('selSerie').options;
+
+                    if (options != null) {
+                        for (var i = 0; i < options.length; i++) {
+                            if (options[i].value == id) {
+                                alert('Tipo de Documento já consta na lista.');
+                                break;
+                            }
+                        }
+                    }
+
+                    if (i == options.length) {
+                        for (i = 0; i < options.length; i++) {
+                            options[i].selected = false;
+                        }
+                        var opt = infraSelectAdicionarOption(document.getElementById('selSerie'), nome, id);
+                        objLupaTipoDocumentoEssencial.atualizar();
+                        opt.selected = true;
+                    }
+                    document.getElementById('txtSerie').value = '';
+                    document.getElementById('txtSerie').focus();
+                }
+            };
+
+            objLupaTipoDocumentoEssencial = new infraLupaSelect('selSerie', 'hdnSerie', '<?=$strLinkTipoDocumentoEssencialSelecao?>');
+        }
+
+        <? if (0){ ?></script><? } ?>
+<?
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
@@ -179,43 +269,21 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         $divDocs = 'style="display: inherit;"';
         ?>
         <fieldset <?php echo $divDocs; ?> id="fldDocEssenciais" class="sizeFieldset tamanhoFieldset fieldNone">
-            <div class="row">
-                <div class="col-sm-12 col-md-5 col-lg-5 col-xl-4">
-                    <label id="lblSerie" for="selSerie" class="infraLabelObrigatorio">Tipos dos Documentos:
-                        <img align="top"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione Tipos de Documentos parametrizados na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n Por exemplo, Ofício é um documento tradicionalmente de comunicação externa e serve para ser o documento principal de uma Intimação Eletrônica. \n \n Nos Documentos Gerados dos Tipos aqui indicados, após assinados, aparecerá o botão Gerar Intimação Eletrônica.', 'Ajuda') ?>
-                             class="infraImgModulo"/>
-                    </label>
-                    <input type="text" id="txtSerie" name="txtSerie" class="infraText form-control"
-                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+            <div>
+                <div style="clear:both;">&nbsp;</div>
+                <div>
+                    <label id="lblSerie" for="selSerie" class="infraLabelObrigatorio">Tipos dos Documentos: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione Tipos de Documentos parametrizados na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n Por exemplo, Ofício é um documento tradicionalmente de comunicação externa e serve para ser o documento principal de uma Intimação Eletrônica. \n \n Nos Documentos Gerados dos Tipos aqui indicados, após assinados, aparecerá o botão Gerar Intimação Eletrônica.')?> class="infraImg"/></label>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                    <div class="input-group mb-3">
-                        <select id="selSerie" name="selSerie" size="8"
-                                multiple="multiple"
-                                class="infraSelect"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                            <?= $strItensSelSeriesEss; ?>
-                        </select>
-                        <div class="botoes">
-                            <img id="imgLupaTipoDocumento" onclick="objLupaTipoDocumentoEssencial.selecionar(700,500);"
-                                 onkeypress="objLupaTipoDocumentoEssencial.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
-                                 alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento"
-                                 class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <br/>
-                            <img id="imgExcluirTipoDocumento" onclick="objLupaTipoDocumentoEssencial.remover();"
-                                 onkeypress="objLupaTipoDocumentoEssencial.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
-                                 alt="Remover Tipos de Documentos Selecionados"
-                                 title="Remover Tipos de Documentos Selecionados"
-                                 class="infraImg" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        </div>
-                    </div>
+                <div>
+                    <input type="text" id="txtSerie" name="txtSerie" class="infraText" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                </div>
+                <div style="margin-top: 5px;">
+                    <select style="float: left;" id="selSerie" name="selSerie" size="8" multiple="multiple" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <?= $strItensSelSeriesEss; ?>
+                    </select>
+                    <img id="imgLupaTipoDocumento" onclick="objLupaTipoDocumentoEssencial.selecionar(700,500);" onkeypress="objLupaTipoDocumentoEssencial.selecionar(700,500);" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/lupa.gif" alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                    <br/>
+                    <img id="imgExcluirTipoDocumento" onclick="objLupaTipoDocumentoEssencial.remover();" onkeypress="objLupaTipoDocumentoEssencial.remover();" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" alt="Remover Tipos de Documentos Selecionados" title="Remover Tipos de Documentos Selecionados" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                 </div>
             </div>
         </fieldset>
@@ -224,7 +292,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <input type="hidden" id="hdnSerie" name="hdnSerie" value=""/>
     </form>
 <?
-require_once("md_pet_int_serie_cadastro_js.php");
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

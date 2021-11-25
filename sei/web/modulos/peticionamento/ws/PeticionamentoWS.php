@@ -174,7 +174,7 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarRepresentacaoPessoaJuridica($siglaSistema, $identificacaoServico, $cnpjOutorgante, $strSituacao, $idsTipoPoderLegal)
+    public function listarRepresentacaoPessoaJuridica($siglaSistema, $identificacaoServico, $cnpjOutorgante, $staSituacao, $idsTipoPoderLegal)
     {
         try {
             $infraException = new InfraException();
@@ -211,8 +211,8 @@ class PeticionamentoWS extends InfraWS
             $mdPetVincRepresentantDTO->setStrSinAtivo('S');
             $mdPetVincRepresentantDTO->setStrCNPJ($cnpjSemFormato);
 
-            if (!empty($strSituacao)) {
-                $mdPetVincRepresentantDTO->setStrStaEstado($strSituacao);
+            if (!empty($staSituacao)) {
+                $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
             }
 
             $filtraPoderLegal = false;
@@ -268,7 +268,7 @@ class PeticionamentoWS extends InfraWS
                                         $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
                                         $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                                         $objMdPetRepresentante->setNome(mb_strtoupper($arrContatoDTO->getStrNome(), 'ISO-8859-1'));
-                                        $objMdPetRepresentante->setStrSituacao($item->getStrStaEstado());
+                                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
                                         $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
                                         $objMdPetRepresentante->setDataLimite($dataLimite);
                                         $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
@@ -282,7 +282,7 @@ class PeticionamentoWS extends InfraWS
                             $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
                             $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                             $objMdPetRepresentante->setNome(mb_strtoupper($arrContatoDTO->getStrNome(), 'ISO-8859-1'));
-                            $objMdPetRepresentante->setStrSituacao($item->getStrStaEstado());
+                            $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
                             $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
                             $objMdPetRepresentante->setDataLimite($dataLimite);
                             $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
@@ -295,7 +295,7 @@ class PeticionamentoWS extends InfraWS
                     $infraException->lancarValidacao('Nenhum Representante encontrato para o CNPJ informado com os filtros utilizados.');
                 }
             } else {
-                if (!empty($strSituacao) || !empty($idsTipoPoderLegal)) {
+                if (!empty($staSituacao) || !empty($idsTipoPoderLegal)) {
                     $infraException->lancarValidacao('Nenhum Representante encontrato para o CNPJ informado com os filtros utilizados.');
                 }
                 $infraException->lancarValidacao('O CNPJ informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
@@ -309,7 +309,7 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarRepresentacaoPessoaFisica($siglaSistema, $identificacaoServico, $cpfOutorgante, $strSituacao, $idsTipoPoderLegal)
+    public function listarRepresentacaoPessoaFisica($siglaSistema, $identificacaoServico, $cpfOutorgante, $staSituacao, $idsTipoPoderLegal)
     {
         try {
             $infraException = new InfraException();
@@ -347,8 +347,8 @@ class PeticionamentoWS extends InfraWS
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $mdPetVincRepresentantDTO->setStrCPF($cpfSemFormato);
 
-            if (!empty($strSituacao)) {
-                $mdPetVincRepresentantDTO->setStrStaEstado($strSituacao);
+            if (!empty($staSituacao)) {
+                $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
             }
 
             $filtraPoderLegal = false;
@@ -404,7 +404,7 @@ class PeticionamentoWS extends InfraWS
                                         $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
                                         $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                                         $objMdPetRepresentante->setNome(mb_strtoupper($arrContatoDTO->getStrNome(), 'ISO-8859-1'));
-                                        $objMdPetRepresentante->setStrSituacao($item->getStrStaEstado());
+                                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
                                         $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
                                         $objMdPetRepresentante->setDataLimite($dataLimite);
                                         $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
@@ -418,7 +418,7 @@ class PeticionamentoWS extends InfraWS
                             $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
                             $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                             $objMdPetRepresentante->setNome(mb_strtoupper($arrContatoDTO->getStrNome(), 'ISO-8859-1'));
-                            $objMdPetRepresentante->setStrSituacao($item->getStrStaEstado());
+                            $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
                             $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
                             $objMdPetRepresentante->setDataLimite($dataLimite);
                             $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
@@ -431,7 +431,7 @@ class PeticionamentoWS extends InfraWS
                     $infraException->lancarValidacao('Nenhum Representante encontrato para o CPF informado com os filtros utilizados.');
                 }
             } else {
-                if (!empty($strSituacao) || !empty($idsTipoPoderLegal)) {
+                if (!empty($staSituacao) || !empty($idsTipoPoderLegal)) {
                     $infraException->lancarValidacao('Nenhum Representante encontrato para o CPF informado com os filtros utilizados.');
                 }
                 $infraException->lancarValidacao('O CPF informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
@@ -658,7 +658,7 @@ class PeticionamentoWS extends InfraWS
                         $objMdPetRepresentante->setNome($arrContatoVincDTO->getStrNome());
                         $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoVincDTO->getDblCpf()));
                         $objMdPetRepresentante->setEmail($arrContatoVincDTO->getStrEmail());
-                        $objMdPetRepresentante->setStrSituacao($item->getStrStaEstado());
+                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
                         $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
                         $objMdPetRepresentante->setTipoPoderesLegais($arrTipoPoderesLegais);
                         $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolos);

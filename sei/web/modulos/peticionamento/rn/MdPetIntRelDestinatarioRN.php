@@ -735,7 +735,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         } 
         
         $js = 'window.open(\''.$strLinkProcesso.'\');';
-        $imgConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" class="infraImg" />';
+        $imgConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/consultar.gif" class="infraImg" />';
         $textTolTip = $tpProcesso;
         $descricao = '';
 
@@ -930,7 +930,37 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         }
     }
 
+    /**
+     * @param array $arrIntimacoes
+     * @param int $idContatoParticipante
+     * @param int $idAcessoExterno
+     * @param int $idIntimacao
+     * @return mixed
+     */
+    public function retornarDestinatariosIntimacao($arrIntimacoes, $idContatoParticipante, $idAcessoExterno, $idIntimacao){
 
+        $mdPetIntAcessoExternoDocumentoRN = new MdPetIntAcessoExternoDocumentoRN();
+        $mdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
+        $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
+        $objMdPetIntRelDestDTO->setDistinct(true);
+        $objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($arrIntimacoes, InfraDTO::$OPER_IN);
+        $objMdPetIntRelDestDTO->retDthDataCadastro();
+        $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
+        $objMdPetIntRelDestDTO->setNumIdContatoParticipante($idContatoParticipante);
+        $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
+        $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
+        $objMdPetIntRelDestDTO->retNumIdContato();
+        $objMdPetIntRelDestDTO->retDblCnpjContato();
+        $objMdPetIntRelDestDTO->retDblCpfContato();
+        $objMdPetIntRelDestDTO->retStrNomeContato();
+        $objMdPetIntRelDestDTO->retDblIdDocumento();
+
+        $idAcessoExternoValido = $mdPetIntAcessoExternoDocumentoRN->verificarAcessoExternoValido(array($idIntimacao, $idContatoParticipante, $idAcessoExterno));
+        if (!is_null($idAcessoExternoValido)) {
+            $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoExterno);
+        }
+        return $mdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestDTO);
+    }
 
     
     

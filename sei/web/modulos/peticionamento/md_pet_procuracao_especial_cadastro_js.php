@@ -50,13 +50,16 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         document.getElementById('selPessoaJuridicaProcSimples').style.display = "none";
         document.getElementById('hdnRbOutorgante').value = "PF"
         document.getElementById('imgPj').style.display = "none";
-        document.getElementById('PessoaJuridicaOutorgante').style.display = "none";
     }
 
     function showPessoaOutorgante() {
-        document.getElementById('PessoaJuridicaOutorgante').style.display = "";
         document.getElementById('lvbPJProSimples').style.display = "";
-        document.getElementById('selPessoaJuridicaProcSimples').style.display = "inline";
+        if ($('#rbOutorgante1').prop('disabled')) {
+            document.getElementById('lvbPJProSimples').style.paddingLeft = "52px";
+        } else {
+            document.getElementById('lvbPJProSimples').style.paddingLeft = "170px";
+        }
+        document.getElementById('selPessoaJuridicaProcSimples').style.display = "";
         document.getElementById('hdnRbOutorgante').value = "PJ"
         document.getElementById('imgPj').style.display = "";
     }
@@ -229,9 +232,12 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
                             var dados = [];
                             $('dados', data).children().each(function () {
-                                console.log($(this)[0].innerHTML)
-                                var valor = $(this)[0].innerHTML;
+
+                                var valor = $(this).context.innerHTML;
                                 dados.push(valor);
+
+
+                                ;
                             });
 
                             //Inicio - Ajax Validação Usuário
@@ -299,7 +305,8 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
     function peticionar() {
 
-        console.log(456);
+        console.log('Cheguei aqui');
+
         //Validando combo Tipo de PRocuração
         if (document.getElementById('selTipoProcuracao').value == "") {
             alert("Escolha um Tipo de Procuração.");
@@ -314,10 +321,8 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         var selPessoaJuridica = document.getElementById('selPessoaJuridica').value;
         var hdnIdContExterno = document.getElementById('hdnIdContExterno').value;
         if (document.getElementById('selTipoProcuracao').value == "S" && document.getElementById('hdnRbOutorgante').value == "PJ") {
-
             validarCampos();
         } else if (document.getElementById('selTipoProcuracao').value == "S" && document.getElementById('hdnRbOutorgante').value == "PF") {
-
             validarCampos();
         } else if (document.getElementById('selTipoProcuracao').value == "E") {
             validarCampos();
@@ -502,12 +507,13 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                             data: dados,
                             success: function (data) {
                                 $.each($(data).find('item'), function (i, j) {
-                                    var valor = $(this)[i].innerHTML;
+                                    var valor = $(this).context.innerHTML;
                                     if ($(j).attr("id") == 0) {
 
 
                                         //Modal para Assinatura
-                                        parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
+                                        infraAbrirJanela('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
+                                            'concluirPeticionamento',
                                             770,
                                             480,
                                             '', //options
@@ -517,9 +523,10 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
                                         //Modal para Existencia de Procuração
                                         //Modal para Validação
-                                        parent.infraAbrirJanelaModal($(j).attr("id"),
-                                            600,
-                                            300,
+                                        infraAbrirJanela($(j).attr("id"),
+                                            'AvisoDeExistencia',
+                                            800,
+                                            490,
                                             '', //options
                                             false); //modal
 
@@ -563,11 +570,12 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 data: dados,
                 success: function (data) {
                     $.each($(data).find('item'), function (i, j) {
-                        var valor = $(this)[0].innerHTML;
+                        var valor = $(this).context.innerHTML;
                         if ($(j).attr("id") == 0) {
 
                             //Modal para Assinatura
-                            parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
+                            infraAbrirJanela('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
+                                'concluirPeticionamento',
                                 770,
                                 480,
                                 '', //options
@@ -577,7 +585,8 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
                             //Modal para Existencia de Procuração
                             //Modal para Validação
-                            parent.infraAbrirJanelaModal($(j).attr("id"),
+                            infraAbrirJanela($(j).attr("id"),
+                                'AvisoDeExistencia',
                                 770,
                                 480,
                                 '', //options
@@ -702,6 +711,8 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             document.getElementById("sbmPeticionarInferior").style.display = "none";
             document.getElementById("btnCancelarInferior").style.display = "none";
 
+            //document.getElementById("selPessoaJuridica").style.display = "none";
+            //document.getElementById("lvbPJProSimples").style.display = "none";
         }
         if (el.value == '<?php echo MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL?>') {
             //Caso a Intimação seja Especial, apagar os campos da Simples caso estejam preenchidos
@@ -712,7 +723,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             document.getElementById('lblDt').style.display = "none";
             document.getElementById('txtDt').style.display = "none";
             document.getElementById('imgDt').style.display = "none";
-            document.getElementById('PessoaJuridicaOutorgante').style.display = "none";
             document.getElementById('hiddenOutorgante').style.display = "none";
             document.getElementById('procuracaoSimplesFieldSet').style.display = "none";
             document.getElementById('rbAbrangencia').checked = false;
@@ -816,6 +826,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             document.getElementById("imgPj").style.display = "none";
             if ($mostrar) {
                 document.getElementById("procuracaoSimplesFieldSet").style.display = "";
+                document.getElementById('lvbPJProSimples').style.paddingLeft = "170px";
                 document.getElementById("txtExplicativo").style.display = "";
                 document.getElementById("hiddenOutorgante").style.display = "";
 

@@ -167,7 +167,7 @@ class MdPetIntRelatorioRN extends InfraRN {
 
             //Data Cumprimento da Intimação
             $dataForm = !is_null($objDTO->getDthDataAceite()) ? explode(' ', $objDTO->getDthDataAceite()) : null;
-            $dataForm = !is_null($dataForm) > 0 ? $dataForm[0] : '';
+            $dataForm = count($dataForm) > 0 ? $dataForm[0] : '';
             $objDTO->setDthDataAceite($dataForm);
 
             //Define Situação Intimação

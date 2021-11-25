@@ -657,7 +657,7 @@ class MdPetIntegracaoRN extends InfraRN
                 $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
                 $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado($arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao(), $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegFuncionalid());
 
-                if ($arrIdMdPetIntegFuncionalidUtilizado) {
+                if (count($arrIdMdPetIntegFuncionalidUtilizado) > 0) {
                     //Regras de Negocio
                     $objInfraException = new InfraException();
 
@@ -722,7 +722,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
             $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado(null, $objMdPetIntegracaoDTO->getNumIdMdPetIntegFuncionalid());
 
-            if ($arrIdMdPetIntegFuncionalidUtilizado) {
+            if (count($arrIdMdPetIntegFuncionalidUtilizado) > 0) {
                 $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra Integração.');
             }
 
@@ -783,7 +783,7 @@ class MdPetIntegracaoRN extends InfraRN
                 $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
                 $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao(), $objMdPetIntegracaoDTO->getNumIdMdPetIntegFuncionalid());
 
-                if ($arrIdMdPetIntegFuncionalidUtilizado) {
+                if (count($arrIdMdPetIntegFuncionalidUtilizado) > 0) {
                     $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra Integração.');
                 }
 
@@ -843,7 +843,7 @@ class MdPetIntegracaoRN extends InfraRN
             'parametrosSaida' => $_POST['nomeFuncionalDadosSaida']
         );
 
-        if ($objMdPetIntegracaoDTO) {
+        if (count($objMdPetIntegracaoDTO) == 1) {
 
             if ($_POST['txtPrazo'] == '') {
                 $prazo = null;
@@ -923,7 +923,7 @@ class MdPetIntegracaoRN extends InfraRN
 
     protected function excluirParametrosControlado(MdPetIntegracaoDTO $objMdPetIntegracaoDTO)
     {
-        if ($objMdPetIntegracaoDTO) {
+        if (count($objMdPetIntegracaoDTO) == 1) {
             $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
             $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
             $objMdPetIntegParametroDTO->retTodos();

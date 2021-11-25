@@ -126,8 +126,8 @@ try {
 			}
 									
 			echo "<script>";
-  			echo "window.parent.location = '" . $urlAssinada . "';";
-  			echo " window.parent.focus();";
+  			echo "window.opener.location = '" . $urlAssinada . "';";
+  			echo " window.opener.focus();";
   			echo " window.close();";
   			echo "</script>";
   			die;
@@ -296,12 +296,12 @@ function assinar(){
 	
 	if( isValido() ){
 
-		var textoEspecificacao = window.parent.document.getElementById('txtEspecificacao').value;
-		var nivelAcesso = window.parent.document.getElementById('nivelAcesso1').value;
+		var textoEspecificacao = window.opener.document.getElementById('txtEspecificacao').value;
+		var nivelAcesso = window.opener.document.getElementById('nivelAcesso1').value;
 
-		var campoHipLegal1 = window.parent.document.getElementById('hipoteseLegal1');
-		var campoHipLegal2 = window.parent.document.getElementById('hipoteseLegal2');
-		var campoHipLegal3 = window.parent.document.getElementById('hipoteseLegal3');
+		var campoHipLegal1 = window.opener.document.getElementById('hipoteseLegal1');
+		var campoHipLegal2 = window.opener.document.getElementById('hipoteseLegal2');
+		var campoHipLegal3 = window.opener.document.getElementById('hipoteseLegal3');
 
 		var hipoteseLegal = null;
 		var hipoteseLegal2 = null;
@@ -312,11 +312,11 @@ function assinar(){
 		}
 
 		if( campoHipLegal2 != null && campoHipLegal2 != undefined ){
-		  hipoteseLegal2 = window.parent.document.getElementById('hipoteseLegal2');
+		  hipoteseLegal2 = window.opener.document.getElementById('hipoteseLegal2');
 		}
 
 		if( campoHipLegal3 != null && campoHipLegal3 != undefined ){
-		  hipoteseLegal3 = window.parent.document.getElementById('hipoteseLegal3');
+		  hipoteseLegal3 = window.opener.document.getElementById('hipoteseLegal3');
 		}
 		
 		if( hipoteseLegal2 != null && hipoteseLegal2 != undefined ){
@@ -333,12 +333,12 @@ function assinar(){
 		document.getElementById('hipoteseLegalDocPrincipal').value = hipoteseLegal;
 
 		//verificar se esta vindo uma lista de interessados
-		var selInteressados = window.parent.document.getElementById('selInteressados');
-		var hdnSelInteressadosIndicados = window.parent.document.getElementById('hdnListaInteressadosIndicados');
+		var selInteressados = window.opener.document.getElementById('selInteressados');
+		var hdnSelInteressadosIndicados = window.opener.document.getElementById('hdnListaInteressadosIndicados');
 		var selInteressadosSelecionadosTxt = '';
 		
 		//verificar se esta a combo de UF (Unidades multiplas)
-		var selUFAberturaProcesso = window.parent.document.getElementById('selUFAberturaProcesso');
+		var selUFAberturaProcesso = window.opener.document.getElementById('selUFAberturaProcesso');
 
 		if( selUFAberturaProcesso != null ) {
 			document.getElementById('hdnIdUnidadeMultiplaSelecionada').value = selUFAberturaProcesso.value;			
@@ -407,9 +407,9 @@ function assinar(){
 		}
 
 		//obtendo valores das grids de documentos principais, essenciais e complementares
-		var hdnDocPrincipal = window.parent.document.getElementById('hdnDocPrincipal');
-		var hdnDocEssencial = window.parent.document.getElementById('hdnDocEssencial');
-		var hdnDocComplementar = window.parent.document.getElementById('hdnDocComplementar');
+		var hdnDocPrincipal = window.opener.document.getElementById('hdnDocPrincipal');
+		var hdnDocEssencial = window.opener.document.getElementById('hdnDocEssencial');
+		var hdnDocComplementar = window.opener.document.getElementById('hdnDocComplementar');
 		
 		if( hdnDocPrincipal != null && hdnDocPrincipal != undefined){
 		  document.getElementById('hdnDocPrincipal').value = hdnDocPrincipal.value;
@@ -468,8 +468,8 @@ function inicializar(){
 
 function fecharJanela(){
 	
-	if (window.parent != null && !window.parent.closed) {
-        window.parent.focus();
+	if (window.opener != null && !window.opener.closed) {
+        window.opener.focus();
     }
 
     window.close();

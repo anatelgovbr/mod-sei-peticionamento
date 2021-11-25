@@ -72,8 +72,7 @@ class MdPetIntimacaoINT extends InfraINT {
                 $hdnSituacao = array_key_exists('selCumprimentoIntimacao', $_POST) ? $_POST['selCumprimentoIntimacao'] : null;
 
                 //Verifica se esse valor deve ser selecionado
-                $qtdHdnSituacao = (is_array($hdnSituacao) ? count($hdnSituacao) : 0);
-                if ($qtdHdnSituacao > 0) {
+                if (count($hdnSituacao != '')) {
                     $strOptionCorreta = $key == $hdnSituacao ? $strOptionSel : $strOption;
                 } else {
                     $strOptionCorreta = $key == MdPetIntimacaoRN::$TODAS ? $strOptionSel : $strOption;

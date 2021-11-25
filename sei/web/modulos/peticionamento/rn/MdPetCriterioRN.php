@@ -277,8 +277,7 @@ class MdPetCriterioRN extends InfraRN
         $objCriterioIntercorrentePeticionamentoValidarDTO->retTodos();
         $arrObjCriterioIntercorrentePeticionamentoValidarDTO = $this->consultar($objCriterioIntercorrentePeticionamentoValidarDTO);
 
-        $criterioIntercorrentePeticionamentoCount = (is_array($arrObjCriterioIntercorrentePeticionamentoValidarDTO) ? count($arrObjCriterioIntercorrentePeticionamentoValidarDTO) : 0);
-        if ($criterioIntercorrentePeticionamentoCount > 0 &&
+        if((count($arrObjCriterioIntercorrentePeticionamentoValidarDTO) > 0 ) &&
             $objMdPetCriterioDTO->getStrSinCriterioPadrao() == $arrObjCriterioIntercorrentePeticionamentoValidarDTO->getStrSinCriterioPadrao()){
             $objInfraException->adicionarValidacao('Tipo de Processo já possui Critério Intercorrente associado.');
         }

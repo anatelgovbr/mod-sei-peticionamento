@@ -247,7 +247,7 @@ class MdPetContatoRN extends InfraRN {
 		$objContatoDTO->setStrMatricula(null);
 		$objContatoDTO->setStrMatriculaOab(null);
 		$objContatoDTO->setDtaNascimento(null);
-		$objContatoDTO->setStrTelefoneComercial(null);
+		$objContatoDTO->setStrTelefoneFixo(null);
 		$objContatoDTO->setStrTelefoneCelular(null);
 		$objContatoDTO->setStrEmail(null);
 		$objContatoDTO->setStrSitioInternet(null);
@@ -405,7 +405,7 @@ class MdPetContatoRN extends InfraRN {
 
 			$idsUsuario    = InfraArray::converterArrInfraDTO($arrContatoDTO, 'IdUsuarioCadastro');
 
-			if($idsUsuario)
+			if(count($idsUsuario) > 0)
 			{
 				$objUsuarioDTO = new UsuarioDTO();
 				$objUsuarioDTO->setNumIdUsuario($idsUsuario, InfraDTO::$OPER_IN);
@@ -420,9 +420,8 @@ class MdPetContatoRN extends InfraRN {
 					$idsContatoUsers  =  InfraArray::converterArrInfraDTO($arrObjUsuarioDTO, 'IdContato');
 
 					$idTipoContatoUsExt = $this->getIdTipoContatoUsExt();
-                    $qtdIdsContatoUsers = isset($idsContatoUsers) ? count($idsContatoUsers) : 0;
 
-					if($qtdIdsContatoUsers > 0 && !empty($idTipoContatoUsExt))
+					if(count($idsContatoUsers) && count($idTipoContatoUsExt) > 0 && !empty($idTipoContatoUsExt))
 					{
 
 						$objContatoDTO = new ContatoDTO();

@@ -40,71 +40,95 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
             //Validação para Procuração Simples
             //DAta
-
-            if ($dados['validade'] != "Indeterminada") {
-                $data = explode('/', $dados['validade']);
-                $dados['validade'] = $data[0] . '-' . $data[1] . '-' . $data[2];
-                $operador = InfraDTO::$OPER_MAIOR_IGUAL;
-            } else {
-                $dados['validade'] = null;
-                $operador = InfraDTO::$OPER_IGUAL;
-            }
-            //PRocessos
-
-            if ($dados['processos'] != "") {
-                $operadorProc = infraDTO::$OPER_IN;
-                $coluna = "IdMdPetRelProtocolo";
-                $processos = array();
-                $tpProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($dados['processos']);
-                foreach ($tpProcesso as $value) {
-                    $processos[] = $value[0];
-                }
-
-            } else {
-                $operadorProc = infraDTO::$OPER_IGUAL;
-                $coluna = "StaAbrangencia";
-                $processos = "";
-                $processos = "Q";
-            }
-
             $objMdPetVincRepresentantSimplesDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantSimplesRN = new MdPetVincRepresentantRN();
             $objMdPetVincRepresentantSimplesDTO->setStrStaEstado('A');
             $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetRelPoder();
             $objMdPetVincRepresentantSimplesDTO->setStrSinAtivo('S');
             $objMdPetVincRepresentantSimplesDTO->retDthDataCadastro();
-            //$objMdPetVincRepresentantSimplesDTO->setDthDataLimite($dados['validade'],$operador);
-            $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
-                array('IdContato', 'IdContatoVinc', 'TipoRepresentante', 'IdMdPetRelPoder', $coluna),
-                array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IN, $operadorProc),
-                array($dados['idOutorgado'], $dados['idOutorgante'], MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES, $poderes, $processos),
-                array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
+            $objMdPetVincRepresentantSimplesDTO->retDthDataLimite();
+            $objMdPetVincRepresentantSimplesDTO->retStrStaAbrangencia();
 
-            //Validação da DAta Liimite e Cadastro
             $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
-                array('DataCadastro', 'DataLimite'),
-                array(InfraDTO::$OPER_MENOR_IGUAL, InfraDTO::$OPER_MAIOR_IGUAL),
-                array(InfraData::getStrDataHoraAtual(), InfraData::getStrDataHoraAtual()),
-                InfraDTO::$OPER_LOGICO_AND, 'ativo');
-            //Validação da DAta Limite
-            $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
-                array('DataLimite'),
-                array($operador),
-                array($dados['validade']),
-                null, 'dataValidade');
-
-            $objMdPetVincRepresentantSimplesDTO->agruparCriterios(array('ativo', 'dataValidade'), InfraDTO::$OPER_LOGICO_OR);
-
+                array('IdContato', 'IdContatoVinc', 'TipoRepresentante'),
+                array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
+                array($dados['idOutorgado'], $dados['idOutorgante'], MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES),
+                array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
 
             $objMdPetVincRepresentantSimplesDTO->retNumIdContato();
             $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetVinculoRepresent();
-            $objMdPetVincRepresentantSimplesDTO = $objMdPetVincRepresentantSimplesRN->listar($objMdPetVincRepresentantSimplesDTO);
-            $objMdPetVincRepresentantSimplesDTO = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantSimplesDTO, 'IdMdPetVinculoRepresent');
+            $arrObjMdPetVincRepresentantSimplesDTO = $objMdPetVincRepresentantSimplesRN->listar($objMdPetVincRepresentantSimplesDTO);
 
-            $qtdObjMdPetVincRepresentantDTO = isset($objMdPetVincRepresentantDTO) ? count($objMdPetVincRepresentantDTO) : 0;
-            $qtdObjMdPetVincRepresentantSimplesDTO = isset($objMdPetVincRepresentantSimplesDTO) ? count($objMdPetVincRepresentantSimplesDTO) : 0;
-            if ($qtdObjMdPetVincRepresentantDTO > 0 || $qtdObjMdPetVincRepresentantSimplesDTO > 0) {
-                $objMdPetVincRepresentantDTO = array_unique(array_merge($objMdPetVincRepresentantDTO, $objMdPetVincRepresentantSimplesDTO));
+            $arrObjMdPetVincRepresentantSimplesFinal = array();
+            foreach($arrObjMdPetVincRepresentantSimplesDTO as $objMdPetVincRepresentantSimples){
+                $gerarProcuracao = true;
+
+                $objMdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
+                $objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
+                $objMdPetRelVincRepTpPoderDTO->retNumIdTipoPoderLegal();
+                $objMdPetRelVincRepTpPoderDTO->setNumIdVinculoRepresent($objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent());
+
+                $arrObjMdPetRelVincRepTpPoderDTO = $objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO);
+                $arrObjMdPetRelVincRepTpPoderDTO = InfraArray::converterArrInfraDTO($arrObjMdPetRelVincRepTpPoderDTO, 'IdTipoPoderLegal');
+
+                $objMdPetRelVincRepProtocRN = new MdPetRelVincRepProtocRN();
+                $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
+                $objMdPetRelVincRepProtocDTO->retNumIdProtocolo();
+                $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent());
+
+                $arrMdPetRelVincRepProtocDTO = $objMdPetRelVincRepProtocRN->listar($objMdPetRelVincRepProtocDTO);
+                $arrMdPetRelVincRepProtocDTO = InfraArray::converterArrInfraDTO($arrMdPetRelVincRepProtocDTO, 'IdProtocolo');
+
+                if ($dados['validade'] != "Indeterminada") {
+                    $data = explode('/', $dados['validade']);
+                    $dados['validade'] = $data[0] . '/' . $data[1] . '/' . $data[2] . " 23:59:59";
+                } else {
+                    $dados['validade'] = null;
+                }
+                //PRocessos
+
+                if ($dados['processos'] != "") {
+                    $processos = array();
+                    $tpProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($dados['processos']);
+                    foreach ($tpProcesso as $value) {
+                        $processos[] = $value[0];
+                    }
+                } else {
+                    $processos = "";
+                    $processos = "Q";
+                }
+
+                $poderesIguais = array_intersect($poderes, $arrObjMdPetRelVincRepTpPoderDTO);
+
+                if($objMdPetVincRepresentantSimples->getStrStaAbrangencia() == 'Q'){
+                    if(is_array($processos) && $poderesIguais){
+                        $gerarProcuracao = false;
+                    } else {
+                        if($poderesIguais){
+                            $gerarProcuracao = false;
+                        }
+                    }
+                } else {
+                    if($processos == 'Q' && $objMdPetVincRepresentantSimples->getStrStaAbrangencia() == 'E'){
+                        if($poderesIguais){
+                            $gerarProcuracao = false;
+                        }
+                    } else {
+                        $processosIguais = array_intersect($processos, $arrMdPetRelVincRepProtocDTO);
+                        if ($processosIguais || $poderesIguais) {
+                            $gerarProcuracao = false;
+                        }
+                    }
+                }
+
+                if(!$gerarProcuracao) {
+                    $arrObjMdPetVincRepresentantSimplesFinal[] = $objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent();
+                }
+            }
+
+
+            if (count($arrObjMdPetVincRepresentantSimplesFinal) > 0 || count($objMdPetVincRepresentantDTO) > 0) {
+                $objMdPetVincRepresentantDTO = array_unique(array_merge($objMdPetVincRepresentantDTO, $arrObjMdPetVincRepresentantSimplesFinal));
                 $arrImplode = implode("-", $objMdPetVincRepresentantDTO);
                 $xml = '';
                 $xml .= '<itens>';
@@ -229,7 +253,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
         $arrContato = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 
-        if (!is_null($arrContato)) {
+        if (count($arrContato) > 0) {
             $xml .= '<dados>';
             $xml .= '<nu-id>' . $arrContato->getNumIdContato() . '</nu-id>';
             $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($arrContato->getDblCpfContato()) . '</nu-cpf>';

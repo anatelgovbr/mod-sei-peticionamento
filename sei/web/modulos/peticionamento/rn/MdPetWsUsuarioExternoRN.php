@@ -32,8 +32,23 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 			throw new InfraException('Erro consultando Usuário Externo.',$e);
 		}
 	}
+
+    protected function listarUsuarioExterno(MdPetWsUsuarioExternoDTO  $objUsuarioExternoDTO){
+        try {
+
+            //Valida Permissao
+            SessaoSEI::getInstance()->validarAuditarPermissao('usuario_externo_consultar',__METHOD__,$objUsuarioExternoDTO);
+
+            $objUsuarioBD = new UsuarioBD($this->getObjInfraIBanco());
+            $ret = $objUsuarioBD->listar($objUsuarioExternoDTO);
+
+            return $ret;
+        }catch(Exception $e){
+            throw new InfraException('Erro consultando Usuário Externo.',$e);
+        }
+    }
 	
-	public function consultarExternoControlado($Sigla){
+	public function consultarExterno($Cpf, $Sigla = ""){
 		
 		try {
 			
@@ -60,12 +75,18 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 			$objUsuarioExternoDTO->retDthDataCadastroContato();
 				
 			//Parâmetros para consulta
-			$objUsuarioExternoDTO->setStrSigla($Sigla, InfraDTO::$OPER_IGUAL);
-	
-			$objUsuarioExternoDTO = self::consultarUsuarioExterno($objUsuarioExternoDTO);
+			$objUsuarioExternoDTO->setStrCpf($Cpf, InfraDTO::$OPER_IGUAL);
+			if($Sigla != "") {
+                $objUsuarioExternoDTO->setStrSigla($Sigla, InfraDTO::$OPER_IGUAL);
+            }
+			$objUsuarioExternoDTO = self::listarUsuarioExterno($objUsuarioExternoDTO);
 				
 			if ($objUsuarioExternoDTO==null) {
-				$objInfraException->lancarValidacao('Não existe cadastro de Usuário Externo no SEI com o e-mail informado.');
+			    if($Sigla != "") {
+                    $objInfraException->lancarValidacao('Não existe cadastro de Usuário Externo no SEI com o E-mail e CPF informados.');
+                } else {
+                    $objInfraException->lancarValidacao('Não existe cadastro de Usuário Externo no SEI com o CPF informados.');
+                }
 			}
 	
 			return $objUsuarioExternoDTO;

@@ -141,14 +141,14 @@ try {
             if ($arrDados->getStrTipoPrazoExternoMdPetIntTipoResp() == 'N') {
                 $prazo = 'Não Possui Prazo Externo';
             } else if ($arrDados->getStrTipoPrazoExternoMdPetIntTipoResp() == 'D') {
-                $tipoDia = null;
-                if ($arrDados->getStrTipoDia() == 'U') {
-                    $tipoDia = 'Útil';
-                    if ($arrDados->getNumValorPrazoExternoMdPetIntTipoResp() > 1) {
-                        $tipoDia = 'Úteis';
-                    }
+              $tipoDia = null;
+              if($arrDados->getStrTipoDia() == 'U'){
+                $tipoDia = 'Útil';
+                if($arrDados->getNumValorPrazoExternoMdPetIntTipoResp() > 1){
+                  $tipoDia = 'Úteis';
                 }
-                $prazo = $arrDados->getNumValorPrazoExternoMdPetIntTipoResp() . ' Dias ' . $tipoDia;
+              }
+                $prazo = $arrDados->getNumValorPrazoExternoMdPetIntTipoResp() . ' Dias '.$tipoDia ;
             } else if ($arrDados->getStrTipoPrazoExternoMdPetIntTipoResp() == 'M') {
                 $prazo = $arrDados->getNumValorPrazoExternoMdPetIntTipoResp() . ' Meses';
             } else if ($arrDados->getStrTipoPrazoExternoMdPetIntTipoResp() == 'A') {
@@ -163,7 +163,7 @@ try {
 
             $isVinculado = $objMdPetIntRelTipoRespRN->validarExclusaoTipoResposta($arrDados->getNumIdMdPetIntTipoRespMdPetIntTipoResp());
 
-            $arrTiposResposta[] = array($arrDados->getNumIdMdPetIntTipoRespMdPetIntTipoResp(), $isVinculado, PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrDados->getStrNomeMdPetIntTipoResp())), $prazo, $resposta);
+            $arrTiposResposta[] = array($arrDados->getNumIdMdPetIntTipoRespMdPetIntTipoResp(), $isVinculado, PaginaSEI::getInstance()->formatarParametrosJavaScript( PaginaSEI::tratarHTML( $arrDados->getStrNomeMdPetIntTipoResp() ) ), $prazo, $resposta);
         }
 
         if (isset($_GET['id_md_pet_int_tipo_intimacao'])) {
@@ -172,8 +172,8 @@ try {
 
         $strItenSelPrazoExterno = MdPetIntTipoRespINT::montarSelectTipoRespostaEU8612($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita());
     }
-    $strLinkAjaxTipoResposta = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=integracao_tipo_resposta');
-    $strUrlBuscaTipoResposta = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=busca_tipo_resposta');
+    $strLinkAjaxTipoResposta  = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=integracao_tipo_resposta');
+    $strUrlBuscaTipoResposta  = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=busca_tipo_resposta');
 
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
@@ -186,110 +186,239 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-require_once("md_pet_int_tipo_intimacao_cadastro_css.php");
+?>
+<? if (0){ ?>
+    <style><?}?>
+        #lblNome { position: absolute; left: 0%; top: 0%; width: 30%; }
+        #txtNome { position: absolute; left: 0%; top: 50%; width: 40%; }
+        #nomeAjuda { position: absolute; left: 31%; top: 45%; width: 2%; }
+        #imgAjudaUsuario {position:absolute;left:40px;top:0%; }
+
+        #fldResposta { position: absolute; left: 0%; top: 11%; width: 85%; }
+        #selTipoResposta { position: absolute; left: 0%; top: 6%; width: 45%; }
+
+        #sbmGravarTipoResposta { position: absolute; left: 45.5%; top: 6%; width: 55px; }
+        #divTabelaTipoResposta { position: absolute; left: 0%; top: 10%; width: 100%; }
+        <? if (0){ ?></style><? } ?>
+<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
+?>
+<? if (0){ ?>
+    <script type="text/javascript"><?}?>
+
+        function inicializar() {
+            if ('<?=$_GET['acao']?>' == 'md_pet_int_tipo_intimacao_cadastrar') {
+                document.getElementById('txtNome').focus();
+            } else if ('<?=$_GET['acao']?>' == 'md_pet_int_tipo_intimacao_consultar') {
+                infraDesabilitarCamposAreaDados();
+            } else {
+                document.getElementById('btnCancelar').focus();
+            }
+            infraEfeitoTabelas();
+
+            //Ajax para carregar os Tipos de Resposta
+            objAjaxIdTipoResposta = new infraAjaxMontarSelectDependente('optTipoRespostaFacultativa', 'selTipoResposta', '<?=$strLinkAjaxTipoResposta?>');
+            objAjaxIdTipoResposta.prepararExecucao = function () {
+                objTabelaDinamicaTipoResposta.limpar();
+                document.getElementById('hdnTipoResposta').value = '';
+                document.getElementById('sbmGravarTipoResposta').removeAttribute("disabled");
+                return 'tipoResposta=' + document.getElementById('optTipoRespostaFacultativa').value;
+            };
+            objAjaxIdTipoResposta = new infraAjaxMontarSelectDependente('optTipoRespostaExige', 'selTipoResposta', '<?=$strLinkAjaxTipoResposta?>');
+            objAjaxIdTipoResposta.prepararExecucao = function () {
+                objTabelaDinamicaTipoResposta.limpar();
+                document.getElementById('hdnTipoResposta').value = '';
+                document.getElementById('sbmGravarTipoResposta').removeAttribute("disabled");
+                return 'tipoResposta=' + document.getElementById('optTipoRespostaExige').value;
+            }
+
+            //Insere as linhas de Tipo de Resposta
+            objTabelaDinamicaTipoResposta = new infraTabelaDinamica('tblTipoResposta', 'hdnTipoResposta', <?=$strEmailAcoes?>);
+            objTabelaDinamicaTipoResposta.alterar = function (arr) {
+                document.getElementById('selTipoResposta').value = arr[0];
+                document.getElementById('selTipoResposta').value = arr[1];
+                document.getElementById('selTipoResposta').value = arr[2];
+            };
+
+            objTabelaDinamicaTipoResposta.remover = function (arr) {
+
+                var id     = arr[0][0];
+                var vinculo = arr[1][0];
+
+                if (objTabelaDinamicaTipoResposta.tbl.rows.length == '2') {
+                    document.getElementById('divTabelaTipoResposta').style.display = 'none';
+                }
+
+                //Adiciona novamente o item ao select
+                var id = arr[0];
+                $("#selTipoResposta option[value='" + id + "']").show();
+
+                //Habilita o inserir caso o item removido seja Exige Resposta
+                if (arr[3] == 'Exige Resposta') {
+                    document.getElementById('sbmGravarTipoResposta').removeAttribute("disabled");
+                }
+
+                return true;
+
+            };
+
+            objTabelaDinamicaTipoResposta.gerarEfeitoTabela = true;
+
+            <? foreach(array_keys($arrAcoes) as $id) { ?>
+            objTabelaDinamicaTipoResposta.adicionarAcoes('<?=$id?>', '<?=$arrAcoes[$id]?>');
+            <? } ?>
+
+            infraEfeitoTabelas();
+            controlarExibicaoTabela();
+        }
+
+        function OnSubmitForm(){
+            if (infraTrim(document.getElementById('txtNome').value)=='') {
+                alert('Informe o Nome.');
+                document.getElementById('txtNome').focus();
+                return false;
+            }
+
+            if (!document.getElementById('optTipoRespostaFacultativa').checked && !document.getElementById('optTipoRespostaExige').checked && !document.getElementById('optTipoSemResposta').checked) {
+                alert('Informe o Tipo de Resposta para a Intimação.');
+                document.getElementById('selTipoResposta').focus();
+                return false;
+            }
+
+            if (document.getElementById('optTipoRespostaFacultativa').checked && document.getElementById('optTipoRespostaExige').checked) {
+                qtdResp = document.getElementById('tblTipoResposta').rows.length;
+                if(qtdResp <= 1){
+                    alert('Selecione pelo menos 1(um) Tipo de Resposta.');
+                    return false;
+                }
+            }
+
+        }
+
+        function esconderTabelaTipoResposta(){
+            document.getElementById('divTabelaTipoResposta').style.display = 'none';
+
+            if (document.getElementById('optTipoRespostaFacultativa').checked || document.getElementById('optTipoRespostaExige').checked) {
+                document.getElementById('divInfraAreaDados2').style.display = '';
+            }else if (document.getElementById('optTipoSemResposta').checked) {
+                document.getElementById('divInfraAreaDados2').style.display = 'none';
+            }
+            esconderTabela();
+        }
+
+        function esconderTabela(){
+            document.getElementById('divTabelaTipoResposta').style.display = 'none';
+        }
+
+        function controlarExibicaoTabela(){
+            var hdnTipoResposta = document.getElementById("hdnTipoResposta").value;
+            if(hdnTipoResposta == ''){
+                document.getElementById('divTabelaTipoResposta').style.display = 'none';
+                if (document.getElementById('optTipoSemResposta').checked) {
+                    document.getElementById('divInfraAreaDados2').style.display = 'none';
+                }
+            }else{
+                document.getElementById('divTabelaTipoResposta').style.display = '';
+            }
+        }
+
+        //Transporta os intens do select Para a tabela.
+        function transportarTipoResposta(){
+
+            var paramsAjax = {
+                id: document.getElementById('selTipoResposta').value
+            };
+
+            $.ajax({
+                url: '<?=$strUrlBuscaTipoResposta?>',
+                type: 'POST',
+                dataType: 'XML',
+                data: paramsAjax,
+                success: function (r) {
+                    var prazo = $(r).find('Prazo').html();
+                    var prazoFormatado = prazo != '' ? prazo.replace("(", "") : '';
+                    prazoFormatado = prazoFormatado != '' ? prazoFormatado.replace(")", "") : '';
+
+                    objTabelaDinamicaTipoResposta.adicionar([$(r).find('Id').text(), $(r).find('Vinculado').text(), $("<pre>").text($(r).find('Nome').html()).html(), $("<pre>").text(prazoFormatado).html(), $(r).find('Tipo').text()]);
+                    controlarExibicaoTabela();
+                    $("#selTipoResposta option:selected").hide();
+                    document.getElementById('selTipoResposta').value = '';
+
+                    document.getElementById('selTipoResposta').focus();
+                },
+                error: function (e) {
+                    console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+                }
+            });
+
+        }
+
+        <? if (0){ ?></script><? } ?>
+<?
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmMdPetIntTipoIntimacaoCadastro" method="post"
-          action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>"
-          onsubmit="return OnSubmitForm();">
+    <form id="frmMdPetIntTipoIntimacaoCadastro" method="post" action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>"  onsubmit="return OnSubmitForm();">
 
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('4em'); ?>
-        <div class="row">
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
-                <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:
-                    <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decisão que motiva a intimação e não a possível resposta do Usuário Externo. \n \n Exemplos: Descisão de 1ª Instância, Decisão de Inadmissibilidade de Recurso, Exigência para Complementação de Informações, Decisão sobre Recurso.', 'Ajuda') ?>
-                         class="infraImgModulo"/></label>
-                <input type="text" id="txtNome" name="txtNome" class="infraTex form-control"
-                       value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoIntimacaoDTO->getStrNome()); ?>"
-                       onkeypress="return infraMascaraTexto(this,event,70);" maxlength="70"
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
-                <fieldset id="fldResposta" class="form-control fieldsetTipoResposta" style="height: auto">
-                    <legend class="infraLegend"> Tipo de Intimação Aceita Tipo de Resposta</legend>
-                    <div id="divOptAno" class="infraDivRadio">
+        <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decisão que motiva a intimação e não a possível resposta do Usuário Externo. \n \n Exemplos: Descisão de 1ª Instância, Decisão de Inadmissibilidade de Recurso, Exigência para Complementação de Informações, Decisão sobre Recurso.') ?> class="infraImg"/></label>
+        <input type="text" id="txtNome" name="txtNome" class="infraText" value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoIntimacaoDTO->getStrNome()); ?>" onkeypress="return infraMascaraTexto(this,event,70);" maxlength="70" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <? PaginaSEI::getInstance()->fecharAreaDados();
+        PaginaSEI::getInstance()->abrirAreaDados('11em'); ?>
+        <fieldset id="fldResposta">
+            <legend class="infraLegend"> Tipo de Intimação Aceita Tipo de Resposta</legend>
+            <div id="divOptAno" class="infraDivRadio">
                 <span id="spnAno"><label id="lblAno" class="infraLabelRadio">
-                    <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta"
-                           id="optTipoRespostaFacultativa"
-                           value="F" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'F' ? 'checked="checked"' : '') ?> class="infraRadio"
-                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Facultativa</label>
+                    <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta" id="optTipoRespostaFacultativa" value="F" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'F' ? 'checked="checked"' : '') ?> class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Facultativa</label>
                 </span>
-                    </div>
-                    <div id="divOptAno" class="infraDivRadio">
+            </div>
+            <br>
+            <div id="divOptAno" class="infraDivRadio">
                 <span id="spnExige"><label id="lblExige" class="infraLabelRadio">
-                    <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta"
-                           id="optTipoRespostaExige"
-                           value="E" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'E' ? 'checked="checked"' : '') ?> class="infraRadio"
-                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Exige Resposta</label>
+                    <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta" id="optTipoRespostaExige" value="E" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'E' ? 'checked="checked"' : '') ?> class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Exige Resposta</label>
                 </span> <br>
-                    </div>
-                    <div id="divOptAno" class="infraDivRadio">
+            </div>
+            <br>
+            <div id="divOptAno" class="infraDivRadio">
                 <span id="spnExige"><label id="lblExige" class="infraLabelRadio">
-                    <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta"
-                           id="optTipoSemResposta"
-                           value="S" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'S' ? 'checked="checked"' : '') ?> class="infraRadio"
-                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Sem Resposta</label>
+                    <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta" id="optTipoSemResposta" value="S" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'S' ? 'checked="checked"' : '') ?> class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Sem Resposta</label>
                 </span> <br>
-                    </div>
-                </fieldset>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
-                <label id="lblTipoResposta" for="txtTipoResposta" accesskey="" class="infraLabelObrigatorio">Tipos de
-                    Resposta:
-                    <img align="top"
-                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('É possível indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usuário Externo. \n \n Somente é possível indicar um Tipo de Resposta que Exige Resposta pelo Usuário Externo.', 'Ajuda') ?>
-                         class="infraImgModulo"/></label>
-                <div class="input-group mb-3">
-                    <select id="selTipoResposta" name="selTipoResposta" class="infraSelect form-control"
-                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <option id=""></option> <?= $strItenSelPrazoExterno ?> </select>
-                    <button type="button" accesskey="A" name="sbmGravarTipoResposta" id="sbmGravarTipoResposta"
-                            value="Adicionar Tipo Resposta" onclick="transportarTipoResposta();"
-                            class="infraButton"><span
-                                class="infraTeclaAtalho">A</span>dicionar
-                    </button>
-                    <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>
-                </div>
-            </div>
-        </div>
-        <div class="row" id="divTabelaTipoResposta">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-10">
-                <table id="tblTipoResposta" width="85%" class="infraTable" summary="Lista de Tipos de Respostas">
-                    <caption class="infraCaption"> Lista de Tipos de Respostas</caption>
-                    <tr>
-                        <th style="display:none;">ID</th>
-                        <th style="display:none;">VINCULADO</th>
-                        <th class="infraTh" width="60%">Tipo de Resposta</th>
-                        <th class="infraTh" width="20px">Prazo Externo</th>
-                        <th class="infraTh" width="25px">Resposta do Usuário Externo</th>
-                        <th class="infraTh" width="15px">Ações</th>
-                    </tr>
-                </table>
-                <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>
+        </fieldset>
+        <? PaginaSEI::getInstance()->fecharAreaDados();
+        PaginaSEI::getInstance()->abrirAreaDados('50em'); ?>
+        <br>
+        <label id="lblTipoResposta" for="txtTipoResposta" accesskey="" class="infraLabelObrigatorio">Tipos de Resposta: <img align="top" style="height:16px; width:16px;" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" <?= PaginaSEI::montarTitleTooltip('É possível indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usuário Externo. \n \n Somente é possível indicar um Tipo de Resposta que Exige Resposta pelo Usuário Externo.') ?> class="infraImg"/></label>
+        <br>
+        <select id="selTipoResposta" name="selTipoResposta" class="infraSelect" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"> <option id=""></option> <?=$strItenSelPrazoExterno ?> </select>
+        <button type="button" accesskey="A" name="sbmGravarTipoResposta" id="sbmGravarTipoResposta" value="Adicionar Tipo Resposta" onclick="transportarTipoResposta();" class="infraButton"><span class="infraTeclaAtalho">A</span>dicionar</button>
+        <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>
 
-                <input type="hidden" id="hdnTipoResposta" name="hdnTipoResposta" value="<?= $strTipoResposta; ?>"/>
+        <div id="divTabelaTipoResposta" class="infraAreaTabela" style="<?php echo ($strTipoResposta == '') ? 'display: none' : '';?>" />
+            <table id="tblTipoResposta" width="85%" class="infraTable" summary="Lista de Tipos de Respostas">
+                <caption class="infraCaption"> Lista de Tipos de Respostas</caption>
+                <tr>
+                    <th style="display:none;">ID</th>
+                    <th style="display:none;">VINCULADO</th>
+                    <th class="infraTh" width="60%">Tipo de Resposta</th>
+                    <th class="infraTh" width="20px">Prazo Externo</th>
+                    <th class="infraTh" width="25px">Resposta do Usuário Externo</th>
+                    <th class="infraTh" width="15px">Ações</th>
+                </tr>
+            </table>
+            <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>
 
-            </div>
+            <input type="hidden" id="hdnTipoResposta" name="hdnTipoResposta" value="<?= $strTipoResposta; ?>"/>
         </div>
 
         <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
-        <input type="hidden" id="hdnIdMdPetIntTipoIntimacao" name="hdnIdMdPetIntTipoIntimacao"
-               value="<?= $objMdPetIntTipoIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(); ?>"/>
+        <input type="hidden" id="hdnIdMdPetIntTipoIntimacao" name="hdnIdMdPetIntTipoIntimacao" value="<?= $objMdPetIntTipoIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(); ?>"/>
     </form>
 <?
-require_once "md_pet_int_tipo_intimacao_cadastro_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

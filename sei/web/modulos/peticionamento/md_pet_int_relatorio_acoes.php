@@ -10,27 +10,28 @@ session_start();
 SessaoSEI::getInstance()->validarLink();
 
 //URL Base
-$strUrl = 'controlador.php?acao=md_pet_int_relatorio';
-$strTitulo = '';
-$strSelSituacao = MdPetIntRelatorioINT::getSituacoes();
-$strLinkAjaxTpIntimacao = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tp_int_auto_completar');
-$strLinkTpIntSelecionar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_selecionar&tipo_selecao=2&id_object=objLupaTpIntimacao');
-$strLinkAjaxUnidade = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=unidade_auto_completar_todas');
-$strLinkUnidSelecionar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=2&id_object=objLupaUnidade');
-$strUrlGrafico1 = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&grafico=1'));;
-$strUrlGrafico2 = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&grafico=2'));;
-$strUrlGrafico3 = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&grafico=3'));;
-$strUrlGrafico4 = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&grafico=4'));;
-$strUrlGrafico5 = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&grafico=5'));;
-$tipoGrafico = array_key_exists('grafico', $_GET) ? $_GET['grafico'] : 0;
-$tipoPesquisar = count($_POST);
-$htmlGrafico = $tipoGrafico != 0 ? MdPetIntRelatorioINT::gerarGraficoGeral($tipoGrafico) : null;
+$strUrl                   = 'controlador.php?acao=md_pet_int_relatorio';
+$strTitulo                = '';
+$strSelSituacao           = MdPetIntRelatorioINT::getSituacoes();
+$strLinkAjaxTpIntimacao   = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tp_int_auto_completar');
+$strLinkTpIntSelecionar   = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_selecionar&tipo_selecao=2&id_object=objLupaTpIntimacao');
+$strLinkAjaxUnidade       = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=unidade_auto_completar_todas');
+$strLinkUnidSelecionar    = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=2&id_object=objLupaUnidade');
+$strUrlGrafico1           = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'].'&grafico=1'));;
+$strUrlGrafico2           = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'].'&grafico=2'));;
+$strUrlGrafico3           = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'].'&grafico=3'));;
+$strUrlGrafico4           = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'].'&grafico=4'));;
+$strUrlGrafico5           = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'].'&grafico=5'));;
+$tipoGrafico              = array_key_exists('grafico', $_GET) ? $_GET['grafico'] : 0;
+$tipoPesquisar            = count($_POST);
+$htmlGrafico              = $tipoGrafico != 0 ? MdPetIntRelatorioINT::gerarGraficoGeral($tipoGrafico) : null;
 $arrGraficosTipoIntimacao = $tipoGrafico != 0 ? MdPetIntRelatorioINT::gerarGraficosTipoIntimacao($tipoGrafico) : array();
-$strSelGraficoGeral = MdPetIntRelatorioINT::getOptionsTipoGrafico($tipoGrafico);
-$strUrlExcel = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_relatorio_exp_excel&acao_origem=' . $_GET['acao'] . '&excel=1'));;
-$strUrlPesquisar = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&pesquisar=1'));
+$strSelGraficoGeral       = MdPetIntRelatorioINT::getOptionsTipoGrafico($tipoGrafico);
+$strUrlExcel              = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_relatorio_exp_excel&acao_origem=' . $_GET['acao'].'&excel=1'));;
+$strUrlPesquisar          = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'].'&pesquisar=1'));
 
-switch ($_GET['acao']) {
+switch ($_GET['acao'])
+{
     case 'md_pet_int_relatorio_listar':
         $strTitulo = 'Intimações Eletrônicas';
         break;
@@ -53,7 +54,7 @@ $arrComandos[] = '<button type="button" accesskey="X" id="btnExportarExcel" oncl
 
 $arrComandos[] = '<button type="button" accesskey="L" id="btnLimparCriterios" onclick="limparCriterios()" class="infraButton">
                                     <span class="infraTeclaAtalho">L</span>impar Critérios </button>';
-if ($tipoPesquisar) {
+if($tipoPesquisar){
     require_once 'md_pet_int_relatorio_lista.php';
 }
 PaginaSEI::getInstance()->montarDocType();
@@ -83,41 +84,34 @@ PaginaSEI::getInstance()->abrirAreaDados('50em');
           ) ?>">
 
         <?php PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-        <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                <!-- Filtro padrão -->
-                <?php require_once 'md_pet_int_relatorio_filtro.php'; ?>
-            </div>
-        </div>
+
+        <!-- Filtro padrão -->
+        <?php require_once 'md_pet_int_relatorio_filtro.php'; ?>
+
         <!-- Lista de Dados -->
         <?php
         PaginaSEI::getInstance()->fecharAreaDados(); ?>
-        <div class="row" style="margin-top: 200px;" id="divTabelaIntimacao">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <?php
-                if ($tipoPesquisar) {
-                    PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-                }
-                ?>
-            </div>
-        </div>
-        <div class="row" id="divGraficos" style="display:none; margin-top: 200px;" >
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                <?php require_once 'md_pet_int_relatorio_graficos.php'; ?>
-            </div>
-        </div>
+        <div id="divTabelaIntimacao" style="margin:24px auto 0 auto;">
+            <div class="grid grid-13 alturaPadrao"></div>
 
-
-
-        <input type="hidden" name="hdnIsPesquisa" id="hdnIsPesquisa"
-               value="<?php echo array_key_exists('pesquisar', $_GET) ? $_GET['pesquisar'] : 0; ?>">
-        <input type="hidden" name="hdnAcaoOrigem" id="hdnAcaoOrigem"
-               value="<?php echo array_key_exists('acao_origem', $_GET) ? $_GET['acao_origem'] : ''; ?>">
-        <div id="espacamento" style="display: block; margin-top: 200px">
+        <?php
+        if($tipoPesquisar){
+            PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+        }
+        ?>
 
         </div>
-        <?php PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos); ?>
-        <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
+
+        <div id="divGraficos" style="display:none; margin:30px auto 0 auto;">
+            <?php require_once 'md_pet_int_relatorio_graficos.php'; ?>
+        </div>
+        <br><br><br>
+        <?php PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+        ?>
+
+        <input type="hidden" name="hdnIsPesquisa" id="hdnIsPesquisa" value="<?php echo array_key_exists('pesquisar', $_GET) ? $_GET['pesquisar'] : 0;  ?>">
+        <input type="hidden" name="hdnAcaoOrigem" id="hdnAcaoOrigem" value="<?php echo array_key_exists('acao_origem', $_GET) ? $_GET['acao_origem'] : '';  ?>">
+
     </form>
 
 <?php

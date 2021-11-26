@@ -186,7 +186,6 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
     			$objAcessoExternoDTO->setStrEmailDestinatario( $emailUsuario );
     			$objAcessoExternoDTO->setStrSinProcesso( 'S' ); //visualizacao integral
     			$objAcessoExternoDTO->setStrSinAtivo('S');
-    			$objAcessoExternoDTO->setStrSinInclusao('N');
     			$objAcessoExternoDTO->setStrSenha('S'); //somente para nao ficar vazio e cair na validacao
     			$objAcessoExternoDTO->setStrMotivo( $strMotivo );
     			$objAcessoExternoDTO->setNumDias( MdPetIntAcessoExternoDocumentoRN::$NUMERO_DIAS_LIBERACAO_ACESSO_EXTERNO ); //100 anos

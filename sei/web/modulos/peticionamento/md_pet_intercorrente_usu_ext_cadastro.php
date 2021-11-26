@@ -79,15 +79,13 @@ try {
             PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
             PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
         ?>
-        <fieldset id="orientacoes" class="infraFieldset sizeFieldset form-control fieldSetOrientacoes" style="height: auto">
+        <fieldset id="field1" class="infraFieldset sizeFieldset">
             <legend class="infraLegend">&nbsp; Orientações &nbsp;</legend>
-            <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <label>
-                        <?= $txtOrientacoes ?>
-                    </label>
-                </div>
-            </div>
+		<div class="bloco">
+			<label>
+				<?= $txtOrientacoes ?>
+			</label>
+		</div>
         </fieldset>
         <br/>
 

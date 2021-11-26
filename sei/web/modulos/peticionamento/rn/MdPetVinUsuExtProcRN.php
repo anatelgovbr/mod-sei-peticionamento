@@ -131,23 +131,21 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $contatoDTO->retNumIdContato();
             $contatoDTO->setNumIdTipoContato($idTipoContatoUsExt);
             $arrIdContato = [];
-
             //Caso venha da tela de especial
             if (isset($_POST['hdnTbUsuarioProcuracao']) && $_POST['hdnTbUsuarioProcuracao'] != "") {
                 foreach ($dadosProcuracao as $procuracao) {
                     $cpf = InfraUtil::retirarFormatacao($procuracao[1]);
                     $contatoDTO->setDblCpf($cpf);
                     $contatoDTO->setNumIdContato($procuracao[0]);
+                    $contatoDTO->retStrSigla();
+                    $contatoDTO->retStrNome();
                     $arrContato = $contatoRN->listarRN0325($contatoDTO);
                     $arrIdContato[] = $arrContato[0]->getNumIdContato();
                 }
             } else {
                 $contatoDTO->setNumIdContato($dados['hdnIdUsuario']);
                 $arrContato = $contatoRN->listarRN0325($contatoDTO);
-                $qtdArrContato = isset($arrContato) ? count($arrContato) : 0;
-                if ($qtdArrContato > 0) {
-                    $arrIdContato[] = $arrContato[0]->getNumIdContato();
-                }
+                $arrIdContato[] = $arrContato[0]->getNumIdContato();
             }
 
             //$arrIdContato = $dados['hdnIdContExterno'];
@@ -417,6 +415,28 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
                 $reciboDTOBasico = $objMdPetVinculoUsuExtRN->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' => $tipoPeticionamento));
 
+                if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ") {
+                    $objContatoProcuracao = new ContatoDTO();
+                    $objContatoProcuracao->setNumIdContato($dados['hdnIdContExterno']);
+                    $objContatoProcuracao->retStrNome();
+                    $objContatoProcuracao->retDblCpf();
+                    $contatoRN = new ContatoRN();
+                    $objContatoProcuracao = $contatoRN->consultarRN0324($objContatoProcuracao);
+                    if($objContatoProcuracao){
+                        $dadosRetornoProcuracao['RepLegal'] = $objContatoProcuracao;
+                    }
+                } else if ($dados['selTipoProcuracao'] == "E") {
+                    $objContatoProcuracao = new ContatoDTO();
+                    $objContatoProcuracao->setNumIdContato($dados['hdnIdContExterno']);
+                    $objContatoProcuracao->retStrNome();
+                    $objContatoProcuracao->retDblCpf();
+                    $contatoRN = new ContatoRN();
+                    $objContatoProcuracao = $contatoRN->consultarRN0324($objContatoProcuracao);
+                    if($objContatoProcuracao){
+                        $dadosRetornoProcuracao['RepLegal'] = $objContatoProcuracao;
+                    }
+                }
+
                 $recibo = $this->gerarReciboProcuracao(array($dadosRetornoProcuracao, $objProcedimentoDTO, $reciboDTOBasico, $idMdPetVinculoRepresent, $tipoPeticionamento, $unidadeDTO, $dados));
                 $idDocumentoRecibo = $reciboDTOBasico->getDblIdDocumento();
 
@@ -683,13 +703,18 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objProcedimentoAPI->setIdTipoProcedimento($idTipoProcesso);
         $objProcedimentoAPI->setIdUnidadeGeradora($objUnidadeDTO->getNumIdUnidade());
         //ESPECIFICAÇÃO
+        $arrContatosAPI = [];
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retStrNome();
         $contatoDTO->retDblCpf();
+        $contatoDTO->retStrSigla();
         $contatoDTO->setNumIdContato($dados['hdnIdContExterno']);
         $contatoRN = new ContatoRN();
         $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
-
+        $objContatoAPI = new ContatoAPI();
+        $objContatoAPI->setSigla($objContatoRN->getStrSigla());
+        $objContatoAPI->setNome($objContatoRN->getStrNome());
+        array_push($arrContatosAPI, $objContatoAPI);
         $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
         $nomeModificado = str_replace("@nome_completo@", $objContatoRN->getStrNome(), $especificacao);
         $nome_cpf = str_replace("@cpf@", InfraUtil::formatarCpf($objContatoRN->getDblCpf()), $nomeModificado);
@@ -707,6 +732,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objProcedimentoAPI->setNumeroProtocolo('');
         $objProcedimentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
         $objProcedimentoAPI->setIdHipoteseLegal(null);
+        $objProcedimentoAPI->setInteressados($arrContatosAPI);
 
         $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
         $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
@@ -1043,7 +1069,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         $numProcuracao = '';
         $numProcesso = '';
-        if (!is_null($parObjDocumentoDTO)) {
+        if (count($parObjDocumentoDTO) > 0) {
             $tipoProcuracao = $parObjDocumentoDTO->getStrNomeSerie();
             $numProcuracao = $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado();
             $numProcesso = $parObjDocumentoDTO->getStrProtocoloProcedimentoFormatado();
@@ -2112,7 +2138,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $usuarioRN = new UsuarioRN();
         $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
 
-        if ($usuarioDTO) {
+        if (count($usuarioDTO) > 0) {
             $siglaOrgao = $usuarioDTO->getStrSiglaOrgao();
             $descricaoOrgao = $usuarioDTO->getStrDescricaoOrgao();
         }
@@ -2241,7 +2267,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
         $idUnidade = null;
-        if ($objMdPetVincTpProcesso) {
+        if (count($objMdPetVincTpProcesso) > 0) {
             $idUnidade = $objMdPetVincTpProcesso->getNumIdUnidade();
         }
 
@@ -2330,7 +2356,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $usuarioRN = new UsuarioRN();
         $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
 
-        if ($usuarioDTO) {
+        if (count($usuarioDTO) > 0) {
             $siglaOrgao = $usuarioDTO->getStrSiglaOrgao();
             $descricaoOrgao = $usuarioDTO->getStrDescricaoOrgao();
         }
@@ -2460,7 +2486,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
         $idUnidade = null;
-        if ($objMdPetVincTpProcesso) {
+        if (count($objMdPetVincTpProcesso) > 0) {
             $idUnidade = $objMdPetVincTpProcesso->getNumIdUnidade();
         }
 
@@ -2537,7 +2563,9 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $htmlModeloRecibo = str_replace('@tipoProcesso', $reciboDTOBasico->getStrStaTipoPeticionamentoFormatado(), $htmlModeloRecibo); //tipo de processo
         $htmlModeloRecibo = str_replace('@numProcesso', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModeloRecibo); //numero do processo
         $htmlModeloRecibo = str_replace('@cpfResponsavel', InfraUtil::formatarCpf($dadosRepresentante->getDblCpf()), $htmlModeloRecibo); // Nome do CPF
-        $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($dadosPj->getDblCnpj()), $htmlModeloRecibo); // Cnpj do vinculo
+        if($dadosPj->isSetDblCnpj()) {
+            $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($dadosPj->getDblCnpj()), $htmlModeloRecibo); // Cnpj do vinculo
+        }
         $htmlModeloRecibo = str_replace('@nomeRazaoSocial', $dadosPj->getStrNome(), $htmlModeloRecibo); // Razao Social
         $htmlModeloRecibo = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRecibo); // Descricao do Orgão
 

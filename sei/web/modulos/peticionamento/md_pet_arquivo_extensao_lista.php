@@ -194,21 +194,16 @@ try {
       $strCaptionTabela = 'Extensões de Arquivos Inativas';
     }
 
-    $strResultado .= '<div class="row">';
-    $strResultado .= '<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">';
-    $strResultado .= '<table class="infraTable table" summary="'.$strSumarioTabela.'">'."\n";
+    $strResultado .= '<table width="99%" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
     $strResultado .= '<caption class="infraCaption">'.PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela,$numRegistros).'</caption>';
-    $strResultado .= '<thead>';
     $strResultado .= '<tr>';
     if ($bolCheck) {
-      $strResultado .= '<th scope="col" class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
+      $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
     }
-    $strResultado .= '<th scope="col" class="infraTh" width="10%">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'Extensão','Extensao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
-    $strResultado .= '<th scope="col" class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'Descrição','Descricao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
-    $strResultado .= '<th scope="col" class="infraTh" width="20%">Ações</th>'."\n";
+    $strResultado .= '<th class="infraTh" width="10%">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'Extensão','Extensao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
+    $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'Descrição','Descricao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
+    $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
     $strResultado .= '</tr>'."\n";
-    $strResultado .= '</thead>'."\n";
-    $strResultado .= '<tbody>'."\n";
     $strCssTr='';
     for($i = 0;$i < $numRegistros; $i++){
 
@@ -216,7 +211,7 @@ try {
       $strResultado .= $strCssTr;
 
       if ($bolCheck){
-        $strResultado .= '<th scope="row" valign="top">'.PaginaSEI::getInstance()->getTrCheck($i,$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao(),$arrObjArquivoExtensaoDTO[$i]->getStrExtensao()).'</th>';
+        $strResultado .= '<td valign="top">'.PaginaSEI::getInstance()->getTrCheck($i,$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao(),$arrObjArquivoExtensaoDTO[$i]->getStrExtensao()).'</td>';
       }
       $strResultado .= '<td align="center">'.$arrObjArquivoExtensaoDTO[$i]->getStrExtensao().'</td>';
       $strResultado .= '<td>'.$arrObjArquivoExtensaoDTO[$i]->getStrDescricao().'</td>';
@@ -225,11 +220,11 @@ try {
       $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i,$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao());
 
       if ($bolAcaoConsultar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg" title="Consultar Extensão de Arquivo" alt="Consultar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Extensão de Arquivo" alt="Consultar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoAlterar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg" title="Alterar Extensão de Arquivo" alt="Alterar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/alterar.gif" title="Alterar Extensão de Arquivo" alt="Alterar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
@@ -238,24 +233,21 @@ try {
       }
 
       if ($bolAcaoDesativar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg" title="Desativar Extensão de Arquivo" alt="Desativar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/desativar.gif" title="Desativar Extensão de Arquivo" alt="Desativar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoReativar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg" title="Reativar Extensão de Arquivo" alt="Reativar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/reativar.gif" title="Reativar Extensão de Arquivo" alt="Reativar Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
 
       if ($bolAcaoExcluir){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg" title="Excluir Extensão de Arquivo" alt="Excluir Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/excluir.gif" title="Excluir Extensão de Arquivo" alt="Excluir Extensão de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       $strResultado .= '</td></tr>'."\n";
     }
-    $strResultado .= '</tbody>';
     $strResultado .= '</table>';
-    $strResultado .= '</div>';
-    $strResultado .= '</div>';
   }
   if ($_GET['acao'] == 'md_pet_arquivo_extensao_selecionar'){
     $arrComandos[] = '<button type="button" accesskey="F" id="btnFecharSelecao" value="Fechar" onclick="window.close();" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
@@ -273,7 +265,92 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(':: '.PaginaSEI::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
 PaginaSEI::getInstance()->montarStyle();
+PaginaSEI::getInstance()->abrirStyle();
+?>
+<?
+PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
+PaginaSEI::getInstance()->abrirJavaScript();
+?>
+
+function inicializar(){
+  if ('<?=$_GET['acao']?>'=='md_pet_arquivo_extensao_selecionar'){
+    infraReceberSelecao();
+    document.getElementById('btnFecharSelecao').focus();
+  }else{
+    document.getElementById('btnFechar').focus();
+  }
+  infraEfeitoTabelas();
+}
+
+<? if ($bolAcaoDesativar){ ?>
+function acaoDesativar(id,desc){
+  if (confirm("Confirma desativação da Extensão de Arquivo \""+desc+"\"?")){
+    document.getElementById('hdnInfraItemId').value=id;
+    document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkDesativar?>';
+    document.getElementById('frmArquivoExtensaoLista').submit();
+  }
+}
+
+function acaoDesativacaoMultipla(){
+  if (document.getElementById('hdnInfraItensSelecionados').value==''){
+    alert('Nenhuma Extensão de Arquivo selecionada.');
+    return;
+  }
+  if (confirm("Confirma desativação das Extensões de Arquivos selecionadas?")){
+    document.getElementById('hdnInfraItemId').value='';
+    document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkDesativar?>';
+    document.getElementById('frmArquivoExtensaoLista').submit();
+  }
+}
+<? } ?>
+
+<? if ($bolAcaoReativar){ ?>
+function acaoReativar(id,desc){
+  if (confirm("Confirma reativação da Extensão de Arquivo \""+desc+"\"?")){
+    document.getElementById('hdnInfraItemId').value=id;
+    document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkReativar?>';
+    document.getElementById('frmArquivoExtensaoLista').submit();
+  }
+}
+
+function acaoReativacaoMultipla(){
+  if (document.getElementById('hdnInfraItensSelecionados').value==''){
+    alert('Nenhuma Extensão de Arquivo selecionada.');
+    return;
+  }
+  if (confirm("Confirma reativação das Extensões de Arquivos selecionadas?")){
+    document.getElementById('hdnInfraItemId').value='';
+    document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkReativar?>';
+    document.getElementById('frmArquivoExtensaoLista').submit();
+  }
+}
+<? } ?>
+
+<? if ($bolAcaoExcluir){ ?>
+function acaoExcluir(id,desc){
+  if (confirm("Confirma exclusão da Extensão de Arquivo \""+desc+"\"?")){
+    document.getElementById('hdnInfraItemId').value=id;
+    document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkExcluir?>';
+    document.getElementById('frmArquivoExtensaoLista').submit();
+  }
+}
+
+function acaoExclusaoMultipla(){
+  if (document.getElementById('hdnInfraItensSelecionados').value==''){
+    alert('Nenhuma Extensão de Arquivo selecionada.');
+    return;
+  }
+  if (confirm("Confirma exclusão das Extensões de Arquivos selecionadas?")){
+    document.getElementById('hdnInfraItemId').value='';
+    document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkExcluir?>';
+    document.getElementById('frmArquivoExtensaoLista').submit();
+  }
+}
+<? } ?>
+
+<?
+PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 ?>
@@ -287,6 +364,5 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 <?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
-require_once 'md_pet_arquivo_extensao_lista_js.php';
 die();
 ?>

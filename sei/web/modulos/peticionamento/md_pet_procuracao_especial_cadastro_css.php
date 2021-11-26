@@ -41,14 +41,4 @@
         font-weight: bold;
         font-size: 13px;
     }
-
-    .infraImgModulo{width: 20px;height: 20px;}
-    button{margin-left: 5px;}
-    #selTpPoder{width: 100%}
-    .row{padding-top:10px;}
-    #listaPoderes{margin-left: -6px;margin-top: 5px;}
-    .dadosProcesso{margin-top: 22px}
-    /*#hiddenOutorgante{display: none;}*/
-    /*#selPessoaJuridicaProcSimples{width: 30%; display: inherit}*/
-    /*#lvbJuridica{width:20px;height:20px;margin-right:17px;}*/
 </style>

@@ -56,7 +56,24 @@ class MdPetProcessoRN extends InfraRN {
 
 	}
 
-	protected function gerarProcedimentoControlado( $arrParametros ){
+    protected function gerarProcedimentoControlado( $arrParametros )
+    {
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+        $retorno = $this->gerarProcedimentoInterno($arrParametros);
+
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+        FeedSEIProtocolos::getInstance()->indexarFeeds();
+
+        try {
+            $emailMdPetEmailNotificacaoRN = new MdPetEmailNotificacaoRN();
+            $emailMdPetEmailNotificacaoRN->notificaoPeticionamentoExterno( $retorno['parametrosEmail'] );
+        } catch( Exception $exEmail ){}
+
+        return $retorno['paramentrosRecibo'];
+    }
+
+	protected function gerarProcedimentoInterno( $arrParametros ){
 		try {
 			
 			$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
@@ -137,27 +154,13 @@ class MdPetProcessoRN extends InfraRN {
 			} 
 
 			$idsContatos = array_unique($idsContatos);
-
-			$arrInteressados = array();
-			foreach ($idsContatos as $contato){
-			    $objContatoDTO = new ContatoDTO();
-			    $objContatoDTO->setNumIdContato($contato);
-                $objContatoDTO->retTodos(true);
-			    $objContato = (new ContatoRN())->consultarRN0324($objContatoDTO);
-			    $objParticipanteContato = new ContatoAPI();
-                $objParticipanteContato->setIdContato($objContato->getNumIdContato());
-                $objParticipanteContato->setSigla($objContato->getStrSigla());
-                $objParticipanteContato->setNome($objContato->getStrNome());
-			    array_push($arrInteressados, $objParticipanteContato);
-            }
-
+			
 			//Gera um processo
 			$objProcedimentoAPI = new ProcedimentoAPI();
 			$objProcedimentoAPI->setIdTipoProcedimento( $objMdPetTipoProcessoDTO[0]->getNumIdProcedimento() );
 			$objProcedimentoAPI->setIdUnidadeGeradora( $unidadeDTO->getNumIdUnidade() );
 			$objProcedimentoAPI->setEspecificacao( $arrParametros['txtEspecificacaoDocPrincipal'] );
 			$objProcedimentoAPI->setNumeroProtocolo('');
-            $objProcedimentoAPI->setInteressados($arrInteressados);
 
             $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
             $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
@@ -273,10 +276,7 @@ class MdPetProcessoRN extends InfraRN {
 			$arrProcessoReciboRetorno[1] = $objProcedimentoDTO;
 
 			//enviando email de sistema EU 5155  / 5156 - try catch por causa que em localhost o envio de email gera erro
-			try {
-			  $emailMdPetEmailNotificacaoRN = new MdPetEmailNotificacaoRN();
-			  $emailMdPetEmailNotificacaoRN->notificaoPeticionamentoExterno( $arrParams );
-			} catch( Exception $exEmail ){}
+
 			
 			//obter todos os documentos deste processo
 			$documentoRN = new DocumentoRN();
@@ -388,7 +388,7 @@ class MdPetProcessoRN extends InfraRN {
 			}
 
 
-			return $arrProcessoReciboRetorno;
+			return array('paramentrosRecibo' => $arrProcessoReciboRetorno, 'parametrosEmail' => $arrParams);
 		
 		} catch(Exception $e){
 			throw new InfraException('Erro cadastrando processo peticionamento do SEI.',$e);
@@ -866,7 +866,7 @@ class MdPetProcessoRN extends InfraRN {
 				$cargoDTO->setStrSinAtivo('S');
 				$cargoDTO = $cargoRN->consultarRN0301($cargoDTO);
 
-				if (count($cargoDTO)>0){
+				if (!is_null($cargoDTO)){
 					$cargoExpressao = "Usuário Externo - " . $cargoDTO->getStrExpressao();
 				}
 			}else{
@@ -978,7 +978,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objAssinaturaDTO->setStrCargoFuncao( $cargoExpressao );
 
 				if (empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
-					$objAssinaturaDTO->setNumIdContextoUsuario( null );	
+//					$objAssinaturaDTO->setNumIdContextoUsuario( null );
 				}
 
 				$documentoDTO->setStrDescricaoTipoConferencia("do próprio documento nato-digital");

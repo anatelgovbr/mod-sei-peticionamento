@@ -315,7 +315,7 @@
 
             $objHipoteseLegalPetRN       = new MdPetHipoteseLegalRN();
             $arrObjMdPetHipoteseLegalDTO = $objHipoteseLegalPetRN->listar($objMdPetHipoteseLegalDTO);
-            $strOptions                  = '<select id="selHipoteseLegal" name="selHipoteseLegal"><option value=""> </option>';
+            $strOptions                  = '<select id="selHipoteseLegal" name="selHipoteseLegal" class="infraSelect form-control"><option value=""> </option>';
 
             foreach ($arrObjMdPetHipoteseLegalDTO as $objMdPetHipoteseLegalDTO) {
                 $nomeBaseLegal = $objMdPetHipoteseLegalDTO->getStrNome() . ' (' . $objMdPetHipoteseLegalDTO->getStrBaseLegal() . ')';
@@ -471,7 +471,7 @@
         	
         	$objHipoteseLegalPetRN       = new MdPetHipoteseLegalRN();
         	$arrObjMdPetHipoteseLegalDTO = $objHipoteseLegalPetRN->listar($objMdPetHipoteseLegalDTO);
-        	$strOptions  = '<select id="selHipoteseLegal" class="infraSelect" onchange="salvarValorHipoteseLegal(this)"
+        	$strOptions  = '<select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)"
                         tabindex="'. PaginaSEIExterna::getInstance()->getProxTabDados() . '"><option value=""> </option>';
         	
         	if( is_array( $arrObjMdPetHipoteseLegalDTO ) && count( $arrObjMdPetHipoteseLegalDTO ) > 0){

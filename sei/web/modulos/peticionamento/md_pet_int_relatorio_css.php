@@ -1,3 +1,5 @@
+.linha {padding-top:10px;}
+
 .grid
 {
 display: inline;
@@ -162,102 +164,21 @@ width: 38%;
 margin-top: 8px;
 }
 
-.imgCalendario
-{
-position: absolute;
-margin: 10px 0px 0px 2px;
-
-}
 
 .alturaPadrao{
 height: 24px
 }
 
-#divOpcoesTpIntimacao {
-position: absolute;
-left: 55.5%;
-top: 14.3%;
+#selSituacao{
+    width: 100%;
 }
 
-#divOpcoesUnidade {
-position: absolute;
-left: 55.5%;
-top: 43.5%;
+#selDescricaoUnidade{
+    width: calc(100% - 40px);
 }
 
-
-@media (min-width: 1370px) {
-.divAreaTodosGraficos{
-margin-left: 7%;
-}
-}
-
-#lblTpIntimacao
-{
-position: absolute;
-left: 0%;
-top: 5.5%;
-}
-
-#txtTpIntimacao{
-top: 9.5%;
-position: absolute;
+#selDescricaoTpIntimacao{
+    width: calc(100% - 40px);
 }
 
 
-#selDescricaoTpIntimacao
-{
-position: absolute;
-left: 0%;
-top: 14%;
-}
-
-#lblUnidade
-{
-position: absolute;
-left: 0%;
-top:35%;
-}
-
-#txtUnidade
-{
-position: absolute;
-left: 0%;
-top: 38.5%;
-width: 50%;
-}
-
-#selDescricaoUnidade
-{
-left: 0%;
-top: 43%;
-position: absolute;
-}
-
-#divInfraAreaDados{
-overflow: unset;
-}
-
-#divPeriodoGeracao
-{
-position: absolute;
-top: 65%;
-width: 100%
-}
-
-#lblSituacao
-{
-position: absolute;
-top: 85%;
-}
-
-#selSituacao
-{
-position: absolute;
-top: 89%;
-}
-
-#lblPeriodo
-{
-position: absolute;
-}

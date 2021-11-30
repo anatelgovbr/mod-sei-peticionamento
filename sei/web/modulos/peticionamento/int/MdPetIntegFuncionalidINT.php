@@ -31,7 +31,7 @@ class MdPetIntegFuncionalidINT extends InfraINT {
     $objMdPetIntegFuncionalidDTO = new MdPetIntegFuncionalidDTO();
     $objMdPetIntegFuncionalidDTO->retNumIdMdPetIntegFuncionalid();
     $objMdPetIntegFuncionalidDTO->retStrNome();
-    if (count($arrIdMdPetIntegFuncionalidUtilizado)>0){
+    if ($arrIdMdPetIntegFuncionalidUtilizado){
       $objMdPetIntegFuncionalidDTO->setNumIdMdPetIntegFuncionalid( $arrIdMdPetIntegFuncionalidUtilizado, InfraDTO::$OPER_NOT_IN );    
     }
 

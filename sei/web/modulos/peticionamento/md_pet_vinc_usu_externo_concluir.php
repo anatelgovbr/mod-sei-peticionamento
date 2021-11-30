@@ -68,10 +68,7 @@ try {
         $dados['idContato'] = $idContato;
         
         $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
-//        $vincularProcuracao = $objMdPetVinculoUsuExtRN->gerarProcuracao($_POST);
 
-//        var_dump($reciboGerado);
-//        die;
 
         $idRecibo = $reciboGerado->getNumIdReciboPeticionamento();
 
@@ -111,8 +108,8 @@ try {
 //          }
 
             echo "<script>";
-            echo "window.opener.location = '" . $urlAssinada . "';";
-            echo " window.opener.focus();";
+            echo "window.parent.location = '" . $urlAssinada . "';";
+            echo " window.parent.focus();";
             echo " window.close();";
             echo "</script>";
             die;
@@ -150,8 +147,8 @@ try {
               $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
 
               echo "<script>";
-              echo "window.opener.location = '" . $urlAssinada . "';";
-              echo " window.opener.focus();";
+              echo "window.parent.location = '" . $urlAssinada . "';";
+              echo " window.parent.focus();";
               echo " window.close();";
               echo "</script>";
               die;
@@ -290,31 +287,31 @@ PaginaSEIExterna::getInstance()->fecharHtml();
     function assinar() {
         if (isValido()) {
 
-            document.getElementById('txtNumeroCnpjPai').value = window.opener.document.getElementById('txtNumeroCnpj').value;
+            document.getElementById('txtNumeroCnpjPai').value = window.parent.document.getElementById('txtNumeroCnpj').value;
 
-            var obj1 = window.opener.document.getElementById('chkDeclaracao');
+            var obj1 = window.parent.document.getElementById('chkDeclaracao');
             if(obj1) {
-                document.getElementById('chkDeclaracaoPai').value = window.opener.document.getElementById('chkDeclaracao').value;
+                document.getElementById('chkDeclaracaoPai').value = window.parent.document.getElementById('chkDeclaracao').value;
             }
 
-            document.getElementById('hdnIdVinculoPai').value = window.opener.document.getElementById('hdnIdVinculo').value;
-            document.getElementById('slTipoInteressadoPai').value = window.opener.document.getElementById('slTipoInteressado').value;
-            document.getElementById('hdnInformacaoPjPai').value = window.opener.document.getElementById('hdnInformacaoPj').value;
-            document.getElementById('hdnTbDocumentoPai').value = window.opener.document.getElementById('hdnTbDocumento').value;
-//            document.getElementById('hdnTbUsuarioProcuracaoPai').value = window.opener.document.getElementById('hdnTbUsuarioProcuracao').value;
-            document.getElementById('hdnStWebservicePai').value = window.opener.document.getElementById('hdnStaWebService').value;
-            document.getElementById('hdnIdVinculoPai').value = window.opener.document.getElementById('hdnIdVinculo').value;
-            document.getElementById('txtNumeroCpfResponsavelPai').value = window.opener.document.getElementById('txtNumeroCpfResponsavel').value;
+            document.getElementById('hdnIdVinculoPai').value = window.parent.document.getElementById('hdnIdVinculo').value;
+            document.getElementById('slTipoInteressadoPai').value = window.parent.document.getElementById('slTipoInteressado').value;
+            document.getElementById('hdnInformacaoPjPai').value = window.parent.document.getElementById('hdnInformacaoPj').value;
+            document.getElementById('hdnTbDocumentoPai').value = window.parent.document.getElementById('hdnTbDocumento').value;
+//            document.getElementById('hdnTbUsuarioProcuracaoPai').value = window.parent.document.getElementById('hdnTbUsuarioProcuracao').value;
+            document.getElementById('hdnStWebservicePai').value = window.parent.document.getElementById('hdnStaWebService').value;
+            document.getElementById('hdnIdVinculoPai').value = window.parent.document.getElementById('hdnIdVinculo').value;
+            document.getElementById('txtNumeroCpfResponsavelPai').value = window.parent.document.getElementById('txtNumeroCpfResponsavel').value;
 
 
-            var obj2 = window.opener.document.getElementById('hdnIdContatoNovo');
+            var obj2 = window.parent.document.getElementById('hdnIdContatoNovo');
             if(obj2) {
-                document.getElementById('hdnIdContatoNovoPai').value = window.opener.document.getElementById('hdnIdContatoNovo').value;
+                document.getElementById('hdnIdContatoNovoPai').value = window.parent.document.getElementById('hdnIdContatoNovo').value;
             }
 
-            var obj3 = window.opener.document.getElementById('txtMotivoAlteracaoRespLegal');
+            var obj3 = window.parent.document.getElementById('txtMotivoAlteracaoRespLegal');
             if(obj3){
-                document.getElementById('txtMotivo').value = window.opener.document.getElementById('txtMotivoAlteracaoRespLegal').value;
+                document.getElementById('txtMotivo').value = window.parent.document.getElementById('txtMotivoAlteracaoRespLegal').value;
             }
 
             processando();
@@ -402,8 +399,8 @@ function isValido() {
 
     function fecharJanela() {
 
-        if (window.opener != null && !window.opener.closed) {
-            window.opener.focus();
+        if (window.parent != null && !window.parent.closed) {
+            window.parent.focus();
         }
 
         window.close();

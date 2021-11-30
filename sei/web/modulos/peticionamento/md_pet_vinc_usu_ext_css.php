@@ -8,8 +8,6 @@
 
 .bloco {
   float: left;
-  margin-top: 1%;
-  margin-right: 0.5%;
 }
 
 label[for^=txt] {
@@ -27,60 +25,29 @@ label[for^=file] {
 
 img[name=ajuda] {
   margin-bottom: -4px;
-  width: 16px !important;
-  height: 16px !important;
+  width: 20px !important;
+  height: 20px !important;
 }
 
 #txtNumeroCnpj{
-  width: 120px;
+  width: 100%;
 }
 .txtNumeroCnpjAlt{
   width: 155px !important;
 }
-#txtRazaoSocial{
-  width:640px;
-}
-#txtRazaoSocialAlt{
-  width:460px;
-}
-#txtNumeroCpfResponsavel{
-  width: 166px;
-}
-#txtNumeroCpfResponsavelAlt{
-  width: 155px;
-}
-#txtNomeResponsavelLegal{
-  width:460px;
-}
-#txtNomeResponsavelLegalAlt{
-  width:460px;
-}
-#txtLogradouro{
-  width:640px;
-}
-#txtBairro{
-  width:248px;
-}
-#slUf{
-  width: 50px;
-}
-#selCidade{
-  width: 248px;
-}
-#txtNumeroCEP{
-  width: 60px;
-}
-#selTipoDocumento{
-  min-width: 200px;
-  max-width: 330px;
-}
-#txtComplementoTipoDocumento{
-  width: 230px;
-}
-#selNivelAcesso{
-  min-width: 120px;
-  max-width: 120px;
-}
+#txtRazaoSocial{width:100%}
+#txtRazaoSocialAlt{width:100%;}
+#txtNumeroCpfResponsavel{width:100%}
+#txtNumeroCpfResponsavelAlt{width:100%}
+#txtNomeResponsavelLegal{width:100%}
+#txtNomeResponsavelLegalAlt{width:100%}
+#txtLogradouro{width:100%}
+#txtBairro{width:100%;}
+#slUf{width: 100%;}
+#selCidade{width: 100%;}
+#txtNumeroCEP{width: 100%;}
+#selTipoDocumento{width:100%;}
+#selNivelAcesso{width: 100%;}
 #selTipoConferencia{
   min-width: 200px;
   max-width: 330px;
@@ -94,11 +61,25 @@ img[name=ajuda] {
     margin-left: 0.2%;
 }
 
+.row{padding-top:10px;}
+
 #imgNivelAcesso {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
-#selNivelAcesso {min-width: 120px !important; max-width: 120px !important;}
 #imgHipoteseLegal {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
 #selHipoteseLegal {float: left; max-width:100% !important;}
 
 ol.Numerada { counter-reset: item; margin-top: 0.1% }
 li.Numerada { display: block }
 li.Numerada:before { content: counters(item, ".") ". "; counter-increment: item }
+
+.textoRegistroPessoaFisica{margin-top:20;}
+
+#fldOrientacoes {height: auto; width: 96%; margin-bottom: 15px; padding: 20px}
+#fieldsetPessoaJuridicaConsulta {height: auto; width: 96%; padding: 20px;}
+#informacaoPJ {height: auto; width: 96%; margin-bottom: 11px; padding: 20px;}
+#registroPessoaJuridica {height: auto; width: 100%; margin-bottom: 15px; padding: 20px}
+#informacaoPJAlterar {height: auto; width: 96%;  margin-bottom: 15px; padding: 20px}
+#fieldDocumentos {height: auto; width: 96%; margin-bottom: 11px; padding: 20px}
+.sizeFieldset {height:auto; width: 86%;}
+.fieldsetClear {border:none !important;}
+#lblCaptcha{margin-top:15px; margin-right:5px}
+#txtCaptcha{width:130px}

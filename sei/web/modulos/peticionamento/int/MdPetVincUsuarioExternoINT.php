@@ -253,7 +253,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
         $arrContato = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 
-        if (count($arrContato) > 0) {
+        if (!is_null($arrContato)) {
             $xml .= '<dados>';
             $xml .= '<nu-id>' . $arrContato->getNumIdContato() . '</nu-id>';
             $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($arrContato->getDblCpfContato()) . '</nu-cpf>';

@@ -41,17 +41,19 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
 ?>
 <style type="text/css">
-#fldOrientacoes {height: auto; width: 96%; margin-bottom: 11px;}
-.sizeFieldset {height:auto; width: 86%;}
-.fieldsetClear {border:none !important;}
-</style>
 
-<fieldset id="fldOrientacoes" class="infraFieldset sizeFieldset" style="width:auto"> 
+</style>
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <fieldset id="fldOrientacoes" class="infraFieldset form-control sizeFieldset" style="width:auto">
             <legend class="infraLegend" class="infraLabelObrigatorio"> &nbsp; Orientações &nbsp;</legend>
-            <?=PaginaSEI::tratarHTML($txtConteudo)?>            
+            <?=PaginaSEI::tratarHTML($txtConteudo)?>
             <?php echo $txtConteudo; ?>
-            <?= '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vincpf_usu_ext_bloco_orientacoes&iframe=S') . '"></iframe>'; ?> 
-</fieldset>    
+            <?= '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vincpf_usu_ext_bloco_orientacoes&iframe=S') . '"></iframe>'; ?>
+        </fieldset>
+    </div>
+</div>
+
 
 <?
 //Verificar se é alteração ou cadastro

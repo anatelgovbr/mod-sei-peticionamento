@@ -87,3 +87,7 @@ width: 90%;
 .fldDestinatarios{
   width: 100%;
 }
+
+.row{margin-top: 10px;}
+.botoes{padding-left:5px;}
+.infraImgModulo{width:20px;}

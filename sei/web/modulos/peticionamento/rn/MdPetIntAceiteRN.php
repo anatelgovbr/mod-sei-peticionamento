@@ -429,7 +429,8 @@ class MdPetIntAceiteRN extends InfraRN
                 $objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($idContato);
                 $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
                 $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
-                if (count($objMdPetIntRelDestinatarioDTO) > 0) {
+                $qtdObjMdPetIntRelDestinatarioDTO = is_array($objMdPetIntRelDestinatarioDTO) ? count($objMdPetIntRelDestinatarioDTO) : 0;
+                if ($qtdObjMdPetIntRelDestinatarioDTO > 0) {
                     $idContato = $objMdPetIntRelDestinatarioDTO->getNumIdContatoParticipante();
                     $nomeContato = $objMdPetIntRelDestinatarioDTO->getStrNomeContatoParticipante();
                 }
@@ -632,119 +633,126 @@ class MdPetIntAceiteRN extends InfraRN
                         ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO,
                         ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO
                     );
-
-                    if (in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $arrStaEstado)) {
-                        switch ($objProcedimentoDTO->getStrStaEstadoProtocolo()) {
-                            case ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO :
-                                $motivo = 'Processo Sobrestado';
-                                break;
-                            case ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO :
-                                $motivo = 'Processo Bloqueado';
-                                break;
-                            case ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO :
-                                $motivo = 'Processo Anexado';
-                                break;
-                        }
-
-                        $arrRetornoIntimacoes['naoCumpridas'] = $arrRetornoIntimacoes['naoCumpridas'] + 1;
-                        $arrRetornoIntimacoes['procedimentos'][] = array(
-                            $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(),
-                            $motivo
-                        );
-                    } else {
-
-                        //unidade intimação
-                        $objUnidadeDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
-
-                        //usuario módulo
-                        $idUsuario = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
-
-                        //parametros
-                        $arrParametros = array($idIntimacao, $objUnidadeDTO, $objProcedimentoDTO);
-
-                        //Gerar Aceite
-                        $objMdPetIntAceiteDTO = $this->_realizarAceitePorPrazoTacito(array($objDTO, $dados[3]));
-
-                        //Cadastrando Data Limite para Tipo Resposta
-                        $arrObjMdPetIntRelTipoRespDestDTO = $objMdPetIntPrazoRN->retornarTipoRespostaDataLimite(array($idIntimacao, $idMdPetIntDest));
-
-                        if (count($arrObjMdPetIntRelTipoRespDestDTO) > 0) {
-                            $objMdPetIntRelTipoRespDestRN = new MdPetIntRelTipoRespDestRN();
-                            foreach ($arrObjMdPetIntRelTipoRespDestDTO as $objMdPetIntRelTipoRespDestDTO) {
-                                $objMdPetIntRelTipoRespDestRN->cadastrar($objMdPetIntRelTipoRespDestDTO);
+                    if ($objProcedimentoDTO) {
+                        if (in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $arrStaEstado)) {
+                            switch ($objProcedimentoDTO->getStrStaEstadoProtocolo()) {
+                                case ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO :
+                                    $motivo = 'Processo Sobrestado';
+                                    break;
+                                case ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO :
+                                    $motivo = 'Processo Bloqueado';
+                                    break;
+                                case ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO :
+                                    $motivo = 'Processo Anexado';
+                                    break;
                             }
-                        }
 
-                        //Unidade Geradora
-                        //unidade esta ativa
-                        $unidadeDTO = new UnidadeDTO();
-                        $unidadeDTO->retTodos();
-                        $unidadeDTO->setBolExclusaoLogica(false);
-                        $unidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-                        $unidadeRN = new UnidadeRN();
-                        $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
-
-                        $arrAtividadeDTO = null;
-                        if ($objUnidadeDTO->getStrSinAtivo() == 'S') {
-                            $arrAtividadeDTO = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                        }
-
-                        $idUsuarioAtribuicao = null;
-                        if (count($arrAtividadeDTO) == 0) {
-                            $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
+                            $arrRetornoIntimacoes['naoCumpridas'] = $arrRetornoIntimacoes['naoCumpridas'] + 1;
+                            $arrRetornoIntimacoes['procedimentos'][] = array(
+                                $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(),
+                                $motivo
+                            );
                         } else {
-                            $idUnidadeAberta = $arrAtividadeDTO[0]->getNumIdUnidade();
-                            if ($arrAtividadeDTO[0]->isSetNumIdUsuarioAtribuicao()) {
-                                $idUsuarioAtribuicao = $arrAtividadeDTO[0]->getNumIdUsuarioAtribuicao();
-                            }
-                        }
-                        if (is_numeric($idUnidadeAberta)) {
-                            $arrParametros[1] = $objMdPetIntimacaoRN->retornaObjUnidadePorId($idUnidadeAberta, true);
-                        }
 
-                        if ($arrParametros[1]) {
-                            //Gerar Certidão
-                            $arrParametros[3] = $objMdPetIntAceiteDTO;
-                            $arrParametros[4] = $objDTO;
-                            $arrParametros[5] = true;
-                            $arrParametros[6] = $datafinal;
+                            //unidade intimação
+                            $objUnidadeDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
 
-                            if ($jobManual) {
-                                SessaoSEI::getInstance()->setBolHabilitada(false);
-                                SessaoSEI::getInstance()->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
-                            }
+                            //usuario módulo
+                            $idUsuario = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
-                            $objMdPetCertidaoRN->gerarCertidao($arrParametros);
+                            //parametros
+                            $arrParametros = array($idIntimacao, $objUnidadeDTO, $objProcedimentoDTO);
 
-                            //Usuário do Módulo de Peticionamento
-                            $objUsuarioPetRN = new MdPetIntUsuarioRN();
-                            $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
+                            //Gerar Aceite
+                            $objMdPetIntAceiteDTO = $this->_realizarAceitePorPrazoTacito(array($objDTO, $dados[3]));
 
-                            $arr = array($idProcedimento, $dataIntimacao, $datafinal, $idIntimacao, $idMdPetIntDest, $idUsuarioPet, MdPetIntAcessoExternoDocumentoRN::$STA_AGENDAMENTO, $arrParametros[1], $jobManual);
+                            //Cadastrando Data Limite para Tipo Resposta
+                            $arrObjMdPetIntRelTipoRespDestDTO = $objMdPetIntPrazoRN->retornarTipoRespostaDataLimite(array($idIntimacao, $idMdPetIntDest));
 
-                            $this->lancarAndamentoAceite($arr);
-
-                            if ($jobManual) {
-                                SessaoSEI::getInstance()->setBolHabilitada(true);
-                            }
-
-                            // REENVIAR ou REENVIAR E REATRIBUIR
-                            if (is_numeric($idUnidadeAberta) && is_numeric($idProcedimento)) {
-                                $arrParams = array();
-                                $arrParams[0] = $idUnidadeAberta;
-                                $arrParams[1] = $idProcedimento;
-
-                                if (!is_null($idUsuarioAtribuicao)) {
-                                    $arrParams[2] = $idUsuarioAtribuicao;
+                            if (count($arrObjMdPetIntRelTipoRespDestDTO) > 0) {
+                                $objMdPetIntRelTipoRespDestRN = new MdPetIntRelTipoRespDestRN();
+                                foreach ($arrObjMdPetIntRelTipoRespDestDTO as $objMdPetIntRelTipoRespDestDTO) {
+                                    $objMdPetIntRelTipoRespDestRN->cadastrar($objMdPetIntRelTipoRespDestDTO);
                                 }
-                                $objMdPetIntimacaoRN->reenviarReatribuirUnidade($arrParams);
                             }
-                            $arrRetornoIntimacoes['cumpridas'] = $arrRetornoIntimacoes['cumpridas'] + 1;
-                        } else {
-                            //EXCEÇÃO DE UNIDADE
-                            $detalhes = "Unidade não definida";
-                            throw new InfraException('Erro na definição da Unidade da Consulta Direta', null, $detalhes);
+
+                            //Unidade Geradora
+                            //unidade esta ativa
+                            $unidadeDTO = new UnidadeDTO();
+                            $unidadeDTO->retTodos();
+                            $unidadeDTO->setBolExclusaoLogica(false);
+                            $unidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
+                            $unidadeRN = new UnidadeRN();
+                            $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+
+                            $arrAtividadeDTO = null;
+                            if ($objUnidadeDTO->getStrSinAtivo() == 'S') {
+                                $arrAtividadeDTO = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
+                            }
+
+                            $idUsuarioAtribuicao = null;
+                            if (count($arrAtividadeDTO) == 0) {
+                                $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
+                            } else {
+                                $idUnidadeAberta = $arrAtividadeDTO[0]->getNumIdUnidade();
+                                if ($arrAtividadeDTO[0]->isSetNumIdUsuarioAtribuicao()) {
+                                    $idUsuarioAtribuicao = $arrAtividadeDTO[0]->getNumIdUsuarioAtribuicao();
+                                }
+                            }
+                            if (is_numeric($idUnidadeAberta)) {
+                                $arrParametros[1] = $objMdPetIntimacaoRN->retornaObjUnidadePorId($idUnidadeAberta, true);
+                            }
+
+                            if ($arrParametros[1]) {
+                                //Gerar Certidão
+                                $arrParametros[3] = $objMdPetIntAceiteDTO;
+                                $arrParametros[4] = $objDTO;
+                                $arrParametros[5] = true;
+                                $arrParametros[6] = $datafinal;
+
+                                if ($jobManual) {
+                                    SessaoSEI::getInstance()->setBolHabilitada(false);
+                                    SessaoSEI::getInstance()->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
+                                }
+
+                                $objMdPetCertidaoRN->gerarCertidao($arrParametros);
+
+                                //Usuário do Módulo de Peticionamento
+                                $objUsuarioPetRN = new MdPetIntUsuarioRN();
+                                $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
+
+                                $arr = array($idProcedimento, $dataIntimacao, $datafinal, $idIntimacao, $idMdPetIntDest, $idUsuarioPet, MdPetIntAcessoExternoDocumentoRN::$STA_AGENDAMENTO, $arrParametros[1], $jobManual);
+
+                                $this->lancarAndamentoAceite($arr);
+
+                                if ($jobManual) {
+                                    SessaoSEI::getInstance()->setBolHabilitada(true);
+                                }
+
+                                // REENVIAR ou REENVIAR E REATRIBUIR
+                                if (is_numeric($idUnidadeAberta) && is_numeric($idProcedimento)) {
+                                    $arrParams = array();
+                                    $arrParams[0] = $idUnidadeAberta;
+                                    $arrParams[1] = $idProcedimento;
+
+                                    if (!is_null($idUsuarioAtribuicao)) {
+                                        $arrParams[2] = $idUsuarioAtribuicao;
+                                    }
+                                    $objMdPetIntimacaoRN->reenviarReatribuirUnidade($arrParams);
+                                }
+                                $arrRetornoIntimacoes['cumpridas'] = $arrRetornoIntimacoes['cumpridas'] + 1;
+                            } else {
+                                //EXCEÇÃO DE UNIDADE
+                                $detalhes = "Unidade não definida";
+                                throw new InfraException('Erro na definição da Unidade da Consulta Direta', null, $detalhes);
+                            }
                         }
+                    }else {
+                        $arrRetornoIntimacoes['naoCumpridas'] = $arrRetornoIntimacoes['naoCumpridas'] + 1;
+                        $arrRetornoIntimacoes['erros'][] = array(
+                            $dados[1] . " " . $dados[4] . "(" . $dados[0] .")",
+                            "Não retornou nenhum registro na consulta para cumprimento das Intimações."
+                        );
                     }
                 }
             }
@@ -887,36 +895,24 @@ class MdPetIntAceiteRN extends InfraRN
             $mdPetVinculoRN = new MdPetVinculoRN();
             $objMdPetIntRelDestDTOTratado = $objMdPetIntRelDestDTO;
             $removerRevogado = false;
+            $arrObjDestinatariosIntimacoesCopia = $objMdPetIntRelDestDTO;
+            $arrObjDestinatarios = array();
+            $arrObjDestinatariosUnicosIntimacao = array();
+            $arrObjDestinatariosUnicosIntimacaoComProcuracao = array();
+            $qtdDestinatariosIntimacao = 0;
             foreach ($objMdPetIntRelDestDTOTratado as $chave => $itemObjMdPetIntRelDestDTOTratado) {
-                $objMdPetVinculoDTO = new MdPetVinculoDTO();
-                $objMdPetVinculoDTO->setNumIdContato($itemObjMdPetIntRelDestDTOTratado->getNumIdContato());
-                $objMdPetVinculoDTO->setNumIdContatoRepresentante($objContato->getNumIdContato());
-                $objMdPetVinculoDTO->retStrStaEstado();
-                $objMdPetVinculoDTO->retNumIdMdPetVinculoRepresent();
-                $objMdPetVinculoDTO->retStrTipoRepresentante();
-                $objMdPetVinculoDTO->retDthDataLimite();
-                $objMdPetVinculoDTO->retStrStaAbrangencia();
-                $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
-                // Caso a PF intimada seja o usuario logado não existirá vinculo por isso já é setado para nã remover o mesmo
-                if ($itemObjMdPetIntRelDestDTOTratado->getNumIdContato() == $objContato->getNumIdContato()) {
-                    $removerRevogado = false;
-                } else {
-                    $removerRevogado = true;
-                }
-                foreach ($objMdPetVinculoDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
-                    if ($itemObjMdPetVinculoDTO->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO && $itemObjMdPetVinculoDTO->getStrTipoRepresentante() != MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                        $removerRevogado = false;
-                    }
-                    if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                        $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                        $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($itemObjMdPetVinculoDTO->getNumIdMdPetVinculoRepresent(), $itemObjMdPetVinculoDTO->getStrStaEstado(), $itemObjMdPetVinculoDTO->getDthDataLimite(), $itemObjMdPetIntRelDestDTOTratado->getDblIdDocumento(), $itemObjMdPetVinculoDTO->getStrStaAbrangencia());
-                        if ($verificacaoCriteriosProcuracaoSimples) {
-                            $removerRevogado = false;
-                        }
+                $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+                $arrProcuracoesAtivasDestinatario = $mdPetVincRepresentantRN->retornarProcuradoresComPoderCumprirResponder($itemObjMdPetIntRelDestDTOTratado->getNumIdContato(), $idProtocolo, $objContato->getNumIdContato());
+                if (count($arrProcuracoesAtivasDestinatario) > 0) {
+                    $arrObjDestinatarios[$chave]['objeto'] = $itemObjMdPetIntRelDestDTOTratado;
+                    $arrObjDestinatarios[$chave]['procuracoes'] = $arrProcuracoesAtivasDestinatario;
+                    if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacaoComProcuracao)) {
+                        $arrObjDestinatariosUnicosIntimacaoComProcuracao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
                     }
                 }
-                if ($removerRevogado) {
-                    unset($objMdPetIntRelDestDTOTratado[$chave]);
+                if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacao)) {
+                    $arrObjDestinatariosUnicosIntimacao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
+                    $qtdDestinatariosIntimacao++;
                 }
             }
             if ($count > 0) {
@@ -931,15 +927,9 @@ class MdPetIntAceiteRN extends InfraRN
                     $countAceites = 0;
                 }
 
-                $arrObjMdPetIntRelDestDTOTratadoFinal = array();
-                foreach ($objMdPetIntRelDestDTOTratado as $itemObjMdPetIntRelDestDTOTratado) {
-                    if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjMdPetIntRelDestDTOTratadoFinal)) {
-                        $arrObjMdPetIntRelDestDTOTratadoFinal[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
-                    }
-                }
 
-                $qntDestinatarioAntes = count($objMdPetIntDestDTO);
-                $qntDestinatario = count($arrObjMdPetIntRelDestDTOTratadoFinal);
+                $qntDestinatarioAntes = count($arrObjDestinatariosUnicosIntimacaoComProcuracao);
+                $qntDestinatario = count($arrObjDestinatariosUnicosIntimacao);
                 $todasAceitas = ($countAceites == $qntDestinatario && $qntDestinatarioAntes == $qntDestinatario);
                 $retorno = array('todasAceitas' => $todasAceitas, 'qntDestinatario' => $qntDestinatario);
             }

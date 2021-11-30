@@ -45,7 +45,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         $("#txtNomeResponsavelLegalAlt").val($("#txtNomeResponsavelLegal").val());
         $("#txtNumeroCpfResponsavelAlt").val($("#txtNumeroCpfResponsavel").val());
         <?php if(!$stAlterar): ?>
-        document.getElementById("txtCaptcha").addEventListener("keyup", controlarEnterValidarProcesso, false);    
+        //document.getElementById("txtCaptcha").addEventListener("keyup", controlarEnterValidarProcesso, false);
         <?php endif; ?>
         <?php if($stWebService): ?>
        //  document.getElementById("txtNumeroCpfProcurador").addEventListener("keyup", controlarEnterValidarUsuario, false);
@@ -398,7 +398,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
                 var success = $.trim($('success', data).text()).length;
                 var txtSuccess = $.trim($('success', data).text());
-
                 if (success > 0) {
                     var message = $.trim($('msg', data).text());
                     if(txtSuccess == 'false') {
@@ -416,9 +415,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                             alert(message);
                         }
                     }
-
-
-
                     document.getElementById('hdnNumeroCnpj').value=document.getElementById('txtNumeroCnpj').value;
                     document.getElementById('frmCNPJ').submit();
 
@@ -428,8 +424,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
                 var valorCmpAppend = '';
                 $('dados-pj', data).children().each(function () {
-                    var idCampo = $(this).context.localName;
-                    var valor = $(this).context.innerHTML;
+                    console.log($(this)[0].tagName);
+                    var idCampo = $(this)[0].localName;
+                    var valor = $(this)[0].innerHTML;
                     var campo = $("#" + idCampo);
                     var noCampo = $(campo).attr('name');
 
@@ -486,6 +483,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 }
                 $("#hdnValorCaptcha").val($("#txtCaptcha").val());
             }
+
         });
 
     }
@@ -767,9 +765,10 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         var dataHora = arr['data_hora'];
 
         var rdoNatoDigital = document.getElementById('rdoNatoDigital');
+        console.log(labelrdoNatoDigital);
         var rdoDigitalizado = document.getElementById('rdoDigitalizado');
-        var formato = rdoNatoDigital.checked ? rdoNatoDigital.nextSibling.nextSibling.innerHTML.trim() :
-            rdoDigitalizado.nextSibling.nextSibling.innerHTML.trim();
+        var formato = rdoNatoDigital.checked ? document.getElementById('labelrdoNatoDigital').innerHTML :
+            document.getElementById('labelrdoDigitalizado').innerHTML;
 
         var tipoDocumento = document.getElementById('selTipoDocumento');
         tipoDocumento = tipoDocumento.options[tipoDocumento.selectedIndex].text;
@@ -974,6 +973,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function peticionar() {
+        console.log(123);
         var isVinculacao       = document.getElementById('hdnIdVinculo').value == '' ? false : true;
         var isAlteracao        = document.getElementById('hdnIsAlteracao').value == '1' || isVinculacao == true ? true : false;
         var isAlteracaoRespLql = document.getElementById('isAlteracaoResponsavelLegal').value == '1' ? true : false;
@@ -1117,8 +1117,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         }
 
 
-        infraAbrirJanela(url,
-            'concluirPeticionamento',
+        parent.infraAbrirJanelaModal(url,
             770,
             480,
             '', //options

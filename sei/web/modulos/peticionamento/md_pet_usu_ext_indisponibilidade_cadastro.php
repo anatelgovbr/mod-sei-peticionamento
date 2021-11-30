@@ -81,7 +81,7 @@ PaginaPeticionamentoExterna::getInstance()->fecharJavaScript();
 
     .sizeFieldset {
         height: auto;
-        width: 86%;
+        width: 100%;
     }
 
     .fieldsetClear {
@@ -93,14 +93,14 @@ PaginaPeticionamentoExterna::getInstance()->fecharJavaScript();
     }
 
     a.ancoraPadraoAzul:hover,
-    a.ancoraPadraoPreta:hover{
-        text-decoration:underline;
+    a.ancoraPadraoPreta:hover {
+        text-decoration: underline;
     }
 
-    a.ancoraPadraoAzul{
-        padding:0 .5em 0 .5em;
-        text-decoration:none;
-        font-size:1.2em;
+    a.ancoraPadraoAzul {
+        padding: 0 .5em 0 .5em;
+        text-decoration: none;
+        font-size: 1.2em;
         color: #0066CC;
     }
 </style>
@@ -109,8 +109,8 @@ PaginaPeticionamentoExterna::getInstance()->fecharJavaScript();
 PaginaPeticionamentoExterna::getInstance()->fecharHead();
 PaginaPeticionamentoExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 $urlBaseLink = "";
-
-if (count($arrAcoesRemover) > 0 || $_POST['hdnAnexos'] != "") {
+$qtdArrAcoesRemover = (is_array($arrAcoesRemover) ? count($arrAcoesRemover) : 0);
+if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
 
     if ($_GET['acao_externa'] == 'md_pet_usu_ext_indisponibilidade_consultar') {
         $arrDados = split("±", $_POST['hdnAnexos'], 3);
@@ -133,66 +133,75 @@ if (count($arrAcoesRemover) > 0 || $_POST['hdnAnexos'] != "") {
     PaginaPeticionamentoExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaPeticionamentoExterna::getInstance()->abrirAreaDados('60em');
     ?>
-    <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6">
+            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset form-control">
+                <!--  Data Inicio  -->
+                <legend class="infraLegend">&nbsp;Período de Indisponibilidade&nbsp;</legend>
+                <label class="infraLabel">
+                    <span style="font-weight: bold;">Início:</span> <?= $objMdPetIndisponibilidadeDTO->getDthDataInicioFormatada() ?>
+                </label>
+                <!--  Data Fim  -->
+                <label class="infraLabel">
+                    <span style="font-weight: bold;"> &nbsp; Fim:</span> <?= $objMdPetIndisponibilidadeDTO->getDthDataFimFormatada() ?>
+                </label>
 
-        <!--  Data Inicio  -->
-        <legend class="infraLegend">&nbsp;Período de Indisponibilidade&nbsp;</legend>
-        <label class="infraLabel">
-            <span
-                style="font-weight: bold;">Início:</span> <?= $objMdPetIndisponibilidadeDTO->getDthDataInicioFormatada() ?>
-        </label>
-
-        <!--  Data Fim  -->
-        <label class="infraLabel">
-            <span
-                style="font-weight: bold;"> &nbsp; Fim:</span> <?= $objMdPetIndisponibilidadeDTO->getDthDataFimFormatada() ?>
-        </label>
-
-    </fieldset>
-
+            </fieldset>
+        </div>
+    </div>
     <!-- Resumo da Indisponibilidade -->
-
-    <fieldset class="sizeFieldset infraFieldset" style="margin-top: 11px; margin-bottom: 11px;">
-
-        <legend class="infraLegend">&nbsp; Resumo da Indisponibilidade &nbsp;</legend>
-        <label class="infraLabel">
-            <?php echo isset($objMdPetIndisponibilidadeDTO) ? $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade() : '' ?>
-        </label>
-    </fieldset>
-
-    <label id="fldProrrogacao" class="infraLabelObrigatorio">Indisponibilidade justificou prorrogação automática dos
-        prazos:</label>
-
-    <label class="infraLabel">
-        <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'S') ? 'Sim' : '' ?>
-        <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'N') ? 'Não' : '' ?>
-    </label>
-
-    <div>
-        <label id="lblDescricao" class="infraLabelOpcional">
-            <ul>Observação: Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação automática dos prazos externos de Intimações Eletrônicas que venceriam durante o período da indisponibilidade, prorrogando-os para o primeiro dia útil seguinte ao fim da respectiva indisponibilidade.
-            </ul>
-        </label>
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6">
+            <fieldset class="sizeFieldset infraFieldset form-control" style="margin-top: 11px; margin-bottom: 11px;">
+                <legend class="infraLegend">&nbsp; Resumo da Indisponibilidade &nbsp;</legend>
+                <label class="infraLabel">
+                    <?php echo isset($objMdPetIndisponibilidadeDTO) ? $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade() : '' ?>
+                </label>
+            </fieldset>
+        </div>
     </div>
-
-    <div id="lblProrrogacao">
-
-        <?php if (!is_null($objDocDTO)) {
-            
-            $serieNumero = $objDocDTO->getStrNomeSerie();
-            $serieNumero .= $objDocDTO->getStrNumero() != '' ? ' ' . $objDocDTO->getStrNumero() : '';
-            $urlDocumento = $objDocDTO->getStrUrlDocumento();
-            $html = "<a class=\"ancoraPadraoAzul\" title=\"" . $serieNumero . "\" style=\"font-size:12.4px\" class=\"ancoraPadraoAzul\" onclick=\"window.open('" . $urlDocumento . "')\"> " . $objDocDTO->getStrNomeDocFormatado() . " </a>";
-            ?>
-            <label class="infraLabelObrigatorio">
-                Documento:
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6">
+            <label id="fldProrrogacao" class="infraLabelObrigatorio">Indisponibilidade justificou prorrogação automática
+                dos
+                prazos:</label>
+            <label class="infraLabel">
+                <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'S') ? 'Sim' : '' ?>
+                <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'N') ? 'Não' : '' ?>
             </label>
-            <?php echo $html; ?>
-        <?php } ?>
-
-
+            <div>
+                <label id="lblDescricao" class="infraLabelOpcional">
+                    <ul>Observação: Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação
+                        automática
+                        dos prazos externos de Intimações Eletrônicas que venceriam durante o período da
+                        indisponibilidade,
+                        prorrogando-os para o primeiro dia útil seguinte ao fim da respectiva indisponibilidade.
+                    </ul>
+                </label>
+            </div>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6">
+            <div id="lblProrrogacao">
 
+                <?php if (!is_null($objDocDTO)) {
+
+                    $serieNumero = $objDocDTO->getStrNomeSerie();
+                    $serieNumero .= $objDocDTO->getStrNumero() != '' ? ' ' . $objDocDTO->getStrNumero() : '';
+                    $urlDocumento = $objDocDTO->getStrUrlDocumento();
+                    $html = "<a class=\"ancoraPadraoAzul\" title=\"" . $serieNumero . "\" style=\"font-size:12.4px\" class=\"ancoraPadraoAzul\" onclick=\"window.open('" . $urlDocumento . "')\"> " . $objDocDTO->getStrNomeDocFormatado() . " </a>";
+                    ?>
+                    <label class="infraLabelObrigatorio">
+                        Documento:
+                    </label>
+                    <?php echo $html; ?>
+                <?php } ?>
+
+
+            </div>
+        </div>
+    </div>
 
 </form>
 

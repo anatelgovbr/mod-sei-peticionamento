@@ -23,15 +23,15 @@ switch ($_GET['acao']) {
             $strTitulo = 'Consultar Intimação Eletrônica';
 
             $arrComandos[] = '<button type="submit" accesskey="I" name="sbmAceitarIntimacao" id="sbmAceitarIntimacao" value="Confirmar Consulta à Intimação" class="infraButton">Confirmar Consulta à <span class="infraTeclaAtalho">I</span>ntimação</button>';
-            $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+            $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="infraFecharJanelaModal();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
-            $texto = 'Para visualizar os documentos da Intimação Eletrônica referente ao ';
-            $texto .= 'Documento Principal SEI nº @numero_documento@, além de poder efetivar sua resposta, se faz necessário confirmar a consulta à intimação.';
+            $texto = '<div style="padding-top: 10px; padding-bottom: 10px;"><p>Para visualizar os documentos da Intimação Eletrônica referente ao ';
+            $texto .= 'Documento Principal SEI nº @numero_documento@, além de poder efetivar sua resposta, se faz necessário confirmar a consulta à intimação.</p>';
             $texto .= '<p>Lembramos que, considerar-se-á cumprida a intimação com a presente consulta no sistema ou, não efetuada a consulta, em ';
             $texto .= '@prazo_intimacao_tacita@ dias após a data de sua expedição.</p>';
             $texto .= '<p>Como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem ';
             $texto .= 'de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta acima indicada, a Intimação será ';
-            $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.</p>';
+            $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.</p></div>';
 
 
             $idDoc = $_GET['id_documento'];
@@ -40,9 +40,6 @@ switch ($_GET['acao']) {
             if (isset($idDoc) && !is_null($idDoc)) {
                 $idIntimacao = $_GET['id_intimacao'];
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-
-//                $idDocPrincipal = $objMdPetIntimacaoRN->retornaIdDocumentoPrincipalIntimacaoAcao($idIntimacao);
-
                 $idDocPrincipal = $idDoc;
 
                 //Get Documento Formatado
@@ -89,18 +86,17 @@ switch ($_GET['acao']) {
                         if ($objMdPetIntDestDTO && $objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S') {
                             $possuiIntimacaoJuridica = TRUE;
                         }
-                    }
+                    }                   
                 }
                 if ($possuiIntimacaoJuridica) {
-                    $texto = 'Para visualizar os documentos da Intimação Eletrônica referente ao ';
-                    $texto .= 'Documento Principal SEI nº @numero_documento@, além de poder efetivar sua resposta, se faz necessário confirmar a consulta à intimação.';
+                    $texto = '<div style="padding-top: 10px; padding-bottom: 10px;"><p>Para visualizar os documentos da Intimação Eletrônica referente ao Documento Principal SEI nº @numero_documento@, além de poder efetivar sua resposta, se faz necessário confirmar a consulta à intimação.</p>';
                     $texto .= '<p>Lembramos que, considerar-se-á cumprida a intimação com a presente consulta no sistema ou, não efetuada a consulta, em ';
                     $texto .= '@prazo_intimacao_tacita@ dias após a data de sua expedição.</p>';
                     //se for pessoa Juridica será adicionado esse paragrafo a mais
                     $texto .= '<p>Por se tratar de Intimação Eletrônica destinada a Pessoa Jurídica, esta será considerada cumprida caso seja confirmada a consulta por qualquer Representante formalmente vinculado à Pessoa Jurídica (Responsável Legal e, caso existam, Procuradores com poderes de receber Intimações por meio de Procurações Eletrônicas geradas no próprio SEI).</p>';
                     $texto .= '<p>Como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem ';
                     $texto .= 'de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta acima indicada, a Intimação será ';
-                    $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.</p>';
+                    $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.</p></div>';
                 }
 
                 //Documento
@@ -116,9 +112,9 @@ switch ($_GET['acao']) {
                     $objInfraException = new InfraException();
                     $todasIntimacoesAceitas = $objMdPetIntAceiteRN->todasIntimacoesAceitas($_POST['hdnIdIntimacao']);
                     if ($todasIntimacoesAceitas['todasAceitas']) {
-                        if ($todasIntimacoesAceitas['qntDestinatario'] == 0) {
+                        if($todasIntimacoesAceitas['qntDestinatario'] == 0){
                             $objInfraException->adicionarValidacao('Você não possui mais permissão para cumprir a Intimação Eletrônica.');
-                        } else {
+                        }else{
                             $objInfraException->adicionarValidacao('Já havia ocorrido o cumprimento da presente intimação.');
                         }
                     }
@@ -133,7 +129,7 @@ switch ($_GET['acao']) {
                     $objMdPetIntProtocoloDTO = $mdPetIntProtocoloRN->listar($objMdPetIntProtocoloDTO);
 
                     if ($objMdPetIntProtocoloDTO) {
-                        $_POST['hdnIdIntimacao'] = "";
+                        $_POST['hdnIdIntimacao'] = [];
                         foreach ($objMdPetIntProtocoloDTO as $item) {
                             $_POST['hdnIdIntimacao'][] = $item->getNumIdMdPetIntimacao();
                         }
@@ -150,7 +146,7 @@ switch ($_GET['acao']) {
                 }
 
                 echo "<script>";
-                echo "window.opener.location.reload();";
+                echo "window.parent.location.reload();";
                 echo "window.close();";
                 echo "</script>";
                 die;
@@ -174,10 +170,13 @@ PaginaSEIExterna::getInstance()->montarTitle(':: ' . PaginaSEIExterna::getInstan
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
 ?>
+    div.infraBarraComandos{text-align: center !important;}
 
     .textoIntimacaoEletronica {}
-    .clear {clear: both;}
-
+.clear {clear: both;}
+    p{
+    font-size: 0.875rem;
+    }
 <?php
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
@@ -187,27 +186,25 @@ PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload=""');
 SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_externo']);
 ?>
-    <form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>"
-          method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
+<form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
 
-        <div class="clear"></div>
-        <div class="textoIntimacaoEletronica">
-            <h2>
-                <?php echo $texto; ?>
-            </h2>
-            <?php
-            if ($idIntimacao) {
-                foreach ($idIntimacao as $id) {
-                    echo '<input type="hidden" name="hdnIdIntimacao[]" id="hdnIdIntimacao" value="' . $id . '"/>';
-                }
+    <div class="clear"></div>
+    <div class="textoIntimacaoEletronica">
+        <h4>
+            <?php echo $texto; ?>
+        </h4>
+        <?php
+        if ($idIntimacao) {
+            foreach ($idIntimacao as $id) {
+                echo '<input type="hidden" name="hdnIdIntimacao[]" id="hdnIdIntimacao" value="' . $id . '"/>';
             }
-            ?>
-            <input type="hidden" name="hdnIdDocumento" value="<?= $idDocPrincipal; ?>">
-        </div>
-        <div style="padding-right: 40%">
-            <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-        </div>
-    </form>
+        }
+        ?>
+        <input type="hidden" name="hdnIdDocumento" value="<?= $idDocPrincipal; ?>">
+    </div>
+        <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
+
+</form>
 <?php
 SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_externo']);
 PaginaSEIExterna::getInstance()->fecharBody();

@@ -58,6 +58,7 @@ try {
                 $objMdPetTipoPoderLegalDTO->setNumIdTipoPoderLegal($value);
                 $objMdPetTipoPoderLegalDTO->setDtaDtaCadastro(InfraData::getStrDataHoraAtual());
                 $objMdPetTipoPoderLegalDTO->setStrStaSistema(null);
+                $objMdPetTipoPoderLegalDTO->setStrSinAtivo('N');
                 $objMdPetTipoPoderLegalRN = new MdPetTipoPoderLegalRN();
                 $arrObjMdPetTipoPoderLegalDTO = $objMdPetTipoPoderLegalRN->desativar($objMdPetTipoPoderLegalDTO);
                 header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_listar&acao_origem=' . $_GET['acao']));
@@ -79,6 +80,7 @@ try {
                 $objMdPetTipoPoderLegalDTO->setNumIdTipoPoderLegal($value);
                 $objMdPetTipoPoderLegalDTO->setDtaDtaCadastro(InfraData::getStrDataHoraAtual());
                 $objMdPetTipoPoderLegalDTO->setStrStaSistema(null);
+                $objMdPetTipoPoderLegalDTO->setStrSinAtivo('N');
                 $objMdPetTipoPoderLegalRN = new MdPetTipoPoderLegalRN();
                 $arrObjMdPetTipoPoderLegalDTO = $objMdPetTipoPoderLegalRN->reativar($objMdPetTipoPoderLegalDTO);
                 header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_listar&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($value)));
@@ -167,7 +169,7 @@ try {
             if( $arrObjMdPetTipoPoderLegalDTO[$i]->getStrSinAtivo() == 'S' ){
                 $strCssTr = ($strCssTr=='<tr class="infraTrClara">')?'<tr class="infraTrEscura">':'<tr class="infraTrClara">';
             } if($arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal() == 1){
-                $strCssTr ='<tr style="background-color:#8BB690;">';
+                $strCssTr ='<tr style="background-color:#d8f5b9;">';
             }
             if($_GET['id_md_pet_tipo_poder'] == $arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal() ){
                 $strCssTr ='<tr class="infraTrAcessada">';
@@ -187,21 +189,21 @@ try {
         
             $strResultado .= '<td align="center" valign="middle">';
             if($arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal() == 1 ){
-                $strResultado .= "<img align=\"top\" style=\"height:16px; width:16px;\" src=\"/infra_css/imagens/ajuda.gif\" name=\"ajuda\" onmouseover='return infraTooltipMostrar(\"O Tipo de Poder Legal para - Receber, Cumprir e Responder Intimação Eletrônica - não pode ser editado, desativado ou excluído, em razão de sua dependência com outros recursos do sistema.   :::Somente se esse Poder constar na Procuração Eletrônica simples e a Procuração estando vigente é que o Usuário Externo participará do fluxo das Intimações Eletrônicas destinadas ao Outorgante.   :::O mencionado Poder é intrínseco das Procurações Eletrônicas Especiais e do Responsável Legal.\", \"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+                $strResultado .= "<img align=\"top\" style=\"\" src=\"" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg\" name=\"ajuda\" onmouseover='return infraTooltipMostrar(\"O Tipo de Poder Legal para - Receber, Cumprir e Responder Intimação Eletrônica - não pode ser editado, desativado ou excluído, em razão de sua dependência com outros recursos do sistema.   :::Somente se esse Poder constar na Procuração Eletrônica simples e a Procuração estando vigente é que o Usuário Externo participará do fluxo das Intimações Eletrônicas destinadas ao Outorgante.   :::O mencionado Poder é intrínseco das Procurações Eletrônicas Especiais e do Responsável Legal.\", \"Ajuda\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
-            $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&IdTipoPoderLegal='.$arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Tipo de Poder" alt="Consultar Tipo de Poder" class="infraImg" /></a>&nbsp;';
+            $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&IdTipoPoderLegal='.$arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg" title="Consultar Tipo de Poder" alt="Consultar Tipo de Poder" class="infraImg" /></a>&nbsp;';
             if($arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal() != 1 ){
-            $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&IdTipoPoderLegal='.$arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/alterar.gif" title="Alterar Tipo de Poder" alt="Alterar Tipo de Poder" class="infraImg" /></a>&nbsp;';
+            $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&IdTipoPoderLegal='.$arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg" title="Alterar Tipo de Poder" alt="Alterar Tipo de Poder" class="infraImg" /></a>&nbsp;';
             }
                 $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjMdPetTipoPoderLegalDTO[$i]->getStrNome()));
                 if($arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal() != 1 ){
                 if ($bolAcaoDesativar && $arrObjMdPetTipoPoderLegalDTO[$i]->getStrSinAtivo() == 'S'){
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/desativar.gif" title="Desativar Tipo de Poder" alt="Desativar Tipo de Poder" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg" title="Desativar Tipo de Poder" alt="Desativar Tipo de Poder" class="infraImg" /></a>&nbsp;';
                 } else {
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/reativar.gif" title="Reativar Tipo de Poder" alt="Reativar Tipo de Poder" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg" title="Reativar Tipo de Poder" alt="Reativar Tipo de Poder" class="infraImg" /></a>&nbsp;';
                 }
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/excluir.gif" title="Excluir Tipo de Poder" alt="Excluir Tipo de Poder" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg" title="Excluir Tipo de Poder" alt="Excluir Tipo de Poder" class="infraImg" /></a>&nbsp;';
             }
             $strResultado .= '</td></tr>'."\n";
         }
@@ -222,72 +224,8 @@ PaginaSEI::getInstance()->abrirStyle();
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-
-
-?>
-
-    function inicializar(){
-    if ('<?=$_GET['acao']?>'=='md_pet_tipo_poder_listar'){
-    infraReceberSelecao();
-    
-    }else{
-   
-    }
-    infraEfeitoTabelas();
-    }
-
-
-    function acaoDesativar(id,desc){
-    if (confirm("Confirma desativação do Tipo de Poder Legal \""+desc+"\"?")){
-    document.getElementById('hdnInfraItemId').value=id;
-    document.getElementById('frmLista').action='<?=$strLinkDesativar?>';
-    document.getElementById('frmLista').submit();
-    }
-    }
-
-   
-
-
-    function acaoReativar(id,desc){
-    if (confirm("Confirma reativação do Tipo de Poder Legal \""+desc+"\"?")){
-    document.getElementById('hdnInfraItemId').value=id;
-    document.getElementById('frmLista').action='<?=$strLinkReativar?>';
-    document.getElementById('frmLista').submit();
-    }
-    }
-
-    
-    function acaoExcluir(id,desc){
-    if (confirm("Confirma exclusão do Tipo de Poder Legal \""+desc+"\"?")){
-    document.getElementById('hdnInfraItemId').value=id;
-    document.getElementById('frmLista').action='<?=$strLinkExcluir?>';
-    document.getElementById('frmLista').submit();
-    }
-    }
-
-
-    
-    function pesquisar(){
-    document.getElementById('frmLista').action='<?=$strLinkPesquisar?>';
-    document.getElementById('frmLista').submit();
-    }
-<?
-
-
 PaginaSEI::getInstance()->fecharJavaScript();
-?>
-
-<style type="text/css">
-
-#lblTipoPoder {position:absolute;left:0%;top:0%;width:20%;}
-#txtTipoPoder {position:absolute;left:0%;top:40%;width:20%;}
-
-#lblTipo {position:absolute;left:23%;top:0%;width:20%;}
-#selTipo {position:absolute;left:23%;top:40%;width:20%;}
-
-</style>
-
-<?
+require_once "md_pet_tipo_poder_css.php";
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
@@ -301,12 +239,14 @@ $arrNivelAcesso = array(
 <form id="frmLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo='. $_GET['id_menu_peticionamento_usuario_externo'] .'&acao='.$_GET['acao'].'&acao_origem='.$_GET['acao']))?>">
 
     <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-  
-    <div style="height:4.5em; margin-top: 11px;" class="infraAreaDados" id="divInfraAreaDados">
-        <!--  Nome do Menu -->
-        <label id="lblTipoProcesso" for="txtTipoPoder" class="infraLabelOpcional">Nome do Tipo de Poder Legal:</label>
-        <input type="text" name="txtTipoPoder" id="txtTipoPoder" class="infraText" />
+
+    <div class="row infraAreaDados">
+        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
+            <label id="lblTipoProcesso" for="txtTipoPoder" class="infraLabelOpcional">Nome do Tipo de Poder Legal:</label>
+            <input type="text" name="txtTipoPoder" id="txtTipoPoder" class="infraText form-control" />
+        </div>
     </div>
+
     <?
     PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros);
     PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
@@ -314,7 +254,8 @@ $arrNivelAcesso = array(
 
 </form>
 
-<?php 
+<?php
+require_once "md_pet_tipo_poder_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

@@ -168,7 +168,7 @@ try {
     $tpLogradouro = '';
     $nuLogradouro = '';
     $compLogradouro = '';
-    if (count($objMdPetIntegracaoDTO) > 0) {
+    if ($objMdPetIntegracaoDTO) {
         if ($objMdPetIntegracaoDTO->getStrStaUtilizarWs() == 'N') {
             $staUtilizarWsNao = "checked='checked'";
             $staUtilizarWsSim = "";
@@ -296,8 +296,8 @@ try {
         $strResultadoParamEntrada .= "</td>";
         $strResultadoParamEntrada .= "<td align='left'  style='padding: 8px;' >";
         if ($chave == 'periodoCache') {
-            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:53%; float: left' name='selCachePrazoExpiracao' class='infraSelect' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . "/ajuda.gif' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.") . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImg' />";
-            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $mes[2] . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . "/ajuda.gif' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.') . " alt='Ajuda' class='infraImg' />";
+            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:53%; float: left' name='selCachePrazoExpiracao' class='infraSelect' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $mes[2] . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
         } else {
             $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS' name='nomeFuncionalDadosEntrada[$chave]' style='width: 80%;'></select>";
         }
@@ -365,531 +365,9 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-?>
-<?php if ($_GET['acao'] == 'md_pet_integracao_consultar') { ?>
-    #btnValidar {display: none}
-<?php } ?>
-    #container{
-    width: 100%;
-    }
-
-    .clear {
-    clear: both;
-    }
-
-    .bloco {
-    float: left;
-    margin-top: 0%;
-    margin-right: 1%;
-    }
-
-    label[for^=txt] {
-    display: block;
-    white-space: nowrap;
-    }
-    label[for^=s] {
-    display: block;
-    white-space: nowrap;
-    }
-    label[for^=file] {
-    display: block;
-    white-space: nowrap;
-    }
-
-    img[name=ajuda] {
-    margin-bottom: -4px;
-    width: 16px !important;
-    height: 16px !important;
-    }
-
-    #txtNome {
-    width:610px;
-    }
-    #selMdPetIntegFuncionalid {
-    width:615px;
-    }
-    #txtEnderecoWsdl {
-    width:610px;
-    }
-<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
-
-$strLinkAjaxValidarWsdl = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_integracao_busca_operacao_wsdl');
-$strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_integracao_busca_parametro_wsdl');
-?>
-    <script type="text/javascript" charset="iso-8859-1">
-        var preencheCache = false;
-        var staUtilizaWs = false;
-        var staUtilizaWsCheck = null;
-
-        function inicializar() {
-            habilitaWs();
-            if ('<?=$_GET['acao']?>' == 'md_pet_integracao_cadastrar') {
-                document.getElementById('selMdPetIntegFuncionalid').focus();
-                $('#blcEnderecoWs').css('display', 'none');
-                $('#blcOperacaoWs').css('display', 'none');
-                $('#blcCacheWs').css('display', 'none');
-                $('#fldParametrosCache').css('display', 'none');
-                $('#blcTextoSemWs').css('display', 'none');
-            } else if ('<?=$_GET['acao']?>' == 'md_pet_integracao_consultar') {
-                infraDesabilitarCamposAreaDados();
-                if (staUtilizaWs) {
-                    validarWsdl();
-                }
-            } else {
-                document.getElementById('btnCancelar').focus();
-                if (staUtilizaWs) {
-                    validarWsdl();
-                }
-            }
-            infraEfeitoTabelas();
-
-        }
-
-        function habilitaWs() {
-            var itensIntegracao = document.getElementsByName('rdStaUtilizarWs');
-
-            $.each(itensIntegracao, function (i, item) {
-                if (item.checked == true) {
-                    staUtilizaWsCheck = true;
-                    if (item.value == 'N') {
-                        staUtilizaWs = false;
-                        $('#blcEnderecoWs').css('display', 'none');
-                        $('#blcOperacaoWs').css('display', 'none');
-                        $('#blcCacheWs').css('display', 'none');
-                        $('#fldParametrosCache').css('display', 'none');
-                        $('#blcTipoClienteWs').css('display', 'none');
-                        $('#blcEntradaWs').css('display', 'none');
-                        $('#blcSaidaWs').css('display', 'none');
-                        $('#blcTextoSemWs').css('display', 'block');
-                    } else {
-                        staUtilizaWs = true;
-                        $('#blcEnderecoWs').css('display', 'block');
-                        $('#blcOperacaoWs').css('display', 'block');
-                        $('#blcCacheWs').css('display', 'block');
-                        $('#blcTipoClienteWs').css('display', 'block');
-                        $('#blcEntradaWs').css('display', 'block');
-                        $('#blcSaidaWs').css('display', 'block');
-                        cacheMarcaDesmarca($('#fldParametrosCache'));
-                        $('#blcTextoSemWs').css('display', 'none');
-                    }
-                }
-            });
-        }
-
-        function validarCadastro() {
-            if (infraTrim(document.getElementById('txtNome').value) == '') {
-                alert('Informe Nome.');
-                document.getElementById('txtNome').focus();
-                return false;
-            }
-
-            if (!infraSelectSelecionado('selMdPetIntegFuncionalid')) {
-                alert('Selecione uma Funcionalidade.');
-                document.getElementById('selMdPetIntegFuncionalid').focus();
-                return false;
-            }
-            if (staUtilizaWsCheck == null) {
-                alert('Informe Indicação de Integração com a Receita Federal.');
-                document.getElementById('txtNome').focus();
-                return false;
-            }
-            if (staUtilizaWs == true) {
-
-                if (infraTrim(document.getElementById('txtEnderecoWsdl').value) == '') {
-                    alert('Informe Endereço do Webservice.');
-                    document.getElementById('txtEnderecoWsdl').focus();
-                    return false;
-                }
-
-                if (infraTrim(document.getElementById('txtEnderecoWsdl').value) == '') {
-                    alert('Informe Endereço do Webservice.');
-                    document.getElementById('txtEnderecoWsdl').focus();
-                    return false;
-                }
-
-                if (infraTrim(document.getElementById('selOperacaoWsdl').value) == '') {
-                    alert('Informe Operação.');
-                    document.getElementById('selOperacaoWsdl').focus();
-                    return false;
-                }
-
-                if (document.getElementById('chkSinCache').checked) {
-                    if (infraTrim(document.getElementById('selCacheDataArmazenamento').value) == '') {
-                        alert('Informe Data de Armazenamento do Registro.');
-                        document.getElementById('selCacheDataArmazenamento').focus();
-                        return false;
-                    }
-                    if (infraTrim(document.getElementById('selCachePrazoExpiracao').value) == '') {
-                        alert('Informe Prazo de Expiração do Cache.');
-                        document.getElementById('selCachePrazoExpiracao').focus();
-                        return false;
-                    }
-                    if (infraTrim(document.getElementById('selCachePrazoExpiracao').value) == '') {
-                        alert('Informe Prazo de Expiração do Cache.');
-                        document.getElementById('selCachePrazoExpiracao').focus();
-                        return false;
-                    }
-                    if (infraTrim(document.getElementById('txtPrazo').value) == '') {
-                        alert('Informe o Prazo.');
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        function OnSubmitForm() {
-            if (!validarCadastro()) {
-                return false;
-            }
-
-            var select = document.getElementById('selParametrosE');
-            for (i = 0; i < select.length; i++) {
-                select.options[i].selected = true;
-            }
-
-            var select = document.getElementById('selParametrosS');
-            for (i = 0; i < select.length; i++) {
-                select.options[i].selected = true;
-            }
-
-            return true;
-
-            //return validarCadastro();
-        }
-
-        function validarWsdl() {
-
-            var enderecoWsdl = document.getElementById('txtEnderecoWsdl').value;
-            if (enderecoWsdl == '') {
-                alert('Preenche o campo Endereço WSDL.');
-                return false;
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "<?= $strLinkAjaxValidarWsdl ?>",
-                dataType: "xml",
-                data: {
-                    endereco_wsdl: enderecoWsdl
-                },
-                beforeSend: function () {
-                    infraExibirAviso(false);
-                },
-                success: function (result) {
-                    var select = document.getElementById('selOperacaoWsdl');
-                    //limpar todos os options
-                    select.options.length = 0;
-
-                    if ($(result).find('success').text() == 'true') {
-                        var opt = document.createElement('option');
-                        opt.value = '';
-                        opt.innerHTML = '';
-                        select.appendChild(opt);
-                        var selectedValor = '<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrOperacaoWsdl());?>';
-                        $.each($(result).find('operacao'), function (key, value) {
-                            var opt = document.createElement('option');
-                            opt.value = $(value).text();
-                            opt.innerHTML = $(value).text();
-                            if ($(value).text() == selectedValor) {
-                                opt.selected = true;
-                                preencheCache = true;
-                            }
-                            select.appendChild(opt);
-                        });
-                        if (preencheCache) {
-                            select.onchange();
-                            chkSinCache.onchange();
-                        }
-                        preencheCache = false;
-                        //document.getElementById('gridOperacao').style.display = "block";
-                    } else {
-                        alert($(result).find('msg').text());
-                        //document.getElementById('gridOperacao').style.display = "none";
-                    }
-                },
-                error: function (msgError) {
-                    msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-                    // console.log(msgCommit);
-                },
-                complete: function (result) {
-                    infraAvisoCancelar();
-                }
-            });
-
-        }
-
-
-        function buscarParametroWsdl(tipo_parametro) {
-
-            var enderecoWsdl = document.getElementById('txtEnderecoWsdl').value;
-            var operacaoWsdl = document.getElementById('selOperacaoWsdl').value;
-
-            /*
-            if(enderecoWsdl == ''){
-                alert('Preenche o campo Endereço WSDL.');
-                return false;
-            }
-            */
-            $.ajax({
-                async: false,
-                type: "POST",
-                url: "<?= $strLinkAjaxBuscarParametroWsdl ?>",
-                dataType: "xml",
-                data: {
-                    endereco_wsdl: enderecoWsdl,
-                    operacao_wsdl: operacaoWsdl,
-                    tipo_parametro: tipo_parametro
-                },
-                beforeSend: function () {
-                    infraExibirAviso(false);
-                },
-                success: function (result) {
-                    var arraySelect = new Array();
-                    if (tipo_parametro == 'e') {
-                        arraySelect.push('selParametrosE');
-                        arraySelect.push('nomeFuncionalDadosEntrada_cnpjEmpresa');
-                        arraySelect.push('nomeFuncionalDadosEntrada_identificacaoOrigem');
-                    } else {
-                        arraySelect.push('nomeFuncionalDadosSaida_cnpjEmpresa');
-                        arraySelect.push('nomeFuncionalDadosSaida_razaoSocial');
-                        arraySelect.push('nomeFuncionalDadosSaida_codSituacaoCadastral');
-                        arraySelect.push('nomeFuncionalDadosSaida_descSituacaoCadastral');
-                        arraySelect.push('nomeFuncionalDadosSaida_dtUltAltSituacaoCadastral');
-                        arraySelect.push('nomeFuncionalDadosSaida_tpLogradouro');
-                        arraySelect.push('nomeFuncionalDadosSaida_logradouro');
-                        arraySelect.push('nomeFuncionalDadosSaida_numero');
-                        arraySelect.push('nomeFuncionalDadosSaida_complemento');
-                        arraySelect.push('nomeFuncionalDadosSaida_cep');
-                        arraySelect.push('nomeFuncionalDadosSaida_bairro');
-                        arraySelect.push('nomeFuncionalDadosSaida_codIbgeMunicipio');
-                        arraySelect.push('nomeFuncionalDadosSaida_cpfRespLegal');
-                        arraySelect.push('nomeFuncionalDadosSaida_nomeRespLegal');
-                    }
-
-                    //limpar todos os options
-                    // select.options.length = 0;
-                    // console.log($(result).find('success').text() == 'true');
-                    if ($(result).find('success').text() == 'true') {
-                        var arrayParametros = $(result).find('parametro');
-
-                        $.each(arraySelect, function (key, select) {
-                            // console.log(select);
-                            popularSelect(tipo_parametro, select, arrayParametros);
-                        });
-                        //document.getElementById('gridOperacao').style.display = "block";
-                    } else {
-                        alert($(result).find('msg').text());
-                        //document.getElementById('gridOperacao').style.display = "none";
-                    }
-                },
-                error: function (msgError) {
-                    msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-                    // console.log(msgCommit);
-                },
-                complete: function (result) {
-                    infraAvisoCancelar();
-                }
-            });
-
-        }
-
-        function buscarParametroWsdlCache(tipo_parametro) {
-
-            var enderecoWsdl = document.getElementById('txtEnderecoWsdl').value;
-            var operacaoWsdl = document.getElementById('selOperacaoWsdl').value;
-
-            /*
-            if(enderecoWsdl == ''){
-                alert('Preenche o campo Endereço WSDL.');
-                return false;
-            }
-            */
-            $.ajax({
-                async: false,
-                type: "POST",
-                url: "<?= $strLinkAjaxBuscarParametroWsdl ?>",
-                dataType: "xml",
-                data: {
-                    endereco_wsdl: enderecoWsdl,
-                    operacao_wsdl: operacaoWsdl,
-                    tipo_parametro: tipo_parametro
-                },
-                beforeSend: function () {
-                    infraExibirAviso(false);
-                },
-                success: function (result) {
-                    console.log(result);
-                    if (tipo_parametro == 'e') {
-                        var select = document.getElementById('selCachePrazoExpiracao');
-                        var selectedValor = '<?= $strItensSelCachePrazoExpiracao;?>';
-                    } else {
-                        var select = document.getElementById('selCacheDataArmazenamento');
-                        var selectedValor = '<?= $strItensSelCacheDataArmazenamento;?>';
-                    }
-
-                    //limpar todos os options
-                    select.options.length = 0;
-
-                    if ($(result).find('success').text() == 'true') {
-                        $.each($(result).find('parametro'), function (key, value) {
-                            var opt = document.createElement('option');
-                            opt.value = $(value).text();
-                            opt.innerHTML = $(value).text();
-                            if ($(value).text() == selectedValor) {
-                                opt.selected = true;
-                            } else {
-                                opt.selected = false;
-                            }
-                            select.appendChild(opt);
-                        });
-
-                        //document.getElementById('gridOperacao').style.display = "block";
-                    } else {
-                        alert($(result).find('msg').text());
-                        //document.getElementById('gridOperacao').style.display = "none";
-                    }
-
-                },
-                error: function (msgError) {
-                    msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-                    // console.log(msgCommit);
-                },
-                complete: function (result) {
-                    infraAvisoCancelar();
-                }
-            });
-
-        }
-
-        function cacheMarcaDesmarca(objeto) {
-            if (document.getElementById('selOperacaoWsdl').value != '') {
-                if (objeto.checked) {
-                    document.getElementById('paramEntradaTable_periodoCache').style.display = '';
-                    buscarParametroWsdlCache('e');
-                    buscarParametroWsdlCache('s');
-                } else {
-                    document.getElementById('paramEntradaTable_periodoCache').style.display = 'none';
-                    var select = document.getElementById('selCachePrazoExpiracao');
-                    select.options.length = 0;
-
-                    var select = document.getElementById('selCacheDataArmazenamento');
-                    select.options.length = 0;
-                }
-            }
-        }
-
-        function tipoMarcaDesmarca(objeto) {
-            if (document.getElementById('selOperacaoWsdl').value != '') {
-                if (objeto.checked) {
-                    document.getElementById('paramSaidaTable_tpLogradouro').style.display = '';
-                } else {
-                    document.getElementById('paramSaidaTable_tpLogradouro').style.display = 'none';
-                }
-            }
-        }
-
-        function numeroMarcaDesmarca(objeto) {
-            if (document.getElementById('selOperacaoWsdl').value != '') {
-                if (objeto.checked) {
-                    document.getElementById('paramSaidaTable_numero').style.display = '';
-                } else {
-                    document.getElementById('paramSaidaTable_numero').style.display = 'none';
-                }
-            }
-        }
-
-        function complementoMarcaDesmarca(objeto) {
-            if (document.getElementById('selOperacaoWsdl').value != '') {
-                if (objeto.checked) {
-                    document.getElementById('paramSaidaTable_complemento').style.display = '';
-                } else {
-                    document.getElementById('paramSaidaTable_complemento').style.display = 'none';
-                }
-            }
-        }
-
-
-        function operacaoSelecionar() {
-            checkbox = document.getElementById('chkSinCache');
-            if (!preencheCache) {
-                checkbox.checked = false;
-            }
-            cacheMarcaDesmarca(checkbox);
-            buscarParametroWsdl('e');
-            buscarParametroWsdl('s');
-        }
-
-        function popularSelect(tipo_parametro, select, arrayValores) {
-
-            var selectRetorno = document.getElementById(select);
-            selectRetorno.options.length = 0;
-
-            var opt = document.createElement('option');
-            opt.value = '';
-            opt.innerHTML = 'Selecione';
-            selectRetorno.appendChild(opt);
-            $.each(arrayValores, function (key, value) {
-
-                var dados = <?php echo json_encode($arrParametrosCadastrados); ?>;
-                var selectedValor = "";
-
-                if (select == 'nomeFuncionalDadosEntrada_cnpjEmpresa' && tipo_parametro == 'e') {
-                    selectedValor = '<?php echo $strItensSelCnpjEmpresa; ?>';
-                } else {
-                    var arrayNome = select.split('_');
-                    $.each(dados, function (chave, item) {
-                        if (item['nome'] == arrayNome[1]) {
-                            selectedValor = item['campo_nome'];
-                        }
-                    });
-                }
-                console.log(selectedValor);
-                if (key != "endereco") {
-
-                    if (tipo_parametro == 'e') {
-                        var opt = document.createElement('option');
-                        if (key > 99) {
-                            opt.value = 'endereco.' + $(value).text();
-                            opt.innerHTML = 'endereco.' + $(value).text();
-                        } else {
-                            opt.value = $(value).text();
-                            opt.innerHTML = $(value).text();
-                        }
-                        if ($(value).text() == selectedValor) {
-                            opt.selected = true;
-                        } else {
-                            opt.selected = false;
-                        }
-                        selectRetorno.appendChild(opt);
-                    } else {
-                        var opt = document.createElement('option');
-                        if (key > 99) {
-                            opt.value = 'endereco.' + $(value).text();
-                            opt.innerHTML = 'endereco.' + $(value).text();
-                        } else {
-                            opt.value = $(value).text();
-                            opt.innerHTML = $(value).text();
-                        }
-                        if ($(value).text() == selectedValor) {
-                            opt.selected = true;
-                        } else {
-                            opt.selected = false;
-                        }
-                        selectRetorno.appendChild(opt);
-                    }
-                }
-            });
-
-            selectRetorno
-        }
-
-
-    </script>
-<?
+require_once "md_pet_integracao_cadastro_css.php";
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
@@ -899,58 +377,54 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('auto');
         ?>
-        <div class="container">
-            <div class="bloco">
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-6 e col-xl-6">
                 <label class="infraLabelObrigatorio" for="txtNome" id="lblNome">Nome:</label>
-                <input type="text" id="txtNome" name="txtNome" class="infraText"
+                <input type="text" id="txtNome" name="txtNome" class="infraText form-control"
                        value="<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrNome()); ?>"
                        onkeypress="return infraMascaraTexto(this,event,30);" maxlength="30"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
-
-            <div class="clear">&nbsp;</div>
-
-            <div class="bloco">
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-6 col-xl-6">
                 <label class="infraLabelObrigatorio" for="selMdPetIntegFuncionalid" id="lblMdPetIntegFuncionalid">Funcionalidade:</label>
-                <select id="selMdPetIntegFuncionalid" name="selMdPetIntegFuncionalid" class="infraSelect"
+                <select id="selMdPetIntegFuncionalid" name="selMdPetIntegFuncionalid" class="infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strItensSelMdPetIntegFuncionalid ?>
                 </select>
             </div>
-
-            <div class="clear">&nbsp;</div>
-
-            <div style="margin-top: 15px!important;">
-                <fieldset class="infraFieldset" style="width:75%;">
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
+                <fieldset class="infraFieldset fieldSetIntegracao form-control">
                     <legend class="infraLegend">&nbsp;Indicação de Integração com a Receita Federal&nbsp; <img
                                 id="imgAjuda2"
                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
-                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('É extremamente recomendado que se utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jurídica e Procuração Eletrônica para os Usuários Externos Sem Integração com a base da Receita Federal, os Usuários Externos continuarão a declarar a responsabilidade, até penal, sobre as informações prestadas, mas poderão ocorrer contradição e, caso necessite, Suspensão e Alteração da vinculação podem ser efetivadas pelo menu Administração > Peticionamento Eletrônico > Vinculações e Procurações Eletrônicas.') ?>
-                                alt="Ajuda" class="infraImg"/></legend>
-                    <div>
-                        <input <?php echo $staUtilizarWsNao; ?> type="radio" name="rdStaUtilizarWs"
-                                                                id="rdStaUtilizarWsNao" value="N"
-                                                                onclick="habilitaWs()">
-                        <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração
-                            <img id="imgAjuda2"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.') ?>
-                                 alt="Ajuda" class="infraImg"/></label>
-
-                        <input <?php echo $staUtilizarWsSim; ?> type="radio" name="rdStaUtilizarWs"
-                                                                id="rdStaUtilizarWsSim" value="S"
-                                                                onclick="habilitaWs()">
-                        <label name="rdStaUtilizarWsSim" id="lblStaUtilizarWsSim" for="rdStaUtilizarWsSim"
-                               class="infraLabelRadio">Com Integração
-                            <img id="imgAjuda2"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica será validado por integração configurada abaixo se é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Se não ocorrer a validação o Usuário Externo não poderá prosseguir com o Peticionamento inicial de Responsável Legal de Pessoa Jurídica.') ?>
-                                 alt="Ajuda" class="infraImg"/></label>
-                    </div>
+                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('É extremamente recomendado que se utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jurídica e Procuração Eletrônica para os Usuários Externos Sem Integração com a base da Receita Federal, os Usuários Externos continuarão a declarar a responsabilidade, até penal, sobre as informações prestadas, mas poderão ocorrer contradição e, caso necessite, Suspensão e Alteração da vinculação podem ser efetivadas pelo menu Administração > Peticionamento Eletrônico > Vinculações e Procurações Eletrônicas.', 'Ajuda') ?>
+                                alt="Ajuda" class="infraImgFielset"/></legend>
+                    <input <?php echo $staUtilizarWsNao; ?> type="radio" name="rdStaUtilizarWs" class="infraRadio"
+                                                            id="rdStaUtilizarWsNao" value="N"
+                                                            onclick="habilitaWs()">
+                    <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração
+                        <img id="imgAjuda2"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.', 'Ajuda') ?>
+                             alt="Ajuda" class="infraImgModulo"/></label>
+                    <input <?php echo $staUtilizarWsSim; ?> type="radio" name="rdStaUtilizarWs" class="infraRadio"
+                                                            id="rdStaUtilizarWsSim" value="S"
+                                                            onclick="habilitaWs()">
+                    <label name="rdStaUtilizarWsSim" id="lblStaUtilizarWsSim" for="rdStaUtilizarWsSim"
+                           class="infraLabelRadio">Com Integração
+                        <img id="imgAjuda2"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica será validado por integração configurada abaixo se é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Se não ocorrer a validação o Usuário Externo não poderá prosseguir com o Peticionamento inicial de Responsável Legal de Pessoa Jurídica.') ?>
+                             alt="Ajuda" class="infraImgModulo"/></label>
                 </fieldset>
             </div>
-
-            <div class="bloco" id="blcTextoSemWs" style="width: 75%;">
+        </div>
+        <div class="row" id="blcTextoSemWs" style="display: none;">
+            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8">
                 <p style="font-size: 12px; padding-top: 10px">
                     <span STYLE="color: red; font-weight: bold">ATENÇAO</span>: É extremamente recomendado que se
                     utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo
@@ -969,111 +443,107 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     Vinculações e Procurações Eletrônicas.
                 </p>
             </div>
-
-            <div class="clear">&nbsp;</div>
-
-            <div class="bloco" id="blcTipoClienteWs" style="width: 75%">
-                <div style="width: 150px; float: left;">
-                    <label id="lblStaTpClienteWs" for="txtStaTpClienteWs" class="infraLabelObrigatorio">Tipo Cliente
-                        WS:</label>
-                    <input <?php echo $staTpClienteWs; ?> type="radio" name="rdStaTpClienteWs" id="rdStaTpClienteWsSoap"
-                                                          value="S">
-                    <label for="rdStaTpClienteWsSoap" id="lblStaTpClienteWsSoap" class="infraLabelRadio">SOAP</label>
-                </div>
-                <div style="width: 150px; float: left;">
-                    <label id="lblNuVersao" for="txtNuVersao" class="infraLabelObrigatorio">Versão SOAP:</label>
-                    <select id="selNuVersao" name="selNuVersao" style="width: 100px" class="infraSelect"
-                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <option value="1.1" <?php echo ($numNuVersao == 1.1) ? 'selected' : ''; ?> >1.1</option>
-                        <option value="1.2" <?php echo ($numNuVersao == 1.2) ? 'selected' : ''; ?> >1.2</option>
-                    </select>
-                </div>
+        </div>
+        <div class="row" id="blcTipoClienteWs"  style="display: none;">
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2">
+                <label id="lblStaTpClienteWs" for="txtStaTpClienteWs" class="infraLabelObrigatorio">Tipo Cliente
+                    WS:</label><br/>
+                <input <?php echo $staTpClienteWs; ?> type="radio" name="rdStaTpClienteWs" id="rdStaTpClienteWsSoap"
+                                                      class="infraRadio"
+                                                      value="S">
+                <label for="rdStaTpClienteWsSoap" id="lblStaTpClienteWsSoap" class="infraLabelRadio">SOAP</label>
             </div>
-
-            <div class="clear">&nbsp;</div>
-
-            <div class="bloco" id="blcEnderecoWs">
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2">
+                <label id="lblNuVersao" for="txtNuVersao" class="infraLabelObrigatorio">Versão SOAP:</label>
+                <select id="selNuVersao" name="selNuVersao" class="infraSelect form-control"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <option value="1.1" <?php echo ($numNuVersao == 1.1) ? 'selected' : ''; ?> >1.1</option>
+                    <option value="1.2" <?php echo ($numNuVersao == 1.2) ? 'selected' : ''; ?> >1.2</option>
+                </select>
+            </div>
+        </div>
+        <div class="row" id="blcEnderecoWs"  style="display: none;">
+            <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
                 <label id="lblEnderecoWsdl" for="txtEnderecoWsdl" class="infraLabelObrigatorio">Endereço do
                     Webservice:</label>
-                <input type="text" id="txtEnderecoWsdl" name="txtEnderecoWsdl" class="infraText"
-                       value="<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrEnderecoWsdl()); ?>"
-                       onkeypress="return infraMascaraTexto(this,event,100);" maxlength="100"
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar"
-                        class="infraButton" onclick="validarWsdl();"><span class="infraTeclaAtalho">V</span>alidar
-                </button>
+                <div class="input-group mb-3">
+                    <input type="text" id="txtEnderecoWsdl" name="txtEnderecoWsdl" class="infraText form-control"
+                           value="<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrEnderecoWsdl()); ?>"
+                           onkeypress="return infraMascaraTexto(this,event,100);" maxlength="100"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar"
+                            class="infraButton" onclick="validarWsdl();"><span class="infraTeclaAtalho">V</span>alidar
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <div class="clear">&nbsp;</div>
 
-            <div class="bloco" id="blcOperacaoWs">
+        <div class="row" id="blcOperacaoWs" style="display: none;">
+            <div class="col-sm-12 col-md-10 col-lg-8 col-xl-4">
                 <label id="lblOperacaoWsdl" for="selOperacaoWsdl" class="infraLabelObrigatorio">Operação:</label>
-                <select id="selOperacaoWsdl" name="selOperacaoWsdl" onchange="operacaoSelecionar()" class="infraSelect"
+                <select id="selOperacaoWsdl" name="selOperacaoWsdl" onchange="operacaoSelecionar()"
+                        class="infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
                 <select id="selParametrosE" name="selParametrosE[]" multiple style="left:400px;display:none"></select>
                 <select id="selParametrosS" name="selParametrosS[]" multiple style="left:500px;display:none"></select>
             </div>
-
-            <div class="clear">&nbsp;</div>
-
-            <div class="bloco" id="blcCacheWs">
+        </div>
+        <div class="row" id="blcCacheWs"  style="display: none;">
+            <div class="col-sm-12 col-md-11 col-lg-11 col-xl-8">
                 <input type="checkbox" id="chkSinCache" name="chkSinCache" onchange="cacheMarcaDesmarca(this);"
                        class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinCache()) ?>
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 <label id="lblSinCache" for="chkSinCache" class="infraLabelCheckbox">Marque caso seu Webservice tenha
                     controle de expiração de cache</label>
-                <img style="margin-bottom: -4px;width:16px; height:16px !important"
-                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
+                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
                      <?= PaginaSEI::montarTitleTooltip('Marque caso a operação selecionada acima utilize controle de expiração de cache das informações recuperadas da Receita Federal.') ?>alt="Ajuda"
-                     class="infraImg"/><br/>
+                     class="infraImgModulo"/><br/>
+                <br/>
                 <input type="checkbox" id="chkSinTipo" name="chkSinTipo" onchange="tipoMarcaDesmarca(this);"
                        class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinTpLogradouro()) ?>
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 <label id="lblSinTipo" for="chkSinTipo" class="infraLabelCheckbox">Marque caso seu Webservice tenha o
                     Tipo do Logradouro separado do próprio Logradouro</label>
-                <img style="margin-bottom: -4px;width:16px; height:16px !important"
-                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
+                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
                      <?= PaginaSEI::montarTitleTooltip('Ao marcar esta opção, o Tipo de Logradouro será agrupado com o Logradouro. \n \nIsso é válido somente para Operações que possuem em sua estrutura as duas informações separadamente.') ?>alt="Ajuda"
-                     class="infraImg"/><br/>
+                     class="infraImgModulo"/><br/>
+                <br/>
                 <input type="checkbox" id="chkSinNumero" name="chkSinNumero" onchange="numeroMarcaDesmarca(this);"
                        class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinNuLogradouro()) ?>
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 <label id="lblSinNumero" for="chkSinNumero" class="infraLabelCheckbox">Marque caso seu Webservice tenha
                     o Número do Logradouro separado do próprio Logradouro</label>
-                <img style="margin-bottom: -4px;width:16px; height:16px !important"
-                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
+                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
                      <?= PaginaSEI::montarTitleTooltip('Ao marcar esta opção, o Número de Logradouro será agrupado com o Logradouro. \n \nIsso é válido somente para Operações que possuem em sua estrutura as duas informações separadamente.') ?>alt="Ajuda"
-                     class="infraImg"/><br/>
+                     class="infraImgModulo"/><br/><br/>
                 <input type="checkbox" id="chkSinComplemento" name="chkSinComplemento"
                        onchange="complementoMarcaDesmarca(this);"
                        class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinCompLogradouro()) ?>
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 <label id="lblSinComplemento" for="chkSinComplemento" class="infraLabelCheckbox">Marque caso seu
                     Webservice tenha o Complemento do Logradouro separado do próprio Logradouro</label>
-                <img style="margin-bottom: -4px;width:16px; height:16px !important"
-                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
+                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
                      <?= PaginaSEI::montarTitleTooltip('Ao marcar esta opção, o Complemento de Logradouro será agrupado com o Logradouro. \n \nIsso é válido somente para Operações que possuem em sua estrutura as duas informações separadamente.') ?>alt="Ajuda"
-                     class="infraImg"/>
+                     class="infraImgModulo"/><br/><br/>
             </div>
-
-            <div class="clear">&nbsp;</div>
-
-
-            <div class="bloco" id="blcEntradaWs" style="width: 90%">
+        </div>
+        <div class="row" id="blcEntradaWs"  style="display: none;">
+            <div class="col-sm-12 col-md-11 col-lg-8 col-xl-8">
                 <?
                 PaginaSEI::getInstance()->montarAreaTabela($strResultadoParamEntrada, 1);
                 ?>
             </div>
-
-            <div class="clear">&nbsp;</div>
-
-            <div class="bloco" id="blcSaidaWs" style="width: 90%">
+        </div>
+        <div class="row" id="blcSaidaWs"  style="display: none;">
+            <div class="col-sm-12 col-md-11 col-lg-8 col-xl-8">
                 <?
                 PaginaSEI::getInstance()->montarAreaTabela($strResultadoParamSaida, 1);
                 ?>
             </div>
+        </div>
+        <div class="container"  style="display: none;">
 
-            <div class="clear">&nbsp;</div>
 
             <!-- div id="divSinCache" class="infraDivCheckbox" -->
             <fieldset style="display:none" id="fldParametrosCache" class="infraFieldset">
@@ -1082,10 +552,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <div class="bloco" style="display:none;">
                         <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento"
                                class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                     name="ajuda"
-                                    <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Operação que retorna a Data de Armazenamento do cache da informações da Receita Federal e que foi utilizado na validação do período de expiração definido nos campo abaixo.') ?>alt="Ajuda"
-                                    class="infraImg"/>
+                                    <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Operação que retorna a Data de Armazenamento do cache da informações da Receita Federal e que foi utilizado na validação do período de expiração definido nos campo abaixo.', 'Ajuda') ?>alt="Ajuda"
+                                    class="infraImgModulo"/>
                         </label>
                         <select id="selCacheDataArmazenamento" style="width:300px;" name="selCacheDataArmazenamento"
                                 class="infraSelect"
@@ -1125,5 +595,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                value="<?= $objMdPetIntegracaoDTO->getNumIdMdPetIntegracao(); ?>"/>
     </form>
 <?
+require_once "md_pet_integracao_cadastro_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

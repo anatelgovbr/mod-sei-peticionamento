@@ -1,24 +1,23 @@
 <?
 require_once dirname(__FILE__) . '/../web/Sip.php';
 
-set_include_path(implode(PATH_SEPARATOR, array(
-    realpath(__DIR__ . '/../../infra/infra_php'),
-    get_include_path(),
-)));
-
-
 class MdPetAtualizadorSipRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '3.4.2';
+    private $versaoAtualDesteModulo = '4.0.2';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '4.0.0', '4.0.1', '4.0.2');
 
     public function __construct()
     {
         parent::__construct();
+    }
+
+    protected function getHistoricoVersoes()
+    {
+        return $this->historicoVersoes;
     }
 
     protected function inicializarObjInfraIBanco()
@@ -26,11 +25,6 @@ class MdPetAtualizadorSipRN extends InfraRN
         return BancoSip::getInstance();
     }
 
-    /**
-     * Inicia o script criando um contator interno do tempo de execução
-     *
-     * @return null
-     */
     protected function inicializar($strTitulo)
     {
         session_start();
@@ -38,32 +32,25 @@ class MdPetAtualizadorSipRN extends InfraRN
 
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '-1');
-        @ini_set('zlib.output_compression', '0');
         @ini_set('implicit_flush', '1');
         ob_implicit_flush();
 
-        $this->objDebug = InfraDebug::getInstance();
-        $this->objDebug->setBolLigado(true);
-        $this->objDebug->setBolDebugInfra(true);
-        $this->objDebug->setBolEcho(true);
-        $this->objDebug->limpar();
+        InfraDebug::getInstance()->setBolLigado(true);
+        InfraDebug::getInstance()->setBolDebugInfra(true);
+        InfraDebug::getInstance()->setBolEcho(true);
+        InfraDebug::getInstance()->limpar();
 
         $this->numSeg = InfraUtil::verificarTempoProcessamento();
-        $this->logar($strTitulo);
 
+        $this->logar($strTitulo);
     }
 
     protected function logar($strMsg)
     {
-        $this->objDebug->gravar($strMsg);
+        InfraDebug::getInstance()->gravar($strMsg);
         flush();
     }
 
-    /**
-     * Finaliza o script informando o tempo de execução.
-     *
-     * @return null
-     */
     protected function finalizar($strMsg = null, $bolErro = false)
     {
         if (!$bolErro) {
@@ -98,7 +85,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '1.532.3';
+            $numVersaoInfraRequerida = '1.595.1';
             $versaoInfraFormatada = (int)str_replace('.', '', VERSAO_INFRA);
             $versaoInfraReqFormatada = (int)str_replace('.', '', $numVersaoInfraRequerida);
 
@@ -159,6 +146,12 @@ class MdPetAtualizadorSipRN extends InfraRN
                     $this->instalarv341();
                 case '3.4.1':
                     $this->instalarv342();
+                case '3.4.2':
+                    $this->instalarv400();
+                case '4.0.0':
+                    $this->instalarv401();
+                case '4.0.1':
+                    $this->instalarv402();
                     break;
 
                 default:
@@ -173,7 +166,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Erro atualizando versão.', $e);
+            throw new InfraException('Erro instalando/atualizando versão.', $e);
         }
     }
 
@@ -1816,7 +1809,7 @@ class MdPetAtualizadorSipRN extends InfraRN
     protected function instalarv330()
     {
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.3.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         $this->logar('EXCLUINDO RECURSOS DA REGRA DE AUDITORIA DO MÓDULO ' . $this->nomeDesteModulo . ' NA BASE DO SIP..');
 
@@ -1926,6 +1919,38 @@ class MdPetAtualizadorSipRN extends InfraRN
         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
+    protected function instalarv400()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.0.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    protected function instalarv401()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.0.1 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.0.1\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    protected function instalarv402()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.0.2 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.0.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
 
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)
     {
@@ -2125,6 +2150,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             $objItemMenuDTO->setNumSequencia($numSequencia);
             $objItemMenuDTO->setStrSinNovaJanela('N');
             $objItemMenuDTO->setStrSinAtivo('S');
+            $objItemMenuDTO->setStrIcone(null);
 
             $objItemMenuDTO = $objItemMenuRN->cadastrar($objItemMenuDTO);
         }
@@ -2240,29 +2266,10 @@ class MdPetAtualizadorSipRN extends InfraRN
 
 }
 
-//========================= INICIO SCRIPT EXECUÇAO =============
-
 try {
 
-    session_start();
     SessaoSip::getInstance(false);
     BancoSip::getInstance()->setBolScript(true);
-
-    if (!ConfiguracaoSip::getInstance()->isSetValor('BancoSip', 'UsuarioScript')) {
-        throw new InfraException('Chave BancoSip/UsuarioScript não encontrada.');
-    }
-
-    if (InfraString::isBolVazia(ConfiguracaoSip::getInstance()->getValor('BancoSip', 'UsuarioScript'))) {
-        throw new InfraException('Chave BancoSip/UsuarioScript não possui valor.');
-    }
-
-    if (!ConfiguracaoSip::getInstance()->isSetValor('BancoSip', 'SenhaScript')) {
-        throw new InfraException('Chave BancoSip/SenhaScript não encontrada.');
-    }
-
-    if (InfraString::isBolVazia(ConfiguracaoSip::getInstance()->getValor('BancoSip', 'SenhaScript'))) {
-        throw new InfraException('Chave BancoSip/SenhaScript não possui valor.');
-    }
 
     $objVersaoRN = new MdPetAtualizadorSipRN();
     $objVersaoRN->atualizarVersao();
@@ -2275,5 +2282,3 @@ try {
     }
     exit(1);
 }
-
-print PHP_EOL;

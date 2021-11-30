@@ -258,7 +258,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objContatoDTO->setStrStaNaturezaContatoAssociado(null);
             $objContatoDTO->setNumIdContatoAssociado('');
             $objContatoDTO->setStrSinEnderecoAssociado('N');
-            $objContatoDTO->setStrTelefoneFixo('');
+            $objContatoDTO->setStrTelefoneComercial('');
             $objContatoDTO->setStrTelefoneCelular('');
             $objContatoDTO->setStrStaGenero(null);
             $objContatoDTO->setStrEmail('');
@@ -394,14 +394,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retStrNome();
         $contatoDTO->retDblCnpj();
-        $contatoDTO->retStrSigla();
         $contatoDTO->setNumIdContato($dados['idContato']);
         $contatoRN = new ContatoRN();
         $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
-
-        $contatoAPI = new ContatoAPI();
-        $contatoAPI->setSigla($objContatoRN->getStrSigla());
-        $contatoAPI->setNome($objContatoRN->getStrNome());
 
         $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
         $nomeModificado = str_replace("@razao_social@",$objContatoRN->getStrNome(),$especificacao);
@@ -420,7 +415,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objProcedimentoAPI->setNumeroProtocolo('');
         $objProcedimentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
         $objProcedimentoAPI->setIdHipoteseLegal(null);
-        $objProcedimentoAPI->setInteressados(array($contatoAPI));
 
         $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
         $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
@@ -616,6 +610,36 @@ class MdPetVinculoUsuExtRN extends InfraRN
      */
     public function gerarProcedimentoVinculoControlado($dados)
     {
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+        $retorno = $this->gerarProcedimentoInterno($dados);
+
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+        FeedSEIProtocolos::getInstance()->indexarFeeds();
+
+        if ($dados['hdnIdContatoNovo'] == '' && $retorno['acessoExterno'] == true) {
+            $arrParams = array();
+            $arrParams[0] = $dados;
+            $arrParams[1] = $this->getUnidade();
+            $arrParams[2] = $this->getProcedimento($retorno['idProcedimento']);
+            $arrParams[3] = array();
+            $arrParams[4] = $retorno['reciboDTOBasico'];
+            $arrParams[5] = $retorno['reciboDTOBasico'];
+
+            $this->enviarEmail($arrParams);
+        }
+
+        return $retorno['reciboDTOBasico'];
+
+    }
+
+
+    /**
+     * @param $dados
+     * @throws InfraException
+     */
+    public function gerarProcedimentoInterno($dados)
+    {
         try {
 
             $isAlteracao = false;
@@ -775,18 +799,14 @@ class MdPetVinculoUsuExtRN extends InfraRN
             if ($isAlteracao && $isAlteradoRespLegal) {
                 $this->setDataEncerramentoVinculo(array($idVinculo));
             }
-            if ($dados['hdnIdContatoNovo'] == '' && $acessoExterno == true) {
-                $arrParams = array();
-                $arrParams[0] = $dados;
-                $arrParams[1] = $this->getUnidade();
-                $arrParams[2] = $this->getProcedimento($idProcedimento);
-                $arrParams[3] = array();
-                $arrParams[4] = $reciboDTOBasico;
-                $arrParams[5] = $reciboDTOBasico;
 
-                $this->enviarEmail($arrParams);
-            }
-            return $reciboDTOBasico;
+            $arrRetorno = array(
+                'reciboDTOBasico' => $reciboDTOBasico,
+                'acessoExterno' => $acessoExterno,
+                'idProcedimento' => $idProcedimento
+            );
+
+            return $arrRetorno;
 
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando processo peticionamento do SEI.', $e);
@@ -1326,7 +1346,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
-        if (count($objMdPetVincRepresentantDTO) > 0) {
+        if ($objMdPetVincRepresentantDTO) {
             return $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
         } else {
             return null;

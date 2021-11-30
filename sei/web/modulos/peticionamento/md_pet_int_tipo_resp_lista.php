@@ -51,6 +51,7 @@ try {
                 for ($i = 0; $i < count($arrStrIds); $i++) {
                     $objMdPetIntTipoRespDTO = new MdPetIntTipoRespDTO();
                     $objMdPetIntTipoRespDTO->setNumIdMdPetIntTipoResp($arrStrIds[$i]);
+                    $objMdPetIntTipoRespDTO->setStrSinAtivo('N');
                     $arrObjMdPetIntTipoRespDTO[] = $objMdPetIntTipoRespDTO;
                 }
                 $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
@@ -72,6 +73,7 @@ try {
                     for ($i = 0; $i < count($arrStrIds); $i++) {
                         $objMdPetIntTipoRespDTO = new MdPetIntTipoRespDTO();
                         $objMdPetIntTipoRespDTO->setNumIdMdPetIntTipoResp($arrStrIds[$i]);
+                        $objMdPetIntTipoRespDTO->setStrSinAtivo('S');
                         $idReativado = $arrStrIds[$i];
                         $arrObjMdPetIntTipoRespDTO[] = $objMdPetIntTipoRespDTO;
                     }
@@ -81,8 +83,8 @@ try {
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
-                if( $idReativado != 0) {
-                    $acaoLinhaAmarela = '&id_tipo_processo_peticionamento='. $idReativado.PaginaSEI::getInstance()->montarAncora($idReativado);
+                if ($idReativado != 0) {
+                    $acaoLinhaAmarela = '&id_tipo_processo_peticionamento=' . $idReativado . PaginaSEI::getInstance()->montarAncora($idReativado);
                 }
                 header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao_origem'] . '&acao_origem=' . $_GET['acao'] . $acaoLinhaAmarela));
                 die;
@@ -125,18 +127,18 @@ try {
     $objMdPetIntTipoRespDTO->retTodos(true);
 
     //Monta Pesquisa
-    if($_POST['txtTipoResposta'] != ''){
-        $objMdPetIntTipoRespDTO->setStrNome('%'.$_POST['txtTipoResposta'].'%',InfraDTO::$OPER_LIKE);
+    if ($_POST['txtTipoResposta'] != '') {
+        $objMdPetIntTipoRespDTO->setStrNome('%' . $_POST['txtTipoResposta'] . '%', InfraDTO::$OPER_LIKE);
     }
 
     if ($_POST['selRespostaUsuarioEx'] != '' && $_POST['selRespostaUsuarioEx'] != 'null') {
         $objMdPetIntTipoRespDTO->setStrTipoRespostaAceita($_POST['selRespostaUsuarioEx']);
     }
 
-    if ($_POST['selPrazoExterno'] != 'null' && $_POST['selPrazoExterno'] != ''){
+    if ($_POST['selPrazoExterno'] != 'null' && $_POST['selPrazoExterno'] != '') {
         $pesq = explode('-', $_POST['selPrazoExterno']);
         $objMdPetIntTipoRespDTO->setStrTipoPrazoExterno($pesq[1]);
-        if ($pesq[2]!=''){
+        if ($pesq[2] != '') {
             $objMdPetIntTipoRespDTO->setStrTipoDia($pesq[2]);
         }
         $objMdPetIntTipoRespDTO->setNumValorPrazoExterno($pesq[0]);
@@ -218,43 +220,43 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO,'Tipo de Resposta','Nome',$arrObjMdPetIntTipoRespDTO).'</th>'."\n";
-        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO,'Prazo Externo','TipoPrazoExterno',$arrObjMdPetIntTipoRespDTO).'</th>'."\n";
-        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO,'Resposta do Usuário Externo','TipoRespostaAceita',$arrObjMdPetIntTipoRespDTO).'</th>'."\n";
+        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Tipo de Resposta', 'Nome', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Prazo Externo', 'TipoPrazoExterno', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Resposta do Usuário Externo', 'TipoRespostaAceita', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         for ($i = 0; $i < $numRegistros; $i++) {
 
-            if( $arrObjMdPetIntTipoRespDTO[$i]->getStrSinAtivo()=='S' ){
-                $strCssTr = ($strCssTr=='<tr class="infraTrClara">')?'<tr class="infraTrEscura">':'<tr class="infraTrClara">';
+            if ($arrObjMdPetIntTipoRespDTO[$i]->getStrSinAtivo() == 'S') {
+                $strCssTr = ($strCssTr == '<tr class="infraTrClara">') ? '<tr class="infraTrEscura">' : '<tr class="infraTrClara">';
             } else {
-                $strCssTr ='<tr class="trVermelha">';
+                $strCssTr = '<tr class="trVermelha">';
             }
 
-            if($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'N'){
+            if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'N') {
                 $prazo = 'Não Possui Prazo Externo';
-            }else {
+            } else {
                 $prazo = $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno();
-                if($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'D'){
-                      $tipoDia = null;
-                      if($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoDia() == 'U'){
+                if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'D') {
+                    $tipoDia = null;
+                    if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoDia() == 'U') {
                         $tipoDia = ' Útil';
-                        if($arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1){
-                          $tipoDia = ' Úteis';
+                        if ($arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1) {
+                            $tipoDia = ' Úteis';
                         }
-                      }
-                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ?  ' Dias'.$tipoDia : ' Dia'.$tipoDia;
-                }else if($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'M'){
-                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ?  ' Meses' : ' Mês';
-                }else if($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'A'){
-                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ?  ' Anos' : ' Ano';
+                    }
+                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Dias' . $tipoDia : ' Dia' . $tipoDia;
+                } else if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'M') {
+                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Meses' : ' Mês';
+                } else if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'A') {
+                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Anos' : ' Ano';
                 }
             }
 
-            if($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoRespostaAceita() == 'E'){
+            if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoRespostaAceita() == 'E') {
                 $resposta = 'Exige Resposta';
-            }else{
+            } else {
                 $resposta = 'Resposta Facultativa';
             }
 
@@ -266,19 +268,19 @@ try {
                 $strResultado .= '<td valign="top">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp(), $nomeTransportado) . '</td>';
             }
 
-            $strResultado .= '<td>'.PaginaSEI::tratarHTML($arrObjMdPetIntTipoRespDTO[$i]->getStrNome()).'</td>';
-            $strResultado .= '<td>'.$prazo.'</td>';
-            $strResultado .= '<td>'.$resposta.'</td>';
+            $strResultado .= '<td>' . PaginaSEI::tratarHTML($arrObjMdPetIntTipoRespDTO[$i]->getStrNome()) . '</td>';
+            $strResultado .= '<td>' . $prazo . '</td>';
+            $strResultado .= '<td>' . $resposta . '</td>';
             $strResultado .= '<td align="center">';
 
             $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i, $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp());
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/consultar.gif" title="Consultar  Tipo de Resposta" alt="Consultar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar  Tipo de Resposta" alt="Consultar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/alterar.gif" title="Alterar  Tipo de Resposta" alt="Alterar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar  Tipo de Resposta" alt="Alterar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -287,23 +289,23 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIntTipoRespDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/desativar.gif" title="Desativar  Tipo de Resposta" alt="Desativar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg" title="Desativar  Tipo de Resposta" alt="Desativar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoReativar && $arrObjMdPetIntTipoRespDTO[$i]->getStrSinAtivo() == 'N') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/reativar.gif" title="Reativar  Tipo de Resposta" alt="Reativar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg" title="Reativar  Tipo de Resposta" alt="Reativar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/excluir.gif" title="Excluir Tipo de Resposta" alt="Excluir " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg" title="Excluir Tipo de Resposta" alt="Excluir " class="infraImg" /></a>&nbsp;';
             }
 
             $strResultado .= '</td></tr>' . "\n";
         }
         $strResultado .= '</table>';
     }
-    $strItenSelPrazoExterno = MdPetIntTipoRespINT::montaSelectPrazoExterno8612('null','&nbsp;',$_POST['selPrazoExterno']);
-    $strRespostaUsuarioEx = MdPetIntTipoRespINT::montaSelectRespostaUsuario8612('null','&nbsp;',$_POST['selRespostaUsuarioEx']);
+    $strItenSelPrazoExterno = MdPetIntTipoRespINT::montaSelectPrazoExterno8612('null', '&nbsp;', $_POST['selPrazoExterno']);
+    $strRespostaUsuarioEx = MdPetIntTipoRespINT::montaSelectRespostaUsuario8612('null', '&nbsp;', $_POST['selRespostaUsuarioEx']);
     if ($_GET['acao'] == 'md_pet_int_tipo_resp_selecionar') {
         $arrComandos[] = '<button type="button" accesskey="C" id="btnFecharSelecao" value="Fechar" onclick="window.close();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
     } else {
@@ -322,16 +324,6 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-?>
-#lblTipoResposta {position:absolute;left:0%;top:25%;width:20%;}
-#txtTipoResposta {position:absolute;left:0%;top:50%;width:20%;}
-
-#lblPrazoExterno {position:absolute;left:23%;top:25%;width:20%;}
-#selPrazoExterno {position:absolute;left:23%;top:50%;width:20%;}
-
-#lblRespostaUsuarioEx {position:absolute;left:46%;top:25%;width:30%;}
-#selRespostaUsuarioEx {position:absolute;left:46%;top:50%;width:20%;}
-<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -424,23 +416,42 @@ PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmMdPetIntTipoRespLista" method="post" action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
+    <form id="frmMdPetIntTipoRespLista" method="post"
+          action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-           PaginaSEI::getInstance()->abrirAreaDados('6em');
+        PaginaSEI::getInstance()->abrirAreaDados('6em');
         ?>
-        <label id="lblTipoResposta" class="infraLabel" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">Tipo de Resposta:</label>
-        <input type="text" id="txtTipoResposta" name="txtTipoResposta" class="infraText" value="<? echo (PaginaSEI::tratarHTML($_POST['txtTipoResposta']) != '' ? PaginaSEI::tratarHTML($_POST['txtTipoResposta']) : '' )?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-        <input type="hidden" id="hdnTipoResposta" name="hdnTipoResposta" value="<?=$numIdContatoAssociadoPesquisa?>" />
+        <div class="row">
+            <div class="col-sm-12 col-md-3 col-lg-4 col-xl-3">
+                <label id="lblTipoResposta" class="infraLabel"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">Tipo
+                    de Resposta:</label>
+                <input type="text" id="txtTipoResposta" name="txtTipoResposta" class="infraText form-control"
+                       value="<? echo(PaginaSEI::tratarHTML($_POST['txtTipoResposta']) != '' ? PaginaSEI::tratarHTML($_POST['txtTipoResposta']) : '') ?>"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <input type="hidden" id="hdnTipoResposta" name="hdnTipoResposta"
+                       value="<?= $numIdContatoAssociadoPesquisa ?>"/>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                <label id="lblPrazoExterno" for="selPrazoExterno" class="infraLabelOpcional">Prazo Externo:</label>
+                <select id="selPrazoExterno" name="selPrazoExterno" onchange="this.form.submit()" class="infraSelect form-control"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <?= $strItenSelPrazoExterno ?>
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
+                <label id="lblRespostaUsuarioEx" for="selRespostaUsuarioEx" accesskey="" class="infraLabelOpicional">Resposta
+                    do
+                    Usuário Externo:</label>
+                <select id="selRespostaUsuarioEx" name="selRespostaUsuarioEx" onchange="this.form.submit()"
+                        class="infraSelect form-control"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <?= $strRespostaUsuarioEx ?>
+                </select>
+            </div>
+        </div>
 
-        <label id="lblPrazoExterno" for="selPrazoExterno" class="infraLabelOpcional">Prazo Externo:</label>
-        <select id="selPrazoExterno" name="selPrazoExterno" onchange="this.form.submit()" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-            <?=$strItenSelPrazoExterno?>
-        </select>
 
-        <label id="lblRespostaUsuarioEx" for="selRespostaUsuarioEx" accesskey="" class="infraLabelOpicional">Resposta do Usuário Externo:</label>
-        <select id="selRespostaUsuarioEx" name="selRespostaUsuarioEx" onchange="this.form.submit()" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" >
-            <?=$strRespostaUsuarioEx?>
-        </select>
         <?
         PaginaSEI::getInstance()->fecharAreaDados();
         PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);

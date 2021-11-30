@@ -735,7 +735,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         } 
         
         $js = 'window.open(\''.$strLinkProcesso.'\');';
-        $imgConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioImagensGlobal() . '/consultar.gif" class="infraImg" />';
+        $imgConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" class="infraImg" />';
         $textTolTip = $tpProcesso;
         $descricao = '';
 
@@ -962,10 +962,4 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         return $mdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestDTO);
     }
 
-    
-    
-
-
-
 }
-?>

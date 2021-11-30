@@ -1143,6 +1143,8 @@ class MdPetDocumentoRN extends InfraRN {
 			$objUsuarioDTOPesquisa->retNumIdUsuario();
 			$objUsuarioDTOPesquisa->retStrSigla();
 			$objUsuarioDTOPesquisa->retStrNome();
+            $objUsuarioDTOPesquisa->retStrNomeRegistroCivil();
+            $objUsuarioDTOPesquisa->retStrNomeSocial();
 			$objUsuarioDTOPesquisa->retDblCpfContato();
 			$objUsuarioDTOPesquisa->retStrStaTipo();
 			$objUsuarioDTOPesquisa->retStrSenha();
@@ -1155,6 +1157,8 @@ class MdPetDocumentoRN extends InfraRN {
 			if ($objUsuarioDTO==null){
 				throw new InfraException('Assinante não cadastrado como usuário do sistema.');
 			}
+
+            $objUsuarioDTO->setStrNome(SeiINT::formatarNomeSocial($objUsuarioDTO->getStrNomeRegistroCivil(), $objUsuarioDTO->getStrNomeSocial()));
 	
 			if ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO_PENDENTE){
 				$objInfraException->lancarValidacao('Usuário externo '.$objUsuarioDTO->getStrSigla().' não foi liberado.');
@@ -1310,7 +1314,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 					$objInfraSip = new InfraSip(SessaoSEI::getInstance());
 					$objInfraSip->autenticar($objAssinaturaDTO->getNumIdOrgaoUsuario(),
-							$objAssinaturaDTO->getNumIdContextoUsuario(),
+							$objAssinaturaDTO->getNumIdUsuario(),
 							$objUsuarioDTO->getStrSigla(),
 							$objAssinaturaDTO->getStrSenhaUsuario());
 	

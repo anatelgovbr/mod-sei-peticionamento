@@ -42,8 +42,8 @@ class MdPetIntRespostaRN extends InfraRN {
                       
                 $js = 'window.location = \''.$strLink.'\';';
                 $imgResposta = '<img src="modulos/peticionamento/imagens/png/intimacao_peticionar_resposta.png" style="width: 24px">';
-                $ToolTipTitle = 'Responder Intimação Eletrônica';
-                $ToolTipTitle .= '<br/>Documento Principal: ';
+                $ToolTipTitulo = 'Responder Intimação Eletrônica';
+                $ToolTipText = 'Documento Principal: ';
                 
                 //obter informacoes do doc principal da intimação
                 $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
@@ -57,13 +57,13 @@ class MdPetIntRespostaRN extends InfraRN {
                 $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
                 $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
                 $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar( $objMdPetIntDocumentoDTO );
+
+                $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
                 
-                $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
-                
-                $ToolTipText = 'Clique para Peticionar Resposta a Intimação.';
+                $ToolTipText .= '<br /><br />Clique para Peticionar Resposta a Intimação.';
 
                 $conteudoHtml  = '<a onclick="'.$js.'"';
-                $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitle.'\')"';
+                $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitulo.'\')"';
                 $conteudoHtml .= 'onmouseout="return infraTooltipOcultar()">';
                 $conteudoHtml .= $imgResposta;
                 $conteudoHtml .= '</a>';
@@ -106,8 +106,8 @@ class MdPetIntRespostaRN extends InfraRN {
                       
                 $js = 'window.location = \''.$strLink.'\';';
                 $imgResposta = '<img src="modulos/peticionamento/imagens/png/intimacao_peticionar_resposta.png" style="width: 24px">';
-                $ToolTipTitle = 'Responder Intimação Eletrônica';
-                $ToolTipTitle .= '<br/>Documento Principal: ';
+                $ToolTipTitulo = 'Responder Intimação Eletrônica';
+                $ToolTipText = 'Documento Principal: ';
                 
                 //obter informacoes do doc principal da intimação
                 $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
@@ -121,28 +121,28 @@ class MdPetIntRespostaRN extends InfraRN {
                 $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
                 $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
                 $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar( $objMdPetIntDocumentoDTO );
-                
-                $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+
+                $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
                 
                 if($cnpjs || $cpfs){
-                    $ToolTipTitle .= '<br/><br/>Destinatários:<br/>';
+                    $ToolTipText .= '<br/><br/>Destinatários:<br/>';
                     if($cnpjs){
                         foreach ($cnpjs as $emp) {
-                            $ToolTipTitle .= $emp.'<br/>';
+                            $ToolTipText .= $emp.'<br/>';
                         }
                     }
                     if($cpfs){
                         foreach ($cpfs as $pes) {
-                            $ToolTipTitle .= $pes.'<br/>';
+                            $ToolTipText .= $pes.'<br/>';
                         }
                     }
                 }
-                
-                
-                $ToolTipText = 'Clique para Peticionar Resposta a Intimação.';
+
+
+                $ToolTipText .= '<br /><br />Clique para Peticionar Resposta a Intimação.';
 
                 $conteudoHtml  = '<a onclick="'.$js.'"';
-                $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitle.'\')"';
+                $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitulo.'\')"';
                 $conteudoHtml .= 'onmouseout="return infraTooltipOcultar()">';
                 $conteudoHtml .= $imgResposta;
                 $conteudoHtml .= '</a>';

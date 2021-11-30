@@ -68,10 +68,7 @@ try {
         $dados['idContato'] = $idContato;
         
         $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
-//        $vincularProcuracao = $objMdPetVinculoUsuExtRN->gerarProcuracao($_POST);
 
-//        var_dump($reciboGerado);
-//        die;
 
         $idRecibo = $reciboGerado->getNumIdReciboPeticionamento();
 

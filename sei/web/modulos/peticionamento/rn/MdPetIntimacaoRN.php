@@ -626,42 +626,45 @@ class MdPetIntimacaoRN extends InfraRN
         $cpfs = $arr[6];
         $tooltipACG = $arr[7];
 
-        $ToolTipTitle = 'Intimação Eletrônica: expedida em ';
-        $ToolTipTitle .= $dtIntimacao . ' ';
-        $ToolTipTitle .= '<br/>Documento Principal: ';
-        $ToolTipTitle .= $docTipo . ' ';
+        $ToolTipTitulo = 'Intimação Eletrônica';
+
+        $ToolTipText = 'Intimação Eletrônica: expedida em ';
+        $ToolTipText .= $dtIntimacao . ' ';
+        $ToolTipText .= '<br/>Documento Principal: ';
+        $ToolTipText .= $docTipo . ' ';
         if ($docNum) {
-            $ToolTipTitle .= $docNum . ' ';
+            $ToolTipText .= $docNum . ' ';
         }
-        $ToolTipTitle .= '(SEI nº ';
-        $ToolTipTitle .= $docFormat;
-        $ToolTipTitle .= ')';
+        $ToolTipText .= '(SEI nº ';
+        $ToolTipText .= $docFormat;
+        $ToolTipText .= ')';
         if ($anexo == 'N') {
-            $ToolTipTitle .= '<span style=font-weight: ligther;> - Documento Anexo</span>';
+            $ToolTipText .= '<span style=font-weight: ligther;> - Documento Anexo</span>';
         }
 
         if ($cnpjs || $cpfs) {
-            $ToolTipTitle .= '<br/><br/>Destinatários:<br/>';
+            $ToolTipText .= '<br/><br/>Destinatários:<br/>';
             if ($cnpjs) {
                 foreach ($cnpjs as $emp) {
-                    $ToolTipTitle .= $emp . '<br/>';
+                    $ToolTipText .= $emp . '<br/>';
                 }
             }
 
             if ($cpfs) {
                 foreach ($cpfs as $pes) {
-                    $ToolTipTitle .= $pes . '<br/>';
+                    $ToolTipText .= $pes . '<br/>';
                 }
             }
         }
-        $ToolTipText = 'Clique para consultar a Intimação e liberar o acesso aos documentos.';
+
+        $ToolTipText .= "<br><br>Clique para consultar a Intimação e liberar o acesso aos documentos.";
         //Caso essa intimação tenha texto de tooltip aguardando cumprimento geral é adicionado o mesmo
         // no tooltip geral do cumprir
         if (!is_null($tooltipACG)) {
             $ToolTipText .= "<br><br>" . $tooltipACG;
         }
 
-        return array($ToolTipTitle, $ToolTipText);
+        return array($ToolTipTitulo, $ToolTipText);
     }
 
     public function getTextoTolTipIntimacaoEletronicaVinculoInativo($dtIntimacao, $docFormat, $docTipo, $docNum, $anexo, $idContatoRepresentante, $idContatoVinculo, $arrPessoaJuridica, $arrPessoaFisica)
@@ -2835,7 +2838,7 @@ class MdPetIntimacaoRN extends InfraRN
     {
 
         $isSessionExt = array_key_exists('sessao_externa', $post) ? $post['sessao_externa'] : null;
-        $objUsuarioDTO = new UsuarioDTO();
+        $objUsuarioDTO = new MdPetUsuarioExternoDTO();
         $objUsuarioDTO->retNumIdContato();
         $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
 
@@ -2844,12 +2847,12 @@ class MdPetIntimacaoRN extends InfraRN
             $objUsuarioDTO->setNumIdUsuario($numIdUSuario, InfraDTO::$OPER_DIFERENTE);
         }
 
-        $objUsuarioRN = new UsuarioRN();
+        $objUsuarioRN = new MdPetUsuarioExternoRN();
 
         if ($_POST['intimacaoPF'] == 't' && $_POST['hdnDadosUsuario']) {
             /** Se o campo intimacaoPF vier preenchido com valor 't' e o campo hdnDadosUsuario tiver
-             * preenchido com algum valor, isto quer dizer que pessoa(s) foram adicionadas para geração
-             * de intimação PF e por isso não poderão aparecer na listagem novamente. **/
+             * preenchido com algum valor, isto quer dizer que pessoa(s) foram adicionadas para gerao
+             * de intimao PF e por isso no podero aparecer na listagem novamente. **/
 
             $arrNumIdContatos = array();
             $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnDadosUsuario']);
@@ -2859,41 +2862,33 @@ class MdPetIntimacaoRN extends InfraRN
             $objUsuarioDTO->setNumIdContato($arrNumIdContatos, InfraDTO::$OPER_NOT_IN);
         }
 
-        $arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
+        $objUsuarioDTO->retNumIdContato();
+        $objUsuarioDTO->retStrSigla();
+        $objUsuarioDTO->retStrNomeContato();
+        $objUsuarioDTO->retDblCnpjContato();
+        $objUsuarioDTO->setStrSinAtivoTipoContato('S');
 
-        $idsContatoUsuarioExterno = InfraArray::converterArrInfraDTO($arrObjUsuarioDTO, 'IdContato');
-
-        if (count($idsContatoUsuarioExterno) > 0) {
-            $objContatoDTO = new ContatoDTO();
-            $objContatoDTO->retNumIdContato();
-            $objContatoDTO->retStrSigla();
-            $objContatoDTO->retStrNome();
-            $objContatoDTO->retDblCnpj();
-            $objContatoDTO->setStrSinAtivoTipoContato('S');
-            $objContatoDTO->setNumIdContato($idsContatoUsuarioExterno, InfraDTO::$OPER_IN);
-
-            $conta = "^[a-zA-Z0-9\._-]+@";
-            $domino = "[a-zA-Z0-9\._-]+.";
-            $extensao = "([a-zA-Z]{2,4})$";
-            $pattern = "#" . $conta.$domino.$extensao . "#";
-            $isEmail = preg_match($pattern, $post['txtUsuario']);
-            if($isEmail){
-                $objContatoDTO->setStrEmail('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
-            } else {
-                $txtPesquisa = preg_replace('/[^0-9]/', '',  $post['txtUsuario']);
-                if($txtPesquisa == ""){
-                    $txtPesquisa = $post['txtUsuario'];
-                }
-                $objContatoDTO->setStrIdxContato('%' . $txtPesquisa . '%', InfraDTO::$OPER_LIKE);
+        $conta = "^[a-zA-Z0-9\._-]+@";
+        $domino = "[a-zA-Z0-9\._-]+.";
+        $extensao = "([a-zA-Z]{2,4})$";
+        $pattern = "#" . $conta.$domino.$extensao . "#";
+        $isEmail = preg_match($pattern, $post['txtUsuario']);
+        if($isEmail){
+            $objUsuarioDTO->setStrEmailContato('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
+        } else {
+            $txtPesquisa = InfraString::prepararIndexacao($post['txtUsuario'],true);
+            if($txtPesquisa == ""){
+                $txtPesquisa = $post['txtUsuario'];
             }
-            $objContatoDTO->setNumMaxRegistrosRetorno(50);
-            $objContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
+            $objUsuarioDTO->setStrIdxContato('%' . $txtPesquisa . '%', InfraDTO::$OPER_LIKE);
+        }
+        $objUsuarioDTO->setNumMaxRegistrosRetorno(50);
+        $objUsuarioDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
 
+        $arrObjUsuarioDTO = $objUsuarioRN->listar($objUsuarioDTO);
 
-            $objContatoRN = new ContatoRN();
-            $arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
-
-            return $arrObjContatoDTO;
+        if($arrObjUsuarioDTO){
+            return $arrObjUsuarioDTO;
         }
 
         return array();

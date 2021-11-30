@@ -30,11 +30,25 @@ class MdPetVinUsuExtProcRN extends InfraRN
         return BancoSEI::getInstance();
     }
 
+    public function gerarProcedimentoVinculoProcuracaoControlado($dados)
+    {
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+        $retorno = $this->gerarProcedimentoVinculoProcuracaoInterno($dados);
+
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+        FeedSEIProtocolos::getInstance()->indexarFeeds();
+
+        $mdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
+        $mdPetVinculoUsuExtRN->enviarEmail($retorno);
+
+        return true;
+    }
     /**
      * @param $dados
      * @throws InfraException
      */
-    public function gerarProcedimentoVinculoProcuracaoControlado($dados)
+    public function gerarProcedimentoVinculoProcuracaoInterno($dados)
     {
         $existeProc = false;
 
@@ -417,6 +431,29 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
                 $reciboDTOBasico = $objMdPetVinculoUsuExtRN->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' => $tipoPeticionamento));
 
+                if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ") {
+                    $objContatoProcuracao = new ContatoDTO();
+                    $objContatoProcuracao->setNumIdContato($dados['hdnIdContExterno']);
+                    $objContatoProcuracao->retStrNome();
+                    $objContatoProcuracao->retDblCpf();
+                    $contatoRN = new ContatoRN();
+                    $objContatoProcuracao = $contatoRN->consultarRN0324($objContatoProcuracao);
+                    if($objContatoProcuracao){
+                        $dadosRetornoProcuracao['RepLegal'] = $objContatoProcuracao;
+                    }
+                } else if ($dados['selTipoProcuracao'] == "E") {
+                    $objContatoProcuracao = new ContatoDTO();
+                    $objContatoProcuracao->setNumIdContato($dados['hdnIdContExterno']);
+                    $objContatoProcuracao->retStrNome();
+                    $objContatoProcuracao->retDblCpf();
+                    $contatoRN = new ContatoRN();
+                    $objContatoProcuracao = $contatoRN->consultarRN0324($objContatoProcuracao);
+                    if($objContatoProcuracao){
+                        $dadosRetornoProcuracao['RepLegal'] = $objContatoProcuracao;
+                    }
+                }
+
+
                 $recibo = $this->gerarReciboProcuracao(array($dadosRetornoProcuracao, $objProcedimentoDTO, $reciboDTOBasico, $idMdPetVinculoRepresent, $tipoPeticionamento, $unidadeDTO, $dados));
                 $idDocumentoRecibo = $reciboDTOBasico->getDblIdDocumento();
 
@@ -550,7 +587,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
                 $objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
 
-                $mdPetVinculoUsuExtRN->enviarEmail($arrParams);
+
 
                 //Disponibilazando Acesso Externo ao Responsável Legal
                 $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
@@ -559,7 +596,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objAtividadeRN = new AtividadeRN();
                 $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
             }
-            return true;
+            return $arrParams;
 
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando processo peticionamento do SEI.', $e);
@@ -2537,7 +2574,9 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $htmlModeloRecibo = str_replace('@tipoProcesso', $reciboDTOBasico->getStrStaTipoPeticionamentoFormatado(), $htmlModeloRecibo); //tipo de processo
         $htmlModeloRecibo = str_replace('@numProcesso', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModeloRecibo); //numero do processo
         $htmlModeloRecibo = str_replace('@cpfResponsavel', InfraUtil::formatarCpf($dadosRepresentante->getDblCpf()), $htmlModeloRecibo); // Nome do CPF
-        $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($dadosPj->getDblCnpj()), $htmlModeloRecibo); // Cnpj do vinculo
+        if($dadosPj->isSetDblCnpj()) {
+            $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($dadosPj->getDblCnpj()), $htmlModeloRecibo); // Cnpj do vinculo
+        }
         $htmlModeloRecibo = str_replace('@nomeRazaoSocial', $dadosPj->getStrNome(), $htmlModeloRecibo); // Razao Social
         $htmlModeloRecibo = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRecibo); // Descricao do Orgão
 

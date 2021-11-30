@@ -480,26 +480,26 @@ class MdPetIntCertidaoRN extends InfraRN
         $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
         $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
 
-        $ToolTipTitle = 'Certidão de Intimação Cumprida';
-        $ToolTipTitle .= '<br/>Documento Principal: ';
-        $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
+        $ToolTipText = 'Documento Principal: ';
+        $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
         if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()) {
-            $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' ';
+            $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' ';
         }
-        $ToolTipTitle .= '(SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+        $ToolTipText .= '(SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
         if ($cnpjs) {
-            $ToolTipTitle .= '<br/><br/>';
+            $ToolTipText .= '<br/><br/>';
             foreach ($cnpjs as $emp) {
-                $ToolTipTitle .= 'Pessoa Jurídica: ' . $emp . '<br/>';
+                $ToolTipText .= 'Pessoa Jurídica: ' . $emp . '<br/>';
             }
         }
 
-        $ToolTipText = '';
-        $ToolTipText .= 'Clique para visualizar a Certidão.';
+        $ToolTipTitulo = 'Certidão de Intimação Cumprida';
+
+        $ToolTipText .= '<br/><br/>Clique para visualizar a Certidão.';
 
         $conteudoHtml = '<a onclick="' . $js . '"';
-        $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitle . '\')"';
+        $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitulo . '\')"';
         $conteudoHtml .= 'onmouseout="return infraTooltipOcultar()">';
         $conteudoHtml .= $imgCertidao;
         $conteudoHtml .= '</a>';

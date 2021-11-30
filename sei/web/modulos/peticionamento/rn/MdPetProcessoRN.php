@@ -56,7 +56,24 @@ class MdPetProcessoRN extends InfraRN {
 
 	}
 
-	protected function gerarProcedimentoControlado( $arrParametros ){
+    protected function gerarProcedimentoControlado( $arrParametros )
+    {
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+        $retorno = $this->gerarProcedimentoInterno($arrParametros);
+
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+        FeedSEIProtocolos::getInstance()->indexarFeeds();
+
+        try {
+            $emailMdPetEmailNotificacaoRN = new MdPetEmailNotificacaoRN();
+            $emailMdPetEmailNotificacaoRN->notificaoPeticionamentoExterno( $retorno['parametrosEmail'] );
+        } catch( Exception $exEmail ){}
+
+        return $retorno['paramentrosRecibo'];
+    }
+
+	protected function gerarProcedimentoInterno( $arrParametros ){
 		try {
 			
 			$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
@@ -259,10 +276,7 @@ class MdPetProcessoRN extends InfraRN {
 			$arrProcessoReciboRetorno[1] = $objProcedimentoDTO;
 
 			//enviando email de sistema EU 5155  / 5156 - try catch por causa que em localhost o envio de email gera erro
-			try {
-			  $emailMdPetEmailNotificacaoRN = new MdPetEmailNotificacaoRN();
-			  $emailMdPetEmailNotificacaoRN->notificaoPeticionamentoExterno( $arrParams );
-			} catch( Exception $exEmail ){}
+
 			
 			//obter todos os documentos deste processo
 			$documentoRN = new DocumentoRN();
@@ -374,7 +388,7 @@ class MdPetProcessoRN extends InfraRN {
 			}
 
 
-			return $arrProcessoReciboRetorno;
+			return array('paramentrosRecibo' => $arrProcessoReciboRetorno, 'parametrosEmail' => $arrParams);
 		
 		} catch(Exception $e){
 			throw new InfraException('Erro cadastrando processo peticionamento do SEI.',$e);

@@ -610,6 +610,36 @@ class MdPetVinculoUsuExtRN extends InfraRN
      */
     public function gerarProcedimentoVinculoControlado($dados)
     {
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+        $retorno = $this->gerarProcedimentoInterno($dados);
+
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+        FeedSEIProtocolos::getInstance()->indexarFeeds();
+
+        if ($dados['hdnIdContatoNovo'] == '' && $retorno['acessoExterno'] == true) {
+            $arrParams = array();
+            $arrParams[0] = $dados;
+            $arrParams[1] = $this->getUnidade();
+            $arrParams[2] = $this->getProcedimento($retorno['idProcedimento']);
+            $arrParams[3] = array();
+            $arrParams[4] = $retorno['reciboDTOBasico'];
+            $arrParams[5] = $retorno['reciboDTOBasico'];
+
+            $this->enviarEmail($arrParams);
+        }
+
+        return $retorno['reciboDTOBasico'];
+
+    }
+
+
+    /**
+     * @param $dados
+     * @throws InfraException
+     */
+    public function gerarProcedimentoInterno($dados)
+    {
         try {
 
             $isAlteracao = false;
@@ -769,18 +799,14 @@ class MdPetVinculoUsuExtRN extends InfraRN
             if ($isAlteracao && $isAlteradoRespLegal) {
                 $this->setDataEncerramentoVinculo(array($idVinculo));
             }
-            if ($dados['hdnIdContatoNovo'] == '' && $acessoExterno == true) {
-                $arrParams = array();
-                $arrParams[0] = $dados;
-                $arrParams[1] = $this->getUnidade();
-                $arrParams[2] = $this->getProcedimento($idProcedimento);
-                $arrParams[3] = array();
-                $arrParams[4] = $reciboDTOBasico;
-                $arrParams[5] = $reciboDTOBasico;
 
-                $this->enviarEmail($arrParams);
-            }
-            return $reciboDTOBasico;
+            $arrRetorno = array(
+                'reciboDTOBasico' => $reciboDTOBasico,
+                'acessoExterno' => $acessoExterno,
+                'idProcedimento' => $idProcedimento
+            );
+
+            return $arrRetorno;
 
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando processo peticionamento do SEI.', $e);

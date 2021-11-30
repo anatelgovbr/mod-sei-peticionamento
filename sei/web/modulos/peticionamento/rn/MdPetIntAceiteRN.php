@@ -895,36 +895,24 @@ class MdPetIntAceiteRN extends InfraRN
             $mdPetVinculoRN = new MdPetVinculoRN();
             $objMdPetIntRelDestDTOTratado = $objMdPetIntRelDestDTO;
             $removerRevogado = false;
+            $arrObjDestinatariosIntimacoesCopia = $objMdPetIntRelDestDTO;
+            $arrObjDestinatarios = array();
+            $arrObjDestinatariosUnicosIntimacao = array();
+            $arrObjDestinatariosUnicosIntimacaoComProcuracao = array();
+            $qtdDestinatariosIntimacao = 0;
             foreach ($objMdPetIntRelDestDTOTratado as $chave => $itemObjMdPetIntRelDestDTOTratado) {
-                $objMdPetVinculoDTO = new MdPetVinculoDTO();
-                $objMdPetVinculoDTO->setNumIdContato($itemObjMdPetIntRelDestDTOTratado->getNumIdContato());
-                $objMdPetVinculoDTO->setNumIdContatoRepresentante($objContato->getNumIdContato());
-                $objMdPetVinculoDTO->retStrStaEstado();
-                $objMdPetVinculoDTO->retNumIdMdPetVinculoRepresent();
-                $objMdPetVinculoDTO->retStrTipoRepresentante();
-                $objMdPetVinculoDTO->retDthDataLimite();
-                $objMdPetVinculoDTO->retStrStaAbrangencia();
-                $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
-                // Caso a PF intimada seja o usuario logado não existirá vinculo por isso já é setado para nã remover o mesmo
-                if ($itemObjMdPetIntRelDestDTOTratado->getNumIdContato() == $objContato->getNumIdContato()) {
-                    $removerRevogado = false;
-                } else {
-                    $removerRevogado = true;
-                }
-                foreach ($objMdPetVinculoDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
-                    if ($itemObjMdPetVinculoDTO->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO && $itemObjMdPetVinculoDTO->getStrTipoRepresentante() != MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                        $removerRevogado = false;
-                    }
-                    if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                        $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                        $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($itemObjMdPetVinculoDTO->getNumIdMdPetVinculoRepresent(), $itemObjMdPetVinculoDTO->getStrStaEstado(), $itemObjMdPetVinculoDTO->getDthDataLimite(), $itemObjMdPetIntRelDestDTOTratado->getDblIdDocumento(), $itemObjMdPetVinculoDTO->getStrStaAbrangencia());
-                        if ($verificacaoCriteriosProcuracaoSimples) {
-                            $removerRevogado = false;
-                        }
+                $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+                $arrProcuracoesAtivasDestinatario = $mdPetVincRepresentantRN->retornarProcuradoresComPoderCumprirResponder($itemObjMdPetIntRelDestDTOTratado->getNumIdContato(), $idProtocolo, $objContato->getNumIdContato());
+                if (count($arrProcuracoesAtivasDestinatario) > 0) {
+                    $arrObjDestinatarios[$chave]['objeto'] = $itemObjMdPetIntRelDestDTOTratado;
+                    $arrObjDestinatarios[$chave]['procuracoes'] = $arrProcuracoesAtivasDestinatario;
+                    if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacaoComProcuracao)) {
+                        $arrObjDestinatariosUnicosIntimacaoComProcuracao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
                     }
                 }
-                if ($removerRevogado) {
-                    unset($objMdPetIntRelDestDTOTratado[$chave]);
+                if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacao)) {
+                    $arrObjDestinatariosUnicosIntimacao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
+                    $qtdDestinatariosIntimacao++;
                 }
             }
             if ($count > 0) {
@@ -939,16 +927,10 @@ class MdPetIntAceiteRN extends InfraRN
                     $countAceites = 0;
                 }
 
-                $arrObjMdPetIntRelDestDTOTratadoFinal = array();
-                foreach ($objMdPetIntRelDestDTOTratado as $itemObjMdPetIntRelDestDTOTratado) {
-                    if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjMdPetIntRelDestDTOTratadoFinal)) {
-                        $arrObjMdPetIntRelDestDTOTratadoFinal[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
-                    }
-                }
 
-                $qntDestinatarioAntes = is_array($objMdPetIntDestDTO) ? count($objMdPetIntDestDTO) : 0;
-                $qntDestinatario = is_array($arrObjMdPetIntRelDestDTOTratadoFinal) ? count($arrObjMdPetIntRelDestDTOTratadoFinal) : 0;
-                $todasAceitas = ($countAceites == $qntDestinatario);
+                $qntDestinatarioAntes = count($arrObjDestinatariosUnicosIntimacaoComProcuracao);
+                $qntDestinatario = count($arrObjDestinatariosUnicosIntimacao);
+                $todasAceitas = ($countAceites == $qntDestinatario && $qntDestinatarioAntes == $qntDestinatario);
                 $retorno = array('todasAceitas' => $todasAceitas, 'qntDestinatario' => $qntDestinatario);
             }
         }

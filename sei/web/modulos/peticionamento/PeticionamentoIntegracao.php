@@ -2322,6 +2322,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                         $dtIntimacao = $obj->getDthDataCadastro();
                                     }
                                 }
+                            } else {
+                                $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                                $dtIntimacao = $dtIntimacao[0];
                             }
                         }
                     }

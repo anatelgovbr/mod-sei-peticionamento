@@ -919,10 +919,16 @@ class MdPetIntAceiteRN extends InfraRN
                     $countAceites = 0;
                 }
 
-
+                $todasAceitas = false;
                 $qntDestinatarioAntes = count($arrObjDestinatariosUnicosIntimacaoComProcuracao);
                 $qntDestinatario = count($arrObjDestinatariosUnicosIntimacao);
-                $todasAceitas = ($countAceites == $qntDestinatario && $qntDestinatarioAntes == $qntDestinatario);
+                if($qntDestinatarioAntes > 0) {
+                    $todasAceitas = ($countAceites == $qntDestinatario && $qntDestinatarioAntes == $qntDestinatario);
+                } else {
+                    $todasAceitas = ($countAceites == $qntDestinatario);
+                }
+
+//                $todasAceitas = ($countAceites == $qntDestinatario && $qntDestinatarioAntes == $qntDestinatario);
                 $retorno = array('todasAceitas' => $todasAceitas, 'qntDestinatario' => $qntDestinatario);
             }
         }

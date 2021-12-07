@@ -90,6 +90,8 @@ if (count($selectOrgao[0]) < 2) {
 
 if (($uf != "" && $orgaoDuplo == false) || ($oragao != "" && count($selectOrgao[0]) > 0)) {
     $selectUf = MdPetTipoProcessoINT::montarSelectUf($_GET['id_tipo_procedimento'], $oragao, $uf, $cidadeHidden);
+} else {
+    $selectUf = MdPetTipoProcessoINT::montarSelectUf($_GET['id_tipo_procedimento']);
 }
 
 $hiddUF = "";

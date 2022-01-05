@@ -810,7 +810,7 @@ class MdPetVincRepresentantRN extends InfraRN
                         $mdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
                         $objMdPetRelVincRepTpPoder = new MdPetRelVincRepTpPoderDTO();
                         $objMdPetRelVincRepTpPoder->setNumIdVinculoRepresent($objVincRepresentante->getNumIdMdPetVinculoRepresent());
-                        $objMdPetRelVincRepTpPoder->setNumIdTipoPoderLegal(MdPetTipoPoderLegalRN::$PODER_LEGAL_CUMPRIMENTO);
+                        $objMdPetRelVincRepTpPoder->setNumIdTipoPoderLegal(1);
                         $objMdPetRelVincRepTpPoder->retTodos();
                         $arrObjMdPetRelVincRepTpPoder = $mdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoder);
                         if ($arrObjMdPetRelVincRepTpPoder) {

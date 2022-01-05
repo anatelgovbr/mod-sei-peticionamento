@@ -230,7 +230,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         }
         ?>
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-5">
                 <label id="lblNome" for="txtNome" class="infraLabelObrigatorio">Nome:
                     <img align="top"
                          style="width:20px;"

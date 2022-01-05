@@ -39,6 +39,7 @@
             $arrObjMdPetIntRelTipoRespValido = $this->_retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto);
             
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'PrazoFinal', InfraArray::$TIPO_ORDENACAO_ASC);
+            
             return $arrObjMdPetIntRelTipoRespValido;
         }
 

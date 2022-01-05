@@ -669,40 +669,39 @@ class MdPetIntimacaoRN extends InfraRN
 
     public function getTextoTolTipIntimacaoEletronicaVinculoInativo($dtIntimacao, $docFormat, $docTipo, $docNum, $anexo, $idContatoRepresentante, $idContatoVinculo, $arrPessoaJuridica, $arrPessoaFisica)
     {
-        $ToolTipTitle = 'Intimação Eletrônica: expedida em ';
-        $ToolTipTitle .= $dtIntimacao . ' ';
-        $ToolTipTitle .= '<br/>Documento Principal: ';
-        $ToolTipTitle .= $docTipo . ' ';
+        $ToolTipTitle = 'Intimação Eletrônica';
+        $toolTipText = 'Intimação Eletrônica: expedida em ';
+        $toolTipText .= $dtIntimacao . ' ';
+        $toolTipText .= '<br/>Documento Principal: ';
+        $toolTipText .= $docTipo . ' ';
         if ($docNum) {
-            $ToolTipTitle .= $docNum . ' ';
+            $toolTipText .= $docNum . ' ';
         }
-        $ToolTipTitle .= '(SEI nº ';
-        $ToolTipTitle .= $docFormat;
-        $ToolTipTitle .= ')';
+        $toolTipText .= '(SEI nº ';
+        $toolTipText .= $docFormat;
+        $toolTipText .= ')';
         if ($anexo == 'N') {
-            $ToolTipTitle .= '<span style=font-weight: ligther;> - Documento Anexo</span>';
+            $toolTipText .= '<span style=font-weight: ligther;> - Documento Anexo</span>';
         }
 
         if (!is_null($arrPessoaJuridica) || !is_null($arrPessoaFisica)) {
-            $ToolTipTitle .= '<br/><br/>Destinatários:<br/>';
+            $toolTipText .= '<br/><br/>Destinatários:<br/>';
             if ($arrPessoaJuridica) {
                 foreach ($arrPessoaJuridica as $emp) {
-                    $ToolTipTitle .= $emp . '<br/>';
+                    $toolTipText .= $emp . '<br/>';
                 }
             }
 
             if ($arrPessoaFisica) {
                 foreach ($arrPessoaFisica as $pes) {
-                    $ToolTipTitle .= $pes . '<br/>';
+                    $toolTipText .= $pes . '<br/>';
                 }
             }
         }
 
-        $ToolTipText = '';
+        $toolTipText .= 'Você não possui mais permissão para cumprir a Intimação Eletrônica. Verifique seus Poderes de Representação.';
 
-        $ToolTipText = 'Você não possui mais permissão para cumprir a Intimação Eletrônica. Verifique seus Poderes de Representação.';
-
-        return array($ToolTipTitle, $ToolTipText);
+        return array($ToolTipTitle, $toolTipText);
     }
 
     public function getTextoTolTipIntimacaoEletronicaCumprida($arr)

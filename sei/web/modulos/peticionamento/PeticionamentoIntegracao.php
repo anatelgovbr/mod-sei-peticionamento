@@ -37,7 +37,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getInstituicao()
     {
-        return 'ANATEL (Projeto Colaborativo no Portal do SPB)';
+        return 'Anatel - Agência Nacional de Telecomunicações';
     }
 
     public function inicializar($strVersaoSEI)
@@ -2335,6 +2335,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                     } else {
                                         $dtIntimacao = $obj->getDthDataCadastro();
                                     }
+                                } else {
+                                    $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                                    $dtIntimacao = $dtIntimacao[0];
                                 }
                             } else {
                                 $dtIntimacao = explode(' ', $objMdPetIntAceiteDTO->getDthDataConsultaDireta());

@@ -143,18 +143,20 @@ class MdPetIntReciboRN extends InfraRN {
 
             $imgRecibo = '<img src="modulos/peticionamento/imagens/png/intimacao_recibo_peticionamento_resposta.png" style="width: 24px">';
 
-            $ToolTipTitle = 'Recibo da Resposta: peticionada em ';
-            $ToolTipTitle .= $data . ' ';
-            $ToolTipTitle .= '<br/>Documento Principal: ';
-            $ToolTipTitle .= $docTipo . ' ';
-            if ($docNum) {
-                $ToolTipTitle .= $docNum . ' ';
-            }
-            $ToolTipTitle .= '(SEI nº ';
-            $ToolTipTitle .= $docPrinc;
-            $ToolTipTitle .= ')';
+            $ToolTipTitle = 'Recibo da Resposta à Intimação';
 
-            $ToolTipText = 'Clique para visualizar o Recibo Eletrônico de Protocolo.';
+            $ToolTipText = 'Peticionada em ';
+            $ToolTipText .= $data . ' ';
+            $ToolTipText .= '<br/>Documento Principal: ';
+            $ToolTipText .= $docTipo . ' ';
+            if ($docNum) {
+                $ToolTipText .= $docNum . ' ';
+            }
+            $ToolTipText .= '(SEI nº ';
+            $ToolTipText .= $docPrinc;
+            $ToolTipText .= ')';
+
+            $ToolTipText .= '<br/><br/>Clique para visualizar o Recibo Eletrônico de Protocolo.';
 
             $conteudoHtml = '<a onclick="' . $js . '"';
             $conteudoHtml .= ' onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitle . '\')"';

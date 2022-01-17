@@ -206,199 +206,203 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
     protected function enviarEmailReiteracaoIntimacaoConectado($params)
     {
+        try {
+            $arrObjMdPetIntRelDestinatarioDTO = $params[0];
+            $arrDadosEmailNaoEnviados = array();
+            $qtdNaoEnviadas = 0;
+            $qtdEnviadas = 0;
+            $arrDadosEmail = array();
 
-        $arrObjMdPetIntRelDestinatarioDTO = $params[0];
-        $arrDadosEmailNaoEnviados = array();
-        $qtdNaoEnviadas = 0;
-        $qtdEnviadas = 0;
-        $arrDadosEmail = array();
+            //Usuário do Módulo de Peticionamento
+            $objUsuarioPetRN = new MdPetIntUsuarioRN();
+            $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
-        //Usuário do Módulo de Peticionamento
-        $objUsuarioPetRN = new MdPetIntUsuarioRN();
-        $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
+            ////////// CAMPOS EM COMUM
+            $arrDadosEmail['sigla_sistema'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
 
-        ////////// CAMPOS EM COMUM
-        $arrDadosEmail['sigla_sistema'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
+            $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+            $arrDadosEmail['email_sistema'] = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA');
 
-        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-        $arrDadosEmail['email_sistema'] = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA');
+            $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
+            ////////// CAMPOS EM COMUM - fim
 
-        $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
-        ////////// CAMPOS EM COMUM - fim
+            if ($arrObjMdPetIntRelDestinatarioDTO) {
+                foreach ($arrObjMdPetIntRelDestinatarioDTO as $destinatario) {
+                    $arrDadosEmail['tipo_resposta'] = '';
+                    $isReiteracao = false;
 
-        if ($arrObjMdPetIntRelDestinatarioDTO) {
-            foreach ($arrObjMdPetIntRelDestinatarioDTO as $destinatario) {
-                $arrDadosEmail['tipo_resposta'] = '';
-                $isReiteracao = false;
+                    $idIntimacao = $destinatario->getNumIdMdPetIntimacao();
+                    $idMdPetIntRelDestinatario = $destinatario->getNumIdMdPetIntRelDestinatario();
+                    $idContato = $destinatario->getNumIdContato();
 
-                $idIntimacao = $destinatario->getNumIdMdPetIntimacao();
-                $idMdPetIntRelDestinatario = $destinatario->getNumIdMdPetIntRelDestinatario();
-                $idContato = $destinatario->getNumIdContato();
-
-                $dtIntimacaoAceite = !is_null($destinatario->getDthDataAceite()) ? explode(' ', $destinatario->getDthDataAceite()) : null;
-                $arrDadosEmail['data_cumprimento_intimacao'] = is_array($dtIntimacaoAceite) ? $dtIntimacaoAceite[0] : null;
-
-                $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-                $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario));
-
-                //Existe algum Tipo de Resposta que ainda possui prazo?
-                if ($arrObjMdPetIntPrazoDTO) {
+                    $dtIntimacaoAceite = !is_null($destinatario->getDthDataAceite()) ? explode(' ', $destinatario->getDthDataAceite()) : null;
+                    $arrDadosEmail['data_cumprimento_intimacao'] = is_array($dtIntimacaoAceite) ? $dtIntimacaoAceite[0] : null;
 
                     $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-                    $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario, true, false));
+                    $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario));
 
-                    if (count($arrObjMdPetIntPrazoDTO) > 0) {
+                    //Existe algum Tipo de Resposta que ainda possui prazo?
+                    if ($arrObjMdPetIntPrazoDTO) {
 
-                        $tipoRespostaDTO = $arrObjMdPetIntPrazoDTO[0];
+                        $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
+                        $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario, true, false));
 
-                        //Data prazo de 1 ou 5 dias
-                        $dataAtual = InfraData::getStrDataAtual();
+                        if (count($arrObjMdPetIntPrazoDTO) > 0) {
 
-                        $dataFinal = $tipoRespostaDTO->getDthDataProrrogada();
-                        if (empty($dataFinal)) {
-                            $dataFinal = $tipoRespostaDTO->getDthDataLimite();
+                            $tipoRespostaDTO = $arrObjMdPetIntPrazoDTO[0];
+
+                            //Data prazo de 1 ou 5 dias
+                            $dataAtual = InfraData::getStrDataAtual();
+
+                            $dataFinal = $tipoRespostaDTO->getDthDataProrrogada();
+                            if (empty($dataFinal)) {
+                                $dataFinal = $tipoRespostaDTO->getDthDataLimite();
+                            }
+                            if (is_array(explode(" ", $dataFinal))) {
+                                $dataFinal = explode(" ", $dataFinal);
+                                $dataFinal = $dataFinal[0];
+                            }
+
+
+                            if (InfraData::compararDatas($dataFinal, $dataAtual) == -1 || InfraData::compararDatas($dataFinal, $dataAtual) == -5) {
+                                $isReiteracao = true;
+                                $arrDadosEmail['tipo_resposta'] = $tipoRespostaDTO->getStrNome();
+                                $arrDadosEmail['prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getNumValorPrazoExterno();
+                                $arrDadosEmail['tipo_prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getStrTipoPrazoExterno();
+                            }
                         }
-                        if (is_array(explode(" ", $dataFinal))) {
-                            $dataFinal = explode(" ", $dataFinal);
-                            $dataFinal = $dataFinal[0];
-                        }
 
+                        if ($isReiteracao) {
+                            //Dados Unidade
+                            $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+                            $objUnidadeIntimacaoDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
 
-                        if (InfraData::compararDatas($dataFinal, $dataAtual) == -1 || InfraData::compararDatas($dataFinal, $dataAtual) == -5) {
-                            $isReiteracao = true;
-                            $arrDadosEmail['tipo_resposta'] = $tipoRespostaDTO->getStrNome();
-                            $arrDadosEmail['prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getNumValorPrazoExterno();
-                            $arrDadosEmail['tipo_prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getStrTipoPrazoExterno();
-                        }
-                    }
+                            if ($objUnidadeIntimacaoDTO) {
+                                if (is_numeric($objUnidadeIntimacaoDTO->getNumIdUnidade())) {
+                                    $objUnidadeDTO = new UnidadeDTO();
+                                    $objUnidadeDTO->retStrSigla();
+                                    $objUnidadeDTO->retStrDescricao();
+                                    $objUnidadeDTO->retStrSiglaOrgao();
+                                    $objUnidadeDTO->retStrDescricaoOrgao();
+                                    $objUnidadeDTO->retStrSitioInternetOrgaoContato();
+                                    $objUnidadeDTO->setBolExclusaoLogica(false);
+                                    $objUnidadeDTO->setNumIdUnidade($objUnidadeIntimacaoDTO->getNumIdUnidade());
 
-                    if ($isReiteracao) {
-                        //Dados Unidade
-                        $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                        $objUnidadeIntimacaoDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
+                                    $objUnidadeRN = new UnidadeRN();
+                                    $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
 
-                        if ($objUnidadeIntimacaoDTO) {
-                            if (is_numeric($objUnidadeIntimacaoDTO->getNumIdUnidade())) {
-                                $objUnidadeDTO = new UnidadeDTO();
-                                $objUnidadeDTO->retStrSigla();
-                                $objUnidadeDTO->retStrDescricao();
-                                $objUnidadeDTO->retStrSiglaOrgao();
-                                $objUnidadeDTO->retStrDescricaoOrgao();
-                                $objUnidadeDTO->retStrSitioInternetOrgaoContato();
-                                $objUnidadeDTO->setBolExclusaoLogica(false);
-                                $objUnidadeDTO->setNumIdUnidade($objUnidadeIntimacaoDTO->getNumIdUnidade());
+                                    if ($objUnidadeIntimacaoDTO) {
+                                        $arrDadosEmail['sigla_orgao'] = $objUnidadeDTO->getStrSiglaOrgao();
+                                        $arrDadosEmail['descricao_orgao'] = $objUnidadeDTO->getStrDescricaoOrgao();
+                                        $arrDadosEmail['sitio_internet_orgao'] = $objUnidadeDTO->getStrSitioInternetOrgaoContato();
+                                    }
 
-                                $objUnidadeRN = new UnidadeRN();
-                                $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+                                }
+                            }
 
-                                if ($objUnidadeIntimacaoDTO) {
-                                    $arrDadosEmail['sigla_orgao'] = $objUnidadeDTO->getStrSiglaOrgao();
-                                    $arrDadosEmail['descricao_orgao'] = $objUnidadeDTO->getStrDescricaoOrgao();
-                                    $arrDadosEmail['sitio_internet_orgao'] = $objUnidadeDTO->getStrSitioInternetOrgaoContato();
+                            //contato
+                            $objUsuarioDTO = new UsuarioDTO();
+                            $objUsuarioDTO->retNumIdUsuario();
+                            $objUsuarioDTO->retStrSigla();
+                            $objUsuarioDTO->retStrNome();
+                            $objUsuarioDTO->retStrStaTipo();
+                            $objUsuarioDTO->retNumIdContato();
+                            $objUsuarioDTO->setNumIdContato($idContato);
+
+                            $objUsuarioRN = new UsuarioRN();
+                            $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+
+                            if (is_object($objUsuarioDTO)) {
+                                if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
+//                                $objInfraException->lancarValidacao('Usuário externo "' . $objUsuarioDTO->getStrSigla() . '" ainda não foi liberado.');
+                                }
+
+                                if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
+//                                $objInfraException->lancarValidacao('Usuário "' . $objUsuarioDTO->getStrSigla() . '" não é um usuário externo.');
+                                }
+                                //contato - fim
+                                $enviaEmail = true;
+                                $conta = "^[a-zA-Z0-9\._-]+@";
+                                $domino = "[a-zA-Z0-9\._-]+.";
+                                $extensao = "([a-zA-Z]{2,4})$";
+                                $pattern = "#" . $conta . $domino . $extensao . "#";
+                                $isEmail = preg_match($pattern, $objUsuarioDTO->getStrSigla());
+                                if (!$isEmail) {
+                                    $enviaEmail = false;
+                                }
+                                $arrDadosEmail['email_usuario_externo'] = $objUsuarioDTO->getStrSigla();
+                                $arrDadosEmail['nome_usuario_externo'] = $objUsuarioDTO->getStrNome();
+
+                                $arrDadosEmail['tipo_intimacao'] = $destinatario->getStrNomeTipoIntimacao();
+
+                                //Get Prazo Tácito
+                                $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
+                                $objPrazoTacitoDTO->retNumNumPrazo();
+                                $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
+                                $retLista = $objPrazoTacitoRN->listar($objPrazoTacitoDTO);
+                                $objPrazoTacitoDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;
+                                $arrDadosEmail['prazo_intimacao_tacita'] = !is_null($objPrazoTacitoDTO) ? $objPrazoTacitoDTO->getNumNumPrazo() : null;
+
+                                $dtIntimacao = !is_null($destinatario->getDthDataCadastro()) ? explode(' ', $destinatario->getDthDataCadastro()) : null;
+
+                                //Data Expedição Intimação
+                                $arrDadosEmail['data_expedicao_intimacao'] = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
+
+                                //Calcular Data Final do Prazo Tácito
+                                $dataFimPrazoTacito = '';
+                                $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
+                                $arrDadosEmail['data_final_prazo_intimacao_tacita'] = $objMdPetIntPrazoRN->calcularDataPrazo($arrDadosEmail['prazo_intimacao_tacita'], $arrDadosEmail['data_expedicao_intimacao']);
+
+                                //Documento Principal
+                                $dados = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
+
+                                $objDocumentoDTO = new DocumentoDTO();
+                                $objDocumentoDTO->retDblIdDocumento();
+                                $objDocumentoDTO->retNumIdOrgaoUnidadeResponsavel();
+                                $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
+                                $objDocumentoDTO->retStrNomeSerie();
+                                $objDocumentoDTO->retStrNumero();
+                                $objDocumentoDTO->retNumIdSerie();
+                                $objDocumentoDTO->retStrProtocoloProcedimentoFormatado();
+                                $objDocumentoDTO->retStrNomeTipoProcedimentoProcedimento();
+
+                                $objDocumentoDTO->setDblIdDocumento($dados[3]);
+                                $objDocumentoRN = new DocumentoRN();
+                                $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+
+                                $arrDadosEmail['documento_principal_intimacao'] = $dados[0];
+                                $arrDadosEmail['tipo_documento_principal_intimacao'] = $dados[1];
+                                if (!empty($dados[4])) {
+                                    $arrDadosEmail['tipo_documento_principal_intimacao'] .= ' ' . $dados[4];
+                                }
+
+                                $arrDadosEmail['processo'] = $objDocumentoDTO->getStrProtocoloProcedimentoFormatado();
+                                $arrDadosEmail['tipo_processo'] = $objDocumentoDTO->getStrNomeTipoProcedimentoProcedimento();
+                                if ($enviaEmail) {
+                                    $this->emailReiteracaoExigeResposta($arrDadosEmail, $params[1]);
+                                    $qtdEnviadas++;
+
+                                    $retornoIntimacaoPF = $this->enviarEmailProcuradorPf($idContato, $destinatario, $idIntimacao, $params[1], $arrDadosEmail);
+                                    $qtdEnviadas += $retornoIntimacaoPF['qtdEnviadas'];
+                                    $qtdNaoEnviadas += $retornoIntimacaoPF['qtdNãoEnviadas'];
+                                    array_merge($arrDadosEmailNaoEnviados, $retornoIntimacaoPF['arrDadosEmailNaoEnviados']);
+                                } else {
+                                    $qtdNaoEnviadas++;
+                                    $arrDadosEmailNaoEnviados[] = $arrDadosEmail;
                                 }
 
                             }
-                        }
-
-                        //contato
-                        $objUsuarioDTO = new UsuarioDTO();
-                        $objUsuarioDTO->retNumIdUsuario();
-                        $objUsuarioDTO->retStrSigla();
-                        $objUsuarioDTO->retStrNome();
-                        $objUsuarioDTO->retStrStaTipo();
-                        $objUsuarioDTO->retNumIdContato();
-                        $objUsuarioDTO->setNumIdContato($idContato);
-
-                        $objUsuarioRN = new UsuarioRN();
-                        $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-
-                        if (is_object($objUsuarioDTO)) {
-                            if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
-//                                $objInfraException->lancarValidacao('Usuário externo "' . $objUsuarioDTO->getStrSigla() . '" ainda não foi liberado.');
-                            }
-
-                            if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
-//                                $objInfraException->lancarValidacao('Usuário "' . $objUsuarioDTO->getStrSigla() . '" não é um usuário externo.');
-                            }
-                            //contato - fim
-                            $enviaEmail = true;
-                            $conta = "^[a-zA-Z0-9\._-]+@";
-                            $domino = "[a-zA-Z0-9\._-]+.";
-                            $extensao = "([a-zA-Z]{2,4})$";
-                            $pattern = "#" . $conta . $domino . $extensao . "#";
-                            $isEmail = preg_match($pattern, $objUsuarioDTO->getStrSigla());
-                            if (!$isEmail) {
-                                $enviaEmail = false;
-                            }
-                            $arrDadosEmail['email_usuario_externo'] = $objUsuarioDTO->getStrSigla();
-                            $arrDadosEmail['nome_usuario_externo'] = $objUsuarioDTO->getStrNome();
-
-                            $arrDadosEmail['tipo_intimacao'] = $destinatario->getStrNomeTipoIntimacao();
-
-                            //Get Prazo Tácito
-                            $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
-                            $objPrazoTacitoDTO->retNumNumPrazo();
-                            $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
-                            $retLista = $objPrazoTacitoRN->listar($objPrazoTacitoDTO);
-                            $objPrazoTacitoDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;
-                            $arrDadosEmail['prazo_intimacao_tacita'] = !is_null($objPrazoTacitoDTO) ? $objPrazoTacitoDTO->getNumNumPrazo() : null;
-
-                            $dtIntimacao = !is_null($destinatario->getDthDataCadastro()) ? explode(' ', $destinatario->getDthDataCadastro()) : null;
-
-                            //Data Expedição Intimação
-                            $arrDadosEmail['data_expedicao_intimacao'] = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
-
-                            //Calcular Data Final do Prazo Tácito
-                            $dataFimPrazoTacito = '';
-                            $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-                            $arrDadosEmail['data_final_prazo_intimacao_tacita'] = $objMdPetIntPrazoRN->calcularDataPrazo($arrDadosEmail['prazo_intimacao_tacita'], $arrDadosEmail['data_expedicao_intimacao']);
-
-                            //Documento Principal
-                            $dados = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
-
-                            $objDocumentoDTO = new DocumentoDTO();
-                            $objDocumentoDTO->retDblIdDocumento();
-                            $objDocumentoDTO->retNumIdOrgaoUnidadeResponsavel();
-                            $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
-                            $objDocumentoDTO->retStrNomeSerie();
-                            $objDocumentoDTO->retStrNumero();
-                            $objDocumentoDTO->retNumIdSerie();
-                            $objDocumentoDTO->retStrProtocoloProcedimentoFormatado();
-                            $objDocumentoDTO->retStrNomeTipoProcedimentoProcedimento();
-
-                            $objDocumentoDTO->setDblIdDocumento($dados[3]);
-                            $objDocumentoRN = new DocumentoRN();
-                            $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
-
-                            $arrDadosEmail['documento_principal_intimacao'] = $dados[0];
-                            $arrDadosEmail['tipo_documento_principal_intimacao'] = $dados[1];
-                            if (!empty($dados[4])) {
-                                $arrDadosEmail['tipo_documento_principal_intimacao'] .= ' ' . $dados[4];
-                            }
-
-                            $arrDadosEmail['processo'] = $objDocumentoDTO->getStrProtocoloProcedimentoFormatado();
-                            $arrDadosEmail['tipo_processo'] = $objDocumentoDTO->getStrNomeTipoProcedimentoProcedimento();
-                            if ($enviaEmail) {
-                                $this->emailReiteracaoExigeResposta($arrDadosEmail, $params[1]);
-                                $qtdEnviadas++;
-
-                                $retornoIntimacaoPF = $this->enviarEmailProcuradorPf($idContato, $destinatario, $idIntimacao, $params[1], $arrDadosEmail);
-                                $qtdEnviadas += $retornoIntimacaoPF['qtdEnviadas'];
-                                $qtdNaoEnviadas += $retornoIntimacaoPF['qtdNãoEnviadas'];
-                                array_merge($arrDadosEmailNaoEnviados, $retornoIntimacaoPF['arrDadosEmailNaoEnviados']);
-                            } else {
-                                $qtdNaoEnviadas++;
-                                $arrDadosEmailNaoEnviados[] = $arrDadosEmail;
-                            }
 
                         }
 
                     }
-
                 }
             }
+            return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
+        } catch (Exception $e) {
+            LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
         }
-        return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
     }
 
 
@@ -406,231 +410,232 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
     protected function enviarEmailReiteracaoIntimacaoJuridicoConectado($params)
     {
+        try {
+            $arrObjMdPetIntRelDestinatarioDTO = $params[0];
 
-        $arrObjMdPetIntRelDestinatarioDTO = $params[0];
+            $qtdEnviadas = 0;
+            $qtdNaoEnviadas = 0;
+            $arrDadosEmailNaoEnviados = array();
+            $arrDadosEmail = array();
 
-        $qtdEnviadas = 0;
-        $qtdNaoEnviadas = 0;
-        $arrDadosEmailNaoEnviados = array();
-        $arrDadosEmail = array();
+            //Usuário do Módulo de Peticionamento
+            $objUsuarioPetRN = new MdPetIntUsuarioRN();
+            $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
-        //Usuário do Módulo de Peticionamento
-        $objUsuarioPetRN = new MdPetIntUsuarioRN();
-        $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
+            ////////// CAMPOS EM COMUM
+            $arrDadosEmail['sigla_sistema'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
 
-        ////////// CAMPOS EM COMUM
-        $arrDadosEmail['sigla_sistema'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
+            $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+            $arrDadosEmail['email_sistema'] = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA');
 
-        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-        $arrDadosEmail['email_sistema'] = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA');
+            $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
+            ////////// CAMPOS EM COMUM - fim
 
-        $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
-        ////////// CAMPOS EM COMUM - fim
+            if (count($arrObjMdPetIntRelDestinatarioDTO) > 0) {
+                foreach ($arrObjMdPetIntRelDestinatarioDTO as $destinatario) {
+                    $arrDadosEmail['tipo_resposta'] = '';
+                    $isReiteracao = false;
 
-        if (count($arrObjMdPetIntRelDestinatarioDTO) > 0) {
-            foreach ($arrObjMdPetIntRelDestinatarioDTO as $destinatario) {
-                $arrDadosEmail['tipo_resposta'] = '';
-                $isReiteracao = false;
+                    $idIntimacao = $destinatario->getNumIdMdPetIntimacao();
+                    $idMdPetIntRelDestinatario = $destinatario->getNumIdMdPetIntRelDestinatario();
 
-                $idIntimacao = $destinatario->getNumIdMdPetIntimacao();
-                $idMdPetIntRelDestinatario = $destinatario->getNumIdMdPetIntRelDestinatario();
+                    $idContato = $destinatario->getNumIdContato();
 
-                $idContato = $destinatario->getNumIdContato();
-
-                $dtIntimacaoAceite = !is_null($destinatario->getDthDataAceite()) ? explode(' ', $destinatario->getDthDataAceite()) : null;
-                $arrDadosEmail['data_cumprimento_intimacao'] = count($dtIntimacaoAceite) > 0 ? $dtIntimacaoAceite[0] : null;
-
-                $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-                $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario));
-
-                //Existe algum Tipo de Resposta que ainda possui prazo?
-                if (count($arrObjMdPetIntPrazoDTO) > 0) {
+                    $dtIntimacaoAceite = !is_null($destinatario->getDthDataAceite()) ? explode(' ', $destinatario->getDthDataAceite()) : null;
+                    $arrDadosEmail['data_cumprimento_intimacao'] = count($dtIntimacaoAceite) > 0 ? $dtIntimacaoAceite[0] : null;
 
                     $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-                    $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario, true, false));
-                    //var_dump($arrObjMdPetIntPrazoDTO[0]->getNumValorPrazoExterno());die;
+                    $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario));
 
-
+                    //Existe algum Tipo de Resposta que ainda possui prazo?
                     if (count($arrObjMdPetIntPrazoDTO) > 0) {
 
-                        $tipoRespostaDTO = $arrObjMdPetIntPrazoDTO[0];
+                        $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
+                        $arrObjMdPetIntPrazoDTO = $objMdPetIntPrazoRN->retornarTipoRespostaValido(array($idIntimacao, $idMdPetIntRelDestinatario, true, false));
+                        //var_dump($arrObjMdPetIntPrazoDTO[0]->getNumValorPrazoExterno());die;
 
-                        //Data prazo de 1 ou 5 dias
-                        $dataAtual = InfraData::getStrDataAtual();
 
-                        $dataFinal = $tipoRespostaDTO->getDthDataProrrogada();
+                        if (count($arrObjMdPetIntPrazoDTO) > 0) {
 
-                        if (empty($dataFinal)) {
-                            $dataFinal = $tipoRespostaDTO->getDthDataLimite();
+                            $tipoRespostaDTO = $arrObjMdPetIntPrazoDTO[0];
 
-                        }
-                        if (is_array(explode(" ", $dataFinal))) {
-                            $dataFinal = explode(" ", $dataFinal);
+                            //Data prazo de 1 ou 5 dias
+                            $dataAtual = InfraData::getStrDataAtual();
 
-                            $dataFinal = $dataFinal[0];
-                        }
+                            $dataFinal = $tipoRespostaDTO->getDthDataProrrogada();
 
-                        if (InfraData::compararDatas($dataFinal, $dataAtual) == -1 || InfraData::compararDatas($dataFinal, $dataAtual) == -5) {
+                            if (empty($dataFinal)) {
+                                $dataFinal = $tipoRespostaDTO->getDthDataLimite();
 
-                            $isReiteracao = true;
-                            $arrDadosEmail['tipo_resposta'] = $tipoRespostaDTO->getStrNome();
-                            $arrDadosEmail['prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getNumValorPrazoExterno();
-                            $arrDadosEmail['tipo_prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getStrTipoPrazoExterno();
-                        }
-                    }
+                            }
+                            if (is_array(explode(" ", $dataFinal))) {
+                                $dataFinal = explode(" ", $dataFinal);
 
-                    if ($isReiteracao) {
-                        //Dados Unidade
-                        $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                        $objUnidadeIntimacaoDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
+                                $dataFinal = $dataFinal[0];
+                            }
 
-                        if ($objUnidadeIntimacaoDTO) {
-                            if (is_numeric($objUnidadeIntimacaoDTO->getNumIdUnidade())) {
-                                $objUnidadeDTO = new UnidadeDTO();
-                                $objUnidadeDTO->retStrSigla();
-                                $objUnidadeDTO->retStrDescricao();
-                                $objUnidadeDTO->retStrSiglaOrgao();
-                                $objUnidadeDTO->retStrDescricaoOrgao();
-                                $objUnidadeDTO->retStrSitioInternetOrgaoContato();
-                                $objUnidadeDTO->setBolExclusaoLogica(false);
-                                $objUnidadeDTO->setNumIdUnidade($objUnidadeIntimacaoDTO->getNumIdUnidade());
+                            if (InfraData::compararDatas($dataFinal, $dataAtual) == -1 || InfraData::compararDatas($dataFinal, $dataAtual) == -5) {
 
-                                $objUnidadeRN = new UnidadeRN();
-                                $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
-
-                                if ($objUnidadeIntimacaoDTO) {
-                                    $arrDadosEmail['sigla_orgao'] = $objUnidadeDTO->getStrSiglaOrgao();
-                                    $arrDadosEmail['descricao_orgao'] = $objUnidadeDTO->getStrDescricaoOrgao();
-                                    $arrDadosEmail['sitio_internet_orgao'] = $objUnidadeDTO->getStrSitioInternetOrgaoContato();
-                                }
-
+                                $isReiteracao = true;
+                                $arrDadosEmail['tipo_resposta'] = $tipoRespostaDTO->getStrNome();
+                                $arrDadosEmail['prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getNumValorPrazoExterno();
+                                $arrDadosEmail['tipo_prazo_externo_tipo_resposta'] = $tipoRespostaDTO->getStrTipoPrazoExterno();
                             }
                         }
 
-                        //Recuperando a pessoa relacionada a empresa
-                        $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
-                        $dtoMdPetVincReptDTO->setNumIdContatoVinc($idContato);
-                        $dtoMdPetVincReptDTO->retNumIdContatoVinc();
-                        $dtoMdPetVincReptDTO->retStrNomeProcurador();
-                        $dtoMdPetVincReptDTO->retStrRazaoSocialNomeVinc();
-                        $dtoMdPetVincReptDTO->retStrTipoRepresentante();
-                        $dtoMdPetVincReptDTO->retStrCNPJ();
-                        $dtoMdPetVincReptDTO->retStrEmail();
-                        $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
-                        $dtoMdPetVincReptDTO->retNumIdMdPetVinculoRepresent();
-                        $dtoMdPetVincReptDTO->setStrSinAtivo('S');
-                        $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-                        
-                        $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
-                        $arrMdPetVincRepRN = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
+                        if ($isReiteracao) {
+                            //Dados Unidade
+                            $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+                            $objUnidadeIntimacaoDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
 
-                        //Recuperando Vinculo, Razão Social e CNPJ
-                        //Para cada pessoa vinculada a empresa
+                            if ($objUnidadeIntimacaoDTO) {
+                                if (is_numeric($objUnidadeIntimacaoDTO->getNumIdUnidade())) {
+                                    $objUnidadeDTO = new UnidadeDTO();
+                                    $objUnidadeDTO->retStrSigla();
+                                    $objUnidadeDTO->retStrDescricao();
+                                    $objUnidadeDTO->retStrSiglaOrgao();
+                                    $objUnidadeDTO->retStrDescricaoOrgao();
+                                    $objUnidadeDTO->retStrSitioInternetOrgaoContato();
+                                    $objUnidadeDTO->setBolExclusaoLogica(false);
+                                    $objUnidadeDTO->setNumIdUnidade($objUnidadeIntimacaoDTO->getNumIdUnidade());
 
-                        foreach ($arrMdPetVincRepRN as $key => $value) {
+                                    $objUnidadeRN = new UnidadeRN();
+                                    $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
 
-                            $temPoder = $this->verificaPoder($value->getStrTipoRepresentante(), $value->getNumIdMdPetVinculoRepresent());
+                                    if ($objUnidadeIntimacaoDTO) {
+                                        $arrDadosEmail['sigla_orgao'] = $objUnidadeDTO->getStrSiglaOrgao();
+                                        $arrDadosEmail['descricao_orgao'] = $objUnidadeDTO->getStrDescricaoOrgao();
+                                        $arrDadosEmail['sitio_internet_orgao'] = $objUnidadeDTO->getStrSitioInternetOrgaoContato();
+                                    }
 
-                            if ($temPoder) {
-                                $arrDadosEmail['cnpj'] = $value->getStrCNPJ();
-                                $arrDadosEmail['razaoSocial'] = $value->getStrRazaoSocialNomeVinc();
-
-                                if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
-                                    $arrDadosEmail['tpVinc'] = "Responsavel Legal";
                                 }
-                                if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL) {
-                                    $arrDadosEmail['tpVinc'] = "Procurador Especial";
-                                }
-                                if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                                    $arrDadosEmail['tpVinc'] = "Procurador Simples";
-                                }
+                            }
 
-                                //Recuperando a pessoa relacionada a empresa // FIM
+                            //Recuperando a pessoa relacionada a empresa
+                            $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
+                            $dtoMdPetVincReptDTO->setNumIdContatoVinc($idContato);
+                            $dtoMdPetVincReptDTO->retNumIdContatoVinc();
+                            $dtoMdPetVincReptDTO->retStrNomeProcurador();
+                            $dtoMdPetVincReptDTO->retStrRazaoSocialNomeVinc();
+                            $dtoMdPetVincReptDTO->retStrTipoRepresentante();
+                            $dtoMdPetVincReptDTO->retStrCNPJ();
+                            $dtoMdPetVincReptDTO->retStrEmail();
+                            $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
+                            $dtoMdPetVincReptDTO->retNumIdMdPetVinculoRepresent();
+                            $dtoMdPetVincReptDTO->setStrSinAtivo('S');
+                            $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
 
-                                $objUsuarioDTO = new UsuarioDTO();
-                                $objUsuarioDTO->retNumIdUsuario();
-                                $objUsuarioDTO->retStrSigla();
-                                $objUsuarioDTO->retStrNome();
-                                $objUsuarioDTO->retStrStaTipo();
-                                $objUsuarioDTO->retNumIdContato();
-                                $objUsuarioDTO->setNumIdContato($value->getNumIdContatoProcurador());
+                            $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
+                            $arrMdPetVincRepRN = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
 
-                                $objUsuarioRN = new UsuarioRN();
-                                $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+                            //Recuperando Vinculo, Razão Social e CNPJ
+                            //Para cada pessoa vinculada a empresa
 
-                                if (is_object($objUsuarioDTO)) {
+                            foreach ($arrMdPetVincRepRN as $key => $value) {
 
-                                    if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
+                                $temPoder = $this->verificaPoder($value->getStrTipoRepresentante(), $value->getNumIdMdPetVinculoRepresent());
+
+                                if ($temPoder) {
+                                    $arrDadosEmail['cnpj'] = $value->getStrCNPJ();
+                                    $arrDadosEmail['razaoSocial'] = $value->getStrRazaoSocialNomeVinc();
+
+                                    if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
+                                        $arrDadosEmail['tpVinc'] = "Responsavel Legal";
+                                    }
+                                    if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL) {
+                                        $arrDadosEmail['tpVinc'] = "Procurador Especial";
+                                    }
+                                    if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
+                                        $arrDadosEmail['tpVinc'] = "Procurador Simples";
+                                    }
+
+                                    //Recuperando a pessoa relacionada a empresa // FIM
+
+                                    $objUsuarioDTO = new UsuarioDTO();
+                                    $objUsuarioDTO->retNumIdUsuario();
+                                    $objUsuarioDTO->retStrSigla();
+                                    $objUsuarioDTO->retStrNome();
+                                    $objUsuarioDTO->retStrStaTipo();
+                                    $objUsuarioDTO->retNumIdContato();
+                                    $objUsuarioDTO->setNumIdContato($value->getNumIdContatoProcurador());
+
+                                    $objUsuarioRN = new UsuarioRN();
+                                    $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+
+                                    if (is_object($objUsuarioDTO)) {
+
+                                        if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
 //                                        $objInfraException->lancarValidacao('Usuário externo "' . $objUsuarioDTO->getStrSigla() . '" ainda não foi liberado.');
-                                    }
+                                        }
 
-                                    if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
+                                        if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
 //                                        $objInfraException->lancarValidacao('Usuário "' . $objUsuarioDTO->getStrSigla() . '" não é um usuário externo.');
-                                    }
-                                    //contato - fim
-                                    $enviaEmail = true;
-                                    $conta = "^[a-zA-Z0-9\._-]+@";
-                                    $domino = "[a-zA-Z0-9\._-]+.";
-                                    $extensao = "([a-zA-Z]{2,4})$";
-                                    $pattern = "#" . $conta . $domino . $extensao . "#";
-                                    $isEmail = preg_match($pattern, $objUsuarioDTO->getStrSigla());
-                                    if (!$isEmail) {
-                                        $enviaEmail = false;
-                                    }
-                                    $arrDadosEmail['email_usuario_externo'] = $objUsuarioDTO->getStrSigla();
-                                    $arrDadosEmail['nome_usuario_externo'] = $objUsuarioDTO->getStrNome();
+                                        }
+                                        //contato - fim
+                                        $enviaEmail = true;
+                                        $conta = "^[a-zA-Z0-9\._-]+@";
+                                        $domino = "[a-zA-Z0-9\._-]+.";
+                                        $extensao = "([a-zA-Z]{2,4})$";
+                                        $pattern = "#" . $conta . $domino . $extensao . "#";
+                                        $isEmail = preg_match($pattern, $objUsuarioDTO->getStrSigla());
+                                        if (!$isEmail) {
+                                            $enviaEmail = false;
+                                        }
+                                        $arrDadosEmail['email_usuario_externo'] = $objUsuarioDTO->getStrSigla();
+                                        $arrDadosEmail['nome_usuario_externo'] = $objUsuarioDTO->getStrNome();
 
-                                    $arrDadosEmail['tipo_intimacao'] = $destinatario->getStrNomeTipoIntimacao();
+                                        $arrDadosEmail['tipo_intimacao'] = $destinatario->getStrNomeTipoIntimacao();
 
-                                    //Get Prazo Tácito
-                                    $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
-                                    $objPrazoTacitoDTO->retNumNumPrazo();
-                                    $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
-                                    $retLista = $objPrazoTacitoRN->listar($objPrazoTacitoDTO);
-                                    $objPrazoTacitoDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;
-                                    $arrDadosEmail['prazo_intimacao_tacita'] = !is_null($objPrazoTacitoDTO) ? $objPrazoTacitoDTO->getNumNumPrazo() : null;
+                                        //Get Prazo Tácito
+                                        $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
+                                        $objPrazoTacitoDTO->retNumNumPrazo();
+                                        $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
+                                        $retLista = $objPrazoTacitoRN->listar($objPrazoTacitoDTO);
+                                        $objPrazoTacitoDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;
+                                        $arrDadosEmail['prazo_intimacao_tacita'] = !is_null($objPrazoTacitoDTO) ? $objPrazoTacitoDTO->getNumNumPrazo() : null;
 
-                                    $dtIntimacao = !is_null($destinatario->getDthDataCadastro()) ? explode(' ', $destinatario->getDthDataCadastro()) : null;
+                                        $dtIntimacao = !is_null($destinatario->getDthDataCadastro()) ? explode(' ', $destinatario->getDthDataCadastro()) : null;
 
-                                    //Data Expedição Intimação
-                                    $arrDadosEmail['data_expedicao_intimacao'] = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
+                                        //Data Expedição Intimação
+                                        $arrDadosEmail['data_expedicao_intimacao'] = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
 
-                                    //Calcular Data Final do Prazo Tácito
-                                    $dataFimPrazoTacito = '';
-                                    $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-                                    $arrDadosEmail['data_final_prazo_intimacao_tacita'] = $objMdPetIntPrazoRN->calcularDataPrazo($arrDadosEmail['prazo_intimacao_tacita'], $arrDadosEmail['data_expedicao_intimacao']);
+                                        //Calcular Data Final do Prazo Tácito
+                                        $dataFimPrazoTacito = '';
+                                        $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
+                                        $arrDadosEmail['data_final_prazo_intimacao_tacita'] = $objMdPetIntPrazoRN->calcularDataPrazo($arrDadosEmail['prazo_intimacao_tacita'], $arrDadosEmail['data_expedicao_intimacao']);
 
-                                    //Documento Principal
-                                    $dados = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
+                                        //Documento Principal
+                                        $dados = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
 
-                                    $objDocumentoDTO = new DocumentoDTO();
-                                    $objDocumentoDTO->retDblIdDocumento();
-                                    $objDocumentoDTO->retNumIdOrgaoUnidadeResponsavel();
-                                    $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
-                                    $objDocumentoDTO->retStrNomeSerie();
-                                    $objDocumentoDTO->retStrNumero();
-                                    $objDocumentoDTO->retNumIdSerie();
-                                    $objDocumentoDTO->retStrProtocoloProcedimentoFormatado();
-                                    $objDocumentoDTO->retStrNomeTipoProcedimentoProcedimento();
+                                        $objDocumentoDTO = new DocumentoDTO();
+                                        $objDocumentoDTO->retDblIdDocumento();
+                                        $objDocumentoDTO->retNumIdOrgaoUnidadeResponsavel();
+                                        $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
+                                        $objDocumentoDTO->retStrNomeSerie();
+                                        $objDocumentoDTO->retStrNumero();
+                                        $objDocumentoDTO->retNumIdSerie();
+                                        $objDocumentoDTO->retStrProtocoloProcedimentoFormatado();
+                                        $objDocumentoDTO->retStrNomeTipoProcedimentoProcedimento();
 
-                                    $objDocumentoDTO->setDblIdDocumento($dados[3]);
-                                    $objDocumentoRN = new DocumentoRN();
-                                    $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+                                        $objDocumentoDTO->setDblIdDocumento($dados[3]);
+                                        $objDocumentoRN = new DocumentoRN();
+                                        $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
-                                    $arrDadosEmail['documento_principal_intimacao'] = $dados[0];
-                                    $arrDadosEmail['tipo_documento_principal_intimacao'] = $dados[1];
-                                    if (!empty($dados[4])) {
-                                        $arrDadosEmail['tipo_documento_principal_intimacao'] .= ' ' . $dados[4];
-                                    }
+                                        $arrDadosEmail['documento_principal_intimacao'] = $dados[0];
+                                        $arrDadosEmail['tipo_documento_principal_intimacao'] = $dados[1];
+                                        if (!empty($dados[4])) {
+                                            $arrDadosEmail['tipo_documento_principal_intimacao'] .= ' ' . $dados[4];
+                                        }
 
-                                    $arrDadosEmail['processo'] = $objDocumentoDTO->getStrProtocoloProcedimentoFormatado();
-                                    $arrDadosEmail['tipo_processo'] = $objDocumentoDTO->getStrNomeTipoProcedimentoProcedimento();
-                                    if ($isEmail) {
-                                        $this->emailReiteracaoExigeResposta($arrDadosEmail, $params[1]);
-                                        $qtdEnviadas++;
-                                    } else {
-                                        $qtdNaoEnviadas++;
-                                        $arrDadosEmailNaoEnviados[] = $arrDadosEmail;
+                                        $arrDadosEmail['processo'] = $objDocumentoDTO->getStrProtocoloProcedimentoFormatado();
+                                        $arrDadosEmail['tipo_processo'] = $objDocumentoDTO->getStrNomeTipoProcedimentoProcedimento();
+                                        if ($isEmail) {
+                                            $this->emailReiteracaoExigeResposta($arrDadosEmail, $params[1]);
+                                            $qtdEnviadas++;
+                                        } else {
+                                            $qtdNaoEnviadas++;
+                                            $arrDadosEmailNaoEnviados[] = $arrDadosEmail;
+                                        }
                                     }
                                 }
                             }
@@ -638,8 +643,11 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                     }
                 }
             }
+            return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
+        } catch (Exception $e) {
+            LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
         }
-        return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
     }
 
 

@@ -628,7 +628,7 @@ class MdPetIntimacaoRN extends InfraRN
 
         $ToolTipTitulo = 'Intimação Eletrônica';
 
-        $ToolTipText = 'Intimação Eletrônica: expedida em ';
+        $ToolTipText = 'Expedida em ';
         $ToolTipText .= $dtIntimacao . ' ';
         $ToolTipText .= '<br/>Documento Principal: ';
         $ToolTipText .= $docTipo . ' ';
@@ -657,7 +657,7 @@ class MdPetIntimacaoRN extends InfraRN
             }
         }
 
-        $ToolTipText .= "<br><br>Clique para consultar a Intimação e liberar o acesso aos documentos.";
+        $ToolTipText .= "<br />Clique para consultar a Intimação e liberar o acesso aos documentos.";
         //Caso essa intimação tenha texto de tooltip aguardando cumprimento geral é adicionado o mesmo
         // no tooltip geral do cumprir
         if (!is_null($tooltipACG)) {
@@ -669,40 +669,39 @@ class MdPetIntimacaoRN extends InfraRN
 
     public function getTextoTolTipIntimacaoEletronicaVinculoInativo($dtIntimacao, $docFormat, $docTipo, $docNum, $anexo, $idContatoRepresentante, $idContatoVinculo, $arrPessoaJuridica, $arrPessoaFisica)
     {
-        $ToolTipTitle = 'Intimação Eletrônica: expedida em ';
-        $ToolTipTitle .= $dtIntimacao . ' ';
-        $ToolTipTitle .= '<br/>Documento Principal: ';
-        $ToolTipTitle .= $docTipo . ' ';
+        $ToolTipTitle = 'Intimação Eletrônica';
+        $toolTipText = 'Expedida em ';
+        $toolTipText .= $dtIntimacao . ' ';
+        $toolTipText .= '<br/>Documento Principal: ';
+        $toolTipText .= $docTipo . ' ';
         if ($docNum) {
-            $ToolTipTitle .= $docNum . ' ';
+            $toolTipText .= $docNum . ' ';
         }
-        $ToolTipTitle .= '(SEI nº ';
-        $ToolTipTitle .= $docFormat;
-        $ToolTipTitle .= ')';
+        $toolTipText .= '(SEI nº ';
+        $toolTipText .= $docFormat;
+        $toolTipText .= ')';
         if ($anexo == 'N') {
-            $ToolTipTitle .= '<span style=font-weight: ligther;> - Documento Anexo</span>';
+            $toolTipText .= '<span style=font-weight: ligther;> - Documento Anexo</span>';
         }
 
         if (!is_null($arrPessoaJuridica) || !is_null($arrPessoaFisica)) {
-            $ToolTipTitle .= '<br/><br/>Destinatários:<br/>';
+            $toolTipText .= '<br/><br/>Destinatários:<br/>';
             if ($arrPessoaJuridica) {
                 foreach ($arrPessoaJuridica as $emp) {
-                    $ToolTipTitle .= $emp . '<br/>';
+                    $toolTipText .= $emp . '<br/>';
                 }
             }
 
             if ($arrPessoaFisica) {
                 foreach ($arrPessoaFisica as $pes) {
-                    $ToolTipTitle .= $pes . '<br/>';
+                    $toolTipText .= $pes . '<br/>';
                 }
             }
         }
 
-        $ToolTipText = '';
+        $toolTipText .= '<br />Você não possui mais permissão para cumprir a Intimação Eletrônica. Verifique seus Poderes de Representação.';
 
-        $ToolTipText = 'Você não possui mais permissão para cumprir a Intimação Eletrônica. Verifique seus Poderes de Representação.';
-
-        return array($ToolTipTitle, $ToolTipText);
+        return array($ToolTipTitle, $toolTipText);
     }
 
     public function getTextoTolTipIntimacaoEletronicaCumprida($arr)
@@ -1922,60 +1921,65 @@ class MdPetIntimacaoRN extends InfraRN
     public function getIntimacoesPossuemDataConectado($params)
     {
 
-        $VerificarRespondidas = isset($params[0]) ? $params[0] : true;
-        $ExigeResposta = isset($params[1]) ? $params[1] : false;
+        try {
+            $VerificarRespondidas = isset($params[0]) ? $params[0] : true;
+            $ExigeResposta = isset($params[1]) ? $params[1] : false;
 
-        $arrObjMdPetIntRelDestinatarioDTO = null;
+            $arrObjMdPetIntRelDestinatarioDTO = null;
 
-        $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
 
-        if ($VerificarRespondidas) {
-            //RESPOSTA
-            $objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
-            $objMdPetIntDestRespostaDTO->retNumIdMdPetIntRelDestinatario();
+            if ($VerificarRespondidas) {
+                //RESPOSTA
+                $objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
+                $objMdPetIntDestRespostaDTO->retNumIdMdPetIntRelDestinatario();
 
-            $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
-            $arrObjMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->listar($objMdPetIntDestRespostaDTO);
+                $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
+                $arrObjMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->listar($objMdPetIntDestRespostaDTO);
 
-            if ($arrObjMdPetIntDestRespostaDTO) {
-                $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
-                //SEM RESPOSTA
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
+                if ($arrObjMdPetIntDestRespostaDTO) {
+                    $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
+                    //SEM RESPOSTA
+                    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
+                }
             }
+
+            $objMdPetIntRelDestinatarioDTO->setAceiteTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
+
+            // Tipos de Resposta com algum tipo de prazo
+            $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
+            $objMdPetIntRelTipoRespDTO->setStrTipoPrazoExterno('N', InfraDTO::$OPER_DIFERENTE);
+            $objMdPetIntRelTipoRespDTO->retNumIdMdPetIntimacao();
+
+            $objMdPetIntRelTipoRespRN = new MdPetIntRelTipoRespRN();
+            $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listar($objMdPetIntRelTipoRespDTO);
+
+            if ($arrObjMdPetIntRelTipoRespDTO) {
+                $arrIdMdPetIntimacao = InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao');
+                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
+            }
+
+            if ($ExigeResposta) {
+                $objMdPetIntRelDestinatarioDTO->setStrNomeTipoRespostaAceita(MdPetIntTipoIntimacaoRN::$EXIGE_RESPOSTA);
+            }
+
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+            $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+            $objMdPetIntRelDestinatarioDTO->retStrNomeTipoIntimacao();
+            $objMdPetIntRelDestinatarioDTO->retDthDataCadastro();
+            $objMdPetIntRelDestinatarioDTO->retDthDataAceite();
+
+            $objMdPetIntRelDestinatarioDTO->setDistinct(true);
+
+            $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
+            $arrObjMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
+
+            return $arrObjMdPetIntRelDestinatarioDTO;
+        } catch (Exception $e) {
+            LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
         }
-
-        $objMdPetIntRelDestinatarioDTO->setAceiteTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
-
-        // Tipos de Resposta com algum tipo de prazo
-        $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
-        $objMdPetIntRelTipoRespDTO->setStrTipoPrazoExterno('N', InfraDTO::$OPER_DIFERENTE);
-        $objMdPetIntRelTipoRespDTO->retNumIdMdPetIntimacao();
-
-        $objMdPetIntRelTipoRespRN = new MdPetIntRelTipoRespRN();
-        $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listar($objMdPetIntRelTipoRespDTO);
-
-        if ($arrObjMdPetIntRelTipoRespDTO) {
-            $arrIdMdPetIntimacao = InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao');
-            $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
-        }
-
-        if ($ExigeResposta) {
-            $objMdPetIntRelDestinatarioDTO->setStrNomeTipoRespostaAceita(MdPetIntTipoIntimacaoRN::$EXIGE_RESPOSTA);
-        }
-
-        $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
-        $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
-        $objMdPetIntRelDestinatarioDTO->retNumIdContato();
-        $objMdPetIntRelDestinatarioDTO->retStrNomeTipoIntimacao();
-        $objMdPetIntRelDestinatarioDTO->retDthDataCadastro();
-        $objMdPetIntRelDestinatarioDTO->retDthDataAceite();
-
-        $objMdPetIntRelDestinatarioDTO->setDistinct(true);
-
-        $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
-        $arrObjMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-
-        return $arrObjMdPetIntRelDestinatarioDTO;
 
     }
 
@@ -1984,63 +1988,66 @@ class MdPetIntimacaoRN extends InfraRN
 
     public function getIntimacoesPossuemDataJuridicoConectado($params)
     {
+        try {
+            $VerificarRespondidas = isset($params[0]) ? $params[0] : true;
+            $ExigeResposta = isset($params[1]) ? $params[1] : false;
 
-        $VerificarRespondidas = isset($params[0]) ? $params[0] : true;
-        $ExigeResposta = isset($params[1]) ? $params[1] : false;
+            $arrObjMdPetIntRelDestinatarioDTO = null;
 
-        $arrObjMdPetIntRelDestinatarioDTO = null;
+            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
 
-        $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+            if ($VerificarRespondidas) {
+                //RESPOSTA
+                $objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
+                $objMdPetIntDestRespostaDTO->retNumIdMdPetIntRelDestinatario();
 
-        if ($VerificarRespondidas) {
-            //RESPOSTA
-            $objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
-            $objMdPetIntDestRespostaDTO->retNumIdMdPetIntRelDestinatario();
+                $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
+                $arrObjMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->listar($objMdPetIntDestRespostaDTO);
 
-            $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
-            $arrObjMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->listar($objMdPetIntDestRespostaDTO);
-
-            if (count($arrObjMdPetIntDestRespostaDTO) > 0) {
-                $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
-                //SEM RESPOSTA
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
+                if (count($arrObjMdPetIntDestRespostaDTO) > 0) {
+                    $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
+                    //SEM RESPOSTA
+                    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
+                }
             }
+
+            $objMdPetIntRelDestinatarioDTO->setAceiteTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
+
+            // Tipos de Resposta com algum tipo de prazo
+            $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
+            $objMdPetIntRelTipoRespDTO->setStrTipoPrazoExterno('N', InfraDTO::$OPER_DIFERENTE);
+            $objMdPetIntRelTipoRespDTO->retNumIdMdPetIntimacao();
+
+            $objMdPetIntRelTipoRespRN = new MdPetIntRelTipoRespRN();
+            $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listar($objMdPetIntRelTipoRespDTO);
+
+            if (count($arrObjMdPetIntRelTipoRespDTO) > 0) {
+                $arrIdMdPetIntimacao = InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao');
+                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
+            }
+
+            if ($ExigeResposta) {
+                $objMdPetIntRelDestinatarioDTO->setStrNomeTipoRespostaAceita(MdPetIntTipoIntimacaoRN::$EXIGE_RESPOSTA);
+            }
+
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+            $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+            $objMdPetIntRelDestinatarioDTO->retStrNomeTipoIntimacao();
+            $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('S');
+            $objMdPetIntRelDestinatarioDTO->retDthDataCadastro();
+            $objMdPetIntRelDestinatarioDTO->retDthDataAceite();
+
+            $objMdPetIntRelDestinatarioDTO->setDistinct(true);
+
+            $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
+            $arrObjMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
+
+            return $arrObjMdPetIntRelDestinatarioDTO;
+        } catch (Exception $e) {
+            LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
         }
-
-        $objMdPetIntRelDestinatarioDTO->setAceiteTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
-
-        // Tipos de Resposta com algum tipo de prazo
-        $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
-        $objMdPetIntRelTipoRespDTO->setStrTipoPrazoExterno('N', InfraDTO::$OPER_DIFERENTE);
-        $objMdPetIntRelTipoRespDTO->retNumIdMdPetIntimacao();
-
-        $objMdPetIntRelTipoRespRN = new MdPetIntRelTipoRespRN();
-        $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listar($objMdPetIntRelTipoRespDTO);
-
-        if (count($arrObjMdPetIntRelTipoRespDTO) > 0) {
-            $arrIdMdPetIntimacao = InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao');
-            $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
-        }
-
-        if ($ExigeResposta) {
-            $objMdPetIntRelDestinatarioDTO->setStrNomeTipoRespostaAceita(MdPetIntTipoIntimacaoRN::$EXIGE_RESPOSTA);
-        }
-
-        $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
-        $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
-        $objMdPetIntRelDestinatarioDTO->retNumIdContato();
-        $objMdPetIntRelDestinatarioDTO->retStrNomeTipoIntimacao();
-        $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('S');
-        $objMdPetIntRelDestinatarioDTO->retDthDataCadastro();
-        $objMdPetIntRelDestinatarioDTO->retDthDataAceite();
-
-        $objMdPetIntRelDestinatarioDTO->setDistinct(true);
-
-        $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
-        $arrObjMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-
-        return $arrObjMdPetIntRelDestinatarioDTO;
-
     }
 
 
@@ -2871,13 +2878,13 @@ class MdPetIntimacaoRN extends InfraRN
         $conta = "^[a-zA-Z0-9\._-]+@";
         $domino = "[a-zA-Z0-9\._-]+.";
         $extensao = "([a-zA-Z]{2,4})$";
-        $pattern = "#" . $conta.$domino.$extensao . "#";
+        $pattern = "#" . $conta . $domino . $extensao . "#";
         $isEmail = preg_match($pattern, $post['txtUsuario']);
-        if($isEmail){
+        if ($isEmail) {
             $objUsuarioDTO->setStrEmailContato('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
         } else {
-            $txtPesquisa = InfraString::prepararIndexacao($post['txtUsuario'],true);
-            if($txtPesquisa == ""){
+            $txtPesquisa = InfraString::prepararIndexacao($post['txtUsuario'], true);
+            if ($txtPesquisa == "") {
                 $txtPesquisa = $post['txtUsuario'];
             }
             $objUsuarioDTO->setStrIdxContato('%' . $txtPesquisa . '%', InfraDTO::$OPER_LIKE);
@@ -2887,7 +2894,7 @@ class MdPetIntimacaoRN extends InfraRN
 
         $arrObjUsuarioDTO = $objUsuarioRN->listar($objUsuarioDTO);
 
-        if($arrObjUsuarioDTO){
+        if ($arrObjUsuarioDTO) {
             return $arrObjUsuarioDTO;
         }
 

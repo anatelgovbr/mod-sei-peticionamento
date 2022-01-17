@@ -36,7 +36,6 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             InfraDebug::getInstance()->setBolEcho(false);
             InfraDebug::getInstance()->limpar();
 
-
             $objUsuarioPetRN = new MdPetIntUsuarioRN();
             $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
             SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
@@ -71,15 +70,15 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
-
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
         } catch (Exception $e) {
-            SessaoSEI::getInstance()->setBolHabilitada(true);
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+            InfraDebug::getInstance()->setBolEcho(true);
+            InfraDebug::getInstance()->limpar();
+
+            SessaoSEI::getInstance(false);
+
+            LogSEI::getInstance()->gravar('Erro cumprindo intimacao por decurso de prazo.' . $e, InfraLog::$INFORMACAO);
             throw new InfraException('Erro cumprindo intimacao por decurso de prazo.', $e);
         }
 
@@ -87,7 +86,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
     protected function AtualizarSituacaoProcuracaoSimplesVencidaControlado( ){
 
-        try{
+        try {
             
             ini_set('max_execution_time','0');
             ini_set('memory_limit','1024M');
@@ -97,7 +96,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             InfraDebug::getInstance()->setBolEcho(false);
             InfraDebug::getInstance()->limpar();
 
-            
+            SessaoSEI::getInstance(false);
            
             $numSeg = InfraUtil::verificarTempoProcessamento();
             InfraDebug::getInstance()->gravar('ALTERANDO SITUACAO DE PROCURACOES VENCIDAS');
@@ -132,24 +131,24 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
             InfraDebug::getInstance()->gravar('FIM');
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
+        } catch (Exception $e) {
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+            InfraDebug::getInstance()->setBolEcho(true);
+            InfraDebug::getInstance()->limpar();
 
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
-        }catch(Exception $e){
-            SessaoSEI::getInstance()->setBolHabilitada(true);
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
+            SessaoSEI::getInstance(false);
+            
+            LogSEI::getInstance()->gravar('Erro alterando situacao da procuracao eletronica.' . $e, InfraLog::$INFORMACAO);
             throw new InfraException('Erro alterando situacao da procuracao eletronica.',$e);
         }
 
     }
 
 
-    /* Método que reintera via email acerca de Intimação Eletrônica:
-     *    - Com Tipo de Resposta que Exige Resposta pelo Usuário Externo 
-     *    e Pendente de Resposta após a Intimação ter sido Cumprida.
+    /* Metodo que reintera via email acerca de Intimacao Eletronica:
+     *    - Com Tipo de Resposta que Exige Resposta pelo Usuario Externo 
+     *    e Pendente de Resposta apos a Intimacao ter sido Cumprida.
      */
     protected function ReiterarIntimacaoExigeRespostaControlado()
     {
@@ -164,18 +163,17 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             InfraDebug::getInstance()->setBolEcho(false);
             InfraDebug::getInstance()->limpar();
 
+            SessaoSEI::getInstance(false);
+
             $numSeg = InfraUtil::verificarTempoProcessamento();
             InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES PENDENTES EXIGE RESPOSTA');
-
 
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
 
             $intimacoesExigeRespostaDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData(array(true, true));
 
             //Juridico DTO
-
             $intimacoesExigeRespostaJuridicoDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemDataJuridico(array(true, true));
-
 
             InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
 
@@ -185,6 +183,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 InfraDebug::getInstance()->setBolLigado(true);
                 InfraDebug::getInstance()->setBolDebugInfra(false);
                 InfraDebug::getInstance()->setBolEcho(false);
+
+                SessaoSEI::getInstance(false);
 
                 InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES PENDENTES EXIGE RESPOSTA');
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
@@ -203,10 +203,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 }
             }
 
-
             //Juridico
             InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaJuridicoDTO));
-
 
             if (count($intimacoesExigeRespostaJuridicoDTO) > 0) {
                 $objMdPetIntEmailNotificacaoRN = new MdPetIntEmailNotificacaoRN();
@@ -214,6 +212,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 InfraDebug::getInstance()->setBolLigado(true);
                 InfraDebug::getInstance()->setBolDebugInfra(false);
                 InfraDebug::getInstance()->setBolEcho(false);
+
+                SessaoSEI::getInstance(false);
 
                 InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES PENDENTES EXIGE RESPOSTA');
                 InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaJuridicoDTO));
@@ -236,23 +236,22 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
             InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
-
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
         } catch (Exception $e) {
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+            InfraDebug::getInstance()->setBolEcho(true);
+            InfraDebug::getInstance()->limpar();
+
+            SessaoSEI::getInstance(false);
+
+            LogSEI::getInstance()->gravar('Erro reiterando intimacoes pendentes exige resposta.' . $e, InfraLog::$INFORMACAO);
             throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
         }
 
     }
 
-
-    /* Método que reintera via email acerca de Intimação Eletrônica:
-   *    - Com Tipo de Resposta que Exige Resposta pelo Usuário Externo
-   *    e Pendente de Resposta após a Intimação ter sido Cumprida.
-   */
     protected function atualizarEstadoIntimacoesPrazoExternoVencidoControlado()
     {
 
@@ -262,6 +261,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
             InfraDebug::getInstance()->limpar();
+
+            SessaoSEI::getInstance(false);
 
             $numSeg = InfraUtil::verificarTempoProcessamento();
             InfraDebug::getInstance()->gravar('ATUALIZANDO O ESTADO DE INTIMACOES VENCIDAS E SEM RESPOSTA');
@@ -279,9 +280,14 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
         } catch (Exception $e) {
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+            InfraDebug::getInstance()->setBolEcho(true);
+            InfraDebug::getInstance()->limpar();
+
+            SessaoSEI::getInstance(false);
+
+            LogSEI::getInstance()->gravar('Erro atualizando o estado das intimacoes vencidas e sem resposta.' . $e, InfraLog::$INFORMACAO);
             throw new InfraException('Erro atualizando o estado das intimacoes vencidas e sem resposta.', $e);
         }
 
@@ -295,6 +301,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
             InfraDebug::getInstance()->limpar();
+
+            SessaoSEI::getInstance(false);
 
             $numSeg = InfraUtil::verificarTempoProcessamento();
             InfraDebug::getInstance()->gravar('ATUALIZANDO O ESTADO DE TODAS AS INTIMACOES JA REALIZADAS NO SEI');
@@ -329,14 +337,16 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
         } catch (Exception $e) {
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+            InfraDebug::getInstance()->setBolEcho(true);
+            InfraDebug::getInstance()->limpar();
+
+            SessaoSEI::getInstance(false);
+
+            LogSEI::getInstance()->gravar('Erro atualizando o estado das intimacoes.' . $e, InfraLog::$INFORMACAO);
             throw new InfraException('Erro atualizando o estado das intimacoes.', $e);
         }
-
-
     }
 }
-
 ?>

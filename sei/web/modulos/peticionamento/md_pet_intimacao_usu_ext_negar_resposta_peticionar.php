@@ -56,35 +56,35 @@ PaginaSEIExterna::getInstance()->montarDocType();
 PaginaSEIExterna::getInstance()->abrirHtml();
 PaginaSEIExterna::getInstance()->abrirHead();
 PaginaSEIExterna::getInstance()->montarMeta();
-
 PaginaSEIExterna::getInstance()->montarTitle(':: ' . PaginaSEIExterna::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo . ' ::');
-
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
-?>
-
-.textoIntimacaoEletronica {}
-.clear {clear: both;}
-
-<?php
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
-PaginaSEIExterna::getInstance()->abrirBody('<b>'.$strTitulo.'</b>', 'onload=""');
+PaginaSEIExterna::getInstance()->abrirBody();
 ?>
 <form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
 
-    <div class="clear"></div>
-    <div class="textoIntimacaoEletronica">
-        <h2>
-            <?php echo $texto; ?>
-        </h2>
+    <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
 
+    <div class="row linha">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <h4>
+                <?php echo $strTitulo; ?>
+            </h4>
+        </div>
     </div>
-    <div style="padding-right: 50%;padding-top: 2%">
-        <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
+
+    <div class="row linha">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 textoIntimacaoEletronica">
+            <h2>
+                <?php echo $texto; ?>
+            </h2>
+        </div>
+    </div>
 
 </form>
 <?php

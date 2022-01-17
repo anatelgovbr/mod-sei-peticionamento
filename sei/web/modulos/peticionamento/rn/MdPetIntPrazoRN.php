@@ -32,13 +32,14 @@
             $objMdPetIntRelTipoRespRN     = new MdPetIntRelTipoRespRN();
             
             $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listarTipoResposta(array($numIdMdPetIntimacao,$idMdPetDest));
-           //A contagem do Prazo Externo deve ser iniciada somente no dia útil seguinte ao da "Data de Cumprimento da Intimação",
-          
+            
+            //A contagem do Prazo Externo deve ser iniciada somente no dia util seguinte ao da "Data de Cumprimento da Intimacao"
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
 
             $arrObjMdPetIntRelTipoRespValido = $this->_retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto);
             
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'PrazoFinal', InfraArray::$TIPO_ORDENACAO_ASC);
+            
             return $arrObjMdPetIntRelTipoRespValido;
         }
 

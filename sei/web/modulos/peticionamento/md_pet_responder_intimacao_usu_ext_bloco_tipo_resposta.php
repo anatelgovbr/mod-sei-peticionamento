@@ -1,4 +1,4 @@
-<fieldset id="field3" class="infraFieldset sizeFieldset form-control" style="min-height: 180px">
+<fieldset id="field3" class="infraFieldset sizeFieldset form-control" style="height:auto;">
     <legend class="infraLegend">&nbsp; Resposta &nbsp;</legend>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">

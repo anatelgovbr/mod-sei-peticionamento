@@ -16,8 +16,6 @@ class MdPetSerieINT extends SerieINT {
   	$objSerieDTO->retStrNome();
   
   	if (!InfraString::isBolVazia($strPalavrasPesquisa)){
-  		
-  		$strPalavrasPesquisa = InfraString::prepararIndexacao($strPalavrasPesquisa);
   			
   		$arrPalavrasPesquisa = explode(' ',$strPalavrasPesquisa);
   		$numPalavras = count($arrPalavrasPesquisa);
@@ -57,46 +55,45 @@ class MdPetSerieINT extends SerieINT {
   	return $arrObjSerieDTO;
   }
 
-	public static function autoCompletarSeriesIntimacao( $strPalavrasPesquisa){
+    public static function autoCompletarSeriesIntimacao($strPalavrasPesquisa)
+    {
 
-		$objSerieDTO = new SerieDTO();
-		$objSerieDTO->retNumIdSerie();
-		$objSerieDTO->retStrNome();
+        $objSerieDTO = new SerieDTO();
+        $objSerieDTO->retNumIdSerie();
+        $objSerieDTO->retStrNome();
 
-		if (!InfraString::isBolVazia($strPalavrasPesquisa)){
+        if (!InfraString::isBolVazia($strPalavrasPesquisa)) {
 
-			$strPalavrasPesquisa = InfraString::prepararIndexacao($strPalavrasPesquisa);
+            $arrPalavrasPesquisa = explode(' ', $strPalavrasPesquisa);
+            $numPalavras = count($arrPalavrasPesquisa);
+            for ($i = 0; $i < $numPalavras; $i++) {
+                $arrPalavrasPesquisa[$i] = '%' . $arrPalavrasPesquisa[$i] . '%';
+            }
 
-			$arrPalavrasPesquisa = explode(' ',$strPalavrasPesquisa);
-			$numPalavras = count($arrPalavrasPesquisa);
-			for($i=0;$i<$numPalavras;$i++){
-				$arrPalavrasPesquisa[$i] = '%'.$arrPalavrasPesquisa[$i].'%';
-			}
-
-			if ($numPalavras==1){
-				$objSerieDTO->setStrNome($arrPalavrasPesquisa[0],InfraDTO::$OPER_LIKE);
-			}else{
-				$a = array_fill(0,count($arrPalavrasPesquisa),'Nome');
-				$c = array_fill(0,count($arrPalavrasPesquisa),InfraDTO::$OPER_LIKE);
-				$d = array_fill(0,count($arrPalavrasPesquisa)-1,InfraDTO::$OPER_LOGICO_AND);
-				$objSerieDTO->adicionarCriterio($a,$c,$arrPalavrasPesquisa,$d);
-			}
-		}
+            if ($numPalavras == 1) {
+                $objSerieDTO->setStrNome($arrPalavrasPesquisa[0], InfraDTO::$OPER_LIKE);
+            } else {
+                $a = array_fill(0, count($arrPalavrasPesquisa), 'Nome');
+                $c = array_fill(0, count($arrPalavrasPesquisa), InfraDTO::$OPER_LIKE);
+                $d = array_fill(0, count($arrPalavrasPesquisa) - 1, InfraDTO::$OPER_LOGICO_AND);
+                $objSerieDTO->adicionarCriterio($a, $c, $arrPalavrasPesquisa, $d);
+            }
+        }
 
 
-		$objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
-			array(InfraDTO::$OPER_IN),
-			array(array(SerieRN::$TA_INTERNO, SerieRN::$TA_INTERNO_EXTERNO)));
+        $objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
+            array(InfraDTO::$OPER_IN),
+            array(array(SerieRN::$TA_INTERNO, SerieRN::$TA_INTERNO_EXTERNO)));
 
-		$objSerieDTO->setNumMaxRegistrosRetorno(50);
-		$objSerieDTO->setStrSinAtivo('S');
-		$objSerieDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
+        $objSerieDTO->setNumMaxRegistrosRetorno(50);
+        $objSerieDTO->setStrSinAtivo('S');
+        $objSerieDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
 
-		$objSerieRN = new SerieRN();
-		$arrObjSerieDTO = $objSerieRN->listarRN0646($objSerieDTO);
+        $objSerieRN = new SerieRN();
+        $arrObjSerieDTO = $objSerieRN->listarRN0646($objSerieDTO);
 
-		return $arrObjSerieDTO;
-	}
+        return $arrObjSerieDTO;
+    }
   
 }
 ?>

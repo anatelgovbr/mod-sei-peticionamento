@@ -99,7 +99,7 @@ try {
                     $objContatoDTO->retStrMatricula();
                     $objContatoDTO->retDblRg();
                     $objContatoDTO->retStrOrgaoExpedidor();
-                    $objContatoDTO->retStrTelefoneFixo();
+                    $objContatoDTO->retStrTelefoneComercial();
                     $objContatoDTO->retStrEmail();
                     $objContatoDTO->retStrSitioInternet();
                     $objContatoDTO->retStrEndereco();
@@ -270,7 +270,7 @@ try {
                 $_POST['txtCNPJ'] = $objContatoDTO->getDblCnpj();
                 $_POST['rg'] = $objContatoDTO->getDblRg();
                 $_POST['orgaoExpedidor'] = $objContatoDTO->getStrOrgaoExpedidor();
-                $_POST['telefone'] = $objContatoDTO->getStrTelefoneFixo();
+                $_POST['telefone'] = $objContatoDTO->getStrTelefoneComercial();
                 $_POST['email'] = $objContatoDTO->getStrEmail();
                 $_POST['sitioInternet'] = $objContatoDTO->getStrSitioInternet();
                 $_POST['endereco'] = $objContatoDTO->getStrEndereco();

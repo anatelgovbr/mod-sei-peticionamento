@@ -34,11 +34,11 @@
     }
 
     #selDescricaoEssencial {
-        width: 66.5%;
+        width: 51.5%;
     }
 
     #selDescricao {
-        width: 66.5%;
+        width: 51.5%;
     }
 
     .fieldsetClear {

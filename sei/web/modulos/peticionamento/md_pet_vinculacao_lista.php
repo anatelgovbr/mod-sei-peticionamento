@@ -94,7 +94,7 @@ $objMdPetVinculoDTO->adicionarCriterio(
         null,
         'responsavellegal'
         );
-if (count($arrObjMdPetVincRepresentantProcEspecDTO)>0){
+if (!empty($arrObjMdPetVincRepresentantProcEspecDTO)){
     $objMdPetVinculoDTO->adicionarCriterio(
             array('IdMdPetVinculo'),
             array(InfraDTO::$OPER_IN),
@@ -171,7 +171,7 @@ if ($numRegistros > 0) {
     $objUsuarioRN = new UsuarioRN();
     $arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
 
-    if (count($arrObjUsuarioDTO)>0){
+    if (!empty($arrObjUsuarioDTO)){
          $idContato = $arrObjUsuarioDTO[0]->getNumIdContato();
     }
     

@@ -131,7 +131,7 @@ try {
           $objMdPetVinculoRN = new MdPetVinculoRN();
           $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->listar($objMdPetVinculoDTO);
 
-          if (count($arrObjMdPetVinculoDTO)>0){
+          if (!empty($arrObjMdPetVinculoDTO)){
 
             $_POST['txtNumeroCnpj'] = InfraUtil::formatarCpfCnpj($arrObjMdPetVinculoDTO[0]->getDblCNPJ());
             $_POST['txtNomeResponsavelAntigo'] = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();

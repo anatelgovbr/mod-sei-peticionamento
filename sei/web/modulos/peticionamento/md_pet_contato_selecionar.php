@@ -94,7 +94,7 @@ try {
 
   $objContatoDTO->retStrExpressaoCargo();
 
-  if (count($arrTiposContextosUnidade)) {
+  if ($arrTiposContextosUnidade) {
     //Verificar se novo campo SinAtivoTipoContato ou outro substitui anterior SinLiberadoTipoContextoContatoContato
     $objContatoDTO->adicionarCriterio(
         array('IdTipoContato'),

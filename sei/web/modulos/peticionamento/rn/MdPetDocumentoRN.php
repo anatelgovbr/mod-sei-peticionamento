@@ -884,9 +884,9 @@ class MdPetDocumentoRN extends InfraRN {
 			$objProtocoloDTO->setDblIdProcedimento($objDocumentoDTO->getDblIdProcedimento());
 	
 			$this->tratarProtocoloRN1164($objDocumentoDTO);
-	
-			$objProtocoloRN = new ProtocoloRN();
-			$objProtocoloDTOGerado  = $objProtocoloRN->gerarRN0154($objProtocoloDTO);
+
+            $objProtocoloRN = new ProtocoloRN();
+            $objProtocoloDTOGerado  = $objProtocoloRN->gerarRN0154($objProtocoloDTO);
 	
 			$objDocumentoDTO->setDblIdProcedimento($objProtocoloDTO->getDblIdProcedimento());
 			$objDocumentoDTO->setDblIdDocumento($objProtocoloDTOGerado->getDblIdProtocolo());

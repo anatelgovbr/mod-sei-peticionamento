@@ -67,7 +67,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
         $objProtocoloDTO->setDtaGeracao(InfraData::getStrDataAtual());
       
       $objProcedimentoDTO->setObjProtocoloDTO($objProtocoloDTO);
-      
+
       $objProtocoloDTOGerado = $objProtocoloRN->gerarRN0154($objProcedimentoDTO->getObjProtocoloDTO());
       
       $objProcedimentoDTO->setDblIdProcedimento($objProtocoloDTOGerado->getDblIdProtocolo());

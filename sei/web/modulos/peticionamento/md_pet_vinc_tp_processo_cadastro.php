@@ -67,7 +67,7 @@ try {
     $strValor = $objInfraParametro->getValor('SEI_HABILITAR_HIPOTESE_LEGAL');
 
     //Preparar Preenchimento Alteração
-    if (count($objMdPetVincTpProcessoDTO) > 0 && !isset($_POST['sbmCadastrarTpProcessoVinculacao'])) {
+    if (!empty($objMdPetVincTpProcessoDTO) && !isset($_POST['sbmCadastrarTpProcessoVinculacao'])) {
 
         foreach ($objMdPetVincTpProcessoDTO as $obj) {
             if ($obj->getStrTipoVinculo() == 'F') {
@@ -112,7 +112,7 @@ try {
         $objMdPetVincRelSerieDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
         $arrObjMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->listar($objMdPetVincRelSerieDTO);
 
-        if (count($arrObjMdPetVincRelSerieDTO) > 0) {
+        if (!empty($arrObjMdPetVincRelSerieDTO)) {
             foreach ($arrObjMdPetVincRelSerieDTO as $objMdPetVincRelSerieDTO) {
                 if ($objMdPetVincRelSerieDTO->getStrSinObrigatorio() == 'N')
                     $strItensSelSeries .= '<option value =' . $objMdPetVincRelSerieDTO->getNumIdSerie() . '>' . $objMdPetVincRelSerieDTO->getStrNomeSerie() . '</option>';
@@ -279,7 +279,7 @@ try {
                     $objMdPetVincRelSerieRN = new MdPetVincRelSerieRN();
                     $objMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->listar($objMdPetVincRelSerieDTO);
 
-                    if (count($objMdPetVincRelSerieDTO) > 0) {
+                    if (!empty($objMdPetVincRelSerieDTO)) {
                         $objMdPetVincRelSerieRN->excluir($objMdPetVincRelSerieDTO);
                     }
                     $arrObjMdPetVincRelSerieDTO = array();
@@ -327,18 +327,13 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(':: ' . PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo . ' ::');
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-
 PaginaSEI::getInstance()->fecharJavaScript();
 require_once "md_pet_vinc_tp_processo_cadastro_css.php";
-
-
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
-
 ?>
 <form id="frmTipoProcessoCadastro" method="post" onsubmit="return OnSubmitForm();"
       action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
@@ -351,7 +346,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
            value="<?php echo $valorParametroHipoteseLegal; ?>"/>
 
     <div class="row">
-        <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Física
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
@@ -360,7 +355,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </legend>
                 <!--  Tipo de Processo  -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <label id="lblTipoProcesso" for="txtTipoProcessoPF" class="infraLabelObrigatorio">Tipo de
                             Processo
                             Associado:</label>
@@ -387,10 +382,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
                 <!--  Fim do Tipo de Processo -->
 
-
                 <!--Especificação do Processo -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
                             Processo:
                             <img
@@ -408,7 +402,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <!--  Unidade -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
                             Processo:</label>
                         <div class="input-group mb-3">
@@ -435,7 +429,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <!--   Exibir menu Procuração Eletrônica -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
                         <label id="lblMenuAcessoExternoPF" for="" class="infraLabelObrigatorio">Exibir menu Procuração
                             Eletrônica: <img
                                     align="top"
@@ -467,8 +461,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset2 form-control">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Jurídica
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
                          id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir o Usuário Externo logado emitir Procurações Eletrônicas simples ou Procurações Eletrônicas Especiais para que outro Usuário Externo possa representar Pessoa Jurídica. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Pessoa Jurídica será aberto.', 'Ajuda') ?>
@@ -476,7 +470,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </legend>
                 <!--  Tipo de Processo  -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo
                             Associado:</label>
                         <div class="input-group mb-3">
@@ -503,7 +497,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--  Fim do Tipo de Processo -->
                 <!--Especificação do Processo -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
                             Processo:
                             <img
@@ -520,7 +514,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--Especificação do Processo - FIM -->
                 <!--  Unidade -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
                             Processo:</label>
                         <div class="input-group mb-3">
@@ -547,7 +541,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <!--   Exibir menu Procuração Eletrônica -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                    <div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
                         <label id="lblMenuAcessoExterno" for="" class="infraLabelObrigatorio">Exibir menu Responsável
                             Legal de
                             Pessoa
@@ -578,7 +572,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
                 <!--  Fim Exibir menu Procuração Eletrônica -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-7 col-lg-7 col-xl-7">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <fieldset class="infraFieldset form-control" style="height: auto">
                             <legend class="infraLegend">Nível de Acesso dos Documentos Peticionados
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
@@ -587,7 +581,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                      class="infraImgFielset"/>
                             </legend>
                             <div class="row">
-                                <div class="col-sm-12 col-md-5 col-lg-5 col-xl-6">
+                                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                                     <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
                                                                        class="infraRadio"
                                                                        id="rdUsuExternoIndicarEntrePermitidos"
@@ -609,7 +603,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             </div>
                             <div class="row"
                                  id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?> >
-                                <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                                <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
 
                                     <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
                                            class="infraLabelObrigatorio">Nível
@@ -703,7 +697,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         Constitutivos não Obrigatórios: <img
                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                                 name="ajuda"
-                                                id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina os Atos Constitutivos que serão listados de forma não obrigatória para o Usuário Externo ao Peticionar a vinculação dele como Responsável Legal a uma Pessoa Jurídica.') ?>
+                                                id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina os Atos Constitutivos que serão listados de forma não obrigatória para o Usuário Externo ao Peticionar a vinculação dele como Responsável Legal a uma Pessoa Jurídica.', 'Ajuda') ?>
                                                 class="infraImgModulo"/></label>
                                 </div>
                                 <div>
@@ -777,11 +771,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     PaginaSEI::getInstance()->fecharAreaDados();
     PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
-
 </form>
 <?
 require_once "md_pet_vinc_tp_processo_cadastro_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>
-

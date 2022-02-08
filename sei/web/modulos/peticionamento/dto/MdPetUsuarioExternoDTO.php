@@ -58,7 +58,7 @@ class MdPetUsuarioExternoDTO extends InfraDTO
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'RgContato', 'a.rg', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdTipoContato', 'a.id_tipo_contato', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'OrgaoExpedidorContato', 'a.orgao_expedidor', 'contato a');
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'TelefoneFixoContato', 'a.telefone_fixo', 'contato a');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'TelefoneComercialContato', 'a.telefone_comercial', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'TelefoneCelularContato', 'a.telefone_celular', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SiglaOrgao', 'sigla', 'orgao');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'DescricaoOrgao', 'descricao', 'orgao');

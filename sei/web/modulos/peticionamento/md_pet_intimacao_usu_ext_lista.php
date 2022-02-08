@@ -201,7 +201,7 @@ try {
 
                     $arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
 
-                    if (count($arrObjMdPetReciboDTO) == 0) {
+                    if (empty($arrObjMdPetReciboDTO)) {
                         //Relacionado
                         $isRelacionado = true;
                         $objMdPetReciboDTO->unSetNumIdProtocolo();

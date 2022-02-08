@@ -63,7 +63,7 @@ if ($_POST) {
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
         $listaExtensoesPrincipal = $objMdPetExtensoesArquivoRN->listar($objMdPetExtensoesArquivoDTO);
-        if (count($listaExtensoesPrincipal)) {
+        if ($listaExtensoesPrincipal) {
             $objMdPetExtensoesArquivoRN->excluir($listaExtensoesPrincipal);
         }
     }
@@ -88,7 +88,7 @@ if ($_POST) {
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
         $listaExtensoesComplementar = $objMdPetExtensoesArquivoRN->listar($objMdPetExtensoesArquivoDTO);
-        if (count($listaExtensoesComplementar)) {
+        if ($listaExtensoesComplementar) {
             $objMdPetExtensoesArquivoRN->excluir($listaExtensoesComplementar);
         }
     }

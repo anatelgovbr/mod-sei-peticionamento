@@ -32,13 +32,13 @@
             $objMdPetIntRelTipoRespRN     = new MdPetIntRelTipoRespRN();
             
             $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listarTipoResposta(array($numIdMdPetIntimacao,$idMdPetDest));
-            
+
             //A contagem do Prazo Externo deve ser iniciada somente no dia util seguinte ao da "Data de Cumprimento da Intimacao"
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
 
             $arrObjMdPetIntRelTipoRespValido = $this->_retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto);
-            
-            InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'PrazoFinal', InfraArray::$TIPO_ORDENACAO_ASC);
+
+            InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
             
             return $arrObjMdPetIntRelTipoRespValido;
         }
@@ -62,12 +62,10 @@
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
 
             $arrObjMdPetIntRelTipoRespValido = $this->_retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto);
-            
-            InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'PrazoFinal', InfraArray::$TIPO_ORDENACAO_ASC);
+
+            InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
             return $arrObjMdPetIntRelTipoRespValido;
         }
-
-        
 
         private function _retornaArrayTpRespValidoFormatados($arrObjMdPetIntRelTipoRespDTO, $retornaPrazoExpirado, $retornaNomeComposto){
             $dataAtual = InfraData::getStrDataAtual();
@@ -83,7 +81,7 @@
                     $dataFinal=explode(" ", $dataFinal);
                     $dataFinal=$dataFinal[0];
                 }
-                
+
                 $nome = $objMdPetIntRelTipoRespDTO->getStrNome();
 
                 if ($objMdPetIntRelTipoRespDTO->getStrTipoPrazoExterno() == 'D') {
@@ -103,10 +101,10 @@
 
                             $nome .= ') - Data Limite: ' . $dataFinal;
                         }
-                        $objMdPetIntRelTipoRespDTO->setStrNome($nome);
-                        $objMdPetIntRelTipoRespDTO->setNumPrazoFinal(strtotime(str_replace('/', '-',$dataFinal)));
-                        $arrObjMdPetIntRelTipoRespValido[] = $objMdPetIntRelTipoRespDTO;
                     }
+                    $objMdPetIntRelTipoRespDTO->setStrNome($nome);
+                    $objMdPetIntRelTipoRespDTO->setNumPrazoFinal(strtotime(str_replace('/', '-',$dataFinal)));
+                    $arrObjMdPetIntRelTipoRespValido[] = $objMdPetIntRelTipoRespDTO;
                 } else if ($objMdPetIntRelTipoRespDTO->getStrTipoPrazoExterno() == 'M') {
                     if ($retornaPrazoExpirado || InfraData::compararDatas($dataFinal, $dataAtual) <= 0) {
                         if ($retornaNomeComposto){
@@ -115,10 +113,10 @@
                             $nome .= $objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno() > 1 ?  ' meses' : ' mês';
                             $nome .= ') - Data Limite: ' . $dataFinal;
                         }
-                        $objMdPetIntRelTipoRespDTO->setStrNome($nome);
-                        $objMdPetIntRelTipoRespDTO->setNumPrazoFinal(strtotime(str_replace('/', '-',$dataFinal)));
-                        $arrObjMdPetIntRelTipoRespValido[] = $objMdPetIntRelTipoRespDTO;
                     }
+                    $objMdPetIntRelTipoRespDTO->setStrNome($nome);
+                    $objMdPetIntRelTipoRespDTO->setNumPrazoFinal(strtotime(str_replace('/', '-',$dataFinal)));
+                    $arrObjMdPetIntRelTipoRespValido[] = $objMdPetIntRelTipoRespDTO;
                 } else if ($objMdPetIntRelTipoRespDTO->getStrTipoPrazoExterno() == 'A') {
                     if ($retornaPrazoExpirado || InfraData::compararDatas($dataFinal, $dataAtual) <= 0) {
                         if ($retornaNomeComposto){
@@ -127,10 +125,10 @@
                             $nome .= $objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno() > 1 ?  ' anos' : ' ano';
                             $nome .= ') - Data Limite: ' . $dataFinal;
                         }
-                        $objMdPetIntRelTipoRespDTO->setStrNome($nome);
-                        $objMdPetIntRelTipoRespDTO->setNumPrazoFinal(strtotime(str_replace('/', '-',$dataFinal)));
-                        $arrObjMdPetIntRelTipoRespValido[] = $objMdPetIntRelTipoRespDTO;
                     }
+                    $objMdPetIntRelTipoRespDTO->setStrNome($nome);
+                    $objMdPetIntRelTipoRespDTO->setNumPrazoFinal(strtotime(str_replace('/', '-',$dataFinal)));
+                    $arrObjMdPetIntRelTipoRespValido[] = $objMdPetIntRelTipoRespDTO;
                 } else {
                     $objMdPetIntRelTipoRespDTO->setStrNome($objMdPetIntRelTipoRespDTO->getStrNome());
                     $objMdPetIntRelTipoRespDTO->setNumPrazoFinal(0);
@@ -139,12 +137,8 @@
                 }
 
             }
-
             return $arrObjMdPetIntRelTipoRespValido;
         }
-
-
-        
 
         protected function retornarTipoRespostaDataLimiteConectado($arrParams)
         {

@@ -89,7 +89,7 @@ $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
 $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
 $existenciaVinculo = true;
 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
-if (count($arrObjMdPetVincRepresentantDTO) > 0) {
+if (!empty($arrObjMdPetVincRepresentantDTO)) {
     $existenciaVinculo = false;
 }
 //Verificando se o Usuário é Procurador Espécial em alguma PRocuração
@@ -104,7 +104,7 @@ $objMdPetVincRepresentantDTO->retNumIdContato();
 //Existencia Vinculo PRocuração Especial
 $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 $existeEspecialVinculo = true;
-if (count($objMdPetVincRepresentantDTO) > 0) {
+if (!empty($objMdPetVincRepresentantDTO)) {
     $existeEspecialVinculo = false;
 }
 

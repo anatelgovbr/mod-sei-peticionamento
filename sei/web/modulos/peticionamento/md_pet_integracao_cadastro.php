@@ -225,7 +225,7 @@ try {
         $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
         $arrObjMdPetIntegParametroDTO = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
         $arrParametrosCadastrados = array();
-        if (count($arrObjMdPetIntegParametroDTO) > 0) {
+        if (!empty($arrObjMdPetIntegParametroDTO)) {
             foreach ($arrObjMdPetIntegParametroDTO as $item) {
                 $arrParametrosCadastrados[] = array(
                     'nome' => $item->getStrNome(),

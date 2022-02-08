@@ -320,13 +320,13 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			$objProtocoloDTO->setStrStaNivelAcessoOriginal(null);
 	
 			$objInfraException->lancarValidacoes();
-	
-			InfraCodigoBarras::gerar($objProtocoloDTO->getStrProtocoloFormatadoPesquisa(), DIR_SEI_TEMP, InfraCodigoBarras::$TIPO_CODE39, InfraCodigoBarras::$COR_PRETO, 1, 26, 0, 13*strlen($objProtocoloDTO->getStrProtocoloFormatadoPesquisa())+30, 30, InfraCodigoBarras::$FORMATO_PNG);
-			$strArquivoCodigoBarras = DIR_SEI_TEMP.'/code39_'.$objProtocoloDTO->getStrProtocoloFormatadoPesquisa().'.png';
-			$fp = fopen($strArquivoCodigoBarras, "r");
-			$imgCodigoBarras = fread($fp, filesize($strArquivoCodigoBarras));
-			fclose($fp);
-			unlink($strArquivoCodigoBarras);
+
+            InfraCodigoBarras::gerar($objProtocoloDTO->getStrProtocoloFormatadoPesquisa(), DIR_SEI_TEMP, InfraCodigoBarras::$TIPO_CODE39, InfraCodigoBarras::$COR_PRETO, 1, 26, 0, 13*strlen($objProtocoloDTO->getStrProtocoloFormatadoPesquisa())+30, 30, InfraCodigoBarras::$FORMATO_PNG);
+            $strArquivoCodigoBarras = DIR_SEI_TEMP.'/code39_'.$objProtocoloDTO->getStrProtocoloFormatadoPesquisa().'.png';
+            $fp = fopen($strArquivoCodigoBarras, "r");
+            $imgCodigoBarras = fread($fp, filesize($strArquivoCodigoBarras));
+            fclose($fp);
+            unlink($strArquivoCodigoBarras);
 			$objProtocoloDTO->setStrCodigoBarras(base64_encode($imgCodigoBarras));
 	
 			$objProtocoloDTO->setDblIdProtocoloAgrupador($objProtocoloDTO->getDblIdProtocolo());

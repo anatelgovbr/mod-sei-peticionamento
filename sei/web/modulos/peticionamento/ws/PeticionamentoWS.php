@@ -514,7 +514,7 @@ class PeticionamentoWS extends InfraWS
                 $objMdPetUsuarioExternoAPIWS->setLiberacaoCadastro($usuarioExterno->getStrStaTipo());
                 $objMdPetUsuarioExternoAPIWS->setRg($usuarioExterno->getDblRgContato());
                 $objMdPetUsuarioExternoAPIWS->setOrgaoExpedidor($usuarioExterno->getStrOrgaoExpedidorContato());
-                $objMdPetUsuarioExternoAPIWS->setTelefone($usuarioExterno->getStrTelefoneFixo());
+                $objMdPetUsuarioExternoAPIWS->setTelefone($usuarioExterno->getStrTelefoneComercial());
                 $objMdPetUsuarioExternoAPIWS->setEndereco($usuarioExterno->getStrEnderecoContato());
                 $objMdPetUsuarioExternoAPIWS->setBairro($contatoDTO->getStrBairro());
                 $objMdPetUsuarioExternoAPIWS->setSiglaUf($contatoDTO->getStrSiglaUf());

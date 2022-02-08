@@ -31,6 +31,7 @@
 
         objAutoCompletarTipoDocumentoEssencial = new infraAjaxAutoCompletar('hdnIdSerie', 'txtSerie', '<?=$strLinkAjaxTipoDocumento?>');
         objAutoCompletarTipoDocumentoEssencial.limparCampo = true;
+        objAutoCompletarTipoDocumentoEssencial.tamanhoMinimo = 3;
 
         objAutoCompletarTipoDocumentoEssencial.prepararExecucao = function () {
             var tipo = 'E';

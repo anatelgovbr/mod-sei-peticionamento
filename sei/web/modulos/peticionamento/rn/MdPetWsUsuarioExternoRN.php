@@ -51,7 +51,7 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 				
 			$objUsuarioExternoDTO->retDblRgContato();
 			$objUsuarioExternoDTO->retStrOrgaoExpedidorContato();
-			$objUsuarioExternoDTO->retStrTelefoneFixo();
+			$objUsuarioExternoDTO->retStrTelefoneComercial();
 			$objUsuarioExternoDTO->retStrTelefoneCelular();
 			$objUsuarioExternoDTO->retStrEnderecoContato();
 			$objUsuarioExternoDTO->retStrBairroContato();

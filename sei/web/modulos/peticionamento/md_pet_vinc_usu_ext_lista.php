@@ -354,7 +354,7 @@ $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO
 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 $bolAcaoCadastrar = false;
 
-if (count($arrObjMdPetVincRepresentantDTO) > 0) {
+if (!empty($arrObjMdPetVincRepresentantDTO)) {
     $bolAcaoCadastrar = true;
 }
 

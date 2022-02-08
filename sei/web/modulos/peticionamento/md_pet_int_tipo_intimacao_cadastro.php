@@ -243,7 +243,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row">
+        <div class="row" id="divInfraAreaDados2">
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                 <label id="lblTipoResposta" for="txtTipoResposta" accesskey="" class="infraLabelObrigatorio">Tipos de
                     Resposta:

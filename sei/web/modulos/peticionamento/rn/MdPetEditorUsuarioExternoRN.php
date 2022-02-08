@@ -1852,7 +1852,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $arrConteudoTags[] = array('@endereco_unidade@', $objContatoAssociadoDTO->getStrEndereco());
       
       //seiv3 @todo telefone fixo ou celular? e se tiver os dois? 
-      $arrConteudoTags[] = array('@telefone_unidade@', $objContatoAssociadoDTO->getStrTelefoneFixo());
+      $arrConteudoTags[] = array('@telefone_unidade@', $objContatoAssociadoDTO->getStrTelefoneComercial());
       //$arrConteudoTags[] = array('@fax_unidade@', $objContatoAssociadoDTO->getStrFax());
 
       $strTag = '';

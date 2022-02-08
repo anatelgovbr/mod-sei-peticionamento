@@ -86,7 +86,7 @@ try {
                     $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
                     $arrObjMdPetIntegParametroRN = $objMdPetIntegParametroRN->consultar($objMdPetIntegParametroDTO);
 
-                    if (count($arrObjMdPetIntegParametroRN)) {
+                    if ($arrObjMdPetIntegParametroRN) {
                         //Convertendo
                         $mes = (int)$arrObjMdPetIntegParametroRN->getStrValorPadrao();
 
@@ -132,7 +132,7 @@ try {
                     $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
                     $arrObjMdPetVinculoUsuExtRN = $objMdPetVinculoUsuExtRN->buscarVinculoDados($_POST['hdnIdVinculo']);
 
-                    if (count($arrObjMdPetVinculoUsuExtRN) > 0) {
+                    if (!empty($arrObjMdPetVinculoUsuExtRN)) {
                         $dados['idContato'] = $arrObjMdPetVinculoUsuExtRN[0]->getNumIdContato();
                     }
 

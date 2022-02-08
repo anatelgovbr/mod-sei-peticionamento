@@ -54,7 +54,7 @@
   		
   		$arrObjSecaoModeloDTO = $objSecaoModeloRN->listar($objSecaoModeloDTO);
   		  		
-  		if (count($arrObjSecaoModeloDTO)==0) {
+  		if (empty($arrObjSecaoModeloDTO)) {
   			throw new InfraException('Modelo do documento não contém seções.');
   		}
   		

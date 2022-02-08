@@ -37,10 +37,10 @@ try {
 
     foreach ($arrObjUnidadeDTO as $key => $objUnidadeDTO) {
 
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaUnidade'] = htmlentities($objUnidadeDTO->getStrSigla(), ENT_QUOTES);
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoUnidade'] = htmlentities($objUnidadeDTO->getStrDescricao(), ENT_QUOTES);
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaOrgao'] = htmlentities($objUnidadeDTO->getStrSiglaOrgao(), ENT_QUOTES);
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoOrgao'] = htmlentities($objUnidadeDTO->getStrDescricaoOrgao(), ENT_QUOTES);
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaUnidade'] = htmlentities($objUnidadeDTO->getStrSigla(), ENT_QUOTES, 'ISO8859-1');
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoUnidade'] = htmlentities($objUnidadeDTO->getStrDescricao(), ENT_QUOTES, 'ISO8859-1');
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaOrgao'] = htmlentities($objUnidadeDTO->getStrSiglaOrgao(), ENT_QUOTES, 'ISO8859-1');
+        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoOrgao'] = htmlentities($objUnidadeDTO->getStrDescricaoOrgao(), ENT_QUOTES, 'ISO8859-1');
         $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['idOrgao'] = $objUnidadeDTO->getNumIdOrgao();
 
         $contatoAssociadoDTO = new ContatoDTO();
@@ -53,8 +53,8 @@ try {
         $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324($contatoAssociadoDTO);
         //so recuperar caso se trata de unidade que possua UF configurada]
         if ($contatoAssociadoDTO != null && $contatoAssociadoDTO->isSetStrSiglaUf() && $contatoAssociadoDTO->getStrSiglaUf() != null) {
-            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = htmlentities($contatoAssociadoDTO->getStrSiglaUf(), ENT_QUOTES);
-            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['cidade'] = htmlentities($contatoAssociadoDTO->getStrNomeCidade(), ENT_QUOTES);
+            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = htmlentities($contatoAssociadoDTO->getStrSiglaUf(), ENT_QUOTES, 'ISO8859-1');
+            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['cidade'] = htmlentities($contatoAssociadoDTO->getStrNomeCidade(), ENT_QUOTES, 'ISO8859-1');
             $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['idCidade'] = $contatoAssociadoDTO->getNumIdCidade();
         }
     }
@@ -120,7 +120,7 @@ try {
             $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
             $arrObjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
 
-            if (count($arrObjMdPetRelTpProcessoUnidDTO) > 0) {
+            if (!empty($arrObjMdPetRelTpProcessoUnidDTO)) {
                 $unica = $arrObjMdPetRelTpProcessoUnidDTO[0]->getStrStaTipoUnidade() === MdPetTipoProcessoRN::$UNIDADE_UNICA ? true : false;
                 $multipla = $arrObjMdPetRelTpProcessoUnidDTO[0]->getStrStaTipoUnidade() === MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS ? true : false;
 
@@ -553,7 +553,7 @@ try {
 
 
                         //Tipo de Documento Essencial
-                        if (count($arrIdTipoDocumentoEssencial) > 0) {
+                        if (!empty($arrIdTipoDocumentoEssencial)) {
                             foreach ($arrIdTipoDocumentoEssencial as $numIdTipoDocumentoEss) {
 
                                 $objMdPetRelTpProcSerieEssDTO = new MdPetRelTpProcSerieDTO();
@@ -567,7 +567,7 @@ try {
                         }
 
                         //Tipo de Documento Complementar
-                        if (count($arrIdTipoDocumento) > 0) {
+                        if (!empty($arrIdTipoDocumento)) {
                             foreach ($arrIdTipoDocumento as $numIdTipoDocumento) {
                                 $objMdPetRelTpProcSerieDTO = new MdPetRelTpProcSerieDTO();
                                 $objMdPetRelTpProcSerieDTO->setNumIdRelTipoProcessoSeriePeticionamento(null);
@@ -873,7 +873,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         ?>
                                         <?php
                                         if ($multipla) {
-                                            if (count($arrObjUnidadesMultiplas) > 0) {
+                                            if (!empty($arrObjUnidadesMultiplas)) {
                                                 //Verifica se existe restrição para este tipo de processo
                                                 $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
                                                 $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();

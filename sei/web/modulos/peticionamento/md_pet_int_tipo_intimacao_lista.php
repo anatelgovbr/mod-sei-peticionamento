@@ -256,13 +256,13 @@ try {
             $arrObjMdPetIntRelIntimRespDTO = $objMdPetIntRelIntimRespRN->listar($objMdPetIntRelIntimRespDTO);
 
             $linha .= '<td>';
-            if (count($arrObjMdPetIntRelIntimRespDTO) == 0) {
+            if (empty($arrObjMdPetIntRelIntimRespDTO)) {
                 if ($arrObjMdPetIntTipoIntimacaoDTO[$i]->getStrTipoRespostaAceita() == 'S') {
                     $montaSelectTipoResposta[9998] = "Sem Resposta";
                     $linha .= "Sem Resposta";
                     $id = 9998;
                 }
-            } else if (count($arrObjMdPetIntRelIntimRespDTO) == 1) {
+            } else if (!empty($arrObjMdPetIntRelIntimRespDTO)) {
                 for ($x = 0; $x < count($arrObjMdPetIntRelIntimRespDTO); $x++) {
                     if ($arrObjMdPetIntRelIntimRespDTO[$x]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'N') {
                         $prazo = '(Não Possui Prazo Externo)';

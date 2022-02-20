@@ -19,60 +19,12 @@ try {
 
     require_once 'md_pet_tipo_processo_cadastro_inicializacao.php';
 
-    //Preencher Array de Unidades para buscar posteriormente
-    $objUnidadeDTO = new UnidadeDTO();
-    $objUnidadeDTO = new UnidadeDTO();
-    $objUnidadeDTO->retNumIdUnidade();
-    //SEIV3 - agora iremos obter a UF pelo contato associado
-    $objUnidadeDTO->retNumIdContato();
-    $objUnidadeDTO->retStrSigla();
-    $objUnidadeDTO->retStrDescricao();
-    $objUnidadeDTO->retStrSiglaOrgao();
-    $objUnidadeDTO->retNumIdOrgao();
-    $objUnidadeDTO->retStrDescricaoOrgao();
-
-    $objUnidadeRN = new UnidadeRN();
-
-    $arrObjUnidadeDTO = $objUnidadeRN->listarTodasComFiltro($objUnidadeDTO);
-
-    foreach ($arrObjUnidadeDTO as $key => $objUnidadeDTO) {
-
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaUnidade'] = htmlentities($objUnidadeDTO->getStrSigla(), ENT_QUOTES, 'ISO8859-1');
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoUnidade'] = htmlentities($objUnidadeDTO->getStrDescricao(), ENT_QUOTES, 'ISO8859-1');
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['siglaOrgao'] = htmlentities($objUnidadeDTO->getStrSiglaOrgao(), ENT_QUOTES, 'ISO8859-1');
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['descricaoOrgao'] = htmlentities($objUnidadeDTO->getStrDescricaoOrgao(), ENT_QUOTES, 'ISO8859-1');
-        $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['idOrgao'] = $objUnidadeDTO->getNumIdOrgao();
-
-        $contatoAssociadoDTO = new ContatoDTO();
-        $contatoAssociadoRN = new ContatoRN();
-        $contatoAssociadoDTO->retStrSiglaUf();
-        $contatoAssociadoDTO->retNumIdContato();
-        $contatoAssociadoDTO->retStrNomeCidade();
-        $contatoAssociadoDTO->retNumIdCidade();
-        $contatoAssociadoDTO->setNumIdContato($objUnidadeDTO->getNumIdContato());
-        $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324($contatoAssociadoDTO);
-        //so recuperar caso se trata de unidade que possua UF configurada]
-        if ($contatoAssociadoDTO != null && $contatoAssociadoDTO->isSetStrSiglaUf() && $contatoAssociadoDTO->getStrSiglaUf() != null) {
-            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['uf'] = htmlentities($contatoAssociadoDTO->getStrSiglaUf(), ENT_QUOTES, 'ISO8859-1');
-            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['cidade'] = htmlentities($contatoAssociadoDTO->getStrNomeCidade(), ENT_QUOTES, 'ISO8859-1');
-            $arrObjUnidadeDTOFormatado[$objUnidadeDTO->getNumIdUnidade()]['idCidade'] = $contatoAssociadoDTO->getNumIdCidade();
-        }
-    }
-
     $objInfraParametroDTO = new InfraParametroDTO();
     $objMdPetParametroRN = new MdPetParametroRN();
     $objInfraParametroDTO->retTodos();
     $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
     $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
     $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
-
-    //Campo de filtro Órgão
-//    $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-//    $objMdPetTipoProcessoOrgaoDTO = new MdPetTipoProcessoDTO();
-//    $objMdPetTipoProcessoOrgaoDTO->setDistinct(true);
-//    $objMdPetTipoProcessoOrgaoDTO->retNumIdOrgaoUnidade();
-//    $objMdPetTipoProcessoOrgaoDTO->retStrSiglaOrgaoUnidade();
-//    $arrFiltroOrgao = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoOrgaoDTO);
 
     $objOrgaoDTO = new OrgaoDTO();
     $objOrgaoRN = new OrgaoRN();

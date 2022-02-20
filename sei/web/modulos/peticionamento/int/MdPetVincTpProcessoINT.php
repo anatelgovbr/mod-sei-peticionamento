@@ -161,4 +161,48 @@ class MdPetVincTpProcessoINT extends InfraINT {
         return $xml;
     }
 
+    public static function retornaDadosUnidade($idUnidadeMultipla) {
+
+        $xml = '<resposta>';
+        if ($idUnidadeMultipla) {
+            $objUnidadeDTO = new UnidadeDTO();
+            $objUnidadeDTO->setNumIdUnidade($idUnidadeMultipla);
+            $objUnidadeDTO->retNumIdUnidade();
+            $objUnidadeDTO->retNumIdContato();
+            $objUnidadeDTO->retStrSigla();
+            $objUnidadeDTO->retStrDescricao();
+            $objUnidadeDTO->retStrSiglaOrgao();
+            $objUnidadeDTO->retNumIdOrgao();
+            $objUnidadeDTO->retStrDescricaoOrgao();
+            $objUnidadeRN = new UnidadeRN();
+            $arrObjUnidadeDTO = $objUnidadeRN->listarTodasComFiltro($objUnidadeDTO);
+
+            foreach ($arrObjUnidadeDTO as $objUnidadeDTO) {
+
+                $xml .= '<siglaUnidade>' . PaginaSEI::tratarHTML($objUnidadeDTO->getStrSigla()) . '</siglaUnidade>';
+                $xml .= '<descricaoUnidade>' . PaginaSEI::tratarHTML($objUnidadeDTO->getStrDescricao()) . '</descricaoUnidade>';
+                $xml .= '<siglaOrgao>' . PaginaSEI::tratarHTML($objUnidadeDTO->getStrSiglaOrgao()) . '</siglaOrgao>';
+                $xml .= '<descricaoOrgao>' . PaginaSEI::tratarHTML($objUnidadeDTO->getStrDescricaoOrgao()) . '</descricaoOrgao>';
+                $xml .= '<idOrgao>' . $objUnidadeDTO->getNumIdOrgao() . '</idOrgao>';
+
+                $contatoAssociadoDTO = new ContatoDTO();
+                $contatoAssociadoRN = new ContatoRN();
+                $contatoAssociadoDTO->retStrSiglaUf();
+                $contatoAssociadoDTO->retNumIdContato();
+                $contatoAssociadoDTO->retStrNomeCidade();
+                $contatoAssociadoDTO->retNumIdCidade();
+                $contatoAssociadoDTO->setNumIdContato($objUnidadeDTO->getNumIdContato());
+                $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324($contatoAssociadoDTO);
+                //so recuperar caso se trata de unidade que possua UF configurada]
+                if ($contatoAssociadoDTO != null && $contatoAssociadoDTO->isSetStrSiglaUf() && $contatoAssociadoDTO->getStrSiglaUf() != null) {
+                    $xml .= '<uf>' . $contatoAssociadoDTO->getStrSiglaUf() . '</uf>';
+                    $xml .= '<cidade>' . PaginaSEI::tratarHTML($contatoAssociadoDTO->getStrNomeCidade()) . '</cidade>';
+                    $xml .= '<idCidade>' . $contatoAssociadoDTO->getNumIdCidade() . '</idCidade>';
+                }
+            }
+        }
+        $xml .= "</resposta>";
+
+        return $xml;
+    }
 }

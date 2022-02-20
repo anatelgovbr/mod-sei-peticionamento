@@ -397,6 +397,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $xml = MdPetVincTpProcessoINT::confirmarRestricaoSalvar($_POST['idTipoProcesso'], $_POST['idUnidadeMultipla']);
                 break;
 
+            case 'retorna_dados_unidade':
+                $xml = MdPetVincTpProcessoINT::retornaDadosUnidade($_POST['idUnidadeMultipla']);
+                break;
+
             case 'confirmar_webservice_consultarCnpj':
                 $xml = MdPetIntegracaoINT::confirmarWsConsultaDadosCNPJReceitaFederal();
                 break;
@@ -2095,13 +2099,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $htmlImgIntNaoCumprVinculoInativoAnex = '<img src="modulos/peticionamento/imagens/png/intimacao_nao_cumprida_vinculo_inativo_anexo.png" style="width: 24px;">';
         
         $objMdPetIntRN = new MdPetIntimacaoRN();
-        $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
         $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
-        $objMdPetRespostaRN = new MdPetIntRespostaRN();
-        $objMdPetIntReciboRN = new MdPetIntReciboRN();
         $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
         $objMdPetIntProtocoloRN = new MdPetIntProtocoloRN();
-        $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
         $arrPessoaJuridica = array();
         $arrPessoaFisica = array();
         $vinculoRepresentanteInativo = false;
@@ -2134,12 +2134,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $arrDados = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacaoBotao, true));
                     if ($arrDados) {
                         foreach ($arrDados as $aceite) {
-                            $mdPetRelIntDestExternoRN = new MdPetRelIntDestExternoRN();
-                            $objMdPetRelIntDestExternoDTO = new MdPetRelIntDestExternoDTO();
-                            $objMdPetRelIntDestExternoDTO->retTodos();
-                            $objMdPetRelIntDestExternoDTO->setNumIdMdPetIntRelDestinatario($aceite['ID_DESTINATARIO']);
-                            $objMdPetRelIntDestExternoDTO = $mdPetRelIntDestExternoRN->listar($objMdPetRelIntDestExternoDTO);
-//                            $existeInt = $aceite['INT'];
                             $idAceite[] = $aceite['ID_ACEITE'];
                             $idDestinatarioAceite[] = $aceite['ID_DESTINATARIO'];
                             if (is_array(explode(' ', $aceite['DATA_ACEITE']))) {
@@ -2148,13 +2142,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             } else {
                                 $dataAceite = $aceite['DATA_ACEITE'];
                             }
+                            $existeInt = true;
                         }
                     }
                 }
 
                 $arrObjDestinatariosIntimacoes = (new MdPetIntRelDestinatarioRN())->retornarDestinatariosIntimacao($idIntimacaoBotao, $objContato->getNumIdContato(), $idAcessoExterno, $idIntimacao);
 
-                $mdPetVinculoRN = new MdPetVinculoRN();
                 $arrObjDestinatariosIntimacoesCopia = $arrObjDestinatariosIntimacoes;
                 $arrObjDestinatarios = array();
                 $arrObjDestinatariosUnicosIntimacao = array();
@@ -2208,7 +2202,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         }
                     } else {
                         foreach ($arrObjDestinatariosUnicosIntimacao as $objDestinatario){
-
                             $objUsuarioDTO = new UsuarioDTO();
                             $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
                             $objUsuarioDTO->retNumIdContato();
@@ -2219,22 +2212,36 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 $temProcuracao = true;
                                 break;
                             } else {
+                                $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                                $objMdPetVinculoRN = new MdPetVinculoRN();
+                                $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+                                $objMdPetVinculoDTO->retNumIdContato();
+                                $objMdPetVinculoDTO->setNumIdContato($objDestinatario->getNumIdContato());
+                                $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
+
                                 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
                                 $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
                                 $objMdPetVincRepresentantDTO->setNumIdContato($objUsuarioDTO->getNumIdContato());
-                                $objMdPetVincRepresentantDTO->setNumIdContatoOutorg($objDestinatario->getNumIdContato());
+                                $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($arrObjMdPetVinculoDTO->getNumIdMdPetVinculo());
                                 $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
                                 $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
                                 $objMdPetVincRepresentantDTO->setNumIdMdPetRelPoder(1);
                                 $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
                                 $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
-                                $objMdPetVincRepresentantDTO->retNumIdMdPetRelProtocolo();
                                 $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
                                 if(!empty($objMdPetVincRepresentantDTO)) {
                                     foreach ($objMdPetVincRepresentantDTO as $objProcNegado) {
-                                        if ($objProcNegado->getStrStaAbrangencia() == 'E' && $objProcNegado->getNumIdMdPetRelProtocolo() != $idProtocolo) {
-                                            $procNegado = true;
+                                        if ($objProcNegado->getStrStaAbrangencia() == 'E') {
+                                            $objMdPetRelVincRepProtocRN = new MdPetRelVincRepProtocRN();
+                                            $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
+                                            $objMdPetRelVincRepProtocDTO->retNumIdProtocolo();
+                                            $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($objProcNegado->getNumIdMdPetVinculoRepresent());
+                                            $arrMdPetRelVincRepProtocDTO = $objMdPetRelVincRepProtocRN->consultar($objMdPetRelVincRepProtocDTO);
+
+                                            if ($arrMdPetRelVincRepProtocDTO->getNumIdProtocolo() != $idProtocolo) {
+                                                $procNegado = true;
+                                            }
                                         }
                                     }
                                 } else {
@@ -2257,7 +2264,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 }
 
                 if (!empty($arrObjDestinatariosIntimacoes)) {
-                    if ($existeInt) {
+                    if (($existeInt && $situacao == $this::$INTIMACAO_CUMPRIDA) || $situacao == $this::$INTIMACAO_CUMPRIDA)  {
                         $isValido = $objMdPetCertidaoRN->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($idProtocolo, $idAcessoExterno));
                         $strLink = $objMdPetCertidaoRN->retornaLinkAcessoDocumento($idProtocolo, $idAcessoExterno, $isProcedimento);
 
@@ -2509,7 +2516,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             }
                         }
 
-                        if (!is_null($objMdPetIntRelDestDTO)) {
+                        if (!empty($objMdPetIntRelDestDTO)) {
                             $arrDados = array($objRelIntDoc->getNumIdMdPetIntimacao());
                             $retorno = $objMdPetIntRN->retornaDadosDocPrincipalIntimacao($arrDados);
                             if (!is_null($retorno)) {
@@ -2761,8 +2768,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 $bolRevogada = false;
                             }
 
-
-                            if ($qntDoc == $documentos) {
+                            if ($existeInt) {
                                 //Se todas as respostas forem revogadas mostro o icone de resposta negada, caso tenha algum ativo mostro somente o de resposta
                                 if ($bolRevogada) {
                                     $idContatoDestinatario = InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdContato');
@@ -2901,43 +2907,52 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $idSerieCertidao = $objInfraParametro->getValor(MdPetIntCertidaoRN::$STR_ID_SERIE_CERTIDAO);
                     $isCertidao = $isDocumento ? $objProtocoloAPIComIntimacao->getIdSerie() == $idSerieCertidao : false;
 
-                    //Se possui intimação realiza verificações
-                    $qtdArrIntimacao = (is_array($arrIntimacao) ? count($arrIntimacao) : 0);
-                    if ($qtdArrIntimacao > 0) {
+                    $objMdPetIntRelDestExternoDTO = new MdPetRelIntDestExternoDTO();
+                    $objMdPetIntRelDestExternoDTO->setNumIdAcessoExterno($idAcessoExterno);
+                    $objMdPetIntRelDestExternoDTO->retNumIdMdPetIntRelDestinatario();
+                    $objMdPetIntRelDestExternoRN = new MdPetRelIntDestExternoRN();
+                    $arrObjMdPetRelIntDestExternoDTO = $objMdPetIntRelDestExternoRN->contar($objMdPetIntRelDestExternoDTO);
 
-                        $isAnexoDisponib = $arrRetIntimacao['T'] == 2;
-                        $disp = $arrRetIntimacao['T'] == 1;
-
-                        //se for somente disponibilizado permite visualização
-                        if ($disp) {
-                            $permissao = SeiIntegracao::$TAM_PERMITIDO;
-
-                            //Se for disponibilizado e anexo, ignora os disponiblizados e  verifica se os anexos já aestão aceitos
-                            //Se for anexo, verifica os aceites
-                        } else {
-                            //Verifica se todos os documentos  anexo possuem aceite
-                            $intAnexo = $arrRetIntimacao['A'];
-                            $todasIntAceit = $objMdPetAceiteRN->todasIntimacoesAceitas($intAnexo);
-
-                            //Se todas as intimações possuem aceite para o anexo  permite visualização
-                            if ($todasIntAceit['todasAceitas']) {
-                                $permissao = SeiIntegracao::$TAM_PERMITIDO;
-                            } else {
-                                //Se não existe aceite e for somente anexo, não permite visualização
-                                $permissao = SeiIntegracao::$TAM_NEGADO;
-                            }
-                        }
+                    if ($arrObjMdPetRelIntDestExternoDTO == 0) {
+                        $permissao = SeiIntegracao::$TAM_PERMITIDO;
                     } else {
+                        //Se possui intimação realiza verificações
+                        $qtdArrIntimacao = (is_array($arrIntimacao) ? count($arrIntimacao) : 0);
+                        if ($qtdArrIntimacao > 0) {
 
-                        //Se não possuir intimações e o acesso for integral permite visualização.
-                        //Se for parcial, não permite.
-                        $isIntAcessoExt = $objMdPetIntAcExtRN->getTipoConcessaoAcesso($_GET['id_acesso_externo']);
-                        if ($isIntAcessoExt == MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL) {
-                            $permissao = SeiIntegracao::$TAM_PERMITIDO;
-                        }
+                            $isAnexoDisponib = $arrRetIntimacao['T'] == 2;
+                            $disp = $arrRetIntimacao['T'] == 1;
 
-                        if ($isCertidao) {
-                            $permissao = SeiIntegracao::$TAM_PERMITIDO;
+                            //se for somente disponibilizado permite visualização
+                            if ($disp) {
+                                $permissao = SeiIntegracao::$TAM_PERMITIDO;
+
+                                //Se for disponibilizado e anexo, ignora os disponiblizados e  verifica se os anexos já aestão aceitos
+                                //Se for anexo, verifica os aceites
+                            } else {
+                                //Verifica se todos os documentos  anexo possuem aceite
+                                $intAnexo = $arrRetIntimacao['A'];
+                                $todasIntAceit = $objMdPetAceiteRN->todasIntimacoesAceitas($intAnexo);
+
+                                //Se todas as intimações possuem aceite para o anexo  permite visualização
+                                if ($todasIntAceit['todasAceitas']) {
+                                    $permissao = SeiIntegracao::$TAM_PERMITIDO;
+                                } else {
+                                    //Se não existe aceite e for somente anexo, não permite visualização
+                                    $permissao = SeiIntegracao::$TAM_NEGADO;
+                                }
+                            }
+                        } else {
+                            //Se não possuir intimações e o acesso for integral permite visualização.
+                            //Se for parcial, não permite.
+                            $isIntAcessoExt = $objMdPetIntAcExtRN->getTipoConcessaoAcesso($_GET['id_acesso_externo']);
+                            if ($isIntAcessoExt == MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL) {
+                                $permissao = SeiIntegracao::$TAM_PERMITIDO;
+                            }
+
+                            if ($isCertidao) {
+                                $permissao = SeiIntegracao::$TAM_PERMITIDO;
+                            }
                         }
                     }
                     //Preenche o array de documento com o retorno

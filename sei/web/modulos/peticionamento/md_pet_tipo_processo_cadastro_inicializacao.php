@@ -25,6 +25,7 @@ $strLinkAjaxUnidade = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
 $strLinkOrgaoMultiplaSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=orgao_selecionar&tipo_selecao=1&id_object=objLupaOrgaoUnidadeMultipla');
 $strLinkAjaxOrgao = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=orgao_auto_completar');
 $strLinkAjaxConfirmaRestricao = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=confirma_restricao_tipo_processo');
+$strLinkAjaxRetornaDadosUnidade = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=retorna_dados_unidade');
 $strLinkAjaxConfirmaRestricaoSalvar = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=confirma_restricao_tipo_processo_salvar');
 
 //Tipo Documento Principal

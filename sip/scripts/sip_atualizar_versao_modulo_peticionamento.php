@@ -80,12 +80,11 @@ class MdPetAtualizadorSipRN extends InfraRN
             if (!(BancoSip::getInstance() instanceof InfraMySql) &&
                 !(BancoSip::getInstance() instanceof InfraSqlServer) &&
                 !(BancoSip::getInstance() instanceof InfraOracle)) {
-
                 $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSip::getInstance()), true);
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '1.595.1';
+            $numVersaoInfraRequerida = '1.598.0';
             $versaoInfraFormatada = (int)str_replace('.', '', VERSAO_INFRA);
             $versaoInfraReqFormatada = (int)str_replace('.', '', $numVersaoInfraRequerida);
 
@@ -100,6 +99,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             if (count($objInfraMetaBD->obterTabelas('sip_teste')) == 0) {
                 BancoSip::getInstance()->executarSql('CREATE TABLE sip_teste (id ' . $objInfraMetaBD->tipoNumero() . ' null)');
             }
+			
             BancoSip::getInstance()->executarSql('DROP TABLE sip_teste');
 
             $objInfraParametro = new InfraParametro(BancoSip::getInstance());
@@ -107,7 +107,6 @@ class MdPetAtualizadorSipRN extends InfraRN
             $strVersaoModuloPeticionamento = $objInfraParametro->getValor($this->nomeParametroModulo, false);
 
             switch ($strVersaoModuloPeticionamento) {
-                //case '' - Nenhuma versão instalada
                 case '':
                     $this->instalarv001();
                 case '0.0.1':
@@ -163,9 +162,9 @@ class MdPetAtualizadorSipRN extends InfraRN
             $this->finalizar('FIM');
             InfraDebug::getInstance()->setBolDebugInfra(true);
         } catch (Exception $e) {
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(true);
+            InfraDebug::getInstance()->setBolEcho(true);
             throw new InfraException('Erro instalando/atualizando versão.', $e);
         }
     }

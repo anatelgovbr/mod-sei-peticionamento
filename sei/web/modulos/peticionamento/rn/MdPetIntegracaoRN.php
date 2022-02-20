@@ -207,8 +207,8 @@ class MdPetIntegracaoRN extends InfraRN
 
         if ($cpfUsuarioLogado != $cpfResponsavelLegalReceita) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>Em consulta junto à base de dados da Receita Federal do Brasil (RFB), verificou-se que o CPF do Usuário Externo logado não consta como Responsável Legal pelo CNPJ informado (" . $dados['txtNumeroCnpj'] . "), o que impede a formalização da presente vinculação.\n \n";
-            $xml .= "Entre em contato com a RFB para verificar sua situação e regularizar eventuais pendências.</msg>\n";
+            $xml .= "<msg>Em consulta à base da Receita Federal do Brasil (RFB), verificou-se que o seu CPF não consta como Responsável Legal pelo CNPJ nº " . $dados['txtNumeroCnpj'] . ", o que impede a presente vinculação.\n \nResponsável Legal não se confunde com o conceito de sócio, havendo apenas um CPF na RFB como Responsável Legal pelo CNPJ.\n \n";
+            $xml .= "Entre em contato com a RFB para verificar eventuais pendências.</msg>\n";
             $xml .= '</dados-pj>';
             return $xml;
         } else {

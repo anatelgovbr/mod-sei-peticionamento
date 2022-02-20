@@ -114,14 +114,6 @@ try {
                     $consulta = $objMdPetSoapClienteRN->consultarWsdl($strMetodoWebservice, $parametro);
                     $cpfResponsavelLegalReceita = $consulta['PessoaJuridica']['responsavel']['cpf'];
 
-
-                    /*if($cpfResponsavelLegalReceita != $cpf){
-                      echo "<script>";
-                      echo "alert('Em consulta junto à base de dados da Receita Federal do Brasil (RFB), verificou-se que o CPF informado não consta como Responsável Legal pelo presente CNPJ, o que impede a formalização da nova vinculação. É necessário entrar em contato com a RFB para verificar a situação cadastral das partes aqui referidas e regularizar eventuais pendências');";
-                      echo "</script>";
-                      break;
-                    }*/
-
                     $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
 
                     $dados = $_POST;

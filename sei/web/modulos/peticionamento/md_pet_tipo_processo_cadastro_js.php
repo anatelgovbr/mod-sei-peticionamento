@@ -82,37 +82,49 @@
 
                         if (valueCodUnidades != '') {
                             var objUnidades = $.parseJSON(valueCodUnidades);
-                            if (!registroDuplicado(objUnidades[idUnidadeSelect].siglaOrgao, objUnidades[idUnidadeSelect].cidade)) {
-                                qtdLinhas = document.getElementsByClassName('linhas').length;
-                                var html = '';
-                                if (qtdLinhas > 0) {
-                                    html = document.getElementById('corpoTabela').innerHTML;
+
+                            $.ajax({
+                                url: '<?=$strLinkAjaxRetornaDadosUnidade?>',
+                                type: 'POST',
+                                dataType: 'XML',
+                                data: { 'idUnidadeMultipla': idUnidadeSelect },
+                                success: function (result) {
+                                    if (!registroDuplicado($(result).find('siglaOrgao').text(), $(result).find('cidade').text())) {
+                                        qtdLinhas = document.getElementsByClassName('linhas').length;
+                                        var html = '';
+                                        if (qtdLinhas > 0) {
+                                            html = document.getElementById('corpoTabela').innerHTML;
+                                        }
+
+                                        html += '<tr class="infraTrClara linhas" id="' + idLinhaTabela + '"><td>';
+                                        html += '<a alt="' + $(result).find('descricaoOrgao').text() + '" title="' + $(result).find('descricaoOrgao').text() + '" class="ancoraSigla">' + $(result).find('siglaOrgao').text() + '</a>';
+                                        html += '</td><td>';
+                                        html += '<a alt="' + $(result).find('descricaoUnidade').text() + '" title="' + $(result).find('descricaoUnidade').text() + '" class="ancoraSigla">' + $(result).find('siglaUnidade').text() + '</a>';
+                                        html += '<td class="ufsSelecionadas">' + $(result).find('uf').text() + '</td>';
+                                        html += '<td class="ufsSelecionadas">' + $(result).find('cidade').text() + '</td>';
+                                        html += '<td align="center">';
+                                        html += '<a><img class="infraImg" title="Remover Unidade" alt="Remover Unidade" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" onclick="removerUnidade(\'' + idLinhaTabela + '\');" id="imgExcluirProcessoSobrestado"></a></td></tr>';
+
+                                        //Adiciona Conteúdo da Tabela no HTML
+                                        document.getElementById('corpoTabela').innerHTML = '';
+                                        document.getElementById('corpoTabela').innerHTML = html;
+
+                                        // Mostra a tabela
+                                        document.getElementById('divTableMultiplasUnidades').style.display = "inherit";
+
+                                        //Zera os campos, após adicionar
+                                        document.getElementById('txtUnidadeMultipla').value = '';
+                                        document.getElementById('hdnIdUnidadeMultipla').value = '';
+                                        document.getElementById('txtOrgaoUnidadeMultipla').value = '';
+                                        document.getElementById('hdnIdOrgaoUnidadeMultipla').value = '';
+
+                                        document.getElementById('qtdRegistros').innerHTML = qtdLinhas + 1;
+                                    }
+                                },
+                                error: function (e) {
+                                    console.error('Erro ao buscar os dados da unidade: ' + e.responseText);
                                 }
-
-                                html += '<tr class="infraTrClara linhas" id="' + idLinhaTabela + '"><td>';
-                                html += '<a alt="' + objUnidades[idUnidadeSelect].descricaoOrgao + '" title="' + objUnidades[idUnidadeSelect].descricaoOrgao + '" class="ancoraSigla">' + objUnidades[idUnidadeSelect].siglaOrgao + '</a>';
-                                html += '</td><td>';
-                                html += '<a alt="' + objUnidades[idUnidadeSelect].descricaoUnidade + '" title="' + objUnidades[idUnidadeSelect].descricaoUnidade + '" class="ancoraSigla">' + objUnidades[idUnidadeSelect].siglaUnidade + '</a>';
-                                html += '<td class="ufsSelecionadas">' + objUnidades[idUnidadeSelect].uf + '</td>';
-                                html += '<td class="ufsSelecionadas">' + objUnidades[idUnidadeSelect].cidade + '</td>';
-                                html += '<td align="center">';
-                                html += '<a><img title="Remover Unidade" alt="Remover Unidade" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg" onclick="removerUnidade(\'' + idLinhaTabela + '\');" id="imgExcluirProcessoSobrestado"></a></td></tr>';
-
-                                //Adiciona Conteúdo da Tabela no HTML
-                                document.getElementById('corpoTabela').innerHTML = '';
-                                document.getElementById('corpoTabela').innerHTML = html;
-
-                                // Mostra a tabela
-                                document.getElementById('divTableMultiplasUnidades').style.display = "inherit";
-
-                                //Zera os campos, após adicionar
-                                document.getElementById('txtUnidadeMultipla').value = '';
-                                document.getElementById('hdnIdUnidadeMultipla').value = '';
-                                document.getElementById('txtOrgaoUnidadeMultipla').value = '';
-                                document.getElementById('hdnIdOrgaoUnidadeMultipla').value = '';
-
-                                document.getElementById('qtdRegistros').innerHTML = qtdLinhas + 1;
-                            }
+                            });
                         }
                     } else {
                         alert('Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. \n\nCaso seja pertinente, antes deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.');

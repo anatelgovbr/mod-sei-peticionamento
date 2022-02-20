@@ -82,7 +82,6 @@ class MdPetAtualizadorSeiRN extends InfraRN
 
     protected function atualizarVersaoConectado()
     {
-
         try {
             $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SEI VERSÃO ' . SEI_VERSAO);
 
@@ -94,7 +93,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '1.595.1';
+            $numVersaoInfraRequerida = '1.598.0';
             $versaoInfraFormatada = (int)str_replace('.', '', VERSAO_INFRA);
             $versaoInfraReqFormatada = (int)str_replace('.', '', $numVersaoInfraRequerida);
 

@@ -5,10 +5,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '3.4.2';
+    private $versaoAtualDesteModulo = '3.4.3';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -19,14 +19,14 @@ class MdPetAtualizadorSeiRN extends InfraRN
     public static $MD_PET_ID_SERIE_VINC_SUSPENSAO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO';
     public static $MD_PET_ID_SERIE_VINC_RESTABELECIMENTO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO';
 
-    protected function getHistoricoVersoes()
-    {
-        return $this->historicoVersoes;
-    }
-
     public function __construct()
     {
         parent::__construct();
+    }
+	
+    protected function getHistoricoVersoes()
+    {
+        return $this->historicoVersoes;
     }
 
     protected function inicializarObjInfraIBanco()
@@ -34,7 +34,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
         return BancoSEI::getInstance();
     }
 
-    private function inicializar($strTitulo)
+    protected function inicializar($strTitulo)
     {
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '-1');
@@ -52,13 +52,13 @@ class MdPetAtualizadorSeiRN extends InfraRN
         $this->logar($strTitulo);
     }
 
-    private function logar($strMsg)
+    protected function logar($strMsg)
     {
         InfraDebug::getInstance()->gravar($strMsg);
         flush();
     }
 
-    private function finalizar($strMsg = null, $bolErro = false)
+    protected function finalizar($strMsg = null, $bolErro = false)
     {
         if (!$bolErro) {
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
@@ -153,6 +153,8 @@ class MdPetAtualizadorSeiRN extends InfraRN
                     $this->instalarv341();
                 case '3.4.1':
                     $this->instalarv342();
+				case '3.4.2':
+                    $this->instalarv343();
                     break;
 
                 default:
@@ -2565,6 +2567,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.4.2\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+    }
+	
+    protected function instalarv343()
+    {
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.4.3 DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.4.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
     }

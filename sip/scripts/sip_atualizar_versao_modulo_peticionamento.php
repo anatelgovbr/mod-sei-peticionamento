@@ -11,10 +11,10 @@ class MdPetAtualizadorSipRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '3.4.2';
+    private $versaoAtualDesteModulo = '3.4.3';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3');
 
     public function __construct()
     {
@@ -26,11 +26,6 @@ class MdPetAtualizadorSipRN extends InfraRN
         return BancoSip::getInstance();
     }
 
-    /**
-     * Inicia o script criando um contator interno do tempo de execução
-     *
-     * @return null
-     */
     protected function inicializar($strTitulo)
     {
         session_start();
@@ -59,11 +54,6 @@ class MdPetAtualizadorSipRN extends InfraRN
         flush();
     }
 
-    /**
-     * Finaliza o script informando o tempo de execução.
-     *
-     * @return null
-     */
     protected function finalizar($strMsg = null, $bolErro = false)
     {
         if (!$bolErro) {
@@ -159,6 +149,8 @@ class MdPetAtualizadorSipRN extends InfraRN
                     $this->instalarv341();
                 case '3.4.1':
                     $this->instalarv342();
+				case '3.4.2':
+                    $this->instalarv343();
                     break;
 
                 default:
@@ -1926,6 +1918,16 @@ class MdPetAtualizadorSipRN extends InfraRN
         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
+    protected function instalarv343()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 3.4.3 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'3.4.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
 
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)
     {

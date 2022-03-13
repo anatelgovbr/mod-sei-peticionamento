@@ -418,8 +418,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 if ($unidadeIncluir) {
                     $arrIdUnidade[] = $unidadeAberta->getUnidade()->getIdUnidade();
                     if ($retornarUsuarioAtribuicao) {
-                        $qtdUnidadeAberta = is_array($unidadeAberta->getUsuarioAtribuicao()) ? count($unidadeAberta->getUsuarioAtribuicao()) : 0;
-                        if ($qtdUnidadeAberta > 0) {
+                        if (!empty($unidadeAberta->getUsuarioAtribuicao())) {
                             $arrIdUsuarioAtribuicao[$unidadeAberta->getUnidade()->getIdUnidade()] = $unidadeAberta->getUsuarioAtribuicao()->getIdUsuario();
                         }
                     }

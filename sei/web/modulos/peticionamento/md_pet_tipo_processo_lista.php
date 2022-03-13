@@ -394,12 +394,21 @@ try {
                 }
             }
 
-            if ($arrObjMdPetTipoProcessoDTO[$i]->getStrSinAtivo() == 'S' && !$tipoProcessoDivergencia && !$tipoProcessoRestricaoErro) {
-                $strCssTr = ($strCssTr == '<tr class="infraTrClara">') ? '<tr class="infraTrEscura">' : '<tr class="infraTrClara">';
-            } elseif ($tipoProcessoDivergencia || $tipoProcessoRestricaoErro) {
+            $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
+            $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
+            $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($arrObjMdPetTipoProcessoDTO[$i]->getNumIdProcedimento());
+            $objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
+            $arrObjNivelAcessoPermitidoDTO = $objNivelAcessoPermitidoRN->listar($objNivelAcessoPermitidoDTO);
+
+            $arrDadosNivelAcessoPermitido = array();
+            foreach ($arrObjNivelAcessoPermitidoDTO as $ObjNivelAcessoPermitido){
+                $arrDadosNivelAcessoPermitido[] = $ObjNivelAcessoPermitido->getStrStaNivelAcesso();
+            }
+
+            if ($tipoProcessoDivergencia || $tipoProcessoRestricaoErro || !in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)) {
                 $strCssTr = '<tr bgcolor="#F4A460">';
-                //F4A460 
-                //FFA54F
+            } elseif ($arrObjMdPetTipoProcessoDTO[$i]->getStrSinAtivo() == 'S' && !$tipoProcessoDivergencia && !$tipoProcessoRestricaoErro) {
+                $strCssTr = ($strCssTr == '<tr class="infraTrClara">') ? '<tr class="infraTrEscura">' : '<tr class="infraTrClara">';
             } else {
                 $strCssTr = '<tr class="trVermelha">';
             }
@@ -429,6 +438,10 @@ try {
 
             if ($tipoProcessoDivergencia || $tipoProcessoRestricaoErro) {
                 $strResultado .= "<img src='modulos/peticionamento/imagens/png/icone_restricao.png' style='width: 24px' onmouseover='return infraTooltipMostrar(\"Neste Tipo de Peticionamento para Processo Novo constam Unidades que não podem utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente à Unidade do conflito.<br><br> Clique na Ação Editar para ver detalhes e sugestões de providências.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+            }
+
+            if(!in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)){
+                $strResultado .= "<img src='modulos/peticionamento/imagens/png/icone_restricao.png' style='width: 24px' onmouseover='return infraTooltipMostrar(\"Este Tipo de Processo para Peticionamento de Processo Novo não é mais exibido para os Usuários Externos, pois o Nível de Acesso do Tipo de Processo não está configurado como Público.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
             if ($bolAcaoConsultar) {

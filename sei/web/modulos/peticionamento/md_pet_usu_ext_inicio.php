@@ -221,6 +221,7 @@ try {
     $objTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($arrIdsTpProcesso, infraDTO::$OPER_IN);
     $objTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
     $objTipoProcessoDTO->retStrNomeProcesso();
+    $objTipoProcessoDTO->retNumIdProcedimento();
 
     if (count($arrRestricao)) {
         $objTipoProcessoDTO->setNumIdProcedimento($arrRestricao, infraDTO::$OPER_NOT_IN);
@@ -231,6 +232,22 @@ try {
     $objTipoProcedimentoRN = new MdPetTipoProcessoRN();
     $arrObjTipoProcedimentoFiltroDTO = $objTipoProcedimentoRN->listar($objTipoProcessoDTO);
 
+    foreach ($arrObjTipoProcedimentoFiltroDTO as $chave => $objTipoProcedimentoFiltroDTO) {
+        $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
+        $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
+        $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($objTipoProcedimentoFiltroDTO->getNumIdProcedimento());
+        $objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
+        $arrObjNivelAcessoPermitidoDTO = $objNivelAcessoPermitidoRN->listar($objNivelAcessoPermitidoDTO);
+
+        $arrDadosNivelAcessoPermitido = array();
+        foreach ($arrObjNivelAcessoPermitidoDTO as $ObjNivelAcessoPermitido){
+            $arrDadosNivelAcessoPermitido[] = $ObjNivelAcessoPermitido->getStrStaNivelAcesso();
+        }
+
+        if(!in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)){
+            unset($arrObjTipoProcedimentoFiltroDTO[$chave]);
+        }
+    }
 
     $objEditorRN = new EditorRN();
 

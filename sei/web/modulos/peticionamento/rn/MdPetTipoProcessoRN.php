@@ -320,8 +320,8 @@ class MdPetTipoProcessoRN extends InfraRN {
 			$objInfraException->adicionarValidacao('Orientações não informada.');
 		}
 		
-		else if ( strlen($objMdPetTipoProcessoDTO->getStrOrientacoes()) > 500 ) {
-			$objInfraException->adicionarValidacao('Orientações possui tamanho superior a 500 caracteres.');
+		else if ( strlen($objMdPetTipoProcessoDTO->getStrOrientacoes()) > 1000 ) {
+			$objInfraException->adicionarValidacao('Orientações possui tamanho superior a 1000 caracteres.');
 		}
 
 		if (($objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'N' && $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'N')) {

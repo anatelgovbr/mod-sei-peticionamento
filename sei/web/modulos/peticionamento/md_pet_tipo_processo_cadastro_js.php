@@ -36,7 +36,7 @@
             }
 
             objAutoCompletarUnidadeMultipla = new infraAjaxAutoCompletar('hdnIdUnidadeMultipla', 'txtUnidadeMultipla', '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=unidade_auto_completar_todas'); ?>');
-            objAutoCompletarUnidadeMultipla.limparCampo = false;
+            objAutoCompletarUnidadeMultipla.limparCampo = true;
             objAutoCompletarUnidadeMultipla.tamanhoMinimo = 3;
             objAutoCompletarUnidadeMultipla.prepararExecucao = function () {
                 return 'palavras_pesquisa=' + document.getElementById('txtUnidadeMultipla').value + '&id_orgao=' + document.getElementById('hdnIdOrgaoUnidadeMultipla').value;
@@ -463,7 +463,7 @@
 
 
         objAutoCompletarUnidade = new infraAjaxAutoCompletar('hdnIdUnidade', 'txtUnidade', '<?= $strLinkAjaxUnidade ?>');
-        objAutoCompletarUnidade.limparCampo = false;
+        objAutoCompletarUnidade.limparCampo = true;
         objAutoCompletarUnidade.tamanhoMinimo = 3;
         objAutoCompletarUnidade.prepararExecucao = function () {
             return 'palavras_pesquisa=' + document.getElementById('txtUnidade').value;
@@ -545,7 +545,7 @@
         }
 
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?= $strLinkAjaxTipoProcesso ?>');
-        objAutoCompletarTipoProcesso.limparCampo = false;
+        objAutoCompletarTipoProcesso.limparCampo = true;
         objAutoCompletarTipoProcesso.tamanhoMinimo = 3;
         objAutoCompletarTipoProcesso.prepararExecucao = function () {
             return 'palavras_pesquisa=' + document.getElementById('txtTipoProcesso').value;

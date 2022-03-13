@@ -228,21 +228,21 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     <select onchange="pesquisarCidade(this)" id="selUF" name="selUF"
                             class="infraSelect form-control">
                         <?php
-                        $qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
-                        if ($qtdSelectUf > 1) {
-                            ?>
-                            <option value=""></option>
-                        <?php } ?>
-                        <?=
+                        if (isset($_GET['id_uf'])) {
+                            $qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
+                            if ($qtdSelectUf > 1) {
+                                ?>
+                                <option value=""></option>
+                            <?php } ?>
+                            <?=
 
-                        $idUf = $selectUf[0];
-                        $uf = $selectUf[1];
-                        for ($i = 0; $i < $qtdSelectUf; $i++) {
-                            echo '<option value="' . $idUf[$i] . '">' . $uf[$i] . '</option>';
+                            $idUf = $selectUf[0];
+                            $uf = $selectUf[1];
+                            for ($i = 0; $i < $qtdSelectUf; $i++) {
+                                echo '<option value="' . $idUf[$i] . '">' . $uf[$i] . '</option>';
+                            }
                         }
-
                         ?>
-
                     </select>
                 </div>
             </div>

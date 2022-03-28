@@ -336,7 +336,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
           
            <tr>
                <th class="infraTh" style="display: none;" > ID Contato </th>
-               <th class="infraTh" width="100" id="tdDescTipoPessoaSelecao" > Tipo </th>
+               <th class="infraTh" width="100" id="tdDescTipoPessoaSelecao" > Natureza </th>
                <th class="infraTh" width="120" id="tdDescTipoPessoa" > CPF/CNPJ </th>
                <th class="infraTh"  id="tdDescNomePessoa" > Nome/Razão Social </th>
                <th align="center" class="infraTh" style="width:50px;"> Ações </th>               

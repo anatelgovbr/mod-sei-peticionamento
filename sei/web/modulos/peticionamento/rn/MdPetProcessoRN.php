@@ -320,7 +320,7 @@ class MdPetProcessoRN extends InfraRN {
 				$arrInteressado = array();
 				$arrInteressado[0] = $DocumentoProcessoDTO->getDblIdDocumento();
 				$arrInteressado[1] = $idsParticipantes;
-				
+
 				$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );
 				// Documento - Interessados - FIM
 
@@ -328,10 +328,10 @@ class MdPetProcessoRN extends InfraRN {
 				$objAtividadeDTOLiberacao->retTodos();
 				$objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
 				$objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
-				
+
 				$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
 				$atividadeRN->excluirRN0034( $arrDTOAtividades );
-				
+
 			}
 			// Andamento Processo NOVO
 			$objMdPetReciboDTO = new MdPetReciboDTO();

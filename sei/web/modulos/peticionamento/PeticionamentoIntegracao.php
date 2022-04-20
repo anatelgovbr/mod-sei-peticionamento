@@ -3471,7 +3471,32 @@ class PeticionamentoIntegracao extends SeiIntegracao
             if (in_array($objDocumentoAPI->getIdSerie(), $arrDocsLiberados) && in_array($objDocumentoAPI->getSubTipo(), $arrTipoDocumento) && $objDocumentoAPI->getNivelAcesso() != ProtocoloRN::$NA_SIGILOSO) {
                 $ret[$objDocumentoAPI->getIdDocumento()] = SeiIntegracao::$TAM_PERMITIDO;
             }
+
+            // Forca a liberacao de acesso interno a todas as Unidades, independentemente do Nivel de Acesso dos documentos
+            // ou do processo, para os documentos anexados a Peticionamentos do tipo V, A e C, ou seja, peticionamentos sobre
+            // Responsavel Legal de Pessoa Juridica
+
+            $objMdPetReciboRN = new MdPetReciboRN();
+            $objMdPetReciboDTO = new MdPetReciboDTO;
+            $objMdPetReciboDTO->setDblIdDocumento($objDocumentoAPI->getIdDocumento());
+            $objMdPetReciboDTO->setNumIdProtocolo($objDocumentoAPI->getIdProcedimento());
+            $objMdPetReciboDTO->setStrStaTipoPeticionamento(array('V','A','C'), InfraDTO::$OPER_IN);
+            $objMdPetReciboDTO->retNumIdReciboPeticionamento();
+
+            $objRecibo = current($objMdPetReciboRN->listar($objMdPetReciboDTO));
+
+            if ($objRecibo) {
+                $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+                $objMdPetRelReciboDocumentoAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
+                $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($objRecibo->getNumIdReciboPeticionamento());
+                $objMdPetRelReciboDocumentoAnexoDTO->retNumIdDocumento();
+                $arrDocumentos = $objMdPetRelReciboDocumentoAnexoRN->listar($objMdPetRelReciboDocumentoAnexoDTO);
+                foreach ($arrDocumentos as $documentos) {
+                    $ret[$documentos->getNumIdDocumento()] = SeiIntegracao::$TAM_PERMITIDO;
+                }
+            }
         }
+
         return $ret;
     }
 

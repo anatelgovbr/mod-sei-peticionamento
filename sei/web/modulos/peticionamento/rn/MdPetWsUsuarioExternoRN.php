@@ -33,7 +33,7 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 		}
 	}
 
-    protected function listarUsuarioExterno(MdPetWsUsuarioExternoDTO  $objUsuarioExternoDTO){
+    public function listarUsuarioExterno(MdPetWsUsuarioExternoDTO  $objUsuarioExternoDTO){
         try {
 
             //Valida Permissao
@@ -55,6 +55,9 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 			$objInfraException = new InfraException();
 	
 			$objUsuarioExternoDTO = new MdPetWsUsuarioExternoDTO();
+
+			//Retorna apenas usuários externos
+            $objUsuarioExternoDTO->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO_PENDENTE,UsuarioRN::$TU_EXTERNO),InfraDTO::$OPER_IN);
 				
 			//campos que serão retornados
 			$objUsuarioExternoDTO->retNumIdUsuario();

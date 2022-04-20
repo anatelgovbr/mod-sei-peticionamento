@@ -39,11 +39,7 @@ class MdPetWsUsuarioExternoDTO extends InfraDTO {
 
 		$this->configurarPK('IdUsuario',InfraDTO::$TIPO_PK_INFORMADO);
 		$this->configurarFK('IdContato','contato','id_contato');
-		
-		//Retorna apenas usuários externos
-		$this->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO_PENDENTE,UsuarioRN::$TU_EXTERNO),InfraDTO::$OPER_IN);
 
-		//$this->configurarExclusaoLogica('SinAtivo', 'N');
-	}
+    }
 }
 ?>

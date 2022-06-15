@@ -30,15 +30,19 @@ switch ($_GET['acao']) {
             $objContatoRN = new ContatoRN();
             $objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
 
-            $texto = 'Você não possui mais permissão para Responder a Intimação Eletrônica, conforme abaixo:<br><br>Destinatários não permitidos:<br>';
+            $texto  = '<p>Você não possui mais permissão para Responder a Intimação Eletrônica, conforme abaixo:</p>';
+            $texto .= '<p>Destinatários não permitidos:</p>';
+            $texto .= '<ul>';
 
             if (!is_null(InfraUtil::formatarCpfCnpj($objContatoDTO->retDblCpf()))) {
-                $texto .= '&nbsp;&nbsp;&nbsp;&nbsp;- '.$objContatoDTO->getStrNome() . ' (' . InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCpf()) . ')';
+                $texto .= '<li>'.$objContatoDTO->getStrNome() . ' (' . InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCpf()) . ')</li>';
             } else {
-                $texto .= '&nbsp;&nbsp;&nbsp;&nbsp;- '.$objContatoDTO->getStrNome() . ' (' . InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCnpj()) . ')';
+                $texto .= '<li>'.$objContatoDTO->getStrNome() . ' (' . InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCnpj()) . ')</li>';
             }
+            
+            $texto .= '</ul>';
 
-            $texto .= ', verifique seus Poderes de Representação.';
+            $texto .= '<p>verifique seus Poderes de Representação.</p>';
             
             $url = "controlador_externo.php?acao=usuario_externo_controle_acessos&acao_origem=usuario_externo_logar&acao_origem=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=0";
 	    $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
@@ -68,21 +72,19 @@ PaginaSEIExterna::getInstance()->abrirBody();
 ?>
 <form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
 
-    <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-
-    <div class="row linha">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-            <h4>
-                <?php echo $strTitulo; ?>
-            </h4>
+    <div class="row">
+        <div class="col-12">
+            <div style="padding-right: 50%; padding-top: 2%">
+                <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
+            </div>
         </div>
-    </div>
-
-    <div class="row linha">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 textoIntimacaoEletronica">
-            <h2>
-                <?php echo $texto; ?>
-            </h2>
+        <div class="col-12">
+            <h4><?= $strTitulo ?></h4>
+        </div>
+        <div class="col-12">
+            <div class="textoIntimacaoEletronica">
+                <?= $texto ?>
+            </div>
         </div>
     </div>
 

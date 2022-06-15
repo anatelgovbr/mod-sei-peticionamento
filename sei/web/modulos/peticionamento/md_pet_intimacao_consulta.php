@@ -93,11 +93,6 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema().' - '.$strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-?>
-#selTipoIntimacao {width: 40%;}
-#selAnexosIntimacao {width: 70%;}
-#selProtocolosDisponibilizados {width: 70%;}
-<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -124,66 +119,91 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     <input type="hidden" name="hdnIdDestInt" id="hdnIdDestInt" value="<?php echo isset($dadosIntimacao['id_dest_int']) ? $dadosIntimacao['id_dest_int'] : '' ?>" />
     <input type="hidden" name="hdnIsListaInt" id="hdnIsListaInt" value="<?php echo isset($_GET['lista_int']) ? $_GET['lista_int'] : '0' ?>" />
 
-    <label class="infraLabelObrigatorio">Destinatário:</label> <label class="infraLabelOpcional"><?= PaginaSEI::tratarHTML($dadosIntimacao['nome'])?></label><br>
-    <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">E-mail:</label><label class="infraLabelOpcional"> <?= $dadosIntimacao['email']?></label><br><?php } ?>
+    <div class="row mb-3">
+        <div class="col-10">
+            <label class="infraLabelObrigatorio">Destinatário:</label> <label class="infraLabelOpcional"><?= PaginaSEI::tratarHTML($dadosIntimacao['nome'])?></label><br>
+            <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">E-mail:</label><label class="infraLabelOpcional"> <?= $dadosIntimacao['email']?></label><br><?php } ?>
 
-    <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">CPF:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCpf($dadosIntimacao['cpf'])?></label><br> <?php } ?>
-    <?php if($pessoa == "J"){ ?><label class="infraLabelObrigatorio">CNPJ:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCnpj($dadosIntimacao['cpf'])?></label><br> <?php } ?>
+            <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">CPF:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCpf($dadosIntimacao['cpf'])?></label><br> <?php } ?>
+            <?php if($pessoa == "J"){ ?><label class="infraLabelObrigatorio">CNPJ:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCnpj($dadosIntimacao['cpf'])?></label><br> <?php } ?>
 
-    <label class="infraLabelObrigatorio">Data de Expedição:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['data_geracao']?></label><br>
-    <label class="infraLabelObrigatorio">Situação da Intimação:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['situacao']?></label><br>
-        <br>
-    <label class="infraLabelObrigatorio">Tipo de Intimação:</label>
-    <select disabled="disabled" class="infraSelect">
-        <?= $strTipoIntimacao ?>
-    </select>
-    <br>
-    <label class="infraLabelObrigatorio">Tipo de Resposta:</label><br>
-    <?= $dadosIntimacao['arr_tipo_resposta']?>
-    <br>
-
-<? PaginaSEI::getInstance()->abrirAreaDados('40em'); ?>
-    <fieldset id="fldDestinatarios">
-        <legend class="infraLegend" class="infraLabelObrigatorio" > Documentos da Intimação </legend>
-        <br>
-        <label class="infraLabelOpcional">Documento Principal da Intimação: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' .$strProtocoloDocumentoFormatado . ')'; ?></label>
-        <br>
-        <div id="divOptAno" class="infraDivCheckbox">
-            <input type="checkbox" <?= ($dadosIntimacao['documento_principal']) ? 'checked="checked"' : ''; ?> id="optPossuiAnexo" disabled="disabled" class="infraCheckbox" />
-            <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelOpcional">Intimação possui Anexos </label>
-            &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considera-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou a qualquer um dos Documentos Anexos ou, não efetuada a consulta, após o decurso do Prazo Tácito.') ?> class="infraImg"/>
+            <label class="infraLabelObrigatorio">Data de Expedição:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['data_geracao']?></label><br>
+            <label class="infraLabelObrigatorio">Situação da Intimação:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['situacao']?></label><br>
         </div>
-        <br>
-        <label id="lblAnexosIntimacao" <?= ($dadosIntimacao['documento_principal']) ? '' : 'style="display:none;"'; ?> for="lblAnexosIntimacao" accesskey="" class="infraLabelObrigatorio">Protocolos dos Anexos da Intimação:</label>
-        <select id="selAnexosIntimacao" <?= ($dadosIntimacao['documento_principal']) ? '' : 'style="display:none;"'; ?> name="selAnexosIntimacao" disabled="disabled" size="5" class="infraSelect" ><?= $dadosIntimacao['arr_protocolos_anexos'] ?></select>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <label class="infraLabelObrigatorio">Tipo de Intimação:</label>
+            <select disabled="disabled" class="infraSelect form-control">
+                <?= $strTipoIntimacao ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-12 col-md-9 col-lg-8">
+            <label class="infraLabelObrigatorio">Tipo de Resposta:</label> <br>
+            <?= $dadosIntimacao['arr_tipo_resposta']?>
+        </div>
+    </div>
+
+<?php PaginaSEI::getInstance()->abrirAreaDados(); ?>
+
+    <fieldset id="fldDestinatarios" class="infraFieldset p-3 mb-3">
+        <legend class="infraLegend" class="infraLabelObrigatorio" > Documentos da Intimação 
+            <img style="margin-top:1px; margin-bottom: -3px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
+                id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até ' . $numNumPrazo . ' dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n\n\n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.', 'Ajuda') ?> />
+        </legend>
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-8 col-lg-7">
+                <label class="infraLabelOpcional">Documento Principal da Intimação: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' .$strProtocoloDocumentoFormatado . ')'; ?></label>                
+                <div id="divOptAno" class="infraDivCheckbox">
+                    <input type="checkbox" <?= ($dadosIntimacao['documento_principal']) ? 'checked="checked"' : ''; ?> id="optPossuiAnexo" disabled="disabled" class="infraCheckbox" />
+                    <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelOpcional">Intimação possui Anexos </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-12 col-md-8 col-lg-8">
+                <label id="lblAnexosIntimacao" <?= ($dadosIntimacao['documento_principal']) ? '' : 'style="display:none;"'; ?> for="lblAnexosIntimacao" accesskey="" class="infraLabelObrigatorio">Protocolos dos Anexos da Intimação:</label>
+                <select id="selAnexosIntimacao" <?= ($dadosIntimacao['documento_principal']) ? '' : 'style="display:none;"'; ?> name="selAnexosIntimacao" disabled="disabled" size="5" class="infraSelect form-control" ><?= $dadosIntimacao['arr_protocolos_anexos'] ?></select>
+            </div>
+        </div>
     </fieldset>
-<? PaginaSEI::getInstance()->abrirAreaDados('15'); ?>
-    <br/>
-    <fieldset id="fldDestinatarios">
+
+    <fieldset id="fldDestinatarios" class="infraFieldset p-3 mb-3">
         <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Acesso Externo </legend>
-        <br>
-        <div id="divOptAno" class="infraDivRadio">
-            <input id="lblIntegral" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'I' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
-            <label class="infraLabelOpcional">Integral </label>
-            &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Todos os Protocolos de Documentos e de Processos Anexos serão disponibilizados para acesso aos Usuários Externos destinatários da Intimação, inclusive Protocolos futuros que forem incluídos no presente Processo.') ?> class="infraImg"/>
-        </div>
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-8 col-lg-7">
+                <div id="divOptAno" class="infraDivRadio">
+                    <input id="lblIntegral" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'I' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
+                    <label class="infraLabelOpcional">Integral </label>
+                    <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" class="infraImg" name="ajuda"                         
+                        <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.','Ajuda') ?> />
+                </div>
 
-        <div id="divOptAno" class="infraDivRadio">
-            <input id="lblParcial" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'P' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
-            <label class="infraLabelOpcional">Parcial </label>
-            &nbsp;<img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('O Documento Principal da Intimação e os eventuais Documentos Anexos serão necessariamente incluídos no Tipo de Acesso Externo Parcial.') ?> class="infraImg"/>
+                <div id="divOptAno" class="infraDivRadio">
+                    <input id="lblParcial" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'P' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
+                    <label class="infraLabelOpcional">Parcial </label>
+                    <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" class="infraImg" name="ajuda"                         
+                        <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE serão disponibilizados ao Destinatário o Documento Principal, os Protocolos dos Anexos da Intimação (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos serão automaticamente incluídos no Acesso Parcial. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Parcial não poderá ser alterado nem cancelado. Todos os Protocolos incluídos no Acesso Externo Parcial poderão ser visualizados pelo Destinatário, independentemente de seus Níveis de Acesso, não abrangendo Protocolos futuros que forem adicionados ao processo.','Ajuda') ?> />
+                </div>
+            </div>
         </div>
-        <br>
-        <label <?= ($dadosIntimacao['tipo_acesso'] == 'I') ? 'style="display:none;"' : ''; ?> class="infraLabelObrigatorio">Protocolos Disponibilizados:</label>
-        <select <?= ($dadosIntimacao['tipo_acesso'] == 'I') ? 'style="display:none;"' : ''; ?> id="selProtocolosDisponibilizados" disabled="disabled" name="selProtocolosDisponibilizados" size="5" class="infraSelect" > <?= $dadosIntimacao['arr_protocolos_disponibilizados'] ?></select>
+        
+        <div class="row">
+            <div class="col-sm-12 col-md-8 col-lg-8">
+                <label <?= ($dadosIntimacao['tipo_acesso'] == 'I') ? 'style="display:none;"' : ''; ?> class="infraLabelObrigatorio">Protocolos Disponibilizados:</label>
+                <select <?= ($dadosIntimacao['tipo_acesso'] == 'I') ? 'style="display:none;"' : ''; ?> id="selProtocolosDisponibilizados" disabled="disabled" name="selProtocolosDisponibilizados" size="5" class="infraSelect form-control" > <?= $dadosIntimacao['arr_protocolos_disponibilizados'] ?></select>
+            </div>
+        </div>
     </fieldset>
 
-
-
-<? PaginaSEI::getInstance()->fecharAreaDados(); ?>
-<? PaginaSEI::getInstance()->fecharAreaDados(); ?>
-<?
-PaginaSEI::getInstance()->montarAreaDebug();
+<?php 
+PaginaSEI::getInstance()->fecharAreaDados();
+//PaginaSEI::getInstance()->montarAreaDebug();
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

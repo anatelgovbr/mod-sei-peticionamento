@@ -33,7 +33,7 @@ try {
 
     //Tipo Processo PF
     $strLinkTipoProcessoPFSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcessoPF');
-
+    
     //Unidade
     $strLinkUnidadeSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidade');
     $strLinkUnidadeMultiplaSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidadeMultipla');
@@ -41,7 +41,7 @@ try {
 
     //Unidade PF
     $strLinkUnidadePFSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=1&id_object=objLupaUnidadePF');
-
+    
     //Tipo Documento Principal
     $strLinkTipoDocPrincExternoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=E&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
     $strLinkTipoDocPrincGeradoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=G&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
@@ -70,16 +70,16 @@ try {
     if (!empty($objMdPetVincTpProcessoDTO) && !isset($_POST['sbmCadastrarTpProcessoVinculacao'])) {
 
         foreach ($objMdPetVincTpProcessoDTO as $obj) {
-            if ($obj->getStrTipoVinculo() == 'F') {
+            if($obj->getStrTipoVinculo() == 'F'){
                 $idTipoProcessoPF = $obj->getNumIdTipoProcedimento();
                 $idUnidadePF = $obj->getNumIdUnidade();
                 $nomeTipoProcessoPF = $obj->getStrNomeProcedimento();
                 $especificacaoPF = $obj->getStrEspecificacao();
-                if ($obj->getStrSiglaUnidade()) {
+                if($obj->getStrSiglaUnidade()){
                     $nomeUnidadePF = $obj->getStrSiglaUnidade() . ' - ' . $obj->getStrDescricaoUnidade();
                 }
-                $exibirMenuAcessoExternoPF = $obj->getStrSinAtivo();
-            } else {
+                $exibirMenuAcessoExternoPF = $obj->getStrSinAtivo();                
+            }else{
                 $idTipoProcesso = $obj->getNumIdTipoProcedimento();
                 $orientacoes = $obj->getStrOrientacoes();
                 $idUnidade = $obj->getNumIdUnidade();
@@ -88,18 +88,18 @@ try {
                 $idhipoteseLegal = $obj->getNumIdHipoteseLegal();
                 $nomeTipoProcesso = $obj->getStrNomeProcedimento();
                 $especificacaoPJ = $obj->getStrEspecificacao();
-                if ($obj->getStrSiglaUnidade()) {
+                if($obj->getStrSiglaUnidade()){
                     $nomeUnidade = $obj->getStrSiglaUnidade() . ' - ' . $obj->getStrDescricaoUnidade();
                 }
                 $staNivelAcesso = $obj->getStrStaNivelAcesso();
                 $exibirMenuAcessoExterno = $obj->getStrSinAtivo();
-
+                
                 if ($obj->getStrSinNaPadrao() == 'S' && $staNivelAcesso == ProtocoloRN::$NA_RESTRITO) {
                     $valorParametroHipoteseLegal = $idhipoteseLegal;
                 }
-            }
-        }
-
+            }           
+        }        
+              
         $strItensSelNivelAcesso = '';
 
         $hipoteseLegal = '';
@@ -112,7 +112,7 @@ try {
         $objMdPetVincRelSerieDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
         $arrObjMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->listar($objMdPetVincRelSerieDTO);
 
-        if (!empty($arrObjMdPetVincRelSerieDTO)) {
+        if (is_iterable($arrObjMdPetVincRelSerieDTO)) {
             foreach ($arrObjMdPetVincRelSerieDTO as $objMdPetVincRelSerieDTO) {
                 if ($objMdPetVincRelSerieDTO->getStrSinObrigatorio() == 'N')
                     $strItensSelSeries .= '<option value =' . $objMdPetVincRelSerieDTO->getNumIdSerie() . '>' . $objMdPetVincRelSerieDTO->getStrNomeSerie() . '</option>';
@@ -162,9 +162,9 @@ try {
             $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
 
             $objMdPetVincTpProcessoDTO->setNumIdTipoProcedimento($idTipoProcesso);
-
+            
             // Vinculo do tipo PF
-            if ($_POST['rdMenuAcessoExternoPF']) {
+            if($_POST['rdMenuAcessoExternoPF']){
                 $objMdPetVincTpProcessoPFDTO = new MdPetVincTpProcessoDTO();
                 $objMdPetVincTpProcessoPFDTO->setNumIdTipoProcedimento($idTipoProcessoPF);
             }
@@ -190,16 +190,16 @@ try {
                 if ($_POST['selNivelAcesso'] == ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0' && $strValor > 0) {
                     $objMdPetVincTpProcessoDTO->setNumIdHipoteseLegal($idhipoteseLegal);
                     $hipoteseLegal = 'style="display: inherit;"';
-                } else {
+                } else{
                     $objMdPetVincTpProcessoDTO->setNumIdHipoteseLegal(null);
                 }
-            }
+            }         
 
             if (isset($_POST['sbmCadastrarTpProcessoVinculacao'])) {
                 try {
 
                     //Pessoa jurídica
-                    if ($_POST['rdMenuAcessoExterno']) {
+                    if($_POST['rdMenuAcessoExterno']){
 
                         $relTipoProcedimentoAssuntoRN = new RelTipoProcedimentoAssuntoRN();
                         $tipoProcedimentoRN = new TipoProcedimentoRN();
@@ -211,10 +211,10 @@ try {
                         $objRelTipoProcedimentoAssuntoDTO->setNumIdTipoProcedimento($objTipoProcedimentoDTO->getNumIdTipoProcedimento());
                         $objRelTipoProcedimentoAssuntoDTO->retTodos();
                         $objRelTipoProcedimentoAssuntoDTO = $relTipoProcedimentoAssuntoRN->listarRN0192($objRelTipoProcedimentoAssuntoDTO);
-                        if (!$objRelTipoProcedimentoAssuntoDTO) {
+                        if(!$objRelTipoProcedimentoAssuntoDTO){
                             $msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
-                            PaginaSEI::getInstance()->setStrMensagem($msg, InfraPagina::$TIPO_MSG_AVISO);
-                            header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao_origem'] . '&acao_origem=' . $_GET['acao']));
+                            PaginaSEI::getInstance()->setStrMensagem($msg,InfraPagina::$TIPO_MSG_AVISO);
+                            header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao_origem'].'&acao_origem='.$_GET['acao']));
                             die;
                         }
 
@@ -236,12 +236,12 @@ try {
                         $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
 
                         $objMdPetVincTpProcessoDTO->setStrSinAtivo($_POST['rdMenuAcessoExterno']);
-                        $exibirMenuAcessoExterno = $_POST['rdMenuAcessoExterno'];
+                        $exibirMenuAcessoExterno = $_POST['rdMenuAcessoExterno'];                  
                         $objMdPetVincTpProcessoRN->cadastrar($objMdPetVincTpProcessoDTO);
-                    }
-
+                    }                   
+                    
                     //Pessoa física
-                    if ($_POST['rdMenuAcessoExternoPF']) {
+                    if($_POST['rdMenuAcessoExternoPF']){
                         $relTipoProcedimentoAssuntoRN = new RelTipoProcedimentoAssuntoRN();
                         $tipoProcedimentoRN = new TipoProcedimentoRN();
                         $objTipoProcedimentoDTO = new TipoProcedimentoDTO();
@@ -252,10 +252,10 @@ try {
                         $objRelTipoProcedimentoAssuntoDTO->setNumIdTipoProcedimento($objTipoProcedimentoDTO->getNumIdTipoProcedimento());
                         $objRelTipoProcedimentoAssuntoDTO->retTodos();
                         $objRelTipoProcedimentoAssuntoDTO = $relTipoProcedimentoAssuntoRN->listarRN0192($objRelTipoProcedimentoAssuntoDTO);
-                        if (!$objRelTipoProcedimentoAssuntoDTO) {
+                        if(!$objRelTipoProcedimentoAssuntoDTO){
                             $msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
-                            PaginaSEI::getInstance()->setStrMensagem($msg, InfraPagina::$TIPO_MSG_AVISO);
-                            header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao_origem'] . '&acao_origem=' . $_GET['acao']));
+                            PaginaSEI::getInstance()->setStrMensagem($msg,InfraPagina::$TIPO_MSG_AVISO);
+                            header('Location: '.SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao_origem'].'&acao_origem='.$_GET['acao']));
                             die;
                         }
                         $nomeTipoProcessoPF = $_POST['txtTipoProcessoPF'];

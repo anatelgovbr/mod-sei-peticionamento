@@ -10,19 +10,6 @@
   float: left;
 }
 
-label[for^=txt] {
-  display: block;
-  white-space: nowrap;
-}
-label[for^=s] {
-  display: block;
-  white-space: nowrap;
-}
-label[for^=file] {
-  display: block;
-  white-space: nowrap;
-}
-
 img[name=ajuda] {
   margin-bottom: -4px;
   width: 20px !important;
@@ -48,24 +35,14 @@ img[name=ajuda] {
 #txtNumeroCEP{width: 100%;}
 #selTipoDocumento{width:100%;}
 #selNivelAcesso{width: 100%;}
-#selTipoConferencia{
-  min-width: 200px;
-  max-width: 330px;
-}
-#btnAdicionarDocumento {
-  margin-top: 15px;
-  margin-left: -5px;
-}
+
 
 #txtRazaoSocialWsdl{
     margin-left: 0.2%;
 }
 
-.row{padding-top:10px;}
-
 #imgNivelAcesso {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
 #imgHipoteseLegal {height: 1.3em !important; width: 1.3em !important; margin-bottom: -4px;}
-#selHipoteseLegal {float: left; max-width:100% !important;}
 
 ol.Numerada { counter-reset: item; margin-top: 0.1% }
 li.Numerada { display: block }
@@ -83,3 +60,7 @@ li.Numerada:before { content: counters(item, ".") ". "; counter-increment: item 
 .fieldsetClear {border:none !important;}
 #lblCaptcha{margin-top:15px; margin-right:5px}
 #txtCaptcha{width:130px}
+
+fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
+    margin-left: 0em;
+}

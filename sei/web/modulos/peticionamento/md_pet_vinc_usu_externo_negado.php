@@ -45,7 +45,7 @@ try {
 
             $arrTipoRepresentante = array(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL,MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES);
             $arrTipoDocumento = array(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO,MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL);
-        
+
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->setNumIdContato($objUsuarioDTO->getNumIdContato());
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante($arrTipoRepresentante, InfraDTO::$OPER_IN);
@@ -79,7 +79,7 @@ try {
 
                 $arrSelectTipoVinculo = array();
                 //Populando obj para tabela
-                
+
                 $qntProcuracao = 0;
                 foreach ($arrObjMdPetVincRepresentantDTO as $itemObjMdPetVinculoDTO) {
                     //verifica se a procuração é do tipo simples, caso seja existe mais uma validação a ser feita
@@ -97,7 +97,7 @@ try {
                             //se a data não estiver vigente a procuração
                             } else {
                                 $informaProcuracao = false;
-                                
+
                             }
                         // caso não tenha data limite a procuração é informada ao usuário
                         } else {
@@ -107,7 +107,7 @@ try {
                     } else {
                         $informaProcuracao = true;
                     }
-                    
+
                     if($informaProcuracao == true){
                         $srtCnpj = InfraUtil::formatarCnpj($itemObjMdPetVinculoDTO->getStrCNPJ());
                         $strRazaoSocial = $itemObjMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
@@ -180,7 +180,7 @@ PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
 $arrComandos = array();
-$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 ?>
@@ -209,7 +209,6 @@ PaginaSEIExterna::getInstance()->fecharHtml();
     }
 
     function fecharJanela() {
-
         if (window.opener != null && !window.opener.closed) {
             window.opener.focus();
         }

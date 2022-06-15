@@ -1,17 +1,22 @@
+<?php
+    $col_pesq  = 'col-md-7 col-lg-7 col-xl-7';
+    $col_combo = 'col-md-9 col-lg-9 col-xl-9';
+?>
 <!-- DIV TIPO DE INTIMAÇÃO  -->
 <div class="row linha">
-    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
-        <label id="lblTpIntimacao" name="lblTpIntimacao" for="txtTpIntimacao" class="infraLabelObrigatorio inputSelect">Tipos
-            de Intimação:</label>
+    <div class="<?= $col_pesq ?>">
+        <label id="lblTpIntimacao" name="lblTpIntimacao" for="txtTpIntimacao" class="infraLabelObrigatorio inputSelect">
+            Tipos de Intimação:
+        </label>
         <input type="text" id="txtTpIntimacao" name="txtTpIntimacao" class="infraText form-control"
                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
+    <div class="<?= $col_combo ?>">
         <div class="input-group mb-3">
             <select size="6" id="selDescricaoTpIntimacao" name="selDescricaoTpIntimacao" multiple="multiple"
-                    class="infraSelect">
+                    class="infraSelect form-control mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                 <?= $strItensSelTpIntimacao ?>
             </select>
             <div id="divOpcoesTpIntimacao">
@@ -26,8 +31,7 @@
                      title="Remover Tipos de Intimação Selecionados" class="infraImg"/>
             </div>
             <input type="hidden" id="hdnTpIntimacao" name="hdnTpIntimacao" value="<?= $_POST['hdnTpIntimacao'] ?>"/>
-            <input type="hidden" id="hdnIdTpIntimacao" name="hdnIdTpIntimacao"
-                   value="<?= $_POST['hdnIdTpIntimacao'] ?>"/>
+            <input type="hidden" id="hdnIdTpIntimacao" name="hdnIdTpIntimacao" value="<?= $_POST['hdnIdTpIntimacao'] ?>"/>
         </div>
     </div>
 </div>
@@ -36,18 +40,17 @@
 
 <!-- DIV UNIDADE -->
 <div class="row linha">
-    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
-        <label id="lblUnidade" name="lblUnidade" for="txtUnidade"
-               class="inputSelect infraLabelObrigatorio">Unidades:</label>
+    <div class="<?= $col_pesq ?>">
+        <label id="lblUnidade" name="lblUnidade" for="txtUnidade" class="inputSelect infraLabelObrigatorio"> Unidades: </label>
         <input type="text" id="txtUnidade" name="txtUnidade" class="infraText form-control"
                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
+    <div class="<?= $col_combo ?>">
         <div class="input-group mb-3">
             <select id="selDescricaoUnidade" name="selDescricaoUnidade" size="6" multiple="multiple"
-                    class="infraSelect">
+                    class="infraSelect form-control mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                 <?= $strItensSelTpUnidade ?>
             </select>
 
@@ -71,11 +74,14 @@
 <!-- FIM DIV UNIDADE -->
 <!--  DIV PERÍODO DE GERAÇÃO  -->
 <div class="row linha">
-    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
+    <div class="col-sm-12 col-md-9 col-lg-9">
         <label id="lblPeriodo" name="lblPeriodo" class="infraLabelObrigatorio">Período de Expedição:</label>
-        <div class="input-group mb-3" style="float: left">
-            <input class="infraText" type="text" name="txtDataInicio" id="txtDataInicio"
-                   onkeypress="return infraMascaraData(this, event);" maxlength="10" style="width: 35%"
+        <div class="input-group input-group-sm mb-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text">De</span>
+            </div>
+            <input class="infraText form-control" type="text" name="txtDataInicio" id="txtDataInicio"
+                   onkeypress="return infraMascaraData(this, event);" maxlength="10"
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
                    value="<?php echo array_key_exists('txtDataInicio', $_POST) ? PaginaSEI::tratarHTML($_POST['txtDataInicio']) : '' ?>"/>
 
@@ -85,14 +91,17 @@
                  title="Selecionar Data Inicial"
                  alt="Selecionar Data Inicial" class="infraImg"
                  onclick="infraCalendario('txtDataInicio',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
-        </div>
-        <div class="input-group mb-3" style="float: left">
-            <input class="infraText" type="text" id="txtDataFim" name="txtDataFim"  style="width: 35%"
+
+            <div class="input-group-prepend ml-1">
+                <span class="input-group-text">Até</span>
+            </div>
+
+            <input class="infraText form-control" type="text" id="txtDataFim" name="txtDataFim"
                    value="<?php echo array_key_exists('txtDataFim', $_POST) ? PaginaSEI::tratarHTML($_POST['txtDataFim']) : '' ?>"
                    onkeypress="return infraMascaraData(this, event);" maxlength="10"
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
 
-            <img style="margin-left: 4px;" class="imgCalendario"
+            <img class="imgCalendario"
                  src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
                  id="imgDataFim"
                  title="Selecionar Data Final"
@@ -104,13 +113,11 @@
 <!--  FIM PERÍODO DE GERAÇÃO  -->
 <!--  Tipo Destinatario  -->
 <div class="row linha">
-    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
-        <label id="lblTpDest" name="lblTpDest" class="infraLabelObrigatorio">Tipo
-            de
-            Destinatário:</label>
+    <div class="col-md-5 col-lg-5 col-xl-5">
+        <label id="lblTpDest" name="lblTpDest" class="infraLabelObrigatorio"> Tipo de Destinatário: </label>
         <select id="selTipoDest" name="selTipoDest"
                 class="infraSelect form-control"
-                tabindex="504">
+                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
             <?php if ($_POST['selTipoDest'] == "") { ?>
                 <option value="" selected>Todos</option>
                 <option value="N"> Pessoa Física</option>
@@ -132,11 +139,12 @@
 </div>
 <!--  Tipo Destinatario - FIM  -->
 <div class="row linha">
-    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
-        <label id="lblSituacao" name="lblSituacao" for="selSituacao" class="infraLabelObrigatorio">Situação da
-            Intimação:</label>
-        <select size="6" id="selSituacao" name="selSituacao" class="infraSelect" multiple="" rows="7"
-                tabindex="502">
+    <div class="<?= $col_combo ?>">
+        <label id="lblSituacao" name="lblSituacao" for="selSituacao" class="infraLabelObrigatorio">
+            Situação da Intimação:
+        </label>
+        <select size="6" id="selSituacao" name="selSituacao" class="infraSelect form-control" multiple="" rows="7"
+                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
             <?php echo $strSelSituacao; ?>
         </select>
     </div>

@@ -141,15 +141,15 @@ switch ($_GET['acao']) {
                     $arrParametrosAceite['id_acesso_externo'] = $_GET['id_acesso_externo'];
 
                     $objAceiteDTO = $objMdPetIntAceiteRN->processarAceiteManual($arrParametrosAceite);
+
+                    echo "<script>";
+                    echo "parent.location.reload();";
+                    echo "</script>";
+
                 } catch (Exception $e) {
                     PaginaSEIExterna::getInstance()->processarExcecao($e);
                 }
 
-                echo "<script>";
-                echo "window.parent.location.reload();";
-                echo "window.close();";
-                echo "</script>";
-                die;
             }
         } catch (Exception $e) {
             PaginaSEIExterna::getInstance()->processarExcecao($e);

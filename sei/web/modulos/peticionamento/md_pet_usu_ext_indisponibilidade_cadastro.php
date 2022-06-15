@@ -113,7 +113,7 @@ $qtdArrAcoesRemover = (is_array($arrAcoesRemover) ? count($arrAcoesRemover) : 0)
 if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
 
     if ($_GET['acao_externa'] == 'md_pet_usu_ext_indisponibilidade_consultar') {
-        $arrDados = split("±", $_POST['hdnAnexos'], 3);
+        $arrDados = explode("±", $_POST['hdnAnexos'], 3);
         array_push($arrAcoesRemover, $arrDados[0]);
     }
 

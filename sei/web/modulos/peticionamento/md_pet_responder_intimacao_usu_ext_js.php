@@ -44,12 +44,15 @@
         var formatoDigitalizado = document.getElementById('rdoDigitalizado');
         var divTipoConferencia = document.getElementById('divTipoConferencia');
         var selTipoConferencia = document.getElementById('selTipoConferencia');
+        var divTipoConferenciaBotao = document.getElementById('divTipoConferenciaBotao');
         selTipoConferencia.value = 'null';
 
         if (formatoDigitalizado.checked) {
-            divTipoConferencia.style.display = 'inline-block';
+            divTipoConferencia.style.display = 'block';
+            divTipoConferenciaBotao.style.display = 'none';
         } else {
             divTipoConferencia.style.display = 'none';
+            divTipoConferenciaBotao.style.display = '';
         }
     }
 
@@ -125,7 +128,7 @@
                         //@todo trocar url para a correta do intercorrente ou nova do resposta  
                         parent.infraAbrirJanelaModal('<?= $strResponderIntimacaoModel ?>',
                             770,
-                            480,
+                            500,
                             '', //options
                             false); //modal
                     }else{                
@@ -240,6 +243,7 @@
         document.getElementById('rdoDigitalizado').checked = false;
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
+        document.getElementById('divTipoConferenciaBotao').style.display = 'block';
     }
 
     function limparTabelaDocumento() {
@@ -399,10 +403,8 @@
     }
 
     function mudarSelect(val) {
-        document.getElementById('selectTipoResp').style.display = '';
         infraSelectLimpar('selTipoResposta');
         validacaoAjaxTipoResp(val.value);
-
     }
 
     function validacaoAjaxTipoResp(valor) {
@@ -418,13 +420,10 @@
                 console.log(dados);
             },
             success: function (data) {
+
                 console.log(data);
-                //Mostrando label
-                // document.getElementById('selTipoRespostaDuplo').style.display = '';
-                document.getElementById('resp').style.display = '';
 
                 var selectMultiple = document.getElementById('selTipoResposta');
-
 
                 $.each($(data).find('item'), function (i, j) {
 
@@ -432,6 +431,7 @@
                     opt.value = $(j).attr("id");
                     opt.innerHTML = $(j).attr("descricao");
                     selectMultiple.appendChild(opt);
+                    
                 });
 
                 var div = document.getElementById('selectTipoResp');

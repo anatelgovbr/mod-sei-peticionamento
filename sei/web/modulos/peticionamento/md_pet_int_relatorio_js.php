@@ -1,6 +1,4 @@
-<?php  if(0) {?>
-<script type="javascript">
-<?php } ?>
+<script type="text/javascript">
 
 function inicializar() {
 controlarVisualizacao();
@@ -9,6 +7,28 @@ controlarVisualizacao();
     infraEfeitoTabelas();
     carregarComponenteTipoIntimacao();
     carregarComponenteUnidade();
+
+    if( $('#divInfraAreaTabela').find('table').length == 0 ){
+        $('#divInfraAreaPaginacaoSuperior').hide();
+        $('#divInfraAreaTabela').addClass('mt-3');
+        $('#divInfraAreaTabela > label').addClass('infraLabelOpcional'); 
+    }else{
+        if( $('#divInfraAreaPaginacaoSuperior').find('select').length == 0 ){
+            $('#divInfraAreaPaginacaoSuperior').hide();
+        }else{
+            $('#divInfraAreaPaginacaoSuperior').addClass('mt-4');
+        }
+    }
+
+    //animate scroll quando é grafico
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var c = url.searchParams.get("grafico");
+    if( c !== null ){
+        var nivel = parseInt( $(".infraFieldset").offset().top );
+        divInfraMoverTopo = document.getElementById("divInfraAreaTelaD");
+        $( divInfraMoverTopo ).animate( { scrollTop: nivel - 100 } , 600 );
+    }
 }
 
 function addControlePaginacao(){
@@ -48,7 +68,7 @@ function controlarVisualizacao(){
     if(!chamadaPosterior && !isGrafico && !isPesquisa){
         document.getElementById('divGraficos').style.display = 'none';
         document.getElementById('divTabelaIntimacao').style.display = 'none';
-        document.getElementById('espacamento').style.marginTop = '200px';
+        //document.getElementById('espacamento').style.marginTop = '200px';
     }
 
     setBotoesInferior('');
@@ -187,7 +207,7 @@ function limparCriterios(){
 
     document.getElementById('divTabelaIntimacao').style.display = 'none';
     document.getElementById('divGraficos').style.display = 'none';
-    document.getElementById('espacamento').style.marginTop = '200px';
+    //document.getElementById('espacamento').style.marginTop = '200px';
     document.getElementById('divInfraAreaTela').style.height = '100%';
 
 }
@@ -313,12 +333,4 @@ function carregarComponenteTipoIntimacao(){
 
 }
 
-
-
-
-
-
-<?php  if(0) {?>
 </script>
-<?php } ?>
-    

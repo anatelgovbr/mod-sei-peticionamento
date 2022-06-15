@@ -21,14 +21,14 @@ class MdPetIndisponibilidadeINT extends InfraINT {
 	
 	
 	public static function formatarData($data, $fim){
-		$dataArray = split(' ',$data);
+		$dataArray = explode(' ',$data);
 		
-		$data1 = split('/',$dataArray[0]); 
+		$data1 = explode('/',$dataArray[0]);
 		$data2 = $data1[2] + '/' + $data1[1] + '/' + $data1[0];
 
 		$date = new DateTime($data2);
 
-		$hours = split(':', $dataArray[1]);
+		$hours = explode(':', $dataArray[1]);
 		
 		$date->setTime($hours[0], $hours[1]);
 		

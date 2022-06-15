@@ -37,7 +37,7 @@ require_once 'md_pet_responder_intimacao_usu_ext_js.php';
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'); 
 ?>
-<form id="frmResponderIntimacao"/>
+<form id="frmResponderIntimacao">
 <?php
     PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEIExterna::getInstance()->abrirAreaDados('auto');

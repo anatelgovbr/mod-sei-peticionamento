@@ -88,36 +88,37 @@ try {
     }
     $strResultado = '';
 
-    $strResultado .= '<table width="99%" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
+    $strResultado .= '<table width="100%" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
     $strResultado .= '<caption class="infraCaption">'.PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela,$numRegistros).'</caption>';
     $strResultado .= '<tr>';
     if ($bolCheck) {
-      $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
-
+      $strResultado .= '<th class="infraTh"><div style="width:20px">'.PaginaSEI::getInstance()->getThCheck().'</div></th>'."\n";
     }
-    $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objDTOVinculo,'Razão Social','RazaoSocialNomeVinc',$arrJuridicas).'</th>'."\n";
-    $strResultado .= '<th class="infraTh" width="115px">'.PaginaSEI::getInstance()->getThOrdenacao($objDTOVinculo,'CNPJ','CNPJ',$arrJuridicas).'</th>'."\n";
-    $strResultado .= '<th class="infraTh" width="20px">Ações</th>'."\n";
+    $strResultado .= '<th class="infraTh"><div>'.PaginaSEI::getInstance()->getThOrdenacao($objDTOVinculo,'Razão Social','RazaoSocialNomeVinc',$arrJuridicas).'</div></th>'."\n";
+    $strResultado .= '<th class="infraTh"><div style="width:150px" class="text-center">'.PaginaSEI::getInstance()->getThOrdenacao($objDTOVinculo,'CNPJ','CNPJ',$arrJuridicas).'</div></th>'."\n";
+    $strResultado .= '<th class="infraTh"><div style="width:50px" class="text-center">Ações</div></th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
+    $strResultado .= '<tbody>';
     for($i = 0;$i < $numRegistros; $i++){
 
       $strCssTr = ($strCssTr=='<tr class="infraTrClara">')?'<tr class="infraTrEscura">':'<tr class="infraTrClara">';
       $strResultado .= $strCssTr;
 
       if ($bolCheck){
-        $strResultado .= '<td valign="top" >'.PaginaSEI::getInstance()->getTrCheck($i,$arrJuridicas[$i]->getNumIdContatoVinc(),$arrJuridicas[$i]->getStrRazaoSocialNomeVinc()).'</td>';
+        $strResultado .= '<td valign="top" style="word-break: break-word">'.PaginaSEI::getInstance()->getTrCheck($i,$arrJuridicas[$i]->getNumIdContatoVinc(),$arrJuridicas[$i]->getStrRazaoSocialNomeVinc()).'</td>';
       }
     
       $strResultado .= '<td>'.PaginaSEI::tratarHTML($arrJuridicas[$i]->getStrRazaoSocialNomeVinc()).'</td>';
-      $strResultado .= '<td>'.InfraUtil::formatarCpfCnpj($arrJuridicas[$i]->getStrCNPJ()).'</td>';
-      $strResultado .= '<td align="center">';
+      $strResultado .= '<td class="text-center">'.InfraUtil::formatarCpfCnpj($arrJuridicas[$i]->getStrCNPJ()).'</td>';
+      $strResultado .= '<td class="text-center">';
       
       $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i,$arrJuridicas[$i]->getNumIdContatoVinc());
       
      
       $strResultado .= '</td></tr>'."\n";
     }
+    $strResultado .= '</tbody>';
     $strResultado .= '</table>';
   }
   
@@ -135,43 +136,45 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(':: '.PaginaSEI::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-?>
-
-
-
-#lblRazao {position:absolute;left:0%;top:0%;width:40%;}
-#txtRazao {position:absolute;left:0%;top:40%;width:40%;}
-
-#lblCnpj {position:absolute;left:45%;top:0%;width:15%;}
-#txtCnpj {position:absolute;left:45%;top:40%;width:15%;}
-
-<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-?>
-
-
-<?
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 ?>
-<form id="frmSerieLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&filtro='. $_GET['filtro'].'&tipoDoc='.$_GET['tipoDoc'].'&acao_origem='.$_GET['acao']))?>">
-  <?
-  PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-  PaginaSEI::getInstance()->abrirAreaDados('4.5em');
-  ?>
-  
-  <label id="lblRazao" for="txtRazao" accesskey="" class="infraLabelOpcional">Razão Social:</label>
-  <input type="text" id="txtRazao" name="txtRazao"  class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"  value="<?php echo array_key_exists('txtRazao', $_POST) ? $_POST['txtRazao'] : '' ?>"/>
 
-   <label id="lblCnpj" for="txtCnpj" accesskey="" class="infraLabelOpcional">CNPJ:</label>
-  <input type="text" value="<?php echo array_key_exists('txtCnpj', $_POST) ? $_POST['txtCnpj'] : '' ?>" id="txtCnpj" name="txtCnpj" onkeypress="return infraMascaraCnpj(this, event)"  class="infraText" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+<form id="frmSerieLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&filtro='. $_GET['filtro'].'&tipoDoc='.$_GET['tipoDoc'].'&acao_origem='.$_GET['acao']))?>">
+  
+    <?
+        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+        PaginaSEI::getInstance()->abrirAreaDados('4.5em');
+    ?>
+    
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-6">
+          <div class="form-group">
+            <label for="txtRazao" class="infraLabelOpcional">Razão Social:</label>
+            <input type="text" id="txtRazao" name="txtRazao"  class="infraText form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"  value="<?php echo array_key_exists('txtRazao', $_POST) ? $_POST['txtRazao'] : '' ?>" />
+          </div>
+      </div>
+      <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6">
+          <div class="form-group">
+            <label id="lblCnpj" for="txtCnpj" accesskey="" class="infraLabelOpcional">CNPJ:</label>
+            <input type="text" value="<?php echo array_key_exists('txtCnpj', $_POST) ? $_POST['txtCnpj'] : '' ?>" id="txtCnpj" name="txtCnpj" onkeypress="return infraMascaraCnpj(this, event)"  class="infraText form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+        </div>
+      </div>
+    </div>
+  
+  
+
+   
 
   <?
   PaginaSEI::getInstance()->fecharAreaDados();
+  echo '<div class="md_pet_pessoa_juridica">';
   PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros);
+  echo '</div>';
   PaginaSEI::getInstance()->montarAreaDebug();
   PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
   ?>

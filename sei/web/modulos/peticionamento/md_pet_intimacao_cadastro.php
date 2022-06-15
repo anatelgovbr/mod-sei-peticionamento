@@ -139,28 +139,6 @@ require_once 'md_pet_intimacao_cadastro_js.php';
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-<style type="text/css">
-    #fldOrientacoesDestinatarios {
-        height: auto;
-        width: 96%;
-        margin-bottom: 11px;
-    }
-
-    #fldDestinatarios {
-        height: auto;
-        width: 100%;
-        margin-bottom: 11px;
-    }
-
-    .sizeFieldset {
-        height: auto;
-        width: 86%;
-    }
-
-    .fieldsetClear {
-        border: none !important;
-    }
-</style>
 
 <form id="frmMdPetIntimacaoCadastro"
       method="post"
@@ -169,7 +147,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <? PaginaSEI::getInstance()->abrirAreaDados(); ?>
     <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?><br>
     <div class="row">
-        <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="fldOrientacoesDestinatarios" class="infraFieldset sizeFieldset form-control"
                       style="width:auto; min-height: 250px">
                 <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Destinatário</legend>
@@ -183,29 +161,32 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <div id="divOptTipoPessoaFisica" class="infraDivRadio">
-                            <div class="infraRadioDiv ">
-                                <input type="radio" id="tipoPessoaFisica" name="tipoPessoa" value="F"
-                                       class="infraRadioInput"
-                                       onclick="intimacaoTipoPessoa(this.value)"
-                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                                <label class="infraRadioLabel" for="tipoPessoaFisica"></label>
+                            <div class="form-group">
+                                <div class="infraRadioDiv ">
+                                    <input type="radio" id="tipoPessoaFisica" name="tipoPessoa" value="F"
+                                        class="infraRadioInput"
+                                        onclick="intimacaoTipoPessoa(this.value)"
+                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                    <label class="infraRadioLabel" for="tipoPessoaFisica"></label>
+                                </div>
+                                <span id="spnFisica">
+                                    <label id="lblFisica" for="tipoPessoaFisica" accesskey="" class="infraLabelRadio">Pessoa Física</label><br>
+                                </span>
                             </div>
-                            <span id="spnFisica">
-                            <label id="lblFisica" for="tipoPessoaFisica" accesskey=""
-                                   class="infraLabelRadio">Pessoa Física</label><br>
-                        </span>
                         </div>
                         <div id="divOptTipoPessoaJuridica" class="infraDivRadio">
-                            <div class="infraRadioDiv ">
-                                <input type="radio" id="tipoPessoaJuridica" name="tipoPessoa" value="J"
-                                       class="infraRadioInput"
-                                       onclick="intimacaoTipoPessoa(this.value)"
-                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                                <label class="infraRadioLabel" for="tipoPessoaJuridica"></label>
+                            <div class="form-group">
+                                <div class="infraRadioDiv ">
+                                    <input type="radio" id="tipoPessoaJuridica" name="tipoPessoa" value="J"
+                                        class="infraRadioInput"
+                                        onclick="intimacaoTipoPessoa(this.value)"
+                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                    <label class="infraRadioLabel" for="tipoPessoaJuridica"></label>
+                                </div>
+                                <span id="spnJuridica">
+                                    <label id="lblJuridica" for="tipoPessoaJuridica" accesskey="" class="infraLabelRadio">Pessoa Jurídica</label>
+                                </span>
                             </div>
-                            <span id="spnJuridica">
-                            <label id="lblJuridica" for="tipoPessoaJuridica" accesskey="" class="infraLabelRadio">Pessoa Jurídica</label>
-                        </span>
                         </div>
                     </div>
                 </div>
@@ -222,22 +203,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>
-<style>
-
-    #divTipoPessoa {
-        margin-left: 20px;
-
-    }
-
-    #lblFisica {
-        font-weight: bold;
-    }
-
-    #lblJuridica {
-        font-weight: bold;
-    }
-
-</style>
 
 <script type="text/javascript">
 

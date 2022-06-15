@@ -9,7 +9,9 @@
 require_once dirname(__FILE__).'/../../../SEI.php';
 
 class MdPetTipoPoderLegalRN extends InfraRN {
-	
+
+    public static $PODER_LEGAL_CUMPRIMENTO = 1;
+
 	public function __construct() {
 		parent::__construct ();
 	}
@@ -185,6 +187,5 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 			throw new InfraException ('Erro reativando Tipo Poder Legal, ', $e);
 		}
 	}
-	
 }
 ?>

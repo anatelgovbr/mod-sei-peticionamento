@@ -303,7 +303,7 @@
          * @since  08/12/2016
          * @author André Luiz <andre.luiz@castgroup.com.br>
          */
-        public static function montarSelectHipoteseLegal()
+        public static function montarSelectHipoteseLegal($booOnlyOptions = false)
         {
             $objMdPetHipoteseLegalDTO = new MdPetHipoteseLegalDTO();
             $objMdPetHipoteseLegalDTO->setStrNivelAcessoHl(ProtocoloRN::$NA_RESTRITO);
@@ -315,18 +315,23 @@
 
             $objHipoteseLegalPetRN       = new MdPetHipoteseLegalRN();
             $arrObjMdPetHipoteseLegalDTO = $objHipoteseLegalPetRN->listar($objMdPetHipoteseLegalDTO);
-            $strOptions                  = '<select id="selHipoteseLegal" name="selHipoteseLegal" class="infraSelect form-control"><option value=""> </option>';
+           
+            $strOptions = '<option value=""></option>';
+        	if( is_array( $arrObjMdPetHipoteseLegalDTO ) && count( $arrObjMdPetHipoteseLegalDTO ) > 0){
+        		foreach ($arrObjMdPetHipoteseLegalDTO as $objMdPetHipoteseLegalDTO) {
+	        		$nomeBaseLegal = $objMdPetHipoteseLegalDTO->getStrNome() . ' (' . $objMdPetHipoteseLegalDTO->getStrBaseLegal() . ')';
+	        		$strOptions .= '<option value="' . $objMdPetHipoteseLegalDTO->getNumIdHipoteseLegalPeticionamento() . '">';
+	        		$strOptions .= $nomeBaseLegal;
+	        		$strOptions .= '</option>';
+	        	}
+        	}
 
-            foreach ($arrObjMdPetHipoteseLegalDTO as $objMdPetHipoteseLegalDTO) {
-                $nomeBaseLegal = $objMdPetHipoteseLegalDTO->getStrNome() . ' (' . $objMdPetHipoteseLegalDTO->getStrBaseLegal() . ')';
-                $strOptions .= '<option value="' . $objMdPetHipoteseLegalDTO->getNumIdHipoteseLegalPeticionamento() . '">';
-                $strOptions .= $nomeBaseLegal;
-                $strOptions .= '</option>';
+            if($booOnlyOptions){
+                return $strOptions;
             }
 
-            $strOptions .= '</select>';
-
-            return $strOptions;
+            return '<select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)"
+                        tabindex="'. PaginaSEIExterna::getInstance()->getProxTabDados() . '">'.$strOptions.'</select>';
         }
 
         /**
@@ -459,7 +464,7 @@
          * @return string
          * @author Marcelo Bezerra
          */
-        public static function montarSelectHipoteseLegalRespostaIntimacao()
+        public static function montarSelectHipoteseLegalRespostaIntimacao($booOnlyOptions = false)
         {
         	$objMdPetHipoteseLegalDTO = new MdPetHipoteseLegalDTO();
         	$objMdPetHipoteseLegalDTO->setStrNivelAcessoHl(ProtocoloRN::$NA_RESTRITO);
@@ -469,13 +474,11 @@
         	$objMdPetHipoteseLegalDTO->retNumIdHipoteseLegalPeticionamento();
         	$objMdPetHipoteseLegalDTO->setOrd("Nome", InfraDTO::$TIPO_ORDENACAO_ASC);
         	
-        	$objHipoteseLegalPetRN       = new MdPetHipoteseLegalRN();
+        	$objHipoteseLegalPetRN = new MdPetHipoteseLegalRN();
         	$arrObjMdPetHipoteseLegalDTO = $objHipoteseLegalPetRN->listar($objMdPetHipoteseLegalDTO);
-        	$strOptions  = '<select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)"
-                        tabindex="'. PaginaSEIExterna::getInstance()->getProxTabDados() . '"><option value=""> </option>';
         	
+            $strOptions = '<option value=""></option>';
         	if( is_array( $arrObjMdPetHipoteseLegalDTO ) && count( $arrObjMdPetHipoteseLegalDTO ) > 0){
-	        	
         		foreach ($arrObjMdPetHipoteseLegalDTO as $objMdPetHipoteseLegalDTO) {
 	        		$nomeBaseLegal = $objMdPetHipoteseLegalDTO->getStrNome() . ' (' . $objMdPetHipoteseLegalDTO->getStrBaseLegal() . ')';
 	        		$strOptions .= '<option value="' . $objMdPetHipoteseLegalDTO->getNumIdHipoteseLegalPeticionamento() . '">';
@@ -483,12 +486,14 @@
 	        		$strOptions .= '</option>';
 	        	}
         	}
-        	
-        	$strOptions .= '</select>';
-        	
-        	return $strOptions;
-        }
 
+            if($booOnlyOptions){
+                return $strOptions;
+            }
+
+            return '<select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)"
+                        tabindex="'. PaginaSEIExterna::getInstance()->getProxTabDados() . '">'.$strOptions.'</select>';
+        }
 
         public static function removerNullsArr($ids){
             if(count($ids)>0 ) {
@@ -505,5 +510,3 @@
         }
 
     }
-
-

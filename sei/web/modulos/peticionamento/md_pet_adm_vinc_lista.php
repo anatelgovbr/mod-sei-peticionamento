@@ -22,16 +22,16 @@ try {
             $strTitulo = 'Administrar Vinculações e Procurações Eletrônicas';
             $strColuna10 = 'CPF/CNPJ Outorgante';
             $strColuna11 = 'CNPJ';
-            $strColuna20 = 'Nome/Razão Social do Outorgante';
+            $strColuna20 = 'Nome/Razão Social Outorgante';
             $strColuna21 = 'RazaoSocialNomeVinc';
             $isAdm = true;
             break;
 
         case 'md_pet_adm_vinc_consultar':
             $strTitulo = 'Vinculações e Procurações Eletrônicas';
-            $strColuna10 = 'CPF/CNPJ do Outorgante';
+            $strColuna10 = 'CPF/CNPJ Outorgante';
             $strColuna11 = 'CNPJ';
-            $strColuna20 = 'Nome/Razão Social do Outorgante';
+            $strColuna20 = 'Nome/Razão Social Outorgante';
             $strColuna21 = 'RazaoSocialNomeVinc';
             if (isset($_POST['hdnIdProcedimento'])) {
                 $idProcedimento = $_POST['hdnIdProcedimento'];
@@ -46,14 +46,17 @@ try {
 
     }
 
-    $strColuna30 = 'CPF do Outorgado';
+    $strColuna30 = 'CPF Outorgado';
     $strColuna31 = 'CpfProcurador';
-    $strColuna40 = 'Nome do Outorgado';
+    $strColuna40 = 'Nome Outorgado';
     $strColuna41 = 'NomeProcurador';
     $strColuna50 = 'Tipo de Vínculo';
     $strColuna51 = 'TipoRepresentante';
     $strColuna60 = 'Situação';
     $strColuna61 = 'StaEstado';
+    $strColuna70 = 'Natureza do Vínculo';
+    $strColuna71 = 'TpVinc';
+    $strColuna80 = 'Tipo de Poder';
 
     $strCpf = '';
     $strRazaoSocial = '';
@@ -63,7 +66,8 @@ try {
     $strSlTipoViculo = '';
 
     if (!$arvoreVincListar) {
-        PaginaSEI::getInstance()->salvarCamposPost(array('txtCnpj', 'txtRazaoSocial', 'txtCpf', 'txtNomeProcurador', 'selStatus', 'slTipoViculo'));
+        PaginaSEI::getInstance()->limparCampos();
+        PaginaSEI::getInstance()->salvarCamposPost(array('txtCnpj', 'txtRazaoSocial', 'txtCpf', 'txtNomeProcurador', 'selStatus', 'slTipoViculo', 'selNaturezaVinculo', 'selTipoPoder'));
         $strLinkConsultaDocumento = SessaoSEI::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_doc_procuracao_consultar&id_documento=');
         $strCnpj = trim(PaginaSEI::getInstance()->recuperarCampo('txtCnpj'));
         $strCnpj = InfraUtil::retirarFormatacao($strCnpj);
@@ -82,6 +86,8 @@ try {
         $strNome = trim(PaginaSEI::getInstance()->recuperarCampo('txtNomeProcurador'));
         $strStatus = trim(PaginaSEI::getInstance()->recuperarCampo('selStatus'));
         $strSlTipoViculo = trim(PaginaSEI::getInstance()->recuperarCampo('slTipoViculo'));
+        $selNaturezaVinculo = trim(PaginaSEI::getInstance()->recuperarCampo('selNaturezaVinculo'));
+        $selTipoPoder = PaginaSEI::getInstance()->recuperarCampo('selTipoPoder');
 
         $arrComandos = array();
         $arrComandos[] = '<button type="submit" accesskey="p" id="btnPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
@@ -118,6 +124,32 @@ try {
     if ($strSlTipoViculo != '' && $strSlTipoViculo != 'null') {
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante($strSlTipoViculo);
     }
+    
+    if(!is_null($selNaturezaVinculo) && !empty($selNaturezaVinculo)){
+        $objMdPetVincRepresentantDTO->setStrTpVinc($selNaturezaVinculo);
+    }
+    
+    if(is_countable($selTipoPoder)){
+
+        // Retorna os Vínculos que teem o(s) Tipo(s) de Poder(es) selecionados: 
+        $objMdPetRelVincRepTpPoderRN    = new MdPetRelVincRepTpPoderRN();
+        $objMdPetRelVincRepTpPoderDTO   = new MdPetRelVincRepTpPoderDTO();
+        $objMdPetRelVincRepTpPoderDTO->setNumIdTipoPoderLegal($selTipoPoder, InfraDTO::$OPER_IN);
+        $objMdPetRelVincRepTpPoderDTO->retNumIdVinculoRepresent();
+        $arrMdPetRelVincRepTpPoder = InfraArray::converterArrInfraDTO($objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO), 'IdVinculoRepresent');
+        
+        if(is_countable($arrMdPetRelVincRepTpPoder) && count($arrMdPetRelVincRepTpPoder) > 0){
+
+            $tipoVinculo = empty($strSlTipoViculo) || is_null($strSlTipoViculo) ? ['L','E'] : [$strSlTipoViculo];
+
+            $objMdPetVincRepresentantDTO->adicionarCriterio(
+                array('IdMdPetVinculoRepresent', 'TipoRepresentante')
+                , array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IN)
+                , array($arrMdPetRelVincRepTpPoder, $tipoVinculo), InfraDTO::$OPER_LOGICO_OR);
+            
+        }
+
+    }
 
     //Validação para verificar se a unidade atual é compatival com a unidade de configuração do vinculo
     $idUnidadeAtual = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
@@ -136,7 +168,7 @@ try {
     }
 
     $objMdPetVincRepresentantDTO->retTodos();
-
+    
     //$objMdPetVincRepresentantDTO->setNumIdContatoOutorg();
     $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
     $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
@@ -145,6 +177,7 @@ try {
     $objMdPetVincRepresentantDTO->retStrCpfProcurador();
     $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
     $objMdPetVincRepresentantDTO->retStrCNPJ();
+    $objMdPetVincRepresentantDTO->retStrTpVinc();
     $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
     $objMdPetVincRepresentantDTO->retStrNomeProcurador();
     $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
@@ -211,10 +244,12 @@ if ($arrIdMdPetVinculoRepresent) {
     $objMdPetVincDocumentoDTO->retDblIdDocumento();
     $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
     $objMdPetVincDocumentoDTO->retNumIdMdPetVinculoRepresent();
-    $objMdPetVincDocumentoDTO->adicionarCriterio(array('TipoDocumento', 'TipoDocumento'),
+    $objMdPetVincDocumentoDTO->adicionarCriterio(
+        array('TipoDocumento', 'TipoDocumento'),
         array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
         array('E', 'P'),
-        array(InfraDTO::$OPER_LOGICO_OR));
+        array(InfraDTO::$OPER_LOGICO_OR)
+    );
 
     $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
     $arrDocumento = [];
@@ -223,27 +258,32 @@ if ($arrIdMdPetVinculoRepresent) {
     }
 }
 $arrSelectTipoVinculo = array(
-    MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
     MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsável Legal',
+    MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
+    MdPetVincRepresentantRN::$PE_PROCURADOR => 'Procurador',
+    MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES => 'Procurador Simples',
 );
 $numRegistros = count($arrObjMdPetVincRepresentantDTO);
 
 if ($numRegistros > 0) {
 
     $strResultado = '';
-    $strSumarioTabela = 'Vinculações e Procurações Eletrônicas';
-    $strCaptionTabela = 'Vinculações e Procurações Eletrônicas';
-    $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">';
-    $strResultado .= '<caption class="infraCaption">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
+    $strSumarioTabela = $strCaptionTabela = 'Vinculações e Procurações Eletrônicas';
+    $strResultado .= '<table class="infraTable" summary="' . $strSumarioTabela . '">';
+    $strResultado .= '<caption class="infraCaption text-left">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
+    $strResultado .= '<thead>';
     $strResultado .= '<tr>';
-    $strResultado .= '<th class="infraTh" style="width:160px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna10, $strColuna11, $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh  style="width: 10%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna20, $strColuna21, $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:120px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna30, $strColuna31, $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:150px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna40, $strColuna41, $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:120px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna50, $strColuna51, $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:80px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna60, $strColuna61, $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" align="center" style="width:90px">Ações</th>';
+    $strResultado .= '<th class="infraTh"><div style="width:110px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna70, $strColuna71, $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:130px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna10, $strColuna11, $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:180px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna20, $strColuna21, $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:120px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna30, $strColuna31, $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:150px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna40, $strColuna41, $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:130px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna50, $strColuna51, $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div>'.$strColuna80.'</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:90px; text-align: center">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna60, $strColuna61, $arrObjMdPetVincRepresentantDTO) . '</siv></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:90px; text-align: center">Ações</div></th>';
     $strResultado .= '</tr>';
+    $strResultado .= '</thead><tbody>';
     //Populando obj para tabela
 
     for ($i = 0; $i < $numRegistros; $i++) {
@@ -273,22 +313,18 @@ if ($numRegistros > 0) {
         $objContatoDTO->retDblCpf();
         $objContatoRN = new ContatoRN();
         $objContatoRN = $objContatoRN->consultarRN0324($objContatoDTO);
-        if ($objContatoRN->getDblCpf() == null) {
-            $strResultado .= '<td>' . InfraUtil::formatarCnpj($objContatoRN->getDblCnpj()) . '</td>';
-        } else {
-            $strResultado .= '<td>' . InfraUtil::formatarCpf($objContatoRN->getDblCpf()) . '</td>';
-        }
-        $strResultado .= '<td style="word-wrap: break-word;">' . PaginaSEI::tratarHTML($arrObjMdPetVincRepresentantDTO[$i]->getStrRazaoSocialNomeVinc()) . '</td>';
-        $strResultado .= '<td>' . InfraUtil::formatarCpf($arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador()) . '</td>';
-        $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeProcurador() . '</td>';
-        $strResultado .= '<td>' . $strTipoRepresentante . '</td>';
-        $strResultado .= '<td align="center">' . $strLabelSituacao . '</td>';
 
-        if ($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
-            $title = 'Consultar Vinculação';
-        } else {
-            $title = 'Consultar Procuração';
-        }
+        $strResultado .= '<td><div style="width:110px">' . PaginaSEI::tratarHTML($arrObjMdPetVincRepresentantDTO[$i]->getNaturezaVinculo()) . '</div></td>';
+        $strResultado .= '<td><div style="width:130px">' . (($objContatoRN->getDblCpf() == null) ? InfraUtil::formatarCnpj($objContatoRN->getDblCnpj()) : InfraUtil::formatarCpf($objContatoRN->getDblCpf()) ) . '</div></td>';
+        $strResultado .= '<td><div style="width:180px; word-wrap: break-word">' . PaginaSEI::tratarHTML($arrObjMdPetVincRepresentantDTO[$i]->getStrRazaoSocialNomeVinc()) . '</div></td>';
+        $strResultado .= '<td><div style="width:110px">' . InfraUtil::formatarCpf($arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador()) . '</div></td>';
+        $strResultado .= '<td><div style="width:150px">' . $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeProcurador() . '</div></td>';
+        $strResultado .= '<td><div style="width:130px">' . $strTipoRepresentante . '</div></td>';
+        $strResultado .= '<td><div class="text-sm" style="width:180px; word-wrap: break-word; font-size: .8rem">'.$arrObjMdPetVincRepresentantDTO[$i]->getStrTipoPoderesLista().'</div></td>';
+        $strResultado .= '<td><div style="text-align: center; width:90px">' . $strLabelSituacao . '</div></td>';
+
+        $title = 'Consultar' . (($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) ? 'Vinculação' : 'Procuração');
+        
         $acaoConsulta = '';
         $strLinkConsultaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento=' . $idDocumento . '&arvore=1');
         $iconeConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="' . $title . '" alt="' . $title . '" class="infraImg" />';
@@ -332,11 +368,13 @@ if ($numRegistros > 0) {
 
 
     }
-    $strResultado .= '</table>';
+    $strResultado .= '</tbody></table>';
 
 }
 
 $strSelStatus = MdPetVinculoINT::montarSelectStaEstado('null', '&nbsp;', $strStatus);
+$strOptionsTiposPoder = MdPetTipoPoderLegalINT::montarOptionsTipoPoder($selTipoPoder);
+
 PaginaSEI::getInstance()->montarDocType();
 PaginaSEI::getInstance()->abrirHtml();
 PaginaSEI::getInstance()->abrirHead();
@@ -344,133 +382,164 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
+require_once('md_pet_adm_vinc_lista_css.php');
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 ?>
 function desvincularProcuracao(link){
-infraAbrirJanela(link,'janelaDesvinculo',700,450,'location=0,status=1,resizable=1,scrollbars=1');
+    infraAbrirJanela(link,'janelaDesvinculo',700,450,'location=0,status=1,resizable=1,scrollbars=1');
 }
 
 function inicializar(){
-infraEfeitoTabelas();
+    infraEfeitoTabelas();
 }
 <?php
 PaginaSEI::getInstance()->fecharJavaScript();
-require_once 'md_pet_adm_vinc_lista_css.php';
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
 ?>
 
-
-<form id="frmPesquisa" method="post"
-      action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
+<form id="frmPesquisa" method="post" action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
     <?
-    if ($arvoreVincListar) {
+    if ($arvoreVincListar):
+
         PaginaSEI::getInstance()->abrirAreaDados("auto");
-        ?>
+    ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= $idProcedimento ?>">
+                <p class="mb-4 mt-2" style="font-size: .875rem">A tabela abaixo exibe as vinculações ativas aos Interessados do presente processo como Responsável Legal, Procurador Especial e Procurador Simples.</p>
+            </div>
+        </div>
+
+    <?
+    else:
+    
+        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+
+    ?>
+
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= $idProcedimento ?>">
-                <p>A tabela abaixo exibe as vinculações ativas aos Interessados do presente processo como Responsável
-                    Legal,
-                    Procurador Especial e Procurador Simples.</p>
+                <p class="mb-4 mt-2" style="font-size: .875rem">
+                <? if ($isAdm): ?>
+                    A Vinculação a Pessoa Jurídica como Responsável Legal pode ser Suspensa, a partir de indício de falsidade ou
+                    de prática de ato ilícito, devendo indicar o Número SEI de documento com registro do indício e da diligência
+                    para sua investigação, afetando o vínculo do Usuário Externo com a Pessoa Jurídica e Procurações Eletrônicas
+                    por ele geradas em sua representação. Em situações que o Usuário Externo não consiga realizar diretamente,
+                    também é possível Alterar o Responsável Legal.
+                <? else: ?>
+                    Este relatório permite visualizar as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador
+                    Especial e Procurador Simples concedidas no âmbito do SEI.
+                <? endif ?>
+                </p>
             </div>
         </div>
 
-        <?
-    }else {
-    PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-
-        if ($isAdm) { ?>
-            <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <p>A Vinculação a Pessoa Jurídica como Responsável Legal pode ser Suspensa, a partir de indício de falsidade ou
-                        de prática de ato ilícito, devendo indicar o Número SEI de documento com registro do indício e da diligência
-                        para sua investigação, afetando o vínculo do Usuário Externo com a Pessoa Jurídica e Procurações Eletrônicas
-                        por ele geradas em sua representação. Em situações que o Usuário Externo não consiga realizar diretamente,
-                        também é possível Alterar o Responsável Legal.</p>
+        <div class="row">
+            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                <div class="form-group">
+                    <label id="lblNaturezaVinculo" for="selNaturezaVinculo" class="infraLabelOpcional"><?= $strColuna70 ?>:</label>
+                    <select id="selNaturezaVinculo" name="selNaturezaVinculo" onchange="this.form.submit()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <option value=""></option>
+                        <option value="F" <?= $selNaturezaVinculo == 'F' ? 'selected="selected"' : '' ?> >Pessoa Física</option>
+                        <option value="J" <?= $selNaturezaVinculo == 'J' ? 'selected="selected"' : '' ?> >Pessoa Jurídica</option>
+                    </select>
                 </div>
             </div>
-
-        <? } else { ?>
-            <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <p>Este relatório permite visualizar as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador
-                        Especial e Procurador Simples concedidas no âmbito do SEI.</p>
+            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                <div class="form-group">
+                    <label id="lblCnpj" for="txtCnpj" class="infraLabelOpcional"><?= $strColuna10 ?>:</label>
+                    <input type="text" id="txtCnpj" name="txtCnpj" onchange="this.form.submit()" class="infraText form-control"
+                        value="<?= $strCnpj ?>" maxlength="18"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
+                        onkeydown="return mascararCampoCnpjCpf(this);" autofocus/>
                 </div>
             </div>
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                <div class="form-group">
+                    <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelOpcional"><?= $strColuna20 ?>:</label>
+                    <input type="text" id="txtRazaoSocial" name="txtRazaoSocial" onchange="this.form.submit()" class="infraText form-control"
+                        value="<?= PaginaSEI::tratarHTML($strRazaoSocial) ?>" maxlength="100"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-2">
+                <div class="form-group">
+                    <label id="lblCpf" for="txtCpf" class="infraLabelOpcional"><?= $strColuna30 ?>:</label>
+                    <input type="text" id="txtCpf" name="txtCpf" onchange="this.form.submit()" class="infraText form-control"
+                        value="<?= $strCpf ?>" maxlength="100"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
+                        onkeypress="return infraMascaraCPF(this,event,250);"/>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-8 col-lg-3 col-xl-4">
+                <div class="form-group">
+                    <label id="lblNomeProcurador" for="txtNomeProcurador" class="infraLabelOpcional"><?= $strColuna40 ?>:</label>
+                    <input type="text" id="txtNomeProcurador" name="txtNomeProcurador" onchange="this.form.submit()" class="infraText form-control"
+                        value="<?= PaginaSEI::tratarHTML($strNome) ?>" maxlength="100"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                <div class="form-group">
+                    <label id="lblTipoVinculo" for="slTipoVinculo" class="infraLabelOpcional"><?= $strColuna50 ?>:</label>
+                    <select name="slTipoViculo" id="slTipoViculo" class="infraSelect form-control" onchange="this.form.submit()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <option value=""></option>
+                        <?php if ($arrSelectTipoVinculo) : ?>
+                            <?php foreach ($arrSelectTipoVinculo as $chaveTipoVinculo => $itemTipoVinculo) : ?>
+                                <option value="<?php echo $chaveTipoVinculo; ?>" <?= ($chaveTipoVinculo == $strSlTipoViculo) ? 'selected="selected"' : '' ?>>
+                                    <?= $itemTipoVinculo ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                <div class="form-group">
+                    <label id="lblStatus" for="selStatus" class="infraLabelOpcional"><?= $strColuna60 ?>:</label>
+                    <select id="selStatus" name="selStatus" onchange="this.form.submit()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <?= $strSelStatus ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                <div class="form-group">
+                    <label id="lblTipoPoder" for="selTipoPoder" class="infraLabelOpcional"><?= $strColuna80 ?>:</label>
+                    <select id="selTipoPoder" name="selTipoPoder[]" onblur="this.form.submit()" class="infraSelect multipleSelect form-control" multiple="multiple" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <!-- $strOptionsTiposPoder ?> -->
+                        <?= MDPetTipoPoderLegalINT::montarArrSelect(null, null, $selTipoPoder) ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="camposForm">
 
-        <? } ?>
-    <div class="row">
-        <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
-            <label id="lblCnpj" for="txtCnpj" class="infraLabelOpcional"><?= $strColuna10 ?>:</label>
-            <input type="text" id="txtCnpj" name="txtCnpj" class="infraText form-control"
-                   value="<?= $strCnpj ?>" maxlength="18"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
-                   onkeydown="return mascararCampoCnpjCpf(this);"
-            />
-        </div>
-        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-4">
-            <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelOpcional"><?= $strColuna20 ?>:</label>
-            <input type="text" id="txtRazaoSocial" name="txtRazaoSocial" class="infraText form-control"
-                   value="<?= PaginaSEI::tratarHTML($strRazaoSocial) ?>" maxlength="100"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-        </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label id="lblCpf" for="txtCpf" class="infraLabelOpcional"><?= $strColuna30 ?>:</label>
-            <input type="text" id="txtCpf" name="txtCpf" class="infraText form-control"
-                   value="<?= $strCpf ?>" maxlength="100"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
-                   onkeypress="return infraMascaraCPF(this,event,250);"/>
-        </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label id="lblNomeProcurador" for="txtNomeProcurador" class="infraLabelOpcional"><?= $strColuna40 ?>
-                :</label>
-            <input type="text" id="txtNomeProcurador" name="txtNomeProcurador" class="infraText form-control"
-                   value="<?= PaginaSEI::tratarHTML($strNome) ?>" maxlength="100"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-        </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label id="lblTipoVinculo"
-                   for="slTipoVinculo"
-                   class="infraLabelOpcional">Tipo de Vínculo:</label>
-            <select name="slTipoViculo" id="slTipoViculo" class="infraSelect form-control"
-                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
-                <option value=""></option>
-                <?php if ($arrSelectTipoVinculo) : ?>
-                    <?php foreach ($arrSelectTipoVinculo as $chaveTipoVinculo => $itemTipoVinculo) : ?>
-                        <option value="<?php echo $chaveTipoVinculo; ?>"
-                            <?php if ($chaveTipoVinculo == $strSlTipoViculo) { ?>
-                                selected="selected"
-                            <?php } ?>>
-                            <?php echo $itemTipoVinculo; ?>
-                        </option>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </select>
-        </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label id="lblStatus" for="selStatus" class="infraLabelOpcional"><?= $strColuna60 ?></label>
-            <select id="selStatus" name="selStatus" onchange="this.form.submit()" class="infraSelect form-control"
-                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                <?= $strSelStatus ?>
-            </select>
-        </div>
-    </div>
-    <div id="camposForm">
+    <?php
 
-                <?php //}
         PaginaSEI::getInstance()->fecharAreaDados();
-        }
-        PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-        //PaginaSEI::getInstance()->montarAreaDebug();
-        PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
-        ?>
+    
+    endif;
+
+    echo '<div class="table-responsive">';
+    PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+    echo '</div>';
+    //PaginaSEI::getInstance()->montarAreaDebug();
+    PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+
+    ?>
+    </div>
+
 </form>
-<?
+<? 
+
 require_once 'md_pet_adm_vinc_lista_js.php';
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
+
 ?>

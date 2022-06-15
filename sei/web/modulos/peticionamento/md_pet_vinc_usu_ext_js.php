@@ -219,7 +219,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             cnpjUsuExt=cnpjUsuExt.replace(/\.(\d{3})(\d)/,".$1/$2");
             //Coloca um hífen depois do bloco de quatro dígitos
             cnpjUsuExt=cnpjUsuExt.replace(/(\d{4})(\d)/,"$1-$2");
-            
+
             obj.value = cnpjUsuExt;
         }
 
@@ -373,7 +373,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-        $("#txtRazaoSocialWsdl").val(''); 
+        $("#txtRazaoSocialWsdl").val('');
 
         $.ajax({
             dataType: 'xml',
@@ -394,7 +394,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 var idCidade = $('selCidade', data).text();
                 createOptionCidade(idCidade, nomeCidade);
 
-                $("#txtRazaoSocialWsdl").val($('txtRazaoSocial', data).text()); 
+                $("#txtRazaoSocialWsdl").val($('txtRazaoSocial', data).text());
 
                 var success = $.trim($('success', data).text()).length;
                 var txtSuccess = $.trim($('success', data).text());
@@ -450,7 +450,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                         })
                         .val(valor)
                         $(cmpHidden).insertAfter($(campo));
-                        
+
                         if (noCampo != 'slTipoInteressado') {
                             $(cmpHidden).addClass('disabled');
                             $(campo).attr('disabled', true)
@@ -461,7 +461,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                             if (valor!=''){
                                 document.getElementById('isAlteracaoResponsavelLegal').value = '1';
                                 document.getElementById('hdnIsAlteracao').value = '1';
-                                document.getElementById('hdnIdContatoNovo').value = '1';                            	
+                                document.getElementById('hdnIdContatoNovo').value = '1';
 //                              document.getElementById('txtNumeroCpfResponsavel').value = '';
 //                              document.getElementById('txtNomeResponsavelLegal').value = '';
 //                              document.getElementById('txtMotivoAlteracaoRespLegal').value = '';
@@ -538,13 +538,18 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     function exibirTipoConferencia() {
         var formatoDigitalizado = document.getElementById('rdoDigitalizado');
         var divTipoConferencia = document.getElementById('divTipoConferencia');
+        var divTipoConferenciaBotao = document.getElementById('divTipoConferenciaBotao');
         var selTipoConferencia = document.getElementById('selTipoConferencia');
+        divTipoConferencia.style.display = 'none';
+        divTipoConferenciaBotao.style.display = 'block';
         selTipoConferencia.value = 'null';
 
         if (formatoDigitalizado.checked) {
-            divTipoConferencia.style.display = 'inline-block';
+            divTipoConferencia.style.display = 'block';
+            divTipoConferenciaBotao.style.display = 'none';
         } else {
             divTipoConferencia.style.display = 'none';
+            divTipoConferenciaBotao.style.display = 'block';
         }
     }
 
@@ -651,11 +656,15 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById('selTipoDocumento').value = 'null';
         document.getElementById('txtComplementoTipoDocumento').value = '';
 
-        document.getElementById('selNivelAcesso').value = '';
-        document.getElementById('hdnNivelAcesso').value = '';
+        if(!$('#selNivelAcesso').hasClass("unclear")){
+            document.getElementById('selNivelAcesso').value = '';
+            document.getElementById('hdnNivelAcesso').value = '';
+        }
         if (EXIBIR_HIPOTESE_LEGAL) {
-            document.getElementById('selHipoteseLegal').value = '';
-            document.getElementById('hdnHipoteseLegal').value = '';
+            if(!$('#selHipoteseLegal').hasClass("unclear")){
+                document.getElementById('selHipoteseLegal').value = '';
+                document.getElementById('hdnHipoteseLegal').value = '';
+            }
         }
         //document.getElementById('divBlcHipoteseLegal').style.display = 'none';
 
@@ -663,6 +672,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById('rdoDigitalizado').checked = false;
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
+        document.getElementById('divTipoConferenciaBotao').style.display = 'block';
     }
 
     function limparTabelaDocumento() {
@@ -828,7 +838,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             document.getElementById('btnValidar').onclick();
         }
     }
-    
+
     function controlarEnterValidarUsuario(e){
         var focus = returnElementFocus();
         if(infraGetCodigoTecla(e)==13) {
@@ -855,7 +865,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             if (selNivelAcesso.nodeName == 'SELECT') {
                 selNivelAcesso.addEventListener('change', exibirHipoteseLegal);
             }
-        }            
+        }
     }
 
     function exibirFieldsetDocumentos(el) {
@@ -954,7 +964,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             }
         });
     }
-    
+
     function validarTodosCamposContato(){
         var campos = document.getElementsByClassName("blocInformacaoPj");
         for (var i = 0; i < campos.length; i++) {
@@ -1070,7 +1080,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 return false;
             }
         }else{
-            
+
             if(!validarTodosCamposContato()){
                 alert('Dados Incompletos na Receita Federal!');
                 return false;
@@ -1119,7 +1129,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
         parent.infraAbrirJanelaModal(url,
             770,
-            480,
+            500,
             '', //options
             false); //modal
     }
@@ -1157,7 +1167,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
                  if( $(data).find('no-usuario').text()!="" && $(data).find('nu-contato').text()!="" ) {
                      if($(data).find('mensagem').text()=="pendente") {
-                         alert('Usuário Externo com pendência de liberação de cadastro.');                         
+                         alert('Usuário Externo com pendência de liberação de cadastro.');
                      }else{
                          document.getElementById('txtNomeProcurador').value = $(data).find('no-usuario').text();
                          document.getElementById('hdnIdUsuarioProcuracao').value = $(data).find('nu-contato').text();

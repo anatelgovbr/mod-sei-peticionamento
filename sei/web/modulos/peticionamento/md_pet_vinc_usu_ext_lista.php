@@ -204,21 +204,21 @@ if ($numRegistros > 0) {
     $strResultado = '';
     $strSumarioTabela = 'Procurações Eletrônicas';
     $strCaptionTabela = 'Procurações Eletrônicas';
-    $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">';
+    $strResultado .= '<table width="100%" class="infraTable" summary="' . $strSumarioTabela . '">';
     $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
 
     $strResultado .= '<tr>';
     //$strResultado .= '<th class="infraTh" width="1%">' . PaginaSEIExterna::getInstance()->getThCheck() . '</th>' . "\n";
     //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'N° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:155px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF / CNPJ Outorgante', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome / Razão Social do Outorgante', 'RazaoSocialNomeVinc', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:120px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF Outorgado', 'CpfProcurador', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:150px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome do Outorgado', 'NomeProcurador', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:120px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo de Procuração', 'TipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:120px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Abrangência', 'StaAbrangencia', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:120px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Validade', 'DataLimite', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:80px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Situação', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh" style="width:90px">Ações</th>';
+    $strResultado .= '<th class="infraTh"><div style="width:150px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF/CNPJ Outorgante', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:170px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome/Razão Social do Outorgante', 'RazaoSocialNomeVinc', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:150px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF Outorgado', 'CpfProcurador', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:180px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome do Outorgado', 'NomeProcurador', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:170px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo de Procuração', 'TipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:240px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Abrangência', 'StaAbrangencia', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:140px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Validade', 'DataLimite', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:100px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Situação', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:90px" class="text-center">Ações</div></th>';
     $strResultado .= '</tr>';
 
     $arrSelectTipoVinculo = array();
@@ -284,14 +284,14 @@ if ($numRegistros > 0) {
             $contatoDTO->retDblCnpj();
             $valor = $contatoRN->consultarRN0324($contatoDTO);
             if ($valor->getDblCnpj() == null) {
-                $strResultado .= '<td>' . InfraUtil::formatarCpf($valor->getDblCpf()) . '</td>';
+                $strResultado .= '<td align="center">' . InfraUtil::formatarCpf($valor->getDblCpf()) . '</td>';
             } else {
-                $strResultado .= '<td>' . InfraUtil::formatarCnpj($valor->getDblCnpj()) . '</td>';
+                $strResultado .= '<td align="center">' . InfraUtil::formatarCnpj($valor->getDblCnpj()) . '</td>';
 
             }
 
         } else {
-            $strResultado .= '<td>' . InfraUtil::formatarCnpj($arrObjMdPetVincRepresentantDTO[$i]->getStrCNPJ()) . '</td>';
+            $strResultado .= '<td align="center">' . InfraUtil::formatarCnpj($arrObjMdPetVincRepresentantDTO[$i]->getStrCNPJ()) . '</td>';
         }
         $strResultado .= '<td>' . PaginaSEI::tratarHTML($arrObjMdPetVincRepresentantDTO[$i]->getStrRazaoSocialNomeVinc()) . '</td>';
         $strResultado .= '<td>' . InfraUtil::formatarCpf($arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador()) . '</td>';
@@ -318,7 +318,7 @@ if ($numRegistros > 0) {
 
             $iconeConsulta = 'Consultar Procuração';
 
-            $iconeConsulta = '<img style="width:24px;"  src="modulos/peticionamento/imagens/png/visualizar_procuracao_especial.png" title="' . $iconeConsulta . '" alt="' . $iconeConsulta . '" class="infraImg" />';
+            $iconeConsulta = '<img style="width:24px;"  src="modulos/peticionamento/imagens/svg/visualizar_procuracao_especial.svg?11" title="' . $iconeConsulta . '" alt="' . $iconeConsulta . '" class="infraImg" />';
 
             $acaoConsulta = '<a target="_blank" href="' . $strLinkConsultaDocumento . '">' . $iconeConsulta . '</a>';
             SessaoSEIExterna::getInstance()->configurarAcessoExterno(null);
@@ -326,12 +326,11 @@ if ($numRegistros > 0) {
 
         $iconeAcao = '';
 
-
         if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) {
             if ($arrObjMdPetVincRepresentantDTO[$i]->getNumIdContato() == $idContatoExterno) {
-                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_renunciar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=renunciar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) .'"><img style="width:24px;"  src="modulos/peticionamento/imagens/png/renunciar_procuracao.png" title="Renunciar Procuração" alt="Renunciar Procuração" class="infraImg" /></a>';
+                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_renunciar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=renunciar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) .'"><img style="width:24px;"  src="modulos/peticionamento/imagens/svg/renunciar_procuracao.svg?11" title="Renunciar Procuração" alt="Renunciar Procuração" class="infraImg" /></a>';
             } else if ($staEstadoRepresentantSuspenso != MdPetVincRepresentantRN::$RP_SUSPENSO || $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() != MdPetVincRepresentantRN::$RP_REVOGADA || $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() != MdPetVincRepresentantRN::$RP_RENUNCIADA) {
-                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_revogar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=revogar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) . '"><img style="width:24px;"  src="modulos/peticionamento/imagens/png/revogar_renunciar_procuracao.png" title="Revogar Procuração" alt="Revogar Procuração" class="infraImg" /></a>';
+                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_revogar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=revogar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) . '"><img style="width:24px;"  src="modulos/peticionamento/imagens/svg/revogar_renunciar_procuracao.svg?11" title="Revogar Procuração" alt="Revogar Procuração" class="infraImg" /></a>';
             }
         }
 
@@ -403,206 +402,226 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     ?>
     <!-- div class="container" -->
     <div class="row">
-        <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3 limpaDireita">
-            <label id="lblTxtCnpj"
-                   for="txtCnpj"
-                   class="infraLabelOpcional">CPF/CNPJ Outorgante:</label>
-            <input type="text"
-                   id="txtCnpj"
-                   name="txtCnpj"
-                   class="infraText form-control"
-                   value="<?= PaginaSEIExterna::tratarHTML($strCnpj) ?>"
-                   maxlength="18"
-                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                   onkeypress="return controlarCpfCnpj(this);"
-                   onkeyup="return controlarCpfCnpj(this);"
-                   onkeydown="return controlarCpfCnpj(this);"
-                   onchange="validaCpfCnpjOutorgante(this)"/>
+        <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+            <div class="form-group">
+                <label id="lblTxtCnpj"
+                    for="txtCnpj"
+                    class="infraLabelOpcional">CPF/CNPJ Outorgante:</label>
+                <input type="text"
+                    id="txtCnpj"
+                    name="txtCnpj"
+                    class="infraText form-control"
+                    value="<?= PaginaSEIExterna::tratarHTML($strCnpj) ?>"
+                    maxlength="18"
+                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                    onkeypress="return controlarCpfCnpj(this);"
+                    onkeyup="return controlarCpfCnpj(this);"
+                    onkeydown="return controlarCpfCnpj(this);"
+                    onchange="validaCpfCnpjOutorgante(this)"/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3 limpaDireita">
-            <label id="lblRazaoSocial"
-                   for="txtRazaoSocial"
-                   class="infraLabelOpcional">Nome/Razão Social do Outorgante:</label>
-            <input type="text"
-                   id="txtRazaoSocial"
-                   name="txtRazaoSocial"
-                   class="infraText form-control"
-                   value="<?= PaginaSEIExterna::tratarHTML($strRazaoSocial) ?>"
-                   maxlength="100"
-                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-4">
+            <div class="form-group">
+                <label id="lblRazaoSocial"
+                    for="txtRazaoSocial"
+                    class="infraLabelOpcional">Nome/Razão Social do Outorgante:</label>
+                <input type="text"
+                    id="txtRazaoSocial"
+                    name="txtRazaoSocial"
+                    class="infraText form-control"
+                    value="<?= PaginaSEIExterna::tratarHTML($strRazaoSocial) ?>"
+                    maxlength="100"
+                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2 limpaDireita">
-            <label id="lblCpf"
-                   for="txtCpf"
-                   class="infraLabelOpcional">CPF do Outorgado:</label>
-            <input type="text"
-                   id="txtCpf"
-                   name="txtCpf"
-                   class="infraText form-control"
-                   value="<?= PaginaSEIExterna::tratarHTML($strCpf) ?>"
-                   maxlength="14"
-                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                   onkeypress="return infraMascaraCPFProcurador(this);"
-                   onchange="validaCpfProcurador(this)"/>
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
+            <div class="form-group">
+                <label id="lblCpf"
+                    for="txtCpf"
+                    class="infraLabelOpcional">CPF Outorgado:</label>
+                <input type="text"
+                    id="txtCpf"
+                    name="txtCpf"
+                    class="infraText form-control"
+                    value="<?= PaginaSEIExterna::tratarHTML($strCpf) ?>"
+                    maxlength="14"
+                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                    onkeypress="return infraMascaraCPFProcurador(this);"
+                    onchange="validaCpfProcurador(this)"/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-2 limpaDireita">
-            <label id="lblNomeProcurador"
-                   for="txtNomeProcurador"
-                   class="infraLabelOpcional">Nome do Outorgado:</label>
-            <input type="text"
-                   id="txtNomeProcurador"
-                   name="txtNomeProcurador"
-                   class="infraText form-control"
-                   value="<?= PaginaSEIExterna::tratarHTML($strNome) ?>"
-                   maxlength="100"
-                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+            <div class="form-group">
+                <label id="lblNomeProcurador"
+                    for="txtNomeProcurador"
+                    class="infraLabelOpcional">Nome do Outorgado:</label>
+                <input type="text"
+                    id="txtNomeProcurador"
+                    name="txtNomeProcurador"
+                    class="infraText form-control"
+                    value="<?= PaginaSEIExterna::tratarHTML($strNome) ?>"
+                    maxlength="100"
+                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2 limpaDireita">
-            <label id="lblSituacao"
-                   for="slSituacao"
-                   class="infraLabelOpcional">Situação:</label>
-            <select name="slSituacao" id="slSituacao" class="infraSelect form-control"
-                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
-                <option value=""></option>
-                <?php
-                if (!is_null($strResultado)) :
-                    ?>
-                    <option value="<?php echo MdPetVincRepresentantRN::$RP_ATIVO ?>"
-                        <?php if (MdPetVincRepresentantRN::$RP_ATIVO == $strSituacao) { ?>
-                            selected="selected"
-                        <?php } ?>>
-                        Ativa
-                    </option>
-                    <option value="<?php echo MdPetVincRepresentantRN::$RP_SUSPENSO ?>"
-                        <?php if (MdPetVincRepresentantRN::$RP_SUSPENSO == $strSituacao) { ?>
-                            selected="selected"
-                        <?php } ?>>
-                        Suspensa
-                    </option>
-                    <option value="<?php echo MdPetVincRepresentantRN::$RP_REVOGADA ?>"
-                        <?php if (MdPetVincRepresentantRN::$RP_REVOGADA == $strSituacao) { ?>
-                            selected="selected"
-                        <?php } ?>>
-                        Revogada
-                    </option>
-                    <option value="<?php echo MdPetVincRepresentantRN::$RP_RENUNCIADA ?>"
-                        <?php if (MdPetVincRepresentantRN::$RP_RENUNCIADA == $strSituacao) { ?>
-                            selected="selected"
-                        <?php } ?>>
-                        Renunciada
-                    </option>
-                    <option value="<?php echo MdPetVincRepresentantRN::$RP_VENCIDA ?>"
-                        <?php if (MdPetVincRepresentantRN::$RP_VENCIDA == $strSituacao) { ?>
-                            selected="selected"
-                        <?php } ?>>
-                        Vencida
-                    </option>
-                <?php endif; ?>
-            </select>
-        </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2 limpaDireita">
-            <label id="lblTipoVinculo"
-                   for="slTipoVinculo"
-                   class="infraLabelOpcional">Tipo de Procuração:</label>
-            <select name="slTipoProcuracao" id="slTipoViculo" class="infraSelect form-control"
-                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
-                <option value=""></option>
-                <?php if ($arrSelectTipoVinculo) : ?>
-                    <?php foreach ($arrSelectTipoVinculo as $chaveTipoVinculo => $itemTipoVinculo) : ?>
-                        <option value="<?php echo $chaveTipoVinculo; ?>"
-                            <?php if ($chaveTipoVinculo == $strTipoVinculo) { ?>
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
+            <div class="form-group">
+                <label id="lblSituacao"
+                    for="slSituacao"
+                    class="infraLabelOpcional">Situação:</label>
+                <select name="slSituacao" id="slSituacao" class="infraSelect form-control"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
+                    <option value=""></option>
+                    <?php
+                    if (!is_null($strResultado)) :
+                        ?>
+                        <option value="<?php echo MdPetVincRepresentantRN::$RP_ATIVO ?>"
+                            <?php if (MdPetVincRepresentantRN::$RP_ATIVO == $strSituacao) { ?>
                                 selected="selected"
                             <?php } ?>>
-                            <?php echo $itemTipoVinculo; ?>
+                            Ativa
                         </option>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </select>
+                        <option value="<?php echo MdPetVincRepresentantRN::$RP_SUSPENSO ?>"
+                            <?php if (MdPetVincRepresentantRN::$RP_SUSPENSO == $strSituacao) { ?>
+                                selected="selected"
+                            <?php } ?>>
+                            Suspensa
+                        </option>
+                        <option value="<?php echo MdPetVincRepresentantRN::$RP_REVOGADA ?>"
+                            <?php if (MdPetVincRepresentantRN::$RP_REVOGADA == $strSituacao) { ?>
+                                selected="selected"
+                            <?php } ?>>
+                            Revogada
+                        </option>
+                        <option value="<?php echo MdPetVincRepresentantRN::$RP_RENUNCIADA ?>"
+                            <?php if (MdPetVincRepresentantRN::$RP_RENUNCIADA == $strSituacao) { ?>
+                                selected="selected"
+                            <?php } ?>>
+                            Renunciada
+                        </option>
+                        <option value="<?php echo MdPetVincRepresentantRN::$RP_VENCIDA ?>"
+                            <?php if (MdPetVincRepresentantRN::$RP_VENCIDA == $strSituacao) { ?>
+                                selected="selected"
+                            <?php } ?>>
+                            Vencida
+                        </option>
+                    <?php endif; ?>
+                </select>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2 limpaDireita">
-            <label id="lblAbrangencia"
-                   for="lblAbrangencia"
-                   class="infraLabelOpcional">Abrangência:</label>
-            <br>
-            <select name="sllblAbrangencia" id="sllblAbrangencia" class="infraSelect form-control"
-                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
-                <option value=""></option>
-                <option value="<?php echo MdPetVincRepresentantRN::$PR_QUALQUER ?>"
-                    <?php if (MdPetVincRepresentantRN::$PR_QUALQUER == $strAbrangencia) { ?>
-                        selected="selected"
-                    <?php } ?>>
-                    Qualquer Processo em Nome do Outorgante
-                </option>
-                <option value="<?php echo MdPetVincRepresentantRN::$PR_ESPECIFICO ?>"
-                    <?php if (MdPetVincRepresentantRN::$PR_ESPECIFICO == $strAbrangencia) { ?>
-                        selected="selected"
-                    <?php } ?>>
-                    Processos Específicos
-                </option>
-            </select>
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+            <div class="form-group">
+                <label id="lblTipoVinculo"
+                    for="slTipoVinculo"
+                    class="infraLabelOpcional">Tipo de Procuração:</label>
+                <select name="slTipoProcuracao" id="slTipoViculo" class="infraSelect form-control"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
+                    <option value=""></option>
+                    <?php if ($arrSelectTipoVinculo) : ?>
+                        <?php foreach ($arrSelectTipoVinculo as $chaveTipoVinculo => $itemTipoVinculo) : ?>
+                            <option value="<?php echo $chaveTipoVinculo; ?>"
+                                <?php if ($chaveTipoVinculo == $strTipoVinculo) { ?>
+                                    selected="selected"
+                                <?php } ?>>
+                                <?php echo $itemTipoVinculo; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2 limpaDireita">
-            <label id="lblValidade"
-                   for="lblValidade"
-                   class="infraLabelOpcional">Validade:</label>
-            <select name="sllblValidade" onchange="showData(this);" class="infraSelect  form-control" id="sllblValidade"
-                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
-
-                <option value=""></option>
-                <option value="null"
-                    <?php if ("null" == $strValidade) { ?>
-                        selected="selected"
-                    <?php } ?>>
-                    Indeterminado
-                </option>
-
-                <option value="D" <?php if ($strValidade == "D") { ?>
-                    selected="selected" <?php } ?>>
-                    Determinado
-                </option>
-
-            </select>
+        <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
+            <div class="form-group">
+                <label id="lblAbrangencia"
+                    for="lblAbrangencia"
+                    class="infraLabelOpcional">Abrangência:</label>
+                <br>
+                <select name="sllblAbrangencia" id="sllblAbrangencia" class="infraSelect form-control"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
+                    <option value=""></option>
+                    <option value="<?php echo MdPetVincRepresentantRN::$PR_QUALQUER ?>"
+                        <?php if (MdPetVincRepresentantRN::$PR_QUALQUER == $strAbrangencia) { ?>
+                            selected="selected"
+                        <?php } ?>>
+                        Qualquer Processo em Nome do Outorgante
+                    </option>
+                    <option value="<?php echo MdPetVincRepresentantRN::$PR_ESPECIFICO ?>"
+                        <?php if (MdPetVincRepresentantRN::$PR_ESPECIFICO == $strAbrangencia) { ?>
+                            selected="selected"
+                        <?php } ?>>
+                        Processos Específicos
+                    </option>
+                </select>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2 limpaDireita">
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+            <div class="form-group">
+                <label id="lblValidade"
+                    for="lblValidade"
+                    class="infraLabelOpcional">Validade:</label>
+                <select name="sllblValidade" onchange="showData(this);" class="infraSelect  form-control" id="sllblValidade"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
+
+                    <option value=""></option>
+                    <option value="null"
+                        <?php if ("null" == $strValidade) { ?>
+                            selected="selected"
+                        <?php } ?>>
+                        Indeterminado
+                    </option>
+
+                    <option value="D" <?php if ($strValidade == "D") { ?>
+                        selected="selected" <?php } ?>>
+                        Determinado
+                    </option>
+
+                </select>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
             <div id="dtInicio">
-                <label id="lblPeriodoInicio"
-                       for="txtPeriodoInicio"
-                >Data Inicio:</label>
-                <div class="input-group mb-3">
-                    <input type="text"
-                           id="txtPeriodoInicio"
-                           name="txtPeriodoInicio"
-                           class="infraText form-control"
-                           value=""
-                           onkeypress="return infraMascaraData(this, event);"
-                           maxlength="100"
-                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                <div class="form-group">
+                    <label id="lblPeriodoInicio"
+                        for="txtPeriodoInicio"
+                    >Data Inicio:</label>
+                    <div class="input-group mb-3">
+                        <input type="text"
+                            id="txtPeriodoInicio"
+                            name="txtPeriodoInicio"
+                            class="infraText form-control"
+                            value=""
+                            onkeypress="return infraMascaraData(this, event);"
+                            maxlength="100"
+                            tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
 
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg" id="imgDt"
-                         title="Selecionar Data"
-                         alt="Selecionar Data" class="infraImg"
-                         onclick="infraCalendario('txtPeriodoInicio',this,false,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg" id="imgDt"
+                            title="Selecionar Data"
+                            alt="Selecionar Data" class="infraImg"
+                            onclick="infraCalendario('txtPeriodoInicio',this,false,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2 limpaDireita">
-            <div id="dtFim" style="display:block;">
-                <label id="lblPeriodoFim"
-                       for="txtPeriodoFim"
-                >Data Fim: </label>
-                <div class="input-group mb-3">
-                    <input type="text"
-                           id="txtPeriodoFim"
-                           name="txtPeriodoFim"
-                           class="infraText"
-                           value=""
-                           onkeypress="return infraMascaraData(this, event);"
-                           maxlength="100"
-                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg" id="imgDt"
-                         title="Selecionar Data"
-                         alt="Selecionar Data" class="infraImg"
-                         onclick="infraCalendario('txtPeriodoFim',this,false,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+            <div id="dtFim">
+                <div class="form-group">
+                    <label id="lblPeriodoFim"
+                        for="txtPeriodoFim"
+                    >Data Fim: </label>
+                    <div class="input-group mb-3">
+                        <input type="text"
+                            id="txtPeriodoFim"
+                            name="txtPeriodoFim"
+                            class="infraText"
+                            value=""
+                            onkeypress="return infraMascaraData(this, event);"
+                            maxlength="100"
+                            tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg" id="imgDt"
+                            title="Selecionar Data"
+                            alt="Selecionar Data" class="infraImg"
+                            onclick="infraCalendario('txtPeriodoFim',this,false,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -614,7 +633,9 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     <!-- /div -->
     <?
     PaginaSEIExterna::getInstance()->fecharAreaDados();
+    echo '<div class="table-responsive mb-0">';
     PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+    echo '</div>';
     ?>
 </form>
 <?

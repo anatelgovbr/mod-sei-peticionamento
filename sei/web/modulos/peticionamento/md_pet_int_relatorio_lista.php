@@ -17,7 +17,7 @@ $numRegistros = count($arrObjResultDTO);
 //Tabela de resultado.
 if ($numRegistros > 0) {
 
-    $strResultado .= '<table id="tabelaIntimacaoEletronica"  width="99%" class="infraTable" summary="Intimações Eletrônicas">';
+    $strResultado .= '<table id="tabelaIntimacaoEletronica" class="infraTable table" summary="Intimações Eletrônicas">';
     $strResultado .= '<caption class="infraCaption">';
     $strResultado .= PaginaSEI::getInstance()->gerarCaptionTabela('Intimações Eletrônicas', $numRegistros);
     $strResultado .= '</caption>';

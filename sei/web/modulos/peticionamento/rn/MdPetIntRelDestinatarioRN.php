@@ -937,16 +937,12 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
      * @param int $idIntimacao
      * @return mixed
      */
-    public function retornarDestinatariosIntimacao($arrIntimacoes, $idContatoParticipante, $idAcessoExterno, $idIntimacao){
+    public function retornarDestinatariosIntimacao($idIntimacao, $idContatoParticipante, $idAcessoExterno){
 
-        $mdPetIntAcessoExternoDocumentoRN = new MdPetIntAcessoExternoDocumentoRN();
-        $mdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
         $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
-        $objMdPetIntRelDestDTO->setDistinct(true);
-        $objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($arrIntimacoes, InfraDTO::$OPER_IN);
+        $objMdPetIntRelDestDTO->retNumIdMdPetIntimacao();
         $objMdPetIntRelDestDTO->retDthDataCadastro();
         $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
-        $objMdPetIntRelDestDTO->setNumIdContatoParticipante($idContatoParticipante);
         $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
         $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
         $objMdPetIntRelDestDTO->retNumIdContato();
@@ -954,12 +950,18 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         $objMdPetIntRelDestDTO->retDblCpfContato();
         $objMdPetIntRelDestDTO->retStrNomeContato();
         $objMdPetIntRelDestDTO->retDblIdDocumento();
+        $objMdPetIntRelDestDTO->setDistinct(true);
+        $objMdPetIntRelDestDTO->setNumIdMdPetIntimacao((array) $idIntimacao, InfraDTO::$OPER_IN);
+        $objMdPetIntRelDestDTO->setNumIdContatoParticipante($idContatoParticipante);
 
-        $idAcessoExternoValido = $mdPetIntAcessoExternoDocumentoRN->verificarAcessoExternoValido(array($idIntimacao, $idContatoParticipante, $idAcessoExterno));
+        $idAcessoExternoValido = (new MdPetIntAcessoExternoDocumentoRN())->verificarAcessoExternoValido([$idIntimacao, $idContatoParticipante, $idAcessoExterno]);
+        
         if (!is_null($idAcessoExternoValido)) {
             $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoExterno);
         }
-        return $mdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestDTO);
+
+        return (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntRelDestDTO);
+        
     }
 
 }

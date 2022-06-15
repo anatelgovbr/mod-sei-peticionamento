@@ -32,14 +32,32 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 			throw new InfraException('Erro consultando Usuário Externo.',$e);
 		}
 	}
+
+    public function listarUsuarioExterno(MdPetWsUsuarioExternoDTO  $objUsuarioExternoDTO){
+        try {
+
+            //Valida Permissao
+            SessaoSEI::getInstance()->validarAuditarPermissao('usuario_externo_consultar',__METHOD__,$objUsuarioExternoDTO);
+
+            $objUsuarioBD = new UsuarioBD($this->getObjInfraIBanco());
+            $ret = $objUsuarioBD->listar($objUsuarioExternoDTO);
+
+            return $ret;
+        }catch(Exception $e){
+            throw new InfraException('Erro consultando Usuário Externo.',$e);
+        }
+    }
 	
-	public function consultarExternoControlado($Sigla){
+	public function consultarExterno($Cpf, $Sigla = ""){
 		
 		try {
 			
 			$objInfraException = new InfraException();
 	
 			$objUsuarioExternoDTO = new MdPetWsUsuarioExternoDTO();
+
+			//Retorna apenas usuários externos
+            $objUsuarioExternoDTO->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO_PENDENTE,UsuarioRN::$TU_EXTERNO),InfraDTO::$OPER_IN);
 				
 			//campos que serão retornados
 			$objUsuarioExternoDTO->retNumIdUsuario();
@@ -60,12 +78,15 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 			$objUsuarioExternoDTO->retDthDataCadastroContato();
 				
 			//Parâmetros para consulta
-			$objUsuarioExternoDTO->setStrSigla($Sigla, InfraDTO::$OPER_IGUAL);
-	
-			$objUsuarioExternoDTO = self::consultarUsuarioExterno($objUsuarioExternoDTO);
+			$objUsuarioExternoDTO->setStrCpf($Cpf, InfraDTO::$OPER_IGUAL);
+			if($Sigla != "") {
+                $objUsuarioExternoDTO->setStrSigla($Sigla, InfraDTO::$OPER_IGUAL);
+            }
+			$objUsuarioExternoDTO = self::listarUsuarioExterno($objUsuarioExternoDTO);
 				
-			if ($objUsuarioExternoDTO==null) {
-				$objInfraException->lancarValidacao('Não existe cadastro de Usuário Externo no SEI com o e-mail informado.');
+			if (is_null($objUsuarioExternoDTO)) {
+				$textoValidacao = $Sigla != "" ? 'E-mail e CPF informados' : 'CPF informado';
+				$objInfraException->lancarValidacao('Não existe cadastro de Usuário Externo no SEI com o '.$textoValidacao.'.');
 			}
 	
 			return $objUsuarioExternoDTO;

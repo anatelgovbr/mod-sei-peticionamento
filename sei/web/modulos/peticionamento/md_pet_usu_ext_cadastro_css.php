@@ -1,16 +1,8 @@
 <style type="text/css">
-    #orientacoesTipoProcesso {height: auto; width: 96%; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}
-    #formularioPeticionamento {height: auto; width: 96%; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}
-
-    #field3 {
-        height: auto;
-        width: 96%;
-        margin-bottom: 11px;
-    }
-
+    #orientacoesTipoProcesso {height: auto; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}
+    #formularioPeticionamento {height: auto; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}
     .sizeFieldset {
-        height: auto;
-        width: 86%;
+        padding: 15px
     }
 
     .fieldsetClear {
@@ -23,9 +15,28 @@
         margin-bottom: -4px;
     }
 
-    .row div{margin-top: 15px;}
+    /* .row div{margin-top: 15px;} */
     .infraImgModulo{width: 20px; height: 20px}
     input[type=button]{margin-left: 5px;}
     .divClean{margin-top: 0px !important;}
     #tbInteressadosIndicados{margin-top: -50px}
+
+    .input-group>.custom-select:not(:first-child), .input-group>.form-control:not(:first-child) {
+        border-top-left-radius: 0.2rem;
+        border-bottom-left-radius:  0.2rem;
+    }
+    .input-group>.custom-select:not(:last-child), .input-group>.form-control:not(:last-child) {
+        border-top-right-radius: 0.2rem;
+        border-bottom-right-radius:  0.2rem;
+    }
+
+    fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
+        margin-left: 0em;
+    }
+    .infraCheckboxDiv, .infraRadioDiv {
+        margin-left: 0px;
+    }
+    fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
+        margin-left: 0em;
+    }
 </style>

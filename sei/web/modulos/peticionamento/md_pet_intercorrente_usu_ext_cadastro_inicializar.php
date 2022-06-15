@@ -24,7 +24,7 @@
     $strMsgTooltipFormato							= 'Selecione a opção “Nato-digital” se o arquivo a ser carregado foi criado originalmente em meio eletrônico.\n\n\n Selecione a opção “Digitalizado” somente se o arquivo a ser carregado foi produzido da digitalização de um documento em papel.';
     //Fim Msgs
 
-    $selHipoteseLegal = MdPetIntercorrenteINT::montarSelectHipoteseLegal();
+    $selHipoteseLegal = MdPetIntercorrenteINT::montarSelectHipoteseLegal($booOptionsOnly = true);
     
 //RN Tamanho Maximo Arquivo
     $tamanhoMaximo = MdPetIntercorrenteINT::tamanhoMaximoArquivoPermitido();

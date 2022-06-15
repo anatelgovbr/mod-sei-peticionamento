@@ -453,8 +453,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $objMdPetIntProtRN = new MdPetIntProtocoloRN();
 
         if (!$idCertidao) {
-            $arrEnvio = array($idIntimacao);
-            $idCertidao = $this->retornaIdDocCertidaoPorIntimacaoConectado($arrEnvio);
+            $idCertidao = $this->retornaIdDocCertidaoPorIntimacaoConectado((array)$idIntimacao);
         }
 
         $strLink = $this->retornaLinkAcessoDocumento($idCertidao, $idAcessoExt);
@@ -465,7 +464,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $alertMsg = 'Documento bloqueado, pois está vinculado a uma Intimação ainda não Cumprida.';
         $js = $isValido ? 'window.open(\'' . $strLink . '\');' : 'alert(\'' . $alertMsg . '\')';
 
-        $imgCertidao = '<img src="modulos/peticionamento/imagens/png/intimacao_certidao.png" style="height: 24px">';
+        $imgCertidao = '<img src="modulos/peticionamento/imagens/svg/intimacao_certidao.svg" style="height: 24px">';
 
         //obter informacoes do doc principal da intimação
         $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
@@ -488,9 +487,9 @@ class MdPetIntCertidaoRN extends InfraRN
         $ToolTipText .= '(SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
         if ($cnpjs) {
-            $ToolTipText .= '<br/><br/>';
+            $ToolTipText .= '<br/><br/>Pessoa Jurídica:';
             foreach ($cnpjs as $emp) {
-                $ToolTipText .= 'Pessoa Jurídica: ' . $emp . '<br/>';
+                $ToolTipText .= '<br/>' . $emp ;
             }
         }
 

@@ -82,7 +82,7 @@ try {
               $dados['chkDeclaracao'] = 'S';
               $dados['idContatoExterno']= $_POST['hdnIdContExterno'];
               $dados['tpVinc'] = $_POST['hdnTpVinculo'];
-              $dados['tpProc'] = $_POST['hdnTpProcuracao'];  
+              $dados['tpProc'] = $_POST['hdnTpProcuracao'];
 
               $mdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
               $mdPetVinUsuExtProc = $mdPetVinUsuExtProcRN->gerarProcedimentoVinculoProcuracaoMotivo($dados);
@@ -155,39 +155,42 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
   PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
   ?>
 
-    <p>
-    <label>A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</label>
-    </p>
-
-    <p>
-        <label class="infraLabelObrigatorio">Usuário Externo:</label> <br/>
-        <input type="text" name="loginUsuarioExterno" style="width: 60%;"
-               value="<?= PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()) ?>"
-               readonly="readonly" id="loginUsuarioExterno" class="infraText" autocomplete="off" disabled/>
-    </p>
-
-    <p>
-        <label class="infraLabelObrigatorio">Cargo/Função:</label> <br/>
-        <select id="selCargo" name="selCargo" class="infraSelect" style="width: 60%;">
-            <option value="">Selecione Cargo/Função</option>
-          <? foreach ($arrObjCargoDTO as $expressao => $cargo) {
-            if ($_POST['selCargo'] != $cargo) {
-              echo "<option value='" . $cargo . "'>";
-            } else {
-              echo "<option selected='selected' value='" . $cargo . "'>";
-            }
-
-            echo $expressao;
-            echo "</option>";
-
-          } ?>
-        </select>
-    </p>
-
-    <p>
-        <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label> <br/>
-        <input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText" autocomplete="off" style="width: 60%;"/>
-    </p>
+    <div class="row">
+        <div class="col-12">
+            <p class="text-justify">A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+            <div class="form-group">
+                <label class="infraLabelObrigatorio">Usuário Externo:</label>
+                <input type="text" name="loginUsuarioExterno"
+                    value="<?= PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()) ?>"
+                    readonly="readonly" id="loginUsuarioExterno" class="infraText form-control" autocomplete="off" disabled />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+            <div class="form-group">
+                <label class="infraLabelObrigatorio">Cargo/Função:</label>
+                <select id="selCargo" name="selCargo" class="infraSelect form-control">
+                    <option value="">Selecione Cargo/Função</option>
+                    <? foreach ($arrObjCargoDTO as $expressao => $cargo): ?>
+                    <option value="<?= $cargo ?>" <?= $_POST['selCargo'] == $cargo ? 'selected="selected"' : '' ?>><?= $expressao ?></option>
+                    <? endforeach ?>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-6">
+            <div class="form-group">
+                <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label>
+                <input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText form-control" autocomplete="off"/>
+            </div>
+        </div>
+    </div>
 
     <!--  Campos Hidden para preencher com valores da janela pai -->
     <input type="hidden" id="hdnCpfProcuradorPai" name="hdnCpfProcurador">
@@ -302,7 +305,6 @@ PaginaSEIExterna::getInstance()->fecharHtml();
     }
 
     function fecharJanela() {
-
         if (window.opener != null && !window.opener.closed) {
             window.opener.focus();
         }

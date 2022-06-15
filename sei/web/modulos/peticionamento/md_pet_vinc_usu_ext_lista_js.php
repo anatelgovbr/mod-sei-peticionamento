@@ -42,17 +42,13 @@
     function validaCpfCnpjOutorgante(objeto) {
         var erro = false;
         var valor = $.trim(objeto.value.replace(/\D/g, ""));
-
-        if (valor.length == 11 || valor.length == 14) {
-            if (valor.length == 11 && !infraValidarCpf(valor)) {
-                erro = true;
+        
+        if(valor.length > 0){
+            switch (valor.length) {
+                case 11: if (!infraValidarCpf(valor)) { erro = true; } break;
+                case 14: if (!infraValidarCnpj(valor)) { erro = true; } break;
+                default: erro = true; break;
             }
-
-            if (valor.length == 14 && !infraValidarCnpj(valor)) {
-                erro = true;
-            }
-        } else {
-            erro = true;
         }
 
         if (erro) {
@@ -70,12 +66,10 @@
         var erro = false;
         var valor = $.trim(objeto.value.replace(/\D/g, ""));
 
-        if (valor.length == 11) {
+        if (valor.length > 0 || valor.length == 11) {
             if (!infraValidarCpf(valor)) {
                 erro = true;
             }
-        } else {
-            erro = true;
         }
 
         if (erro) {

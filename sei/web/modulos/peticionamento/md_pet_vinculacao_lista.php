@@ -137,16 +137,16 @@ if ($numRegistros > 0) {
   $strResultado = '';
   $strSumarioTabela = 'Vinculação a Pessoas Jurídicas como Responsável Legal';
   $strCaptionTabela = 'Vinculação a Pessoas Jurídicas como Responsável Legal';
-  $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">';
+  $strResultado .= '<table class="infraTable" summary="' . $strSumarioTabela . '" width="100%">';
   $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
 
   $strResultado .= '<tr>';
-  $strResultado .= '<th class="infraTh" style="width:15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Número do Processo', 'ProtocoloFormatado', $arrRegistro) . '</th>';
-  $strResultado .= '<th class="infraTh" style="width:15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'CNPJ', 'CNPJ', $arrRegistro) . '</th>';
-  $strResultado .= '<th class="infraTh">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Razão Social', 'RazaoSocialNomeVinc', $arrRegistro) . '</th>';
-  $strResultado .= '<th class="infraTh">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Responsável Legal', 'NomeContatoRepresentante', $arrRegistro) .'</th>';
-  $strResultado .= '<th class="infraTh" style="width:80px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Situação', 'StaEstado', $arrRegistro) .'</th>';
-  $strResultado .= '<th class="infraTh" style="width:60px">Ações</th>';
+  $strResultado .= '<th class="infraTh"><div style="width:180px" class="text-center pr-0 mr-0">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Número do Processo', 'ProtocoloFormatado', $arrRegistro) . '</div></th>';
+  $strResultado .= '<th class="infraTh"><div style="width:140px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'CNPJ', 'CNPJ', $arrRegistro) . '</div></th>';
+  $strResultado .= '<th class="infraTh" align="center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Razão Social', 'RazaoSocialNomeVinc', $arrRegistro) . '</th>';
+  $strResultado .= '<th class="infraTh" align="center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Responsável Legal', 'NomeContatoRepresentante', $arrRegistro) .'</th>';
+  $strResultado .= '<th class="infraTh"><div style="width:90px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Situação', 'StaEstado', $arrRegistro) .'</div></th>';
+  $strResultado .= '<th class="infraTh"><div style="width:70px" class="text-center">Ações</div></th>';
   $strResultado .= '</tr>';
 //Populando obj para tabela
 
@@ -188,9 +188,9 @@ if ($numRegistros > 0) {
     $iconeAlterar = "";
     $strResultado .= '<tr class="infraTrClara">';
     $strResultado .= '<td align="center"><a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');" alt="' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '" title="' . PaginaSEIExterna::tratarHTML($registro->getStrNomeTipoProcedimento()) . '" class="ancoraPadraoAzul">' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '</a></td>';
-    $strResultado .= '<td>' . InfraUtil::formatarCnpj($registro->getDblCNPJ()) . '</td>';
-    $strResultado .= '<td>' . PaginaSEI::tratarHTML($registro->getStrRazaoSocialNomeVinc()) . '</td>';
-    $strResultado .= '<td>' . $registro->getStrNomeContatoRepresentante() . '</td>';
+    $strResultado .= '<td align="center">' . InfraUtil::formatarCnpj($registro->getDblCNPJ()) . '</td>';
+    $strResultado .= '<td align="center">' . PaginaSEI::tratarHTML($registro->getStrRazaoSocialNomeVinc()) . '</td>';
+    $strResultado .= '<td align="center">' . $registro->getStrNomeContatoRepresentante() . '</td>';
 
     $tpSit = $registro->getStrStaEstado();
     if($tpSit == MdPetVincRepresentantRN::$RP_ATIVO){
@@ -204,7 +204,7 @@ if ($numRegistros > 0) {
     } else if($tpSit == MdPetVincRepresentantRN::$RP_VENCIDA){
         $strSituacao = 'Vencida';
     }
-    $strResultado .= '<td>' . $strSituacao . '</td>';
+    $strResultado .= '<td align="center">' . $strSituacao . '</td>';
 
     $strResultado .= '<input type="hidden" value="'.$url.'" id="urlLinkDesativar'.$registro->getNumIdMdPetVinculoRepresent().'"/>';
     $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar Cadastro da Pessoa Jurídica" alt="Consultar Cadastro da Pessoa Jurídica" class="infraImg" /></a>';
@@ -238,71 +238,54 @@ function inicializar(){
 PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
-
 ?>
-<style type="text/css">
-#container{
-  width: 100%;
-}
-.clear {
-  clear: both;
-}
-
-.bloco {
-  float: left;
-  margin-top: 1%;
-  margin-right: 1%;
-}
-
-label[for^=txt] {
-  display: block;
-  white-space: nowrap;
-}
-
-#txtNumeroProcesso{
-  width:98%;
-}
-#txtCnpj{
-  width:98%;
-}
-</style>
 <form id="frmPesquisa" method="post" action="">
-  <?
-  PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
-  PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
-  ?>
 
-    <div class="bloco" style="width:155px">
+<?
+        PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
+        PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
+        ?>
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12">
+      <div class="form-group">
         <label id="lblNumeroProcesso" 
                for="txtNumeroProcesso" 
                class="infraLabelOpcional">Número do Processo:</label>
         <input type="text" 
                id="txtNumeroProcesso" 
                name="txtNumeroProcesso" 
-               class="infraText"
+               class="infraText form-control"
                value="<?= PaginaSEIExterna::tratarHTML($_POST['txtNumeroProcesso']) ?>" 
                maxlength="100"
                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+      </div>
     </div>
-
-    <div class="bloco" style="width:155px">
-        <label id="lblCnpj" 
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12">
+      <div class="form-group">
+      <label id="lblCnpj" 
                for="txtCnpj" 
                class="infraLabelOpcional">CNPJ:</label>
         <input type="text" 
                id="txtCnpj" 
                name="txtCnpj" 
-               class="infraText" 
+               class="infraText form-control" 
                onkeypress="return infraMascaraCnpj(this, event)"
                value="<?= PaginaSEIExterna::tratarHTML($_POST['txtCnpj']) ?>" maxlength="100"
                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+      </div>
     </div>
-<?
+  </div>
+  <div class="col-12">
+
+    <?
 PaginaSEIExterna::getInstance()->fecharAreaDados();
+echo '<div class="table-responsive">';
 PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+echo '</div>';
 //PaginaSEIExterna::getInstance()->montarAreaDebug();
 PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);
 ?>
+</div>
 </form>
 <?
 PaginaSEIExterna::getInstance()->fecharBody();

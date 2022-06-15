@@ -1,93 +1,67 @@
-.clear {clear: both;}
-
-.grid
-{
-    display: inline;
-    float: left;
-    margin-right: 6px;
+.clear{clear:both}
+.grid{display:inline;float:left;margin-right:6px}
+.height{height:3px}
+.height_1{height:9px}
+.height_2{height:18px}
+.grid_1{width:68px}
+.grid_2{width:53px}
+.grid_3{width:204px}
+.grid_4{width:272px}
+.grid_4-5{width:42%}
+.grid_5{width:340px}
+.grid_6{width:99%}
+.grid_7{width:476px}
+.grid_8{width:544px}
+.grid_9{width:99%}
+.grid_10{width:680px}
+.grid_11{width:80%}
+.grid_12{width:99%}
+.campoPadrao{width:100%}
+fieldset{width:98%}
+.multipleSelect{width:100% !important}
+.fldDestinatarios{width:100%}
+.row{margin-top:10px}
+.botoes{padding-left:5px}
+.infraImgModulo{width:20px}
+#tblEnderecosEletronicos tbody tr td div { text-align: center !important }
+label.infraLabelCheckbox, label.infraLabelRadio {font-size: .9rem}
+fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {margin-left: 0;}
+#divSelectTipoResposta {
+    margin: 0;
+}
+#fldOrientacoesDestinatarios {
+    height: auto;
+    width: 96%;
+    margin-bottom: 11px;
 }
 
-.height{
-height: 3px;
+#fldDestinatarios {
+    height: auto;
+    width: 100%;
+    margin-bottom: 11px;
 }
 
-.height_1{
-height: 9px;
+.sizeFieldset {
+    height: auto;
+    width: 86%;
 }
 
-.height_2{
-    height: 18px;
+.fieldsetClear {
+    border: none !important;
 }
 
+#divTipoPessoa {
+    margin-left: 20px;
 
-.grid_1 {
-    width: 68px;
 }
 
-.grid_2 {
-    width: 53px;
+#lblFisica {
+    font-weight: bold;
 }
 
-.grid_3 {
-    width: 204px;
+#lblJuridica {
+    font-weight: bold;
 }
-
-.grid_4 {
-    width: 272px;
+#flTpAcesso .infraDivRadio {
+    margin-top: 10px;
 }
-
-.grid_4-5 {
-width: 42%;
-}
-
-.grid_5 {
-    width: 340px;
-}
-
-.grid_6 {
-    width: 99%;
-}
-
-.grid_7 {
-    width: 476px;
-}
-
-.grid_8{
-    width: 544px;
-}
-
-.grid_9 {
-    width: 99%;
-}
-
-.grid_10 {
-    width: 680px;
-}
-
-.grid_11 {
-    width: 80%;
-}
-
-.grid_12 {
-    width: 99%;
-}
-
-.campoPadrao{
- width: 100%;
-}
-
-fieldset{
-  width: 98%;
-}
-
-.multipleSelect{
-width: 90%;
-}
-
-.fldDestinatarios{
-  width: 100%;
-}
-
-.row{margin-top: 10px;}
-.botoes{padding-left:5px;}
-.infraImgModulo{width:20px;}

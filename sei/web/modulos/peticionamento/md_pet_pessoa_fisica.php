@@ -100,17 +100,17 @@ try {
     $strSumarioTabela = 'Tabela de Usuários Externos.';
     $strCaptionTabela = 'Usuários Externos';
 
-    $strResultado .= '<table width="99%" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
+    $strResultado .= '<table width="100%" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
     $strResultado .= '<caption class="infraCaption">'.PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela,$numRegistros).'</caption>';
     $strResultado .= '<tr>';
     if ($bolCheck) {
-      $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
+      $strResultado .= '<th class="infraTh"><div style="width:20px">'.PaginaSEI::getInstance()->getThCheck().'</div></th>'."\n";
     }
     
-    $strResultado .= '<th class="infraTh" width="30%">'.PaginaSEI::getInstance()->getThOrdenacao($objUsuarioDTO,'E-mail','Sigla',$arrObjUsuarioDTO,true).'</th>'."\n";
-    $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objUsuarioDTO,'Nome','Nome',$arrObjUsuarioDTO,true).'</th>'."\n";    
+    $strResultado .= '<th class="infraTh"><div class="text-left">'.PaginaSEI::getInstance()->getThOrdenacao($objUsuarioDTO,'E-mail','Sigla',$arrObjUsuarioDTO,true).'</div></th>'."\n";
+    $strResultado .= '<th class="infraTh"><div style="width:150px" class="text-left">'.PaginaSEI::getInstance()->getThOrdenacao($objUsuarioDTO,'Nome','Nome',$arrObjUsuarioDTO,true).'</div></th>'."\n";    
     
-    $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
+    $strResultado .= '<th class="infraTh"><div style="width:50px" class="text-center">Ações</div></th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
     for($i = 0;$i < $numRegistros; $i++){
@@ -122,9 +122,9 @@ try {
         $strResultado .= '<td valign="top">'.PaginaSEI::getInstance()->getTrCheck($i,$arrObjUsuarioDTO[$i]->getNumIdContato(),$arrObjUsuarioDTO[$i]->getStrSigla()).'</td>';
       }
       //$strResultado .= '<td align="center">'.$arrObjUsuarioDTO[$i]->getNumIdUsuario().'</td>';
-      $strResultado .= '<td>'.PaginaSEI::tratarHTML($arrObjUsuarioDTO[$i]->getStrSigla()).'</td>';
-      $strResultado .= '<td>'.PaginaSEI::tratarHTML($arrObjUsuarioDTO[$i]->getStrNome()).'</td>';
-      $strResultado .= '<td align="center">';
+      $strResultado .= '<td class="text-left">'.PaginaSEI::tratarHTML($arrObjUsuarioDTO[$i]->getStrSigla()).'</td>';
+      $strResultado .= '<td class="text-left">'.PaginaSEI::tratarHTML($arrObjUsuarioDTO[$i]->getStrNome()).'</td>';
+      $strResultado .= '<td class="text-center">';
 
       $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i,$arrObjUsuarioDTO[$i]->getNumIdContato());
 
@@ -151,18 +151,6 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema().' - '.$strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-?>
-
-#lblSiglaUsuario {position:absolute;left:0%;top:0%;width:20%;}
-#txtSiglaUsuario {position:absolute;left:0%;top:40%;width:20%;}
-
-#lblNomeUsuario {position:absolute;left:22%;top:0%;width:40%;}
-#txtNomeUsuario {position:absolute;left:22%;top:40%;width:40%;}
-
-#lblCpfUsuario {position:absolute;left:64%;top:0%;width:15%;}
-#txtCpfUsuario {position:absolute;left:64%;top:40%;width:15%;}
-
-<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -188,20 +176,40 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
   <?
   //PaginaSEI::getInstance()->montarBarraLocalizacao($strTitulo);
   PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-  PaginaSEI::getInstance()->abrirAreaDados('5em');
+  PaginaSEI::getInstance()->abrirAreaDados();
   ?>
-  <label id="lblSiglaUsuario" for="txtSiglaUsuario" class="infraLabelOpcional">E-mail:</label>
-  <input type="text" id="txtSiglaUsuario" name="txtSiglaUsuario" class="infraText" value="<?=PaginaSEI::tratarHTML($strSiglaPesquisa)?>" maxlength="100" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+
+  <div class="row">
+    <div class="col-xl-3 col-lg-4 col-md-5 col-sm-4 col-6">
+      <div class="form-group">
+        <label for="txtSiglaUsuario" class="infraLabelOpcional">E-mail:</label>
+        <input type="text" id="txtSiglaUsuario" name="txtSiglaUsuario" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strSiglaPesquisa)?>" maxlength="100" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-4 col-md-5 col-sm-4 col-6">
+      <div class="form-group">
+        <label for="txtNomeUsuario" accesskey="N" class="infraLabelOpcional"><span class="infraTeclaAtalho">N</span>ome:</label>
+        <input type="text" id="txtNomeUsuario" name="txtNomeUsuario" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strNomePesquisa)?>" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+      </div>
+    </div>
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-4 col-4">
+      <div class="form-group">
+        <label for="txtCpfUsuario" class="infraLabelOpcional">CPF:</label>
+        <input type="text" id="txtCpfUsuario" name="txtCpfUsuario" onkeypress="return infraMascaraCpf(this, event)" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strCpfPesquisa);?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+      </div>
+    </div>
+  </div>
   
-  <label id="lblNomeUsuario" for="txtNomeUsuario" accesskey="N" class="infraLabelOpcional"><span class="infraTeclaAtalho">N</span>ome:</label>
-  <input type="text" id="txtNomeUsuario" name="txtNomeUsuario" class="infraText" value="<?=PaginaSEI::tratarHTML($strNomePesquisa)?>" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
 
-  <label id="lblCpfUsuario" for="txtCpfUsuario" class="infraLabelOpcional">CPF:</label>
-  <input type="text" id="txtCpfUsuario" name="txtCpfUsuario" onkeypress="return infraMascaraCpf(this, event)" class="infraText" value="<?=PaginaSEI::tratarHTML($strCpfPesquisa);?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-
-  <?
-  PaginaSEI::getInstance()->fecharAreaDados();
-  PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros);
+  <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
+  <div class="row">
+   <div class="col-12">
+     <div class="table-responsive">
+       <? PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros); ?>
+     </div>
+   </div>
+ </div>
+  <? 
   PaginaSEI::getInstance()->montarAreaDebug();
   PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
   ?>

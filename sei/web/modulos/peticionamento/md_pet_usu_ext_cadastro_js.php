@@ -583,7 +583,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             objTabelaInteressado.adicionarAcoes(
                 arrDadosInteressado[0],
-                "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('" + arrDadosInteressado[0] + "', '" + arrDadosInteressado[1] + "', '" + arrDadosInteressado[2] + "')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>",
+                "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('" + arrDadosInteressado[0] + "', '" + arrDadosInteressado[1] + "', '" + arrDadosInteressado[2] + "')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/svg/alterar.svg' class='infraImg' /></a>",
                 false,
                 true);
 

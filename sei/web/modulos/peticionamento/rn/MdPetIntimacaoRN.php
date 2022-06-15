@@ -1936,6 +1936,9 @@ class MdPetIntimacaoRN extends InfraRN
                 $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
                 //SEM RESPOSTA
                 $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
+
+                unset($arrObjMdPetIntDestRespostaDTO);
+                unset($arrIdMdPetIntRelDestinatario);
             }
         }
 
@@ -1952,6 +1955,9 @@ class MdPetIntimacaoRN extends InfraRN
         if (count($arrObjMdPetIntRelTipoRespDTO) > 0) {
             $arrIdMdPetIntimacao = InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao');
             $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
+
+            unset($arrObjMdPetIntRelTipoRespDTO);
+            unset($arrIdMdPetIntimacao);
         }
 
         if ($ExigeResposta) {
@@ -1999,6 +2005,9 @@ class MdPetIntimacaoRN extends InfraRN
                 $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
                 //SEM RESPOSTA
                 $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
+
+                unset($arrObjMdPetIntDestRespostaDTO);
+                unset($arrIdMdPetIntRelDestinatario);
             }
         }
 
@@ -2015,6 +2024,9 @@ class MdPetIntimacaoRN extends InfraRN
         if (count($arrObjMdPetIntRelTipoRespDTO) > 0) {
             $arrIdMdPetIntimacao = InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao');
             $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
+
+            unset($arrObjMdPetIntRelTipoRespDTO);
+            unset($arrIdMdPetIntimacao);
         }
 
         if ($ExigeResposta) {

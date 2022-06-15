@@ -89,7 +89,7 @@ try {
         $strResultado .= '</caption>';
 
         $strResultado .= '<tr>';
-        $strResultado .= '<th class="infraTh" width="600px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Processo', 'ProtocoloFormatadoProcedimento', $arrObjDTO) . '</th>';
+        $strResultado .= '<th class="infraTh"><div style="width: 160px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Processo', 'ProtocoloFormatadoProcedimento', $arrObjDTO) . '</div></th>';
 
         $strResultado .= '<th class="infraTh" width="66px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Data de Expedição', 'DataCadastro', $arrObjDTO) . '</th>';
 
@@ -103,7 +103,7 @@ try {
 
         $strResultado .= '<th class="infraTh" width="225px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Situação', 'StaSituacaoIntimacao', $arrObjDTO) . '</th>';
 
-        $strResultado .= '<th class="infraTh" width="90px">Ações</th>';
+        $strResultado .= '<th class="infraTh"><div style="width: 90px" class="text-center">Ações</div></th>';
         $strResultado .= '</tr>';
 
         $strCssTr = '<tr class="infraTrEscura">';
@@ -305,13 +305,16 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
 ?>
 
     <div class="row">
-        <div class="col-sm-12 col-md-5 col-lg-3 col-xl-3">
-            <label class="infraLabelOpcional" for="txtNumeroProcesso">Número do Processo:</label>
-            <input type="text" name="txtNumeroProcesso" id="txtNumeroProcesso" class="infraText form-control"
+        <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+            <div class="form-group">
+                <label class="infraLabelOpcional" for="txtNumeroProcesso">Número do Processo:</label>
+                <input type="text" name="txtNumeroProcesso" id="txtNumeroProcesso" class="infraText form-control"
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
                    value="<?php echo array_key_exists('txtNumeroProcesso', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtNumeroProcesso']) : '' ?>"/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+        <div class="col-sm-12 col-md-7 col-lg-5 col-xl-4">
+            <div class="form-group">
             <label class="infraLabelOpcional" for="txtPeriodoExpedicao">Período de Expedição:</label>
             <!--DATA INICIAL-->
             <input type="text" name="txtDataInicio" id="txtDataInicio" class="infraText"
@@ -326,7 +329,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
                  onclick="infraCalendario('txtDataInicio',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
 
             <!--FIM DATA INICIAL-->
-            <label class="infraLabelOpcional">até</label>
+            <label class="infraLabelOpcional mx-2">até</label>
             <!--DATA FINAL-->
 
             <input type="text" id="txtDataFim" name="txtDataFim" class="infraText"
@@ -339,35 +342,42 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
                  title="Selecionar Data Final"
                  alt="Selecionar Data Final" class="infraImg"
                  onclick="infraCalendario('txtDataFim',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
+            </div>
 
             <!--FIM DATA FINAL-->
         </div>
         <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label class="infraLabelOpcional" for="selTipoDestinatario">Tipo de Destinatário:</label>
-            <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoDestinatario"
-                    id="selTipoDestinatario"
-                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
-                <option value=""></option>
-                <?php foreach ($arrTipoDestinatario as $chaveTipoDestinatario => $itemTipoDestinatario) : ?>
-                    <option <?php if ($selTipoDestinatario == $chaveTipoDestinatario) echo "selected='selected'"; ?>
-                            value="<?php echo $chaveTipoDestinatario; ?>"><?php echo $itemTipoDestinatario; ?></option>
-                <?php endforeach; ?>
-            </select>
+            <div class="form-group">
+                <label class="infraLabelOpcional" for="selTipoDestinatario">Tipo de Destinatário:</label>
+                <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoDestinatario"
+                        id="selTipoDestinatario"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                    <option value=""></option>
+                    <?php foreach ($arrTipoDestinatario as $chaveTipoDestinatario => $itemTipoDestinatario) : ?>
+                        <option <?php if ($selTipoDestinatario == $chaveTipoDestinatario) echo "selected='selected'"; ?>
+                                value="<?php echo $chaveTipoDestinatario; ?>"><?php echo $itemTipoDestinatario; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label class="infraLabelOpcional" for="selTipoIntimacao">Tipo de Intimação:</label>
-            <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoIntimacao"
-                    id="selTipoIntimacao" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
-                <?php echo $selTipoIntimacao; ?>
-            </select>
+        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+            <div class="form-group">
+                <label class="infraLabelOpcional" for="selTipoIntimacao">Tipo de Intimação:</label>
+                <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoIntimacao"
+                        id="selTipoIntimacao" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                    <?php echo $selTipoIntimacao; ?>
+                </select>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <label class="infraLabelOpcional" for="selCumprimentoIntimacao">Situação:</label>
-            <select onchange="pesquisar();" class="infraSelect selectPadrao" name="selCumprimentoIntimacao"
-                    style="width: 13%; min-width: 100%;" id="selCumprimentoIntimacao"
-                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
-                <?php echo $comboSituacao; ?>
-            </select>
+        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-4">
+            <div class="form-group">
+                <label class="infraLabelOpcional" for="selCumprimentoIntimacao">Situação:</label>
+                <select onchange="pesquisar();" class="infraSelect form-control" name="selCumprimentoIntimacao"
+                        style="width: 13%; min-width: 100%;" id="selCumprimentoIntimacao"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                    <?php echo $comboSituacao; ?>
+                </select>
+            </div>
         </div>
     </div>
 

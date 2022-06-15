@@ -25,39 +25,33 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
     </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-5 col-lg-2">
-            <label class="infraLabelObrigatorio"
-                   for="txtNumeroCnpj"
-                   id="lblNumeroCnpj">
+        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
+            <div class="form-group">
+            <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">
                 CNPJ:
             </label>
-            <input type="text" class="infraText"
-                   id="txtNumeroCnpj"
-                   name="txtNumeroCnpj" maxlength="18"
-                   readonly="readonly"
+            <input type="text" class="infraText" id="txtNumeroCnpj" name="txtNumeroCnpj" maxlength="18" readonly="readonly"
                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getDblCNPJ()) : null; ?>"
                    onkeypress="return infraMascaraCnpj(this,event);"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-4">
-            <label class="infraLabelObrigatorio"
-                   for="txtRazaoSocial"
-                   id="lblRazaoSocial">
+        <div class="col-sm-12 col-md-7 col-lg-6">
+            <div class="form-group">
+            <label class="infraLabelObrigatorio" for="txtRazaoSocial" id="lblRazaoSocial">
                 Razão Social:
             </label>
-            <input type="text"
-                   class="infraText blocInformacaoPj"
-                   id="txtRazaoSocialAlt"
-                   name="txtRazaoSocialAlt"
-                   readonly="readonly"
+            <input type="text" class="infraText blocInformacaoPj" id="txtRazaoSocialAlt" name="txtRazaoSocialAlt" readonly="readonly"
                 <?php echo $readOnly ?>
                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? $arrDadosPessoaJuridicaVinculo->getStrRazaoSocialNomeVinc() : null; ?>"
                    onkeypress="return infraMascaraCnpj(this,event);"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
+            </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-5 col-lg-3 col-xl-2">
+        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
+            <div class="form-group">
             <label class="infraLabelObrigatorio" for="txtNumeroCpfResponsavelAlt">
                 CPF do Responsável Legal:
             </label>
@@ -65,8 +59,10 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
                    readonly
                    onchange="validarCpf(this);"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="col-sm-12 col-md-7 col-lg-6">
+            <div class="form-gruop">
             <label class="infraLabelObrigatorio" for="txtNomeResponsavelLegalAlt">
                 Nome do Responsável Legal:
             </label>
@@ -74,6 +70,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
                    maxlength="250"
                    readonly
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
+            </div>
         </div>
     </div>
     <div class="row">

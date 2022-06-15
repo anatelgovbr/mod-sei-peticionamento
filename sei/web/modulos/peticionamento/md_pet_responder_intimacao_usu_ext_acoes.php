@@ -39,7 +39,7 @@ switch ($_GET['acao']) {
             $exibirHipoteseLegal = $objMdPetIntDestRespostaRN->verificarHipoteseLegal();
             $arrHipoteseNivel = $objMdPetIntDestRespostaRN->verificarCriterioIntercorrente($idTipoProcedimento);
            
-            $selHipoteseLegal = MdPetIntercorrenteINT::montarSelectHipoteseLegalRespostaIntimacao();
+            $selHipoteseLegal = MdPetIntercorrenteINT::montarSelectHipoteseLegalRespostaIntimacao($booOnlyOptions = true);
             
             //Documento Principal
             $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
@@ -177,11 +177,13 @@ switch ($_GET['acao']) {
 
             //Tipo Resposta
             if($contador == 1){
+
                 $strSelectTipoResposta = MdPetIntRelTipoRespINT::montarSelectTipoResposta('null', '', 'null', $_GET['id_intimacao'], $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntRelDestinatario());
                 
             }else{
+                
                 $strSelectTipoResposta = MdPetIntRelTipoRespINT::montarSelectTipoResposta('null', '', 'null', $_GET['id_intimacao'], $objMdPetIntRelDestinatarioDTO[0]->getNumIdMdPetIntRelDestinatario());
-                $strSelectEmpresa = MdPetIntRelDestinatarioINT::montarSelectRazaoSocial('null', '', 'null', $_GET['id_intimacao'], $objMdPetIntRelDestinatarioDTO[0]->getNumIdMdPetIntimacao(),$idDocumento,$idAceite);
+                $strSelectEmpresa = MdPetIntRelDestinatarioINT::montarSelectRazaoSocial('null', '', 'null', $_GET['id_intimacao'], $objMdPetIntRelDestinatarioDTO[0]->getNumIdMdPetIntimacao(),$idDocumento,$idAceite, $objUsuarioDTO->getNumIdContato());
 
             }
 

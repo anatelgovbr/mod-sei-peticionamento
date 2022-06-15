@@ -37,7 +37,7 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntRelDestinatarioDTO, 'IdMdPetIntRelDestinatario', 'IdMdPetIntRelDestinatario');
     }
 
-    public static function montarSelectRazaoSocial($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntimacao = '', $idMdPetIntRelDestinatario,$idDocumento,$idAceite)
+    public static function montarSelectRazaoSocial($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntimacao = '', $idMdPetIntRelDestinatario,$idDocumento,$idAceite, $idContatoVincRepresentant)
     {
             $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
 			//$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao);
@@ -53,9 +53,23 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
             $objMdPetIntRelDestinatarioDTO->retStrNomeContato();
 			$objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
 			$objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-            
 
-        return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $objMdPetIntRelDestinatarioDTO, 'IdMdPetIntRelDestinatario', 'NomeEmailCnpjCpf');
+            // filtra a empresa para saber se aquela representação está ativa
+			$MdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $arrObjMdPetIntRelDestinatarioFiltrado = [];
+            foreach ($objMdPetIntRelDestinatarioDTO as $objMdPetIntRelDestinatario){
+                $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                $objMdPetVincRepresentantDTO->setNumIdContato($idContatoVincRepresentant);
+                $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+                $objMdPetVincRepresentantDTO->setDblIdContatoVinculo($objMdPetIntRelDestinatario->getNumIdContato());
+                $objMdPetVincRepresentantAtivo = $MdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+                if(!empty($objMdPetVincRepresentantAtivo)){
+                    array_push($arrObjMdPetIntRelDestinatarioFiltrado, $objMdPetIntRelDestinatario);
+                }
+            }
+
+        return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntRelDestinatarioFiltrado, 'IdMdPetIntRelDestinatario', 'NomeEmailCnpjCpf');
 
     }
 
@@ -71,7 +85,7 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
         return $arrSituacao;
     }
 
-    public function consultarIntimacao($idMdPetIntRelDestinatario){
+    public static function consultarIntimacao($idMdPetIntRelDestinatario){
        
             $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
 			$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idMdPetIntRelDestinatario['id']);
@@ -82,7 +96,7 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
             $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
             
 
-            $xml .= '<dados>';
+            $xml = '<dados>';
             $xml .= '<idContato>' . $objMdPetIntRelDestinatarioDTO->getNumIdContato() . '</idContato>';
             $xml .= '<idIntimacao>' . $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntimacao() . '</idIntimacao>';
             $xml .= '<idAceite>' . $objMdPetIntRelDestinatarioDTO->getNumIdMdPetAceite() . '</idAceite>';

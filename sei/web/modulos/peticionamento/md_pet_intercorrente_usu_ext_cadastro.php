@@ -82,7 +82,7 @@ try {
         <fieldset id="orientacoes" class="infraFieldset sizeFieldset form-control fieldSetOrientacoes" style="height: auto">
             <legend class="infraLegend">&nbsp; Orientações &nbsp;</legend>
             <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <div class="col-12">
                     <label>
                         <?= $txtOrientacoes ?>
                     </label>

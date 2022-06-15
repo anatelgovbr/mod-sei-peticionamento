@@ -1,16 +1,5 @@
-<style type="text/css">
-    label[for^=txt] {
-        display: block;
-        white-space: nowrap;
-    }
-
-    p {
-        font-size: 1.2em;
-    }
-
-    .row div {
-        padding-right: 0px;
-        padding-top: 4px;
-    }
-
-</style>
+.infraTable tbody tr td { padding-left: 16px; padding-right: 16px; }
+.infraDivOrdenacao { display: flex !important; align-items: center; }
+div.ms-parent.infraSelect { padding: 0px; height: 34px; width: 100% !important; }
+div.ms-parent.infraSelect button { border: none }
+div.ms-parent.infraSelect button div, div.ms-parent.infraSelect button span { margin-top: 3px }

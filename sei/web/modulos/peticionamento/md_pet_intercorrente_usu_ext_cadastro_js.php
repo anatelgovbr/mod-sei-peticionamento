@@ -16,20 +16,20 @@
         inicializarDocumento();
         document.getElementById("txtNumeroProcesso").addEventListener("keyup", controlarEnterValidarProcesso, false);
 
-        <?php if( isset( $_POST['id_procedimento'] ) ) { 
-        	
+        <?php if( isset( $_POST['id_procedimento'] ) ) {
+
         	$objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
         	$objEntradaConsultarProcedimentoAPI->setIdProcedimento( $_POST['id_procedimento'] );
         	$objSeiRN = new SeiRN();
         	$objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento( $objEntradaConsultarProcedimentoAPI );
-        	    	
+
         	$numeroProcesso = $objSaidaConsultarProcedimentoAPI->getProcedimentoFormatado();
         	?>
 
          document.getElementById('txtNumeroProcesso').value = '<?= $numeroProcesso ?>';
          validarNumeroProcesso();
          adicionarProcesso();
-         	
+
        <? } ?>
     }
 
@@ -62,7 +62,7 @@
 		){
 			return false;
         }
-       
+
         objTabelaDinamicaProcesso.adicionar([document.getElementById('hdnIdTipoProcedimento').value, numeroProcesso.value, tipoProcesso.value, processoIntercorrente.value, dataAtuacao.value ]);
 
         document.getElementById('tbProcesso').style.display = '';
@@ -90,7 +90,7 @@
 
             parent.infraAbrirJanelaModal(urlValida.value,
                 770,
-                480,
+                500,
                 '', //options
                 false); //modal*/
         }
@@ -205,12 +205,12 @@
 				MSGTOOLTIPNIVELACESSO = MSGTOOLTIPNIVELACESSO.replace(/\"/g, '');
 				MSGTOOLTIPNIVELACESSO = MSGTOOLTIPNIVELACESSO.replace(/return /g,'');
 				var MSGTOOLTIPNIVELACESSO2 = MSGTOOLTIPNIVELACESSO.split(" onmouseout=");
-				if (evento==0){ 
+				if (evento==0){
 					objeto.addEventListener('mouseover', function () {
 						eval (MSGTOOLTIPNIVELACESSO2[0]);
 					});
 				}
-				if (evento==1){ 
+				if (evento==1){
 					objeto.addEventListener('mouseout', function () {
 						eval (MSGTOOLTIPNIVELACESSO2[1]);
 					});
@@ -222,12 +222,12 @@
 				MSGTOOLTIPHIPOTESELEGAL = MSGTOOLTIPHIPOTESELEGAL.replace(/\"/g, '');
 				MSGTOOLTIPHIPOTESELEGAL = MSGTOOLTIPHIPOTESELEGAL.replace(/return /g,'');
 				var MSGTOOLTIPHIPOTESELEGAL2 = MSGTOOLTIPHIPOTESELEGAL.split(" onmouseout=");
-				if (evento==0){ 
+				if (evento==0){
 					objeto.addEventListener('mouseover', function () {
 						eval (MSGTOOLTIPHIPOTESELEGAL2[0]);
 					});
 				}
-				if (evento==1){ 
+				if (evento==1){
 					objeto.addEventListener('mouseout', function () {
 						eval (MSGTOOLTIPHIPOTESELEGAL2[1]);
 					});
@@ -239,12 +239,12 @@
 				MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.replace(/\"/g, '');
 				MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.replace(/return /g,'');
 				var MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO2 = MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO.split(" onmouseout=");
-				if (evento==0){ 
+				if (evento==0){
 					objeto.addEventListener('mouseover', function () {
 						eval (MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO2[0]);
 					});
 				}
-				if (evento==1){ 
+				if (evento==1){
 					objeto.addEventListener('mouseout', function () {
 						eval (MSGTOOLTIPNIVELACESSOPADRAOPREDEFINIDO2[1]);
 					});
@@ -256,12 +256,12 @@
 				MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.replace(/\"/g, '');
 				MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.replace(/return /g,'');
 				var MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO2 = MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO.split(" onmouseout=");
-				if (evento==0){ 
+				if (evento==0){
 					objeto.addEventListener('mouseover', function () {
 						eval (MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO2[0]);
 					});
 				}
-				if (evento==1){ 
+				if (evento==1){
 					objeto.addEventListener('mouseout', function () {
 						eval (MSGTOOLTIPHIPOTESELEGALPADRAOPREDEFINIDO2[1]);
 					});
@@ -269,7 +269,7 @@
 				break;
 		}
     }
-        
+
     function inicializarDocumento() {
         iniciarTabelaDinamicaDocumento();
         iniciarObjUploadArquivo();
@@ -299,7 +299,7 @@
             return 'id_tipo_procedimento=' + document.getElementById('hdnIdTipoProcedimento').value;
         };
     }
-    
+
     function carregarFieldDocumentos() {
 
         //Combos que dependem do processo
@@ -430,8 +430,10 @@
     function exibirTipoConferencia() {
         var formato = '';
         var divTipoConferencia = document.getElementById('divTipoConferencia');
+        var divTipoConferenciaBotao = document.getElementById('divTipoConferenciaBotao');
         var selTipoConferencia = document.getElementById('selTipoConferencia');
         divTipoConferencia.style.display = 'none';
+        divTipoConferenciaBotao.style.display = 'block';
         selTipoConferencia.value = 'null';
 
         var radiosFormato = document.getElementsByName("rdoFormato");
@@ -450,8 +452,8 @@
         }
 
         if (formato == DIGITAL) {
-            divTipoConferencia.style.marginTop = '15px';
             divTipoConferencia.style.display = '';
+            divTipoConferenciaBotao.style.display = 'none';
         }
     }
 
@@ -723,6 +725,7 @@
         document.getElementById('rdoDigitalizado').checked = false;
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
+        document.getElementById('divTipoConferenciaBotao').style.display = 'block';
     }
 
     function limparTabelaDocumento() {

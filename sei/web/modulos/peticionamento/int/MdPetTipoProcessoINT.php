@@ -825,7 +825,7 @@ class MdPetTipoProcessoINT extends InfraINT
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->retTodos();
-        if (!is_null($arrRestricaoOrgao)) {
+        if (!is_null($arrRestricaoOrgao) && count($arrRestricaoOrgao) > 0) {
             $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrRestricaoOrgao, infraDTO::$OPER_NOT_IN);
         }
         if (array_key_exists("idTpProc", $idOrgao)) {

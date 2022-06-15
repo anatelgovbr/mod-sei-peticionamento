@@ -310,7 +310,7 @@ try {
             }
 
             $linha .= '</td>';
-            $linha .= '<td align="center">';
+            $linha .= '<td width="150" align="center">';
             $linha .= PaginaSEI::getInstance()->getAcaoTransportarItem($i, $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao());
 
             if ($bolAcaoConsultar) {

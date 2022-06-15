@@ -1,5 +1,8 @@
 #divTipoConferencia {display: none;}
-#btnAdicionarDocumento {vertical-align: middle; margin-top: 28px; margin-bottom: 7%;}
+#btnAdicionarDocumento {vertical-align: middle;}
+#divTipoConferenciaBotao button#btnAdicionarDocumento {margin-top: 24px}
 .infraImgModulo{width:20px; height: 20px;}
 #fieldDocumentos{height:auto;}
-.row div{margin-top: 10px;}
+fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
+    margin-left: 0em;
+}

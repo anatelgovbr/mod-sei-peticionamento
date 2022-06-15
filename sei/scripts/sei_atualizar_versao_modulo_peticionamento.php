@@ -24,11 +24,6 @@ class MdPetAtualizadorSeiRN extends InfraRN
         parent::__construct();
     }
 
-    protected function getHistoricoVersoes()
-    {
-        return $this->historicoVersoes;
-    }
-
     protected function inicializarObjInfraIBanco()
     {
         return BancoSEI::getInstance();
@@ -100,7 +95,6 @@ class MdPetAtualizadorSeiRN extends InfraRN
             if ($versaoInfraFormatada < $versaoInfraReqFormatada) {
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
-
 
             //checando permissoes na base de dados
             $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
@@ -4165,18 +4159,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
     }
 
-    protected function fixIndices(InfraMetaBD $objInfraMetaBD, $arrTabelas, $debug = false)
+    protected function fixIndices(InfraMetaBD $objInfraMetaBD, $arrTabelas)
     {
-        if (!$debug) {
-            InfraDebug::getInstance()->setBolDebugInfra(true);
-        }
+        InfraDebug::getInstance()->setBolDebugInfra(true);
+        
         $this->logar('ATUALIZANDO INDICES...');
-
-        $objInfraMetaBD->processarIndicesChavesEstrangeiras($arrTabelas);
-
-        if (!$debug) {
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-        }
+		
+		$objInfraMetaBD->processarIndicesChavesEstrangeiras($arrTabelas);
+		
+		InfraDebug::getInstance()->setBolDebugInfra(false);
     }
 
 }
@@ -4190,18 +4181,19 @@ try {
     $arrConfig = $configuracaoSEI->getInstance()->getArrConfiguracoes();
 
     if (!isset($arrConfig['SEI']['Modulos'])) {
-        throw new InfraException('PARÂMETROS DE MÓDULOS NO CONFIGURAÇÃO DO SEI NÃO DECLARADO');
+        throw new InfraException('PARÂMETRO DE MÓDULOS NO CONFIGURAÇÃO DO SEI NÃO DECLARADO');
     } else {
         $arrModulos = $arrConfig['SEI']['Modulos'];
         if (!key_exists('PeticionamentoIntegracao', $arrModulos)) {
-            throw new InfraException('MÓDULO DO PETICIONAMENTO ELETRÔNICO NÃO DECLARADO NA CONFIGURAÇÃO DO SEI');
+            throw new InfraException('MÓDULO PETICIONAMENTO NÃO DECLARADO NO CONFIGURAÇÃO DO SEI');
         }
     }
 
     if (!class_exists('PeticionamentoIntegracao')) {
-        throw new InfraException('A CLASSE PRINCIPAL "PETICIONAMENTOINTEGRACAO" DO MÓDULO DO PETICIONAMENTO ELETRÔNICO NÃO ENCONTRADA');
+        throw new InfraException('A CLASSE PRINCIPAL "PeticionamentoIntegracao" DO MÓDULO NÃO FOI ENCONTRADA');
     }
 
+    InfraScriptVersao::solicitarAutenticacao(BancoSEI::getInstance());
     $objVersaoSeiRN = new MdPetAtualizadorSeiRN();
     $objVersaoSeiRN->atualizarVersao();
     exit;

@@ -69,13 +69,10 @@ require_once 'md_pet_int_relatorio_css.php';
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-
-require_once 'md_pet_int_relatorio_js.php';
-
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
-PaginaSEI::getInstance()->abrirAreaDados('50em');
+PaginaSEI::getInstance()->abrirAreaDados('auto');
 ?>
     <form id="frmIntimacaoRelatorioLista" method="post"
           action="<?= PaginaSEI::getInstance()->formatarXHTML(
@@ -90,9 +87,9 @@ PaginaSEI::getInstance()->abrirAreaDados('50em');
             </div>
         </div>
         <!-- Lista de Dados -->
-        <?php
-        PaginaSEI::getInstance()->fecharAreaDados(); ?>
-        <div class="row" style="margin-top: 200px;" id="divTabelaIntimacao">
+        <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
+
+        <div class="row" id="divTabelaIntimacao">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <?php
                 if ($tipoPesquisar) {
@@ -101,25 +98,27 @@ PaginaSEI::getInstance()->abrirAreaDados('50em');
                 ?>
             </div>
         </div>
-        <div class="row" id="divGraficos" style="display:none; margin-top: 200px;" >
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+
+        <div class="row mt-4" id="divGraficos" style="display:none;" >
+            <div class="col-12">
                 <?php require_once 'md_pet_int_relatorio_graficos.php'; ?>
             </div>
         </div>
-
-
 
         <input type="hidden" name="hdnIsPesquisa" id="hdnIsPesquisa"
                value="<?php echo array_key_exists('pesquisar', $_GET) ? $_GET['pesquisar'] : 0; ?>">
         <input type="hidden" name="hdnAcaoOrigem" id="hdnAcaoOrigem"
                value="<?php echo array_key_exists('acao_origem', $_GET) ? $_GET['acao_origem'] : ''; ?>">
-        <div id="espacamento" style="display: block; margin-top: 200px">
+        
+        <div id="espacamento" class="row" style="display: block;"></div>
 
-        </div>
         <?php PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos); ?>
         <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
     </form>
 
 <?php
+
+require_once 'md_pet_int_relatorio_js.php';
+
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

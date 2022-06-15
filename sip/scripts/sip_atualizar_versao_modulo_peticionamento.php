@@ -15,11 +15,6 @@ class MdPetAtualizadorSipRN extends InfraRN
         parent::__construct();
     }
 
-    protected function getHistoricoVersoes()
-    {
-        return $this->historicoVersoes;
-    }
-
     protected function inicializarObjInfraIBanco()
     {
         return BancoSip::getInstance();
@@ -91,7 +86,6 @@ class MdPetAtualizadorSipRN extends InfraRN
             if ($versaoInfraFormatada < $versaoInfraReqFormatada) {
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
-
 
             //checando permissoes na base de dados
             $objInfraMetaBD = new InfraMetaBD(BancoSip::getInstance());
@@ -2239,7 +2233,6 @@ class MdPetAtualizadorSipRN extends InfraRN
 
     private function removerPerfil($numIdSistema, $strNome)
     {
-
         $objPerfilDTO = new PerfilDTO();
         $objPerfilDTO->retNumIdPerfil();
         $objPerfilDTO->setNumIdSistema($numIdSistema);
@@ -2296,8 +2289,10 @@ try {
     SessaoSip::getInstance(false);
     BancoSip::getInstance()->setBolScript(true);
 
-    $objVersaoRN = new MdPetAtualizadorSipRN();
-    $objVersaoRN->atualizarVersao();
+    InfraScriptVersao::solicitarAutenticacao(BancoSip::getInstance());
+    $objVersaoSipRN = new MdPetAtualizadorSipRN();
+    $objVersaoSipRN->atualizarVersao();
+	exit;
 
 } catch (Exception $e) {
     echo(InfraException::inspecionar($e));

@@ -394,9 +394,14 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retStrNome();
         $contatoDTO->retDblCnpj();
+        $contatoDTO->retStrSigla();
         $contatoDTO->setNumIdContato($dados['idContato']);
         $contatoRN = new ContatoRN();
         $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
+
+        $contatoAPI = new ContatoAPI();
+        $contatoAPI->setSigla($objContatoRN->getStrSigla());
+        $contatoAPI->setNome($objContatoRN->getStrNome());
 
         $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
         $nomeModificado = str_replace("@razao_social@",$objContatoRN->getStrNome(),$especificacao);
@@ -415,6 +420,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objProcedimentoAPI->setNumeroProtocolo('');
         $objProcedimentoAPI->setNivelAcesso(ProtocoloRN::$NA_PUBLICO);
         $objProcedimentoAPI->setIdHipoteseLegal(null);
+        $objProcedimentoAPI->setInteressados(array($contatoAPI));
 
         $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
         $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);

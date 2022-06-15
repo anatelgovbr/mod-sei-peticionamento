@@ -584,7 +584,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		$objMdPetIntRelDestRN  = new MdPetIntRelDestinatarioRN();
 		$objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
 		$objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($idIntimacao);
-                $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoEx);
+        $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoEx);
 		$objMdPetIntRelDestDTO->retNumIdAcessoExterno();
 		$objMdPetIntRelDestDTO->setNumIdContato($idContato);
 		$objMdPetIntRelDestDTO = $objMdPetIntRelDestRN->consultar($objMdPetIntRelDestDTO);

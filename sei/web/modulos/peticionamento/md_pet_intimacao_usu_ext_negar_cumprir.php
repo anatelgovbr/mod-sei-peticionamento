@@ -25,11 +25,7 @@ switch ($_GET['acao']) {
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-            if (count($idContato) == 1) {
-                $objMdPetVincRepresentantDTO->setNumIdContatoVinc(current($idContato));
-            } else {
-                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($idContato, InfraDTO::$OPER_IN);
-            }
+            $objMdPetVincRepresentantDTO->setNumIdContatoVinc((array)$idContato, InfraDTO::$OPER_IN);
             $objMdPetVincRepresentantDTO->setNumIdContato($idDestinatario);
             $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
             $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
@@ -50,7 +46,7 @@ switch ($_GET['acao']) {
             if ($arrObjMdPetVincRepresentantDTO) {
                 $arrPessoaJuridica = array();
                 $arrPessoaFisica = array();
-                $texto = '<div style="padding-top: 10px; padding-bottom: 10px"><p>Você não possui mais permissão para cumprir a Intimação Eletrônica conforme abaixo:<br><br>Destinatários não permitidos:';
+                $texto = 'Você não possui mais permissão para cumprir a Intimação Eletrônica conforme abaixo:<br><br>Destinatários não permitidos:<br>';
                 foreach ($arrObjMdPetVincRepresentantDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
                     $procuracaoValida = true;
                     if ($itemObjMdPetVinculoDTO->getStrStaEstado() != MdPetVincRepresentantRN::$RP_ATIVO) {
@@ -70,9 +66,8 @@ switch ($_GET['acao']) {
                         }
                     }
                 }
-                $texto .= implode('<br>',$arrPessoaJuridica)."<br>".implode('<br>',$arrPessoaFisica);
+                $texto .= implode('<br>',array_unique($arrPessoaJuridica))."<br>".implode('<br>',array_unique($arrPessoaFisica));
             }
-            $texto .= '</p></div>';
         } catch (Exception $e) {
             PaginaSEIExterna::getInstance()->processarExcecao($e);
         }
@@ -92,12 +87,7 @@ PaginaSEIExterna::getInstance()->montarTitle(':: ' . PaginaSEIExterna::getInstan
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
 ?>
-
-.textoIntimacaoEletronica {}
-.clear {clear: both;}
-    p{
-    font-size: 0.875rem;
-    }
+p{ font-size: 0.875rem; }
 <?php
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
@@ -108,21 +98,12 @@ PaginaSEIExterna::getInstance()->abrirBody();
 ?>
 <form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
 
-    <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-
-    <div class="row linha">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-            <h4>
-                <?php echo $strTitulo; ?>
-            </h4>
+    <div class="row">
+        <div class="col-12">
+            <h4 class="mt-4"><?= $strTitulo ?></h4>
         </div>
-    </div>
-
-    <div class="row linha">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 textoIntimacaoEletronica">
-            <h2>
-                <?php echo $texto; ?>
-            </h2>
+        <div class="col-12">
+            <p><?= $texto ?></p>
         </div>
     </div>
 

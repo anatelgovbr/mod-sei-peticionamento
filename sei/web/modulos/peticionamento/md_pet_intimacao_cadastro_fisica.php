@@ -22,12 +22,12 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
 <br>
 <input type="hidden" id="intimacoesFisica" value="<?php echo count($arrIntimacoes) ?>"/>
 <div class="row">
-    <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
         <fieldset id="fldDestinatarios" class="infraFieldset sizeFieldset form-control">
             <legend class="infraLegend" class="infraLabelObrigatorio"> Destinatários</legend>
             <!-- Usuario Externo -->
             <div class="row">
-                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Usuário Externo: </label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/ajuda.svg" name="ajuda"
                          id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Usuários Externos liberados. \n \n A pesquisa pode ser efetuada pelo Nome, E-mail ou CPF do Usuário Externo.', 'Ajuda') ?>
@@ -48,14 +48,14 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
                     </div>
                 </div>
                 <!-- Email -->
-                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3" style="padding-top: 5px">
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6" style="padding-top: 5px">
                     <label id="lblEmail" for="txtEmail" class="infraLabelObrigatorio">E-mail do Usuário Externo:</label>
                     <input type="text" id="txtEmail" name="txtEmail" class="infraText campoPadrao infraAutoCompletar"
                            disabled="disabled" onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
                 <!-- Botao Adicionar -->
-                <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                <div class="col-3">
                     <button type="button" id="sbmGravarUsuario" style="margin-left: -3px;margin-top: 28px;"
                             accesskey="A"
                             name="sbmGravarUsuario" class="infraButton" onclick="transportarUsuario();"
@@ -71,52 +71,46 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
             <!-- Tabela de Destinatários -->
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela"
-                         style="<?php echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?>">
-                        <table id="tblEnderecosEletronicos" width="100%"
-                               summary="Lista de Pessoas Jurídicas disponíveis"
-                               class="infraTable">
-                            <caption id="test"
-                                     class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Físicas disponíveis", count($arrIntimacoes)) ?></caption>
+                    <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="<?php echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?>">
+                        <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jurídicas disponíveis" class="infraTable">
+                            <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Físicas disponíveis", count($arrIntimacoes)) ?></caption>
                             <tr>
                                 <th style="display:none;">ID</th>
-                                <th class="infraTh" width="30%">Destinatário</th>
-                                <th class="infraTh">E-mail</th>
-                                <th class="infraTh" width="15%">CPF</th>
+                                <th class="infraTh">Destinatário</th>
+                                <th class="infraTh" width="30%">E-mail</th>
+                                <th class="infraTh" width="17%">CPF</th>
                                 <th class="infraTh" width="10%">Data de Expedição</th>
-                                <th class="infraTh" width="10%">Situação da Intimação</th>
+                                <th class="infraTh" width="15%">Situação da Intimação</th>
                                 <th class="infraTh" width="10%">Ações</th>
                             </tr>
                             <? if ($_REQUEST['is_alterar']) { ?>
-                                <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios"
-                                       value="<?= $arrIntimacoes ?>"/>
+                                <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= $arrIntimacoes ?>"/>
                                 <? foreach ($arrIntimacoes as $key => $intimacao) {
                                     $countInt++;
                                     ?>
                                     <tr id="changeColor<?php echo $key ?>" class="infraTrClara">
                                         <!--<tr class="<?php echo $key % 2 == 0 ? 'infraTrClara' : 'infraTrEscura'; ?>">-->
-                                        <td style="display:none; width: 100px;  "> <?= $intimacao['Id'] ?></td>
-                                        <td> <?= $intimacao['Nome'] ?></td>
-                                        <td> <?= $intimacao['Email'] ?></td>
-                                        <td> <?= InfraUtil::formatarCpf($intimacao['Cpf']) ?></td>
-                                        <td align="center"> <?= $intimacao['DataIntimacao'] ?></td>
-                                        <td> <?= $intimacao['Situacao'] ?></td>
-                                        <td align="center"><a href='#'
-                                                              onclick="abrirIntimacaoCadastrada('<?= $intimacao['Url'] ?>','<?= $key ?>')">
+                                        <td class="d-none"> <?= $intimacao['Id'] ?></td>
+                                        <td class="text-center"><?= $intimacao['Nome'] ?></td>
+                                        <td class="text-center"><?= $intimacao['Email'] ?></td>
+                                        <td class="text-center"><?= InfraUtil::formatarCpf($intimacao['Cpf']) ?></td>
+                                        <td class="text-center"><?= $intimacao['DataIntimacao'] ?></td>
+                                        <td class="text-center"><?= $intimacao['Situacao'] ?></td>
+                                        <td class="text-center">
+                                            <a href='#' onclick="abrirIntimacaoCadastrada('<?= $intimacao['Url'] ?>','<?= $key ?>')">
                                                 <img title='Consultar Intimação Eletrônica'
                                                      alt='Consultar Intimação Eletrônica'
                                                      src='<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/consultar.svg'
-                                                     class='infraImg'/></a></td>
+                                                     class='infraImg'/>
+                                            </a>
+                                        </td>
                                     </tr>
                                 <? }
                             } ?>
                         </table>
                         <br/>
-                        <input type="hidden" id="hdnIdDadosUsuario" name="hdnIdDadosUsuario"
-                               value="<?= $_POST['hdnIdDadosUsuario'] ?>"/>
-                        <input type="hidden" id="hdnDadosUsuario" name="hdnDadosUsuario"
-                               value="<?= $_POST['hdnDadosUsuario'] ?>"/>
-
+                        <input type="hidden" id="hdnIdDadosUsuario" name="hdnIdDadosUsuario" value="<?= $_POST['hdnIdDadosUsuario'] ?>"/>
+                        <input type="hidden" id="hdnDadosUsuario" name="hdnDadosUsuario" value="<?= $_POST['hdnDadosUsuario'] ?>"/>
                     </div>
                 </div>
             </div>
@@ -126,7 +120,7 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
 </div>
 <div id="conteudoHide" style="display: none;">
     <div class="row">
-        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-4">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
             <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de
                 Intimação:</label>
             <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)"
@@ -136,18 +130,16 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
             </select>
             <input type=hidden name=hdnTipoIntimacao id=hdnTipoIntimacao>
         </div>
-    </div>
-    <div class="row" id="divTipoResposta" name="divTipoResposta">
-        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-4">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6" id="divTipoResposta" name="divTipoResposta">
             <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de
                 Resposta:</label>
-            <div class="grid grid_6" id="divSelectTipoResposta"></div>
+            <div id="divSelectTipoResposta"></div>
             <div style="display: none" id="divEspacoResposta" class="clear height_1"></div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-12">
             <fieldset id="fldDocumentosIntimacao" class="infraFieldset sizeFieldset form-control" style="width: 100%;">
                 <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img
                             style="margin-top:1px; margin-bottom: -3px"
@@ -207,7 +199,7 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="flTpAcesso" class="infraFieldset sizeFieldset form-control"
                       style="width:auto; min-height: 125px; margin-top:17px">
                 <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Acesso Externo</legend>
@@ -222,13 +214,14 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
                                 <label class="infraRadioLabel" for="optIntegral"></label>
                             </div>
                             <span id="spnFisica">
-                        <label id="lblIntegral" for="optIntegral" accesskey=""
-                               class="infraLabelRadio">Integral </label>
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda"
-                             id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.', 'Ajuda') ?>
-                             class="infraImgModulo"/>
-                        </span>
+                                <label id="lblIntegral" for="optIntegral" accesskey=""
+                                    class="infraLabelRadio">Integral
+                                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    name="ajuda"
+                                    id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.', 'Ajuda') ?>
+                                    class="infraImgModulo"/>
+                                </label>
+                            </span>
                         </div>
                         <div id="divOptTipoPessoaJuridica" class="infraDivRadio">
                             <div class="infraRadioDiv ">
@@ -238,12 +231,13 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
                                 <label class="infraRadioLabel" for="optParcial"></label>
                             </div>
                             <span id="spnJuridica">
-                            <label id="lblParcial" for="optParcial" accesskey=""
-                                   class="infraLabelRadio">Parcial </label>
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda"
-                             id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE serão disponibilizados ao Destinatário o Documento Principal, os Protocolos dos Anexos da Intimação (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos serão automaticamente incluídos no Acesso Parcial. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Parcial não poderá ser alterado nem cancelado. Todos os Protocolos incluídos no Acesso Externo Parcial poderão ser visualizados pelo Destinatário, independentemente de seus Níveis de Acesso, não abrangendo Protocolos futuros que forem adicionados ao processo.', 'Ajuda') ?>
-                             class="infraImgModulo"/>
+                                <label id="lblParcial" for="optParcial" accesskey=""
+                                    class="infraLabelRadio">Parcial
+                                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    name="ajuda"
+                                    id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE serão disponibilizados ao Destinatário o Documento Principal, os Protocolos dos Anexos da Intimação (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos serão automaticamente incluídos no Acesso Parcial. \n\n\n\n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Parcial não poderá ser alterado nem cancelado. Todos os Protocolos incluídos no Acesso Externo Parcial poderão ser visualizados pelo Destinatário, independentemente de seus Níveis de Acesso, não abrangendo Protocolos futuros que forem adicionados ao processo.', 'Ajuda') ?>
+                                    class="infraImgModulo"/>
+                                </label>
                         </span>
                         </div>
                     </div>

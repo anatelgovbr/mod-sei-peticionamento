@@ -144,7 +144,7 @@ class MdPetProcessoRN extends InfraRN {
 				
 				if (strpos( $arrParametros['hdnListaInteressados'] , ',') !== false) {
 					// Interessados
-					$idsContatos = split(",", $arrParametros['hdnListaInteressados']);
+					$idsContatos = explode(",", $arrParametros['hdnListaInteressados']);
 				} else {
 					// Interessados				
 					$idsContatos = array();
@@ -154,13 +154,27 @@ class MdPetProcessoRN extends InfraRN {
 			} 
 
 			$idsContatos = array_unique($idsContatos);
-			
+
+			$arrInteressados = array();
+			foreach ($idsContatos as $contato){
+			    $objContatoDTO = new ContatoDTO();
+			    $objContatoDTO->setNumIdContato($contato);
+                $objContatoDTO->retTodos(true);
+			    $objContato = (new ContatoRN())->consultarRN0324($objContatoDTO);
+			    $objParticipanteContato = new ContatoAPI();
+                $objParticipanteContato->setIdContato($objContato->getNumIdContato());
+                $objParticipanteContato->setSigla($objContato->getStrSigla());
+                $objParticipanteContato->setNome($objContato->getStrNome());
+			    array_push($arrInteressados, $objParticipanteContato);
+            }
+
 			//Gera um processo
 			$objProcedimentoAPI = new ProcedimentoAPI();
 			$objProcedimentoAPI->setIdTipoProcedimento( $objMdPetTipoProcessoDTO[0]->getNumIdProcedimento() );
 			$objProcedimentoAPI->setIdUnidadeGeradora( $unidadeDTO->getNumIdUnidade() );
 			$objProcedimentoAPI->setEspecificacao( $arrParametros['txtEspecificacaoDocPrincipal'] );
 			$objProcedimentoAPI->setNumeroProtocolo('');
+            $objProcedimentoAPI->setInteressados($arrInteressados);
 
             $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
             $objEntradaGerarProcedimentoAPI->setProcedimento($objProcedimentoAPI);
@@ -320,7 +334,7 @@ class MdPetProcessoRN extends InfraRN {
 				$arrInteressado = array();
 				$arrInteressado[0] = $DocumentoProcessoDTO->getDblIdDocumento();
 				$arrInteressado[1] = $idsParticipantes;
-				
+
 				$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );
 				// Documento - Interessados - FIM
 
@@ -328,10 +342,10 @@ class MdPetProcessoRN extends InfraRN {
 				$objAtividadeDTOLiberacao->retTodos();
 				$objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
 				$objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
-				
+
 				$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
 				$atividadeRN->excluirRN0034( $arrDTOAtividades );
-				
+
 			}
 			// Andamento Processo NOVO
 			$objMdPetReciboDTO = new MdPetReciboDTO();

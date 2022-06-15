@@ -163,7 +163,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
     public static function verificarUsuarioValido($dados)
     {
-
+        $xml = '';
         $usuarioDTO = new UsuarioDTO();
         $usuarioDTO->setNumIdContato($dados['idContato']);
         $usuarioDTO->retStrStaTipo();

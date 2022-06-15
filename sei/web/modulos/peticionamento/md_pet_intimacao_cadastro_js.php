@@ -820,7 +820,7 @@
             document.getElementById("changeColor" + i).className = 'infraTrClara';
         }
 
-        valor = infraAbrirJanela(Url, 'consultarIntimacao', 900, 900, '', false); //modal
+        valor = infraAbrirJanelaModal(Url, 900, 1000, true, false); //modal
         valor.onbeforeunload = function () {
 
             document.getElementById("changeColor" + id).className = 'infraTrAcessada';
@@ -841,7 +841,7 @@
             document.getElementById("changeColorJuridico" + i).className = 'infraTrClara';
         }
 
-        valor = infraAbrirJanela(Url, 'consultarIntimacao', 900, 900, '', false); //modal
+        valor = infraAbrirJanelaModal(Url, 900, 1000, true, false); //modal        
         valor.onbeforeunload = function () {
 
             document.getElementById("changeColorJuridico" + id).className = 'infraTrAcessada';

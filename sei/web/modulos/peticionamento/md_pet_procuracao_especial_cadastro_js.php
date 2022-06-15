@@ -65,13 +65,16 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         document.getElementById('lblDt').style.display = "";
         document.getElementById('txtDt').style.display = "";
         document.getElementById('imgDt').style.display = "";
+        document.getElementById('dvDataLimite').style.display = "";
         document.getElementById('hdnRbValidate').value = "Determinada";
     }
 
     function showDataNot() {
         document.getElementById('lblDt').style.display = "none";
         document.getElementById('txtDt').style.display = "none";
+        document.getElementById('txtDt').value = "";
         document.getElementById('imgDt').style.display = "none";
+        document.getElementById('dvDataLimite').style.display = "none";
         document.getElementById('hdnRbValidate').value = "Indeterminada";
     }
 
@@ -141,13 +144,31 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
     function adicionarProcesso() {
         document.getElementById('tbProcessos').style.display = "";
         //Limpando Campos
-        objTabelaDinamicaUsuarioProcessos.adicionar([document.getElementById('hdnIdProcedimento').value, document.getElementById('hdnTbNumeroProc').value, document.getElementById('txtTipo').value]);
+        objTabelaDinamicaUsuarioProcessos.adicionar([document.getElementById('hdnIdProcedimento').value, document.getElementById('hdnTbNumeroProc').value, document.getElementById('txtTipo').value, '<img src="/infra_css/svg/remover.svg" title="Remover Processo" onclick="$(this).closest(\'tr\').remove(); removerProcesso('+document.getElementById('hdnIdProcedimento').value+')" class="infraImg">']);
 
         document.getElementById('hdnIdProcedimento').value = '';
         document.getElementById('hdnTbNumeroProc').value = '';
         document.getElementById('txtNumeroProcesso').value = '';
         document.getElementById('txtTipo').value = '';
         document.getElementById('btnAdicionar').disabled = true;
+
+    }
+
+    function removerProcesso(IdProcedimento){
+
+        var clean = '', arrhdnTbProcessos = $('input#hdnTbProcessos').val().split('¥');
+
+        if (arrhdnTbProcessos.length > 0) {
+            for (i = 0; i < arrhdnTbProcessos.length; i++) {
+                var hdnLinha = arrhdnTbProcessos[i].split('±');
+                if(IdProcedimento != hdnLinha[0]){
+                    clean += (clean != '' ? '¥' : '') + arrhdnTbProcessos[i];
+                }
+            }
+        }
+
+        $('input#hdnTbProcessos').val(clean);
+        if(clean == ''){ $('#tbProcessos').hide() }
 
     }
 
@@ -509,7 +530,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                                         //Modal para Assinatura
                                         parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
                                             770,
-                                            480,
+                                            520,
                                             '', //options
                                             false); //modal
 
@@ -569,7 +590,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                             //Modal para Assinatura
                             parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
                                 770,
-                                480,
+                                520,
                                 '', //options
                                 false); //modal
 
@@ -579,7 +600,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                             //Modal para Validação
                             parent.infraAbrirJanelaModal($(j).attr("id"),
                                 770,
-                                480,
+                                520,
                                 '', //options
                                 false); //modal
 
@@ -788,11 +809,9 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             document.getElementById('hdnIdUsuarioProcuracao').value = "";
             $mostrar = true;
             if (document.getElementById('hdnBloqueioRadio').value == "true") {
-                document.getElementById("lvbJuridica").style.display = "none";
-                document.getElementById("rbOutorgante2").style.display = "none";
+                $('.radioJuridica').hide().find('input').prop('disabled', true);
                 document.getElementById('lvbPJProSimples').style.paddingLeft = "52px";
                 document.getElementById("ajudaPJ").style.display = "none";
-                document.getElementById("rbOutorgante2").disabled = true;
                 document.getElementById('hdnRbOutorgante').value = "PF"
                 if (!$('#rbOutorgante1').prop('disabled')) {
                     document.getElementById("rbOutorgante1").checked;
@@ -862,6 +881,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 msg = 'Informe o CPF do usuário externo completo ou válido para realizar a pesquisa.';
             }
         } else {
+            msg = 'É necessário preecher o campo CPF do Usuário Externo com 11 caracteres.';
             erro = true;
         }
 

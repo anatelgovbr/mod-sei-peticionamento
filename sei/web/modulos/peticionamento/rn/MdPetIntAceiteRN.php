@@ -206,54 +206,56 @@ class MdPetIntAceiteRN extends InfraRN
 
         //Get Id Contato
         $objUsuarioDTO = new UsuarioDTO();
-        $objUsuarioRN = new UsuarioRN();
         $objUsuarioDTO->retNumIdContato();
         $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-        $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-        $idContato = isset($objUsuarioDTO) && !is_null($objUsuarioDTO) ? $objUsuarioDTO->getNumIdContato() : null;
+        $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+
+        $idContato = isset($objUsuarioDTO) ? $objUsuarioDTO->getNumIdContato() : null;
 
         //Get Pet Rel Destinatario,
         $objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
-        if (is_array($idIntimacao)) {
-            $objMdPetIntDestDTO->setNumIdMdPetIntimacao($idIntimacao, InfraDTO::$OPER_IN);
-        } else {
-            $objMdPetIntDestDTO->setNumIdMdPetIntimacao($idIntimacao);
-        }
+        $objMdPetIntDestDTO->setNumIdMdPetIntimacao((array) $idIntimacao, InfraDTO::$OPER_IN);
         $objMdPetIntDestDTO->setNumIdContatoParticipante($idContato);
         $objMdPetIntDestDTO->retNumIdMdPetIntRelDestinatario();
         $objMdPetIntDestDTO->retStrStaSituacaoIntimacao();
-        $objMdPetIntDestRN = new MdPetIntRelDestinatarioRN();
-        $retLista = $objMdPetIntDestRN->listar($objMdPetIntDestDTO);
+        $retLista = (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntDestDTO);
+
         $idMdPetIntDest = InfraArray::converterArrInfraDTO($retLista, 'IdMdPetIntRelDestinatario');
 
         if ($idMdPetIntDest) {
+
             $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
-            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($idMdPetIntDest, InfraDTO::$OPER_IN);
+            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario((array) $idMdPetIntDest, InfraDTO::$OPER_IN);
             $count = $this->contar($objMdPetIntAceiteDTO);
 
             if (!$bolRetDados) {
                 return $count > 0;
             } else {
-                $countRet = $count > 0;
                 $idAceite = null;
                 $dataAceite = null;
-                if ($countRet) {
+                if ($count > 0) {
                     $objMdPetIntAceiteDTO->retDblIdDocumentoCertidao();
                     $objMdPetIntAceiteDTO->retNumIdMdPetIntAceite();
                     $objMdPetIntAceiteDTO->retNumIdMdPetIntRelDestinatario();
                     $objMdPetIntAceiteDTO->retDthData();
                     $ret = $this->listar($objMdPetIntAceiteDTO);
+
                     if ($ret) {
                         foreach ($ret as $aceite) {
-                            $arrDados[] = array('INT' => $count > 0,
-                                'ID_DOCUMENTO_CERTIDAO' => $aceite->getDblIdDocumentoCertidao(),
-                                'ID_ACEITE' => $aceite->getNumIdMdPetIntAceite(),
-                                'ID_DESTINATARIO' => $aceite->getNumIdMdPetIntRelDestinatario(),
-                                'DATA_ACEITE' => $aceite->getDthData());
+                            $arrDados[] = [
+                                            'INT' => $count > 0,
+                                            'ID_DOCUMENTO_CERTIDAO' => $aceite->getDblIdDocumentoCertidao(),
+                                            'ID_ACEITE' => $aceite->getNumIdMdPetIntAceite(),
+                                            'ID_DESTINATARIO' => $aceite->getNumIdMdPetIntRelDestinatario(),
+                                            'DATA_ACEITE' => $aceite->getDthData()
+                                        ];
                         }
                     }
+
                 }
+
                 return $arrDados;
+                
             }
         }
     }
@@ -429,11 +431,7 @@ class MdPetIntAceiteRN extends InfraRN
                 $objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($idContato);
                 $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
                 $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
-                $qtdObjMdPetIntRelDestinatarioDTO = is_array($objMdPetIntRelDestinatarioDTO) ? count($objMdPetIntRelDestinatarioDTO) : 0;
-                if ($qtdObjMdPetIntRelDestinatarioDTO > 0) {
-                    $idContato = $objMdPetIntRelDestinatarioDTO->getNumIdContatoParticipante();
-                    $nomeContato = $objMdPetIntRelDestinatarioDTO->getStrNomeContatoParticipante();
-                }
+                $nomeContato = $objMdPetIntRelDestinatarioDTO->getStrNomeContatoParticipante();
 
                 //@todo testar aqui o que o idContato faz
                 $idCertidao = $this->getIdCertidaoPorIntimacao(array($idIntimacao, $idContato, $objMdPetIntRelDestinatarioDTO));

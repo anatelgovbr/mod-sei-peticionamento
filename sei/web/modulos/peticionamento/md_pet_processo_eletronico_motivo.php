@@ -151,50 +151,50 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
     ?>
 
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset class="infraFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Informações sobre a Procuração</legend>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">CPF / CNPJ
                             Outorgante: </label><?php echo (is_null($objMdPetVincRepresentantDTO->getStrCNPJ())) ? InfraUtil::formatarCpf($objMdPetVincRepresentantDTO->getStrCPF()) : InfraUtil::formatarCnpj($objMdPetVincRepresentantDTO->getStrCNPJ()); ?>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">Nome / Razão Social do
                             Outorgante: </label><?php echo $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc(); ?>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">CPF
                             Outorgado: </label><?php echo InfraUtil::formatarCpf($objMdPetVincRepresentantDTO->getStrCpfProcurador()); ?>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">Nome do
                             Outorgado: </label><?php echo $objMdPetVincRepresentantDTO->getStrNomeProcurador(); ?>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">Tipo de Procuração: </label> <?php echo $tpProcuracao; ?>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">Validade: </label><?php echo (is_null($objMdPetVincRepresentantDTO->getDthDataLimiteValidade())) ? "Indeterminado" : $objMdPetVincRepresentantDTO->getDthDataLimiteValidade(); ?>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">Situação: </label><?php echo $situacao; ?>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">Abrangência: </label><br />
                         <?php
                             if(count($arrProtocolosAbrangencia) > 0){
@@ -213,7 +213,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
     </div>
     <br/>
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <label id="lblJustificativa" for="txtJustificativa"
                    class="infraLabelObrigatorio"><?= $strMotivo ?> </label>
             <textarea name="txtJustificativa" id="txtJustificativa" maxlength=250 type="text"

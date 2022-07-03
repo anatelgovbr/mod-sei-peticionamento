@@ -33,7 +33,7 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
                          id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Usuários Externos liberados. \n \n A pesquisa pode ser efetuada pelo Nome, E-mail ou CPF do Usuário Externo.', 'Ajuda') ?>
                          class="infraImgModulo"/><br>
                     <div class="input-group mb-3">
-                        <input style="width:85%;margin-top:1px;" type="text" id="txtUsuario" name="txtUsuario"
+                        <input style="width:91%;margin-top:1px;" type="text" id="txtUsuario" name="txtUsuario"
                                class="infraText campoPadrao" onkeypress="return infraMascaraTexto(this,event);"
                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
@@ -48,14 +48,14 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
                     </div>
                 </div>
                 <!-- Email -->
-                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6" style="padding-top: 5px">
+                <div class="col-sm-10 col-md-4 col-lg-4 col-xl-5" style="padding-top: 5px">
                     <label id="lblEmail" for="txtEmail" class="infraLabelObrigatorio">E-mail do Usuário Externo:</label>
                     <input type="text" id="txtEmail" name="txtEmail" class="infraText campoPadrao infraAutoCompletar"
                            disabled="disabled" onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
                 <!-- Botao Adicionar -->
-                <div class="col-3">
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-1 text-right">
                     <button type="button" id="sbmGravarUsuario" style="margin-left: -3px;margin-top: 28px;"
                             accesskey="A"
                             name="sbmGravarUsuario" class="infraButton" onclick="transportarUsuario();"
@@ -121,25 +121,29 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocum
 <div id="conteudoHide" style="display: none;">
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-            <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de
-                Intimação:</label>
-            <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)"
-                    class="campoPadrao infraSelect form-control"
-                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                <?= $strTipoIntimacao ?>
-            </select>
-            <input type=hidden name=hdnTipoIntimacao id=hdnTipoIntimacao>
+            <div class="form-group">
+                <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de
+                    Intimação:</label>
+                <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)"
+                        class="campoPadrao infraSelect form-control"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <?= $strTipoIntimacao ?>
+                </select>
+                <input type=hidden name=hdnTipoIntimacao id=hdnTipoIntimacao>
+            </div>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6" id="divTipoResposta" name="divTipoResposta">
-            <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de
-                Resposta:</label>
-            <div id="divSelectTipoResposta"></div>
-            <div style="display: none" id="divEspacoResposta" class="clear height_1"></div>
+            <div class="form-group">
+                <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de
+                    Resposta:</label>
+                <div id="divSelectTipoResposta"></div>
+                <div style="display: none" id="divEspacoResposta" class="clear height_1"></div>
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-12">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="fldDocumentosIntimacao" class="infraFieldset sizeFieldset form-control" style="width: 100%;">
                 <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img
                             style="margin-top:1px; margin-bottom: -3px"

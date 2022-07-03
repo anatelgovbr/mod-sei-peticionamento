@@ -65,3 +65,23 @@ fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {margin-left: 0;}
 #flTpAcesso .infraDivRadio {
     margin-top: 10px;
 }
+@media (max-width: 1200px) {
+    #fldDestinatarios #txtUsuario {
+        width: 94% !important;
+    }
+}
+@media (max-width: 991.98px) {
+    #fldDestinatarios #txtUsuario {
+        width: 92% !important;
+    }
+}
+@media (max-width: 767.98px) {
+    #fldDestinatarios #txtUsuario {
+        width: 95% !important;
+    }
+}
+@media (max-width: 575.98px) {
+    #fldDestinatarios #txtUsuario {
+        width: 94% !important;
+    }
+}

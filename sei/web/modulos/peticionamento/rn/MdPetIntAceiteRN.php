@@ -929,8 +929,8 @@ class MdPetIntAceiteRN extends InfraRN
                 $qntDestinatarioAntes = count($arrObjDestinatariosUnicosIntimacaoComProcuracao);
                 $qntDestinatario = count($arrObjDestinatariosUnicosIntimacao);
                 if($qntDestinatarioAntes > 0) {
-                    $todasAceitas = ($countAceites == $qntDestinatario && $qntDestinatarioAntes == $qntDestinatario);
-                } else {
+                //     $todasAceitas = ($countAceites == $qntDestinatario && $qntDestinatarioAntes == $qntDestinatario);
+                // } else {
                     $todasAceitas = ($countAceites == $qntDestinatario);
                 }
 

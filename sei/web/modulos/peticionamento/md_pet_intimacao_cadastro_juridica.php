@@ -29,7 +29,7 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasJuridico($idDoc
 
             <!-- Pessoa Jurídica -->
             <div class="row">
-                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <div class="col-sm-12 col-md-7 col-lg-7 col-xl-7">
                     <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Pessoa Jurídica: </label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/ajuda.svg" name="ajuda"
                          id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Pessoas Jurídicas que já tenham vinculado pelo menos o Responsável Legal no âmbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela Razão Social ou CNPJ da Pessoa Jurídica.', 'Ajuda') ?>
@@ -50,7 +50,7 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasJuridico($idDoc
                     <input type="hidden" id="hdnTipoPessoa" name="hdnTipoPessoa" value="J"/>
                 </div>
                 <!-- CNPJ -->
-                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3" style="padding-top: 5px">
+                <div class="col-sm-10 col-md-3 col-lg-3 col-xl-4" style="padding-top: 5px">
                     <label id="lblUsuario" for="txtUsuario"
                            class="infraLabelObrigatorio">CNPJ:</label><br>
                     <input type="text" id="txtEmail" name="txtEmail"
@@ -59,7 +59,7 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasJuridico($idDoc
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
                 <!-- Botao Adicionar -->
-                <div class="col-3">
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-1 text-right">
                     <!--<input type="button" id="sbmGravarUsuario" accesskey="A" name="sbmGravarUsuario" class="infraButton" onclick="transportarUsuario();" value="Adicionar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>-->
                     <button type="button" id="sbmGravarUsuario" style="margin-left: -3px;margin-top: 28px;"
                             accesskey="A"
@@ -142,20 +142,24 @@ $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasJuridico($idDoc
 <div id="conteudoHide2" style="display: none;">
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-            <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de
-                Intimação:</label>
-            <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)"
-                    class="campoPadrao infraSelect form-control"
-                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                <?= $strTipoIntimacao ?>
-            </select>
-            <input type=hidden name=hdnTipoIntimacao id=hdnTipoIntimacao>
+            <div class="form-group">
+                <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de
+                    Intimação:</label>
+                <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)"
+                        class="campoPadrao infraSelect form-control"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <?= $strTipoIntimacao ?>
+                </select>
+                <input type=hidden name=hdnTipoIntimacao id=hdnTipoIntimacao>
+            </div>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6" id="divTipoResposta" name="divTipoResposta">
-            <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de
-                Resposta:</label>
-            <div id="divSelectTipoResposta"></div>
-            <div style="display: none" id="divEspacoResposta" class="clear height_1"></div>
+            <div class="form-group">
+                <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de
+                    Resposta:</label>
+                <div id="divSelectTipoResposta"></div>
+                <div style="display: none" id="divEspacoResposta" class="clear height_1"></div>
+            </div>
         </div>
     </div>
 

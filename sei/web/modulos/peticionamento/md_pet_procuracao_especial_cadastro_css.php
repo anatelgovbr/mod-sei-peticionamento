@@ -69,4 +69,8 @@
 
     .infraTable > thead > tr > th:last-child > div,
     .infraTable > tbody > tr > td:last-child > div { display: block; text-align: center !important }
+    #divInfraAreaTelaD #divInfraCalendario {
+        right: 5% !important;
+        left: unset !important;
+    }
 </style>

@@ -801,7 +801,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetVincRepresentante->setNumIdMdPetVinculo($objMdPetVinculo->getNumIdMdPetVinculo());
 
             if (!is_null($idContatoRepresentante)) {
-                $objMdPetVincRepresentante->setNumIdContato($idContatoRepresentante);
+                $objMdPetVincRepresentante->setNumIdContato((array) $idContatoRepresentante, InfraDTO::$OPER_IN);
             }
 
             $objMdPetVincRepresentante->setStrStaEstado($this::$RP_ATIVO);

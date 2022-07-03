@@ -964,4 +964,156 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         
     }
 
+    public function getSituacaoUsuarioIntimacao($idDocumento, $idAcessoExterno)
+    {
+        
+        $objContatoLogado = (new MdPetIntAceiteRN())->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
+        
+        // Retorna as intimacoes do documento
+        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
+        $objMdPetIntDocumentoDTO->retDblIdDocumento();
+        $objMdPetIntDocumentoDTO->retStrSinPrincipal();
+        $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
+        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idDocumento);
+        $listaIntimacoes = (new MdPetIntProtocoloRN())->listar($objMdPetIntDocumentoDTO);
+
+        if(is_array($listaIntimacoes) && count($listaIntimacoes) > 0){
+
+            $ctrlIntimacoes     = [];
+            $intimacoesResp     = [];
+            $intimacoesCump     = [];
+            $intimacoesImpedido = [];
+            $intimacoesIncapaz  = [];
+
+            $qtdImpedido = $qtdAguardando = $qtdDestinatarios = $qtdResponder = $qtdIncapaz = 0;
+            $idsIntimacoes = InfraArray::converterArrInfraDTO($listaIntimacoes, 'IdMdPetIntimacao');
+
+            // Para cada intimação checo os destinatários
+            foreach($listaIntimacoes as $intimacao){
+                
+                // Retornando os destinatários da intimação
+                $destinatarios = $this->retornarDestinatariosIntimacao($intimacao->getNumIdMdPetIntimacao(), $objContatoLogado->getNumIdContato(), $idAcessoExterno);
+
+                if(is_array($destinatarios) && count($destinatarios) > 0){
+                    
+                    $ctrlIntimacoes[$intimacao->getNumIdMdPetIntimacao()]['destinatario'] = [];
+                    
+                    foreach($destinatarios as $destinatario){
+
+                        // Verifica se o destinatário cumpriu a intimação
+                        $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+                        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($destinatario->getNumIdMdPetIntRelDestinatario());
+                        $objMdPetIntAceiteDTO->retNumIdMdPetIntAceite();
+                        $aceite = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
+
+                        // Verifica se o usuário logado tem poderes para cumprir:
+                        $podemCumprirResponder = (new MdPetVincRepresentantRN())->retornarProcuradoresComPoderCumprirResponder($destinatario->getNumIdContato(), $idDocumento, $objContatoLogado->getNumIdContato());
+                        $procuradores = InfraArray::converterArrInfraDTO($podemCumprirResponder, 'IdContato');
+
+                        // Adiciona ao array de situacoes perante o destinatario
+                        $destinatarioInfo = [
+                            'idIntimacao'         => $intimacao->getNumIdMdPetIntimacao(),
+                            'idDestinatario'      => $destinatario->getNumIdContato(),
+                            'nomeDestinatario'    => $destinatario->getStrNomeContato(),
+                            'cpfCnpjDestinatario' => ($destinatario->getStrSinPessoaJuridica() == 'S' ? $destinatario->getDblCnpjContato() : $destinatario->getDblCpfContato()),
+                            'juridica'            => $destinatario->getStrSinPessoaJuridica(),
+                            'aceite'              => (!empty($aceite) ? $aceite->getNumIdMdPetIntAceite() : null),
+                            'temPoderes'          => ($destinatario->getNumIdContato() == $objContatoLogado->getNumIdContato() ? true : (in_array($objContatoLogado->getNumIdContato(), $procuradores) ? true : false))
+                        ];
+
+                        if(is_numeric($destinatarioInfo['aceite']) && $destinatarioInfo['temPoderes']){
+                            $destinatarioInfo['acao'] = 'responder';
+                        }else if(!is_numeric($destinatarioInfo['aceite']) && $destinatarioInfo['temPoderes']){
+                            $destinatarioInfo['acao'] = 'aguardando';
+                        }else if(is_numeric($destinatarioInfo['aceite']) && !$destinatarioInfo['temPoderes']){
+                            $destinatarioInfo['acao'] = 'impedido';
+                            $intimacoesImpedido[] = $destinatarioInfo;
+                        }else if(!is_numeric($destinatarioInfo['aceite']) && !$destinatarioInfo['temPoderes']){
+                            $destinatarioInfo['acao'] = 'incapaz';
+                            $intimacoesIncapaz[] = $destinatarioInfo;
+                        }
+
+                        if(!in_array($destinatarioInfo, $ctrlIntimacoes)){
+                            $ctrlIntimacoes[] = $destinatarioInfo;
+                            switch ($destinatarioInfo['acao']) {
+                                case 'responder': $qtdResponder++; $intimacoesResp[] = $destinatarioInfo['idIntimacao']; break;
+                                case 'aguardando': $qtdAguardando++; $intimacoesCump[] = $destinatarioInfo['idIntimacao']; break;
+                                case 'impedido': $qtdImpedido++; break;
+                                case 'incapaz': $qtdIncapaz++; break;
+                            }
+                            $qtdDestinatarios++;
+                        }
+
+                    }
+
+                }  
+
+            }
+
+            $situacao = null;
+
+            // Valida se os contadores estão de acordo com o número de destinatários
+            if(($qtdResponder + $qtdImpedido + $qtdAguardando + $qtdIncapaz) == $qtdDestinatarios){
+
+                if( $qtdAguardando == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'nao_cumprida';
+
+                }else if( $qtdResponder == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'cumprida_geral';
+
+                }else if($qtdImpedido == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = 'com_impedimento';
+                    $situacao['btn_cumprir'] = 'cumprida_geral';
+
+                }else if($qtdIncapaz == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'com_impedimento';
+
+                }else if($qtdIncapaz == 0 && $qtdImpedido == 0 && $qtdAguardando > 0 && $qtdResponder > 0 && ($qtdAguardando + $qtdResponder) == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = 'cumprida_parcial';
+                    $situacao['btn_cumprir'] = 'cumprida_parcial';
+
+                }else if($qtdIncapaz > 0 && $qtdImpedido == 0 && $qtdAguardando == 0 && $qtdResponder > 0 && ($qtdIncapaz + $qtdResponder) == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = 'cumprida_parcial';
+                    $situacao['btn_cumprir'] = 'cumprida_geral';
+
+                }else if($qtdIncapaz == 0 && $qtdImpedido > 0 && $qtdAguardando == 0 && $qtdResponder > 0 && ($qtdImpedido + $qtdResponder) == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = 'cumprida_parcial';
+                    $situacao['btn_cumprir'] = 'cumprida_geral';
+
+                }else if($qtdIncapaz == 0 && $qtdImpedido > 0 && $qtdAguardando > 0 && $qtdResponder == 0 ){
+
+                    $situacao['btn_responder'] = 'com_impedimento';
+                    $situacao['btn_cumprir'] = 'cumprida_parcial';
+
+                }else if($qtdIncapaz > 0 && $qtdImpedido > 0 && $qtdAguardando == 0 && $qtdResponder == 0 && ($qtdIncapaz + $qtdImpedido) == $qtdDestinatarios ){
+
+                    $situacao['btn_responder'] = 'com_impedimento';
+                    $situacao['btn_cumprir'] = 'com_impedimento';
+
+                }else {
+
+                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'nao_cumprida';
+
+                }
+
+                $situacao['int_responder']  = $intimacoesResp;
+                $situacao['int_cumprir']    = $intimacoesCump;
+                $situacao['int_impedido']   = $intimacoesImpedido;
+                $situacao['int_incapaz']    = $intimacoesIncapaz;
+
+            }
+            
+            return $situacao;
+            
+        }
+        
+    }
+
 }

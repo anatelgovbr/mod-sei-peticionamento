@@ -210,15 +210,15 @@ if ($numRegistros > 0) {
     $strResultado .= '<tr>';
     //$strResultado .= '<th class="infraTh" width="1%">' . PaginaSEIExterna::getInstance()->getThCheck() . '</th>' . "\n";
     //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'N° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
-    $strResultado .= '<th class="infraTh"><div style="width:150px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF/CNPJ Outorgante', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:130px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF/CNPJ Outorgante', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:170px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome/Razão Social do Outorgante', 'RazaoSocialNomeVinc', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:150px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF Outorgado', 'CpfProcurador', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:100px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF Outorgado', 'CpfProcurador', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:180px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome do Outorgado', 'NomeProcurador', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:170px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo de Procuração', 'TipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:240px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Abrangência', 'StaAbrangencia', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:140px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Validade', 'DataLimite', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:100px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Situação', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:90px" class="text-center">Ações</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:130px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo de Procuração', 'TipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:150px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Abrangência', 'StaAbrangencia', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:120px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Validade', 'DataLimite', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:70px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Situação', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:60px" class="text-center">Ações</div></th>';
     $strResultado .= '</tr>';
 
     $arrSelectTipoVinculo = array();
@@ -394,6 +394,8 @@ PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
+
+
 <form id="frmPesquisa" method="post"
       action="<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
     <?
@@ -530,7 +532,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 </select>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
+        <div class="col-sm-12 col-md-6 col-lg-7 col-xl-4">
             <div class="form-group">
                 <label id="lblAbrangencia"
                     for="lblAbrangencia"
@@ -554,7 +556,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 </select>
             </div>
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+        <div class="col-sm-12 col-md-3 col-lg-5 col-xl-3">
             <div class="form-group">
                 <label id="lblValidade"
                     for="lblValidade"
@@ -633,9 +635,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     <!-- /div -->
     <?
     PaginaSEIExterna::getInstance()->fecharAreaDados();
-    echo '<div class="table-responsive mb-0">';
     PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-    echo '</div>';
     ?>
 </form>
 <?

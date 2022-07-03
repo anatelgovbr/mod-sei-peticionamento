@@ -32,14 +32,7 @@ try {
   //=====================================================
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
-
-    if($_GET['tipoDocumento']=='revogar'){
-        $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
-
-    }else{
-        $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
-
-    }
+  $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
 
   switch ($_GET['acao']) {
 
@@ -88,13 +81,10 @@ try {
               $mdPetVinUsuExtProc = $mdPetVinUsuExtProcRN->gerarProcedimentoVinculoProcuracaoMotivo($dados);
               $motivoOk = $mdPetVinUsuExtProc;
 
-              $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar&acao_origem='.$_GET['acao']);
+              $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar&acao_origem='.$_GET['acao'].'#ID-'.$_POST['hdnIdVinculacao']);
 
               echo "<script>";
               echo " window.parent.location = '" . $urlAssinada . "';";
-              echo " window.parent.focus();";
-              echo " window.parent.close();";
-              echo " window.close();";
               echo "</script>";
               die;
           }

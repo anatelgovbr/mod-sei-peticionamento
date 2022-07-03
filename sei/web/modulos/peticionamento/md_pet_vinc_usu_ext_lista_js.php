@@ -12,6 +12,10 @@
         }
     }
 
+    if($(location).attr('hash').length > 0){
+        $('tbody tr'+$(location).attr('hash')).addClass('infraTrAcessada');
+    }
+
     function inicializar() {
 //Escondendo o Campo data
         if (document.getElementById('hdnDtInicio').value != "" && document.getElementById('hdnDtFim').value != "") {

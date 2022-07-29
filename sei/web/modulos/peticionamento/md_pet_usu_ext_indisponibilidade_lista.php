@@ -73,7 +73,7 @@ try {
         $strSumarioTabela = 'Tabela de Indisponibilidades.';
         $strCaptionTabela = 'Indisponibilidades';
 
-        $strResultado .= '<table width="99%" id="tbIndisponibilidade" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
+        $strResultado .= '<table width="100%" id="tbIndisponibilidade" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
         $strResultado .= '<caption class="infraCaption">' . PaginaPeticionamentoExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
         $strResultado .= '<tr>';
 
@@ -103,7 +103,7 @@ try {
             $strResultado .= $strCssTr;
 
             if ($bolCheck) {
-                $strResultado .= '<td valign="top">' . PaginaPeticionamentoExterna::getInstance()->getTrCheck($i, $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade(), $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao()) . '</td>';
+                $strResultado .= '<td valign="top" style="vertical-align: middle;">' . PaginaPeticionamentoExterna::getInstance()->getTrCheck($i, $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade(), $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao()) . '</td>';
             }
 
             $dataInicio = isset($arrObjMdPetIndisponibilidadeDTO[$i]) && $arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataInicio() != '' ? str_replace(' ', ' - ', substr($arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataInicio(), 0, -3)) : '';
@@ -295,7 +295,7 @@ $urlForm = 'modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?ac
         <?php PaginaPeticionamentoExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
 
         <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <label id="lblDescricao" class="infraLabelOpcional">
                     <br/>Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação automática dos
                     prazos externos de Intimações Eletrônicas que venceriam durante o período da indisponibilidade,
@@ -308,48 +308,53 @@ $urlForm = 'modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?ac
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-                <label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">Início:</label>
-                <div class="input-group mb-3">
-                    <input type="text" name="txtDtInicio" id="txtDtInicio" onchange="validDate('I');"
-                           value="<?= PaginaSEIExterna::tratarHTML($strDtInicio) ?>"
-                           onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
-                           class="infraText form-control"/>
-                    <img src="<?= PaginaPeticionamentoExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
-                         id="imgDtInicio"
-                         title="Selecionar Data/Hora Inicial"
-                         alt="Selecionar Data/Hora Inicial" class="infraImg"
-                         onclick="infraCalendario('txtDtInicio',this,true,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>
+                <div class="form-group">
+                    <label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">Início:</label>
+                    <div class="input-group mb-3">
+                        <input type="text" name="txtDtInicio" id="txtDtInicio" onchange="validDate('I');"
+                            value="<?= PaginaSEIExterna::tratarHTML($strDtInicio) ?>"
+                            onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
+                            class="infraText form-control"/>
+                        <img src="<?= PaginaPeticionamentoExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                            id="imgDtInicio"
+                            title="Selecionar Data/Hora Inicial"
+                            alt="Selecionar Data/Hora Inicial" class="infraImg"
+                            onclick="infraCalendario('txtDtInicio',this,true,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-                <label id="lblDtFim" for="txtDtFim" class="infraLabelOpcional">Fim:</label>
-                <div class="input-group mb-3">
-                    <input type="text" name="txtDtFim" onchange="validDate('F');" id="txtDtFim"
-                           value="<?= PaginaSEIExterna::tratarHTML($strDtFim) ?>"
-                           onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
-                           maxlength="16" class="infraText form-control"/>
-                    <img src="<?= PaginaPeticionamentoExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
-                         id="imgDtFim"
-                         title="Selecionar Data/Hora Final"
-                         alt="Selecionar Data/Hora Final"
-                         class="infraImg"
-                         onclick="infraCalendario('txtDtFim',this,true,'<?= InfraData::getStrDataAtual() . ' 23:59' ?>');"/>
+                <div class="form-group">
+                    <label id="lblDtFim" for="txtDtFim" class="infraLabelOpcional">Fim:</label>
+                    <div class="input-group mb-3">
+                        <input type="text" name="txtDtFim" onchange="validDate('F');" id="txtDtFim"
+                            value="<?= PaginaSEIExterna::tratarHTML($strDtFim) ?>"
+                            onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
+                            maxlength="16" class="infraText form-control"/>
+                        <img src="<?= PaginaPeticionamentoExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                            id="imgDtFim"
+                            title="Selecionar Data/Hora Final"
+                            alt="Selecionar Data/Hora Final"
+                            class="infraImg"
+                            onclick="infraCalendario('txtDtFim',this,true,'<?= InfraData::getStrDataAtual() . ' 23:59' ?>');"/>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
-                <label id="lblSinProrrogacao" for="selSinProrrogacao" class="infraLabelOpcional">Prorrogação Automática
-                    dos
-                    Prazos:</label>
-                <select onchange="pesquisar()" id="selSinProrrogacao" name="selSinProrrogacao"
-                        class="infraSelect form-control">
-                    <?= $strItensSelSinProrrogacaoAutomatica ?>
-                </select>
-
-                <input type="submit" style="visibility: hidden; display:none;"/>
+                <div class="form-group">
+                    <label id="lblSinProrrogacao" for="selSinProrrogacao" class="infraLabelOpcional">Prorrogação Automática
+                        dos
+                        Prazos:</label>
+                    <select onchange="pesquisar()" id="selSinProrrogacao" name="selSinProrrogacao"
+                            class="infraSelect form-control">
+                        <?= $strItensSelSinProrrogacaoAutomatica ?>
+                    </select>
+                    <input type="submit" style="visibility: hidden; display:none;"/>
+                </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <?
                 PaginaPeticionamentoExterna::getInstance()->montarAreaTabela($strResultado, $numRegistros);
                 ?>

@@ -52,7 +52,7 @@ li.Numerada:before { content: counters(item, ".") ". "; counter-increment: item 
 
 #fldOrientacoes {height: auto; width: 96%; margin-bottom: 15px; padding: 20px}
 #fieldsetPessoaJuridicaConsulta {height: auto; width: 96%; padding: 20px;}
-#informacaoPJ {height: auto; width: 96%; margin-bottom: 11px; padding: 20px;}
+#informacaoPJ {height: auto; width: 100%; margin-bottom: 11px; padding: 20px;}
 #registroPessoaJuridica {height: auto; width: 100%; margin-bottom: 15px; padding: 20px}
 #informacaoPJAlterar {height: auto; width: 96%;  margin-bottom: 15px; padding: 20px}
 #fieldDocumentos {height: auto; width: 96%; margin-bottom: 11px; padding: 20px}
@@ -63,4 +63,7 @@ li.Numerada:before { content: counters(item, ".") ". "; counter-increment: item 
 
 fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
     margin-left: 0em;
+}
+button {
+    margin-left: 5px;
 }

@@ -11,9 +11,11 @@
         height: 16px !important;
     }
 
-    .row div{padding-top: 5px;}
     .infraImgModulo{width: 20px;}
     .infraLabelRadio{top: 5px}
     .fieldSetIntegracao{ height: 75px;}
     #txtEnderecoWsdl{width: 80%}
+    .fieldSetIntegracao {
+        margin-bottom: 1rem;
+    }
 </style>

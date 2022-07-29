@@ -854,31 +854,32 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objAtividadeRN = new AtividadeRN();
 			$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
 
-			foreach($arrObjAtividadeDTO as $objAtividadeDTO){
-				$objAtividadeDTO->setDtaPrazo(null);
-			}
+			if (count($arrObjAtividadeDTO) > 0){
 
-			if (count($arrObjAtividadeDTO)>0){
+				foreach($arrObjAtividadeDTO as $objAtividadeDTO){
+					$objAtividadeDTO->setDtaPrazo(null);
+				}
+
 				$arrObjAtividadeDTO = InfraArray::indexarArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
-
-				$arrIdUnidade=InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
+				$arrIdUnidade = InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
 
 				//Acessar os retornos programados para a unidade atual
 				$objRetornoProgramadoDTO = new RetornoProgramadoDTO();
 				$objRetornoProgramadoDTO->setNumFiltroFkAtividadeRetorno(InfraDTO::$FILTRO_FK_WHERE);
-				$objRetornoProgramadoDTO->retNumIdUnidade();
+				$objRetornoProgramadoDTO->retNumIdUnidadeEnvio();
 				$objRetornoProgramadoDTO->retDtaProgramada();
-				$objRetornoProgramadoDTO->setNumIdUnidade($arrIdUnidade,InfraDTO::$OPER_IN);
-				$objRetornoProgramadoDTO->setDblIdProtocoloAtividadeEnvio($objProcedimentoDTO->getDblIdProcedimento());
-				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeEnvio(null);
-				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeRetorno(null);
+				$objRetornoProgramadoDTO->setNumIdUnidadeEnvio($arrIdUnidade,InfraDTO::$OPER_IN);
+				$objRetornoProgramadoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+				$objRetornoProgramadoDTO->setNumIdUnidadeRetorno(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+				$objRetornoProgramadoDTO->setNumIdAtividadeRetorno(null);
 
 				$objRetornoProgramadoRN = new RetornoProgramadoRN();
 				$arrObjRetornoProgramadoDTO = $objRetornoProgramadoRN->listar($objRetornoProgramadoDTO);
 
 				foreach ($arrObjRetornoProgramadoDTO as $objRetornoProgramadoDTO) {
-					$arrObjAtividadeDTO[$objRetornoProgramadoDTO->getNumIdUnidade()]->setDtaPrazo($objRetornoProgramadoDTO->getDtaProgramada());
+					$arrObjAtividadeDTO[$objRetornoProgramadoDTO->getNumIdUnidadeEnvio()]->setDtaPrazo($objRetornoProgramadoDTO->getDtaProgramada());
 				}
+				
 			}
 
 			return $arrObjAtividadeDTO;

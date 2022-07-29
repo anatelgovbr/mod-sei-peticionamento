@@ -1008,8 +1008,12 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
 
                         // Verifica se o usuário logado tem poderes para cumprir:
                         $podemCumprirResponder = (new MdPetVincRepresentantRN())->retornarProcuradoresComPoderCumprirResponder($destinatario->getNumIdContato(), $idDocumento, $objContatoLogado->getNumIdContato());
-                        $procuradores = InfraArray::converterArrInfraDTO($podemCumprirResponder, 'IdContato');
+                        if(empty($podemCumprirResponder)){
+                            throw new InfraException("O retorno do método retornarProcuradoresComPoderCumprirResponder() não pode ser nulo.");
+                        }
 
+                        $procuradores = (is_array($podemCumprirResponder) && count($podemCumprirResponder) > 0) ? InfraArray::converterArrInfraDTO($podemCumprirResponder, 'IdContato') : [];
+                        
                         // Adiciona ao array de situacoes perante o destinatario
                         $destinatarioInfo = [
                             'idIntimacao'         => $intimacao->getNumIdMdPetIntimacao(),

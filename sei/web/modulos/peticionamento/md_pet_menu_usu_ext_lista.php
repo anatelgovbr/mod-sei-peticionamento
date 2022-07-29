@@ -210,7 +210,7 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Nome do Menu', 'Nome', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="50%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Nome do Menu', 'Nome', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Tipo de Menu', 'Tipo', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="15%">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
@@ -228,7 +228,7 @@ try {
             $strResultado .= $strCssTr;
 
             if ($bolCheck) {
-                $strResultado .= '<td valign="top">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdPetMenuUsuarioExternoDTO[$i]->getNumIdMenuPeticionamentoUsuarioExterno(), $arrObjMdPetMenuUsuarioExternoDTO[$i]->getStrNome()) . '</td>';
+                $strResultado .= '<td valign="top"  style="vertical-align:middle">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdPetMenuUsuarioExternoDTO[$i]->getNumIdMenuPeticionamentoUsuarioExterno(), $arrObjMdPetMenuUsuarioExternoDTO[$i]->getStrNome()) . '</td>';
             }
             $strResultado .= '<td>' . PaginaSEI::tratarHTML($arrObjMdPetMenuUsuarioExternoDTO[$i]->getStrNome()) . '</td>';
 
@@ -308,25 +308,27 @@ $strTipo = $_POST['selTipo'];;
             <div class="row">
                 <!--  Nome do Menu -->
                 <div class="col-sm-6 col-md-5 col-lg-5 col-xl-4">
-                    <label id="lblNome" for="txtNome" class="infraLabelOpcional"         value=>Nome do Menu:</label>
-                    <input type="text" name="txtNome" id="txtNome" maxlength="30"
-                  "<?= PaginaSEI::tratarHTML($strNome) ?>" class="infraText form-control"/>
+                    <div class="form-group">
+                        <label id="lblNome" for="txtNome" class="infraLabelOpcional"         value=>Nome do Menu:</label>
+                        <input type="text" name="txtNome" id="txtNome" maxlength="30"
+                    <?= PaginaSEI::tratarHTML($strNome) ?> class="infraText form-control"/>
+                    </div>
                 </div>
                 <!--  Tipo do Menu -->
                 <div class="col-sm-6 col-md-5 col-lg-5 col-xl-4">
-                    <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Tipo de Menu:</label>
+                    <div class="form-group">
+                        <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Tipo de Menu:</label>
 
-                    <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect form-control">
-                        <option value="" <? if ($strTipo == "") echo " selected='selected' "; ?> > Todos
-                        </option>
-                        <option value="E" <? if ($strTipo == "E") echo " selected='selected' "; ?> >Link Externo
-                        </option>
-                        <option value="H" <? if ($strTipo == "H") echo " selected='selected' "; ?> >Conteúdo HTML
-                        </option>
-                    </select>
-
-
-                    <input type="submit" style="visibility: hidden;"/>
+                        <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect form-control">
+                            <option value="" <? if ($strTipo == "") echo " selected='selected' "; ?> > Todos
+                            </option>
+                            <option value="E" <? if ($strTipo == "E") echo " selected='selected' "; ?> >Link Externo
+                            </option>
+                            <option value="H" <? if ($strTipo == "H") echo " selected='selected' "; ?> >Conteúdo HTML
+                            </option>
+                        </select>
+                        <input type="submit" style="visibility: hidden;"/>
+                    </div>
                 </div>
             </div>
             <div class="row">

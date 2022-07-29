@@ -92,14 +92,14 @@ try {
         $strSumarioTabela = 'Tabela de Recibos.';
         $strCaptionTabela = 'Recibos';
 
-        $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
+        $strResultado .= '<table width="100%" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
         $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
         $strResultado .= '<tr>';
 
         $strResultado .= '<th class="infraTh" width="15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Data e Horário', 'DataHoraRecebimentoFinal', $arrObjMdPetReciboDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="20%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Número do Processo', 'NumeroProcessoFormatado', $arrObjMdPetReciboDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="35%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Recibo', 'NumeroProcessoFormatadoDoc', $arrObjMdPetReciboDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="30%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Tipo de Peticionamento', 'StaTipoPeticionamento', $arrObjMdPetReciboDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="20%" style="min-width:160px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Número do Processo', 'NumeroProcessoFormatado', $arrObjMdPetReciboDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" style="width:100px ">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Recibo', 'NumeroProcessoFormatadoDoc', $arrObjMdPetReciboDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="58%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Tipo de Peticionamento', 'StaTipoPeticionamento', $arrObjMdPetReciboDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="15px">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';

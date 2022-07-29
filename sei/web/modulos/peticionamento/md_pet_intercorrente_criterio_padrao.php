@@ -104,7 +104,7 @@ try {
                     $sinNAPadrao = $objCriterioIntercorrentePadraoDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
                     $sinAtivoSim = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'S' ? 'checked = checked' : '';
                     $sinAtivoNao = $objCriterioIntercorrentePadraoDTO->getStrSinAtivo() == 'N' ? 'checked = checked' : '';
-                    $hipoteseLegal = $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
+                    $hipoteseLegal = $objCriterioIntercorrentePadraoDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:flex"' : 'style="display:none"';
                     $strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $idTipoProcesso);
                     $strItensSelHipoteseLegal = MdPetTipoProcessoINT::montarSelectHipoteseLegal(null, null, $objCriterioIntercorrentePadraoDTO->getNumIdHipoteseLegal());
                     $nivelAcessoTemplate = '<option value="%s" %s>%s</option>';
@@ -157,79 +157,83 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="infraAreaDados" id="divInfraAreaDados">
             <!--  Tipo de Processo  -->
             <div class="row">
-                <div class="col-sm-12 col-md-10 col-lg-10 col-xl-6">
-                    <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de
-                        Processo: </label>
-                    <div class="input-group mb-3" id="divIcones">
-                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso"
-                               name="txtTipoProcesso"
-                               class="infraText form-control"
-                               value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>"
-                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div class="form-group">
+                        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de
+                            Processo: </label>
+                        <div class="input-group mb-3" id="divIcones">
+                            <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso"
+                                name="txtTipoProcesso"
+                                class="infraText form-control"
+                                value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>"
+                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-                        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
-                             alt="Selecionar Tipo de Processo"
-                             title="Selecionar Tipo de Processo"
-                             class="infraImg"/>
-                        <img id="imgExcluirTipoProcesso"
-                             onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
-                             alt="Remover Tipo de Processo"
-                             title="Remover Tipo de Processo"
-                             class="infraImginfraImgModulo"/>
-                        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             onmouseover="return infraTooltipMostrar('Apenas após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; ou 3) Processo Bloqueado. \n \n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrerá o peticionamento não tiver permissão de uso do Tipo de Processo do processo indicado.', 'Ajuda');"
-                             onmouseout="return infraTooltipOcultar();"
-                             alt="Ajuda" class="infraImgModulo"/>
-                    </div>
-                    <div id="divHidden">
-                        <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
-                               value="<?php echo $valorParametroHipoteseLegal; ?>"/>
-                        <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
-                               value="<?php echo $idTipoProcesso ?>"/>
-                        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
-                               value="<?php echo $idMdPetTipoProcesso ?>"/>
+                            <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                alt="Selecionar Tipo de Processo"
+                                title="Selecionar Tipo de Processo"
+                                class="infraImg"/>
+                            <img id="imgExcluirTipoProcesso"
+                                onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                alt="Remover Tipo de Processo"
+                                title="Remover Tipo de Processo"
+                                class="infraImginfraImgModulo"/>
+                            <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                onmouseover="return infraTooltipMostrar('Apenas após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; ou 3) Processo Bloqueado. \n \n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrerá o peticionamento não tiver permissão de uso do Tipo de Processo do processo indicado.', 'Ajuda');"
+                                onmouseout="return infraTooltipOcultar();"
+                                alt="Ajuda" class="infraImgModulo"/>
+                        </div>
+                        <div id="divHidden">
+                            <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
+                                value="<?php echo $valorParametroHipoteseLegal; ?>"/>
+                            <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
+                                value="<?php echo $idTipoProcesso ?>"/>
+                            <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
+                                value="<?php echo $idMdPetTipoProcesso ?>"/>
+                        </div>
                     </div>
                 </div>
             </div>
             <!--  Fim do Tipo de Processo -->
             <div class="row rowFieldSet1 rowFieldSet">
-                <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                     <fieldset class="infraFieldset form-control">
-
                         <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos</legend>
+                            <div class="form-group">
+                                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
+                                                                id="rdUsuExternoIndicarEntrePermitidos"
+                                                                onclick="changeNivelAcesso();" value="1" class="infraRadio">
+                                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário
+                                    Externo indicar diretamente</label><br/>
 
-                            <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
-                                                               id="rdUsuExternoIndicarEntrePermitidos"
-                                                               onclick="changeNivelAcesso();" value="1" class="infraRadio">
-                            <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário
-                                Externo indicar diretamente</label><br/>
-
-                            <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
-                                                               onclick="changeNivelAcesso();" value="2" class="infraRadio">
-                            <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
-                                definido</label>
-
-                        <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
-                            <div class="col-sm-5 col-md-5 col-lg-5 col-xl-3">
-                                <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
-                                       class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
-                                <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()"
-                                        class="infraSelect">
-                                    <?= $strItensSelNivelAcesso ?>
-                                </select>
+                                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
+                                                                onclick="changeNivelAcesso();" value="2" class="infraRadio">
+                                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
+                                    definido</label>
                             </div>
-                        </div>
-                        <div class="row" id="divHipoteseLegal" <?php echo $hipoteseLegal ?> >
-                            <div class="col-sm-8 col-md-8 col-lg-8 col-xl-5">
-                                <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
-                                       class="infraLabelObrigatorio">Hipótese Legal:</label>
-                                <select id="selHipoteseLegal" name="selHipoteseLegal"
-                                        class="infraSelect form-control"
-                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                    <?= $strItensSelHipoteseLegal ?>
-                                </select>
+
+                        <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: flex;"' : 'style="display: none;"' ?>>
+                            <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+                                <div class="form-group">
+                                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
+                                        class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
+                                    <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()"
+                                            class="infraSelect form-control">
+                                        <?= $strItensSelNivelAcesso ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9" id="divHipoteseLegal" <?php echo $hipoteseLegal ?>>
+                                <div class="form-group">
+                                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
+                                        class="infraLabelObrigatorio">Hipótese Legal:</label>
+                                    <select id="selHipoteseLegal" name="selHipoteseLegal"
+                                            class="infraSelect form-control"
+                                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                        <?= $strItensSelHipoteseLegal ?>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -237,7 +241,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
         </div>
         <div class="row rowFieldSet2 rowFieldSet">
-            <div class="col-sm-12 col-md-10 col-lg-10">
+            <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset class="infraFieldset form-control">
                     <legend class="infraLegend">Exibir menu Peticionamento Intercorrente
                         <img id="imgAjuda2"
@@ -247,14 +251,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                              onmouseout="return infraTooltipOcultar();"
                              class="infraImg"/>
                     </legend>
+                    <div class="form-group">
                         <input <?php echo $sinAtivoSim; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoSim" value="S" class="infraRadio">
                         <label for="rdSinAtivoSim" id="lblSinAtivoSim" class="infraLabelRadio">Exibir no Acesso
                             Externo</label><br/>
                         <input <?php echo $sinAtivoNao; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoNao" value="N" class="infraRadio">
                         <label name="rdSinAtivoNao" id="lblSinAtivoNao" for="rdSinAtivoNao" class="infraLabelRadio">Não
                             Exibir no Acesso Externo</label>
-
-
+                    </div>
                 </fieldset>
             </div>
         </div>

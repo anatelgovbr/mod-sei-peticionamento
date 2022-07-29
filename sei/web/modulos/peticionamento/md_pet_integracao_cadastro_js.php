@@ -52,7 +52,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     $('#blcEnderecoWs').css('display', 'inherit');
                     $('#blcOperacaoWs').css('display', 'inherit');
                     $('#blcCacheWs').css('display', 'inherit');
-                    $('#blcTipoClienteWs').css('display', 'inherit');
+                    $('#blcTipoClienteWs').css('display', 'flex');
                     $('#blcEntradaWs').css('display', 'inherit');
                     $('#blcSaidaWs').css('display', 'inherit');
                     cacheMarcaDesmarca($('#fldParametrosCache'));
@@ -350,49 +350,41 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
     }
 
     function cacheMarcaDesmarca(objeto) {
-        if (document.getElementById('selOperacaoWsdl').value != '') {
-            if (objeto.checked) {
-                document.getElementById('paramEntradaTable_periodoCache').style.display = '';
-                buscarParametroWsdlCache('e');
-                buscarParametroWsdlCache('s');
-            } else {
-                document.getElementById('paramEntradaTable_periodoCache').style.display = 'none';
-                var select = document.getElementById('selCachePrazoExpiracao');
-                select.options.length = 0;
+        if (objeto.checked) {
+            document.getElementById('paramEntradaTable_periodoCache').style.display = '';
+            buscarParametroWsdlCache('e');
+            buscarParametroWsdlCache('s');
+        } else {
+            document.getElementById('paramEntradaTable_periodoCache').style.display = 'none';
+            var select = document.getElementById('selCachePrazoExpiracao');
+            select.options.length = 0;
 
-                var select = document.getElementById('selCacheDataArmazenamento');
-                select.options.length = 0;
-            }
+            var select = document.getElementById('selCacheDataArmazenamento');
+            select.options.length = 0;
         }
     }
 
     function tipoMarcaDesmarca(objeto) {
-        if (document.getElementById('selOperacaoWsdl').value != '') {
-            if (objeto.checked) {
-                document.getElementById('paramSaidaTable_tpLogradouro').style.display = '';
-            } else {
-                document.getElementById('paramSaidaTable_tpLogradouro').style.display = 'none';
-            }
+        if (objeto.checked) {
+            document.getElementById('paramSaidaTable_tpLogradouro').style.display = '';
+        } else {
+            document.getElementById('paramSaidaTable_tpLogradouro').style.display = 'none';
         }
     }
 
     function numeroMarcaDesmarca(objeto) {
-        if (document.getElementById('selOperacaoWsdl').value != '') {
-            if (objeto.checked) {
-                document.getElementById('paramSaidaTable_numero').style.display = '';
-            } else {
-                document.getElementById('paramSaidaTable_numero').style.display = 'none';
-            }
+        if (objeto.checked) {
+            document.getElementById('paramSaidaTable_numero').style.display = '';
+        } else {
+            document.getElementById('paramSaidaTable_numero').style.display = 'none';
         }
     }
 
     function complementoMarcaDesmarca(objeto) {
-        if (document.getElementById('selOperacaoWsdl').value != '') {
-            if (objeto.checked) {
-                document.getElementById('paramSaidaTable_complemento').style.display = '';
-            } else {
-                document.getElementById('paramSaidaTable_complemento').style.display = 'none';
-            }
+        if (objeto.checked) {
+            document.getElementById('paramSaidaTable_complemento').style.display = '';
+        } else {
+            document.getElementById('paramSaidaTable_complemento').style.display = 'none';
         }
     }
 

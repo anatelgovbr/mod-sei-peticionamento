@@ -13,7 +13,7 @@
         document.getElementById('divHipoteseLegal').style.display = 'none';
 
         if (padrao) {
-            document.getElementById('divNivelAcesso').style.display = "inherit";
+            document.getElementById('divNivelAcesso').style.display = "flex";
         }
     }
 
@@ -23,7 +23,7 @@
         var valorSelectNivelAcesso = document.getElementById('selNivelAcesso').value;
         var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
         if (valorSelectNivelAcesso == 'I' && valorHipoteseLegal != '0') {
-            document.getElementById('divHipoteseLegal').style.display = 'inherit';
+            document.getElementById('divHipoteseLegal').style.display = 'block';
         } else {
             document.getElementById('divHipoteseLegal').style.display = 'none';
         }

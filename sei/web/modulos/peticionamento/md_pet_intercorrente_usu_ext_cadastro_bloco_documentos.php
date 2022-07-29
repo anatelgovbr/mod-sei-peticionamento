@@ -37,13 +37,13 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="selTipoDocumento">
-                    Tipo de Documento: 
+                    Tipo de Documento:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, "Ajuda") ?> alt="Ajuda" class="infraImgModulo"/>
                 </label><br/>
                 <select id="selTipoDocumento" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"></select>
             </div>
         </div>
-        <div class="col-sm-12 col-md-7 col-lg-8 col-xl-7">
+        <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="txtComplementoTipoDocumento">
                     Complemento do Tipo de Documento:
@@ -64,7 +64,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             </div>
         </div>
         <?php if ($exibirHipoteseLegal): ?>
-            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-7" id="divBlcHipoteseLegal" style="display: none;">
+            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9" id="divBlcHipoteseLegal" style="display: none;">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selHipoteseLegal">
                         Hipótese Legal:
@@ -84,7 +84,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
 
             <div class="form-group">
                 <label class="infraLabelObrigatorio">
-                    Formato: 
+                    Formato:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato, "Ajuda") ?> class="infraImgModulo"/>
                 </label><br/>
                 <div class="form-check form-check-inline mr-1">
@@ -96,9 +96,9 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                     <label class="form-check-label" for="rdoDigitalizado">Digitalizado</label>
                 </div>
             </div>
-            
+
         </div>
-        <div class="col-sm-12 col-md-7 col-lg-8 col-xl-7">
+        <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
             <div class="form-group">
                 <div id="divTipoConferencia" style="display: none">
                     <label class="infraLabelObrigatorio" for="selTipoConferencia">
@@ -111,11 +111,11 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                         <div class="input-group-append ml-1">
                             <input type="button" class="infraButton" value="Adicionar" onclick="adicionarDocumento()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() + 2; ?>">
                         </div>
-                    </div>    
+                    </div>
                 </div>
                 <div id="divTipoConferenciaBotao">
                     <input type="button" class="infraButton mt-3" value="Adicionar" onclick="adicionarDocumento()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() + 2; ?>">
-                </div>    
+                </div>
             </div>
         </div>
     </div>

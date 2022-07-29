@@ -37,12 +37,12 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
                     <label class="infraLabelObrigatorio" for="selTipoDocumento">Tipo de Documento:
                         <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?php echo PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, 'Ajuda') ?> alt="Ajuda" class="infraImg"/>
                     </label>
-                    <select id="selTipoDocumento" class="infraSelect" <?php echo $disabledConsultar ?> tabindex="<?php echo PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                    <select id="selTipoDocumento" class="infraSelect form-control" <?php echo $disabledConsultar ?> tabindex="<?php echo PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                         <?= $strSelectTipoDocumento ?>
                     </select>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-7">
+            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="txtComplementoTipoDocumento">
                         Complemento do Tipo de Documento:
@@ -65,7 +65,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
                     </label>
                     <div id="divNivelAcesso"></div>
                     <?php if (!isset($arrHipoteseNivel['nivelAcesso'])) { ?>
-                        <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect" <?php echo $disabledConsultar ?> tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                        <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect form-control" <?php echo $disabledConsultar ?> tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                             <?php echo $strSelectNivelAcesso ?>
                         </select>
                     <?php } else { ?>
@@ -78,7 +78,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
             </div>
 
             <?php if ($exibirHipoteseLegal): ?>
-                <div class="col-sm-12 col-md-7 col-lg-8 col-xl-7">
+                <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
                     <div id="divBlcHipoteseLegal" <?= !isset($arrHipoteseNivel['hipoteseLegal']) ? 'style="display: none;"' : '' ?>>
                         <div class="form-group">
                             <label class="infraLabelObrigatorio" for="selHipoteseLegal">Hiptese Legal:
@@ -99,13 +99,13 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
                 </div>
             <?php endif; ?>
         </div>
-        
+
         <div class="row">
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
 
                 <div class="form-group">
                     <label class="infraLabelObrigatorio">
-                        Formato: 
+                        Formato:
                         <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipFormato, 'Ajuda') ?> class="infraImgModulo"/>
                     </label><br />
                     <div class="form-check form-check-inline m-0 p-0 ml-0 mr-1">
@@ -119,7 +119,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
                 </div>
 
             </div>
-            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-7">
+            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
                 <div class="form-group">
                     <div id="divTipoConferencia" style="display: none;">
                         <label class="infraLabelObrigatorio" for="selTipoConferencia">Conferência com o documento digitalizado:</label><br/>
@@ -130,7 +130,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
                             <div class="input-group-append">
                                 <button type="button" accesskey="A" class="infraButton" id="btnAdicionarDocumento" onclick="adicionarDocumento();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                                     <span class="infraTeclaAtalho">A</span>dicionar
-                                </button>    
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <?php $arrArquivo = null; ?>
                 <div class="table-responsive">
-                    <table class="infraTable" summary="Documento" id="tbDocumento">
+                    <table class="infraTable" summary="Documento" id="tbDocumento" style="width: 100%">
                         <caption class="infraCaption">&nbsp;</caption>
                         <tr>
                             <th class="infraTh" width="0" style="display: none;">ID Linha</th> <!--0-->

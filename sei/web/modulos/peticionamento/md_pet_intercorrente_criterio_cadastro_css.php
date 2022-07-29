@@ -6,3 +6,6 @@
 .rowFieldSet2{ margin-top: 10px}
 .row div .mb-3{ margin-bottom: 0px !important}
 #selTipoProcesso{width: calc(100% - 90px);}
+.input-group-text-semBorda{background: none; border: none; height: 30px}
+.btnConsultarDocumento{display: block; position: relative; left: -7px;}
+.btnExcluirDocumento{display: block; position: relative; left:  -30px; top: 26px;}

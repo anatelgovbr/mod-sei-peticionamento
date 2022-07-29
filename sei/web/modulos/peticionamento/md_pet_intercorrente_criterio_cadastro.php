@@ -68,7 +68,7 @@ try {
             $sinNAUsuExt = $objMdPetCriterioDTO->getStrStaNivelAcesso() == 1 ? 'checked = checked' : '';
             $sinNAPadrao = $objMdPetCriterioDTO->getStrStaNivelAcesso() == 2 ? 'checked = checked' : '';
             if ($objMdPetCriterioDTO->getStrStaNivelAcesso() == 2) {
-                $hipoteseLegal = $objMdPetCriterioDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit"' : 'style="display:none"';
+                $hipoteseLegal = $objMdPetCriterioDTO->getStrStaTipoNivelAcesso() === 'I' && $valorParametroHipoteseLegal != '0' ? 'style="display:block"' : 'style="display:none"';
 
             }
 
@@ -185,61 +185,69 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <!--  Tipo de Processo  -->
     <div class="infraAreaDados" id="divInfraAreaDados">
         <div class="row">
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
+            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
                 <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipos de
-                    Processos: </label>
+                    Processos:                        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                             onmouseover="return infraTooltipMostrar('A indicação de mais de um Tipo de Processo apenas facilita aplicar o mesmo Critério para os Tipos indicados. Ou seja, em seguida, cada um terá registro próprio de Critério para Intercorrente.', 'Ajuda');"
+                             onmouseout="return infraTooltipOcultar();"
+                             alt="Ajuda" class="infraImgModulo"/> </label>
                 <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
                        class="infraText InfraAutoCompletar form-control" value="<?= PaginaSEI::tratarHTML($nomeTipoProcesso) ?>"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                <div class="input-group mb-3" id="divIcones">
-                    <?php if ($_GET['acao'] != 'md_pet_intercorrente_criterio_consultar') { ?>
-                        <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect" multiple="multiple"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                            <?= $strTipoProcesso; ?>
-                        </select>
-                    <?php } ?>
-                    <div>
-                        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-                             src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
-                             class="infraImg"/>
-                        <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             onmouseover="return infraTooltipMostrar('A indicação de mais de um Tipo de Processo apenas facilita aplicar o mesmo Critério para os Tipos indicados. Ou seja, em seguida, cada um terá registro próprio de Critério para Intercorrente.', 'Ajuda');"
-                             onmouseout="return infraTooltipOcultar();"
-                             alt="Ajuda" class="infraImgModulo"/>
-                        <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg" alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
-                             class="infraImg"/>
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <div class="form-group">
+                    <div class="input-group mb-3" id="divIcones">
+                        <?php if ($_GET['acao'] != 'md_pet_intercorrente_criterio_consultar') { ?>
+                            <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect form-control" multiple="multiple"
+                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                <?= $strTipoProcesso; ?>
+                            </select>
+                        <?php } ?>
+                        <div class="input-group-prepend divBotoes">
+                            <span class="input-group-text input-group-text-semBorda">
+                                <div class="btnConsultarDocumento">
+                                    <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
+                                        src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
+                                        class="infraImg"/>
+                                </div>
+                                <div class="btnExcluirDocumento">
+                                    <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg" alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
+                                        class="infraImg"/>
+                                </div>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <!--  Fim do Tipo de Processo -->
         <div class="row rowFieldSet2 rowFieldSet">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <fieldset class="infraFieldset form-control">
                     <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos&nbsp;</legend>
-                    <div>
+                    <div class="form-group">
                         <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
-                                                           id="rdUsuExternoIndicarEntrePermitidos" class="infraRadio"
-                                                           onclick="changeNivelAcesso();" value="1"
-                                                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                                        id="rdUsuExternoIndicarEntrePermitidos" class="infraRadio"
+                                                        onclick="changeNivelAcesso();" value="1"
+                                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usuário
                             Externo indica diretamente</label><br/>
 
                         <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
-                                                           onclick="changeNivelAcesso();" value="2" class="infraRadio"
-                                                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                                        onclick="changeNivelAcesso();" value="2" class="infraRadio"
+                                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
                             definido</label>
-
-                        <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>>
-                            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+                    </div>
+                    <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: flex;"' : 'style="display: none;"' ?>>
+                        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+                            <div class="form-group">
                                 <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
-                                       class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
+                                    class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
                                 <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()"
                                         class="infraSelect form-control"
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -247,11 +255,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 </select>
                             </div>
                         </div>
-
-                        <div class="row" id="divHipoteseLegal" <?php echo $hipoteseLegal ?> >
-                            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9"  id="divHipoteseLegal" <?php echo $hipoteseLegal ?>>
+                            <div class="form-group">
                                 <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
-                                       class="infraLabelObrigatorio">Hipótese Legal:</label><br/>
+                                    class="infraLabelObrigatorio">Hipótese Legal:</label><br/>
                                 <select id="selHipoteseLegal" name="selHipoteseLegal" class="infraSelect form-control"
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                     <?= $strItensSelHipoteseLegal ?>

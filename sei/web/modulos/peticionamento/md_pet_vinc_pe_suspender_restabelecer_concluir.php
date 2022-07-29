@@ -19,35 +19,35 @@ try {
   //////////////////////////////////////////////////////////////////////////////
 
   SessaoSEI::getInstance()->validarLink();
-  
+
   //SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
-	
+
   //PaginaSEI::getInstance()->salvarCamposPost(array('selCargoFuncao'));
-  
+
   PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
-  
+
   $strParametros = '';
 
   $idVinculo = isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo'];
   $idContato = isset($_GET['idContato']) ? $_GET['idContato'] : $_POST['hdnIdContato'];
   $numeroSEI = isset($_GET['numeroSEI']) ? $_GET['numeroSEI'] : $_POST['hdnNumeroSei'];
-  
+
   $txtNumeroCpfResponsavel = isset($_POST['txtNumeroCpfResponsavel']) ? $_POST['txtNumeroCpfResponsavel'] : $_GET['txtNumeroCpfResponsavel'];
   $hdnNomeNovo = $_POST['hdnNomeNovo'];
-  
+
   $bolAssinaturaOK = false;
   $bolPermiteAssinaturaLogin=false;
   $bolPermiteAssinaturaCertificado=false;
   $bolAutenticacao = false;
 
   switch($_GET['acao']){
-    
+
     case 'md_pet_vinc_responsavel_concluir_alt':
 
       $objInfraParametro=new InfraParametro(BancoSEI::getInstance());
       $tipoAssinatura=$objInfraParametro->getValor('SEI_TIPO_ASSINATURA_INTERNA');
 
-      $strTitulo = 'Assinatura de Documento';            
+      $strTitulo = 'Assinatura de Documento';
 
       switch ($tipoAssinatura){
         case 1:
@@ -63,18 +63,18 @@ try {
 
       $objAssinaturaDTO = new AssinaturaDTO();
       $objAssinaturaDTO->setStrStaFormaAutenticacao($_POST['hdnFormaAutenticacao']);
-      
+
       if (!isset($_POST['hdnFlagAssinatura'])){
         $objAssinaturaDTO->setNumIdOrgaoUsuario(SessaoSEI::getInstance()->getNumIdOrgaoUsuario());
       }else{
         $objAssinaturaDTO->setNumIdOrgaoUsuario($_POST['selOrgao']);
       }
-      
+
       $objAssinaturaDTO->setNumIdUsuario($_POST['hdnIdUsuario']);
       $objAssinaturaDTO->setStrSenhaUsuario($_POST['pwdSenha']);
-      
+
       //$objAssinaturaDTO->setStrCargoFuncao(PaginaSEI::getInstance()->recuperarCampo('selCargoFuncao'));
-      
+
       $objInfraDadoUsuario = new InfraDadoUsuario(SessaoSEI::getInstance());
 
       $strChaveDadoUsuarioAssinatura = 'ASSINATURA_CARGO_FUNCAO_'.SessaoSEI::getInstance()->getNumIdUnidadeAtual();
@@ -98,7 +98,7 @@ try {
           $objInfraSip->autenticar(SessaoSEI::getInstance()->getNumIdOrgaoUsuario(), null, SessaoSEI::getInstance()->getStrSiglaUsuario(), $_POST['pwdSenha']);
 
           // POST
-       
+
           // Responsavel - Novo
           $objMdPetContatoRN = new MdPetContatoRN();
           $idTipoContatoUsExt = $objMdPetContatoRN->getIdTipoContatoUsExt();
@@ -109,9 +109,9 @@ try {
           $objContatoDTO->setNumIdTipoContato($idTipoContatoUsExt);
           $objContatoDTO->retNumIdContato();
           $arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
-          
+
           if(count($arrObjContatoDTO) > 0) {
-            $_POST['hdnIdContatoNovo'] = $arrObjContatoDTO[0]->getNumIdContato();       
+            $_POST['hdnIdContatoNovo'] = $arrObjContatoDTO[0]->getNumIdContato();
           }
 
           $objMdPetVinculoDTO = new MdPetVinculoDTO();
@@ -137,7 +137,7 @@ try {
             $_POST['txtNomeResponsavelAntigo'] = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
             $_POST['txtCpfResponsavelAntigo'] = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
             $razaoSocial = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $nomeContato = $_POST['hdnNomeNovo'];	   
+            $nomeContato = $_POST['hdnNomeNovo'];
 
 //	   		$cpfResponsavel = InfraUtil::formatarCpf($_POST['txtNumeroCpfResponsavel']);
             $numero = '0';
@@ -161,7 +161,7 @@ try {
 	           $cep = $arrObjContatoDTO[0]->getStrCep();
 	           $logradouro = $arrObjContatoDTO[0]->getStrEndereco();
 	           $bairro = $arrObjContatoDTO[0]->getStrBairro();
-	           $_POST['hdnInformacaoPj'] = $razaoSocial.'±'.$nomeContato.'±±±'.$numero.'±'.$complemento.'±'.$cep.'±'.$logradouro.'±'.$bairro;       
+	           $_POST['hdnInformacaoPj'] = $razaoSocial.'±'.$nomeContato.'±±±'.$numero.'±'.$complemento.'±'.$cep.'±'.$logradouro.'±'.$bairro;
             }
           }
 
@@ -179,20 +179,20 @@ try {
           echo " window.opener.focus();";
           echo " window.close();";
           echo "</script>";
-          die();       	
-          //$bolAssinaturaOK = true;       
+          die();
+          //$bolAssinaturaOK = true;
         }catch(Exception $e){
           PaginaSEI::getInstance()->processarExcecao($e, true);
         }
 
       }
-      
+
     case 'md_pet_vinc_suspender_restabelecer_concluir':
 
       $objInfraParametro=new InfraParametro(BancoSEI::getInstance());
       $tipoAssinatura=$objInfraParametro->getValor('SEI_TIPO_ASSINATURA_INTERNA');
 
-      $strTitulo = 'Assinatura de Documento';            
+      $strTitulo = 'Assinatura de Documento';
 
       switch ($tipoAssinatura){
         case 1:
@@ -208,7 +208,7 @@ try {
 
       $objAssinaturaDTO = new AssinaturaDTO();
       $objAssinaturaDTO->setStrStaFormaAutenticacao($_POST['hdnFormaAutenticacao']);
-      
+
       if (!isset($_POST['hdnFlagAssinatura'])){
         $objAssinaturaDTO->setNumIdOrgaoUsuario(SessaoSEI::getInstance()->getNumIdOrgaoUsuario());
       }else{
@@ -217,9 +217,9 @@ try {
 
       $objAssinaturaDTO->setNumIdUsuario($_POST['hdnIdUsuario']);
       $objAssinaturaDTO->setStrSenhaUsuario($_POST['pwdSenha']);
-      
+
       //$objAssinaturaDTO->setStrCargoFuncao(PaginaSEI::getInstance()->recuperarCampo('selCargoFuncao'));
-      
+
       $objInfraDadoUsuario = new InfraDadoUsuario(SessaoSEI::getInstance());
 
       $strChaveDadoUsuarioAssinatura = 'ASSINATURA_CARGO_FUNCAO_'.SessaoSEI::getInstance()->getNumIdUnidadeAtual();
@@ -260,21 +260,21 @@ try {
           echo " window.parent.close();";
           echo " window.close();";
           echo "</script>";
-          die();       	
-//          $bolAssinaturaOK = true;       
+          die();
+//          $bolAssinaturaOK = true;
         }catch(Exception $e){
 //          PaginaSEI::getInstance()->processarExcecao($e, true);
         }
 
-      }      
+      }
       break;
-      
+
     default:
       throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
   }
 
   $arrComandos = array();
-  
+
 
 //  if ($numRegistros) {
 //    if ($bolPermiteAssinaturaCertificado && $objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_CERTIFICADO_DIGITAL){
@@ -308,10 +308,10 @@ try {
 //  $strIdDocumentos = implode(',',$arrIdDocumentos);
 //  $strHashDocumentos = md5($strIdDocumentos);
 
-  $idVinculo = isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo']; 
- 
+  $idVinculo = isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo'];
 
-}catch(Exception $e){ 
+
+}catch(Exception $e){
   PaginaSEI::getInstance()->processarExcecao($e);
 }
 
@@ -324,21 +324,8 @@ PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
 ?>
 
-#lblOrgao {position:absolute;left:0%;top:0%;}
-#selOrgao {position:absolute;left:0%;top:40%;width:40%;}
-
 #divContexto {<?=$strDisplayContexto?>}
-#lblContexto {position:absolute;left:0%;top:0%;}
-#selContexto {position:absolute;left:0%;top:40%;width:40%;}
-
-#lblUsuario {position:absolute;left:0%;top:0%;}
-#txtUsuario {position:absolute;left:0%;top:40%;width:60%;}
-
 #divAutenticacao {<?=$strDisplayAutenticacao?>}
-#pwdSenha {width:15%;}
-
-#lblCargoFuncao {position:absolute;left:0%;top:0%;}
-#selCargoFuncao {position:absolute;left:0%;top:40%;width:99%;}
 
 #lblOu {<?=((PaginaSEI::getInstance()->isBolIpad() || PaginaSEI::getInstance()->isBolAndroid())?'visibility:hidden;':'')?>}
 #lblCertificadoDigital {<?=((PaginaSEI::getInstance()->isBolIpad() || PaginaSEI::getInstance()->isBolAndroid())?'visibility:hidden;':'')?>}
@@ -373,7 +360,7 @@ function inicializar(){
 
   //se realizou assinatura
   <?if ($bolAssinaturaOK){ ?>
-  
+
     <?if ($objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_CERTIFICADO_DIGITAL) {?>
         infraExibirAviso(false);
     <?} else {?>
@@ -383,7 +370,7 @@ function inicializar(){
     return;
 
   <?}else{?>
-  
+
     if (document.getElementById('selCargoFuncao').options.length==2){
       document.getElementById('selCargoFuncao').options[1].selected = true;
     }
@@ -438,7 +425,7 @@ function inicializar(){
     	$('#txtNumeroCpfResponsavel').val(window.parent.document.getElementById('txtCpfNovo').value);
     	$('#hdnNomeNovo').val(window.parent.document.getElementById('txtNomeNovo').value);
     	$('#hdnIdContato').val(window.parent.document.getElementById('hdnIdContato').value);
-    }            
+    }
     if (window.parent.document.getElementById('hdnOperacao')!=null){
         $('#hdnOperacao').val(window.parent.document.getElementById('hdnOperacao').value);
     }
@@ -452,7 +439,7 @@ function OnSubmitForm() {
     document.getElementById('selOrgao').focus();
     return false;
   }
-  
+
   if (infraTrim(document.getElementById('hdnIdUsuario').value)==''){
     alert('Informe um Assinante.');
     document.getElementById('txtUsuario').focus();
@@ -469,7 +456,7 @@ function OnSubmitForm() {
     alert('Nenhum documento informado para assinatura.');
     return false;
   }
-  */	
+  */
   return true;
 }
 
@@ -532,53 +519,72 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 ?>
 
 <form id="frmAssinaturas" method="post" onsubmit="return OnSubmitForm();" action="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao'].'&acao_retorno='.PaginaSEI::getInstance()->getAcaoRetorno().'&hash_documentos='.$strHashDocumentos.$strParametros)?>">
-  
+
     <?
     //PaginaSEI::getInstance()->montarBarraLocalizacao($strTitulo);
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     //PaginaSEI::getInstance()->montarAreaValidacao();
     ?>
-
-    <div id="divOrgao" class="infraAreaDados" style="height:4.5em;">
-      <label id="lblOrgao" for="selOrgao" accesskey="r" class="infraLabelObrigatorio">Ó<span class="infraTeclaAtalho">r</span>gão do Assinante:</label>
-      <select id="selOrgao" name="selOrgao" onchange="trocarOrgaoUsuario();" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-      <?=$strItensSelOrgaos?>
-      </select>
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+            <div id="divOrgao" class="infraAreaDados">
+                <div class="form-group">
+                    <label id="lblOrgao" for="selOrgao" accesskey="r" class="infraLabelObrigatorio">Ó<span class="infraTeclaAtalho">r</span>gão do Assinante:</label>
+                    <select id="selOrgao" name="selOrgao" onchange="trocarOrgaoUsuario();" class="infraSelect form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                    <?=$strItensSelOrgaos?>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div id="divUsuario" class="infraAreaDados" style="height:4.5em;">
-      <label id="lblUsuario" for="txtUsuario" accesskey="e" class="infraLabelObrigatorio">Assinant<span class="infraTeclaAtalho">e</span>:</label>
-      <input type="text" id="txtUsuario" name="txtUsuario" class="infraText" value="<?=$strNomeUsuario?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-      <input type="hidden" id="hdnIdUsuario" name="hdnIdUsuario" value="<?=$strIdUsuario?>" />
-    </div>  
-
-    <div id="divCargoFuncao" class="infraAreaDados" style="height:4.5em;">
-      <label id="lblCargoFuncao" for="selCargoFuncao" accesskey="F" class="infraLabelObrigatorio">Cargo / <span class="infraTeclaAtalho">F</span>unção:</label>
-      <select id="selCargoFuncao" name="selCargoFuncao" class="infraSelect" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
-      <?=$strItensSelCargoFuncao?>
-      </select>
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+            <div id="divUsuario" class="infraAreaDados">
+                <div class="form-group">
+                    <label id="lblUsuario" for="txtUsuario" accesskey="e" class="infraLabelObrigatorio">Assinant<span class="infraTeclaAtalho">e</span>:</label>
+                    <input type="text" id="txtUsuario" name="txtUsuario" class="infraText form-control" value="<?=$strNomeUsuario?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                    <input type="hidden" id="hdnIdUsuario" name="hdnIdUsuario" value="<?=$strIdUsuario?>" />
+                </div>
+            </div>
+        </div>
     </div>
-    <br />
-    <div id="divAutenticacao" class="infraAreaDados" style="height:2.5em;">
-      <? if($bolPermiteAssinaturaLogin) { ?>
-        <label id="lblSenha" for="pwdSenha" accesskey="S" class="infraLabelRadio infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><span class="infraTeclaAtalho">S</span>enha</label>&nbsp;&nbsp;
-    		<input type="password" id="pwdSenha" name="pwdSenha" autocomplete="off" class="infraText" onkeypress="return tratarSenha(event);" value="" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />&nbsp;&nbsp;&nbsp;&nbsp;
-      <? }
-         if($bolPermiteAssinaturaLogin && $bolPermiteAssinaturaCertificado) { ?>
-    		<label id="lblOu" class="infraLabelOpcional" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">ou</label>&nbsp;&nbsp;&nbsp;
-      <? }
-         if($bolPermiteAssinaturaCertificado) { ?>
-        <label id="lblCertificadoDigital" onclick="tratarCertificadoDigital();" accesskey="" for="optCertificadoDigital" class="infraLabelRadio infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=((!$bolPermiteAssinaturaLogin)?(!$bolAutenticacao?'Assinar com ':'Autenticar com '):'')?>Certificado Digital</label>&nbsp;
-        <div id="divAjudaAssinaturaDigital"><a id="ancAjudaAssinaturaDigital" href="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao=assinatura_digital_ajuda&acao_origem='.$_GET['acao'])?>" target="janAjudaAssinaturaDigital" title="Instruções para Configuração da Assinatura Digital" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><img src="<?=PaginaSEI::getInstance()->getDiretorioImagensLocal()?>/sei_informacao.png" class="infraImg" /></a></div>
-      <? } ?>
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+            <div id="divCargoFuncao" class="infraAreaDados">
+                <div class="form-group">
+                    <label id="lblCargoFuncao" for="selCargoFuncao" accesskey="F" class="infraLabelObrigatorio">Cargo / <span class="infraTeclaAtalho">F</span>unção:</label>
+                    <select id="selCargoFuncao" name="selCargoFuncao" class="infraSelect form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                    <?=$strItensSelCargoFuncao?>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
-            
+    <div class="row">
+        <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-6">
+            <div id="divAutenticacao" class="infraAreaDados">
+            <? if($bolPermiteAssinaturaLogin) { ?>
+                <div class="form-group">
+                    <label id="lblSenha" for="pwdSenha" accesskey="S" class="infraLabelRadio infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><span class="infraTeclaAtalho">S</span>enha</label>&nbsp;&nbsp;
+                    <input type="password" id="pwdSenha" name="pwdSenha" autocomplete="off" class="infraText form-control" onkeypress="return tratarSenha(event);" value="" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+            <? }
+                if($bolPermiteAssinaturaLogin && $bolPermiteAssinaturaCertificado) { ?>
+                    <label id="lblOu" class="infraLabelOpcional" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">ou</label>&nbsp;&nbsp;&nbsp;
+            <? }
+                if($bolPermiteAssinaturaCertificado) { ?>
+                <label id="lblCertificadoDigital" onclick="tratarCertificadoDigital();" accesskey="" for="optCertificadoDigital" class="infraLabelRadio infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=((!$bolPermiteAssinaturaLogin)?(!$bolAutenticacao?'Assinar com ':'Autenticar com '):'')?>Certificado Digital</label>&nbsp;
+                <div id="divAjudaAssinaturaDigital"><a id="ancAjudaAssinaturaDigital" href="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao=assinatura_digital_ajuda&acao_origem='.$_GET['acao'])?>" target="janAjudaAssinaturaDigital" title="Instruções para Configuração da Assinatura Digital" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><img src="<?=PaginaSEI::getInstance()->getDiretorioImagensLocal()?>/sei_informacao.png" class="infraImg" /></a></div>
+            <? } ?>
+            </div>
+        </div>
+    </div>
     <?=$strDivCertificacao?>
     <input type="hidden" id="hdnFormaAutenticacao" name="hdnFormaAutenticacao" value="" />
     <input type="hidden" id="hdnLinkRetorno" name="hdnLinkRetorno" value="<?=$strLinkRetorno?>" />
     <input type="hidden" id="hdnFlagAssinatura" name="hdnFlagAssinatura" value="1" />
     <input type="hidden" id="hdnIdDocumentos" name="hdnIdDocumentos" value="<?=$strIdDocumentos?>" />
-  
+
     <input type="hidden" id="hdnOperacao" name="hdnOperacao" value="" />
     <input type="hidden" id="hdnIdVinculo" name="hdnIdVinculo" value="<?=$idVinculo?>" />
     <input type="hidden" id="hdnIdContato" name="hdnIdContato" value="<?=$idContato?>" />

@@ -5,22 +5,24 @@
     <div class="infraAreaDados">
         <?php $idDiv = $stWebService ? 'blcPj' : 'blcPjSemWs' ?>
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-2">
+            <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
                 <div id="<?php echo $idDiv ?>">
-                    <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">CNPJ:
-                        <img style="margin-bottom: -4px;width:20px; height:20px !important"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Insira no campo abaixo o CNPJ da Pessoa Jurídica à qual deseja se vincular.', 'Ajuda') ?>
-                             alt="Ajuda" class="infraImg"/></label>
-                    <input type="text" class="infraText" id="txtNumeroCnpj" onchange="esconderCamposPJ();"
-                           name="txtNumeroCnpj" maxlength="18"
-                           value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getDblCNPJ()) : $hdnNumeroCnpj; ?>"
-                           onkeypress="return infraMascaraCnpj(this,event);"
-                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
+                    <div class="form-group">
+                        <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">CNPJ:
+                            <img style="margin-bottom: -4px;width:20px; height:20px !important"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Insira no campo abaixo o CNPJ da Pessoa Jurídica à qual deseja se vincular.', 'Ajuda') ?>
+                                alt="Ajuda" class="infraImg"/></label>
+                        <input type="text" class="infraText form-control" id="txtNumeroCnpj" onchange="esconderCamposPJ();"
+                            name="txtNumeroCnpj" maxlength="18"
+                            value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getDblCNPJ()) : $hdnNumeroCnpj; ?>"
+                            onkeypress="return infraMascaraCnpj(this,event);"
+                            tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
+                    </div>
                 </div>
             </div>
             <?php if ($stWebService) { ?>
-                <div class="col-sm-12 col-md-8 col-lg-7 col-xl-5">
+                <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8">
                     <div class="bloco" id="blc">
                         <label id="lblCaptcha" for="txtCaptcha" class="infraLabelObrigatorio"><img
                                     valign=bottom
@@ -28,16 +30,20 @@
                                     alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>"/></label>
                     </div>
                     <div class="bloco" id="">
-                        <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de
-                            Confirmação:</label>
-                        <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText"
-                               value="" maxlength="4"
-                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-                        <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar"
-                                onclick="consultarDadosReceita()"
-                                class="infraButton"
-                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"><span
-                                    class="infraTeclaAtalho">V</span>alidar
+                        <div class="form-group">
+                            <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de
+                                Confirmação:</label>
+                            <div class="input-group mb-3">
+                                <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText form-control"
+                                    value="" maxlength="4"
+                                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                                <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar"
+                                        onclick="consultarDadosReceita()"
+                                        class="infraButton"
+                                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"><span
+                                            class="infraTeclaAtalho">V</span>alidar
+                                </button>
+                            </div>
                         </button>
                     </div>
                 </div>
@@ -51,24 +57,30 @@
                     </div>
                 </div>
             <?php } else { ?>
-                <div class="col-sm-12 col-md-8 col-lg-7 col-xl-5">
+                <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8">
                     <div class="bloco" id="blc">
+                        <br>
                         <label id="lblCaptcha" for="txtCaptcha" class="infraLabelObrigatorio"><img
                                     valign=bottom
                                     src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>"
                                     alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>"/></label>
                     </div>
                     <div class="bloco" id="">
-                        <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de
-                            Confirmação:</label>
-                        <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText"
-                               value="" maxlength="4"
-                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-                        <button type="button" accesskey="V" name="btnValidarSemWS" id="btnValidarSemWS"
-                                value="Validar"
-                                onclick=""
-                                class="infraButton"><span class="infraTeclaAtalho">V</span>alidar
-                        </button>
+                        <div class="form-group">
+                            <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de
+                                Confirmação:</label>
+                            <div class="input-group mb-3">
+                                <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText form-control"
+                                    value="" maxlength="4"
+                                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+
+                                <button type="button" accesskey="V" name="btnValidarSemWS" id="btnValidarSemWS"
+                                        value="Validar"
+                                        onclick=""
+                                        class="infraButton"><span class="infraTeclaAtalho">V</span>alidar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             <?php } ?>
@@ -108,12 +120,12 @@
     <div class="clear"></div>
 
     <div id="stDeclaracao" style="display:none">
-        <div class="bloco" id="blcDeclaracaoCheck" style="width:3%">
+        <div class="bloco" id="blcDeclaracaoCheck" style="width:3%; min-width: 25px">
             <input type=checkbox id="chkDeclaracao" value="S" class="infraCheckbox"
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
                    onchange="//mostrarEsconderCampos(this)" style="margin-top: 30%;margin-left: 30%;">
         </div>
-        <div class="bloco" id="blcDeclaracao" style="width:95%">
+        <div class="bloco" id="blcDeclaracao" style="width:93%">
             <label id="lblDeclaracao"><span id="textoDeclaracao"><?= $textoFormatadoDeclaracao ?></span></label>
         </div>
         <div class="clear"></div>

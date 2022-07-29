@@ -31,7 +31,7 @@
         url = '<?php echo PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer_concluir&idVinculo=' . $idVinculo))?>';
         parent.infraAbrirJanelaModal(url,
             770,
-            480,
+            380,
             '',     //options
             false); //modal
     }

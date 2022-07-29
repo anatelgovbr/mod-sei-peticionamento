@@ -316,7 +316,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-2 pesquisaTipoNovo">
+            <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3 pesquisaTipoNovo">
                 <label class="infraLabelOpcional">Tipo do Processo:</label>
                 <br/>
                 <input type="text" id="txtFiltro" onkeypress="filtro()" class="infraText form-control"

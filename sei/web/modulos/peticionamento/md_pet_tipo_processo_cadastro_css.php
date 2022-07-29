@@ -59,8 +59,8 @@
 .divDocumentoPrincipalExterno{margin-top: 10px;}
 .divSelecionarDocumentoPrincipal{margin-top: 10px; margin-left:-7px}
 .divNivelAcesso{margin-left: -4px;}
-#txtSerie{width: 100%; width: calc(100% - 30px);}
-#txtSerieEssencial{width: 100%; width: calc(100% - 30px);}
+#txtSerie{width: 100%}
+#txtSerieEssencial{width: 100%;}
 #txtOrgaoUnidadeMultipla{width:80%; width: calc(100% - 30px);}
 #txtTipoDocPrinc{width:100%; width: calc(100% - 60px);}
 #sbmAdicionarUnidade{margin-top:22px;}

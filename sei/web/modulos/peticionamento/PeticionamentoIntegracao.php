@@ -2991,10 +2991,15 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 if ($todasIntAceit['todasAceitas']) {
                                     $permissao = SeiIntegracao::$TAM_PERMITIDO;
                                 } else {
-                                    // Verifica a situação do usuário logado perante os destinatários e o cumprimento das intimações as quais o documento está vinculado
-                                    $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocoloDaIntimacao, $idAcessoExterno);
-                                    if(in_array($situacao['btn_cumprir'], ['cumprida_geral'])){
-                                        $permissao = SeiIntegracao::$TAM_PERMITIDO;
+                                    
+                                    if(empty($idProtocoloDaIntimacao) || empty($idAcessoExterno)){
+                                        throw new InfraException("Parâmetros IdProtocoloDaIntimacao e IdAcessoExterno não podem ser nulos");
+                                    }else{
+                                        // Verifica a situação do usuário logado perante os destinatários e o cumprimento das intimações as quais o documento está vinculado
+                                        $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocoloDaIntimacao, $idAcessoExterno);
+                                        if(in_array($situacao['btn_cumprir'], ['cumprida_geral'])){
+                                            $permissao = SeiIntegracao::$TAM_PERMITIDO;
+                                        }
                                     }
                                 }
                             }

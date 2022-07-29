@@ -82,7 +82,7 @@ try {
         $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
         $objMdPetIntReciboRN = new MdPetIntReciboRN();
 
-        $strResultado .= '<table width="99%" class="infraTable" summary="Intimações Eletrônicas">';
+        $strResultado .= '<table width="100%" class="infraTable" summary="Intimações Eletrônicas">';
         $strResultado .= '<caption class="infraCaption">';
 
         $strResultado .= PaginaSEIExterna::getInstance()->gerarCaptionTabela('Intimações Eletrônicas', $numRegistros);
@@ -305,7 +305,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
 ?>
 
     <div class="row">
-        <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+        <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
             <div class="form-group">
                 <label class="infraLabelOpcional" for="txtNumeroProcesso">Número do Processo:</label>
                 <input type="text" name="txtNumeroProcesso" id="txtNumeroProcesso" class="infraText form-control"
@@ -313,40 +313,46 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
                    value="<?php echo array_key_exists('txtNumeroProcesso', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtNumeroProcesso']) : '' ?>"/>
             </div>
         </div>
-        <div class="col-sm-12 col-md-7 col-lg-5 col-xl-4">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
             <div class="form-group">
-            <label class="infraLabelOpcional" for="txtPeriodoExpedicao">Período de Expedição:</label>
-            <!--DATA INICIAL-->
-            <input type="text" name="txtDataInicio" id="txtDataInicio" class="infraText"
-                   onkeypress="return infraMascaraData(this, event);" maxlength="10"
-                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
-                   value="<?php echo array_key_exists('txtDataInicio', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtDataInicio']) : '' ?>"/>
+                <label class="infraLabelOpcional" for="txtPeriodoExpedicao">Período de Expedição:</label>
+                <!--DATA INICIAL-->
+                <div class="input-group mb-3">
+                    <input type="text" name="txtDataInicio" id="txtDataInicio" class="infraText form-control"
+                        onkeypress="return infraMascaraData(this, event);" maxlength="10"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
+                        value="<?php echo array_key_exists('txtDataInicio', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtDataInicio']) : '' ?>"/>
 
-            <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
-                 id="imgDataInicio"
-                 title="Selecionar Data Inicial"
-                 alt="Selecionar Data Inicial" class="infraImg"
-                 onclick="infraCalendario('txtDataInicio',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
-
-            <!--FIM DATA INICIAL-->
-            <label class="infraLabelOpcional mx-2">até</label>
-            <!--DATA FINAL-->
-
-            <input type="text" id="txtDataFim" name="txtDataFim" class="infraText"
-                   value="<?php echo array_key_exists('txtDataFim', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtDataFim']) : '' ?>"
-                   onkeypress="return infraMascaraData(this, event);" maxlength="10"
-                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
-
-            <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
-                 id="imgDataFim"
-                 title="Selecionar Data Final"
-                 alt="Selecionar Data Final" class="infraImg"
-                 onclick="infraCalendario('txtDataFim',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
+                    <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                        id="imgDataInicio"
+                        title="Selecionar Data Inicial"
+                        alt="Selecionar Data Inicial" class="infraImg"
+                        onclick="infraCalendario('txtDataInicio',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
+                </div>
             </div>
-
-            <!--FIM DATA FINAL-->
         </div>
-        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
+            <div class="form-group">
+                <!--FIM DATA INICIAL-->
+                <label class="infraLabelOpcional mx-2">até</label>
+                <!--DATA FINAL-->
+                <div class="input-group mb-3">
+                    <input type="text" id="txtDataFim" name="txtDataFim" class="infraText form-control"
+                        value="<?php echo array_key_exists('txtDataFim', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtDataFim']) : '' ?>"
+                        onkeypress="return infraMascaraData(this, event);" maxlength="10"
+                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
+
+                    <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                        id="imgDataFim"
+                        title="Selecionar Data Final"
+                        alt="Selecionar Data Final" class="infraImg"
+                        onclick="infraCalendario('txtDataFim',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
+                </div>
+            </div>
+        </div>
+
+        <!--FIM DATA FINAL-->
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
             <div class="form-group">
                 <label class="infraLabelOpcional" for="selTipoDestinatario">Tipo de Destinatário:</label>
                 <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoDestinatario"
@@ -360,7 +366,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
                 </select>
             </div>
         </div>
-        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
+        <div class="col-sm-12 col-md-9 col-lg-7 col-xl-6">
             <div class="form-group">
                 <label class="infraLabelOpcional" for="selTipoIntimacao">Tipo de Intimação:</label>
                 <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoIntimacao"
@@ -369,7 +375,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
                 </select>
             </div>
         </div>
-        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-4">
+        <div class="col-sm-12 col-md-12 col-lg-5 col-xl-6">
             <div class="form-group">
                 <label class="infraLabelOpcional" for="selCumprimentoIntimacao">Situação:</label>
                 <select onchange="pesquisar();" class="infraSelect form-control" name="selCumprimentoIntimacao"

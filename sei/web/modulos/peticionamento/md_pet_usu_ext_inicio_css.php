@@ -1,5 +1,5 @@
 <style type="text/css">
-    #orientacoesGerais {min-height: 165px; height: auto; width: 96%; margin-bottom: 11px;}
+    #orientacoesGerais {min-height: 165px; height: auto; width: 100%; margin-bottom: 11px;}
     .sizeFieldset {height: auto; width: 86%;}
     .fieldsetClear { border: none !important;}
     td.tdOpcaoSigiloso a {background-color: red; color: white; width: 100%;}

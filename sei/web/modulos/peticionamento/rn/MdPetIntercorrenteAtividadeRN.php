@@ -46,43 +46,18 @@ class MdPetIntercorrenteAtividadeRN extends AtividadeRN {
             }
 
             $objAtividadeDTO->setDblIdProtocolo($idProcedimento);
-
 			$objAtividadeDTO->setOrdStrSiglaUnidade(InfraDTO::$TIPO_ORDENACAO_ASC);
 
 			$arrObjAtividadeDTO = $this->listarRN0036($objAtividadeDTO);
 
-			foreach($arrObjAtividadeDTO as $objAtividadeDTO){
-				$objAtividadeDTO->setDtaPrazo(null);
-			}
-
-			if (count($arrObjAtividadeDTO)>0){
-
-				$arrObjAtividadeDTO = InfraArray::indexarArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
-
-				$arrIdUnidade=InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
-
-				//Acessar os retornos programados para a unidade atual
-				$objRetornoProgramadoDTO = new RetornoProgramadoDTO();
-				$objRetornoProgramadoDTO->setNumFiltroFkAtividadeRetorno(InfraDTO::$FILTRO_FK_WHERE);
-				$objRetornoProgramadoDTO->retNumIdUnidade();
-				$objRetornoProgramadoDTO->retDtaProgramada();
-				$objRetornoProgramadoDTO->setNumIdUnidade($arrIdUnidade,InfraDTO::$OPER_IN);
-				$objRetornoProgramadoDTO->setDblIdProtocoloAtividadeEnvio($idProcedimento);
-				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeEnvio(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
-				$objRetornoProgramadoDTO->setNumIdUnidadeAtividadeRetorno(null);
-
-				$objRetornoProgramadoRN = new RetornoProgramadoRN();
-				$arrObjRetornoProgramadoDTO = $objRetornoProgramadoRN->listar($objRetornoProgramadoDTO);
-
-				foreach ($arrObjRetornoProgramadoDTO as $objRetornoProgramadoDTO) {
-					$arrObjAtividadeDTO[$objRetornoProgramadoDTO->getNumIdUnidade()]->setDtaPrazo($objRetornoProgramadoDTO->getDtaProgramada());
-				}
+			if ( count($arrObjAtividadeDTO) > 0){
+				$arrIdUnidade = InfraArray::converterArrInfraDTO($arrObjAtividadeDTO,'IdUnidade');
 			}
 
             $objUnidadeDTO = new UnidadeDTO();
             $objUnidadeDTO->retTodos();
             $objUnidadeDTO->setBolExclusaoLogica(false);
-            $objUnidadeDTO->setNumIdUnidade(array_keys($arrObjAtividadeDTO), InfraDTO::$OPER_IN);
+            $objUnidadeDTO->setNumIdUnidade((array)$arrIdUnidade, InfraDTO::$OPER_IN);
 
             $objUnidadeRN = new UnidadeRN();
             $arrObjUnidadeDTO = $objUnidadeRN->listarRN0127($objUnidadeDTO);

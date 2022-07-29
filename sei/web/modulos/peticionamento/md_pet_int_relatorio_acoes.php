@@ -81,7 +81,7 @@ PaginaSEI::getInstance()->abrirAreaDados('auto');
 
         <?php PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
         <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
                 <!-- Filtro padrão -->
                 <?php require_once 'md_pet_int_relatorio_filtro.php'; ?>
             </div>
@@ -109,7 +109,7 @@ PaginaSEI::getInstance()->abrirAreaDados('auto');
                value="<?php echo array_key_exists('pesquisar', $_GET) ? $_GET['pesquisar'] : 0; ?>">
         <input type="hidden" name="hdnAcaoOrigem" id="hdnAcaoOrigem"
                value="<?php echo array_key_exists('acao_origem', $_GET) ? $_GET['acao_origem'] : ''; ?>">
-        
+
         <div id="espacamento" class="row" style="display: block;"></div>
 
         <?php PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos); ?>

@@ -72,7 +72,7 @@ if (isset($_GET['id_cidade'])) {
 }
 
 
-//combo disabled 
+//combo disabled
 $disabled = '';
 //Option vazio
 //Recuperando Oragao
@@ -162,7 +162,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <fieldset id="formularioPeticionamento" class="infraFieldset sizeFieldset form-control">
         <legend class="infraLegend px-3">Formulário de Peticionamento</legend>
         <div class="row">
-            <div class="col-sm-12 col-md-8 col-lg-7 col-xl-6">
+            <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio">Especificação (resumo limitado a 50 caracteres):</label>
                     <input type="text" class="infraText form-control" name="txtEspecificacao" id="txtEspecificacao" maxlength="50"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" autofocus/>
@@ -195,7 +195,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listados os Órgãos em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo o Órgão no qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label>
                         <select onchange="pesquisarUF(this)" style="<?php echo $hiddenOrgao; ?>" id="selOrgao" name="selOrgao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
-                            <?php 
+                            <?php
                                 if (($orgaoDuplo && empty($oragao)) || ($orgaoDuplo == false && count($selectOrgao[0]) > 1)){
                                     echo '<option value=""></option>';
                                 }
@@ -216,21 +216,21 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     <!-- UF -->
                     <div class="form-group" style="<?php echo $hiddUF; ?>" id="ufHidden">
                         <label id="lblPublico" class="infraLabelObrigatorio">
-                            UF: 
+                            UF:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
                         <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
                             <?php
                                 if (isset($_GET['id_uf'])) {
                                     $qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
-                                    
+
                                     if ($qtdSelectUf > 1) {
                                         echo '<option value=""></option>';
                                     }
-                                    
+
                                     $idUf   = $selectUf[0];
                                     $uf     = $selectUf[1];
-                                    
+
                                     for ($i = 0; $i < $qtdSelectUf; $i++) {
                                         echo '<option value="' . $idUf[$i] . '">' . $uf[$i] . '</option>';
                                     }
@@ -243,7 +243,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     <div class="form-group" style="<?php echo $cidadeHidde; ?>" id="cidadeHidden">
                         <!-- Cidade -->
                         <label id="lblPublico" class="infraLabelObrigatorio">
-                            Cidade: 
+                            Cidade:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as Cidades em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a Cidade na qual deseja que este Processo seja aberto.", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
                         <select onchange="pesquisarFinal(this)" id="selUFAberturaProcesso" name="selUFAberturaProcesso" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
@@ -252,7 +252,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                                 if ($qtdSelectCidade > 1) {
                                     echo '<option value=""></option>';
                                 }
-                                     
+
                                 $unidade    = $selectCidade[0];
                                 $cidade     = $selectCidade[1];
 
@@ -264,7 +264,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     </div>
                 </div>
             </div>
-                
+
             <input type="hidden" name="hdnIdUfTelaAnterior" id="hdnIdUfTelaAnterior" value="<?php echo $_GET['id_uf'] ?>" tabindex="-1"/>
             <input type="hidden" name="hdnIdCidadeTelaAnterior" id="hdnIdCidadeTelaAnterior" value="<?php echo $cidadeHidden; ?>" tabindex="-1"/>
             <input type="hidden" name="hdnIdOrgaoTelaAnterior" id="hdnIdOrgaoTelaAnterior" value="<?php echo $_GET['id_orgao'] ?>" tabindex="-1"/>
@@ -280,7 +280,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     <div class="form-group infraDivRadio" id="divOptPublico">
 		                <span id="spnPublico0">
 			                <label id="lblPublico" class="infraLabelObrigatorio">
-                                Interessado: 
+                                Interessado:
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoProprioUsuarioExterno, 'Ajuda') ?> alt="Ajuda" class="infraImg"/>
                             </label>
 		                </span>
@@ -288,11 +288,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     </div>
 
                 <? } else if ($objTipoProcDTO->getStrSinIIIndicacaoDiretaCpfCnpj() == 'S') { ?>
-                    
+
                     <!--  CASO 2 -->
                     <div class="form-group" aria-checked="true">
                         <label id="lblPublico" class="infraLabelObrigatorio">
-                            Interessados: 
+                            Interessados:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoInformandoCPFeCNPJ, 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
 
@@ -307,7 +307,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-12 col-md-6 col-lg-3 col-lx-4" id="divSel1" style="display: none;">
+                        <div class="col-sm-12 col-md-12 col-lg-4 col-lx-4" id="divSel1" style="display: none;">
                             <div class="form-group">
                                 <label id="descTipoPessoa" class="infraLabelObrigatorio"> </label><br/>
                                 <div class="input-group mb-3 divClean">
@@ -317,7 +317,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-6 col-lg-6 col-lx-4" id="divSel2" style="display: none;">
+                        <div class="col-sm-12 col-md-12 col-lg-8 col-lx-4" id="divSel2" style="display: none;">
                             <div class="form-group">
                                 <label id="descNomePessoa" class="infraLabelObrigatorio"> </label><br/>
                                 <div class="input-group mb-3 divClean">
@@ -329,7 +329,6 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-lx-12" id="divSel0">
-                            
                             <div class="form-group">
                                 <table id="tbInteressadosIndicados" class="infraTable" width="100%" style="margin-top: 0px" summary="Lista de Interessados">
                                     <tr>
@@ -350,7 +349,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             <input type="hidden" name="hdnUsuarioCadastro" id="hdnUsuarioCadastro" value="" tabindex="-1"/>
                             <input type="hidden" name="hdnUsuarioLogado" id="hdnUsuarioLogado" value="<? echo SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(); ?>" tabindex="-1"/>
                             <input type="hidden" name="hdnIdEdicao" id="hdnIdEdicao" value="" tabindex="-1"/>
-                            
+
                         </div>
 
                     </div>
@@ -369,7 +368,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                                 <div id="divOptPublico" class="infraDivRadio">
                                     <span id="spnPublico0">
                                         <label id="lblPublico" class="infraLabelObrigatorio">
-                                            Interessado: 
+                                            Interessado:
                                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoDigitadoNomeExistente, 'Ajuda') ?> alt="Ajuda" class="infraImg"/>
                                         </label><br/>
                                     </span>
@@ -381,13 +380,13 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
                                 <div style="margin-top: 5px;">
 
-                                    <select name="selInteressados" size="4" multiple="multiple" class="infraSelect" id="selInteressados" style="float: left; width: 75%; margin-right: 5px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
-                                        <? 
+                                    <select name="selInteressados" size="4" multiple="multiple" class="infraSelect form-control" id="selInteressados" style="float: left; width: 75%; margin-right: 5px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                                        <?
                                             if (is_array($arrContatosInteressados) && count($arrContatosInteressados) > 0){
                                                 foreach ($arrContatosInteressados as $itemObj){
                                                     echo '<option value="'.$itemObj->getNumIdContato().'">'.$itemObj->getStrNome().'</option>';
                                                 }
-                                            } 
+                                            }
                                         ?>
                                     </select>
 

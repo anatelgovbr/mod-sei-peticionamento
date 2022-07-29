@@ -95,35 +95,37 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <fieldset id="fieldsetTamanhoArquivo"
                               class="infraFieldset fieldsetTamanhoMaximoArquivo form-control">
                         <legend class="infraLegend">&nbsp;Limite em Mb para carregamento de Arquivos&nbsp;</legend>
-
-                        <div class="col-sm-10 col-md-10 col-lg-8 col-xl-6" id="divValorDocPrincipal">
-
-                            <label id="lblValorDocPrincipal" for="txtValorDocPrincipal"
-                                   class="infraLabelObrigatorio">Documento
-                                Principal (Processo Novo): <img align="top"
-                                                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo somente do Documento Principal, que geralmente é de tamanho menor que os demais documentos, pois tende a ser Nato Digital.', 'Ajuda') ?>
-                                                                class="infraImgModulo"/></label>
-                            <input type="text" id="txtValorDocPrincipal" name="txtValorDocPrincipal"
-                                   class="infraText form-control"
-                                   value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocPrincipal()) : '' ?>"
-                                   onkeypress="return validarCampo(this, event, 11)" maxlength="11"
-                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        </div>
-
-
-                        <div class="col-sm-10 col-md-10 col-lg-8 col-xl-6" id="divValorDocComplementar">
-                            <label id="lblValorDocComplementar" for="txtValorDocComplementar"
-                                   class="infraLabelObrigatorio">Demais Documentos: <img align="top"
-                                                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intimação e no Peticionamento de Responsável Legal de Pessoa Jurídica.', 'Ajuda') ?>
-                                                                                         class="infraImgModulo"/></label>
-                            <input type="text" id="txtValorDocComplementar" name="txtValorDocComplementar"
-                                   class="infraText form-control"
-                                   value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocComplementar()) : '' ?>"
-                                   onkeypress="return validarCampo(this, event, 11);"
-                                   onkeydown="somenteNumeros(event)"
-                                   maxlength="11" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <div class="row">
+                            <div class="col-sm-10 col-md-10 col-lg-7 col-xl-6" id="divValorDocPrincipal">
+                                <div class="form-group">
+                                    <label id="lblValorDocPrincipal" for="txtValorDocPrincipal"
+                                        class="infraLabelObrigatorio">Documento
+                                        Principal (Processo Novo): <img align="top"
+                                                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo somente do Documento Principal, que geralmente é de tamanho menor que os demais documentos, pois tende a ser Nato Digital.', 'Ajuda') ?>
+                                                                        class="infraImgModulo"/></label>
+                                    <input type="text" id="txtValorDocPrincipal" name="txtValorDocPrincipal"
+                                        class="infraText form-control"
+                                        value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocPrincipal()) : '' ?>"
+                                        onkeypress="return validarCampo(this, event, 11)" maxlength="11"
+                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-10 col-md-10 col-lg-5 col-xl-6" id="divValorDocComplementar">
+                                <div class="form-group">
+                                    <label id="lblValorDocComplementar" for="txtValorDocComplementar"
+                                        class="infraLabelObrigatorio">Demais Documentos: <img align="top"
+                                                                                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                                                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intimação e no Peticionamento de Responsável Legal de Pessoa Jurídica.', 'Ajuda') ?>
+                                                                                                class="infraImgModulo"/></label>
+                                    <input type="text" id="txtValorDocComplementar" name="txtValorDocComplementar"
+                                        class="infraText form-control"
+                                        value="<?php echo isset($objMdPetTamanhoArquivoDTO) ? PaginaSEI::tratarHTML($objMdPetTamanhoArquivoDTO->getNumValorDocComplementar()) : '' ?>"
+                                        onkeypress="return validarCampo(this, event, 11);"
+                                        onkeydown="somenteNumeros(event)"
+                                        maxlength="11" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                </div>
+                            </div>
                         </div>
                         <div class="clear">&nbsp;</div>
                     </fieldset>

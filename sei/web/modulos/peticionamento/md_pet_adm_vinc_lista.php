@@ -124,20 +124,20 @@ try {
     if ($strSlTipoViculo != '' && $strSlTipoViculo != 'null') {
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante($strSlTipoViculo);
     }
-    
+
     if(!is_null($selNaturezaVinculo) && !empty($selNaturezaVinculo)){
         $objMdPetVincRepresentantDTO->setStrTpVinc($selNaturezaVinculo);
     }
-    
+
     if(is_countable($selTipoPoder)){
 
-        // Retorna os Vínculos que teem o(s) Tipo(s) de Poder(es) selecionados: 
+        // Retorna os Vínculos que teem o(s) Tipo(s) de Poder(es) selecionados:
         $objMdPetRelVincRepTpPoderRN    = new MdPetRelVincRepTpPoderRN();
         $objMdPetRelVincRepTpPoderDTO   = new MdPetRelVincRepTpPoderDTO();
         $objMdPetRelVincRepTpPoderDTO->setNumIdTipoPoderLegal($selTipoPoder, InfraDTO::$OPER_IN);
         $objMdPetRelVincRepTpPoderDTO->retNumIdVinculoRepresent();
         $arrMdPetRelVincRepTpPoder = InfraArray::converterArrInfraDTO($objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO), 'IdVinculoRepresent');
-        
+
         if(is_countable($arrMdPetRelVincRepTpPoder) && count($arrMdPetRelVincRepTpPoder) > 0){
 
             $tipoVinculo = empty($strSlTipoViculo) || is_null($strSlTipoViculo) ? ['L','E'] : [$strSlTipoViculo];
@@ -146,7 +146,7 @@ try {
                 array('IdMdPetVinculoRepresent', 'TipoRepresentante')
                 , array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IN)
                 , array($arrMdPetRelVincRepTpPoder, $tipoVinculo), InfraDTO::$OPER_LOGICO_OR);
-            
+
         }
 
     }
@@ -168,7 +168,7 @@ try {
     }
 
     $objMdPetVincRepresentantDTO->retTodos();
-    
+
     //$objMdPetVincRepresentantDTO->setNumIdContatoOutorg();
     $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
     $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
@@ -214,7 +214,7 @@ try {
 //                $objMdPetVincRepresentantDTO->setDblIdProcedimentoVinculo($arrIdsProcedimento, InfraDTO::$OPER_IN);
 //            }else{
 //                $objMdPetVincRepresentantDTO->setDblIdProcedimentoVinculo(0);
-//            } 
+//            }
         }
     }
 
@@ -269,7 +269,7 @@ if ($numRegistros > 0) {
 
     $strResultado = '';
     $strSumarioTabela = $strCaptionTabela = 'Vinculações e Procurações Eletrônicas';
-    $strResultado .= '<table class="infraTable" summary="' . $strSumarioTabela . '">';
+    $strResultado .= '<table style="width: 100%" class="infraTable" summary="' . $strSumarioTabela . '">';
     $strResultado .= '<caption class="infraCaption text-left">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
     $strResultado .= '<thead>';
     $strResultado .= '<tr>';
@@ -324,7 +324,7 @@ if ($numRegistros > 0) {
         $strResultado .= '<td><div style="text-align: center; width:90px">' . $strLabelSituacao . '</div></td>';
 
         $title = 'Consultar' . (($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) ? 'Vinculação' : 'Procuração');
-        
+
         $acaoConsulta = '';
         $strLinkConsultaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento=' . $idDocumento . '&arvore=1');
         $iconeConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="' . $title . '" alt="' . $title . '" class="infraImg" />';
@@ -416,7 +416,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
     <?
     else:
-    
+
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
 
     ?>
@@ -439,7 +439,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
 
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblNaturezaVinculo" for="selNaturezaVinculo" class="infraLabelOpcional"><?= $strColuna70 ?>:</label>
                     <select id="selNaturezaVinculo" name="selNaturezaVinculo" onchange="this.form.submit()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -449,7 +449,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </select>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblCnpj" for="txtCnpj" class="infraLabelOpcional"><?= $strColuna10 ?>:</label>
                     <input type="text" id="txtCnpj" name="txtCnpj" onchange="this.form.submit()" class="infraText form-control"
@@ -485,7 +485,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblTipoVinculo" for="slTipoVinculo" class="infraLabelOpcional"><?= $strColuna50 ?>:</label>
                     <select name="slTipoViculo" id="slTipoViculo" class="infraSelect form-control" onchange="this.form.submit()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -500,7 +500,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </select>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblStatus" for="selStatus" class="infraLabelOpcional"><?= $strColuna60 ?>:</label>
                     <select id="selStatus" name="selStatus" onchange="this.form.submit()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -523,12 +523,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <?php
 
         PaginaSEI::getInstance()->fecharAreaDados();
-    
+
     endif;
 
-    echo '<div class="table-responsive">';
     PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-    echo '</div>';
+
     //PaginaSEI::getInstance()->montarAreaDebug();
     PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
 
@@ -536,7 +535,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     </div>
 
 </form>
-<? 
+<?
 
 require_once 'md_pet_adm_vinc_lista_js.php';
 PaginaSEI::getInstance()->fecharBody();

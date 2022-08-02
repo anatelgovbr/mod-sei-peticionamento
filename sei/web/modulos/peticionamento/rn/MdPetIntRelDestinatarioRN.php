@@ -1006,17 +1006,13 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
                         $objMdPetIntAceiteDTO->retNumIdMdPetIntAceite();
                         $aceite = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
 
-                        // Verifica se o usuário logado tem poderes para cumprir:
+                        // Verifica os usuários que têm poderes para cumprir:
                         $podemCumprirResponder = (new MdPetVincRepresentantRN())->retornarProcuradoresComPoderCumprirResponder($destinatario->getNumIdContato(), $idDocumento, $objContatoLogado->getNumIdContato());
-                        if(empty($podemCumprirResponder)){
-                            throw new InfraException("O retorno do método retornarProcuradoresComPoderCumprirResponder() não pode ser nulo.");
-                        }
-
                         $procuradores = (is_array($podemCumprirResponder) && count($podemCumprirResponder) > 0) ? InfraArray::converterArrInfraDTO($podemCumprirResponder, 'IdContato') : [];
                         
                         // Adiciona ao array de situacoes perante o destinatario
                         $destinatarioInfo = [
-                            'idIntimacao'         => $intimacao->getNumIdMdPetIntimacao(),
+                            'idIntimacao'         => $intimacao->getNuFmIdMdPetIntimacao(),
                             'idDestinatario'      => $destinatario->getNumIdContato(),
                             'nomeDestinatario'    => $destinatario->getStrNomeContato(),
                             'cpfCnpjDestinatario' => ($destinatario->getStrSinPessoaJuridica() == 'S' ? $destinatario->getDblCnpjContato() : $destinatario->getDblCpfContato()),

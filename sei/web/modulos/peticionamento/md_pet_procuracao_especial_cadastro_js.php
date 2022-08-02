@@ -374,6 +374,11 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
     function validarCampos() {
         $tpProc = document.getElementById('selTipoProcuracao').value;
 
+        if(document.getElementById('hdnCpfContExterno').value.replace(/\D/g, "") == ""){
+            alert('O seu cadastro está incompleto, faltando o CPF. \n\nEntre em contato com a gestão do SEI deste órgão pedindo que atualize dados do seu cadastro como Usuário Externo.');
+            return false;
+        }
+
         //Validando combo Tipo de PRocuração
         if (document.getElementById('selTipoProcuracao').value == "") {
             alert("Escolha um Tipo de Procuração.");
@@ -613,6 +618,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             //Fim Procuração Especial Modal
 
         }
+
     }
 
     var textoProcEsp = '<div class="espacamentoConteudo">';

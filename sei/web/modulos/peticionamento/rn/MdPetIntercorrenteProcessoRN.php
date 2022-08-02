@@ -585,7 +585,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())) {
                 $objMdPetProcedimentoRN = new MdPetProcedimentoRN();
                 $objConcederCredencial = $objMdPetProcedimentoRN->concederCredencial(array($objProcedimentoDTO, $idUnidadeProcesso));
-                if (count($objConcederCredencial) > 0) {
+                if (is_array($objConcederCredencial) && count($objConcederCredencial) > 0) {
                     $numIdUsuarioExterno = $objConcederCredencial[4];
                     $idUnidade = $objConcederCredencial[6];
                     SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioExterno, $idUnidade);
@@ -599,7 +599,12 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         // SIGILOSO - conceder credencial - FIM
 
         // se não usar o //$this->simularLogin($idUnidadeProcesso);
-        $this->setUnidadeDTO($idUnidade);
+        if(!empty($idUnidade)){
+            $this->setUnidadeDTO($idUnidade);
+        }else{
+            $objInfraException = new InfraException();
+            $objInfraException->lancarValidacao('O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
+        }
 
         foreach ($arrObjDocumentoAPI as $documentoAPI) {
 

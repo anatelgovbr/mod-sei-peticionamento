@@ -1554,7 +1554,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 						// cadastrar como Retorno Programado
 						$objRetornoProgramadoDTO = new RetornoProgramadoDTO();
 						$objRetornoProgramadoDTO->setNumIdRetornoProgramado(null);
-						$objRetornoProgramadoDTO->setNumIdUnidade( $idUnidadeOrigem );
+						$objRetornoProgramadoDTO->setNumIdUnidadeEnvio( $idUnidadeOrigem );
 						$objRetornoProgramadoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 						$objRetornoProgramadoDTO->setNumIdAtividadeEnvio($ret->getNumIdAtividade());
 						$objRetornoProgramadoDTO->setNumIdAtividadeRetorno(null);

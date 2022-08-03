@@ -1012,7 +1012,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
                         
                         // Adiciona ao array de situacoes perante o destinatario
                         $destinatarioInfo = [
-                            'idIntimacao'         => $intimacao->getNuFmIdMdPetIntimacao(),
+                            'idIntimacao'         => $intimacao->getNumIdMdPetIntimacao(),
                             'idDestinatario'      => $destinatario->getNumIdContato(),
                             'nomeDestinatario'    => $destinatario->getStrNomeContato(),
                             'cpfCnpjDestinatario' => ($destinatario->getStrSinPessoaJuridica() == 'S' ? $destinatario->getDblCnpjContato() : $destinatario->getDblCpfContato()),

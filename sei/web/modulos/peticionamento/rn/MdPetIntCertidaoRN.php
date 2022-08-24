@@ -450,6 +450,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $idAcessoExt = $arr[2];
         $idCertidao = $arr[3];
         $cnpjs = $arr[4];
+        $dataAceite = $arr[5];
         $objMdPetIntProtRN = new MdPetIntProtocoloRN();
 
         if (!$idCertidao) {
@@ -479,7 +480,9 @@ class MdPetIntCertidaoRN extends InfraRN
         $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
         $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
 
-        $ToolTipText = 'Documento Principal: ';
+        $ToolTipText = 'Cumprida em: ';
+	    $ToolTipText .= explode(' ', $dataAceite)[0] . ' ';
+        $ToolTipText .= '<br/>Documento Principal: ';
         $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
         if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()) {
             $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' ';
@@ -487,7 +490,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $ToolTipText .= '(SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
         if ($cnpjs) {
-            $ToolTipText .= '<br/><br/>Pessoa Jurídica:';
+            $ToolTipText .= '<br/><br/>Destinatários:';
             foreach ($cnpjs as $emp) {
                 $ToolTipText .= '<br/>' . $emp ;
             }

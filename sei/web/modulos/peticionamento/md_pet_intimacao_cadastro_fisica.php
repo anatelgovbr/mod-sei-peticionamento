@@ -18,6 +18,17 @@ $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO-
 
 //  Buscar Intimações cadastradas.
 $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocumento);
+
+$objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
+$objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
+$objMdPetIntPrazoTacitaDTO->retTodos();
+
+$objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
+$objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
+$numNumPrazo = null;
+if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
+    $numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
+}
 ?>
 <br>
 <input type="hidden" id="intimacoesFisica" value="<?php echo count($arrIntimacoes) ?>"/>

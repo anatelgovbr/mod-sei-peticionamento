@@ -67,3 +67,10 @@ fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
 button {
     margin-left: 5px;
 }
+.card {
+    width: 14rem; 
+    margin-bottom: 15px;
+}
+.card-body {
+    padding: 10px;
+}

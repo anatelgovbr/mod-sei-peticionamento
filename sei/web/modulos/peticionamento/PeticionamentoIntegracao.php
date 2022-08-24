@@ -1771,7 +1771,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
 
                 //Icone Sinalizador do Processo com Intimacao Eletronica
-                $strMsgTooltipSinalizadorProcesso = "Intimação Eletrônica:";
+                $strMsgTooltipSinalizadorProcesso = "Intimação Eletrônica";
                 $strMsgTooltipTextoSinalizadorProcesso = "Expedida em {$dtIntimacao}\n";
                 $strMsgTooltipTextoSinalizadorProcesso .= "Documento Principal: ";
                 $strMsgTooltipTextoSinalizadorProcesso .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
@@ -2578,7 +2578,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                                 if ($existeInt && !in_array($cpfCnpj, $arrExibidos)) {
                                     //Botão
-                                    $conteudoHtml .= $objMdPetCertidaoRN->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcessoExterno, $aceite['ID_DOCUMENTO_CERTIDAO'], $arrDestinatarios));
+                                    $conteudoHtml .= $objMdPetCertidaoRN->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcessoExterno, $aceite['ID_DOCUMENTO_CERTIDAO'], $arrDestinatarios, $aceite['DATA_ACEITE']));
                                     $arrExibidos[] = $cpfCnpj;
                                 }
 
@@ -2766,9 +2766,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 if (!empty($objMdPetIntRelDestDTO)) {
 
-                    if (isset($objMdPetIntRelDestDTO)) {
-                        $idMdPetDest = InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntRelDestinatario');
-                    }
+                    $idMdPetDest = InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntRelDestinatario');
                     
                     if ($existeInt) {
                         
@@ -2834,7 +2832,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocolo, $idAcessoExterno);
 
-            if(in_array($situacao['btn_responder'], ['cumprida_geral', 'cumprida_parcial'])){
+			// Verifica se ainda tem prazo pra responder a intimacao:
+	        $arrPrazoResposta   = (new MdPetIntPrazoRN())->retornarTipoRespostaValido([$idIntimacao, $idMdPetDest]);
+	        $dtPrazoResposta    = !empty($arrPrazoResposta) && !is_null($arrPrazoResposta[0]->getDthDataProrrogada()) ? $arrPrazoResposta[0]->getDthDataProrrogada() : $arrPrazoResposta[0]->getDthDataLimite();
+
+	        if(in_array($situacao['btn_responder'], ['cumprida_geral', 'cumprida_parcial']) && InfraData::compararDatas(date('d/m/Y'), $dtPrazoResposta) >= 0 ){
                 $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaAcao(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $arrPessoaJuridica, $arrPessoaFisica));
             }else if(in_array($situacao['btn_responder'], ['com_impedimento'])){
                 $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaNegada(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica, $idProtocolo));

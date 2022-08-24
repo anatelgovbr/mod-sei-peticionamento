@@ -54,6 +54,13 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         $('#btnValidarSemWS').on('click', function(){
             carregarTelaNovoCnpj();
         });
+        document.addEventListener("keypress", function(e) {
+            if(e.key === 'Enter') {
+                var btn = document.querySelector("#cardCaptcha button");
+                btn.click();
+
+            }
+        });
     }
 
 
@@ -380,6 +387,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             method: 'POST',
             url: '<?php echo $strLinkConsultaReceita?>',
             beforeSend: function (request) {
+                infraExibirAviso(false, 'Processando...');
                 request.setRequestHeader("captcha", '<?php echo $strCaptcha?>');
             },
             data: {
@@ -388,8 +396,10 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             },
             error: function (dados) {
                 console.log(dados);
+                infraOcultarAviso();
             },
             success: function (data) {
+                infraOcultarAviso();
                 var nomeCidade = $('nomeCidade', data).text();
                 var idCidade = $('selCidade', data).text();
                 createOptionCidade(idCidade, nomeCidade);

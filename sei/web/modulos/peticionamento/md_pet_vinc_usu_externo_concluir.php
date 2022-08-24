@@ -132,26 +132,36 @@ try {
               $idContato   = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
               $dados['idContato'] = $idContato;
 
-              $url = '';
+              // Verifica se o vinculo ja existe antes de prosseguir
+              $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+	          $objMdPetVincRepresentantDTO->setNumIdContato($dados['idContato']);
+	          $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
+	          $existeVinculo = (new MdPetVincRepresentantRN())->contar($objMdPetVincRepresentantDTO);
 
-              $idRecibo = '';
-              $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
+	          if($existeVinculo > 0){
 
-              $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+	              echo "<script>";
+		          echo "alert('O vnculo com esta Pessoa Jurdica j existe!');";
+		          echo "window.close();";
+		          echo "</script>";
+		          die;
 
-              //  }else{
-              //    $url = "controlador_externo.php?acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-              //}
+              }else{
 
+		          $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
-              $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+		          $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+		          $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
 
-              echo "<script>";
-              echo "window.parent.location = '" . $urlAssinada . "';";
-              echo " window.parent.focus();";
-              echo " window.close();";
-              echo "</script>";
-              die;
+		          echo "<script>";
+		          echo "window.opener.location = '" . $urlAssinada . "';";
+		          echo " window.opener.focus();";
+		          echo " window.close();";
+		          echo "</script>";
+		          die;
+
+	          }
+
           }
 
       break;

@@ -99,17 +99,18 @@ try {
                 }
             }
 
+            /*
             $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
             $objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
             $objMdPetIntPrazoTacitaDTO->retTodos();
 
             $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
             $objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
-            $qtdObjMdPetIntPrazoTacitaDTO = is_array($objMdPetIntPrazoTacitaDTO) ? count($objMdPetIntPrazoTacitaDTO) : 0;
-            if ($qtdObjMdPetIntPrazoTacitaDTO > 0) {
+            $numNumPrazo = null;
+            if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
                 $numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
             }
-
+            */
             break;
 
         default:

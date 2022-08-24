@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -6,7 +7,7 @@
  *
  * Versão do Gerador de Código: 1.41.0
  */
- 
+
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdPetIntegracaoDTO extends InfraDTO
@@ -30,7 +31,7 @@ class MdPetIntegracaoDTO extends InfraDTO
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'TpClienteWs', 'sta_tp_cliente_ws');
 
-        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'NuVersao', 'nu_versao');
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL, 'NuVersao', 'nu_versao');
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'EnderecoWsdl', 'endereco_wsdl');
 
@@ -52,6 +53,5 @@ class MdPetIntegracaoDTO extends InfraDTO
 
         $this->configurarFK('IdMdPetIntegFuncionalid', 'md_pet_adm_integ_funcion', 'id_md_pet_adm_integ_funcion');
         $this->configurarExclusaoLogica('SinAtivo', 'N');
-
     }
 }

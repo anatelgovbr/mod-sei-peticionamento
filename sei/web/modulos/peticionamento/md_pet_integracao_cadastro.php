@@ -115,6 +115,20 @@ try {
                 $objMdPetIntegracaoDTO->setNumIdMdPetIntegFuncionalid($_POST['selMdPetIntegFuncionalid']);
                 $objMdPetIntegracaoDTO->setStrNome($_POST['txtNome']);
                 $objMdPetIntegracaoDTO->setStrStaUtilizarWs($_POST['rdStaUtilizarWs']);
+
+                # Independente do input StaUtilizarWs ser [S e N], preenche todos os dados abaixo, de acordo com a estória: 5838
+                $objMdPetIntegracaoDTO->setStrEnderecoWsdl($_POST['txtEnderecoWsdl']);
+                $objMdPetIntegracaoDTO->setStrOperacaoWsdl($_POST['selOperacaoWsdl']);
+                $objMdPetIntegracaoDTO->setStrSinCache(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinCache']));
+                $objMdPetIntegracaoDTO->setStrSinAtivo('S');
+            
+                $objMdPetIntegracaoDTO->setStrTpClienteWs($_POST['rdStaTpClienteWs']);
+                $objMdPetIntegracaoDTO->setDblNuVersao($_POST['selNuVersao']);
+                $objMdPetIntegracaoDTO->setStrSinTpLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinTipo']));
+                $objMdPetIntegracaoDTO->setStrSinNuLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinNumero']));
+                $objMdPetIntegracaoDTO->setStrSinCompLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinComplemento']));
+
+                /*
                 if ($_POST['rdStaUtilizarWs'] == 'N') {
                     $objMdPetIntegracaoDTO->setStrEnderecoWsdl('');
                     $objMdPetIntegracaoDTO->setStrOperacaoWsdl('');
@@ -131,6 +145,7 @@ try {
                     $objMdPetIntegracaoDTO->setStrSinCompLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinComplemento']));
                     $objMdPetIntegracaoDTO->setStrSinAtivo('S');
                 }
+                */
             }
 
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
@@ -151,6 +166,7 @@ try {
 
         case 'md_pet_integracao_consultar':
             $strTitulo = 'Consultar Integração';
+            $bolIsConsultar = true;
             $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_md_pet_integracao'])) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
             $objMdPetIntegracaoDTO->setNumIdMdPetIntegracao($_GET['id_md_pet_integracao']);
             $objMdPetIntegracaoDTO->setBolExclusaoLogica(false);
@@ -204,22 +220,6 @@ try {
 
         $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO;
         $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
-        //        $objMdPetIntegParametroDTO->setStrTpParametro('D');
-        $objMdPetIntegParametroDTO->setBolExclusaoLogica(false);
-        $objMdPetIntegParametroDTO->retTodos();
-        $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
-        $arrObjMdPetIntegParametroDTO = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
-        foreach ($arrObjMdPetIntegParametroDTO as $item) {
-            if (trim($item->getStrNomeCampo()) == 'PrazoExpiracao') {
-                $strItensSelCachePrazoExpiracao = $item->getStrNome();
-                $strItensSelCacheDataArmazenamento = $item->getStrNome();
-            }
-            if (trim($item->getStrNome()) == 'cnpjEmpresa' && $item->getStrTpParametro() == 'E') {
-                $strItensSelCnpjEmpresa = $item->getStrNomeCampo();
-            }
-        }
-        $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO;
-        $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
         //        $objMdPetIntegParametroDTO->setStrTpParametro('P');
         $objMdPetIntegParametroDTO->setBolExclusaoLogica(false);
         $objMdPetIntegParametroDTO->retTodos();
@@ -233,9 +233,14 @@ try {
                     'campo_nome' => $item->getStrNomeCampo(),
                     'valor' => $item->getStrValorPadrao()
                 );
+
                 if (trim($item->getStrNomeCampo()) == 'PrazoExpiracao') {
                     $strItensSelCachePrazoExpiracao = $item->getStrNome();
                     $strItensSelCacheDataArmazenamento = $item->getStrNome();
+                }
+
+                if (trim($item->getStrNome()) == 'cnpjEmpresa' && $item->getStrTpParametro() == 'E') {
+                    $strItensSelCnpjEmpresa = $item->getStrNomeCampo();
                 }
             }
         }
@@ -400,7 +405,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <input <?php echo $staUtilizarWsNao; ?> type="radio" name="rdStaUtilizarWs" class="infraRadio" id="rdStaUtilizarWsNao" value="N" onclick="habilitaWs()">
                     <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração
                         <img id="imgAjuda2" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.', 'Ajuda') ?> alt="Ajuda" class="infraImgModulo" /></label>
-                    <input <?php echo $staUtilizarWsSim; ?> type="radio" name="rdStaUtilizarWs" class="infraRadio" id="rdStaUtilizarWsSim" value="S" onclick="habilitaWs()">
+                    <input <?php echo $staUtilizarWsSim; ?> type="radio" name="rdStaUtilizarWs" class="infraRadio" id="rdStaUtilizarWsSim" value="S" onclick="habilitaWs(true)">
                     <label name="rdStaUtilizarWsSim" id="lblStaUtilizarWsSim" for="rdStaUtilizarWsSim" class="infraLabelRadio">Com Integração
                         <img id="imgAjuda2" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica será validado por integração configurada abaixo se é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Se não ocorrer a validação o Usuário Externo não poderá prosseguir com o Peticionamento inicial de Responsável Legal de Pessoa Jurídica.') ?> alt="Ajuda" class="infraImgModulo" /></label>
                 </div>
@@ -499,21 +504,20 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
     </div>
     <div class="row" id="blcEntradaWs" style="display: none;">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8">
+        <div class="col-12">
             <?
             PaginaSEI::getInstance()->montarAreaTabela($strResultadoParamEntrada, 1);
             ?>
         </div>
     </div>
     <div class="row" id="blcSaidaWs" style="display: none;">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8">
+        <div class="col-12">
             <?
             PaginaSEI::getInstance()->montarAreaTabela($strResultadoParamSaida, 1);
             ?>
         </div>
     </div>
     <div class="container" style="display: none;">
-
 
         <!-- div id="divSinCache" class="infraDivCheckbox" -->
         <fieldset style="display:none" id="fldParametrosCache" class="infraFieldset">
@@ -557,6 +561,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     PaginaSEI::getInstance()->fecharAreaDados();
     ?>
     <input type="hidden" id="hdnIdMdPetIntegracao" name="hdnIdMdPetIntegracao" value="<?= $objMdPetIntegracaoDTO->getNumIdMdPetIntegracao(); ?>" />
+    <input type="hidden" id="bolIsConsultar" value="<?= isset($bolIsConsultar) ? 'S' : 'N'?>">
 </form>
 <?
 require_once "md_pet_integracao_cadastro_js.php";

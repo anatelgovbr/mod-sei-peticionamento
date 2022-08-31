@@ -63,7 +63,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         });
     }
 
-
     function validarCpf(obj){
         if(!infraValidarCpf(obj.value)){
             alert('CPF informado é inválido.');

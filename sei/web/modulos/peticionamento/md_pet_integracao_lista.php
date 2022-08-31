@@ -412,12 +412,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         PaginaSEI::getInstance()->abrirAreaDados('auto');
         ?>
         <div class="row">
-            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-                <label id="lblNome" for="txtNome" accesskey="" class="infraLabelOpcional">Nome:</label>
-                <input type=text id="txtNome" name="txtNome" class="infraText form-control"
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
+                <div class="mb-2">
+                    <label id="lblNome" for="txtNome" accesskey="" class="infraLabelOpcional">Nome:</label>
+                    <input type=text id="txtNome" name="txtNome" class="infraText form-control"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                </div>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
                 <label id="lblMdPetIntegFuncionalid" for="selMdPetIntegFuncionalid" accesskey=""
                        class="infraLabelOpcional">Funcionalidade:</label>
                 <select id="selMdPetIntegFuncionalid" name="selMdPetIntegFuncionalid" onchange="this.form.submit();"

@@ -195,7 +195,6 @@ class MdPetIntegracaoRN extends InfraRN
             return $xml;
         }
 
-
         $cpfResponsavelLegalReceita = $consulta['PessoaJuridica']['responsavel']['cpf'];
 
         if (empty($cpfResponsavelLegalReceita)) {
@@ -793,10 +792,8 @@ class MdPetIntegracaoRN extends InfraRN
             $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
             $objMdPetIntegracaoRN->alterar($objMdPetIntegracaoDTO);
 
-            $objMdPetIntegracaoRN->excluirParametros($objMdPetIntegracaoDTO);
-
             if ($objMdPetIntegracaoDTO->getStrStaUtilizarWs() == 'S') {
-
+                $objMdPetIntegracaoRN->excluirParametros($objMdPetIntegracaoDTO);
                 $objMdPetIntegracaoRN->cadastrarParametros($objMdPetIntegracaoDTO);
             }
             //Auditoria

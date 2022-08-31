@@ -568,7 +568,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 //Novo
                 $xml = MdPetTipoProcessoINT::montarSelectOrgaoTpProcessoOrgaoUf($_POST);
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($xml, 'IdUf', 'SiglaUf');
-
                 break;
 
             case 'md_pet_consultar_tipo_processo_cidade':
@@ -2832,12 +2831,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocolo, $idAcessoExterno);
 
-			// Verifica se ainda tem prazo pra responder a intimacao:
+			// Verifica se a intimacao requer resposta e se ainda tem prazo pra responder-la:
 	        $arrPrazoResposta   = (new MdPetIntPrazoRN())->retornarTipoRespostaValido([$idIntimacao, $idMdPetDest]);
-	        $dtPrazoResposta    = !empty($arrPrazoResposta) && !is_null($arrPrazoResposta[0]->getDthDataProrrogada()) ? $arrPrazoResposta[0]->getDthDataProrrogada() : $arrPrazoResposta[0]->getDthDataLimite();
 
-	        if(in_array($situacao['btn_responder'], ['cumprida_geral', 'cumprida_parcial']) && InfraData::compararDatas(date('d/m/Y'), $dtPrazoResposta) >= 0 ){
-                $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaAcao(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $arrPessoaJuridica, $arrPessoaFisica));
+	        if(in_array($situacao['btn_responder'], ['cumprida_geral', 'cumprida_parcial']) && is_array($arrPrazoResposta) && count($arrPrazoResposta) > 0){
+                $dtPrazoResposta = !is_null($arrPrazoResposta[0]->getDthDataProrrogada()) ? $arrPrazoResposta[0]->getDthDataProrrogada() : $arrPrazoResposta[0]->getDthDataLimite();
+                if(InfraData::compararDatas(date('d/m/Y'), $dtPrazoResposta) >= 0){
+                    $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaAcao(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $arrPessoaJuridica, $arrPessoaFisica));
+                }
             }else if(in_array($situacao['btn_responder'], ['com_impedimento'])){
                 $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaNegada(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica, $idProtocolo));
             }

@@ -53,5 +53,6 @@ class MdPetIntegracaoDTO extends InfraDTO
 
         $this->configurarFK('IdMdPetIntegFuncionalid', 'md_pet_adm_integ_funcion', 'id_md_pet_adm_integ_funcion');
         $this->configurarExclusaoLogica('SinAtivo', 'N');
+        
     }
 }

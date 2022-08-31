@@ -28,10 +28,9 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             }
         }
         infraEfeitoTabelas();
-
     }
 
-    function habilitaWs() {
+    function habilitaWs(changeRadio = false) {
         var itensIntegracao = document.getElementsByName('rdStaUtilizarWs');
 
         $.each(itensIntegracao, function (i, item) {
@@ -60,6 +59,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 }
             }
         });
+
+        if(changeRadio) validarWsdl();
     }
 
     function validarCadastro() {
@@ -161,7 +162,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 endereco_wsdl: enderecoWsdl
             },
             beforeSend: function () {
-                infraExibirAviso(false);
+                if( document.querySelector('#bolIsConsultar').value == 'N' ) infraExibirAviso(false);
             },
             success: function (result) {
                 var select = document.getElementById('selOperacaoWsdl');
@@ -197,10 +198,9 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             },
             error: function (msgError) {
                 msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-                // console.log(msgCommit);
             },
             complete: function (result) {
-                infraAvisoCancelar();
+                if( document.querySelector('#bolIsConsultar').value == 'N' ) infraAvisoCancelar();
             }
         });
 
@@ -256,12 +256,10 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
                 //limpar todos os options
                 // select.options.length = 0;
-                // console.log($(result).find('success').text() == 'true');
                 if ($(result).find('success').text() == 'true') {
                     var arrayParametros = $(result).find('parametro');
 
                     $.each(arraySelect, function (key, select) {
-                        // console.log(select);
                         popularSelect(tipo_parametro, select, arrayParametros);
                     });
                     //document.getElementById('gridOperacao').style.display = "inherit";
@@ -272,7 +270,6 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             },
             error: function (msgError) {
                 msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-                // console.log(msgCommit);
             },
             complete: function (result) {
                 infraAvisoCancelar();
@@ -306,7 +303,6 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 infraExibirAviso(false);
             },
             success: function (result) {
-                console.log(result);
                 if (tipo_parametro == 'e') {
                     var select = document.getElementById('selCachePrazoExpiracao');
                     var selectedValor = '<?= $strItensSelCachePrazoExpiracao;?>';
@@ -340,7 +336,6 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             },
             error: function (msgError) {
                 msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-                // console.log(msgCommit);
             },
             complete: function (result) {
                 infraAvisoCancelar();
@@ -423,7 +418,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     }
                 });
             }
-            console.log(selectedValor);
+            
             if (key != "endereco") {
 
                 if (tipo_parametro == 'e') {

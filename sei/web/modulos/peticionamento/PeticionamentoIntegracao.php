@@ -1461,15 +1461,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $item = $objLista[$i];
 
                 if ($item->getStrTipo() == MdPetMenuUsuarioExternoRN::$TP_EXTERNO) {
-                    $link = "javascript:";
-                    $link .= "var a = document.createElement('a'); ";
-                    $link .= "a.href='" . $item->getStrUrl() . "'; ";
-                    $link .= "a.target = '_blank'; ";
-                    $link .= "document.body.appendChild(a); ";
-                    $link .= "a.click(); ";
-                    $arrMenusNomes[$item->getStrNome()] = $link;
+                    $arrMenusNomes[$item->getStrNome()] = $item->getStrUrl()."^".$item->getStrNome()."^".$item->getStrNome()."^_blank";
                 } else if ($item->getStrTipo() == MdPetMenuUsuarioExternoRN::$TP_CONTEUDO_HTML) {
-
                     $idItem = $item->getNumIdMenuPeticionamentoUsuarioExterno();
                     $strLinkMontado = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_pagina_conteudo_externo&id_md_pet_usu_externo_menu=' . $idItem);
                     $arrMenusNomes[$item->getStrNome()] = $strLinkMontado;

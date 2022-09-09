@@ -2268,7 +2268,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                 try {
 
-                    var count = $(data).find("item").size();
+                    var count = $(data).find("item").length;
 
                     if (count < 2) {
                         document.getElementById("ufHidden").style.display = "none";
@@ -2286,7 +2286,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                     $.each($(data).find('item'), function (i, j) {
                         //Quando retornar somente uma UF
-                        var count = $(data).find("item").size();
+                        var count = $(data).find("item").length;
                         if (count < 2) {
                             //document.getElementById('hdnIdUf').value = $(j).attr("id");
 
@@ -2310,7 +2310,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                     try {
 
                                         //Caso retorne somente uma cidade, travar a combo
-                                        var count = $(data).find("item").size();
+                                        var count = $(data).find("item").length;
 
                                         if (count < 2) {
                                             document.getElementById("cidadeHidden").style.display = "none";

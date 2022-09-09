@@ -185,13 +185,13 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
         <!-- Validação para quando deve aparecer as 3 combos -->
         <? if ($arrUnidadeUFDTO != null && count($arrUnidadeUFDTO) > 1): ?>
             <!-- Orgão -->
-            <?php $display = ($hiddenOrgao == "display:none;") ? "float: left;" : "float: left; padding-right:10px;"; ?>
+            <?php $display = ($hiddenOrgao == "display:none;") ? "float: inherit;" : "float: inherit; padding-right:10px;"; ?>
 
             <div class="row" style="<?php echo $display ?>">
                 <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
                     <div class="form-group">
                         <label id="lblPublico" style="<?php echo $hiddenOrgao; ?>" class="infraLabelObrigatorio">
-                            Orgão:
+                            Órgão:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listados os Órgãos em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo o Órgão no qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label>
                         <select onchange="pesquisarUF(this)" style="<?php echo $hiddenOrgao; ?>" id="selOrgao" name="selOrgao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
@@ -212,9 +212,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2" style="<?php echo $hiddUF; ?>" id="ufHidden">
                     <!-- UF -->
-                    <div class="form-group" style="<?php echo $hiddUF; ?>" id="ufHidden">
+                    <div class="form-group">
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             UF:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
@@ -239,8 +239,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
-                    <div class="form-group" style="<?php echo $cidadeHidde; ?>" id="cidadeHidden">
+                <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4" style="<?php echo $cidadeHidde; ?>" id="cidadeHidden">
+                    <div class="form-group">
                         <!-- Cidade -->
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             Cidade:

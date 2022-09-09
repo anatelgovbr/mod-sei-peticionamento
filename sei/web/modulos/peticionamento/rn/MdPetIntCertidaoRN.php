@@ -619,36 +619,34 @@ class MdPetIntCertidaoRN extends InfraRN
             $idContato = !is_null($objContatoDTO) ? $objContatoDTO->getNumIdContato() : false;
         }
 
-        if ($idContato) {
-            $objMdPetRelDestRN = new MdPetIntRelDestinatarioRN();
-            $objMdPetRelDestDTO = new MdPetIntRelDestinatarioDTO();
-            $objMdPetRelDestDTO->setDblIdProtocolo($idProtocolo);
-            if (is_numeric($idContato)) {
-                $objMdPetRelDestDTO->setNumIdContato($idContato);
-            }
-            $objMdPetRelDestDTO->retNumIdMdPetIntRelDestinatario();
-            $objMdPetRelDestDTO->retDblIdProtocolo();
-            $objMdPetRelDestDTO->retDblIdDocumento();
+        $objMdPetRelDestRN = new MdPetIntRelDestinatarioRN();
+        $objMdPetRelDestDTO = new MdPetIntRelDestinatarioDTO();
+        $objMdPetRelDestDTO->setDblIdProtocolo($idProtocolo);
+        if (is_numeric($idContato)) {
+            $objMdPetRelDestDTO->setNumIdContato($idContato);
+        }
+        $objMdPetRelDestDTO->retNumIdMdPetIntRelDestinatario();
+        $objMdPetRelDestDTO->retDblIdProtocolo();
+        $objMdPetRelDestDTO->retDblIdDocumento();
 
-            $count = $objMdPetRelDestRN->contar($objMdPetRelDestDTO);
+        $count = $objMdPetRelDestRN->contar($objMdPetRelDestDTO);
 
-            if ($count > 0) {
-                //Get Qtd Intimacoe
-                $arrObjDTO = $objMdPetRelDestRN->listar($objMdPetRelDestDTO);
-                $idsIntimacoes = array_unique(InfraArray::converterArrInfraDTO($arrObjDTO, 'IdMdPetIntRelDestinatario'));
-                $qtdIntimacoes = count($idsIntimacoes);
+        if ($count > 0) {
+            //Get Qtd Intimacoe
+            $arrObjDTO = $objMdPetRelDestRN->listar($objMdPetRelDestDTO);
+            $idsIntimacoes = array_unique(InfraArray::converterArrInfraDTO($arrObjDTO, 'IdMdPetIntRelDestinatario'));
+            $qtdIntimacoes = count($idsIntimacoes);
 
-                //Get Qtd Aceites
-                $objMdPetIntAcRN = new MdPetIntAceiteRN();
-                $objMdPetIntAcDTO = new MdPetIntAceiteDTO();
-                $objMdPetIntAcDTO->setNumIdMdPetIntRelDestinatario($idsIntimacoes, InfraDTO::$OPER_IN);
-                $objMdPetIntAcDTO->retNumIdMdPetIntRelDestinatario();
+            //Get Qtd Aceites
+            $objMdPetIntAcRN = new MdPetIntAceiteRN();
+            $objMdPetIntAcDTO = new MdPetIntAceiteDTO();
+            $objMdPetIntAcDTO->setNumIdMdPetIntRelDestinatario($idsIntimacoes, InfraDTO::$OPER_IN);
+            $objMdPetIntAcDTO->retNumIdMdPetIntRelDestinatario();
 
-                $qtdAceites = $objMdPetIntAcRN->contar($objMdPetIntAcDTO);
+            $qtdAceites = $objMdPetIntAcRN->contar($objMdPetIntAcDTO);
 
-                //condição
-                $isValido = $qtdIntimacoes == $qtdAceites;
-            }
+            //condição
+            $isValido = $qtdIntimacoes == $qtdAceites;
         }
 
         return $isValido;

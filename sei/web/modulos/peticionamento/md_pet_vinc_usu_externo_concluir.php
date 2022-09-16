@@ -132,6 +132,7 @@ try {
               $idContato   = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
               $dados['idContato'] = $idContato;
 
+
               // Verifica se o vinculo ja existe antes de prosseguir
               $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 	          $objMdPetVincRepresentantDTO->setNumIdContato($dados['idContato']);
@@ -141,8 +142,8 @@ try {
 	          if($existeVinculo > 0){
 
 	              echo "<script>";
-		          echo "alert('O vnculo com esta Pessoa Jurdica j existe!');";
-		          echo "window.close();";
+		          echo "alert('O vnculo com esta Pessoa Jurdica já existe!');";
+                  echo "parent.infraFecharJanelaModal();";
 		          echo "</script>";
 		          die;
 
@@ -150,15 +151,24 @@ try {
 
 		          $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
-		          $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-		          $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+		          if(!is_numeric($idRecibo)){
 
-		          echo "<script>";
-		          echo "window.opener.location = '" . $urlAssinada . "';";
-		          echo " window.opener.focus();";
-		          echo " window.close();";
-		          echo "</script>";
-		          die;
+                      echo "<script>";
+                      echo "alert('Erro ao realizar o processo de Vinculação de Novo Responsável Legal.');";
+                      echo "parent.infraFecharJanelaModal();";
+                      echo "</script>";
+                      die;
+
+                  }
+
+                  $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+                  $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
+                  echo "<script>";
+                  echo "parent.infraFecharJanelaModal();";
+                  echo "parent.location = '" . $urlAssinada . "';";
+                  echo "</script>";
+                  die;
 
 	          }
 

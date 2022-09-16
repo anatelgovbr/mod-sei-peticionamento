@@ -370,7 +370,6 @@ class MdPetVincRepresentantRN extends InfraRN
 
         $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
         $responsavelLegal = $objMdPetVinculoUsuExtRN->verificaMudancaResponsavelLegal($dados);
-        $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
 
         $dados['isAlteradoRespLegal'] = false;
 

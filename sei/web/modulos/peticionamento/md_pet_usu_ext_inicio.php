@@ -316,16 +316,16 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3 pesquisaTipoNovo">
+            <div class="col-sm-12 col-md-8 col-lg-4 col-xl-3 pesquisaTipoNovo">
                 <label class="infraLabelOpcional">Tipo do Processo:</label>
                 <br/>
                 <input type="text" id="txtFiltro" onkeypress="filtro()" class="infraText form-control"
                        autocomplete="off"
                        value="<? if (isset($_POST['txtFiltro'])) echo $_POST['txtFiltro']; ?>">
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2" style="<?php echo $hiddenOrgao ?>" id="OrgaoHidd">
+            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-2" style="<?php echo $hiddenOrgao ?>" id="OrgaoHidd">
                 <label id="lblOrgao" for="selOrgao" class="infraLabelOpcional">
-                    Orgão:
+                    Órgão:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                          name="ajuda" align="top"
                         <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinado Órgão.", 'Ajuda') ?>
@@ -345,7 +345,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                     ?>
                 </select>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2" style=" <?php echo $hiddenUF; ?> " id="UFHidd">
+            <div class="col-sm-12 col-md-4 col-lg-2 col-xl-2" style=" <?php echo $hiddenUF; ?> " id="UFHidd">
                 <label id="lblUF" for="selUF" style="font-size:12px;" class="infraLabelOpcional">
                     UF:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
@@ -370,13 +370,13 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                     <?php } ?>
                 </select>
             </div>
-            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2" style="<?php echo $hiddenCidade ?>" id="cidadeHidd">
+            <div class="col-sm-12 col-md-8 col-lg-3 col-xl-5" style="<?php echo $hiddenCidade ?>" id="cidadeHidd">
                 <label id="lblCidade" for="selCidade" class="infraLabelOpcional">Cidade:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                          name="ajuda" align="top"
                         <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinada Cidade.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/></label>
-                <select onchange="pesquisarFinal(this)" style="width:120px;" id="selCidade" name="selCidade"
+                <select onchange="pesquisarFinal(this)" id="selCidade" name="selCidade"
                         class="infraSelect form-control">
                     <option value="">Todos</option>
                     <?=

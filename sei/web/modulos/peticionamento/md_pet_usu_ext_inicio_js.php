@@ -5,6 +5,7 @@
         document.getElementById('hdnIdUf').value = '';
         document.getElementById('hdnIdCidade').value = '';
         document.getElementById("selCidade").disabled = false;
+        document.getElementById("cidadeHidd").style.display = "none";
 
         if (document.getElementById("selOrgao").value == "") {
             //Inserindo 'Todos' nas combos UF e Cidade
@@ -20,7 +21,6 @@
             document.getElementById("selUF").disabled = true;
             document.getElementById("selCidade").disabled = true;
         }
-
         mudarTpProcesso();
         infraSelectLimpar('selUF');
         infraSelectLimpar('selCidade');
@@ -59,24 +59,22 @@
                     console.log(dados);
                 },
                 success: function (data) {
-
                     var selectMultiple = document.getElementById('selUF');
 
                     try {
-                        var count = $(data).find("item").size();
+                        var count = $(data).find("item").length;
                         if (count > 1) {
                             var opt = document.createElement('option');
                             opt.value = "";
                             opt.innerHTML = "Todos";
                             selectMultiple.appendChild(opt);
 
-
                         }
 
                         $.each($(data).find('item'), function (i, j) {
 
                             //Caso tenha somente uma uf vinculado com o orgão.
-                            var count = $(data).find("item").size();
+                            var count = $(data).find("item").length;
 
                             if (count < 2) {
                                 document.getElementById("UFHidd").style.display = "none";
@@ -97,6 +95,7 @@
                                 }
 
                                 mudarTpProcesso();
+
                                 $.ajax({
                                     dataType: 'xml',
                                     method: 'POST',
@@ -114,7 +113,7 @@
 
                                         try {
 
-                                            var count = $(data).find("item").size();
+                                            var count = $(data).find("item").length;
                                             if (count < 2) {
                                                 document.getElementById("cidadeHidd").style.display = "none";
                                             } else {
@@ -134,7 +133,7 @@
 
                                             $.each($(data).find('item'), function (i, j) {
                                                 //Atribuindo o Id da cidade caso haja somente uma cidade
-                                                var count = $(data).find("item").size();
+                                                var count = $(data).find("item").length;
                                                 if (count < 2) {
                                                     document.getElementById('hdnIdCidade').value = $(j).attr("id");
                                                     //mudarTpProcesso();
@@ -163,7 +162,6 @@
                             }
 
                             if (document.getElementById("selOrgao").value != "") {
-
                                 var opt = document.createElement('option');
                                 opt.value = $(j).attr("id");
                                 opt.innerHTML = $(j).attr("descricao");
@@ -190,11 +188,9 @@
 
     //Uf
     function pesquisarCidade(idUf) {
-        console.log(idUf.value);
         document.getElementById("selCidade").disabled = false;
         document.getElementById('hdnIdUf').value = idUf.value;
         document.getElementById('hdnIdCidade').value = '';
-
         mudarTpProcesso();
         infraSelectLimpar('selCidade');
 
@@ -363,7 +359,7 @@
             };
 
         }
-        console.log(filtros);
+
         $.ajax({
             dataType: 'xml',
             method: 'POST',

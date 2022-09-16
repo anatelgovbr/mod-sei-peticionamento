@@ -175,9 +175,8 @@ try {
           //$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
 
           echo "<script>";
-          echo "window.opener.history.go(-1);";
-          echo " window.opener.focus();";
-          echo " window.close();";
+          echo "parent.infraFecharJanelaModal();";
+          echo "parent.location.reload();";
           echo "</script>";
           die();
           //$bolAssinaturaOK = true;

@@ -102,6 +102,10 @@ if ($qtdSelectUf < 2) {
     $hiddUF = "display:none";
 
 }
+if ($selectCidade == null) {
+
+    $selectCidade = MdPetTipoProcessoINT::montarSelectCidade($_GET['id_tipo_procedimento'], $oragao, $selectUf[0][0], $cidadeHidden);
+}
 //Caso retorne somente uma cidade
 $cidadeHidde = "display:none";
 $qtdSelectCidade = isset($selectCidade[0]) ? count($selectCidade[0]) : 0;
@@ -171,12 +175,13 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
         </div>
 
         <?php
+
             if (count($selectOrgao[0]) < 2) {
                 $hiddenOrgao    = "display:none;";
                 $unicoOrgao     = $selectOrgao[0];
                 $orgaoDuplo     = false;
             }
-            if (count($selectOrgao[0]) > 1) {
+            if (count($selectOrgao[0]) > 1 && $_GET['id_orgao'] == "") {
                 $cidadeHidde    = "display:none;";
             }
         ?>
@@ -188,7 +193,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
             <?php $display = ($hiddenOrgao == "display:none;") ? "float: inherit;" : "float: inherit; padding-right:10px;"; ?>
 
             <div class="row" style="<?php echo $display ?>">
-                <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="form-group">
                         <label id="lblPublico" style="<?php echo $hiddenOrgao; ?>" class="infraLabelObrigatorio">
                             Órgão:
@@ -219,15 +224,15 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             UF:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
+
                         <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
                             <?php
-                                if (isset($_GET['id_uf'])) {
+                                if ($_GET['id_uf'] != null || $_GET['id_orgao'] != null) {
                                     $qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
 
                                     if ($qtdSelectUf > 1) {
                                         echo '<option value=""></option>';
                                     }
-
                                     $idUf   = $selectUf[0];
                                     $uf     = $selectUf[1];
 
@@ -239,6 +244,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                         </select>
                     </div>
                 </div>
+
                 <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4" style="<?php echo $cidadeHidde; ?>" id="cidadeHidden">
                     <div class="form-group">
                         <!-- Cidade -->

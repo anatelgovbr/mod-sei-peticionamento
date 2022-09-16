@@ -166,7 +166,7 @@ class MdPetVinculoINT extends InfraINT {
                         $objUsuarioDTO->setNumIdContato($itemObjMdPetVincRepresentantDTO->getNumIdContato());
 
                         $arrObjUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-                        if (count($arrObjUsuarioDTO) > 0) {
+                        if ($arrObjUsuarioDTO) {
                             if ($idUsuarioLogado == $arrObjUsuarioDTO->getNumIdUsuario() && $itemObjMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
                                 $xml = "<dados-pj>";
                                 $xml .= "<success>false</success>\n";
@@ -174,7 +174,7 @@ class MdPetVinculoINT extends InfraINT {
                                 $xml .= "<msg>Este CNPJ já está vinculado a um Responsável Legal.</msg>\n";
                                 $xml .= "</dados-pj>";
                             }
-                            
+
                             if(!is_null($itemObjMdPetVincRepresentantDTO->getDthDataLimite())){
                                 $dataAtual = date("Y-m-d");
                                 $dataLimite = explode(' ',$itemObjMdPetVincRepresentantDTO->getDthDataLimite());

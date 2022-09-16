@@ -206,6 +206,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
     protected function enviarEmailReiteracaoIntimacaoConectado($params)
     {
+
         try {
             $arrObjMdPetIntRelDestinatarioDTO = $params[0];
             $arrDadosEmailNaoEnviados = array();
@@ -1415,6 +1416,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
         $dtoMdPetVincReptDTO->retNumIdMdPetVinculoRepresent();
         $dtoMdPetVincReptDTO->setStrSinAtivo('S');
+        $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
         $arrMdPetVincRepRN = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
 

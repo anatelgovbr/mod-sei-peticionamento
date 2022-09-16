@@ -1150,7 +1150,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 data: formData,
                 success: function (data, textStatus, jqXHR) {
                     //data - response from server
-
                     if (data != null && data != undefined && data != "") {
 
                         var obj = jQuery.parseJSON(data);
@@ -1194,10 +1193,13 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function inicializar() {
 //Caso tenha somente um ORGAO dentro do processo
-
         try {
-            if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled" && document.getElementById('hdnIdUfTelaAnterior').value == "") {
-
+            if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled") {
+                var idOrgao = document.getElementById('hdnIdOrgaoUnico').value;
+            } else {
+                var idOrgao = document.getElementById('hdnIdOrgaoTelaAnterior').value;
+            }
+            if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled" && document.getElementById('hdnIdUfTelaAnterior').value == "" && document.getElementById('hdnIdUfTelaAnterior').value == "") {
                 infraSelectLimpar('selUFAberturaProcesso');
                 document.getElementById("ufHidden").style.display = "none";
                 $.ajax({
@@ -1205,7 +1207,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     method: 'POST',
                     url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_uf');?>',
                     data: {
-                        'idOrgao': document.getElementById('hdnIdOrgaoUnico').value,
+                        'idOrgao': idOrgao,
                         'idTpProc': document.getElementById('hdnTpProcesso').value
                     },
                     error: function (dados) {
@@ -1213,7 +1215,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     },
                     success: function (data) {
                         var selectMultiple = document.getElementById('selUF');
-
                         try {
                             //Quando tiver mais de uma UF
                             var count = $(data).find("item").length;
@@ -1233,7 +1234,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                             }
                             $.each($(data).find('item'), function (i, j) {
                                 //Quando retornar somente uma UF
-                                console.log($(data).find("item").length);
                                 var count = $(data).find("item").length;
                                 if (count < 2) {
                                     //document.getElementById('hdnIdUf').value = $(j).attr("id");
@@ -1243,7 +1243,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                         method: 'POST',
                                         url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_cidade');?>',
                                         data: {
-                                            'idOrgao': document.getElementById('hdnIdOrgaoUnico').value,
+                                            'idOrgao': idOrgao,
                                             'idUf': $(j).attr("id"),
                                             'idTpProc': document.getElementById('hdnTpProcesso').value
                                         },
@@ -1281,27 +1281,11 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                     });
                                     // document.getElementById("selUF").disabled = true;
                                 }
-                                var count = $(data).find("item").size();
+
+                                var count = $(data).find("item").length;
                                 if (count < 2) {
                                     //document.getElementById("selUF").disabled = true;
 
-                                }
-                                var opt = document.createElement('option');
-                                opt.value = $(j).attr("id");
-                                opt.innerHTML = $(j).attr("descricao");
-                                selectMultiple.appendChild(opt);
-
-                                //Se o usuário já tiver escolhido uma UF na tela anterior
-                                if (document.getElementById('hdnIdUfTelaAnterior').value != '') {
-                                    var val = document.getElementById('hdnIdUfTelaAnterior').value;
-                                    var sel = document.getElementById('selUF');
-                                    var opts = sel.options;
-                                    for (var opt, j = 0; opt = opts[j]; j++) {
-                                        if (opt.value == val) {
-                                            sel.selectedIndex = j;
-                                            break;
-                                        }
-                                    }
                                 }
                             });
 
@@ -1313,16 +1297,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         }
 
                     }
-
                 });
-
-
             }
-        } catch (err) {
-
-        }
-//Reordenação dos nomes das combos	
-        try {
             if (document.getElementById('hdnIdUfTelaAnterior').value != '') {
                 var val = document.getElementById('hdnIdUfTelaAnterior').value;
                 var sel = document.getElementById('selUF');
@@ -1334,7 +1310,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     }
                 }
             }
-            if (document.getElementById('hdnIdOrgaoTelaAnterior').value != '') {
+           if (document.getElementById('hdnIdOrgaoTelaAnterior').value != '') {
                 var val = document.getElementById('hdnIdOrgaoTelaAnterior').value;
                 var sel = document.getElementById('selOrgao');
                 var opts = sel.options;
@@ -1345,7 +1321,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     }
                 }
             }
-//Cidade
             if (document.getElementById('hdnIdCidadeTelaAnterior').value != '') {
                 var val = document.getElementById('hdnIdCidadeTelaAnterior').value;
                 var sel = document.getElementById('selUFAberturaProcesso');
@@ -1357,11 +1332,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     }
                 }
             }
-
         } catch (err) {
 
         }
-
 
         <? if( $objTipoProcDTO->getStrSinIIIndicacaoDiretaContato() == 'S') { ?>
         objLupaInteressados = new infraLupaSelect('selInteressados', 'hdnInteressados', '<?=$strLinkInteressadosSelecao?>');
@@ -2239,7 +2212,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById("selUF").disabled = false;
         document.getElementById("selUFAberturaProcesso").disabled = false;
         document.getElementById('hdnIdOrgao').value = idOrgao.value;
-
         //Caso selecione vazio na combo orgão, sumir com a combo uf
         if (document.getElementById("selOrgao").value == "") {
             document.getElementById("ufHidden").style.display = "none";
@@ -2249,7 +2221,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         infraSelectLimpar('selUF');
         infraSelectLimpar('selUFAberturaProcesso');
-
 
         $.ajax({
             dataType: 'xml',
@@ -2269,7 +2240,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 try {
 
                     var count = $(data).find("item").length;
-
                     if (count < 2) {
                         document.getElementById("ufHidden").style.display = "none";
                     } else {
@@ -2311,7 +2281,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                                         //Caso retorne somente uma cidade, travar a combo
                                         var count = $(data).find("item").length;
-
                                         if (count < 2) {
                                             document.getElementById("cidadeHidden").style.display = "none";
                                         } else {
@@ -2352,13 +2321,11 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                             document.getElementById("selUF").disabled = true;
                         }
 
-
                         var opt = document.createElement('option');
                         opt.value = $(j).attr("id");
                         opt.innerHTML = $(j).attr("descricao");
                         selectMultiple.appendChild(opt);
                     });
-
                     var div = document.getElementById('selUF');
                     div.appendChild(selectMultiple);
 
@@ -2383,7 +2350,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             document.getElementById('hdnIdOrgao').value = document.getElementById('hdnIdOrgaoTelaAnterior').value;
         }
         infraSelectLimpar('selUFAberturaProcesso');
-
 
         $.ajax({
             dataType: 'xml',
@@ -2410,8 +2376,14 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                         document.getElementById("cidadeHidden").style.display = "none";
                     } else {
-
                         document.getElementById("cidadeHidden").style.display = "";
+                    }
+
+                    if (count > 1) {
+                        var opt = document.createElement('option');
+                        opt.value = "";
+                        opt.innerHTML = "";
+                        selectMultiple.appendChild(opt);
                     }
 
                     if (count < 2) {

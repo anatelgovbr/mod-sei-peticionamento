@@ -75,13 +75,13 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
         var cpf = document.getElementById('txtCpfNovo').value.trim();
 
         if (cpf.length == 0) {
-            alert('Usuário não encontrado');
+            alert('CPF do Usuário Externo não informado.');
             return false;
         }
 
         var nome = document.getElementById('txtNomeNovo').value.trim();
         if (nome.length == 0) {
-            alert('Nome do Usuário Externo não Informado.');
+            alert('Usuário Externo não encontrado.');
             return false;
         }
 
@@ -97,29 +97,8 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
             return false;
         }
 
-        //var motivo  = document.getElementById('txtMotivo').value.trim();
-        //if(motivo.length == 0){
-        //    alert('Motivo não Informado.');
-        //    return false;
-        //}
-
-
-//        document.getElementById('frmEdicaoAuxiliar').submit();
-
-//        var alteracao = document.getElementById('hdnIsAlteracao').value == '1';
-
-//        if(alteracao){
-            url = '<?php echo PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_responsavel_concluir_alt&idVinculo=' . $idVinculo))?>';
-//        }else{
-//            url = '<?php echo PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_responsavel_concluir_cad'))?>';
-//        }
-        
-        infraAbrirJanela(url,
-            'concluirPeticionamento',
-            770,
-            480,
-            '', //options
-            false); //modal
+        url = '<?php echo PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_responsavel_concluir_alt&idVinculo=' . $idVinculo))?>';
+        infraAbrirJanelaModal(url, 600, 400);
         
     }
 

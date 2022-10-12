@@ -421,6 +421,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 break;
 
+            case 'md_pet_intimacao_validar_duplicidade':
+                $xml = (new MdPetIntimacaoRN())->verificaIntimacaoExistente($_POST);
+                break;
+
             case 'busca_tipo_resposta_intimacao':
                 $xml = MdPetIntTipoIntimacaoINT::montaSelectTipoRespostaIntimacao($_POST['paramsBusca']);
                 break;
@@ -938,7 +942,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $tipoRESP = 'PETICIONAMENTO';
                 $idRESP = 'PET' . $dblIdProcedimento;
                 $titleRESP = 'Peticionamento Eletrônico\nResposta a Intimação: ' . $data . '\nDocumento Principal: SEI nº ' . $numeroDocPrincipal . '';
-                $iconeRESP = 'modulos/peticionamento/imagens/png/peticionamento_resposta_a_intimacao.png';
+                $iconeRESP = 'modulos/peticionamento/imagens/svg/peticionamento_resposta_a_intimacao.svg?'.Icone::VERSAO;
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoRESP);
@@ -971,7 +975,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $titleINT = 'Peticionamento Eletrônico\nIntercorrente: ' . $data;
                 $tipoINT = 'PETICIONAMENTO';
                 $idINT = 'PET' . $dblIdProcedimento;
-                $iconeINT = 'modulos/peticionamento/imagens/png/peticionamento_intercorrente.png';
+                $iconeINT = 'modulos/peticionamento/imagens/svg/peticionamento_intercorrente.svg?'.Icone::VERSAO;
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoINT);
@@ -1002,7 +1006,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $titleNOVO = 'Peticionamento Eletrônico\nProcesso Novo: ' . $data;
                 $tipoNOVO = 'PETICIONAMENTO';
                 $idNOVO = 'PET' . $dblIdProcedimento;
-                $iconeNOVO = 'modulos/peticionamento/imagens/png/peticionamento_processo_novo.png';
+                $iconeNOVO = 'modulos/peticionamento/imagens/svg/peticionamento_processo_novo.svg?'.Icone::VERSAO;
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoNOVO);
@@ -1021,7 +1025,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $titlePJ = $arrRetDadosIcones['textoSeparado'];
                 $tipoPJ = 'PETICIONAMENTO';
                 $idPJ = 'PET' . $dblIdProcedimento;
-                $iconePJ = 'modulos/peticionamento/imagens/png/peticionamento_processo_novo_azul.png';
+                $iconePJ = 'modulos/peticionamento/imagens/svg/peticionamento_processo_novo_azul.svg?'.Icone::VERSAO;
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoPJ);
@@ -1041,7 +1045,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $titlePF = $arrRetDadosIcones['textoSeparado'];
                 $tipoPF = 'PETICIONAMENTO';
                 $idPF = 'PET' . $dblIdProcedimento;
-                $iconePF = 'modulos/peticionamento/imagens/png/peticionamento_processo_novo_cinza.png';
+                $iconePF = 'modulos/peticionamento/imagens/svg/peticionamento_processo_novo_cinza.svg?'.Icone::VERSAO;
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
                 $objArvoreAcaoItemAPI->setTipo($tipoPF);
@@ -1173,7 +1177,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Resposta a Intimação: ' . $data . '\nDocumento Principal: SEI nº ' . $numeroDocPrincipal . '"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_resposta_a_intimacao.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-top: 1px' />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_resposta_a_intimacao.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px;' />";
             } //recibo mais atual é de peticionamento intercorrente
             if (in_array(MdPetReciboRN::$TP_RECIBO_INTERCORRENTE, $tipoPet)) {
 
@@ -1193,7 +1197,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Intercorrente: ' . $data . '"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_intercorrente.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-top: 1px' />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_intercorrente.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px;' />";
             } //recibo mais atual é de peticionamento de processo novo
             if (in_array(MdPetReciboRN::$TP_RECIBO_NOVO, $tipoPet)) {
 
@@ -1210,7 +1214,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeCima = '"Peticionamento Eletrônico"';
                 $linhaDeBaixo = '"Processo Novo: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy') . '"';
 
-                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_processo_novo.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px; padding-top: 1px'  />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px;'  />";
             }
             if (in_array(MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL, $tipoPetTodos)) {
 
@@ -1292,7 +1296,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $textoSeparado = $linhaDeCimaTxt . ' \n' . $linhaDeBaixoTxt;
 
                     }
-                    $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_processo_novo_azul.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPJ . "," . $linhaDeCimaPJ . ");' style='width:24px; padding-top: 1px' />";
+                    $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo_azul.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPJ . "," . $linhaDeCimaPJ . ");' style='width:24px' />";
                 }
 
             }
@@ -1318,7 +1322,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeBaixoTexto .= 'Último Peticionamento de Atualização: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
                 $textoSeparado = $linhaDeCimaTexto . ' \n' . $linhaDeBaixoTexto;
 
-                $img .= "<img src='modulos/peticionamento/imagens/png/peticionamento_processo_novo_cinza.png' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPF . "," . $linhaDeCimaPF . ");' style='width:24px; padding-top: 1px' />";
+                $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo_cinza.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPF . "," . $linhaDeCimaPF . ");' style='width:24px;' />";
 
             }
             $arrDados['dataPJ'] = $dataPJ;
@@ -1776,7 +1780,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $objAcessoExternoAPI->getIdAcessoExterno());
 
-                $strLink = '<a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');"><img src="modulos/peticionamento/imagens/png/intimacao_controle_de_acessos_externos_destaque.png" class="infraImg" style="width:24px" ';
+                $strLink = '<a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');"><img src="modulos/peticionamento/imagens/svg/intimacao_controle_de_acessos_externos_destaque.svg?'.Icone::VERSAO.'" class="infraImg" style="width:24px" ';
                 $strLink .= str_replace('\n', '<br/>', PaginaSEI::montarTitleTooltip($strMsgTooltipTextoSinalizadorProcesso, $strMsgTooltipSinalizadorProcesso));
                 $strLink .= '/></a>&nbsp;';
 
@@ -1809,7 +1813,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
         if ($intQntdIntimacao > 0 && SessaoSEI::getInstance()->verificarPermissao('md_pet_intimacao_eletronica_listar')) {
-            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg" class="infraCorBarraSistema" alt="Ver Intimações Eletrônicas" title="Ver Intimações Eletrônicas" widtt="30"/></a>';
+            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg?'.Icone::VERSAO.'" class="infraCorBarraSistema" alt="Ver Intimações Eletrônicas" title="Ver Intimações Eletrônicas" widtt="30"/></a>';
         }
 
         if (!SessaoSEI::getInstance()->verificarPermissao('md_pet_adm_vinc_consultar') && $objProcedimentoAPI->getCodigoAcesso() > 0)
@@ -2081,14 +2085,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarAcaoBotaoCumprir($idProtocolo, $idAcessoExterno, $idProcedimento, $isProcedimento)
     {
-        $htmlImgIntCumpridaPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_principal.svg" style="width: 24px;">';
-        $htmlImgIntNaoCumpPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_principal.svg" style="width: 24px;">';
-        $htmlImgIntCumpridaAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_anexo.svg" style="width: 24px;">';
-        $htmlImgIntNaoCumprAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_anexo.svg" style="width: 24px;">';
-        $htmlImgIntAguardandoCumprGeralPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral.svg" style="width: 24px;">';
-        $htmlImgIntAguardandoCumprGeralAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral_anexo.svg" style="width: 24px;">';
-        $htmlImgIntNaoCumprVinculoInativoPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo.svg" style="width: 24px;">';
-        $htmlImgIntNaoCumprVinculoInativoAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo_anexo.svg" style="width: 24px;">';
+        $htmlImgIntCumpridaPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_principal.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntNaoCumpPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_principal.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntCumpridaAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntNaoCumprAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntAguardandoCumprGeralPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntAguardandoCumprGeralAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntNaoCumprVinculoInativoPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntNaoCumprVinculoInativoAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
         
         $objContato = (new MdPetIntAceiteRN())->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
         
@@ -3088,7 +3092,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
                                 $qtdArrDtoPetIntSerie = (is_array($arrDtoPetIntSerie) ? count($arrDtoPetIntSerie) : 0);
                                 if ($qtdArrDtoPetIntSerie > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
-                                    $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" style="width: 38px" /></a>';
+                                    $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg?'.Icone::VERSAO.'" alt="Gerar Intimação Eletrônica" title="Gerar Intimação Eletrônica" style="width: 38px" /></a>';
                                 }
                             }
                         }

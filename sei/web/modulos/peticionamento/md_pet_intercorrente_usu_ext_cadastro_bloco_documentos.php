@@ -38,7 +38,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="selTipoDocumento">
                     Tipo de Documento:
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, "Ajuda") ?> alt="Ajuda" class="infraImgModulo"/>
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, "Ajuda") ?> alt="Ajuda" class="infraImgModulo"/>
                 </label><br/>
                 <select id="selTipoDocumento" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"></select>
             </div>

@@ -735,7 +735,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         } 
         
         $js = 'window.open(\''.$strLinkProcesso.'\');';
-        $imgConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" class="infraImg" />';
+        $imgConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" class="infraImg" />';
         $textTolTip = $tpProcesso;
         $descricao = '';
 

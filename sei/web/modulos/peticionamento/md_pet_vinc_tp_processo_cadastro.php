@@ -368,13 +368,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                    value="<?php echo $idTipoProcessoPF ?>"/>
                             <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcessoPF.selecionar(700,500);"
                                  onkeypress="objLupaTipoProcessoPF.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                  alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirTipoProcesso"
                                  onclick="removerProcessoAssociadoPF(0);objLupaTipoProcessoPF.remover();"
                                  onkeypress="removerProcessoAssociadoPF(0);objLupaTipoProcessoPF.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                  alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
@@ -388,7 +388,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
                             Processo:
                             <img
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
                                     id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cpf@ - CPF da Pessoa Física Outorgante @nome_completo@ - Nome Completo da Pessoa Física Outorgante. ', 'Ajuda') ?>
                                     class="infraImgModulo"/></label>
@@ -412,13 +412,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <input type="hidden" id="hdnIdUnidadePF" name="hdnIdUnidadePF" value="<?= $idUnidadePF ?>"/>
                             <img id="imgLupaUnidade" onclick="objLupaUnidadePF.selecionar(700,500);"
                                  onkeypress="objLupaUnidadePF.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                  alt="Selecionar Unidade"
                                  title="Selecionar Unidade" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirUnidade" onclick="objLupaUnidadePF.remover();"
                                  onkeypress="objLupaUnidadePF.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                  alt="Remover Unidade"
                                  title="Remover Unidade" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -433,7 +433,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <label id="lblMenuAcessoExternoPF" for="" class="infraLabelObrigatorio">Exibir menu Procuração
                             Eletrônica: <img
                                     align="top"
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Procurações Eletrônicas" para os Usuários Externos.', 'Ajuda') ?>
                                     class="infraImgModulo"/></label>
                         <br/>
@@ -482,13 +482,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                    value="<?php echo $idTipoProcesso ?>"/>
                             <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
                                  onkeypress="objLupaTipoProcesso.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                  alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirTipoProcesso"
                                  onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
                                  onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                  alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
@@ -501,7 +501,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
                             Processo:
                             <img
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
                                     id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cnpj@ - CNPJ da Pessoa Jurídica Outorgante @razao_social@ - Razão Social da Pessoa Jurídica Outorgante.', 'Ajuda') ?>
                                     class="infraImgModulo"/></label>
@@ -524,13 +524,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?= $idUnidade ?>"/>
                             <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);"
                                  onkeypress="objLupaUnidade.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                  alt="Selecionar Unidade"
                                  title="Selecionar Unidade" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();"
                                  onkeypress="objLupaUnidade.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                  alt="Remover Unidade"
                                  title="Remover Unidade" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -546,7 +546,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             Legal de
                             Pessoa
                             Jurídica:</label>
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
                              id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externos. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.', 'Ajuda') ?>
                              class="infraImgModulo"/>
                         <br/>
@@ -643,7 +643,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <label id="lblDescricaoEssencial" for="selDescricaoEssencial"
                                            class="infraLabelObrigatorio">Tipos
                                         dos Documentos de Atos Constitutivos Obrigatórios: <img
-                                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                                 name="ajuda"
                                                 id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina os Atos Constitutivos que obrigatoriamente o Usuário Externo deverá adicionar ao Peticionar a vinculação dele como Responsável Legal a uma Pessoa Jurídica.', 'Ajuda') ?>
                                                 class="infraImgModulo"/></label>
@@ -663,7 +663,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <img id="imgLupaTipoDocumentoObrigatorio"
                                          onclick="objLupaTipoDocumentoEssencial.selecionar(700,500)"
                                          onkeypress="objLupaTipoDocumentoEssencial.selecionar(700,500)"
-                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                          alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento"
                                          class="infraImg"
                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -671,7 +671,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <img id="imgExcluirTipoDocumentoObrigatorio"
                                          onclick="objLupaTipoDocumentoEssencial.remover();"
                                          onkeypress="objLupaTipoDocumentoEssencial.remover();"
-                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                          alt="Remover Tipos de Documentos Selecionados"
                                          title="Remover Tipos de Documentos Selecionados"
                                          class="infraImg"
@@ -695,7 +695,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         Documentos
                                         de Atos
                                         Constitutivos não Obrigatórios: <img
-                                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                                 name="ajuda"
                                                 id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina os Atos Constitutivos que serão listados de forma não obrigatória para o Usuário Externo ao Peticionar a vinculação dele como Responsável Legal a uma Pessoa Jurídica.', 'Ajuda') ?>
                                                 class="infraImgModulo"/></label>
@@ -715,7 +715,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <img id="imgLupaTipoDocumento"
                                          onclick="carregarComponenteLupaTpDocComplementar('S');"
                                          onkeypress="carregarComponenteLupaTpDocComplementar('S');"
-                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                          alt="Selecionar Tipo de Documento" title="Selecionar Tipo de Documento"
                                          class="infraImg"
                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -723,7 +723,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <img id="imgExcluirTipoDocumentoNaoObrigatorio"
                                          onclick="carregarComponenteLupaTpDocComplementar('R');"
                                          onkeypress="carregarComponenteLupaTpDocComplementar('R');"
-                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                          alt="Remover Tipos de Documentos Selecionados"
                                          title="Remover Tipos de Documentos Selecionados"
                                          class="infraImg"
@@ -756,7 +756,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label id="lblOrientacoes" for="txaConteudo" class="infraLabelOpcional">Orientações:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
                                  id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina as Orientações que devem ser apresentadas para o Usuário Externo na funcionalidade que permite a vinculação dele como Responsável Legal a uma Pessoa Jurídica.', 'Ajuda') ?>
                                  class="infraImgModulo"/>
                         </label>

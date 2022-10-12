@@ -714,7 +714,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         <?php if ($tipoProcessoRestricaoErroUU) { ?>
                                             <div id="divRestricaoUU">
                                                 <img id='alertaRestricaoUU' class='alertaRestricao'  style="width: 24px"
-                                                    src='modulos/peticionamento/imagens/png/icone_contato.png'
+                                                    src='modulos/peticionamento/imagens/svg/icone_contato.svg?<?= Icone::VERSAO ?>'
                                                     onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "Ajuda");'
                                                     onmouseout='return infraTooltipOcultar();'/>&nbsp;
                                             </div>
@@ -955,13 +955,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 <td align="center">
                                                                     <?php if ($tipoProcessoRestricaoErro) { ?>
                                                                         <img id='alertaRestricao' class='alertaRestricao' style="width: 24px"
-                                                                            src='modulos/peticionamento/imagens/png/icone_contato.png'
+                                                                            src='modulos/peticionamento/imagens/svg/icone_contato.svg?'<?= Icone::VERSAO ?>
                                                                             onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "Ajuda");'
                                                                             onmouseout='return infraTooltipOcultar();'/>&nbsp;
                                                                     <?php }
                                                                     if ($tipoProcessoDivergencia) { ?>
                                                                         <img id='alertaDivergencia' class='alertaDivergencia' style="width: 24px"
-                                                                            src='modulos/peticionamento/imagens/png/icone_principal.png'
+                                                                            src='modulos/peticionamento/imagens/svg/icone_principal.svg'<?= Icone::VERSAO ?>
                                                                             onmouseover='return infraTooltipMostrar("Posteriormente à parametrização original deste Peticionamento devem ter ocorrido alterações no cadastro das Unidades, de forma que constam conflitos de Unidades com mesma UF ou mesma Cidade. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente às Unidades com tais conflitos.<br><br>Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, corrija o cadastro das Unidades para ficar com a UF ou a Cidade corretos, no menu Administração > Unidades > Listar.", "Ajuda");'
                                                                             onmouseout='return infraTooltipOcultar();'/>&nbsp;
                                                                     <?php }

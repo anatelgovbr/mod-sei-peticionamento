@@ -192,7 +192,7 @@ $title = '';
                 <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:</label>
                 <a href="javascript:void(0);" id="tipoAjuda"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita a possível Resposta do Usuário Externo a ser intimado. Exemplos: Recurso de 1ª Instância, Embargos de Declaração, Pedido de Reconsideração.', 'Ajuda') ?>>
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" class="infraImgModulo"/></a>
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" class="infraImgModulo"/></a>
                 <input type="text" id="txtNome" name="txtNome" class="infraText form-control"
                        value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoRespDTO->getStrNome()); ?>"
                        onkeypress="return infraMascaraTexto(this,event,70);" maxlength="70"

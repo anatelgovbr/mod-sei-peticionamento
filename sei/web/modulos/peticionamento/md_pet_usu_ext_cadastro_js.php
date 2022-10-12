@@ -1072,7 +1072,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var str = '<?= $strLinkEdicaoPJ ?>';
         }
 
-        infraAbrirJanela(str, 'cadastrarInteressado', 900, 900, '', false); //modal
+        infraAbrirJanelaModal(str, 850, 850); //modal
         return;
 
     }
@@ -1143,7 +1143,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //se chegar aqui o CPF/CNPJ está valido, entao consultar via AJAX para ver se o contato já está cadastrado
             var formData = "cpfcnpj=" + conteudo;  //Name value Pair
-
             $.ajax({
                 url: "<?= $strLinkAjaxContato ?>",
                 type: "POST",
@@ -1165,14 +1164,14 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         $('#txtNomeRazaoSocial').val('');
                         $('#txtNomeRazaoSocialTratadoHTML').val('');
                         $('#hdnCustomizado').val('');
-
                         if (chkTipoPessoaFisica) {
                             var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=true&cadastro=true') ?>';
                         } else if (chkTipoPessoaJuridica) {
                             var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&cadastro=true') ?>';
                         }
 
-                        infraAbrirJanela(str, 'cadastrarInteressado', 900, 900, '', false); //modal
+                        infraAbrirJanelaModal(str, 875, 875); //modal
+
                         return;
 
                     }
@@ -1465,9 +1464,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                 //Tamanho
                 var tamanhoMb = tamanho / 1024 / 1024;
-                var tamanhoPermitidoMb = document.getElementById('hdnTamArquivoPrincipal').value.toLowerCase().replace(' mb', '');
+                var tamanhoPermitidoMb = parseInt(document.getElementById('hdnTamArquivoPrincipal').value.toLowerCase().replace(' mb', ''));
                 if (tamanhoMb > tamanhoPermitidoMb) {
-                    alert('Arquivo com tamanho maior que o permitido.');
+                    alert('Arquivo Principal com tamanho maior que o permitido. \nTamanho do arquivo: ' + tamanhoMb.toFixed(2) + 'Mb\nTamanho permitido: ' + tamanhoPermitidoMb + 'Mb');
                     return false;
                 }
 
@@ -1614,9 +1613,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //Tamanho
             var tamanhoMb = tamanho / 1024 / 1024;
-            var tamanhoPermitidoMb = document.getElementById('hdnTamArquivoEssencial').value.toLowerCase().replace(' mb', '');
+            var tamanhoPermitidoMb = parseInt(document.getElementById('hdnTamArquivoEssencial').value.toLowerCase().replace(' mb', ''));
             if (tamanhoMb > tamanhoPermitidoMb) {
-                alert('Arquivo com tamanho maior que o permitido.');
+                alert('Arquivo Essencial com tamanho maior que o permitido. \nTamanho do arquivo: ' + tamanhoMb.toFixed(2) + 'Mb\nTamanho permitido: ' + tamanhoPermitidoMb + 'Mb');
                 return false;
             }
 
@@ -1770,9 +1769,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //Tamanho
             var tamanhoMb = tamanho / 1024 / 1024;
-            var tamanhoPermitidoMb = document.getElementById('hdnTamArquivoComplementar').value.toLowerCase().replace(' mb', '');
+            var tamanhoPermitidoMb = parseInt(document.getElementById('hdnTamArquivoComplementar').value.toLowerCase().replace(' mb', ''));
             if (tamanhoMb > tamanhoPermitidoMb) {
-                alert('Arquivo com tamanho maior que o permitido.');
+                alert('Arquivo Complementar com tamanho maior que o permitido. \nTamanho do arquivo: ' + tamanhoMb.toFixed(2) + 'Mb\nTamanho permitido: ' + tamanhoPermitidoMb + 'Mb');
                 return false;
             }
 
@@ -2074,8 +2073,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function adicionarInteressadoValido() {
 
-        var txtCPF = document.getElementById("txtCPF").value;
-        var txtCNPJ = document.getElementById("txtCNPJ").value;
+        var txtCPF = window.top.document.getElementById("txtCPF").value;
+        var txtCNPJ = window.top.document.getElementById("txtCNPJ").value;
         var txtCPFCNPJ = '';
 
         if (txtCPF != "") {
@@ -2084,12 +2083,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             txtCPFCNPJ = txtCNPJ;
         }
 
-        var hdnCustomizado = document.getElementById("hdnCustomizado").value;
-        var txtNomeRazaoSocial = document.getElementById("txtNomeRazaoSocial").value;
-        var hdnIdInteressadoCadastrado = document.getElementById('hdnIdInteressadoCadastrado').value;
-        var chkTipoPessoaFisica = document.getElementById("optTipoPessoaFisica").checked;
-        var chkTipoPessoaJuridica = document.getElementById("optTipoPessoaJuridica").checked;
-        var hdnUsuarioLogado = document.getElementById("hdnUsuarioCadastro").value;
+        var hdnCustomizado = window.top.document.getElementById("hdnCustomizado").value;
+        var txtNomeRazaoSocial = window.top.document.getElementById("txtNomeRazaoSocial").value;
+        var hdnIdInteressadoCadastrado = window.top.document.getElementById('hdnIdInteressadoCadastrado').value;
+        var chkTipoPessoaFisica = window.top.document.getElementById("optTipoPessoaFisica").checked;
+        var chkTipoPessoaJuridica = window.top.document.getElementById("optTipoPessoaJuridica").checked;
+        var hdnUsuarioLogado = window.top.document.getElementById("hdnUsuarioCadastro").value;
 
         //checar se o Nome / Razao Social foi preenchido
         if (txtNomeRazaoSocial == '') {

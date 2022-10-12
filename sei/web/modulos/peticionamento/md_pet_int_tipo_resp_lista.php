@@ -276,11 +276,11 @@ try {
             $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i, $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp());
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar  Tipo de Resposta" alt="Consultar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar  Tipo de Resposta" alt="Consultar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar  Tipo de Resposta" alt="Alterar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_resp=' . $arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar  Tipo de Resposta" alt="Alterar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -289,15 +289,15 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIntTipoRespDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg" title="Desativar  Tipo de Resposta" alt="Desativar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar  Tipo de Resposta" alt="Desativar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoReativar && $arrObjMdPetIntTipoRespDTO[$i]->getStrSinAtivo() == 'N') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg" title="Reativar  Tipo de Resposta" alt="Reativar " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar  Tipo de Resposta" alt="Reativar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg" title="Excluir Tipo de Resposta" alt="Excluir " class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir Tipo de Resposta" alt="Excluir " class="infraImg" /></a>&nbsp;';
             }
 
             $strResultado .= '</td></tr>' . "\n";

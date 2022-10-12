@@ -12,7 +12,7 @@
             <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selRazaoSocial">Responder em nome de:
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                             name="ajuda" class="infraImgModulo"
                         <?= PaginaSEI::montarTitleTooltip("Esta Intimação possui como destinatários você e/ou as Pessoas Jurídicas listadas neste campo. \n \n Selecione seu registro para responder a Intimação em seu nome próprio ou a Pessoa Jurídica que representa para responder em nome da mesma.", 'Ajuda') ?>>
                     </label>
@@ -31,7 +31,7 @@
             <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selTipoResposta">Tipo de Resposta: <img
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoResposta, 'Ajuda') ?>
                                 alt="Ajuda" class="infraImgModulo"/></label>
                     <select class="infraSelect form-control" name="selTipoResposta" id="selTipoResposta"
@@ -47,7 +47,7 @@
             <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selTipoResposta">Tipo de Resposta: <img
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoResposta, 'Ajuda') ?>
                                 alt="Ajuda" class="infraImgModulo"/></label>
                     <select class="infraSelect form-control" name="selTipoResposta" id="selTipoResposta"

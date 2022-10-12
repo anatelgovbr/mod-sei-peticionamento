@@ -169,17 +169,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
                             <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                 alt="Selecionar Tipo de Processo"
                                 title="Selecionar Tipo de Processo"
                                 class="infraImg"/>
                             <img id="imgExcluirTipoProcesso"
                                 onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                 alt="Remover Tipo de Processo"
                                 title="Remover Tipo de Processo"
                                 class="infraImginfraImgModulo"/>
-                            <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                            <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 onmouseover="return infraTooltipMostrar('Apenas após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; ou 3) Processo Bloqueado. \n \n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrerá o peticionamento não tiver permissão de uso do Tipo de Processo do processo indicado.', 'Ajuda');"
                                 onmouseout="return infraTooltipOcultar();"
                                 alt="Ajuda" class="infraImgModulo"/>

@@ -437,20 +437,20 @@ try {
             $strResultado .= '<td align="center" valign="middle">';
 
             if ($tipoProcessoDivergencia || $tipoProcessoRestricaoErro) {
-                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Neste Tipo de Peticionamento para Processo Novo constam Unidades que não podem utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente à Unidade do conflito.<br><br> Clique na Ação Editar para ver detalhes e sugestões de providências.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg?".Icone::VERSAO."' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Neste Tipo de Peticionamento para Processo Novo constam Unidades que não podem utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente à Unidade do conflito.<br><br> Clique na Ação Editar para ver detalhes e sugestões de providências.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
             if(!in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)){
-                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Este Tipo de Processo para Peticionamento de Processo Novo não é mais exibido para os Usuários Externos, pois o Nível de Acesso do Tipo de Processo não está configurado como Público.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg?".Icone::VERSAO."' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Este Tipo de Processo para Peticionamento de Processo Novo não é mais exibido para os Usuários Externos, pois o Nível de Acesso do Tipo de Processo não está configurado como Público.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar Tipo de Processo" alt="Consultar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Tipo de Processo" alt="Consultar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
 
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar Tipo de Processo" alt="Alterar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar Tipo de Processo" alt="Alterar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -459,13 +459,13 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetTipoProcessoDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg" title="Desativar Tipo de Processo" alt="Desativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar Tipo de Processo" alt="Desativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             } else {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg" title="Reativar Tipo de Processo" alt="Reativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar Tipo de Processo" alt="Reativar Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg" title="Excluir Tipo de Processo" alt="Excluir Tipo de Processo" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir Tipo de Processo" alt="Excluir Tipo de Processo" class="infraImg" /></a>&nbsp;';
             }
 
             $strResultado .= '</td></tr>' . "\n";

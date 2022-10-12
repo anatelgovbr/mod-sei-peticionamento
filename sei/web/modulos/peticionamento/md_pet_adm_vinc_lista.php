@@ -327,7 +327,7 @@ if ($numRegistros > 0) {
 
         $acaoConsulta = '';
         $strLinkConsultaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento=' . $idDocumento . '&arvore=1');
-        $iconeConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="' . $title . '" alt="' . $title . '" class="infraImg" />';
+        $iconeConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="' . $title . '" alt="' . $title . '" class="infraImg" />';
         $acaoConsulta = '<a target="_blank" href="' . $strLinkConsultaDocumento . '">' . $iconeConsulta . '</a>';
 
         $acaoResponsavel = '';
@@ -336,7 +336,7 @@ if ($numRegistros > 0) {
                 $acaoResponsavel = '';
                 if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) { //
                     $strLinkSuspenderVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_SUSPENSO);
-                    $iconeResponsavel = '<img style="width:24px;" src="modulos/peticionamento/imagens/png/suspender_responsavel_legal.png" title="Suspender Responsável Legal" alt="Suspender Responsável Legal" class="infraImg" />';
+                    $iconeResponsavel = '<img style="width:24px;" src="modulos/peticionamento/imagens/svg/suspender_responsavel_legal.svg?'.Icone::VERSAO.'" title="Suspender Responsável Legal" alt="Suspender Responsável Legal" class="infraImg" />';
 
                     $acaoResponsavel = '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>';
                     if ($bolAcoes) {
@@ -345,7 +345,7 @@ if ($numRegistros > 0) {
                         $acaoResponsavel = '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
                     }
                     $strLinkResponsavelVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_responsavel_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo());
-                    $iconeResponsavel = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar o Responsável Legal" alt="Alterar o Responsável Legal" class="infraImg" />';
+                    $iconeResponsavel = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar o Responsável Legal" alt="Alterar o Responsável Legal" class="infraImg" />';
                     if ($bolAcoes) {
                         $acaoResponsavel .= '<a href="' . $strLinkResponsavelVinc . '">' . $iconeResponsavel . '</a>';
                     } else {

@@ -150,7 +150,7 @@ try {
 
             $isValido = $objMdPetCertidaoRN->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($arrObjMdPetReciboDTO[$i]->getDblIdDocumento(), false, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
 
-            $iconeConsulta = '<img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar Recibo" alt="Consultar Recibo" class="infraImg" />';
+            $iconeConsulta = '<img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Recibo" alt="Consultar Recibo" class="infraImg" />';
 
             if ($isValido) {
                 $linkAssinado = '';
@@ -237,7 +237,7 @@ $strTipo = $_POST['selTipo'];
                                        class="infraText form-control" onchange="validDate('F');"
                                        onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
                                        maxlength="16"/>
-                                <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg"
+                                <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg?<?= Icone::VERSAO ?>"
                                      id="imgDtInicio"
                                      title="Selecionar Data/Hora Inicial"
                                      alt="Selecionar Data/Hora Inicial" class="infraImg"
@@ -255,7 +255,7 @@ $strTipo = $_POST['selTipo'];
                                        class="infraText form-control" onchange="validDate('F');"
                                        onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
                                        maxlength="16"/>
-                                <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg"
+                                <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg?<?= Icone::VERSAO ?>"
                                      id="imgDtFim"
                                      title="Selecionar Data/Hora Final"
                                      alt="Selecionar Data/Hora Final"

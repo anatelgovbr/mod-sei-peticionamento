@@ -244,23 +244,23 @@ try {
             $strResultado .= '<td align="center" valign="middle">';
 
             if ($bolAcaoConsultar){
-                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg" title="Consultar Critério Intercorrente" alt="Consultar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg?'.Icone::VERSAO.'" title="Consultar Critério Intercorrente" alt="Consultar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar){
-                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg" title="Alterar Critério Intercorrente" alt="Alterar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg?'.Icone::VERSAO.'" title="Alterar Critério Intercorrente" alt="Alterar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
                 $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjMdPetCriterioDTO[$i]->getStrNomeProcesso()));
                 if ($bolAcaoDesativar && $arrObjMdPetCriterioDTO[$i]->getStrSinAtivo() == 'S'){
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg" title="Desativar Critério Intercorrente" alt="Desativar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg?'.Icone::VERSAO.'" title="Desativar Critério Intercorrente" alt="Desativar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
                 } else {
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg" title="Reativar Critério Intercorrente" alt="Reativar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg?'.Icone::VERSAO.'" title="Reativar Critério Intercorrente" alt="Reativar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
                 }
 
                 if ($bolAcaoExcluir){
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg" title="Excluir Critério Intercorrente" alt="Excluir Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg?'.Icone::VERSAO.'" title="Excluir Critério Intercorrente" alt="Excluir Critério Intercorrente" class="infraImg" /></a>&nbsp;';
                 }
             }
 

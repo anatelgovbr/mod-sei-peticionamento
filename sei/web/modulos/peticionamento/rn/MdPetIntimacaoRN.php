@@ -1828,6 +1828,19 @@ class MdPetIntimacaoRN extends InfraRN
         return $nome;
     }
 
+    public function verificaIntimacaoExistente(){
+
+        $ids = [];
+        $arrIdsDocAnexo = !empty($_POST['hdnIdsDocAnexo']) ? json_decode($_POST['hdnIdsDocAnexo']) : [];
+
+        $hdnUsuarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnDadosUsuario']);
+        foreach ($hdnUsuarios as $key => $value) {
+            $ids [] = $value[0];
+        }
+
+        return $msg = '<message>'.(new MdPetIntimacaoRN())->_verificarDocumentosDuplicados($_POST['hdnIdDocumento'], $arrIdsDocAnexo, $ids, $_POST['hdnIdProcedimento']).'</message>';
+
+    }
 
     public function cadastrarIntimacaoControlado($dadosCadastro)
     {

@@ -141,9 +141,9 @@ class MdPetContatoINT extends ContatoINT
 
         foreach ($strPalavrasPesquisa as $i => $usuarios) {
 
-            $contatoIntimacao = MdPetContatoINT::getDadosContatos($usuarios->getNumIdContato(), $_GET['id_documento'], false);
+            // $contatoIntimacao = MdPetContatoINT::getDadosContatos($usuarios->getNumIdContato(), $_GET['id_documento'], false);
 
-            if ($contatoIntimacao['Intimacao'] == 0) {
+            // if ($contatoIntimacao['Intimacao'] == 0) {
 
                 $objContextoContatoDTO = new ContatoDTO();
                 $objContextoContatoDTO->retTodos();
@@ -151,7 +151,7 @@ class MdPetContatoINT extends ContatoINT
 
                 $objContatoRN = new ContatoRN();
                 $arrContextoContatoDTO[$i] = $objContatoRN->consultarRN0324($objContextoContatoDTO);
-            }
+            // }
 
         }
 
@@ -239,8 +239,8 @@ class MdPetContatoINT extends ContatoINT
             //$dtoMdPetVincReptDTO->setDistinct(true);
             $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
             $dtoMdPetVincReptDTO->setStrSinAtivo('S');
-            //$dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-            $dtoMdPetVincReptDTO->adicionarCriterio(array('StaEstado', 'StaEstado'), array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL), array(MdPetVincRepresentantRN::$RP_ATIVO, MdPetVincRepresentantRN::$RP_REVOGADA), InfraDTO::$OPER_LOGICO_OR);
+            $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+            //$dtoMdPetVincReptDTO->adicionarCriterio(array('StaEstado', 'StaEstado'), array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL), array(MdPetVincRepresentantRN::$RP_ATIVO, MdPetVincRepresentantRN::$RP_REVOGADA), InfraDTO::$OPER_LOGICO_OR);
 
             $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
             $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
@@ -344,9 +344,9 @@ class MdPetContatoINT extends ContatoINT
 
         foreach ($strPalavrasPesquisa as $i => $usuarios) {
 
-            $contatoIntimacao = MdPetContatoINT::getDadosContatosJuridico($usuarios->getNumIdContatoVinc(), $_GET['id_documento'], false);
+            // $contatoIntimacao = MdPetContatoINT::getDadosContatosJuridico($usuarios->getNumIdContatoVinc(), $_GET['id_documento'], false);
 
-            if ($contatoIntimacao['Intimacao'] == 0) {
+            // if ($contatoIntimacao['Intimacao'] == 0) {
 
                 $objContextoContatoDTO = new ContatoDTO();
                 $objContextoContatoDTO->retTodos();
@@ -354,7 +354,7 @@ class MdPetContatoINT extends ContatoINT
 
                 $objContatoRN = new ContatoRN();
                 $arrContextoContatoDTO[$i] = $objContatoRN->consultarRN0324($objContextoContatoDTO);
-            }
+            // }
 
         }
 

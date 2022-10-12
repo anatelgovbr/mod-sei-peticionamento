@@ -134,7 +134,7 @@ PaginaSEI::getInstance()->abrirAreaDados('40em');
             <div class="col-sm-6 col-md-7 col-lg-6 col-xl-4">
                 <label id="lblHipoteseLgl" for="txtHipoteseLgl" accesskey="n" class="infraLabelObrigatorio">Hipóteses
                     Legais: <img align="top"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                  onmouseover="return infraTooltipMostrar('Nos casos em que o Usuário Externo indicar Nível de Acesso Restrito para Documentos que adicionar, as Hipóteses Legais disponíveis para ele selecionar estarão restringidas às Hipóteses Legais indicadas aqui.', 'Ajuda');"
                                  onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                 </label>
@@ -152,12 +152,12 @@ PaginaSEI::getInstance()->abrirAreaDados('40em');
                     </select>
                     <div id="divIconesHipoteseLgl">
                         <img id="imgLupaHipoteseLgl" onclick="objLupaHipLegal.selecionar(700,500);"
-                             onkeypress="objLupaHipLegal.selecionar(700,500);" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                             onkeypress="objLupaHipLegal.selecionar(700,500);" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                              alt="Selecionar Hipóteses Legais" title="Selecionar Hipóteses Legais" class="infraImg"
                              tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
                         <img id="imgExcluirHipoteseLgl" onclick="objLupaHipLegal.remover();"
-                             onkeypress="objLupaHipLegal.remover();" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                             onkeypress="objLupaHipLegal.remover();" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                              alt="Remover Hipóteses Legais Selecionadas" title="Remover Hipóteses Legais Selecionados"
                              class="infraImg" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>

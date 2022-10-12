@@ -75,35 +75,24 @@
     function preparaPessoaFisica() {
 
         try {
-            if (document.getElementById('intimacoesFisica').value == 0) {
-                document.getElementById("tblEnderecosEletronicos").style.display = "none";
-            } else {
-                document.getElementById("tblEnderecosEletronicos").style.display = "";
-            }
-        } catch (err) {
-
-        }
+            document.getElementById("tblEnderecosEletronicos").style.display = document.getElementById('intimacoesFisica').value == 0 ? "none" : "";
+        } catch (err) {}
 
         objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?= $strLinkAjaxUsuarios ?>');
         objAutoCompletarUsuario.limparCampo = true;
         objAutoCompletarUsuario.tamanhoMinimo = 3;
 
-
         objAutoCompletarUsuario.prepararExecucao = function () {
-
-
             document.getElementById('txtEmail').value = '';
-            return 'intimacaoPF=t&txtUsuario=' + document.getElementById('txtUsuario').value + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value;
-
-        };
+            return 'intimacaoPF=t&txtUsuario=' + document.getElementById('txtUsuario').value; //  + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value;
+        }
 
         objAutoCompletarUsuario.processarResultado = function (id, descricao, complemento) {
             if (id != '') {
                 var arrayResultado = complemento.split(" - ");
                 document.getElementById('txtEmail').value = arrayResultado[0];
             }
-        };
-
+        }
 
         objTabelaDinamicaUsuarios = new infraTabelaDinamica('tblEnderecosEletronicos', 'hdnDadosUsuario', false, false);
         objTabelaDinamicaUsuarios.gerarEfeitoTabela = true;
@@ -179,21 +168,16 @@
         objAutoCompletarUsuario.limparCampo = true;
         objAutoCompletarUsuario.tamanhoMinimo = 3;
 
-//AutoComplete
+        //AutoComplete
         objAutoCompletarUsuario.prepararExecucao = function () {
-
             document.getElementById('txtEmail').value = '';
-            return 'intimacaoPJ=t&txtUsuario=' + document.getElementById('txtUsuario').value + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value + '&gerados=' + document.getElementById('gerados').value;
-
+            return 'intimacaoPJ=t&txtUsuario=' + document.getElementById('txtUsuario').value + '&gerados=' + document.getElementById('gerados').value; // + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value
         };
-
 
         objAutoCompletarUsuario.processarResultado = function (id, descricao, complemento) {
             if (id != '') {
-
                 document.getElementById('txtEmail').value = infraFormatarCnpj(complemento);
                 document.getElementById('txtUsuario').value = descricao;
-
             }
         };
 
@@ -201,7 +185,6 @@
         objTabelaDinamicaUsuarios.gerarEfeitoTabela = true;
 
         objTabelaDinamicaUsuarios.registroDuplicado = function (cpf) {
-
             var duplicado = false;
             var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
 
@@ -217,27 +200,19 @@
             return duplicado;
         };
 
-
-//Protocolos da Intimação
+        //Protocolos da Intimação
         carregarComponenteProtocoloIntimacao();
 
-//Protocolos Disponibilizados
+        //Protocolos Disponibilizados
         carregarComponenteProtocoloDisponibilizado();
 
         esconderAnexos(false);
         mostrarProtocoloParcial(false);
 
-
         var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
-        if (tbUsuarios.rows.length < 2) {
-            document.getElementById("tblEnderecosEletronicos").style.display = "none";
-        } else {
-            document.getElementById("tblEnderecosEletronicos").style.display = "";
-        }
-
+        document.getElementById("tblEnderecosEletronicos").style.display = tbUsuarios.rows.length < 2 ? "none" : "";
 
         document.body.addEventListener('DOMSubtreeModified', function () {
-
 
             try {
                 var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
@@ -278,15 +253,13 @@
 
                 }
 
-
             } catch (err) {
 
             }
 
-
         }, false);
 
-//Limpando input hidden
+        //Limpando input hidden
 
         document.getElementById("txtUsuario").addEventListener("keydown", function (event) {
 
@@ -549,8 +522,7 @@
             for (var i = 1; i < tbUsuarios.rows.length; i++) {
                 var razao = tbUsuarios.rows[i].cells[0].innerText;
                 if (razao.trim() == document.getElementById('hdnIdDadosUsuario').value) {
-                    alert("A pessoa física informada já possui intimação gerada para este documento.");
-
+                    alert("A Pessoa Física informada já foi adicionada à lista de destinatários ou já possui intimação gerada para este documento.");
                     return true;
                     break;
                 }
@@ -563,20 +535,12 @@
                 dataType: 'XML',
                 data: paramsAjax,
                 success: function (r) {
-                    if ($(r).find('Quantidade').text() == 1) {
 
-                        if ($(r).find('Cadastro').text() > 0) {
-                            alert(" A Pessoa Física selecionada já foi intimada através da Pessoa Jurídica abaixo. " + $(r).find('Vinculo').text());
-                            return;
-                        }
+                    console.log(r);
 
-                    } else if ($(r).find('Quantidade').text() > 1) {
-
-                        if ($(r).find('Cadastro').text() > 0) {
-                            alert(" A Pessoa Física selecionada já foi intimada através das Pessoas Jurídicas abaixo. " + $(r).find('Vinculo').text());
-                            return;
-                        }
-
+                    if ($(r).find('Quantidade').text() >= 1 && $(r).find('Cadastro').text() > 0) {
+                        alert(" A Pessoa Física selecionada já foi intimada através do destinatário abaixo: " + $(r).find('Vinculo').text());
+                        return;
                     }
 
                     var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
@@ -650,7 +614,7 @@
                 var razao = tbUsuarios.rows[i].cells[0].innerText;
 
                 if (razao.trim() == document.getElementById('hdnIdDadosUsuario').value) {
-                    alert("A pessoa jurídica informado já possui intimação gerada para este documento.");
+                    alert("A Pessoa Jurídica informada já foi adicionada à lista de destinatários ou já possui intimação gerada para este documento.");
 
                     return true;
                     break;

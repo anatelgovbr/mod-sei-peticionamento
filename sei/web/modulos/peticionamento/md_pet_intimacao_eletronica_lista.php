@@ -157,7 +157,7 @@ if ($numRegistros > 0) {
         $strResultado .= '<td align="center">';
         //Ação Consulta
         $strUrlConsulta = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_consulta&arvore=1&id_documento='.$arrObjIntimacao[$i]->getDblIdDocumento().'&lista_int=1&id_intimacao='.$arrObjIntimacao[$i]->getNumIdMdPetIntimacao().'&id_contato='.$arrObjIntimacao[$i]->getNumIdContato());
-        $strResultado .= '<a tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" onclick="abrirModal(\''. $strUrlConsulta .'\', '.$strId.');" title="Consultar Intimação" alt="Consultar Intimação" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" onclick="abrirModal(\''. $strUrlConsulta .'\', '.$strId.');" title="Consultar Intimação" alt="Consultar Intimação" class="infraImg" /></a>&nbsp;';
         $strResultado .= '</td>';
         $strResultado .= '</tr>';
 

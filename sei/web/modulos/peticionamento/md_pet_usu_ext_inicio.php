@@ -326,7 +326,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-2" style="<?php echo $hiddenOrgao ?>" id="OrgaoHidd">
                 <label id="lblOrgao" for="selOrgao" class="infraLabelOpcional">
                     Órgão:
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda" align="top"
                         <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinado Órgão.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/>
@@ -348,7 +348,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="col-sm-12 col-md-4 col-lg-2 col-xl-2" style=" <?php echo $hiddenUF; ?> " id="UFHidd">
                 <label id="lblUF" for="selUF" style="font-size:12px;" class="infraLabelOpcional">
                     UF:
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda"
                         <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinada UF.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/>
@@ -372,7 +372,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             </div>
             <div class="col-sm-12 col-md-8 col-lg-3 col-xl-5" style="<?php echo $hiddenCidade ?>" id="cidadeHidd">
                 <label id="lblCidade" for="selCidade" class="infraLabelOpcional">Cidade:
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda" align="top"
                         <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinada Cidade.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/></label>

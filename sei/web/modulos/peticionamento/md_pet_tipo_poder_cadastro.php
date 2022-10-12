@@ -234,7 +234,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <label id="lblNome" for="txtNome" class="infraLabelObrigatorio">Nome:
                     <img align="top"
                          style="width:20px;"
-                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda" <?= PaginaSEI::montarTitleTooltip('Indicar Poderes específicos para serem utilizados na emissão de Procuração Eletrônica simples pelos Usuários Externos. \n \n Por exemplo: Participar em Reuniões, Peticionar Processo Novo ou Intercorrente, Operar Sistemas.', 'Ajuda') ?>
                          class="infraImgModulo"/>
                 </label>

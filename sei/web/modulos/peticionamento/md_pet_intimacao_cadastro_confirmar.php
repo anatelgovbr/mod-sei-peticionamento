@@ -20,7 +20,7 @@ switch($_GET['acao']) {
         try {
             $strTitulo = 'Gerar Intimação Eletrônica - Confirmação';
 
-            $arrComandos[] = '<button type="button" accesskey="G" name="sbmConfirmarIntimacao" id="sbmConfirmarIntimacao" onclick="gerarIntimacao();" value="Ciente e Gerar Intimação" class="infraButton">Ciente e <span class="infraTeclaAtalho">G</span>erar Intimação</button>';
+            $arrComandos[] = '<button type="button" accesskey="G" name="sbmConfirmarIntimacao" id="sbmConfirmarIntimacao" value="Ciente e Gerar Intimação" class="infraButton">Ciente e <span class="infraTeclaAtalho">G</span>erar Intimação</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar" onclick="infraFecharJanelaModal();" value="Cancelar" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
@@ -127,18 +127,45 @@ PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 ?>
 
-function inicializar(){
+    $(document).ready(function() {
+        $('button#sbmConfirmarIntimacao').off('click').one('click', function(e){
+            e.preventDefault();
+            var sendForm = false;
+            var btn = $("button#sbmConfirmarIntimacao");
+            var form = $('#frmMdPetIntimacaoCadastro', window.parent.ifrVisualizacao.document);
+            $.ajax({
+                url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_intimacao_validar_duplicidade') ?>',
+                type: form.attr('method'),
+                data: form.serialize(),
+                dataType: 'xml',
+                beforeSend: function(){
+                    btn.prop('disabled', true).html('Aguarde, gerando intimação...');
+                },
+                success: function (r) {
+                    var msg = $(r).find('message').text();
+                    if(msg != ''){
+                        alert(msg);
+                        $('button#sbmFechar').click();
+                    }else{
+                        sendForm = true;
+                    }
+                },
+                complete: function (e) {
+                    if(sendForm){
+                        form.submit();
+                    }
+                },
+                error: function (e) {
+                    console.error('Erro ao processar requisição');
+                }
+            });
+        });
+    });
 
-}
-function gerarIntimacao(){
-	if (window.parent!=null){
-        window.parent.ifrVisualizacao.document.getElementById('frmMdPetIntimacaoCadastro').submit();
-	}
-}
 <?php
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
-PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
+PaginaSEI::getInstance()->abrirBody($strTitulo,'');
 ?>
     <div class="clear"></div>
     <div class="textoIntimacaoEletronica">

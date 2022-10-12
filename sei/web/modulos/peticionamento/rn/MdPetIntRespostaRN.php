@@ -41,7 +41,7 @@ class MdPetIntRespostaRN extends InfraRN {
             $strLink = $urlBase . '/controlador_externo.php?' . $strParam . '&infra_hash=' . $hash;
 
             $js = 'window.location = \''.$strLink.'\';';
-            $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta.svg?11" style="width: 24px">';
+            $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta.svg?'.Icone::VERSAO.'" style="width: 24px">';
             $ToolTipTitulo = 'Responder Intimação Eletrônica';
             $ToolTipText = 'Documento Principal: ';
 
@@ -105,7 +105,7 @@ class MdPetIntRespostaRN extends InfraRN {
             $strLink = $urlBase . '/controlador_externo.php?' . $strParam . '&infra_hash=' . $hash;
 
             $js = 'window.location = \''.$strLink.'\';';
-            $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta.svg?11" style="width: 24px">';
+            $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta.svg?'.Icone::VERSAO.'" style="width: 24px">';
             $ToolTipTitulo = 'Responder Intimação Eletrônica';
             $ToolTipText = 'Documento Principal: ';
 
@@ -185,7 +185,7 @@ class MdPetIntRespostaRN extends InfraRN {
 
             $js = "infraAbrirJanelaModal('" . $strLink . "', 700, 250);";
 
-            $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta_negada.svg?11" style="width: 24px">';
+            $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta_negada.svg?'.Icone::VERSAO.'" style="width: 24px">';
             $ToolTipTitle = 'Responder Intimação Eletrônica';
             $ToolTipText .= 'Documento Principal: ';
 

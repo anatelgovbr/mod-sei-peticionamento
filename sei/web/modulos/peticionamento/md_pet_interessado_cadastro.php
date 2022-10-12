@@ -38,7 +38,6 @@ try {
             } else if (isset($_GET['cnpj'])) {
                 $strTitulo .= ' - Pessoa Jurídica';
             }
-
             $strPrimeiroItemValor = 'null';
             $strPrimeiroItemDescricao = '&nbsp;';
             $strValorSiglaEstadoSelecionado = isset($_POST['selEstado']) ? $_POST['selEstado'] : null;
@@ -77,7 +76,6 @@ try {
             } else {
                 $_SESSION['validarXss'] = false;
             }
-
 
             //setando dados no contato que esta sendo cadastrado ou editado
             if (isset($_POST['hdnCadastrar']) && $validadorXss == false) {
@@ -131,6 +129,7 @@ try {
 
                 //campos manipulados apenas no cadastro (nao na ediçao)
                 if (!isset($_POST['hdnIdEdicao']) || $_POST['hdnIdEdicao'] == "") {
+
                     // Pessoa Física
                     if (isset($_POST['txtNome']) && $_POST['txtNome'] != "" && isset($_POST['txtCPF']) && $_POST['txtCPF'] != "") {
                         $objContatoDTO->setStrSigla(InfraUtil::formatarCpf($_POST['txtCPF']));
@@ -227,22 +226,22 @@ try {
 
                     echo "<script>";
                     if ($janelaSelecaoPorNome == null || $janelaSelecaoPorNome == "") {
-                        echo "window.opener.document.getElementById('txtNomeRazaoSocial').value = '" . str_replace("/", "\/", $nome) . "'; ";
-                        echo "window.opener.document.getElementById('txtNomeRazaoSocialTratadoHTML').value = '" . PaginaSEIExterna::tratarHTML($nome) . "'; ";
-                        echo "window.opener.document.getElementById('hdnCustomizado').value = 'true'; ";
-                        echo "window.opener.document.getElementById('hdnIdInteressadoCadastrado').value = " . $objContatoDTO->getNumIdContato() . "; ";
+                        echo "window.top.document.getElementById('txtNomeRazaoSocial').value = '" . str_replace("/", "\/", $nome) . "'; ";
+                        echo "window.top.document.getElementById('txtNomeRazaoSocialTratadoHTML').value = '" . PaginaSEIExterna::tratarHTML($nome) . "'; ";
+                        echo "window.top.document.getElementById('hdnCustomizado').value = 'true'; ";
+                        echo "window.top.document.getElementById('hdnIdInteressadoCadastrado').value = " . $objContatoDTO->getNumIdContato() . "; ";
                     } else {
                         SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
                     }
 
-                    echo "window.close();";
+                    echo "window.top.document.getElementById('divInfraSparklingModalClose').click();";
                     echo "</script>";
                     die;
 
                 } else {
                     echo "<script>";
-                    echo "window.opener.atualizarNomeRazaoSocial('" . $cpfCnpjEditado . "', '" . PaginaSEIExterna::tratarHTML($nome) . "');";
-                    echo "window.close();";
+                    echo "atualizarNomeRazaoSocial('" . $cpfCnpjEditado . "', '" . PaginaSEIExterna::tratarHTML($nome) . "');";
+                    echo "window.top.document.getElementById('divInfraSparklingModalClose').click()";
                     echo "</script>";
                     die;
                 }
@@ -366,7 +365,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 $urlBaseLink = "";
 $arrComandos = array();
 $arrComandos[] = '<button type="button" accesskey="s" name="Salvar" value="Salvar" onclick="salvar()" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="window.close();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="window.top.document.getElementById(\'divInfraSparklingModalClose\').click()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 $strLinkBaseFormEdicao = 'controlador_externo.php?edicaoExibir=true&acao=' . $_GET['acao'];
 
@@ -423,8 +422,8 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                onclick="selecionarPF()"/>
                         Pessoa Física
+                        <br>
                     </label>
-                    <br/>
                     <label for="rdPF1" id="lblrdPF1" class="infraLabelRadio" style="display: none; left: 25px">
                         <input type="radio" name="tipoPessoaPF" value="0" id="rdPF1"
                                class="infraRadio"
@@ -432,8 +431,8 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
                                onclick="selecionarPF1()"/>
                         Sem Vinculação com
                         Pessoa Jurídica
+                        <br>
                     </label>
-                    <br/>
                     <label for="rdPF2" id="lblrdPF2" class="infraLabelRadio" style="display: none;; left: 25px">
                         <input type="radio" name="tipoPessoaPF" value="1" id="rdPF2" class="infraRadio"
                                onclick="selecionarPF2()"
@@ -441,15 +440,18 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
                         Com vínculo com
                         Pessoa
                         Jurídica
+                        <br>
                     </label>
 
                 <?php } ?>
 
                 <?php if (isset($_GET['cnpj'])) { ?>
-                    <input type="radio" name="tipoPessoa" value="pj" id="rdPJ" class="infraRadio"
-                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                           onclick="selecionarPJ()"/>
-                    <label for="rdPJ" class="infraLabelRadio">Pessoa Jurídica</label>
+                    <label for="rdPJ" class="infraLabelRadio">
+                        <input type="radio" name="tipoPessoa" value="pj" id="rdPJ" class="infraRadio"
+                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                               onclick="selecionarPJ()"/>
+                        <label for="rdPJ" class="infraLabelRadio">Pessoa Jurídica</label>
+                    </label>
                 <?php } ?>
 
             </fieldset>
@@ -458,265 +460,248 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
 
                 <legend class="infraLegend">&nbsp; Formulário de Cadastro &nbsp;</legend>
 
-
-                <label class="infraLabelObrigatorio">Tipo de Interessado:</label><br/>
-                <select class="infraSelect" width="380" id="tipoInteressado"
-                        tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                        name="tipoInteressado"
-                        value="<?= PaginaSEIExterna::tratarHTML($_POST['tipoInteressado']) ?>"
-                        onchange="selecionarTipoInteressado()" style="width:380px;">
-                    <?= $strItensSelTipoInteressado ?>
-                </select>
-
-                <label id="lblNome" class="infraLabelObrigatorio" style="display:none;">Nome Completo:<br/>
-                    <input type="text" id="txtNome" name="txtNome"
-                           class="infraText" style="width: 580px;"
-                           value="<?= PaginaSEIExterna::tratarHTML($_POST['txtNome']) ?>"
-                           onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-
-                </label>
-
-                <label id="lblRazaoSocial" class="infraLabelObrigatorio" style="display:none;">Razão Social:<br/>
-                    <input type="text" id="txtRazaoSocial" name="txtRazaoSocial"
-                           class="infraText" style="width: 580px;"
-                           value="<?= PaginaSEIExterna::tratarHTML($_POST['txtRazaoSocial']) ?>"
-                           onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-
-                </label>
-
+                <div class="row">
+                    <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                        <label class="infraLabelObrigatorio">Tipo de Interessado:</label>
+                        <select class="infraSelect form-control" id="tipoInteressado"
+                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                                name="tipoInteressado"
+                                value="<?= PaginaSEIExterna::tratarHTML($_POST['tipoInteressado']) ?>"
+                                onchange="selecionarTipoInteressado()">
+                            <?= $strItensSelTipoInteressado ?>
+                        </select>
+                    </div>
+                </div>
+                <div id="nome" style="display:none;" class="row">
+                    <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                        <label id="lblNome" class="infraLabelObrigatorio">Nome Completo:</label>                 </label>
+                        <input type="text" id="txtNome" name="txtNome"
+                               class="infraText form-control"
+                               value="<?= PaginaSEIExterna::tratarHTML($_POST['txtNome']) ?>"
+                               onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                    </div>
+                </div>
+                <div id="razaoSocial" style="display:none;" class="row">
+                    <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                        <label id="lblRazaoSocial" class="infraLabelObrigatorio">Razão Social:<br/></label>
+                        <input type="text" id="txtRazaoSocial" name="txtRazaoSocial"
+                               class="infraText form-control"
+                               value="<?= PaginaSEIExterna::tratarHTML($_POST['txtRazaoSocial']) ?>"
+                               onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                    </div>
+                </div>
 
                 <?php if ($_POST['hdnIdContextoContato'] == '') { ?>
-                    <br/>
-                    <label id="lblPjVinculada" style="display: none;" class="infraLabelObrigatorio">Razão Social da
-                        Pessoa
-                        Jurídica vinculada:<br/>
-                        <input type="text" class="infraText"
-                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                               onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                               name="txtPjVinculada" id="txtPjVinculada"
-                               autocomplete="off" style="width: 580px; display: none;"/>
+                    <div id="pjVinculada" style="display: none;" class="row">
+                        <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                            <label id="lblPjVinculada" class="infraLabelObrigatorio">Razão Social da
+                                Pessoa
+                                Jurídica vinculada:<br/> </label>
+                            <input type="text" class="infraText form-control"
+                                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                                   name="txtPjVinculada" id="txtPjVinculada"
+                                   autocomplete="off" style="display: none;"/>
 
-                        <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato"
-                               value="<?php echo $_POST['hdnIdContextoContato']; ?>"/>
-
-
-                    </label>
-
+                            <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato"
+                                   value="<?php echo $_POST['hdnIdContextoContato']; ?>"/>
+                        </div>
+                    </div>
                 <?php } else if ($_POST['txtPjVinculada'] != "") { ?>
-
-                    <label id="lblPjVinculada" style="display: none;" class="infraLabelObrigatorio">Razão Social da
-                        Pessoa
-                        Jurídica vinculada:<br/>
-                        <input type="text" class="infraText"
-                               value="<?= PaginaSEIExterna::tratarHTML($_POST['txtPjVinculada']) ?>"
-                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                               onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                               name="txtPjVinculada" id="txtPjVinculada"
-                               autocomplete="off" style="width: 580px;"/>
-                        <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato"
-                               value="<?= $_POST['hdnIdContextoContato'] ?>"/>
-                    </label>
-
+                    <div id="pjVinculada" style="display: none;" class="row">
+                        <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                            <label id="lblPjVinculada" class="infraLabelObrigatorio">Razão Social da
+                                Pessoa
+                                Jurídica vinculada:<br/></label>
+                            <input type="text" class="infraText form-control"
+                                   value="<?= PaginaSEIExterna::tratarHTML($_POST['txtPjVinculada']) ?>"
+                                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                                   onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                                   name="txtPjVinculada" id="txtPjVinculada"
+                                   autocomplete="off" />
+                            <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato"
+                                   value="<?= $_POST['hdnIdContextoContato'] ?>"/>
+                        </div>
+                    </div>
                 <?php } ?>
-                <label id="lblCPF" style="display: none;" class="infraLabelObrigatorio">CPF:<br/>
-                    <input type="text" class="infraText" name="txtCPF" id="txtCPF"
-                           value="<?= PaginaSEIExterna::tratarHTML($_POST['txtCPF']) ?>"
-                           readonly="readonly"
-                           onkeypress="return infraMascaraCpf(this, event)"
-                           style="width: 280px;"/>
-                </label>
-                <label id="lblCNPJ" style="display: none;" class="infraLabelObrigatorio">CNPJ:<br/>
-                    <input type="text" class="infraText" name="txtCNPJ" id="txtCNPJ"
-                           value="<?= PaginaSEIExterna::tratarHTML($_POST['txtCNPJ']) ?>"
-                           readonly="readonly" onkeypress="return infraMascaraCnpj(this, event)"
-                           style="width: 280px;"/>
-                </label><br/>
+                <div class="row" id="CPF" style="display: none;">
+                    <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                        <label id="lblCPF" class="infraLabelObrigatorio">CPF:</label>
+                        <input type="text" class="infraText form-control" name="txtCPF" id="txtCPF"
+                                   value="<?= PaginaSEIExterna::tratarHTML($_POST['txtCPF']) ?>"
+                                   readonly="readonly"
+                                   onkeypress="return infraMascaraCpf(this, event)"/>
 
-                <div id="div1" style="float:left; width: auto; display: none;">
-
-                    <div id="div1_2" style="float:left; width: auto;">
-                        <label class="infraLabelObrigatorio">RG:</label><br/>
-                        <input type="text" class="infraText"
+                    </div>
+                </div>
+                <div class="row" id="CNPJ" style="display: none;">
+                    <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                        <label id="lblCNPJ" class="infraLabelObrigatorio">CNPJ:</label>
+                        <input type="text" class="infraText form-control" name="txtCNPJ" id="txtCNPJ"
+                                   value="<?= PaginaSEIExterna::tratarHTML($_POST['txtCNPJ']) ?>"
+                                   readonly="readonly" onkeypress="return infraMascaraCnpj(this, event)"/>
+                    </div>
+                </div>
+                <div id="camposIdentificacao" style="display: none;" class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                        <label class="infraLabelObrigatorio">RG:</label>
+                        <input type="text" class="infraText form-control"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['rg']) ?>"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                onkeypress="return infraMascaraNumero(this,event, 15);"
                                name="rg" id="rg"/>
                     </div>
-
-                    <div id="div1_3" style="float:left; margin-left:20px; width: auto;">
-                        <label class="infraLabelObrigatorio">Órgão Expedidor do RG:</label><br/>
-                        <input type="text" class="infraText" name="orgaoExpedidor"
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                        <label class="infraLabelObrigatorio">Órgão Expedidor do RG:</label>
+                        <input type="text" class="infraText form-control" name="orgaoExpedidor"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['orgaoExpedidor']) ?>"
                                onkeypress="return infraMascaraTexto(this,event, 50);"
                                id="orgaoExpedidor"/>
                     </div>
-
-                    <div id="div1_1" style="float:left; margin-left:20px; width: auto;">
-                        <label class="infraLabel">Número da OAB:</label><br/>
-                        <input type="text" class="infraText"
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                        <label class="infraLabel">Número da OAB:</label>
+                        <input type="text" class="infraText form-control"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['numeroOab']) ?>"
                                onkeypress="return infraMascaraTexto(this,event,10);" maxlength="10"
                                name="numeroOab" id="numeroOab"/>
                     </div>
-
                 </div>
-
                 <div id="divPessoaFisicaPublico1" class="infraAreaDados">
-                    <div style="clear: both;"></br></div>
-
-                    <div style="float:left; width: 23%;">
-                        <fieldset id="fldStaGenero" class="infraFieldset form-control" style="height: 125px">
-                            <br/>
-                            <legend class="infraLegend">&nbsp;Gênero&nbsp;</legend>
-                            <div id="divOptFeminino" class="infraDivRadio" style="">
-                                <input type="radio" name="rdoStaGenero" id="optFeminino"
-                                       value="F" <?= ($objContatoDTO && $objContatoDTO->getStrStaGenero() == ContatoRN::$TG_FEMININO ? 'checked="checked"' : '') ?>
-                                    <?= ($_POST['rdoStaGenero'] == ContatoRN::$TG_FEMININO ? 'checked="checked"' : '') ?>
-                                       class="infraRadio" onchange="trocarGenero()"/>
-                                <label id="lblFeminino" for="optFeminino" class="infraLabelRadio"
-                                       tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">Feminino</label>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            <fieldset id="fldStaGenero" class="infraFieldset form-control" style="height: 125px">
+                                <br/>
+                                <legend class="infraLegend">&nbsp;Gênero&nbsp;</legend>
+                                <div id="divOptFeminino" class="infraDivRadio" style="">
+                                    <input type="radio" name="rdoStaGenero" id="optFeminino"
+                                           value="F" <?= ($objContatoDTO && $objContatoDTO->getStrStaGenero() == ContatoRN::$TG_FEMININO ? 'checked="checked"' : '') ?>
+                                        <?= ($_POST['rdoStaGenero'] == ContatoRN::$TG_FEMININO ? 'checked="checked"' : '') ?>
+                                           class="infraRadio" onchange="trocarGenero()"/>
+                                    <label id="lblFeminino" for="optFeminino" class="infraLabelRadio"
+                                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">Feminino</label>
+                                </div>
+                                <div id="divOptMasculino" class="infraDivRadio">
+                                    <input type="radio" name="rdoStaGenero" id="optMasculino"
+                                           value="M" <?= ($objContatoDTO && $objContatoDTO->getStrStaGenero() == ContatoRN::$TG_MASCULINO ? 'checked="checked"' : '') ?>
+                                        <?= ($_POST['rdoStaGenero'] == ContatoRN::$TG_MASCULINO ? 'checked="checked"' : '') ?>
+                                           class="infraRadio" onchange="trocarGenero()"/>
+                                    <label id="lblMasculino" for="optMasculino" class="infraLabelRadio"
+                                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">Masculino</label>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                    <label id="lblIdCargo" for="cargo" class="infraLabelObrigatorio">Cargo:</label>
+                                    <select id="cargo" name="cargo" class="infraSelect form-control"
+                                            tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
+                                    </select>
+                                </div>
                             </div>
-                            <div id="divOptMasculino" class="infraDivRadio">
-                                <input type="radio" name="rdoStaGenero" id="optMasculino"
-                                       value="M" <?= ($objContatoDTO && $objContatoDTO->getStrStaGenero() == ContatoRN::$TG_MASCULINO ? 'checked="checked"' : '') ?>
-                                    <?= ($_POST['rdoStaGenero'] == ContatoRN::$TG_MASCULINO ? 'checked="checked"' : '') ?>
-                                       class="infraRadio" onchange="trocarGenero()"/>
-                                <label id="lblMasculino" for="optMasculino" class="infraLabelRadio"
-                                       tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">Masculino</label>
+                            <div class="row">
+                                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                    <label id="lblTratamento" for="tratamento" class="infraLabelObrigatorio">Tratamento:</label>
+                                    <input type="text" id="tratamento" name="tratamento" disabled="disabled"
+                                           class="infraText infraReadOnly form-control"
+                                           value="<? /*=PaginaSEI::tratarHTML($objContatoDTO->getStrExpressaoTratamentoCargo())*/ ?>"
+                                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                                </div>
+                                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                    <label id="lblVocativo" for="txtVocativo"
+                                           class="infraLabelObrigatorio">Vocativo:</label><br/>
+                                    <input type="text" id="vocativo" name="vocativo" disabled="disabled"
+                                           class="infraText infraReadOnly form-control"
+                                           value="<? /*=PaginaSEI::tratarHTML($objContatoDTO->getStrExpressaoVocativoCargo())*/ ?>"
+                                           tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+                                </div>
                             </div>
-                        </fieldset>
+                        </div>
                     </div>
-
-                    <div style="float:left; width: 2%;">&nbsp;</div>
-
-                    <div style="float:left; width: 74%;">
-
-                        <div style="float:left; width: 100%;">
-                            <label id="lblIdCargo" for="cargo" class="infraLabelObrigatorio">Cargo:</label><br/>
-                            <select id="cargo" name="cargo" class="infraSelect"
-                                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                                    style="width: 100%; align:left">
-                            </select>
-                        </div>
-
-                        <div style="float:left; width: 50%;">
-                            <label id="lblTratamento" for="tratamento" class="infraLabelObrigatorio">Tratamento:</label><br/>
-                            <input type="text" id="tratamento" name="tratamento" disabled="disabled"
-                                   class="infraText infraReadOnly" style="width: 93%;"
-                                   value="<? /*=PaginaSEI::tratarHTML($objContatoDTO->getStrExpressaoTratamentoCargo())*/ ?>"
-                                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-                        </div>
-
-
-                        <div style="float:left; width: 50%;">
-                            <label id="lblVocativo" for="txtVocativo"
-                                   class="infraLabelObrigatorio">Vocativo:</label><br/>
-                            <input type="text" id="vocativo" name="vocativo" disabled="disabled"
-                                   class="infraText infraReadOnly" style="width: 98%;"
-                                   value="<? /*=PaginaSEI::tratarHTML($objContatoDTO->getStrExpressaoVocativoCargo())*/ ?>"
-                                   tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-                        </div>
-
-                    </div>
-
-                    <div style="clear: both;"></br></div>
                 </div>
-
-                <label class="infraLabelObrigatorio">Telefone:</label><br/>
-                <input type="text" class="infraText" name="telefone"
-                       tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                       value="<?= PaginaSEIExterna::tratarHTML($_POST['telefone']) ?>"
-                       onkeydown="return infraMascaraTelefone(this,event);" maxlength="25"
-                       id="telefone"/>
-
-                <div style="clear: both;"></div>
-
-                <div class="div2" style="float:left; width: auto;">
-
-
-                    <div id="div2_1" style="float:left; width: 280px;">
-                        <label class="infraLabel">E-mail:</label><br/>
-                        <input type="text" class="infraText"
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                        <label class="infraLabelObrigatorio">Telefone:</label>
+                        <input type="text" class="infraText form-control" name="telefone"
+                               tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                               value="<?= PaginaSEIExterna::tratarHTML($_POST['telefone']) ?>"
+                               onkeydown="return infraMascaraTelefone(this,event);" maxlength="25"
+                               id="telefone"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                        <label class="infraLabel">E-mail:</label>
+                        <input type="text" class="infraText form-control"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['email']) ?>"
                                onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50"
-                               name="email" id="email" style="width: 280px;"/>
+                               name="email" id="email"/>
                     </div>
-
-                    <div id="div2_2" style="float:left; margin-left:20px; width: 280px;">
-                        <label class="infraLabel">Sítio na Internet:</label><br/>
-                        <input type="text" class="infraText" style="width: 280px;"
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                        <label class="infraLabel">Sítio na Internet:</label>
+                        <input type="text" class="infraText form-control"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['sitioInternet']) ?>"
                                onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50"
                                name="sitioInternet" id="sitioInternet"/>
                     </div>
-
                 </div>
-
-                <div style="clear: both;"></div>
-
-                <div class="div3" style="float:left; width: auto;">
-                    <div id="div3_1" style="float:left; width: 280px;">
-                        <label class="infraLabelObrigatorio">Endereço:</label><br/>
-                        <input type="text" class="infraText" style="width: 280px;"
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                        <label class="infraLabelObrigatorio">Endereço:</label>
+                        <input type="text" class="infraText form-control"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['endereco']) ?>"
                                name="endereco" id="endereco"/>
                     </div>
-                    <div id="div3_2" style="float:left; margin-left:20px; width: 280px;">
-                        <label class="infraLabelObrigatorio">Bairro:</label><br/>
-                        <input type="text" class="infraText" style="width: 280px;"
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                        <label class="infraLabelObrigatorio">Bairro:</label>
+                        <input type="text" class="infraText form-control"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['bairro']) ?>"
                                name="bairro" id="bairro"/>
                     </div>
                 </div>
-                <div style="clear: both;"></div>
-                <div class="div4" style="float:left; width: auto;">
-                    <div id="div4_1" style="float:left; width: auto; display: none;">
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4" style="display: none">
                         <label class="infraLabelObrigatorio">País:</label><br/>
                         <input type="text" class="infraText"
                                onkeyup="paisEstadoCidade(this);" value="Brasil"
                                onkeypress="return infraMascaraTexto(this,event,50);"
                                maxlength="50" name="pais" id="pais"/>
                     </div>
-                    <div id="div4_2" style="float:left; width: auto;">
-                        <label class="infraLabelObrigatorio">Estado:</label><br/>
-
-                        <select class="infraSelect" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                                name="selEstado" id="selEstado" style="width: 70px">
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                        <label class="infraLabelObrigatorio">Estado:</label>
+                        <select class="infraSelect form-control" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                                name="selEstado" id="selEstado">
                             <?= $strItensSelSiglaEstado ?>
                         </select>
-
                     </div>
-
-                    <div id="div4_3" style="float:left; margin-left:20px; width: auto;">
-                        <label class="infraLabelObrigatorio">Cidade:</label><br/>
-                        <select class="infraSelect" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
-                                name="selCidade" id="selCidade" style="width: 200px">
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                        <label class="infraLabelObrigatorio">Cidade:</label>
+                        <select class="infraSelect form-control" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
+                                name="selCidade" id="selCidade">
                             <?= $strItensSelCidade ?>
                         </select>
                     </div>
-
-                    <div id="div4_4" style="float:left; margin-left:20px; width: auto;">
-                        <label class="infraLabelObrigatorio">CEP:</label><br/>
-                        <input type="text" class="infraText"
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                        <label class="infraLabelObrigatorio">CEP:</label>
+                        <input type="text" class="infraText form-control"
                                onkeypress="return infraMascaraCEP(this,event);"
                                maxlength="15"
                                tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                value="<?= PaginaSEIExterna::tratarHTML($_POST['cep']) ?>"
                                name="cep" id="cep"/>
                     </div>
-
                 </div>
-
-                <div style="clear: both;"></div>
-
+                <br>
             </fieldset>
 
             <input type="hidden" name="hdnCadastrar" value=""/>

@@ -241,11 +241,11 @@ try {
 
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_indisponibilidade_peticionamento=' . $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_indisponibilidade_peticionamento=' . $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_indisponibilidade_peticionamento=' . $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar Indisponibilidade" alt="Alterar Indisponibilidade" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_indisponibilidade_peticionamento=' . $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade())) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar Indisponibilidade" alt="Alterar Indisponibilidade" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -258,13 +258,13 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $dataIni . '\',\'' . $dataFim . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg" title="Desativar Indisponibilidade" alt="Desativar Indisponibilidade" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $dataIni . '\',\'' . $dataFim . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar Indisponibilidade" alt="Desativar Indisponibilidade" class="infraImg" /></a>&nbsp;';
             } else {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $dataIni . '\',\'' . $dataFim . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg" title="Reativar Indisponibilidade" alt="Reativar Indisponibilidade" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $dataIni . '\',\'' . $dataFim . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar Indisponibilidade" alt="Reativar Indisponibilidade" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $dataIni . '\',\'' . $dataFim . '\', \'' . $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao() . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg" title="Excluir Indisponibilidade" alt="Excluir Indisponibilidade" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $dataIni . '\',\'' . $dataFim . '\', \'' . $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao() . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir Indisponibilidade" alt="Excluir Indisponibilidade" class="infraImg" /></a>&nbsp;';
             }
 
 
@@ -342,7 +342,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            value="<?= PaginaSEI::tratarHTML($strDtInicio) ?>"
                            onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
                            class="infraText form-control"/>
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                          id="imgDtInicio"
                          title="Selecionar Data/Hora Inicial"
                          alt="Selecionar Data/Hora Inicial" class="infraImg"
@@ -356,7 +356,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            value="<?= PaginaSEI::tratarHTML($strDtFim) ?>"
                            onchange="validDate('F');" onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
                            maxlength="16" class="infraText form-control"/>
-                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg" id="imgDtFim"
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>" id="imgDtFim"
                          title="Selecionar Data/Hora Final"
                          alt="Selecionar Data/Hora Final"
                          class="infraImg"

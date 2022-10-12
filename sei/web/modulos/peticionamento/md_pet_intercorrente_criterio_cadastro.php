@@ -205,13 +205,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                    value="<?php echo $idMdPetTipoProcesso ?>"/>
                             <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700, 500);"
                                  onkeypress="objLupaTipoProcesso.selecionar(700, 500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                  alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirTipoProcesso"
                                  onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
                                  onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                  alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
@@ -242,16 +242,16 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     </select>
                                 <?php } ?>
                                 <div class="divOpcoesUnidades">
-"                                        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-                                    src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
+                                        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
+                                    src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg?<?= Icone::VERSAO ?>" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
                                     class="infraImg"/>
-                                    <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                          onmouseover="return infraTooltipMostrar('A indicação de mais de um Tipo de Processo apenas facilita aplicar o mesmo Critério para os Tipos indicados. Ou seja, em seguida, cada um terá registro próprio de Critério para Intercorrente.', 'Ajuda');"
                                          onmouseout="return infraTooltipOcultar();"
-                                         alt="Ajuda" class="infraImgModulo"/>"
+                                         alt="Ajuda" class="infraImgModulo"/>
                                     <br>
                                 <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg" alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
+                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>" alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
                                     class="infraImg"/>
 
                                 </div>

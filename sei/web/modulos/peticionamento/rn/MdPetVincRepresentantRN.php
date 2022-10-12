@@ -807,8 +807,11 @@ class MdPetVincRepresentantRN extends InfraRN
 
             $objMdPetVincRepresentante->retTodos();
             $arrObjMdPetVincRepresentante = $this->listar($objMdPetVincRepresentante);
+
             if ($arrObjMdPetVincRepresentante) {
+
                 foreach ($arrObjMdPetVincRepresentante as $chave => $objVincRepresentante){
+
                     if($objVincRepresentante->getStrTipoRepresentante() == $this::$PE_PROCURADOR_SIMPLES){
                         $mdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
                         $objMdPetRelVincRepTpPoder = new MdPetRelVincRepTpPoderDTO();
@@ -822,13 +825,13 @@ class MdPetVincRepresentantRN extends InfraRN
                     }
 
                     if(!is_null($objVincRepresentante->getDthDataLimite())){
-                        $dataHoje = date('d/m/Y 23:59:59');
-                        $strToTimeHoje = strtotime($dataHoje);
-                        $strToTimeDataLimite = strtotime($objVincRepresentante->getDthDataLimite());
+                        $strToTimeHoje = strtotime(date('d-m-Y 23:59:59'));
+                        $strToTimeDataLimite = strtotime(str_replace('/', '-', $objVincRepresentante->getDthDataLimite()));
                         if($strToTimeHoje > $strToTimeDataLimite){
                             unset($arrObjMdPetVincRepresentante[$chave]);
                         }
                     }
+
                     if($objVincRepresentante->getStrStaAbrangencia() == $this::$PR_ESPECIFICO){
                         $mdPetRelVincRepProtocolo = new MdPetRelVincRepProtocRN();
                         $objMdPetRelVincRepProtocolo = new MdPetRelVincRepProtocDTO();

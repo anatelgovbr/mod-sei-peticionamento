@@ -240,41 +240,30 @@ PaginaSEI::getInstance()->fecharHtml();
 
     function intimacaoTipoPessoa(tipo) {
 
-
         try {
 
             var tbUsuarios = document.getElementById('hdnDadosUsuario');
             var tipoPessoa = null;
+
             if (tbUsuarios.value != "") {
 
-                if (document.getElementById('hdnTipoPessoa').value == "J") {
-
-                    tipoPessoa = "tipoPessoaJuridica";
-
-                } else {
-
-                    tipoPessoa = "tipoPessoaFisica";
-                }
-
+                tipoPessoa = document.getElementById('hdnTipoPessoa').value == "J" ? "tipoPessoaJuridica" : "tipoPessoaFisica";
 
                 var r = confirm("Os dados preenchidos serão desconsiderados. Deseja Continuar?");
-                if (r == false) {
 
+                if (r == false) {
                     document.getElementById(tipoPessoa).checked = true;
                     return;
                 }
 
             }
+
         } catch (err) {
 
         }
 
+        url = tipo == 'F' ? '<?=$urlTipoFisica?>' : '<?=$urlTipoJuridica?>';
 
-        if (tipo == 'F') {
-            url = '<?=$urlTipoFisica?>';
-        } else {
-            url = '<?=$urlTipoJuridica?>';
-        }
         $.ajax({
             async: true,
             type: "POST",

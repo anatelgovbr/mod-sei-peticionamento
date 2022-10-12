@@ -323,7 +323,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
                         value="<?php echo array_key_exists('txtDataInicio', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtDataInicio']) : '' ?>"/>
 
-                    <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                    <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                         id="imgDataInicio"
                         title="Selecionar Data Inicial"
                         alt="Selecionar Data Inicial" class="infraImg"
@@ -342,7 +342,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
                         onkeypress="return infraMascaraData(this, event);" maxlength="10"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
 
-                    <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                    <img src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                         id="imgDataFim"
                         title="Selecionar Data Final"
                         alt="Selecionar Data Final" class="infraImg"

@@ -314,11 +314,11 @@ try {
             $linha .= PaginaSEI::getInstance()->getAcaoTransportarItem($i, $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao());
 
             if ($bolAcaoConsultar) {
-                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Consultar Tipo de Intimação Eletronica" alt="Consultar " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Tipo de Intimação Eletronica" alt="Consultar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar Tipo de Intimação Eletronica" alt="Alterar " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar Tipo de Intimação Eletronica" alt="Alterar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -327,15 +327,15 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIntTipoIntimacaoDTO[$i]->getStrSinAtivo() == 'S') {
-                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg" title="Desativar Tipo de Intimação Eletronica" alt="Desativar " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar Tipo de Intimação Eletronica" alt="Desativar " class="infraImg" /></a>&nbsp;';
             } else {
                 if ($bolAcaoReativar) {
-                    $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg" title="Reativar Tipo de Intimação Eletronica" alt="Reativar " class="infraImg" /></a>&nbsp;';
+                    $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar Tipo de Intimação Eletronica" alt="Reativar " class="infraImg" /></a>&nbsp;';
                 }
             }
 
             if ($bolAcaoExcluir) {
-                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg" title="Excluir Tipo de Intimação Eletronica" alt="Excluir " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir Tipo de Intimação Eletronica" alt="Excluir " class="infraImg" /></a>&nbsp;';
             }
 
             $linha .= '</td></tr>' . "\n";

@@ -38,8 +38,8 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
     function ocultarComboPJVinculada() {
 
-        if (document.getElementById('lblPjVinculada') != null) {
-            document.getElementById('lblPjVinculada').style.display = 'none';
+        if (document.getElementById('pjVinculada') != null) {
+            document.getElementById('pjVinculada').style.display = 'none';
         }
 
         if (document.getElementById('txtPjVinculada') != null) {
@@ -53,8 +53,8 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
     function mostrarComboPJVinculada() {
 
-        if (document.getElementById('lblPjVinculada') != null) {
-            document.getElementById('lblPjVinculada').style.display = '';
+        if (document.getElementById('pjVinculada') != null) {
+            document.getElementById('pjVinculada').style.display = '';
             document.getElementById('txtPjVinculada').style.display = '';
         }
     }
@@ -70,12 +70,12 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         document.getElementById('lblrdPF1').style.display = '';
         document.getElementById('lblrdPF2').style.display = '';
 
-        document.getElementById('lblNome').style.display = '';
-        document.getElementById('lblCPF').style.display = '';
+        document.getElementById('nome').style.display = '';
+        document.getElementById('CPF').style.display = '';
 
         <?php if( !isset($_GET['cpf']) ) { ?>
-        document.getElementById('lblRazaoSocial').style.display = 'none';
-        document.getElementById('lblCNPJ').style.display = 'none';
+        document.getElementById('razaoSocial').style.display = 'none';
+        document.getElementById('CNPJ').style.display = 'none';
         document.getElementById('txtCNPJ').value = '';
         document.getElementById('txtRazaoSocial').value = '';
         <?php } ?>
@@ -85,11 +85,11 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
 
         //mostrar campos RG, orgao expedidor, numero da OAB
-        document.getElementById('div1').style.display = '';
+        document.getElementById('camposIdentificacao').style.display = '';
 
         <?php if( isset($_GET['cnpj']) ) { ?>
-        document.getElementById('lblCNPJ').style.display = 'none';
-        document.getElementById('lblRazaoSocial').style.display = 'none';
+        document.getElementById('CNPJ').style.display = 'none';
+        document.getElementById('razaoSocial').style.display = 'none';
         <?php } ?>
         mostrarCampos();
     }
@@ -109,19 +109,19 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         document.getElementById('lblrdPF2').style.display = 'none';
         <?php } ?>
 
-        document.getElementById('lblPjVinculada').style.display = 'none';
+        document.getElementById('pjVinculada').style.display = 'none';
         document.getElementById('txtPjVinculada').style.display = 'none';
         document.getElementById('txtPjVinculada').value = '';
 
         <?php if( !isset($_GET['cnpj']) ) { ?>
-        document.getElementById('lblNome').style.display = 'none';
-        document.getElementById('lblCPF').style.display = 'none';
+        document.getElementById('nome').style.display = 'none';
+        document.getElementById('CPF').style.display = 'none';
         document.getElementById('txtNome').value = '';
         document.getElementById('txtCPF').value = '';
         <?php } ?>
 
-        document.getElementById('lblCNPJ').style.display = '';
-        document.getElementById('lblRazaoSocial').style.display = '';
+        document.getElementById('CNPJ').style.display = '';
+        document.getElementById('razaoSocial').style.display = '';
 
         //ocultar campos Vocativo, Tratamento, Cargo
         document.getElementById('cargo').value = '';
@@ -130,7 +130,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         document.getElementById('divPessoaFisicaPublico1').style.display = 'none';
 
         //mostrar campos RG, orgao expedidor, numero da OAB
-        document.getElementById('div1').style.display = 'none';
+        document.getElementById('camposIdentificacao').style.display = 'none';
 
         <?php if( isset($_GET['cpf']) ) { ?>
         document.getElementById('rdPF1').style.display = 'none';
@@ -144,8 +144,8 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         document.getElementById('rdPF2').checked = false;
         document.getElementById('rdPF2').checked = '';
 
-        document.getElementById('lblNome').style.display = 'none';
-        document.getElementById('lblCPF').style.display = 'none';
+        document.getElementById('nome').style.display = 'none';
+        document.getElementById('CPF').style.display = 'none';
         document.getElementById('txtNome').value = '';
         document.getElementById('txtCPF').value = '';
         <?php } ?>
@@ -223,8 +223,12 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         }
 
         <?php if( isset($_GET['edicao']) ) { ?>
+        if(window.top.document.getElementById("hdnIdEdicao") != null ) {
+            var idEdicao = window.top.document.getElementById("hdnIdEdicao").value;
+        } else {
+            var idEdicao = window.top.document.getElementById("modal-frame").contentWindow.document.getElementById('hdnIdEdicao').value;
+        }
 
-        var idEdicao = window.opener.document.getElementById("hdnIdEdicao").value;
         document.getElementById("hdnIdEdicaoAuxiliar").value = idEdicao;
         document.frmEdicaoAuxiliar.submit();
         return;
@@ -234,20 +238,19 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         var txtcpf = '';
         var txtcnpj = '';
 
-        if (window.opener.document.getElementById("txtCPF") != null) {
-            txtcpf = window.opener.document.getElementById("txtCPF").value;
+        if (window.top.document.getElementById("txtCPF") != null) {
+            txtcpf = window.top.document.getElementById("txtCPF").value;
         }
 
-        if (window.opener.document.getElementById("txtCNPJ") != null) {
-            txtcnpj = window.opener.document.getElementById("txtCNPJ").value;
+        if (window.top.document.getElementById("txtCNPJ") != null) {
+            txtcnpj = window.top.document.getElementById("txtCNPJ").value;
         }
-
-        <?php if( isset($_GET['cpf']) ) { ?>
+        <?php if($_GET['cpf'] != "") { ?>
         document.getElementById("rdPF").click();
         document.getElementById("txtCPF").value = txtcpf;
         <?php } ?>
 
-        <?php if( isset($_GET['cnpj']) ) { ?>
+        <?php if($_GET['cnpj'] != "") { ?>
         document.getElementById("rdPJ").click();
         document.getElementById("txtCNPJ").value = txtcnpj;
         <?php } ?>
@@ -378,11 +381,11 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         $janelaSelecaoPorNome = SessaoSEIExterna::getInstance()->getAtributo('janelaSelecaoPorNome');
         if( $janelaSelecaoPorNome != null && $janelaSelecaoPorNome != "" && !isset($_GET['cadastro']) ) { ?>
 
-        document.getElementById('lblNome').style.display = 'none';
-        document.getElementById('lblCPF').style.display = 'none';
+        document.getElementById('nome').style.display = 'none';
+        document.getElementById('CPF').style.display = 'none';
 
-        document.getElementById('lblRazaoSocial').style.display = 'none';
-        document.getElementById('lblCNPJ').style.display = 'none';
+        document.getElementById('razaoSocial').style.display = 'none';
+        document.getElementById('CNPJ').style.display = 'none';
 
         document.getElementById('txtCPF').readOnly = false;
         document.getElementById('txtCPF').readOnly = '';

@@ -417,7 +417,7 @@
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                         </label><br/>
-                        <select class="infraSelectform-group" disabled tabindex="-1">
+                        <select class="form-control infraSelect" disabled tabindex="-1">
                             <option value=""><?= $strNomeNivelAcessoPadrao ?></option>
                         </select>
                         <input type="hidden" value="<?= $nivelAcessoPadrao ?>" id="nivelAcesso2" name="nivelAcesso2" tabindex="-1"/>
@@ -566,7 +566,7 @@
                 <div id="divArquivo" class="form-group infraAreaDados mb-4">
                     <label class="" for="fileArquivoPrincipal">
                         Documentos Complementares (<?= $strTamanhoMaximoComplementar ?>):
-                        <input type="hidden" name="hdnTamArquivoComplementar" id="hdnTamArquivoComplementar" value="<?= $strTamanhoMaximoPrincipal ?>" tabindex="-1">
+                        <input type="hidden" name="hdnTamArquivoComplementarhdnTamArquivoComplementar" id="hdnTamArquivoComplementar" value="<?= $strTamanhoMaximoComplementar ?>" tabindex="-1">
                     </label><br/>
                     <input type="file" name="fileArquivoComplementar" class="form-control-file" id="fileArquivoComplementar"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>

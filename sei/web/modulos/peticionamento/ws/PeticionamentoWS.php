@@ -9,7 +9,7 @@
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
 
-class PeticionamentoWS extends InfraWS
+class PeticionamentoWS extends MdPetUtilWS
 {
 
     public function getObjInfraLog()
@@ -17,9 +17,10 @@ class PeticionamentoWS extends InfraWS
         return LogSEI::getInstance();
     }
 
-    public function listarPoderesLegais($siglaSistema, $identificacaoServico)
+    public function listarPoderesLegaisMonitorado($siglaSistema, $identificacaoServico)
     {
         try {
+
             $infraException = new InfraException();
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -27,10 +28,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
 
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $mdPetTipoPoderLegalDTO = new MdPetTipoPoderLegalDTO();
             $mdPetTipoPoderLegalRN = new MdPetTipoPoderLegalRN();
@@ -62,9 +59,10 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarTiposRepresentacao($siglaSistema, $identificacaoServico)
+    public function listarTiposRepresentacaoMonitorado($siglaSistema, $identificacaoServico)
     {
         try {
+
             $infraException = new InfraException();
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -72,10 +70,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
 
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
@@ -114,9 +108,10 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarSituacoesRepresentacao($siglaSistema, $identificacaoServico)
+    public function listarSituacoesRepresentacaoMonitorado($siglaSistema, $identificacaoServico)
     {
         try {
+
             $infraException = new InfraException();
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -124,10 +119,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
 
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
@@ -174,7 +165,7 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarRepresentacaoPessoaJuridica($siglaSistema, $identificacaoServico, $cnpjOutorgante, $staSituacao, $idsTipoPoderLegal)
+    public function listarRepresentacaoPessoaJuridicaMonitorado($siglaSistema, $identificacaoServico, $cnpjOutorgante, $staSituacao, $idsTipoPoderLegal)
     {
         try {
             $infraException = new InfraException();
@@ -199,10 +190,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
 
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $cnpjSemFormato = InfraUtil::retirarFormatacao($cnpjOutorgante);
 
@@ -310,7 +297,7 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarRepresentacaoPessoaFisica($siglaSistema, $identificacaoServico, $cpfOutorgante, $staSituacao, $idsTipoPoderLegal)
+    public function listarRepresentacaoPessoaFisicaMonitorado($siglaSistema, $identificacaoServico, $cpfOutorgante, $staSituacao, $idsTipoPoderLegal)
     {
         try {
             $infraException = new InfraException();
@@ -335,10 +322,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
 
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $this->validarUsuarioExterno($cpfOutorgante);
 
@@ -447,7 +430,7 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function consultarUsuarioExterno($SiglaSistema, $IdentificacaoServico, $Cpf, $Email = "")
+    public function consultarUsuarioExternoMonitorado($siglaSistema, $identificacaoServico, $Cpf, $Email = "")
     {
         try {
             $InfraException = new InfraException();
@@ -469,10 +452,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
 
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($SiglaSistema, $IdentificacaoServico);
-
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $UsuarioExternoRN = new MdPetWsUsuarioExternoRN();
             $Cpf = preg_replace('/[^0-9]/', '', $Cpf);
@@ -532,16 +511,17 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarRepresentados($siglaSistema, $identificacaoServico, $cpfOutorgado, $StaSituacao = "")
+    public function listarRepresentadosMonitorado($siglaSistema, $identificacaoServico, $cpfOutorgado, $StaSituacao = "")
     {
         try {
             $infraException = new InfraException();
 
+            // Valida CPF se informado.
             if (empty($cpfOutorgado) || $cpfOutorgado == null) {
                 throw new InfraException('CPF não informado.');
             }
 
-            // Valida CPF se informado.
+            // Valida CPF.
             if (strlen(trim($cpfOutorgado)) > 0 && !InfraUtil::validarCpf($cpfOutorgado)) {
                 $infraException->lancarValidacao('Número de CPF inválido.');
             }
@@ -551,10 +531,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
 
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $this->validarUsuarioExterno($cpfOutorgado);
 
@@ -596,14 +572,6 @@ class PeticionamentoWS extends InfraWS
                     $arrRepresentadoAtivo = $contatoRN->consultarRN0324($contatoDTO);
 
                     if ($arrRepresentadoAtivo) {
-                        $contatoVincRN = new ContatoRN();
-                        $contatoVincDTO = new ContatoDTO();
-                        $contatoVincDTO->setNumIdContato($item->getNumIdContato());
-                        $contatoVincDTO->retStrSinAtivo();
-                        $contatoVincDTO->retStrNome();
-                        $contatoVincDTO->retStrEmail();
-                        $contatoVincDTO->retDblCpf();
-                        $arrContatoVincDTO = $contatoVincRN->consultarRN0324($contatoVincDTO);
 
                         $cnpjCpf = is_null($item->getStrCNPJ()) ? InfraUtil::formatarCpf($item->getStrCPF()) : InfraUtil::formatarCnpj($item->getStrCNPJ());
 
@@ -657,9 +625,25 @@ class PeticionamentoWS extends InfraWS
                         }
 
                         $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
-                        $objMdPetRepresentante->setNome($arrContatoVincDTO->getStrNome());
-                        $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoVincDTO->getDblCpf()));
-                        $objMdPetRepresentante->setEmail($arrContatoVincDTO->getStrEmail());
+
+                        if(!empty($item->getNumIdContato())){
+
+                            $contatoVincDTO = new ContatoDTO();
+                            $contatoVincDTO->setNumIdContato($item->getNumIdContato());
+                            $contatoVincDTO->retStrSinAtivo();
+                            $contatoVincDTO->retStrEmail();
+                            $contatoVincDTO->retStrNome();
+                            $contatoVincDTO->retDblCpf();
+                            $arrContatoVincDTO = (new ContatoRN())->consultarRN0324($contatoVincDTO);
+
+                            if($arrContatoVincDTO){
+                                $objMdPetRepresentante->setNome($arrContatoVincDTO->getStrNome());
+                                $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoVincDTO->getDblCpf()));
+                                $objMdPetRepresentante->setEmail($arrContatoVincDTO->getStrEmail());
+                            }
+
+                        }
+
                         $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
                         $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
                         $objMdPetRepresentante->setTipoPoderesLegais($arrTipoPoderesLegais);
@@ -693,9 +677,10 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarUsuariosExternos($SiglaSistema, $IdentificacaoServico, $staSituacao, $liberacaoCadastro, $pagina)
+    public function listarUsuariosExternosMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $liberacaoCadastro, $pagina)
     {
         try {
+
             $pagina = $pagina ? $pagina : 1;
             $qtdePorPagina = 1000;
             $this->validarPagina($pagina);
@@ -706,8 +691,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->limpar();
             SessaoSEI::getInstance(false);
 
-            $objServicoDTO = self::obterServico($SiglaSistema, $IdentificacaoServico);
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
             $UsuarioExternoDTO = new MdPetWsUsuarioExternoDTO();
 
             $this->validarStaSituacaoInformada($staSituacao);
@@ -790,9 +773,10 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarRepresentantesPessoaJuridica($SiglaSistema, $IdentificacaoServico, $staSituacao, $pagina)
+    public function listarRepresentantesPessoaJuridicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
     {
         try {
+
             $pagina = $pagina ? $pagina : 1;
             $qtdePorPagina = 1000;
             $this->validarPagina($pagina);
@@ -801,9 +785,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->limpar();
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($SiglaSistema, $IdentificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
@@ -883,7 +864,7 @@ class PeticionamentoWS extends InfraWS
         }
     }
 
-    public function listarRepresentantesPessoaFisica($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
+    public function listarRepresentantesPessoaFisicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
     {
         try {
 
@@ -895,9 +876,6 @@ class PeticionamentoWS extends InfraWS
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->limpar();
             SessaoSEI::getInstance(false);
-
-            $objServicoDTO = self::obterServico($siglaSistema, $identificacaoServico, OperacaoServicoRN::$TS_LISTAR_CONTATOS);
-            $this->validarAcessoAutorizado(explode(',', str_replace(' ', '', $objServicoDTO->getStrServidor())));
 
             $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
@@ -1098,62 +1076,6 @@ class PeticionamentoWS extends InfraWS
 
     }
 
-    private function obterServico($siglaSistema, $identificacaoServico, $operacaoExigida = null)
-    {
-
-        if (empty($siglaSistema) || $siglaSistema == null) {
-            throw new InfraException('Sistema não informado.');
-        }
-        if (empty($identificacaoServico) || $identificacaoServico == null) {
-            throw new InfraException('Serviço não informado.');
-        }
-
-        $objUsuarioDTO = new UsuarioDTO();
-        $objUsuarioDTO->retNumIdUsuario();
-        $objUsuarioDTO->setStrSigla($siglaSistema);
-        $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_SISTEMA);
-
-        $objUsuarioRN = new UsuarioRN();
-        $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-
-        if ($objUsuarioDTO == null) {
-            throw new InfraException('Sistema [' . $siglaSistema . '] não encontrado.');
-        }
-
-        $objServicoDTO = new ServicoDTO();
-        $objServicoDTO->retNumIdServico();
-        $objServicoDTO->retStrIdentificacao();
-        $objServicoDTO->retStrSiglaUsuario();
-        $objServicoDTO->retNumIdUsuario();
-        $objServicoDTO->retStrServidor();
-        $objServicoDTO->retStrSinLinkExterno();
-        $objServicoDTO->retNumIdContatoUsuario();
-        $objServicoDTO->setNumIdUsuario($objUsuarioDTO->getNumIdUsuario());
-        $objServicoDTO->setStrIdentificacao($identificacaoServico);
-
-        $objServicoRN = new ServicoRN();
-        $objServicoDTO = $objServicoRN->consultar($objServicoDTO);
-
-        if ($objServicoDTO == null) {
-            throw new InfraException('Serviço [' . $identificacaoServico . '] do sistema [' . $siglaSistema . '] não foi encontrado.');
-        } else {
-            if ($operacaoExigida) {
-                $operacaoServicoDTO = new OperacaoServicoDTO();
-                $operacaoServicoRN = new OperacaoServicoRN();
-                $operacaoServicoDTO->setNumStaOperacaoServico($operacaoExigida);
-                $operacaoServicoDTO->setNumIdServico($objServicoDTO->getNumIdServico());
-                $operacaoServicoDTO->retNumIdServico();
-                $objOperacaoServicoDTO = $operacaoServicoRN->listar($operacaoServicoDTO);
-
-                if (empty($objOperacaoServicoDTO)) {
-                    throw new InfraException('Operação não permitida.');
-                }
-            }
-        }
-
-        return $objServicoDTO;
-
-    }
 }
 
 $servidorSoap = new SoapServer("wspeticionamento.wsdl", array('encoding' => 'ISO-8859-1'));

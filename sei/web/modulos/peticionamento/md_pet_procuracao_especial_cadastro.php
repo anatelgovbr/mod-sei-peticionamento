@@ -177,7 +177,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         Tipo de Procuração:
                     </label>
                     <img align="top" name="ajuda"
-                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                         <?= PaginaSEI::montarTitleTooltip('Para emitir Procuração Eletrônica Especial com todos os poderes previstos no Sistema, antes é necessário que você seja Responsável Legal de alguma Pessoa Jurídica. \n \n Se for o caso e o tipo "Procuração Eletrônica Especial" não está listado, acesse o menu "Responsável Legal de Pessoa Jurídica" e, em seguida, o botão "Novo Responsável Legal" para realizar o cadastro.', 'Ajuda') ?>
                         class="infraImgModulo"/>
                     <br/>
@@ -205,7 +205,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         <label for="lblOutorgante" class="infraLabelObrigatorio">
                             Outorgante:
                             <img name="ajuda"
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 <?= PaginaSEI::montarTitleTooltip('A opção "Pessoa Jurídica" estará habilitada somente se você for o Responsável Legal com situação Ativa ou quando possuir Procuração Eletrônica Especial vigente de alguma Pessoa Jurídica.', 'Ajuda') ?>
                                 class="infraImgModulo"/>
                         </label>
@@ -219,7 +219,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                     class="infraLabelRadi mt-2">
                                 Pessoa Física
                             </label>
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 name="ajuda" style="<?php echo $bloqueioRadioPF ? "display:none" : ""; ?>"
                                 <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opção Pessoa Física, a Procuração Eletrônica Simples terá como objetivo definir alguém para representar você, enquanto Pessoa Física. \n \n Ou seja, será uma Procuração de Usuário Externo para Usuário Externo.', 'Ajuda') ?>
                                 class="infraImgModulo mx-2 mt-n2"/>
@@ -230,7 +230,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             <label for="rbOutorgante2" id="lvbJuridica" class="infraLabelRadio mt-2">
                                 Pessoa Jurídica
                             </label>
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 name="ajuda"
                                 <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opção Pessoa Jurídica, a Procuração Eletrônica terá como objetivo definir alguém para representar a Pessoa Jurídica que você já representa como Responsável Legal ou como Procurador Especial.', 'Ajuda') ?>
                                 class="infraImgModulo ml-2 mt-n2" id="ajudaPJ"/>
@@ -245,7 +245,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         <label class="infraLabelObrigatorio" for="selPessoaJuridica">
                             Pessoa Jurídica Outorgante:
                         </label>
-                        <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                        <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                             name="ajuda"
                             <?= PaginaSEI::montarTitleTooltip('Neste campo são listadas as Pessoas Jurídicas que você é o Responsável Legal com situação Ativa, pois somente o Responsável Legal de Pessoa Jurídica pode emitir Procuração Eletrônica Especial. \n \n Se você é o Responsavel Legal e a Pessoa Jurídica não foi listada, então confira se a vinculação está cadastrada no menu "Responsável Legal de Pessoa Jurídica": \n \n 1.1. Se a Pessoa Jurídica não for listada no citado menu, clique no botão "Novo Responsável Legal" e realize o cadastro. \n 1.2. Se a Pessoa Jurídica foi listada no citado menu, mas não está com situação Ativa, regularize a situação juntamente ao Órgão.') ?>
                             class="infraImgModulo"/>
@@ -265,7 +265,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                     <div class="form-group">
                         <label class="infraLabelObrigatorio" for="selPessoaJuridica" id="lvbPJProSimples">
                             Pessoa Jurídica Outorgante:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 align="top"
                                 name="ajuda"
                                 id="imgPj"
@@ -296,7 +296,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                            class="infraLabelObrigatorio">
                         CPF do Usuário Externo:
                     </label>
-                    <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                    <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda"
                         <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Usuários Externos liberados.  \n \n A consulta somente pode ser efetuada pelo CPF do Usuário Externo.') ?>
                          class="infraImgModulo"/><br/>
@@ -325,7 +325,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <label for="txtNomeProcurador" class="infraLabelObrigatorio">Nome do Usuário Externo: <img
                                 align="top"
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Caso seja listado mais de um cadastro de Usuário Externo utilizando o mesmo CPF, escolha neste campo o nome do cadastro correto.') ?>
                                 class="infraImgModulo"/></label>
                     <br/>
@@ -369,7 +369,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             <label for="txtCpf" class="infraLabelObrigatorio">
                                 CPF do Usuário Externo:
                                 <img align="top"
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
                                     <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Usuários Externos liberados.  \n \n A consulta somente pode ser efetuada pelo CPF do Usuário Externo.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
@@ -395,7 +395,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         <div class="form-group">
                             <label for="txtNomeProcurador" class="infraLabelObrigatorio">
                                 Nome do Usuário Externo:
-                                <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Caso seja listado mais de um cadastro de Usuário Externo utilizando o mesmo CPF, escolha neste campo o nome do cadastro correto.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                             </label>
@@ -416,7 +416,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             <!-- Combo Tipo de Poderes -->
                             <label for="lblTipoPoder" class="infraLabelObrigatorio">Poderes:
                                 <img align="top"
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escolha os Poderes sobre os quais o Procurador representará o Outorgante. \n \n Somente se for concedido o poder para "Receber, Cumprir e Responder Intimação Eletrônica" (destacado abaixo) o Procurador receberá Intimações Eletrônicas destinadas ao Outorgante e participará de todo o fluxo subsequente a respeito da intimação recebida.', 'Ajuda') ?>
                                     class="infraImgModulo"/></label>
 
@@ -450,14 +450,14 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
                                 <label id="lvbIndeterminado" name="lvbIndeterminado" for="rbValidade" class="infraLabelRadio">Indeterminado </label>
 
-                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda" class="infraImgModulo mr-2"
                                     <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o Procurador representará o Outorgante por prazo indeterminado. \n \n Contudo, a qualquer momento o Outorgante poderá Revogar a Procuração ou o próprio Outorgado poderá Renunciar a Procuração.', 'Ajuda') ?>/>
 
                                 <input type="radio" onchange="showData();" class="infraRadio" name="Validade" id="rbValidade2" value="2"">
 
                                 <label for="rbValidade2" id="lblUsuExterno" class="infraLabelRadio">Determinado </label> <img
-                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                         name="ajuda" class="infraImgModulo"
                                     <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o Procurador representará o Outorgante até a Data Limite indicada no campo ao lado. \n \n Contudo, a qualquer momento o Outorgante poderá Revogar a Procuração ou o próprio Outorgado poderá Renunciar a Procuração.', 'Ajuda') ?>/>
                             </div>
@@ -472,7 +472,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                     value=""
                                     onkeypress="return infraMascara(this, event, '##/##/####');"
                                     class="infraText form-control"/>
-                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                                     id="imgDt"
                                     title="Selecionar Data" style="display:none;"
                                     alt="Selecionar Data" class="infraImg"
@@ -499,7 +499,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                 <label for="rbAbrangencia1" id="lvbIndeterminado" class="infraLabelRadio">
                                     Qualquer Processo em Nome do Outorgante
                                 </label>
-                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
                                     <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o Procurador representará o Outorgante em qualquer Processo.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
@@ -514,7 +514,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                 <label for="rbAbrangencia" id="lvbIndeterminado" class="infraLabelRadio">
                                     Processos Específicos
                                 </label>
-                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
                                     <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o Procurador representará o Outorgante somente em processos específicos, que devem ser adionados na lista abaixo. \n \n Após marcar esta opção, torna-se necessário informar o número válido de cada processo sobre os quais o Procurador poderá atuar.', 'Ajuda') ?>
                                     class="infraImgModulo"/>

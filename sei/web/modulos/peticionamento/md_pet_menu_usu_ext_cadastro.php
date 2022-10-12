@@ -285,7 +285,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                         Nome do Menu:
                     </label>
                     <img id="imgAjudatTipoExterno"
-                         src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg" alt=""
+                         src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
                          onmouseover="return infraTooltipMostrar('O menu será listado para o Usuário Externo depois que ele fizer login no Acesso Externo do SEI.', 'Ajuda');"
                          onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     <div class="input-group mb-3">
@@ -302,14 +302,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                         <div id="divOptTipoExterno" class="infraDivRadio divOptTipoExterno">
                             <input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?>  class="infraRadio">
                             <label for="tipoExterno" class="infraLabelRadio"> Link Externo
-                                <img id="imgAjudatTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg" alt="" onmouseover="return infraTooltipMostrar('O menu abrirá o link externo sempre em nova janela do navegador do Usuário Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                                <img id="imgAjudatTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrirá o link externo sempre em nova janela do navegador do Usuário Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                             </label>
                         </div>
 
                         <div id="divOptTipoHTML" class="infraDivRadio divOptTipoExterno">
                             <input type="radio" id="tipoHTML" name="tipo" <?= $disabled ?> value="H" onclick="rdTipo()" <?php if( $tipo == 'H' ){ echo " checked='checked' "; } ?>  class="infraRadio">
                             <label for="tipoHTML" class="infraLabelRadio"> Conteúdo HTML
-                                <img id="imgAjudatTipoHTML" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg" alt="" onmouseover="return infraTooltipMostrar('O menu abrirá tela no próprio SEI para o Usuário Externo logado com o texto HTML parametrizado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                                <img id="imgAjudatTipoHTML" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrirá tela no próprio SEI para o Usuário Externo logado com o texto HTML parametrizado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                             </label>
                         </div>
                     </fieldset>

@@ -264,7 +264,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                   name="txtDtInicio" id="txtDtInicio"
                                                                   value="<?= PaginaSEI::tratarHTML($objMdPetIndisponibilidadeDTO->getDthDataInicioFormatada()) ?>"
                                                                   class="infraText"/>
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                                  id="imgDtInicio"
                                  title="Selecionar Data/Hora Inicial" alt="Selecionar Data/Hora Inicial"
                                  class="infraImg"
@@ -279,7 +279,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                   name="txtDtFim" id="txtDtFim"
                                                                   value="<?= PaginaSEI::tratarHTML($objMdPetIndisponibilidadeDTO->getDthDataFimFormatada()) ?>"
                                                                   class="infraText"/>
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                                  id="imgDtFim"
                                  title="Selecionar Data/Hora Final"
                                  alt="Selecionar Data/Hora Final" class="infraImg"
@@ -317,7 +317,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         echo $disabledAlterar; ?> type="radio" id="rdProrrogacaoSim" name="rdProrrogacao[]"/> <label
                                 id="lblProrrogacaoSim" class="infraLabelCheckbox" for="rdProrrogacaoSim">Sim</label>
                         <img id="imgAjuda" class="infraImgModulo"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
                              onmouseout="return infraTooltipOcultar();"
                              onmouseover="return infraTooltipMostrar('<?= $textoTolTipSim; ?>');"/>
                     </div>

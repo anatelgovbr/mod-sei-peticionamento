@@ -22,12 +22,12 @@
                 </select>
                 <div id="divOpcoesTpIntimacao">
                     <img id="imgLupaTpIntimacao" onclick="objLupaTpIntimacao.selecionar(700,500);"
-                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
+                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                         alt="Selecionar Tipos de Intimação"
                         title="Selecionar Tipos de Intimação" class="infraImg"/>
                     <br>
                     <img id="imgExcluirTpIntimacao" onclick="objLupaTpIntimacao.remover();"
-                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/remover.svg"
+                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/remover.svg?<?= Icone::VERSAO ?>"
                         alt="Remover Tipos de Intimação Selecionados"
                         title="Remover Tipos de Intimação Selecionados" class="infraImg"/>
                 </div>
@@ -59,12 +59,12 @@
 
                 <div id="divOpcoesUnidade">
                     <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);"
-                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
+                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                         alt="Selecionar Unidades"
                         title="Selecionar Unidades" class="infraImg"/>
                     <br>
                     <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();"
-                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/remover.svg"
+                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/remover.svg?<?= Icone::VERSAO ?>"
                         alt="Remover Unidades Selecionadas"
                         title="Remover Unidades Selecionadas" class="infraImg"/>
                 </div>
@@ -91,7 +91,7 @@
                     value="<?php echo array_key_exists('txtDataInicio', $_POST) ? PaginaSEI::tratarHTML($_POST['txtDataInicio']) : '' ?>"/>
 
                 <img class="imgCalendario"
-                    src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                    src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                     id="imgDataInicio"
                     title="Selecionar Data Inicial"
                     alt="Selecionar Data Inicial" class="infraImg"
@@ -107,7 +107,7 @@
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
 
                 <img class="imgCalendario"
-                    src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg"
+                    src="<?= PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg?<?= Icone::VERSAO ?>"
                     id="imgDataFim"
                     title="Selecionar Data Final"
                     alt="Selecionar Data Final" class="infraImg"

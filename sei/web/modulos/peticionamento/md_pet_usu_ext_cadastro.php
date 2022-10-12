@@ -168,8 +168,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
         <div class="row">
             <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6">
                 <div class="form-group">
-                    <label class="infraLabelObrigatorio">Especificação (resumo limitado a 50 caracteres):</label>
-                    <input type="text" class="infraText form-control" name="txtEspecificacao" id="txtEspecificacao" maxlength="50"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" autofocus/>
+                    <label class="infraLabelObrigatorio">Especificação (resumo limitado a 100 caracteres):</label>
+                    <input type="text" class="infraText form-control" name="txtEspecificacao" id="txtEspecificacao" maxlength="100"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" autofocus/>
                 </div>
             </div>
         </div>

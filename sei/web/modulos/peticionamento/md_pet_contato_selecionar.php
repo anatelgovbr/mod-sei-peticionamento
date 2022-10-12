@@ -249,7 +249,7 @@ try {
       //Alteração
 
       if (SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()==$dto->getNumIdUsuarioCadastro()){
-      	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', '".$dto->getStrStaNatureza()."')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>";
+      	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', '".$dto->getStrStaNatureza()."')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/svg/alterar.svg' class='infraImg' /></a>";
       }
 
       $strResultado .= PaginaSEIExterna::getInstance()->getAcaoTransportarItem($n++,$dto->getNumIdContato());
@@ -257,7 +257,7 @@ try {
       $strId = $dto->getNumIdContato();
       $strDescricao = PaginaSEIExterna::getInstance()->formatarParametrosJavaScript(PaginaSEIExterna::tratarHTML($strNomeSigla));
 
-	    if($_GET['acao']=='contato_selecionar' ||  $_GET['acao']=='peticionamento_contato_listar'){ 
+	    if($_GET['acao']=='contato_selecionar' ||  $_GET['acao']=='peticionamento_contato_listar'){
 
 	      $balao = '';
 	      if (!InfraString::isBolVazia($dto->getStrExpressaoVocativo())){
@@ -340,7 +340,7 @@ PaginaSEIExterna::getInstance()->abrirStyle();
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
-$linkCadastroInteressado = PaginaSEIExterna::getInstance()->formatarXHTML( SessaoSEIExterna::getInstance()->assinarLink("controlador_externo.php?acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=true&cnpj=true&id_orgao_acesso_externo=0"));
+$linkCadastroInteressado = PaginaSEIExterna::getInstance()->formatarXHTML( SessaoSEIExterna::getInstance()->assinarLink("controlador_externo.php?acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=&cnpj=&id_orgao_acesso_externo=0"));
 ?>
 
 function cadastrarNovoInteressado(){
@@ -403,8 +403,8 @@ function abrirCadastroInteressadoAlterar(id, tipo){
 	else if( tipo == '<?= ContatoRN::$TN_PESSOA_JURIDICA ?>' ){
 		var str = '<?= $strLinkEdicaoPJ ?>';
 	}
-	
-	infraAbrirJanela( str, 'cadastrarInteressado', 900, 900, '', false); //modal 
+
+    infraAbrirJanelaModal(str, 875, 875); //modal
 	return;
 	
 }

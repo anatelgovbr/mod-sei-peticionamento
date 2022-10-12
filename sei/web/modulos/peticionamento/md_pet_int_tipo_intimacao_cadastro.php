@@ -203,7 +203,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                 <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:
-                    <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                    <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decisão que motiva a intimação e não a possível resposta do Usuário Externo. \n \n Exemplos: Descisão de 1ª Instância, Decisão de Inadmissibilidade de Recurso, Exigência para Complementação de Informações, Decisão sobre Recurso.', 'Ajuda') ?>
                          class="infraImgModulo"/></label>
                 <input type="text" id="txtNome" name="txtNome" class="infraTex form-control"
@@ -248,7 +248,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <label id="lblTipoResposta" for="txtTipoResposta" accesskey="" class="infraLabelObrigatorio">Tipos de
                     Resposta:
                     <img align="top"
-                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda" <?= PaginaSEI::montarTitleTooltip('É possível indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usuário Externo. \n \n Somente é possível indicar um Tipo de Resposta que Exige Resposta pelo Usuário Externo.', 'Ajuda') ?>
                          class="infraImgModulo"/></label>
                 <div class="input-group mb-3">

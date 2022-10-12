@@ -146,7 +146,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblPrincipal" for="txtPrincipal" accesskey="P" class="infraLabelObrigatorio">Documento
                         Principal (Processo Novo):
                         <img id="imgAjudaTxtPrincipal"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" alt=""
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
                              onmouseover="return infraTooltipMostrar('Define as Extensões de Arquivos Permitidas no Peticionamento de Processo Novo somente do Documento Principal, que geralmente é de tamanho menor que os demais documentos, pois tende a ser Nato Digital. \n \n ATENÇÃO: permitir apenas extensões que comportem texto, evitando, por exemplo. zip, mp4 ou mp3 para Documento Principal', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     </label>
@@ -166,12 +166,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <div id="divIconesPrincipal">
                             <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);"
                                  onkeypress="objLupaPrincipal.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                  alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();"
                                  onkeypress="objLupaPrincipal.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                  alt="Remover Extensões Selecionadas"
                                  title="Remover Extensões Selecionadas" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -184,7 +184,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div id="divLblComplementar" class="col-sm-6 col-md-7 col-lg-6 col-xl-4">
                     <label id="lblComplementar" for="txtComplementar" class="infraLabelObrigatorio">Demais Documentos:
                         <img id="imgAjudaTxtComplementar"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" alt=""
+                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
                              onmouseover="return infraTooltipMostrar('Define as Extensões de Arquivos Permitidas no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intimação e no Peticionamento de Responsável Legal de Pessoa Jurídica', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     </label>
@@ -204,12 +204,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <div id="divIconesComplementar">
                             <img id="imgLupaComplementar" onclick="objLupaComplementar.selecionar(700,500);"
                                  onkeypress="objLupaComplementar.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                  alt="Selecionar Extensões" title="Selecionar Extensões" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirComplementar" onclick="objLupaComplementar.remover();"
                                  onkeypress="objLupaComplementar.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
                                  alt="Remover Extensões Selecionadas" title="Remover Extensões Selecionadas"
                                  class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>

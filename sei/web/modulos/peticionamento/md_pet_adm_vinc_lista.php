@@ -260,7 +260,6 @@ if ($arrIdMdPetVinculoRepresent) {
 $arrSelectTipoVinculo = array(
     MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsável Legal',
     MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
-    MdPetVincRepresentantRN::$PE_PROCURADOR => 'Procurador',
     MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES => 'Procurador Simples',
 );
 $numRegistros = count($arrObjMdPetVincRepresentantDTO);

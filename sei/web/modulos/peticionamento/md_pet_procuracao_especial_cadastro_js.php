@@ -979,6 +979,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     if (ids.length == 1) {
                         document.getElementById("selUsuario").disabled = true;
                     } else {
+                        $('#selUsuario').prepend('<option value="" selected="selected">Selecione o Usuario Externo</option>');
                         document.getElementById("selUsuario").disabled = false;
                     }
 
@@ -1059,6 +1060,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     if (ids.length == 1) {
                         document.getElementById("selUsuarioSimples").disabled = true;
                     } else {
+                        $('#selUsuarioSimples').prepend('<option value="" selected="selected">Selecione o Usuario Externo</option>');
                         document.getElementById("selUsuarioSimples").disabled = false;
                     }
 

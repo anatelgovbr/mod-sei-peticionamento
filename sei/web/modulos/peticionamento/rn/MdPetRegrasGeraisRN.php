@@ -97,6 +97,51 @@ class MdPetRegrasGeraisRN extends InfraRN
         }
         return $msg;
     }
+
+	protected function verificarExcluirDesativarUsuarioExternoConectado($arrObjUsuarioAPI)
+	{
+
+		$acao = $arrObjUsuarioAPI[1];
+		$acaoPlural = $acao == 'excluir' ? 'excluidos' : 'desativados';
+		$arrObjUsuarioAPI = $arrObjUsuarioAPI[0];
+		$msg = '';
+		$preMsg = 'Não é permitido '.$acao.' Usuário Externo que possua Vinculações ou Procurações Eletrônicas ativas. Os usuários externos abaixo não puderam ser '.$acaoPlural.':\n';
+
+		foreach ($arrObjUsuarioAPI as $objUsuario) {
+
+			$objUsuarioDTO = new UsuarioDTO();
+			$objUsuarioDTO->retNumIdContato();
+			$objUsuarioDTO->setNumIdUsuario($objUsuario->getIdUsuario());
+			$objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+
+			if($objUsuarioDTO){
+
+				// Valida se o Usuario Externo tem algum vinculo:
+				$objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+				$objMdPetVincRepresentantDTO->setStrStaEstado('A');
+				$objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+				$objMdPetVincRepresentantDTO->adicionarCriterio(
+					['IdContato', 'IdContatoOutorg'],
+					[InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL],
+					[$objUsuarioDTO->getNumIdContato(), $objUsuarioDTO->getNumIdContato()],
+					InfraDTO::$OPER_LOGICO_OR
+				);
+				$objMdPetVincRepresentantDTO->retNumIdContato();
+
+				$objMdPetVincRepresentantDTO = (new MdPetVincRepresentantBD(BancoSEI::getInstance()))->contar($objMdPetVincRepresentantDTO) > 0;
+
+				if($objMdPetVincRepresentantDTO){
+					$msg .= $objUsuario->getNome().' ('.$objUsuario->getSigla().')\n';
+				}
+
+			}
+
+		}
+
+		return !empty($msg) ? $preMsg.$msg : $msg;
+
+	}
+
     protected function verificarExistenciaUnidadeConectado($arrObjUnidadeAPI)
     {
 

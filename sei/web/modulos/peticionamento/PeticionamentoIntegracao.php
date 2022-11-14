@@ -3338,6 +3338,30 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
     }
 
+	public function excluirUsuario($arrObjUsuarioAPI)
+	{
+		$mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
+		$msg = $mdPetRegrasGeraisRN->verificarExcluirDesativarUsuarioExterno([$arrObjUsuarioAPI, 'excluir']);
+		if ($msg != '') {
+			$objInfraException = new InfraException();
+			$objInfraException->lancarValidacao($msg);
+		} else {
+			return $arrObjUsuarioAPI;
+		}
+	}
+
+	public function desativarUsuario($arrObjUsuarioAPI)
+	{
+		$mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
+		$msg = $mdPetRegrasGeraisRN->verificarExcluirDesativarUsuarioExterno([$arrObjUsuarioAPI, 'desativar']);
+		if ($msg != '') {
+			$objInfraException = new InfraException();
+			$objInfraException->lancarValidacao($msg);
+		} else {
+			return $arrObjUsuarioAPI;
+		}
+	}
+
     public function excluirUnidade($arrObjUnidadeAPI)
     {
 

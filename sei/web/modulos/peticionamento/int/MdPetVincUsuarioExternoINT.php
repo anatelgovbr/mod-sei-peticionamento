@@ -410,8 +410,8 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
         $objUsuarioDTO = new UsuarioDTO();
         $objUsuarioDTO->setDblCpfContato(InfraUtil::retirarFormatacao($cpf));
-        $objUsuarioDTO->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO_PENDENTE, UsuarioRN::$TU_EXTERNO), InfraDTO::$OPER_IN);
-//        $objUsuarioDTO->setStrSinAtivo(array('N', 'S'), InfraDTO::$OPER_IN);
+        $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
+        $objUsuarioDTO->setStrSinAtivo('S');
         $objUsuarioDTO->setBolExclusaoLogica(false);
         $objUsuarioDTO->retStrNome();
         $objUsuarioDTO->retDblCpfContato();
@@ -425,18 +425,10 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         if (count($arrObjUsuarioDTO) > 0) {
             foreach ($arrObjUsuarioDTO as $usuarioDTO) {
                 $xml .= '<contato';
-                if ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO && $usuarioDTO->getStrSinAtivo() == 'S') {
-                    $xml .= ' sucesso="1" ';
-                    $xml .= ' id="' . $usuarioDTO->getNumIdContato() . '"';
-                    $xml .= ' descricao="' . $usuarioDTO->getStrNome() . '"';
-                    $xml .= ' complemento="' . $params['cpf'] . '"';
-                } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
-                    $xml .= ' sucesso="false" ';
-                    $xml .= ' mensagem="Usuário Externo com pendência de liberação de cadastro" ';
-                } elseif ($usuarioDTO->getStrSinAtivo() == 'N') {
-                    $xml .= ' sucesso="false" ';
-                    $xml .= ' mensagem="Usuário Externo está com o cadastro desativado" ';
-                }
+                $xml .= ' sucesso="1" ';
+                $xml .= ' id="' . $usuarioDTO->getNumIdContato() . '"';
+                $xml .= ' descricao="' . $usuarioDTO->getStrNome() . '"';
+                $xml .= ' complemento="' . $params['cpf'] . '"';
                 $xml .= '></contato>';
             }
         }

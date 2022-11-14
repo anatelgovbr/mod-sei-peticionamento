@@ -18,7 +18,7 @@
                 </button>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-5">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-8">
             <label id="lblTipo" for="txtTipo" class="infraLabelObrigatorio">Tipo:</label>
             <div class="input-group mb-3">
                 <input type="text" id="txtTipo" name="txtTipo" class="infraText form-control" readonly="readonly"

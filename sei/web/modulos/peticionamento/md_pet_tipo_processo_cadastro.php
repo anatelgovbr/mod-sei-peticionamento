@@ -152,7 +152,7 @@ try {
             $nomeSerie = $objMdPetTipoProcessoDTO->getStrNomeSerie();
             $idSerie = $objMdPetTipoProcessoDTO->getNumIdSerie();
 
-            $hipoteseLegal = $objMdPetTipoProcessoDTO->getStrStaNivelAcesso() === ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit; margin-top: 10px"' : 'style="display:none;  margin-top: 10px"';
+            $hipoteseLegal = $objMdPetTipoProcessoDTO->getStrStaNivelAcesso() === ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit; margin-top: 0px"' : 'style="display:none;  margin-top: 0px"';
 
             $strItensSelNivelAcesso = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, $objMdPetTipoProcessoDTO->getStrStaNivelAcesso(), $idTipoProcesso);
 

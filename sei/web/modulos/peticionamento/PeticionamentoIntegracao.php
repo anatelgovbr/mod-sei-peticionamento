@@ -3340,27 +3340,22 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
 	public function excluirUsuario($arrObjUsuarioAPI)
 	{
-		$mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
-		$msg = $mdPetRegrasGeraisRN->verificarExcluirDesativarUsuarioExterno([$arrObjUsuarioAPI, 'excluir']);
+        $msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarUsuarioExterno([$arrObjUsuarioAPI, 'excluir']);
 		if ($msg != '') {
-			$objInfraException = new InfraException();
-			$objInfraException->lancarValidacao($msg);
-		} else {
-			return $arrObjUsuarioAPI;
+			(new InfraException())->lancarValidacao($msg);
 		}
 	}
 
-	public function desativarUsuario($arrObjUsuarioAPI)
-	{
-		$mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
-		$msg = $mdPetRegrasGeraisRN->verificarExcluirDesativarUsuarioExterno([$arrObjUsuarioAPI, 'desativar']);
-		if ($msg != '') {
-			$objInfraException = new InfraException();
-			$objInfraException->lancarValidacao($msg);
-		} else {
-			return $arrObjUsuarioAPI;
-		}
-	}
+	/*
+	 * TODO: Desativado à espera do novo evento no SeiIntegracao.php previsto para o SEI v4.1
+	 */
+//	public function desativarUsuario($arrObjUsuarioAPI)
+//	{
+//		$msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarUsuarioExterno([$arrObjUsuarioAPI, 'desativar']);
+//		if ($msg != '') {
+//			(new InfraException())->lancarValidacao($msg);
+//		}
+//	}
 
     public function excluirUnidade($arrObjUnidadeAPI)
     {
@@ -3422,116 +3417,20 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
     }
 
-    public function excluirContato($objContatoAPI)
+    public function excluirContato($arrObjContatoAPI)
     {
-        $qtdObjContatoAPI = (is_array($objContatoAPI) ? count($objContatoAPI) : 0);
-        if ($qtdObjContatoAPI > 0) {
-            $objContatoAPI = $objContatoAPI[0];
-            $isMesmaUnidade = false;
-
-            $idContato = $objContatoAPI->getIdContato();
-            $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
-
-            $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
-            $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
-            $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
-            $objMdPetVincTpProcessoDTO->retNumIdUnidade();
-            $objMdPetVincTpProcessoDTO = $mdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
-
-            $qtdObjMdPetVincTpProcessoDTO = (is_array($objMdPetVincTpProcessoDTO) ? count($objMdPetVincTpProcessoDTO) : 0);
-            if ($qtdObjMdPetVincTpProcessoDTO > 0) {
-                if ($objMdPetVincTpProcessoDTO->getNumIdUnidade() == $idUnidade) {
-                    $isMesmaUnidade = true;
-                }
-            }
-
-            $mdPetVinculoRN = new MdPetVinculoRN();
-            $objMdPetVinculoDTO = new MdPetVinculoDTO();
-
-            $objMdPetVinculoDTO->setNumIdContato($idContato);
-            $objMdPetVinculoDTO->setStrSinAtivoRepresentante('S');
-            $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-            $objMdPetVinculoDTO->retStrTpVinculo();
-
-            $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
-
-            $qtdObjMdPetVinculoDTO = (is_array($objMdPetVinculoDTO) ? count($objMdPetVinculoDTO) : 0);
-            if ($qtdObjMdPetVinculoDTO > 0) {
-                if ($isMesmaUnidade == false) {
-                    $objInfraException = new InfraException();
-                    $objInfraException->adicionarValidacao('Este Contato não pode ser Excluído porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');
-                    $objInfraException->lancarValidacoes();
-                }
-            }
+        $msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarContato([$arrObjContatoAPI, 'excluir']);
+        if ($msg != '') {
+            (new InfraException())->lancarValidacao($msg);
         }
     }
 
-    public function desativarContato($objContatoAPI)
+    public function desativarContato($arrObjContatoAPI)
     {
-        $qtdObjContatoAPI = (is_array($objContatoAPI) ? count($objContatoAPI) : 0);
-        if ($qtdObjContatoAPI > 0) {
-            $objInfraException = new InfraException();
-
-            $objContatoAPI = $objContatoAPI[0];
-            $isMesmaUnidade = false;
-
-            $idContato = $objContatoAPI->getIdContato();
-            $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
-
-            $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
-            $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
-            $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
-            $objMdPetVincTpProcessoDTO->retNumIdUnidade();
-            $objMdPetVincTpProcessoDTO = $mdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
-
-            $qtdObjMdPetVincTpProcessoDTO = (is_array($objMdPetVincTpProcessoDTO) ? count($objMdPetVincTpProcessoDTO) : 0);
-            if ($qtdObjMdPetVincTpProcessoDTO > 0) {
-                if ($objMdPetVincTpProcessoDTO->getNumIdUnidade() == $idUnidade) {
-                    $isMesmaUnidade = true;
-                }
-            }
-
-            $mdPetVinculoRN = new MdPetVinculoRN();
-            $objMdPetVinculoDTO = new MdPetVinculoDTO();
-
-            $objMdPetVinculoDTO->setNumIdContato($idContato);
-            $objMdPetVinculoDTO->setStrSinAtivoRepresentante('S');
-            $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-            $objMdPetVinculoDTO->retStrTpVinculo();
-
-            $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
-
-            $qtdObjMdPetVinculoDTO = (is_array($objMdPetVinculoDTO) ? count($objMdPetVinculoDTO) : 0);
-            if ($qtdObjMdPetVinculoDTO > 0) {
-//                if ($isMesmaUnidade == false) {
-                $objInfraException->lancarValidacao('Este Contato não pode ser Desativado porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');
-//                }
-            }
-
-            //Verifica se o contato tem intimação em curso
-            $mdPetIntimacaoRN = new MdPetIntimacaoRN();
-            $intimacoesEmCurso = $mdPetIntimacaoRN->existeIntimacoesEmCursoPorContato($idContato);
-
-            if ($intimacoesEmCurso) {
-                $objInfraException->lancarValidacao('Não é permitido Desativar este Contato, pois o mesmo está associado a Usuário Externo com Intimação Eletrônica ainda em curso.');
-            }
-
-            $idContatoAssociado = $objContatoAPI->getIdContatoAssociado();
-
-            if ($idContatoAssociado) {
-                $intimacoesEmCurso = $mdPetIntimacaoRN->existeIntimacoesEmCursoPorContato($idContatoAssociado);
-                if ($intimacoesEmCurso) {
-                    $objInfraException->lancarValidacao('Não é permitido Desativar este Contato, pois o mesmo está associado a Usuário Externo com Intimação Eletrônica ainda em curso.');
-                }
-            }
-
-            $intimacoesEmCurso = $mdPetIntimacaoRN->verificarVinculoComIntimacoesEmCurso($idContato);
-
-            if ($intimacoesEmCurso) {
-                $objInfraException->lancarValidacao('Não é permitido Desativar este Contato, pois o mesmo está associado a Usuário Externo com Intimação Eletrônica ainda em curso.');
-            }
-
-        }
+        $msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarContato([$arrObjContatoAPI, 'desativar']);
+		if ($msg != '') {
+            (new InfraException())->lancarValidacao($msg);
+		}
     }
 
     public function verificarAcessoProtocolo($arrObjProcedimentoAPI, $arrObjDocumentoAPI)

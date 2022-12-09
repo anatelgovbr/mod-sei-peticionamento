@@ -98,49 +98,111 @@ class MdPetRegrasGeraisRN extends InfraRN
         return $msg;
     }
 
-	protected function verificarExcluirDesativarUsuarioExternoConectado($arrObjUsuarioAPI)
-	{
+    protected function verificarExcluirDesativarUsuarioExternoConectado($arrObjUsuarioAPI)
+    {
 
-		$acao = $arrObjUsuarioAPI[1];
-		$acaoPlural = $acao == 'excluir' ? 'excluidos' : 'desativados';
-		$arrObjUsuarioAPI = $arrObjUsuarioAPI[0];
-		$msg = '';
-		$preMsg = 'Não é permitido '.$acao.' Usuário Externo que possua Vinculações ou Procurações Eletrônicas ativas. Os usuários externos abaixo não puderam ser '.$acaoPlural.':\n';
+        $acao = $arrObjUsuarioAPI[1];
+        $arrObjUsuarioAPI = $arrObjUsuarioAPI[0];
+        $msg = $msgVinc = $msgInt = $msgIntVinc = '';
 
-		foreach ($arrObjUsuarioAPI as $objUsuario) {
+        foreach ($arrObjUsuarioAPI as $objUsuario) {
 
-			$objUsuarioDTO = new UsuarioDTO();
-			$objUsuarioDTO->retNumIdContato();
-			$objUsuarioDTO->setNumIdUsuario($objUsuario->getIdUsuario());
-			$objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+            $objUsuarioDTO = new UsuarioDTO();
+            $objUsuarioDTO->retNumIdContato();
+            $objUsuarioDTO->setNumIdUsuario($objUsuario->getIdUsuario());
+            $objUsuarioDTO->setBolExclusaoLogica(false);
+            $objUsuarioDTO = (new UsuarioBD($this->getObjInfraIBanco()))->consultar($objUsuarioDTO);
 
-			if($objUsuarioDTO){
+            if($objUsuarioDTO){
 
-				// Valida se o Usuario Externo tem algum vinculo:
-				$objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-				$objMdPetVincRepresentantDTO->setStrStaEstado('A');
-				$objMdPetVincRepresentantDTO->setStrSinAtivo('S');
-				$objMdPetVincRepresentantDTO->adicionarCriterio(
-					['IdContato', 'IdContatoOutorg'],
-					[InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL],
-					[$objUsuarioDTO->getNumIdContato(), $objUsuarioDTO->getNumIdContato()],
-					InfraDTO::$OPER_LOGICO_OR
-				);
-				$objMdPetVincRepresentantDTO->retNumIdContato();
+                if($acao == 'excluir'){
+                    if((new MdPetVincRepresentantRN())->existeVinculoPorContato($objUsuarioDTO->getNumIdContato())){
+                        $msgVinc .= '- '.$objUsuario->getNome().' ('.$objUsuario->getSigla().')\n';
+                    }
+                    if((new MdPetIntimacaoRN())->existeIntimacaoPorContato($objUsuarioDTO->getNumIdContato())){
+                        $msgInt .= '- '.$objUsuario->getNome().' ('.$objUsuario->getSigla().')\n';
+                    }
+                }
 
-				$objMdPetVincRepresentantDTO = (new MdPetVincRepresentantBD(BancoSEI::getInstance()))->contar($objMdPetVincRepresentantDTO) > 0;
+                if($acao == 'desativar'){
+                    if((new MdPetVincRepresentantRN())->existeVinculoPorContato($objUsuarioDTO->getNumIdContato(), true)){
+                        $msgVinc .= '- '.$objUsuario->getNome().' ('.$objUsuario->getSigla().')\n';
+                    }
+                    if ((new MdPetIntimacaoRN())->existeIntimacoesEmCursoPorContato($objUsuarioDTO->getNumIdContato())) {
+                        $msgInt .= '- '.$objUsuario->getNome().' ('.$objUsuario->getSigla().')\n';
+                    }
+                    if ((new MdPetIntimacaoRN())->verificarVinculoComIntimacoesEmCurso($objUsuarioDTO->getNumIdContato())) {
+                        $msgIntVinc .= '- '.$objUsuario->getNome().' ('.$objUsuario->getSigla().')\n';
+                    }
+                }
 
-				if($objMdPetVincRepresentantDTO){
-					$msg .= $objUsuario->getNome().' ('.$objUsuario->getSigla().')\n';
-				}
+            }
 
-			}
+        }
 
-		}
+        $preMsg = 'Não é permitido '.$acao.' Usuário Externo que possua registro de Vinculação, Procuração Eletrônica '.($acao == 'desativar' ? 'ativa' : '').' ou Intimação Eletrônica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
 
-		return !empty($msg) ? $preMsg.$msg : $msg;
+        if(!empty($msgVinc)){
+            $msg .= 'Usuários Externos com registros de Vinculações ou Procurações Eletrônicas'.($acao == 'desativar' ? ' ainda ativas' : '').':\n'.$msgVinc.'\n';
+        }else{
+            if(!empty($msgInt) || !empty($msgIntVinc)){
+                $msg .= 'Usuários Externos com registros de Intimação Eletrônica'.($acao == 'desativar' ? ' ainda em curso' : '').':\n'.$msgInt.$msgIntVinc.'\n';
+            }
+        }
 
-	}
+        return !empty($msg) ? $preMsg.$msg : $msg;
+
+    }
+
+    protected function verificarExcluirDesativarContatoConectado($arrObjContatoAPI)
+    {
+        $acao = $arrObjContatoAPI[1];
+        $arrObjContatoAPI = $arrObjContatoAPI[0];
+        $msg = $msgVinc = $msgInt = $msgIntVinc = '';
+
+        foreach ($arrObjContatoAPI as $objContato) {
+
+            if($objContato instanceof ContatoAPI){
+
+                if($acao == 'excluir'){
+                    if((new MdPetVincRepresentantRN())->existeVinculoPorContato($objContato->getIdContato())){
+                        $msgVinc .= '- '.$objContato->getNome().' ('.$objContato->getSigla().')\n';
+                    }
+                    if((new MdPetIntimacaoRN())->existeIntimacaoPorContato($objContato->getIdContato())){
+                        $msgInt .= '- '.$objContato->getNome().' ('.$objContato->getSigla().')\n';
+                    }
+                }
+
+                if($acao == 'desativar'){
+                    if((new MdPetVincRepresentantRN())->existeVinculoPorContato($objContato->getIdContato(), true)){
+                        $msgVinc .= '- '.$objContato->getNome().' ('.$objContato->getSigla().')\n';
+                    }
+                    if ((new MdPetIntimacaoRN())->existeIntimacoesEmCursoPorContato($objContato->getIdContato())) {
+                        $msgInt .= '- '.$objContato->getNome().' ('.$objContato->getSigla().')\n';
+                    }
+                    if ((new MdPetIntimacaoRN())->verificarVinculoComIntimacoesEmCurso($objContato->getIdContato())) {
+                        $msgIntVinc .= '- '.$objContato->getNome().' ('.$objContato->getSigla().')\n';
+                    }
+                }
+
+            }
+
+        }
+
+        $preMsg = 'Não é permitido '.$acao.' Contato que possua registro de Vinculação, Procuração Eletrônica '.($acao == 'desativar' ? 'ativa' : '').' ou Intimação Eletrônica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
+
+        if(!empty($msgVinc)){
+            $msg .= 'Contatos com registros de Vinculações ou Procurações Eletrônicas'.($acao == 'desativar' ? ' ainda ativas' : '').':\n'.$msgVinc.'\n';
+        }else{
+            if(!empty($msgInt) || !empty($msgIntVinc)){
+                $msg .= 'Contatos com registros de Intimação Eletrônica'.($acao == 'desativar' ? ' ainda em curso' : '').':\n'.$msgInt.$msgIntVinc.'\n';
+            }
+        }
+
+        return !empty($msg) ? $preMsg.$msg : $msg;
+
+    }
+
 
     protected function verificarExistenciaUnidadeConectado($arrObjUnidadeAPI)
     {

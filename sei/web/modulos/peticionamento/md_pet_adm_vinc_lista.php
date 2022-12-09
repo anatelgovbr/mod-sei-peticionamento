@@ -299,7 +299,7 @@ if ($numRegistros > 0) {
         $idVinculacao = $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo();
         //$idDocumentoFormatado = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getStrProtocoloFormatadoProtocolo();
 
-        $idDocumento = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getDblIdDocumento();
+        $idDocumento = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()] ? $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getDblIdDocumento() : '';
         if (!in_array($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante(), $arrSelectTipoVinculo)) {
             $arrSelectTipoVinculo[$arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante()] = $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante();
         }
@@ -441,7 +441,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblNaturezaVinculo" for="selNaturezaVinculo" class="infraLabelOpcional"><?= $strColuna70 ?>:</label>
-                    <select id="selNaturezaVinculo" name="selNaturezaVinculo" onchange="this.form.submit()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <select id="selNaturezaVinculo" name="selNaturezaVinculo" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <option value=""></option>
                         <option value="F" <?= $selNaturezaVinculo == 'F' ? 'selected="selected"' : '' ?> >Pessoa Física</option>
                         <option value="J" <?= $selNaturezaVinculo == 'J' ? 'selected="selected"' : '' ?> >Pessoa Jurídica</option>
@@ -451,7 +451,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblCnpj" for="txtCnpj" class="infraLabelOpcional"><?= $strColuna10 ?>:</label>
-                    <input type="text" id="txtCnpj" name="txtCnpj" onchange="this.form.submit()" class="infraText form-control"
+                    <input type="text" id="txtCnpj" name="txtCnpj" class="infraText form-control"
                         value="<?= $strCnpj ?>" maxlength="18"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
                         onkeydown="return mascararCampoCnpjCpf(this);" autofocus/>
@@ -460,7 +460,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
                 <div class="form-group">
                     <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelOpcional"><?= $strColuna20 ?>:</label>
-                    <input type="text" id="txtRazaoSocial" name="txtRazaoSocial" onchange="this.form.submit()" class="infraText form-control"
+                    <input type="text" id="txtRazaoSocial" name="txtRazaoSocial" class="infraText form-control"
                         value="<?= PaginaSEI::tratarHTML($strRazaoSocial) ?>" maxlength="100"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
@@ -470,7 +470,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-2">
                 <div class="form-group">
                     <label id="lblCpf" for="txtCpf" class="infraLabelOpcional"><?= $strColuna30 ?>:</label>
-                    <input type="text" id="txtCpf" name="txtCpf" onchange="this.form.submit()" class="infraText form-control"
+                    <input type="text" id="txtCpf" name="txtCpf" class="infraText form-control"
                         value="<?= $strCpf ?>" maxlength="100"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
                         onkeypress="return infraMascaraCPF(this,event,250);"/>
@@ -479,7 +479,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-8 col-lg-3 col-xl-4">
                 <div class="form-group">
                     <label id="lblNomeProcurador" for="txtNomeProcurador" class="infraLabelOpcional"><?= $strColuna40 ?>:</label>
-                    <input type="text" id="txtNomeProcurador" name="txtNomeProcurador" onchange="this.form.submit()" class="infraText form-control"
+                    <input type="text" id="txtNomeProcurador" name="txtNomeProcurador" class="infraText form-control"
                         value="<?= PaginaSEI::tratarHTML($strNome) ?>" maxlength="100"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
@@ -487,7 +487,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblTipoVinculo" for="slTipoVinculo" class="infraLabelOpcional"><?= $strColuna50 ?>:</label>
-                    <select name="slTipoViculo" id="slTipoViculo" class="infraSelect form-control" onchange="this.form.submit()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <select name="slTipoViculo" id="slTipoViculo" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <option value=""></option>
                         <?php if ($arrSelectTipoVinculo) : ?>
                             <?php foreach ($arrSelectTipoVinculo as $chaveTipoVinculo => $itemTipoVinculo) : ?>
@@ -502,7 +502,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <label id="lblStatus" for="selStatus" class="infraLabelOpcional"><?= $strColuna60 ?>:</label>
-                    <select id="selStatus" name="selStatus" onchange="this.form.submit()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <select id="selStatus" name="selStatus" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <?= $strSelStatus ?>
                     </select>
                 </div>
@@ -510,7 +510,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
                 <div class="form-group">
                     <label id="lblTipoPoder" for="selTipoPoder" class="infraLabelOpcional"><?= $strColuna80 ?>:</label>
-                    <select id="selTipoPoder" name="selTipoPoder[]" onblur="this.form.submit()" class="infraSelect multipleSelect form-control" multiple="multiple" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <select id="selTipoPoder" name="selTipoPoder[]" class="infraSelect multipleSelect form-control" multiple="multiple" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <!-- $strOptionsTiposPoder ?> -->
                         <?= MDPetTipoPoderLegalINT::montarArrSelect(null, null, $selTipoPoder) ?>
                     </select>

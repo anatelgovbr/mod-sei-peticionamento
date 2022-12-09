@@ -849,4 +849,58 @@ class MdPetVincRepresentantRN extends InfraRN
         return $arrObjMdPetVincRepresentante;
     }
 
+    public function existeVinculoPorContato($idContato, $ativo = false){
+
+        $objContatoDTO = new ContatoDTO();
+        $objContatoDTO->setBolExclusaoLogica(false);
+        $objContatoDTO->retStrStaNatureza();
+        $objContatoDTO->setNumIdContato($idContato);
+        $objContatoDTO = (new ContatoRN())->consultarRN0324($objContatoDTO);
+
+        if($objContatoDTO->getStrStaNatureza() == 'F'){
+
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            if($ativo) {
+                $objMdPetVincRepresentantDTO->setStrStaEstado('A');
+                $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+            }
+            $objMdPetVincRepresentantDTO->adicionarCriterio(
+                ['IdContato', 'IdContatoOutorg'],
+                [InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL],
+                [$idContato, $idContato],
+                InfraDTO::$OPER_LOGICO_OR
+            );
+            $objMdPetVincRepresentantDTO->retNumIdContato();
+            return (new MdPetVincRepresentantBD(BancoSEI::getInstance()))->contar($objMdPetVincRepresentantDTO) > 0;
+
+        }
+
+        if($objContatoDTO->getStrStaNatureza() == 'J'){
+
+            $objVinculoDTO = new MdPetVinculoDTO();
+            $objVinculoDTO->setNumIdContato($idContato);
+            $objVinculoDTO->retNumIdMdPetVinculo();
+            $arrIdMdPetVinculo = InfraArray::converterArrInfraDTO((new MdPetVinculoBD($this->getObjInfraIBanco()))->listar($objVinculoDTO),'IdMdPetVinculo');
+
+            if(count($arrIdMdPetVinculo) > 0){
+
+                $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo((array) $arrIdMdPetVinculo, InfraDTO::$OPER_IN);
+
+                if($ativo) {
+                    $objMdPetVincRepresentantDTO->setStrStaEstado('A');
+                    $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+                }
+
+                $objMdPetVincRepresentantDTO->retNumIdContato();
+                return (new MdPetVincRepresentantBD(BancoSEI::getInstance()))->contar($objMdPetVincRepresentantDTO) > 0;
+
+            }
+
+        }
+
+        return false;
+
+    }
+
 }

@@ -229,6 +229,7 @@ class PeticionamentoWS extends MdPetUtilWS
                     $contatoRN = new ContatoRN();
                     $contatoDTO = new ContatoDTO();
                     $contatoDTO->setNumIdContato($item->getNumIdContato());
+                    $contatoDTO->setBolExclusaoLogica(false);
                     $contatoDTO->retStrNome();
                     $contatoDTO->retDblCpf();
                     $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);

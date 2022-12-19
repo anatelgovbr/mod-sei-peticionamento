@@ -234,14 +234,14 @@ try {
                         SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
                     }
 
-                    echo "window.top.document.getElementById('divInfraSparklingModalClose').click();";
+                    echo "$(window.top.document).find('div[id^=divInfraSparklingModalClose]').click();";
                     echo "</script>";
                     die;
 
                 } else {
                     echo "<script>";
                     echo "atualizarNomeRazaoSocial('" . $cpfCnpjEditado . "', '" . PaginaSEIExterna::tratarHTML($nome) . "');";
-                    echo "window.top.document.getElementById('divInfraSparklingModalClose').click()";
+                    echo "$(window.top.document).find('div[id^=divInfraSparklingModalClose]').click();";
                     echo "</script>";
                     die;
                 }
@@ -365,7 +365,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 $urlBaseLink = "";
 $arrComandos = array();
 $arrComandos[] = '<button type="button" accesskey="s" name="Salvar" value="Salvar" onclick="salvar()" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="window.top.document.getElementById(\'divInfraSparklingModalClose\').click()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="$(window.top.document).find(\'div[id^=divInfraSparklingModalClose]\').click();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 $strLinkBaseFormEdicao = 'controlador_externo.php?edicaoExibir=true&acao=' . $_GET['acao'];
 

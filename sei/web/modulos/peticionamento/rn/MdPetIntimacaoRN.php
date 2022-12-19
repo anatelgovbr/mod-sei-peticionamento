@@ -2993,6 +2993,17 @@ class MdPetIntimacaoRN extends InfraRN
         return null;
     }
 
+    protected function existeIntimacaoPorContatoConectado($idContato){
+
+        $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
+        $objMdPetIntRelDestDTO->setNumIdContato($idContato);
+        $objMdPetIntRelDestDTO->retNumIdMdPetIntimacao();
+        $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
+
+        return (new MdPetIntRelDestinatarioBD(BancoSEI::getInstance()))->contar($objMdPetIntRelDestDTO) > 0;
+
+    }
+
     protected function existeIntimacoesEmCursoPorContatoConectado($idContato)
     {
         $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();

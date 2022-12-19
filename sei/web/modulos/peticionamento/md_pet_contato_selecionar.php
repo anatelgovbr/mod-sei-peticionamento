@@ -295,7 +295,7 @@ try {
                     '</table>'."\n";
   }
   
-  $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" name="btnFechar" onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+  $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" name="btnFechar" onclick="$(window.top.document).find(\'div[id^=divInfraSparklingModalClose]\').click();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
   
   $strItensSelGrupoContato = GrupoContatoINT::ConjuntoPorUnidadeRI0515('null','&nbsp;',$numIdGrupoContato);
   

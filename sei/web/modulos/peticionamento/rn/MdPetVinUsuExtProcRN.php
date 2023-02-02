@@ -32,12 +32,21 @@ class MdPetVinUsuExtProcRN extends InfraRN
     
     public function gerarProcedimentoVinculoProcuracaoControlado($dados)
     {
-        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
-
         $retorno = $this->gerarProcedimentoVinculoProcuracaoInterno($dados);
 
-        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
-        FeedSEIProtocolos::getInstance()->indexarFeeds();
+        if(!empty($retorno[6]) && count($retorno[6]) > 0){
+
+            FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+            $objIndexacaoDTO = new IndexacaoDTO();
+            $objIndexacaoDTO->setArrIdProtocolos( $retorno[6] );
+            $objIndexacaoDTO->setStrStaOperacao(IndexacaoRN::$TO_PROTOCOLO_METADADOS_E_CONTEUDO);
+            (new IndexacaoRN())->indexarProtocolo($objIndexacaoDTO);
+
+            FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+            FeedSEIProtocolos::getInstance()->indexarFeeds();
+
+        }
 
         $mdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
         $mdPetVinculoUsuExtRN->enviarEmail($retorno);
@@ -96,7 +105,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objProtocoloDTO->retNumIdUnidadeGeradora();
                 $objProtocoloRN = new ProtocoloRN();
                 $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
-                if ($objUnidadeGeradora->getNumIdUnidadeGeradora() == $arrObjMdPetVincTpProcesso->getNumIdUnidade()) {
+                if ($objUnidadeGeradora && $objUnidadeGeradora->getNumIdUnidadeGeradora() == $arrObjMdPetVincTpProcesso->getNumIdUnidade()) {
                     $idTipoUnidadeAberturaProcesso = $objUnidadeGeradora->getNumIdUnidadeGeradora();
                 } else {
                     $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
@@ -383,7 +392,9 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
 
                 $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
-                $idMdPetVinculoRepresent = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
+                if($objMdPetVincRepresentantDTO){
+                    $idMdPetVinculoRepresent = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
+                }
 
             } else {
 
@@ -470,6 +481,13 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $arrParams[3] = array();
                 $arrParams[4] = $reciboDTOBasico;
                 $arrParams[5] = $reciboDTOBasico;
+
+                $arrDocumentosIndexar = [];
+                for ($i = 0; $i < count($dadosRetornoProcuracao['Procuracao']); $i++) {
+                    array_push($arrDocumentosIndexar, $dadosRetornoProcuracao['Procuracao'][$i]['Outorgado']['Documento']->getIdDocumento()); // IdDocumentoProcuracao
+                }
+
+                $arrParams[6] = $arrDocumentosIndexar;
 
                 $objMdRegrasGeraisRN = new MdPetRegrasGeraisRN();
                 $strTipoPeticionamento = $objMdRegrasGeraisRN->getTipoPeticionamento($tipoPeticionamento, true);
@@ -813,15 +831,17 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
             $arrProcessos = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantRN, 'IdProcedimentoVinculo');
 
+            $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+
             if (count(array_unique($arrProcessos))) {
                 $objProtocoloDTO = new ProtocoloDTO();
                 $objProtocoloDTO->setDblIdProtocolo($arrProcessos[0]);
                 $objProtocoloDTO->retNumIdUnidadeGeradora();
                 $objProtocoloRN = new ProtocoloRN();
                 $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
-                $idTipoUnidadeAberturaProcesso = $objUnidadeGeradora->getNumIdUnidadeGeradora();
-            } else {
-                $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+                if(!empty($objUnidadeGeradora)){
+                    $idTipoUnidadeAberturaProcesso = $objUnidadeGeradora->getNumIdUnidadeGeradora();
+                }
             }
 
             //Obtendo tipo do processo

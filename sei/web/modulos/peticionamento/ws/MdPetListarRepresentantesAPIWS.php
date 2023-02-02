@@ -10,11 +10,12 @@
 class MdPetListarRepresentantesAPIWS
 {
 
+    private $TipoVinculo;
     private $NomeRepresentado;
     private $NomeRepresentante;
     private $CpfRepresentado;
     private $CpfRepresentante;
-    private $Email;
+    private $EmailRepresentante;
     private $StaSituacao;
     private $StaTipoRepresentacao;
     private $TipoPoderesLegais;
@@ -22,6 +23,22 @@ class MdPetListarRepresentantesAPIWS
     private $DataLimite;
     private $RazaoSocialRepresentado;
     private $CnpjRepresentado;
+
+    /**
+     * @return mixed
+     */
+    public function getTipoVinculo()
+    {
+        return $this->TipoVinculo;
+    }
+
+    /**
+     * @param mixed TipoRepresentante
+     */
+    public function setTipoVinculo($TipoVinculo)
+    {
+        $this->TipoVinculo = $TipoVinculo;
+    }
 
     /**
      * @return mixed
@@ -90,17 +107,17 @@ class MdPetListarRepresentantesAPIWS
     /**
      * @return mixed
      */
-    public function getEmail()
+    public function getEmailRepresentante()
     {
-        return $this->Email;
+        return $this->EmailRepresentante;
     }
 
     /**
      * @param mixed $Email
      */
-    public function setEmail($Email)
+    public function setEmailRepresentante($Email)
     {
-        $this->Email = $Email;
+        $this->EmailRepresentante = $Email;
     }
 
     /**

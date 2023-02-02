@@ -81,12 +81,17 @@ class MdPetIntRelatorioRN extends InfraRN {
         return $objMdPetIntRelDestDTO;
     }
 
-    private function _addFiltroListagem($objDTO){
+    public function _addFiltroListagem($objDTO){
         
         //Tipo de Intimação
         $arrTipoIntimacao = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnTpIntimacao']);
-        if(count($arrTipoIntimacao) > 0) {
-            $objDTO->setNumIdMdPetTipoIntimacao($arrTipoIntimacao, InfraDTO::$OPER_IN);
+
+        if($_POST['idTipoIntimacao'] == 0){
+            if(count($arrTipoIntimacao) > 0) {
+                $objDTO->setNumIdMdPetTipoIntimacao($arrTipoIntimacao, InfraDTO::$OPER_IN);
+            }
+        }else{
+            $objDTO->setNumIdMdPetTipoIntimacao($_POST['idTipoIntimacao']);
         }
 
         $arrTpIntSession  = array();
@@ -130,7 +135,7 @@ class MdPetIntRelatorioRN extends InfraRN {
             $arrSituacaoFiltro = json_decode($hdnSituacao);
         }
 
-        if(count($arrSituacaoFiltro) > 0 && !in_array(MdPetIntimacaoRN::$TODAS,$arrSituacaoFiltro)){
+        if(is_countable($arrSituacaoFiltro) > 0 && !in_array(MdPetIntimacaoRN::$TODAS,$arrSituacaoFiltro)){
             $objDTO->setStrStaSituacaoIntimacao($arrSituacaoFiltro, InfraDTO::$OPER_IN);
         }
 
@@ -185,7 +190,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         return $arrObjDTO;
     }
 
-    protected function listarDadosGraficoConectado($objMdPetIntRelDestDTO){
+    public function listarDadosGraficoConectado($objMdPetIntRelDestDTO){
 
         $objMdPetIntRelDestRN  = new MdPetIntRelDestinatarioRN();
 
@@ -208,7 +213,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         return $docFormat;
     }
 
-    protected function getQtdDadosPorSituacaoConectado(){
+    public function getQtdDadosPorSituacaoConectado(){
         $objDTO     = $this->retornaSelectsGrafico();
         $arrObjs    = $this->listarDadosGrafico($objDTO);
         $arrDados   = array();
@@ -539,20 +544,18 @@ class MdPetIntRelatorioRN extends InfraRN {
     }
 
     private function _getTiposIntimacaoDasIntimacoes(){
-        $objMdPetIntRelDestRN  = new MdPetIntRelDestinatarioRN();
-        $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
-        $objMdPetIntRelDestDTO->retNumIdMdPetTipoIntimacao();
-        $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
-        $objMdPetIntRelDestDTO->retStrNomeTipoIntimacao();
 
         $arrTipoIntimacao = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnTpIntimacao']);
+
+        $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
+        $objMdPetIntRelDestDTO->retNumIdMdPetTipoIntimacao();
+        $objMdPetIntRelDestDTO->retStrNomeTipoIntimacao();
         if(count($arrTipoIntimacao) > 0) {
             $objMdPetIntRelDestDTO->setNumIdMdPetTipoIntimacao($arrTipoIntimacao, InfraDTO::$OPER_IN);
         }
+        $objMdPetIntRelDestDTO->setDistinct(true);
+        return (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntRelDestDTO);
 
-        $arrDados = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
-
-        return $arrDados;
     }
 
 
@@ -561,54 +564,27 @@ class MdPetIntRelatorioRN extends InfraRN {
      */
     protected function getArrGraficosIntimacaoConectado($tipoGrafico){
 
-        ini_set('max_execution_time', '0');
-        ini_set('memory_limit', '1024M');
         $arrRetorno = array();
         $arrObjDTOs = $this->_getTiposIntimacaoDasIntimacoes();
 
         if(count($arrObjDTOs) > 0){
+
             $idsTipoIntimacao = array_unique(InfraArray::converterArrInfraDTO($arrObjDTOs, 'IdMdPetTipoIntimacao'));
-            $arrNomes     = $this->_retornaArrNomesTipoIntimacao($arrObjDTOs);
+            $arrNomes = array_unique(InfraArray::converterArrInfraDTO($arrObjDTOs, 'NomeTipoIntimacao', 'IdMdPetTipoIntimacao'));
 
             foreach($idsTipoIntimacao as $idTipoIntimacao){
-                $_SESSION[static::$ID_TP_INT_FILTRO_GRAFICO] = $idTipoIntimacao;
                 $tamanhoGrafico = MdPetIntRelatorioRN::$GRAFICO_TAMANHO_PADRAO;
-           
-                $htmlGrafico = MdPetIntRelatorioINT::gerarGraficoGeral($tipoGrafico, $idTipoIntimacao, $tamanhoGrafico);
+                $htmlGrafico    = MdPetIntRelatorioINT::gerarGraficoGeral($tipoGrafico, $idTipoIntimacao, $tamanhoGrafico);
 
                 if(!is_null($htmlGrafico)) {
                     $arrRetorno[$idTipoIntimacao]['html']  = $htmlGrafico;
                     $arrRetorno[$idTipoIntimacao]['label'] = $arrNomes[$idTipoIntimacao];
                 }
-
-                unset($_SESSION[static::$ID_TP_INT_FILTRO_GRAFICO]);
             }
 
         }
 
         return $arrRetorno;
     }
-
-    private function _retornaArrNomesTipoIntimacao($arrObjDTOs){
-        $arrNomes = array();
-        foreach($arrObjDTOs as $objDTO){
-            $id = $objDTO->getNumIdMdPetTipoIntimacao();
-            if(!array_key_exists($id, $arrNomes)){
-                $arrNomes[$id] = $objDTO->getStrNomeTipoIntimacao();
-            }
-        }
-        return $arrNomes;
-    }
-    
-
-
-
-
-
-
-
-
-
-
 
 }

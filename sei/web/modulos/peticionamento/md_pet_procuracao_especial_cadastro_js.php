@@ -17,7 +17,8 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         document.getElementById("btnCancelarInferior").style.display = "none";
 
         $("#selTpPoder").multipleSelect({
-            filter: false,
+            placeholder: 'Selecione',
+            filter: true,
             minimumCountSelected: 1,
             selectAll: false,
         });

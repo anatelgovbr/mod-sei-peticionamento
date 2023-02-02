@@ -269,7 +269,7 @@ if ($numRegistros > 0) {
     $strResultado = '';
     $strSumarioTabela = $strCaptionTabela = 'Vinculações e Procurações Eletrônicas';
     $strResultado .= '<table style="width: 100%" class="infraTable" summary="' . $strSumarioTabela . '">';
-    $strResultado .= '<caption class="infraCaption text-left">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
+    $strResultado .= '<caption class="infraCaption">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
     $strResultado .= '<thead>';
     $strResultado .= '<tr>';
     $strResultado .= '<th class="infraTh"><div style="width:110px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna70, $strColuna71, $arrObjMdPetVincRepresentantDTO) . '</div></th>';

@@ -1,24 +1,25 @@
 <script type="text/javascript">
 
 function inicializar() {
-controlarVisualizacao();
-//   hideOrShowTable(isHide, true);
- //   funcaoTemporariaProgramacao();
+
+    controlarVisualizacao();
+    //   hideOrShowTable(isHide, true);
+    //   funcaoTemporariaProgramacao();
     infraEfeitoTabelas();
     carregarComponenteTipoIntimacao();
     carregarComponenteUnidade();
 
-    if( $('#divInfraAreaTabela').find('table').length == 0 ){
-        $('#divInfraAreaPaginacaoSuperior').hide();
-        $('#divInfraAreaTabela').addClass('mt-3');
-        $('#divInfraAreaTabela > label').addClass('infraLabelOpcional'); 
-    }else{
-        if( $('#divInfraAreaPaginacaoSuperior').find('select').length == 0 ){
-            $('#divInfraAreaPaginacaoSuperior').hide();
-        }else{
-            $('#divInfraAreaPaginacaoSuperior').addClass('mt-4');
-        }
-    }
+    // if( $('#divInfraAreaTabela').find('table').length == 0 ){
+    //     $('#divInfraAreaPaginacaoSuperior').hide();
+    //     $('#divInfraAreaTabela').addClass('mt-3');
+    //     $('#divInfraAreaTabela > label').addClass('infraLabelOpcional');
+    // }else{
+    //     if( $('#divInfraAreaPaginacaoSuperior').find('select').length == 0 ){
+    //         $('#divInfraAreaPaginacaoSuperior').hide();
+    //     }else{
+    //         $('#divInfraAreaPaginacaoSuperior').addClass('mt-4');
+    //     }
+    // }
 
     //animate scroll quando é grafico
     var url_string = window.location.href;
@@ -37,16 +38,10 @@ function addControlePaginacao(){
         document.getElementById('frmIntimacaoRelatorioLista').action = '<?= $strUrlPesquisar ?>';
         infraAcaoPaginar('=',this.value,'Infra');
     }
-
-
     document.getElementById('lnkInfraProximaPaginaSuperior').onchange = function(){
         infraAcaoPaginar('+',0,'Infra');
     }
-
-
 }
-
-
 
 function controlarVisualizacao(){
     var chamadaPosterior = document.getElementById('hdnAcaoOrigem').value == 'md_pet_int_relatorio_listar' ? true : false;
@@ -59,8 +54,8 @@ function controlarVisualizacao(){
         document.getElementById('espacamento').style.marginTop = '0px';
     }
 
-    if(isPesquisa){
-        document.getElementById('divTabelaIntimacao').style.display = '';
+    if(isPesquisa || (chamadaPosterior && !isGrafico)){
+        document.getElementById('divTabelaIntimacao').style.display = 'block';
         document.getElementById('divGraficos').style.display = 'none';
         document.getElementById('espacamento').style.marginTop = '0px';
     }

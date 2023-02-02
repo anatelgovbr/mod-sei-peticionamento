@@ -55,7 +55,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro Listando Poderes Legais.', $e);
         }
     }
 
@@ -104,7 +104,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro Listando Tipos de Representação.', $e);
         }
     }
 
@@ -161,7 +161,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro ao listar Situações de de Representação.', $e);
         }
     }
 
@@ -294,7 +294,7 @@ class PeticionamentoWS extends MdPetUtilWS
 
         } catch
         (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro ao consultar Representações de Pessoa Jurídica.', $e);
         }
     }
 
@@ -415,11 +415,11 @@ class PeticionamentoWS extends MdPetUtilWS
                     }
                 }
                 if (!$ret) {
-                    $infraException->lancarValidacao('Nenhum Representante encontrato para o CPF informado com os filtros utilizados.');
+                    $infraException->lancarValidacao('Nenhum Representante encontrado para o CPF informado com os filtros utilizados.');
                 }
             } else {
                 if (!empty($staSituacao) || !empty($idsTipoPoderLegal)) {
-                    $infraException->lancarValidacao('Nenhum Representante encontrato para o CPF informado com os filtros utilizados.');
+                    $infraException->lancarValidacao('Nenhum Representante encontrado para o CPF informado com os filtros utilizados.');
                 }
                 $infraException->lancarValidacao('O CPF informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
             }
@@ -427,7 +427,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro Consultar Representação de Pessoa Física.', $e);
         }
     }
 
@@ -508,7 +508,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro ao Consultar Usuário Externo.', $e);
         }
     }
 
@@ -665,7 +665,7 @@ class PeticionamentoWS extends MdPetUtilWS
                     }
                 }
                 if (!$ret) {
-                    $infraException->lancarValidacao('Nenhum Representante encontrato para o CPF informado com os filtros utilizados.');
+                    $infraException->lancarValidacao('Nenhum Representante encontrado para o CPF informado com os filtros utilizados.');
                 }
             } else {
                 $infraException->lancarValidacao('O CPF informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
@@ -674,7 +674,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro Listando Representações.', $e);
         }
     }
 
@@ -770,11 +770,11 @@ class PeticionamentoWS extends MdPetUtilWS
 
             return $retorno;
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro Listando Usuários Externos.', $e);
         }
     }
 
-    public function listarRepresentantesPessoaJuridicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
+    public function listarRepresentantesMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
     {
         try {
 
@@ -789,7 +789,6 @@ class PeticionamentoWS extends MdPetUtilWS
 
             $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-            $mdPetVincRepresentantDTO->setStrCNPJ(null, InfraDTO::$OPER_DIFERENTE);
 
             if (!empty($staSituacao)) {
                 $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
@@ -809,6 +808,7 @@ class PeticionamentoWS extends MdPetUtilWS
             $mdPetVincRepresentantDTO->retStrTipoRepresentante();
             $mdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
             $mdPetVincRepresentantDTO->retStrEmail();
+            $mdPetVincRepresentantDTO->retStrTpVinc();
 
             $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
             $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
@@ -830,19 +830,30 @@ class PeticionamentoWS extends MdPetUtilWS
                     $contatoDTO->setNumIdContato($item->getNumIdContato());
                     $contatoDTO->retStrNome();
                     $contatoDTO->retDblCpf();
+                    $contatoDTO->retStrEmail();
                     $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
 
                     if ($arrContatoDTO) {
                         $dataLimite = (empty($item->getDthDataLimite()) ? '' : $item->getDthDataLimite());
 
-                        $arrPoderLegal = $this->recuperarPoderLegal($item->getNumIdMdPetVinculoRepresent());
-                        $arrProtocolo = $this->recuperarProtocoloFormatado($item->getNumIdMdPetVinculoRepresent());
+                        $arrPoderLegal  = $this->recuperarPoderLegal($item->getNumIdMdPetVinculoRepresent());
+                        $arrProtocolo   = $this->recuperarProtocoloFormatado($item->getNumIdMdPetVinculoRepresent());
 
                         $objMdPetRepresentante = new MdPetListarRepresentantesAPIWS();
-                        $objMdPetRepresentante->setCnpjRepresentado(InfraUtil::formatarCnpj($item->getStrCNPJ()));
-                        $objMdPetRepresentante->setRazaoSocialRepresentado($item->getStrRazaoSocialNomeVinc());
+
+                        $objMdPetRepresentante->setTipoVinculo($item->getStrTpVinc());
+
+                        if($item->getStrTpVinc() == 'J'){
+                            $objMdPetRepresentante->setCnpjRepresentado(InfraUtil::formatarCnpj($item->getStrCNPJ()));
+                            $objMdPetRepresentante->setRazaoSocialRepresentado($item->getStrRazaoSocialNomeVinc());
+                        }else{
+                            $objMdPetRepresentante->setCpfRepresentado(InfraUtil::formatarCpf($item->getStrCPF()));
+                            $objMdPetRepresentante->setNomeRepresentado($item->getStrRazaoSocialNomeVinc());
+                        }
+
                         $objMdPetRepresentante->setCpfRepresentante(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                         $objMdPetRepresentante->setNomeRepresentante($arrContatoDTO->getStrNome());
+                        $objMdPetRepresentante->setEmailRepresentante($arrContatoDTO->getStrEmail());
                         $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
                         $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
                         $objMdPetRepresentante->setDataLimite($dataLimite);
@@ -861,99 +872,193 @@ class PeticionamentoWS extends MdPetUtilWS
 
             return $retorno;
         } catch (Exception $e) {
-            $this->processarExcecao($e);
+            throw new InfraException('Erro Listando Representações.', $e);
         }
     }
 
-    public function listarRepresentantesPessoaFisicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
-    {
-        try {
-
-            $pagina = $pagina ? $pagina : 1;
-            $qtdePorPagina = 1000;
-            $this->validarPagina($pagina);
-
-            InfraDebug::getInstance()->setBolLigado(false);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->limpar();
-            SessaoSEI::getInstance(false);
-
-            $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-            $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-            $mdPetVincRepresentantDTO->setStrCPF(null, InfraDTO::$OPER_DIFERENTE);
-
-            if (!empty($staSituacao)) {
-                $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
-            }
-
-            $mdPetVincRepresentantDTO->retNumIdContatoVinc();
-            $mdPetVincRepresentantDTO->retNumIdContato();
-            $mdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
-            $mdPetVincRepresentantDTO->retStrStaEstado();
-            $mdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
-            $mdPetVincRepresentantDTO->retStrCPF();
-            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
-            $mdPetVincRepresentantDTO->retDthDataLimite();
-            $mdPetVincRepresentantDTO->retStrStaAbrangencia();
-            $mdPetVincRepresentantDTO->retStrStaEstado();
-            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
-            $mdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
-            $mdPetVincRepresentantDTO->retStrEmail();
-
-            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
-            $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
-
-            // caso a pagina seja -1 não realiza a paginação
-            if ($pagina !== '-1') {
-                $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
-                $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
-            }
-
-            $arrRepres = $mdPetVincRepresentantRN->listar($mdPetVincRepresentantDTO);
-            $this->validarPaginaVazia($arrRepres, $pagina);
-
-            $ret = array();
-            if ($arrRepres) {
-                foreach ($arrRepres as $item) {
-                    $contatoRN = new ContatoRN();
-                    $contatoDTO = new ContatoDTO();
-                    $contatoDTO->setNumIdContato($item->getNumIdContato());
-                    $contatoDTO->retStrNome();
-                    $contatoDTO->retDblCpf();
-                    $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
-
-                    if ($arrContatoDTO) {
-                        $dataLimite = (empty($item->getDthDataLimite()) ? '' : $item->getDthDataLimite());
-
-                        $arrPoderLegal = $this->recuperarPoderLegal($item->getNumIdMdPetVinculoRepresent());
-                        $arrProtocolo = $this->recuperarProtocoloFormatado($item->getNumIdMdPetVinculoRepresent());
-                        $objMdPetRepresentante = new MdPetListarRepresentantesAPIWS();
-                        $objMdPetRepresentante->setCpfRepresentado(InfraUtil::formatarCpf($item->getStrCPF()));
-                        $objMdPetRepresentante->setNomeRepresentado($item->getStrRazaoSocialNomeVinc());
-                        $objMdPetRepresentante->setCpfRepresentante(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
-                        $objMdPetRepresentante->setNomeRepresentante($arrContatoDTO->getStrNome());
-                        $objMdPetRepresentante->setEmail($item->getStrEmail());
-                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
-                        $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
-                        $objMdPetRepresentante->setDataLimite($dataLimite);
-                        $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
-                        $objMdPetRepresentante->setTipoPoderesLegais($arrPoderLegal);
-                        $ret[] = $objMdPetRepresentante;
-                    }
-                }
-            }
-
-            $objMdPetRetornoListarUsuarioExternoAPIWS = new MdPetRetornoPaginadoAPIWS();
-            $objMdPetRetornoListarUsuarioExternoAPIWS->setPagina($pagina);
-            $objMdPetRetornoListarUsuarioExternoAPIWS->setTotalPaginas($this->calcularTotalPaginas($totalRegistros, $qtdePorPagina));
-            $objMdPetRetornoListarUsuarioExternoAPIWS->setListaItens($ret);
-            $retorno = array($objMdPetRetornoListarUsuarioExternoAPIWS);
-
-            return $retorno;
-        } catch (Exception $e) {
-            $this->processarExcecao($e);
-        }
-    }
+//    public function listarRepresentantesPessoaJuridicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
+//    {
+//        try {
+//
+//            $pagina = $pagina ? $pagina : 1;
+//            $qtdePorPagina = 1000;
+//            $this->validarPagina($pagina);
+//
+//            InfraDebug::getInstance()->setBolLigado(false);
+//            InfraDebug::getInstance()->setBolDebugInfra(false);
+//            InfraDebug::getInstance()->limpar();
+//            SessaoSEI::getInstance(false);
+//
+//            $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+//            $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+//            $mdPetVincRepresentantDTO->setStrCNPJ(null, InfraDTO::$OPER_DIFERENTE);
+//
+//            if (!empty($staSituacao)) {
+//                $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
+//            }
+//
+//            $mdPetVincRepresentantDTO->retNumIdContatoVinc();
+//            $mdPetVincRepresentantDTO->retNumIdContato();
+//            $mdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+//            $mdPetVincRepresentantDTO->retStrStaEstado();
+//            $mdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+//            $mdPetVincRepresentantDTO->retStrCNPJ();
+//            $mdPetVincRepresentantDTO->retStrCPF();
+//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
+//            $mdPetVincRepresentantDTO->retDthDataLimite();
+//            $mdPetVincRepresentantDTO->retStrStaAbrangencia();
+//            $mdPetVincRepresentantDTO->retStrStaEstado();
+//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
+//            $mdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+//            $mdPetVincRepresentantDTO->retStrEmail();
+//
+//            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
+//            $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
+//
+//            // caso a pagina seja -1 não realiza a paginação
+//            if ($pagina !== '-1') {
+//                $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
+//                $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
+//            }
+//
+//            $arrRepres = $mdPetVincRepresentantRN->listar($mdPetVincRepresentantDTO);
+//            $this->validarPaginaVazia($arrRepres, $pagina);
+//
+//            $ret = array();
+//            if ($arrRepres) {
+//                foreach ($arrRepres as $item) {
+//                    $contatoRN = new ContatoRN();
+//                    $contatoDTO = new ContatoDTO();
+//                    $contatoDTO->setNumIdContato($item->getNumIdContato());
+//                    $contatoDTO->retStrNome();
+//                    $contatoDTO->retDblCpf();
+//                    $contatoDTO->retStrEmail();
+//                    $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
+//
+//                    if ($arrContatoDTO) {
+//                        $dataLimite = (empty($item->getDthDataLimite()) ? '' : $item->getDthDataLimite());
+//
+//                        $arrPoderLegal = $this->recuperarPoderLegal($item->getNumIdMdPetVinculoRepresent());
+//                        $arrProtocolo = $this->recuperarProtocoloFormatado($item->getNumIdMdPetVinculoRepresent());
+//
+//                        $objMdPetRepresentante = new MdPetListarRepresentantesAPIWS();
+//                        $objMdPetRepresentante->setCnpjRepresentado(InfraUtil::formatarCnpj($item->getStrCNPJ()));
+//                        $objMdPetRepresentante->setRazaoSocialRepresentado($item->getStrRazaoSocialNomeVinc());
+//                        $objMdPetRepresentante->setCpfRepresentante(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
+//                        $objMdPetRepresentante->setNomeRepresentante($arrContatoDTO->getStrNome());
+//                        $objMdPetRepresentante->setEmailRepresentante($arrContatoDTO->getStrEmail());
+//                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
+//                        $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
+//                        $objMdPetRepresentante->setDataLimite($dataLimite);
+//                        $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
+//                        $objMdPetRepresentante->setTipoPoderesLegais($arrPoderLegal);
+//                        $ret[] = $objMdPetRepresentante;
+//                    }
+//                }
+//            }
+//
+//            $objMdPetRetornoListarUsuarioExternoAPIWS = new MdPetRetornoPaginadoAPIWS();
+//            $objMdPetRetornoListarUsuarioExternoAPIWS->setPagina($pagina);
+//            $objMdPetRetornoListarUsuarioExternoAPIWS->setTotalPaginas($this->calcularTotalPaginas($totalRegistros, $qtdePorPagina));
+//            $objMdPetRetornoListarUsuarioExternoAPIWS->setListaItens($ret);
+//            $retorno = array($objMdPetRetornoListarUsuarioExternoAPIWS);
+//
+//            return $retorno;
+//        } catch (Exception $e) {
+//            throw new InfraException('Erro Listando Representações de Pessoa Jurídica.', $e);
+//        }
+//    }
+//
+//    public function listarRepresentantesPessoaFisicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
+//    {
+//        try {
+//
+//            $pagina = $pagina ? $pagina : 1;
+//            $qtdePorPagina = 1000;
+//            $this->validarPagina($pagina);
+//
+//            InfraDebug::getInstance()->setBolLigado(false);
+//            InfraDebug::getInstance()->setBolDebugInfra(false);
+//            InfraDebug::getInstance()->limpar();
+//            SessaoSEI::getInstance(false);
+//
+//            $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+//            $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+//            $mdPetVincRepresentantDTO->setStrCPF(null, InfraDTO::$OPER_DIFERENTE);
+//
+//            if (!empty($staSituacao)) {
+//                $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
+//            }
+//
+//            $mdPetVincRepresentantDTO->retNumIdContatoVinc();
+//            $mdPetVincRepresentantDTO->retNumIdContato();
+//            $mdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+//            $mdPetVincRepresentantDTO->retStrStaEstado();
+//            $mdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+//            $mdPetVincRepresentantDTO->retStrCPF();
+//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
+//            $mdPetVincRepresentantDTO->retDthDataLimite();
+//            $mdPetVincRepresentantDTO->retStrStaAbrangencia();
+//            $mdPetVincRepresentantDTO->retStrStaEstado();
+//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
+//            $mdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+//            $mdPetVincRepresentantDTO->retStrEmail();
+//
+//            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
+//            $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
+//
+//            // caso a pagina seja -1 não realiza a paginação
+//            if ($pagina !== '-1') {
+//                $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
+//                $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
+//            }
+//
+//            $arrRepres = $mdPetVincRepresentantRN->listar($mdPetVincRepresentantDTO);
+//            $this->validarPaginaVazia($arrRepres, $pagina);
+//
+//            $ret = array();
+//            if ($arrRepres) {
+//                foreach ($arrRepres as $item) {
+//                    $contatoRN = new ContatoRN();
+//                    $contatoDTO = new ContatoDTO();
+//                    $contatoDTO->setNumIdContato($item->getNumIdContato());
+//                    $contatoDTO->retStrNome();
+//                    $contatoDTO->retDblCpf();
+//                    $contatoDTO->retStrEmail();
+//                    $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
+//
+//                    if ($arrContatoDTO) {
+//                        $dataLimite = (empty($item->getDthDataLimite()) ? '' : $item->getDthDataLimite());
+//
+//                        $arrPoderLegal = $this->recuperarPoderLegal($item->getNumIdMdPetVinculoRepresent());
+//                        $arrProtocolo = $this->recuperarProtocoloFormatado($item->getNumIdMdPetVinculoRepresent());
+//                        $objMdPetRepresentante = new MdPetListarRepresentantesAPIWS();
+//                        $objMdPetRepresentante->setCpfRepresentado(InfraUtil::formatarCpf($item->getStrCPF()));
+//                        $objMdPetRepresentante->setNomeRepresentado($item->getStrRazaoSocialNomeVinc());
+//                        $objMdPetRepresentante->setCpfRepresentante(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
+//                        $objMdPetRepresentante->setNomeRepresentante($arrContatoDTO->getStrNome());
+//                        $objMdPetRepresentante->setEmailRepresentante($arrContatoDTO->getStrEmail());
+//                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
+//                        $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
+//                        $objMdPetRepresentante->setDataLimite($dataLimite);
+//                        $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
+//                        $objMdPetRepresentante->setTipoPoderesLegais($arrPoderLegal);
+//                        $ret[] = $objMdPetRepresentante;
+//                    }
+//                }
+//            }
+//
+//            $objMdPetRetornoListarUsuarioExternoAPIWS = new MdPetRetornoPaginadoAPIWS();
+//            $objMdPetRetornoListarUsuarioExternoAPIWS->setPagina($pagina);
+//            $objMdPetRetornoListarUsuarioExternoAPIWS->setTotalPaginas($this->calcularTotalPaginas($totalRegistros, $qtdePorPagina));
+//            $objMdPetRetornoListarUsuarioExternoAPIWS->setListaItens($ret);
+//            $retorno = array($objMdPetRetornoListarUsuarioExternoAPIWS);
+//
+//            return $retorno;
+//        } catch (Exception $e) {
+//            throw new InfraException('Erro Listando Representações de Pessoa Física.', $e);
+//        }
+//    }
 
     private function calcularTotalPaginas($totalRegistros, $qtdePorPagina)
     {
@@ -1087,5 +1192,3 @@ $servidorSoap->setClass("PeticionamentoWS");
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $servidorSoap->handle();
 }
-
-?>

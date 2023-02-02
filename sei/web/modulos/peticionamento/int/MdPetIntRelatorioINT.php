@@ -91,31 +91,22 @@ class MdPetIntRelatorioINT extends InfraINT {
         return $arrGrafico;
     }
 
-        public static function _gerarGraficoBarra(){
-            $objMdPetRelatorioRN  = new MdPetIntRelatorioRN();
-            $arrDados    = $objMdPetRelatorioRN->getQtdDadosPorSituacao();
-            return MdPetGraficoINT::gerarBarra($arrDados, 'barra', MdPetGraficoINT::$_tipoBar, 'Grafico Barra', '500px');
-        }
+    public static function _gerarGraficoBarra(){
+        $objMdPetRelatorioRN  = new MdPetIntRelatorioRN();
+        $arrDados    = $objMdPetRelatorioRN->getQtdDadosPorSituacao();
+        return MdPetGraficoINT::gerarBarra($arrDados, 'barra', MdPetGraficoINT::$_tipoBar, 'Grafico Barra', '500px');
+    }
     
     public static function gerarGraficosTipoIntimacao($tipoGrafico){
-        $objMdPetRelatorioRN  = new MdPetIntRelatorioRN();
-        $arrDadosIntimacao = $objMdPetRelatorioRN->getArrGraficosIntimacao($tipoGrafico);
-        
-        return $arrDadosIntimacao;
+        return (new MdPetIntRelatorioRN())->getArrGraficosIntimacao($tipoGrafico);
     }
 
     public static function gerarGraficoGeral($tipoGrafico, $idGrafico = '0', $tamanho = 0){
 
-        if($tamanho == 0){
-            $tamanho = MdPetIntRelatorioRN::$GRAFICO_TAMANHO_PADRAO;
-        }
+        $tamanho = ($tamanho == 0) ? MdPetIntRelatorioRN::$GRAFICO_TAMANHO_PADRAO : $tamanho;
+        $arrDadosGerais = (new MdPetIntRelatorioRN())->getQtdDadosPorSituacao();
+        return static::_retornaHtmlGrafico($tipoGrafico, $arrDadosGerais, $idGrafico, $tamanho);
 
-        $htmlGraficoGeral     = '';
-        $objMdPetRelatorioRN  = new MdPetIntRelatorioRN();
-        $arrDadosGerais       = $objMdPetRelatorioRN->getQtdDadosPorSituacao();
-        $htmlGraficoGeral     = static::_retornaHtmlGrafico($tipoGrafico, $arrDadosGerais, $idGrafico, $tamanho);
-
-        return $htmlGraficoGeral;
     }
 
     public static function _verificaNulo($arrDados){

@@ -7,54 +7,38 @@
                 <?php echo $strSelGraficoGeral ?>
             </select>
         </div>
+        <div class="col-md-6 col-lg-6 col-xl-6">
+            <div class="form-group pt-2">
+                <div class="form-check pt-4">
+                    <input class="form-check-input" type="checkbox" name="ocultarTiposIntVazios" value="1" id="ocultarTiposIntVazios" checked="checked">
+                    <label class="form-check-label" for="ocultarTiposIntVazios">
+                        Ocultar Tipos de Intimação sem registro
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="divAreaTodosGraficos">
         <div class="row">
             <div class="col-12 mb-3">
-                <?php if(!is_null($htmlGrafico)){ ?>                
-                        <label id="lblGraficoTotalGeral" name="lblGraficoTotalGeral" class="infraLabelObrigatorio">Total Geral:</label>
-                        <?php echo $htmlGrafico; ?>                
-                <?php } else { ?>                    
-                        <label class="infraLabelOpcional"> Nenhum registro encontrado. </label>
-                <?php } ?>
+                <div class="card card-body shadow-sm mb-3" style="min-height: 400px">
+                    <h6 class="font-weight-bold">Total Geral:</h6>
+                    <div class="carregarGraficoAjax" data-idtipointimacao="0"></div>
+                </div>
             </div>
         </div>
-
-        <?php
-        //Se o grafico geral for null os outros serão tbm, por isso não será necessário exibir os dados abaixo.
-        if(!is_null($htmlGrafico))
-        {
-            if(count($arrGraficosTipoIntimacao) > 0)
-            {
-                $qtdGraficos   = count($arrGraficosTipoIntimacao);
-                $tamanhoUltimo = $qtdGraficos % 2 == 0 ? '7' : '13';
-        ?>
-            <div class="row">
-                <?php
-                foreach($arrGraficosTipoIntimacao as $key=> $graficoTipoIntimacao)
-                {
-                    $idLabel = 'lblGraficoTipoIntimacao_' .$key;
-                    if(!is_null($graficoTipoIntimacao['html']))
-                    {
-                        $tamanhoMarginLeft =  MdPetIntRelatorioRN::$GRAFICO_TAMANHO_PADRAO / 3;
-                ?>            
-                        <div class="col-sm-12 col-md-7 col-lg-6 mb-3">
-                            <div class="card" style="height: 100%;">
-                                <div class="card-body">
-                                    <label style="vertical-align: middle;" id="<?php echo $idLabel; ?>" name="<?php echo $idLabel; ?>" class="infraLabelObrigatorio"><?php echo $graficoTipoIntimacao['label']; ?>:</label>
-                                    <?php echo $graficoTipoIntimacao['html']; ?>
-                                </div>
-                            </div>
-                        </div>    
-                <?php 
-                    }
-                } 
-                ?>
-            </div> 
-        <?php 
-            }
-        } 
-        ?>
+        <div class="row">
+            <?php if(($tipoGrafico) != 0 && count($arrTiposIntimacao) > 0): ?>
+                <?php foreach($arrTiposIntimacao as $key => $value): ?>
+                    <div class="col-6 pb-4">
+                        <div class="card card-body shadow-sm mb-3" style="height: 100%">
+                            <h6 class="font-weight-bold"><?= $value ?>:</h6>
+                            <div class="carregarGraficoAjax" data-idtipointimacao="<?= $key ?>"></div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
     </div>
 </fieldset>

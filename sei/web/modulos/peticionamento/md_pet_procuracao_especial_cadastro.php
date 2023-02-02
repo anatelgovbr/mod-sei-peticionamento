@@ -422,11 +422,11 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
                             <!-- Alterar para multiplo -->
                             <div id="listaPoderes">
-                                <select onchange="" id="selTpPoder" name="selTpPoder[]" class="infraSelect">
+                                <select onchange="" id="selTpPoder" name="selTpPoder[]" multiple="multiple" class="infraSelect">
                                     <?php
                                     foreach ($arrObjMdPetTipoPoderLegalDTO as $key => $value) {
                                         if ($value->getNumIdTipoPoderLegal() == 1) {
-                                            echo '<option value="' . $value->getNumIdTipoPoderLegal() . '">*' . $value->getStrNome() . '</option>';
+                                            echo '<option value="' . $value->getNumIdTipoPoderLegal() . '">* ' . $value->getStrNome() . '</option>';
                                         } else {
                                             echo '<option value="' . $value->getNumIdTipoPoderLegal() . '">' . $value->getStrNome() . '</option>';
                                         }

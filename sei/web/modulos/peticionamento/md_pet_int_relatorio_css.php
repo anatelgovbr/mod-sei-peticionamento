@@ -181,4 +181,6 @@ height: 24px
     width: calc(100% - 40px);
 }
 
-
+.progress-bar {
+    background-color: #aaa;
+}

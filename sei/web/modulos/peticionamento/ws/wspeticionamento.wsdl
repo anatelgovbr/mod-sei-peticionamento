@@ -205,37 +205,40 @@
                 </xsd:all>
             </xsd:complexType>
 
-            <xsd:complexType name="ArrayOfListarRepresentantesPessoaJuridica">
+            <xsd:complexType name="ArrayOfListarRepresentantes">
                 <xsd:complexContent>
                     <xsd:restriction base="SOAP-ENC:Array">
-                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaJuridica[]"/>
+                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantes[]"/>
                     </xsd:restriction>
                 </xsd:complexContent>
             </xsd:complexType>
 
-            <xsd:complexType name="ListarRepresentantesPessoaJuridica">
+            <xsd:complexType name="ListarRepresentantes">
                 <xsd:all>
                     <xsd:element name="Pagina" type="xsd:string"/>
                     <xsd:element name="TotalPaginas" type="xsd:string"/>
-                    <xsd:element name="ListaItens" type="tns:ArrayOfListarRepresentantesPessoaJuridicaItens"/>
+                    <xsd:element name="ListaItens" type="tns:ArrayOfListarRepresentantesItens"/>
                 </xsd:all>
             </xsd:complexType>
 
-            <xsd:complexType name="ArrayOfListarRepresentantesPessoaJuridicaItens">
+            <xsd:complexType name="ArrayOfListarRepresentantesItens">
                 <xsd:complexContent>
                     <xsd:restriction base="SOAP-ENC:Array">
-                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaJuridicaItens[]"/>
+                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesItens[]"/>
                     </xsd:restriction>
                 </xsd:complexContent>
             </xsd:complexType>
 
-
-            <xsd:complexType name="ListarRepresentantesPessoaJuridicaItens">
+            <xsd:complexType name="ListarRepresentantesItens">
                 <xsd:all>
-                    <xsd:element name="CnpjRepresentado" type="xsd:string"/>
-                    <xsd:element name="RazaoSocialRepresentado" type="xsd:string"/>
+                    <xsd:element name="TipoVinculo" type="xsd:string"/>
+                    <xsd:element name="CpfRepresentado" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="NomeRepresentado" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="CnpjRepresentado" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="RazaoSocialRepresentado" type="xsd:string" minOccurs="0"/>
                     <xsd:element name="CpfRepresentante" type="xsd:string"/>
                     <xsd:element name="NomeRepresentante" type="xsd:string"/>
+                    <xsd:element name="EmailRepresentante" type="xsd:string"/>
                     <xsd:element name="StaSituacao" type="xsd:string"/>
                     <xsd:element name="StaTipoRepresentacao" type="xsd:string"/>
                     <xsd:element name="DataLimite" type="xsd:string"/>
@@ -244,44 +247,85 @@
                 </xsd:all>
             </xsd:complexType>
 
-            <xsd:complexType name="ArrayOfListarRepresentantesPessoaFisica">
-                <xsd:complexContent>
-                    <xsd:restriction base="SOAP-ENC:Array">
-                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaFisica[]"/>
-                    </xsd:restriction>
-                </xsd:complexContent>
-            </xsd:complexType>
+<!--            <xsd:complexType name="ArrayOfListarRepresentantesPessoaJuridica">-->
+<!--                <xsd:complexContent>-->
+<!--                    <xsd:restriction base="SOAP-ENC:Array">-->
+<!--                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaJuridica[]"/>-->
+<!--                    </xsd:restriction>-->
+<!--                </xsd:complexContent>-->
+<!--            </xsd:complexType>-->
 
-            <xsd:complexType name="ListarRepresentantesPessoaFisica">
-                <xsd:all>
-                    <xsd:element name="Pagina" type="xsd:string"/>
-                    <xsd:element name="TotalPaginas" type="xsd:string"/>
-                    <xsd:element name="ListaItens" type="tns:ArrayOfListarRepresentantesPessoaFisicaItens"/>
-                </xsd:all>
-            </xsd:complexType>
+<!--            <xsd:complexType name="ListarRepresentantesPessoaJuridica">-->
+<!--                <xsd:all>-->
+<!--                    <xsd:element name="Pagina" type="xsd:string"/>-->
+<!--                    <xsd:element name="TotalPaginas" type="xsd:string"/>-->
+<!--                    <xsd:element name="ListaItens" type="tns:ArrayOfListarRepresentantesPessoaJuridicaItens"/>-->
+<!--                </xsd:all>-->
+<!--            </xsd:complexType>-->
 
-            <xsd:complexType name="ArrayOfListarRepresentantesPessoaFisicaItens">
-                <xsd:complexContent>
-                    <xsd:restriction base="SOAP-ENC:Array">
-                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaFisicaItens[]"/>
-                    </xsd:restriction>
-                </xsd:complexContent>
-            </xsd:complexType>
+<!--            <xsd:complexType name="ArrayOfListarRepresentantesPessoaJuridicaItens">-->
+<!--                <xsd:complexContent>-->
+<!--                    <xsd:restriction base="SOAP-ENC:Array">-->
+<!--                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaJuridicaItens[]"/>-->
+<!--                    </xsd:restriction>-->
+<!--                </xsd:complexContent>-->
+<!--            </xsd:complexType>-->
 
 
-            <xsd:complexType name="ListarRepresentantesPessoaFisicaItens">
-                <xsd:all>
-                    <xsd:element name="CpfRepresentado" type="xsd:string"/>
-                    <xsd:element name="NomeRepresentado" type="xsd:string"/>
-                    <xsd:element name="CpfRepresentante" type="xsd:string"/>
-                    <xsd:element name="NomeRepresentante" type="xsd:string"/>
-                    <xsd:element name="StaSituacao" type="xsd:string"/>
-                    <xsd:element name="StaTipoRepresentacao" type="xsd:string"/>
-                    <xsd:element name="DataLimite" type="xsd:string"/>
-                    <xsd:element name="ProcessosAbrangencia" type="tns:ArrayOfProcessosAbrangencia"/>
-                    <xsd:element name="TipoPoderesLegais" type="tns:ArrayOfPoderesLegaisSimpes"/>
-                </xsd:all>
-            </xsd:complexType>
+<!--            <xsd:complexType name="ListarRepresentantesPessoaJuridicaItens">-->
+<!--                <xsd:all>-->
+<!--                    <xsd:element name="CnpjRepresentado" type="xsd:string"/>-->
+<!--                    <xsd:element name="RazaoSocialRepresentado" type="xsd:string"/>-->
+<!--                    <xsd:element name="CpfRepresentante" type="xsd:string"/>-->
+<!--                    <xsd:element name="NomeRepresentante" type="xsd:string"/>-->
+<!--                    <xsd:element name="EmailRepresentante" type="xsd:string"/>-->
+<!--                    <xsd:element name="StaSituacao" type="xsd:string"/>-->
+<!--                    <xsd:element name="StaTipoRepresentacao" type="xsd:string"/>-->
+<!--                    <xsd:element name="DataLimite" type="xsd:string"/>-->
+<!--                    <xsd:element name="ProcessosAbrangencia" type="tns:ArrayOfProcessosAbrangencia"/>-->
+<!--                    <xsd:element name="TipoPoderesLegais" type="tns:ArrayOfPoderesLegaisSimpes"/>-->
+<!--                </xsd:all>-->
+<!--            </xsd:complexType>-->
+
+<!--            <xsd:complexType name="ArrayOfListarRepresentantesPessoaFisica">-->
+<!--                <xsd:complexContent>-->
+<!--                    <xsd:restriction base="SOAP-ENC:Array">-->
+<!--                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaFisica[]"/>-->
+<!--                    </xsd:restriction>-->
+<!--                </xsd:complexContent>-->
+<!--            </xsd:complexType>-->
+
+<!--            <xsd:complexType name="ListarRepresentantesPessoaFisica">-->
+<!--                <xsd:all>-->
+<!--                    <xsd:element name="Pagina" type="xsd:string"/>-->
+<!--                    <xsd:element name="TotalPaginas" type="xsd:string"/>-->
+<!--                    <xsd:element name="ListaItens" type="tns:ArrayOfListarRepresentantesPessoaFisicaItens"/>-->
+<!--                </xsd:all>-->
+<!--            </xsd:complexType>-->
+
+<!--            <xsd:complexType name="ArrayOfListarRepresentantesPessoaFisicaItens">-->
+<!--                <xsd:complexContent>-->
+<!--                    <xsd:restriction base="SOAP-ENC:Array">-->
+<!--                        <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ListarRepresentantesPessoaFisicaItens[]"/>-->
+<!--                    </xsd:restriction>-->
+<!--                </xsd:complexContent>-->
+<!--            </xsd:complexType>-->
+
+
+<!--            <xsd:complexType name="ListarRepresentantesPessoaFisicaItens">-->
+<!--                <xsd:all>-->
+<!--                    <xsd:element name="CpfRepresentado" type="xsd:string"/>-->
+<!--                    <xsd:element name="NomeRepresentado" type="xsd:string"/>-->
+<!--                    <xsd:element name="CpfRepresentante" type="xsd:string"/>-->
+<!--                    <xsd:element name="NomeRepresentante" type="xsd:string"/>-->
+<!--                    <xsd:element name="EmailRepresentante" type="xsd:string"/>-->
+<!--                    <xsd:element name="StaSituacao" type="xsd:string"/>-->
+<!--                    <xsd:element name="StaTipoRepresentacao" type="xsd:string"/>-->
+<!--                    <xsd:element name="DataLimite" type="xsd:string"/>-->
+<!--                    <xsd:element name="ProcessosAbrangencia" type="tns:ArrayOfProcessosAbrangencia"/>-->
+<!--                    <xsd:element name="TipoPoderesLegais" type="tns:ArrayOfPoderesLegaisSimpes"/>-->
+<!--                </xsd:all>-->
+<!--            </xsd:complexType>-->
 
         </xsd:schema>
     </wsdl:types>
@@ -352,7 +396,7 @@
         <wsdl:part name="parametros" type="tns:ArrayOfRepresentacaoPessoaJuridica"/>
     </wsdl:message>
 
-    <wsdl:message name="listarRepresentantesPessoaJuridicaRequest">
+    <wsdl:message name="listarRepresentantesRequest">
         <wsdl:part name="SiglaSistema" type="xsd:string"/>
         <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
         <!--Opcional-->
@@ -360,21 +404,33 @@
         <wsdl:part name="Pagina" type="xsd:string"/>
     </wsdl:message>
 
-    <wsdl:message name="listarRepresentantesPessoaJuridicaResponse">
-        <wsdl:part name="parametros" type="tns:ArrayOfListarRepresentantesPessoaJuridica"/>
+    <wsdl:message name="listarRepresentantesResponse">
+        <wsdl:part name="parametros" type="tns:ArrayOfListarRepresentantes"/>
     </wsdl:message>
 
-    <wsdl:message name="listarRepresentantesPessoaFisicaRequest">
-        <wsdl:part name="SiglaSistema" type="xsd:string"/>
-        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
-        <!--Opcional-->
-        <wsdl:part name="StaSituacao" type="xsd:string"/>
-        <wsdl:part name="Pagina" type="xsd:string"/>
-    </wsdl:message>
+<!--    <wsdl:message name="listarRepresentantesPessoaJuridicaRequest">-->
+<!--        <wsdl:part name="SiglaSistema" type="xsd:string"/>-->
+<!--        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>-->
+<!--        &lt;!&ndash;Opcional&ndash;&gt;-->
+<!--        <wsdl:part name="StaSituacao" type="xsd:string"/>-->
+<!--        <wsdl:part name="Pagina" type="xsd:string"/>-->
+<!--    </wsdl:message>-->
 
-    <wsdl:message name="listarRepresentantesPessoaFisicaResponse">
-        <wsdl:part name="parametros" type="tns:ArrayOfListarRepresentantesPessoaFisica"/>
-    </wsdl:message>
+<!--    <wsdl:message name="listarRepresentantesPessoaJuridicaResponse">-->
+<!--        <wsdl:part name="parametros" type="tns:ArrayOfListarRepresentantesPessoaJuridica"/>-->
+<!--    </wsdl:message>-->
+
+<!--    <wsdl:message name="listarRepresentantesPessoaFisicaRequest">-->
+<!--        <wsdl:part name="SiglaSistema" type="xsd:string"/>-->
+<!--        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>-->
+<!--        &lt;!&ndash;Opcional&ndash;&gt;-->
+<!--        <wsdl:part name="StaSituacao" type="xsd:string"/>-->
+<!--        <wsdl:part name="Pagina" type="xsd:string"/>-->
+<!--    </wsdl:message>-->
+
+<!--    <wsdl:message name="listarRepresentantesPessoaFisicaResponse">-->
+<!--        <wsdl:part name="parametros" type="tns:ArrayOfListarRepresentantesPessoaFisica"/>-->
+<!--    </wsdl:message>-->
 
     <wsdl:message name="listarTiposRepresentacaoRequest">
         <wsdl:part name="SiglaSistema" type="xsd:string"/>
@@ -448,17 +504,23 @@
             <wsdl:output message="tns:listarUsuariosExternosResponse"/>
         </wsdl:operation>
 
-        <wsdl:operation name="listarRepresentantesPessoaJuridica">
-            <wsdl:documentation>Listar Representantes Pessoa Jurídica</wsdl:documentation>
-            <wsdl:input message="tns:listarRepresentantesPessoaJuridicaRequest"/>
-            <wsdl:output message="tns:listarRepresentantesPessoaJuridicaResponse"/>
+        <wsdl:operation name="listarRepresentantes">
+            <wsdl:documentation>Listar Representantes</wsdl:documentation>
+            <wsdl:input message="tns:listarRepresentantesRequest"/>
+            <wsdl:output message="tns:listarRepresentantesResponse"/>
         </wsdl:operation>
 
-        <wsdl:operation name="listarRepresentantesPessoaFisica">
-            <wsdl:documentation>Listar Representantes Pessoa Física</wsdl:documentation>
-            <wsdl:input message="tns:listarRepresentantesPessoaFisicaRequest"/>
-            <wsdl:output message="tns:listarRepresentantesPessoaFisicaResponse"/>
-        </wsdl:operation>
+<!--        <wsdl:operation name="listarRepresentantesPessoaJuridica">-->
+<!--            <wsdl:documentation>Listar Representantes Pessoa Jurídica</wsdl:documentation>-->
+<!--            <wsdl:input message="tns:listarRepresentantesPessoaJuridicaRequest"/>-->
+<!--            <wsdl:output message="tns:listarRepresentantesPessoaJuridicaResponse"/>-->
+<!--        </wsdl:operation>-->
+
+<!--        <wsdl:operation name="listarRepresentantesPessoaFisica">-->
+<!--            <wsdl:documentation>Listar Representantes Pessoa Física</wsdl:documentation>-->
+<!--            <wsdl:input message="tns:listarRepresentantesPessoaFisicaRequest"/>-->
+<!--            <wsdl:output message="tns:listarRepresentantesPessoaFisicaResponse"/>-->
+<!--        </wsdl:operation>-->
 
     </wsdl:portType>
 
@@ -555,7 +617,7 @@
             </wsdl:output>
         </wsdl:operation>
 
-        <wsdl:operation name="listarRepresentantesPessoaJuridica">
+        <wsdl:operation name="listarRepresentantes">
             <soap:operation soapAction="SeiPeticionamentoAction"/>
             <wsdl:input>
                 <soap:body namespace="SeiPeticionamento" use="encoded"
@@ -567,17 +629,29 @@
             </wsdl:output>
         </wsdl:operation>
 
-        <wsdl:operation name="listarRepresentantesPessoaFisica">
-            <soap:operation soapAction="SeiPeticionamentoAction"/>
-            <wsdl:input>
-                <soap:body namespace="SeiPeticionamento" use="encoded"
-                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body namespace="SeiPeticionamento" use="encoded"
-                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-            </wsdl:output>
-        </wsdl:operation>
+<!--        <wsdl:operation name="listarRepresentantesPessoaJuridica">-->
+<!--            <soap:operation soapAction="SeiPeticionamentoAction"/>-->
+<!--            <wsdl:input>-->
+<!--                <soap:body namespace="SeiPeticionamento" use="encoded"-->
+<!--                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>-->
+<!--            </wsdl:input>-->
+<!--            <wsdl:output>-->
+<!--                <soap:body namespace="SeiPeticionamento" use="encoded"-->
+<!--                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>-->
+<!--            </wsdl:output>-->
+<!--        </wsdl:operation>-->
+
+<!--        <wsdl:operation name="listarRepresentantesPessoaFisica">-->
+<!--            <soap:operation soapAction="SeiPeticionamentoAction"/>-->
+<!--            <wsdl:input>-->
+<!--                <soap:body namespace="SeiPeticionamento" use="encoded"-->
+<!--                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>-->
+<!--            </wsdl:input>-->
+<!--            <wsdl:output>-->
+<!--                <soap:body namespace="SeiPeticionamento" use="encoded"-->
+<!--                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>-->
+<!--            </wsdl:output>-->
+<!--        </wsdl:operation>-->
 
     </wsdl:binding>
 

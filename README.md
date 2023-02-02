@@ -14,10 +14,10 @@
 3. Editar o arquivo "/sei/config/ConfiguracaoSEI.php", tomando o cuidado de usar editor que não altere o charset do arquivo, para adicionar a referência à classe de integração do módulo e seu caminho relativo dentro da pasta "/sei/web/modulos" na array 'Modulos' da chave 'SEI':
 
 		'SEI' => array(
-			'URL' => 'http://[Servidor_PHP]/sei',
-			'Producao' => false,
-			'RepositorioArquivos' => '/var/sei/arquivos',
-			'Modulos' => array('PeticionamentoIntegracao' => 'peticionamento',)
+			...
+			'Modulos' => array(
+				'PeticionamentoIntegracao' => 'peticionamento',
+				),
 			),
 
 4. Antes de seguir para os próximos passos, é importante conferir se o Módulo foi corretamente declarado no arquivo "/sei/config/ConfiguracaoSEI.php". Acesse o menu **Infra > Módulos** e confira se consta a linha correspondente ao Módulo, pois, realizando os passos anteriores da forma correta, independente da execução do script de banco, o Módulo já deve ser reconhecido na tela aberta pelo menu indicado.

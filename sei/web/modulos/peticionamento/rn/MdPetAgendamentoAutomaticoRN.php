@@ -145,6 +145,21 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
     }
 
+    protected function configDebugSession(){
+        InfraDebug::getInstance()->setBolLigado(true);
+        InfraDebug::getInstance()->setBolDebugInfra(false);
+        InfraDebug::getInstance()->setBolEcho(false);
+        InfraDebug::getInstance()->limpar();
+        SessaoSEI::getInstance(false);
+    }
+
+    protected function gravaLogs($startScript){
+        $numSeg = InfraUtil::verificarTempoProcessamento($startScript);
+        InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+        InfraDebug::getInstance()->gravar('FIM');
+        LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
+    }
+
 
     /* Metodo que reintera via email acerca de Intimacao Eletronica:
      *    - Com Tipo de Resposta que Exige Resposta pelo Usuario Externo 
@@ -158,85 +173,62 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             ini_set('max_execution_time', '0');
             ini_set('memory_limit', '1024M');
 
-            InfraDebug::getInstance()->setBolLigado(true);
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            InfraDebug::getInstance()->setBolEcho(false);
-            InfraDebug::getInstance()->limpar();
-
             SessaoSEI::getInstance(false);
 
-            $numSeg = InfraUtil::verificarTempoProcessamento();
-            InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES PENDENTES EXIGE RESPOSTA');
+            $startScript = InfraUtil::verificarTempoProcessamento();
 
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
 
-            $intimacoesExigeRespostaDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData(array(true, true));
+            $intimacoesExigeRespostaDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData();
+            $intimacoesExigeRespostaJuridicoDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData($PessoaJuridica = true);
 
-            //Juridico DTO
-            $intimacoesExigeRespostaJuridicoDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemDataJuridico(array(true, true));
-
-            InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
+            if(count($intimacoesExigeRespostaDTO) == 0 || count($intimacoesExigeRespostaJuridicoDTO) == 0){
+                $this->configDebugSession();
+                InfraDebug::getInstance()->gravar('NEHUMA INTIMAÇÃO A REITERAR.');
+                $this->gravaLogs($startScript);
+            }
 
             if (count($intimacoesExigeRespostaDTO) > 0) {
                 $objMdPetIntEmailNotificacaoRN = new MdPetIntEmailNotificacaoRN();
 
-                InfraDebug::getInstance()->setBolLigado(true);
-                InfraDebug::getInstance()->setBolDebugInfra(false);
-                InfraDebug::getInstance()->setBolEcho(false);
+                $this->configDebugSession();
 
-                SessaoSEI::getInstance(false);
-
-                InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES PENDENTES EXIGE RESPOSTA');
-                InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaDTO));
+                InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES QUE EXIGEM RESPOSTA PF');
 
                 $qtdEnviadas = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacao(array($intimacoesExigeRespostaDTO, $pessoa = "F"));
                 if (is_numeric($qtdEnviadas['qtdEnviadas'])) {
-                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Reiteradas: ' . $qtdEnviadas['qtdEnviadas']);
-                }
-                if (is_numeric($qtdEnviadas['qtdNãoEnviadas'])) {
-                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Não Reiteradas: ' . $qtdEnviadas['qtdNãoEnviadas']);
+                    InfraDebug::getInstance()->gravar('Qtd. Reiterações: ' . $qtdEnviadas['qtdEnviadas']);
                 }
                 if (is_array($qtdEnviadas['arrDadosEmailNaoEnviados']) && count($qtdEnviadas['arrDadosEmailNaoEnviados']) > 0) {
                     foreach($qtdEnviadas['arrDadosEmailNaoEnviados'] as $email) {
                         InfraDebug::getInstance()->gravar('Nº Processo: ' . $email['processo'] . ' - Usuário Externo: ' . $email['nome_usuario_externo'] . ' - E-mail Usuário Externo: ' . $email['email_usuario_externo']);
                     }
                 }
+
+                $this->gravaLogs($startScript);
             }
 
             //Juridico
-            InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaJuridicoDTO));
 
             if (count($intimacoesExigeRespostaJuridicoDTO) > 0) {
                 $objMdPetIntEmailNotificacaoRN = new MdPetIntEmailNotificacaoRN();
 
-                InfraDebug::getInstance()->setBolLigado(true);
-                InfraDebug::getInstance()->setBolDebugInfra(false);
-                InfraDebug::getInstance()->setBolEcho(false);
+                $this->configDebugSession();
 
-                SessaoSEI::getInstance(false);
-
-                InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES PENDENTES EXIGE RESPOSTA');
-                InfraDebug::getInstance()->gravar('Qtd. Intimacoes Exige Resposta: ' . count($intimacoesExigeRespostaJuridicoDTO));
+                InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES QUE EXIGEM RESPOSTA PJ');
 
                 $qtdEnviadasJuridico = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacaoJuridico(array($intimacoesExigeRespostaJuridicoDTO, $pessoa = "J"));
                 if (is_numeric($qtdEnviadasJuridico['qtdEnviadas'])) {
-                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Reiteradas: ' . $qtdEnviadasJuridico['qtdEnviadas']);
-                }
-                if (is_numeric($qtdEnviadasJuridico['qtdNãoEnviadas'])) {
-                    InfraDebug::getInstance()->gravar('Qtd. Intimacoes Não Reiteradas: ' . $qtdEnviadasJuridico['qtdNãoEnviadas']);
+                    InfraDebug::getInstance()->gravar('Qtd. Reiterações: ' . $qtdEnviadasJuridico['qtdEnviadas']);
                 }
                 if (is_array($qtdEnviadasJuridico['arrDadosEmailNaoEnviados']) && count($qtdEnviadasJuridico['arrDadosEmailNaoEnviados']) > 0) {
                     foreach($qtdEnviadasJuridico['arrDadosEmailNaoEnviados'] as $email) {
                         InfraDebug::getInstance()->gravar('Nº Processo: ' . $email['processo'] . ' - Usuário Externo: ' . $email['nome_usuario_externo'] . ' - E-mail Usuário Externo: ' . $email['email_usuario_externo']);
                     }
                 }
+
+                $this->gravaLogs($startScript);
             }
-
-
-            $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
-            InfraDebug::getInstance()->gravar('FIM');
-            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(true);

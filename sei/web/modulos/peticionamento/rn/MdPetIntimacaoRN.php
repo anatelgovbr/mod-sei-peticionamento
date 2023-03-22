@@ -1940,27 +1940,107 @@ class MdPetIntimacaoRN extends InfraRN
         return $situacao;
     }
 
-    public function getIntimacoesPossuemDataConectado($params)
+    public function getIntimacoesPossuemDataConectado($PessoaJuridica = false)
     {
         try {
 
-            $VerificarRespondidas = isset($params[0]) ? $params[0] : true;
-            $ExigeResposta = isset($params[1]) ? $params[1] : false;
+            $arrObjNaoRespondidos   = [];
+            $dataReiteracao1        = date('d-m-Y', strtotime('+5 days'));
+            $dataReiteracao2        = date('d-m-Y', strtotime('+1 day'));
+
+            $objMdPetIntRelTipoRespDestDTO = new MdPetIntRelTipoRespDestDTO();
+            $objMdPetIntRelTipoRespDestDTO->retNumIdMdPetIntRelTipoResp();
+
+            $objMdPetIntRelTipoRespDestDTO->adicionarCriterio(array('DataLimite', 'DataLimite', 'DataProrrogada', 'DataProrrogada'),
+            array(InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL, InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL),
+            array($dataReiteracao1.' 00:00:00', $dataReiteracao1.' 23:59:59', $dataReiteracao1.' 00:00:00', $dataReiteracao1.' 23:59:59'),
+            array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_OR, InfraDTO::$OPER_LOGICO_AND), 'dataLimite2');
+
+            $objMdPetIntRelTipoRespDestDTO->adicionarCriterio(array('DataLimite', 'DataLimite', 'DataProrrogada', 'DataProrrogada'),
+            array(InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL, InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL),
+            array($dataReiteracao2.' 00:00:00', $dataReiteracao2.' 23:59:59', $dataReiteracao2.' 00:00:00', $dataReiteracao2.' 23:59:59'),
+            array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_OR, InfraDTO::$OPER_LOGICO_AND), 'dataLimite1');
+
+            $objMdPetIntRelTipoRespDestDTO->agruparCriterios(array('dataLimite1', 'dataLimite2'), array(InfraDTO::$OPER_LOGICO_OR));
+
+            $objMdPetIntRelTipoRespDestDTO = (new MdPetIntRelTipoRespDestRN())->listar($objMdPetIntRelTipoRespDestDTO);
+            $arrIdMdPetIntRelTipoResp = InfraArray::converterArrInfraDTO($objMdPetIntRelTipoRespDestDTO,'IdMdPetIntRelTipoResp');
+
+            if(!empty($arrIdMdPetIntRelTipoResp)){
+
+                $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
+                $objMdPetIntRelTipoRespDTO->retNumIdMdPetIntimacao();
+                $objMdPetIntRelTipoRespDTO->setStrTipoPrazoExterno('N', InfraDTO::$OPER_DIFERENTE);
+                $objMdPetIntRelTipoRespDTO->setNumIdMdPetIntRelTipoResp($arrIdMdPetIntRelTipoResp, InfraDTO::$OPER_IN);
+                $arrObjMdPetIntRelTipoRespDTO = (new MdPetIntRelTipoRespRN())->listar($objMdPetIntRelTipoRespDTO);
+
+                foreach($arrObjMdPetIntRelTipoRespDTO as $intimacao){
+
+                    // Busca os Destinatarios que ja responderam esta intimacao:
+                    $objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
+                    $objMdPetIntDestRespostaDTO->retNumIdMdPetIntRelDestinatario();
+                    $objMdPetIntDestRespostaDTO->setNumIdMdPetIntimacao($intimacao->getNumIdMdPetIntimacao());
+                    $objMdPetIntDestRespostaDTO = (new MdPetIntDestRespostaRN())->listar($objMdPetIntDestRespostaDTO);
+                    $arrMdPetIntDestResponderam = InfraArray::converterArrInfraDTO($objMdPetIntDestRespostaDTO,'IdMdPetIntRelDestinatario');
+
+                    // Busca os Desdinatarios que nao responderam para reiterar:
+                    $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                    $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+                    $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+                    $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+                    $objMdPetIntRelDestinatarioDTO->retStrNomeTipoIntimacao();
+                    $objMdPetIntRelDestinatarioDTO->retDthDataCadastro();
+                    $objMdPetIntRelDestinatarioDTO->retDthDataAceite();
+                    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($intimacao->getNumIdMdPetIntimacao());
+                    $objMdPetIntRelDestinatarioDTO->setAceiteTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
+                    $objMdPetIntRelDestinatarioDTO->setStrNomeTipoRespostaAceita(MdPetIntTipoIntimacaoRN::$EXIGE_RESPOSTA);
+                    $objMdPetIntRelDestinatarioDTO->setDistinct(true);
+                    if($PessoaJuridica){
+                        $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('S');
+                    }
+                    if(!empty($arrMdPetIntDestResponderam) && count($arrMdPetIntDestResponderam) > 0){
+                        $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrMdPetIntDestResponderam, InfraDTO::$OPER_NOT_IN);
+                    }
+                    $arrObjMdPetIntRelDestinatarios = (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntRelDestinatarioDTO);
+
+                    foreach($arrObjMdPetIntRelDestinatarios as $objMdPetIntRelDestinatario){
+                        array_push($arrObjNaoRespondidos, $objMdPetIntRelDestinatario);
+                    }
+                }
+
+            }
+
+            return $arrObjNaoRespondidos;
+
+        } catch (Exception $e) {
+            LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
+        }
+
+    }
+
+    public function BKPgetIntimacoesPossuemDataConectado($PessoaJuridica = false)
+    {
+
+        try {
+
+            $VerificarRespondidas = true;
+            $ExigeResposta = true;
 
             $arrObjMdPetIntRelDestinatarioDTO = null;
-
             $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
 
             if ($VerificarRespondidas) {
                 //RESPOSTA
                 $objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
                 $objMdPetIntDestRespostaDTO->retNumIdMdPetIntRelDestinatario();
+                $objMdPetIntDestRespostaDTO->setNumMaxRegistrosRetorno(10);
 
                 $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
                 $arrObjMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->listar($objMdPetIntDestRespostaDTO);
 
                 if (is_countable($arrObjMdPetIntDestRespostaDTO) && count($arrObjMdPetIntDestRespostaDTO) > 0) {
-                    $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
+                    $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO,'IdMdPetIntRelDestinatario');
                     //SEM RESPOSTA
                     $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
 
@@ -1975,9 +2055,10 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
             $objMdPetIntRelTipoRespDTO->setStrTipoPrazoExterno('N', InfraDTO::$OPER_DIFERENTE);
             $objMdPetIntRelTipoRespDTO->retNumIdMdPetIntimacao();
+//            $objMdPetIntRelTipoRespDTO->setNumMaxRegistrosRetorno(10);
+            $arrObjMdPetIntRelTipoRespDTO = (new MdPetIntRelTipoRespRN())->contar($objMdPetIntRelTipoRespDTO);
 
-            $objMdPetIntRelTipoRespRN = new MdPetIntRelTipoRespRN();
-            $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listar($objMdPetIntRelTipoRespDTO);
+            die(var_dump($arrObjMdPetIntRelTipoRespDTO));
 
             if (is_countable($arrObjMdPetIntRelTipoRespDTO) && count($arrObjMdPetIntRelTipoRespDTO) > 0) {
                 $arrIdMdPetIntimacao = array_unique(InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao'));
@@ -1989,6 +2070,10 @@ class MdPetIntimacaoRN extends InfraRN
 
             if ($ExigeResposta) {
                 $objMdPetIntRelDestinatarioDTO->setStrNomeTipoRespostaAceita(MdPetIntTipoIntimacaoRN::$EXIGE_RESPOSTA);
+            }
+
+            if($PessoaJuridica){
+                $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('S');
             }
 
             $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
@@ -2011,84 +2096,6 @@ class MdPetIntimacaoRN extends InfraRN
         }
 
     }
-
-
-//Juridico
-
-    public function getIntimacoesPossuemDataJuridicoConectado($params)
-    {
-
-        try {
-
-            $VerificarRespondidas = isset($params[0]) ? $params[0] : true;
-            $ExigeResposta = isset($params[1]) ? $params[1] : false;
-
-            $arrObjMdPetIntRelDestinatarioDTO = null;
-
-            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-
-            if ($VerificarRespondidas) {
-                //RESPOSTA
-                $objMdPetIntDestRespostaDTO = new MdPetIntDestRespostaDTO();
-                $objMdPetIntDestRespostaDTO->retNumIdMdPetIntRelDestinatario();
-
-                $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
-                $arrObjMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->listar($objMdPetIntDestRespostaDTO);
-
-                if (is_countable($arrObjMdPetIntDestRespostaDTO) && count($arrObjMdPetIntDestRespostaDTO) > 0) {
-                    $arrIdMdPetIntRelDestinatario = InfraArray::converterArrInfraDTO($arrObjMdPetIntDestRespostaDTO, 'IdMdPetIntRelDestinatario');
-                    //SEM RESPOSTA
-                    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($arrIdMdPetIntRelDestinatario, InfraDTO::$OPER_NOT_IN);
-
-                    unset($arrObjMdPetIntDestRespostaDTO);
-                    unset($arrIdMdPetIntRelDestinatario);
-                }
-            }
-
-            $objMdPetIntRelDestinatarioDTO->setAceiteTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
-
-            // Tipos de Resposta com algum tipo de prazo
-            $objMdPetIntRelTipoRespDTO = new MdPetIntRelTipoRespDTO();
-            $objMdPetIntRelTipoRespDTO->setStrTipoPrazoExterno('N', InfraDTO::$OPER_DIFERENTE);
-            $objMdPetIntRelTipoRespDTO->retNumIdMdPetIntimacao();
-
-            $objMdPetIntRelTipoRespRN = new MdPetIntRelTipoRespRN();
-            $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listar($objMdPetIntRelTipoRespDTO);
-
-            if (is_countable($arrObjMdPetIntRelTipoRespDTO) && count($arrObjMdPetIntRelTipoRespDTO) > 0) {
-                $arrIdMdPetIntimacao = array_unique(InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao'));
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);
-
-                unset($arrObjMdPetIntRelTipoRespDTO);
-                unset($arrIdMdPetIntimacao);
-            }
-
-            if ($ExigeResposta) {
-                $objMdPetIntRelDestinatarioDTO->setStrNomeTipoRespostaAceita(MdPetIntTipoIntimacaoRN::$EXIGE_RESPOSTA);
-            }
-
-            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
-            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
-            $objMdPetIntRelDestinatarioDTO->retNumIdContato();
-            $objMdPetIntRelDestinatarioDTO->retStrNomeTipoIntimacao();
-            $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('S');
-            $objMdPetIntRelDestinatarioDTO->retDthDataCadastro();
-            $objMdPetIntRelDestinatarioDTO->retDthDataAceite();
-
-            $objMdPetIntRelDestinatarioDTO->setDistinct(true);
-
-            $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
-            $arrObjMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-
-            return $arrObjMdPetIntRelDestinatarioDTO;
-
-        } catch (Exception $e) {
-            LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
-        }
-
-    }
-
 
     public function buscaIntimacoesCadastradas($idDocumento)
     {

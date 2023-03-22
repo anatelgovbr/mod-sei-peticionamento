@@ -200,16 +200,17 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $dadosPj = $novosDadosPj;
         }
 
-        $nomeContato = $dadosPj[0];
-        $endereco             = $dadosPj[3];
-        $enderecoPadrao = str_replace($dadosPj[4], "", $endereco);
-        $complemento = $dadosPj[5];
-        $cep                  = $dadosPj[9];
-        $bairro               = $dadosPj[6];
-        $idUf                 = $dadosPj[7];
-        $idCidade             = $dadosPj[8];
+	    // MAPEIA OS DADOS DA PJ
+	    $nomeContato            = $dadosPj[0];
+	    $endereco               = $dadosPj[3];
+	    $enderecoPadrao         = str_replace($dadosPj[4], "", $endereco);
+	    $complemento            = $dadosPj[5];
+	    $bairro                 = $dadosPj[6];
+	    $idUf                   = $dadosPj[7];
+	    $idCidade               = $dadosPj[8];
+	    $cep                    = $dadosPj[9];
 
-        $idTipoContato = $post['slTipoInteressado'];
+	    $idTipoContato = $post['slTipoInteressado'];
 
         $objContatoDTO = new ContatoDTO();
         $objContatoDTO->setStrNome($nomeContato); // Array Razao Social
@@ -1086,22 +1087,30 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
     private function _getDadosContatoVinculoPJ($idVinculo)
     {
-        $objMdPetVinculoDTO = new MdPetVinculoDTO();
-        $objMdPetVinculoRN = new MdPetVinculoRN();
-        $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
-        $objMdPetVinculoDTO->retNumIdContato();
-        $objMdPetVinculoDTO->retNumIdCidadeContatoVinc();
-        $objMdPetVinculoDTO->retStrNomeCidadeContatoVinc();
 
-        $objMdPetVinculoDTO->retNumIdUfContatoVinc();
-        $objMdPetVinculoDTO->retStrSiglaUfContatoVinc();
-        //$objMdPetVinculoDTO->retNumIdCidade();
-        //$objMdPetVinculoDTO->retStrNomeCidade();
-        $objMdPetVinculoDTO->setNumMaxRegistrosRetorno(1);
+	    $contato = null;
 
-        $objMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
+	    $objMdPetVinculoDTO = new MdPetVinculoDTO();
+	    $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
+	    $objMdPetVinculoDTO->retNumIdContato();
+	    $objMdPetVinculoDTO->setNumMaxRegistrosRetorno(1);
+	    $objMdPetVinculoDTO = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
 
-        return $objMdPetVinculoDTO;
+	    if($objMdPetVinculoDTO){
+
+		    $objContatoDTO = new ContatoDTO();
+		    $objContatoDTO->setNumIdContato($objMdPetVinculoDTO->getNumIdContato());
+		    $objContatoDTO->retNumIdContato();
+		    $objContatoDTO->retNumIdCidade();
+		    $objContatoDTO->retStrNomeCidade();
+		    $objContatoDTO->retNumIdUf();
+		    $objContatoDTO->retStrSiglaUf();
+		    $contato = (new ContatoRN())->consultarRN0324($objContatoDTO);
+
+	    }
+
+	    return $contato;
+
     }
 
     private function _getSeriesIds($arrSeries)
@@ -1185,8 +1194,11 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $orgao = $this->_getOrgaoInterno($dados['selOrgao']);
         }
 
-        $objMdPetVincDTO = $this->_getDadosContatoVinculoPJ($idVinculo);
+        $objContatoVincDTO = $this->_getDadosContatoVinculoPJ($idVinculo);
 
+        if(is_null($objContatoVincDTO)){
+	        throw new InfraException('Não foram encontrados os dados do Contato deste Vínculo.');
+        }
 
         $url = dirname(__FILE__) . '/../md_pet_vinc_usu_ext_modelo_formulario.php';
         $htmlModeloFormulario = file_get_contents($url);
@@ -1239,8 +1251,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $htmlModeloFormulario = str_replace('@cpf', $cpf, $htmlModeloFormulario); // Nome do CPF
         $htmlModeloFormulario = str_replace('@cnpjVinculo', $dados['txtNumeroCnpj'], $htmlModeloFormulario); // Cnpj do vinculo
         $htmlModeloFormulario = str_replace('@razaoSocial', $razaoSocial, $htmlModeloFormulario); // Razao Social
-        $htmlModeloFormulario = str_replace('@uf', $objMdPetVincDTO->getStrSiglaUfContatoVinc(), $htmlModeloFormulario); // Uf
-        $htmlModeloFormulario = str_replace('@cidade', $objMdPetVincDTO->getStrNomeCidadeContatoVinc(), $htmlModeloFormulario); // Cidade
+        $htmlModeloFormulario = str_replace('@uf', $objContatoVincDTO->getStrSiglaUf(), $htmlModeloFormulario); // Uf
+        $htmlModeloFormulario = str_replace('@cidade', $objContatoVincDTO->getStrNomeCidade(), $htmlModeloFormulario); // Cidade
         $htmlModeloFormulario = str_replace('@endereco', $endereco, $htmlModeloFormulario); // logradouro
         $htmlModeloFormulario = str_replace('@bairro', $bairro, $htmlModeloFormulario); // bairro do logradouro
         $htmlModeloFormulario = str_replace('@cep', $cep, $htmlModeloFormulario); // cep do logradouro

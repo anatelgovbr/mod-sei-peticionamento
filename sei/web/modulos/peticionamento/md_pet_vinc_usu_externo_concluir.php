@@ -41,13 +41,16 @@ try {
 
       $objMdPetProcessoRN = new MdPetProcessoRN();
       $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
+      $strSubTitulo = 'Cadastro de Responsável Legal';
 
       if (isset($_POST['pwdsenhaSEI'])) {
+
         $arrParam = array();
         $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
         $objMdPetProcessoRN->validarSenha($arrParam);
         $params['pwdsenhaSEI'] = '***********';
         $_POST['pwdsenhaSEI'] = '***********';
+
         // organizando tabela procuradores
         if ($_POST['hdnTbUsuarioProcuracao']!=''){
             $dadosProcuradorTemp = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbUsuarioProcuracao']);
@@ -63,112 +66,163 @@ try {
             $_POST['hdnTbUsuarioProcuracao'] = PaginaSEIExterna::getInstance()->gerarItensTabelaDinamica($dadosProcurador);
         }
 
-        $dados = $_POST;
-        $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
-        $dados['idContato'] = $idContato;
+          $dados = $_POST;
+          $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
+          $dados['idContato'] = $idContato;
 
-        $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
+          // VERIFICA SE JA EXISTE VINCULACAO
+          $objMdPetVinculoDTO = new MdPetVinculoDTO();
+          $objMdPetVinculoDTO->setNumIdContato($dados['idContato']); // REPRESENTADO
+	      $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+	      $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+          $objMdPetVinculoDTO->setOrdNumIdMdPetVinculo(InfraDTO::$TIPO_ORDENACAO_ASC);
+          $objMdPetVinculoDTO->retNumIdContato();
+          $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+          $objMdPetVinculoDTO->retNumIdContatoRepresentante();
+          $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
+          $arrIdVinculo = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoDTO, 'IdMdPetVinculo');
 
+          // PEGA O CONTATO DO USUARIO LOGADO
+          $objUsuarioDTO = new UsuarioDTO();
+          $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+          $objUsuarioDTO->retNumIdContato();
+          $objUsuarioDTO->retStrNome();
+          $objUsuarioLogado = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
 
-        $idRecibo = $reciboGerado->getNumIdReciboPeticionamento();
+          if(!empty($arrIdVinculo) && count($arrIdVinculo) > 0){
 
-	// Temporários apagando
-        $arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbDocumento']);
+	          if($objUsuarioLogado->getNumIdContato() == $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante()){
 
-        foreach ($arquivos_enviados as $arquivo_enviado) {
-            unlink(DIR_SEI_TEMP.'/'.$arquivo_enviado[7]);
-        }
+	              echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">O Usuário logado ('.$objUsuarioLogado->getStrNome().') já possui vínculo de Responsável Legal com este CNPJ.</p>';
+		          echo "<script>";
+		          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
+		          echo "</script>";
+		          die;
 
-        //executar javascript para fechar janela filha e redirecionar janela pai para a tela de detalhes do recibo que foi gerado
-//        $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-//          $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar&id_orgao_acesso_externo=0&infra_hash=6f611cf79074bde0d5430b580497d37a"
+	          }else{
 
-        $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-        $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+		          $dados['hdnIdVinculo'] = $arrIdVinculo[0];
+		          $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
-//          //removendo atributos da sessao
-//          if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
-//              SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
-//          }
-//
-//          if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
-//              SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
-//          }
-//
-//          if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoEssencial') ){
-//              SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoEssencial');
-//          }
-//
-//          if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoComplementar') ){
-//              SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoComplementar');
-//          }
-//
-//          if( SessaoSEIExterna::getInstance()->isSetAtributo('idDocPrincipalGerado') ){
-//              SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
-//          }
+		          if(!is_numeric($idRecibo)){
+			          echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Vinculação de Novo Responsável Legal.</p>';
+			          echo "<script>";
+			          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
+			          echo "</script>";
+		          }
 
-            echo "<script>";
-            echo "window.parent.location = '" . $urlAssinada . "';";
-            echo " window.parent.focus();";
-            echo " window.close();";
-            echo "</script>";
-            die;
+		          $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+		          $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
+		          echo "<script>";
+		          echo "window.parent.location = '" . $urlAssinada . "';";
+		          echo " window.parent.focus();";
+		          echo " window.close();";
+		          echo "</script>";
+		          die;
+
+              }
+
+          }else{
+
+              $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
+              $idRecibo = $reciboGerado->getNumIdReciboPeticionamento();
+
+              // Temporários apagando
+              $arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbDocumento']);
+
+              foreach ($arquivos_enviados as $arquivo_enviado) {
+                  unlink(DIR_SEI_TEMP.'/'.$arquivo_enviado[7]);
+              }
+
+              $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+              $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
+              echo "<script>";
+              echo "window.parent.location = '" . $urlAssinada . "';";
+              echo " window.parent.focus();";
+              echo " window.close();";
+              echo "</script>";
+              die;
+
+          }
+
       }
 
       break;
 
       case 'md_pet_usuario_ext_vinc_pj_concluir_alt':
+
           $objMdPetProcessoRN = new MdPetProcessoRN();
           $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
+	      $strSubTitulo = 'Substituição/Atualização de Representente Legal';
 
           if (isset($_POST['pwdsenhaSEI'])) {
+
               $arrParam = array();
               $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
               $dados = $_POST;
 
               $objMdPetProcessoRN->validarSenha($arrParam);
-              $dados       = $_POST;
               $dados['isAlteracaoCrud'] = true;
-              $idContato   = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
+              $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
               $dados['idContato'] = $idContato;
 
+	          // VERIFICA SE JA EXISTE VINCULACAO
+	          $objMdPetVinculoDTO = new MdPetVinculoDTO();
+	          $objMdPetVinculoDTO->setNumIdContato($dados['idContato']); // REPRESENTADO
+	          $objMdPetVinculoDTO->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
+	          $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+	          $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+	          $objMdPetVinculoDTO->setOrdNumIdMdPetVinculo(InfraDTO::$TIPO_ORDENACAO_ASC);
+	          $objMdPetVinculoDTO->retNumIdContato();
+	          $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+	          $objMdPetVinculoDTO->retNumIdContatoRepresentante();
+	          $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
+	          $arrIdVinculo = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoDTO, 'IdMdPetVinculo');
 
-              // Verifica se o vinculo ja existe antes de prosseguir
-              $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-	          $objMdPetVincRepresentantDTO->setNumIdContato($dados['idContato']);
-	          $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
-	          $existeVinculo = (new MdPetVincRepresentantRN())->contar($objMdPetVincRepresentantDTO);
+	          // PEGA O CONTATO DO USUARIO LOGADO
+	          $objUsuarioDTO = new UsuarioDTO();
+	          $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+	          $objUsuarioDTO->retNumIdContato();
+	          $objUsuarioDTO->retStrNome();
+	          $objUsuarioLogado = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
 
-	          if($existeVinculo > 0){
+	          if(!empty($arrIdVinculo) && count($arrIdVinculo) > 0){
 
-	              echo "<script>";
-		          echo "alert('O vnculo com esta Pessoa Jurdica já existe!');";
-                  echo "parent.infraFecharJanelaModal();";
-		          echo "</script>";
-		          die;
+		          if($objUsuarioLogado->getNumIdContato() == $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante()){
 
-              }else{
+			          // Impede que o Representante Legal se vincule novamente
+		              echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">O Usuário logado ('.$objUsuarioLogado->getStrNome().') já possui vínculo de Responsável Legal com este CNPJ.</p>';
+			          echo "<script>";
+			          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
+			          echo "</script>";
+			          die();
 
-		          $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
+		          }else{
 
-		          if(!is_numeric($idRecibo)){
+		              // Realiza a substituição do Responsável Legal
+			          $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
-                      echo "<script>";
-                      echo "alert('Erro ao realizar o processo de Vinculação de Novo Responsável Legal.');";
-                      echo "parent.infraFecharJanelaModal();";
-                      echo "</script>";
-                      die;
+			          if(!is_numeric($idRecibo)){
+				          echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Alteração de Responsável Legal.</p>';
+				          echo "<script>";
+				          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
+				          echo "</script>";
+				          die();
+			          }
+
+		          $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+		          $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
+			          echo "<script>";
+			          echo "window.parent.location = '" . $urlAssinada . "';";
+			          echo " window.parent.focus();";
+			          echo " window.close();";
+			          echo "</script>";
+			          die();
 
                   }
-
-                  $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-                  $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
-
-                  echo "<script>";
-                  echo "parent.infraFecharJanelaModal();";
-                  echo "parent.location = '" . $urlAssinada . "';";
-                  echo "</script>";
-                  die;
 
 	          }
 
@@ -176,7 +230,48 @@ try {
 
       break;
 
-          default:
+	  case 'md_pet_usuario_ext_vinc_pj_concluir_atos':
+
+		  $objMdPetProcessoRN = new MdPetProcessoRN();
+		  $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
+		  $strSubTitulo = 'Atualização de Atos Constitutivos de Representente Legal';
+
+		  if (isset($_POST['pwdsenhaSEI'])) {
+
+			  $arrParam = array();
+			  $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
+			  $dados = $_POST;
+
+			  $objMdPetProcessoRN->validarSenha($arrParam);
+			  $dados['isAlteracaoCrud'] = true;
+			  $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
+			  $dados['idContato'] = $idContato;
+
+			  $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
+
+			  if(!is_numeric($idRecibo)){
+				  echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Alteração de Responsável Legal.</p>';
+				  echo "<script>";
+				  echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
+				  echo "</script>";
+				  die();
+			  }
+
+			  $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+			  $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
+			  echo "<script>";
+			  echo "window.parent.location = '" . $urlAssinada . "';";
+			  echo " window.parent.focus();";
+			  echo " window.close();";
+			  echo "</script>";
+			  die();
+
+		  }
+
+		  break;
+
+	  default:
       throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
   }
 
@@ -227,6 +322,7 @@ $arrComandos = array();
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="a" name="Assinar" value="Assinar" onclick="assinar()" class="infraButton"><span class="infraTeclaAtalho">A</span>ssinar</button>';
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 ?>
+
 <form id="frmConcluir" method="post" onsubmit="return assinar();"
       action="<?= PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
   <?
@@ -236,7 +332,7 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
 
     <div class="row">
         <div class="col-12">
-            <p class="text-justify">A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
+            <p class="text-justify"><span style="display: none"><?= $strSubTitulo ?></span>A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
         </div>
     </div>
 

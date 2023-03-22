@@ -78,6 +78,7 @@ if(!$stConsultar) {
 <input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?php echo $idMdPetVinculo?>"/>
 <input type="hidden" name="hdnStaWebService" id="hdnStaWebService" value="<?= $stWebService ?>"/>
 <input type="hidden" name="hdnIsWebServiceHabilitado" id="hdnIsWebServiceHabilitado" value=""/>
+<input type="hidden" name="hdnStrTipo" id="hdnStrTipo" value="<?= $strTipo ?>"/>
 
 <?php
 PaginaSEIExterna::getInstance()->fecharAreaDados();

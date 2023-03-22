@@ -127,8 +127,8 @@ $arrComandos = array();
            $objMdPetVinculoDTO->setNumIdMdPetVinculo($arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo());
            $objMdPetVinculoRN = new MdPetVinculoRN();
            $objMdPetVinculoRN = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
-           if(count($objMdPetVinculoRN) > 0){
-           $strResultado .= '<td valign="middle">'.$objMdPetVinculoRN->getStrProtocoloFormatado().'</td>';
+           if(!empty($objMdPetVinculoRN)){
+                $strResultado .= '<td valign="middle">'.$objMdPetVinculoRN->getStrProtocoloFormatado().'</td>';
            }
            //Fim Recuperando Processo
 

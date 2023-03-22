@@ -12,8 +12,8 @@
         </ol>
     </label>
 </div>
-<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Usuário Externo Substituído como Responsável Legal:</p>
-<table width="100%" style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;border-collapse: collapse;">
+<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;@p_estilo_substituido">Usuário Externo Substituído como Responsável Legal:</p>
+<table width="100%" style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;border-collapse: collapse;@table_estilo_substituido">
     <tr>
         <td style="font-weight: bold;font-weight: normal; background: #ffffff;width: 20%; text-align: left; padding: 8px; padding-left: 35px;">Nome:</td>
         <td style="font-weight: normal; background: #ffffff;text-align: left; padding: 8px;">@nomeSubstituido</td>

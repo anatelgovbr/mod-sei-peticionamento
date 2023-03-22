@@ -854,6 +854,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
              */
             case 'md_pet_usuario_ext_vinc_pj_concluir_cad':
             case 'md_pet_usuario_ext_vinc_pj_concluir_alt':
+            case 'md_pet_usuario_ext_vinc_pj_concluir_atos':
                 require_once dirname(__FILE__) . '/md_pet_vinc_usu_externo_concluir.php';
                 return true;
 

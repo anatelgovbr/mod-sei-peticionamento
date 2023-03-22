@@ -94,27 +94,17 @@ if (($uf != "" && $orgaoDuplo == false) || ($oragao != "" && count($selectOrgao[
     $selectUf = MdPetTipoProcessoINT::montarSelectUf($_GET['id_tipo_procedimento']);
 }
 
-$hiddUF = "";
 //Caso o usuário tenha selecionado na uf e retorne somente uma, esconder combo
 $qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
-if ($qtdSelectUf < 2) {
+$hiddUF = $qtdSelectUf == 1 ? "display:none" : "";
 
-    $hiddUF = "display:none";
-
-}
 if ($selectCidade == null) {
-
     $selectCidade = MdPetTipoProcessoINT::montarSelectCidade($_GET['id_tipo_procedimento'], $oragao, $selectUf[0][0], $cidadeHidden);
 }
-//Caso retorne somente uma cidade
-$cidadeHidde = "display:none";
-$qtdSelectCidade = isset($selectCidade[0]) ? count($selectCidade[0]) : 0;
-if ($qtdSelectCidade == 1) {
-    $cidadeHidde = "display:none";
 
-} else if ($qtdSelectCidade > 1) {
-    $cidadeHidde = "";
-}
+//Caso retorne somente uma cidade, esconder combo
+$qtdSelectCidade = isset($selectCidade[0]) ? count($selectCidade[0]) : 0;
+$cidadeHidde = $qtdSelectCidade == 1 ? "display:none" : "";
 
 $objInfraParametroDTO = new InfraParametroDTO();
 $objMdPetParametroRN = new MdPetParametroRN();
@@ -226,21 +216,14 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                         </label><br/>
 
                         <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
-                            <?php
-                                if ($_GET['id_uf'] != null || $_GET['id_orgao'] != null) {
-                                    $qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
-
-                                    if ($qtdSelectUf > 1) {
-                                        echo '<option value=""></option>';
-                                    }
-                                    $idUf   = $selectUf[0];
-                                    $uf     = $selectUf[1];
-
-                                    for ($i = 0; $i < $qtdSelectUf; $i++) {
-                                        echo '<option value="' . $idUf[$i] . '">' . $uf[$i] . '</option>';
-                                    }
-                                }
-                            ?>
+                            <? if(count($selectUf[0]) == 1): ?>
+                                <option value="<?= $selectUf[0][0]; ?>"><?= $selectUf[1][0]; ?></option>
+                            <? elseif(count($selectUf[0]) > 1): ?>
+                                <option value=""></option>
+	                            <? for($i = 0; $i < $qtdSelectUf; $i++): ?>
+                                    <option value="<?= $selectUf[0][$i]; ?>"><?= $selectUf[1][$i]; ?></option>
+	                            <? endfor; ?>
+                            <? endif; ?>
                         </select>
                     </div>
                 </div>

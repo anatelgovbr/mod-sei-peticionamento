@@ -992,11 +992,12 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function peticionar() {
-        console.log(123);
+
         var isVinculacao       = document.getElementById('hdnIdVinculo').value == '' ? false : true;
         var isAlteracao        = document.getElementById('hdnIsAlteracao').value == '1' || isVinculacao == true ? true : false;
         var isAlteracaoRespLql = document.getElementById('isAlteracaoResponsavelLegal').value == '1' ? true : false;
         var isTabelaVazia      = document.getElementById('hdnTbDocumento').value.trim().length == 0 ? true : false;
+        var isAlteracaoAtos    = document.getElementById('hdnStrTipo').value.trim() == 'Alteração' ? true : false;
 
 
         if (document.getElementById('txtNumeroCnpj').value.trim().length == 0) {
@@ -1116,7 +1117,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
         var valorCmpAppend = '';
         document.querySelectorAll('.blocInformacaoPj').forEach(function (dados) {
-//            console.log(dados.nodeName);
             if (dados.nodeName == 'INPUT') {
                 valorCmpAppend += dados.value + '±'
             }
@@ -1129,12 +1129,13 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
         var url = '';
 
-        if(isAlteracao){
+        if(isAlteracao && !isAlteracaoAtos){ // Substituicao do Responsavel Legal
             url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_alt'))?>';
+        }else if(isAlteracao && isAlteracaoAtos){  // Alteracao Atos Constitutivos
+            url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_atos'))?>';
         }else{
             url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_cad'))?>';
         }
-
 
         parent.infraAbrirJanelaModal(url,
             770,

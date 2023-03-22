@@ -34,6 +34,9 @@ class MdPetIntDestRespostaDTO extends InfraDTO {
     $this->configurarFK('IdMdPetIntRelTipoResp','md_pet_int_rel_tipo_resp','id_md_pet_int_rel_tipo_resp');
     $this->configurarFK('IdUsuario','usuario','id_usuario');
 
+    $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetIntimacao', 'id_md_pet_intimacao', 'md_pet_int_rel_dest');
+
+
   }
 }
 ?>

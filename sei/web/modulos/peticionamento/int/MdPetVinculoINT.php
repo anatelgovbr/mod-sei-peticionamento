@@ -163,6 +163,7 @@ class MdPetVinculoINT extends InfraINT {
                         $objUsuarioRN = new UsuarioRN();
                         $objUsuarioDTO = new UsuarioDTO();
                         $objUsuarioDTO->retNumIdUsuario();
+                        $objUsuarioDTO->retStrNome();
                         $objUsuarioDTO->setNumIdContato($itemObjMdPetVincRepresentantDTO->getNumIdContato());
 
                         $arrObjUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
@@ -171,7 +172,7 @@ class MdPetVinculoINT extends InfraINT {
                                 $xml = "<dados-pj>";
                                 $xml .= "<success>false</success>\n";
                                 $xml .= "<procuracao>false</procuracao>\n";
-                                $xml .= "<msg>Este CNPJ já está vinculado a um Responsável Legal.</msg>\n";
+                                $xml .= "<msg>O Usuário logado (".$arrObjUsuarioDTO->getStrNome().") já possui vinculo de Responsável Legal com este CNPJ.</msg>\n";
                                 $xml .= "</dados-pj>";
                             }
 

@@ -128,33 +128,6 @@ class MdPetIntRelTipoRespDestRN extends InfraRN
         }
     }
 
-protected function cadastrarDataLimiteAntigosConectado(){
-	$objMdPetIntRelTipoRespDestRN = new MdPetIntRelTipoRespDestRN();
-	
-	//Cadastrando Data Prorrogada para Tipo Resposta
-	$objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-	$arrObjMdPetIntRelDestinatarioDTO = $objMdPetIntimacaoRN->getIntimacoesPossuemData( array (false,false) );
-
-	if(count($arrObjMdPetIntRelDestinatarioDTO) > 0){
-	foreach ($arrObjMdPetIntRelDestinatarioDTO as $destinatario) {
-		$idIntimacao = $destinatario->getNumIdMdPetIntimacao();
-		$idMdPetIntDest = $destinatario->getNumIdMdPetIntRelDestinatario();
-
-		$objMdPetIntPrazoRN = new MdPetIntPrazoRN();
-		
-		$arrObjMdPetIntRelTipoRespDTO = $objMdPetIntPrazoRN->retornarTipoRespostaDataLimite(array($idIntimacao, $idMdPetIntDest));
-
-		//Existe algum Tipo de Resposta que ainda possui prazo?
-		if (count($arrObjMdPetIntRelTipoRespDTO)>0) {
-		foreach ($arrObjMdPetIntRelTipoRespDTO as $objMdPetIntRelTipoRespDTO) {
-			$objMdPetIntRelTipoRespDestRN->cadastrar ( $objMdPetIntRelTipoRespDTO );
-		}
-		}
-		$i++;
-	}
-	}
-}
-
     protected function retornaObjTipoRespostaDestPorIdsConectado($idsTipoRespDest)
     {
         $arrObjDTO      = array();

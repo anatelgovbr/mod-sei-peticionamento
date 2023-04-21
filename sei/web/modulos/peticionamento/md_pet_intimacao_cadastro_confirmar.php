@@ -23,16 +23,13 @@ switch($_GET['acao']) {
             $arrComandos[] = '<button type="button" accesskey="G" name="sbmConfirmarIntimacao" id="sbmConfirmarIntimacao" value="Ciente e Gerar Intimação" class="infraButton">Ciente e <span class="infraTeclaAtalho">G</span>erar Intimação</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar" onclick="infraFecharJanelaModal();" value="Cancelar" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
-            $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
+	        $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
             $objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
-            $objMdPetIntPrazoTacitaDTO->retTodos();
+            $objMdPetIntPrazoTacitaDTO->retNumNumPrazo();
+            $objMdPetIntPrazoTacitaDTO = (new MdPetIntPrazoTacitaRN())->consultar($objMdPetIntPrazoTacitaDTO);
 
-            $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
-            $objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
-            $qtdObjMdPetIntPrazoTacitaDTO = is_array($objMdPetIntPrazoTacitaDTO) ? count($objMdPetIntPrazoTacitaDTO) : 0;
-            if ($qtdObjMdPetIntPrazoTacitaDTO > 0) {
-            	$numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
-            }
+	        $numNumPrazo = !empty($objMdPetIntPrazoTacitaDTO) ? $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() : 0;
+
             $divParcial = ($_GET["tipo"] == 'parcial') ? 'block' : 'none';
             $divIntegral = ($_GET["tipo"]== 'integral') ? 'block' : 'none';
 

@@ -1,4 +1,4 @@
-  <?
+<?
 /**
 * ANATEL
 *
@@ -106,5 +106,3 @@ class MdPetIntOrientacoesRN extends InfraRN {
 
 }
 ?>
-  
- 

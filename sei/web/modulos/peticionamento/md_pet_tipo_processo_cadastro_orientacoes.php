@@ -1,4 +1,4 @@
-  <?php 
+<?php
   try {
  require_once dirname(__FILE__).'/../../SEI.php';
   
@@ -147,7 +147,7 @@ PaginaSEI::getInstance()->abrirAreaDados('3em');
 ?>
 
 <label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">Conteúdo:</label>
-<?php 
+<?php
 PaginaSEI::getInstance()->fecharAreaDados();
 
 ?>
@@ -163,7 +163,7 @@ PaginaSEI::getInstance()->fecharAreaDados();
   </table>
   </form>
   
-  <?
+<?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

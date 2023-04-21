@@ -757,14 +757,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 }
             }
 
-            //Gerar Recibo de vinculação do protocolo
-            if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) && $acessoExterno == true) {
-
-                $recibo = $this->gerarReciboVinculacao(array($dados, $objProcedimentoDTO, $reciboDTOBasico, $objArquivoPrincipal, $idVinculo, $idRepresentant, $tpRecibo, $arrDadosProcuracao, $objUnidadeDTO));
-
-                $idDocumentoRecibo = $recibo->getDblIdDocumento();
-            }
-
             // Atualizando Conteúdo
             $this->_atualizarConteudoFormulario($idVinculo, $dados, $arrSeries, $objArquivoPrincipal, $isAlteracao);
 
@@ -800,6 +792,11 @@ class MdPetVinculoUsuExtRN extends InfraRN
                     $this->_gerarAcessoExterno($isAlteracao, $idVinculo, $idProcedimento);
                 }
             }
+
+	        //Gerar Recibo de vinculação do protocolo
+	        if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) && $acessoExterno == true) {
+		        $this->gerarReciboVinculacao(array($dados, $objProcedimentoDTO, $reciboDTOBasico, $objArquivoPrincipal, $idVinculo, $idRepresentant, $tpRecibo, $arrDadosProcuracao, $objUnidadeDTO));
+	        }
 
             $this->_remeterProcesso($objProcedimentoDTO, $objUnidadeDTO);
 

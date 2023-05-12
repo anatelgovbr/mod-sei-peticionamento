@@ -232,7 +232,7 @@
             $objFeriadoDTO->retDtaFeriado();
             $objFeriadoDTO->retStrDescricao();
 
-            if($numIdOrgao != ''){
+            if(is_numeric($numIdOrgao)){
                 $objFeriadoDTO->adicionarCriterio(array('IdOrgao','IdOrgao'),
                 array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),
                 array(null,$numIdOrgao),

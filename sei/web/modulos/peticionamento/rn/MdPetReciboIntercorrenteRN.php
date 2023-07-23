@@ -255,7 +255,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
             foreach ($arrDocumentos as $documentoDTO) {
                 $strNumeroSEI = $documentoDTO->getStrProtocoloDocumentoFormatado();
                 //concatenar tipo e complemento
-                $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNumero();
+                $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
                 $html .= '<tr>';
                 $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
                 $html .= '<td>' . $strNumeroSEI . '</td>';

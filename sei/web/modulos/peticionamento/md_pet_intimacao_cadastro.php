@@ -85,12 +85,13 @@ try {
                     if ($objMdPetIntimacaoDTO) {
                         $idProcedimento = $objDocumentoDTO->getDblIdProcedimento();
 
-                        $url = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arvore_visualizar&acao_origem=' . $_GET['acao'] . '&id_procedimento=' . $idProcedimento . '&id_documento=' . $objDocumentoDTO->getDblIdDocumento());
-                        echo "<script>";
-                        echo "window.location = '" . $url . "';";
-                        echo "window.focus();";
-                        echo "parent.infraFecharJanelaModal();";
-                        echo "</script>";
+                        $strLinkMontarArvore = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_visualizar&acao_origem='.$_GET["acao"].'&montar_visualizacao=1&arvore=1&id_procedimento='.$idProcedimento .'&id_documento='.$objDocumentoDTO->getDblIdDocumento());
+
+	                    echo "<script>";
+	                    echo "window.focus();";
+	                    echo "window.parent.document.getElementById('ifrArvore').src = '".$strLinkMontarArvore."';";
+	                    echo "parent.infraFecharJanelaModal();";
+	                    echo "</script>";
                         //necessário para atualizara a arvore do processo e mostra caneta preta de imediato
                         die;
                     }
@@ -99,18 +100,6 @@ try {
                 }
             }
 
-            /*
-            $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
-            $objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
-            $objMdPetIntPrazoTacitaDTO->retTodos();
-
-            $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
-            $objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
-            $numNumPrazo = null;
-            if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
-                $numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
-            }
-            */
             break;
 
         default:
@@ -159,7 +148,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <?= '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_orientacoes_destinatario&iframe=S') . '"></iframe>'; ?>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="margin-top:-10px">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <div id="divOptTipoPessoaFisica" class="infraDivRadio">
                             <div class="form-group">

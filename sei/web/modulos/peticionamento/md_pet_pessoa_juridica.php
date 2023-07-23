@@ -57,9 +57,8 @@ try {
   if(!empty($_POST['txtCnpj'])){
     $objDTOVinculo->setStrCNPJ(InfraUtil::retirarFormatacao($_POST['txtCnpj']));
   }
-  $objDTOVinculo->setStrStaEstado('A');
-  $objDTOVinculo->setStrSinAtivo('S');
-  $objDTOVinculo->setStrTpVinc('J');
+  $objDTOVinculo->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+  $objDTOVinculo->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
   $objDTOVinculo->setDistinct(true);
   $objDTOVinculo->retStrRazaoSocialNomeVinc();
   $objDTOVinculo->retStrCNPJ();

@@ -45,6 +45,8 @@ class MdPetIntegracaoDTO extends InfraDTO
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinCompLogradouro', 'sin_comp_lougradouro');
 
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'CodReceitaSuspAuto', 'cod_receita_suspensao_auto');
+
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinAtivo', 'sin_ativo');
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeMdPetIntegFuncionalid', 'nome', 'md_pet_adm_integ_funcion');

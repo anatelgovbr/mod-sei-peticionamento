@@ -1070,7 +1070,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 		if(!$isCadastroAcessoEx && !is_null($idAcessoEx)){
 			$idsDocAcessoAtual = $this->_getIdsDocsAtuaisAcessoExterno($idAcessoEx);
-			if(!is_null($idsDocAcessoAtual)){
+			if(!is_null($idsDocAcessoAtual) && !is_null($arrIdsDoc)){
 
 				$arrIdsRepetidos = array_intersect($arrIdsDoc, $idsDocAcessoAtual);
 

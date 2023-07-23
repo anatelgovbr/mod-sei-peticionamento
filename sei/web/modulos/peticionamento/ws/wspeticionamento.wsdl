@@ -380,7 +380,7 @@
     </wsdl:message>
 
     <wsdl:message name="listarRepresentacaoPessoaFisicaResponse">
-        <wsdl:part name="parametros" type="tns:ArrayOfRepresentacaoPessoaJuridica"/>
+        <wsdl:part name="parametros" type="tns:ArrayOfRepresentacaoPessoaFisica"/>
     </wsdl:message>
 
     <wsdl:message name="listarRepresentacaoPessoaJuridicaRequest">

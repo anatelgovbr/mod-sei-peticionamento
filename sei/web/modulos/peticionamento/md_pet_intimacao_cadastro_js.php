@@ -79,6 +79,7 @@
         } catch (err) {}
 
         objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?= $strLinkAjaxUsuarios ?>');
+        document.getElementById('txtUsuario').focus();
         objAutoCompletarUsuario.limparCampo = true;
         objAutoCompletarUsuario.tamanhoMinimo = 3;
 
@@ -165,6 +166,7 @@
     function preparaPessoaJuridica(tipo) {
 
         objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?= $strLinkAjaxUsuariosJuridicos ?>');
+        document.getElementById('txtUsuario').focus();
         objAutoCompletarUsuario.limparCampo = true;
         objAutoCompletarUsuario.tamanhoMinimo = 3;
 
@@ -317,49 +319,47 @@
     }
 
     function carregarComponenteProtocoloDisponibilizado() {
-        objLupaProtocolosDisponibilizados = new infraLupaSelect('selMainIntimacao', 'hdnProtocolosDisponibilizados', '<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=acesso_externo_protocolo_selecionar&tipo_selecao=2&id_object=objLupaProtocolosDisponibilizados&id_procedimento=' . $_GET['id_procedimento'] . '&id_documento=' . $_GET['id_documento']) ?>');
+        //objLupaProtocolosDisponibilizados = new infraLupaSelect('selProtocolosDisponibilizados', 'hdnProtocolosDisponibilizados', '<?//= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_acesso_externo_protocolos&tipo_selecao=2&tipo_protocolo=disponibilizado&id_object=objLupaProtocolosDisponibilizados&id_procedimento=' . $_GET['id_procedimento'] . '&ids_documento=' . $_GET['id_documento']) ?>//');
+        objLupaProtocolosDisponibilizados = new infraLupaSelect('selProtocolosDisponibilizados', 'hdnProtocolosDisponibilizados', '<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=acesso_externo_protocolo_selecionar&tipo_selecao=2&tipo_protocolo=disponibilizado&id_object=objLupaProtocolosDisponibilizados&id_procedimento=' . $_GET['id_procedimento'] . '&id_documento=' . $_GET['id_documento']) ?>');
+    }
 
-        objLupaProtocolosDisponibilizados.processarSelecao = function (itens) {
-            limparSelectedComponentes('A');
-            limparSelectedComponentes('P');
-            var qtd = itens.length;
-            var unicoItem = itens.length == 1;
-            var registroExistente = unicoItem ? verificarExistenciaRegistro(itens[0]) : false;
-            for (var i = 0; i < qtd; i++) {
+    function atualizarProtocoloDisponibilizado() {
 
-                if (unicoItem && registroExistente) {
-                    return false;
-                }
-
-                preencherObjSelecao(itens[i], false);
-            }
-
-
-            //addSelectedCampos(0);
-            return true;
-        }
-
-        objLupaProtocolosDisponibilizados.processarRemocao = function (itens) {
-            var qtd = itens.length;
-
-            var isPermiteExclusao = permiteExclusao(itens, 'P');
-
-            if (isPermiteExclusao) {
-                if (qtd > 0) {
-                    for (var i = 0; i < qtd; i++) {
-                        var valueOpt = itens[i].value;
-                        var remover = '#selProtocolosDisponibilizados option[value="' + valueOpt + '"]';
-                        $(remover).remove();
-                    }
-
-                    return true;
-                }
-            }
-        }
+        //todo Apos tratamento do TRF4 esse codigo sera descomentado para filtrar documentos
+        //var arrIdsDocumentosSelecionados = [];
+        //arrIdsDocumentosSelecionados.push('<?// echo $_GET['id_documento'] ?>//');
+        //
+        //Array.from(document.querySelectorAll('#selAnexosIntimacao option')).forEach(option => {
+        //    if(option.value){
+        //        arrIdsDocumentosSelecionados.push(option.value);
+        //    }
+        //});
+        //
+        //var url;
+        //var paramsAjax = {
+        //    arrIdsDocumentosSelecionados,
+        //    idProcedimento: '<?// echo $_GET['id_procedimento'] ?>//'
+        //};
+        //
+        //$.ajax({
+        //    url: '<?//= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=criar_link_assinado_doc_selecionado'); ?>//',
+        //    type: 'POST',
+        //    dataType: 'text',
+        //    data: paramsAjax,
+        //    async: false,
+        //    success: function (r) {
+        //        url = $(r).find('url').text();
+        //        objLupaProtocolosDisponibilizados = new infraLupaSelect('selProtocolosDisponibilizados', 'hdnProtocolosDisponibilizados', url);
+        //    },
+        //    error: function (e) {
+        //        console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+        //    }
+        //});
     }
 
     function carregarComponenteProtocoloIntimacao() {
-        objLupaProtocolosIntimacao = new infraLupaSelect('selMainIntimacao', 'hdnAnexosIntimacao', '<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=acesso_externo_protocolo_selecionar&tipo_selecao=2&id_object=objLupaProtocolosIntimacao&id_procedimento=' . $_GET['id_procedimento'] . '&id_documento=' . $_GET['id_documento']) ?>');
+        //objLupaProtocolosIntimacao = new infraLupaSelect('selMainIntimacao', 'hdnAnexosIntimacao', '<?//= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_acesso_externo_protocolos&tipo_selecao=2&tipo_protocolo=anexo&id_object=objLupaProtocolosIntimacao&id_procedimento=' . $_GET['id_procedimento'] . '&id_documento=' . $_GET['id_documento']) ?>//');
+        objLupaProtocolosIntimacao = new infraLupaSelect('selMainIntimacao', 'hdnAnexosIntimacao', '<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=acesso_externo_protocolo_selecionar&tipo_selecao=2&tipo_protocolo=anexo&id_object=objLupaProtocolosIntimacao&id_procedimento=' . $_GET['id_procedimento'] . '&id_documento=' . $_GET['id_documento']) ?>');
 
         objLupaProtocolosIntimacao.processarSelecao = function (itens) {
             limparSelectedComponentes('A')
@@ -1097,7 +1097,6 @@
             dataType: 'XML',
             data: paramsAjax,
             success: function (r) {
-                console.log(r);
                 var impeditivo = $(r).find('Impeditivo').text() == 'S';
                 var alerta = $(r).find('Alerta').text() == 'S';
                 var msg = $(r).find('Mensagem').text();

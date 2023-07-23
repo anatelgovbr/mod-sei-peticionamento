@@ -31,11 +31,11 @@
 
     function inicializar() {
         if ('<?=$_GET['acao']?>' == 'md_pet_intercorrente_criterio_cadastrar') {
-            carregarComponenteTipoProcessoNovo();
             document.getElementById('txtTipoProcesso').focus();
+            carregarComponenteTipoProcesso(); // Seleção Única
         } else if ('<?=$_GET['acao']?>' == 'md_pet_intercorrente_criterio_alterar') {
-            carregarComponenteTipoProcessoAlterar();
             document.getElementById('txtTipoProcesso').focus();
+            carregarComponenteTipoProcesso(); // Seleção Única
         } else if ('<?=$_GET['acao']?>' == 'md_pet_intercorrente_criterio_consultar') {
             infraDesabilitarCamposAreaDados();
         }
@@ -43,75 +43,18 @@
         infraEfeitoTabelas();
     }
 
-    function carregarComponenteTipoProcessoNovo() {
-        objLupaTipoProcesso = new infraLupaSelect('selTipoProcesso', 'hdnIdTipoProcesso', '<?=$strLinkTipoProcessoSelecao?>');
-
-        objLupaTipoProcesso.finalizarSelecao = function () {
-            var options = document.getElementById('selTipoProcesso').options;
-            if (options.length < 1) {
-                return;
-            }
-            for (var i = 0; i < options.length; i++) {
-                options[i].selected = true;
-            }
-            objLupaTipoProcesso.atualizar();
-        };
-
-        objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
-        objAutoCompletarTipoProcesso.limparCampo = false;
-        objAutoCompletarTipoProcesso.tamanhoMinimo = 3;
-        objAutoCompletarTipoProcesso.prepararExecucao = function () {
-            var itensSelecionados = '';
-            var options = document.getElementById('selTipoProcesso').options;
-
-            if (options.length > 0) {
-                for (var i = 0; i < options.length; i++) {
-                    itensSelecionados += '&itens_selecionados[]=' + options[i].value;
-                }
-            }
-            return 'palavras_pesquisa=' + document.getElementById('txtTipoProcesso').value + '&' + itensSelecionados;
-        };
-
-        objAutoCompletarTipoProcesso.processarResultado = function (id, descricao, complemento) {
-            if (id != '') {
-                var options = document.getElementById('selTipoProcesso').options;
-
-                for (var i = 0; i < options.length; i++) {
-                    if (options[i].value == id) {
-                        self.setTimeout('alert(\'Tipo de Processo [' + descricao + '] já consta na lista.\')', 100);
-                        break;
-                    }
-                }
-
-                if (i == options.length) {
-
-                    for (i = 0; i < options.length; i++) {
-                        options[i].selected = false;
-                    }
-
-                    opt = infraSelectAdicionarOption(document.getElementById('selTipoProcesso'), descricao, id);
-
-                    objLupaTipoProcesso.atualizar();
-
-                    opt.selected = true;
-                }
-
-                document.getElementById('txtTipoProcesso').value = '';
-                document.getElementById('txtTipoProcesso').focus();
-            }
-        }
-        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
-    }
-
-    function carregarComponenteTipoProcessoAlterar() {
-        objLupaTipoProcesso = new infraLupaText('txtTipoProcesso', 'hdnIdTipoProcesso', '<?=$strLinkTipoProcessoSelecao?>');
+    function carregarComponenteTipoProcesso() {
+        objLupaTipoProcesso = new infraLupaText('txtTipoProcesso', 'hdnIdTipoProcesso', '<?= $strLinkTipoProcessoSelecao ?>');
 
         objLupaTipoProcesso.finalizarSelecao = function () {
             objAutoCompletarTipoProcesso.selecionar(document.getElementById('hdnIdTipoProcesso').value, document.getElementById('txtTipoProcesso').value);
+            objAjaxIdNivelAcesso.executar();
+            changeUnidadeTipoProcesso();
+
         }
 
-        objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
-        objAutoCompletarTipoProcesso.limparCampo = false;
+        objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?= $strLinkAjaxTipoProcesso ?>');
+        objAutoCompletarTipoProcesso.limparCampo = true;
         objAutoCompletarTipoProcesso.tamanhoMinimo = 3;
         objAutoCompletarTipoProcesso.prepararExecucao = function () {
             return 'palavras_pesquisa=' + document.getElementById('txtTipoProcesso').value;
@@ -121,9 +64,12 @@
             if (id != '') {
                 document.getElementById('hdnIdTipoProcesso').value = id;
                 document.getElementById('txtTipoProcesso').value = descricao;
+                changeUnidadeTipoProcesso();
+                objAjaxIdNivelAcesso.executar();
             }
         }
-        objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
+        objAutoCompletarTipoProcesso.selecionar('<?= $strIdTipoProcesso ?>', '<?= PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente)); ?>');
+
     }
 
     function removerProcessoAssociado(remover) {
@@ -137,8 +83,9 @@
 
         var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
 
-        if (document.getElementById('selTipoProcesso').options < 1) {
+        if (infraTrim(document.getElementById('txtTipoProcesso').value) == '') {
             alert('Informe o Tipo de Processo.');
+            document.getElementById('txtTipoProcesso').focus();
             return false;
         }
 

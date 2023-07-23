@@ -85,7 +85,6 @@ $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
 $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
 $objMdPetVincRepresentantDTO->setNumIdContato($idContatoExterno);
-$objMdPetVincRepresentantDTO->setStrSinAtivo('S');
 $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
 $existenciaVinculo = true;
 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
@@ -97,9 +96,8 @@ $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
 $objMdPetVincRepresentantDTO->setNumIdContato($idContatoExterno);
-$objMdPetVincRepresentantDTO->setStrStaEstado('A');
-$objMdPetVincRepresentantDTO->setStrSinAtivo('S');
-$objMdPetVincRepresentantDTO->setStrTipoRepresentante('E');
+$objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+$objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL);
 $objMdPetVincRepresentantDTO->retNumIdContato();
 //Existencia Vinculo PRocuração Especial
 $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
@@ -601,8 +599,8 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <input type="hidden" name="hdnIdUsuario" id="hdnIdUsuario"/>
 
             <input type="hidden" name="hdnTbUsuarioProcuracao" id="hdnTbUsuarioProcuracao"/>
-            <input type="hidden" name=hdnIdContExterno" id="hdnIdContExterno" value="<?= $idContatoExterno ?>"/>
-            <input type="hidden" name=hdnCpfContExterno" id="hdnCpfContExterno" value="<?= InfraUtil::formatarCpf($cpfContato) ?>"/>
+            <input type="hidden" name="hdnIdContExterno" id="hdnIdContExterno" value="<?= $idContatoExterno ?>"/>
+            <input type="hidden" name="hdnCpfContExterno" id="hdnCpfContExterno" value="<?= InfraUtil::formatarCpf($cpfContato) ?>"/>
 
             <br/>
             <? PaginaSEIExterna::getInstance()->fecharAreaDados(); ?>

@@ -1,5 +1,8 @@
 <?php
 
+ini_set('memory_limit', '-1');
+ini_set('max_execution_time', 0);
+
 $objMdPetIntRelatorioRN  = new MdPetIntRelatorioRN();
 $objConsultaDTO    = $objMdPetIntRelatorioRN->retornaSelectsRelatorio();
 $arrObjDTO         = $objMdPetIntRelatorioRN->listarDados($objConsultaDTO);
@@ -62,13 +65,17 @@ if(empty($arrObjDTO)){
     $objPHPExcel->getActiveSheet()->getStyle('A2:I2')->getBorders()->getOutline()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 }
 
-// Indicação da criação do ficheiro
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 
-// Encaminhar o ficheiro resultante para abrir no browser ou fazer download
-header('Content-Type: application/vnd.ms-excel');
-header('Content-Disposition: attachment;filename="'.$nomeArquivo.'.xls"');
+ob_end_clean();
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="'.$nomeArquivo.'.xlsx"');
 header('Cache-Control: max-age=0');
+ob_end_clean();
+
 $objWriter->save('php://output');
+
+exit();
+
 ?>
 

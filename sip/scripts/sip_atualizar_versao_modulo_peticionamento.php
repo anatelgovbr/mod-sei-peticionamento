@@ -5,10 +5,10 @@ class MdPetAtualizadorSipRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.0.3';
+    private $versaoAtualDesteModulo = '4.1.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0');
 
     public function __construct()
     {
@@ -66,6 +66,14 @@ class MdPetAtualizadorSipRN extends InfraRN
         die;
     }
 
+	protected function normalizaVersao($versao){
+		$ultimoPonto = strrpos($versao, '.');
+		if ($ultimoPonto !== false) {
+			$versao = substr($versao, 0, $ultimoPonto) . substr($versao, $ultimoPonto + 1);
+		}
+		return $versao;
+	}
+
     protected function atualizarVersaoConectado()
     {
         try {
@@ -79,11 +87,9 @@ class MdPetAtualizadorSipRN extends InfraRN
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '1.602.1';
-            $versaoInfraFormatada = (int)str_replace('.', '', VERSAO_INFRA);
-            $versaoInfraReqFormatada = (int)str_replace('.', '', $numVersaoInfraRequerida);
+	        $numVersaoInfraRequerida = '1.612.3';
 
-            if ($versaoInfraFormatada < $versaoInfraReqFormatada) {
+	        if ($this->normalizaVersao(VERSAO_INFRA) < $this->normalizaVersao($numVersaoInfraRequerida)) {
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
 
@@ -149,6 +155,10 @@ class MdPetAtualizadorSipRN extends InfraRN
                     $this->instalarv402();
                 case '4.0.2':
                     $this->instalarv403();
+                case '4.0.3':
+                    $this->instalarv404();
+                case '4.0.4':
+                    $this->instalarv410();
                     break;
 
                 default:
@@ -1969,6 +1979,29 @@ class MdPetAtualizadorSipRN extends InfraRN
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.0.3\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    protected function instalarv404()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.0.4 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO 4.0.4 NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.0.4\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.0.4 DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+    }
+
+    protected function instalarv410()
+    {
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.1.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.1.0 DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+	    $this->logar('SCRIPT EXECUTADO EM: ' . date('d/m/Y H:i:s'));
     }
 
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)

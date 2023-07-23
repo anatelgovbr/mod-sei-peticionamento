@@ -567,7 +567,9 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 		
 		//metodo customizado de upload visando permitir download posterior do arquivo
 		public function processarUploadComRetornoDoNomeReal($strCampoArquivo, $strDirUpload, $bolArquivoTemporarioIdentificado = true){
-			
+
+			LimiteSEI::getInstance()->configurarNivel3();
+
 			$ret = '';
 			try{
 		

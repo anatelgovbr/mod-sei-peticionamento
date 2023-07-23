@@ -13,9 +13,6 @@
 
     .infraImgModulo{width: 20px;}
     .infraLabelRadio{top: 5px}
-    .fieldSetIntegracao{ height: 75px;}
+    .fieldSetIntegracao { height: 75px; margin: 1rem 0; }
     #txtEnderecoWsdl{width: 80%}
-    .fieldSetIntegracao {
-        margin-bottom: 1rem;
-    }
 </style>

@@ -268,7 +268,7 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
                                     class="infraSelect"></select>
                             <div class="botoes">
                                 <img id="imgLupaProtocolos"
-                                     onclick="objLupaProtocolosDisponibilizados.selecionar(700,500);"
+                                     onclick="atualizarProtocoloDisponibilizado(); objLupaProtocolosDisponibilizados.selecionar(700,500)"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
                                      alt="Selecionar Protocolos" title="Selecionar Protocolos" class="infraImg"/>
                                 <br/>
@@ -287,26 +287,21 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
     </div>
 </div>
 
-<!-- Hiddens -->
-<select style="display: none" multiple="multiple" id="selMainIntimacao" name="selMainIntimacao" size="12"/>
+<select style="display: none" multiple="multiple" id="selMainIntimacao" name="selMainIntimacao" size="12"></select>
+<select style="display: none" multiple="multiple" id="selMainIntimacaoProtocoloDisponibilizado" name="selMainIntimacaoProtocoloDisponibilizado" size="12"></select>
 <input type="hidden" id="hdnIsAlterar" name="hdnIsAlterar" value="<?php echo $_REQUEST['is_alterar'] ? '1' : '0' ?>"/>
 <input type="hidden" id="hdnCountIntimacoes" name="hdnCountIntimacoes" value="<?php echo $countInt ?>"/>
-<input type="hidden" id="hdnProtocolosDisponibilizados" name="hdnProtocolosDisponibilizados"
-       value="<?= $_POST['hdnProtocolosDisponibilizados'] ?>"/>
+<input type="hidden" id="hdnProtocolosDisponibilizados" name="hdnProtocolosDisponibilizados" value="<?= $_POST['hdnProtocolosDisponibilizados'] ?>"/>
 <input type="hidden" id="hdnIdDocumento" name="hdnIdDocumento" value="<?php echo $idDocumento ?>"/>
 <input type="hidden" id="hndIdDocumento" name="hndIdDocumento" value="<?= $idDocumento ?>"/>
-<input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento"
-       value="<?= array_key_exists('id_procedimento', $_REQUEST) ? $_REQUEST['id_procedimento'] : $_POST['hdnIdProcedimento'] ?>"/>
+<input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= array_key_exists('id_procedimento', $_REQUEST) ? $_REQUEST['id_procedimento'] : $_POST['hdnIdProcedimento'] ?>"/>
 <input type="hidden" id="hdnIdsDocAnexo" name="hdnIdsDocAnexo" value=""/>
 <input type="hidden" id="hdnIdsDocDisponivel" name="hdnIdsDocDisponivel" value=""/>
 
 <!-- Hiddens das constantes do Acesso Parcial / Integral -->
-<input type="hidden" id="hdnStaAcessoParcial" name="hdnStaAcessoParcial"
-       value="<?php echo MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL ?>">
-<input type="hidden" id="hdnStaAcessoIntegral" name="hdnStaAcessoIntegral"
-       value="<?php echo MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL ?>">
-<input type="hidden" id="hdnStaSemAcesso" name="hdnStaSemAcesso"
-       value="<?php echo MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO ?>">
+<input type="hidden" id="hdnStaAcessoParcial" name="hdnStaAcessoParcial" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL ?>">
+<input type="hidden" id="hdnStaAcessoIntegral" name="hdnStaAcessoIntegral" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL ?>">
+<input type="hidden" id="hdnStaSemAcesso" name="hdnStaSemAcesso" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO ?>">
 
 <style>
 

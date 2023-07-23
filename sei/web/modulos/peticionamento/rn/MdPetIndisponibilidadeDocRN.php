@@ -190,10 +190,5 @@ class MdPetIndisponibilidadeDocRN extends InfraRN {
 			$objAcessoExternoRN->excluir($arrObjAcessoExternoDTO);
 		}
 	}
-
-
-
-
-
 }
 ?>

@@ -63,3 +63,21 @@ $textoFormatadoDeclaracao = '<span style="font-weight: bold">Declaro </span>ser 
 $textoDestaqueDeclaracao = '<span style="font-weight: bold">Declaro ser o Responsável Legal pela Pessoa Jurídica cujo CNPJ informei e que 
                 concordo com os termos acima dispostos. Declaro ainda estar ciente de que o ato de inserir ou fazer 
                 inserir declaração falsa ou diversa da que devia ser escrita é crime, conforme disposto no art. 299 do Código Penal Brasileiro.</span>';
+
+if(!is_null($objContatoUsuarioEx)){
+
+    $objVinculosExistentes = '';
+
+    $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+    $objMdPetVincRepresentantDTO->setNumIdContato($objContatoUsuarioEx->getNumIdContato());
+    $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+    $objMdPetVincRepresentantDTO->setStrStaEstado([MdPetVincRepresentantRN::$RP_ATIVO, MdPetVincRepresentantRN::$RP_SUSPENSO], InfraDTO::$OPER_IN);
+    $objMdPetVincRepresentantDTO->retStrCNPJ();
+    $objMdPetVincRepresentantDTO->retStrStaEstado();
+    $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN)->listar($objMdPetVincRepresentantDTO);
+
+    if(is_countable($arrObjMdPetVincRepresentantDTO)){
+        $objVinculosExistentes = json_encode(InfraArray::converterArrInfraDTO($arrObjMdPetVincRepresentantDTO, 'StaEstado', 'CNPJ'));
+    }
+
+}

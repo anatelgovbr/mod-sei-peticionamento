@@ -140,7 +140,7 @@ try {
                     $objMdPetCriterioRN->cadastrarPadrao($objMdPetCriterioDTO);
                 } else {
                     if (empty($_POST['hdnIdTipoProcesso'])) {
-                        $objMdPetCriterioDTO->setNumIdTipoProcedimento($_POST['selTipoProcesso']);
+                        $objMdPetCriterioDTO->setNumIdTipoProcedimento($_POST['txtTipoProcesso']);
                         $objMdPetCriterioRN->cadastrar($objMdPetCriterioDTO);
                     } else {
                         $arrTipoProcesso = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnIdTipoProcesso']);
@@ -184,87 +184,40 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     ?>
     <!--  Tipo de Processo  -->
     <div class="infraAreaDados" id="divInfraAreaDados">
-        <?php
-            if($_GET['acao'] != "md_pet_intercorrente_criterio_cadastrar") {
-        ?>
-            <div class="row">
-                <div class="col-sm-12 col-md-10 col-lg-8">
-                    <div class="form-group">
-                        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">
-                            Tipo de Processos:
-                        </label>
-                        <div class="input-group mb-3">
-                            <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso"
-                                   name="txtTipoProcesso"
-                                   class="infraText form-control"
-                                   value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>"
-                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
-                                   value="<?php echo $idTipoProcesso ?>"/>
-                            <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
-                                   value="<?php echo $idMdPetTipoProcesso ?>"/>
-                            <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700, 500);"
-                                 onkeypress="objLupaTipoProcesso.selecionar(700, 500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                                 alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <img id="imgExcluirTipoProcesso"
-                                 onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                 onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                                 alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        </div>
+    <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-8">
+                <div class="form-group">
+                    <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">
+                        Tipo de Processos:
+                    </label>
+                    <div class="input-group mb-3">
+                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso"
+                            name="txtTipoProcesso"
+                            class="infraText form-control"
+                            value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>"
+                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
+                            value="<?php echo $idTipoProcesso ?>"/>
+                        <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
+                            value="<?php echo $idMdPetTipoProcesso ?>"/>
+                        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700, 500);"
+                            onkeypress="objLupaTipoProcesso.selecionar(700, 500);"
+                            src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
+                            alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
+                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <img id="imgExcluirTipoProcesso"
+                            onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+                            onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+                            src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                            alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
+                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
                 </div>
             </div>
-            <?php
-                } else {
-
-            ?>
-                <div class="row">
-                    <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
-                        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipos de
-                            Processos:</label>
-                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
-                               class="infraText InfraAutoCompletar form-control" value="<?= PaginaSEI::tratarHTML($nomeTipoProcesso) ?>"
-                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <div class="form-group">
-                            <div class="input-group mb-3" id="divIcones">
-                                <?php if ($_GET['acao'] != 'md_pet_intercorrente_criterio_consultar') { ?>
-                                    <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect form-control" multiple="multiple"
-                                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                        <?= $strTipoProcesso; ?>
-                                    </select>
-                                <?php } ?>
-                                <div class="divOpcoesUnidades">
-                                        <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-                                    src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg?<?= Icone::VERSAO ?>" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
-                                    class="infraImg"/>
-                                    <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                         onmouseover="return infraTooltipMostrar('A indicação de mais de um Tipo de Processo apenas facilita aplicar o mesmo Critério para os Tipos indicados. Ou seja, em seguida, cada um terá registro próprio de Critério para Intercorrente.', 'Ajuda');"
-                                         onmouseout="return infraTooltipOcultar();"
-                                         alt="Ajuda" class="infraImgModulo"/>
-                                    <br>
-                                <img id="imgExcluirTipoProcesso" onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>" alt="Remover Tipo de Processo" title="Remover Tipo de Processo"
-                                    class="infraImg"/>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        <?php
-            }
-        ?>
+        </div>
         <!--  Fim do Tipo de Processo -->
         <div class="row rowFieldSet2 rowFieldSet">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8">
                 <fieldset class="infraFieldset form-control">
                     <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos&nbsp;</legend>
                     <div class="form-group">
@@ -310,7 +263,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div id="dovHidden">
             <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
                    value="<?php echo $valorParametroHipoteseLegal; ?>"/>
-            <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
             <input type="hidden" id="hdnIdCriterioIntercorrentePeticionamento"
                    name="hdnIdCriterioIntercorrentePeticionamento"
                    value="<?php echo $IdCriterioIntercorrentePeticionamento ?>"/>

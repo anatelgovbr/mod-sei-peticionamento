@@ -1027,12 +1027,12 @@ class MdPetTipoProcessoINT extends InfraINT
                 }
             }
         } else {
-            $objNivelAcessoDTO->setNumIdTipoProcedimento($params['selTipoProcesso']);
+            $objNivelAcessoDTO->setNumIdTipoProcedimento($params['txtTipoProcesso']);
             $objNivelAcessoDTO->setStrStaNivelAcesso($staTipoNivelAcesso);
             $contador = $objNivelAcessoRN->contar($objNivelAcessoDTO);
             if ($contador <= 0) {
                 $objTipoProcedimentoConsultaDTO = new TipoProcedimentoDTO();
-                $objTipoProcedimentoConsultaDTO->setNumIdTipoProcedimento($params['selTipoProcesso']);
+                $objTipoProcedimentoConsultaDTO->setNumIdTipoProcedimento($params['txtTipoProcesso']);
                 $objTipoProcedimentoConsultaDTO->retTodos();
                 $objTipoProcedimentoRN = new TipoProcedimentoRN();
                 $objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoConsultaDTO);
@@ -1136,11 +1136,11 @@ class MdPetTipoProcessoINT extends InfraINT
                 }
             }
         } else {
-            $relTipoProcedimentoDTO->setNumIdTipoProcedimento($params['selTipoProcesso']);
+            $relTipoProcedimentoDTO->setNumIdTipoProcedimento($params['txtTipoProcesso']);
             $arrLista = $relTipoProcedimentoRN->listarRN0192($relTipoProcedimentoDTO);
             if (!is_array($arrLista) || count($arrLista) == 0) {
                 $objTipoProcedimentoConsultaDTO = new TipoProcedimentoDTO();
-                $objTipoProcedimentoConsultaDTO->setNumIdTipoProcedimento($params['selTipoProcesso']);
+                $objTipoProcedimentoConsultaDTO->setNumIdTipoProcedimento($params['txtTipoProcesso']);
                 $objTipoProcedimentoConsultaDTO->retTodos();
                 $objTipoProcedimentoRN = new TipoProcedimentoRN();
                 $objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoConsultaDTO);

@@ -1,6 +1,4 @@
-<?php
-    $readOnly =  'readonly="readonly"';
-?>
+<?php $readOnly =  'readonly="readonly"'; ?>
 <fieldset id="informacaoPJAlterar" class="infraFieldset sizeFieldset" style="width: auto;">
     <legend class="infraLegend">&nbsp; Informações da Pessoa Jurídica &nbsp;</legend>
     <div class="row">

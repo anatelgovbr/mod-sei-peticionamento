@@ -107,6 +107,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     var docTipoEssencial = Array();
 
+    <?php if(!empty($nivelAcessoDoc)): ?>
+    var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
+    var nivel = '<?= $nivelAcessoDoc['nivel'] ?>';
+    var hipotese = '<?= $nivelAcessoDoc['hipotese'] ?>';
+    <? endif ?>
+
     function validarQtdArquivosPrincipal() {
 
         try {
@@ -478,6 +484,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         //se nao for o "Principal", resetar a seleçao da combo "Tipo"
         if (numero != '1') {
             document.getElementById('tipoDocumento' + complemento).options[0].selected = 'selected';
+            document.querySelector('select[name="hipoteseLegal' + numero + '"]').removeAttribute("disabled");
+            document.querySelector('select[name="nivelAcesso' + numero + '"]').removeAttribute("disabled");
         }
 
         cbTipoConferencia.options[0].selected = 'selected';
@@ -1072,7 +1080,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var str = '<?= $strLinkEdicaoPJ ?>';
         }
 
-        infraAbrirJanelaModal(str, 850, 850); //modal
+        infraAbrirJanelaModal(str, 900, 900); //modal
         return;
 
     }
@@ -1170,7 +1178,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                             var str = '<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&cadastro=true') ?>';
                         }
 
-                        infraAbrirJanelaModal(str, 875, 875); //modal
+                        infraAbrirJanelaModal(str, 900, 900); //modal
 
                         return;
 
@@ -2416,6 +2424,56 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         //mudarTpProcesso();
 
     }
+
+    <?php if(!empty($nivelAcessoDoc)): ?>
+
+    $(document).ready(function(){
+
+        var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
+        var nivel = <?= $nivelAcessoDoc['nivel'] ?>;
+        var hipotese = <?= $nivelAcessoDoc['hipotese'] ?>;
+
+        $('body').on('change', '#tipoDocumentoEssencial, #tipoDocumentoComplementar', function(){
+
+            var self = $(this);
+            var selectNivelAcesso = self.closest('form').find('select[id^="nivelAcesso"]');
+            var selectHipoteseLegal = self.closest('form').find('select[id^="hipoteseLegal"]');
+
+            if(arrDocForcaNivelAcesso.indexOf(self.val()) !== -1){
+
+                selectNivelAcesso.val(nivel).prop('disabled', true);
+                selectNivelAcesso.closest('div').append('<input type="hidden" value="'+nivel+'" id="'+selectNivelAcesso.attr('id')+'" name="'+selectNivelAcesso.attr('id')+'" tabindex="-1"/>');
+
+                selectHipoteseLegal.val(hipotese).prop('disabled', true);
+                selectHipoteseLegal.closest('div').append('<input type="hidden" value="'+hipotese+'" id="'+selectHipoteseLegal.attr('id')+'" name="'+selectHipoteseLegal.attr('id')+'" tabindex="-1"/>');
+
+                self.closest('form').find('div[id^="divhipoteseLegal"]').show();
+                if(self.closest('form').find('input[id^="complemento"]').val() == '') {
+                    self.closest('form').find('input[id^="complemento"]').focus();
+                }
+
+            }else{
+
+                selectNivelAcesso.val('').prop('disabled', false);
+                selectNivelAcesso.closest('div').find('input[id="'+selectNivelAcesso.attr('id')+'"]').remove();
+
+                selectHipoteseLegal.val('').prop('disabled', false);
+                selectHipoteseLegal.closest('div').find('input[id="'+selectHipoteseLegal.attr('id')+'"]').remove();
+
+                self.closest('form').find('div[id^="divhipoteseLegal"]').hide();
+                if(self.closest('form').find('input[id^="complemento"]').val() == ''){
+                    self.closest('form').find('input[id^="complemento"]').focus();
+                }else{
+                    selectNivelAcesso.focus();
+                }
+
+            }
+
+        });
+
+    });
+
+    <?php endif; ?>
 
 
 </script>

@@ -27,7 +27,7 @@ try {
     case 'peticionamento_usuario_externo_vinc_validacao_procuracao':
 
       $objMdPetProcessoRN = new MdPetProcessoRN();
-      $strTitulo = 'Procuração Eletrônica já Existente';
+      $strTitulo = 'Conflito de Procuração Eletrônica Existente';
 
       break;
 
@@ -70,7 +70,7 @@ $arrComandos = array();
   PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
   PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
   ?>
-    <label>Não foi possível Peticionar a presente Procuração em razão de conflito de informações com Procurações Eletrônicas já existentes:</label>
+    <label>Conforme listagem abaixo, não foi possível emitir a nova Procuração Eletrônica em razão de conflito com Procuração Eletrônica já existente. Para emitir a nova Procuração deve-se revogar a Procuração existente.</label>
    <?php 
    //Inicio da Lista
    
@@ -101,10 +101,10 @@ $arrComandos = array();
     
        $strResultado = '';
 
-       $strResultado .= '<table width="99%" class="infraTable" summary="Lista de Procurações Eletrônicas">'."\n";
+       $strResultado .= '<table width="100%" class="infraTable" summary="Lista de Procurações Eletrônicas">'."\n";
        $strResultado .= '<caption class="infraCaption">'.PaginaSEI::getInstance()->gerarCaptionTabela("Procurações Eletrônicas",$numRegistros).'</caption>';
        $strResultado .= '<tr>';
-       $strResultado .= '<th class="infraTh" style="width: 150px">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Processo','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
+       $strResultado .= '<th class="infraTh" style="width: 190px">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Processo','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Procuração','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Tipo','RazaoSocialNomeVinc',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Outorgante','RazaoSocialNomeVinc',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
@@ -130,7 +130,6 @@ $arrComandos = array();
            if(!empty($objMdPetVinculoRN)){
                 $strResultado .= '<td valign="middle">'.$objMdPetVinculoRN->getStrProtocoloFormatado().'</td>';
            }
-           //Fim Recuperando Processo
 
            //Recuperando Documento
            $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
@@ -139,8 +138,7 @@ $arrComandos = array();
            $objMdPetVincDocumentoDTO->setStrTipoDocumento("E");
            $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
            $arrObjMdPetVincDocumentoRN = $objMdPetVincDocumentoRN->consultar($objMdPetVincDocumentoDTO);
-           $strResultado .= '<td valign="middle">'.$arrObjMdPetVincDocumentoRN->getStrProtocoloFormatadoProtocolo().'</td>';
-           //Fim Recuperando Documento
+           $strResultado .= '<td valign="middle" style="width: 190px">'.$arrObjMdPetVincDocumentoRN->getStrProtocoloFormatadoProtocolo().'</td>';
 
            
            $strResultado .= '<td valign="middle">'.$arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante().'</td>';
@@ -151,18 +149,19 @@ $arrComandos = array();
 
            //Detectando Abrangência e Tratando
            if($arrObjMdPetVincRepresentantDTO[$i]->getStrStaAbrangencia() == "Q" || $arrObjMdPetVincRepresentantDTO[$i]->getStrStaAbrangencia() == null){
-            $strResultado .= '<td valign="middle">Qualquer Processo em Nome do Outorgante</td>';
-            }else{
-            $strResultado .= '<td valign="middle">Processos Específicos</td>';
-            }
-
+                $strResultado .= '<td valign="middle">Qualquer Processo em Nome do Outorgante</td>';
+           }else{
+                $strResultado .= '<td valign="middle">Processos Específicos</td>';
+           }
 
            $strResultado .= '<td valign="middle">'.$arrObjMdPetVincRepresentantDTO[$i]->getDthDataLimiteValidade().'</td>';
            $strResultado .= '</td></tr>'."\n";
+
        }
+
        $strResultado .= '</table>';
+
    }
-//Fim da Lista
 
    ?>
 
@@ -170,7 +169,6 @@ $arrComandos = array();
     <input type="hidden" id="hdnTabelaProc" name="hdnTabelaProc"/>
     
    <?php PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros); ?>
-   <label>Caso seja necessário, para Peticionar a presente Procuração antes o Outorgante deve Revogá-la ou o próprio Outorgado deve Renunciá-la.</label>
 </form>
 
 <?
@@ -193,4 +191,10 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 
         window.close();
     }
+
+    $(document).ready(function(){
+        if($('div.infraAreaPaginacao').text().trim() == ''){
+            $('div.infraAreaPaginacao').height('0px');
+        }
+    });
 </script>

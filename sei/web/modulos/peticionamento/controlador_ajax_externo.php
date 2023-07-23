@@ -38,14 +38,12 @@ try{
 			//trazer todos que sejam empresas (CNPJ diferente de null), estejam ativos,
 			//e atenda ao filtro por nome e tipo de contexto informado na tela
 
-            $objContextoContatoDTO->setStrPalavrasPesquisa($_POST['palavras_pesquisa']);
-
-            $objContextoContatoDTO->adicionarCriterio(
+			$objContextoContatoDTO->adicionarCriterio(
 					//alteracoes seiv3
-					array('SinAtivo', 'IdTipoContato'),
-					array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL ),
-					array('S', $_POST['id_tipo_contexto_contato'] ),
-					array(InfraDTO::$OPER_LOGICO_AND )
+					array('Cnpj','Nome', 'SinAtivo', 'IdTipoContato'),
+					array(InfraDTO::$OPER_DIFERENTE,InfraDTO::$OPER_LIKE, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL ),
+					array(null, "%".$_POST['palavras_pesquisa']."%", 'S', $_POST['id_tipo_contexto_contato'] ),
+					array( InfraDTO::$OPER_LOGICO_AND , InfraDTO::$OPER_LOGICO_AND , InfraDTO::$OPER_LOGICO_AND )
 			);
 
 			$objContextoContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
@@ -59,24 +57,28 @@ try{
 
 	case 'md_pet_contato_auto_completar_contexto_pesquisa':
 
-        
 		//alterado para atender anatel exibir apenas nome contato
 		$objContatoDTO = new ContatoDTO();
   		$objContatoDTO->retNumIdContato();
   		$objContatoDTO->retStrSigla();
   		$objContatoDTO->retStrNome();  		
   		$objContatoDTO->setStrPalavrasPesquisa($_POST['extensao']);
-
+  		
+  		$objContatoDTO->adicionarCriterio(
+  				array('SinAtivo','Nome'),
+  				array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_LIKE ),
+  				array('S', '%'.$_POST["extensao"]. '%' ),
+  				array( InfraDTO::$OPER_LOGICO_AND ) 
+  		);
+  		
   		$objContatoDTO->setNumMaxRegistrosRetorno(50);
   		$objContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
 
         $objMdPetRelTpCtxContatoDTO = new MdPetRelTpCtxContatoDTO();
         $objMdPetTpCtxContatoRN = new MdPetTpCtxContatoRN();
-        $objMdPetRelTpCtxContatoDTO->setStrSinSelecaoInteressado('S');
-        $objMdPetRelTpCtxContatoDTO->setStrSinSistema('N');
         $objMdPetRelTpCtxContatoDTO->retTodos();
         $arrobjMdPetRelTpCtxContatoDTO = $objMdPetTpCtxContatoRN->listar( $objMdPetRelTpCtxContatoDTO );
-
+        
         if(!empty($arrobjMdPetRelTpCtxContatoDTO)){
             
         	$arrId = array();
@@ -84,21 +86,16 @@ try{
             foreach($arrobjMdPetRelTpCtxContatoDTO as $item){
                 array_push($arrId, $item->getNumIdTipoContextoContato());
             }
+
             //alteracoes seiv3
-            $objContatoDTO->adicionarCriterio(array('IdTipoContato', 'SinAtivo'),
+            $objContatoDTO->adicionarCriterio(array('IdTipoContato', 'IdTipoContato'),
                 array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL),
-                array($arrId, 'S'),
-            	array(InfraDTO::$OPER_LOGICO_AND));
-        } else {
-            $objContatoDTO->adicionarCriterio(
-                array('SinAtivo'),
-                array(InfraDTO::$OPER_IGUAL),
-                array('S')
-            );
+                array($arrId, null), 
+            	array( InfraDTO::$OPER_LOGICO_OR));
         }
 
         $objMdPetContatoRN = new MdPetContatoRN();
-        $arrObjContatoDTO = $objMdPetContatoRN->pesquisar($objContatoDTO);
+        $arrObjContatoDTO = $objMdPetContatoRN->pesquisar($objContatoDTO);        
         $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
         InfraAjax::enviarXML($xml);
         break;
@@ -141,4 +138,3 @@ try{
 }catch(Exception $e){
   InfraAjax::processarExcecao($e);
 }
-?>

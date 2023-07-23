@@ -40,6 +40,7 @@
             $objProtocoloDTO         = new ProtocoloDTO();
             $objProtocoloDTO->setStrProtocoloFormatadoPesquisa(InfraUtil::retirarFormatacao($numeroProcesso, false));
             $objProtocoloDTO = $objMdPetIntercorrenteRN->pesquisarProtocoloFormatado($objProtocoloDTO);
+
             $xml = '<Validacao>';
 
             if (!$objProtocoloDTO || $objProtocoloDTO == null || $objProtocoloDTO == '' ) {
@@ -97,6 +98,11 @@
 
             $contadorCriterioIntercorrente = $objMdPetCriterioRN->contar($objMdPetCriterioDTO);
 
+            $objMdPetCriterioDTO = new MdPetCriterioDTO();
+            $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
+            $objMdPetCriterioDTO->retTodos(true);
+            $objCriterioIntercorrentePadraoDTO = (new MdPetCriterioRN())->consultar($objMdPetCriterioDTO);
+
             $estadosReabrirRelacionado = array(ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO, ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO);
             /**
              * Verifica se:
@@ -105,10 +111,14 @@
              */
             $processoIntercorrente = 'Direto no Processo Indicado';
 
-            if ($contadorCriterioIntercorrente <= 0 && !$stRespostaIntimacao
-              || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado)) {
-              $processoIntercorrente = 'Em Processo Novo Relacionado ao Processo Indicado';
+            if ( $contadorCriterioIntercorrente <= 0 && !$stRespostaIntimacao
+                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado)
+                || ($objProtocoloDTO->getStrStaNivelAcessoGlobal() == 2 && $objCriterioIntercorrentePadraoDTO->getStrSinIntercorrenteSigiloso() == 'N') ) {
+
+                $processoIntercorrente = 'Em Processo Novo Relacionado ao Processo Indicado';
+
             } elseif ($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO) {
+
               $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
               $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
               $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
@@ -118,9 +128,8 @@
 
               $dadosProtocoloAnexador = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
               $processoIntercorrente = 'Diretamente no Processo Anexador nº ' . $dadosProtocoloAnexador->getStrProtocoloFormatadoProtocolo1();
+
             }
-
-
 
             $urlValida = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_procedimento=' . $objProcedimentoDTO->getDblIdProcedimento() . '&id_tipo_procedimento=' . $objProcedimentoDTO->getNumIdTipoProcedimento() . '&acao=md_pet_intercorrente_usu_ext_assinar&tipo_selecao=2'));
 
@@ -134,6 +143,7 @@
             $xml .= '</Validacao>';
 
             return $xml;
+
         }
 
 
@@ -346,6 +356,8 @@
         public static function montarArrDocumentoAPI($idProcedimento, $hdnTabelaDinamicaDocumento)
         {
 
+	        LimiteSEI::getInstance()->configurarNivel3();
+
             $arrItensTbDocumento = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($hdnTabelaDinamicaDocumento);
             $arrDocumentoAPI     = array();
 
@@ -354,7 +366,7 @@
                 $documentoAPI->setIdProcedimento($idProcedimento);
                 $documentoAPI->setIdSerie($itemTbDocumento[1]);
                 $documentoAPI->setDescricao($itemTbDocumento[2]);
-                $documentoAPI->setNumero($itemTbDocumento[2]);
+                $documentoAPI->setNomeArvore($itemTbDocumento[2]);
                 $documentoAPI->setNivelAcesso($itemTbDocumento[3]);
                 $documentoAPI->setIdHipoteseLegal($itemTbDocumento[4]);
                 $documentoAPI->setIdTipoConferencia($itemTbDocumento[6]);

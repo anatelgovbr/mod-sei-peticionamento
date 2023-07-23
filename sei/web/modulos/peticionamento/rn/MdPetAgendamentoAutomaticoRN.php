@@ -340,5 +340,100 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             throw new InfraException('Erro atualizando o estado das intimacoes.', $e);
         }
     }
+
+    protected function atualizarAutorrepresentacaoUsuarioExternoControlado()
+    {
+        try {
+
+            InfraDebug::getInstance()->setBolLigado(true);
+            InfraDebug::getInstance()->setBolDebugInfra(false);
+            InfraDebug::getInstance()->setBolEcho(false);
+            InfraDebug::getInstance()->limpar();
+
+            $numSeg = InfraUtil::verificarTempoProcessamento();
+            InfraDebug::getInstance()->gravar('ATUALIZANDO REGISTROS DE USUARIOS EXTERNOS AUTORREPRESENTAVEIS');
+
+
+            $objUsuarioRN = new UsuarioRN();
+            $objUsuarioDTO = new UsuarioDTO();
+            $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
+            $objUsuarioDTO->retNumIdContato();
+
+            $arrObjUsuariosAtivos =   $objUsuarioRN->listarRN0490($objUsuarioDTO);
+            $arrIdContatoUsuariosAtivos = InfraArray::converterArrInfraDTO($arrObjUsuariosAtivos,'IdContato');
+
+            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO);
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantDTO->retNumIdContato();
+
+            $arrObjMdPetVincRepresentant = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+            $arrIdMdPetVincRepresentant = InfraArray::converterArrInfraDTO($arrObjMdPetVincRepresentant,'IdContato');
+
+            // CADASTRA NOVAS REPRESENTACOES
+            $arrIdContatoUsuarioNovos = array_diff($arrIdContatoUsuariosAtivos, $arrIdMdPetVincRepresentant);
+            foreach ($arrIdContatoUsuarioNovos as $idContato){
+
+                // CADASTRAR A PESSOA FISICA QUE SERÁ REPRESENTADA
+                $objMdPetVinculoRN = new MdPetVinculoRN();
+                $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                $objMdPetVinculoDTO->setNumIdContato($idContato);
+                $objMdPetVinculoDTO->setStrSinValidado("N");
+                $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+                $objMdPetVinculoDTO->setDblIdProtocolo(null);
+                $objMdPetVinculoDTO->setStrTpVinculo('F');
+                $objMdPetVinculoDTO->setStrSinWebService("N");
+                $objMdPetVinculoDTO = $objMdPetVinculoRN->cadastrar($objMdPetVinculoDTO);
+
+                // CADASTRAR O VINCULO DE PRESENTAÇÃO
+                $objNovoMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                $objNovoMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO);
+                $objNovoMdPetVincRepresentantDTO->setNumIdContato($idContato);
+                $objNovoMdPetVincRepresentantDTO->setNumIdMdPetVinculo($objMdPetVinculoDTO->getNumIdMdPetVinculo());
+                $objNovoMdPetVincRepresentantDTO->setNumIdContatoOutorg($idContato);
+                $objNovoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                $objNovoMdPetVincRepresentantDTO->setDthDataCadastro(InfraData::getStrDataHoraAtual());
+                $objMdPetVincRepresentantRN->cadastrar($objNovoMdPetVincRepresentantDTO);
+            }
+
+            // ATUALIZAR REPRESENTANTES EXISTENTES DE USUARIOS AUTORREPRESENTAVEIS
+            foreach ($arrObjMdPetVincRepresentant as $objMdPetVincRepresentant){
+
+                 $objMdPetVincRepresentant->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                $objMdPetVincRepresentant->setDthDataEncerramento(null);
+
+                if(!in_array($objMdPetVincRepresentant->getNumIdContato(), $arrIdContatoUsuariosAtivos)){
+                    $objMdPetVincRepresentant->setStrStaEstado(MdPetVincRepresentantRN::$RP_INATIVO);
+                    $objMdPetVincRepresentant->setDthDataEncerramento(InfraData::getStrDataHoraAtual());
+                }
+
+                $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentant);
+            }
+
+            $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+            InfraDebug::getInstance()->gravar('FIM');
+
+            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
+
+        } catch (Exception $e) {
+            InfraDebug::getInstance()->setBolLigado(false);
+            InfraDebug::getInstance()->setBolDebugInfra(false);
+            InfraDebug::getInstance()->setBolEcho(false);
+            throw new InfraException('Erro ao atualizar as autorrepresentações.', $e);
+        }
+    }
+
+    protected function ConsultarSituacaoReceitaCnpjControlado()
+    {
+
+    }
+
+    protected function ConsultarSituacaoReceitaCpfControlado()
+    {
+
+    }
+
 }
 ?>

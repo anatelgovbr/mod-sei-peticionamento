@@ -146,6 +146,43 @@
     </div>
 </div>
 <!--  Tipo Destinatario - FIM  -->
+
+<!-- DIV UNIDADE -->
+<div class="row">
+    <div class="<?= $col_pesq ?>">
+        <label id="lblDestinatario" name="lblDestinatario" for="txtDestinatario" class="inputSelect infraLabelObrigatorio"> Destinatários: </label>
+        <input type="text" id="txtDestinatario" name="txtDestinatario" class="infraText form-control"
+               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+    </div>
+</div>
+<div class="row">
+    <div class="<?= $col_combo ?>">
+        <div class="form-group">
+            <div class="input-group mb-3">
+                <select id="selDestinatario" name="selDestinatario" size="6" multiple="multiple"
+                        class="infraSelect form-control mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                </select>
+
+                <div id="divOpcoesDestinatario">
+                    <img id="imgLupaDestinatario" onclick="objLupaDestinatarios.selecionar(700,500);"
+                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
+                         alt="Selecionar Destinatários"
+                         title="Selecionar Destinatários" class="infraImg"/>
+                    <br>
+                    <img id="imgExcluirDestinatario" onclick="objLupaDestinatarios.remover();"
+                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/remover.svg?<?= Icone::VERSAO ?>"
+                         alt="Remover Destinatários Selecionados"
+                         title="Remover Destinatários Selecionados" class="infraImg"/>
+                </div>
+
+                <input type="hidden" id="hdnDestinatario" name="hdnDestinatario" value="<?= $_POST['hdnDestinatario'] ?>"/>
+                <input type="hidden" id="hdnIdDestinatario" name="hdnIdDestinatario" value="<?= $_POST['hdnIdDestinatario'] ?>"/>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FIM DIV DESTINATARIO -->
+
 <div class="row">
     <div class="<?= $col_combo ?>">
         <div class="form-group">

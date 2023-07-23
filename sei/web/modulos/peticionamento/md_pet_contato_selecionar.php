@@ -249,7 +249,7 @@ try {
       //Alteração
 
       if (SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()==$dto->getNumIdUsuarioCadastro()){
-      	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', '".$dto->getStrStaNatureza()."')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/svg/alterar.svg' class='infraImg' /></a>";
+      	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', '".$dto->getStrStaNatureza()."')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>";
       }
 
       $strResultado .= PaginaSEIExterna::getInstance()->getAcaoTransportarItem($n++,$dto->getNumIdContato());
@@ -257,7 +257,7 @@ try {
       $strId = $dto->getNumIdContato();
       $strDescricao = PaginaSEIExterna::getInstance()->formatarParametrosJavaScript(PaginaSEIExterna::tratarHTML($strNomeSigla));
 
-	    if($_GET['acao']=='contato_selecionar' ||  $_GET['acao']=='peticionamento_contato_listar'){
+	    if($_GET['acao']=='contato_selecionar' ||  $_GET['acao']=='peticionamento_contato_listar'){ 
 
 	      $balao = '';
 	      if (!InfraString::isBolVazia($dto->getStrExpressaoVocativo())){
@@ -404,7 +404,7 @@ function abrirCadastroInteressadoAlterar(id, tipo){
 		var str = '<?= $strLinkEdicaoPJ ?>';
 	}
 
-    infraAbrirJanelaModal(str, 875, 875); //modal
+    infraAbrirJanelaModal(str, 900, 900); //modal
 	return;
 	
 }

@@ -242,7 +242,10 @@ class MdPetIntDestRespostaRN extends InfraRN
     {
 
         try {
-            $arrItensTbDocumento = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($arrParametros['tbDocumentos']);
+
+	        LimiteSEI::getInstance()->configurarNivel3();
+
+	        $arrItensTbDocumento = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($arrParametros['tbDocumentos']);
 
             //Salva o corpo
             $seiRN = new SeiRN();

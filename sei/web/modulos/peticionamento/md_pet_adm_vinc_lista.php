@@ -245,10 +245,10 @@ if ($arrIdMdPetVinculoRepresent) {
     $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
     $objMdPetVincDocumentoDTO->retNumIdMdPetVinculoRepresent();
     $objMdPetVincDocumentoDTO->adicionarCriterio(
-        array('TipoDocumento', 'TipoDocumento'),
-        array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
-        array('E', 'P'),
-        array(InfraDTO::$OPER_LOGICO_OR)
+        array('TipoDocumento', 'TipoDocumento', 'TipoDocumento'),
+        array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
+        array(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL, MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL, MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO),
+        array(InfraDTO::$OPER_LOGICO_OR, InfraDTO::$OPER_LOGICO_OR)
     );
 
     $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
@@ -261,6 +261,7 @@ $arrSelectTipoVinculo = array(
     MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsável Legal',
     MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
     MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES => 'Procurador Simples',
+    MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO => 'Autorrepresentação',
 );
 $numRegistros = count($arrObjMdPetVincRepresentantDTO);
 
@@ -268,7 +269,7 @@ if ($numRegistros > 0) {
 
     $strResultado = '';
     $strSumarioTabela = $strCaptionTabela = 'Vinculações e Procurações Eletrônicas';
-    $strResultado .= '<table style="width: 100%" class="infraTable" summary="' . $strSumarioTabela . '">';
+    $strResultado .= '<table class="infraTable" width="100%" summary="' . $strSumarioTabela . '">';
     $strResultado .= '<caption class="infraCaption">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
     $strResultado .= '<thead>';
     $strResultado .= '<tr>';
@@ -286,21 +287,17 @@ if ($numRegistros > 0) {
     //Populando obj para tabela
 
     for ($i = 0; $i < $numRegistros; $i++) {
-        $strTipoRepresentante = MdPetVincRepresentantDTO::getStrNomeTipoRepresentante(
-            $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante()
-        );
-
-        $arrSerieSituacao = MdPetVincRepresentantDTO::getArrSerieSituacao(
-            $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado()
-        );
+        $strTipoRepresentante = $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante();
+        $arrSerieSituacao = $arrObjMdPetVincRepresentantDTO[$i]->getArrSerieSituacao();
         $strLabelSituacao = $arrSerieSituacao['strSituacao'];
 
         //Buscar documento da procuração
         $idVinculacao = $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo();
-        //$idDocumentoFormatado = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getStrProtocoloFormatadoProtocolo();
 
-        $idDocumento = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()] ? $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getDblIdDocumento() : '';
-        if (!in_array($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante(), $arrSelectTipoVinculo)) {
+        $idVinculoRepresent = $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent();
+        $strTipoVinculo = $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante();
+        //$idDocumentoFormatado = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getStrProtocoloFormatadoProtocolo();
+        if (!array_key_exists($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante(), $arrSelectTipoVinculo)){
             $arrSelectTipoVinculo[$arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante()] = $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante();
         }
         $strResultado .= '<tr class="infraTrClara">';
@@ -324,49 +321,46 @@ if ($numRegistros > 0) {
 
         $title = 'Consultar' . (($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) ? 'Vinculação' : 'Procuração');
 
-        $acaoConsulta = '';
-        $strLinkConsultaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento=' . $idDocumento . '&arvore=1');
-        $iconeConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="' . $title . '" alt="' . $title . '" class="infraImg" />';
-        $acaoConsulta = '<a target="_blank" href="' . $strLinkConsultaDocumento . '">' . $iconeConsulta . '</a>';
+        if ($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() != MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO) {
+            $idDocumento = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getDblIdDocumento();
+            $acaoConsulta = '';
+            $strLinkConsultaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento=' . $idDocumento . '&arvore=1');
+            $iconeConsulta = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="' . $title . '" alt="' . $title . '" class="infraImg" />';
+            $acaoConsulta = '<a target="_blank" href="' . $strLinkConsultaDocumento . '">' . $iconeConsulta . '</a>';
 
-        $acaoResponsavel = '';
-        if ($isAdm) {
-            if ($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
-                $acaoResponsavel = '';
+            $acaoResponsavel = '';
+
+            if ($isAdm) {
+
                 if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) { //
-                    $strLinkSuspenderVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_SUSPENSO);
-                    $iconeResponsavel = '<img style="width:24px;" src="modulos/peticionamento/imagens/svg/suspender_responsavel_legal.svg?'.Icone::VERSAO.'" title="Suspender Responsável Legal" alt="Suspender Responsável Legal" class="infraImg" />';
 
-                    $acaoResponsavel = '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>';
-                    if ($bolAcoes) {
-                        $acaoResponsavel = '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>';
-                    } else {
-                        $acaoResponsavel = '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
-                    }
+                    $strLinkSuspenderVinc   = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&idVinculoRepresent=' . $idVinculoRepresent . '&tipoVinculo=' . $strTipoVinculo . '&idDocumentoRepresent=' . $idDocumento . '&operacao=' . MdPetVincRepresentantRN::$RP_SUSPENSO);
+                    $iconeResponsavel       = '<img style="width:24px;" src="modulos/peticionamento/imagens/svg/suspender_responsavel_legal.svg?'.Icone::VERSAO.'" title="Suspender '.$strTipoRepresentante.'" alt="Suspender '.$strTipoRepresentante.'" class="infraImg" />';
+                    $acaoResponsavel        = '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>';
+                    $acaoResponsavel        = ($bolAcoes) ? '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>' : '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
+
+
                     $strLinkResponsavelVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_responsavel_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo());
-                    $iconeResponsavel = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar o Responsável Legal" alt="Alterar o Responsável Legal" class="infraImg" />';
-                    if ($bolAcoes) {
-                        $acaoResponsavel .= '<a href="' . $strLinkResponsavelVinc . '">' . $iconeResponsavel . '</a>';
-                    } else {
-                        $acaoResponsavel .= '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
-                    }
-                } else if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO) {
-                    $strLinkRestabelecerVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&operacao=' . MdPetVincRepresentantRN::$RP_ATIVO);
-                    $iconeResponsavel = '<img style="width:24px;" src="modulos/peticionamento/imagens/png/retirarSuspensao.png" title="Restabelecer Responsável Legal" alt="Restabelecer Responsável Legal" class="infraImg" />';
-                    if ($bolAcoes) {
-                        $acaoResponsavel = '<a href="' . $strLinkRestabelecerVinc . '">' . $iconeResponsavel . '</a>';
-                    } else {
-                        $acaoResponsavel = '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
-                    }
-                }
-            }
-        }
-        $strResultado .= '<td align="center">' . $acaoConsulta . $acaoResponsavel . '</td>';
+                    $iconeResponsavel       = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar o '.$strTipoRepresentante.'" alt="Alterar o '.$strTipoRepresentante.'" class="infraImg" />';
+                    $acaoResponsavel        .= ($bolAcoes) ? '<a href="' . $strLinkResponsavelVinc . '">' . $iconeResponsavel . '</a>' : '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
 
+                } else if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO) {
+
+                    $strLinkRestabelecerVinc    = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $idVinculacao . '&idVinculoRepresent=' . $idVinculoRepresent . '&tipoVinculo=' . $strTipoVinculo . '&idDocumentoRepresent=' . $idDocumento . '&operacao=' . MdPetVincRepresentantRN::$RP_ATIVO);
+                    $iconeResponsavel           = '<img style="width:24px;" src="modulos/peticionamento/imagens/svg/retirar_suspensao.svg?v=11" title="Restabelecer '.$strTipoRepresentante.'" alt="Restabelecer '.$strTipoRepresentante.'" class="infraImg" />';
+                    $acaoResponsavel            = ($bolAcoes) ? '<a href="' . $strLinkRestabelecerVinc . '">' . $iconeResponsavel . '</a>' : '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
+
+                }
+
+            }
+            $strResultado .= '<td align="center"><div style="width:90px; text-align: center">' . $acaoConsulta . $acaoResponsavel . '</div></td>';
+        } else {
+            $strResultado .= '<td align="center"></td>';
+        }
         $strResultado .= '</tr>';
 
-
     }
+
     $strResultado .= '</tbody></table>';
 
 }
@@ -416,7 +410,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <?
     else:
 
-        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+        PaginaSEI::getInstance()->montarBarraComandosSuperior((array)$arrComandos);
 
     ?>
 
@@ -528,12 +522,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
 
     //PaginaSEI::getInstance()->montarAreaDebug();
-    PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+    PaginaSEI::getInstance()->montarBarraComandosInferior((array)$arrComandos);
 
     ?>
     </div>
 
 </form>
+
 <?
 
 require_once 'md_pet_adm_vinc_lista_js.php';

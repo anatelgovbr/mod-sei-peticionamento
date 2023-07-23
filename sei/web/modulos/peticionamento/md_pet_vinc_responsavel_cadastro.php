@@ -47,7 +47,6 @@ try {
             $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
             $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
             $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-            $objMdPetVinculoDTO->setStrStaResponsavelLegal('S');
             $objMdPetVinculoDTO->setDistinct(true);
             $objMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
 

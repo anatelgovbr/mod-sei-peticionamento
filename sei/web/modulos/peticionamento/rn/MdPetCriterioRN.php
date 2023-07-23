@@ -128,6 +128,11 @@ class MdPetCriterioRN extends InfraRN
             
             $objInfraException = new InfraException();
 
+            // Adiciona valor padrão para o campo SinIntercorrenteSigiloso caso o mesmo nao esteja presente no objeto
+            if(!$objMdPetCriterioDTO->isSetStrSinIntercorrenteSigiloso()){
+                $objMdPetCriterioDTO->setStrSinIntercorrenteSigiloso('S');
+            }
+
             $this->_validarCamposObrigatorios($objMdPetCriterioDTO, $objInfraException);
 
             $objInfraException->lancarValidacoes();

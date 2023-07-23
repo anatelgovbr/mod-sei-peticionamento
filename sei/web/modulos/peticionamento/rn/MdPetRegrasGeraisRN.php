@@ -746,6 +746,36 @@ class MdPetRegrasGeraisRN extends InfraRN
 
     }
 
+    protected function verificarParametroTipoDocumentoConectado($arrObjSerieAPI)
+    {
+        $arrSerieAPI = $arrObjSerieAPI[0];
+        $acao = $arrObjSerieAPI[1];
+        $msg = '';
+        $arrIds = array();
+
+        foreach ($arrSerieAPI as $objSerieAPI) {
+            $arrIds[] = $objSerieAPI->getIdSerie();
+        }
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+
+	    $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA');
+	    $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL');
+	    $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RENUNCIA');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RESTABELECIMENTO');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_REVOGACAO');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_SUSPENSAO');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO');
+        $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO');
+
+        if (array_intersect($arrIds, array_map('intval', $arrayTiposDocumento))) {
+	        return 'Não é possível ' . $acao . ' este Tipo de Documento, pois o seu ID ainda está associado a parâmetros afetos a geração de documentos do módulo SEI Peticionamento, Intimação e Procuração.';
+        }
+    }
+
 
     private function _verificaSituacaoRespondida($idsRelDest, $arrIdsRelDest){
         $objMdPetIntDestRespRN = new MdPetIntDestRespostaRN();
@@ -1034,6 +1064,5 @@ class MdPetRegrasGeraisRN extends InfraRN
             throw new InfraException('Não foi consultar a Unidade.',$e);
         }
     }
-
 
 }

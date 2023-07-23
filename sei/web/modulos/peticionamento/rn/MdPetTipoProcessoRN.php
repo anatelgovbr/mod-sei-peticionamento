@@ -490,224 +490,143 @@ class MdPetTipoProcessoRN extends InfraRN {
 	}
 
 	public function validacaoCidadeDuplcada($arrobjMdPetRelTpProcessoUnidDTO){
+
 		//VALIDAÇÃO CIDADE UNICA
-		$arrUnidadesFiltradas = array();
-		$arrUnidadesFiltradasNovo = array();
-		$arrUnidades = array();
-		$arrUnidadeTpUnidade = array();
-		//idUnidade
-		$arrIdsUnidade = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
-	   //Tipo Proc
-	   $arrTpProc = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdTipoProcessoPeticionamento');
-	  
-	   for ($i=0; $i < count($arrTpProc) ; $i++) { 
-	  
-		$objUnidadeDTO = new UnidadeDTO();
-		$objUnidadeDTO->retNumIdCidadeContato();
-		$objUnidadeDTO->retNumIdUnidade();
-		$objUnidadeDTO->setNumIdUnidade($arrIdsUnidade[$i]);
-		$objUnidadeRN = new UnidadeRN();
-		$arrUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
-	  
-		$objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-		$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-		$objMdPetRelTpProcessoUnidDTO->setNumIdUnidade($arrUnidadeDTO->getNumIdUnidade());
-		$objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrTpProc[$i]);
-		$objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
-		$objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
-		$arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-	  
-		$unidade_cidade [] = array("idCidade"=>$arrUnidadeDTO->getNumIdCidadeContato(), "IdUnidade"=>$arrUnidadeDTO->getNumIdUnidade(), "tpUnidade"=>$arrobjMdPetRelTpProcessoUnidDTO[0]->getStrStaTipoUnidade(), "idTpProc"=>$arrobjMdPetRelTpProcessoUnidDTO[0]->getNumIdTipoProcessoPeticionamento());
-	  
-		}
-		
-		foreach ($unidade_cidade as $key => $value) {
-		  $arrUnidadesFiltradas[] = $value['idCidade'];
-		  $arrUnidades[] = $value['IdUnidade'];
-		}
-		
-		foreach($arrUnidadesFiltradas as $key => $val){
-		  unset($arrUnidadesFiltradas[$key]); 
-		  if (in_array($val,$arrUnidadesFiltradas)){
-			$arrUnidadesFiltradasNovo[] = $val;
-		  }
-		}
-	 
-	  if($arrUnidadesFiltradasNovo != null){
-		  
-		 $objTipoProcessoDTO = new MdPetTipoProcessoDTO();
-		$objTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
-		$objTipoProcessoDTO->retStrNomeProcesso();
-		$objTipoProcessoDTO->retStrOrientacoes();
-		$objTipoProcessoDTO->setStrSinAtivo('S');
-		$objTipoProcessoDTO->setOrdStrNomeProcesso(InfraDTO::$TIPO_ORDENACAO_ASC);
-		 
-		$objTipoProcedimentoRN = new MdPetTipoProcessoRN();
-		$arrObjTipoProcedimentoFiltroDTO = $objTipoProcedimentoRN->listar($objTipoProcessoDTO);
-		$arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrObjTipoProcedimentoFiltroDTO, 'IdTipoProcessoPeticionamento');
-	  
-	  
-		$objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-		$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-		$objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento,InfraDTO::$OPER_IN);
-		$objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
-		$arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-		$arrIdsUnidade = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
-		
-		$unidades = array();
-		foreach ($arrIdsUnidade as $key => $value) {
-		  $objUnidadeDTO = new UnidadeDTO();
-		$objUnidadeDTO->retNumIdCidadeContato();
-		$objUnidadeDTO->setNumIdCidadeContato(array_unique($arrUnidadesFiltradasNovo),infraDTO::$OPER_IN);
-		$objUnidadeDTO->retNumIdUnidade();
-		$objUnidadeDTO->setNumIdUnidade($value);
-		$objUnidadeRN = new UnidadeRN();
-		$arrUnidadeDTO = $objUnidadeRN->listarRN0127($objUnidadeDTO);
-		
-		  foreach ($arrUnidadeDTO as $key => $value) {
-			$unidades[] = $value->getNumIdUnidade();
-		  }
-		
-		}
-		
-		
-		if(count(array_unique($arrUnidadesFiltradasNovo)) > 1 ){
-			
-			$arrUnidadesFiltradasCidade = array();
-			$unidadesFiltro = array();
-			foreach ($unidades as $key => $value) {
-			  
-			  $objUnidadeDTO = new UnidadeDTO();
-			  $objUnidadeDTO->retNumIdCidadeContato();
-			  $objUnidadeDTO->setNumIdCidadeContato(array_unique($arrUnidadesFiltradasNovo),infraDTO::$OPER_IN);
-			  $objUnidadeDTO->retNumIdUnidade();
-			  $objUnidadeDTO->setNumIdUnidade($value);
-			  $objUnidadeRN = new UnidadeRN();
-			  $arrUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
-			  //$arrIdsUnidadeDuplas = InfraArray::converterArrInfraDTO($arrUnidadeDTO, 'IdUnidade');
-			 // var_dump($arrUnidadeDTO->getNumIdUnidade());
-			  $unidade_cidade_duplicada [] = array("idCidade"=>$arrUnidadeDTO->getNumIdCidadeContato(), "IdUnidade"=>$arrUnidadeDTO->getNumIdUnidade());
-			  
-		  }
-		  
-		  foreach (array_unique($arrUnidadesFiltradasNovo) as $key => $value) {
-		  $search = $value;
-		  $index = array_keys(
-			  array_filter(
-				  $unidade_cidade_duplicada,
-				  function ($value) use ($search) {
-					  return (strpos($value['idCidade'], $search) !== false);
-				  }
-			  )
-		  );
-  
-		  foreach ($index as $key => $value) {
-			  
-			  $unidadesFiltro[] = $unidade_cidade_duplicada[$value];
-			  
-		  }
-	  
-	  //Verifica se todas as unidades são iguais	
-		  $status = true;
-		foreach(array_column($unidadesFiltro,'IdUnidade') as $value) {
-			if(array_column($unidadesFiltro,'IdUnidade')[0] != $value) {
-				 $status = false;
-				 break;
-			}
-		}
-		
-		//Caso as Unidades sejam todas iguais
-	   
-		if($status == true){
-		
-		  foreach (array_column($unidadesFiltro,'IdUnidade') as $key => $value) {
-			array_push($arrIdsUnidade,$value);
-		  }
-		
+
+		$unidade_cidade = array_map(function ($item) {
+			return [
+				'idCidade'  => $item->getNumIdCidadeContato(),
+				'IdUnidade' => $item->getNumIdUnidade(),
+				'tpUnidade' => $item->getStrStaTipoUnidade(),
+				'idTpProc'  => $item->getNumIdTipoProcessoPeticionamento()
+			];
+		}, $arrobjMdPetRelTpProcessoUnidDTO);
+
+		$arrIdTipoProcessoPeticionamento = array_unique(array_column($unidade_cidade, 'idTpProc'));
+		$arrIdCidadeContato = array_column($unidade_cidade, 'idCidade');
+		$arrIdUnidade = array_column($unidade_cidade, 'IdUnidade');
+
+		$arrIdsUnidade = $arrIdUnidade;
+
+		$arrUnidadesFiltradasNovo = array_unique($arrIdCidadeContato);
+
+	    if(!empty($arrUnidadesFiltradasNovo)){
+
+			$unidadesFiltro = [];
+
+		    foreach ($arrUnidadesFiltradasNovo as $key => $value) {
+
+			    $search = $value;
+			    $index = array_keys(
+			        array_filter(
+				        $unidade_cidade,
+					    function ($value) use ($search) {
+			                return (strpos($value['idCidade'], $search) !== false);
+			            }
+				    )
+			    );
+
+			    foreach ($index as $key => $value) {
+				  $unidadesFiltro[] = $unidade_cidade[$value];
+			    }
+
+	            //Verifica se todas as unidades são iguais
+		        $status = true;
+			    foreach(array_column($unidadesFiltro,'IdUnidade') as $value) {
+					if(array_column($unidadesFiltro,'IdUnidade')[0] != $value) {
+					    $status = false;
+					    break;
+					}
+				}
+
+				//Caso as Unidades sejam todas iguais
+
+				if($status == true){
+
+				    foreach (array_column($unidadesFiltro,'IdUnidade') as $key => $value) {
+						array_push($arrIdsUnidade,$value);
+				    }
+
+				}else{
+
+					$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
+			        $objMdPetRelTpProcessoUnidDTO->setNumIdUnidade(array_column($unidadesFiltro, 'IdUnidade'), infraDTO::$OPER_IN);
+					$objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
+					$objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
+					$arrobjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
+					$tpProcsNegados = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdTipoProcessoPeticionamento');
+
+					$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
+					$objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
+					$objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, infraDTO::$OPER_IN);
+					$arrobjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
+					$arrIdsUnidadeUnico = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
+
+					$unidades = $arrIdsUnidadeUnico;
+
+			        foreach ($unidades as $key => $value) {
+				        foreach (array_keys($arrIdsUnidade, $value, true) as $key) {
+							unset($arrIdsUnidade[$key]);
+					    }
+					}
+				}
+
+				$unidadesFiltro = [];
+			    //cidades repetidas - FIM
+
+	        }
+
+			$arrIdsUnidade = $arrIdsUnidade;
+
 		}else{
 
-			$objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-		 $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-		 $objMdPetRelTpProcessoUnidDTO->setNumIdUnidade(array_column($unidadesFiltro,'IdUnidade'),infraDTO::$OPER_IN);
-		 $objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
-		 $objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
-		 $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-		 $tpProcsNegados = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdTipoProcessoPeticionamento');
-		 
-		 $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-		 $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-		 $objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
-		 $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento,infraDTO::$OPER_IN);
-		 $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-		 $arrIdsUnidadeUnico = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
-		 $unidades = $arrIdsUnidadeUnico;
-		  foreach ($unidades as $key => $value) {
-			  foreach (array_keys($arrIdsUnidade, $value, true) as $key) {
-				unset($arrIdsUnidade[$key]);
-				  
-					}
-					
-			  }
-		}
-		
-			$unidadesFiltro = [];
-		  //cidades repetidas - FIM
-	  }
-			  
-			$arrIdsUnidade = $arrIdsUnidade;
-			
-		  }else{
-	  
-		$status = true;
-	  foreach($unidades as $value) {
-		  if($unidades[0] != $value) {
-			   $status = false;
-			   break;
-		  }
-	  }
-	  
-	  //se todos os elementos são iguais, adiciona no array 
-	  if($status == true){
-	  
-		foreach ($unidades as $key => $value) {
-		  array_push($arrIdsUnidade,$value);
-		}
-	  
-	  }else{
-	  //Limpa todas as unidades com Cidades em comum
-		 //Incluindo as para serem removidas tambem.
-		 
-		 $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-		 $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-		 $objMdPetRelTpProcessoUnidDTO->setNumIdUnidade($unidades,infraDTO::$OPER_IN);
-		 $objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
-		 $objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
-		 $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-		 $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdTipoProcessoPeticionamento');
-		 
-		 $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-		 $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-		 $objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
-		 $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento,infraDTO::$OPER_IN);
-		 $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-		 $arrIdsUnidadeUnico = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
-		 //$unidades - Unidades que precisam ser removidas
-		 $unidades = $arrIdsUnidadeUnico;
-		 
-		foreach ($unidades as $key => $value) {
-		foreach (array_keys($arrIdsUnidade, $value, true) as $key) {
-		  unset($arrIdsUnidade[$key]);
-		 
-			  }
-			  
+			$status = true;
+			foreach($unidades as $value) {
+				if($unidades[0] != $value) {
+					$status = false;
+					break;
+				}
 			}
-		  }
+
+			//se todos os elementos são iguais, adiciona no array
+			if($status == true){
+
+				foreach ($unidades as $key => $value) {
+					array_push($arrIdsUnidade,$value);
+				}
+
+			}else{
+
+				//Limpa todas as unidades com Cidades em comum
+			    //Incluindo as para serem removidas tambem.
+
+				$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
+				$objMdPetRelTpProcessoUnidDTO->setNumIdUnidade($unidades, infraDTO::$OPER_IN);
+				$objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
+				$objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
+				$arrobjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
+				$arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdTipoProcessoPeticionamento');
+
+				$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
+				$objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
+				$objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, infraDTO::$OPER_IN);
+				$arrobjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
+				$arrIdsUnidadeUnico = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
+
+				//$unidades - Unidades que precisam ser removidas
+				$unidades = $arrIdsUnidadeUnico;
+
+				foreach ($unidades as $key => $value) {
+					foreach (array_keys($arrIdsUnidade, $value, true) as $key) {
+						unset($arrIdsUnidade[$key]);
+					}
+				}
+			}
 		}
-	  }
-	   
-	  
-	  return array($arrIdsUnidade,$tpProcsNegados);
-	  //VALIDAÇÃO CIDADE UNICA - FIM
+
+		return array($arrIdsUnidade, $tpProcsNegados);
+		//VALIDAÇÃO CIDADE UNICA - FIM
+
 	}
 	
 	

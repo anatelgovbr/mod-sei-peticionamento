@@ -121,7 +121,6 @@ class MdPetIntimacaoINT extends InfraINT {
             $dtoMdPetVincReptDTO->retStrStaEstado();
             $dtoMdPetVincReptDTO->retStrStaAbrangencia();
             $dtoMdPetVincReptDTO->retNumIdMdPetVinculoRepresent();
-            $dtoMdPetVincReptDTO->setStrSinAtivo('S');
             $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
             $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
             $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);

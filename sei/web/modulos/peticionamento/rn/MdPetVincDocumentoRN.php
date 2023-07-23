@@ -208,16 +208,18 @@ class MdPetVincDocumentoRN extends InfraRN {
 
   protected function getDocumentosRepresentantesConectado($idsRepresentantes){
     $idsDocumentos = null;
-    $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
-    $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($idsRepresentantes, InfraDTO::$OPER_IN);
-    $objMdPetVincDocumentoDTO->retDblIdDocumento();
 
-    $count = $this->contar($objMdPetVincDocumentoDTO);
-    
-    if($count > 0) 
-    {
-      $objs = $this->listar($objMdPetVincDocumentoDTO);
-      $idsDocumentos = InfraArray::converterArrInfraDTO($objs, 'IdDocumento');
+    if(!empty($idsRepresentantes) && is_countable($idsRepresentantes)){
+	    $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
+	    $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($idsRepresentantes, InfraDTO::$OPER_IN);
+	    $objMdPetVincDocumentoDTO->retDblIdDocumento();
+
+	    $count = $this->contar($objMdPetVincDocumentoDTO);
+
+	    if($count > 0){
+		    $objs = $this->listar($objMdPetVincDocumentoDTO);
+		    $idsDocumentos = InfraArray::converterArrInfraDTO($objs, 'IdDocumento');
+	    }
     }
     
     return $idsDocumentos;

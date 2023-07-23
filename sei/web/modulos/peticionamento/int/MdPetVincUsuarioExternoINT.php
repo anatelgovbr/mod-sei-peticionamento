@@ -14,189 +14,188 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetVincUsuarioExternoINT extends InfraINT
 {
 
-//
     public static function validarExistenciaProcuracao($dados)
     {
 
+	    if ($dados['tipoProc'] == "S") {
 
-        if ($dados['tipoProc'] == "S") {
             $poderes = explode('-', $dados['poderes']);
+
             //Validação para Procuração Especial
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-            $objMdPetVincRepresentantDTO->setStrStaEstado('A');
-            //$objMdPetVincRepresentantDTO->retStrDataCadastro();
-            $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+            $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
             $objMdPetVincRepresentantDTO->adicionarCriterio(
                 array('IdContato', 'IdContatoVinc', 'TipoRepresentante'),
                 array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
                 array($dados['idOutorgado'], $dados['idOutorgante'], 'E'),
                 array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
-
             $objMdPetVincRepresentantDTO->retNumIdContato();
             $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
             $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
             $objMdPetVincRepresentantDTO = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantDTO, 'IdMdPetVinculoRepresent');
 
             //Validação para Procuração Simples
-            //DAta
             $objMdPetVincRepresentantSimplesDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantSimplesRN = new MdPetVincRepresentantRN();
-            $objMdPetVincRepresentantSimplesDTO->setStrStaEstado('A');
+            $objMdPetVincRepresentantSimplesDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
             $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetRelPoder();
-            $objMdPetVincRepresentantSimplesDTO->setStrSinAtivo('S');
             $objMdPetVincRepresentantSimplesDTO->retDthDataCadastro();
             $objMdPetVincRepresentantSimplesDTO->retDthDataLimite();
             $objMdPetVincRepresentantSimplesDTO->retStrStaAbrangencia();
-
             $objMdPetVincRepresentantSimplesDTO->adicionarCriterio(
                 array('IdContato', 'IdContatoVinc', 'TipoRepresentante'),
                 array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
                 array($dados['idOutorgado'], $dados['idOutorgante'], MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES),
                 array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
-
             $objMdPetVincRepresentantSimplesDTO->retNumIdContato();
             $objMdPetVincRepresentantSimplesDTO->retNumIdMdPetVinculoRepresent();
             $arrObjMdPetVincRepresentantSimplesDTO = $objMdPetVincRepresentantSimplesRN->listar($objMdPetVincRepresentantSimplesDTO);
+	        $arrObjMdPetVincRepresentantSimplesDTO = InfraArray::converterArrInfraDTO($arrObjMdPetVincRepresentantSimplesDTO, 'IdMdPetVinculoRepresent');
 
-            $arrObjMdPetVincRepresentantSimplesFinal = array();
-            foreach($arrObjMdPetVincRepresentantSimplesDTO as $objMdPetVincRepresentantSimples){
-                $gerarProcuracao = true;
+	        if($validarPoderes = false){
 
-                $objMdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
-                $objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
-                $objMdPetRelVincRepTpPoderDTO->retNumIdTipoPoderLegal();
-                $objMdPetRelVincRepTpPoderDTO->setNumIdVinculoRepresent($objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent());
+	            $arrObjMdPetVincRepresentantSimplesFinal = array();
+	            foreach($arrObjMdPetVincRepresentantSimplesDTO as $objMdPetVincRepresentantSimples){
+	                $gerarProcuracao = true;
 
-                $arrObjMdPetRelVincRepTpPoderDTO = $objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO);
-                $arrObjMdPetRelVincRepTpPoderDTO = InfraArray::converterArrInfraDTO($arrObjMdPetRelVincRepTpPoderDTO, 'IdTipoPoderLegal');
+	                $objMdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
+	                $objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
+	                $objMdPetRelVincRepTpPoderDTO->retNumIdTipoPoderLegal();
+	                $objMdPetRelVincRepTpPoderDTO->setNumIdVinculoRepresent($objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent());
 
-                $objMdPetRelVincRepProtocRN = new MdPetRelVincRepProtocRN();
-                $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
-                $objMdPetRelVincRepProtocDTO->retNumIdProtocolo();
-                $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent());
+	                $arrObjMdPetRelVincRepTpPoderDTO = $objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO);
+	                $arrObjMdPetRelVincRepTpPoderDTO = InfraArray::converterArrInfraDTO($arrObjMdPetRelVincRepTpPoderDTO, 'IdTipoPoderLegal');
 
-                $arrMdPetRelVincRepProtocDTO = $objMdPetRelVincRepProtocRN->listar($objMdPetRelVincRepProtocDTO);
-                $arrMdPetRelVincRepProtocDTO = InfraArray::converterArrInfraDTO($arrMdPetRelVincRepProtocDTO, 'IdProtocolo');
+	                $objMdPetRelVincRepProtocRN = new MdPetRelVincRepProtocRN();
+	                $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
+	                $objMdPetRelVincRepProtocDTO->retNumIdProtocolo();
+	                $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent());
 
-                if ($dados['validade'] != "Indeterminada") {
-                    $data = explode('/', $dados['validade']);
-                    $dados['validade'] = $data[0] . '/' . $data[1] . '/' . $data[2] . " 23:59:59";
-                } else {
-                    $dados['validade'] = null;
-                }
-                //PRocessos
+	                $arrMdPetRelVincRepProtocDTO = $objMdPetRelVincRepProtocRN->listar($objMdPetRelVincRepProtocDTO);
+	                $arrMdPetRelVincRepProtocDTO = InfraArray::converterArrInfraDTO($arrMdPetRelVincRepProtocDTO, 'IdProtocolo');
 
-                if ($dados['processos'] != "") {
-                    $processos = array();
-                    $tpProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($dados['processos']);
-                    foreach ($tpProcesso as $value) {
-                        $processos[] = $value[0];
-                    }
-                } else {
-                    $processos = "";
-                    $processos = "Q";
-                }
+	                if ($dados['validade'] != "Indeterminada") {
+	                    $data = explode('/', $dados['validade']);
+	                    $dados['validade'] = $data[0] . '/' . $data[1] . '/' . $data[2] . " 23:59:59";
+	                } else {
+	                    $dados['validade'] = null;
+	                }
 
-                $poderesIguais = array_intersect($poderes, $arrObjMdPetRelVincRepTpPoderDTO);
+	                if ($dados['processos'] != "") {
+	                    $processos = array();
+	                    $tpProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($dados['processos']);
+	                    foreach ($tpProcesso as $value) {
+	                        $processos[] = $value[0];
+	                    }
+	                } else {
+	                    $processos = "Q";
+	                }
 
-                if($objMdPetVincRepresentantSimples->getStrStaAbrangencia() == 'Q'){
-                    if(is_array($processos) && $poderesIguais){
-                        $gerarProcuracao = false;
-                    } else {
-                        if($poderesIguais){
-                            $gerarProcuracao = false;
-                        }
-                    }
-                } else {
-                    if($processos == 'Q' && $objMdPetVincRepresentantSimples->getStrStaAbrangencia() == 'E'){
-                        if($poderesIguais){
-                            $gerarProcuracao = false;
-                        }
-                    } else {
-                        $processosIguais = array_intersect($processos, $arrMdPetRelVincRepProtocDTO);
-                        if ($processosIguais || $poderesIguais) {
-                            $gerarProcuracao = false;
-                        }
-                    }
-                }
+	                $poderesIguais = array_intersect($poderes, $arrObjMdPetRelVincRepTpPoderDTO);
 
-                if(!$gerarProcuracao) {
-                    $arrObjMdPetVincRepresentantSimplesFinal[] = $objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent();
-                }
-            }
+	                if($objMdPetVincRepresentantSimples->getStrStaAbrangencia() == 'Q'){
+	                    if(is_array($processos) && $poderesIguais){
+	                        $gerarProcuracao = false;
+	                    } else {
+	                        if($poderesIguais){
+	                            $gerarProcuracao = false;
+	                        }
+	                    }
+	                } else {
+	                    if($processos == 'Q' && $objMdPetVincRepresentantSimples->getStrStaAbrangencia() == 'E'){
+	                        if($poderesIguais){
+	                            $gerarProcuracao = false;
+	                        }
+	                    } else {
+	                        $processosIguais = array_intersect($processos, $arrMdPetRelVincRepProtocDTO);
+	                        if ($processosIguais || $poderesIguais) {
+	                            $gerarProcuracao = false;
+	                        }
+	                    }
+	                }
 
+	                if(!$gerarProcuracao) {
+	                    $arrObjMdPetVincRepresentantSimplesFinal[] = $objMdPetVincRepresentantSimples->getNumIdMdPetVinculoRepresent();
+	                }
+	            }
 
-            if (count($arrObjMdPetVincRepresentantSimplesFinal) > 0 || count($objMdPetVincRepresentantDTO) > 0) {
-                $objMdPetVincRepresentantDTO = array_unique(array_merge($objMdPetVincRepresentantDTO, $arrObjMdPetVincRepresentantSimplesFinal));
+	        }
+
+            if (count($arrObjMdPetVincRepresentantSimplesDTO) > 0 || count($objMdPetVincRepresentantDTO) > 0) {
+
+	            $objMdPetVincRepresentantDTO = array_unique(array_merge($objMdPetVincRepresentantDTO, $arrObjMdPetVincRepresentantSimplesDTO));
                 $arrImplode = implode("-", $objMdPetVincRepresentantDTO);
-                $xml = '';
-                $xml .= '<itens>';
-                $xml .= '<item id="' . InfraString::formatarXML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_validacao_procuracao&id_represent=' . $arrImplode)) . '"';
-                $xml .= '></item>';
+                $xml = '<itens>';
+                $xml .= '<item id="' . InfraString::formatarXML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_validacao_procuracao&id_represent=' . $arrImplode)) . '"></item>';
                 $xml .= '</itens>';
 
                 return $xml;
+
             } else {
 
-                $xml = '';
-                $xml .= '<itens>';
-                $xml .= '<item id="0"';
-                $xml .= '></item>';
-                $xml .= '</itens>';
-                return $xml;
+                return '<itens><item id="0"></item></itens>';
 
             }
-            //Caso seja Procuração Especial
-        } else {
-
-            $xml = '';
-            $xml .= '<itens>';
-            $xml .= '<item id="0"';
-            $xml .= '></item>';
-            $xml .= '</itens>';
-            return $xml;
-
         }
+
+	    if($dados['tipoProc'] == 'E'){
+
+			$objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+			$objMdPetVincRepresentantDTO->setStrStaEstado('A');
+			$objMdPetVincRepresentantDTO->adicionarCriterio(
+				array('IdContato', 'IdContatoVinc', 'TipoRepresentante'),
+				array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
+				array(explode('#', $dados['idOutorgado']), $dados['idOutorgante'], 'E'),
+				array(InfraDTO::$OPER_LOGICO_AND, InfraDTO::$OPER_LOGICO_AND));
+			$objMdPetVincRepresentantDTO->retNumIdContato();
+			$objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+			$objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
+			$objMdPetVincRepresentantDTO = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantDTO, 'IdMdPetVinculoRepresent');
+
+			if(count($objMdPetVincRepresentantDTO) > 0){
+
+				$arrImplode = implode("-", $objMdPetVincRepresentantDTO);
+				$xml = '';
+				$xml .= '<itens>';
+				$xml .= '<item id="' . InfraString::formatarXML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_validacao_procuracao&id_represent=' . $arrImplode)) . '"';
+				$xml .= '></item>';
+				$xml .= '</itens>';
+				return $xml;
+
+			}else{
+
+				return '<itens><item id="0"></item></itens>';
+
+			}
+
+		}
 
     }
 
     public static function verificarUsuarioValido($dados)
     {
-        $xml = '';
-        $usuarioDTO = new UsuarioDTO();
+
+    	$usuarioDTO = new UsuarioDTO();
         $usuarioDTO->setNumIdContato($dados['idContato']);
         $usuarioDTO->retStrStaTipo();
         $usuarioRN = new UsuarioRN();
         $objUsuarioRN = $usuarioRN->consultarRN0489($usuarioDTO);
-        // Igual a 2 é Pendente
-        if ($objUsuarioRN->getStrStaTipo() == "2") {
-            $xml .= '<dados>';
-            $xml .= '<existe>0</existe>';
-            $xml .= '</dados>';
-        } else {
-            $xml .= '<dados>';
-            $xml .= '<existe>1</existe>';
-            $xml .= '</dados>';
-        }
 
-        return $xml;
+        // Igual a 2 é Pendente
+	    return '<dados><existe>'.($objUsuarioRN->getStrStaTipo() == "2" ? 0 : 1).'</existe></dados>';
+
     }
 
     public static function consultarDadosUsuario($dados)
     {
-        $existeVinculo = false;
-        $xml = '';
+
+    	$xml = '';
 
         if (isset($dados['hdnSelPessoaJuridica'])) {
             //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
-            $existeVinculo = self::_consultarExistenciaVinculo($dados);
-
-            if ($existeVinculo) {
-                $xml .= '<dados>';
-                $xml .= '<sucesso>0</sucesso>';
-                $xml .= '</dados>';
-                return $xml;
+            if (self::_consultarExistenciaVinculo($dados)) {
+	            return '<dados><sucesso>0</sucesso></dados>';
             }
         }
 
@@ -222,24 +221,13 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         }
 
         return $xml;
+
     }
 
     public static function consultarDadosUsuarioExternoProcuracao($dados)
     {
-        $existeVinculo = false;
-        $xml = '';
 
-        /* if(isset($dados['hdnSelPessoaJuridica'])) {
-             //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
-             $existeVinculo = self::_consultarExistenciaVinculo($dados);
-
-            if($existeVinculo) {
-                 $xml .= '<dados>';
-                 $xml .= '<sucesso>0</sucesso>';
-                 $xml .= '</dados>';
-                 return $xml;
-            }
-         }*/
+    	$xml = '';
 
         $idContato = $dados['hdnIdUsuarioProcuracao'];
 
@@ -263,61 +251,40 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         }
 
         return $xml;
+
     }
 
     public static function consultarDadosUsuarioExterno($dados)
     {
-        $existeVinculo = false;
-        $xml = '';
 
-        if (isset($dados['hdnSelPessoaJuridica'])) {
-            //verifica se o procurador indicado já possui uma procuração naquele mesmo vinculo
-            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+    	if (isset($dados['hdnSelPessoaJuridica'])) {
+
+    		$objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 
             $objMdPetVincRepresentantDTO->setNumIdContato($dados['hdnIdUsuarioProcuracao']);
             $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPessoaJuridica']);
-            $objMdPetVincRepresentantDTO->setStrStaEstado('A');
-            $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
-            $objMdPetVincRepresentantDTO->setStrTipoRepresentante('E');
+            $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
             $objMdPetVincRepresentantDTO->retNumIdContato();
 
-            $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO) > 0;
+            $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->contar($objMdPetVincRepresentantDTO) > 0;
 
-            if ($objMdPetVincRepresentantDTO) {
-                $xml .= '<dados>';
-                $xml .= '<sucesso>1</sucesso>';
-                $xml .= '</dados>';
-                return $xml;
-            } else {
-                $xml .= '<dados>';
-                $xml .= '<sucesso>0</sucesso>';
-                $xml .= '</dados>';
-                return $xml;
-            }
+		    return '<dados><sucesso>'.($objMdPetVincRepresentantDTO ? 1 : 0).'</sucesso></dados>';
+
         }
 
-
     }
-
 
     private static function _consultarExistenciaVinculo($dados)
     {
 
         $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-
         $objMdPetVincRepresentantDTO->setNumIdContato($dados['hdnIdUsuarioProcuracao']);
         $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPessoaJuridica']);
-        $objMdPetVincRepresentantDTO->setStrStaEstado('A');
-        $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $objMdPetVincRepresentantDTO->retNumIdContato();
+	    return (new MdPetVincRepresentantRN())->contar($objMdPetVincRepresentantDTO) > 0;
 
-        $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO) > 0;
-
-        return $objMdPetVincRepresentantDTO;
     }
-
 
     public static function consultarUsuarioValido($params)
     {
@@ -330,36 +297,11 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $objContatoDTO->retNumIdUsuarioCadastro();
         $objContatoDTO->retNumIdContato();
         $objContatoDTO->retStrNome();
-
-        $objMdPetContatoRN = new MdPetContatoRN();
-//    $objContatoDTO->setNumIdTipoContato($objMdPetContatoRN->getIdTipoContatoUsExt());
         $objContatoDTO->setDblCpf(InfraUtil::retirarFormatacao($cpf));
-//    if($cpf) {        
-//        if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
-//            $objUsuarioRN = new UsuarioRN();
-//            $objUsuarioDTO = new UsuarioDTO();
-//            $objUsuarioDTO->retNumIdContato();
-//            $objUsuarioDTO->setDblCpfContato(InfraUtil::retirarFormatacao($cpf));
-////            $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-//
-//            $arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
-//
-//            if (count($arrObjUsuarioDTO)>0){
-//                $objContatoDTO->setDblCpf(0);
-//            }else{
-//                $objContatoDTO->setDblCpf(InfraUtil::retirarFormatacao($cpf));
-//            }
-//        }
-//    }else{
-//        $objContatoDTO->setDblCpf(0);
-//    }
-
-
         $objContatoRN = new ContatoRN();
         $arrObjContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
 
         if (count($arrObjContatoDTO) > 0) {
-
 
             $arrIdContato = InfraArray::converterArrInfraDTO($arrObjContatoDTO, 'IdContato');
 
@@ -402,16 +344,15 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
     }
 
-
     public static function consultarUsuarioValidoProcuracao($params)
     {
+
         $xml = '<resultado>';
         $cpf = array_key_exists('cpf', $params) ? $params['cpf'] : null;
 
         $objUsuarioDTO = new UsuarioDTO();
         $objUsuarioDTO->setDblCpfContato(InfraUtil::retirarFormatacao($cpf));
-        $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
-        $objUsuarioDTO->setStrSinAtivo('S');
+        $objUsuarioDTO->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO_PENDENTE, UsuarioRN::$TU_EXTERNO), InfraDTO::$OPER_IN);
         $objUsuarioDTO->setBolExclusaoLogica(false);
         $objUsuarioDTO->retStrNome();
         $objUsuarioDTO->retDblCpfContato();
@@ -425,10 +366,18 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         if (count($arrObjUsuarioDTO) > 0) {
             foreach ($arrObjUsuarioDTO as $usuarioDTO) {
                 $xml .= '<contato';
-                $xml .= ' sucesso="1" ';
-                $xml .= ' id="' . $usuarioDTO->getNumIdContato() . '"';
-                $xml .= ' descricao="' . $usuarioDTO->getStrNome() . '"';
-                $xml .= ' complemento="' . $params['cpf'] . '"';
+                if ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO && $usuarioDTO->getStrSinAtivo() == 'S') {
+                    $xml .= ' sucesso="1" ';
+                    $xml .= ' id="' . $usuarioDTO->getNumIdContato() . '"';
+                    $xml .= ' descricao="' . $usuarioDTO->getStrNome() . '"';
+                    $xml .= ' complemento="' . $params['cpf'] . '"';
+                } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
+                    $xml .= ' sucesso="false" ';
+                    $xml .= ' mensagem="Usuário Externo com pendência de liberação de cadastro" ';
+                } elseif ($usuarioDTO->getStrSinAtivo() == 'N') {
+                    $xml .= ' sucesso="false" ';
+                    $xml .= ' mensagem="Usuário Externo está com o cadastro desativado" ';
+                }
                 $xml .= '></contato>';
             }
         }
@@ -438,6 +387,5 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         return $xml;
 
     }
-
 
 }

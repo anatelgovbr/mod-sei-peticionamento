@@ -39,7 +39,7 @@ switch ($_GET['acao']) {
             $exibirHipoteseLegal = $objMdPetIntDestRespostaRN->verificarHipoteseLegal();
             $arrHipoteseNivel = $objMdPetIntDestRespostaRN->verificarCriterioIntercorrente($idTipoProcedimento);
            
-            $selHipoteseLegal = MdPetIntercorrenteINT::montarSelectHipoteseLegalRespostaIntimacao($booOnlyOptions = true);
+            $selHipoteseLegal = MdPetHipoteseLegalINT::montarSelectHipoteseLegal($booOnlyOptions = true);
             
             //Documento Principal
             $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();

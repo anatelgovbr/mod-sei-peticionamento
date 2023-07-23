@@ -8,6 +8,7 @@ function inicializar() {
     infraEfeitoTabelas();
     carregarComponenteTipoIntimacao();
     carregarComponenteUnidade();
+    carregarComponenteDestinatario()
 
     // if( $('#divInfraAreaTabela').find('table').length == 0 ){
     //     $('#divInfraAreaPaginacaoSuperior').hide();
@@ -281,6 +282,48 @@ function carregarComponenteUnidade(){
 
     objLupaUnidade = new infraLupaSelect('selDescricaoUnidade' , 'hdnUnidade',  '<?=$strLinkUnidSelecionar ?>');
 }
+
+function carregarComponenteDestinatario(){
+
+    objAutoCompletarDestinatario = new infraAjaxAutoCompletar('hdnIdDestinatario' , 'txtDestinatario',  '<?=$strLinkAjaxContatos ?>');
+    objAutoCompletarDestinatario.limparCampo = true;
+    objAutoCompletarDestinatario.tamanhoMinimo = 3;
+    objAutoCompletarDestinatario.prepararExecucao = function(){
+        return 'palavras_pesquisa='+document.getElementById('txtDestinatario').value;
+    };
+
+    objAutoCompletarDestinatario.processarResultado = function(id,nome,complemento){
+
+        if (id!=''){
+           var options = document.getElementById('selDestinatario').options;
+
+           if(options != null){
+               for(var i=0;i < options.length;i++){
+                   if (options[i].value == id){
+                       alert('Destinatário já consta na lista.');
+                       break;
+                   }
+               }
+           }
+
+           if (i==options.length){
+
+               for(i=0;i < options.length;i++){
+                   options[i].selected = false;
+               }
+
+               opt = infraSelectAdicionarOption(document.getElementById('selDestinatario'),nome,id);
+               objLupaDestinatarios.atualizar();
+               opt.selected = true;
+           }
+           document.getElementById('txtDestinatario').value = '';
+           document.getElementById('txtDestinatario').focus();
+       }
+    };
+
+    objLupaDestinatarios = new infraLupaSelect('selDestinatario','hdnDestinatario','<?=$strLinkDestinatariosSelecao?>');
+}
+
 
 function carregarComponenteTipoIntimacao(){
 

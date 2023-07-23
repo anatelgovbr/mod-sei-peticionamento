@@ -235,6 +235,8 @@ class MdPetIntimacaoRN extends InfraRN
         $objDocumentoDTO->retNumIdOrgaoUnidadeResponsavel();
         $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
         $objDocumentoDTO->retStrNomeSerie();
+        $objDocumentoDTO->retStrNomeArvore();
+        $objDocumentoDTO->retStrDescricaoProtocolo();
         $objDocumentoDTO->retStrNumero();
         $objDocumentoDTO->retNumIdSerie();
         $objDocumentoDTO->setDblIdDocumento($idDocumento);
@@ -316,7 +318,7 @@ class MdPetIntimacaoRN extends InfraRN
 
                 if (!is_null($objDocumentoDTO)) {
                     $strProtocoloDocumentoFormatado = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
-                    $arr_protocolos_anexos .= '<option>' . DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')</option>';
+                    $arr_protocolos_anexos .= '<option>'.$objDocumentoDTO->getStrNomeSerie().' '.$objDocumentoDTO->getStrNomeArvore().' '.$objDocumentoDTO->getStrNumero().' (' . $strProtocoloDocumentoFormatado . ')</option>';
                 } else {
                     $objProcedimentoDTO = $this->_retornaProcedimentoPorId($docsIntimacao->getDblIdProtocolo());
                     if (!is_null($objProcedimentoDTO)) {
@@ -343,6 +345,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objDocumentoDTO->retNumIdOrgaoUnidadeResponsavel();
             $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
             $objDocumentoDTO->retStrNomeSerie();
+            $objDocumentoDTO->retStrNomeArvore();
             $objDocumentoDTO->retStrNumero();
             $objDocumentoDTO->retNumIdSerie();
             $objDocumentoDTO->setDblIdDocumento($docsDisponibilizados->getDblIdProtocolo());
@@ -351,7 +354,7 @@ class MdPetIntimacaoRN extends InfraRN
 
             if (!is_null($objDocumentoDTO)) {
                 $strProtocoloDocumentoFormatado = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
-                $arr_protocolos_disponibilizados .= '<option>' . DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')</option>';
+                $arr_protocolos_disponibilizados .= '<option>'.$objDocumentoDTO->getStrNomeSerie().' '.$objDocumentoDTO->getStrNomeArvore().' '.$objDocumentoDTO->getStrNumero().' (' . $strProtocoloDocumentoFormatado . ')</option>';
             } else {
                 $objProcedimentoDTO = $this->_retornaProcedimentoPorId($docsDisponibilizados->getDblIdProtocolo());
                 if (!is_null($objProcedimentoDTO)) {
@@ -448,7 +451,7 @@ class MdPetIntimacaoRN extends InfraRN
 
                 if (!is_null($objDocumentoDTO)) {
                     $strProtocoloDocumentoFormatado = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
-                    $arr_protocolos_anexos .= '<option>' . DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')</option>';
+                    $arr_protocolos_anexos .= '<option>'.$objDocumentoDTO->getStrNomeSerie().' '.$objDocumentoDTO->getStrNomeArvore().' '.$objDocumentoDTO->getStrNumero().' (' . $strProtocoloDocumentoFormatado . ')</option>';
                 } else {
                     $objProcedimentoDTO = $this->_retornaProcedimentoPorId($docsIntimacao->getDblIdProtocolo());
                     if (!is_null($objProcedimentoDTO)) {
@@ -475,6 +478,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objDocumentoDTO->retNumIdOrgaoUnidadeResponsavel();
             $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
             $objDocumentoDTO->retStrNomeSerie();
+            $objDocumentoDTO->retStrNomeArvore();
             $objDocumentoDTO->retStrNumero();
             $objDocumentoDTO->retNumIdSerie();
             $objDocumentoDTO->setDblIdDocumento($docsDisponibilizados->getDblIdProtocolo());
@@ -483,7 +487,7 @@ class MdPetIntimacaoRN extends InfraRN
 
             if (!is_null($objDocumentoDTO)) {
                 $strProtocoloDocumentoFormatado = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
-                $arr_protocolos_disponibilizados .= '<option>' . DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')</option>';
+                $arr_protocolos_disponibilizados .= '<option>'.$objDocumentoDTO->getStrNomeSerie().' '.$objDocumentoDTO->getStrNomeArvore().' '.$objDocumentoDTO->getStrNumero().' (' . $strProtocoloDocumentoFormatado . ')</option>';
             } else {
                 $objProcedimentoDTO = $this->_retornaProcedimentoPorId($docsDisponibilizados->getDblIdProtocolo());
                 if (!is_null($objProcedimentoDTO)) {
@@ -1018,8 +1022,8 @@ class MdPetIntimacaoRN extends InfraRN
             $dtoMdPetVincReptDTO->retStrStaAbrangencia();
             $dtoMdPetVincReptDTO->retNumIdMdPetVinculoRepresent();
             $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
-            $dtoMdPetVincReptDTO->setStrSinAtivo('S');
             $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+            $dtoMdPetVincReptDTO->setStrTipoRepresentante([MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO], InfraDTO::$OPER_NOT_IN);
             $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
             $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
 
@@ -1130,7 +1134,6 @@ class MdPetIntimacaoRN extends InfraRN
             $dtoMdPetVincReptDTO->retStrStaAbrangencia();
             $dtoMdPetVincReptDTO->retNumIdMdPetVinculoRepresent();
             $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
-            $dtoMdPetVincReptDTO->setStrSinAtivo('S');
             $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
             $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
             $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
@@ -1550,7 +1553,6 @@ class MdPetIntimacaoRN extends InfraRN
                 $dtoMdPetVincReptDTO->retStrCNPJ();
                 $dtoMdPetVincReptDTO->retStrEmail();
                 $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
-                $dtoMdPetVincReptDTO->setStrSinAtivo('S');
                 $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
                 $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
                 $arrMdPetVincRepRN = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
@@ -1679,7 +1681,6 @@ class MdPetIntimacaoRN extends InfraRN
                         $dtoMdPetVincReptDTO->retNumIdContatoVinc();
                         $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
                         $dtoMdPetVincReptDTO->retStrRazaoSocialNomeVinc();
-                        $dtoMdPetVincReptDTO->setStrSinAtivo('S');
 
                         $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
                         $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
@@ -1770,7 +1771,6 @@ class MdPetIntimacaoRN extends InfraRN
                         $dtoMdPetVincReptDTO->setNumIdContatoVinc($arrContatos, InfraDTO::$OPER_IN);
                         $dtoMdPetVincReptDTO->retStrRazaoSocialNomeVinc();
                         $dtoMdPetVincReptDTO->retNumIdContatoVinc();
-                        $dtoMdPetVincReptDTO->setStrSinAtivo('S');
                         $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
                         $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
                         $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
@@ -2215,7 +2215,7 @@ class MdPetIntimacaoRN extends InfraRN
         $objMdPetIntDestinatarioDTO->retDthDataCadastro();
         $objMdPetIntDestinatarioDTO->retStrSinPessoaJuridica();
         $objMdPetIntDestinatarioDTO->retStrNomeContato();
-        $objMdPetIntDestinatarioDTO->retStrNomeContato();
+        $objMdPetIntDestinatarioDTO->retNumIdOrgao();
         $objMdPetIntDestinatarioDTO->setDistinct(true);
 
         $objMdPetIntDestinatarioDTO->adicionarCriterio('DataAceite', InfraDTO::$OPER_IGUAL, NULL);
@@ -2223,16 +2223,20 @@ class MdPetIntimacaoRN extends InfraRN
         $objIntimacoesLista = $objMdPetIntDestinatarioRN->listar($objMdPetIntDestinatarioDTO);
 
         if (is_countable($objIntimacoesLista) && count($objIntimacoesLista) > 0) {
+
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+
             foreach ($objIntimacoesLista as $objRelDestIntimacao) {
-                $dataHrIntimacao = $objRelDestIntimacao->getDthDataCadastro();
-                $arrFormtDtInt = explode(" ", $dataHrIntimacao);
-                $dataIntimacao = count($arrFormtDtInt) > 0 ? current($arrFormtDtInt) : null;
-                $dateIntimacao = strtotime(str_replace('/', '-', $dataIntimacao));
+
+	            $numIdOrgao         = $objRelDestIntimacao->getNumIdOrgao();
+                $dataHrIntimacao    = $objRelDestIntimacao->getDthDataCadastro();
+                $arrFormtDtInt      = explode(" ", $dataHrIntimacao);
+                $dataIntimacao      = count($arrFormtDtInt) > 0 ? current($arrFormtDtInt) : null;
+                $dateIntimacao      = strtotime(str_replace('/', '-', $dataIntimacao));
 
                 $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
 
-                $datafinal = $objMdPetIntPrazoRN->calcularDataPrazo($diasExp, $dataIntimacao);
+                $datafinal = $objMdPetIntPrazoRN->calcularDataPrazo($diasExp, $dataIntimacao, $numIdOrgao);
                 $datefinal = strtotime(str_replace('/', '-', $datafinal));
 
                 // TODO: if para PULAR cumprimento por decurso do prazo tácito sobre processo Sigiloso (Nivel de Acesso local OU Global 2),
@@ -2956,9 +2960,8 @@ class MdPetIntimacaoRN extends InfraRN
         $dtoMdPetVincRepresentantDTO->retNumIdContatoVinc();
         $dtoMdPetVincRepresentantDTO->retNumIdContatoProcurador();
         $dtoMdPetVincRepresentantDTO->setDistinct(true);
-        $dtoMdPetVincRepresentantDTO->setStrSinAtivo('S');
-        $dtoMdPetVincRepresentantDTO->setStrStaEstado('A');
-        $dtoMdPetVincRepresentantDTO->setStrTpVinc('J');
+        $dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+        $dtoMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
 
         if ($_POST['intimacaoPJ'] == 't' && $_POST['hdnDadosUsuario']) {
 

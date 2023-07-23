@@ -186,77 +186,81 @@
             return $arrObjMdPetIntRelTipoRespDestDTO;
         }
 
-        public function somarDiaUtil($numQtde, $strData)
+        public function somarDiaUtil($numQtde, $strData, $numIdOrgao = null)
         {
 
             $strDataFinal = InfraData::calcularData(($numQtde + 365), InfraData::$UNIDADE_DIAS, InfraData::$SENTIDO_ADIANTE, $strData);
 
             $this->_removerTimeDate($strData);
-            $arrFeriados  = $this->_recuperarFeriados($strData, $strDataFinal);
+            $arrFeriados  = $this->_recuperarFeriados($strData, $strDataFinal, $numIdOrgao);
 
             $count = 0;
             while ($count < $numQtde) {
                 $strData = InfraData::calcularData(1, InfraData::$UNIDADE_DIAS, InfraData::$SENTIDO_ADIANTE, $strData);
-                if (InfraData::obterDescricaoDiaSemana($strData) != 'sábado' &&
-                    InfraData::obterDescricaoDiaSemana($strData) != 'domingo' &&
-                    !in_array($strData, $arrFeriados)
-                ) {
+                if (!in_array(InfraData::obterDescricaoDiaSemana($strData), ['sábado', 'domingo']) && !in_array($strData, $arrFeriados)) {
                     $count++;
                 }
             }
 
             return $strData;
+
         }
 
 
-        private function _recuperarFeriados($strDataInicial, $strDataFinal)
+        private function _recuperarFeriados($strDataInicial, $strDataFinal, $numIdOrgao = null)
         {
-            $numIdOrgao = SessaoSEI::getInstance()->getNumIdOrgaoUnidadeAtual();
-            $numIdOrgao = is_null($numIdOrgao) ? SessaoSEIExterna::getInstance()->getNumIdOrgaoUnidadeAtual() : $numIdOrgao;
 
-            if (is_null($numIdOrgao)){
-                $objOrgaoDTO = new OrgaoDTO();
-                $objOrgaoDTO->retNumIdOrgao();
-                $objOrgaoDTO->setBolExclusaoLogica(false);
-                $objOrgaoDTO->adicionarCriterio(array('SinAtivo','Sigla'),array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),array('S',ConfiguracaoSEI::getInstance()->getValor('SessaoSEI','SiglaOrgaoSistema')),InfraDTO::$OPER_LOGICO_AND);
+        	if(is_null($numIdOrgao)){
+		        $numIdOrgao = SessaoSEI::getInstance()->getNumIdOrgaoUnidadeAtual();
+		        $numIdOrgao = is_null($numIdOrgao) ? SessaoSEIExterna::getInstance()->getNumIdOrgaoUnidadeAtual() : $numIdOrgao;
 
-                $objOrgaoRN = new OrgaoRN();
-                $arrObjOrgaoDTO = $objOrgaoRN->listarRN1353($objOrgaoDTO);
-                $numIdOrgao = !is_null($arrObjOrgaoDTO) && count($arrObjOrgaoDTO) > 0 ? current($arrObjOrgaoDTO)->getNumIdOrgao() : null;
-           	}
+		        if (is_null($numIdOrgao)){
+			        $objOrgaoDTO = new OrgaoDTO();
+			        $objOrgaoDTO->retNumIdOrgao();
+			        $objOrgaoDTO->setBolExclusaoLogica(false);
+			        $objOrgaoDTO->adicionarCriterio(array('SinAtivo','Sigla'),array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),array('S',ConfiguracaoSEI::getInstance()->getValor('SessaoSEI','SiglaOrgaoSistema')),InfraDTO::$OPER_LOGICO_AND);
 
-            $arrFeriados  = array();
+			        $objOrgaoRN = new OrgaoRN();
+			        $arrObjOrgaoDTO = $objOrgaoRN->listarRN1353($objOrgaoDTO);
+			        $numIdOrgao = !is_null($arrObjOrgaoDTO) && count($arrObjOrgaoDTO) > 0 ? current($arrObjOrgaoDTO)->getNumIdOrgao() : null;
+		        }
+	        }
 
-            $objFeriadoRN = new FeriadoRN();
-            $objFeriadoDTO = new FeriadoDTO();
+            $arrFeriados    = array();
+
+            $objFeriadoRN   = new FeriadoRN();
+            $objFeriadoDTO  = new FeriadoDTO();
+
             $objFeriadoDTO->retDtaFeriado();
             $objFeriadoDTO->retStrDescricao();
 
             if(is_numeric($numIdOrgao)){
                 $objFeriadoDTO->adicionarCriterio(array('IdOrgao','IdOrgao'),
-                array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),
-                array(null,$numIdOrgao),
-                array(InfraDTO::$OPER_LOGICO_OR));
+                    array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),
+                    array(null,$numIdOrgao),
+                    array(InfraDTO::$OPER_LOGICO_OR));
             }else{
                 $objFeriadoDTO->setNumIdOrgao(null);
             }
 
-            $objFeriadoDTO->adicionarCriterio(array('Feriado', 'Feriado'),
+            $objFeriadoDTO->adicionarCriterio(
+            	array('Feriado', 'Feriado'),
                 array(InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL),
                 array($strDataInicial, $strDataFinal),
-                array(InfraDTO::$OPER_LOGICO_AND));
+                array(InfraDTO::$OPER_LOGICO_AND)
+            );
 
             $objFeriadoDTO->setOrdDtaFeriado(InfraDTO::$TIPO_ORDENACAO_ASC);
 
             $count = $objFeriadoRN->contar($objFeriadoDTO);
             $arrObjFeriadoDTO = $objFeriadoRN->listar($objFeriadoDTO);
 
-            if($count > 0)
-            {
-             $arrFeriados = InfraArray::converterArrInfraDTO($arrObjFeriadoDTO, 'Feriado');
+            if($count > 0){
+                $arrFeriados = InfraArray::converterArrInfraDTO($arrObjFeriadoDTO, 'Feriado');
             }
 
             return $arrFeriados;
+
         }
 
 
@@ -331,7 +335,7 @@
             }
         }
 
-        public function calcularDataPrazo($prazoTacita, $dataCumprimentoIntimacao = null)
+        public function calcularDataPrazo($prazoTacita, $dataCumprimentoIntimacao = null, $numIdOrgao = null)
         {
             // DATA INÍCIO
             if (is_null($dataCumprimentoIntimacao)) {
@@ -339,7 +343,7 @@
             }
 
             if ($prazoTacita>1){
-                $dataCumprimentoIntimacao = $this->somarDiaUtil(1, $dataCumprimentoIntimacao);
+                $dataCumprimentoIntimacao = $this->somarDiaUtil(1, $dataCumprimentoIntimacao, $numIdOrgao);
                 if ($prazoTacita>2){
                     $data = DateTime::createFromFormat('d/m/Y', $dataCumprimentoIntimacao);
                     $dtsSomar = 'P'.($prazoTacita-2).'D';
@@ -348,10 +352,10 @@
                 }
             }
 
-            return $this->somarDiaUtil(1, $dataCumprimentoIntimacao);
+            return $this->somarDiaUtil(1, $dataCumprimentoIntimacao, $numIdOrgao);
         }
 
-        public function calcularDataPrazoPorTipo($tipo, $prazo, $dataCumprimentoIntimacao = null, $tipoDia = null) {
+        public function calcularDataPrazoPorTipo($tipo, $prazo, $dataCumprimentoIntimacao = null, $tipoDia = null, $numIdOrgao = null) {
 
             // DATA INÍCIO
             if (is_null($dataCumprimentoIntimacao)) {
@@ -364,7 +368,7 @@
                     if($tipoDia == 'U'){
                       $qtdDia = $prazo;
                     }
-                    $dataCumprimentoIntimacao = $this->somarDiaUtil($qtdDia, $dataCumprimentoIntimacao);
+                    $dataCumprimentoIntimacao = $this->somarDiaUtil($qtdDia, $dataCumprimentoIntimacao, $numIdOrgao);
 
                   if ($tipoDia != 'U') {
                     if ($prazo > 2) {
@@ -377,7 +381,7 @@
                 }
             } elseif ($tipo=='M' || $tipo=='A'){
                 if ($prazo>0){
-                    $dataCumprimentoIntimacao = $this->somarDiaUtil(1, $dataCumprimentoIntimacao);
+                    $dataCumprimentoIntimacao = $this->somarDiaUtil(1, $dataCumprimentoIntimacao, $numIdOrgao);
                     $data = DateTime::createFromFormat('d/m/Y', $dataCumprimentoIntimacao);
                     $dtsSomar = $tipo=='M' ? 'P'.$prazo.'M' : 'P'.$prazo.'Y';
                     $data->add(new DateInterval($dtsSomar));
@@ -389,7 +393,7 @@
 
 
             if (is_null($tipoDia) || $tipoDia!='U'){
-              $dataCumprimentoIntimacao =  $this->somarDiaUtil(1, $dataCumprimentoIntimacao);
+              $dataCumprimentoIntimacao =  $this->somarDiaUtil(1, $dataCumprimentoIntimacao, $numIdOrgao);
             }
 
             return $dataCumprimentoIntimacao;

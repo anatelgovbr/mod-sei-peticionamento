@@ -44,6 +44,10 @@ class MdPetCriterioDTO extends InfraDTO  {
 				'SinCriterioPadrao',
 				'sin_criterio_padrao');
 
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+            'SinIntercorrenteSigiloso',
+            'sin_intercorrente_sigiloso');
+
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeProcesso', 'tipo_proc.nome', 'tipo_procedimento tipo_proc');
         

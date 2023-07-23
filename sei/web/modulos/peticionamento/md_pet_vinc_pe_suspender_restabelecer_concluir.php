@@ -32,6 +32,12 @@ try {
   $idContato = isset($_GET['idContato']) ? $_GET['idContato'] : $_POST['hdnIdContato'];
   $numeroSEI = isset($_GET['numeroSEI']) ? $_GET['numeroSEI'] : $_POST['hdnNumeroSei'];
 
+  // VARIÁVEIS ADICIONADAS PARA PERMITIR A SUSPENSÃO OU REATIVAÇÃO DE PROCURADORES
+  $idContatoProc = isset($_GET['idContatoProc']) ? $_GET['idContatoProc'] : $_POST['hdnIdContatoProc'];
+  $idVinculoRepresent = isset($_GET['idVinculoRepresent']) ? $_GET['idVinculoRepresent'] : $_POST['hdnIdVinculoRepresent'];
+  $strTipoVinculo = isset($_GET['strTipoVinculo']) ? $_GET['strTipoVinculo'] : $_POST['hdnStrTipoVinculo'];
+  $idDocumentoRepresent = isset($_GET['idDocumentoRepresent']) ? $_GET['idDocumentoRepresent'] : $_POST['hdnIdDocumentoRepresent'];
+
   $txtNumeroCpfResponsavel = isset($_POST['txtNumeroCpfResponsavel']) ? $_POST['txtNumeroCpfResponsavel'] : $_GET['txtNumeroCpfResponsavel'];
   $hdnNomeNovo = $_POST['hdnNomeNovo'];
 
@@ -248,11 +254,21 @@ try {
           $arrParam[] = $idVinculo;
 
           $_POST['pwdsenhaSEI'] = $_POST['pwdSenha'];
-          $dados = $_POST;
+          
+          $params['dados'] = $dados = $_POST;
 
-          $params['dados'] = $dados;
+          // Manda para a função encarregada dos procuradores:
+          if(in_array($_POST['hdnStrTipoVinculo'], ['E', 'S', 'L']) && $_POST['hdnCascata'] == 'N'){
+            $objMdPetVinculoRepresentRN->realizarProcessoSuspensaoRestabelecimentoProcurador($params);
+          }
 
-          $objMdPetVinculoRepresentRN->realizarProcessoSuspensaoRestabelecimentoVinculo($params);
+          // Manda para a função antiga, encarregada do responsável legal apenas se o checkbox 
+          // "Também suspender os atuais Procuradores ativos" estiver marcado, suspendendo ou 
+          // restabelecendo também os procuradores:
+          if(in_array($_POST['hdnStrTipoVinculo'], ['L']) && $_POST['hdnCascata'] == 'S'){
+            $objMdPetVinculoRepresentRN->realizarProcessoSuspensaoRestabelecimentoVinculo($params);
+          }
+
           $urlAssinada = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_listar&acao_origem='.$_GET['acao']);
           echo "<script>";
           echo " window.parent.location = '" . $urlAssinada . "';";
@@ -428,6 +444,21 @@ function inicializar(){
     if (window.parent.document.getElementById('hdnOperacao')!=null){
         $('#hdnOperacao').val(window.parent.document.getElementById('hdnOperacao').value);
     }
+    if (window.parent.document.getElementById('hdnIdContatoProc')!=null){
+        $('#hdnIdContatoProc').val(window.parent.document.getElementById('hdnIdContatoProc').value);
+    }
+    if (window.parent.document.getElementById('hdnIdVinculoRepresent')!=null){
+        $('#hdnIdVinculoRepresent').val(window.parent.document.getElementById('hdnIdVinculoRepresent').value);
+    }
+    if (window.parent.document.getElementById('hdnStrTipoVinculo')!=null){
+        $('#hdnStrTipoVinculo').val(window.parent.document.getElementById('hdnStrTipoVinculo').value);
+    }
+    if (window.parent.document.getElementById('hdnIdDocumentoRepresent')!=null){
+        $('#hdnIdDocumentoRepresent').val(window.parent.document.getElementById('hdnIdDocumentoRepresent').value);
+    }
+    if (window.parent.document.getElementById('optCascata') != null && window.parent.document.getElementById('optCascata').checked){
+      $('#hdnCascata').val(window.parent.document.getElementById('optCascata').value);
+    }
   <?}?>
 }
 
@@ -590,11 +621,21 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     <input type="hidden" id="txtNumeroCpfResponsavel" name="txtNumeroCpfResponsavel" value="<?=$txtNumeroCpfResponsavel?>" />
     <input type="hidden" id="hdnNomeNovo" name="hdnNomeNovo" value="<?=$hdnNomeNovo?>" />
     <input type="hidden" id="hdnNumeroSei" name="hdnNumeroSei" value="<?=$numeroSEI?>" />
+
+    <input type="hidden" id="hdnIdContatoProc" name="hdnIdContatoProc" value="<?= $idContatoProc ?>" />
+    <input type="hidden" id="hdnIdVinculoRepresent" name="hdnIdVinculoRepresent" value="<?= $idVinculoRepresent ?>" />
+    <input type="hidden" id="hdnStrTipoVinculo" name="hdnStrTipoVinculo" value="<?= $tipoVinculo ?>" />
+    <input type="hidden" id="hdnIdDocumentoRepresent" name="hdnIdDocumentoRepresent" value="Id doc<?= $idDocumento ?>" />
+    
+    <input type="hidden" id="hdnCascata" name="hdnCascata" value="N" />
+
     <?
-    //PaginaSEI::getInstance()->fecharAreaDados();
-    //PaginaSEI::getInstance()->montarAreaDebug();
-    //PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+      //echo var_dump($_GET);
+      //PaginaSEI::getInstance()->fecharAreaDados();
+      //PaginaSEI::getInstance()->montarAreaDebug();
+      //PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
+
 </form>
 <?
 PaginaSEI::getInstance()->fecharBody();

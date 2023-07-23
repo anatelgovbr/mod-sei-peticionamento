@@ -422,7 +422,7 @@ class MdPetReciboRN extends InfraRN
                 unset($erroDocumentos['documentoPrincipal']);
             }
 
-            $strNome = $documentoDTO->getStrNomeSerie() . " " . $documentoDTO->getStrNumero();
+	        $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
             $strNumeroSEI = $documentoDTO->getStrProtocoloDocumentoFormatado();
 
             $html .= '<tr>';
@@ -471,7 +471,7 @@ class MdPetReciboRN extends InfraRN
                     $bolExclusao = false;
                 }
                 //concatenar tipo e complemento
-                $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNumero();
+	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
 
                 $html .= '<tr>';
                 $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
@@ -523,7 +523,7 @@ class MdPetReciboRN extends InfraRN
                     $bolExclusao = false;
                 }
                 //concatenar tipo e complemento
-                $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNumero();
+	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
 
                 $html .= '<tr>';
                 $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
@@ -576,7 +576,7 @@ class MdPetReciboRN extends InfraRN
                     $bolExclusao = false;
                 }
                 //concatenar tipo e complemento
-                $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNumero();
+	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
 
                 $html .= '<tr>';
                 $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';

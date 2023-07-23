@@ -29,3 +29,6 @@ $tamanhoMaximo = MdPetIntercorrenteINT::tamanhoMaximoArquivoPermitido();
 //RN Extensoes Permitidas
 $extensoesPermitidas = MdPetExtensoesArquivoINT::recuperaExtensoes(null, null, null, "N");
 //Fim RN
+
+// Forcar o Nivel de Acesso parametrizado
+$nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc($tipoPeticionamento = 'I');

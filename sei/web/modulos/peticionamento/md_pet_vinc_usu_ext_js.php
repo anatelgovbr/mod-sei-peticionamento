@@ -14,28 +14,30 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 <script type="text/javascript">
     "use strict";
 
-    var stWebservice = '<?php echo $stWebService ? 'true' : 'false'?>';
-    var stWebserviceBol = '<?php echo $stWebService ? 1 : 0?>';
-    var RESTRITO = '<?php echo ProtocoloRN::$NA_RESTRITO?>';
-    var TAMANHO_MAXIMO = '<?php echo $tamanhoMaximo?>';
-    var EXIBIR_HIPOTESE_LEGAL = '<?php echo $exibirHipoteseLegal?>';
-    var arrExtensoesPermitidas = [<?php echo $extensoesPermitidas?>];
+    var stWebservice = '<?php echo $stWebService ? 'true' : 'false' ?>';
+    var stWebserviceBol = '<?php echo $stWebService ? 1 : 0 ?>';
+    var RESTRITO = '<?php echo ProtocoloRN::$NA_RESTRITO ?>';
+    var TAMANHO_MAXIMO = '<?php echo $tamanhoMaximo ?>';
+    var EXIBIR_HIPOTESE_LEGAL = '<?php echo $exibirHipoteseLegal ?>';
+    var arrExtensoesPermitidas = [<?php echo $extensoesPermitidas ?>];
     var objAjaxSelectTipoDocumento = null;
     var objAjaxSelectHipoteseLegal = null;
     var objUploadArquivo = null;
     var objTabelaDinamicaDocumento = null;
     var objAjaxCidade = null;
 
-//    var objAutoCompletarUsuario = null;
+    //    var objAutoCompletarUsuario = null;
 
     function inicializar() {
         infraEfeitoTabelas();
-        document.getElementsByTagName("BODY")[0].onresize = function() {resizeIFramePorConteudo()};
+        document.getElementsByTagName("BODY")[0].onresize = function() {
+            resizeIFramePorConteudo()
+        };
         if (EXIBIR_HIPOTESE_LEGAL) {
             verificarHipoteseLegal();
         }
 
-        if (document.getElementById('tbDocumento')!=null){
+        if (document.getElementById('tbDocumento') != null) {
             iniciarObjUploadArquivo();
             iniciarTabelaDinamicaDocumento();
             carregarDependenciaCidades();
@@ -44,18 +46,18 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
         $("#txtNomeResponsavelLegalAlt").val($("#txtNomeResponsavelLegal").val());
         $("#txtNumeroCpfResponsavelAlt").val($("#txtNumeroCpfResponsavel").val());
-        <?php if(!$stAlterar): ?>
-        //document.getElementById("txtCaptcha").addEventListener("keyup", controlarEnterValidarProcesso, false);
+        <?php if (!$stAlterar) : ?>
+            //document.getElementById("txtCaptcha").addEventListener("keyup", controlarEnterValidarProcesso, false);
         <?php endif; ?>
-        <?php if($stWebService): ?>
-       //  document.getElementById("txtNumeroCpfProcurador").addEventListener("keyup", controlarEnterValidarUsuario, false);
+        <?php if ($stWebService) : ?>
+            //  document.getElementById("txtNumeroCpfProcurador").addEventListener("keyup", controlarEnterValidarUsuario, false);
         <?php endif; ?>
 
-        $('#btnValidarSemWS').on('click', function(){
+        $('#btnValidarSemWS').on('click', function() {
             carregarTelaNovoCnpj();
         });
         document.addEventListener("keypress", function(e) {
-            if(e.key === 'Enter') {
+            if (e.key === 'Enter') {
                 var btn = document.querySelector("#cardCaptcha button");
                 btn.click();
 
@@ -63,8 +65,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         });
     }
 
-    function validarCpf(obj){
-        if(!infraValidarCpf(obj.value)){
+
+    function validarCpf(obj) {
+        if (!infraValidarCpf(obj.value)) {
             alert('CPF informado é inválido.');
             obj.value = '';
             obj.focus();
@@ -72,10 +75,10 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function carregarTelaNovoCnpj() {
-       //Verificar se o cnpj já esta sendo utilizado num vinculo
+        //Verificar se o cnpj já esta sendo utilizado num vinculo
         var qtdNuCPNJ = document.getElementById('txtNumeroCnpj').value.trim().length;
         var qtdTxtCaptcha = document.getElementById('txtCaptcha').value.trim().length;
-        var valido =true;
+        var valido = true;
 
         if (qtdNuCPNJ == 0) {
             alert('Antes, informe o CNPJ!');
@@ -90,15 +93,15 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         $.ajax({
             dataType: 'xml',
             method: 'POST',
-            url: '<?php echo $strLinkConsultaVinculo?>',
+            url: '<?php echo $strLinkConsultaVinculo ?>',
             data: {
                 'txtNumeroCnpj': $("#txtNumeroCnpj").val(),
                 'txtCaptcha': $("#txtCaptcha").val()
             },
-            error: function (dados) {
+            error: function(dados) {
                 console.log(dados);
             },
-            success: function (data) {
+            success: function(data) {
                 valido = $(data).find('success').text();
 
                 var success = $.trim($('success', data).text()).length;
@@ -144,11 +147,11 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                     $.ajax({
                         dataType: 'xml',
                         method: 'POST',
-                        url: '<?php echo $strLinkConsultaContato?>',
+                        url: '<?php echo $strLinkConsultaContato ?>',
                         data: {
                             'txtNumeroCnpj': $("#txtNumeroCnpj").val()
                         },
-                        success: function (data) {
+                        success: function(data) {
                             var success = $.trim($('success', data).text()).length;
                             if (success > 0) {
                                 var message = $.trim($('msg', data).text());
@@ -167,7 +170,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                             var idCidade = $('idCidade', data).text();
 
                             objAjaxCidade.executar();
-                            objAjaxCidade.processarResultado = function(){
+                            objAjaxCidade.processarResultado = function() {
                                 $('#selCidade').val(idCidade)
                             }
 
@@ -185,7 +188,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
     }
 
-    function exibirTodosCampos(){
+    function exibirTodosCampos() {
         document.getElementById('informacaoPJ').style.display = '';
         document.getElementById('informacaoPJ_BR').style.display = '';
         document.getElementById('fieldDocumentos').style.display = '';
@@ -193,11 +196,11 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
 
-    function validoDeclaracaoOrWs(){
-        var isChecked       = document.getElementById('chkDeclaracao').checked;
+    function validoDeclaracaoOrWs() {
+        var isChecked = document.getElementById('chkDeclaracao').checked;
         var validWebService = document.getElementById('hdnStaWebService').value == '1' && document.getElementById('hdnIsCnpjValidado').value == '1';
 
-        if(isChecked || validWebService){
+        if (isChecked || validWebService) {
             return true;
         }
 
@@ -205,47 +208,47 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function esconderCamposPJ() {
-        var obj           = document.getElementById('txtNumeroCnpj');
+        var obj = document.getElementById('txtNumeroCnpj');
         var qtdCaracteres = obj.value.length;
-        var valido        = true;
+        var valido = true;
 
         //trata mascara
         var cnpjUsuExt = infraTrim(obj.value);
-        if(cnpjUsuExt != '') {
+        if (cnpjUsuExt != '') {
             cnpjUsuExt = infraRetirarFormatacao(cnpjUsuExt);
             cnpjUsuExt = infraLPad(cnpjUsuExt, 14, '0');
             cnpjUsuExt = cnpjUsuExt.substring(0, 14);
             obj.value = cnpjUsuExt;
 
             //Coloca ponto entre o segundo e o terceiro dígitos
-            cnpjUsuExt=cnpjUsuExt.replace(/^(\d{2})(\d)/,"$1.$2");
+            cnpjUsuExt = cnpjUsuExt.replace(/^(\d{2})(\d)/, "$1.$2");
             //Coloca ponto entre o quinto e o sexto dígitos
-            cnpjUsuExt=cnpjUsuExt.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
+            cnpjUsuExt = cnpjUsuExt.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
             //Coloca uma barra entre o oitavo e o nono dígitos
-            cnpjUsuExt=cnpjUsuExt.replace(/\.(\d{3})(\d)/,".$1/$2");
+            cnpjUsuExt = cnpjUsuExt.replace(/\.(\d{3})(\d)/, ".$1/$2");
             //Coloca um hífen depois do bloco de quatro dígitos
-            cnpjUsuExt=cnpjUsuExt.replace(/(\d{4})(\d)/,"$1-$2");
+            cnpjUsuExt = cnpjUsuExt.replace(/(\d{4})(\d)/, "$1-$2");
 
             obj.value = cnpjUsuExt;
         }
 
-        if(qtdCaracteres == 18) {
+        if (qtdCaracteres == 18) {
             var validCnpj = infraValidarCnpj(obj.value);
-            if(!validCnpj){
+            if (!validCnpj) {
                 valido = false;
             }
-        }else{
+        } else {
             valido = false;
         }
 
         var add = valido ? '' : 'none';
 
-       if(validoDeclaracaoOrWs()) {
-             document.getElementById('informacaoPJ').style.display = add;
-             document.getElementById('informacaoPJ_BR').style.display = add;
+        if (validoDeclaracaoOrWs()) {
+            document.getElementById('informacaoPJ').style.display = add;
+            document.getElementById('informacaoPJ_BR').style.display = add;
         }
 
-        if(!valido){
+        if (!valido) {
             document.getElementById('hdnIsCnpjValidado').value = '0';
             document.getElementById('chkDeclaracao').checked = false;
         }
@@ -258,7 +261,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
         var checked = campo.checked;
 
-        if(checked){
+        if (checked) {
             addRemoverDestaqueDeclaracao(false);
         }
 
@@ -270,9 +273,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         }
         alert(document.getElementById('hdnIsCnpjValidado').value);
         var isCnpjValidado = document.getElementById('hdnIsCnpjValidado').value == '1';
-        if(!isCnpjValidado){
+        if (!isCnpjValidado) {
             alert('É necessário validar o CNPJ para continuar!');
-            if(checked) {
+            if (checked) {
                 campo.checked = false;
             }
 
@@ -296,11 +299,11 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             $.ajax({
                 dataType: 'xml',
                 method: 'POST',
-                url: '<?php echo $strLinkConsultaContato?>',
+                url: '<?php echo $strLinkConsultaContato ?>',
                 data: {
                     'txtNumeroCnpj': $("#txtNumeroCnpj").val()
                 },
-                success: function (data) {
+                success: function(data) {
                     var success = $.trim($('success', data).text()).length;
                     if (success > 0) {
                         var message = $.trim($('msg', data).text());
@@ -313,13 +316,13 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                     $("#fieldDocumentos").show();
                     $("#fieldDocumentos_BR").show();
 
-                    if (document.getElementById('hdnIdVinculo').value==''){
+                    if (document.getElementById('hdnIdVinculo').value == '') {
                         $("#fieldUsuarioProcuracao").show();
                         $("#fieldUsuarioProcuracao_BR").show();
                     }
 
-                    if(document.getElementById('hdnIsCnpjValidado').value == 1) {
-                        if (document.getElementById('hdnIdVinculo').value==''){
+                    if (document.getElementById('hdnIsCnpjValidado').value == 1) {
+                        if (document.getElementById('hdnIdVinculo').value == '') {
                             $("#informacaoPJ").show();
                             $("#informacaoPJ_BR").show();
                         }
@@ -329,11 +332,11 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
 
                     if (verificaContato.length == 0) {
-                        document.querySelectorAll('.blocInformacaoPj').forEach(function (campo) {
+                        document.querySelectorAll('.blocInformacaoPj').forEach(function(campo) {
                             if (campo.value.trim().length == 0) {
                                 campo.removeAttribute('readonly');
                             } else {
-                            //    campo.readOnly = true;
+                                //    campo.readOnly = true;
                             }
                         });
                     }
@@ -351,7 +354,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
 
-    function createOptionCidade(idCidade, nomeCidade){
+    function createOptionCidade(idCidade, nomeCidade) {
         var optionNova = document.createElement("option");
         optionNova.value = idCidade;
         optionNova.text = nomeCidade;
@@ -361,10 +364,30 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         selCidade.appendChild(optionNova);
     }
 
-    function consultarVinculoExistenteCnpj(){
+    function consultarVinculoExistenteCnpj() {
+        let self = $('#txtNumeroCnpj');
+        let vinculosExistentes = JSON.parse($('#hdnVinculoPreExistente').val());
+        let novoVinculo = parseInt(self.val().replace(/\D/g,''));
+        let message;
+        if(self.val().length == 18) {
+            if(vinculosExistentes.hasOwnProperty(parseInt(self.val().replace(/\D/g,'')))){
+                $.each(vinculosExistentes, function(key, value){
+                    if(key == novoVinculo && value == 'A'){
+                        message = 'Você já possui uma vinculação de Responsável Legal de Pessoa Jurídica Ativa com este CNPJ!';
+                    }
+                    if(key == novoVinculo && value == 'S'){
+                        message = 'Essa vinculação de Responsável Legal de Pessoa Jurídica está suspensa pela Administração do SEI.\n\nEntre em contato com a Administração do SEI para maiores informações.';
+                    }
+                });
+                alert(message);
+                document.location = '<?php echo $strUrlFechar ?>';
+            }
+        }
     }
 
     function consultarDadosReceita() {
+
+        consultarVinculoExistenteCnpj();
 
         var qtdNuCPNJ = document.getElementById('txtNumeroCnpj').value.trim().length;
         var qtdTxtCaptcha = document.getElementById('txtCaptcha').value.trim().length;
@@ -384,20 +407,20 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         $.ajax({
             dataType: 'xml',
             method: 'POST',
-            url: '<?php echo $strLinkConsultaReceita?>',
-            beforeSend: function (request) {
+            url: '<?php echo $strLinkConsultaReceita ?>',
+            beforeSend: function(request) {
                 infraExibirAviso(false, 'Processando...');
-                request.setRequestHeader("captcha", '<?php echo $strCaptcha?>');
+                request.setRequestHeader("captcha", '<?php echo $strCaptcha ?>');
             },
             data: {
                 'txtNumeroCnpj': $("#txtNumeroCnpj").val(),
                 'txtCaptcha': $("#txtCaptcha").val()
             },
-            error: function (dados) {
+            error: function(dados) {
                 console.log(dados);
                 infraOcultarAviso();
             },
-            success: function (data) {
+            success: function(data) {
                 infraOcultarAviso();
                 var nomeCidade = $('nomeCidade', data).text();
                 var idCidade = $('selCidade', data).text();
@@ -409,7 +432,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 var txtSuccess = $.trim($('success', data).text());
                 if (success > 0) {
                     var message = $.trim($('msg', data).text());
-                    if(txtSuccess == 'false') {
+                    if (txtSuccess == 'false') {
                         var procuracao = $.trim($('procuracao', data).text());
                         var url = $.trim($('url', data).text());
                         console.log(url);
@@ -420,11 +443,11 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                                 480,
                                 '', //options
                                 false); //modal
-                        } else if (message.length > 0)  {
+                        } else if (message.length > 0) {
                             alert(message);
                         }
                     }
-                    document.getElementById('hdnNumeroCnpj').value=document.getElementById('txtNumeroCnpj').value;
+                    document.getElementById('hdnNumeroCnpj').value = document.getElementById('txtNumeroCnpj').value;
                     document.getElementById('frmCNPJ').submit();
 
 
@@ -432,7 +455,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 }
 
                 var valorCmpAppend = '';
-                $('dados-pj', data).children().each(function () {
+                $('dados-pj', data).children().each(function() {
                     console.log($(this)[0].tagName);
                     var idCampo = $(this)[0].localName;
                     var valor = $(this)[0].innerHTML;
@@ -442,38 +465,38 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                     if ($(campo).attr('type') == 'text' || $(campo).attr('type') == 'hidden') {
                         valorCmpAppend += valor + '±';
                         $(campo).val(valor);
-                        if(noCampo == 'txtLogradouro') {
+                        if (noCampo == 'txtLogradouro') {
                             $('#txtLogradouroPadrao').val(valor);
                         }
-                    }else if (typeof $(campo).attr('type') === 'undefined') {
+                    } else if (typeof $(campo).attr('type') === 'undefined') {
                         //Tipo de Interessado não seleciona
-                        if (noCampo!='slTipoInteressado'){
+                        if (noCampo != 'slTipoInteressado') {
                             $(campo).find('option[value="' + valor + '"]').prop('selected', true);
                         }
 
                         var cmpHidden = $("<input/>")
-                        .attr({
-                            'id': noCampo,
-                            'name': noCampo,
-                            'type': 'hidden'
-                        })
-                        .val(valor)
+                            .attr({
+                                'id': noCampo,
+                                'name': noCampo,
+                                'type': 'hidden'
+                            })
+                            .val(valor)
                         $(cmpHidden).insertAfter($(campo));
 
-                        if (noCampo != 'slTipoInteressado') {
+                        if (noCampo != 'slTipoInteressado' && valor != '') {
                             $(cmpHidden).addClass('disabled');
                             $(campo).attr('disabled', true)
                         }
-                    }else {
-                        if (noCampo=='hdnIdVinculo'){
+                    } else {
+                        if (noCampo == 'hdnIdVinculo') {
                             $(campo).val(valor);
-                            if (valor!=''){
+                            if (valor != '') {
                                 document.getElementById('isAlteracaoResponsavelLegal').value = '1';
                                 document.getElementById('hdnIsAlteracao').value = '1';
                                 document.getElementById('hdnIdContatoNovo').value = '1';
-//                              document.getElementById('txtNumeroCpfResponsavel').value = '';
-//                              document.getElementById('txtNomeResponsavelLegal').value = '';
-//                              document.getElementById('txtMotivoAlteracaoRespLegal').value = '';
+                                // document.getElementById('txtNumeroCpfResponsavel').value = '';
+                                // document.getElementById('txtNomeResponsavelLegal').value = '';
+                                // document.getElementById('txtMotivoAlteracaoRespLegal').value = '';
                             }
                         }
                     }
@@ -486,7 +509,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 $("#informacaoPJ_BR").show();
                 $("#fieldDocumentos").show();
                 $("#fieldDocumentos_BR").show();
-                if (document.getElementById('hdnIdVinculo').value==''){
+                if (document.getElementById('hdnIdVinculo').value == '') {
                     $("#fieldUsuarioProcuracao").show();
                     $("#fieldUsuarioProcuracao_BR").show();
                 }
@@ -497,21 +520,21 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
     }
 
-    function fechar(){
+    function fechar() {
         var isAlteracao = document.getElementById('isAlteracaoResponsavelLegal');
 
-        if(isAlteracao && isAlteracao.value != 0){
-            if(confirm('As alteração não serão salvas, para conclui-lá é necessário Peticionar!! Deseja continuar?')){
+        if (isAlteracao && isAlteracao.value != 0) {
+            if (confirm('As alteração não serão salvas, para conclui-lá é necessário Peticionar!! Deseja continuar?')) {
                 document.location = '<?php echo $strUrlFechar ?>';
             }
-        }else{
+        } else {
             document.location = '<?php echo $strUrlFechar ?>';
         }
     }
 
     function iniciarObjAjaxSelectHipoteseLegal() {
-        objAjaxSelectHipoteseLegal = new infraAjaxMontarSelect('selHipoteseLegal', '<?php echo $strUrlAjaxMontarHipoteseLegal?>');
-        objAjaxSelectHipoteseLegal.processarResultado = function () {
+        objAjaxSelectHipoteseLegal = new infraAjaxMontarSelect('selHipoteseLegal', '<?php echo $strUrlAjaxMontarHipoteseLegal ?>');
+        objAjaxSelectHipoteseLegal.processarResultado = function() {
             return 'nivelAcesso=' + RESTRITO;
         }
     }
@@ -519,13 +542,12 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     function iniciarTabelaDinamicaDocumento() {
         objTabelaDinamicaDocumento = new infraTabelaDinamica('tbDocumento', 'hdnTbDocumento', false, true);
         objTabelaDinamicaDocumento.gerarEfeitoTabela = true;
-        objTabelaDinamicaDocumento.remover = function () {
+        objTabelaDinamicaDocumento.remover = function() {
             verificarTabelaVazia(2);
             return true;
         };
 
-        objTabelaDinamicaDocumento.verificarTiposDocumentos = function(idSerieSel)
-        {
+        objTabelaDinamicaDocumento.verificarTiposDocumentos = function(idSerieSel) {
             var qtd;
             var linha;
             qtd = document.getElementById('tbDocumento').rows.length;
@@ -586,9 +608,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
     function iniciarObjUploadArquivo() {
         var tbDocumento = document.getElementById('tbDocumento');
-        objUploadArquivo = new infraUpload('frmDocumentoAto', '<?php echo $strLinkUploadArquivo?>');
+        objUploadArquivo = new infraUpload('frmDocumentoAto', '<?php echo $strLinkUploadArquivo ?>');
 
-        objUploadArquivo.finalizou = function (arr) {
+        objUploadArquivo.finalizou = function(arr) {
             //Tamanho do Arquivo
             var fileArquivo = document.getElementById('fileArquivo');
             var tamanhoArquivo = (arr['tamanho'] / 1024 / 1024).toFixed(2);
@@ -618,7 +640,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             limparCampoDocumento();
         };
 
-        objUploadArquivo.validar = function () {
+        objUploadArquivo.validar = function() {
             var fileArquivo = document.getElementById('fileArquivo');
             var ext = fileArquivo.value.split('.').pop().toLowerCase();
             var extensaoConfigurada = arrExtensoesPermitidas.length > 0;
@@ -665,12 +687,12 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById('selTipoDocumento').value = 'null';
         document.getElementById('txtComplementoTipoDocumento').value = '';
 
-        if(!$('#selNivelAcesso').hasClass("unclear")){
+        if (!$('#selNivelAcesso').hasClass("unclear")) {
             document.getElementById('selNivelAcesso').value = '';
             document.getElementById('hdnNivelAcesso').value = '';
         }
         if (EXIBIR_HIPOTESE_LEGAL) {
-            if(!$('#selHipoteseLegal').hasClass("unclear")){
+            if (!$('#selHipoteseLegal').hasClass("unclear")) {
                 document.getElementById('selHipoteseLegal').value = '';
                 document.getElementById('hdnHipoteseLegal').value = '';
             }
@@ -841,16 +863,16 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         }
     }
 
-    function controlarEnterValidarProcesso(e){
+    function controlarEnterValidarProcesso(e) {
         var focus = returnElementFocus();
-        if(infraGetCodigoTecla(e)==13) {
+        if (infraGetCodigoTecla(e) == 13) {
             document.getElementById('btnValidar').onclick();
         }
     }
 
-    function controlarEnterValidarUsuario(e){
+    function controlarEnterValidarUsuario(e) {
         var focus = returnElementFocus();
-        if(infraGetCodigoTecla(e)==13) {
+        if (infraGetCodigoTecla(e) == 13) {
             document.getElementById('btnValidarUsuario').onclick();
         }
     }
@@ -859,8 +881,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         var focused = document.activeElement;
         if (!focused || focused == document.body) {
             focused = null;
-        }
-        else if (document.querySelector){
+        } else if (document.querySelector) {
             focused = document.querySelector(":focus")
         }
 
@@ -868,7 +889,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function verificarHipoteseLegal() {
-        if (document.getElementById('selNivelAcesso')!=null){
+        if (document.getElementById('selNivelAcesso') != null) {
             var selNivelAcesso = document.getElementById('selNivelAcesso');
 
             if (selNivelAcesso.nodeName == 'SELECT') {
@@ -924,60 +945,58 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
     }
 
-    function validarDocumentosObrigatorios(){
+    function validarDocumentosObrigatorios() {
         var objJsonEncodDocs = JSON.parse(document.getElementById('hdnIdsDocObrigatorios').value);
-        var docsMsg          = '';
-        var docsAusentes     = false;
+        var docsMsg = '';
+        var docsAusentes = false;
 
-        for(var i =0; i < objJsonEncodDocs.length; i++){
+        for (var i = 0; i < objJsonEncodDocs.length; i++) {
             var str = objJsonEncodDocs[i];
             var ret = str.split('__');
 
             var valid = objTabelaDinamicaDocumento.verificarTiposDocumentos(ret[0]);
 
-            if(!valid){
+            if (!valid) {
                 docsAusentes = true;
-                docsMsg += '    * ' +ret[1];
+                docsMsg += '    * ' + ret[1];
             }
         }
 
-        if(docsAusentes)
-        {
-            var msgCompleta  = 'Os Tipos de Documentos listados abaixo são obrigatórios para efetivar a vinculação como Responsável Legal de Pessoa Jurídica:\n'
+        if (docsAusentes) {
+            var msgCompleta = 'Os Tipos de Documentos listados abaixo são obrigatórios para efetivar a vinculação como Responsável Legal de Pessoa Jurídica:\n'
             msgCompleta += docsMsg;
             alert(msgCompleta);
             document.getElementById('fileArquivo').focus();
             return false;
-        }else
-        {
+        } else {
             return true;
         }
     }
 
     function carregarDependenciaCidades() {
         //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-        objAjaxCidade = new infraAjaxMontarSelectDependente('slUf', 'selCidade', '<?=$strLinkAjaxCidade?>');
-        objAjaxCidade.prepararExecucao = function () {
+        objAjaxCidade = new infraAjaxMontarSelectDependente('slUf', 'selCidade', '<?= $strLinkAjaxCidade ?>');
+        objAjaxCidade.prepararExecucao = function() {
             return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idUf=' + document.getElementById('slUf').value;
         }
 
-        objAjaxCidade.processarResultado = function(){
+        objAjaxCidade.processarResultado = function() {
             //alert('terminou carregamento');
         }
     }
 
     function bloquearVirgula() {
         $('#txtNumeroEndereco').keydown(function(e) {
-            if(e.which === 188 || e.which === 110) { // 188 é vírgula e 110 virgula do teclado numérico
+            if (e.which === 188 || e.which === 110) { // 188 é vírgula e 110 virgula do teclado numérico
                 return false;
             }
         });
     }
 
-    function validarTodosCamposContato(){
+    function validarTodosCamposContato() {
         var campos = document.getElementsByClassName("blocInformacaoPj");
         for (var i = 0; i < campos.length; i++) {
-            if(campos[i].value == '' &&  campos[i].id != 'txtComplementoEndereco'){
+            if (campos[i].value == '' && campos[i].id != 'txtComplementoEndereco') {
                 return false;
             }
         }
@@ -985,18 +1004,18 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         return true;
     }
 
-    function controlarMascaraCep(obj){
-        if(obj.value.length != 9){
-            obj.value  = '';
+    function controlarMascaraCep(obj) {
+        if (obj.value.length != 9) {
+            obj.value = '';
         }
     }
 
     function peticionar() {
 
-        var isVinculacao       = document.getElementById('hdnIdVinculo').value == '' ? false : true;
-        var isAlteracao        = document.getElementById('hdnIsAlteracao').value == '1' || isVinculacao == true ? true : false;
+        var isVinculacao = document.getElementById('hdnIdVinculo').value == '' ? false : true;
+        var isAlteracao = document.getElementById('hdnIsAlteracao').value == '1' || isVinculacao == true ? true : false;
         var isAlteracaoRespLql = document.getElementById('isAlteracaoResponsavelLegal').value == '1' ? true : false;
-        var isTabelaVazia      = document.getElementById('hdnTbDocumento').value.trim().length == 0 ? true : false;
+        var isTabelaVazia = document.getElementById('hdnTbDocumento').value.trim().length == 0 ? true : false;
         var isAlteracaoAtos    = document.getElementById('hdnStrTipo').value.trim() == 'Alteração' ? true : false;
 
 
@@ -1029,10 +1048,10 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
         var isCnpjValidado = document.getElementById('hdnIsCnpjValidado').value == '1';
         console.log(isCnpjValidado);
-        var obj =document.getElementById('chkDeclaracao');
-        if(!isCnpjValidado){
+        var obj = document.getElementById('chkDeclaracao');
+        if (!isCnpjValidado) {
             alert('É necessário validar o CNPJ para continuar!');
-            if(obj) {
+            if (obj) {
                 document.getElementById('chkDeclaracao').checked = false;
             }
             return false;
@@ -1053,45 +1072,45 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-        if(stWebservice == 'false'){
-            if(document.getElementById('txtRazaoSocial').value.length == 0){
+        if (stWebservice == 'false') {
+            if (document.getElementById('txtRazaoSocial').value.length == 0) {
                 alert('Informe a Razão Social!');
                 document.getElementById('txtRazaoSocial').focus();
                 return false;
             }
 
-            if(document.getElementById('slUf').value == 'NULL'){
+            if (document.getElementById('slUf').value == 'NULL') {
                 alert('Informe a UF!');
                 document.getElementById('slUf').focus();
                 return false;
             }
 
-            if(document.getElementById('selCidade').value.length == 0 || document.getElementById('selCidade').value == 'null'){
+            if (document.getElementById('selCidade').value.length == 0 || document.getElementById('selCidade').value == 'null') {
                 alert('Informe a Cidade!');
                 document.getElementById('selCidade').focus();
                 return false;
             }
 
-            if(document.getElementById('txtNumeroCEP').value.length == 0){
+            if (document.getElementById('txtNumeroCEP').value.length == 0) {
                 alert('Informe o CEP!');
                 document.getElementById('txtNumeroCEP').focus();
                 return false;
             }
 
-            if(document.getElementById('txtLogradouro').value.length == 0){
+            if (document.getElementById('txtLogradouro').value.length == 0) {
                 alert('Informe o Endereço!');
                 document.getElementById('txtLogradouro').focus();
                 return false;
             }
 
-            if(document.getElementById('txtBairro').value.length == 0){
+            if (document.getElementById('txtBairro').value.length == 0) {
                 alert('Informe o Bairro!');
                 document.getElementById('txtBairro').focus();
                 return false;
             }
-        }else{
+        } else {
 
-            if(!validarTodosCamposContato()){
+            if (!validarTodosCamposContato()) {
                 alert('Dados Incompletos na Receita Federal!');
                 return false;
             }
@@ -1103,20 +1122,20 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-        if(!validarDocumentosObrigatorios()){
+        if (!validarDocumentosObrigatorios()) {
             return false;
         }
 
-        if(isAlteracao && !isAlteracaoRespLql && isTabelaVazia){
+        if (isAlteracao && !isAlteracaoRespLql && isTabelaVazia) {
             alert('Para realizar o Peticionamento é necessário adicionar documentos ou Alterar o Responsável Legal!');
             return false;
         }
 
-        if($('#hdnIsWebServiceHabilitado').val(stWebserviceBol))
+        if ($('#hdnIsWebServiceHabilitado').val(stWebserviceBol))
 
 
-        var valorCmpAppend = '';
-        document.querySelectorAll('.blocInformacaoPj').forEach(function (dados) {
+            var valorCmpAppend = '';
+        document.querySelectorAll('.blocInformacaoPj').forEach(function(dados) {
             if (dados.nodeName == 'INPUT') {
                 valorCmpAppend += dados.value + '±'
             }
@@ -1130,12 +1149,13 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         var url = '';
 
         if(isAlteracao && !isAlteracaoAtos){ // Substituicao do Responsavel Legal
-            url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_alt'))?>';
+            url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_alt')) ?>';
         }else if(isAlteracao && isAlteracaoAtos){  // Alteracao Atos Constitutivos
             url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_atos'))?>';
-        }else{
-            url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_cad'))?>';
+        } else {
+            url = '<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usuario_ext_vinc_pj_concluir_cad')) ?>';
         }
+
 
         parent.infraAbrirJanelaModal(url,
             770,
@@ -1144,9 +1164,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             false); //modal
     }
 
-    function addRemoverDestaqueDeclaracao(addDestaque){
-        var idHdn = addDestaque ?  'hdnTextoDeclaracaoDestaque' : 'hdnTextoDeclaracaoFormatado';
-        var hdnTextoDeclaracao  = document.getElementById(idHdn).value;
+    function addRemoverDestaqueDeclaracao(addDestaque) {
+        var idHdn = addDestaque ? 'hdnTextoDeclaracaoDestaque' : 'hdnTextoDeclaracaoFormatado';
+        var hdnTextoDeclaracao = document.getElementById(idHdn).value;
         document.getElementById('textoDeclaracao').innerHTML = hdnTextoDeclaracao;
     }
 
@@ -1158,61 +1178,60 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-        var valido=true;
+        var valido = true;
 
-         $.ajax({
-             dataType: 'xml',
-             method: 'POST',
-             url: '<?php echo $strLinkConsultaUsuarioExternoValido?>',
-             data: {
-                 'cpf': $("#txtNumeroCpfProcurador").val()
-             },
-             error: function (dados) {
-                 console.log(dados);
-             },
-             success: function (data) {
-                 document.getElementById('txtNomeProcurador').value = '';
-                 document.getElementById('hdnIdUsuarioProcuracao').value = '';
-                 document.getElementById('btnAdicionarProcurador').style.display='none';
+        $.ajax({
+            dataType: 'xml',
+            method: 'POST',
+            url: '<?php echo $strLinkConsultaUsuarioExternoValido ?>',
+            data: {
+                'cpf': $("#txtNumeroCpfProcurador").val()
+            },
+            error: function(dados) {
+                console.log(dados);
+            },
+            success: function(data) {
+                document.getElementById('txtNomeProcurador').value = '';
+                document.getElementById('hdnIdUsuarioProcuracao').value = '';
+                document.getElementById('btnAdicionarProcurador').style.display = 'none';
 
-                 if( $(data).find('no-usuario').text()!="" && $(data).find('nu-contato').text()!="" ) {
-                     if($(data).find('mensagem').text()=="pendente") {
-                         alert('Usuário Externo com pendência de liberação de cadastro.');
-                     }else{
-                         document.getElementById('txtNomeProcurador').value = $(data).find('no-usuario').text();
-                         document.getElementById('hdnIdUsuarioProcuracao').value = $(data).find('nu-contato').text();
-                         document.getElementById('btnAdicionarProcurador').style.display='';
-                     }
-                 }else{
-                     alert('Cadastro de Usuário Externo não localizado no sistema. Oriente o Usuário a realizar o Cadastro no Acesso Externo do SEI.');
-                 }
-             }
-         });
+                if ($(data).find('no-usuario').text() != "" && $(data).find('nu-contato').text() != "") {
+                    if ($(data).find('mensagem').text() == "pendente") {
+                        alert('Usuário Externo com pendência de liberação de cadastro.');
+                    } else {
+                        document.getElementById('txtNomeProcurador').value = $(data).find('no-usuario').text();
+                        document.getElementById('hdnIdUsuarioProcuracao').value = $(data).find('nu-contato').text();
+                        document.getElementById('btnAdicionarProcurador').style.display = '';
+                    }
+                } else {
+                    alert('Cadastro de Usuário Externo não localizado no sistema. Oriente o Usuário a realizar o Cadastro no Acesso Externo do SEI.');
+                }
+            }
+        });
 
-     }
+    }
 
     function validaCpf(objeto) {
         var erro = false;
-        var valor = $.trim(objeto.value.replace(/\D/g,""));
+        var valor = $.trim(objeto.value.replace(/\D/g, ""));
 
-        if(valor.length == 10 && valor.indexOf('.') < 0){
-            objeto.value = '0'+objeto.value;
-            valor = '0'+valor;
-            if(!infraValidarCpf(valor)) {
+        if (valor.length == 10 && valor.indexOf('.') < 0) {
+            objeto.value = '0' + objeto.value;
+            valor = '0' + valor;
+            if (!infraValidarCpf(valor)) {
                 erro = true;
             }
-        }else if(valor.length == 11){
-            if(!infraValidarCpf(valor)) {
+        } else if (valor.length == 11) {
+            if (!infraValidarCpf(valor)) {
                 erro = true;
             }
-        }else{
+        } else {
             erro = true;
         }
 
-        if(erro){
+        if (erro) {
             alert('Informe o CPF do Usuário Externo completo ou válido.');
             objeto.value = '';
         }
     }
-
 </script>

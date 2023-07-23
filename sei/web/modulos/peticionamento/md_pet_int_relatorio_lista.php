@@ -93,12 +93,6 @@ if ($numRegistros > 0) {
         $strResultado .= PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrAnexos());;
         $strResultado .= '</td>';
 
-
-        //Href Destinatário
-        $hrefDest  = '<a class="ancoraSigla" style="font-size: 1.0em;" title="'.PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrNomeContato()).'" >';
-        $hrefDest .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrNomeContato());
-        $hrefDest .= '</a>';
-
         //Tipo de Destinatário
         $strResultado .= '<td align="left">';
         $strResultado .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrTipoDestinatario());
@@ -106,7 +100,7 @@ if ($numRegistros > 0) {
 
         //Destinatário
         $strResultado .= '<td align="left">';
-        $strResultado .=  $hrefDest;
+        $strResultado .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrNomeContato());
         $strResultado .= '</td>';
 
         //Tipo de Intimacao

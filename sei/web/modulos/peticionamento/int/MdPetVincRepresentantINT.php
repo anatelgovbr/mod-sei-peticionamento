@@ -12,26 +12,20 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetVincRepresentantINT extends InfraINT {
 
   public static function montarSelectIdMdPetVinculoRepresent($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado){
-    $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+
+  	$objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
     $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
-
-    if ($strValorItemSelecionado!=null){
-      $objMdPetVincRepresentantDTO->setBolExclusaoLogica(false);
-      $objMdPetVincRepresentantDTO->adicionarCriterio(array('SinAtivo',''),array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),array('S',$strValorItemSelecionado),InfraDTO::$OPER_LOGICO_OR);
-    }
-
     $objMdPetVincRepresentantDTO->setOrdNumIdMdPetVinculoRepresent(InfraDTO::$TIPO_ORDENACAO_ASC);
-
-    $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-    $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+	$arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
 
     return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetVincRepresentantDTO, '', 'IdMdPetVinculoRepresent');
+
   }
 
   public static function montarSelectStaEstado($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado){
-    $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
-    $arrObjEstadoMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarValoresEstado();
+	  $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+	  $arrObjEstadoMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarValoresEstado();
 
     return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjEstadoMdPetVincRepresentantDTO, 'StaEstado', 'Descricao');
 
@@ -132,7 +126,6 @@ class MdPetVincRepresentantINT extends InfraINT {
             $objMdPetVinculoDTO->retStrNomeTipoProcedimento();
             $objMdPetVinculoDTO->setDistinct(true);
             $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-            $objMdPetVinculoDTO->setStrStaResponsavelLegal('S');
             $arrObjMdPetVinculoRN = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
             
                 if(count($arrObjMdPetVinculoRN)> 0){

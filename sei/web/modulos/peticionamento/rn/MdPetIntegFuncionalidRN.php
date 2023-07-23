@@ -12,6 +12,7 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 class MdPetIntegFuncionalidRN extends InfraRN {
 
     public static $ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL = '1';
+    public static $ID_FUNCIONALIDADE_CPF_RECEITA_FEDERAL = '2';
 
   public function __construct(){
     parent::__construct();

@@ -227,7 +227,7 @@ try {
     $strLinkPesquisar = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&acao_retorno=md_pet_tipo_processo_listar'));
     $arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
 
-    $arrComandos[] = '<button type="button" accesskey="o" id="btnOrientacoesGerais" value="Orientações Gerais" class="infraButton" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_cadastrar_orientacoes&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'])) . '\'"><span class="infraTeclaAtalho">O</span>rientações Gerais</button>';
+    $arrComandos[] = '<button type="button" accesskey="c" id="btnConfiguracoesGerais" value="Configurações Gerais" class="infraButton" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_cadastrar_orientacoes&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'])) . '\'"><span class="infraTeclaAtalho">C</span>onfigurações Gerais</button>';
 
     $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('md_pet_tipo_processo_cadastrar');
     if ($bolAcaoCadastrar) {

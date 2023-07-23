@@ -67,10 +67,9 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
             <caption class="infraCaption">&nbsp;</caption>
             <tr>
                 <th class="infraTh" width="0" style="display: none;">ID Usuario Externo</th>
-                <th class="infraTh" width="0">CPF</th> <!--0-->
-                <th class="infraTh" width="0">Nome do Usuário</th> <!--1-->
-                <!-- th class="infraTh" width="0">E-mail</th --> <!--2-->
-                <th class="infraTh" width="5%">Ações</th> <!--3-->
+                <th class="infraTh" width="0">CPF</th>
+                <th class="infraTh" width="0">Nome do Usuário</th>
+                <th class="infraTh" width="5%">Ações</th>
             </tr>
             <?php if(!is_null($arrRepresentante)){?>
                 <?php foreach ($arrRepresentante as $representante){?>
@@ -78,7 +77,6 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
                         <td class="infraTd" style="display: none;"><div><?php echo $representante->getNumIdContato()?></div></td>
                         <td class="infraTd"><div><?php echo InfraUtil::formatarCpf($representante->getStrCpfProcurador())?></div></td>
                         <td class="infraTd"><div><?php echo $representante->getStrNomeProcurador()?></div></td>
-                        <!-- td class="infraTd"><div><?php echo $representante->getStrEmail()?></div></td -->
                         <td align="center" valign="center"></td>
                     </tr>
                 <?php }?>

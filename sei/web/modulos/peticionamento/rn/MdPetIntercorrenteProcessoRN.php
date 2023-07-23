@@ -931,6 +931,11 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objMdPetCriterioRN = new MdPetCriterioRN();
         $objCriterioIntercorrenteDTO = $objMdPetCriterioRN->retornarCriterioPorTipoProcesso($params);
 
+        $objMdPetCriterioDTO = new MdPetCriterioDTO();
+        $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
+        $objMdPetCriterioDTO->retTodos(true);
+        $objCriterioIntercorrentePadraoDTO = (new MdPetCriterioRN())->consultar($objMdPetCriterioDTO);
+
         // Verifica se o processo possui critério intercorrente cadastrado
         //Se não possui busca o padrão e cria um processo relacionado ao processo selecionado
         $arrObjReciboDocPet = array();
@@ -953,7 +958,9 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $arrUnidadeProcesso = null;
 
         if (!$params['isRespostaIntimacao'] == true && (($params['isRespostaIntercorrente'] == true && $objCriterioIntercorrenteDTO->getStrSinAtivo() == "N") || $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S'
-                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado))) {
+                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado))
+                || ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == 2 && $objCriterioIntercorrentePadraoDTO->getStrSinIntercorrenteSigiloso() == 'N')
+        ) {
             $especificacao = 'Peticionamento Intercorrente relacionado ao Processo nº ' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
             $objSaidaGerarProcedimentoAPI = $this->gerarProcedimentoApi(array($objProcedimentoDTO, $objCriterioIntercorrenteDTO, $especificacao));
 
@@ -1110,6 +1117,29 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         // Processo - Interessados - FIM
 
         $idUnidadeRespostaIntimacao = $params['isRespostaIntimacao'] ? $idUnidadeProcesso : null;
+
+        // Forca o Nivel de Acesso parametrizado na Administracao para Intercorrente e Resposta da Intimacao
+        $versaoPeticionamento = intval(preg_replace("/\D/", "", (new InfraParametro(BancoSEI::getInstance()))->getValor('VERSAO_MODULO_PETICIONAMENTO', false)));
+        if($versaoPeticionamento >= 410){
+            $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc('I');
+            if(!empty($nivelAcessoDoc) && is_array($nivelAcessoDoc['documentos']) && count($nivelAcessoDoc['documentos']) > 0){
+
+                $rows = explode("¥", $params['hdnTbDocumento']);
+
+                $matrix = array_map(function ($row) use ($nivelAcessoDoc) {
+                    $values = explode("±", $row);
+                    if (in_array($values[1], $nivelAcessoDoc['documentos'])) {
+                        $values[3] = $nivelAcessoDoc['nivel'];
+                        $values[4] = $nivelAcessoDoc['hipotese'];
+                    }
+                    return $values;
+                }, $rows);
+
+                $params['hdnTbDocumento'] = implode("¥", array_map(function ($row) {
+                    return implode("±", $row);
+                }, $matrix));
+            }
+        }
 
         $arrDocApi = MdPetIntercorrenteINT::montarArrDocumentoAPI($params['id_procedimento'], $params['hdnTbDocumento']);
 

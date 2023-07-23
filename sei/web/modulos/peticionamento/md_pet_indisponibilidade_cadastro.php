@@ -42,7 +42,8 @@ try {
 
         case 'md_pet_indisponibilidade_upload_anexo':
             if (isset($_FILES['filArquivo'])) {
-                PaginaSEI::getInstance()->processarUpload('filArquivo', DIR_SEI_TEMP, false);
+	            LimiteSEI::getInstance()->configurarNivel3();
+	            PaginaSEI::getInstance()->processarUpload('filArquivo', DIR_SEI_TEMP, false);
             }
             die;
 

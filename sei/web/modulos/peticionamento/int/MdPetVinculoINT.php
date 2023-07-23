@@ -100,7 +100,15 @@ class MdPetVinculoINT extends InfraINT {
    * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
    */
   public static function montarSelectStaEstado($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado){
-    $arr = array(MdPetVincRepresentantRN::$RP_ATIVO => 'Ativa', MdPetVincRepresentantRN::$RP_SUSPENSO=>'Suspensa', MdPetVincRepresentantRN::$RP_REVOGADA =>'Revogada', MdPetVincRepresentantRN::$RP_RENUNCIADA =>'Renunciada', MdPetVincRepresentantRN::$RP_VENCIDA =>'Vencida',  MdPetVincRepresentantRN::$RP_SUBSTITUIDA =>'Substituída' );
+    $arr = array(
+        MdPetVincRepresentantRN::$RP_ATIVO => 'Ativa',
+        MdPetVincRepresentantRN::$RP_SUSPENSO=>'Suspensa',
+        MdPetVincRepresentantRN::$RP_REVOGADA =>'Revogada',
+        MdPetVincRepresentantRN::$RP_RENUNCIADA =>'Renunciada',
+        MdPetVincRepresentantRN::$RP_VENCIDA =>'Vencida',
+        MdPetVincRepresentantRN::$RP_SUBSTITUIDA =>'Substituída',
+        MdPetVincRepresentantRN::$RP_INATIVO =>'Inativa'
+    );
     return InfraINT::montarSelectArray($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arr);
   }
 

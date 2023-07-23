@@ -64,7 +64,6 @@ $objMdPetVincRepresentantProcEspecDTO = new MdPetVincRepresentantDTO();
 $objMdPetVincRepresentantProcEspecDTO->retNumIdMdPetVinculo();
 $objMdPetVincRepresentantProcEspecDTO->setNumIdContato($idContatoRepresentante);
 $objMdPetVincRepresentantProcEspecDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL);
-$objMdPetVincRepresentantProcEspecDTO->setStrSinAtivo('S');
 $objMdPetVincRepresentantProcEspecDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
 
 $arrObjMdPetVincRepresentantProcEspecDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantProcEspecDTO);
@@ -85,7 +84,6 @@ $objMdPetVinculoDTO->retNumIdMdPetVinculoRepresent();
 $objMdPetVinculoDTO->retStrStaEstado();
 $objMdPetVinculoDTO->setDistinct(true);
 $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-$objMdPetVinculoDTO->setStrStaResponsavelLegal('S');
 
 $objMdPetVinculoDTO->adicionarCriterio(
         array('IdContatoRepresentante'),

@@ -89,6 +89,7 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		//Unidade da Intimação
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SiglaUnidadeIntimacao','uint.sigla','unidade uint');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'DescricaoUnidadeIntimacao','uint.descricao','unidade uint');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdOrgao','uint.id_orgao','unidade uint');
 
 		//Intimação
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetIntimacaoMdPetIntimacao', 'mpi.id_md_pet_intimacao', 'md_pet_intimacao mpi');

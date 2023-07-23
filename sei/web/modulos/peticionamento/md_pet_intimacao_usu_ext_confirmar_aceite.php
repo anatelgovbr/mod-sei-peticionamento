@@ -107,7 +107,7 @@ switch ($_GET['acao']) {
                         if($todasIntimacoesAceitas['qntDestinatario'] == 0){
                             $objInfraException->adicionarValidacao('Você não possui mais permissão para cumprir a Intimação Eletrônica.');
                         }else{
-                            $objInfraException->adicionarValidacao('Já havia ocorrido o cumprimento da presente intimação.');
+                            $objInfraException->adicionarValidacao('Esta intimação já foi cumprida.');
                         }
                     }
 
@@ -135,6 +135,22 @@ switch ($_GET['acao']) {
                         $arrParametrosAceite['id_acesso_externo'] = $_GET['id_acesso_externo'];
 
                         $objAceiteDTO = $objMdPetIntAceiteRN->processarAceiteManual($arrParametrosAceite);
+
+	                    echo "<script>";
+	                    echo "var captionDocumentos = window.top.document.getElementById('tblDocumentos').getElementsByTagName('caption')[0];";
+	                    echo "window.top.document.getElementById('tblDocumentos').getElementsByTagName('tbody')[0].style.display = 'none';";
+	                    echo "captionDocumentos.innerHTML = 'Atualizando lista de Protocolos...';";
+	                    echo "captionDocumentos.style.cssText = 'color: #dc4909; text-align: center !important; border-bottom: none';";
+
+	                    echo "var captionHistorico = window.top.document.getElementById('tblHistorico').getElementsByTagName('caption')[0];";
+	                    echo "window.top.document.getElementById('tblHistorico').getElementsByTagName('tbody')[0].style.display = 'none';";
+	                    echo "captionHistorico.innerHTML = 'Atualizando lista de Andamentos...';";
+	                    echo "captionHistorico.style.cssText = 'color: #dc4909; text-align: center !important; border-bottom: none';";
+
+	                    echo "window.top.location.reload(true);";
+	                    echo "parent.infraFecharJanelaModal();";
+	                    echo "</script>";
+
                     }
 
                 } catch (Exception $e) {
@@ -186,33 +202,32 @@ PaginaSEIExterna::getInstance()->abrirBody();
 SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_externo']);
 ?>
 
-<?php if(isset($_POST['sbmAceitarIntimacao'])): ?>
-<script>window.top.location.reload();</script>
-<?php else: ?>
     <form action="<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_procedimento=' . $_GET['id_procedimento'] . '&id_acesso_externo=' . $_GET['id_acesso_externo'] . '&id_documento=' . $_GET['id_documento']); ?>" method="post" id="frmMdPetIntimacaoConfirmarAceite" name="frmMdPetIntimacaoConfirmarAceite">
         <div class="row">
             <div class="col-12">
                 <h4 class="mt-2"><?= $strTitulo ?></h4>
+	            <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior([]); ?>
                 <div class="textoIntimacaoEletronica">
                     <h4><?= $texto; ?></h4>
-                    <?php
-                    if ($idIntimacao) {
-                        foreach ($idIntimacao as $id) {
-                            echo '<input type="hidden" name="hdnIdIntimacao[]" id="hdnIdIntimacao" value="' . $id . '"/>';
-                        }
-                    }
-                    ?>
+	                <?php
+	                if ($idIntimacao) {
+		                foreach ($idIntimacao as $id) {
+			                echo '<input type="hidden" name="hdnIdIntimacao[]" id="hdnIdIntimacao" value="' . $id . '"/>';
+		                }
+	                }
+	                ?>
                     <input type="hidden" name="hdnIdDocumento" value="<?= $idDocPrincipal; ?>">
                     <input type="hidden" name="sbmAceitarIntimacao" value="true">
                 </div>
-                <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
+	            <?php PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos); ?>
             </div>
         </div>
     </form>
-<?php endif ?>
+
     <script>
         $(document).ready(function() {
             $('button#sbmAceitarIntimacao').off('click').one('click', function(e){
+                e.preventDefault(); e.stopPropagation();
                 $(this).prop('disabled', true).html('Aguarde, confirmando a consulta à intimação...');
                 $('form#frmMdPetIntimacaoConfirmarAceite')[0].submit();
             });

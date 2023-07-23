@@ -1190,7 +1190,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                     onkeypress="carregarComponenteLupaTpDocPrinc('R')"
                                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
                                                     alt="Remover Tipo de Documento" title="Remover Tipo de Documento"
-                                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>'
+                                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                             </div>
                                         </div>
                                     </div>

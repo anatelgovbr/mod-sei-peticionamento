@@ -27,11 +27,9 @@
             alert('Número SEI da Justificativa não válido.');
             return false;
         }
-
-        url = '<?php echo PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer_concluir&idVinculo=' . $idVinculo))?>';
-        parent.infraAbrirJanelaModal(url,
-            770,
-            380,
+        
+        url = '<?php echo PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_suspender_restabelecer_concluir&idVinculo=' . $idVinculo . '&idContatoProc=' . $objMdPetVincRepresentantDTO->getNumIdContatoProcurador() . '&idVinculoRepresent=' . $idVinculoRepresent . '&tipoVinculo=' . $strTipoVinculo))?>';
+        parent.infraAbrirJanelaModal(url, 770, 380,
             '',     //options
             false); //modal
     }
@@ -73,6 +71,7 @@
                 } else {
                     document.getElementById('hdnIdDocumento').value = arr['IdProtocolo'];
                     document.getElementById('txtTipo').value = arr['Identificacao'];
+                    $('#txtTipoLink').attr('href', arr['UrlDocumento']).fadeIn(100);
                 }
             };
 

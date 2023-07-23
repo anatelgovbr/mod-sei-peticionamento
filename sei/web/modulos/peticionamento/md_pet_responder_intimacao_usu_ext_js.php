@@ -232,9 +232,11 @@
         document.getElementById('txtComplementoTipoDocumento').value = '';
 
         document.getElementById('selNivelAcesso').value = '';
+        document.getElementById("selNivelAcesso").removeAttribute("disabled");
         document.getElementById('hdnNivelAcesso').value = '';
         if (EXIBIR_HIPOTESE_LEGAL) {
             document.getElementById('selHipoteseLegal').value = '';
+            document.getElementById("selHipoteseLegal").removeAttribute("disabled");
             document.getElementById('hdnHipoteseLegal').value = '';
         }
         document.getElementById('divBlcHipoteseLegal').style.display = 'none';
@@ -522,6 +524,53 @@
 
         return true;
     }
+
+    <?php if(!empty($nivelAcessoDoc)): ?>
+
+    $(document).ready(function(){
+
+        var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
+        var nivel = '<?= $nivelAcessoDoc['nivel'] ?>';
+        var hipotese = '<?= $nivelAcessoDoc['hipotese'] ?>';
+
+        $('body').on('change', '#selTipoDocumento', function(){
+            var self = $(this);
+            var selectNivelAcesso = self.closest('form').find('select[id^="selNivelAcesso"]');
+            var selectHipoteseLegal = self.closest('form').find('select[id^="selHipoteseLegal"]');
+
+            if(arrDocForcaNivelAcesso.indexOf(self.val()) !== -1){
+
+                selectNivelAcesso.val(nivel).prop('disabled', true);
+                $('input[name="hdnNivelAcesso"]').val(nivel);
+
+                if(nivel == 1){
+                    selectHipoteseLegal.val(hipotese).prop('disabled', true);
+                    $('input[name="hdnHipoteseLegal"]').val(hipotese);
+                    self.closest('form').find('div[id^="divBlcHipoteseLegal"]').show();
+                }
+                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == '') {
+                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
+                }
+
+            }else{
+
+                self.closest('form').find('select[id^="selHipoteseLegal"], select[id^="selNivelAcesso"]').prop('disabled', false);
+                $('input[name="hdnNivelAcesso"], input[name="hdnHipoteseLegal"]').val('');
+
+                self.closest('form').find('div[id^="divBlcHipoteseLegal"]').hide();
+                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == ''){
+                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
+                }else{
+                    selectNivelAcesso.focus();
+                }
+
+            }
+
+        });
+
+    });
+
+    <?php endif; ?>
 
 
 </script>

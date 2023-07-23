@@ -73,8 +73,6 @@ class PeticionamentoWS extends MdPetUtilWS
 
             $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-
-            $mdPetVincRepresentantDTO->setStrSinAtivo('S');
             $mdPetVincRepresentantDTO->retStrTipoRepresentante();
             $mdPetVincRepresentantDTO->setDistinct(true);
             $arrTipoRepres = $mdPetVincRepresentantRN->listar($mdPetVincRepresentantDTO);
@@ -91,6 +89,9 @@ class PeticionamentoWS extends MdPetUtilWS
                     }
                     if ($item->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
                         $nome = MdPetVincRepresentantRN::$STR_RESPONSAVEL_LEGAL;
+                    }
+                    if ($item->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO) {
+                        $nome = MdPetVincRepresentantRN::$STR_AUTORREPRESENTACAO;
                     }
                     $objMdPetTipoRepresentacao = new MdPetTipoRepresentacaoAPIWS();
                     $objMdPetTipoRepresentacao->setNome($nome);
@@ -131,24 +132,17 @@ class PeticionamentoWS extends MdPetUtilWS
             $estado = '';
             if ($arrStaRepres) {
                 foreach ($arrStaRepres as $item) {
-                    if ($item->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) {
-                        $estado = "Ativa";
-                    }
-                    if ($item->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO) {
-                        $estado = "Suspensa";
-                    }
-                    if ($item->getStrStaEstado() == MdPetVincRepresentantRN::$RP_REVOGADA) {
-                        $estado = "Revogada";
-                    }
-                    if ($item->getStrStaEstado() == MdPetVincRepresentantRN::$RP_RENUNCIADA) {
-                        $estado = "Renunciada";
-                    }
-                    if ($item->getStrStaEstado() == MdPetVincRepresentantRN::$RP_VENCIDA) {
-                        $estado = "Vencida";
-                    }
-                    if ($item->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUBSTITUIDA) {
-                        $estado = "Substituída";
-                    }
+
+	                switch ($item->getStrStaEstado()) {
+		                case MdPetVincRepresentantRN::$RP_ATIVO:        $estado = "Ativa"; break;
+		                case MdPetVincRepresentantRN::$RP_SUSPENSO:     $estado = "Suspensa"; break;
+		                case MdPetVincRepresentantRN::$RP_REVOGADA:     $estado = "Revogada"; break;
+		                case MdPetVincRepresentantRN::$RP_RENUNCIADA:   $estado = "Renunciada"; break;
+		                case MdPetVincRepresentantRN::$RP_VENCIDA:      $estado = "Vencida"; break;
+		                case MdPetVincRepresentantRN::$RP_SUBSTITUIDA:  $estado = "Substituída"; break;
+		                case MdPetVincRepresentantRN::$RP_INATIVO:      $estado = "Inativa"; break;
+	                }
+
                     $objMdPetSituacaoRepresentacao = new MdPetSituacaoRepresentacaoAPIWS();
                     $objMdPetSituacaoRepresentacao->setStaEstado($item->getStrStaEstado());
                     $objMdPetSituacaoRepresentacao->setNome($estado);
@@ -437,10 +431,8 @@ class PeticionamentoWS extends MdPetUtilWS
             $InfraException = new InfraException();
 
             // Valida E-mail.
-            if($Email != "") {
-                if (!InfraUtil::validarEmail($Email)) {
-                    $InfraException->lancarValidacao('E-mail inválido.');
-                }
+            if(!empty($Email) && !InfraUtil::validarEmail($Email)) {
+                $InfraException->lancarValidacao('E-mail inválido.');
             }
 
             // Valida CPF se informado.
@@ -469,6 +461,10 @@ class PeticionamentoWS extends MdPetUtilWS
                     $InfraException->lancarValidacao('CPF informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
                 }
 
+                if (!empty($Email) && $Email != $usuarioExterno->getStrSigla()) {
+                    $InfraException->lancarValidacao('E-mail informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
+                }
+
                 // Usuário Externo Liberado = L, Pendente = P
                 switch ($usuarioExterno->getStrStaTipo()) {
                     case UsuarioRN::$TU_EXTERNO_PENDENTE :
@@ -483,9 +479,6 @@ class PeticionamentoWS extends MdPetUtilWS
                         $InfraException->lancarValidacao('Erro ao consultar o cadastro do Usuário Externo no SEI.');
                         break;
                 }
-
-
-
 
                 $objMdPetUsuarioExternoAPIWS = new MdPetUsuarioExternoAPIWS();
                 $objMdPetUsuarioExternoAPIWS->setIdUsuario($usuarioExterno->getNumIdUsuario());
@@ -503,8 +496,11 @@ class PeticionamentoWS extends MdPetUtilWS
                 $objMdPetUsuarioExternoAPIWS->setNomeCidade($contatoDTO->getStrNomeCidade());
                 $objMdPetUsuarioExternoAPIWS->setCep($contatoDTO->getStrCep());
                 $objMdPetUsuarioExternoAPIWS->setDataCadastro($usuarioExterno->getDthDataCadastroContato());
+
                 $ret[] = $objMdPetUsuarioExternoAPIWS;
+
             }
+
             return $ret;
 
         } catch (Exception $e) {
@@ -544,7 +540,7 @@ class PeticionamentoWS extends MdPetUtilWS
             if($StaSituacao != "") {
                 $mdPetVincRepresentantDTO->setStrStaEstado($StaSituacao);
             }
-            $mdPetVincRepresentantDTO->retStrSinAtivo();
+
             $mdPetVincRepresentantDTO->retNumIdContatoVinc();
             $mdPetVincRepresentantDTO->retNumIdContato();
             $mdPetVincRepresentantDTO->retNumIdContatoOutorg();

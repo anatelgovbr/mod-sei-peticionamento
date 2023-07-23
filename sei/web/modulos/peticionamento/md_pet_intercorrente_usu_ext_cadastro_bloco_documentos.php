@@ -58,7 +58,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="selNivelAcesso">
                     Nível de Acesso:
-                    <img id=imgNivelAcesso name=imgNivelAcesso src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" onmouseover="" onmouseout="" alt="Ajuda" class="infraImgModulo"/>
+                    <img id="imgNivelAcesso" name="imgNivelAcesso" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" onmouseover="" onmouseout="" alt="Ajuda" class="infraImgModulo"/>
                 </label>
                 <div id="divNivelAcesso"></div>
             </div>

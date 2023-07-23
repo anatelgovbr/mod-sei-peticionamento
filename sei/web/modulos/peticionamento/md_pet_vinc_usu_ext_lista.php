@@ -347,7 +347,6 @@ $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
 $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
 $objMdPetVincRepresentantDTO->setNumIdContato($idContatoExterno);
-$objMdPetVincRepresentantDTO->setStrSinAtivo('S');
 $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
 
 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);

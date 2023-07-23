@@ -40,8 +40,6 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'TipoRepresentante', 'tipo_representante');
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'NomeTipoRepresentante');
 		
-		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinAtivo', 'sin_ativo');
-		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'DataCadastro', 'data_cadastro');
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'DataEncerramento', 'data_encerramento');
@@ -52,7 +50,6 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		//Novas Colunas
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaAbrangencia', 'sta_abrangencia');
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'DataLimite', 'data_limite');
-		
 		
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetRelPoder', 'relpoder.id_md_pet_tipo_poder', 'md_pet_rel_vincrep_tipo_poder relpoder');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetRelProtocolo', 'relproc.id_protocolo', 'md_pet_rel_vincrep_protoc relproc');
@@ -99,8 +96,6 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		//Constraint de Processos - Fim
 		
 		$this->configurarFK('IdMdPetVinculoRepresent','md_pet_vinculo_documento vinc_doc','vinc_doc.id_md_pet_vinculo_represent');
-		
-		//    $this->configurarExclusaoLogica('SinAtivo', 'N');
 		
 	}
 	
@@ -155,7 +150,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 
 		$retorno = '';
 		
-		if(in_array($this->getStrTipoRepresentante(), [MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL, MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL])){
+		if(in_array($this->getStrTipoRepresentante(), [MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL, MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL, MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO])){
 
 			$retorno = '<div style="width: 100%">&#9900; Todos os Poderes Legais</div>';
 		
@@ -196,6 +191,9 @@ class MdPetVincRepresentantDTO extends InfraDTO
 			break;
 			case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES :
 			$retorno = 'Procurador Simples';
+			break;
+			case MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO :
+			$retorno = 'Autorrepresentação';
 			break;
 		}
 		
@@ -238,39 +236,25 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		$tipo_representante = is_null($tipo_representante) ? $this->getStrTipoRepresentante() : $tipo_representante;
 		
 		switch ($tipo_representante){
-			case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL :
-			$retorno = 'Procuração Eletrônica Especial';
-			break;
+			case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL : $retorno = 'Procuração Eletrônica Especial';break;
+			case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES : $retorno = 'Procuração Eletrônica';break;
+			case MdPetVincRepresentantRN::$PE_PROCURADOR : $retorno = 'Procuração Eletrônica';break;
 		}
 		
 		return $retorno;
 	}
 	
 	public function getStrStaEstadoTipo($estado = null){
-		$estado = "";
-		//    if($this->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO){
-			//        if(infraData::compararDatas(infraData::getStrDataAtual(),$this->getDthDataLimite()) < 0){
-				//        $estado = "Vencida";
-				//        }else{
-					//        $estado = "Ativa";
-					//        }
-					//    }
-					
-		if($this->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO){
-			$estado = "Suspensa";
-		}
-		if($this->getStrStaEstado() == MdPetVincRepresentantRN::$RP_REVOGADA){
-			$estado = "Revogada";
-		}
-		if($this->getStrStaEstado() == MdPetVincRepresentantRN::$RP_RENUNCIADA){
-			$estado = "Renunciada";
-		}
-		if($this->getStrStaEstado() == MdPetVincRepresentantRN::$RP_VENCIDA){
-			$estado = "Vencida";
-		}
-		if($this->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUBSTITUIDA){
-			$estado = "Substituída";
-		}
+		$estado = '';
+
+		switch ($this->getStrStaEstado()){
+            case MdPetVincRepresentantRN::$RP_SUSPENSO : $estado = 'Suspensa'; break;
+            case MdPetVincRepresentantRN::$RP_REVOGADA : $estado = 'Revogada'; break;
+            case MdPetVincRepresentantRN::$RP_RENUNCIADA : $estado = 'Renunciada'; break;
+            case MdPetVincRepresentantRN::$RP_VENCIDA : $estado = 'Vencida'; break;
+            case MdPetVincRepresentantRN::$RP_SUBSTITUIDA : $estado = 'Substituída'; break;
+            case MdPetVincRepresentantRN::$RP_INATIVO : $estado = 'Inativa'; break;
+        }
 		
 		return $estado;
 	}
@@ -284,62 +268,50 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		
 		switch ($idSituacao){
 			case MdPetVincRepresentantRN::$RP_ATIVO :
-			
-			if($tipoProcuracao != null){
-				if($tipoProcuracao == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ){
-					$idSerieFormulario = $objInfraParametro->getValor(
-					MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOE
-					);
-					
-				}else if($tipoProcuracao == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
-					$idSerieFormulario = $objInfraParametro->getValor(
-					MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOS
-					);
-					
-				}
-			}else{
-				$idSerieFormulario = $objInfraParametro->getValor(
-				MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOE
-				);
-			}
-			$retorno = array('strSituacao'=>'Ativa', 'numSerie'=>$idSerieFormulario);
+                if($tipoProcuracao != null){
+                    if($tipoProcuracao == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ){
+                        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOE);
+                    }else if($tipoProcuracao == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES){
+                        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOS);
+                    }
+                }else{
+                    $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAOE);
+                }
+                $retorno = array('strSituacao'=>'Ativa', 'numSerie'=>$idSerieFormulario);
 			break;
+
 			case MdPetVincRepresentantRN::$RP_SUSPENSO :
-			$idSerieFormulario = $objInfraParametro->getValor(
-			MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO
-			);
-			
-			$retorno = array('strSituacao'=>'Suspensa', 'numSerie'=>$idSerieFormulario);
+                $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO);
+                $retorno = array('strSituacao'=>'Suspensa', 'numSerie'=>$idSerieFormulario);
 			break;
+
 			case MdPetVincRepresentantRN::$RP_REVOGADA :
-			$idSerieFormulario = $objInfraParametro->getValor(
-			MdPetIntSerieRN::$MD_PET_ID_SERIE_REVOGACAO
-			);
-			
-			$retorno = array('strSituacao'=>'Revogada', 'numSerie'=>$idSerieFormulario);
+                $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_REVOGACAO);
+                $retorno = array('strSituacao'=>'Revogada', 'numSerie'=>$idSerieFormulario);
 			break;
+
 			case MdPetVincRepresentantRN::$RP_RENUNCIADA :
-			$idSerieFormulario = $objInfraParametro->getValor(
-			MdPetIntSerieRN::$MD_PET_ID_SERIE_RENUNCIA
-			);
-			
-			$retorno = array('strSituacao'=>'Renunciada', 'numSerie'=>$idSerieFormulario);
+                $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RENUNCIA);
+                $retorno = array('strSituacao'=>'Renunciada', 'numSerie'=>$idSerieFormulario);
 			break;
+
 			case MdPetVincRepresentantRN::$RP_VENCIDA :
-			$idSerieFormulario = $objInfraParametro->getValor(
-			MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO
-			);
-			
-			$retorno = array('strSituacao'=>'Vencida', 'numSerie'=>$idSerieFormulario);
-			break;case MdPetVincRepresentantRN::$RP_SUBSTITUIDA :
-			$idSerieFormulario = $objInfraParametro->getValor(
-			MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO
-			);
-			
-			$retorno = array('strSituacao'=>'Substituída', 'numSerie'=>$idSerieFormulario);
+                $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
+                $retorno = array('strSituacao'=>'Vencida', 'numSerie'=>$idSerieFormulario);
+			break;
+
+			case MdPetVincRepresentantRN::$RP_SUBSTITUIDA :
+                $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
+                $retorno = array('strSituacao'=>'Substituída', 'numSerie'=>$idSerieFormulario);
+            break;
+
+            case MdPetVincRepresentantRN::$RP_INATIVO :
+                $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
+                $retorno = array('strSituacao'=>'Inativa', 'numSerie'=>$idSerieFormulario);
 			break;
 		}
 		
 		return $retorno;
 	}
+	
 }

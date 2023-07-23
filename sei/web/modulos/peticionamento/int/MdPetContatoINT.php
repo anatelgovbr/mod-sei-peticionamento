@@ -238,7 +238,6 @@ class MdPetContatoINT extends ContatoINT
             $dtoMdPetVincReptDTO->retStrTipoRepresentante();
             //$dtoMdPetVincReptDTO->setDistinct(true);
             $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
-            $dtoMdPetVincReptDTO->setStrSinAtivo('S');
             $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
             //$dtoMdPetVincReptDTO->adicionarCriterio(array('StaEstado', 'StaEstado'), array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL), array(MdPetVincRepresentantRN::$RP_ATIVO, MdPetVincRepresentantRN::$RP_REVOGADA), InfraDTO::$OPER_LOGICO_OR);
 
@@ -389,7 +388,7 @@ class MdPetContatoINT extends ContatoINT
         // $dtoMdPetVincReptDTO->setDistinct(true);
         $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
         $dtoMdPetVincReptDTO->retStrRazaoSocialNomeVinc();
-        $dtoMdPetVincReptDTO->setStrSinAtivo('S');
+	    $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
         $arr = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
 

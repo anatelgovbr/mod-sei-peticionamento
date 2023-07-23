@@ -142,7 +142,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetVincRepresentantDTO->retStrCpfProcurador();
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-        $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
+        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
 
         $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
         if (!is_null($objMdPetVincRepresentantDTO)) {
@@ -685,7 +685,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $objMdPetVinculoRepresentantDTORL = new MdPetVincRepresentantDTO();
                 $objMdPetVinculoRepresentantDTORL->setNumIdMdPetVinculo($idVinculo);
                 $objMdPetVinculoRepresentantDTORL->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-                $objMdPetVinculoRepresentantDTORL->setStrSinAtivo('S');
+                $objMdPetVinculoRepresentantDTORL->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
                 $objMdPetVinculoRepresentantDTORL->retStrCpfProcurador();
                 $arrObjMdPetVinculoRepresentantDTORL = $mdPetVinculoRepresentant->consultar($objMdPetVinculoRepresentantDTORL);
 
@@ -827,7 +827,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL);
-            $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
             $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
 
             $count = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO);
@@ -1000,8 +999,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objMdPetVincRepresentantDTO->retTodos();
             $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante($tipoRepresentante);
-            $objMdPetVincRepresentantDTO->setStrSinAtivo('N');
-            $objMdPetVincRepresentantDTO->setStrStaEstado('T');
+            $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_SUBSTITUIDA);
             $objMdPetVincRepresentantDTO->setDthDataEncerramento(null);
             $objMdPetVincRepresentantDTO->setBolExclusaoLogica(false);
             $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
@@ -1357,7 +1355,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
-        $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
 
         $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
@@ -1485,7 +1482,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
             //criando registro em protocolo
             $objDocumentoDTO = new DocumentoDTO();
-            $objDocumentoDTO->setStrNumero($strComplemento);
+            $objDocumentoDTO->setStrNomeArvore($strComplemento);
             $objDocumentoDTO->setDblIdDocumento(null);
             $objDocumentoDTO->setDblIdProcedimento($idProcedimento);
 
@@ -1923,14 +1920,13 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $objMdPetVincRepresentantAltDTO = new MdPetVincRepresentantDTO();
         $objMdPetVincRepresentantAltDTO->setNumIdMdPetVinculo($idVinculo);
-        $objMdPetVincRepresentantAltDTO->retStrSinAtivo();
+        $objMdPetVincRepresentantAltDTO->retStrStaEstado();
         $objMdPetVincRepresentantAltDTO->retStrTipoRepresentante();
         $objMdPetVincRepresentantAltDTO->retNumIdMdPetVinculoRepresent();
         $arrObjMdPetVincRepresentantAltDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantAltDTO);
         if ($arrObjMdPetVincRepresentantAltDTO) {
             foreach ($arrObjMdPetVincRepresentantAltDTO as $objMdPetVincRepresentant) {
-                if($objMdPetVincRepresentant->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL && $objMdPetVincRepresentant->getStrSinAtivo() == 'S') {
-                    $objMdPetVincRepresentant->setStrSinAtivo('N');
+                if($objMdPetVincRepresentant->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
                     $objMdPetVincRepresentant->setStrStaEstado(MdPetVincRepresentantRN::$RP_SUBSTITUIDA);
                     $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentant);
                 }
@@ -1941,10 +1937,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
         $objMdPetVincRepresentantDTO->setNumIdContato($idContatoRepresentante);
-        //$objMdPetVincRepresentantDTO->setNumIdAcessoExterno('');
         $objMdPetVincRepresentantDTO->setNumIdContatoOutorg($idContatoLogado);
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL); // Responsável Legal
-        $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
         $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $objMdPetVincRepresentantDTO->setDthDataCadastro(InfraData::getStrDataHoraAtual());
 
@@ -1953,10 +1947,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $idRepresentante = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
 
         return $idRepresentante;
-    }
-
-    protected function buscarDocumentosObrigatoriosConectado()
-    {
     }
 
     protected function validarContatoProcuradorConectado($arrParams)
@@ -1969,7 +1959,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetVinculoRN = new MdPetVinculoRN();
 
         $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
-        $objMdPetVinculoDTO->setStrSinAtivoRepresentante('S');
         $objMdPetVinculoDTO->setNumIdContatoRepresentante($idContatoRepr);
 
         return $objMdPetVinculoRN->contar($objMdPetVinculoDTO) > 0;
@@ -2028,11 +2017,12 @@ class MdPetVinculoUsuExtRN extends InfraRN
     }
 
     private function _getTipoPeticionamento($dados){
-        $mdPetVinculoRepresentant = new MdPetVincRepresentantRN();
+
+    	$mdPetVinculoRepresentant = new MdPetVincRepresentantRN();
         $objMdPetVinculoRepresentantDTORL = new MdPetVincRepresentantDTO();
         $objMdPetVinculoRepresentantDTORL->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
         $objMdPetVinculoRepresentantDTORL->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-        $objMdPetVinculoRepresentantDTORL->setStrSinAtivo('S');
+        $objMdPetVinculoRepresentantDTORL->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $objMdPetVinculoRepresentantDTORL->retStrCpfProcurador();
         $arrObjMdPetVinculoRepresentantDTORL = $mdPetVinculoRepresentant->consultar($objMdPetVinculoRepresentantDTORL);
 

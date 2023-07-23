@@ -165,12 +165,12 @@ try {
 
               $objMdPetProcessoRN->validarSenha($arrParam);
               $dados['isAlteracaoCrud'] = true;
-              $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
-              $dados['idContato'] = $idContato;
+
+	          $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
+	          $dados['idContato'] = $idContato;
 
 	          // VERIFICA SE JA EXISTE VINCULACAO
 	          $objMdPetVinculoDTO = new MdPetVinculoDTO();
-	          $objMdPetVinculoDTO->setNumIdContato($dados['idContato']); // REPRESENTADO
 	          $objMdPetVinculoDTO->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
 	          $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
 	          $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
@@ -212,8 +212,8 @@ try {
 				          die();
 			          }
 
-		          $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-		          $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+                      $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+                      $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
 
 			          echo "<script>";
 			          echo "window.parent.location = '" . $urlAssinada . "';";
@@ -409,11 +409,9 @@ PaginaSEIExterna::getInstance()->fecharHtml();
             document.getElementById('slTipoInteressadoPai').value = window.parent.document.getElementById('slTipoInteressado').value;
             document.getElementById('hdnInformacaoPjPai').value = window.parent.document.getElementById('hdnInformacaoPj').value;
             document.getElementById('hdnTbDocumentoPai').value = window.parent.document.getElementById('hdnTbDocumento').value;
-//            document.getElementById('hdnTbUsuarioProcuracaoPai').value = window.parent.document.getElementById('hdnTbUsuarioProcuracao').value;
             document.getElementById('hdnStWebservicePai').value = window.parent.document.getElementById('hdnStaWebService').value;
             document.getElementById('hdnIdVinculoPai').value = window.parent.document.getElementById('hdnIdVinculo').value;
             document.getElementById('txtNumeroCpfResponsavelPai').value = window.parent.document.getElementById('txtNumeroCpfResponsavel').value;
-
 
             var obj2 = window.parent.document.getElementById('hdnIdContatoNovo');
             if(obj2) {
@@ -470,7 +468,6 @@ function isValido() {
         }
 
     }
-
 
     function callback(opt) {
         selInteressadosSelecionados + ', ';

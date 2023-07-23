@@ -43,7 +43,7 @@
 <p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Pelo presente instrumento de Restabelecimento de Vinculação a Pessoa Jurídica, a Administração do SEI-@sigla_orgao@ restabeleceu a vinculação do Responsável Legal acima identificado pela Pessoa Jurídica indicada, de acordo com o Documento de Justificativa acima enumerado.</p>
 <p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Comunicamos que:</p>
 <ul>
-    <li><p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;;">Fica restabelecido seu direito de peticionar e emitir Procurações Eletrônicas em nome da Pessoa Jurídica, bem como realizar alterações de seus dados cadastrais e atos constitutivos;</p></li>
-    <li><p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">As Procurações Eletrônicas concedidas que tenham sido suspensas restam igualmente restabelecidas.</p></li>
+    <li><p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Fica restabelecido seu direito de peticionar e emitir Procurações Eletrônicas em nome da Pessoa Jurídica, bem como realizar alterações de seus dados cadastrais e atos constitutivos;</p></li>
+    @itemCascata
 </ul>
 <p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">A existência deste instrumento de Restabelecimento de Vinculação a Pessoa Jurídica, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>

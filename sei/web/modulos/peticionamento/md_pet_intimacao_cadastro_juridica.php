@@ -314,6 +314,7 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
 
 <!-- Hiddens -->
 <select style="display: none" multiple="multiple" id="selMainIntimacao" name="selMainIntimacao" size="12"/>
+<select style="display: none" multiple="multiple" id="selMainIntimacaoProtocoloDisponibilizado" name="selMainIntimacaoProtocoloDisponibilizado" size="12"/>
 <input type="hidden" id="hdnIsAlterar" name="hdnIsAlterar"
        value="<?php echo $_REQUEST['is_alterar'] ? '1' : '0' ?>"/>
 <input type="hidden" id="hdnCountIntimacoes" name="hdnCountIntimacoes" value="<?php echo $countInt ?>"/>

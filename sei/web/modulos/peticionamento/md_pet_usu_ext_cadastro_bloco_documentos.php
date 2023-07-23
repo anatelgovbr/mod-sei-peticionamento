@@ -135,16 +135,30 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                <div class="col-sm-12 col-md-3 col-lg-2 col-xl-2">
                     <div class="form-group">
+
                         <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
+
                             <label id="lblPublico" class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
                             </label><br/>
-                            <select name="nivelAcesso1" class="form-control infraSelect" id="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <?= $strItensSelNivelAcesso ?>
+                            <select name="nivelAcesso1" class="form-control infraSelect" id="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) ? 'disabled' : '' ?>>
+                                <?
+
+                                    if(!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos'])){
+                                        echo '<option value="0" '.($nivelAcessoDoc['nivel'] == 0 ? 'selected="selected"' : '').'>Público</option>';
+                                        echo '<option value="1" '.($nivelAcessoDoc['nivel'] == 1 ? 'selected="selected"' : '').'>Restrito</option>';
+                                    }else{
+                                        echo $strItensSelNivelAcesso;
+                                    }
+
+                                ?>
                             </select>
+                            <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) ? '<input type="hidden" name="nivelAcesso1" value="'.$nivelAcessoDoc['nivel'].'" tabindex="-1">' : '' ?>
+
                         <? elseif ($isNivelAcessoPadrao == 'S'): ?>
+
                             <label id="lblPublico" class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                             </label><br/>
@@ -152,34 +166,38 @@
                                 <option value=""><?= $strNomeNivelAcessoPadrao ?></option>
                             </select>
                             <input type="hidden" name="nivelAcesso1" id="nivelAcesso1" value="<?= $nivelAcessoPadrao ?>"/>
+
                         <? endif ?>
+
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
-                    <div class="form-group" id="divhipoteseLegal1" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") ? 'block' : 'none' ?>">
+                    <div class="form-group" id="divhipoteseLegal1" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
 
                         <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
                             <label id="lblPublico" class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                             </label><br/>
-                            <select name="hipoteseLegal1" class="form-control infraSelect" id="hipoteseLegal1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <select class="form-control infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"  <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1 ? 'disabled' : '' ?>>
                                 <option value=""></option>
                                 <?
-                                    if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
-                                        foreach ($arrHipoteseLegal as $itemObj) {
-                                            echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'">'.$itemObj->getStrNome().'('.$itemObj->getStrBaseLegal().')</option>';
-                                        }
+                                if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
+                                    foreach ($arrHipoteseLegal as $itemObj) {
+                                        $selected = (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $itemObj->getNumIdHipoteseLegal() == $nivelAcessoDoc['hipotese']) ? 'selected="selected"' : '';
+                                        echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'" '.$selected.'>'.$itemObj->getStrNome().'('.$itemObj->getStrBaseLegal().')</option>';
                                     }
+                                }
                                 ?>
                             </select>
+                            <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1 ? '<input type="hidden" name="hipoteseLegal1" value="'.$nivelAcessoDoc['hipotese'].'">' : '' ?>
 
                         <? elseif ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"): ?>
 
                             <label id="lblPublico" class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                             </label><br/>
-                            <select class="form-control infraSelect" disabled tabindex="-1">
+                            <select class="form-control infraSelect" name="hipoteseLegal1" disabled tabindex="-1">
                                 <option value=""><?= $strHipoteseLegalPadrao ?></option>
                             </select>
                             <input type="hidden" name="hipoteseLegal1" id="hipoteseLegal1" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>
@@ -199,41 +217,59 @@
             <div class="row">
                 <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                     <div class="form-group">
+
                         <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
+
                             <label id="lblPublico" class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
                             </label><br/>
-                            <select class="form-control infraSelect" id="nivelAcesso1" name="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <?= $strItensSelNivelAcesso ?>
+                            <select class="form-control infraSelect" id="nivelAcesso1" name="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) ? 'disabled' : '' ?>>
+                                <?php
+
+                                    if(!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos'])){
+                                        echo '<option value="0" '.($nivelAcessoDoc['nivel'] == 0 ? 'selected="selected"' : '').'>Público</option>';
+                                        echo '<option value="1" '.($nivelAcessoDoc['nivel'] == 1 ? 'selected="selected"' : '').'>Restrito</option>';
+                                    }else{
+                                        echo $strItensSelNivelAcesso;
+                                    }
+
+                                ?>
                             </select>
+                            <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) ? '<input type="hidden" name="nivelAcesso1" data-debug="gabriel" value="'.$nivelAcessoDoc['nivel'].'" tabindex="-1">' : '' ?>
+
                         <? elseif ($isNivelAcessoPadrao == 'S'): ?>
+
                             <label id="lblPublico" class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                             </label><br/>
                             <select class="form-control infraSelect" disabled tabindex="-1">
                                 <option value=""><?= $strNomeNivelAcessoPadrao ?></option>
                             </select>
-                            <input type="hidden" name="nivelAcesso1" id="nivelAcesso1" value="<?= $nivelAcessoPadrao ?>" tabindex="-1"/>
+                            <input type="hidden" name="nivelAcesso1" id="nivelAcesso1" data-debug="gg" value="<?= $nivelAcessoPadrao ?>" tabindex="-1"/>
+
                         <? endif ?>
+
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
-                    <div id="divhipoteseLegal1" class="form-group" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") ? 'block' : 'none' ?>">
+                    <div id="divhipoteseLegal1" class="form-group" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
                         <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
                             <label id="lblPublico" class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                             </label><br/>
-                            <select class="form-control infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <select class="form-control infraSelect" id="hipoteseLegal1" name="hipoteseLegal1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"  <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1 ? 'disabled' : '' ?>>
                                 <option value=""></option>
                                 <?
                                     if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
                                         foreach ($arrHipoteseLegal as $itemObj) {
-                                            echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'">'.$itemObj->getStrNome().'('.$itemObj->getStrBaseLegal().')</option>';
+                                            $selected = (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $itemObj->getNumIdHipoteseLegal() == $nivelAcessoDoc['hipotese']) ? 'selected="selected"' : '';
+                                            echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'" '.$selected.'>'.$itemObj->getStrNome().'('.$itemObj->getStrBaseLegal().')</option>';
                                         }
                                     }
                                 ?>
                             </select>
+                            <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1 ? '<input type="hidden" name="hipoteseLegal1" value="'.$nivelAcessoDoc['hipotese'].'">' : '' ?>
 
                         <? elseif ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"): ?>
 
@@ -613,12 +649,14 @@
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                 <div class="form-group">
                     <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
-                        <label id="lblPublico" class="infraLabelObrigatorio">
-                            Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
-                        </label><br/>
-                        <select class="infraSelect form-control" id="nivelAcesso3" name="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                            <?= $strItensSelNivelAcesso ?>
-                        </select>
+                        <div>
+                            <label id="lblPublico" class="infraLabelObrigatorio">
+                                Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
+                            </label><br/>
+                            <select class="infraSelect form-control" id="nivelAcesso3" name="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                <?= $strItensSelNivelAcesso ?>
+                            </select>
+                        </div>
                     <? else: ?>
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>

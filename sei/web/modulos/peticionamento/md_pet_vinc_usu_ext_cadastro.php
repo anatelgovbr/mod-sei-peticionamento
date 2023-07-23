@@ -72,12 +72,12 @@ if(!$stConsultar) {
     require_once 'md_pet_vinc_usu_ext_bloco_documento.php';
 }
 
-//require_once 'md_pet_vinc_usu_ext_bloco_procuracao.php';
 ?>
 <input type="hidden" name="hdnIdDocumento" id="hdnIdDocumento" value="0"/>
 <input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?php echo $idMdPetVinculo?>"/>
 <input type="hidden" name="hdnStaWebService" id="hdnStaWebService" value="<?= $stWebService ?>"/>
 <input type="hidden" name="hdnIsWebServiceHabilitado" id="hdnIsWebServiceHabilitado" value=""/>
+<input type="hidden" name="hdnVinculoPreExistente" id="hdnVinculoPreExistente" value='<?= $objVinculosExistentes ?>'>
 <input type="hidden" name="hdnStrTipo" id="hdnStrTipo" value="<?= $strTipo ?>"/>
 
 <?php
@@ -89,9 +89,13 @@ PaginaSEIExterna::getInstance()->fecharHead();
 ?>
 <script type="text/javascript">
 
-function OnSubmitForm() {
-	return true;
-}
+$('body').on('blur', '#txtNumeroCnpj', function(){
+    consultarVinculoExistenteCnpj();
+});
+
+$('body').on('submit', '#frmCNPJ', function(){
+    consultarVinculoExistenteCnpj();
+});
 
 function resizeIFramePorConteudo(){
 	var id = 'ifrConteudoHTML';

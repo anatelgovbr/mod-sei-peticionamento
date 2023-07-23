@@ -135,6 +135,12 @@ class MdPetIntRelatorioRN extends InfraRN {
             $arrSituacaoFiltro = json_decode($hdnSituacao);
         }
 
+        //Destinatário
+        $arrDestinatario = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnDestinatario']);
+        if(count($arrDestinatario) > 0) {
+          $objDTO->setNumIdContato($arrDestinatario, InfraDTO::$OPER_IN);
+        }
+
         if(is_countable($arrSituacaoFiltro) > 0 && !in_array(MdPetIntimacaoRN::$TODAS,$arrSituacaoFiltro)){
             $objDTO->setStrStaSituacaoIntimacao($arrSituacaoFiltro, InfraDTO::$OPER_IN);
         }

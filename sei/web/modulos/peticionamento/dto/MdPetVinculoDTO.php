@@ -42,9 +42,9 @@ class MdPetVinculoDTO extends InfraDTO
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'TipoRepresentante', 'repr.tipo_representante', 'md_pet_vinculo_represent repr');
 
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaResponsavelLegal', 'repr.sin_ativo', 'md_pet_vinculo_represent repr');
+//        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaResponsavelLegal', 'repr.sin_ativo', 'md_pet_vinculo_represent repr');
 
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SinAtivoRepresentante', 'repr.sin_ativo', 'md_pet_vinculo_represent repr');
+//        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SinAtivoRepresentante', 'repr.sin_ativo', 'md_pet_vinculo_represent repr');
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaEstado', 'repr.sta_estado', 'md_pet_vinculo_represent repr');
 

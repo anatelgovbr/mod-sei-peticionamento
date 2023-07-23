@@ -90,10 +90,10 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
             if ($dados['hdnOutorgante'] == "PJ" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                 $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPJSimples']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc("J");
+                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
             } else if ($dados['hdnOutorgante'] == "PF" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                 $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['idContatoExterno']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc("F");
+                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_FISICA);
             }
             $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
@@ -105,7 +105,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objProtocoloDTO->retNumIdUnidadeGeradora();
                 $objProtocoloRN = new ProtocoloRN();
                 $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
-                if ($objUnidadeGeradora && $objUnidadeGeradora->getNumIdUnidadeGeradora() == $arrObjMdPetVincTpProcesso->getNumIdUnidade()) {
+                if (!empty($objUnidadeGeradora) && $objUnidadeGeradora->getNumIdUnidadeGeradora() == $arrObjMdPetVincTpProcesso->getNumIdUnidade()) {
                     $idTipoUnidadeAberturaProcesso = $objUnidadeGeradora->getNumIdUnidadeGeradora();
                 } else {
                     $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
@@ -113,11 +113,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
             } else {
                 $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
             }
-            // var_dump($idTipoUnidadeAberturaProcesso);die;
-            // $idTipoUnidadeAberturaProcesso = 110000909;
-            //110000909
-            //Obtendo tipo do processo
-            $idTipoProcesso = $arrObjMdPetVincTpProcesso->getNumIdTipoProcedimento();
+
+            $idTipoProcesso = $arrObjMdPetVincTpProcesso->getNumIdTipoProcedimento(); // Obtendo tipo do processo
 
             $objTipoProcedimentoDTO = new TipoProcedimentoDTO();
             $objTipoProcedimentoDTO->retNumIdTipoProcedimento();
@@ -128,9 +125,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
 
             if ($objTipoProcedimentoDTO == null) {
-                throw new InfraException('Tipo de processo não encontrado.');
-            }
-
+		        throw new InfraException('Tipo de processo não encontrado.');
+	        }
 
             //obter unidade configurada no "Tipo de Processo para peticionamento"
             $unidadeRN = new UnidadeRN();
@@ -146,7 +142,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
             if (isset($_POST['hdnTbUsuarioProcuracao']) && $_POST['hdnTbUsuarioProcuracao'] != "") {
                 $dadosProcuracao = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbUsuarioProcuracao']);
             }
-
 
             $objMdPetContatoRN = new MdPetContatoRN();
             $idTipoContatoUsExt = $objMdPetContatoRN->getIdTipoContatoUsExt();
@@ -181,38 +176,26 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             // Recupera o idProcedimento(Processo) referente ao cnpj informado (idContato)
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
-            $objMdPetVinculoRN = new MdPetVinculoRN();
-            if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PJ") {
-                $objMdPetVinculoDTO->setNumIdContato($dados['idContato']);
-            }
-            //Caso seja outorgante pessoa física
+	        $objMdPetVinculoDTO->setDblIdProtocolo(null, InfraDTO::$OPER_DIFERENTE);
             if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF") {
                 $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);
-            }
-            if ($dados['selTipoProcuracao'] == "E") {
-                $objMdPetVinculoDTO->setNumIdContato($dados['idContato']);
+            }else{
+	            $objMdPetVinculoDTO->setNumIdContato($dados['idContato']);
             }
             $objMdPetVinculoDTO->retTodos();
-
-            $mdPetVinculacao = $objMdPetVinculoRN->listar($objMdPetVinculoDTO);
-
-            $qtd = $objMdPetVinculoRN->contar($objMdPetVinculoDTO);
+	        $mdPetVinculacao = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
 
             //Verifica se existe o idContato na tabela MdPetVinculoDTO
-            if ($qtd == 0) {
+            if (count($mdPetVinculacao) == 0) {
 
                 //Criando Processo Novo Caso seja o primeiro acesso
                 //Recuperando Configuração Estabelecida de Pessoa Jurídica
 
-                $arrObjMdPetVincTpProcesso = $this->getConfiguracaoVinculo();
-
-                $objTipoProcedimentoDTO = $this->_getTipoProcesso($arrObjMdPetVincTpProcesso);
-                //obtendo a unidade de abertura do processo
-                $objUnidadeDTO = $this->_getUnidade($arrObjMdPetVincTpProcesso);
-                //Criação do PRocess
-                $idProc = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados, $arrObjMdPetVincTpProcesso);
-
-                $id_vinc = $this->_adicionarVinculoPF($dados, $idProc);
+                $arrObjMdPetVincTpProcesso  = $this->getConfiguracaoVinculo();
+                $objTipoProcedimentoDTO     = $this->_getTipoProcesso($arrObjMdPetVincTpProcesso);
+                $objUnidadeDTO              = $this->_getUnidade($arrObjMdPetVincTpProcesso); // Obtendo a unidade de abertura do processo
+                $idProc                     = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados, $arrObjMdPetVincTpProcesso); // Criação do Processo
+                $id_vinc                    = $this->_adicionarVinculoPF($dados, $idProc);
 
             } else {
 
@@ -233,9 +216,9 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 
 
-                if (($objUnidadeDTO->getNumIdUnidade() != $objUnidadeGeradora->getNumIdUnidadeGeradora())) {
-                    // var_dump($objUnidadeDTO->getNumIdUnidade());die;
-                    //Realiza Tramitação
+                if (!empty($objUnidadeGeradora) && ($objUnidadeDTO->getNumIdUnidade() != $objUnidadeGeradora->getNumIdUnidadeGeradora())) {
+
+                	//Realiza Tramitação
                     $arrObjAtributoAndamentoDTO = array();
                     $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                     $objAtributoAndamentoDTO->setStrNome('UNIDADE');
@@ -269,7 +252,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
 
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
-            $mdPetVinculacaoRN = new MdPetVinculoRN();
 
             //Caso a Pessoa Seja Juridica da Tela de Procuração Especial
             if ($dados['selTipoProcuracao'] == "E") {
@@ -284,7 +266,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objMdPetVinculoDTO->retNumIdMdPetVinculo();
             $objMdPetVinculoDTO->setDblIdProtocolo($idProcedimento);
 
-            $objMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
+            $objMdPetVinculoDTO = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
             $idVinculo = $objMdPetVinculoDTO->getNumIdMdPetVinculo();
 
 
@@ -379,13 +361,15 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             //RECUPERA ID_MD_PET_REPRESENTANT DO VINCULO PRINCIPAL CASO TENHA MAIS DE UMA PROCURAÇÃO
 
+	        $idMdPetVinculoRepresent = $dadosRetornoProcuracao['Procuracao'][0]['IdMdPetVinculoRepresent'];
+
             if ($numRegistro > 1) {
+            	
                 $idResponsavelLegal = $dados['idContatoExterno'];
                 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
                 $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
                 $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
-                $objMdPetVincRepresentantDTO->setNumIdContato($idResponsavelLegal);
                 $objMdPetVincRepresentantDTO->setNumIdContato($idResponsavelLegal);
                 $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
                 $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
@@ -396,10 +380,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     $idMdPetVinculoRepresent = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
                 }
 
-            } else {
-
-                $idMdPetVinculoRepresent = $dadosRetornoProcuracao['Procuracao'][0]['IdMdPetVinculoRepresent'];
             }
+
             //Tratanto Tipo de Poderes
             if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnTipoPoder'] != "") {
                 $tipoPoderes = explode("-", $dados['hdnTipoPoder']);
@@ -822,10 +804,10 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
             if ($dados['tpVinc'] == "J" && $dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                 $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnIdContatoVinc']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc("J");
+                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
             } else if ($dados['tpVinc'] == "F" && $dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                 $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnIdContatoVinc']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc("F");
+                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_FISICA);
             }
             $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $objMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
@@ -990,7 +972,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objMdPetVincRepresentantOutorganteDTO->retNumIdMdPetVinculo();
                 $objMdPetVincRepresentantOutorganteDTO->retNumIdContato();
                 $objMdPetVincRepresentantOutorganteDTO->retNumIdContatoOutorg();
-                $objMdPetVincRepresentantOutorganteDTO->setStrTipoRepresentante(array('L'), InfraDTO::$OPER_NOT_IN);
+                $objMdPetVincRepresentantOutorganteDTO->setStrTipoRepresentante(array(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL), InfraDTO::$OPER_NOT_IN);
                 $objMdPetVincRepresentantOutorganteRN = $objMdPetVincRepresentantOutorganteRN->consultar($objMdPetVincRepresentantOutorganteDTO);
 
                 //Recuperando responsave legal
@@ -1061,7 +1043,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objMdPetVincRepresentantOutorganteDTO->setNumIdMdPetVinculoRepresent($idMdPetVinculoRepresent);
                 $objMdPetVincRepresentantOutorganteDTO->retNumIdMdPetVinculo();
                 $objMdPetVincRepresentantOutorganteDTO->retNumIdContato();
-                $objMdPetVincRepresentantOutorganteDTO->setStrTipoRepresentante(array('L'), InfraDTO::$OPER_NOT_IN);
+                $objMdPetVincRepresentantOutorganteDTO->setStrTipoRepresentante(array(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL), InfraDTO::$OPER_NOT_IN);
                 $objMdPetVincRepresentantOutorganteRN = $objMdPetVincRepresentantOutorganteRN->consultar($objMdPetVincRepresentantOutorganteDTO);
 
 
@@ -2038,8 +2020,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVincRepresentantDTO->setNumIdContato($dados['IdOutorgado']);
         $objMdPetVincRepresentantDTO->setNumIdContatoOutorg($dados['idContatoExterno']);
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante($dados['selTipoProcuracao']);
-        $objMdPetVincRepresentantDTO->setStrSinAtivo('S');
-        $objMdPetVincRepresentantDTO->setStrStaEstado('A');
+        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         //Novas Colunas
         //Data Validade
         if ($dados['validade'] != "") {
@@ -2121,86 +2102,245 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     public function gerarDocumentoSuspensaoControlado($params)
     {
-        $objProcedimentoDTO = $params['procedimento'];
-        $dados = $params['dados'];
 
-        $idVinculo = isset($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
-        $numeroSEI = isset($dados['hdnNumeroSei']) ? $dados['hdnNumeroSei'] : null;
+        $objProcedimentoDTO     = $params['procedimento'];
+        $dados                  = $params['dados'];
+        $arrListaProcuradores   = $params['arrListaProcuradores'];
 
-        $objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
-        $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_suspensao.php';
-        $htmlModelo = file_get_contents($url);
+        $idVinculo              = isset($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
+        $numeroSEI              = isset($dados['hdnNumeroSei']) ? $dados['hdnNumeroSei'] : null;
+        $tipoVinculo            = isset($dados['hdnStrTipoVinculo']) ? $dados['hdnStrTipoVinculo'] : null;
+        $idVinculoRepresent     = isset($dados['hdnIdVinculoRepresent']) ? $dados['hdnIdVinculoRepresent'] : null;
 
-        $objMdPetVinculoRN = new MdPetVinculoRN();
+        $objInfraParametro      = new InfraParametro($this->getObjInfraIBanco());
+
+        $objMdPetVinculoRN  = new MdPetVinculoRN();
         $objMdPetVinculoDTO = new MdPetVinculoDTO();
-
         $objMdPetVinculoDTO->retTodos(true);
         $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
         $objMdPetVinculoDTO->retDblCNPJ();
         $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
         $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
         $objMdPetVinculoDTO->retDthDataVinculo();
+        $objMdPetVinculoDTO->retStrTpVinculo();
         $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
-        $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+
+        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
+            $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+        }else{
+            $objMdPetVinculoDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
+        }
 
         $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->listar($objMdPetVinculoDTO);
 
         if (count($arrObjMdPetVinculoDTO) > 0) {
-            $razaoSocial = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $cnpj = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
-            $idContatoRepresentante = $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante();
-            $RepLegalNome = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
-            $RepLegalCpf = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
-            $dataVinc = $arrObjMdPetVinculoDTO[0]->getDthDataVinculo();
+
+            $razaoSocial                = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
+            $cnpj                       = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
+            $idContatoRepresentante     = $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante();
+            $RepLegalNome               = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
+            $RepLegalCpf                = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
+            $dataVinc                   = $arrObjMdPetVinculoDTO[0]->getDthDataVinculo();
 
             // Documento do Vinculo
-            $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
+            $objMdPetVincDocumentoRN    = new MdPetVincDocumentoRN;
+            $objMdPetVincDocumentoDTO   = new MdPetVincDocumentoDTO();
             $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
             $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($arrObjMdPetVinculoDTO[0]->getNumIdMdPetVinculoRepresent());
-            $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL);
-            $objMdPetVincDocumentoDTO->setOrdNumIdMdPetVincDocumento(InfraDTO::$TIPO_ORDENACAO_DESC);
 
-            $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN;
+            if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
+                $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL);
+            }else if($tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL){
+                $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL);
+            }else if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
+                $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO);
+            }
+
+            $objMdPetVincDocumentoDTO->setOrdNumIdMdPetVincDocumento(InfraDTO::$TIPO_ORDENACAO_DESC);
             $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
 
             if (count($arrObjMdPetVincDocumentoDTO) > 0) {
                 $numDocVinc = $arrObjMdPetVincDocumentoDTO[0]->getStrProtocoloFormatadoProtocolo();
             }
+
+	        // ORGÃO
+	        $usuarioDTO = new UsuarioDTO();
+	        $usuarioDTO->retStrSiglaOrgao();
+	        $usuarioDTO->retStrDescricaoOrgao();
+	        $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
+
+	        $usuarioRN = new UsuarioRN();
+	        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
+
+	        if (!is_null($usuarioDTO)) {
+		        $siglaOrgao = $usuarioDTO->getStrSiglaOrgao();
+		        $descricaoOrgao = $usuarioDTO->getStrDescricaoOrgao();
+	        }
+
         }
 
-        //Orgao
-        $usuarioDTO = new UsuarioDTO();
-        $usuarioDTO->retStrSiglaOrgao();
-        $usuarioDTO->retStrDescricaoOrgao();
-        $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
+        // Novos valores para suspensão/restabelecimento em cascata:
+        $itemListaProcuradores = '';
 
-        $usuarioRN = new UsuarioRN();
-        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
+        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
 
-        if (!is_null($usuarioDTO)) {
-            $siglaOrgao = $usuarioDTO->getStrSiglaOrgao();
-            $descricaoOrgao = $usuarioDTO->getStrDescricaoOrgao();
+            $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_suspensao.php';
+            $htmlModelo = file_get_contents($url);
+
+            $htmlModelo = str_replace('@RazaoSocial', $razaoSocial, $htmlModelo);
+            $htmlModelo = str_replace('@Cnpj', InfraUtil::formatarCnpj($cnpj), $htmlModelo);
+            $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
+            $htmlModelo = str_replace('@RepLegalCpf', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
+
+	        $itemCascata = $dados['hdnCascata'] == 'S' ? '<li><p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">As Procurações Eletrônicas concedidas para representação da Pessoa Jurídica restam igualmente suspensas até que seja restabelecida a vinculação como Responsável Legal.</p></li>' : '';
+	        $htmlModelo = str_replace('@itemCascata', $itemCascata, $htmlModelo);
+
+            if(is_array($arrListaProcuradores) && count($arrListaProcuradores) > 0){
+                $itemListaProcuradores = '<li>';
+                $itemListaProcuradores .= '<p class="Texto_Justificado">As Procurações Eletrônicas citadas abaixo que foram concedidas para representação da Pessoa Jurídica restam igualmente suspensas até que sejam restabelecidas:</p>';
+                $itemListaProcuradores .= '<ul>';
+                for ($i=0; $i < count($arrListaProcuradores); $i++) {
+                    $itemListaProcuradores .= '<li><p class="Texto_Justificado">'.$arrListaProcuradores[$i].'</p></li>';
+                }
+                $itemListaProcuradores .= '</ul>';
+                $itemListaProcuradores .= '</li>';
+            }
+
+        }else{
+
+            // RETORNANDO DADOS DO VÍNCULO
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->retTodos();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
+            $objMdPetVincRepresentantDTO->retDblIdDocumento();
+            $objMdPetVincRepresentantDTO->retStrTipoDocumento();
+            $objMdPetVincRepresentantDTO->retStrStaEstado();
+            $objMdPetVincRepresentantDTO->retStrCpfProcurador();
+            $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+            $objMdPetVincRepresentantDTO->retStrCNPJ();
+            $objMdPetVincRepresentantDTO->retStrCPF();
+            $objMdPetVincRepresentantDTO->retStrTpVinc();
+            $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
+            $objMdPetVincRepresentantDTO->retStrNomeProcurador();
+            $objMdPetVincRepresentantDTO->retNumIdContatoProcurador();
+            $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+            $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
+            $objMdPetVincRepresentantDTO->setStrTipoDocumento([MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL, MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO], infraDTO::$OPER_IN);
+            $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->consultar($objMdPetVincRepresentantDTO);
+
+            $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_suspensao_procurador.php';
+            $htmlModelo = file_get_contents($url);
+
+            $procuracaoDocNum       = $dados['procuracao_doc_num'];
+            $procuracaoTipo         = $tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ? 'Especial' : 'Simples';
+            $outorganteTipoPessoa   = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Pessoa Jurídica' : 'Pessoa Física';
+            $outorganteNome         = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
+            $outorganteDoc          = PaginaSEI::tratarHTML(InfraUtil::formatarCpfCnpj(($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? $objMdPetVincRepresentantDTO->getStrCNPJ() : $objMdPetVincRepresentantDTO->getStrCPF())));
+            $procuracaoDados        = '';
+            $outorganteDados        = '';
+
+            $htmlModelo = str_replace('@procuracaoTipo', $procuracaoTipo, $htmlModelo);
+            $htmlModelo = str_replace('@procuracaoDocNum', $procuracaoDocNum, $htmlModelo);
+            $htmlModelo = str_replace('@outorganteTipoPessoa', $outorganteTipoPessoa, $htmlModelo);
+
+            // DADOS DA PROCURAÇÃO SIMPLES
+            if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
+
+                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2">Dados da Procuração Eletrônica:</td></tr>';
+                $procuracaoDados .= '<tr>';
+                $procuracaoDados .= '<td class="tdTabulacao">Validade:</td>';
+                $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getDthDataLimiteValidade().'</td>';
+                $procuracaoDados .= '</tr>';
+                $procuracaoDados .= '<tr>';
+                $procuracaoDados .= '<td class="tdTabulacao">Poderes:</td>';
+                $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getStrTipoPoderesLista().'</td>';
+                $procuracaoDados .= '</tr>';
+                $procuracaoDados .= '<tr>';
+                $procuracaoDados .= '<td class="tdTabulacao">Abrangência:</td>';
+
+                if($objMdPetVincRepresentantDTO->getStrStaAbrangencia() == MdPetVincRepresentantRN::$PR_ESPECIFICO){
+
+                    $procuracaoDados .= '<td style="font-weight: normal">';
+                    $procuracaoDados .= $objMdPetVincRepresentantDTO->getStrStaAbrangenciaTipo() . ':<br>';
+                    $procuracaoDados .= '<ul class="abrangenciaLista">';
+
+                    $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
+                    $objMdPetRelVincRepProtocDTO->retTodos();
+                    $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($idVinculoRepresent);
+                    $arrObjMdPetRelVincRepProtocDTO = (new MdPetRelVincRepProtocRN)->listar($objMdPetRelVincRepProtocDTO);
+
+                    if ($arrObjMdPetRelVincRepProtocDTO) {
+                        foreach ($arrObjMdPetRelVincRepProtocDTO as $objMdPetRelVincRepProtoc) {
+                            $objProtocoloDTO = new ProtocoloDTO();
+                            $objProtocoloDTO->retStrProtocoloFormatado();
+                            $objProtocoloDTO->setDblIdProtocolo($objMdPetRelVincRepProtoc->getNumIdProtocolo());
+                            $objProtocoloDTO = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
+                            if ($objProtocoloDTO) {
+                                $procuracaoDados .= '<li>' . $objProtocoloDTO->getStrProtocoloFormatado() . '</li>';
+                            }
+                        }
+                    }
+
+                    $procuracaoDados .= '</ul>';
+                    $procuracaoDados .= '</td>';
+
+                }else{
+
+                    $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getStrStaAbrangenciaTipo().'</td>';
+
+                }
+
+                $procuracaoDados .= '</tr>';
+                $procuracaoDados .= '<tr><td colspan="2" class="clear">&nbsp;</td></tr>';
+
+            }
+
+            // INJETA DOS DADOS DA PROCURACAO SIMPLES NO TEMPLATE
+            $htmlModelo = str_replace('@procuracaoDados', $procuracaoDados, $htmlModelo);
+
+            // DADOS DO OUTORGANTE
+            $outorganteDados .= '<tr>';
+            $outorganteDados .= '<td class="tdTabulacao">'.($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Razão Social' : 'Nome').':</td>';
+            $outorganteDados .= '<td style="font-weight: normal">'.$outorganteNome.'</td>';
+            $outorganteDados .= '</tr>';
+
+            if($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J'){
+                $outorganteDados .= '<tr>';
+                $outorganteDados .= '<td class="tdTabulacao">CNPJ:</td>';
+                $outorganteDados .= '<td style="font-weight: normal">'.$outorganteDoc.'</td>';
+                $outorganteDados .= '</tr>';
+            }
+
+            // INJETA OS DADOS DO OUTORGANTE NO TEMPLATE
+            $htmlModelo = str_replace('@outorganteDados', $outorganteDados, $htmlModelo);
+
+            // INJETA OS DADOS DO OUTORGADO NO TEMPLATE
+            $htmlModelo = str_replace('@outorgadoNome', $objMdPetVincRepresentantDTO->getStrNomeProcurador(), $htmlModelo);
+
         }
 
+        // INJETA OS MEMAIS DADOS NO TEMPLATE
         $htmlModelo = str_replace('@dataVinc', $dataVinc, $htmlModelo);
         $htmlModelo = str_replace('@numProcessoVinc', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModelo);
         $htmlModelo = str_replace('@numDocVinc', $numDocVinc, $htmlModelo);
-
-        $htmlModelo = str_replace('@RazaoSocial', $razaoSocial, $htmlModelo);
-        $htmlModelo = str_replace('@Cnpj', InfraUtil::formatarCnpj($cnpj), $htmlModelo);
-        $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
-        $htmlModelo = str_replace('@cpfRespLegal', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
-        $htmlModelo = str_replace('@cpfRespLegal', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
         $htmlModelo = str_replace('@numeroSEI', $numeroSEI, $htmlModelo);
         $htmlModelo = str_replace('@sigla_orgao@', $siglaOrgao, $htmlModelo);
         $htmlModelo = str_replace('@descricao_orgao@', $descricaoOrgao, $htmlModelo);
-
+        $htmlModelo = str_replace('@itemListaProcuradores', $itemListaProcuradores, $htmlModelo);
 
         //==========================================================================
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
 
-        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO);
+        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
+            $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO);
+        }else{
+            $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAO_SUSPENSAO);
+        }
 
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
@@ -2214,10 +2354,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //        $objDocumentoAPI->setIdTipoConferencia(null);
         //        $objDocumentoAPI->setConteudo(null);
 
-
         $objSeiRN = new SeiRN();
         $saidaDocExternoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
-
 
         // Alterando Valores do Documento //
         $docRN = new DocumentoRN();
@@ -2238,15 +2376,13 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
         $objDocumentoBD->alterar($parObjDocumentoDTO);
 
+        // Alterando Conteudo do Documento com as Informções atualizadas
+        // $parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
+        // $parObjDocumentoConteudoDTO->setStrConteudo($htmlModelo);
+        // $parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
 
-        //Alterando Conteudo do Documento com as Informções atualizadas
-//        $parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
-//        $parObjDocumentoConteudoDTO->setStrConteudo($htmlModelo);
-//        $parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
-
-//        $objDocumentoConteudoBD = new DocumentoConteudoBD($this->getObjInfraIBanco());
-//        $objDocumentoConteudoBD->alterar($parObjDocumentoConteudoDTO);
-
+        // $objDocumentoConteudoBD = new DocumentoConteudoBD($this->getObjInfraIBanco());
+        // $objDocumentoConteudoBD->alterar($parObjDocumentoConteudoDTO);
 
         $objEditorDTO = new EditorDTO();
 
@@ -2294,7 +2430,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }
 
-
         //RECUPERANDO DADOS PARA ASSINATURA
 
         $mdPetProcessoRN = new mdPetProcessoRN();
@@ -2324,7 +2459,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
         //$objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
         //$objDocumentoBD->alterar($parObjDocumentoDTO);
 
-
         //Disponibilazando Acesso Externo ao Procurador Especial
         $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
         $objMdPetAcessoExternoRN->aplicarRegrasGeraisAcessoExterno(
@@ -2339,89 +2473,255 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     public function gerarDocumentoRestabelecimentoControlado($params)
     {
-        $objProcedimentoDTO = $params['procedimento'];
-        $dados = $params['dados'];
+        $objProcedimentoDTO     = $params['procedimento'];
+        $dados                  = $params['dados'];
+        $arrListaProcuradores   = $params['arrListaProcuradores'];
 
-        $idVinculo = isset($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
-        $numeroSEI = isset($dados['hdnNumeroSei']) ? $dados['hdnNumeroSei'] : null;
+        $idVinculo          = isset($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
+        $numeroSEI          = isset($dados['hdnNumeroSei']) ? $dados['hdnNumeroSei'] : null;
+        $tipoVinculo        = isset($dados['hdnStrTipoVinculo']) ? $dados['hdnStrTipoVinculo'] : null;
+        $idVinculoRepresent = isset($dados['hdnIdVinculoRepresent']) ? $dados['hdnIdVinculoRepresent'] : null;
 
-        $objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
-        $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_restabelecimento.php';
-        $htmlModelo = file_get_contents($url);
+        $objInfraParametro  = new InfraParametro($this->getObjInfraIBanco());
 
-        $objMdPetVinculoRN = new MdPetVinculoRN();
         $objMdPetVinculoDTO = new MdPetVinculoDTO();
-
         $objMdPetVinculoDTO->retTodos(true);
         $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
         $objMdPetVinculoDTO->retDblCNPJ();
         $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
         $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
         $objMdPetVinculoDTO->retDthDataVinculo();
-
+        $objMdPetVinculoDTO->retStrTpVinculo();
         $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
 
-        $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->listar($objMdPetVinculoDTO);
+        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
+            $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+        }else{
+            $objMdPetVinculoDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
+        }
+
+        $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
 
         if (is_countable($arrObjMdPetVinculoDTO) && count($arrObjMdPetVinculoDTO) > 0) {
-            $razaoSocial = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $cnpj = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
+
+            $razaoSocial            = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
+            $cnpj                   = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
             $idContatoRepresentante = $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante();
-            $RepLegalNome = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
-            $RepLegalCpf = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
-            $dataVinc = $arrObjMdPetVinculoDTO[0]->getDthDataVinculo();
+            $RepLegalNome           = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
+            $RepLegalCpf            = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
+            $dataVinc               = $arrObjMdPetVinculoDTO[0]->getDthDataVinculo();
 
             // Documento do Vinculo
             $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
             $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
             $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($arrObjMdPetVinculoDTO[0]->getNumIdMdPetVinculoRepresent());
-            $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL);
+
+            if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
+                $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL);
+            }else if($tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL){
+                $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL);
+            }else if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
+                $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO);
+            }
+
             $objMdPetVincDocumentoDTO->setOrdNumIdMdPetVincDocumento(InfraDTO::$TIPO_ORDENACAO_DESC);
+            $arrObjMdPetVincDocumentoDTO = (new MdPetVincDocumentoRN)->listar($objMdPetVincDocumentoDTO);
 
-            $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN;
-            $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
-
-            if (is_countable($arrObjMdPetVincDocumentoDTO) && count($arrObjMdPetVincDocumentoDTO) > 0) {
+            if (is_array($arrObjMdPetVincDocumentoDTO) && count($arrObjMdPetVincDocumentoDTO) > 0) {
                 $numDocVinc = $arrObjMdPetVincDocumentoDTO[0]->getStrProtocoloFormatadoProtocolo();
             }
+
+	        //Orgao
+	        $usuarioDTO = new UsuarioDTO();
+	        $usuarioDTO->retStrSiglaOrgao();
+	        $usuarioDTO->retStrDescricaoOrgao();
+	        $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
+
+	        $usuarioRN = new UsuarioRN();
+	        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
+
+	        if (!is_null($usuarioDTO)) {
+	            $siglaOrgao = $usuarioDTO->getStrSiglaOrgao();
+	            $descricaoOrgao = $usuarioDTO->getStrDescricaoOrgao();
+	        }
+
         }
 
-        //Orgao
-        $usuarioDTO = new UsuarioDTO();
-        $usuarioDTO->retStrSiglaOrgao();
-        $usuarioDTO->retStrDescricaoOrgao();
-        $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
+        // Novos valores para suspensão/restabelecimento em cascata:
+        $itemListaProcuradores = '';
 
-        $usuarioRN = new UsuarioRN();
-        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
+        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
 
-        if (!is_null($usuarioDTO)) {
-            $siglaOrgao = $usuarioDTO->getStrSiglaOrgao();
-            $descricaoOrgao = $usuarioDTO->getStrDescricaoOrgao();
+            $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_restabelecimento.php';
+            $htmlModelo = file_get_contents($url);
+
+            $htmlModelo = str_replace('@RazaoSocial', $razaoSocial, $htmlModelo);
+            $htmlModelo = str_replace('@Cnpj', InfraUtil::formatarCnpj($cnpj), $htmlModelo);
+            $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
+            $htmlModelo = str_replace('@cpfRespLegal', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
+
+	        $itemCascata = $dados['hdnCascata'] == 'S' ? '<li><p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">As Procurações Eletrônicas concedidas que tenham sido suspensas restam igualmente restabelecidas.</p></li>' : '';
+	        $htmlModelo = str_replace('@itemCascata', $itemCascata, $htmlModelo);
+
+            if(is_array($arrListaProcuradores) && count($arrListaProcuradores) > 0){
+                $itemListaProcuradores = '<li><p class="Texto_Justificado">As Procurações Eletrônicas citadas abaixo que tenham sido suspensas restam igualmente restabelecidas:</p>';
+                $itemListaProcuradores .= '<ul>';
+                for ($i=0; $i < count($arrListaProcuradores); $i++) {
+                    $itemListaProcuradores .= '<li><p class="Texto_Justificado">'.$arrListaProcuradores[$i].'</p></li>';
+                }
+                $itemListaProcuradores .= '</ul></li>';
+            }
+
+        }else{
+
+            // RETORNANDO DADOS DO VÍNCULO
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->retTodos();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
+            $objMdPetVincRepresentantDTO->retDblIdDocumento();
+            $objMdPetVincRepresentantDTO->retStrTipoDocumento();
+            $objMdPetVincRepresentantDTO->retStrStaEstado();
+            $objMdPetVincRepresentantDTO->retStrCpfProcurador();
+            $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+            $objMdPetVincRepresentantDTO->retStrCNPJ();
+            $objMdPetVincRepresentantDTO->retStrCPF();
+            $objMdPetVincRepresentantDTO->retStrTpVinc();
+            $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
+            $objMdPetVincRepresentantDTO->retStrNomeProcurador();
+            $objMdPetVincRepresentantDTO->retNumIdContatoProcurador();
+            $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+            $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
+            $objMdPetVincRepresentantDTO->setStrTipoDocumento([MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL, MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO], infraDTO::$OPER_IN);
+            $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->consultar($objMdPetVincRepresentantDTO);
+
+            $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_restabelecimento_procurador.php';
+            $htmlModelo = file_get_contents($url);
+
+            $procuracaoDocNum     = $dados['procuracao_doc_num'];
+            $procuracaoTipo       = $tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ? 'Especial' : 'Simples';
+            $outorganteTipoPessoa = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Pessoa Jurídica' : 'Pessoa Física';
+            $outorganteNome       = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
+            $outorganteDoc        = PaginaSEI::tratarHTML(InfraUtil::formatarCpfCnpj(($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? $objMdPetVincRepresentantDTO->getStrCNPJ() : $objMdPetVincRepresentantDTO->getStrCPF())));
+            $procuracaoDados      = '';
+            $outorganteDados      = '';
+            $paragrafoComunicado  = '';
+
+            $htmlModelo = str_replace('@procuracaoTipo', $procuracaoTipo, $htmlModelo);
+            $htmlModelo = str_replace('@procuracaoDocNum', $procuracaoDocNum, $htmlModelo);
+            $htmlModelo = str_replace('@outorganteTipoPessoa', $outorganteTipoPessoa, $htmlModelo);
+
+            // DADOS DA PROCURAÇÃO SIMPLES
+            if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
+
+                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2">Dados da Procuração Eletrônica:</td></tr>';
+                $procuracaoDados .= '<tr>';
+                $procuracaoDados .= '<td class="tdTabulacao">Validade:</td>';
+                $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getDthDataLimiteValidade().'</td>';
+                $procuracaoDados .= '</tr>';
+                $procuracaoDados .= '<tr>';
+                $procuracaoDados .= '<td class="tdTabulacao">Poderes:</td>';
+                $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getStrTipoPoderesLista().'</td>';
+                $procuracaoDados .= '</tr>';
+                $procuracaoDados .= '<tr>';
+                $procuracaoDados .= '<td class="tdTabulacao">Abrangência:</td>';
+
+                if($objMdPetVincRepresentantDTO->getStrStaAbrangencia() == MdPetVincRepresentantRN::$PR_ESPECIFICO){
+
+                    $procuracaoDados .= '<td style="font-weight: normal">';
+                    $procuracaoDados .= $objMdPetVincRepresentantDTO->getStrStaAbrangenciaTipo() . ':<br>';
+                    $procuracaoDados .= '<ul class="abrangenciaLista">';
+
+                    $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
+                    $objMdPetRelVincRepProtocDTO->retTodos();
+                    $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($idVinculoRepresent);
+                    $arrObjMdPetRelVincRepProtocDTO = (new MdPetRelVincRepProtocRN)->listar($objMdPetRelVincRepProtocDTO);
+
+                    if ($arrObjMdPetRelVincRepProtocDTO) {
+                        foreach ($arrObjMdPetRelVincRepProtocDTO as $objMdPetRelVincRepProtoc) {
+                            $objProtocoloDTO = new ProtocoloDTO();
+                            $objProtocoloDTO->retStrProtocoloFormatado();
+                            $objProtocoloDTO->setDblIdProtocolo($objMdPetRelVincRepProtoc->getNumIdProtocolo());
+                            $objProtocoloDTO = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
+                            if ($objProtocoloDTO) {
+                                $procuracaoDados .= '<li>' . $objProtocoloDTO->getStrProtocoloFormatado() . '</li>';
+                            }
+                        }
+                    }
+
+                    $procuracaoDados .= '</ul>';
+                    $procuracaoDados .= '</td>';
+
+                }else{
+
+                    $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getStrStaAbrangenciaTipo().'</td>';
+
+                }
+
+                $procuracaoDados .= '</tr>';
+                $procuracaoDados .= '<tr><td colspan="2" class="clear">&nbsp;</td></tr>';
+
+            }
+
+            // INJETA DOS DADOS DA PROCURACAO SIMPLES NO TEMPLATE
+            $htmlModelo = str_replace('@procuracaoDados', $procuracaoDados, $htmlModelo);
+
+            // DADOS DO OUTORGANTE
+            $outorganteDados .= '<tr>';
+            $outorganteDados .= '<td class="tdTabulacao">'.($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Razão Social' : 'Nome').':</td>';
+            $outorganteDados .= '<td style="font-weight: normal">'.$outorganteNome.'</td>';
+            $outorganteDados .= '</tr>';
+
+            if($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J'){
+                $outorganteDados .= '<tr>';
+                $outorganteDados .= '<td class="tdTabulacao">CNPJ:</td>';
+                $outorganteDados .= '<td style="font-weight: normal">'.$outorganteDoc.'</td>';
+                $outorganteDados .= '</tr>';
+            }
+
+            // INJETA OS DADOS DO OUTORGANTE NO TEMPLATE
+            $htmlModelo = str_replace('@outorganteDados', $outorganteDados, $htmlModelo);
+
+            // INJETA OS DADOS DO OUTORGADO NO TEMPLATE
+            $htmlModelo = str_replace('@outorgadoNome', $objMdPetVincRepresentantDTO->getStrNomeProcurador(), $htmlModelo);
+
+            // MONTA PARAGRAFO ESPECÍFICO PARA RESTABELECIMENTO DE PROCURADOR ESPECIAL
+            if($tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL){
+                $paragrafoComunicado .= '<p class="Texto_Justificado">Comunicamos que:</p>';
+                $paragrafoComunicado .= '<ul class="paragrafoEspecial"><li><span class="Texto_Justificado">Fica restabelecido seu direito de peticionar e emitir Procurações Eletrônicas Simples em nome do Outorgante;</span></li></ul>';
+            }
+            if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
+                $paragrafoComunicado .= '<p class="Texto_Justificado">Comunicamos que:</p>';
+                $paragrafoComunicado .= '<ul class="paragrafoEspecial"><li><span class="Texto_Justificado">Ficam restabelecidos os Poderes de Representação e de peticionar em nome do Outorgante; </span></li></ul>';
+
+            }
+
+            // INJETA PARAGRAFO ESPECÍFICO PARA PROCURADOR ESPECIAL
+            $htmlModelo = str_replace('@paragrafoComunicado', $paragrafoComunicado, $htmlModelo);
+
         }
 
+        // INJETA OS MEMAIS DADOS NO TEMPLATE
         $htmlModelo = str_replace('@dataVinc', $dataVinc, $htmlModelo);
         $htmlModelo = str_replace('@numProcessoVinc', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModelo);
         $htmlModelo = str_replace('@numDocVinc', $numDocVinc, $htmlModelo);
-
-        $htmlModelo = str_replace('@RazaoSocial', $razaoSocial, $htmlModelo);
-        $htmlModelo = str_replace('@NomeFantasia', $nomeFantasia, $htmlModelo);
-        $htmlModelo = str_replace('@Cnpj', InfraUtil::formatarCnpj($cnpj), $htmlModelo);
-        $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
-        $htmlModelo = str_replace('@cpfRespLegal', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
         $htmlModelo = str_replace('@numeroSEI', $numeroSEI, $htmlModelo);
-
-        $htmlModelo = str_replace('@dataVinc', $dataVinc, $htmlModelo);
         $htmlModelo = str_replace('@sigla_orgao@', $siglaOrgao, $htmlModelo);
         $htmlModelo = str_replace('@descricao_orgao@', $descricaoOrgao, $htmlModelo);
-
+        $htmlModelo = str_replace('@itemListaProcuradores', $itemListaProcuradores, $htmlModelo);
 
         //==========================================================================
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
 
-        $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_RESTABELECIMENTO);
-
+        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
+            $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_RESTABELECIMENTO);
+        }else{
+            $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAO_RESTABELECIMENTO);
+        }
 
         $objDocumentoAPI = new DocumentoAPI();
         $objDocumentoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());

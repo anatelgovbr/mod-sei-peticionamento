@@ -215,7 +215,6 @@ class MdPetVinculoRN extends InfraRN {
             $objMdPetVinculoDTO->setNumIdContato($arrIdContato,InfraDTO::$OPER_IN);
 
             if ($isAtivos){
-                $objMdPetVinculoDTO->setStrSinAtivoRepresentante('S');
                 $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
             }
 

@@ -451,7 +451,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $idCertidao = $arr[3];
         $cnpjs = $arr[4];
         $dataAceite = $arr[5];
-        $objMdPetIntProtRN = new MdPetIntProtocoloRN();
+	    $objMdPetIntProtRN = new MdPetIntProtocoloRN();
 
         if (!$idCertidao) {
             $idCertidao = $this->retornaIdDocCertidaoPorIntimacaoConectado((array)$idIntimacao);
@@ -480,10 +480,10 @@ class MdPetIntCertidaoRN extends InfraRN
         $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
         $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
 
-        $ToolTipText = 'Cumprida em: ';
+	    $ToolTipText = 'Cumprida em: ';
 	    $ToolTipText .= explode(' ', $dataAceite)[0] . ' ';
-        $ToolTipText .= '<br/>Documento Principal: ';
-        $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
+	    $ToolTipText .= '<br/>Documento Principal: ';
+	    $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
         if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()) {
             $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' ';
         }

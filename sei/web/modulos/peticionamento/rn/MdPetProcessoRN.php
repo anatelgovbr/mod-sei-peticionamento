@@ -464,6 +464,10 @@ class MdPetProcessoRN extends InfraRN {
 	private function montarArrDocumentos( $arrParametros , $objUnidadeDTO , 
 			                              $objProcedimentoDTO , $reciboDTOBasico ){
 
+		LimiteSEI::getInstance()->configurarNivel3();
+
+		$versaoPeticionamento = intval(preg_replace("/\D/", "", (new InfraParametro(BancoSEI::getInstance()))->getValor('VERSAO_MODULO_PETICIONAMENTO', false)));
+
 		//tentando simular sessao de usuario interno do SEI
 		SessaoSEI::getInstance()->setNumIdUnidadeAtual( $objUnidadeDTO->getNumIdUnidade() );
 		SessaoSEI::getInstance()->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
@@ -566,12 +570,22 @@ class MdPetProcessoRN extends InfraRN {
 					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
 					$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
 				}
+
+                if($versaoPeticionamento >= 410){
+                    $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc('N');
+                    if(!empty($nivelAcessoDoc) && is_array($nivelAcessoDoc['documentos']) && count($nivelAcessoDoc['documentos']) > 0){
+                        if(in_array($arrLinhasAnexos[ $contador ][9], $nivelAcessoDoc['documentos'])){
+                            $idNivelAcesso = $nivelAcessoDoc['nivel'];
+                            $idHipoteseLegal = $nivelAcessoDoc['hipotese'];
+                        }
+                    }
+                }
 								
 				$idGrauSigilo = null;
 				
 				//criando registro em protocolo
 				$objDocumentoDTO = new DocumentoDTO();
-				$objDocumentoDTO->setStrNumero( $strComplemento );
+				$objDocumentoDTO->setStrNomeArvore( $strComplemento );
 				$objDocumentoDTO->setDblIdDocumento(null);
 				$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
 				$objDocumentoDTO->setStrStaNivelAcessoLocalProtocolo( $idNivelAcesso );
@@ -668,12 +682,22 @@ class MdPetProcessoRN extends InfraRN {
 					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
 					$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
 				}
+
+                if($versaoPeticionamento >= 410){
+                    $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc('N');
+                    if(!empty($nivelAcessoDoc) && is_array($nivelAcessoDoc['documentos']) && count($nivelAcessoDoc['documentos']) > 0){
+                        if(in_array($arrLinhasAnexos[ $contador ][9], $nivelAcessoDoc['documentos'])){
+                            $idNivelAcesso = $nivelAcessoDoc['nivel'];
+                            $idHipoteseLegal = $nivelAcessoDoc['hipotese'];
+                        }
+                    }
+                }
 								
 				$idGrauSigilo = null;
 					
 				//criando registro em protocolo
 				$objDocumentoDTO = new DocumentoDTO();
-				$objDocumentoDTO->setStrNumero( $strComplemento );
+				$objDocumentoDTO->setStrNomeArvore( $strComplemento );
 				$objDocumentoDTO->setDblIdDocumento(null);
 				$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
 						
@@ -760,12 +784,22 @@ class MdPetProcessoRN extends InfraRN {
 					$idNivelAcesso = ProtocoloRN::$NA_RESTRITO;
 					$idHipoteseLegal = $arrLinhasAnexos[ $contador ][5];
 				}
+
+				if($versaoPeticionamento >= 410){
+                    $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc('N');
+                    if(!empty($nivelAcessoDoc) && is_array($nivelAcessoDoc['documentos']) && count($nivelAcessoDoc['documentos']) > 0){
+                        if(in_array($arrLinhasAnexos[ $contador ][9], $nivelAcessoDoc['documentos'])){
+                            $idNivelAcesso = $nivelAcessoDoc['nivel'];
+                            $idHipoteseLegal = $nivelAcessoDoc['hipotese'];
+                        }
+                    }
+                }
 				
 				$idGrauSigilo = null;
 					
 				//criando registro em protocolo
 				$objDocumentoDTO = new DocumentoDTO();
-				$objDocumentoDTO->setStrNumero( $strComplemento );
+				$objDocumentoDTO->setStrNomeArvore( $strComplemento );
 				$objDocumentoDTO->setDblIdDocumento(null);
 				$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
 														

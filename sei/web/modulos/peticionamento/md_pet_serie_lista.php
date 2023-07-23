@@ -146,7 +146,14 @@ try {
         array(InfraDTO::$OPER_IN),
         array(array(SerieRN::$TA_INTERNO, SerieRN::$TA_INTERNO_EXTERNO)));
   }
-  
+
+    if($filtro == '3'){
+        //Add filtro para Tipos de Documentos para Intimação Eletrônica
+        $objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
+            array(InfraDTO::$OPER_IN),
+            array(array(SerieRN::$TA_EXTERNO, SerieRN::$TA_INTERNO_EXTERNO)));
+    }
+
   $numIdGrupoSerie = PaginaSEI::getInstance()->recuperarCampo('selGrupoSerie');
   if ($numIdGrupoSerie!==''){
     $objSerieDTO->setNumIdGrupoSerie($numIdGrupoSerie);

@@ -56,7 +56,6 @@ switch ($_GET['acao']) {
     $objMdPetVinculoDTO->retNumIdContatoRepresentante();
     $objMdPetVinculoDTO->setNumIdMdPetVinculo($idMdPetVinculo);
     $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-    $objMdPetVinculoDTO->setStrStaResponsavelLegal('S');
     $objMdPetVinculoDTO->setDistinct(true);
     $arrDadosPessoaJuridicaVinculo = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
 
@@ -127,7 +126,6 @@ switch ($_GET['acao']) {
     $objMdPetVincDocumentoDTO->retStrNumeroDocumento();
     $objMdPetVincDocumentoDTO->retNumIdTipoConferencia();
     $objMdPetVincDocumentoDTO->retNumTamanhoArquivoAnexo();
-    //$objMdPetVincDocumentoDTO->setNumIdMdPetVinculacaoPj($idMdPetVinculacaoPj);
     $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_ATOS);
 
     $arrArquivo = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
@@ -151,18 +149,7 @@ switch ($_GET['acao']) {
     $strVlultimaPosition = !is_null($intUltimaPosition) ? trim($arrEndereco[$intUltimaPosition]) : null;
 
     $strEndereco = '';
-        /*if(!is_null($intUltimaPosition)) {
-            for ($i = 0; $i < $intUltimaPosition; $i++) {
-                $strEndereco .= $arrEndereco[$i];
-                if ($intUltimaPosition != ($i + 1)) {
-                    $strEndereco .= ',';
-                }
-            }
-
-      $strNumero = !is_null($strVlultimaPosition) ? $strVlultimaPosition : '';
-    }else{*/
-      $strEndereco = $strEnderecoCompleto;
-   // }
+	$strEndereco = $strEnderecoCompleto;
 
     $arrDescricaoNivelAcesso = ['0' => 'Público', '1' => 'Restrito', '2' => 'Sigiloso'];
     if(!$stConsultar){
@@ -269,6 +256,3 @@ if ($verificaNivelAcessoTipoProcesso == 'S') {
 }
 
 $orientacoes = $objMdPetVincUsuExtPj->getStrOrientacoes();
-
-
-//SessaoSEIExterna::getInstance()->configurarAcessoExterno(null);

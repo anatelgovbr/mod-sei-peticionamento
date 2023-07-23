@@ -713,11 +713,13 @@
         document.getElementById('txtComplementoTipoDocumento').value = '';
 
         if (document.getElementById('selNivelAcesso')) {
-            document.getElementById('selNivelAcesso').value = '';
+            $('#selNivelAcesso').prop('disabled', false).val('');
+            $('input[name="hdnNivelAcesso"]').remove();
         }
 
         if (document.getElementById('selHipoteseLegal')) {
-            document.getElementById('selHipoteseLegal').value = '';
+            $('#selHipoteseLegal').prop('disabled', false).val('');
+            $('input[name="hdnHipoteseLegal"]').remove();
             document.getElementById('divBlcHipoteseLegal').style.display = 'none';
         }
 
@@ -773,7 +775,14 @@
             document.getElementById('tbDocumento').style.display = '';
             var minHeightFieldSetDocumentos = document.getElementById("field_documentos").style.minHeight;
             minHeightFieldSetDocumentos = parseInt(minHeightFieldSetDocumentos.replace("px", ""));
-            document.getElementById("field_documentos").style.minHeight = minHeightFieldSetDocumentos + 50 + "px"
+            document.getElementById("field_documentos").style.minHeight = minHeightFieldSetDocumentos + 50 + "px";
+
+            document.getElementById("selNivelAcesso").attr('disabled', false).value = '';
+            document.querySelector('input[name="hdnNivelAcesso"]').remove();
+
+            document.getElementById("selHipoteseLegal").removeAttribute("disabled").value = '';
+            document.querySelector('input[name="hdnHipoteseLegal"]').remove();
+            document.getElementById('divBlcHipoteseLegal').style.display = 'none';
         }
     }
 
@@ -873,6 +882,56 @@
 
         return focused;
     }
+
+    <?php if(!empty($nivelAcessoDoc)): ?>
+
+    $(document).ready(function(){
+
+        var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
+        var nivel = '<?= $nivelAcessoDoc['nivel'] ?>';
+        var hipotese = '<?= $nivelAcessoDoc['hipotese'] ?>';
+
+        $('body').on('change', '#selTipoDocumento', function(){
+            var self = $(this);
+            var selectNivelAcesso = self.closest('form').find('select[id^="selNivelAcesso"]');
+            var selectHipoteseLegal = self.closest('form').find('select[id^="selHipoteseLegal"]');
+
+            if(arrDocForcaNivelAcesso.indexOf(self.val()) !== -1){
+
+                selectNivelAcesso.val(nivel).prop('disabled', true);
+                selectNivelAcesso.closest('div').append('<input type="hidden" value="'+nivel+'" id="hdn'+selectNivelAcesso.attr('id')+'" name="'+selectNivelAcesso.attr('id')+'" tabindex="-1"/>');
+
+                if(nivel == 1){
+                    selectHipoteseLegal.val(hipotese).prop('disabled', true);
+                    selectHipoteseLegal.closest('div').append('<input type="hidden" value="'+hipotese+'" id="hdn'+selectHipoteseLegal.attr('id')+'" name="'+selectHipoteseLegal.attr('id')+'" tabindex="-1"/>');
+                    self.closest('form').find('div[id^="divBlcHipoteseLegal"]').show();
+                }
+                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == '') {
+                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
+                }
+
+            }else{
+
+                selectNivelAcesso.val('').prop('disabled', false);
+                selectNivelAcesso.closest('div').find('input[id="'+selectNivelAcesso.attr('id')+'"]').remove();
+
+                selectHipoteseLegal.val('').prop('disabled', false);
+                selectHipoteseLegal.closest('div').find('input[id="'+selectHipoteseLegal.attr('id')+'"]').remove();
+
+                self.closest('form').find('div[id^="divBlcHipoteseLegal"]').hide();
+                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == ''){
+                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
+                }else{
+                    selectNivelAcesso.focus();
+                }
+
+            }
+
+        });
+
+    });
+
+    <?php endif; ?>
 
 
     //===============================================================================================================//

@@ -97,6 +97,7 @@ class MdPetIntegracaoRN extends InfraRN
         $mdPetIntegracaoDTO->retNumIdMdPetIntegracao();
         $mdPetIntegracaoDTO->retStrEnderecoWsdl();
         $mdPetIntegracaoDTO->retStrOperacaoWsdl();
+	    $mdPetIntegracaoDTO->retStrCodReceitaSuspAuto();
         $mdPetIntegracaoDTO->setNumIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
         $mdPetIntegracaoDTO->setStrSinAtivo('S');
 
@@ -186,11 +187,12 @@ class MdPetIntegracaoRN extends InfraRN
             ];
 
         }
+
         $consulta = $objMdPetSoapClienteRN->consultarWsdl($strMetodoWebservice, $parametro);
 
-        if ($consulta['PessoaJuridica']['situacaoCadastral']['codigo'] == '03') {
+	    if (!empty($objMdPetIntegracao->getStrCodReceitaSuspAuto()) && in_array(intval($consulta['PessoaJuridica']['situacaoCadastral']['codigo']), explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto()))) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>Empresa Suspensa junto a Receita Federal, não podendo ser vinculada a Pessoa Jurídica.</msg>\n";
+            $xml .= "<msg>O cadastro do CNPJ indicado está suspenso na Receita Federal. Dessa forma, não pode ser efetivada a vinculação do Responsável Legal à Pessoa Jurídica.</msg>\n";
             $xml .= '</dados-pj>';
             return $xml;
         }
@@ -855,8 +857,6 @@ class MdPetIntegracaoRN extends InfraRN
 
             $arrParametrosE = $_POST['selParametrosE'];
 
-            if ($_POST['chkSinCache'] != null) {
-
 //         if (count($arrParametrosE)){
 //
 //               $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
@@ -886,34 +886,33 @@ class MdPetIntegracaoRN extends InfraRN
 //            $objMdPetIntegParametroDTO = $objMdPetIntegParametroRN->cadastrar($objMdPetIntegParametroDTO);
 //        }
 
-                foreach ($arrParametros['paramentrosEntrada'] as $chaveEntrada => $valorEntrada) {
-                    $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
-                    $objMdPetIntegParametroDTO->setNumIdMdPetIntegParametro(null);
-                    $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
-                    $objMdPetIntegParametroDTO->setStrNome($chaveEntrada);
-                    $objMdPetIntegParametroDTO->setStrTpParametro('E');
-                    if ($chaveEntrada == 'mesesExpiraCache') {
-                        $objMdPetIntegParametroDTO->setStrValorPadrao($prazo);
-                        $objMdPetIntegParametroDTO->setStrNomeCampo('PrazoExpiracao');
-                    } else {
-                        $objMdPetIntegParametroDTO->setStrNomeCampo($valorEntrada);
-                    }
-
-                    $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
-                    $objMdPetIntegParametroDTO = $objMdPetIntegParametroRN->cadastrar($objMdPetIntegParametroDTO);
+            foreach ($arrParametros['paramentrosEntrada'] as $chaveEntrada => $valorEntrada) {
+                $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
+                $objMdPetIntegParametroDTO->setNumIdMdPetIntegParametro(null);
+                $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
+                $objMdPetIntegParametroDTO->setStrNome($chaveEntrada);
+                $objMdPetIntegParametroDTO->setStrTpParametro('E');
+                if ($chaveEntrada == 'mesesExpiraCache') {
+                    $objMdPetIntegParametroDTO->setStrValorPadrao($prazo);
+                    $objMdPetIntegParametroDTO->setStrNomeCampo('PrazoExpiracao');
+                } else {
+                    $objMdPetIntegParametroDTO->setStrNomeCampo($valorEntrada);
                 }
-                foreach ($arrParametros['parametrosSaida'] as $chaveSaida => $valorSaida) {
-                    $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
-                    $objMdPetIntegParametroDTO->setNumIdMdPetIntegParametro(null);
-                    $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
-                    $objMdPetIntegParametroDTO->setStrNome($chaveSaida);
-                    $objMdPetIntegParametroDTO->setStrTpParametro('P');
-                    $objMdPetIntegParametroDTO->setStrValorPadrao(null);
-                    $objMdPetIntegParametroDTO->setStrNomeCampo($valorSaida);
 
-                    $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
-                    $objMdPetIntegParametroDTO = $objMdPetIntegParametroRN->cadastrar($objMdPetIntegParametroDTO);
-                }
+                $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
+                $objMdPetIntegParametroDTO = $objMdPetIntegParametroRN->cadastrar($objMdPetIntegParametroDTO);
+            }
+            foreach ($arrParametros['parametrosSaida'] as $chaveSaida => $valorSaida) {
+                $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
+                $objMdPetIntegParametroDTO->setNumIdMdPetIntegParametro(null);
+                $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
+                $objMdPetIntegParametroDTO->setStrNome($chaveSaida);
+                $objMdPetIntegParametroDTO->setStrTpParametro('P');
+                $objMdPetIntegParametroDTO->setStrValorPadrao(null);
+                $objMdPetIntegParametroDTO->setStrNomeCampo($valorSaida);
+
+                $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
+                $objMdPetIntegParametroDTO = $objMdPetIntegParametroRN->cadastrar($objMdPetIntegParametroDTO);
             }
         }
     }

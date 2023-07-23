@@ -225,75 +225,54 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             document.getElementById('hdnIdUsuario').value = hdnIdUsuarioProcuracao;
         }
 
-
-        //Validação de Existencia de Procuração Especial
         $.ajax({
             dataType: 'xml',
             method: 'POST',
-            url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_usu_ext_dados_usuario_externo'); ?>',
+            url: '<?php echo $strLinkConsultaDadosUsuario?>',
             data: {
-                'hdnIdUsuarioProcuracao': document.getElementById('hdnIdUsuario').value,
-                'hdnSelPessoaJuridica': document.getElementById('selPessoaJuridica').value
+                'hdnIdUsuarioProcuracao': hdnIdUsuarioProcuracao,
+                'hdnSelPessoaJuridica': hdnSelPessoaJuridica
             },
             success: function (data) {
-                if ($(data).find('sucesso').text() == 0) {
-                    $.ajax({
-                        dataType: 'xml',
-                        method: 'POST',
-                        url: '<?php echo $strLinkConsultaDadosUsuario?>',
-                        data: {
-                            'hdnIdUsuarioProcuracao': hdnIdUsuarioProcuracao,
-                            'hdnSelPessoaJuridica': hdnSelPessoaJuridica
-                        },
-                        success: function (data) {
 
-                            var valido = $(data).find('sucesso').text();
+                var valido = $(data).find('sucesso').text();
 
-                            var dados = [];
-                            $('dados', data).children().each(function () {
-                                console.log($(this)[0].innerHTML)
-                                var valor = $(this)[0].innerHTML;
-                                dados.push(valor);
-                            });
+                var dados = [];
+                $('dados', data).children().each(function () {
+                    console.log($(this)[0].innerHTML)
+                    var valor = $(this)[0].innerHTML;
+                    dados.push(valor);
+                });
 
-                            //Inicio - Ajax Validação Usuário
-                            //Validando para ver se o usuário externo não é pendente
-                            $.ajax({
-                                dataType: 'xml',
-                                method: 'POST',
-                                url: '<?php echo $strLinkAjaxValidarUsuarioExternoPendente?>',
-                                data: {
-                                    'idContato': document.getElementById('hdnIdUsuario').value,
-                                    'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
-                                },
-                                success: function (data) {
+                //Inicio - Ajax Validação Usuário
+                //Validando para ver se o usuário externo não é pendente
+                $.ajax({
+                    dataType: 'xml',
+                    method: 'POST',
+                    url: '<?php echo $strLinkAjaxValidarUsuarioExternoPendente?>',
+                    data: {
+                        'idContato': document.getElementById('hdnIdUsuario').value,
+                        'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
+                    },
+                    success: function (data) {
 
-                                    if ($(data).find('existe').text() == 0) {
-                                        alert("Usuário Externo com pendência de liberação de cadastro.");
-                                        dados = [];
-                                        return false;
-                                    } else {
+                        if ($(data).find('existe').text() == 0) {
+                            alert("Usuário Externo com pendência de liberação de cadastro.");
+                            dados = [];
+                            return false;
+                        } else {
 
-                                        objTabelaDinamicaUsuarioProcuracao.adicionar(dados);
+                            objTabelaDinamicaUsuarioProcuracao.adicionar(dados);
 
-                                        $("#tbUsuarioProcuracao").show();
-                                        document.getElementById('txtNumeroCpfProcurador').value = '';
-                                        infraSelectLimpar('selUsuario');
+                            $("#tbUsuarioProcuracao").show();
+                            document.getElementById('txtNumeroCpfProcurador').value = '';
+                            infraSelectLimpar('selUsuario');
 
-                                    }
-                                }
-                            });
-
-
-                        },
-                        error: function (e) {
-                            console.error('Erro ao processar o XML do SEI: ' + e.responseText);
                         }
-                    });
-                } else {
-                    alert("Não é permitido adicionar este usuário, pois o mesmo já possui uma Procuração Especial para esta PJ.");
-                    return false;
-                }
+                    }
+                });
+
+
             },
             error: function (e) {
                 console.error('Erro ao processar o XML do SEI: ' + e.responseText);
@@ -392,14 +371,12 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 return false;
             }
 
-
             //Validando Combo Usuário Externo
 
             if (document.getElementById('selUsuarioSimples').value == "") {
                 alert("Selecione o Nome do Usuário Externo.");
                 return false;
             }
-
 
             //Validando Combo Tipo de Poder
             if (document.getElementById('selTpPoder').value == "") {
@@ -431,8 +408,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     alert("Informe a Data Limite.");
                     return false;
                 }
-
-
             }
             //Verifica se a data é posteriar a data atua
             if (document.getElementById('txtDt').value != "") {
@@ -447,7 +422,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     return false;
                 }
             }
-
 
             if (document.getElementById('hdnRbAbrangencia').value == "") {
                 alert("Informe um tipo de Abrangência.");
@@ -468,18 +442,14 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
         if ($tpProc == "S") {
             //Procuração Simples
-            //Validação de Modal
             var dados = {
                 idOutorgado: document.getElementById('hdnIdContExterno').value,
                 tipoProc: document.getElementById('selTipoProcuracao').value
             };
 
             if (document.getElementById('hdnRbOutorgante').value == "PF") {
-                if (document.getElementById('hdnRbValidate').value == "Indeterminada") {
-                    validadeValor = "Indeterminada";
-                } else {
-                    validadeValor = document.getElementById('txtDt').value;
-                }
+
+                validadeValor = (document.getElementById('hdnRbValidate').value == "Indeterminada") ? "Indeterminada" : document.getElementById('txtDt').value;
 
                 var dados = {
                     idOutorgante: document.getElementById('hdnIdContExterno').value,
@@ -489,13 +459,11 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     validade: validadeValor,
                     processos: document.getElementById('hdnTbProcessos').value
                 };
+
             } else if (document.getElementById('hdnRbOutorgante').value == "PJ") {
 
-                if (document.getElementById('hdnRbValidate').value == "Indeterminada") {
-                    validadeValor = "Indeterminada";
-                } else {
-                    validadeValor = document.getElementById('txtDt').value;
-                }
+                validadeValor = (document.getElementById('hdnRbValidate').value == "Indeterminada") ? "Indeterminada" : document.getElementById('txtDt').value;
+
                 var dados = {
                     idOutorgante: document.getElementById('selPessoaJuridicaProcSimples').value,
                     idOutorgado: document.getElementById('hdnIdUsuario').value,
@@ -505,8 +473,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     processos: document.getElementById('hdnTbProcessos').value
                 };
             }
-
-            //Fim Validação Modal
 
             //Verificando Pendencia de Usuário Externo
             $.ajax({
@@ -532,42 +498,41 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                                     var valor = $(this)[i].innerHTML;
                                     if ($(j).attr("id") == 0) {
 
-
                                         //Modal para Assinatura
                                         parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
                                             770,
                                             520,
                                             '', //options
-                                            false); //modal
+                                            false);
 
                                     } else {
 
                                         //Modal para Existencia de Procuração
-                                        //Modal para Validação
                                         parent.infraAbrirJanelaModal($(j).attr("id"),
-                                            600,
+                                            1200,
                                             300,
                                             '', //options
-                                            false); //modal
-
+                                            false);
 
                                     }
-                                })
+
+                                });
+
                             }
+
                         });
 
-                        //Abre Modal - Fim
                     }
+
                 }
+
             });
 
-
-            //Fim Procuração Especial Modal
         }
-
 
         //Caso seja procuração especial
         if ($tpProc == "E") {
+
             var tbUsuarioProcuracao = document.getElementById('tbUsuarioProcuracao');
             var qtdLinhas = tbUsuarioProcuracao.rows.length;
 
@@ -576,13 +541,19 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 return false;
             }
 
-            //Validação Modal - Procuração Especial
-            //Validação de Modal
+            var idsUsuarios = [];
+
+            $('table#tbUsuarioProcuracao tbody tr').each(function() {
+                var id = $(this).find('td:first-child div').html();
+                idsUsuarios.push(id);
+            });
+
             var dados = {
-                idOutorgado: document.getElementById('hdnIdContExterno').value,
+                idOutorgante: document.getElementById('selPessoaJuridica').value,
+                idOutorgado: idsUsuarios.join('#'),
                 tipoProc: document.getElementById('selTipoProcuracao').value,
-                idOutorgante: document.getElementById('selPessoaJuridica').value
             };
+
             $.ajax({
                 dataType: 'xml',
                 method: 'POST',
@@ -598,25 +569,21 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                                 770,
                                 520,
                                 '', //options
-                                false); //modal
+                                false);
 
                         } else {
 
                             //Modal para Existencia de Procuração
-                            //Modal para Validação
                             parent.infraAbrirJanelaModal($(j).attr("id"),
-                                770,
-                                520,
+                                1200,
+                                300,
                                 '', //options
-                                false); //modal
-
+                                false);
 
                         }
                     })
                 }
             });
-
-            //Fim Procuração Especial Modal
 
         }
 
@@ -980,7 +947,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     if (ids.length == 1) {
                         document.getElementById("selUsuario").disabled = true;
                     } else {
-                        $('#selUsuario').prepend('<option value="" selected="selected">Selecione o Usuario Externo</option>');
                         document.getElementById("selUsuario").disabled = false;
                     }
 
@@ -1061,7 +1027,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     if (ids.length == 1) {
                         document.getElementById("selUsuarioSimples").disabled = true;
                     } else {
-                        $('#selUsuarioSimples').prepend('<option value="" selected="selected">Selecione o Usuario Externo</option>');
                         document.getElementById("selUsuarioSimples").disabled = false;
                     }
 

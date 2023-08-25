@@ -19,7 +19,6 @@
                     Razão Social:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj form-control" id="txtRazaoSocial" name="txtRazaoSocial" maxlength="250" onkeypress="return infraMascaraTexto(this,event,250);"
-                    readonly
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
@@ -37,13 +36,10 @@
                     Endereço:
                 </label>
                 <input onkeypress="return infraMascaraTexto(this,event,130);" type="text" class="infraText blocInformacaoPj form-control" id="txtLogradouro" name="txtLogradouro" maxlength="130"
-                    readonly
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 <input type="hidden" class="infraText blocInformacaoPj" id="txtLogradouroPadrao" name="txtLogradouroPadrao" maxlength="130"
-                    readonly
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 <input type="hidden" class="infraText blocInformacaoPj" id="txtComplementoEndereco" name="txtComplementoEndereco" maxlength="130"
-                    readonly
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
@@ -52,7 +48,6 @@
                 Bairro:
             </label>
             <input type="text" class="infraText blocInformacaoPj form-control" id="txtBairro" name="txtBairro" maxlength="70" onkeypress="return infraMascaraTexto(this,event,70);"
-                   readonly
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
         </div>
     </div>
@@ -87,7 +82,6 @@
                 <input type="text" class="infraText blocInformacaoPj form-control" id="txtNumeroCEP" name="txtNumeroCEP" maxlength="15"
                     onkeypress="return infraMascaraNumero(this,event, 9);" onchange="return controlarMascaraCep(this);"
                     onkeyup="return infraMascara(this, event, '#####-###');"
-                    readonly
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>

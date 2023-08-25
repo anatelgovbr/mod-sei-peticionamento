@@ -66,7 +66,8 @@ class MdPetAtualizadorSipRN extends InfraRN
         die;
     }
 
-	protected function normalizaVersao($versao){
+	protected function normalizaVersao($versao)
+    {
 		$ultimoPonto = strrpos($versao, '.');
 		if ($ultimoPonto !== false) {
 			$versao = substr($versao, 0, $ultimoPonto) . substr($versao, $ultimoPonto + 1);
@@ -76,6 +77,7 @@ class MdPetAtualizadorSipRN extends InfraRN
 
     protected function atualizarVersaoConectado()
     {
+        
         try {
             $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SIP VERSÃO ' . SIP_VERSAO);
 
@@ -87,8 +89,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             }
 
             //testando versao do framework
-	        $numVersaoInfraRequerida = '1.612.3';
-
+	        $numVersaoInfraRequerida = '2.0.18';
 	        if ($this->normalizaVersao(VERSAO_INFRA) < $this->normalizaVersao($numVersaoInfraRequerida)) {
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
@@ -1996,6 +1997,45 @@ class MdPetAtualizadorSipRN extends InfraRN
     {
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.1.0 DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $objSistemaDTO = new SistemaDTO();
+        $objSistemaDTO->retNumIdSistema();
+        $objSistemaDTO->setStrSigla('SEI');
+        $objSistemaDTO = (new SistemaRN())->consultar($objSistemaDTO);
+
+        if ($objSistemaDTO == null) {
+            throw new InfraException('Sistema SEI não encontrado.');
+        }
+
+        $numIdSistemaSei = $objSistemaDTO->getNumIdSistema();
+
+        $objPerfilDTO = new PerfilDTO();
+        $objPerfilDTO->retNumIdPerfil();
+        $objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilDTO->setStrNome('Administrador');
+        $objPerfilDTO = (new PerfilRN())->consultar($objPerfilDTO);
+
+        if ($objPerfilDTO == null) {
+            throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
+        }
+
+        $numIdPerfilSeiAdministrador = $objPerfilDTO->getNumIdPerfil();
+
+        $objPerfilBasicoDTO = new PerfilDTO();
+        $objPerfilBasicoDTO->retNumIdPerfil();
+        $objPerfilBasicoDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilBasicoDTO->setStrNome('Básico');
+        $objPerfilBasicoDTO = (new PerfilRN())->consultar($objPerfilBasicoDTO);
+
+        if ($objPerfilBasicoDTO == null) {
+            throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
+        }
+
+        $numIdPerfilSeiBasico = $objPerfilBasicoDTO->getNumIdPerfil();
+
+        $this->logar('AJUSTANDO VINCULO DO RECURSO md_pet_vinc_documento_consultar');
+        $this->removerRecursoPerfil($numIdSistemaSei, 'md_pet_vinc_documento_consultar', $numIdPerfilSeiAdministrador);
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_vinc_documento_consultar');
 
         $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
         BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');

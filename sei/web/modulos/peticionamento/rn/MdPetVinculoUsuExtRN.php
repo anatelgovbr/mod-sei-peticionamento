@@ -131,31 +131,28 @@ class MdPetVinculoUsuExtRN extends InfraRN
     protected function verificaMudancaResponsavelLegalConectado($post)
     {
 
-
         $idVinculo = isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo'];
         $cpfRespLegal = null;
-        $mudancaResponsavel = false;
 
-        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
         $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
         $objMdPetVincRepresentantDTO->retStrNomeProcurador();
         $objMdPetVincRepresentantDTO->retStrCpfProcurador();
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
         $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+        $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->consultar($objMdPetVincRepresentantDTO);
 
-        $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
         if (!is_null($objMdPetVincRepresentantDTO)) {
             $cpfRespLegal = trim($objMdPetVincRepresentantDTO->getStrCpfProcurador());
             $cpfAtual = array_key_exists('txtNumeroCpfResponsavel', $_POST) ? InfraUtil::retirarFormatacao(trim($_POST['txtNumeroCpfResponsavel'])) : null;
         }
-
 
         if (!is_null($cpfRespLegal) & !is_null($cpfAtual) & $cpfRespLegal != $cpfAtual) {
             return $objMdPetVincRepresentantDTO;
         }
 
         return null;
+
     }
 
     /*

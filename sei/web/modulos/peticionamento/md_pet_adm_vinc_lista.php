@@ -339,10 +339,11 @@ if ($numRegistros > 0) {
                     $acaoResponsavel        = '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>';
                     $acaoResponsavel        = ($bolAcoes) ? '<a href="' . $strLinkSuspenderVinc . '">' . $iconeResponsavel . '</a>' : '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
 
-
-                    $strLinkResponsavelVinc = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_responsavel_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo());
-                    $iconeResponsavel       = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar o '.$strTipoRepresentante.'" alt="Alterar o '.$strTipoRepresentante.'" class="infraImg" />';
-                    $acaoResponsavel        .= ($bolAcoes) ? '<a href="' . $strLinkResponsavelVinc . '">' . $iconeResponsavel . '</a>' : '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
+                    if($strTipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
+                        $strLinkResponsavelVinc     = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_vinc_responsavel_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&idVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo());
+                        $iconeResponsavel           = '<img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg" title="Alterar o '.$strTipoRepresentante.'" alt="Alterar o '.$strTipoRepresentante.'" class="infraImg" />';
+                        $acaoResponsavel            .= ($bolAcoes) ? '<a href="' . $strLinkResponsavelVinc . '">' . $iconeResponsavel . '</a>' : '<a onclick="mostrarExcessao();">' . $iconeResponsavel . '</a>';
+                    }
 
                 } else if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO) {
 

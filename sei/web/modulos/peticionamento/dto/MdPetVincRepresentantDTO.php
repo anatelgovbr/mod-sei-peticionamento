@@ -226,7 +226,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		
 		$data = $this->getDthDataLimite();
 		$dataFormatada = explode(" ",$data);
-		return ($data == null) ? "Indeterminado" : "Determinado (Data Limíte:".$dataFormatada[0].")";
+		return ($data == null) ? "Indeterminado" : "Determinado (Data Limite: ".$dataFormatada[0].")";
 		
 	}
 	

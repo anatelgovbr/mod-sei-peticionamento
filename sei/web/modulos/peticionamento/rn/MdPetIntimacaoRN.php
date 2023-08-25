@@ -2058,8 +2058,6 @@ class MdPetIntimacaoRN extends InfraRN
 //            $objMdPetIntRelTipoRespDTO->setNumMaxRegistrosRetorno(10);
             $arrObjMdPetIntRelTipoRespDTO = (new MdPetIntRelTipoRespRN())->contar($objMdPetIntRelTipoRespDTO);
 
-            die(var_dump($arrObjMdPetIntRelTipoRespDTO));
-
             if (is_countable($arrObjMdPetIntRelTipoRespDTO) && count($arrObjMdPetIntRelTipoRespDTO) > 0) {
                 $arrIdMdPetIntimacao = array_unique(InfraArray::converterArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntimacao'));
                 $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($arrIdMdPetIntimacao, InfraDTO::$OPER_IN);

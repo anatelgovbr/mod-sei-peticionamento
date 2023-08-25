@@ -8,8 +8,9 @@
                 <div id="<?php echo $idDiv ?>">
                     <div class="form-group">
                         <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">CNPJ:
-                            <img style="margin-bottom: -4px;width:20px; height:20px !important" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Insira no campo abaixo o CNPJ da Pessoa Jurídica à qual deseja se vincular.', 'Ajuda') ?> alt="Ajuda" class="infraImg" /></label>
-                        <input type="text" class="infraText form-control" id="txtNumeroCnpj" onchange="esconderCamposPJ();" name="txtNumeroCnpj" maxlength="18" value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getDblCNPJ()) : $hdnNumeroCnpj; ?>" onkeypress="return infraMascaraCnpj(this,event);" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" />
+                            <img style="margin-bottom: -4px;width:20px; height:20px !important" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Insira no campo abaixo o CNPJ da Pessoa Jurídica à qual deseja se vincular.', 'Ajuda') ?> alt="Ajuda" class="infraImg" />
+                        </label>
+                        <input type="text" class="infraText form-control" id="txtNumeroCnpj" onchange="esconderCamposPJ();" name="txtNumeroCnpj" maxlength="18" value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getDblCNPJ()) : $hdnNumeroCnpj; ?>" onkeypress="return infraMascaraCnpj(this,event);" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" autofocus />
                     </div>
                 </div>
             </div>

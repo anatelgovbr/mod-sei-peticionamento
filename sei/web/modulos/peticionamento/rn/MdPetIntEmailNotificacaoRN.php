@@ -679,7 +679,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $itemListaProcuradores = '';
 
         if(is_array($params['arrListaProcuradores']) && count($params['arrListaProcuradores']) > 0){
-            $itemListaProcuradores = "- As Procurações Eletrônicas citadas abaixo que foram concedidas para representação da Pessoa Jurídica restam igualmente suspensas até que sejam restabelecidas:
+            $itemListaProcuradores = "- As Procurações Eletrônicas, abaixo listadas, concedidas para representação da Pessoa Jurídica restam igualmente suspensas:
 ";
             for ($i=0; $i < count($params['arrListaProcuradores']); $i++) { 
                 $itemListaProcuradores .= "
@@ -781,7 +781,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $itemListaProcuradores = '';
 
         if(is_array($params['arrListaProcuradores']) && count($params['arrListaProcuradores']) > 0){
-            $itemListaProcuradores = "- As Procurações Eletrônicas citadas abaixo que tenham sido suspensas restam igualmente restabelecidas:
+            $itemListaProcuradores = "- As Procurações Eletrônicas, abaixo listadas, que tenham sido suspensas restam igualmente restabelecidas:
 ";
             for ($i=0; $i < count($params['arrListaProcuradores']); $i++) { 
                 $itemListaProcuradores .= "
@@ -1450,6 +1450,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailDTO = new EmailDTO();
         $objEmailDTO->setStrDe($strDe);
         $objEmailDTO->setStrPara($strPara);
+//        $objEmailDTO->setStrCCO((new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_EMAIL_ADMINISTRADOR'));
         $objEmailDTO->setStrAssunto($strAssunto);
         $objEmailDTO->setStrMensagem($strConteudo);
         EmailRN::processar(array($objEmailDTO));
@@ -1505,6 +1506,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailDTO = new EmailDTO();
         $objEmailDTO->setStrDe($strDe);
         $objEmailDTO->setStrPara($strPara);
+//        $objEmailDTO->setStrCCO((new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_EMAIL_ADMINISTRADOR'));
         $objEmailDTO->setStrAssunto($strAssunto);
         $objEmailDTO->setStrMensagem($strConteudo);
         EmailRN::processar(array($objEmailDTO));

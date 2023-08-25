@@ -160,12 +160,13 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                             }
 
                             $('#slTipoInteressado').val($('slTipoInteressado', data).text()).attr('readonly', false);
-                            $('#txtRazaoSocial').val($('txtRazaoSocial', data).text()).attr('readonly', false);;
-                            $('#txtLogradouro').val($('txtLogradouro', data).text()).attr('readonly', false);;
-                            $('#txtBairro').val($('txtBairro', data).text()).attr('readonly', false);;
-                            $('#slUf').val($('idUf', data).text()).attr('readonly', false);;
-                            $('#selCidade').val($('txtLogradouro', data).text()).attr('readonly', false);;
-                            $('#txtNumeroCEP').val($('txtNumeroCEP', data).text()).attr('readonly', false);;
+                            $('#txtRazaoSocial').val($('txtRazaoSocial', data).text()).attr('readonly', false);
+                            $('#txtLogradouro').val($('txtLogradouro', data).text()).attr('readonly', false);
+                            $('#txtBairro').val($('txtBairro', data).text()).attr('readonly', false);
+                            $('#slUf').val($('idUf', data).text()).attr('readonly', false);
+                            $('#selCidade').val($('idCidade', data).text()).attr('readonly', false);
+                            $('#txtNumeroCEP').val($('txtNumeroCEP', data).text()).attr('readonly', false);
+
                             var nomeCidade = $('txtCidade', data).text();
                             var idCidade = $('idCidade', data).text();
 
@@ -173,7 +174,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                             objAjaxCidade.processarResultado = function() {
                                 $('#selCidade').val(idCidade)
                             }
-
 
                             $("#stDeclaracao").show();
                             $("#fieldDocumentos").show();
@@ -421,6 +421,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 infraOcultarAviso();
             },
             success: function(data) {
+
                 infraOcultarAviso();
                 var nomeCidade = $('nomeCidade', data).text();
                 var idCidade = $('selCidade', data).text();
@@ -435,7 +436,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                     if (txtSuccess == 'false') {
                         var procuracao = $.trim($('procuracao', data).text());
                         var url = $.trim($('url', data).text());
-                        console.log(url);
+
                         if (procuracao == 'true') {
                             infraAbrirJanela(window.atob(url),
                                 'Impedimento de Substitução de Responsável Legal',
@@ -447,20 +448,23 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                             alert(message);
                         }
                     }
+
                     document.getElementById('hdnNumeroCnpj').value = document.getElementById('txtNumeroCnpj').value;
                     document.getElementById('frmCNPJ').submit();
 
-
                     return false;
+
                 }
 
                 var valorCmpAppend = '';
+
                 $('dados-pj', data).children().each(function() {
-                    console.log($(this)[0].tagName);
+
+                    // console.log($(this)[0].tagName);
                     var idCampo = $(this)[0].localName;
                     var valor = $(this)[0].innerHTML;
                     var campo = $("#" + idCampo);
-                    var noCampo = $(campo).attr('name');
+                    var noCampo = $(this)[0].tagName;
 
                     if ($(campo).attr('type') == 'text' || $(campo).attr('type') == 'hidden') {
                         valorCmpAppend += valor + '±';
@@ -480,13 +484,10 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                                 'name': noCampo,
                                 'type': 'hidden'
                             })
-                            .val(valor)
+                            .val(valor);
+
                         $(cmpHidden).insertAfter($(campo));
 
-                        if (noCampo != 'slTipoInteressado' && valor != '') {
-                            $(cmpHidden).addClass('disabled');
-                            $(campo).attr('disabled', true)
-                        }
                     } else {
                         if (noCampo == 'hdnIdVinculo') {
                             $(campo).val(valor);
@@ -494,11 +495,13 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                                 document.getElementById('isAlteracaoResponsavelLegal').value = '1';
                                 document.getElementById('hdnIsAlteracao').value = '1';
                                 document.getElementById('hdnIdContatoNovo').value = '1';
-                                // document.getElementById('txtNumeroCpfResponsavel').value = '';
-                                // document.getElementById('txtNomeResponsavelLegal').value = '';
-                                // document.getElementById('txtMotivoAlteracaoRespLegal').value = '';
                             }
                         }
+                    }
+
+                    if (noCampo != 'slTipoInteressado' && valor.trim() != '') {
+                        campo.addClass('disabled');
+                        campo.attr('disabled', true).attr('readonly', true);
                     }
 
                 })

@@ -2124,29 +2124,25 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVinculoDTO->retDthDataVinculo();
         $objMdPetVinculoDTO->retStrTpVinculo();
         $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
+        $objMdPetVinculoDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
+        $objMdPetVinculoDTO->setStrTipoRepresentante($tipoVinculo);
 
-        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
-            $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-        }else{
-            $objMdPetVinculoDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
-        }
+        $objMdPetVinculoDTO = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
 
-        $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->listar($objMdPetVinculoDTO);
+        if (!empty($objMdPetVinculoDTO)) {
 
-        if (count($arrObjMdPetVinculoDTO) > 0) {
-
-            $razaoSocial                = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $cnpj                       = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
-            $idContatoRepresentante     = $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante();
-            $RepLegalNome               = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
-            $RepLegalCpf                = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
-            $dataVinc                   = $arrObjMdPetVinculoDTO[0]->getDthDataVinculo();
+            $razaoSocial                = $objMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
+            $cnpj                       = $objMdPetVinculoDTO->getDblCNPJ();
+            $idContatoRepresentante     = $objMdPetVinculoDTO->getNumIdContatoRepresentante();
+            $RepLegalNome               = $objMdPetVinculoDTO->getStrNomeContatoRepresentante();
+            $RepLegalCpf                = $objMdPetVinculoDTO->getStrCpfContatoRepresentante();
+            $dataVinc                   = $objMdPetVinculoDTO->getDthDataVinculo();
 
             // Documento do Vinculo
             $objMdPetVincDocumentoRN    = new MdPetVincDocumentoRN;
             $objMdPetVincDocumentoDTO   = new MdPetVincDocumentoDTO();
             $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
-            $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($arrObjMdPetVinculoDTO[0]->getNumIdMdPetVinculoRepresent());
+            $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($objMdPetVinculoDTO->getNumIdMdPetVinculoRepresent());
 
             if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
                 $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL);
@@ -2167,7 +2163,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 	        $usuarioDTO = new UsuarioDTO();
 	        $usuarioDTO->retStrSiglaOrgao();
 	        $usuarioDTO->retStrDescricaoOrgao();
-	        $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
+	        $usuarioDTO->setNumIdContato($objMdPetVinculoDTO->getNumIdContatoRepresentante());
 
 	        $usuarioRN = new UsuarioRN();
 	        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
@@ -2179,9 +2175,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }
 
-        // Novos valores para suspensão/restabelecimento em cascata:
-        $itemListaProcuradores = '';
-
         if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
 
             $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_suspensao.php';
@@ -2192,19 +2185,12 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
             $htmlModelo = str_replace('@RepLegalCpf', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
 
-	        $itemCascata = $dados['hdnCascata'] == 'S' ? '<li><p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">As Procurações Eletrônicas concedidas para representação da Pessoa Jurídica restam igualmente suspensas até que seja restabelecida a vinculação como Responsável Legal.</p></li>' : '';
-	        $htmlModelo = str_replace('@itemCascata', $itemCascata, $htmlModelo);
+            // Novos valores para suspensão/restabelecimento em cascata:
 
-            if(is_array($arrListaProcuradores) && count($arrListaProcuradores) > 0){
-                $itemListaProcuradores = '<li>';
-                $itemListaProcuradores .= '<p class="Texto_Justificado">As Procurações Eletrônicas citadas abaixo que foram concedidas para representação da Pessoa Jurídica restam igualmente suspensas até que sejam restabelecidas:</p>';
-                $itemListaProcuradores .= '<ul>';
-                for ($i=0; $i < count($arrListaProcuradores); $i++) {
-                    $itemListaProcuradores .= '<li><p class="Texto_Justificado">'.$arrListaProcuradores[$i].'</p></li>';
-                }
-                $itemListaProcuradores .= '</ul>';
-                $itemListaProcuradores .= '</li>';
-            }
+            $cascata                = $this->getParagrafoCascataSuspensaoRestabelecimento($params, $tipoLista = 'suspensas');
+            $itemListaProcuradores  = $cascata['itemListaProcuradores'];
+
+            $htmlModelo = str_replace('@paragrafoCascata', $cascata['paragrafoCascata'], $htmlModelo);
 
         }else{
 
@@ -2323,7 +2309,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }
 
-        // INJETA OS MEMAIS DADOS NO TEMPLATE
+        // INJETA OS DEMAIS DADOS NO TEMPLATE
         $htmlModelo = str_replace('@dataVinc', $dataVinc, $htmlModelo);
         $htmlModelo = str_replace('@numProcessoVinc', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModelo);
         $htmlModelo = str_replace('@numDocVinc', $numDocVinc, $htmlModelo);
@@ -2493,28 +2479,23 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVinculoDTO->retDthDataVinculo();
         $objMdPetVinculoDTO->retStrTpVinculo();
         $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
+        $objMdPetVinculoDTO->setStrTipoRepresentante($tipoVinculo);
+        $objMdPetVinculoDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
+        $objMdPetVinculoDTO = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
 
-        if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
-            $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-        }else{
-            $objMdPetVinculoDTO->setNumIdMdPetVinculoRepresent($idVinculoRepresent);
-        }
+        if (!empty($objMdPetVinculoDTO)) {
 
-        $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
-
-        if (is_countable($arrObjMdPetVinculoDTO) && count($arrObjMdPetVinculoDTO) > 0) {
-
-            $razaoSocial            = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $cnpj                   = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
-            $idContatoRepresentante = $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante();
-            $RepLegalNome           = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
-            $RepLegalCpf            = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
-            $dataVinc               = $arrObjMdPetVinculoDTO[0]->getDthDataVinculo();
+            $razaoSocial            = $objMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
+            $cnpj                   = $objMdPetVinculoDTO->getDblCNPJ();
+            $idContatoRepresentante = $objMdPetVinculoDTO->getNumIdContatoRepresentante();
+            $RepLegalNome           = $objMdPetVinculoDTO->getStrNomeContatoRepresentante();
+            $RepLegalCpf            = $objMdPetVinculoDTO->getStrCpfContatoRepresentante();
+            $dataVinc               = $objMdPetVinculoDTO->getDthDataVinculo();
 
             // Documento do Vinculo
             $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
             $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
-            $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($arrObjMdPetVinculoDTO[0]->getNumIdMdPetVinculoRepresent());
+            $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($objMdPetVinculoDTO->getNumIdMdPetVinculoRepresent());
 
             if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
                 $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL);
@@ -2535,7 +2516,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 	        $usuarioDTO = new UsuarioDTO();
 	        $usuarioDTO->retStrSiglaOrgao();
 	        $usuarioDTO->retStrDescricaoOrgao();
-	        $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
+	        $usuarioDTO->setNumIdContato($objMdPetVinculoDTO->getNumIdContatoRepresentante());
 
 	        $usuarioRN = new UsuarioRN();
 	        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
@@ -2547,9 +2528,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }
 
-        // Novos valores para suspensão/restabelecimento em cascata:
-        $itemListaProcuradores = '';
-
         if($tipoVinculo == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
 
             $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_restabelecimento.php';
@@ -2560,17 +2538,12 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
             $htmlModelo = str_replace('@cpfRespLegal', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
 
-	        $itemCascata = $dados['hdnCascata'] == 'S' ? '<li><p style="font: normal 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">As Procurações Eletrônicas concedidas que tenham sido suspensas restam igualmente restabelecidas.</p></li>' : '';
-	        $htmlModelo = str_replace('@itemCascata', $itemCascata, $htmlModelo);
+            // Novos valores para suspensão/restabelecimento em cascata:
 
-            if(is_array($arrListaProcuradores) && count($arrListaProcuradores) > 0){
-                $itemListaProcuradores = '<li><p class="Texto_Justificado">As Procurações Eletrônicas citadas abaixo que tenham sido suspensas restam igualmente restabelecidas:</p>';
-                $itemListaProcuradores .= '<ul>';
-                for ($i=0; $i < count($arrListaProcuradores); $i++) {
-                    $itemListaProcuradores .= '<li><p class="Texto_Justificado">'.$arrListaProcuradores[$i].'</p></li>';
-                }
-                $itemListaProcuradores .= '</ul></li>';
-            }
+            $cascata                = $this->getParagrafoCascataSuspensaoRestabelecimento($params, $tipoLista = 'restabelecidas');
+            $itemListaProcuradores  = $cascata['itemListaProcuradores'];
+
+            $htmlModelo = str_replace('@paragrafoCascata', $cascata['paragrafoCascata'], $htmlModelo);
 
         }else{
 
@@ -2853,6 +2826,38 @@ class MdPetVinUsuExtProcRN extends InfraRN
         );
 
         return $saidaDocExternoAPI;
+
+    }
+
+    private function getParagrafoCascataSuspensaoRestabelecimento($params, $tipoLista){
+
+        $paragrafoCascata = $txtListaProcuradores = $ulListaProcuradores = '';
+
+        if($params['dados']['hdnCascata'] == 'S'){
+
+            $commonStyle = 'font: normal 12pt Calibri; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;';
+            $commonText  = 'Procurações Eletrônicas, abaixo listadas, concedidas para representação da Pessoa Jurídica restam igualmente '.$tipoLista.':';
+
+            if(is_array($params['arrListaProcuradores']) && count($params['arrListaProcuradores']) > 0){
+                $ulListaProcuradores .= '<ul>';
+                for ($i=0; $i < count($params['arrListaProcuradores']); $i++) {
+                    $ulListaProcuradores .= '<li><p style="'.$commonStyle.'">'.$params['arrListaProcuradores'][$i].'</p></li>';
+                }
+                $ulListaProcuradores .= '</ul>';
+            }
+
+            // Montando listagem dos procuradores para o documento
+            $paragrafoCascata = '<p style="'.$commonStyle.'">Comunicamos que as '.$commonText.'</p>'.$ulListaProcuradores;
+
+            // Montando listagem dos procuradores para o e-mail
+            $itemListaProcuradores = '<li><p style="'.$commonStyle.'">As '.$commonText.'</p>'.$ulListaProcuradores.'</li>';
+
+        }
+
+        return [
+            'paragrafoCascata' => $paragrafoCascata,
+            'itemListaProcuradores' => $itemListaProcuradores
+        ];
 
     }
 

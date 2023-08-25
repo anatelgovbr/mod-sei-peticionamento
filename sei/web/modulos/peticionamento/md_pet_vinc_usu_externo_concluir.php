@@ -169,17 +169,31 @@ try {
 	          $idContato = $objMdPetVinculoUsuExtRN->salvarDadosContatoCnpj($dados);
 	          $dados['idContato'] = $idContato;
 
-	          // VERIFICA SE JA EXISTE VINCULACAO
+	          // VERIFICA SE JA EXISTE VINCULACAO ATIVA
 	          $objMdPetVinculoDTO = new MdPetVinculoDTO();
 	          $objMdPetVinculoDTO->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
 	          $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-	          $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-	          $objMdPetVinculoDTO->setOrdNumIdMdPetVinculo(InfraDTO::$TIPO_ORDENACAO_ASC);
+//	          $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+	          $objMdPetVinculoDTO->retStrStaEstado();
 	          $objMdPetVinculoDTO->retNumIdContato();
 	          $objMdPetVinculoDTO->retNumIdMdPetVinculo();
 	          $objMdPetVinculoDTO->retNumIdContatoRepresentante();
+              $objMdPetVinculoDTO->setOrdNumIdMdPetVinculo(InfraDTO::$TIPO_ORDENACAO_DESC);
 	          $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
-	          $arrIdVinculo = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoDTO, 'IdMdPetVinculo');
+
+              $arrIdVinculoTodos        = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoDTO, 'IdMdPetVinculo');
+              $arrIdContatoVinculoTodos = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoDTO, 'IdContato');
+
+              $arrIdVinculoAtivo        = [];
+              $arrIdContatoVinculoAtivo = [];
+
+	          // VERIFICA SE O USUARIO QUE ESTA TENTANDO SE VINCULAR JA E O RESPONSAVEL LEGAL
+              foreach ($arrObjMdPetVinculoDTO as $objMdPetVinculoDTO){
+                  if($objMdPetVinculoDTO->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO){
+                      array_push($arrIdVinculoAtivo, [$objMdPetVinculoDTO->getNumIdMdPetVinculo()]);
+                      array_push($arrIdContatoVinculoAtivo, [$objMdPetVinculoDTO->getNumIdContato()]);
+                  }
+              }
 
 	          // PEGA O CONTATO DO USUARIO LOGADO
 	          $objUsuarioDTO = new UsuarioDTO();
@@ -188,9 +202,9 @@ try {
 	          $objUsuarioDTO->retStrNome();
 	          $objUsuarioLogado = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
 
-	          if(!empty($arrIdVinculo) && count($arrIdVinculo) > 0){
+	          if(!empty($arrIdVinculoAtivo)){
 
-		          if($objUsuarioLogado->getNumIdContato() == $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante()){
+		          if(in_array($objUsuarioLogado->getNumIdContato(), $arrIdContatoVinculoAtivo)){
 
 			          // Impede que o Representante Legal se vincule novamente
 		              echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">O Usuário logado ('.$objUsuarioLogado->getStrNome().') já possui vínculo de Responsável Legal com este CNPJ.</p>';
@@ -224,7 +238,41 @@ try {
 
                   }
 
-	          }
+	          }else{
+
+                  $ultimoVinculo = end($arrObjMdPetVinculoDTO);
+
+                  // Se o último vinculado foi ele e foi suspenso nao deixa se vincular
+                  if($ultimoVinculo->getNumIdContato() == $objUsuarioLogado->getNumIdContato() && $ultimoVinculo->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO){
+                      echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Não é possível realizar o processo de Alteração de Responsável Legal para este Usuário Externo. Procure a administração do SEI do órgão para maiores informações.</p>';
+                      echo "<script>";
+                      echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
+                      echo "</script>";
+                      die();
+                  }
+
+                  // Realiza a substituição do Responsável Legal
+                  $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
+
+                  if(!is_numeric($idRecibo)){
+                      echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Alteração de Responsável Legal.</p>';
+                      echo "<script>";
+                      echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
+                      echo "</script>";
+                      die();
+                  }
+
+                  $url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+                  $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
+                  echo "<script>";
+                  echo "window.parent.location = '" . $urlAssinada . "';";
+                  echo " window.parent.focus();";
+                  echo " window.close();";
+                  echo "</script>";
+                  die();
+
+              }
 
           }
 

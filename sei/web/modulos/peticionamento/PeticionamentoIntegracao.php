@@ -1093,7 +1093,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $reciboRN = new MdPetReciboRN();
         $arrDados = array();
-	    $acesso = false;
+        $acesso = false;
 
         //pegar o recibo mais atual disponivel (caso haja um) e verificar se é de resposta a intimação, intercorrente ou de peticionamento de processo novo e aplicar icone+tooltip correspondente
 
@@ -1122,11 +1122,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->setDblIdDocumento($documentos, infraDTO::$OPER_IN);
             $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
-            $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
             $objMdPetVincRepresentantDTO->retDblIdDocumento();
             $objMdPetVincRepresentantDTO->setDblIdProcedimentoVinculo($idProcedimento);
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES);
-	        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+            $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
             $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $arrMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
@@ -1218,7 +1217,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             } //recibo mais atual é de peticionamento de processo novo
 
-	        if (in_array(MdPetReciboRN::$TP_RECIBO_NOVO, $tipoPet)) {
+            if (in_array(MdPetReciboRN::$TP_RECIBO_NOVO, $tipoPet)) {
 
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
                 $reciboIntercorrenteDTO->retNumIdProtocolo();
@@ -1234,9 +1233,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $linhaDeBaixo = '"Processo Novo: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy') . '"';
                 $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px;'  />";
 
-	        }
+            }
 
-	        if (in_array(MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL, $tipoPetTodos)) {
+            if (in_array(MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL, $tipoPetTodos)) {
 
                 //Vinculo PJ
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
@@ -1256,7 +1255,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetVincRepresentantPJDTO->retDthDataCadastro();
                 $objMdPetVincRepresentantPJDTO->retNumIdMdPetVinculoRepresent();
                 $objMdPetVincRepresentantPJDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-                $objMdPetVincRepresentantPJDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
                 $objMdPetVincRepresentantPJRN = new MdPetVincRepresentantRN();
                 $arrMdPetVincRepresentantPJRN = $objMdPetVincRepresentantPJRN->listar($objMdPetVincRepresentantPJDTO);
 
@@ -1275,7 +1273,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $objMdPetVincDocumentoDTO->retStrNomeSerieProtocolo();
                     $objMdPetVincDocumentoDTO->retStrTipoDocumento();
                     $objMdPetVincDocumentoDTO->retNumIdMdPetVinculoRepresent();
-                    $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
+                    $objMdPetVincDocumentoDTO->setNumMaxRegistrosRetorno(1);
+                    $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->consultar($objMdPetVincDocumentoDTO);
 
                     $qtdArrMdPetVincRepresentantPJRN = (is_array($arrMdPetVincRepresentantPJRN) ? count($arrMdPetVincRepresentantPJRN) : 0);
 
@@ -1305,6 +1304,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $objContatoDTO->setBolExclusaoLogica(false);
                         $objContatoDTO->retStrNome();
                         $objContatoDTO->retDblCnpj();
+                        $objContatoDTO->setNumMaxRegistrosRetorno(1);
                         $objContatoRN = new ContatoRN();
                         $arrObjContatoRN = $objContatoRN->consultarRN0324($objContatoDTO);
 
@@ -1359,7 +1359,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         }
 
-	    return $arrDados;
+        return $arrDados;
 
     }
 

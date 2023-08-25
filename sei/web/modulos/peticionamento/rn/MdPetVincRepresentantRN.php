@@ -369,11 +369,14 @@ class MdPetVincRepresentantRN extends InfraRN
             $dados['isAlteradoRespLegal'] = true;
             $dados['NomeProcurador'] = $responsavelLegal->getStrNomeProcurador();
             $dados['CpfProcurador'] = $responsavelLegal->getStrCpfProcurador();
+
         }
 
         $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
         $idRecibo = $reciboGerado ? $reciboGerado->getNumIdReciboPeticionamento() : '';
+
         return $idRecibo;
+
     }
 
     private function _realizarProcessoEncerramentoVinculo($params)
@@ -456,6 +459,8 @@ class MdPetVincRepresentantRN extends InfraRN
                 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
                 $bolNaoReestabelecer = false;
+                $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+                $usuariosExternosDesativados = [];
 
                 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
                     $objUsuarioDTO = new UsuarioDTO();
@@ -464,20 +469,20 @@ class MdPetVincRepresentantRN extends InfraRN
                     $objUsuarioDTO->retStrNome();
                     $objUsuarioDTO->setBolExclusaoLogica(false);
                     $objUsuarioDTO = (new UsuarioRN)->consultarRN0489($objUsuarioDTO);
-                    if ($objUsuarioDTO) {
-                        if ($objUsuarioDTO->getStrSinAtivo() == 'N') {
-                            $bolNaoReestabelecer = true;
-                            $strMensagemNaoReestabelecer .= '    - ' . $objUsuarioDTO->getStrNome() . ' (' . InfraUtil::formatarCpf($objMdPetVincRepresentantDTO->getStrCpfProcurador()) . ') \n';
-                        }
+                    if (!empty($objUsuarioDTO) && $objUsuarioDTO->getStrSinAtivo() == 'N') {
+                        $bolNaoReestabelecer = true;
+                        array_push($usuariosExternosDesativados, '    - ' . $objUsuarioDTO->getStrNome() . ' (' . InfraUtil::formatarCpf($objMdPetVincRepresentantDTO->getStrCpfProcurador()) . ') \n');
                     }
                 }
 
                 if ($bolNaoReestabelecer) {
-                    $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+
+                    $strMensagemNaoReestabelecer .= implode('', array_unique($usuariosExternosDesativados));
                     $strMensagemNaoReestabelecer .= '\n Caso necessário, primeiramente regularize os cadastros dos Usuários Externos acima.';
                     $objInfraException = new InfraException();
                     $objInfraException->adicionarValidacao($strMensagemNaoReestabelecer);
                     $objInfraException->lancarValidacoes();
+
                 }
 
                 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
@@ -526,7 +531,7 @@ class MdPetVincRepresentantRN extends InfraRN
                     $arrObjMdPetVincDocumentoDTO = (new MdPetVincDocumentoRN)->consultar($objMdPetVincDocumentoDTO);
 
                     if(!empty($objUsuarioDTO) && !empty($arrObjMdPetVincDocumentoDTO)){
-                        $procurador = $objUsuarioDTO->getStrNome() . ' nº ' . $arrObjMdPetVincDocumentoDTO->getStrProtocoloFormatadoProtocolo();
+                        $procurador = $objUsuarioDTO->getStrNome() . ' - '.$objMdPetVincRepresentantDTO->getStrNomeTipoVinculacao().' nº ' . $arrObjMdPetVincDocumentoDTO->getStrProtocoloFormatadoProtocolo();
                         if(!in_array($procurador, $arrListaProcuradores)){
                             array_push($arrListaProcuradores, $procurador);
                         }

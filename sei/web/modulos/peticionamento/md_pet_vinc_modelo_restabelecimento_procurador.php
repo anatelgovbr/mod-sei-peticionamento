@@ -42,5 +42,4 @@
     </table>
 </div>
 <p class="Texto_Justificado">Pelo presente instrumento de Restabelecimento de Procuração Eletrônica, a Administração do SEI-@sigla_orgao@ restabeleceu os poderes de representação do Procurador acima identificado no que tange à Procuração Eletrônica @procuracaoTipo nº @procuracaoDocNum, de acordo com o Documento de Justificativa acima enumerado. </p>
-<p class="Texto_Justificado">Assim, comunicamos que ficam restabelecidos os poderes de representação conforme consta na citada Procuração Eletrônica @procuracaoTipo nº @procuracaoDocNum.</p>
 <p class="Texto_Justificado">A existência deste instrumento de Restabelecimento de Procuração, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>

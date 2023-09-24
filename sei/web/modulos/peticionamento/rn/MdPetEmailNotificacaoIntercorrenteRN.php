@@ -71,6 +71,8 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 		}
 		$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
 
+//        die(var_dump($arrEmailUnidade));
+
         //obtendo o tipo de procedimento
         $idTipoProc = $arrParametros['id_tipo_procedimento'];
         $objTipoProcDTO = new MdPetTipoProcessoDTO();
@@ -178,7 +180,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
             $strConteudo = str_replace('@descricao_orgao@',$objOrgaoDTO->getStrDescricao(),$strConteudo);
             $strConteudo = str_replace('@sitio_internet_orgao@',$objOrgaoDTO->getStrSitioInternetContato(),$strConteudo);
 
-            // InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+             InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
 
         }
 
@@ -252,7 +254,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 	            $strPara = str_replace('@processo@', $documentoDTO->getStrProtocoloDocumentoFormatado() , $strPara);
 	            $strPara = str_replace('@emails_unidade@', $mail->getStrEmail() , $strPara);
 	            if ($enviaemail){
-                	// InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                	InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
 	            }
             }
         }

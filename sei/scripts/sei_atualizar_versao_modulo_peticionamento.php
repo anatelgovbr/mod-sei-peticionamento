@@ -2737,16 +2737,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('>>>> CRIANDO AGENDAMENTO PARA ATUALIZAR AUTORREPRESENTACOES ');
 
-		// IMPEDE ERRO DE CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO:
-	    $this->logar('----- VERIFICANDO CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO');
-	    $arrMaxIdInfraAgendamentoTarefaSelect = BancoSEI::getInstance()->consultarSql("SELECT MAX(id_infra_agendamento_tarefa) as max FROM infra_agendamento_tarefa");
-	    $arrMaxIdInfraSequenciaSelect = BancoSEI::getInstance()->consultarSql("SELECT num_atual as max FROM infra_sequencia WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
+		    // IMPEDE ERRO DE CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO:
+        $this->logar('----- VERIFICANDO CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO');
+        $arrMaxIdInfraAgendamentoTarefaSelect = BancoSEI::getInstance()->consultarSql("SELECT MAX(id_infra_agendamento_tarefa) as max FROM infra_agendamento_tarefa");
+        $arrMaxIdInfraSequenciaSelect = BancoSEI::getInstance()->consultarSql("SELECT num_atual as max FROM infra_sequencia WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
 
-	    if($arrMaxIdInfraSequenciaSelect[0]['max'] < $arrMaxIdInfraAgendamentoTarefaSelect[0]['max']){
-		    BancoSEI::getInstance()->executarSql("UPDATE infra_sequencia SET num_atual = ".$arrMaxIdInfraAgendamentoTarefaSelect[0]['max']." WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
-	    }
+        if($arrMaxIdInfraSequenciaSelect[0]['max'] < $arrMaxIdInfraAgendamentoTarefaSelect[0]['max']){
+          BancoSEI::getInstance()->executarSql("UPDATE infra_sequencia SET num_atual = ".$arrMaxIdInfraAgendamentoTarefaSelect[0]['max']." WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
+        }
 
-	    $this->logar('----- CADASTRANDO O AGENDAMENTO DE AUTOREPRESENTAÇÃO');
+        $this->logar('----- CADASTRANDO O AGENDAMENTO DE AUTOREPRESENTAÇÃO');
         $infraAgendamentoDTO    = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoRN     = new InfraAgendamentoTarefaRN();
         $objInfraParametro      = new InfraParametro(BancoSEI::getInstance());
@@ -2771,7 +2771,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('>>>> ALTERANDO TAMANHO DO CAMPO "endereco_wsdl" DA TABELA "md_pet_adm_integracao" para 250 caracteres ');
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-        $objInfraMetaBD->alterarColuna('md_pet_adm_integracao','endereco_wsdl',$objInfraMetaBD->tipoTextoVariavel(250),'not null');
+        $objInfraMetaBD->alterarColuna('md_pet_adm_integracao','endereco_wsdl',$objInfraMetaBD->tipoTextoVariavel(250),'null');
 
         $this->logar('>>>> EXCLUINDO FOREIGN KEY "fk1_md_pet_int_prot_disponivel" DA TABELA "md_pet_int_prot_disponivel" ');
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
@@ -2825,8 +2825,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_rel_cont_sit_rf', 'md_pet_rel_cont_sit_rf', array('id_contato'), 'contato', array('id_contato'));
 
-	    $this->logar('EXCLUINDO A COLUNA sin_ativo DA TABELA md_pet_vinculo_represent');
-	    $objInfraMetaBD->excluirColuna('md_pet_vinculo_represent', 'sin_ativo');
+	      $this->logar('EXCLUINDO A COLUNA sin_ativo DA TABELA md_pet_vinculo_represent');
+	      $objInfraMetaBD->excluirColuna('md_pet_vinculo_represent', 'sin_ativo');
 
         $this->logar('----- CADASTRANDO O AGENDAMENTO PARA SUSPENDER VINCULAÇÕES');
         $infraAgendamentoDTO    = new InfraAgendamentoTarefaDTO();
@@ -2872,7 +2872,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'4.1.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
 
         $this->logar('>>>> INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO 4.1.0 DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
-	    $this->logar('>>>> SCRIPT EXECUTADO EM: ' . date('d/m/Y H:i:s'));
+	      $this->logar('>>>> SCRIPT EXECUTADO EM: ' . date('d/m/Y H:i:s'));
         $this->finalizar('FIM', false);
 
     }

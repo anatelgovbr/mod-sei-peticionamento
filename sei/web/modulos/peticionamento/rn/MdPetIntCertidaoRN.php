@@ -286,13 +286,6 @@ class MdPetIntCertidaoRN extends InfraRN
         $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
         $objMdPetIntDestRN = new MdPetIntRelDestinatarioRN();
         $dadosDocPrinc = $objMdPetIntRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
-//        if($job){
-//            $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacaoPorDestinario($idIntimacao, true, false, $objContato);
-//        }else{
-////            $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacao($idIntimacao, true, false, $objContato);
-//        $objIntimacao      = $objMdPetIntDestRN->consultarDadosIntimacaoPorDestinario($idIntimacao, true, false, $objContato);
-//        }
-//        var_dump('akiii');die;
 
         $objIntimacao = $objMdPetIntDestRN->consultarDadosIntimacaoPorDestinario($idIntimacao, true, false, $objContato);
 
@@ -309,11 +302,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $html .= '<tbody>';
         $html .= '<tr>';
         $html .= '<td style="font-weight: bold; width: 300px">Tipo de Destinatário:</td>';
-        if ($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S') {
-            $html .= '<td>Pessoa Jurídica</td>';
-        } elseif ($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'N') {
-            $html .= '<td>Pessoa Física</td>';
-        }
+        $html .= '<td>Pessoa '.($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S' ? 'Jurídica' : 'Física').'</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';
@@ -338,6 +327,18 @@ class MdPetIntCertidaoRN extends InfraRN
 
         $html .= count($dadosDocPrinc) > 0 ? $strTexto : '';
         $html .= '</tr>';
+
+        // Caso haja, lista os documentos anexos na Certidão
+        $arr_protocolos_anexos = (new MdPetIntimacaoRN())->retornaArrDocumentosAnexosIntimacao($idIntimacao);
+
+        if(!empty($arr_protocolos_anexos) && count($arr_protocolos_anexos) > 0){
+
+            $html .= '<tr>';
+            $html .= '<td style="padding-left: 15px">- Anexos:</td>';
+            $html .= '<td>' . implode(', ', $arr_protocolos_anexos) . '<td>';
+            $html .= '</tr>';
+
+        }
 
         $arrDtIntimacao = isset($objIntimacao) ? explode(' ', $objIntimacao->getDthDataCadastro()) : '';
         $dtIntimacao = count($arrDtIntimacao) > 0 ? current($arrDtIntimacao) : null;

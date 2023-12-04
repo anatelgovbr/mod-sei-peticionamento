@@ -140,13 +140,13 @@ class MdPetRegrasGeraisRN extends InfraRN
 
         }
 
-        $preMsg = 'Não é permitido '.$acao.' Usuário Externo que possua registro de Vinculação, Procuração Eletrônica '.($acao == 'desativar' ? 'ativa' : '').' ou Intimação Eletrônica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
+        $preMsg = 'Não é permitido '.$acao.' os Usuários Externos abaixo porque possuem registro de Vinculação, Procuração Eletrônica '.($acao == 'desativar' ? 'ativa' : '').' ou Intimação Eletrônica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
 
         if(!empty($msgVinc)){
-            $msg .= 'Usuários Externos com registros de Vinculações ou Procurações Eletrônicas'.($acao == 'desativar' ? ' ainda ativas' : '').':\n'.$msgVinc.'\n';
+            $msg .= $msgVinc.'\n';
         }else{
             if(!empty($msgInt) || !empty($msgIntVinc)){
-                $msg .= 'Usuários Externos com registros de Intimação Eletrônica'.($acao == 'desativar' ? ' ainda em curso' : '').':\n'.$msgInt.$msgIntVinc.'\n';
+                $msg .= $msgInt.$msgIntVinc.'\n';
             }
         }
 
@@ -199,7 +199,7 @@ class MdPetRegrasGeraisRN extends InfraRN
             }
         }
 
-        return !empty($msg) ? $preMsg.$msg : $msg;
+        return !empty($msg) ? substr($preMsg.$msg, 0, -2) : $msg;
 
     }
 

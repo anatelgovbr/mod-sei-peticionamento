@@ -3494,38 +3494,113 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $isMesmaUnidade = false;
 
-        $idContato = $objContatoAPI->getIdContato();
-        $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
-
-        $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
         $objMdPetVincTpProcessoDTO->retNumIdUnidade();
-        $objMdPetVincTpProcessoDTO = $mdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
+        $objMdPetVincTpProcessoDTO = (new MdPetVincTpProcessoRN())->consultar($objMdPetVincTpProcessoDTO);
 
-        if ($objMdPetVincTpProcessoDTO) {
-            if ($objMdPetVincTpProcessoDTO->getNumIdUnidade() == $idUnidade) {
-                $isMesmaUnidade = true;
-            }
+        if (!empty($objMdPetVincTpProcessoDTO) && $objMdPetVincTpProcessoDTO->getNumIdUnidade() == SessaoSEI::getInstance()->getNumIdUnidadeAtual()) {
+            $isMesmaUnidade = true;
         }
 
-        $mdPetVinculoRN = new MdPetVinculoRN();
-        $objMdPetVinculoDTO = new MdPetVinculoDTO();
+        // Se nao for da mesma unidade realiza as verificacoes para realizar o bloqueio cajo haja vinculos ativos:
+        if ($isMesmaUnidade == false) {
 
-        $objMdPetVinculoDTO->setNumIdContato($idContato);
-        $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-        $objMdPetVinculoDTO->retStrTpVinculo();
+            $idContato = $objContatoAPI->getIdContato();
+            $msg = $msgVinc = $msgInt = $msgIntVinc = '';
 
-        $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
+            if($objContatoAPI->getStaNatureza() == 'F'){
 
-        $qtdObjMdPetVinculoDTO = (is_array($objMdPetVinculoDTO) ? count($objMdPetVinculoDTO) : 0);
-        if ($qtdObjMdPetVinculoDTO > 0) {
-            if ($isMesmaUnidade == false) {
-                $objInfraException = new InfraException();
-                $objInfraException->adicionarValidacao('Este Contato não pode ser Alterado porque é de Pessoa Jurídica com vinculação de Responsável Legal e Procuradores.');
-                $objInfraException->lancarValidacoes();
+                // Pega os Vinculos onde o contato é o Outorgado:
+                $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                $objMdPetVincRepresentantDTO->setNumIdContato($idContato);
+                $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                $objMdPetVincRepresentantDTO->setStrTipoRepresentante([MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO], InfraDTO::$OPER_NOT_IN);
+                $objMdPetVincRepresentantDTO->retTodos();
+                $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
+                $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+                $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
+                $objMdPetVincRepresentantDTO->retStrStaEstado();
+                $objMdPetVincRepresentantDTO->retStrCpfProcurador();
+                $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+                $objMdPetVincRepresentantDTO->retStrCNPJ();
+                $objMdPetVincRepresentantDTO->retStrTpVinc();
+                $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
+                $objMdPetVincRepresentantDTO->retStrNomeProcurador();
+                $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+                $arrObjVinculosOutorgado = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
+
+                // Pega os Vinculos onde o contato é o Outorgante:
+                $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                $objMdPetVincRepresentantDTO->setNumIdContatoOutorg($idContato);
+                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($idContato);
+                $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                $objMdPetVincRepresentantDTO->setStrTipoRepresentante([MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES], InfraDTO::$OPER_IN);
+                $objMdPetVincRepresentantDTO->retTodos();
+                $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
+                $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+                $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
+                $objMdPetVincRepresentantDTO->retStrStaEstado();
+                $objMdPetVincRepresentantDTO->retStrCpfProcurador();
+                $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
+                $objMdPetVincRepresentantDTO->retStrCNPJ();
+                $objMdPetVincRepresentantDTO->retStrTpVinc();
+                $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
+                $objMdPetVincRepresentantDTO->retStrNomeProcurador();
+                $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+                $arrObjVinculosOutorgante = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
+
+                if(!empty($arrObjVinculosOutorgante)){
+                    foreach($arrObjVinculosOutorgante as $vinculo){
+                        $msgVinc .= '- Outorgou '.$vinculo->getStrNomeProcurador().' como '.$vinculo->getStrNomeTipoRepresentante().'\n';
+                    }
+                }
+
+                if(!empty($arrObjVinculosOutorgado)){
+                    foreach($arrObjVinculosOutorgado as $vinculo){
+                        $msgVinc .= '- Outorgado por '.$vinculo->getStrRazaoSocialNomeVinc().' como '.$vinculo->getStrNomeTipoRepresentante().'\n';
+                    }
+                }
+
             }
+
+            if($objContatoAPI->getStaNatureza() == 'J'){
+
+                $objVinculoDTO = new MdPetVinculoDTO();
+                $objVinculoDTO->setNumIdContato($objContatoAPI->getIdContato());
+                $objVinculoDTO->retNumIdMdPetVinculo();
+                $arrIdMdPetVinculo = InfraArray::converterArrInfraDTO((new MdPetVinculoBD(BancoSEI::getInstance()))->listar($objVinculoDTO),'IdMdPetVinculo');
+
+                if(count($arrIdMdPetVinculo) > 0){
+
+                    $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                    $objMdPetVincRepresentantDTO->setStrTipoRepresentante([MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO], InfraDTO::$OPER_NOT_IN);
+                    $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo((array) $arrIdMdPetVinculo, InfraDTO::$OPER_IN);
+                    $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+
+                    $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
+                    $objMdPetVincRepresentantDTO->retStrCpfProcurador();
+                    $objMdPetVincRepresentantDTO->retStrNomeProcurador();
+                    $arrObjVinculos = (new MdPetVincRepresentantBD(BancoSEI::getInstance()))->listar($objMdPetVincRepresentantDTO);
+
+                }
+
+                if(!empty($arrObjVinculos)){
+                    foreach($arrObjVinculos as $vinculo){
+                        $msgVinc .= '- Outorgado por '.$vinculo->getStrNomeProcurador().' como '.$vinculo->getStrNomeTipoRepresentante().'\n';
+                    }
+                }
+
+            }
+
+            if(!empty($msgVinc)){
+                $preMsg = 'Não é permitido alterar Contato que possua registro de Vinculação ou Procuração Eletrônica ativa.\n\n';
+                $msg .= ''. $objContatoAPI->getNome() . ' ainda possui as seguintes Vinculações ou Procurações ativas:\n\n'.$msgVinc.'\n';
+                if(!empty($msg)){ (new InfraException())->lancarValidacao(substr($preMsg.$msg, 0, -2)); }
+            }
+
         }
+
     }
 
     public static function validarXssFormulario($arrPost, $arrayCampos, $objInfraException)

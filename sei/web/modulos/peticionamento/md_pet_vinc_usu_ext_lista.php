@@ -170,7 +170,7 @@ try {
 
     $objMdPetVincRepresentantDTO->adicionarCriterio(array('TipoRepresentante'),
         array(InfraDTO::$OPER_NOT_IN),
-        array(array(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL)));
+        array(array(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL, MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO)));
 
     PaginaSEIExterna::getInstance()->prepararOrdenacao($objMdPetVincRepresentantDTO, 'TipoRepresentante', InfraDTO::$TIPO_ORDENACAO_ASC);
     PaginaSEIExterna::getInstance()->prepararPaginacao($objMdPetVincRepresentantDTO);

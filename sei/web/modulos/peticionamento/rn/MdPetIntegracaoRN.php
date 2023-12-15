@@ -839,7 +839,7 @@ class MdPetIntegracaoRN extends InfraRN
         $arrParametrosEntradaMontado['mesesExpiraCache'] = $_POST['txtPrazo'];
         $arrParametros = array(
             'paramentrosEntrada' => $arrParametrosEntradaMontado,
-            'parametrosSaida' => $_POST['nomeFuncionalDadosSaida']
+            'parametrosSaida' => $_POST['nomeFuncionalDadosSaida'] ?: []
         );
 
         if ($objMdPetIntegracaoDTO) {

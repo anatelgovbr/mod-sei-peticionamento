@@ -1642,6 +1642,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetRelReciboDocumentoAnexoDTO->retStrNomeSerie();
         $objMdPetRelReciboDocumentoAnexoDTO->retStrProtocoloFormatado();
         $objMdPetRelReciboDocumentoAnexoDTO->retStrNumeroDocumento();
+        $objMdPetRelReciboDocumentoAnexoDTO->retStrNomeArvore();
 
         $reciboAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
         $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($reciboDTOBasico->getNumIdReciboPeticionamento());
@@ -1674,7 +1675,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $tblAtos .= '    </tr>';
             foreach ($arrReciboAnexoDTO as $arquivos) {
                 $tblAtos .= '    <tr>';
-                $tblAtos .= '        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $arquivos->getStrNomeSerie();
+                $tblAtos .= '        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $arquivos->getStrNomeSerie(). ' ' . $arquivos->getStrNomeArvore();
                 $tblAtos .= $arquivos->getStrNumeroDocumento() != '' ? ' ' . $arquivos->getStrNumeroDocumento() : '';
                 $tblAtos .= '</td>';
                 $tblAtos .= '        <td>' . $arquivos->getStrProtocoloFormatado() . '</td>';

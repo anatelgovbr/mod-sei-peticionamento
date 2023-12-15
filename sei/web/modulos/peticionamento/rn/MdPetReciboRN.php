@@ -415,6 +415,7 @@ class MdPetReciboRN extends InfraRN
             $documentoDTO->retStrNomeSerie();
             $documentoDTO->retStrDescricaoProtocolo();
             $documentoDTO->retStrProtocoloDocumentoFormatado();
+            $documentoDTO->retStrNomeArvore();
             $documentoDTO->setDblIdDocumento($idPrincipalGerado);
             $documentoDTO = $documentoRN->consultarRN0005($documentoDTO);
 
@@ -422,7 +423,7 @@ class MdPetReciboRN extends InfraRN
                 unset($erroDocumentos['documentoPrincipal']);
             }
 
-	        $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
+	        $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNomeArvore() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
             $strNumeroSEI = $documentoDTO->getStrProtocoloDocumentoFormatado();
 
             $html .= '<tr>';
@@ -462,6 +463,7 @@ class MdPetReciboRN extends InfraRN
                 $documentoDTO->retStrNomeSerie();
                 $documentoDTO->retStrDescricaoProtocolo();
                 $documentoDTO->retStrProtocoloDocumentoFormatado();
+                $documentoDTO->retStrNomeArvore();
 
                 $documentoDTO->setDblIdDocumento($anexoPrincipal->getDblIdProtocolo());
                 $documentoDTO = $documentoRN->consultarRN0005($documentoDTO);
@@ -471,7 +473,7 @@ class MdPetReciboRN extends InfraRN
                     $bolExclusao = false;
                 }
                 //concatenar tipo e complemento
-	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
+	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNomeArvore() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
 
                 $html .= '<tr>';
                 $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
@@ -514,6 +516,7 @@ class MdPetReciboRN extends InfraRN
                 $documentoDTO->retStrNomeSerie();
                 $documentoDTO->retStrDescricaoProtocolo();
                 $documentoDTO->retStrProtocoloDocumentoFormatado();
+                $documentoDTO->retStrNomeArvore();
 
                 $documentoDTO->setDblIdDocumento($objAnexoEssencial->getDblIdProtocolo());
                 $documentoDTO = $documentoRN->consultarRN0005($documentoDTO);
@@ -523,7 +526,7 @@ class MdPetReciboRN extends InfraRN
                     $bolExclusao = false;
                 }
                 //concatenar tipo e complemento
-	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
+	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNomeArvore() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
 
                 $html .= '<tr>';
                 $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
@@ -567,6 +570,7 @@ class MdPetReciboRN extends InfraRN
                 $documentoDTO->retStrNomeSerie();
                 $documentoDTO->retStrDescricaoProtocolo();
                 $documentoDTO->retStrProtocoloDocumentoFormatado();
+                $documentoDTO->retStrNomeArvore();
 
                 $documentoDTO->setDblIdDocumento($objAnexoComplementar->getDblIdProtocolo());
                 $documentoDTO = $documentoRN->consultarRN0005($documentoDTO);
@@ -576,7 +580,7 @@ class MdPetReciboRN extends InfraRN
                     $bolExclusao = false;
                 }
                 //concatenar tipo e complemento
-	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
+	            $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrNomeArvore() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
 
                 $html .= '<tr>';
                 $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';

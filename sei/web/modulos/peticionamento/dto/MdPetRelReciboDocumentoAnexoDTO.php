@@ -50,6 +50,11 @@ class MdPetRelReciboDocumentoAnexoDTO extends InfraDTO  {
 				'doc.numero',
 				'documento doc');
 
+    $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
+        'NomeArvore',
+        'doc.nome_arvore',
+        'documento doc');
+
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,
 				'NomeSerie',
 				'nome',

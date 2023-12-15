@@ -210,8 +210,8 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh" width="50%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Nome do Menu', 'Nome', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Tipo de Menu', 'Tipo', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft" width="50%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Nome do Menu', 'Nome', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Tipo de Menu', 'Tipo', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="15%">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';

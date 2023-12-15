@@ -7,7 +7,7 @@
     #txtNumeroSei{width: 70%}
     #txtTipo{width: 80%}
     #fldProrrogacao{
-        height: 100px;
+        height: auto;
     }
     .sizeFieldset {
         height: 100px;
@@ -20,14 +20,18 @@
         padding-left: 0px !important;
         height: 110px;
     }
-
-    #fldDocumento{
-        padding-left: 10px;
-        padding-top: 10px;
-    }
     .bloco {
         position: relative;
         float: left;
+    }
+
+    .infraFieldset {
+        padding: 15px
+    }
+
+    legend.infraLegend {
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
 </style>

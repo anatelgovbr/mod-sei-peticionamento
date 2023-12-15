@@ -159,7 +159,7 @@ try {
         $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
         
 
-        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoPoderLegalDTO,'Nome do Tipo de Poder Legal','Nome',$arrObjMdPetTipoPoderLegalDTO).'</th>'."\n";
+        $strResultado .= '<th class="infraTh text-left">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoPoderLegalDTO,'Nome do Tipo de Poder Legal','Nome',$arrObjMdPetTipoPoderLegalDTO).'</th>'."\n";
         $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
         $strResultado .= '</tr>'."\n";
         $strCssTr='';

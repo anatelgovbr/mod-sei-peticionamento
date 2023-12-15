@@ -5,10 +5,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.1.0';
+    private $versaoAtualDesteModulo = '4.2.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -171,6 +171,8 @@ class MdPetAtualizadorSeiRN extends InfraRN
                     $this->instalarv404();
                 case '4.0.4':
                     $this->instalarv410();
+                case '4.1.0':
+                    $this->instalarv420();
                     break;
 
                 default:
@@ -331,7 +333,6 @@ class MdPetAtualizadorSeiRN extends InfraRN
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_03', 'md_pet_indisp_doc', array('id_usuario'), 'usuario', array('id_usuario'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_04', 'md_pet_indisp_doc', array('id_documento'), 'documento', array('id_documento'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_05', 'md_pet_indisp_doc', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
-
 
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisp_doc');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
@@ -708,6 +709,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática do Recibo Eletrônico de Protocolo nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -721,8 +723,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('ATUALIZANDO INFRA_PARAMETRO (' . MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO . ')');
         $nomeParamIdSerie = MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO;
-
-        BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome)  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
+		    BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome)  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -775,9 +776,9 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
         $nmVersao = '1.1.0';
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
-        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+		
         $this->logar('CRIANDO A TABELA md_pet_criterio');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_criterio (
@@ -1191,6 +1192,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaDTO1->setStrNome($texto1);
         $tarefaDTO1->setStrSinHistoricoResumido('S');
         $tarefaDTO1->setStrSinHistoricoCompleto('S');
+        $tarefaDTO1->setStrSinConsultaProcessual('N');
         $tarefaDTO1->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO1->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO1->setStrSinPermiteProcessoFechado('N');
@@ -1211,6 +1213,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaDTO2->setStrNome($texto2);
         $tarefaDTO2->setStrSinHistoricoResumido('S');
         $tarefaDTO2->setStrSinHistoricoCompleto('S');
+        $tarefaDTO2->setStrSinConsultaProcessual('N');
         $tarefaDTO2->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO2->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO2->setStrSinPermiteProcessoFechado('N');
@@ -1231,6 +1234,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaDTO3->setStrNome($texto3);
         $tarefaDTO3->setStrSinHistoricoResumido('S');
         $tarefaDTO3->setStrSinHistoricoCompleto('S');
+        $tarefaDTO3->setStrSinConsultaProcessual('N');
         $tarefaDTO3->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO3->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO3->setStrSinPermiteProcessoFechado('N');
@@ -1251,6 +1255,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaDTO4->setStrNome($texto4);
         $tarefaDTO4->setStrSinHistoricoResumido('S');
         $tarefaDTO4->setStrSinHistoricoCompleto('S');
+        $tarefaDTO4->setStrSinConsultaProcessual('N');
         $tarefaDTO4->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO4->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO4->setStrSinPermiteProcessoFechado('S');
@@ -1350,6 +1355,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática da Certidao em Intimações feitas pelo Peticionamentos Eletrônicos realizados por Usuário Externo.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -1729,7 +1735,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $nmVersao = '3.0.0';
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
+
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
         $this->logar('ATUALIZANDO A DESCRIÇÃO DOS E-MAILS DE SISTEMA DE INTIMAÇÃO ELETRÔNICA DE PESSOA FÍSICA');
@@ -2360,7 +2366,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $nmVersao = '3.1.0';
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
+		
         $this->logar('CRIANDO DOCUMENTO/MODELO DE PROCURAÇÃO ELETRÔNICA SIMPLES');
         $this->_gerarModeloProcuracaoEletronicaSimples();
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
@@ -2489,7 +2495,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $arrTabelas = array('md_pet_acesso_externo', 'md_pet_criterio', 'md_pet_ext_arquivo_perm', 'md_pet_hipotese_legal', 'md_pet_indisp_doc', 'md_pet_indisponibilidade', 'md_pet_int_aceite', 'md_pet_int_dest_resposta', 'md_pet_int_prazo_tacita', 'md_pet_int_prot_disponivel', 'md_pet_int_protocolo', 'md_pet_int_rel_dest', 'md_pet_int_rel_intim_resp', 'md_pet_int_rel_resp_doc', 'md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tpo_res_des', 'md_pet_int_serie', 'md_pet_int_tipo_intimacao', 'md_pet_int_tipo_resp', 'md_pet_intimacao', 'md_pet_rel_recibo_docanexo', 'md_pet_rel_recibo_protoc', 'md_pet_rel_tp_ctx_contato', 'md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_unid', 'md_pet_tamanho_arquivo', 'md_pet_tipo_processo', 'md_pet_tp_processo_orientacoes', 'md_pet_usu_externo_menu', 'md_pet_adm_integ_funcion', 'md_pet_adm_integ_param', 'md_pet_adm_integracao', 'md_pet_adm_tipo_poder', 'md_pet_adm_vinc_rel_serie', 'md_pet_adm_vinc_tp_proced', 'md_pet_int_tp_int_orient', 'md_pet_rel_int_dest_extern', 'md_pet_rel_vincrep_protoc', 'md_pet_rel_vincrep_tipo_poder', 'md_pet_vinculo', 'md_pet_vinculo_documento', 'md_pet_vinculo_represent');
 
         $this->fixIndices($objInfraMetaBD, $arrTabelas);
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2508,7 +2514,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $this->logar('ALTERANDO O NOME DO TIPO DO DOCUMENTO DA SÉRIE MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES');
         $idSerie = BancoSEI::getInstance()->consultarSql('SELECT valor FROM infra_parametro WHERE nome  = \'' . MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_PROCURACAOS . '\' ');
         BancoSEI::getInstance()->executarSql('UPDATE serie SET nome = \'Procuração Eletrônica Simples\' WHERE id_serie = \'' . $idSerie[0]['valor'] . '\' ');
-        
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2560,14 +2566,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $arrTabelas = array('md_pet_acesso_externo', 'md_pet_criterio', 'md_pet_ext_arquivo_perm', 'md_pet_hipotese_legal', 'md_pet_indisp_doc', 'md_pet_indisponibilidade', 'md_pet_int_aceite', 'md_pet_int_dest_resposta', 'md_pet_int_prazo_tacita', 'md_pet_int_prot_disponivel', 'md_pet_int_protocolo', 'md_pet_int_rel_dest', 'md_pet_int_rel_intim_resp', 'md_pet_int_rel_resp_doc', 'md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tpo_res_des', 'md_pet_int_serie', 'md_pet_int_tipo_intimacao', 'md_pet_int_tipo_resp', 'md_pet_intimacao', 'md_pet_rel_recibo_docanexo', 'md_pet_rel_recibo_protoc', 'md_pet_rel_tp_ctx_contato', 'md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_unid', 'md_pet_tamanho_arquivo', 'md_pet_tipo_processo', 'md_pet_tp_processo_orientacoes', 'md_pet_usu_externo_menu', 'md_pet_adm_integ_funcion', 'md_pet_adm_integ_param', 'md_pet_adm_integracao', 'md_pet_adm_tipo_poder', 'md_pet_adm_vinc_rel_serie', 'md_pet_adm_vinc_tp_proced', 'md_pet_int_tp_int_orient', 'md_pet_rel_int_dest_extern', 'md_pet_rel_vincrep_protoc', 'md_pet_rel_vincrep_tipo_poder', 'md_pet_vinculo', 'md_pet_vinculo_documento', 'md_pet_vinculo_represent');
 
         $this->fixIndices($objInfraMetaBD, $arrTabelas);
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
     protected function instalarv401()
     {
         $nmVersao = '4.0.1';
-        
+
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
@@ -2576,7 +2582,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     protected function instalarv402()
     {
         $nmVersao = '4.0.2';
-        
+
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
@@ -2585,7 +2591,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $this->logar('ALTERAÇÃO NO TAMANHO DA COLUNA ORIENTACOES, TABELA: md_pet_tipo_processo');
         $objInfraMetaBD->alterarColuna('md_pet_tipo_processo', 'orientacoes', $objInfraMetaBD->tipoTextoVariavel(1000), 'not null');
         $this->logar('FIM DA ALTERAÇÃO NO TAMANHO DA COLUNA ORIENTACOES, TABELA: md_pet_tipo_processo');
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2594,7 +2600,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $nmVersao = '4.0.3';
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2653,16 +2659,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $this->_atualizarEmailVinculoSuspensaoRestabelecimento();
 
         }
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
     protected function instalarv410()
     {
         $nmVersao = '4.1.0';
-
+		
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
+		
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
         $this->adicionarConsultaCPF();
@@ -2672,16 +2678,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('>>>> CRIANDO AGENDAMENTO PARA ATUALIZAR AUTORREPRESENTACOES ');
 
-		    // IMPEDE ERRO DE CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO:
-        $this->logar('----- VERIFICANDO CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO');
-        $arrMaxIdInfraAgendamentoTarefaSelect = BancoSEI::getInstance()->consultarSql("SELECT MAX(id_infra_agendamento_tarefa) as max FROM infra_agendamento_tarefa");
-        $arrMaxIdInfraSequenciaSelect = BancoSEI::getInstance()->consultarSql("SELECT num_atual as max FROM infra_sequencia WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
+		// IMPEDE ERRO DE CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO:
+	    $this->logar('----- VERIFICANDO CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO');
+	    $arrMaxIdInfraAgendamentoTarefaSelect = BancoSEI::getInstance()->consultarSql("SELECT MAX(id_infra_agendamento_tarefa) as max FROM infra_agendamento_tarefa");
+	    $arrMaxIdInfraSequenciaSelect = BancoSEI::getInstance()->consultarSql("SELECT num_atual as max FROM infra_sequencia WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
 
-        if($arrMaxIdInfraSequenciaSelect[0]['max'] < $arrMaxIdInfraAgendamentoTarefaSelect[0]['max']){
-          BancoSEI::getInstance()->executarSql("UPDATE infra_sequencia SET num_atual = ".$arrMaxIdInfraAgendamentoTarefaSelect[0]['max']." WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
-        }
+	    if($arrMaxIdInfraSequenciaSelect[0]['max'] < $arrMaxIdInfraAgendamentoTarefaSelect[0]['max']){
+		    BancoSEI::getInstance()->executarSql("UPDATE infra_sequencia SET num_atual = ".$arrMaxIdInfraAgendamentoTarefaSelect[0]['max']." WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
+	    }
 
-        $this->logar('----- CADASTRANDO O AGENDAMENTO DE AUTOREPRESENTAÇÃO');
+	    $this->logar('----- CADASTRANDO O AGENDAMENTO DE AUTOREPRESENTAÇÃO');
         $infraAgendamentoDTO    = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoRN     = new InfraAgendamentoTarefaRN();
         $objInfraParametro      = new InfraParametro(BancoSEI::getInstance());
@@ -2760,8 +2766,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_rel_cont_sit_rf', 'md_pet_rel_cont_sit_rf', array('id_contato'), 'contato', array('id_contato'));
 
-	      $this->logar('EXCLUINDO A COLUNA sin_ativo DA TABELA md_pet_vinculo_represent');
-	      $objInfraMetaBD->excluirColuna('md_pet_vinculo_represent', 'sin_ativo');
+	    $this->logar('EXCLUINDO A COLUNA sin_ativo DA TABELA md_pet_vinculo_represent');
+	    $objInfraMetaBD->excluirColuna('md_pet_vinculo_represent', 'sin_ativo');
 
         $this->logar('----- CADASTRANDO O AGENDAMENTO PARA SUSPENDER VINCULAÇÕES');
         $infraAgendamentoDTO    = new InfraAgendamentoTarefaDTO();
@@ -2802,7 +2808,23 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $infraAgendamentoDTO->setStrSinSucesso('S');
         $infraAgendamentoDTO->setStrEmailErro($objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR'));
         $infraAgendamentoRN->cadastrar($infraAgendamentoDTO);
-        
+		
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv420()
+    {
+        $nmVersao = '4.2.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+        $objInfraMetaBD->setBolValidarIdentificador(true);
+
+        $objInfraMetaBD->adicionarColuna('md_pet_tp_processo_orientacoes', 'sin_ativo_menu_ext', $objInfraMetaBD->tipoTextoFixo(1), 'NULL');
+        BancoSEI::getInstance()->executarSql("update md_pet_tp_processo_orientacoes set sin_ativo_menu_ext = 'S'");
+        $objInfraMetaBD->alterarColuna('md_pet_tp_processo_orientacoes','sin_ativo_menu_ext',$objInfraMetaBD->tipoTextoFixo(1),'NOT NULL');
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -3039,6 +3061,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática do formulário de Vinculação de Responsável Legal a Pessoa Jurídica por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3251,6 +3274,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática da Procuração Eletrônica nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3464,6 +3488,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática da Procuração Eletrônica Especial nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3675,6 +3700,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática da Revogação de Procuração Eletrônica nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3886,6 +3912,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática da Renúncia de Procuração Eletrônica nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -4097,6 +4124,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática da Suspensão de Vinculação a Pessoa Jurídica por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -4308,6 +4336,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrDescricao('Utilizado para a geração automática do Restabelecimento de Vinculação a Pessoa Jurídica por Usuário Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -4427,6 +4456,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 		    $serieDTO->setStrDescricao($novoDocumento['descricao']);
 		    $serieDTO->setStrSinInteressado('S');
 		    $serieDTO->setStrSinDestinatario('N');
+            $serieDTO->setStrSinValorMonetario('N');
 		    $serieDTO->setStrSinAssinaturaPublicacao('S');
 		    $serieDTO->setStrSinInterno('S');
 		    $serieDTO->setStrSinAtivo('S');
@@ -4630,6 +4660,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 		
 		InfraDebug::getInstance()->setBolDebugInfra(false);
     }
+    
     protected function adicionarConsultaCPF()
     {
 

@@ -187,7 +187,7 @@ $title = '';
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
 
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                 <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:</label>
                 <a href="javascript:void(0);" id="tipoAjuda"
@@ -199,9 +199,9 @@ $title = '';
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
-                <fieldset id="fldPrazo" class="form-control">
+                <fieldset id="fldPrazo" class="infraFieldset">
                     <legend class="infraLegend"> Prazo Externo</legend>
                     <div class="row">
                         <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2" style="padding-top: 5px; padding-bottom: 5px">
@@ -280,25 +280,32 @@ $title = '';
                 </fieldset>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
-                <fieldset id="fldResposta" class="form-control">
+                <fieldset id="fldResposta" class="infraFieldset">
                     <legend class="infraLegend"> Resposta do Usuário Externo</legend>
 
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'F' ? 'checked="checked"' : ''; ?>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'F' ? 'checked="checked"' : ''; ?>
 
-                    <input type="radio" name="rdoResposta" id="optTipoRespostaFacultativa" <? echo $checked ?>
-                           value="F"
-                           class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    <label id="lblAno" for="optTipoRespostaFacultativa" class="infraLabelRadio">Resposta Facultativa</label>
-                    <br/>
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'E' ? 'checked="checked"' : ''; ?>
+                            <input type="radio" name="rdoResposta" id="optTipoRespostaFacultativa" <? echo $checked ?>
+                                   value="F"
+                                   class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblAno" for="optTipoRespostaFacultativa" class="infraLabelRadio">Resposta Facultativa</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'E' ? 'checked="checked"' : ''; ?>
 
-                    <input type="radio" name="rdoResposta" id="optTipoRespostaExige" <? echo $checked ?> value="E"
-                           class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    <label id="lblExige" for="optTipoRespostaExige" class="infraLabelRadio">
-                        Exige Resposta (intimação destacará o Tipo de Resposta e Prazo Externo esperado e emitirá
-                        reiterações por e-mail) </label>
+                            <input type="radio" name="rdoResposta" id="optTipoRespostaExige" <? echo $checked ?> value="E"
+                                   class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblExige" for="optTipoRespostaExige" class="infraLabelRadio">
+                                Exige Resposta (intimação destacará o Tipo de Resposta e Prazo Externo esperado e emitirá
+                                reiterações por e-mail) </label>
+                        </div>
+                    </div>
 
                 </fieldset>
             </div>

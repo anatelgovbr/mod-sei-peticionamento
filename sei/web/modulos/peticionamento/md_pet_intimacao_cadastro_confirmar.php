@@ -129,7 +129,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
             e.preventDefault();
             var sendForm = false;
             var btn = $("button#sbmConfirmarIntimacao");
-            var form = $('#frmMdPetIntimacaoCadastro', window.parent.ifrVisualizacao.document);
+            var form = $('#frmMdPetIntimacaoCadastro', window.top.document.getElementById('ifrConteudoVisualizacao').contentDocument.getElementById('ifrVisualizacao').contentDocument);
             $.ajax({
                 url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_intimacao_validar_duplicidade') ?>',
                 type: form.attr('method'),

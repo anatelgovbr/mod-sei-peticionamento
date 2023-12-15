@@ -672,7 +672,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset class="infraFieldset fieldsetUnidade">
                     <legend class="infraLegend">&nbsp;Unidade para Abertura do Processo&nbsp;</legend>
@@ -713,7 +713,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                         <?php if ($tipoProcessoRestricaoErroUU) { ?>
                                             <div id="divRestricaoUU">
-                                                <img id='alertaRestricaoUU' class='alertaRestricao'  style="width: 24px"
+                                                <img id='alertaRestricaoUU' class='alertaRestricao' width="24" height="24"
                                                     src='modulos/peticionamento/imagens/svg/icone_contato.svg?<?= Icone::VERSAO ?>'
                                                     onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "Ajuda");'
                                                     onmouseout='return infraTooltipOcultar();'/>&nbsp;
@@ -806,69 +806,24 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <!-- Tabela Múltiplas Unidades -->
                                     <div class="row">
                                         <div class="col-sm-12 col-md-12 col-lg-12">
-                                            <div class=""
-                                                id="divTableMultiplasUnidades" <?php echo $divUnidadeMultiplaTable; ?>>
+                                            <div class="" id="divTableMultiplasUnidades" <?php echo $divUnidadeMultiplaTable; ?>>
                                                 <table width="100%" summary="Tabela de Unidades" class="infraTable"
                                                     id="tableTipoUnidade">
                                                     <caption class="infraCaption">Lista de Unidades (<span
                                                                 id="qtdRegistros"><?php echo count($arrObjUnidadesMultiplas) > 0 ? count($arrObjUnidadesMultiplas) : '0'; ?> </span>
                                                         registros):
                                                     </caption>
-                                                    <tbody>
-                                                    <tr>
-                                                        <th width="15%" class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                                                        Órgão
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                                </th>
-                                                            </table>
-                                                        <th class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                                                        Unidade
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </th>
-                                                        <th width="15%" class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                                                        UF da Unidade
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </th>
-                                                        <th class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td width="6%" valign="center" class="infraTdRotuloOrdenacao">
-                                                                        Cidade da Unidade
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </th>
-                                                        <?php //if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
-                                                        <th width="80px" class="infraTh">Ações</th>
-                                                        <?php //} ?>
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="15%" class="infraTh">Órgão</th>
+                                                            <th class="infraTh">Unidade</th>
+                                                            <th width="15%" class="infraTh">UF da Unidade</th>
+                                                            <th class="infraTh">Cidade da Unidade</th>
+                                                            <th width="80px" class="infraTh">Ações</th>
+                                                        </tr>
+                                                    </thead>
                                                     <tbody id="corpoTabela">
-                                                    <?php
-                                                    if ($multipla && isset($hdnCorpoTabela)) {
-                                                        echo $hdnCorpoTabela;
-                                                    }
-                                                    ?>
+                                                    <?php if ($multipla && isset($hdnCorpoTabela)) { echo $hdnCorpoTabela; } ?>
                                                     <?php
                                                     if ($multipla) {
                                                         if (!empty($arrObjUnidadesMultiplas)) {
@@ -929,32 +884,26 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 }
                                                                 //alteracoes seiv3
                                                                 ?>
-                                                                <td valign="middle">
+                                                                <td align="center" valign="middle">
                                                                     <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>"
                                                                     title="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>"
                                                                     class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSiglaOrgao(); ?>
                                                                 </td>
-                                                                <td id="tabNomeUnidade">
+                                                                <td align="center" id="tabNomeUnidade">
                                                                     <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>"
                                                                     title="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>"
                                                                     class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSigla(); ?>
                                                                     </a>
                                                                 </td>
-                                                                <td class="ufsSelecionadas">
-                                                                    <?php
-                                                                    //alteracoes seiv3
-                                                                    echo $contatoAssociadoDTO->getStrSiglaUf();
-                                                                    ?>
+                                                                <td align="center" class="ufsSelecionadas">
+                                                                    <?php echo $contatoAssociadoDTO->getStrSiglaUf(); //alteracoes seiv3 ?>
                                                                 </td>
-                                                                <td class="cidadesSelecionadas">
-                                                                    <?php
-                                                                    //alteracoes seiv3
-                                                                    echo $contatoAssociadoDTO->getStrNomeCidade();
-                                                                    ?>
+                                                                <td align="center" class="cidadesSelecionadas">
+                                                                    <?php echo $contatoAssociadoDTO->getStrNomeCidade(); //alteracoes seiv3 ?>
                                                                 </td>
                                                                 <td align="center">
                                                                     <?php if ($tipoProcessoRestricaoErro) { ?>
-                                                                        <img id='alertaRestricao' class='alertaRestricao' style="width: 24px"
+                                                                        <img id='alertaRestricao' class='alertaRestricao' width="24" height="24"
                                                                             src='modulos/peticionamento/imagens/svg/icone_contato.svg?'<?= Icone::VERSAO ?>
                                                                             onmouseover='return infraTooltipMostrar("Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.", "Ajuda");'
                                                                             onmouseout='return infraTooltipOcultar();'/>&nbsp;
@@ -994,7 +943,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset class="infraFieldset fieldsetInteressado">
                     <legend class="infraLegend">&nbsp;Indicação de Interessado&nbsp;</legend>
@@ -1061,7 +1010,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset class="infraFieldset fieldsetAcessoDocumentos">
                     <legend class="infraLegend">&nbsp;Nível de Acesso dos Documentos&nbsp;</legend>
@@ -1133,7 +1082,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset id="fldDocPrincipal" class="infraFieldset fieldsetAcessoDocumentoPrincipal">
                     <legend class="infraLegend">&nbsp;Documento Principal&nbsp;</legend>

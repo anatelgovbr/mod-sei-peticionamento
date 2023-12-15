@@ -185,10 +185,10 @@ if ($numRegistros > 0) {
 
     $iconeAlterar = "";
     $strResultado .= '<tr class="infraTrClara">';
-    $strResultado .= '<td><a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');" alt="' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '" title="' . PaginaSEIExterna::tratarHTML($registro->getStrNomeTipoProcedimento()) . '" class="ancoraPadraoAzul">' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '</a></td>';
-    $strResultado .= '<td>' . InfraUtil::formatarCnpj($registro->getDblCNPJ()) . '</td>';
-    $strResultado .= '<td>' . PaginaSEI::tratarHTML($registro->getStrRazaoSocialNomeVinc()) . '</td>';
-    $strResultado .= '<td>' . $registro->getStrNomeContatoRepresentante() . '</td>';
+    $strResultado .= '<td class="text-center"><a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');" alt="' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '" title="' . PaginaSEIExterna::tratarHTML($registro->getStrNomeTipoProcedimento()) . '" class="ancoraPadraoAzul">' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '</a></td>';
+    $strResultado .= '<td class="text-center">' . InfraUtil::formatarCnpj($registro->getDblCNPJ()) . '</td>';
+    $strResultado .= '<td class="text-center">' . PaginaSEI::tratarHTML($registro->getStrRazaoSocialNomeVinc()) . '</td>';
+    $strResultado .= '<td class="text-center">' . $registro->getStrNomeContatoRepresentante() . '</td>';
 
     $tpSit = $registro->getStrStaEstado();
     if($tpSit == MdPetVincRepresentantRN::$RP_ATIVO){
@@ -202,14 +202,14 @@ if ($numRegistros > 0) {
     } else if($tpSit == MdPetVincRepresentantRN::$RP_VENCIDA){
         $strSituacao = 'Vencida';
     }
-    $strResultado .= '<td>' . $strSituacao . '</td>';
+    $strResultado .= '<td class="text-center">' . $strSituacao . '</td>';
 
     $strResultado .= '<input type="hidden" value="'.$url.'" id="urlLinkDesativar'.$registro->getNumIdMdPetVinculoRepresent().'"/>';
     $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Cadastro da Pessoa Jurídica" alt="Consultar Cadastro da Pessoa Jurídica" class="infraImg" /></a>';
     if($registro->getStrTipoRepresentante()==MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL && $registro->getStrStaEstado()==MdPetVincRepresentantRN::$RP_ATIVO) {
         $iconeAlterar = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_vinculo=' . $registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Atualizar Atos Constitutivos da Pessoa Jurídica" alt="Atualizar Atos Constitutivos da Pessoa Jurídica" class="infraImg" /></a>';
     }
-    $strResultado .= '<td>' . $iconeConsulta . $iconeAlterar . '</td>';
+    $strResultado .= '<td class="text-center">' . $iconeConsulta . $iconeAlterar . '</td>';
     $strResultado .= '</tr>';
 
   }

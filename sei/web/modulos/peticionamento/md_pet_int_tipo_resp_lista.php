@@ -220,9 +220,9 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Tipo de Resposta', 'Nome', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Prazo Externo', 'TipoPrazoExterno', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Resposta do Usuário Externo', 'TipoRespostaAceita', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Tipo de Resposta', 'Nome', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Prazo Externo', 'TipoPrazoExterno', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Resposta do Usuário Externo', 'TipoRespostaAceita', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
@@ -416,6 +416,7 @@ PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
+    <style type="text/css"> th.text-left .infraDivOrdenacao { margin-left: 0px } </style>
     <form id="frmMdPetIntTipoRespLista" method="post"
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);

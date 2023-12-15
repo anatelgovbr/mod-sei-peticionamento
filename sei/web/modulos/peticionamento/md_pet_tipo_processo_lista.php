@@ -290,13 +290,13 @@ try {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
 
-        $strResultado .= '<th class="infraTh" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Tipo de Processo', 'NomeProcesso', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Tipo de Processo', 'NomeProcesso', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
 //        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Órgão', 'SinIIIndicacaoDireta', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
 //        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Unidade para Abertura', 'SinDocExterno', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . 'Órgão' . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . 'Unidade para Abertura' . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Indicação de Interessado', 'SinIIIndicacaoDireta', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Documento Principal', 'SinDocExterno', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . 'Órgão' . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . 'Unidade para Abertura' . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Indicação de Interessado', 'SinIIIndicacaoDireta', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Documento Principal', 'SinDocExterno', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="15%">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
@@ -647,6 +647,8 @@ PaginaSEI::getInstance()->fecharJavaScript();
 ?>
     <style type="text/css">
         .row div{margin-top: 5px;}
+        .thLeft {text-align: left !important;}
+        .thLeft .infraDivOrdenacao {margin-left: 0px !important;}
     </style>
 <?php
 PaginaSEI::getInstance()->fecharHead();

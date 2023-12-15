@@ -345,7 +345,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <input type="hidden" name="hdnParametroHipoteseLegal" id="hdnParametroHipoteseLegal"
            value="<?php echo $valorParametroHipoteseLegal; ?>"/>
 
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Física
@@ -356,28 +356,31 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--  Tipo de Processo  -->
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <label id="lblTipoProcesso" for="txtTipoProcessoPF" class="infraLabelObrigatorio">Tipo de
-                            Processo
-                            Associado:</label>
-                        <div class="input-group mb-3">
-                            <input type="text" onchange="removerProcessoAssociadoPF(0);" id="txtTipoProcessoPF"
-                                   name="txtTipoProcessoPF"
-                                   class="infraText form-control" value="<?php echo $nomeTipoProcessoPF; ?>"
-                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <input type="hidden" id="hdnIdTipoProcessoPF" name="hdnIdTipoProcessoPF"
-                                   value="<?php echo $idTipoProcessoPF ?>"/>
-                            <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcessoPF.selecionar(700,500);"
-                                 onkeypress="objLupaTipoProcessoPF.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                                 alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <img id="imgExcluirTipoProcesso"
-                                 onclick="removerProcessoAssociadoPF(0);objLupaTipoProcessoPF.remover();"
-                                 onkeypress="removerProcessoAssociadoPF(0);objLupaTipoProcessoPF.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                                 alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <div class="form-group">
+                            <label id="lblTipoProcesso" for="txtTipoProcessoPF" class="infraLabelObrigatorio">Tipo de
+                                Processo
+                                Associado:</label>
+                            <div class="input-group mb-3">
+                                <input type="text" onchange="removerProcessoAssociadoPF(0);" id="txtTipoProcessoPF"
+                                       name="txtTipoProcessoPF"
+                                       class="infraText form-control" value="<?php echo $nomeTipoProcessoPF; ?>"
+                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <input type="hidden" id="hdnIdTipoProcessoPF" name="hdnIdTipoProcessoPF"
+                                       value="<?php echo $idTipoProcessoPF ?>"/>
+                                <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcessoPF.selecionar(700,500);"
+                                     onkeypress="objLupaTipoProcessoPF.selecionar(700,500);"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
+                                     alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <img id="imgExcluirTipoProcesso"
+                                     onclick="removerProcessoAssociadoPF(0);objLupaTipoProcessoPF.remover();"
+                                     onkeypress="removerProcessoAssociadoPF(0);objLupaTipoProcessoPF.remover();"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
+                                     alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            </div>
                         </div>
+
                     </div>
                 </div>
                 <!--  Fim do Tipo de Processo -->
@@ -385,17 +388,19 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--Especificação do Processo -->
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
-                            Processo:
-                            <img
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                    name="ajuda"
-                                    id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cpf@ - CPF da Pessoa Física Outorgante @nome_completo@ - Nome Completo da Pessoa Física Outorgante. ', 'Ajuda') ?>
-                                    class="infraImgModulo"/></label>
-                        <input type="text" id="txtEspecProcPF" name="txtEspecProcPF"
-                               onkeypress="return infraMascaraTexto(this,event,100);" class="infraText form-control"
-                               value="<?php echo $especificacaoPF ?>"
-                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <div class="form-group">
+                            <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
+                                Processo:
+                                <img
+                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
+                                        name="ajuda"
+                                        id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cpf@ - CPF da Pessoa Física Outorgante @nome_completo@ - Nome Completo da Pessoa Física Outorgante. ', 'Ajuda') ?>
+                                        class="infraImgModulo"/></label>
+                            <input type="text" id="txtEspecProcPF" name="txtEspecProcPF"
+                                   onkeypress="return infraMascaraTexto(this,event,100);" class="infraText form-control"
+                                   value="<?php echo $especificacaoPF ?>"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        </div>
                     </div>
                 </div>
                 <!--Especificação do Processo - FIM -->
@@ -403,25 +408,27 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--  Unidade -->
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
-                            Processo:</label>
-                        <div class="input-group mb-3">
-                            <input type="text" id="txtUnidadePF" name="txtUnidadePF" class="infraText form-control"
-                                   value="<?php echo $nomeUnidadePF; ?>"
-                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <input type="hidden" id="hdnIdUnidadePF" name="hdnIdUnidadePF" value="<?= $idUnidadePF ?>"/>
-                            <img id="imgLupaUnidade" onclick="objLupaUnidadePF.selecionar(700,500);"
-                                 onkeypress="objLupaUnidadePF.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                                 alt="Selecionar Unidade"
-                                 title="Selecionar Unidade" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <img id="imgExcluirUnidade" onclick="objLupaUnidadePF.remover();"
-                                 onkeypress="objLupaUnidadePF.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                                 alt="Remover Unidade"
-                                 title="Remover Unidade" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <div class="form-group">
+                            <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
+                                Processo:</label>
+                            <div class="input-group">
+                                <input type="text" id="txtUnidadePF" name="txtUnidadePF" class="infraText form-control"
+                                       value="<?php echo $nomeUnidadePF; ?>"
+                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <input type="hidden" id="hdnIdUnidadePF" name="hdnIdUnidadePF" value="<?= $idUnidadePF ?>"/>
+                                <img id="imgLupaUnidade" onclick="objLupaUnidadePF.selecionar(700,500);"
+                                     onkeypress="objLupaUnidadePF.selecionar(700,500);"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
+                                     alt="Selecionar Unidade"
+                                     title="Selecionar Unidade" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <img id="imgExcluirUnidade" onclick="objLupaUnidadePF.remover();"
+                                     onkeypress="objLupaUnidadePF.remover();"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
+                                     alt="Remover Unidade"
+                                     title="Remover Unidade" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -430,30 +437,32 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--   Exibir menu Procuração Eletrônica -->
                 <div class="row">
                     <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
-                        <label id="lblMenuAcessoExternoPF" for="" class="infraLabelObrigatorio">Exibir menu Procuração
-                            Eletrônica: <img
-                                    align="top"
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Procurações Eletrônicas" para os Usuários Externos.', 'Ajuda') ?>
-                                    class="infraImgModulo"/></label>
-                        <br/>
-                        <input <?php if ($exibirMenuAcessoExternoPF == 'S') {
-                            echo 'checked = checked';
-                        } ?> type="radio" name="rdMenuAcessoExternoPF" id="rdExibirMenuAcessoExternoPF" value="S"
-                             class="infraRadio"
-                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label for="rdExibirMenuAcessoExternoPF" id="lblMenuAcessoExternoPF" class="infraLabelRadio">Exibir
-                            no
-                            Acesso
-                            Externo</label>
-                        <br/>
-                        <input <?php if ($exibirMenuAcessoExternoPF == 'N') {
-                            echo 'checked = checked';
-                        } ?> type="radio" name="rdMenuAcessoExternoPF" id="rdNaoExibirMenuAcessoExternoPF" value="N"
-                             class="infraRadio"
-                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label name="lblMenuAcessoExternoPF" id="lblPadrao" for="rdNaoExibirMenuAcessoExternoPF"
-                               class="infraLabelRadio">Não exibir no Acesso Externo</label>
+                        <div class="form-group">
+                            <label id="lblMenuAcessoExternoPF" for="" class="infraLabelObrigatorio">Exibir menu Procuração
+                                Eletrônica: <img
+                                        align="top"
+                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
+                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Procurações Eletrônicas" para os Usuários Externos.', 'Ajuda') ?>
+                                        class="infraImgModulo"/></label>
+                            <br/>
+                            <input <?php if ($exibirMenuAcessoExternoPF == 'S') {
+                                echo 'checked = checked';
+                            } ?> type="radio" name="rdMenuAcessoExternoPF" id="rdExibirMenuAcessoExternoPF" value="S"
+                                 class="infraRadio"
+                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <label for="rdExibirMenuAcessoExternoPF" id="lblMenuAcessoExternoPF" class="infraLabelRadio">Exibir
+                                no
+                                Acesso
+                                Externo</label>
+                            <br/>
+                            <input <?php if ($exibirMenuAcessoExternoPF == 'N') {
+                                echo 'checked = checked';
+                            } ?> type="radio" name="rdMenuAcessoExternoPF" id="rdNaoExibirMenuAcessoExternoPF" value="N"
+                                 class="infraRadio"
+                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <label name="lblMenuAcessoExternoPF" id="lblPadrao" for="rdNaoExibirMenuAcessoExternoPF"
+                                   class="infraLabelRadio">Não exibir no Acesso Externo</label>
+                        </div>
                     </div>
                 </div>
                 <!--  Fim Exibir menu Procuração Eletrônica -->
@@ -471,26 +480,28 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--  Tipo de Processo  -->
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo
-                            Associado:</label>
-                        <div class="input-group mb-3">
-                            <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso"
-                                   name="txtTipoProcesso"
-                                   class="infraText form-control" value="<?php echo $nomeTipoProcesso; ?>"
-                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
-                                   value="<?php echo $idTipoProcesso ?>"/>
-                            <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
-                                 onkeypress="objLupaTipoProcesso.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                                 alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <img id="imgExcluirTipoProcesso"
-                                 onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                 onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                                 alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <div class="form-group">
+                            <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo
+                                Associado:</label>
+                            <div class="input-group">
+                                <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso"
+                                       name="txtTipoProcesso"
+                                       class="infraText form-control" value="<?php echo $nomeTipoProcesso; ?>"
+                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
+                                       value="<?php echo $idTipoProcesso ?>"/>
+                                <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
+                                     onkeypress="objLupaTipoProcesso.selecionar(700,500);"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
+                                     alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <img id="imgExcluirTipoProcesso"
+                                     onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+                                     onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
+                                     alt="Remover Tipo de Processo" title="Remover Tipo de Processo" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -498,42 +509,46 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--Especificação do Processo -->
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
-                            Processo:
-                            <img
-                                    src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                    name="ajuda"
-                                    id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cnpj@ - CNPJ da Pessoa Jurídica Outorgante @razao_social@ - Razão Social da Pessoa Jurídica Outorgante.', 'Ajuda') ?>
-                                    class="infraImgModulo"/></label>
-                        <input type="text" id="txtEspecProcPJ" name="txtEspecProcPJ"
-                               onkeypress="return infraMascaraTexto(this,event,100);" class="infraText form-control"
-                               value="<?php echo $especificacaoPJ ?>"
-                               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <div class="form-group">
+                            <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
+                                Processo:
+                                <img
+                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
+                                        name="ajuda"
+                                        id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O texto aqui configurado será utilizado na Especificação dos processos abertos, sempre limitado a 100 caracteres no momento da abertura do processo. \n \n No texto podem ser utilizadas as variáveis a seguir: @cnpj@ - CNPJ da Pessoa Jurídica Outorgante @razao_social@ - Razão Social da Pessoa Jurídica Outorgante.', 'Ajuda') ?>
+                                        class="infraImgModulo"/></label>
+                            <input type="text" id="txtEspecProcPJ" name="txtEspecProcPJ"
+                                   onkeypress="return infraMascaraTexto(this,event,100);" class="infraText form-control"
+                                   value="<?php echo $especificacaoPJ ?>"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        </div>
                     </div>
                 </div>
                 <!--Especificação do Processo - FIM -->
                 <!--  Unidade -->
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
-                            Processo:</label>
-                        <div class="input-group mb-3">
-                            <input type="text" id="txtUnidade" name="txtUnidade" class="infraText form-control"
-                                   value="<?php echo $nomeUnidade; ?>"
-                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?= $idUnidade ?>"/>
-                            <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);"
-                                 onkeypress="objLupaUnidade.selecionar(700,500);"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                                 alt="Selecionar Unidade"
-                                 title="Selecionar Unidade" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();"
-                                 onkeypress="objLupaUnidade.remover();"
-                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                                 alt="Remover Unidade"
-                                 title="Remover Unidade" class="infraImg"
-                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <div class="form-group">
+                            <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
+                                Processo:</label>
+                            <div class="input-group">
+                                <input type="text" id="txtUnidade" name="txtUnidade" class="infraText form-control"
+                                       value="<?php echo $nomeUnidade; ?>"
+                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <input type="hidden" id="hdnIdUnidade" name="hdnIdUnidade" value="<?= $idUnidade ?>"/>
+                                <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);"
+                                     onkeypress="objLupaUnidade.selecionar(700,500);"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
+                                     alt="Selecionar Unidade"
+                                     title="Selecionar Unidade" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();"
+                                     onkeypress="objLupaUnidade.remover();"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
+                                     alt="Remover Unidade"
+                                     title="Remover Unidade" class="infraImg"
+                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -542,32 +557,34 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--   Exibir menu Procuração Eletrônica -->
                 <div class="row">
                     <div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
-                        <label id="lblMenuAcessoExterno" for="" class="infraLabelObrigatorio">Exibir menu Responsável
-                            Legal de
-                            Pessoa
-                            Jurídica:</label>
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
-                             id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externos. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.', 'Ajuda') ?>
-                             class="infraImgModulo"/>
-                        <br/>
-                        <input <?php if ($exibirMenuAcessoExterno == 'S') {
-                            echo 'checked = checked';
-                        } ?> type="radio" name="rdMenuAcessoExterno" id="rdExibirMenuAcessoExterno" value="S"
-                             class="infraRadio"
-                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label for="rdExibirMenuAcessoExterno" id="lblMenuAcessoExternoPF" class="infraLabelRadio">Exibir
-                            no
-                            Acesso
-                            Externo</label>
-                        <br/>
-                        <input <?php if ($exibirMenuAcessoExterno == 'N') {
-                            echo 'checked = checked';
-                        } ?> type="radio" name="rdMenuAcessoExterno" id="rdNaoExibirMenuAcessoExterno" value="N"
-                             class="infraRadio"
-                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label name="lblMenuAcessoExternoPF" id="lblPadrao" for="rdNaoExibirMenuAcessoExterno"
-                               class="infraLabelRadio">Não
-                            exibir no Acesso Externo</label>
+                        <div class="form-group">
+                            <label id="lblMenuAcessoExterno" for="" class="infraLabelObrigatorio">Exibir menu Responsável
+                                Legal de
+                                Pessoa
+                                Jurídica:</label>
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
+                                 id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externos. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.', 'Ajuda') ?>
+                                 class="infraImgModulo"/>
+                            <br/>
+                            <input <?php if ($exibirMenuAcessoExterno == 'S') {
+                                echo 'checked = checked';
+                            } ?> type="radio" name="rdMenuAcessoExterno" id="rdExibirMenuAcessoExterno" value="S"
+                                 class="infraRadio"
+                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <label for="rdExibirMenuAcessoExterno" id="lblMenuAcessoExternoPF" class="infraLabelRadio">Exibir
+                                no
+                                Acesso
+                                Externo</label>
+                            <br/>
+                            <input <?php if ($exibirMenuAcessoExterno == 'N') {
+                                echo 'checked = checked';
+                            } ?> type="radio" name="rdMenuAcessoExterno" id="rdNaoExibirMenuAcessoExterno" value="N"
+                                 class="infraRadio"
+                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <label name="lblMenuAcessoExternoPF" id="lblPadrao" for="rdNaoExibirMenuAcessoExterno"
+                                   class="infraLabelRadio">Não
+                                exibir no Acesso Externo</label>
+                        </div>
                     </div>
                 </div>
                 <!--  Fim Exibir menu Procuração Eletrônica -->
@@ -605,25 +622,29 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                  id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?> >
                                 <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
 
-                                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
-                                           class="infraLabelObrigatorio">Nível
-                                        de Acesso:</label>
-                                    <select id="selNivelAcesso" name="selNivelAcesso" class="infraSelect form-control"
-                                            onchange="changeSelectNivelAcesso()"
-                                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                        <?= $strItensSelNivelAcesso ?>
-                                    </select>
+                                    <div class="form-group">
+                                        <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
+                                               class="infraLabelObrigatorio">Nível
+                                            de Acesso:</label>
+                                        <select id="selNivelAcesso" name="selNivelAcesso" class="infraSelect form-control"
+                                                onchange="changeSelectNivelAcesso()"
+                                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                            <?= $strItensSelNivelAcesso ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row" id="divHipoteseLegal" <?php echo $hipoteseLegal ?> >
                                 <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
-                                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
-                                           class="infraLabelObrigatorio">Hipótese Legal:</label>
-                                    <select id="selHipoteseLegal" name="selHipoteseLegal"
-                                            class="infraSelect form-control"
-                                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                        <?= $strItensSelHipoteseLegal ?>
-                                    </select>
+                                    <div class="form-group">
+                                        <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
+                                               class="infraLabelObrigatorio">Hipótese Legal:</label>
+                                        <select id="selHipoteseLegal" name="selHipoteseLegal"
+                                                class="infraSelect form-control"
+                                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                            <?= $strItensSelHipoteseLegal ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </fieldset>
@@ -632,12 +653,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--  Documento Obrigatório -->
                 <?
                 //$divDocs = $alterar || $gerado || $externo ? 'style="display: inherit;"' : 'style="display: none;"'
-                $divDocs = 'style="display: inherit; margin-left: -5px; margin-top: -3px"';
+                $divDocs = 'style="display: inherit; margin-top: -3px"';
                 ?>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <fieldset <?php echo $divDocs; ?> id="fldDocObrigatorio" class="fieldsetClear">
-                            <div>
+                            <div class="form-group">
                                 <div style="clear:both;">&nbsp;</div>
                                 <div>
                                     <label id="lblDescricaoEssencial" for="selDescricaoEssencial"
@@ -688,7 +709,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <fieldset <?php echo $divDocs; ?> id="fldDocComplementar" class="fieldsetClear">
-                            <div>
+                            <div class="form-group">
                                 <div style="clear:both;">&nbsp;</div>
                                 <div>
                                     <label id="lblDescricao" for="txtDescricao" class="infraLabelOpcional">Tipos dos
@@ -755,12 +776,15 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!-- Orientações -->
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <label id="lblOrientacoes" for="txaConteudo" class="infraLabelOpcional">Orientações:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
-                                 id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina as Orientações que devem ser apresentadas para o Usuário Externo na funcionalidade que permite a vinculação dele como Responsável Legal a uma Pessoa Jurídica.', 'Ajuda') ?>
-                                 class="infraImgModulo"/>
-                        </label>
-                        <?php require_once 'md_pet_vinc_cadastro_orientacao.php'; ?>
+                        <div class="form-group">
+                            <div style="clear:both;">&nbsp;</div>
+                            <label id="lblOrientacoes" for="txaConteudo" class="infraLabelOpcional">Orientações:
+                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
+                                     id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina as Orientações que devem ser apresentadas para o Usuário Externo na funcionalidade que permite a vinculação dele como Responsável Legal a uma Pessoa Jurídica.', 'Ajuda') ?>
+                                     class="infraImgModulo"/>
+                            </label>
+                            <?php require_once 'md_pet_vinc_cadastro_orientacao.php'; ?>
+                        </div>
                     </div>
                 </div>
                 <!--  Fim das Orientações  -->

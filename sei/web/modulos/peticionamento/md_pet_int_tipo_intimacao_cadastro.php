@@ -200,7 +200,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('4em'); ?>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                 <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
@@ -212,9 +212,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
-                <fieldset id="fldResposta" class="form-control fieldsetTipoResposta" style="height: auto">
+                <fieldset id="fldResposta" class="infraFieldset" style="height: auto">
                     <legend class="infraLegend"> Tipo de Intimação Aceita Tipo de Resposta</legend>
                     <div id="divOptAno" class="infraDivRadio">
                 <span id="spnAno"><label id="lblAno" class="infraLabelRadio">
@@ -269,12 +269,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <table id="tblTipoResposta" width="85%" class="infraTable" summary="Lista de Tipos de Respostas">
                     <caption class="infraCaption"> Lista de Tipos de Respostas</caption>
                     <tr>
-                        <th style="display:none;">ID</th>
-                        <th style="display:none;">VINCULADO</th>
-                        <th class="infraTh" width="60%">Tipo de Resposta</th>
-                        <th class="infraTh" width="20px">Prazo Externo</th>
-                        <th class="infraTh" width="25px">Resposta do Usuário Externo</th>
-                        <th class="infraTh" width="15px">Ações</th>
+                        <th align="center" style="display:none;">ID</th>
+                        <th align="center" style="display:none;">VINCULADO</th>
+                        <th align="center" class="infraTh" width="60%">Tipo de Resposta</th>
+                        <th align="center" class="infraTh" width="20px">Prazo Externo</th>
+                        <th align="center" class="infraTh" width="25px">Resposta do Usuário Externo</th>
+                        <th align="center" class="infraTh" width="15px">Ações</th>
                     </tr>
                 </table>
                 <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>

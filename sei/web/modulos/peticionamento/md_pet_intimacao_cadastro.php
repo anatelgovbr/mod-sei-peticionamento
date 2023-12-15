@@ -89,7 +89,7 @@ try {
 
 	                    echo "<script>";
 	                    echo "window.focus();";
-	                    echo "window.parent.document.getElementById('ifrArvore').src = '".$strLinkMontarArvore."';";
+	                    echo "window.parent.parent.document.getElementById('ifrArvore').src = '".$strLinkMontarArvore."';";
 	                    echo "parent.infraFecharJanelaModal();";
 	                    echo "</script>";
                         //necessário para atualizara a arvore do processo e mostra caneta preta de imediato

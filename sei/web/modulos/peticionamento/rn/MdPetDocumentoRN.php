@@ -1225,6 +1225,7 @@ class MdPetDocumentoRN extends InfraRN {
 			$objProtocoloDTOProcedimento = new ProtocoloDTO();
 			$objProtocoloDTOProcedimento->retStrProtocoloFormatado();
 			$objProtocoloDTOProcedimento->retStrStaEstado();
+			$objProtocoloDTOProcedimento->retStrSinEliminado();
 			$objProtocoloDTOProcedimento->setDblIdProtocolo(InfraArray::converterArrInfraDTO($arrObjProtocoloDTO,'IdProcedimentoDocumento'),InfraDTO::$OPER_IN);
 	
 			$objProtocoloRN = new ProtocoloRN();

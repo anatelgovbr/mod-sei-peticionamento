@@ -38,10 +38,12 @@ try {
 
             $alterar        = count($objLista) > 0;
             $txtConteudo    = $alterar ? $objLista[0]->getStrOrientacoesGerais() : '';
+            $mostraMenuExt  = $alterar ? $objLista[0]->getStrSinAtivoMenuExt() : '';
 
             $objMdPetTpProcessoOrientacoesDTO = new MdPetTpProcessoOrientacoesDTO();
             $objMdPetTpProcessoOrientacoesDTO->setStrOrientacoesGerais($_POST['txaConteudo']);
             $objMdPetTpProcessoOrientacoesDTO->setNumIdTipoProcessoOrientacoesPet(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
+            $objMdPetTpProcessoOrientacoesDTO->setStrSinAtivoMenuExt($_POST['rdSinAtivoMenuExt']);
 
             if (isset($_POST['sbmCadastrarOrientacoesPetIndisp'])) {
 
@@ -54,6 +56,7 @@ try {
 
                         (new EditorRN())->validarTagsCriticas(array('jpg','png'), $_POST['txaConteudo']);
                         $objMdPetTpProcessoOrientacoesDTO2->setStrOrientacoesGerais($_POST['txaConteudo']);
+                        $objMdPetTpProcessoOrientacoesDTO2->setStrSinAtivoMenuExt($_POST['rdSinAtivoMenuExt']);
 
                         //Estilo
                         $conjuntoEstilosDTO = new ConjuntoEstilosDTO();
@@ -118,11 +121,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
         <div class="row">
             <div class="col-12">
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-12">
                         <div class="form-group">
                             <label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">Orientações Gerais:</label>
-                            <div id="divEditores" class="mb-4">
+                            <div id="divEditores" class="mb-0">
                                 <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
                                 <script type="text/javascript"> <?= $retEditor->getStrEditores(); ?> </script>
                             </div>
@@ -130,10 +133,36 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                     </div>
                 </div>
 
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <fieldset class="infraFieldset p-2">
+                            <legend class="infraLegend">Exibir menu Peticionamento Processo Novo
+                                <img id="imgAjuda2"
+                                     src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
+                                     name="ajuda"
+                                     onmouseover="return infraTooltipMostrar('Opção para tornar visível ou não o menu de Peticionamento > Processo Novo para os Usuários Externos no Acesso Externo do SEI.', 'Ajuda');"
+                                     onmouseout="return infraTooltipOcultar();"
+                                     class="infraImg"/>
+                            </legend>
+                            <div class="form-group mb-0">
+                                <div class="infraDivRadio mt-2">
+                                    <input <?= $mostraMenuExt == 'S' ? 'checked="checked"' : '' ?> type="radio" name="rdSinAtivoMenuExt" id="rdSinAtivoMenuExtSim" value="S" class="infraRadio">
+                                    <label for="rdSinAtivoMenuExtSim" id="lblSinAtivoMenuExtSim" for="rdSinAtivoMenuExtSim"  class="infraLabelRadio">Exibir no Acesso Externo</label>
+                                </div>
+                                <div class="infraDivRadio">
+                                    <input <?= $mostraMenuExt == 'N' ? 'checked="checked"' : '' ?> type="radio" name="rdSinAtivoMenuExt" id="rdSinAtivoMenuExtNao" value="N" class="infraRadio">
+                                    <label name="rdSinAtivoMenuExtNao" id="lblSinAtivoMenuExtNao" for="rdSinAtivoMenuExtNao" class="infraLabelRadio">Não Exibir no Acesso Externo</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
                 <?php $staTipoPeticinamento='N'; require_once 'md_pet_forcar_nivel_acesso_doc_bloco.php'; ?>
 
             </div>
         </div>
+
 
         <? PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos, true); ?>
 

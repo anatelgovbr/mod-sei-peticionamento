@@ -241,7 +241,7 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO, 'Nome', 'Nome', $arrObjMdPetIntegracaoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" style="text-align: left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO, 'Nome', 'Nome', $arrObjMdPetIntegracaoDTO) . '</th>' . "\n";
         //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Endereço do Webservice','EnderecoWsdl',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
         //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Operação','OperacaoWsdl',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
         //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Marque caso seu Webservice tenha controle de expiração de cache','SinCache',$arrObjMdPetIntegracaoDTO).'</th>'."\n";

@@ -1,7 +1,4 @@
 <script type="text/css">
-    .row div {
-        padding-top: 5px;
-    }
 
     .infraImgModulo {
         width: 20px;
@@ -15,4 +12,8 @@
 
     #selTipoResposta {
         width: 80%;
+    }
+
+    .infraFieldset { padding: 15px !important }
+
 </script>

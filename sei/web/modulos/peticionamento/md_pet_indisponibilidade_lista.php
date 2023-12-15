@@ -209,9 +209,9 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Início', 'DataInicio', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Fim', 'DataFim', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Prorrogação Automática dos Prazos', 'SinProrrogacao', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-center" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Início', 'DataInicio', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-center">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Fim', 'DataFim', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-center">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Prorrogação Automática dos Prazos', 'SinProrrogacao', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="15%">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
@@ -234,9 +234,9 @@ try {
 
             $sinProrrogacao = $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao() === 'S' ? 'Sim' : 'Não';
 
-            $strResultado .= '<td>' . $dataInicio . '</td>';
-            $strResultado .= '<td>' . $dataFim . '</td>';
-            $strResultado .= '<td>' . $sinProrrogacao . '</td>';
+            $strResultado .= '<td class="text-center">' . $dataInicio . '</td>';
+            $strResultado .= '<td class="text-center">' . $dataFim . '</td>';
+            $strResultado .= '<td class="text-center">' . $sinProrrogacao . '</td>';
             $strResultado .= '<td align="center">';
 
 

@@ -570,6 +570,29 @@ class MdPetIntimacaoRN extends InfraRN
         return $idDocumento;
     }
 
+// TODO apagar caso não gere nenhum estouro em tela
+//    protected function retornaDadosDocPrincipalIntimacaoAcaoConectado($idIntimacao){
+//
+//        $idDocumento = $this->retornaIdDocumentoPrincipalIntimacaoConectado($dados);
+//
+//        if ($idDocumento) {
+//            $objDocumentoDTO = new DocumentoDTO();
+//            $objDocumentoRN = new DocumentoRN();
+//            $objDocumentoDTO->setDblIdDocumento($idDocumento);
+//            $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
+//            $objDocumentoDTO->retStrNomeSerie();
+//            $objDocumentoDTO->retDblIdProcedimento();
+//            $objDocumentoDTO->retStrNumero();
+//            $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+//
+//            if ($objDocumentoDTO) {
+//                return array($objDocumentoDTO->getStrProtocoloDocumentoFormatado(), $objDocumentoDTO->getStrNomeSerie(), $objDocumentoDTO->getDblIdProcedimento(), $idDocumento, $objDocumentoDTO->getStrNumero() );
+//            }
+//        }
+//
+//        return null;
+//    }
+
     protected function retornaDadosDocPrincipalIntimacaoConectado($dados)
     {
 
@@ -593,38 +616,6 @@ class MdPetIntimacaoRN extends InfraRN
         }
 
         return null;
-    }
-
-    public function retornaArrDocumentosAnexosIntimacaoConectado($idIntimacao){
-
-        //Busca Documentos Anexos da Intimação
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntDocumentoDTO->retTodos(null);
-        $objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao((array)$idIntimacao, InfraDTO::$OPER_IN);
-        $objMdPetIntDocumentoDTO = (new MdPetIntProtocoloRN())->listar($objMdPetIntDocumentoDTO);
-
-        $arr_protocolos_anexos = [];
-
-        foreach ($objMdPetIntDocumentoDTO as $i => $docsIntimacao) {
-            if ($docsIntimacao->getStrSinPrincipal() == 'N') {
-                $objDocumentoDTO = $this->_retornaDocumentoPorProtocolo($docsIntimacao->getDblIdProtocolo());
-
-                if (!is_null($objDocumentoDTO)) {
-                    array_push($arr_protocolos_anexos, $objDocumentoDTO->getStrNomeSerie().' '.$objDocumentoDTO->getStrNumero().' '.$objDocumentoDTO->getStrNomeArvore().' (' . $objDocumentoDTO->getStrProtocoloDocumentoFormatado() . ')');
-                } else {
-                    // Caso seja um Processo:
-                    $objProcedimentoDTO = $this->_retornaProcedimentoPorId($docsIntimacao->getDblIdProtocolo());
-                    if (!is_null($objProcedimentoDTO)) {
-                        $str = PaginaSEI::tratarHTML($objProcedimentoDTO->getStrNomeTipoProcedimento() . ' (' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . ')');
-                        array_push($arr_protocolos_anexos, $str);
-                    }
-                }
-
-            }
-        }
-
-        return $arr_protocolos_anexos;
-
     }
 
     public function getTextoTolTipIntimacaoEletronica($arr)

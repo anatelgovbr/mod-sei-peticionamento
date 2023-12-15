@@ -29,6 +29,10 @@ class MdPetTpProcessoOrientacoesDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
 				'IdConjuntoEstilos',
 				'id_conjunto_estilos');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+            'SinAtivoMenuExt',
+            'sin_ativo_menu_ext');
 		
 		$this->configurarPK('IdTipoProcessoOrientacoesPet', InfraDTO::$TIPO_PK_INFORMADO);
 	

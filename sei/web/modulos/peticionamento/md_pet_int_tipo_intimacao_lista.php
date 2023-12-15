@@ -225,7 +225,7 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoIntimacaoDTO, 'Tipo de Intimação Eletrônica', 'Nome', $arrObjMdPetIntTipoIntimacaoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" align="left" style="text-align: left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoIntimacaoDTO, 'Tipo de Intimação Eletrônica', 'Nome', $arrObjMdPetIntTipoIntimacaoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" style="text-align: left; padding-left: 6px;">Tipo de Resposta</th>' . "\n";
         $strResultado .= '<th class="infraTh">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";

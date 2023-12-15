@@ -69,3 +69,5 @@
 .input-group-text-semBorda{background: none; border: none; height: 30px}
 .btnConsultarDocumento{display: block; position: relative; left: -7px;}
 .btnExcluirDocumento{display: block; position: relative; left:  -30px; top: 26px;}
+
+.infraFieldset { padding: 15px; }

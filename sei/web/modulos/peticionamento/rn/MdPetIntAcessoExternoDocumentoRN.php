@@ -256,7 +256,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 			
 		}
 
-                $procuradorSimplesValido = isset($arrParams[2]) ? $arrParams[2] : NULL;
+        $procuradorSimplesValido = isset($arrParams[2]) ? $arrParams[2] : NULL;
                 
 		$idProcedimento       = $post['hdnIdProcedimento'];
 		

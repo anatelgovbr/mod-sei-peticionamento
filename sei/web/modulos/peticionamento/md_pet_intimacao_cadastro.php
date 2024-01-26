@@ -20,6 +20,18 @@ try {
     //InfraDebug::getInstance()->limpar();
     //////////////////////////////////////////////////////////////////////////////
 
+    //Orientações Tipo de Destinatário
+    $objMdPetIntOrientacoesDTO2 = new MdPetIntOrientacoesDTO();
+    $objMdPetIntOrientacoesDTO2->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
+    $objMdPetIntOrientacoesDTO2->retTodos();
+    $objLista = (new MdPetIntOrientacoesRN())->listar($objMdPetIntOrientacoesDTO2);
+
+    $txtOrientacoes = '';
+
+    if(count($objLista) > 0){
+        $txtOrientacoes = $objLista[0]->getStrOrientacoesTipoDestinatario();
+    }
+
     //Pessoa Física
     $strLinkTipoProcessoSelecaoF = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_fisica&tipo_selecao=1&id_object=objLupaTipoProcesso');
 
@@ -40,6 +52,7 @@ try {
     $arrComandos = array();
     $idDocumento = isset($_GET['id_documento']) ? $_GET['id_documento'] : $_POST['hdnIdDocumento'];
     $strLinkAjaxUsuarios = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar&id_documento=' . $idDocumento);
+    $strLinkAjaxUsuariosLote = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_lote&intimacaoPF=t&id_documento=' . $idDocumento);
     $strLinkAjaxTransportaUsuarios = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=usuario_dados_tabela');
     $strLinkAjaxBuscaTiposRespostaTipoIntimacao = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=busca_tipo_resposta_intimacao');
     $strLinkAjaxValidacoesSubmit = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_validar_cadastro');
@@ -138,14 +151,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?><br>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-            <fieldset id="fldOrientacoesDestinatarios" class="infraFieldset sizeFieldset form-control"
-                      style="width:auto; min-height: 250px">
+            <fieldset id="fldOrientacoesDestinatarios" class="infraFieldset sizeFieldset form-control" style="width:auto; min-height: 250px">
                 <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Destinatário</legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <?= PaginaSEI::tratarHTML($txtConteudo) ?>
-                        <?php echo $txtConteudo; ?>
-                        <?= '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_orientacoes_destinatario&iframe=S') . '"></iframe>'; ?>
+                        <div class="mb-5">
+                            <?= $txtOrientacoes ?>
+                        </div>
                     </div>
                 </div>
                 <div class="row" style="margin-top:-10px">
@@ -201,37 +213,11 @@ PaginaSEI::getInstance()->fecharHtml();
         return false;
     }
 
-    function resizeIFramePorConteudo() {
-        var id = 'ifrConteudoHTML';
-        var ifrm = document.getElementById(id);
-        ifrm.style.visibility = 'hidden';
-        ifrm.style.height = "10px";
-
-        var doc = ifrm.contentDocument ? ifrm.contentDocument : ifrm.contentWindow.document;
-        doc = doc || document;
-        var body = doc.body, html = doc.documentElement;
-
-        var width = Math.max(body.scrollWidth, body.offsetWidth,
-            html.clientWidth, html.scrollWidth, html.offsetWidth);
-        ifrm.style.width = '100%';
-
-        var height = Math.max(body.scrollHeight, body.offsetHeight,
-            html.clientHeight, html.scrollHeight, html.offsetHeight);
-        ifrm.style.height = height + 'px';
-
-        ifrm.style.visibility = 'visible';
-    }
-
-    document.getElementById('ifrConteudoHTML').onload = function () {
-        resizeIFramePorConteudo();
-    }
-
-
     function intimacaoTipoPessoa(tipo) {
 
         try {
 
-            var tbUsuarios = document.getElementById('hdnDadosUsuario');
+            var tbUsuarios = document.getElementById('hdnDadosUsuario2');
             var tipoPessoa = null;
 
             if (tbUsuarios.value != "") {

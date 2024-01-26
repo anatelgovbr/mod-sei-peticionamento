@@ -74,6 +74,8 @@ class MdPetIntUsuarioRN extends InfraRN {
             $objUsuarioDTO->setStrIdxUsuario($idxUsuario);
             $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_SISTEMA);
             $objUsuarioDTO->setStrSenha(null);
+            // TODO: Gabriel conferir se mais alguma coisa passou em merges ou commits que não vieram pra ca
+            //$objUsuarioDTO->setStrSinAcessibilidade(MdPetIntUsuarioRN::$NAO);
             $objUsuarioDTO->setStrSinAtivo(MdPetIntUsuarioRN::$SIM);
 
             $objUsuarioDTO = $objUsuarioRN->cadastrarRN0487($objUsuarioDTO);

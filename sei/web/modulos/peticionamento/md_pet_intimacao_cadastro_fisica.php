@@ -29,15 +29,81 @@ $numNumPrazo = null;
 if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
     $numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
 }
+
+// Destinatarios em Massa
+
+function printHelp($msg){
+    echo '<img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/ajuda.svg" name="ajuda" id="imgAjudaUsuario" '.PaginaSEI::montarTitleTooltip($msg, 'Ajuda').' class="infraImgModulo"/>';
+}
+
+$idProcedimento             = array_key_exists('id_procedimento', $_REQUEST) ? $_REQUEST['id_procedimento'] : $_POST['hdnIdProcedimento'];
+$strLinkAjaxDestinatarios   = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_lote'); // Input Autocomplete
+$strLinkInteressados        = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
+
+//Pessoa Física - Lupa do multiselect
+$strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_fisica&tipo_selecao=2&id_object=objLupaInteressados&id_procedimento=' . $idProcedimento.'&id_documento=' . $idDocumento);
+
+// Destinatarios em Massa
+
 ?>
+<style>
+    #txtUsuario2 {position:absolute;left:0%;top:18%;width:50%;}
+    #selDadosUsuario2 {position:absolute;left:0%;top:43%;width:85%;height:50%;}
+    #divOpcoesDadosUsuario2 {position:relative;left:85.2%;top:14.4%;width: 1px}
+</style>
 <br>
 <input type="hidden" id="intimacoesFisica" value="<?php echo count($arrIntimacoes) ?>"/>
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
         <fieldset id="fldDestinatarios" class="infraFieldset sizeFieldset form-control">
             <legend class="infraLegend" class="infraLabelObrigatorio"> Destinatários</legend>
-            <!-- Usuario Externo -->
+            <!-- Destinatários em Massa START -->
+
             <div class="row">
+                <div class="col-md-12">
+                    <div class="text-right">
+                        <button type="button"
+                                onclick="infraAbrirJanelaModal('<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $idProcedimento) ?>' , 1200 , 600 );"
+                                class="infraButton"
+                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
+                                accesskey="V">
+                            <span class="infraTeclaAtalho">V</span>er intimações do processo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="divInteressados" class="infraAreaDados" style="height:14em;">
+
+                        <div class="form-group mb-0">
+                            <label id="lbltxtUsuario2" for="txtUsuario2" class="infraLabelObrigatorio mb-0">Usuário Externo:</label>
+                            <?= printHelp('A pesquisa é realizada somente sobre Usuários Externos liberados. \n \n A pesquisa pode ser efetuada pelo Nome, E-mail ou CPF do Usuário Externo.'); ?>
+                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
+
+                        </div>
+
+                        <select id="selDadosUsuario2" name="selDadosUsuario2" class="infraSelect" multiple="multiple" size="6" style="height: 110px; margin-top: -34px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+							<?=$strItensSelParticipante?>
+                        </select>
+
+                        <div id="divOpcoesDadosUsuario2">
+                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Usuário Externo" alt="Selecionar Usuário Externo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Usuário Externo Selecionado" title="Remover Usuário Externo Selecionado" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                        </div>
+
+                    </div>
+                    <input type="hidden" id="hdnIdDadosUsuario2" name="hdnIdDadosUsuario2" class="infraText campoPadrao" value="" />
+                    <input type="hidden" id="hdnDadosUsuario2" name="hdnDadosUsuario2" class="infraText campoPadrao" value="" />
+                </div>
+            </div>
+            <!-- Destinatários em Massa END -->
+
+
+            <!-- Usuario Externo -->
+            <!-- Todo: Destinatários em Massa Remover -->
+            <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Usuário Externo: </label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/ajuda.svg" name="ajuda"
@@ -77,10 +143,13 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
                 </div>
             </div>
 
-            <div class="tabUsuario clear height_2"
-                 style="<?php echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?>"></div>
+
+            <!-- Todo: Destinatários em Massa Remover -->
+            <div class="tabUsuario clear height_2" style="display:none"></div>
             <!-- Tabela de Destinatários -->
-            <div class="row">
+
+            <!-- Todo: Destinatários em Massa Remover -->
+            <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                     <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="<?php echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?>">
                         <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jurídicas disponíveis" class="infraTable">
@@ -120,8 +189,10 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
                             } ?>
                         </table>
                         <br/>
-                        <input type="hidden" id="hdnIdDadosUsuario" name="hdnIdDadosUsuario" value="<?= $_POST['hdnIdDadosUsuario'] ?>"/>
-                        <input type="hidden" id="hdnDadosUsuario" name="hdnDadosUsuario" value="<?= $_POST['hdnDadosUsuario'] ?>"/>
+                        <label for="hdnIdDadosUsuario">hdnIdDadosUsuario</label>
+                        <input type="text" id="hdnIdDadosUsuario" name="hdnIdDadosUsuario" class="infraText campoPadrao" value="<?= $_POST['hdnIdDadosUsuario'] ?>"/>
+                        <label for="hdnIdDadosUsuario">hdnDadosUsuario</label>
+                        <input type="text" id="hdnDadosUsuario" name="hdnDadosUsuario" class="infraText campoPadrao" value="<?= $_POST['hdnDadosUsuario'] ?>"/>
                     </div>
                 </div>
             </div>
@@ -190,7 +261,7 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
                                class="infraLabelObrigatorio">Protocolos
                             dos Anexos da Intimação:</label>
                         <div class="input-group mb-3">
-                            <select onclick="controlarSelected(this);" id="selAnexosIntimacao" style="width: 80%"
+                            <select id="selAnexosIntimacao" style="width: 80%"
                                     name="selAnexosIntimacao" size="7"
                                     class="infraSelect" multiple="multiple"></select>
                             <div class="botoes">
@@ -230,10 +301,10 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
                             </div>
                             <span id="spnFisica">
                                 <label id="lblIntegral" for="optIntegral" accesskey=""
-                                    class="infraLabelRadio">Integral
+                                       class="infraLabelRadio">Integral
                                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                    name="ajuda"
-                                    id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.', 'Ajuda') ?>
+                                         name="ajuda"
+                                         id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                                 </label>
                             </span>
@@ -262,7 +333,7 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
                         <label id="lblProtocolosDisponibilizados" for="lblProtocolosDisponibilizados" accesskey=""
                                class="infraLabelObrigatorio">Protocolos Disponibilizados:</label>
                         <div class="input-group mb-3">
-                            <select onclick="controlarSelected(this);" style="width: 80%"
+                            <select style="width: 80%"
                                     id="selProtocolosDisponibilizados"
                                     multiple="multiple" name="selProtocolosDisponibilizados" size="7"
                                     class="infraSelect"></select>
@@ -303,12 +374,7 @@ if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
 <input type="hidden" id="hdnStaAcessoIntegral" name="hdnStaAcessoIntegral" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL ?>">
 <input type="hidden" id="hdnStaSemAcesso" name="hdnStaSemAcesso" value="<?php echo MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO ?>">
 
-<style>
 
-    .bloco {
-        float: left;
-        margin-top: 1%;
-        margin-right: 1%;
-    }
+<? require_once 'md_pet_intimacao_cadastro_pf_js.php'; ?>
 
-</style>
+

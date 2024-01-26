@@ -11,9 +11,6 @@
 
     function inicializar() {
         infraEfeitoTabelas();
-        document.getElementsByTagName("BODY")[0].onresize = function () {
-            resizeIFramePorConteudo()
-        };
 
         try {
             objTabelaDinamicaUsuarios.remover = function () {
@@ -71,62 +68,62 @@
 
     //Validando troca radio
 
-
+    // Todo: Destinatários em Massa Remover
     function preparaPessoaFisica() {
 
-        try {
-            document.getElementById("tblEnderecosEletronicos").style.display = document.getElementById('intimacoesFisica').value == 0 ? "none" : "";
-        } catch (err) {}
-
-        objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?= $strLinkAjaxUsuarios ?>');
-        document.getElementById('txtUsuario').focus();
-        objAutoCompletarUsuario.limparCampo = true;
-        objAutoCompletarUsuario.tamanhoMinimo = 3;
-
-        objAutoCompletarUsuario.prepararExecucao = function () {
-            document.getElementById('txtEmail').value = '';
-            return 'intimacaoPF=t&txtUsuario=' + document.getElementById('txtUsuario').value; //  + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value;
-        }
-
-        objAutoCompletarUsuario.processarResultado = function (id, descricao, complemento) {
-            if (id != '') {
-                var arrayResultado = complemento.split(" - ");
-                document.getElementById('txtEmail').value = arrayResultado[0];
-            }
-        }
-
-        objTabelaDinamicaUsuarios = new infraTabelaDinamica('tblEnderecosEletronicos', 'hdnDadosUsuario', false, false);
-        objTabelaDinamicaUsuarios.gerarEfeitoTabela = true;
-
-        objTabelaDinamicaUsuarios.registroDuplicado = function (cpf) {
-            var duplicado = false;
-            var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
-
-            for (var i = 1; i < tbUsuarios.rows.length; i++) {
-                var cpfTab = tbUsuarios.rows[i].cells[3].innerText.trim();
-
-                if (cpf == cpfTab) {
-                    duplicado = true;
-                    break;
-                }
-            }
-            return duplicado;
-        };
-
-        objTabelaDinamicaUsuarios.registroDuplicadoPorId = function (id) {
-            var duplicado = false;
-            var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
-
-            for (var i = 1; i < tbUsuarios.rows.length; i++) {
-                var idTab = tbUsuarios.rows[i].cells[0].innerText.trim();
-
-                if (id == idTab) {
-                    duplicado = true;
-                    break;
-                }
-            }
-            return duplicado;
-        };
+        //try {
+        //    document.getElementById("tblEnderecosEletronicos").style.display = document.getElementById('intimacoesFisica').value == 0 ? "none" : "";
+        //} catch (err) {}
+        //
+        //objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?//= $strLinkAjaxUsuarios ?>//');
+        //document.getElementById('txtUsuario').focus();
+        //objAutoCompletarUsuario.limparCampo = true;
+        //objAutoCompletarUsuario.tamanhoMinimo = 3;
+        //
+        //objAutoCompletarUsuario.prepararExecucao = function () {
+        //    document.getElementById('txtEmail').value = '';
+        //    return 'intimacaoPF=t&txtUsuario=' + document.getElementById('txtUsuario').value; //  + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value;
+        //}
+        //
+        //objAutoCompletarUsuario.processarResultado = function (id, descricao, complemento) {
+        //    if (id != '') {
+        //        var arrayResultado = complemento.split(" - ");
+        //        document.getElementById('txtEmail').value = arrayResultado[0];
+        //    }
+        //}
+        //
+        //objTabelaDinamicaUsuarios = new infraTabelaDinamica('tblEnderecosEletronicos', 'hdnDadosUsuario', false, false);
+        //objTabelaDinamicaUsuarios.gerarEfeitoTabela = true;
+        //
+        //objTabelaDinamicaUsuarios.registroDuplicado = function (cpf) {
+        //    var duplicado = false;
+        //    var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
+        //
+        //    for (var i = 1; i < tbUsuarios.rows.length; i++) {
+        //        var cpfTab = tbUsuarios.rows[i].cells[3].innerText.trim();
+        //
+        //        if (cpf == cpfTab) {
+        //            duplicado = true;
+        //            break;
+        //        }
+        //    }
+        //    return duplicado;
+        //};
+        //
+        // objTabelaDinamicaUsuarios.registroDuplicadoPorId = function (id) {
+        //     var duplicado = false;
+        //     var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
+        //
+        //     for (var i = 1; i < tbUsuarios.rows.length; i++) {
+        //         var idTab = tbUsuarios.rows[i].cells[0].innerText.trim();
+        //
+        //         if (id == idTab) {
+        //             duplicado = true;
+        //             break;
+        //         }
+        //     }
+        //     return duplicado;
+        // };
 
         //Protocolos da Intimação
         carregarComponenteProtocoloIntimacao();
@@ -137,70 +134,71 @@
         esconderAnexos(false);
         mostrarProtocoloParcial(false);
 
-        objLupaTipoProcesso = new infraLupaText('txtUsuario', 'hdnIdUsuario', '<?= $strLinkTipoProcessoSelecaoF ?>');
-        objLupaTipoProcesso.processarSelecao = function (itens) {
-            var paramsAjax = {
-                paramsBusca: itens.value,
-                paramsIdDocumento: document.getElementById('hdnIdDocumento').value
-            };
-
-            $.ajax({
-                url: '<?= $strLinkAjaxTransportaUsuarios ?>',
-                type: 'POST',
-                dataType: 'XML',
-                data: paramsAjax,
-                success: function (r) {
-
-                    document.getElementById('txtUsuario').value = $(r).find('Nome').text();
-                    document.getElementById('txtEmail').value = $(r).find('Email').text();
-                    document.getElementById('hdnIdDadosUsuario').value = $(r).find('Id').text();
-                },
-                error: function (e) {
-                    console.error('Erro ao processar o XML do SEI: ' + e.responseText);
-                }
-            });
-            return true;
-        }
+        //objLupaTipoProcesso = new infraLupaText('txtUsuario', 'hdnIdUsuario', '<?//= $strLinkTipoProcessoSelecaoF ?>//');
+        //objLupaTipoProcesso.processarSelecao = function (itens) {
+        //    var paramsAjax = {
+        //        paramsBusca: itens.value,
+        //        paramsIdDocumento: document.getElementById('hdnIdDocumento').value
+        //    };
+        //
+        //    $.ajax({
+        //        url: '<?//= $strLinkAjaxTransportaUsuarios ?>//',
+        //        type: 'POST',
+        //        dataType: 'XML',
+        //        data: paramsAjax,
+        //        success: function (r) {
+        //
+        //            document.getElementById('txtUsuario').value = $(r).find('Nome').text();
+        //            document.getElementById('txtEmail').value = $(r).find('Email').text();
+        //            document.getElementById('hdnIdDadosUsuario').value = $(r).find('Id').text();
+        //        },
+        //        error: function (e) {
+        //            console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+        //        }
+        //    });
+        //    return true;
+        //}
     }
 
+    // Todo: Destinatários em Massa Remover
     function preparaPessoaJuridica(tipo) {
 
-        objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?= $strLinkAjaxUsuariosJuridicos ?>');
-        document.getElementById('txtUsuario').focus();
-        objAutoCompletarUsuario.limparCampo = true;
-        objAutoCompletarUsuario.tamanhoMinimo = 3;
-
-        //AutoComplete
-        objAutoCompletarUsuario.prepararExecucao = function () {
-            document.getElementById('txtEmail').value = '';
-            return 'intimacaoPJ=t&txtUsuario=' + document.getElementById('txtUsuario').value + '&gerados=' + document.getElementById('gerados').value; // + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value
-        };
-
-        objAutoCompletarUsuario.processarResultado = function (id, descricao, complemento) {
-            if (id != '') {
-                document.getElementById('txtEmail').value = infraFormatarCnpj(complemento);
-                document.getElementById('txtUsuario').value = descricao;
-            }
-        };
-
-        objTabelaDinamicaUsuarios = new infraTabelaDinamica('tblEnderecosEletronicos', 'hdnDadosUsuario', false, false);
-        objTabelaDinamicaUsuarios.gerarEfeitoTabela = true;
-
-        objTabelaDinamicaUsuarios.registroDuplicado = function (cpf) {
-            var duplicado = false;
-            var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
-
-            for (var i = 1; i < tbUsuarios.rows.length; i++) {
-                var cpfTab = tbUsuarios.rows[i].cells[2].innerText;
-
-                if (cpf == cpfTab) {
-
-                    return true;
-                    break;
-                }
-            }
-            return duplicado;
-        };
+        //objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?//= $strLinkAjaxUsuariosJuridicos ?>//');
+        //document.getElementById('txtUsuario').focus();
+        //objAutoCompletarUsuario.limparCampo = true;
+        //objAutoCompletarUsuario.tamanhoMinimo = 3;
+        //
+        ////AutoComplete
+        //objAutoCompletarUsuario.prepararExecucao = function () {
+        //    document.getElementById('txtEmail').value = '';
+        //    return 'intimacaoPJ=t&txtUsuario=' + document.getElementById('txtUsuario').value + '&gerados=' + document.getElementById('gerados').value; // + '&hdnDadosUsuario=' + document.getElementById('hdnDadosUsuario').value
+        //};
+        //
+        //objAutoCompletarUsuario.processarResultado = function (id, descricao, complemento) {
+        //    if (id != '') {
+        //        document.getElementById('txtEmail').value = infraFormatarCnpj(complemento);
+        //        document.getElementById('txtUsuario').value = descricao;
+        //    }
+        //};
+        //
+        //objTabelaDinamicaUsuarios = new infraTabelaDinamica('tblEnderecosEletronicos', 'hdnDadosUsuario', false, false);
+        //objTabelaDinamicaUsuarios.gerarEfeitoTabela = true;
+        //
+        //objTabelaDinamicaUsuarios.registroDuplicado = function (cpf) {
+        //    var duplicado = false;
+        //    var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
+        //
+        //    for (var i = 1; i < tbUsuarios.rows.length; i++) {
+        //        var cpfTab = tbUsuarios.rows[i].cells[2].innerText;
+        //
+        //        if (cpf == cpfTab) {
+        //
+        //            return true;
+        //            break;
+        //        }
+        //    }
+        //    return duplicado;
+        //};
 
         //Protocolos da Intimação
         carregarComponenteProtocoloIntimacao();
@@ -211,92 +209,92 @@
         esconderAnexos(false);
         mostrarProtocoloParcial(false);
 
-        var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
-        document.getElementById("tblEnderecosEletronicos").style.display = tbUsuarios.rows.length < 2 ? "none" : "";
+        // var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
+        // document.getElementById("tblEnderecosEletronicos").style.display = tbUsuarios.rows.length < 2 ? "none" : "";
+        //
+        // document.body.addEventListener('DOMSubtreeModified', function () {
+        //
+        //     try {
+        //         var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
+        //         var qtdEmGeracao = (tbUsuarios.rows.length - 1) - document.getElementById('intimacoes').value;
+        //
+        //         if (document.getElementById('intimacoes').value != 0) {
+        //             //Com intimação já gerada
+        //             if (document.getElementById('intimacoes').value >= 1 && qtdEmGeracao == 0) {
+        //
+        //                 document.getElementById("hiddeAll1").style.display = "none";
+        //                 document.getElementById("hiddeAll2").style.display = "none";
+        //                 document.getElementById("conteudoHide2").style.display = "none";
+        //
+        //             } else {
+        //
+        //                 document.getElementById("hiddeAll1").style.display = "";
+        //                 document.getElementById("hiddeAll2").style.display = "";
+        //                 document.getElementById("conteudoHide2").style.display = "";
+        //
+        //             }
+        //
+        //         } else {
+        //
+        //             if (qtdEmGeracao >= 1) {
+        //
+        //                 document.getElementById("hiddeAll1").style.display = "";
+        //                 document.getElementById("hiddeAll2").style.display = "";
+        //                 document.getElementById("conteudoHide2").style.display = "";
+        //                 document.getElementById("hiddeTable").style.display = "";
+        //
+        //             } else {
+        //
+        //                 document.getElementById("hiddeAll1").style.display = "none";
+        //                 document.getElementById("hiddeAll2").style.display = "none";
+        //                 document.getElementById("conteudoHide2").style.display = "none";
+        //                 document.getElementById("hiddeTable").style.display = "none";
+        //             }
+        //
+        //         }
+        //
+        //     } catch (err) {
+        //
+        //     }
 
-        document.body.addEventListener('DOMSubtreeModified', function () {
-
-            try {
-                var tbUsuarios = document.getElementById('tblEnderecosEletronicos');
-                var qtdEmGeracao = (tbUsuarios.rows.length - 1) - document.getElementById('intimacoes').value;
-
-                if (document.getElementById('intimacoes').value != 0) {
-                    //Com intimação já gerada
-                    if (document.getElementById('intimacoes').value >= 1 && qtdEmGeracao == 0) {
-
-                        document.getElementById("hiddeAll1").style.display = "none";
-                        document.getElementById("hiddeAll2").style.display = "none";
-                        document.getElementById("conteudoHide2").style.display = "none";
-
-                    } else {
-
-                        document.getElementById("hiddeAll1").style.display = "";
-                        document.getElementById("hiddeAll2").style.display = "";
-                        document.getElementById("conteudoHide2").style.display = "";
-
-                    }
-
-                } else {
-
-                    if (qtdEmGeracao >= 1) {
-
-                        document.getElementById("hiddeAll1").style.display = "";
-                        document.getElementById("hiddeAll2").style.display = "";
-                        document.getElementById("conteudoHide2").style.display = "";
-                        document.getElementById("hiddeTable").style.display = "";
-
-                    } else {
-
-                        document.getElementById("hiddeAll1").style.display = "none";
-                        document.getElementById("hiddeAll2").style.display = "none";
-                        document.getElementById("conteudoHide2").style.display = "none";
-                        document.getElementById("hiddeTable").style.display = "none";
-                    }
-
-                }
-
-            } catch (err) {
-
-            }
-
-        }, false);
+        // }, false);
 
         //Limpando input hidden
 
-        document.getElementById("txtUsuario").addEventListener("keydown", function (event) {
-
-            if (event.keyCode == 8) {
-                document.getElementById('hdnIdDadosUsuario').value = '';
-                document.getElementById('hdnIdUsuario').value = '';
-            }
-
-        });
-
-        objLupaJuridico = new infraLupaText('txtUsuario', 'hdnIdUsuario', '<?= $strLinkTipoProcessoSelecao ?>');
-        objLupaJuridico.processarSelecao = function (itens) {
-            var paramsAjax = {
-                paramsBusca: itens.value,
-                paramsIdDocumento: document.getElementById('hdnIdDocumento').value
-            };
-
-            $.ajax({
-
-                url: '<?= $strLinkAjaxJuridicos ?>',
-                type: 'POST',
-                dataType: 'XML',
-                data: paramsAjax,
-                success: function (r) {
-
-                    document.getElementById('txtUsuario').value = $(r).find('Nome').text();
-                    document.getElementById('txtEmail').value = $(r).find('Cnpj').text();
-                    document.getElementById('hdnIdDadosUsuario').value = $(r).find('Id').text();
-                },
-                error: function (e) {
-                    console.error('Erro ao processar o XML do SEI: ' + e.responseText);
-                }
-            });
-            return true;
-        }
+        //document.getElementById("txtUsuario").addEventListener("keydown", function (event) {
+        //
+        //    if (event.keyCode == 8) {
+        //        document.getElementById('hdnIdDadosUsuario').value = '';
+        //        document.getElementById('hdnIdUsuario').value = '';
+        //    }
+        //
+        //});
+        //
+        //objLupaJuridico = new infraLupaText('txtUsuario', 'hdnIdUsuario', '<?//= $strLinkTipoProcessoSelecao ?>//');
+        //objLupaJuridico.processarSelecao = function (itens) {
+        //    var paramsAjax = {
+        //        paramsBusca: itens.value,
+        //        paramsIdDocumento: document.getElementById('hdnIdDocumento').value
+        //    };
+        //
+        //    $.ajax({
+        //
+        //        url: '<?//= $strLinkAjaxJuridicos ?>//',
+        //        type: 'POST',
+        //        dataType: 'XML',
+        //        data: paramsAjax,
+        //        success: function (r) {
+        //
+        //            document.getElementById('txtUsuario').value = $(r).find('Nome').text();
+        //            document.getElementById('txtEmail').value = $(r).find('Cnpj').text();
+        //            document.getElementById('hdnIdDadosUsuario').value = $(r).find('Id').text();
+        //        },
+        //        error: function (e) {
+        //            console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+        //        }
+        //    });
+        //    return true;
+        //}
 
 
     }
@@ -405,12 +403,6 @@
         }
 
         return true;
-    }
-
-    function controlarSelected(el) {
-        //limparSelectedComponentes('M');
-        //addSelectedCampos(0);
-        //addSelectedCampos(1);
     }
 
     function limparSelectedComponentes(opcao) {
@@ -539,7 +531,7 @@
                     console.log(r);
 
                     if ($(r).find('Quantidade').text() >= 1 && $(r).find('Cadastro').text() > 0) {
-                        alert(" A Pessoa Física selecionada já foi intimada através do destinatário abaixo: " + $(r).find('Vinculo').text());
+                        alert("A Pessoa Física selecionada já foi intimada deste documento principal por meio do destinatário: " + $(r).find('Vinculo').text());
                         return;
                     }
 
@@ -574,7 +566,7 @@
                     var usuariosCadastro = document.getElementById('hdnDadosUsuario').value;
 
                     if ($(r).find('Intimacao').text() > 0) {
-                        objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), $(r).find('Email').text(), cpf, $(r).find('DataIntimacao').text(), $(r).find('Situacao').text()]);
+                        objTabelaDinamicaUsuarios.adicionar([conteudoHide, $(r).find('Nome').text(), $(r).find('Email').text(), cpf, $(r).find('DataIntimacao').text(), $(r).find('Situacao').text()]);
                     } else {
                         objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), $(r).find('Email').text(), cpf, infraDataAtual(), 'Em geração']);
                     }
@@ -1005,9 +997,9 @@
 
     function validarCadastro() {
         //valido Destinatários
-        if (document.getElementById("hdnDadosUsuario").value == "") {
+        if (document.getElementById("hdnDadosUsuario2").value == "") {
             alert("Insira um Destinatário.");
-            document.getElementById("hdnDadosUsuario").focus();
+            document.getElementById("hdnDadosUsuario2").focus();
             return false;
         }
 

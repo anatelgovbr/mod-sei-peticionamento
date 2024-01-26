@@ -185,7 +185,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetIntegracaoDTO->setNumIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
         $objMdPetIntegracaoDTO->retStrStaUtilizarWs();
         $objMdPetIntegracaoDTO = (new MdPetIntegracaoRN)->consultar($objMdPetIntegracaoDTO);
-        $strUtilizarWs = $objMdPetIntegracaoDTO->getStrStaUtilizarWs() == 'S' ? true : false;
+        $strUtilizarWs = $objMdPetIntegracaoDTO && $objMdPetIntegracaoDTO->getStrStaUtilizarWs() == 'S' ? true : false;
 //  SÓ CADASTRO. FALTA ALTERAÇÃO
 
         if($strUtilizarWs){

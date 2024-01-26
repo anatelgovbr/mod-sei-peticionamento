@@ -163,6 +163,8 @@ if ($numRegistros > 0) {
 
     }
     $strResultado .= '</table>';
+}else{
+    $strResultado = '<p class="alert alert-warning text-center my-5">Nenhuma Intimação Eletrônica encontrada neste processo.</p>';
 }
 
 
@@ -217,18 +219,25 @@ PaginaSEI::getInstance()->abrirJavaScript(); ?>
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmServicoLista" method="post"
-          action="<?= PaginaSEI::getInstance()->formatarXHTML(
-              SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])
-          ) ?>">
-
-        <?php PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-        <?php PaginaSEI::getInstance()->abrirAreaDados('auto'); ?>
+    <form id="frmServicoLista" method="post" action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
 
         <?php
-        PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-        PaginaSEI::getInstance()->fecharAreaDados();
-        PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+
+            if($numRegistros > 0){
+
+                PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+                PaginaSEI::getInstance()->abrirAreaDados('auto');
+                PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+                PaginaSEI::getInstance()->fecharAreaDados();
+
+            }else {
+
+                echo $strResultado;
+
+            }
+
+            PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+
         ?>
 
     </form>

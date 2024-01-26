@@ -4,6 +4,3 @@
 
 #lblTipo {left:21%;top:0%;width:30%;}
 #selTipo {left:21%;top:40%;}
-
-.thLeft {text-align: left !important;}
-.thLeft .infraDivOrdenacao {margin-left: 0px !important;}

@@ -350,6 +350,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO, 'IdTipoProcedimento', 'Nome');
                 break;
 
+            case 'md_pet_tipo_processo_auto_completar_lote':
+                $arrObjTipoProcessoDTO = TipoProcedimentoINT::autoCompletarTipoProcedimentoLote($_REQUEST);
+                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO, 'IdTipoProcedimento', 'Nome');
+                break;
+
             case 'md_pet_intercorrente_tipo_processo_auto_completar':
                 $arrObjTipoProcessoDTO = MdPetTipoProcessoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa'], $_POST['itens_selecionados']);
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO, 'IdTipoProcedimento', 'Nome');
@@ -417,12 +422,23 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 
                 break;
 
+            case 'md_pet_int_usuario_auto_completar_juridica_lote':
+
+                $arrObjContatoDTO = ( new MdPetIntimacaoRN())->filtrarContatosPesquisaIntimacaoJuridicaLote($_REQUEST);
+                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
+                break;
+
             case 'md_pet_int_usuario_auto_completar':
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
                 $arrContatosDTO = $objMdPetIntimacaoRN->filtrarContatosPesquisaIntimacao($_POST);
 
                 $xml = ($arrContatosDTO > 0) ? MdPetContatoINT::getContatosNomeAutoCompletePF($arrContatosDTO) : '';
 
+                break;
+
+            case 'md_pet_int_usuario_auto_completar_lote':
+                $arrObjContatoDTO = (new MdPetIntimacaoRN())->filtrarContatosPesquisaIntimacaoLote($_REQUEST);
+                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
                 break;
 
             case 'md_pet_intimacao_validar_duplicidade':
@@ -437,7 +453,15 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $xml = $total = MdPetContatoINT::getDadosContatos($_POST['paramsBusca'], $_POST['paramsIdDocumento']);
                 break;
 
+            case 'usuario_dados_tabela_lote':
+                $xml = $total = MdPetContatoINT::getDadosContatos($_POST['paramsBusca'], $_POST['paramsIdDocumento']);
+                break;
+
             case 'usuario_dados_tabela_juridica':
+                $xml = $total = MdPetContatoINT::getDadosContatosJuridico($_POST['paramsBusca'], $_POST['paramsIdDocumento']);
+                break;
+
+            case 'usuario_dados_tabela_juridica_lote':
                 $xml = $total = MdPetContatoINT::getDadosContatosJuridico($_POST['paramsBusca'], $_POST['paramsIdDocumento']);
                 break;
 

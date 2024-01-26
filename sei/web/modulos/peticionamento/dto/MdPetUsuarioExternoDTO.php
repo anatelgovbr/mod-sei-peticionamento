@@ -87,6 +87,10 @@ class MdPetUsuarioExternoDTO extends InfraDTO
         $this->configurarExclusaoLogica('SinAtivo', 'N');
 
     }
+
+    public function getDblDocContato(){
+        return !empty($this->getDblCpfContato()) || is_null($this->getDblCpfContato()) || $this->getDblCpfContato() != '' ? $this->getDblCpfContato() : $this->getDblCnpjContato();
+    }
 }
 
 ?>

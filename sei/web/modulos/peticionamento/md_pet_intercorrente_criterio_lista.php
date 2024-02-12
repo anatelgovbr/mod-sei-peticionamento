@@ -104,11 +104,11 @@ try {
 
 		case 'md_pet_intercorrente_criterio_listar':
 
-			$strTitulo = 'Critérios para Intercorrente';
+			$strTitulo = 'CritÃ©rios para Intercorrente';
 			break;
 	
 		default:
-			throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+			throw new InfraException("AÃ§Ã£o '".$_GET['acao']."' nÃ£o reconhecida.");
 	}
 
     $arrComandos = array();
@@ -152,7 +152,7 @@ try {
 
     $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('md_pet_intercorrente_criterio_cadastrar');
     if ($bolAcaoCadastrar){
-        $arrComandos[] = '<button type="button" accesskey="n" id="btnNovo" value="Novo Critério" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo Critério</button>';
+        $arrComandos[] = '<button type="button" accesskey="n" id="btnNovo" value="Novo CritÃ©rio" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_cadastrar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'])).'\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo CritÃ©rio</button>';
     }
 
     if( $bolAcaoImprimir ||  $bolAcaoCadastrar) {
@@ -194,11 +194,11 @@ try {
 
         $strResultado = '';
 
-        $strSumarioTabela = 'Lista de Critérios para intercorrente.';
-        $strCaptionTabela = 'Critérios para intercorrente Inativos';
+        $strSumarioTabela = 'Lista de CritÃ©rios para intercorrente.';
+        $strCaptionTabela = 'CritÃ©rios para intercorrente Inativos';
         if ($_GET['acao']!='md_pet_intercorrente_criterio_reativar'){
-            $strSumarioTabela = 'Lista de Critérios para intercorrente';
-            $strCaptionTabela = 'Critérios para intercorrente';
+            $strSumarioTabela = 'Lista de CritÃ©rios para intercorrente';
+            $strCaptionTabela = 'CritÃ©rios para intercorrente';
         }
 
         $strResultado .= '<table width="99%" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
@@ -208,9 +208,9 @@ try {
             $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
         }
 
-        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetCriterioDTO,'Tipo de Processo','NomeProcesso',$arrObjMdPetCriterioDTO).'</th>'."\n";
-        $strResultado .= '<th class="infraTh" width="30%">Nível de Acesso dos Documentos</th>'."\n";
-        $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
+        $strResultado .= '<th class="infraTh text-left">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetCriterioDTO,'Tipo de Processo','NomeProcesso',$arrObjMdPetCriterioDTO).'</th>'."\n";
+        $strResultado .= '<th class="infraTh text-left" width="30%">NÃ­vel de Acesso dos Documentos</th>'."\n";
+        $strResultado .= '<th class="infraTh" width="15%">AÃ§Ãµes</th>'."\n";
         $strResultado .= '</tr>'."\n";
         $strCssTr='';
         for($i = 0;$i < $numRegistros; $i++){
@@ -226,17 +226,17 @@ try {
                 $strResultado .= '<td valign="middle">'.PaginaSEI::getInstance()->getTrCheck($i,$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento(), $arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento()).'</td>';
             }
 
-            $indicacaoInteressado = $arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento() === 'S' ? 'Próprio Usuário Externo' : 'Indicação Direta';
+            $indicacaoInteressado = $arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento() === 'S' ? 'PrÃ³prio UsuÃ¡rio Externo' : 'IndicaÃ§Ã£o Direta';
             $docExterno          = $arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento() === 'S' ? 'Externo' : 'Gerado';
             $strResultado .= '<td valign="middle">'.$arrObjMdPetCriterioDTO[$i]->getStrNomeProcesso().'</td>';
 
-            $strStaNivelAcesso = 'Usuário Externo indicar diretamente';
+            $strStaNivelAcesso = 'UsuÃ¡rio Externo indicar diretamente';
 
             if($arrObjMdPetCriterioDTO[$i]->getStrStaNivelAcesso() == 2){
-                $strStaNivelAcesso = 'Padrão pré definido';
+                $strStaNivelAcesso = 'PadrÃ£o prÃ© definido';
                 $strStaTipoNivelAcesso = ' - Restrito';
                 if($arrObjMdPetCriterioDTO[$i]->getStrStaTipoNivelAcesso() == 'P'){
-                    $strStaTipoNivelAcesso = ' - Público';
+                    $strStaTipoNivelAcesso = ' - PÃºblico';
                 }
                 $strStaNivelAcesso .= $strStaTipoNivelAcesso;
             }
@@ -244,23 +244,23 @@ try {
             $strResultado .= '<td align="center" valign="middle">';
 
             if ($bolAcaoConsultar){
-                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg?'.Icone::VERSAO.'" title="Consultar Critério Intercorrente" alt="Consultar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg?'.Icone::VERSAO.'" title="Consultar CritÃ©rio Intercorrente" alt="Consultar CritÃ©rio Intercorrente" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar){
-                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg?'.Icone::VERSAO.'" title="Alterar Critério Intercorrente" alt="Alterar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intercorrente_criterio_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_criterio_intercorrente_peticionamento='.$arrObjMdPetCriterioDTO[$i]->getNumIdCriterioIntercorrentePeticionamento())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg?'.Icone::VERSAO.'" title="Alterar CritÃ©rio Intercorrente" alt="Alterar CritÃ©rio Intercorrente" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
                 $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($arrObjMdPetCriterioDTO[$i]->getStrNomeProcesso()));
                 if ($bolAcaoDesativar && $arrObjMdPetCriterioDTO[$i]->getStrSinAtivo() == 'S'){
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg?'.Icone::VERSAO.'" title="Desativar Critério Intercorrente" alt="Desativar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg?'.Icone::VERSAO.'" title="Desativar CritÃ©rio Intercorrente" alt="Desativar CritÃ©rio Intercorrente" class="infraImg" /></a>&nbsp;';
                 } else {
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg?'.Icone::VERSAO.'" title="Reativar Critério Intercorrente" alt="Reativar Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg?'.Icone::VERSAO.'" title="Reativar CritÃ©rio Intercorrente" alt="Reativar CritÃ©rio Intercorrente" class="infraImg" /></a>&nbsp;';
                 }
 
                 if ($bolAcaoExcluir){
-                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg?'.Icone::VERSAO.'" title="Excluir Critério Intercorrente" alt="Excluir Critério Intercorrente" class="infraImg" /></a>&nbsp;';
+                    $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg?'.Icone::VERSAO.'" title="Excluir CritÃ©rio Intercorrente" alt="Excluir CritÃ©rio Intercorrente" class="infraImg" /></a>&nbsp;';
                 }
             }
 
@@ -285,9 +285,9 @@ PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
 $arrNivelAcesso = array(
-    '1-' => 'Usuário Externo indicar diretamente',
-    '2-I' => 'Padrão pré definido - Restrito',
-    '2-P' => 'Padrão pré definido - Público',
+    '1-' => 'UsuÃ¡rio Externo indicar diretamente',
+    '2-I' => 'PadrÃ£o prÃ© definido - Restrito',
+    '2-P' => 'PadrÃ£o prÃ© definido - PÃºblico',
 );
 ?>
 
@@ -306,7 +306,7 @@ $arrNivelAcesso = array(
             </div>
             <!--  Tipo do Menu -->
             <div class="col-sm-10 col-md-8 col-lg-6 col-xl-4">
-                <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Nível de Acesso dos Documentos:</label>
+                <label id="lblTipo" for="selTipo" class="infraLabelOpcional">NÃ­vel de Acesso dos Documentos:</label>
                 <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect form-control" >
                     <option value="" <?if( $strTipo == "" ) { echo " selected='selected' "; } ?> > Todos </option>
                     <?php foreach($arrNivelAcesso as $i=>$nivelAcesso):

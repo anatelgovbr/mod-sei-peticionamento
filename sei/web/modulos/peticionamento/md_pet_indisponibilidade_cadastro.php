@@ -36,7 +36,7 @@ try {
     $isConsultar = false;
     $isAlterar = false;
     $isDisabled = 0;
-    $textoTolTipSim = 'Após salvar a Nova Indisponibilidade do SEI, NÃO será possível alterar o campo de Sim  para Não e também não será possível alterar o Período de Indisponibilidade';
+    $textoTolTipSim = 'ApÃ³s salvar a Nova Indisponibilidade do SEI, NÃƒO serÃ¡ possÃ­vel alterar o campo de Sim  para NÃ£o e tambÃ©m nÃ£o serÃ¡ possÃ­vel alterar o PerÃ­odo de Indisponibilidade';
 
     switch ($_GET['acao']) {
 
@@ -117,7 +117,7 @@ try {
                 }
 
                 if ($objMdPetIndisponibilidadeDTO == null) {
-                    throw new InfraException("Registro não encontrado.");
+                    throw new InfraException("Registro nÃ£o encontrado.");
                 }
 
             }
@@ -145,7 +145,7 @@ try {
                         }
                     }
 
-                    //Somente se o Sin prorrogação For Não irá settar esses campos com os valores da tela, se não setta os antigos para validações.
+                    //Somente se o Sin prorrogaÃ§Ã£o For NÃ£o irÃ¡ settar esses campos com os valores da tela, se nÃ£o setta os antigos para validaÃ§Ãµes.
                     if ($sinProrrogSim) {
                         $objMdPetIndisponibilidadeDTOAlt->setDthDataInicio($objMdPetIndisponibilidadeDTO->getDthDataInicio());
                         $objMdPetIndisponibilidadeDTOAlt->setDthDataFim($objMdPetIndisponibilidadeDTO->getDthDataFim());
@@ -203,12 +203,12 @@ try {
             }
 
             if ($objMdPetIndisponibilidadeDTO === null) {
-                throw new InfraException("Registro não encontrado.");
+                throw new InfraException("Registro nÃ£o encontrado.");
             }
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 
@@ -219,7 +219,7 @@ try {
 $hashAnexo = "";
 $idAnexo = "";
 
-//na primeira vez que entrar na tela de geração de nova versão não deve processar os anexos (a tabela deve ser montada com os anexos do clone)
+//na primeira vez que entrar na tela de geraÃ§Ã£o de nova versÃ£o nÃ£o deve processar os anexos (a tabela deve ser montada com os anexos do clone)
 if (isset($_GET['id_indisponibilidade_peticionamento'])) {
     $sinProrrogSim = isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'S');
 }
@@ -252,13 +252,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <?php $disabledAlterar = $isAlterar && $sinProrrogSim ? 'disabled = "disabled"' : '';
     $isDisabled = $disabledAlterar != '' ? 1 : 0;
     ?>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset form-control">
-                <legend class="infraLegend">&nbsp;Período de Indisponibilidade&nbsp;</legend>
+            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset">
+                <legend class="infraLegend">PerÃ­odo de Indisponibilidade</legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <label id="lblDtInicio" for="txtDtInicio" class="infraLabelObrigatorio">Início:</label>
+                        <label id="lblDtInicio" for="txtDtInicio" class="infraLabelObrigatorio">InÃ­cio:</label>
                         <div class="input-group mb-3">
                             <input <?php echo $disabledAlterar ?> type="text" onchange="validDate('I')"
                                                                   onkeypress="return infraMascara(this, event, '##/##/#### ##:##');"
@@ -291,57 +291,58 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </fieldset>
         </div>
     </div>
-    <br/>
-    <fieldset class="sizeFieldset2 fieldsetClear form-control">
-        <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                <label id="lblResumoIndisponibilidade" for="txtResumoIndisponibilidade"
-                       class="infraLabelObrigatorio">Resumo
-                    da
-                    Indisponibilidade:</label><br/>
-                <textarea type="text" maxlength="500" id="txtResumoIndisponibilidade" rows="3"
-                          name="txtResumoIndisponibilidade"
-                          class="infraText form-control" onkeypress="return infraMascaraTexto(this,event,500);"
-                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?php echo isset($objMdPetIndisponibilidadeDTO) ? PaginaSEI::tratarHTML($objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade()) : '' ?></textarea>
-
-            </div>
-        </div>
-    </fieldset>
-    <br/>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-            <fieldset id="fldProrrogacao" class="infraFieldset form-control">
-                <legend class="infraLegend">Indisponibilidade justifica a prorrogação automática dos prazos</legend>
-                <div class="row" id="divProrrogacaoSim">
-                    <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+
+            <fieldset class="infraFieldset fieldsetClear p-0">
+            <label id="lblResumoIndisponibilidade" for="txtResumoIndisponibilidade"
+                   class="infraLabelObrigatorio">Resumo
+                da
+                Indisponibilidade:</label><br/>
+            <textarea type="text" maxlength="500" id="txtResumoIndisponibilidade" rows="3"
+                      name="txtResumoIndisponibilidade"
+                      class="infraText form-control" onkeypress="return infraMascaraTexto(this,event,500);"
+                      tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?php echo isset($objMdPetIndisponibilidadeDTO) ? PaginaSEI::tratarHTML($objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade()) : '' ?></textarea>
+
+
+            </fieldset>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+            <fieldset id="fldProrrogacao" class="infraFieldset">
+                <legend class="infraLegend">Indisponibilidade justifica a prorrogaÃ§Ã£o automÃ¡tica dos prazos</legend>
+                <div class="row mb-2">
+                    <div class="col-12">
                         <input <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'S') ? 'checked="checked" ' : '';
-                        echo $disabledAlterar; ?> type="radio" id="rdProrrogacaoSim" name="rdProrrogacao[]"/> <label
-                                id="lblProrrogacaoSim" class="infraLabelCheckbox" for="rdProrrogacaoSim">Sim</label>
-                        <img id="imgAjuda" class="infraImgModulo"
-                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
-                             onmouseout="return infraTooltipOcultar();"
-                             onmouseover="return infraTooltipMostrar('<?= $textoTolTipSim; ?>');"/>
+                        echo $disabledAlterar; ?> type="radio" class="infraRadio" id="rdProrrogacaoSim" name="rdProrrogacao[]"/>
+                        <label id="lblProrrogacaoSim" class="infraLabelCheckbox" for="rdProrrogacaoSim">
+                            Sim
+                            <img id="imgAjuda" class="infraImgModulo"
+                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
+                                 onmouseout="return infraTooltipOcultar();" onmouseover="return infraTooltipMostrar('<?= $textoTolTipSim; ?>');"/>
+                        </label>
                     </div>
                 </div>
-                <div class="row" id="divProrrogacaoNao">
-                    <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+
+                <div class="row">
+                    <div class="col-12">
                         <input <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'N') ? 'checked="checked" ' : '';
-                        echo $disabledAlterar; ?> type="radio" id="rdProrrogacaoNao" name="rdProrrogacao[]"/> <label
-                                id="lblProrrogacaoNao" class="infraLabelCheckbox" for="rdProrrogacaoNao">Não</label>
+                        echo $disabledAlterar; ?> type="radio" class="infraRadio" id="rdProrrogacaoNao" name="rdProrrogacao[]"/>
+                        <label id="lblProrrogacaoNao" class="infraLabelCheckbox" for="rdProrrogacaoNao">NÃ£o</label>
                     </div>
                 </div>
             </fieldset>
         </div>
     </div>
-    <br/>
     <div class="row">
         <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-            <fieldset id="fldDocumento" class="infraFieldset">
-                <legend class="infraLegend"> Anexar Documento</legend>
+            <fieldset class="infraFieldset">
+                <legend class="infraLegend">Anexar Documento</legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
                         <label id="lblNumeroSei" for="txtNumeroSei" accesskey="f" class="infraLabelOpcional">
-                            Número SEI:
+                            NÃºmero SEI:
                         </label>
                         <div class="input-group mb-3">
                             <input onchange="removerValidacaoDocumento();" type="text" id="txtNumeroSei"
@@ -381,7 +382,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
 
                         <table id="tbDocumento" name="tbDocumento" class="infraTable" summary="Documentos"
-                               style="<?php echo count($arrGrid) == 0 ? 'display:none; width:90%;' : 'width:90%;' ?>">
+                               style="<?php echo count($arrGrid) == 0 ? 'display:none; width:100%;' : 'width:100%;' ?>">
 
                             <caption
                                     class="infraCaption">    <?= PaginaSEI::getInstance()->gerarCaptionTabela("Documentos", 0) ?> </caption>
@@ -392,7 +393,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <th width="30%" class="infraTh">Documento</th>
                                 <th width="30%" class="infraTh" align="center">Unidade</th>
                                 <th width="15%" class="infraTh" align="center">Data</th>
-                                <th width="10%" class="infraTh">Ações</th>
+                                <th width="10%" class="infraTh">AÃ§Ãµes</th>
                             </tr>
 
 

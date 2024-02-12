@@ -2,7 +2,7 @@
 /**
  * ANATEL
  *
- * Construi a tela de Cadastro, AlteraÁ„o e Consulta de Tipos de Processos para Peticionamento
+ * Construi a tela de Cadastro, Altera√ß√£o e Consulta de Tipos de Processos para Peticionamento
  * 15/04/2016 - criado por jaqueline.mendes@cast.com.br - CAST
  *
  */
@@ -86,7 +86,7 @@ try {
                     $nomeUnidade = $objUnidadeDTO->getStrSigla() . ' - ' . $objUnidadeDTO->getStrDescricao();
                     $arrObjUnidadesMultiplas[] = $objUnidadeDTO;
 
-                    //Verifica se existe restriÁ„o para este tipo de processo
+                    //Verifica se existe restri√ß√£o para este tipo de processo
                     $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
                     $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
                     $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -98,11 +98,11 @@ try {
                     $tipoProcessoRestricaoErroUU = false;
 
                     foreach ($arrObjUnidadesMultiplas as $cadaObjUnidadeDTO) {
-                        //Verifica se tem algum Ûrg„o diferente dos restritos, caso exista restriÁıes para o tipo de processo
+                        //Verifica se tem algum √≥rg√£o diferente dos restritos, caso exista restri√ß√µes para o tipo de processo
                         if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($cadaObjUnidadeDTO->getNumIdOrgao(), $idOrgaoRestricao)) {
                             $tipoProcessoRestricaoErroUU = true;
                         }
-                        //Verifica se tem alguma unidade diferente dos restritos, caso exista restriÁıes para o tipo de processo
+                        //Verifica se tem alguma unidade diferente dos restritos, caso exista restri√ß√µes para o tipo de processo
                         if (($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($cadaObjUnidadeDTO->getNumIdUnidade(), $idUnidadeRestricao)) {
                             $tipoProcessoRestricaoErroUU = true;
                         }
@@ -123,7 +123,7 @@ try {
                         $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
                         $arrObjUnidadesMultiplas[] = $objUnidadeDTO;
 
-                        //CriaÁ„o do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
+                        //Cria√ß√£o do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
                         if (!key_exists($objRelUnidade->getNumIdOrgaoUnidade(), $arrTipoProcessoOrgaoCidade)) {
                             $arrTipoProcessoOrgaoCidade[$objRelUnidade->getNumIdOrgaoUnidade()] = array();
                         }
@@ -280,7 +280,7 @@ try {
                     }
 
                     if(!in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)){
-                        $objInfraException->lancarValidacao('Tipo de Processo para Peticionamento de Processo Novo n„o pode ser cadastrado, pois o NÌvel de Acesso do Tipo de Processo n„o est· configurado como P˙blico.');
+                        $objInfraException->lancarValidacao('Tipo de Processo para Peticionamento de Processo Novo n√£o pode ser cadastrado, pois o N√≠vel de Acesso do Tipo de Processo n√£o est√° configurado como P√∫blico.');
                         $objInfraException->lancarValidacoes();
                     } else {
                         $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
@@ -438,7 +438,7 @@ try {
                     }
 
                     if(!in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)){
-                        $objInfraException->lancarValidacao('Tipo de Processo para Peticionamento de Processo Novo n„o pode ser alterado, pois o NÌvel de Acesso do Tipo de Processo n„o est· configurado como P˙blico.');
+                        $objInfraException->lancarValidacao('Tipo de Processo para Peticionamento de Processo Novo n√£o pode ser alterado, pois o N√≠vel de Acesso do Tipo de Processo n√£o est√° configurado como P√∫blico.');
                         $objInfraException->lancarValidacoes();
                     } else {
                         $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
@@ -487,8 +487,8 @@ try {
                         $objAlterado = $objMdPetTipoProcessoRN->alterar($objMdPetTipoProcessoDTO);
 
                         if ($objAlterado) {
-                            //EXCLUS’ES DAS RNS
-                            //Exclus„o de Tipo de Documento Essencial e Complementar
+                            //EXCLUS√ïES DAS RNS
+                            //Exclus√£o de Tipo de Documento Essencial e Complementar
                             $numIdTpProcessoPet = isset($_GET['id_tipo_processo_peticionamento']) && $_GET['id_tipo_processo_peticionamento'] != '' ? $_GET['id_tipo_processo_peticionamento'] : $_POST['hdnIdMdPetTipoProcesso'];
                             $objMdPetRelTpProcSerieRN = new MdPetRelTpProcSerieRN();
                             $arrMdPetRelTpProcSerieDTO = array();
@@ -503,7 +503,7 @@ try {
                                 $objMdPetRelTpProcSerieRN->excluir($arrMdPetRelTpProcSerieDTO);
                             }
 
-                            //Exclus„o de Unidade
+                            //Exclus√£o de Unidade
                             $arrMdPetRelTpProcessoUnidDTO = array();
                             $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
                             $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
@@ -591,7 +591,7 @@ try {
 
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
@@ -657,10 +657,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <div class="form-group">
-                    <label id="lblOrientacoes" for="txtOrientacoes" class="infraLabelObrigatorio">OrientaÁıes:
+                    <label id="lblOrientacoes" for="txtOrientacoes" class="infraLabelObrigatorio">Orienta√ß√µes:
                         <img align="top"
                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientaÁıes descritas abaixo ser„o exibidas na tela de Peticionamento de Processo Novo depois que o Usu·rio Externo tiver selecionado este Tipo de Processo para peticionar.', 'Ajuda') ?>
+                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orienta√ß√µes descritas abaixo ser√£o exibidas na tela de Peticionamento de Processo Novo depois que o Usu√°rio Externo tiver selecionado este Tipo de Processo para peticionar.', 'Ajuda') ?>
                             class="infraImg"/>
                     </label>
                     <div class="input-group mb-3">
@@ -672,12 +672,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset class="infraFieldset fieldsetUnidade">
                     <legend class="infraLegend">&nbsp;Unidade para Abertura do Processo&nbsp;</legend>
                     <div id="divUnidade">
-                        <!-- Unidade ˙nica -->
+                        <!-- Unidade √∫nica -->
                         <?php
                         $divUnidadeUnica = $unica ? 'style="display:inherit;margin-bottom: 6px; margin-top: 10px"' : 'style="display:none;margin-bottom: 6px; margin-top: 10px"';
                         $checkUnidadeUnica = $unica ? 'checked="checked";' : '';
@@ -689,9 +689,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                         class="infraRadio"
                                                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <label id="lblUnidadeUnica" name="lblUnidadeUnica" for="rdUnidadeUnica"
-                                    class="infraLabelRadio">Unidade ⁄nica <img align="top"
+                                    class="infraLabelRadio">Unidade √önica <img align="top"
                                                                                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo n„o ter· opÁ„o de escolha para a abertura do Processo Novo, sendo sempre aberto na Unidade prÈ definida aqui.', 'Ajuda') ?>
+                                                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo n√£o ter√° op√ß√£o de escolha para a abertura do Processo Novo, sendo sempre aberto na Unidade pr√© definida aqui.', 'Ajuda') ?>
                                                                                                     class="infraImg"/></label>
                                 <div id="divCpUnidadeUnica" <?php echo $divUnidadeUnica; ?> class="col-sm-12 col-md-7 col-lg-7 col-xl-7">
                                     <div class="input-group mb-3">
@@ -713,18 +713,18 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                         <?php if ($tipoProcessoRestricaoErroUU) { ?>
                                             <div id="divRestricaoUU">
-                                                <img id='alertaRestricaoUU' class='alertaRestricao'  style="width: 24px"
+                                                <img id='alertaRestricaoUU' class='alertaRestricao' width="24" height="24"
                                                     src='modulos/peticionamento/imagens/svg/icone_contato.svg?<?= Icone::VERSAO ?>'
-                                                    onmouseover='return infraTooltipMostrar("Esta Unidade n„o pode utilizar o Tipo de Processo indicado, em raz„o de restriÁ„o de uso do Tipo de Processo configurado pela AdministraÁ„o do SEI. Dessa forma, o Usu·rio Externo n„o visualiza a opÁ„o da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restriÁıes de uso do Tipo de Processo para adicionar esta Unidade, no menu AdministraÁ„o > Tipos de Processos > Listar.", "Ajuda");'
+                                                    onmouseover='return infraTooltipMostrar("Esta Unidade n√£o pode utilizar o Tipo de Processo indicado, em raz√£o de restri√ß√£o de uso do Tipo de Processo configurado pela Administra√ß√£o do SEI. Dessa forma, o Usu√°rio Externo n√£o visualiza a op√ß√£o da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restri√ß√µes de uso do Tipo de Processo para adicionar esta Unidade, no menu Administra√ß√£o > Tipos de Processos > Listar.", "Ajuda");'
                                                     onmouseout='return infraTooltipOcultar();'/>&nbsp;
                                             </div>
                                         <?php } ?>
                                     </div>
                                 </div>
                             </div>
-                            <!--  Fim da Unidade ⁄nica -->
+                            <!--  Fim da Unidade √önica -->
 
-                            <!--  M˙ltiplas Unidades -->
+                            <!--  M√∫ltiplas Unidades -->
                             <?php
                             $divUnidadeMultipla = $multipla ? 'style="display:inherit; margin-top: 15px;"' : 'style="display:none; margin-top: 15px;"';
                             $divUnidadeMultiplaTable = $multipla ? 'style="display:inherit;"' : 'style="display:none;"';
@@ -736,9 +736,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                             onchange="changeUnidade()" value="M"
                                                                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <label id="lblUnidadeMultipla" name="lblUnidadeMultipla" for="rdUnidadeMultipla"
-                                    class="infraLabelRadio">M˙ltiplas Unidades <img align="top"
+                                    class="infraLabelRadio">M√∫ltiplas Unidades <img align="top"
                                                                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo ter· opÁ„o de escolha do ”rg„o, da UF ou da Cidade onde quer que o Processo Novo seja aberto. \n \n As trÍs opÁıes de escolha que o Usu·rio Externo ver· depende das Unidades aqui adicionadas, quando possuirem diferentes ”rg„os, UFs ou Cidades.', 'Ajuda') ?>
+                                                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo ter√° op√ß√£o de escolha do √ìrg√£o, da UF ou da Cidade onde quer que o Processo Novo seja aberto. \n \n As tr√™s op√ß√µes de escolha que o Usu√°rio Externo ver√° depende das Unidades aqui adicionadas, quando possuirem diferentes √ìrg√£os, UFs ou Cidades.', 'Ajuda') ?>
                                                                                                         class="infraImg"/></label>
                                 <div id="divCpUnidadeMultipla" <?php echo $divUnidadeMultipla; ?>>
                                     <div id="divOrgaoUnidadeMultipla" class="infraAreaDados" style="">
@@ -746,7 +746,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
                                                 <div class="form-group">
                                                     <label id="lblOrgaos" for="selOrgaos"
-                                                        class="infraLabelObrigatorio">”rg„o:</label>
+                                                        class="infraLabelObrigatorio">√ìrg√£o:</label>
                                                     <div class="input-group mb-3">
                                                         <input type="text" id="txtOrgaoUnidadeMultipla"
                                                             name="txtOrgaoUnidadeMultipla"
@@ -761,7 +761,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 onclick="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);"
                                                                 onkeypress="objLupaOrgaoUnidadeMultipla.selecionar(700, 500);"
                                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
-                                                                alt="Selecionar ”rg„o" title="Selecionar ”rg„o"
+                                                                alt="Selecionar √ìrg√£o" title="Selecionar √ìrg√£o"
                                                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                                         </div>
                                                     </div>
@@ -803,76 +803,31 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Tabela M˙ltiplas Unidades -->
+                                    <!-- Tabela M√∫ltiplas Unidades -->
                                     <div class="row">
                                         <div class="col-sm-12 col-md-12 col-lg-12">
-                                            <div class=""
-                                                id="divTableMultiplasUnidades" <?php echo $divUnidadeMultiplaTable; ?>>
+                                            <div class="" id="divTableMultiplasUnidades" <?php echo $divUnidadeMultiplaTable; ?>>
                                                 <table width="100%" summary="Tabela de Unidades" class="infraTable"
                                                     id="tableTipoUnidade">
                                                     <caption class="infraCaption">Lista de Unidades (<span
                                                                 id="qtdRegistros"><?php echo count($arrObjUnidadesMultiplas) > 0 ? count($arrObjUnidadesMultiplas) : '0'; ?> </span>
                                                         registros):
                                                     </caption>
-                                                    <tbody>
-                                                    <tr>
-                                                        <th width="15%" class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                                                        ”rg„o
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                                </th>
-                                                            </table>
-                                                        <th class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                                                        Unidade
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </th>
-                                                        <th width="15%" class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td valign="center" class="infraTdRotuloOrdenacao">
-                                                                        UF da Unidade
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </th>
-                                                        <th class="infraTh">
-                                                            <table class="infraTableOrdenacao">
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td width="6%" valign="center" class="infraTdRotuloOrdenacao">
-                                                                        Cidade da Unidade
-                                                                    </td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </th>
-                                                        <?php //if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
-                                                        <th width="80px" class="infraTh">AÁıes</th>
-                                                        <?php //} ?>
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="15%" class="infraTh">√ìrg√£o</th>
+                                                            <th class="infraTh">Unidade</th>
+                                                            <th width="15%" class="infraTh">UF da Unidade</th>
+                                                            <th class="infraTh">Cidade da Unidade</th>
+                                                            <th width="80px" class="infraTh">A√ß√µes</th>
+                                                        </tr>
+                                                    </thead>
                                                     <tbody id="corpoTabela">
-                                                    <?php
-                                                    if ($multipla && isset($hdnCorpoTabela)) {
-                                                        echo $hdnCorpoTabela;
-                                                    }
-                                                    ?>
+                                                    <?php if ($multipla && isset($hdnCorpoTabela)) { echo $hdnCorpoTabela; } ?>
                                                     <?php
                                                     if ($multipla) {
                                                         if (!empty($arrObjUnidadesMultiplas)) {
-                                                            //Verifica se existe restriÁ„o para este tipo de processo
+                                                            //Verifica se existe restri√ß√£o para este tipo de processo
                                                             $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
                                                             $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
                                                             $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -886,11 +841,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 $tipoProcessoRestricaoErro = false;
                                                                 $idTabela = 'tabNomeUnidade_' . $cadaObjUnidadeDTO->getNumIdUnidade();
 
-                                                                //Verifica se tem algum Ûrg„o diferente dos restritos, caso exista restriÁıes para o tipo de processo
+                                                                //Verifica se tem algum √≥rg√£o diferente dos restritos, caso exista restri√ß√µes para o tipo de processo
                                                                 if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($cadaObjUnidadeDTO->getNumIdOrgao(), $idOrgaoRestricao)) {
                                                                     $tipoProcessoRestricaoErro = true;
                                                                 }
-                                                                //Verifica se tem alguma unidade diferente dos restritos, caso exista restriÁıes para o tipo de processo
+                                                                //Verifica se tem alguma unidade diferente dos restritos, caso exista restri√ß√µes para o tipo de processo
                                                                 if (($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($cadaObjUnidadeDTO->getNumIdUnidade(), $idUnidadeRestricao)) {
                                                                     $tipoProcessoRestricaoErro = true;
                                                                 }
@@ -918,10 +873,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                     }
                                                                 }
 
-                                                                //Caso tenha alguma unidade ou orgao diferente dos restritos ou unidades do mesmo Ûrg„o e cidade a tr ter· uma cor diferente
+                                                                //Caso tenha alguma unidade ou orgao diferente dos restritos ou unidades do mesmo √≥rg√£o e cidade a tr ter√° uma cor diferente
                                                                 if ($tipoProcessoRestricaoErro) {
                                                                     echo "<tr class='linhas' id='" . $idTabela . "' bgcolor='#F4A460'>";
-                                                                    //Caso tenha unidades de mesmo Ûrg„o e cidade a tr ter· uma cor diferente
+                                                                    //Caso tenha unidades de mesmo √≥rg√£o e cidade a tr ter√° uma cor diferente
                                                                 } elseif ($tipoProcessoDivergencia) {
                                                                     echo "<tr class='linhas' id='" . $idTabela . "' bgcolor='#75AD8D'>";
                                                                 } else {
@@ -929,40 +884,34 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 }
                                                                 //alteracoes seiv3
                                                                 ?>
-                                                                <td valign="middle">
+                                                                <td align="center" valign="middle">
                                                                     <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>"
                                                                     title="<?php echo $cadaObjUnidadeDTO->getStrDescricaoOrgao(); ?>"
                                                                     class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSiglaOrgao(); ?>
                                                                 </td>
-                                                                <td id="tabNomeUnidade">
+                                                                <td align="center" id="tabNomeUnidade">
                                                                     <a alt="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>"
                                                                     title="<?php echo $cadaObjUnidadeDTO->getStrDescricao(); ?>"
                                                                     class="ancoraSigla"><?php echo $cadaObjUnidadeDTO->getStrSigla(); ?>
                                                                     </a>
                                                                 </td>
-                                                                <td class="ufsSelecionadas">
-                                                                    <?php
-                                                                    //alteracoes seiv3
-                                                                    echo $contatoAssociadoDTO->getStrSiglaUf();
-                                                                    ?>
+                                                                <td align="center" class="ufsSelecionadas">
+                                                                    <?php echo $contatoAssociadoDTO->getStrSiglaUf(); //alteracoes seiv3 ?>
                                                                 </td>
-                                                                <td class="cidadesSelecionadas">
-                                                                    <?php
-                                                                    //alteracoes seiv3
-                                                                    echo $contatoAssociadoDTO->getStrNomeCidade();
-                                                                    ?>
+                                                                <td align="center" class="cidadesSelecionadas">
+                                                                    <?php echo $contatoAssociadoDTO->getStrNomeCidade(); //alteracoes seiv3 ?>
                                                                 </td>
                                                                 <td align="center">
                                                                     <?php if ($tipoProcessoRestricaoErro) { ?>
-                                                                        <img id='alertaRestricao' class='alertaRestricao' style="width: 24px"
+                                                                        <img id='alertaRestricao' class='alertaRestricao' width="24" height="24"
                                                                             src='modulos/peticionamento/imagens/svg/icone_contato.svg?'<?= Icone::VERSAO ?>
-                                                                            onmouseover='return infraTooltipMostrar("Esta Unidade n„o pode utilizar o Tipo de Processo indicado, em raz„o de restriÁ„o de uso do Tipo de Processo configurado pela AdministraÁ„o do SEI. Dessa forma, o Usu·rio Externo n„o visualiza a opÁ„o da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restriÁıes de uso do Tipo de Processo para adicionar esta Unidade, no menu AdministraÁ„o > Tipos de Processos > Listar.", "Ajuda");'
+                                                                            onmouseover='return infraTooltipMostrar("Esta Unidade n√£o pode utilizar o Tipo de Processo indicado, em raz√£o de restri√ß√£o de uso do Tipo de Processo configurado pela Administra√ß√£o do SEI. Dessa forma, o Usu√°rio Externo n√£o visualiza a op√ß√£o da UF ou Cidade para abertura do Processo correspondente a esta Unidade. <br><br> Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, deve ampliar as restri√ß√µes de uso do Tipo de Processo para adicionar esta Unidade, no menu Administra√ß√£o > Tipos de Processos > Listar.", "Ajuda");'
                                                                             onmouseout='return infraTooltipOcultar();'/>&nbsp;
                                                                     <?php }
                                                                     if ($tipoProcessoDivergencia) { ?>
                                                                         <img id='alertaDivergencia' class='alertaDivergencia' style="width: 24px"
                                                                             src='modulos/peticionamento/imagens/svg/icone_principal.svg'<?= Icone::VERSAO ?>
-                                                                            onmouseover='return infraTooltipMostrar("Posteriormente ‡ parametrizaÁ„o original deste Peticionamento devem ter ocorrido alteraÁıes no cadastro das Unidades, de forma que constam conflitos de Unidades com mesma UF ou mesma Cidade. Dessa forma, o Usu·rio Externo n„o visualiza a opÁ„o da UF ou Cidade para abertura do Processo correspondente ‡s Unidades com tais conflitos.<br><br>Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, corrija o cadastro das Unidades para ficar com a UF ou a Cidade corretos, no menu AdministraÁ„o > Unidades > Listar.", "Ajuda");'
+                                                                            onmouseover='return infraTooltipMostrar("Posteriormente √† parametriza√ß√£o original deste Peticionamento devem ter ocorrido altera√ß√µes no cadastro das Unidades, de forma que constam conflitos de Unidades com mesma UF ou mesma Cidade. Dessa forma, o Usu√°rio Externo n√£o visualiza a op√ß√£o da UF ou Cidade para abertura do Processo correspondente √†s Unidades com tais conflitos.<br><br>Remova a Unidade deste Peticionamento de Processo Novo ou, caso seja pertinente, corrija o cadastro das Unidades para ficar com a UF ou a Cidade corretos, no menu Administra√ß√£o > Unidades > Listar.", "Ajuda");'
                                                                             onmouseout='return infraTooltipOcultar();'/>&nbsp;
                                                                     <?php }
                                                                     if ($_GET['acao'] != 'md_pet_tipo_processo_consultar') { ?>
@@ -994,10 +943,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset class="infraFieldset fieldsetInteressado">
-                    <legend class="infraLegend">&nbsp;IndicaÁ„o de Interessado&nbsp;</legend>
+                    <legend class="infraLegend">&nbsp;Indica√ß√£o de Interessado&nbsp;</legend>
                     <div id="divInteressado">
                         <div class="form-group">
                             <div class="divIndicacaoInteressadoProprioUsuario">
@@ -1005,11 +954,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     name="indicacaoInteressado[]" class="infraRadio"
                                     value="1" <?php echo $sinIndIntUsExt ?>
                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">PrÛprio Usu·rio Externo
+                                <label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">Pr√≥prio Usu√°rio Externo
                                     <img
                                             align="top" class="infraImg"
                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo logado sempre ser· o Interessado do processo a ser aberto, sem opÁ„o de escolha.', 'Ajuda') ?>
+                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo logado sempre ser√° o Interessado do processo a ser aberto, sem op√ß√£o de escolha.', 'Ajuda') ?>
                                     /></label>
                             </div>
                             <div class="divIndicacaoInteressadoIndicacaoDireta">
@@ -1018,10 +967,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     class="infraRadio"
                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <label name="lblIndicacaoIndireta" id="lblIndicacaoIndireta" for="rdIndicacaoIndireta"
-                                    class="infraLabelRadio">IndicaÁ„o Direta
+                                    class="infraLabelRadio">Indica√ß√£o Direta
                                     <img align="top" class="infraImg"
                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo dever· indicar manualmente o Interessado do processo a ser aberto.', 'Ajuda') ?>
+                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo dever√° indicar manualmente o Interessado do processo a ser aberto.', 'Ajuda') ?>
                                     />
                                 </label>
                             </div>
@@ -1037,7 +986,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                        class="lblIndicacaoIndiretaHide infraLabelRadio">Informando CPF ou CNPJ <img
                                             align="top" class="infraImg"
                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo indicar· o Interessado digitando um CPF ou CNPJ v·lido. \n \n Se o CPF ou CNPJ digitado n„o constar na lista de Contatos do SEI ou se existir duplicado, ent„o o Usu·rio Externo ser· direcionado a uma janela de Cadastro do Contato que ser· de fato utilizado como Interessado do processo.', 'Ajuda') ?>
+                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo indicar√° o Interessado digitando um CPF ou CNPJ v√°lido. \n \n Se o CPF ou CNPJ digitado n√£o constar na lista de Contatos do SEI ou se existir duplicado, ent√£o o Usu√°rio Externo ser√° direcionado a uma janela de Cadastro do Contato que ser√° de fato utilizado como Interessado do processo.', 'Ajuda') ?>
                                     /></label>
                             </div>
                             <div class="divIndicacaoInteressadoIndicacaoDireta">
@@ -1048,12 +997,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <label for="indicacaoIndireta2" id="lblContatosJaExistentes"
                                        name="lblContatosJaExistentes"
-                                       class="lblIndicacaoIndiretaHide infraLabelRadio">Digitando nome de Contatos j·
+                                       class="lblIndicacaoIndiretaHide infraLabelRadio">Digitando nome de Contatos j√°
                                     existentes
                                     <img
                                             align="top" class="infraImg"
                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo indicar· o Interessado digitando o Nome ou clicando na Lupa para selecion·-lo dentre os Contatos do SEI, respeitadas as parametrizaÁıes na AdministraÁ„o > Peticionamento EletrÙnico > Tipos de Contatos Permitidos. \n \n ATEN«√O: Com esta opÁ„o, os Usu·rios Externos poder„o acessar toda a lista de Contatos do SEI do ”rg„o.', 'Ajuda') ?>
+                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo indicar√° o Interessado digitando o Nome ou clicando na Lupa para selecion√°-lo dentre os Contatos do SEI, respeitadas as parametriza√ß√µes na Administra√ß√£o > Peticionamento Eletr√¥nico > Tipos de Contatos Permitidos. \n \n ATEN√á√ÉO: Com esta op√ß√£o, os Usu√°rios Externos poder√£o acessar toda a lista de Contatos do SEI do √ìrg√£o.', 'Ajuda') ?>
                                     /></label>
                             </div>
                         </div>
@@ -1061,10 +1010,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset class="infraFieldset fieldsetAcessoDocumentos">
-                    <legend class="infraLegend">&nbsp;NÌvel de Acesso dos Documentos&nbsp;</legend>
+                    <legend class="infraLegend">&nbsp;N√≠vel de Acesso dos Documentos&nbsp;</legend>
                     <div id="divDocumentos">
                         <div class="form-group">
                             <div class="divAcessoDocumentosIndicadoDiretamente">
@@ -1073,10 +1022,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 onclick="changeNivelAcesso();" value="1"
                                                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
 
-                                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usu·rio
+                                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usu√°rio
                                     Externo indica diretamente <img align="top" class="infraImg"
                                                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo ter· opÁ„o de escolha do NÌvel de Acesso para cada Documento que adicionar.', 'Ajuda') ?>
+                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo ter√° op√ß√£o de escolha do N√≠vel de Acesso para cada Documento que adicionar.', 'Ajuda') ?>
                                     /></label>
                             </div>
                             <div class="divAcessoDocumentosPreDefinido">
@@ -1084,10 +1033,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 class="infraRadio"
                                                                 onclick="changeNivelAcesso();" value="2"
                                                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padr„o prÈ
+                                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padr√£o pr√©
                                     definido <img align="top" class="infraImg"
                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo n„o ter· opÁ„o de escolha do NÌvel de Acesso para os Documentos, sendo sempre adicionados com o NÌvel de Acesso prÈ definido aqui.', 'Ajuda') ?>
+                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo n√£o ter√° op√ß√£o de escolha do N√≠vel de Acesso para os Documentos, sendo sempre adicionados com o N√≠vel de Acesso pr√© definido aqui.', 'Ajuda') ?>
                                     /></label>
                             </div>
                         </div>
@@ -1098,10 +1047,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         <div class="divNivelAcesso">
                                             <div class="form-group">
                                                 <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
-                                                    class="infraLabelObrigatorio">NÌvel
+                                                    class="infraLabelObrigatorio">N√≠vel
                                                     de Acesso: <img align="top" class="infraImg"
                                                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('As opÁıes abaixo dependem dos NÌveis de Acesso Permitidos para o Tipo de Processo escolhido acima. \n \n A opÁ„o Sigiloso n„o È suportada para o Peticionamento de Processo Novo.', 'Ajuda') ?>
+                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('As op√ß√µes abaixo dependem dos N√≠veis de Acesso Permitidos para o Tipo de Processo escolhido acima. \n \n A op√ß√£o Sigiloso n√£o √© suportada para o Peticionamento de Processo Novo.', 'Ajuda') ?>
                                                     /></label>
                                                 <br/>
                                                 <select id="selNivelAcesso" name="selNivelAcesso"
@@ -1116,9 +1065,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <div class="col-sm-12 col-md-12 col-lg-7 col-xl-8">
                                     <div id="divHipoteseLegal" class="form-group" <?php echo $hipoteseLegal //$sinNAPadrao != '' ? 'style="display: inherit; margin-top:3px"' : 'style="display: none; margin-top:3px"' ?> >
                                         <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
-                                               class="infraLabelObrigatorio">HipÛtese Legal: <img align="top"
+                                               class="infraLabelObrigatorio">Hip√≥tese Legal: <img align="top"
                                                                                                   src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                                                  name="ajuda" <?= PaginaSEI::montarTitleTooltip('As opÁıes abaixo dependem da parametrizaÁ„o na AdministraÁ„o > Peticionamento EletrÙnico > HipÛteses Legais Permitidas.', 'Ajuda') ?>
+                                                                                                  name="ajuda" <?= PaginaSEI::montarTitleTooltip('As op√ß√µes abaixo dependem da parametriza√ß√£o na Administra√ß√£o > Peticionamento Eletr√¥nico > Hip√≥teses Legais Permitidas.', 'Ajuda') ?>
                                                                                                   class="infraImg"/></label>
                                         <br/>
                                         <select id="selHipoteseLegal" name="selHipoteseLegal"
@@ -1133,7 +1082,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row rowFieldSet">
+        <div class="row mb-3 ml-0">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <fieldset id="fldDocPrincipal" class="infraFieldset fieldsetAcessoDocumentoPrincipal">
                     <legend class="infraLegend">&nbsp;Documento Principal&nbsp;</legend>
@@ -1147,7 +1096,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <img
                                             align="top"
                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo dever· preencher um Documento de modelo prÈ definido, utilizando o Editor HTML do SEI. \n \n Neste caso, selecione Tipo de Documento parametrizado na AdministraÁ„o com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n ATEN«√O: por limitaÁıes tÈcnicas, o Usu·rio Externo somente visualizar· e editar· a seÁ„o Princial (Corpo do Texto) do modelo do Documento.', 'Ajuda') ?>
+                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo dever√° preencher um Documento de modelo pr√© definido, utilizando o Editor HTML do SEI. \n \n Neste caso, selecione Tipo de Documento parametrizado na Administra√ß√£o com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n ATEN√á√ÉO: por limita√ß√µes t√©cnicas, o Usu√°rio Externo somente visualizar√° e editar√° a se√ß√£o Princial (Corpo do Texto) do modelo do Documento.', 'Ajuda') ?>
                                             class="infraImg"/></label>
                             </div>
                             <div class="divDocumentoPrincipalExterno">
@@ -1156,10 +1105,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     value="2" <?php echo $externo ?> class="infraRadio"
                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <label name="lblDocExterno" id="lblDocExterno" for="rdDocExterno" class="infraLabelRadio">Externo
-                                    (AnexaÁ„o de
+                                    (Anexa√ß√£o de
                                     Arquivo) <img align="top"
                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo dever· anexar um Arquivo como Documento Principal, respeitadas as parametrizaÁıes na AdministraÁ„o > Peticionamento EletrÙnico > Extens„o de Arquivos Permitidos e Tamanho M·ximo de Arquivos.') ?>
+                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo dever√° anexar um Arquivo como Documento Principal, respeitadas as parametriza√ß√µes na Administra√ß√£o > Peticionamento Eletr√¥nico > Extens√£o de Arquivos Permitidos e Tamanho M√°ximo de Arquivos.') ?>
                                                 class="infraImg"/></label>
                             </div>
                         </div>
@@ -1211,7 +1160,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         dos
                         Documentos Essenciais: <img align="top"
                                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta opÁ„o n„o È obrigatÛria na parametrizaÁ„o, mas se for utilizada o Usu·rio Externo ser· obrigado a anexar um Arquivo como Documento Essencial para cada Tipo de Documento que for indicado aqui, respeitadas as parametrizaÁıes na AdministraÁ„o > Peticionamento EletrÙnico > Extens„o de Arquivos Permitidos e Tamanho M·ximo de Arquivos.', 'Ajuda') ?>
+                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta op√ß√£o n√£o √© obrigat√≥ria na parametriza√ß√£o, mas se for utilizada o Usu√°rio Externo ser√° obrigado a anexar um Arquivo como Documento Essencial para cada Tipo de Documento que for indicado aqui, respeitadas as parametriza√ß√µes na Administra√ß√£o > Peticionamento Eletr√¥nico > Extens√£o de Arquivos Permitidos e Tamanho M√°ximo de Arquivos.', 'Ajuda') ?>
                                                     class="infraImg"/></label>
                     <input type="text" id="txtSerieEssencial" name="txtSerieEssencial"
                             class="infraText form-control"
@@ -1262,7 +1211,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblDescricao" for="txtDescricao" class="infraLabelOpcional">Tipos dos Documentos
                         Complementares: <img align="top"
                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu·rio Externo n„o ser· obrigado a anexar nenhum Documento Complementar, utilizando-os para anexar Documentos que podem variar conforme cada caso, respeitadas as parametrizaÁıes na AdministraÁ„o > Peticionamento EletrÙnico > Extens„o de Arquivos Permitidos e Tamanho M·ximo de Arquivos. \n \n … boa pr·tica indicar o m·ximo de Tipos de Documentos neste campo.', 'Ajuda') ?>
+                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usu√°rio Externo n√£o ser√° obrigado a anexar nenhum Documento Complementar, utilizando-os para anexar Documentos que podem variar conforme cada caso, respeitadas as parametriza√ß√µes na Administra√ß√£o > Peticionamento Eletr√¥nico > Extens√£o de Arquivos Permitidos e Tamanho M√°ximo de Arquivos. \n \n √â boa pr√°tica indicar o m√°ximo de Tipos de Documentos neste campo.', 'Ajuda') ?>
                                                 class="infraImg"/></label>
                     <input type="text" id="txtSerie" name="txtSerie" class="infraText form-control"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>

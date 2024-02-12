@@ -14,7 +14,7 @@ try {
   switch ($_GET['acao']) {
 
     case 'md_pet_vinculacao_listar':
-        $strTitulo = 'Respons·vel Legal de Pessoa JurÌdica';
+        $strTitulo = 'Respons√°vel Legal de Pessoa Jur√≠dica';
         $objMdPetVincTpProcessoRN  = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retNumIdTipoProcedimento();
@@ -33,10 +33,10 @@ try {
 
   $arrComandos[] = '<button type="submit" accesskey="p" id="btnPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
   if(is_null($objMdPetVincUsuExtPj)) {
-      $jsAlerta = 'alert(\'Tipo de Processo para VinculaÁ„o de Usu·rio Externo n„o parametrizado. Contate o Administrador!\');';
-      $arrComandos[] = '<button type="button" accesskey="N" id="btnNovoResponsavelLegal" value="NovoResponsavelLegal" onclick="'.$jsAlerta. '" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo Respons·vel Legal</button>';
+      $jsAlerta = 'alert(\'Tipo de Processo para Vincula√ß√£o de Usu√°rio Externo n√£o parametrizado. Contate o Administrador!\');';
+      $arrComandos[] = '<button type="button" accesskey="N" id="btnNovoResponsavelLegal" value="NovoResponsavelLegal" onclick="'.$jsAlerta. '" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo Respons√°vel Legal</button>';
   }else{
-      $arrComandos[] = '<button type="button" accesskey="N" id="btnNovoResponsavelLegal" value="NovoResponsavelLegal" onclick="location.href=\'' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_cadastrar&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo Respons·vel Legal</button>';
+      $arrComandos[] = '<button type="button" accesskey="N" id="btnNovoResponsavelLegal" value="NovoResponsavelLegal" onclick="location.href=\'' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_cadastrar&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo Respons√°vel Legal</button>';
   }
   $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" onclick="window.history.back();" class="infraButton" >Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
@@ -133,24 +133,24 @@ PaginaSEIExterna::getInstance()->processarPaginacao($objMdPetVinculoDTO);
 if ($numRegistros > 0) {
 
   $strResultado = '';
-  $strSumarioTabela = 'VinculaÁ„o a Pessoas JurÌdicas como Respons·vel Legal';
-  $strCaptionTabela = 'VinculaÁ„o a Pessoas JurÌdicas como Respons·vel Legal';
+  $strSumarioTabela = 'Vincula√ß√£o a Pessoas Jur√≠dicas como Respons√°vel Legal';
+  $strCaptionTabela = 'Vincula√ß√£o a Pessoas Jur√≠dicas como Respons√°vel Legal';
   $strResultado .= '<table class="infraTable" summary="' . $strSumarioTabela . '" width="100%">';
   $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
 
   $strResultado .= '<tr>';
-  $strResultado .= '<th class="infraTh" align="center" style="min-width: 200px;">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'N˙mero do Processo', 'ProtocoloFormatado', $arrRegistro) . '</th>';
+  $strResultado .= '<th class="infraTh" align="center" style="min-width: 200px;">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'N√∫mero do Processo', 'ProtocoloFormatado', $arrRegistro) . '</th>';
   $strResultado .= '<th class="infraTh" align="center"  style="min-width: 160px;">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'CNPJ', 'CNPJ', $arrRegistro) . '</th>';
-  $strResultado .= '<th class="infraTh" align="center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Raz„o Social', 'RazaoSocialNomeVinc', $arrRegistro) . '</th>';
-  $strResultado .= '<th class="infraTh" align="center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Respons·vel Legal', 'NomeContatoRepresentante', $arrRegistro) .'</th>';
-  $strResultado .= '<th class="infraTh" align="center" style="min-width: 110px;">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'SituaÁ„o', 'StaEstado', $arrRegistro) .'</th>';
-  $strResultado .= '<th class="infraTh" align="center"  style="min-width: 90px;">AÁıes</th>';
+  $strResultado .= '<th class="infraTh" align="center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Raz√£o Social', 'RazaoSocialNomeVinc', $arrRegistro) . '</th>';
+  $strResultado .= '<th class="infraTh" align="center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Respons√°vel Legal', 'NomeContatoRepresentante', $arrRegistro) .'</th>';
+  $strResultado .= '<th class="infraTh" align="center" style="min-width: 110px;">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVinculoDTO, 'Situa√ß√£o', 'StaEstado', $arrRegistro) .'</th>';
+  $strResultado .= '<th class="infraTh" align="center"  style="min-width: 90px;">A√ß√µes</th>';
   $strResultado .= '</tr>';
 //Populando obj para tabela
 
   $arrStaTipoVinculo = [
     MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
-    MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Respons·vel Legal'
+    MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Respons√°vel Legal'
   ];
 
   $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
@@ -185,31 +185,31 @@ if ($numRegistros > 0) {
 
     $iconeAlterar = "";
     $strResultado .= '<tr class="infraTrClara">';
-    $strResultado .= '<td><a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');" alt="' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '" title="' . PaginaSEIExterna::tratarHTML($registro->getStrNomeTipoProcedimento()) . '" class="ancoraPadraoAzul">' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '</a></td>';
-    $strResultado .= '<td>' . InfraUtil::formatarCnpj($registro->getDblCNPJ()) . '</td>';
-    $strResultado .= '<td>' . PaginaSEI::tratarHTML($registro->getStrRazaoSocialNomeVinc()) . '</td>';
-    $strResultado .= '<td>' . $registro->getStrNomeContatoRepresentante() . '</td>';
+    $strResultado .= '<td class="text-center"><a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');" alt="' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '" title="' . PaginaSEIExterna::tratarHTML($registro->getStrNomeTipoProcedimento()) . '" class="ancoraPadraoAzul">' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '</a></td>';
+    $strResultado .= '<td class="text-center">' . InfraUtil::formatarCnpj($registro->getDblCNPJ()) . '</td>';
+    $strResultado .= '<td class="text-center">' . PaginaSEI::tratarHTML($registro->getStrRazaoSocialNomeVinc()) . '</td>';
+    $strResultado .= '<td class="text-center">' . $registro->getStrNomeContatoRepresentante() . '</td>';
 
-    $tpSit = $registro->getStrStaEstado();
-    if($tpSit == MdPetVincRepresentantRN::$RP_ATIVO){
-        $strSituacao = 'Ativa';
-    }else if($tpSit == MdPetVincRepresentantRN::$RP_SUSPENSO){
-        $strSituacao = 'Suspensa';
-    }else if($tpSit == MdPetVincRepresentantRN::$RP_REVOGADA){
-        $strSituacao = 'Revogada';
-    }else if($tpSit == MdPetVincRepresentantRN::$RP_RENUNCIADA){
-        $strSituacao = 'Renunciada';
-    } else if($tpSit == MdPetVincRepresentantRN::$RP_VENCIDA){
-        $strSituacao = 'Vencida';
-    }
-    $strResultado .= '<td>' . $strSituacao . '</td>';
+	$strSituacao = '';
+
+	switch ($registro->getStrStaEstado()) {
+		case MdPetVincRepresentantRN::$RP_ATIVO: $strSituacao = 'Ativa'; break;
+		case MdPetVincRepresentantRN::$RP_SUSPENSO: $strSituacao = 'Suspensa'; break;
+		case MdPetVincRepresentantRN::$RP_REVOGADA: $strSituacao = 'Revogada'; break;
+		case MdPetVincRepresentantRN::$RP_RENUNCIADA: $strSituacao = 'Renunciada'; break;
+		case MdPetVincRepresentantRN::$RP_VENCIDA: $strSituacao = 'Vencida'; break;
+		case MdPetVincRepresentantRN::$RP_SUBSTITUIDA: $strSituacao = 'Substitu√≠da'; break;
+		case MdPetVincRepresentantRN::$RP_INATIVO: $strSituacao = 'Inativa'; break;
+	}
+
+    $strResultado .= '<td class="text-center">'. $strSituacao . '</td>';
 
     $strResultado .= '<input type="hidden" value="'.$url.'" id="urlLinkDesativar'.$registro->getNumIdMdPetVinculoRepresent().'"/>';
-    $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Cadastro da Pessoa JurÌdica" alt="Consultar Cadastro da Pessoa JurÌdica" class="infraImg" /></a>';
+    $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Cadastro da Pessoa Jur√≠dica" alt="Consultar Cadastro da Pessoa Jur√≠dica" class="infraImg" /></a>';
     if($registro->getStrTipoRepresentante()==MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL && $registro->getStrStaEstado()==MdPetVincRepresentantRN::$RP_ATIVO) {
-        $iconeAlterar = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_vinculo=' . $registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Atualizar Atos Constitutivos da Pessoa JurÌdica" alt="Atualizar Atos Constitutivos da Pessoa JurÌdica" class="infraImg" /></a>';
+        $iconeAlterar = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_vinculo=' . $registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Atualizar Atos Constitutivos da Pessoa Jur√≠dica" alt="Atualizar Atos Constitutivos da Pessoa Jur√≠dica" class="infraImg" /></a>';
     }
-    $strResultado .= '<td>' . $iconeConsulta . $iconeAlterar . '</td>';
+    $strResultado .= '<td class="text-center">' . $iconeConsulta . $iconeAlterar . '</td>';
     $strResultado .= '</tr>';
 
   }
@@ -248,7 +248,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
       <div class="form-group">
         <label id="lblNumeroProcesso"
                for="txtNumeroProcesso"
-               class="infraLabelOpcional">N˙mero do Processo:</label>
+               class="infraLabelOpcional">N√∫mero do Processo:</label>
         <input type="text"
                id="txtNumeroProcesso"
                name="txtNumeroProcesso"

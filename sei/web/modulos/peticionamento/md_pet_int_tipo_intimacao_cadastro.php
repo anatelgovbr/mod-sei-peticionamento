@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 08/12/2016 - criado por Marcelo Bezerra - CAST
  *
- * Vers„o do Gerador de CÛdigo: 1.39.0
+ * Vers√£o do Gerador de C√≥digo: 1.39.0
  *
  */
 try {
@@ -33,7 +33,7 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_pet_int_tipo_intimacao_cadastrar':
-            $strTitulo = 'Novo Tipo de IntimaÁ„o EletrÙnica ';
+            $strTitulo = 'Novo Tipo de Intima√ß√£o Eletr√¥nica ';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarMdPetIntTipoIntimacao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -64,7 +64,7 @@ try {
             break;
 
         case 'md_pet_int_tipo_intimacao_alterar':
-            $strTitulo = 'Alterar Tipo de IntimaÁ„o EletrÙnica';
+            $strTitulo = 'Alterar Tipo de Intima√ß√£o Eletr√¥nica';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarMdPetIntTipoIntimacao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $strDesabilitar = 'disabled="disabled"';
 
@@ -78,7 +78,7 @@ try {
                 $objMdPetIntTipoIntimacaoDTO = $objMdPetIntTipoIntimacaoRN->consultar($objMdPetIntTipoIntimacaoDTO);
 
                 if ($objMdPetIntTipoIntimacaoDTO == null) {
-                    throw new InfraException("Registro n„o encontrado.");
+                    throw new InfraException("Registro n√£o encontrado.");
                 }
             } else {
                 $strTipoResposta = $_POST['hdnTipoResposta'];
@@ -110,7 +110,7 @@ try {
             break;
 
         case 'md_pet_int_tipo_intimacao_consultar':
-            $strTitulo = 'Consultar Tipo de IntimaÁ„o EletrÙnica';
+            $strTitulo = 'Consultar Tipo de Intima√ß√£o Eletr√¥nica';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_md_pet_int_tipo_intimacao'])) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
             $objMdPetIntTipoIntimacaoDTO->setNumIdMdPetIntTipoIntimacao($_GET['id_md_pet_int_tipo_intimacao']);
             $objMdPetIntTipoIntimacaoDTO->setBolExclusaoLogica(false);
@@ -119,12 +119,12 @@ try {
             $objMdPetIntTipoIntimacaoDTO = $objMdPetIntTipoIntimacaoRN->consultar($objMdPetIntTipoIntimacaoDTO);
             $strEmailAcoes = 'false, false';
             if ($objMdPetIntTipoIntimacaoDTO === null) {
-                throw new InfraException("Registro n„o encontrado.");
+                throw new InfraException("Registro n√£o encontrado.");
             }
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
     if ($_GET['acao'] === 'md_pet_int_tipo_intimacao_alterar' || $_GET['acao'] === 'md_pet_int_tipo_intimacao_consultar') {
@@ -139,13 +139,13 @@ try {
         $arrTiposResposta = array();
         foreach ($arrMdPetIntRelIntimRespDTO as $arrDados) {
             if ($arrDados->getStrTipoPrazoExternoMdPetIntTipoResp() == 'N') {
-                $prazo = 'N„o Possui Prazo Externo';
+                $prazo = 'N√£o Possui Prazo Externo';
             } else if ($arrDados->getStrTipoPrazoExternoMdPetIntTipoResp() == 'D') {
                 $tipoDia = null;
                 if ($arrDados->getStrTipoDia() == 'U') {
-                    $tipoDia = '⁄til';
+                    $tipoDia = '√ötil';
                     if ($arrDados->getNumValorPrazoExternoMdPetIntTipoResp() > 1) {
-                        $tipoDia = '⁄teis';
+                        $tipoDia = '√öteis';
                     }
                 }
                 $prazo = $arrDados->getNumValorPrazoExternoMdPetIntTipoResp() . ' Dias ' . $tipoDia;
@@ -200,11 +200,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('4em'); ?>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                 <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decis„o que motiva a intimaÁ„o e n„o a possÌvel resposta do Usu·rio Externo. \n \n Exemplos: Descis„o de 1™ Inst‚ncia, Decis„o de Inadmissibilidade de Recurso, ExigÍncia para ComplementaÁ„o de InformaÁıes, Decis„o sobre Recurso.', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decis√£o que motiva a intima√ß√£o e n√£o a poss√≠vel resposta do Usu√°rio Externo. \n \n Exemplos: Descis√£o de 1¬™ Inst√¢ncia, Decis√£o de Inadmissibilidade de Recurso, Exig√™ncia para Complementa√ß√£o de Informa√ß√µes, Decis√£o sobre Recurso.', 'Ajuda') ?>
                          class="infraImgModulo"/></label>
                 <input type="text" id="txtNome" name="txtNome" class="infraTex form-control"
                        value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoIntimacaoDTO->getStrNome()); ?>"
@@ -212,10 +212,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
-                <fieldset id="fldResposta" class="form-control fieldsetTipoResposta" style="height: auto">
-                    <legend class="infraLegend"> Tipo de IntimaÁ„o Aceita Tipo de Resposta</legend>
+                <fieldset id="fldResposta" class="infraFieldset" style="height: auto">
+                    <legend class="infraLegend"> Tipo de Intima√ß√£o Aceita Tipo de Resposta</legend>
                     <div id="divOptAno" class="infraDivRadio">
                 <span id="spnAno"><label id="lblAno" class="infraLabelRadio">
                     <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta"
@@ -249,7 +249,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     Resposta:
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('… possÌvel indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usu·rio Externo. \n \n Somente È possÌvel indicar um Tipo de Resposta que Exige Resposta pelo Usu·rio Externo.', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('√â poss√≠vel indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usu√°rio Externo. \n \n Somente √© poss√≠vel indicar um Tipo de Resposta que Exige Resposta pelo Usu√°rio Externo.', 'Ajuda') ?>
                          class="infraImgModulo"/></label>
                 <div class="input-group mb-3">
                     <select id="selTipoResposta" name="selTipoResposta" class="infraSelect form-control"
@@ -269,12 +269,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <table id="tblTipoResposta" width="85%" class="infraTable" summary="Lista de Tipos de Respostas">
                     <caption class="infraCaption"> Lista de Tipos de Respostas</caption>
                     <tr>
-                        <th style="display:none;">ID</th>
-                        <th style="display:none;">VINCULADO</th>
-                        <th class="infraTh" width="60%">Tipo de Resposta</th>
-                        <th class="infraTh" width="20px">Prazo Externo</th>
-                        <th class="infraTh" width="25px">Resposta do Usu·rio Externo</th>
-                        <th class="infraTh" width="15px">AÁıes</th>
+                        <th align="center" style="display:none;">ID</th>
+                        <th align="center" style="display:none;">VINCULADO</th>
+                        <th align="center" class="infraTh" width="60%">Tipo de Resposta</th>
+                        <th align="center" class="infraTh" width="20px">Prazo Externo</th>
+                        <th align="center" class="infraTh" width="25px">Resposta do Usu√°rio Externo</th>
+                        <th align="center" class="infraTh" width="15px">A√ß√µes</th>
                     </tr>
                 </table>
                 <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>

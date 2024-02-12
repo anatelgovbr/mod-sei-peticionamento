@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 08/12/2016 - criado por Marcelo Bezerra - CAST
  *
- * Versão do Gerador de Código: 1.39.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.39.0
  */
 try {
     require_once dirname(__FILE__) . '/../../SEI.php';
@@ -34,7 +34,7 @@ try {
                 }
                 $objMdPetIntTipoIntimacaoRN = new MdPetIntTipoIntimacaoRN();
                 $objMdPetIntTipoIntimacaoRN->excluir($arrObjMdPetIntTipoIntimacaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -53,7 +53,7 @@ try {
                 }
                 $objMdPetIntTipoIntimacaoRN = new MdPetIntTipoIntimacaoRN();
                 $objMdPetIntTipoIntimacaoRN->desativar($arrObjMdPetIntTipoIntimacaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -76,7 +76,7 @@ try {
                     }
                     $objMdPetIntTipoIntimacaoRN = new MdPetIntTipoIntimacaoRN();
                     $objMdPetIntTipoIntimacaoRN->reativar($arrObjMdPetIntTipoIntimacaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
@@ -92,7 +92,7 @@ try {
             break;
 
         case 'md_pet_int_tipo_intimacao_selecionar':
-            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Tipos de Intimação Eletrônica', 'Selecionar Tipo de Intimação Eletrônica');
+            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Tipos de IntimaÃ§Ã£o EletrÃ´nica', 'Selecionar Tipo de IntimaÃ§Ã£o EletrÃ´nica');
 
             //Se cadastrou alguem
             if ($_GET['acao_origem'] == 'md_pet_int_tipo_intimacao_cadastrar') {
@@ -103,22 +103,22 @@ try {
             break;
 
         case 'md_pet_int_tipo_intimacao_listar':
-            $strTitulo = 'Tipos de Intimação Eletrônica';
+            $strTitulo = 'Tipos de IntimaÃ§Ã£o EletrÃ´nica';
             break;
 
         case 'md_pet_int_tipo_intimacao_selecionar ':
-            $strTitulo = 'Selecionar Tipos de Intimação Eletrônica';
+            $strTitulo = 'Selecionar Tipos de IntimaÃ§Ã£o EletrÃ´nica';
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
     $arrComandos = array();
     if ($_GET['acao'] == 'md_pet_int_tipo_intimacao_listar') {
         $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('md_pet_int_tipo_intimacao_cadastrar');
         $arrComandos[] = '<button type="submit" accesskey="P" id="sbmPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
-        $arrComandos[] = '<button type="button" accesskey="O" id="btnOrientacao" value="Orientacoes" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_orientacoes_tipo_destinatario&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">O</span>rientações Tipo de Destinatário</button>';
+        $arrComandos[] = '<button type="button" accesskey="O" id="btnOrientacao" value="Orientacoes" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_orientacoes_tipo_destinatario&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">O</span>rientaÃ§Ãµes Tipo de DestinatÃ¡rio</button>';
         $arrComandos[] = '<button type="button" accesskey="T" id="btnNovo" value="Novo" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_resp_listar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">T</span>ipos de Resposta</button>';
         if ($bolAcaoCadastrar) {
             $arrComandos[] = '<button type="button" accesskey="N" id="btnNov" value="Nov" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo</button>';
@@ -180,7 +180,7 @@ try {
             $bolAcaoExcluir = SessaoSEI::getInstance()->verificarPermissao('md_pet_int_tipo_intimacao_excluir');
             $bolAcaoDesativar = false;
         } else {
-            $strTitulo = 'Tipos de Intimação Eletrônica';
+            $strTitulo = 'Tipos de IntimaÃ§Ã£o EletrÃ´nica';
             $bolAcaoReativar = true;
             $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('md_pet_int_tipo_intimacao_consultar');
             $bolAcaoAlterar = SessaoSEI::getInstance()->verificarPermissao('md_pet_int_tipo_intimacao_alterar');
@@ -213,7 +213,7 @@ try {
 
         if ($_GET['acao'] != 'md_pet_int_tipo_intimacao_reativar') {
             $strSumarioTabela = 'Tabela de .';
-            $strCaptionTabela = 'Tipos de Intimação Eletrônica';
+            $strCaptionTabela = 'Tipos de IntimaÃ§Ã£o EletrÃ´nica';
         } else {
             $strSumarioTabela = 'Tabela de  Inativs.';
             $strCaptionTabela = ' Inativs';
@@ -225,9 +225,9 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoIntimacaoDTO, 'Tipo de Intimação Eletrônica', 'Nome', $arrObjMdPetIntTipoIntimacaoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" align="left" style="text-align: left" width="250">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoIntimacaoDTO, 'Tipo de IntimaÃ§Ã£o EletrÃ´nica', 'Nome', $arrObjMdPetIntTipoIntimacaoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" style="text-align: left; padding-left: 6px;">Tipo de Resposta</th>' . "\n";
-        $strResultado .= '<th class="infraTh">Ações</th>' . "\n";
+        $strResultado .= '<th class="infraTh">AÃ§Ãµes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
 
@@ -265,21 +265,21 @@ try {
             } else if (!empty($arrObjMdPetIntRelIntimRespDTO)) {
                 for ($x = 0; $x < count($arrObjMdPetIntRelIntimRespDTO); $x++) {
                     if ($arrObjMdPetIntRelIntimRespDTO[$x]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'N') {
-                        $prazo = '(Não Possui Prazo Externo)';
+                        $prazo = '(NÃ£o Possui Prazo Externo)';
                     } else {
                         $prazo = '(' . $arrObjMdPetIntRelIntimRespDTO[$x]->getNumValorPrazoExternoMdPetIntTipoResp();
                         if ($arrObjMdPetIntRelIntimRespDTO[$x]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'D') {
                             $tipoDia = null;
                             if ($arrObjMdPetIntRelIntimRespDTO[$x]->getStrTipoDia() == 'U') {
                                 if ($arrObjMdPetIntRelIntimRespDTO[$x]->getNumValorPrazoExternoMdPetIntTipoResp() > 1) {
-                                    $tipoDia = ' Úteis';
+                                    $tipoDia = ' Ãšteis';
                                 } else {
-                                    $tipoDia = ' Útil';
+                                    $tipoDia = ' Ãštil';
                                 }
                             }
                             $prazo .= $arrObjMdPetIntRelIntimRespDTO[$x]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ? ' Dias' . $tipoDia . ')' : ' Dia' . $tipoDia . ')';
                         } else if ($arrObjMdPetIntRelIntimRespDTO[$x]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'M') {
-                            $prazo .= $arrObjMdPetIntRelIntimRespDTO[$x]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ? ' Meses)' : ' Mês)';
+                            $prazo .= $arrObjMdPetIntRelIntimRespDTO[$x]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ? ' Meses)' : ' MÃªs)';
                         } else if ($arrObjMdPetIntRelIntimRespDTO[$x]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'A') {
                             $prazo .= $arrObjMdPetIntRelIntimRespDTO[$x]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ? ' Anos)' : ' Ano)';
                         }
@@ -305,8 +305,8 @@ try {
                     $strTipoRespostaComplemento = "Facultativa";
                 }
 
-                $montaSelectTipoResposta[9999] = 'Múltiplos';
-                $linha .= 'Múltiplos - ' . $strTipoRespostaComplemento;
+                $montaSelectTipoResposta[9999] = 'MÃºltiplos';
+                $linha .= 'MÃºltiplos - ' . $strTipoRespostaComplemento;
             }
 
             $linha .= '</td>';
@@ -314,11 +314,11 @@ try {
             $linha .= PaginaSEI::getInstance()->getAcaoTransportarItem($i, $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao());
 
             if ($bolAcaoConsultar) {
-                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Tipo de Intimação Eletronica" alt="Consultar " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Tipo de IntimaÃ§Ã£o Eletronica" alt="Consultar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar Tipo de Intimação Eletronica" alt="Alterar " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_tipo_intimacao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_int_tipo_intimacao=' . $arrObjMdPetIntTipoIntimacaoDTO[$i]->getNumIdMdPetIntTipoIntimacao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar Tipo de IntimaÃ§Ã£o Eletronica" alt="Alterar " class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -327,15 +327,15 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIntTipoIntimacaoDTO[$i]->getStrSinAtivo() == 'S') {
-                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar Tipo de Intimação Eletronica" alt="Desativar " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar Tipo de IntimaÃ§Ã£o Eletronica" alt="Desativar " class="infraImg" /></a>&nbsp;';
             } else {
                 if ($bolAcaoReativar) {
-                    $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar Tipo de Intimação Eletronica" alt="Reativar " class="infraImg" /></a>&nbsp;';
+                    $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar Tipo de IntimaÃ§Ã£o Eletronica" alt="Reativar " class="infraImg" /></a>&nbsp;';
                 }
             }
 
             if ($bolAcaoExcluir) {
-                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir Tipo de Intimação Eletronica" alt="Excluir " class="infraImg" /></a>&nbsp;';
+                $linha .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir Tipo de IntimaÃ§Ã£o Eletronica" alt="Excluir " class="infraImg" /></a>&nbsp;';
             }
 
             $linha .= '</td></tr>' . "\n";
@@ -394,7 +394,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
                 <label id="lblTipoIntimacao" for="txtTipoIntimacao" accesskey=""
-                       class="infraLabelOpcional">Tipo de Intimação:</label>
+                       class="infraLabelOpcional">Tipo de IntimaÃ§Ã£o:</label>
                 <input type="text" id="txtTipoIntimacao" name="txtTipoIntimacao"
                        class="infraText form-control" maxlength="100"
                        value="<? echo(PaginaSEI::tratarHTML($_POST['txtTipoIntimacao']) != '' ? PaginaSEI::tratarHTML($_POST['txtTipoIntimacao']) : '') ?>"

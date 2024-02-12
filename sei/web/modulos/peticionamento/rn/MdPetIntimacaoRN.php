@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 14/03/2017 - criado por pedro.cast
  *
- * Versão do Gerador de Código: 1.40.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.40.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -12,14 +12,14 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetIntimacaoRN extends InfraRN
 {
 
-    //Id Tarefa Módulo
+    //Id Tarefa MÃ³dulo
     public static $ID_TAREFA_MODULO_CADASTRO_INTIMACAO = 'MD_PET_INTIMACAO_EXPEDIDA';
 
     //tipo acesso externo
     public static $TIPO_ACESSO_EXTERNO_INTEGRAL = 'I';
     public static $TIPO_ACESSO_EXTERNO_PARCIAL = 'P';
 
-    //Id Situação Intimação
+    //Id SituaÃ§Ã£o IntimaÃ§Ã£o
     public static $INTIMACAO_PENDENTE = '1';
     public static $INTIMACAO_CUMPRIDA_PRAZO = '2';
     public static $INTIMACAO_CUMPRIDA_POR_ACESSO = '3';
@@ -27,31 +27,31 @@ class MdPetIntimacaoRN extends InfraRN
     public static $INTIMACAO_PRAZO_VENCIDO = '5';
     public static $TODAS = '6';
 
-    //String Situação Intimação
+    //String SituaÃ§Ã£o IntimaÃ§Ã£o
     public static $STR_INTIMACAO_PENDENTE = 'Pendente';
-    public static $STR_INTIMACAO_CUMPRIDA_PRAZO = 'Cumprida por Decurso do Prazo Tácito';
+    public static $STR_INTIMACAO_CUMPRIDA_PRAZO = 'Cumprida por Decurso do Prazo TÃ¡cito';
     public static $STR_INTIMACAO_CUMPRIDA_POR_ACESSO = 'Cumprida por Consulta Direta';
     public static $STR_INTIMACAO_RESPONDIDA = 'Respondida';
     public static $STR_INTIMACAO_PRAZO_VENCIDO = 'Pendente de Resposta com Prazo Externo Vencido';
     public static $STR_TODAS = 'Todas';
-    public static $STR_SITUACAO_NAO_CADASTRADA = 'Situação não cadastrada';
+    public static $STR_SITUACAO_NAO_CADASTRADA = 'SituaÃ§Ã£o nÃ£o cadastrada';
 
-    //TP = Tipo de Aceite da Intimação
+    //TP = Tipo de Aceite da IntimaÃ§Ã£o
     public static $TP_AUTOMATICO_POR_DECURSO_DE_PRAZO = 'A';
     public static $TP_MANUAL_USUARIO_EXTERNO_ACEITE = 'U';
 
     //Utilizado para Lancamento do Andamento no Processo
     public static $STR_TP_CUMPRIMENTO_LANC_ACESSO_DIRETO = 'consulta direta';
-    public static $STR_TP_MANUAL_USUARIO_EXTERNO_ACEITE = 'decurso do prazo tácito';
+    public static $STR_TP_MANUAL_USUARIO_EXTERNO_ACEITE = 'decurso do prazo tÃ¡cito';
 
-    //String Situação Intimação Aceite
+    //String SituaÃ§Ã£o IntimaÃ§Ã£o Aceite
     public static $STR_INTIMACAO_PENDENTE_ACEITE = 'Pendente';
-    public static $STR_INTIMACAO_CUMPRIDA_PRAZO_ACEITE = 'Por Decurso do Prazo Tácito';
+    public static $STR_INTIMACAO_CUMPRIDA_PRAZO_ACEITE = 'Por Decurso do Prazo TÃ¡cito';
     public static $STR_INTIMACAO_CUMPRIDA_POR_ACESSO_ACEITE = 'Consulta Direta';
     public static $STR_INTIMACAO_RESPONDIDA_ACEITE = 'Respondida';
     public static $STR_INTIMACAO_PRAZO_VENCIDO_ACEITE = 'Pendente de Resposta com Prazo Externo Vencido';
     public static $STR_TODAS_ACEITE = 'Todas';
-    public static $STR_SITUACAO_NAO_CADASTRADA_ACEITE = 'Situação não cadastrada';
+    public static $STR_SITUACAO_NAO_CADASTRADA_ACEITE = 'SituaÃ§Ã£o nÃ£o cadastrada';
 
     public function __construct()
     {
@@ -66,14 +66,14 @@ class MdPetIntimacaoRN extends InfraRN
     private function validarNumIdMdPetIntTipoIntimacao(MdPetIntimacaoDTO $objMdPetIntimacaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao())) {
-            $objInfraException->adicionarValidacao('Tipo de Intimacao não informado.');
+            $objInfraException->adicionarValidacao('Tipo de Intimacao nÃ£o informado.');
         }
     }
 
     private function validarStrSinTipoAcessoProcesso(MdPetIntimacaoDTO $objMdPetIntimacaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntimacaoDTO->getStrSinTipoAcessoProcesso())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Tipo de Acesso não informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Tipo de Acesso nÃ£o informado.');
         }
     }
 
@@ -100,7 +100,7 @@ class MdPetIntimacaoRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Intimação.', $e);
+            throw new InfraException('Erro cadastrando IntimaÃ§Ã£o.', $e);
         }
     }
 
@@ -129,7 +129,7 @@ class MdPetIntimacaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Intimação.', $e);
+            throw new InfraException('Erro alterando IntimaÃ§Ã£o.', $e);
         }
     }
 
@@ -153,7 +153,7 @@ class MdPetIntimacaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Intimação.', $e);
+            throw new InfraException('Erro excluindo IntimaÃ§Ã£o.', $e);
         }
     }
 
@@ -176,7 +176,7 @@ class MdPetIntimacaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Intimação.', $e);
+            throw new InfraException('Erro consultando IntimaÃ§Ã£o.', $e);
         }
     }
 
@@ -200,7 +200,7 @@ class MdPetIntimacaoRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Intimações.', $e);
+            throw new InfraException('Erro listando IntimaÃ§Ãµes.', $e);
         }
     }
 
@@ -223,7 +223,7 @@ class MdPetIntimacaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Intimações.', $e);
+            throw new InfraException('Erro contando IntimaÃ§Ãµes.', $e);
         }
     }
 
@@ -267,7 +267,7 @@ class MdPetIntimacaoRN extends InfraRN
 
         $objMdPetIntimacaoDTO = $this->consultar($objMdPetIntimacaoDTO);
 
-        //Get Data Intimação
+        //Get Data IntimaÃ§Ã£o
         $objMdPetIntDestinatarioRN = new MdPetIntRelDestinatarioRN();
         $objMdDestDTO = $objMdPetIntDestinatarioRN->consultarDadosIntimacao($id_intimacao, true, $id_contato);
         $dtIntimacao = $objMdDestDTO->getDthDataCadastro();
@@ -292,7 +292,7 @@ class MdPetIntimacaoRN extends InfraRN
         $tiposResposta = MdPetIntTipoIntimacaoINT::montaSelectTipoRespostaIntimacao($objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(), false);
         $strSelect = '';
         foreach ($tiposResposta as $id => $tipoResposta) {
-            $tipoResposta = explode('±', $tipoResposta);
+            $tipoResposta = explode('Â±', $tipoResposta);
             $checked = '';
             foreach ($objMdPetIntRelTipoRespDTO as $objTipoResposta) {
                 if ($tipoResposta[0] == $objTipoResposta->getNumIdMdPetIntTipoResp()) {
@@ -301,7 +301,7 @@ class MdPetIntimacaoRN extends InfraRN
             }
         }
 
-        //Busca Documentos da Intimação
+        //Busca Documentos da IntimaÃ§Ã£o
         $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
         $objMdPetIntDocumentoDTO->retTodos(null);
         $objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao($id_intimacao);
@@ -400,7 +400,7 @@ class MdPetIntimacaoRN extends InfraRN
 
         $objMdPetIntimacaoDTO = $this->consultar($objMdPetIntimacaoDTO);
 
-        //Get Data Intimação
+        //Get Data IntimaÃ§Ã£o
         $objMdPetIntDestinatarioRN = new MdPetIntRelDestinatarioRN();
         $objMdDestDTO = $objMdPetIntDestinatarioRN->consultarDadosIntimacaoPorDestinario($id_intimacao, true, $id_contato);
         $dtIntimacao = $objMdDestDTO->getDthDataCadastro();
@@ -425,7 +425,7 @@ class MdPetIntimacaoRN extends InfraRN
         $tiposResposta = MdPetIntTipoIntimacaoINT::montaSelectTipoRespostaIntimacao($objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(), false);
         $strSelect = '';
         foreach ($tiposResposta as $id => $tipoResposta) {
-            $tipoResposta = explode('±', $tipoResposta);
+            $tipoResposta = explode('Â±', $tipoResposta);
             $checked = '';
             foreach ($objMdPetIntRelTipoRespDTO as $objTipoResposta) {
                 if ($tipoResposta[0] == $objTipoResposta->getNumIdMdPetIntTipoResp()) {
@@ -434,7 +434,7 @@ class MdPetIntimacaoRN extends InfraRN
             }
         }
 
-        //Busca Documentos da Intimação
+        //Busca Documentos da IntimaÃ§Ã£o
         $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
         $objMdPetIntDocumentoDTO->retTodos(null);
         $objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao($id_intimacao);
@@ -597,7 +597,7 @@ class MdPetIntimacaoRN extends InfraRN
 
     public function retornaArrDocumentosAnexosIntimacaoConectado($idIntimacao){
 
-        //Busca Documentos Anexos da Intimação
+        //Busca Documentos Anexos da IntimaÃ§Ã£o
         $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
         $objMdPetIntDocumentoDTO->retTodos(null);
         $objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao((array)$idIntimacao, InfraDTO::$OPER_IN);
@@ -639,7 +639,7 @@ class MdPetIntimacaoRN extends InfraRN
         $cpfs = $arr[6];
         $tooltipACG = $arr[7];
 
-        $ToolTipTitulo = 'Intimação Eletrônica';
+        $ToolTipTitulo = 'IntimaÃ§Ã£o EletrÃ´nica';
 
         $ToolTipText = 'Expedida em ';
         $ToolTipText .= $dtIntimacao . ' ';
@@ -648,7 +648,7 @@ class MdPetIntimacaoRN extends InfraRN
         if ($docNum) {
             $ToolTipText .= $docNum . ' ';
         }
-        $ToolTipText .= '(SEI nº ';
+        $ToolTipText .= '(SEI nÂº ';
         $ToolTipText .= $docFormat;
         $ToolTipText .= ')';
         if ($anexo == 'N') {
@@ -656,7 +656,7 @@ class MdPetIntimacaoRN extends InfraRN
         }
 
         if ($cnpjs || $cpfs) {
-            $ToolTipText .= '<br/><br/>Destinatários:<br/>';
+            $ToolTipText .= '<br/><br/>DestinatÃ¡rios:<br/>';
             if ($cnpjs) {
                 foreach ($cnpjs as $emp) {
                     $ToolTipText .= $emp . '<br/>';
@@ -670,8 +670,8 @@ class MdPetIntimacaoRN extends InfraRN
             }
         }
 
-        $ToolTipText .= "<br />Clique para consultar a Intimação e liberar o acesso aos documentos.";
-        //Caso essa intimação tenha texto de tooltip aguardando cumprimento geral é adicionado o mesmo
+        $ToolTipText .= "<br />Clique para consultar a IntimaÃ§Ã£o e liberar o acesso aos documentos.";
+        //Caso essa intimaÃ§Ã£o tenha texto de tooltip aguardando cumprimento geral Ã© adicionado o mesmo
         // no tooltip geral do cumprir
         if (!is_null($tooltipACG)) {
             $ToolTipText .= "<br><br>" . $tooltipACG;
@@ -682,7 +682,7 @@ class MdPetIntimacaoRN extends InfraRN
 
     public function getTextoTolTipIntimacaoEletronicaVinculoInativo($dtIntimacao, $docFormat, $docTipo, $docNum, $anexo, $idContatoRepresentante, $idContatoVinculo, $arrPessoaJuridica, $arrPessoaFisica)
     {
-        $ToolTipTitle = 'Intimação Eletrônica';
+        $ToolTipTitle = 'IntimaÃ§Ã£o EletrÃ´nica';
         $toolTipText = 'Expedida em ';
         $toolTipText .= $dtIntimacao . ' ';
         $toolTipText .= '<br/>Documento Principal: ';
@@ -690,7 +690,7 @@ class MdPetIntimacaoRN extends InfraRN
         if ($docNum) {
             $toolTipText .= $docNum . ' ';
         }
-        $toolTipText .= '(SEI nº ';
+        $toolTipText .= '(SEI nÂº ';
         $toolTipText .= $docFormat;
         $toolTipText .= ')';
         if ($anexo == 'N') {
@@ -698,7 +698,7 @@ class MdPetIntimacaoRN extends InfraRN
         }
 
         if (!is_null($arrPessoaJuridica) || !is_null($arrPessoaFisica)) {
-            $toolTipText .= '<br/><br/>Destinatários:<br/>';
+            $toolTipText .= '<br/><br/>DestinatÃ¡rios:<br/>';
             if ($arrPessoaJuridica) {
                 foreach ($arrPessoaJuridica as $emp) {
                     $toolTipText .= $emp . '<br/>';
@@ -712,7 +712,7 @@ class MdPetIntimacaoRN extends InfraRN
             }
         }
 
-        $toolTipText .= '<br />Você não possui mais permissão para cumprir a Intimação Eletrônica. Verifique seus Poderes de Representação.';
+        $toolTipText .= '<br />VocÃª nÃ£o possui mais permissÃ£o para cumprir a IntimaÃ§Ã£o EletrÃ´nica. Verifique seus Poderes de RepresentaÃ§Ã£o.';
 
         return array($ToolTipTitle, $toolTipText);
     }
@@ -729,7 +729,7 @@ class MdPetIntimacaoRN extends InfraRN
         $cpfs = $arr[6];
         $tooltipACG = $arr[7];
 
-        $ToolTipTitle = 'Intimação Eletrônica';
+        $ToolTipTitle = 'IntimaÃ§Ã£o EletrÃ´nica';
         $ToolTipText = 'Cumprida em: ';
         $ToolTipText .= $dtIntimacao . ' ';
         $ToolTipText .= '<br/>Documento Principal: ';
@@ -737,7 +737,7 @@ class MdPetIntimacaoRN extends InfraRN
         if ($docNum) {
             $ToolTipText .= $docNum . ' ';
         }
-        $ToolTipText .= '(SEI nº ';
+        $ToolTipText .= '(SEI nÂº ';
         $ToolTipText .= $docFormat;
         $ToolTipText .= ')';
         if ($anexo == 'N') {
@@ -745,7 +745,7 @@ class MdPetIntimacaoRN extends InfraRN
         }
 
         if ($cnpjs || $cpfs) {
-            $ToolTipText .= '<br/><br/>Destinatários:<br/>';
+            $ToolTipText .= '<br/><br/>DestinatÃ¡rios:<br/>';
             if ($cnpjs) {
                 foreach ($cnpjs as $emp) {
                     $ToolTipText .= $emp . '<br/>';
@@ -759,9 +759,9 @@ class MdPetIntimacaoRN extends InfraRN
             }
         }
 
-        // Caso essa intimação tenha texto de tooltip aguardando cumprimento geral é adicionado o mesmo no tooltip geral do cumprir
+        // Caso essa intimaÃ§Ã£o tenha texto de tooltip aguardando cumprimento geral Ã© adicionado o mesmo no tooltip geral do cumprir
         if (!is_null($tooltipACG)) {
-            $ToolTipText .= "<br />Clique para consultar a Intimação e liberar o acesso aos documentos.";
+            $ToolTipText .= "<br />Clique para consultar a IntimaÃ§Ã£o e liberar o acesso aos documentos.";
             $ToolTipText .= "<br><br>" . $tooltipACG;
         }else{
             $ToolTipText .= '<br/>Acesse o documento liberado.';
@@ -880,7 +880,7 @@ class MdPetIntimacaoRN extends InfraRN
         //nao aplicando metodo alterar da RN de Documento por conta de regras de negocio muito especificas aplicadas ali
         $documentoDTO->setStrSinBloqueado('S');
         $documentoBD->alterar($documentoDTO);
-        //remover a liberação de acesso externo //AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
+        //remover a liberaÃ§Ã£o de acesso externo //AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
     }
 
     private function _cadastrarObjIntimacao($dadosCadastro)
@@ -938,7 +938,7 @@ class MdPetIntimacaoRN extends InfraRN
         return $objDocumentoDTO;
     }
 
-    //bloquear (caneta preta) o doc principal da intimação
+    //bloquear (caneta preta) o doc principal da intimaÃ§Ã£o
     private function _bloquearDocIntimacao($idProtocolo)
     {
         $objDocDTO = new DocumentoDTO();
@@ -988,6 +988,24 @@ class MdPetIntimacaoRN extends InfraRN
         $objMdPetAcessoExtRN = new MdPetAcessoExternoRN();
 
         $arrHdnDadosUsuario = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dadosCadastro['hdnDadosUsuario']);
+
+        // Destinatarios em massa: Recebendo e complementando os dados do novo array
+        if(isset($dadosCadastro['hdnDadosUsuario2']) && !empty($dadosCadastro['hdnDadosUsuario2'])){
+
+            $hdnDadosUsuario2 = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dadosCadastro['hdnDadosUsuario2']); // Monta array ['IdContato', 'Nome-email-cpf']
+            $arrayNormalizado = [];
+
+            // Normaliza array para PF ['IdContato', 'Nome', 'Email', 'Cpf', 'Data', 'Situacao']
+            foreach($hdnDadosUsuario2 as $item){
+                $idContato      = $item[0];
+                $complemento    = explode(' - ', $item[1]);
+                array_push($arrayNormalizado, [$idContato, $complemento[0], $complemento[1], $complemento[2], InfraData::getStrDataAtual(), 'Em geraÃ§Ã£o']);
+            }
+
+            $arrHdnDadosUsuario = $arrayNormalizado;
+
+        }
+
         $destinatarios = array();
         foreach ($arrHdnDadosUsuario as $dadosUsuarios) {
             $arrParams = array($dadosUsuarios, $dadosCadastro);
@@ -1015,7 +1033,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntRelDestExternoRN->cadastrar($objMdPetIntRelDestExternoDTO);
             //Fim novo
 
-            //verifica se existe procurador simples para a pessoa física em questão
+            //verifica se existe procurador simples para a pessoa fÃ­sica em questÃ£o
             $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
             $dtoMdPetVincReptDTO->setNumIdContatoVinc($objMdPetIntRelDestinatarioDTO->getNumIdContato());
             $dtoMdPetVincReptDTO->retNumIdContatoVinc();
@@ -1038,8 +1056,8 @@ class MdPetIntimacaoRN extends InfraRN
 
             if (is_iterable($arrObjMdPetVincRepresentantDTO)) {
                 foreach ($arrObjMdPetVincRepresentantDTO as $value) {
-                    //Caso o tipo de procuração seja "Simples" será necessário
-                    //fazer algumas validações para criação dos destinatários externos da intimação
+                    //Caso o tipo de procuraÃ§Ã£o seja "Simples" serÃ¡ necessÃ¡rio
+                    //fazer algumas validaÃ§Ãµes para criaÃ§Ã£o dos destinatÃ¡rios externos da intimaÃ§Ã£o
                     if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                         $procuradorSimplesValido = FALSE;
                         $verificacaoCriteriosProcuracaoSimples = $this->_verificarCriteriosProcuracaoSimples($value->getNumIdMdPetVinculoRepresent(), $value->getStrStaEstado(), $value->getDthDataLimite(), $documento, $value->getStrStaAbrangencia());
@@ -1053,7 +1071,7 @@ class MdPetIntimacaoRN extends InfraRN
                     $arrParams = array($value->getNumIdContatoProcurador(), $dadosCadastro, $procuradorSimplesValido);
                     $idAcessoExt = $objMdPetIntAcessoExtDocRN->controlarAcessoExternoIntimacao($arrParams);
 
-                    //Criação dos destinatários externos caso o procurador simples seja valido ou tenha outro tipo de representação
+                    //CriaÃ§Ã£o dos destinatÃ¡rios externos caso o procurador simples seja valido ou tenha outro tipo de representaÃ§Ã£o
                     if (($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && !is_null($procuradorSimplesValido) && $procuradorSimplesValido) || $value->getStrTipoRepresentante() != MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                         //Novo DTO
                         $objMdPetIntRelDestExternoDTO = new MdPetRelIntDestExternoDTO();
@@ -1105,11 +1123,28 @@ class MdPetIntimacaoRN extends InfraRN
         //Cada um dos representantes
         $destinatarios = array();
 
-        //Array Intimações
+        //Array IntimaÃ§Ãµes
         $intimacao = array();
 
-
         $arrHdnDadosUsuario = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dadosCadastro['hdnDadosUsuario']);
+
+        // Destinatarios em massa: Recebendo e complementando os dados do novo array
+        if(isset($dadosCadastro['hdnDadosUsuario2']) && !empty($dadosCadastro['hdnDadosUsuario2'])){
+
+            $hdnDadosUsuario2 = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dadosCadastro['hdnDadosUsuario2']); // Monta array ['IdContato', 'Nome-email-cpf']
+            $arrayNormalizado = [];
+
+            // Normaliza array para PJ ['IdContato', 'Nome', 'Cnpj', 'Data', 'Situacao']
+            foreach($hdnDadosUsuario2 as $item){
+                $idContato      = $item[0];
+                $complemento    = explode(' - ', $item[1]);
+                array_push($arrayNormalizado, [$idContato, $complemento[0], $complemento[1], InfraData::getStrDataAtual(), 'Em geraÃ§Ã£o']);
+            }
+
+            $arrHdnDadosUsuario = $arrayNormalizado;
+
+        }
+
         foreach ($arrHdnDadosUsuario as $dadosUsuarios) {
 
             $destinatarios[] = $dadosUsuarios[1];
@@ -1151,11 +1186,11 @@ class MdPetIntimacaoRN extends InfraRN
 
                 foreach ($arrObjMdPetVincRepresentantDTO as $value) {
                     $liberarAcesso = true;
-                    //Caso o tipo de procuração seja "Simples" será necessário
-                    //fazer algumas validações para criação dos destinatários externos da intimação
+                    //Caso o tipo de procuraÃ§Ã£o seja "Simples" serÃ¡ necessÃ¡rio
+                    //fazer algumas validaÃ§Ãµes para criaÃ§Ã£o dos destinatÃ¡rios externos da intimaÃ§Ã£o
                     if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                         $verificacaoCriteriosProcuracaoSimples = $this->_verificarCriteriosProcuracaoSimples($value->getNumIdMdPetVinculoRepresent(), $value->getStrStaEstado(), $value->getDthDataLimite(), $documento, $value->getStrStaAbrangencia());
-                        //se tiver alguma validação falsa não serão feitos os cadastros abaixo
+                        //se tiver alguma validaÃ§Ã£o falsa nÃ£o serÃ£o feitos os cadastros abaixo
                         if (!$verificacaoCriteriosProcuracaoSimples) {
                             $liberarAcesso = false;
                         }
@@ -1198,7 +1233,7 @@ class MdPetIntimacaoRN extends InfraRN
         $dtoMdPetRelVincRepTpPoderDTO->retNumIdVinculoRepresent();
         $arrObjMdPetRelVincRepTpPoderDTO = $rnMdPetRelVincRepTpPoderRN->listar($dtoMdPetRelVincRepTpPoderDTO);
 
-        //Verifica se o usuário em questão possui o poder "Recebimento e Cumprimento de Intimação Eletrônica"
+        //Verifica se o usuÃ¡rio em questÃ£o possui o poder "Recebimento e Cumprimento de IntimaÃ§Ã£o EletrÃ´nica"
         if (!count($arrObjMdPetRelVincRepTpPoderDTO)) {
             $confirmaCriterios = false;
         }
@@ -1219,13 +1254,13 @@ class MdPetIntimacaoRN extends InfraRN
             $dataLimite = null;
         }
 
-        //Verifica se a situação da procuração é vigente
+        //Verifica se a situaÃ§Ã£o da procuraÃ§Ã£o Ã© vigente
         if ($staEstado != MdPetVincRepresentantRN::$RP_ATIVO) {
             $confirmaCriterios = false;
         }
 
-        //Estado = A e caso tenha data limite a mesma não esteja vencida
-        //Se a data limite estiver vencida o estado é alterado para vencido automaticamente
+        //Estado = A e caso tenha data limite a mesma nÃ£o esteja vencida
+        //Se a data limite estiver vencida o estado Ã© alterado para vencido automaticamente
         if ($staEstado == 'A' && !is_null($dataLimite) && strtotime($dataAtual) > strtotime($dataLimite)) {
             $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
             $dtoMdPetVincReptDTO->setNumIdMdPetVinculoRepresent($idMdPetVinculoRepresent);
@@ -1235,7 +1270,7 @@ class MdPetIntimacaoRN extends InfraRN
             $confirmaCriterios = false;
         }
 
-        //Processos especificos escolhidos na procuração com abrangencia
+        //Processos especificos escolhidos na procuraÃ§Ã£o com abrangencia
         $dtoMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
         $rnMdPetRelVincRepProtocRN = new MdPetRelVincRepProtocRN();
         $dtoMdPetRelVincRepProtocDTO->setNumIdVincRepresent($idMdPetVinculoRepresent);
@@ -1265,8 +1300,8 @@ class MdPetIntimacaoRN extends InfraRN
             $idProcesso = $procedimento;
         }
 
-        //Verifica se existe algum processo associado a procuração
-        //caso tenha é necessário confirmar se é o mesmo que originou a intimação
+        //Verifica se existe algum processo associado a procuraÃ§Ã£o
+        //caso tenha Ã© necessÃ¡rio confirmar se Ã© o mesmo que originou a intimaÃ§Ã£o
         if ($staAbrangencia == 'E' && !in_array($idProcesso, $arrMdPetRelVincRepProtocDTO)) {
             $confirmaCriterios = false;
         }
@@ -1288,7 +1323,7 @@ class MdPetIntimacaoRN extends InfraRN
         $dadosIntimacao['razaoSocial'] = $value->getStrRazaoSocialNomeVinc();
         $dadosIntimacao['cnpj'] = $value->getStrCNPJ();
 
-        //Tipo Vinculação
+        //Tipo VinculaÃ§Ã£o
         if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
             $dadosIntimacao['tpVinc'] = "Responsavel Legal";
         }
@@ -1327,10 +1362,10 @@ class MdPetIntimacaoRN extends InfraRN
 
 
     /*
-     * Essa função verifica se nas intimações os documentos são anexos e em quais são principais
+     * Essa funÃ§Ã£o verifica se nas intimaÃ§Ãµes os documentos sÃ£o anexos e em quais sÃ£o principais
      *
-     * Principal questão tratada na função:
-     * Para os anexos ela verifica a qual Intimação de Documento Principal o Anexo pertence
+     * Principal questÃ£o tratada na funÃ§Ã£o:
+     * Para os anexos ela verifica a qual IntimaÃ§Ã£o de Documento Principal o Anexo pertence
      * */
     private function _getDadosDocumentoIntimacao($idsDocs)
     {
@@ -1348,17 +1383,17 @@ class MdPetIntimacaoRN extends InfraRN
 
             $arrObjDTOAdd = $objMdPetIntDestRN->listar($objMdPetIntDestDTO1);
 
-            //Se o documento for anexo add o id da intimação, se for principal deixa vazio
+            //Se o documento for anexo add o id da intimaÃ§Ã£o, se for principal deixa vazio
             $arrDocIntimacao = array();
 
-            //Array para pesquisar todas as Intimações
+            //Array para pesquisar todas as IntimaÃ§Ãµes
             $idsIntimacao = array();
             if (is_countable($arrObjDTOAdd) && count($arrObjDTOAdd) > 0) {
                 $idsIntimacao = array_unique(InfraArray::converterArrInfraDTO($arrObjDTOAdd, 'IdMdPetIntimacao'));
             }
 
             if (is_countable($idsIntimacao) && count($idsIntimacao) > 0) {
-                //Consulta todos os dados das Intimações dos Documentos Anexos
+                //Consulta todos os dados das IntimaÃ§Ãµes dos Documentos Anexos
                 $objMdPetIntDestDTO2 = new MdPetIntRelDestinatarioDTO();
                 $objMdPetIntDestDTO2->setNumIdMdPetIntimacao($idsIntimacao, InfraDTO::$OPER_IN);
                 $objMdPetIntDestDTO2->setStrSinPrincipalDoc('S');
@@ -1393,7 +1428,7 @@ class MdPetIntimacaoRN extends InfraRN
     private function _verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $hdnIdsUsuarios, $idProcedimento)
     {
         $msg = '';
-        $msgFim = "\nNão será possível concluir esta intimação. Para prosseguir, antes é necessário remover o Destinatário acima sobre o qual constam os conflitos indicados ou retirar os protocolos do conflito da presente Intimação.";
+        $msgFim = "\nNÃ£o serÃ¡ possÃ­vel concluir esta intimaÃ§Ã£o. Para prosseguir, antes Ã© necessÃ¡rio remover o DestinatÃ¡rio acima sobre o qual constam os conflitos indicados ou retirar os protocolos do conflito da presente IntimaÃ§Ã£o.";
         $arrMsgAnexo = array();
         $idsDocs = $arrIdsAnexo;
         $objMdPetIntDestRN = new MdPetIntRelDestinatarioRN();
@@ -1405,7 +1440,7 @@ class MdPetIntimacaoRN extends InfraRN
         foreach ($hdnIdsUsuarios as $usuario) {
             $idContato = $usuario;
             $nomeContato = $this->_getNomeContato($idContato);
-            $msgInicio = "O Destinatário " . PaginaSEI::tratarHTML($nomeContato) . " já possui protocolos indicados nesta Intimação a ser gerada vinculados a Intimação anterior neste processo. Veja a lista abaixo: \n\n";
+            $msgInicio = "O DestinatÃ¡rio " . PaginaSEI::tratarHTML($nomeContato) . " jÃ¡ possui protocolos indicados nesta IntimaÃ§Ã£o a ser gerada vinculados a IntimaÃ§Ã£o anterior neste processo. Veja a lista abaixo: \n\n";
 
             $objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
             $objMdPetIntDestDTO->retNumIdMdPetIntimacao();
@@ -1456,7 +1491,7 @@ class MdPetIntimacaoRN extends InfraRN
                     $corpoMsg = "";
                     foreach ($arrMsgAnexo as $arrMsg) {
                         $inicioInt = $corpoMsg != "" ? "\n " : "";
-                        $inicioInt .= "* Intimação referente ao Documento Principal ";
+                        $inicioInt .= "* IntimaÃ§Ã£o referente ao Documento Principal ";
                         $inicioInt .= $arrMsg['dadosIntimacao'];
                         $inicioInt .= ": \n \n";
                         $inicioInt .= $arrMsg['dadosDoc'];
@@ -1508,7 +1543,7 @@ class MdPetIntimacaoRN extends InfraRN
         $protocoloForm = !is_null($objDTO) ? $objDTO->getStrProtocoloFormatadoDocumento() : '';
         $nomeSerie = $objDTO->getStrNomeSerie() != '' ? trim($objDTO->getStrNomeSerie()) : '';
         $nomeSerieNumero = $objDTO->getStrNumero() != '' ? $nomeSerie . ' ' . $objDTO->getStrNumero() : $nomeSerie;
-        $nomeReturn = $nomeSerieNumero . ' (SEI nº ' . $protocoloForm . ')';
+        $nomeReturn = $nomeSerieNumero . ' (SEI nÂº ' . $protocoloForm . ')';
         $tipoDoc = $objDTO->getStrSinPrincipalDoc() == 'S' ? ' - Documento Principal' : ' - Anexo';
         $nomeReturn .= $tipoDoc;
         return $nomeReturn;
@@ -1604,7 +1639,7 @@ class MdPetIntimacaoRN extends InfraRN
         $idDocumentoPrinc = $arr[4];
         $arrIdsAnexo = $arr[3] != '' ? explode('_', $arr[3]) : array();
 
-        //Realiza as validações relacionadas a duplicação de anexo
+        //Realiza as validaÃ§Ãµes relacionadas a duplicaÃ§Ã£o de anexo
         if (count($arrIdsAnexo) > 0 && $arr[5] == "J") {
             $ids = array();
             $hdnUsuarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($hdnDadosUsuario);
@@ -1626,17 +1661,17 @@ class MdPetIntimacaoRN extends InfraRN
         }
 
 
-        //Realizar Validações de Acesso Externo
+        //Realizar ValidaÃ§Ãµes de Acesso Externo
         if (count($tpsAcessoAnterior) > 0) {
 
-            // Se já possui acesso integral, e a concessão atual é para acesso Parcial - Impeditivo
+            // Se jÃ¡ possui acesso integral, e a concessÃ£o atual Ã© para acesso Parcial - Impeditivo
             $msg = $this->_verificarPossuiAcessoIntegralAtualParcial($tpAcessoSolicitado, $tpsAcessoAnterior, $arr[5], $arrHdnDadosUsuario, $idProcedimento);
 
             if ($msg != '') {
                 $impedimento = true;
             }
 
-            //Se já possui parcial, e a concessão atual é para Acesso Integral - Alerta de Cancelamento do Parcial
+            //Se jÃ¡ possui parcial, e a concessÃ£o atual Ã© para Acesso Integral - Alerta de Cancelamento do Parcial
             if ($msg == '') {
                 $msg = $this->_verificarPossuiAcessoParcialAtualIntegral($tpAcessoSolicitado, $tpsAcessoAnterior, $arr[5], $arrHdnDadosUsuario, $idProcedimento);
 
@@ -1717,7 +1752,7 @@ class MdPetIntimacaoRN extends InfraRN
                 }
 
             }
-            $msg = "Os destinatários abaixo listados já possuem Acesso Externo do Tipo Parcial neste processo, concedido por meio do módulo Peticionamento e Intimação Eletrônicos: \n";
+            $msg = "Os destinatÃ¡rios abaixo listados jÃ¡ possuem Acesso Externo do Tipo Parcial neste processo, concedido por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos: \n";
             if ($pessoaTipo == "J") {
                 $novoArrayUnico = array_unique($destinatarios);
                 foreach ($novoArrayUnico as $key => $value) {
@@ -1731,7 +1766,7 @@ class MdPetIntimacaoRN extends InfraRN
             }
 
             $msg .= " \n \n";
-            $msg .= "Nova Intimação para os Destinatários acima do Acesso Externo do Tipo Integral neste processo cancelará o Acesso Externo Parcial anterior. Deseja continuar?";
+            $msg .= "Nova IntimaÃ§Ã£o para os DestinatÃ¡rios acima do Acesso Externo do Tipo Integral neste processo cancelarÃ¡ o Acesso Externo Parcial anterior. Deseja continuar?";
             $msg .= " \n ";
 
         }
@@ -1787,8 +1822,8 @@ class MdPetIntimacaoRN extends InfraRN
 
                         foreach ($arrObjMdPetVincRepresentantDTO as $key => $value) {
                             foreach ($tabela as $coluna) {
-                                if ($value->getStrRazaoSocialNomeVinc() == $coluna[1]) {
-                                    $destinatarios [] = $this->_getNomeContato($value->getNumIdContatoVinc());
+                                if ($value->getNumIdContatoVinc() == $coluna[0]) {
+                                    $destinatarios[] = $this->_getNomeContato($value->getNumIdContatoVinc());
                                 }
                             }
                         }
@@ -1808,8 +1843,8 @@ class MdPetIntimacaoRN extends InfraRN
 
             }
 
-            $msg = "A Intimação não pode ser gerada, pois existem Destinatários que já possuem Acesso Externo do Tipo Integral neste processo, concedido por meio de Intimação Eletrônica anterior. Sendo assim, para os Destinatários listados abaixo, as Intimações subsequentes neste processo também devem selecionar o Acesso Externo do Tipo Integral. Caso necessário, para os demais Destinatários, a Intimação pode ser gerada em separado para a lista abaixo e para os que devem de fato receber Acesso Parcial nesta nova Intimação. \n\n";
-            $msg .= "Lista dos Destinatários que já possuem Acesso Externo Integral em razão de Intimação Eletrônica anterior neste processo:";
+            $msg = "A IntimaÃ§Ã£o nÃ£o pode ser gerada, pois existem DestinatÃ¡rios que jÃ¡ possuem Acesso Externo do Tipo Integral neste processo, concedido por meio de IntimaÃ§Ã£o EletrÃ´nica anterior. Sendo assim, para os DestinatÃ¡rios listados abaixo, as IntimaÃ§Ãµes subsequentes neste processo tambÃ©m devem selecionar o Acesso Externo do Tipo Integral. Caso necessÃ¡rio, para os demais DestinatÃ¡rios, a IntimaÃ§Ã£o pode ser gerada em separado para a lista abaixo e para os que devem de fato receber Acesso Parcial nesta nova IntimaÃ§Ã£o. \n\n";
+            $msg .= "Lista dos DestinatÃ¡rios que jÃ¡ possuem Acesso Externo Integral em razÃ£o de IntimaÃ§Ã£o EletrÃ´nica anterior neste processo:";
             $msg .= " \n ";
             if ($pessoaTipo == "J") {
                 $novoArrayUnico = array_unique($destinatarios);
@@ -1821,6 +1856,7 @@ class MdPetIntimacaoRN extends InfraRN
                 $msg .= "\n ";
                 $msg .= $destinatarios;
             }
+			$msg .= " \n ";
         }
 
         return $msg;
@@ -1853,7 +1889,6 @@ class MdPetIntimacaoRN extends InfraRN
 
     public function cadastrarIntimacaoControlado($dadosCadastro)
     {
-
 
         try {
             $dataHoraGeracao = InfraData::getStrDataHoraAtual();
@@ -1928,8 +1963,8 @@ class MdPetIntimacaoRN extends InfraRN
                 $objMdPetIntDestRespostaDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntRelDestinatario());
 
                 //ajustando esta consulta para limitar retorno a 1 registro, e para trazer a resposta mais atual deste destinatario
-                //se nao aplicar isso, a tela de consultar detalhes da intimaçao (Processo -> Ver intimaçoes -> lupinha)
-                //dá erro por causa de chamada a metodo "consultar" retornando mais de uma linha
+                //se nao aplicar isso, a tela de consultar detalhes da intimaÃ§ao (Processo -> Ver intimaÃ§oes -> lupinha)
+                //dÃ¡ erro por causa de chamada a metodo "consultar" retornando mais de uma linha
 
                 $objMdPetIntDestRespostaDTO->setNumMaxRegistrosRetorno(1);
                 $objMdPetIntDestRespostaDTO->setOrd('IdMdPetIntDestResposta', InfraDTO::$TIPO_ORDENACAO_DESC);
@@ -2119,6 +2154,7 @@ class MdPetIntimacaoRN extends InfraRN
             foreach ($arrMdPetIntDocumentoDTO as $MdPetIntDocumento) {
                 $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
                 $objMdPetIntRelDestinatarioDTO->retTodos();
+                $objMdPetIntRelDestinatarioDTO->retNumIdContatoParticipante();
                 $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($MdPetIntDocumento->getNumIdMdPetIntimacao());
 
                 $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
@@ -2126,9 +2162,7 @@ class MdPetIntimacaoRN extends InfraRN
 
                 if (!empty($objMdPetIntRelDestinatarioDTO)) {
                     foreach ($objMdPetIntRelDestinatarioDTO as $MdPetIntRelDestinatario) {
-
-                        $arrContatos[] = MdPetContatoINT::getDadosContatos($MdPetIntRelDestinatario->getNumIdContato(), $idDocumento, false);
-
+                        $arrContatos[] = MdPetContatoINT::getDadosContatos($MdPetIntRelDestinatario->getNumIdContatoParticipante(), $idDocumento, false);
                     }
                 }
             }
@@ -2246,8 +2280,8 @@ class MdPetIntimacaoRN extends InfraRN
                 $datafinal = $objMdPetIntPrazoRN->calcularDataPrazo($diasExp, $dataIntimacao, $numIdOrgao);
                 $datefinal = strtotime(str_replace('/', '-', $datafinal));
 
-                // TODO: if para PULAR cumprimento por decurso do prazo tácito sobre processo Sigiloso (Nivel de Acesso local OU Global 2),
-                //       ate a resolucao do item 22.2 da lista de correções
+                // TODO: if para PULAR cumprimento por decurso do prazo tÃ¡cito sobre processo Sigiloso (Nivel de Acesso local OU Global 2),
+                //       ate a resolucao do item 22.2 da lista de correÃ§Ãµes
                 $idIntimacao = $objRelDestIntimacao->getNumIdMdPetIntimacao();
                 $docPrinc = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
 
@@ -2287,7 +2321,7 @@ class MdPetIntimacaoRN extends InfraRN
         $objAtributoAndamentoAPI = new AtributoAndamentoAPI();
         $objAtributoAndamentoAPI->setNome($nome);
         $objAtributoAndamentoAPI->setValor($valor);
-        $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do prédio, pode ser null
+        $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do prÃ©dio, pode ser null
 
         return $objAtributoAndamentoAPI;
     }
@@ -2397,8 +2431,8 @@ class MdPetIntimacaoRN extends InfraRN
         return array();
     }
 
-    /* Função responsável por verificar a exibição de documentos,  se o documento é disponível e anexo retorna 2,
-       se ele é disponível retorna 1 e se for somente anexo retorna 0. Obs: Leva em consideração todas as intimações para o usuário
+    /* FunÃ§Ã£o responsÃ¡vel por verificar a exibiÃ§Ã£o de documentos,  se o documento Ã© disponÃ­vel e anexo retorna 2,
+       se ele Ã© disponÃ­vel retorna 1 e se for somente anexo retorna 0. Obs: Leva em consideraÃ§Ã£o todas as intimaÃ§Ãµes para o usuÃ¡rio
       logado. */
     protected function retornaIntimacoesVinculadasDocumentoConectado($idDocumento)
     {
@@ -2495,7 +2529,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
             $idContato = $objContato->getNumIdContato();
 
-            // @todo precisa ser refatorado o codigo para ser mais perfomatico, pode ocorrer despecho de memoria por trazer todas as intimaçoes do usuario
+            // @todo precisa ser refatorado o codigo para ser mais perfomatico, pode ocorrer despecho de memoria por trazer todas as intimaÃ§oes do usuario
             $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
             $objMdPetIntRelDestDTO->setNumIdContatoParticipante($idContato);
             $objMdPetIntRelDestDTO->retNumIdMdPetIntimacao();
@@ -2575,8 +2609,8 @@ class MdPetIntimacaoRN extends InfraRN
             $objAtividadeDTO->retStrSiglaUsuarioAtribuicao();
             $objAtividadeDTO->retStrNomeUsuarioAtribuicao();
 
-            //ordena descendente pois no envio de processo que já existe na unidade e está atribuído ficará com mais de um andamento em aberto
-            //desta forma os andamentos com usuário nulo (envios do processo) serão listados depois
+            //ordena descendente pois no envio de processo que jÃ¡ existe na unidade e estÃ¡ atribuÃ­do ficarÃ¡ com mais de um andamento em aberto
+            //desta forma os andamentos com usuÃ¡rio nulo (envios do processo) serÃ£o listados depois
             $objAtividadeDTO->setOrdStrSiglaUsuarioAtribuicao(InfraDTO::$TIPO_ORDENACAO_DESC);
         }
 
@@ -2584,11 +2618,11 @@ class MdPetIntimacaoRN extends InfraRN
 
         $objAtividadeDTO->setDthConclusao(null);
 
-        //sigiloso sem credencial - não preparado
-        //                        -     considera o último usuário da unidade informada
-        //                        -     considera o último usuário da última independente da unidade informada
+        //sigiloso sem credencial - nÃ£o preparado
+        //                        -     considera o Ãºltimo usuÃ¡rio da unidade informada
+        //                        -     considera o Ãºltimo usuÃ¡rio da Ãºltima independente da unidade informada
         if ($strStaNivelAcessoGlobal == ProtocoloRN::$NA_SIGILOSO) {
-            //último usuário da unidade informada
+            //Ãºltimo usuÃ¡rio da unidade informada
             $objAcessoDTO = new AcessoDTO();
             $objAcessoDTO->retNumIdUsuario();
             $objAcessoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
@@ -2603,7 +2637,7 @@ class MdPetIntimacaoRN extends InfraRN
             $arrObjAcessoDTO = $objAcessoRN->listar($objAcessoDTO);
 
             if (count($arrObjAcessoDTO) == 0) {
-                //último usuário da última independente da unidade informada
+                //Ãºltimo usuÃ¡rio da Ãºltima independente da unidade informada
                 $objAcessoDTO = new AcessoDTO();
 //                $objAcessoDTO->setDistinct(true);
                 $objAcessoDTO->retNumIdUsuario();
@@ -2616,20 +2650,20 @@ class MdPetIntimacaoRN extends InfraRN
                 $objAcessoRN = new AcessoRN();
                 $arrObjAcessoDTO = $objAcessoRN->listar($objAcessoDTO);
 
-                // sempre tem credencial - não preparado para sem credencial
+                // sempre tem credencial - nÃ£o preparado para sem credencial
                 if (count($arrObjAcessoDTO) > 0) {
                     $objAtividadeDTO->setNumIdUnidade($arrObjAcessoDTO[0]->getNumIdUnidade());
                 }
             }
 
-            // sempre tem credencial - não preparado para sem credencial
+            // sempre tem credencial - nÃ£o preparado para sem credencial
             $objAtividadeDTO->setNumIdUsuario(InfraArray::converterArrInfraDTO($arrObjAcessoDTO, 'IdUsuario'), InfraDTO::$OPER_IN);
         }
 
         $arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
 
         if ($strStaNivelAcessoGlobal != ProtocoloRN::$NA_SIGILOSO) {
-            //filtra andamentos com indicação de usuário atribuído
+            //filtra andamentos com indicaÃ§Ã£o de usuÃ¡rio atribuÃ­do
             $arrObjAtividadeDTO = InfraArray::distinctArrInfraDTO($arrObjAtividadeDTO, 'SiglaUnidade');
         }
 
@@ -2647,7 +2681,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objProcedimentoDTO = $params[0];
             $idUnidade = $params[1];
 
-            $usuarioTipo = null;    //I-Interno, E-Externo e S-Sistema e/ou  Módulo
+            $usuarioTipo = null;    //I-Interno, E-Externo e S-Sistema e/ou  MÃ³dulo
             $idUnidadeAtual = null;
             $idUnidadeReabrirProcesso = null;
             $idUnidadeAberta = null;
@@ -2745,7 +2779,7 @@ class MdPetIntimacaoRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Intimação.', $e);
+            throw new InfraException('Erro cadastrando IntimaÃ§Ã£o.', $e);
         }
 
     }
@@ -2768,7 +2802,7 @@ class MdPetIntimacaoRN extends InfraRN
             $arrObjAtributoAndamentoDTO = array();
             $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
             $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-            $objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla() . '¥' . $unidadeDTO->getStrDescricao());
+            $objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla() . 'Â¥' . $unidadeDTO->getStrDescricao());
             $objAtributoAndamentoDTO->setStrIdOrigem($unidadeDTO->getNumIdUnidade());
             $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -2789,7 +2823,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objAtividadeRN = new AtividadeRN();
             $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
         } catch (Exception $e) {
-            throw new InfraException('Erro ao Reenviar e Reatribuir na Intimação.', $e);
+            throw new InfraException('Erro ao Reenviar e Reatribuir na IntimaÃ§Ã£o.', $e);
         }
 
     }
@@ -2859,7 +2893,7 @@ class MdPetIntimacaoRN extends InfraRN
                     }
 
                     /**
-                     * Verifica se o tipo de resposta da intimação é sem resposta
+                     * Verifica se o tipo de resposta da intimaÃ§Ã£o Ã© sem resposta
                      */
                     if ($objDTO->getStrNomeTipoRespostaAceita() != 'S') {
                         $objMdPetIntDestRespostaDto->setNumIdMdPetIntRelDestinatario($objDTO->getNumIdMdPetIntRelDestinatario());
@@ -2867,7 +2901,7 @@ class MdPetIntimacaoRN extends InfraRN
                         $objMdPetIntTpRespDTO->setNumIdMdPetIntimacao($objDTO->getNumIdMdPetIntimacao());
 
                         /**
-                         * Verifica se o tipo de resposta, para verificar se tem mais de uma intimação a ser respondida
+                         * Verifica se o tipo de resposta, para verificar se tem mais de uma intimaÃ§Ã£o a ser respondida
                          */
                         $arrRespostaFacultada = $objMdPetIntTpRespRN->listar($objMdPetIntTpRespDTO);
                         foreach ($arrRespostaFacultada as $arrResposta) {
@@ -2897,6 +2931,82 @@ class MdPetIntimacaoRN extends InfraRN
         return $isValidoInt;
     }
 
+    // Destinatarios em massa:
+    protected function filtrarContatosPesquisaIntimacaoLoteConectado($post)
+    {
+
+        $post['txtUsuario'] = utf8_decode(urldecode($post['txtUsuario']));
+
+        $isSessionExt   = array_key_exists('sessao_externa', $post) ? $post['sessao_externa'] : null;
+
+        $objUsuarioDTO = new MdPetUsuarioExternoDTO();
+        $objUsuarioDTO->retNumIdContato();
+        $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
+
+        if (!is_null($isSessionExt) && $isSessionExt != 0) {
+            $numIdUSuario = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+            $objUsuarioDTO->setNumIdUsuario($numIdUSuario, InfraDTO::$OPER_DIFERENTE);
+        }
+
+        $objUsuarioDTO->retNumIdContato();
+        $objUsuarioDTO->retStrSigla();
+        $objUsuarioDTO->retStrNomeContato();
+        $objUsuarioDTO->retDblCnpjContato();
+        $objUsuarioDTO->retDblCpfContato();
+        $objUsuarioDTO->retStrEmailContato();
+        $objUsuarioDTO->setStrSinAtivoTipoContato('S');
+
+        $conta      = "^[a-zA-Z0-9\._-]+@";
+        $domino     = "[a-zA-Z0-9\._-]+.";
+        $extensao   = "([a-zA-Z]{2,4})$";
+        $pattern    = "#" . $conta . $domino . $extensao . "#";
+
+        $isEmail = preg_match($pattern, $post['txtUsuario']);
+
+        if ($isEmail) {
+            $objUsuarioDTO->setStrEmailContato('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
+        } else {
+            $txtPesquisa = InfraString::prepararIndexacao($post['txtUsuario'],true);
+            $txtPesquisa = ($txtPesquisa == "") ? $post['txtUsuario'] : $txtPesquisa;
+            $objUsuarioDTO->setStrIdxContato('%' . $txtPesquisa . '%', InfraDTO::$OPER_LIKE);
+        }
+
+        $objUsuarioDTO->setNumMaxRegistrosRetorno(50);
+        $objUsuarioDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
+
+        $arrObjUsuarioDTO = (new MdPetUsuarioExternoRN())->listar($objUsuarioDTO);
+
+        if($arrObjUsuarioDTO){
+
+            $arrTemp = [];
+            foreach($arrObjUsuarioDTO as $objContatoDTO){
+                if ($objContatoDTO->getStrSigla() != null && $objContatoDTO->getStrNomeContato() != null) {
+                    $strChave = strtolower($objContatoDTO->getStrNomeContato().'-'.$objContatoDTO->getStrSigla());
+                    if (!isset($arrTemp[$strChave])) {
+                        $arrTemp[$strChave] = array($objContatoDTO);
+                    } else {
+                        $arrTemp[$strChave][] = $objContatoDTO;
+                    }
+                }
+            }
+
+            foreach($arrTemp as $arr){
+                if (count($arr) == 1){
+                    $arr[0]->setStrNome($arr[0]->getStrNomeContato().' - '.$arr[0]->getStrSigla().' - '.InfraUtil::formatarCpfCnpj($arr[0]->getDblDocContato()));
+                }else{
+                    foreach($arr as $dto){
+                        $dto->setStrNome($dto->getStrNomeContato().' - '.$dto->getStrSigla().' - '.InfraUtil::formatarCpfCnpj($dto->getDblDocContato()));
+                    }
+                }
+            }
+
+            return $arrObjUsuarioDTO;
+        }
+
+        return array();
+    }
+
+    // Todo: Remover na sequencia
     protected function filtrarContatosPesquisaIntimacaoConectado($post)
     {
 
@@ -2914,8 +3024,8 @@ class MdPetIntimacaoRN extends InfraRN
 
         if ($_POST['intimacaoPF'] == 't' && $_POST['hdnDadosUsuario']) {
             /** Se o campo intimacaoPF vier preenchido com valor 't' e o campo hdnDadosUsuario tiver
-             * preenchido com algum valor, isto quer dizer que pessoa(s) foram adicionadas para geração
-             * de intimação PF e por isso não poderão aparecer na listagem novamente. **/
+             * preenchido com algum valor, isto quer dizer que pessoa(s) foram adicionadas para geraÃ§Ã£o
+             * de intimaÃ§Ã£o PF e por isso nÃ£o poderÃ£o aparecer na listagem novamente. **/
 
             $arrNumIdContatos = array();
             $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnDadosUsuario']);
@@ -2957,6 +3067,7 @@ class MdPetIntimacaoRN extends InfraRN
         return array();
     }
 
+    // Todo: Remover na sequencia
     protected function filtrarContatosPesquisaIntimacaoJuridicaConectado($post)
     {
 
@@ -2989,6 +3100,67 @@ class MdPetIntimacaoRN extends InfraRN
         $novo = InfraArray::distinctArrInfraDTO($arr, "IdMdPetVinculo");
 
         return $novo;
+
+    }
+
+    protected function filtrarContatosPesquisaIntimacaoJuridicaLoteConectado($post)
+    {
+
+        $post['txtUsuario'] = utf8_decode(urldecode($post['txtUsuario']));
+
+        $dtoMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+        $dtoMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
+        $dtoMdPetVincRepresentantDTO->retNumIdContatoVinc();
+        $dtoMdPetVincRepresentantDTO->retNumIdContatoProcurador();
+        $dtoMdPetVincRepresentantDTO->setDistinct(true);
+        $dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+        $dtoMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
+        $dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+        $dtoMdPetVincRepresentantDTO->setStrIdxContato('%' . $post['txtUsuario'] . '%', InfraDTO::$OPER_LIKE);
+        $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincRepresentantDTO);
+
+        $arrRepres = array_unique(InfraArray::converterArrInfraDTO($arrObjMdPetVincRepresentantDTO, 'IdContatoVinc'));
+
+        if(is_iterable($arrRepres) && count($arrRepres) > 0){
+
+            $objContatoDTO = new ContatoDTO();
+            $objContatoDTO->retStrNome();
+            $objContatoDTO->retDblCnpj();
+            $objContatoDTO->retNumIdContato();
+            $objContatoDTO->setNumIdContato($arrRepres, infraDTO::$OPER_IN);
+            $arrObjContatoDTO = (new ContatoRN())->listarRN0325($objContatoDTO);
+
+            if(!empty($arrObjContatoDTO) && count($arrObjContatoDTO) > 0){
+
+                $arrTemp = [];
+                foreach($arrObjContatoDTO as $contatoDTO){
+                    if ($contatoDTO->get('Nome') != null && $contatoDTO->get('Cnpj') != null) {
+                        $strChave = strtolower($contatoDTO->get('Nome').'-'.$contatoDTO->get('Cnpj'));
+                        if (!isset($arrTemp[$strChave])) {
+                            $arrTemp[$strChave] = array($contatoDTO);
+                        } else {
+                            $arrTemp[$strChave][] = $contatoDTO;
+                        }
+                    }
+                }
+
+                foreach($arrTemp as $arr){
+                    if (count($arr) == 1){
+                        $arr[0]->setStrNome($arr[0]->get('Nome').' - '.InfraUtil::formatarCpfCnpj($arr[0]->get('Cnpj')));
+                    }else{
+                        foreach($arr as $dto){
+                            $dto->setStrNome($dto->get('Nome').' - '.InfraUtil::formatarCpfCnpj($dto->get('Cnpj')));
+                        }
+                    }
+                }
+
+                return $arrObjContatoDTO;
+
+            }
+
+        }
+
+        return [];
 
     }
 

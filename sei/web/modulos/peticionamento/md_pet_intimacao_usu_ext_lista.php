@@ -1,7 +1,7 @@
 <?php
 try {
     /**
-     * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+     * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
      * @since  08/03/2017
      */
 
@@ -18,18 +18,16 @@ try {
     SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
 
     //URL's
-    $strUrlAcaoForm = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']);
+    $strUrlAcaoForm     = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']);
+    $strUrlFechar       = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=usuario_externo_controle_acessos');
+    $strUrlResponder    = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_responder_intimacao_usu_ext');
+	$strUrlAcaoLinhas   = SessaoSEIExterna::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=get_acoes_intimacao_lista&acao_origem=' . $_GET['acao']);
+    $comboSituacao      = MdPetIntimacaoINT::getSituacoesListaExterno();
 
-    $strUrlFechar = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=usuario_externo_controle_acessos');
-
-    $strUrlResponder = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_responder_intimacao_usu_ext');
-
-    $comboSituacao = MdPetIntimacaoINT::getSituacoesListaExterno();
-
-    //Combo tipo de IntimaÁ„o
-    $selectedTpIntim = array_key_exists('selTipoIntimacao', $_POST) ? $_POST['selTipoIntimacao'] : '0';
-    $selTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectTipoIntimacaoListaExterna($selectedTpIntim);
-    $selectedSitIntim = array_key_exists('selCumprimentoIntimacao', $_POST) ? $_POST['selCumprimentoIntimacao'] : '';
+    //Combo tipo de Intima√ß√£o
+    $selectedTpIntim    = array_key_exists('selTipoIntimacao', $_POST) ? $_POST['selTipoIntimacao'] : '0';
+    $selTipoIntimacao   = MdPetIntTipoIntimacaoINT::montarSelectTipoIntimacaoListaExterna($selectedTpIntim);
+    $selectedSitIntim   = array_key_exists('selCumprimentoIntimacao', $_POST) ? $_POST['selCumprimentoIntimacao'] : '';
     $selSituacaoIntimacao = MdPetIntimacaoINT::montarSelectSituacaoIntimacao($selectedSitIntim);
 
     //Init RN
@@ -39,11 +37,11 @@ try {
 
         case 'md_pet_intimacao_usu_ext_listar':
 
-            $strTitulo = "IntimaÁıes EletrÙnicas";
+            $strTitulo = "Intima√ß√µes Eletr√¥nicas";
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
     $arrComandos[] = '<button type="button" accesskey="P" name="btnPesquisar" onclick="pesquisar()" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
@@ -59,7 +57,7 @@ try {
     $objDTO = $objMdPetRelDestRN->retornaSelectsDto(array(false, $arrPost));
 
     PaginaSEIExterna::getInstance()->prepararOrdenacao($objDTO, 'DataCadastro', InfraDTO::$TIPO_ORDENACAO_DESC);
-    PaginaSEIExterna::getInstance()->prepararPaginacao($objDTO, 200);
+    PaginaSEIExterna::getInstance()->prepararPaginacao($objDTO, 100);
 
     $objDTO->retStrNomeContato();
     $objDTO->retDblCnpjContato();
@@ -70,8 +68,8 @@ try {
 
     PaginaSEIExterna::getInstance()->processarPaginacao($objDTO);
     $arrTipoDestinatario = array(
-        "N" => "Pessoa FÌsica",
-        "S" => "Pessoa JurÌdica"
+        "N" => "Pessoa F√≠sica",
+        "S" => "Pessoa Jur√≠dica"
     );
 
     $numRegistros = (is_array($arrObjDTO) ? count($arrObjDTO) : 0);
@@ -82,28 +80,28 @@ try {
         $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
         $objMdPetIntReciboRN = new MdPetIntReciboRN();
 
-        $strResultado .= '<table width="100%" class="infraTable" summary="IntimaÁıes EletrÙnicas">';
+        $strResultado .= '<table width="100%" class="infraTable" summary="Intima√ß√µes Eletr√¥nicas">';
         $strResultado .= '<caption class="infraCaption">';
 
-        $strResultado .= PaginaSEIExterna::getInstance()->gerarCaptionTabela('IntimaÁıes EletrÙnicas', $numRegistros);
+        $strResultado .= PaginaSEIExterna::getInstance()->gerarCaptionTabela('Intima√ß√µes Eletr√¥nicas', $numRegistros);
         $strResultado .= '</caption>';
 
         $strResultado .= '<tr>';
         $strResultado .= '<th class="infraTh"><div style="width: 160px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Processo', 'ProtocoloFormatadoProcedimento', $arrObjDTO) . '</div></th>';
 
-        $strResultado .= '<th class="infraTh" width="66px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Data de ExpediÁ„o', 'DataCadastro', $arrObjDTO) . '</th>';
+        $strResultado .= '<th class="infraTh" width="66px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Data de Expedi√ß√£o', 'DataCadastro', $arrObjDTO) . '</th>';
 
         $strResultado .= '<th class="infraTh" width="15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Documento Principal', 'DocumentoPrincipal', $arrObjDTO) . '</th>';
 
-        $strResultado .= '<th class="infraTh" width="30%" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Destinat·rio', 'NomeContato', $arrObjDTO) . '</th>';
+        $strResultado .= '<th class="infraTh" width="30%" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Destinat√°rio', 'NomeContato', $arrObjDTO) . '</th>';
 
-        $strResultado .= '<th class="infraTh" width="66px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Tipo de Destinat·rio', 'SinPessoaJuridica', $arrObjDTO) . '</th>';
+        $strResultado .= '<th class="infraTh" width="66px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Tipo de Destinat√°rio', 'SinPessoaJuridica', $arrObjDTO) . '</th>';
 
-        $strResultado .= '<th class="infraTh" width="12%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Tipo de IntimaÁ„o', 'NomeTipoIntimacao', $arrObjDTO) . '</th>';
+        $strResultado .= '<th class="infraTh" width="12%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Tipo de Intima√ß√£o', 'NomeTipoIntimacao', $arrObjDTO) . '</th>';
 
-        $strResultado .= '<th class="infraTh" width="225px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'SituaÁ„o', 'StaSituacaoIntimacao', $arrObjDTO) . '</th>';
+        $strResultado .= '<th class="infraTh" width="225px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objDTO, 'Situa√ß√£o', 'StaSituacaoIntimacao', $arrObjDTO) . '</th>';
 
-        $strResultado .= '<th class="infraTh"><div style="width: 90px" class="text-center">AÁıes</div></th>';
+        $strResultado .= '<th class="infraTh"><div style="width: 90px" class="text-center">A√ß√µes</div></th>';
         $strResultado .= '</tr>';
 
         $strCssTr = '<tr class="infraTrEscura">';
@@ -118,7 +116,7 @@ try {
             $strId = $objRet->getNumIdMdPetIntimacao();
             $bolRegistroAtivo = $objRet->getStrSinAtivo() == 'S';
             $idIntimacao = $objRet->getNumIdMdPetIntimacao(); //Corrigir
-            $nomeTela = 'IntimaÁ„o EletrÙnica';
+            $nomeTela = 'Intima√ß√£o Eletr√¥nica';
 
             $idProcesso = isset($objRet) && !is_null($objRet) ? $objRet->getDblIdProtocoloProcedimento() : null;
             $tpProcesso = $objRet->getStrNomeTipoProcedimento();
@@ -126,15 +124,16 @@ try {
             $idMdPetDest = $objRet->getNumIdMdPetIntRelDestinatario();
 
             $descricao = $objRet->getStrEspecificacaoProcedimento();
-            $strCssTr = !$bolRegistroAtivo ? '<tr class="trVermelha">' : ($strCssTr == '<tr class="infraTrClara">' ? '<tr class="infraTrEscura">' : '<tr class="infraTrClara">');
-            $strResultado .= $strCssTr;
+            $strCssTr = !$bolRegistroAtivo ? 'trVermelha' : ($strCssTr == 'infraTrClara' ? 'infraTrEscura' : 'infraTrClara');
 
-            //Linha N˙mero do Processo
+            $strResultado .= '<tr class="tr-acoes-dinamicas '.$strCssTr.'" data-idMdPetDest="'.$objRet->getNumIdMdPetIntRelDestinatario().'" data-idIntimacao="'.$idIntimacao.'" data-idProcesso="'.$idProcesso.'" data-tpProcesso="'.$tpProcesso.'" data-idAcExt="'.$idAcExt.'" data-descricao="'.$descricao.'" data-idSituacao="'.$objRet->getStrStaSituacaoIntimacao().'" data-docTipo="'.str_replace('(' . $objRet->getStrProtocoloFormatadoDocumento() . ')', '', $objRet->getStrDocumentoPrincipal()).'" data-docPrinc="'.$objRet->getStrProtocoloFormatadoDocumento().'" data-idUsuarioExterno="'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'">';
+
+            //Linha N√∫mero do Processo
             $strResultado .= '<td align="center" >';
             $strResultado .= $objMdPetRelDestRN->addConsultarProcesso($idProcesso, $tpProcesso, $idAcExt, $descricao, $objRet->getStrProtocoloFormatadoProcedimento());
             $strResultado .= '</td>';
 
-            //Linha Data de ExpediÁ„o
+            //Linha Data de Expedi√ß√£o
             $arrData = explode(' ', $objRet->getDthDataCadastro());
             $strResultado .= '<td align="center">';
             $strResultado .= $arrData[0];
@@ -145,130 +144,29 @@ try {
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrDocumentoPrincipal());
             $strResultado .= '</td>';
 
-            //Destinat·rio
+            //Destinat√°rio
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrNomeContato()) . " (";
             $strResultado .= $objRet->getStrSinPessoaJuridica() == 'S' ? PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objRet->getDblCnpjContato())) : InfraUtil::formatarCpf(PaginaSEI::tratarHTML($objRet->getDblCpfContato()));
             $strResultado .= ') </td>';
 
-            //Destinat·rio
+            //Destinat√°rio
             $strResultado .= '<td>';
-            $strResultado .= $objRet->getStrSinPessoaJuridica() == 'S' ? "Pessoa JurÌdica" : "Pessoa FÌsica";
+            $strResultado .= $objRet->getStrSinPessoaJuridica() == 'S' ? "Pessoa Jur√≠dica" : "Pessoa F√≠sica";
             $strResultado .= '</td>';
 
 
-            //Tipo de IntimaÁ„o
+            //Tipo de Intima√ß√£o
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrNomeTipoIntimacao());
             $strResultado .= '</td>';
 
-            //SituaÁ„o
+            //Situa√ß√£o
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrSituacaoIntimacao());
             $strResultado .= '</td>';
 
-            $strResultado .= '<td align="center">';
-
-            //AÁ„o Consulta
-            if (!is_null($idProcesso)) {
-                $strResultado .= $objMdPetRelDestRN->addConsultarProcesso($idProcesso, $tpProcesso, $idAcExt, $descricao);
-
-                $idSituacao = $objRet->getStrStaSituacaoIntimacao();
-
-                if (!is_null($idSituacao) && $idSituacao != MdPetIntimacaoRN::$INTIMACAO_PENDENTE) {
-                    $docPrinc = $objRet->getStrProtocoloFormatadoDocumento();
-                    $docTipo = str_replace('(' . $objRet->getStrProtocoloFormatadoDocumento() . ')', '', $objRet->getStrDocumentoPrincipal());
-                    $docNum = '';
-                    $idDocCert = $objMdPetIntAceiteRN->getIdCertidaoPorIntimacao(array($idIntimacao, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
-                    $strResultado .= $objMdPetCertidaoRN->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcExt, $idDocCert));
-
-                    //RECIBO
-                    $objMdPetReciboDTO = new MdPetReciboDTO();
-                    $objMdPetReciboDTO->retTodos();
-
-                    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-                    $strVersaoModuloPeticionamento = $objInfraParametro->getValor('VERSAO_MODULO_PETICIONAMENTO', false);
-
-//                        $objMdPetReciboDTO->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
-                    $objMdPetReciboDTO->setStrStaTipoPeticionamento(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO);
-
-                    $objMdPetReciboRN = new MdPetReciboRN();
-
-                    //PrÛprio Processo
-                    $isRelacionado = false;
-                    $objMdPetReciboDTO->setNumIdProtocolo($idProcesso);
-                    $objMdPetReciboDTO->unSetDblIdProtocoloRelacionado();
-
-                    $arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
-
-                    if (empty($arrObjMdPetReciboDTO)) {
-                        //Relacionado
-                        $isRelacionado = true;
-                        $objMdPetReciboDTO->unSetNumIdProtocolo();
-                        $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcesso);
-
-                        $arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
-                    }
-
-                    foreach ($arrObjMdPetReciboDTO as $objMdPetReciboDTO) {
-
-                        $usuarioDTO = new UsuarioDTO();
-                        $usuarioRN = new UsuarioRN();
-                        $usuarioDTO->retNumIdUsuario();
-                        $usuarioDTO->retNumIdContato();
-                        $usuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-
-                        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
-
-                        $emailDestinatario = SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno();
-                        $acessoExtRN = new AcessoExternoRN();
-                        $acessoExtDTO = new AcessoExternoDTO();
-                        $acessoExtDTO->retTodos();
-                        $acessoExtDTO->setOrd("IdAcessoExterno", InfraDTO::$TIPO_ORDENACAO_DESC);
-                        $acessoExtDTO->retDblIdProtocoloAtividade();
-                        $acessoExtDTO->retNumIdContatoParticipante();
-
-                        //trazer acesso externo  mais recente, deste processo, para este usuario externo, que estejam dentro da data de validade
-                        $acessoExtDTO->setDblIdProtocoloAtividade($objMdPetReciboDTO->getNumIdProtocolo());
-
-                        $acessoExtDTO->setNumIdContatoParticipante($usuarioDTO->getNumIdContato());
-                        $acessoExtDTO->setStrEmailDestinatario($emailDestinatario);
-                        $acessoExtDTO->setStrStaTipo(AcessoExternoRN::$TA_USUARIO_EXTERNO);
-                        $acessoExtDTO->setStrSinAtivo('S');
-
-                        //Verificar se traz somente o do acesso atual ou do relacionado desta intimaÁ„o (linha 1215)
-                        //$acessoExtDTO->setNumIdAcessoExterno($idAcessoExterno);
-                        //@todo adicionar verificaÁao de data de validade do acesso externo
-
-                        $arrAcessosExternos = $acessoExtRN->listar($acessoExtDTO);
-
-//                            var_dump($arrAcessosExternos);
-
-                        if (is_array($arrAcessosExternos) && count($arrAcessosExternos) > 0) {
-                            $id_acesso_ext_link = $arrAcessosExternos[0]->getNumIdAcessoExterno();
-
-                            $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
-                            $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
-                            $docLink .= "&id_orgao_acesso_externo=0";
-                            SessaoSEIExterna::getInstance()->configurarAcessoExterno($id_acesso_ext_link);
-
-                            //se nao configurar acesso externo ANTES, a assinatura do link falha
-                            $linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($docLink));
-
-                            $strResultado .= $objMdPetIntReciboRN->addIconeRecibo(array($objMdPetReciboDTO->getDthDataHoraRecebimentoFinal(), $docPrinc, $docTipo, $docNum, $linkAssinado, $objMdPetReciboDTO->getDblIdDocumento(), $idMdPetDest));
-                        }
-                    }
-
-                    //necessario fazer isso para nao quebrar a navegaÁao (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario È enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
-                    SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
-                    //RECIBO - fim
-
-
-                }
-
-            }
-
-            $strResultado .= '</td>';
+            $strResultado .= '<td align="center" class="td-acoes-dinamicas" style="vertical-align: middle"><h4 class="text-placeholder line"></h4></td>';
             $strResultado .= '</tr>';
 
         }
@@ -307,7 +205,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
             <div class="form-group">
-                <label class="infraLabelOpcional" for="txtNumeroProcesso">N˙mero do Processo:</label>
+                <label class="infraLabelOpcional" for="txtNumeroProcesso">N√∫mero do Processo:</label>
                 <input type="text" name="txtNumeroProcesso" id="txtNumeroProcesso" class="infraText form-control"
                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"
                    value="<?php echo array_key_exists('txtNumeroProcesso', $_POST) ? PaginaSEIExterna::tratarHTML($_POST['txtNumeroProcesso']) : '' ?>"/>
@@ -315,7 +213,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
         </div>
         <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
             <div class="form-group">
-                <label class="infraLabelOpcional" for="txtPeriodoExpedicao">PerÌodo de ExpediÁ„o:</label>
+                <label class="infraLabelOpcional" for="txtPeriodoExpedicao">Per√≠odo de Expedi√ß√£o:</label>
                 <!--DATA INICIAL-->
                 <div class="input-group mb-3">
                     <input type="text" name="txtDataInicio" id="txtDataInicio" class="infraText form-control"
@@ -334,7 +232,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
         <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
             <div class="form-group">
                 <!--FIM DATA INICIAL-->
-                <label class="infraLabelOpcional mx-2">atÈ</label>
+                <label class="infraLabelOpcional mx-2">at√©</label>
                 <!--DATA FINAL-->
                 <div class="input-group mb-3">
                     <input type="text" id="txtDataFim" name="txtDataFim" class="infraText form-control"
@@ -354,7 +252,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
         <!--FIM DATA FINAL-->
         <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
             <div class="form-group">
-                <label class="infraLabelOpcional" for="selTipoDestinatario">Tipo de Destinat·rio:</label>
+                <label class="infraLabelOpcional" for="selTipoDestinatario">Tipo de Destinat√°rio:</label>
                 <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoDestinatario"
                         id="selTipoDestinatario"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
@@ -368,7 +266,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
         </div>
         <div class="col-sm-12 col-md-9 col-lg-7 col-xl-6">
             <div class="form-group">
-                <label class="infraLabelOpcional" for="selTipoIntimacao">Tipo de IntimaÁ„o:</label>
+                <label class="infraLabelOpcional" for="selTipoIntimacao">Tipo de Intima√ß√£o:</label>
                 <select onchange="pesquisar();" class="infraSelect form-control" name="selTipoIntimacao"
                         id="selTipoIntimacao" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                     <?php echo $selTipoIntimacao; ?>
@@ -377,7 +275,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
         </div>
         <div class="col-sm-12 col-md-12 col-lg-5 col-xl-6">
             <div class="form-group">
-                <label class="infraLabelOpcional" for="selCumprimentoIntimacao">SituaÁ„o:</label>
+                <label class="infraLabelOpcional" for="selCumprimentoIntimacao">Situa√ß√£o:</label>
                 <select onchange="pesquisar();" class="infraSelect form-control" name="selCumprimentoIntimacao"
                         style="width: 13%; min-width: 100%;" id="selCumprimentoIntimacao"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">

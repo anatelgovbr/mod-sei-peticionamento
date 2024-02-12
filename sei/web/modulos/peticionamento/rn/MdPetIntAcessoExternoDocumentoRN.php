@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 31/03/2017 - criado por marcelo.cast
  *
- * Versão do Gerador de Código: 1.40.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.40.0
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -38,12 +38,12 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
         $objAtributoAndamentoAPI->setNome($nome);
         
         $objAtributoAndamentoAPI->setValor($valor);
-        $objAtributoAndamentoAPI->setIdOrigem($id); //ID do prédio, pode ser null
+        $objAtributoAndamentoAPI->setIdOrigem($id); //ID do prÃ©dio, pode ser null
         
         return $objAtributoAndamentoAPI;
     }
     
-    /* Método responsável por conceder acesso externo (integral ou parcial) aos documentos envolvidoas na intimação */
+    /* MÃ©todo responsÃ¡vel por conceder acesso externo (integral ou parcial) aos documentos envolvidoas na intimaÃ§Ã£o */
     protected function concederAcessoExternoParaDocumentosControlado( MdPetIntAcessoExternoDocumentoDTO $dto){
     	
     	//cadastrando acesso externo para um usuario em todos os documentos passados
@@ -54,7 +54,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
     	$idParticipante = $dto->getNumIdParticipante();
     	$idProtocolo    = $dto->getDblIdProtocoloProcesso();
     	$isIntegral     = $dto->getStrSinVisualizacaoIntegral();
-    	$motivoPadrao   = 'MOTIVO: Acesso Externo para documentos de Intimação';
+    	$motivoPadrao   = 'MOTIVO: Acesso Externo para documentos de IntimaÃ§Ã£o';
     	$strMotivo      = $dto->getStrMotivo() == '' ?  $motivoPadrao : $dto->getStrMotivo();
 
     	//lista dos docs
@@ -106,7 +106,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
     			$param[2] = $dto->getStrStaConcessao();
     			
     			//=========================================
-    			//INICIO - preencher corretamente os atributos possiveis para os andamento de liberaçao de acesso externo, para permitir o parser correto nas variaveis do texto
+    			//INICIO - preencher corretamente os atributos possiveis para os andamento de liberaÃ§ao de acesso externo, para permitir o parser correto nas variaveis do texto
     			//=========================================
     			
     			$numDias = MdPetIntAcessoExternoDocumentoRN::$NUMERO_DIAS_LIBERACAO_ACESSO_EXTERNO;
@@ -256,7 +256,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 			
 		}
 
-                $procuradorSimplesValido = isset($arrParams[2]) ? $arrParams[2] : NULL;
+        $procuradorSimplesValido = isset($arrParams[2]) ? $arrParams[2] : NULL;
                 
 		$idProcedimento       = $post['hdnIdProcedimento'];
 		
@@ -268,7 +268,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		$tpAcessoSolicitado   = array_key_exists('optIntegral', $post) && $post['optIntegral'] == static::$ACESSO_INTEGRAL ? static::$ACESSO_INTEGRAL : static::$ACESSO_PARCIAL;
 		
 		if($post['hdnTipoPessoa'] == "J"){
-		//Atribuindo acesso integral para jurídico
+		//Atribuindo acesso integral para jurÃ­dico
 		$objMdPetAcessoExtRN   = new MdPetAcessoExternoRN();
 		$tpAcessoAnterior =  $objMdPetAcessoExtRN->getUltimaConcAcessoExtModuloPorContatos(array(array($idContato), $idProcedimento));
 		
@@ -365,13 +365,13 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 
 		$isTpConcessao = isset($post['optParcial']) ? 'N': 'S';
 		$objMdPetIntAcessoExtDocDTO->setStrSinVisualizacaoIntegral($isTpConcessao);
-		$objMdPetIntAcessoExtDocDTO->setStrMotivo('Criado automaticamente no âmbito da Intimação Eletrônica afeta ao Documento '.$nomeDocCompleto.'.');
+		$objMdPetIntAcessoExtDocDTO->setStrMotivo('Criado automaticamente no Ã¢mbito da IntimaÃ§Ã£o EletrÃ´nica afeta ao Documento '.$nomeDocCompleto.'.');
 
 		return $this->concederAcessoExternoParaDocumentosControlado($objMdPetIntAcessoExtDocDTO);
    }
 
 
-   /* Função Responsável por verificar se o processo que está sendo realizada a intimação possui algum tipo de AcessoExterno Gerada Anteriormente.
+   /* FunÃ§Ã£o ResponsÃ¡vel por verificar se o processo que estÃ¡ sendo realizada a intimaÃ§Ã£o possui algum tipo de AcessoExterno Gerada Anteriormente.
     *
     */
 	private function _verificarPossuiConcessaoAcesso($arrParams)
@@ -408,10 +408,10 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		$objAcessoExternoRN  = new AcessoExternoRN();
 		$bolTxtDtAtual 		 = InfraData::getStrDataAtual();
 
-		//Get Participante por número de Processo (Se não existir, realiza o cadastro)
+		//Get Participante por nÃºmero de Processo (Se nÃ£o existir, realiza o cadastro)
 		$idParticipante = $this->_getIdParticipantePorContato($idContato, $idProcesso, $cadNovoPart);
 
-		//Remover pelo filtro Processos já vencidos ou que sejam cancelados
+		//Remover pelo filtro Processos jÃ¡ vencidos ou que sejam cancelados
 		$objAcessoExternoDTO->setDtaValidade($bolTxtDtAtual, InfraDTO::$OPER_MAIOR_IGUAL);
 		$objAcessoExternoDTO->setStrSinAtivo('S');
 		$objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_USUARIO_EXTERNO);
@@ -502,7 +502,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		return null;
 	}
 
-	//parte da Solução atual para coluna de ações. Item 35
+	//parte da SoluÃ§Ã£o atual para coluna de aÃ§Ãµes. Item 35
 	protected function getArrDocumentosAPIConectado($arrParams){
 		
 		$idAcessoExt = $arrParams[0];

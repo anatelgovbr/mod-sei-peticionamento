@@ -1,12 +1,12 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 11/01/2008 - criado por marcio_db
  *
- * Versão do Gerador de Código: 1.12.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.12.0
  *
- * Versão no CVS: $Id$
+ * VersÃ£o no CVS: $Id$
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -86,6 +86,10 @@ class MdPetUsuarioExternoDTO extends InfraDTO
 
         $this->configurarExclusaoLogica('SinAtivo', 'N');
 
+    }
+
+    public function getDblDocContato(){
+        return !empty($this->getDblCpfContato()) || is_null($this->getDblCpfContato()) || $this->getDblCpfContato() != '' ? $this->getDblCpfContato() : $this->getDblCnpjContato();
     }
 }
 

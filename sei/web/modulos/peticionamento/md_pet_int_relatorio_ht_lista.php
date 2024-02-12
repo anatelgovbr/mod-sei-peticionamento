@@ -12,12 +12,12 @@ $strTitulo = '';
 switch($_GET['acao']) {
 
     case 'md_pet_int_relatorio_ht_listar':
-        $strTitulo = "Histórico da Intimação Eletrônica";
+        $strTitulo = "HistÃ³rico da IntimaÃ§Ã£o EletrÃ´nica";
 
         break;
 
     default:
-        throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+        throw new InfraException("AÃ§Ã£o '".$_GET['acao']."' nÃ£o reconhecida.");
         break;
 
         
@@ -54,36 +54,36 @@ $objConsultaDTO = $objMdPetIntRelatorioRN->retornaSelectsRelatorio();
 $objConsultaDTO->setNumIdMdPetIntRelDestinatario($_GET['md_pet_int_rel']);
 $arrDados = $objMdPetIntRelatorioRN->listarDadosModalSituacao($objConsultaDTO);
 
-//Configuração da Paginação
+//ConfiguraÃ§Ã£o da PaginaÃ§Ã£o
 $numRegistros = count($arrDados);
 
 //Tabela de resultado.
 if ($numRegistros > 0) {
 
-    $strResultado .= '<table id="tabelaIntimacaoEletronica"  class="infraTable" summary="Intimação Eletrônica">';
+    $strResultado .= '<table id="tabelaIntimacaoEletronica"  class="infraTable" summary="IntimaÃ§Ã£o EletrÃ´nica">';
     $strResultado .= '<caption class="infraCaption">';
     $pluralOrSing  = $numRegistros == 1 ? 'registro' : 'registros';
-    $strResultado .=  'Histórico da Intimação Eletrônica ('.$numRegistros.' '.$pluralOrSing.'):';
+    $strResultado .=  'HistÃ³rico da IntimaÃ§Ã£o EletrÃ´nica ('.$numRegistros.' '.$pluralOrSing.'):';
     $strResultado .= '</caption>';
 
     $strResultado .= '<tr>';
-    //Data/Hora que alterou pra essa Situação
-    $strResultado .= '<th class="infraTh" style="text-align:left;" width="140px;">Data/Hora </th>';
+    //Data/Hora que alterou pra essa SituaÃ§Ã£o
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="140px">Data/Hora </th>';
 
-    //Usuário  Responsável pela Ação
-    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto">Usuário </th>';
+    //UsuÃ¡rio  ResponsÃ¡vel pela AÃ§Ã£o
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="200px">UsuÃ¡rio </th>';
 
-    //Unidade da Intimação
+    //Unidade da IntimaÃ§Ã£o
     $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto"> Unidade </th>';
 
     //Destinatario
-    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto"> Destinatário </th>';
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto"> DestinatÃ¡rio </th>';
 
     //Tipo de Destinatario
-    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto">Tipo de Destinatário </th>';
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto">Tipo de DestinatÃ¡rio </th>';
 
-    //Situação
-    $strResultado .= '<th class="infraTh" style="text-align:left;" width="240px;">Situação da Intimação </th>';
+    //SituaÃ§Ã£o
+    $strResultado .= '<th class="infraTh" style="text-align:left;" width="240px">SituaÃ§Ã£o da IntimaÃ§Ã£o </th>';
 
     //Tipo de Resposta
     $strResultado .= '<th class="infraTh" style="text-align:left;" width="auto">Tipo de Resposta</th>';
@@ -106,12 +106,12 @@ if ($numRegistros > 0) {
         $strResultado .= '</td>';
 
 
-        //Href Destinatário
+        //Href DestinatÃ¡rio
         $hrefDest  = '<a class="ancoraSigla" style="font-size: 1.0em;" title="'.PaginaSEI::tratarHTML($dado['usuarioNome']).'" >';
         $hrefDest .=  PaginaSEI::tratarHTML($dado['usuarioEmail']);
         $hrefDest .= '</a>';
 
-        //Destinatário
+        //DestinatÃ¡rio
         $strResultado .= '<td>';
         $strResultado .=  $hrefDest;
         $strResultado .= '</td>';
@@ -122,7 +122,7 @@ if ($numRegistros > 0) {
         $hrefUnidade .=  PaginaSEI::tratarHTML($dado['unidadeSigla']);
         $hrefUnidade .= '</a>';
 
-        //Unidade Geradora da Intimação
+        //Unidade Geradora da IntimaÃ§Ã£o
         $strResultado .= '<td>';
         $strResultado .=  $hrefUnidade;
         $strResultado .= '</td>';
@@ -135,13 +135,13 @@ if ($numRegistros > 0) {
         //Tipo Destinatario
         $strResultado .= '<td>';
         if($dado['tipoPessoa'] == "S"){
-        $strResultado .=  "Pessoa Jurídica";
+        $strResultado .=  "Pessoa JurÃ­dica";
         }else{
-            $strResultado .=  "Pessoa Física";
+            $strResultado .=  "Pessoa FÃ­sica";
         }
         $strResultado .= '</td>';
 
-        //Coluna Situação da Intimação
+        //Coluna SituaÃ§Ã£o da IntimaÃ§Ã£o
         $strResultado .= '<td>';
         $strResultado .= PaginaSEI::tratarHTML($dado['situacao']);
         $strResultado .= '</td>';

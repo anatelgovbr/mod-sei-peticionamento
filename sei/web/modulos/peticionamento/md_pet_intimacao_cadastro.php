@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/03/2017 - criado por pedro.cast
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 try {
@@ -20,7 +20,7 @@ try {
     //InfraDebug::getInstance()->limpar();
     //////////////////////////////////////////////////////////////////////////////
 
-    //OrientaÁıes Tipo de Destinat·rio
+    //Orienta√ß√µes Tipo de Destinat√°rio
     $objMdPetIntOrientacoesDTO2 = new MdPetIntOrientacoesDTO();
     $objMdPetIntOrientacoesDTO2->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
     $objMdPetIntOrientacoesDTO2->retTodos();
@@ -32,7 +32,7 @@ try {
         $txtOrientacoes = $objLista[0]->getStrOrientacoesTipoDestinatario();
     }
 
-    //Pessoa FÌsica
+    //Pessoa F√≠sica
     $strLinkTipoProcessoSelecaoF = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_fisica&tipo_selecao=1&id_object=objLupaTipoProcesso');
 
     //Juridicos
@@ -66,9 +66,9 @@ try {
 
 
             $strEmailAcoes = array('true', 'true');
-            $strTitulo = 'Gerar IntimaÁ„o EletrÙnica';
+            $strTitulo = 'Gerar Intima√ß√£o Eletr√¥nica';
 
-            $arrComandos[] = '<button type="button" onclick="onSubmitForm();" accesskey="G" name="sbmCadastrarMdPetIntimacao" id="sbmCadastrarMdPetIntimacao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">G</span>erar IntimaÁ„o</button>';
+            $arrComandos[] = '<button type="button" onclick="onSubmitForm();" accesskey="G" name="sbmCadastrarMdPetIntimacao" id="sbmCadastrarMdPetIntimacao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">G</span>erar Intima√ß√£o</button>';
 
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -86,7 +86,7 @@ try {
 
             $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
 
-//            Buscar IntimaÁıes cadastradas.
+//            Buscar Intima√ß√µes cadastradas.
             $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradas($idDocumento);
             $isAlterar = (!empty($arrIntimacoes)) ? true : false;
 
@@ -105,7 +105,7 @@ try {
 	                    echo "window.parent.parent.document.getElementById('ifrArvore').src = '".$strLinkMontarArvore."';";
 	                    echo "parent.infraFecharJanelaModal();";
 	                    echo "</script>";
-                        //necess·rio para atualizara a arvore do processo e mostra caneta preta de imediato
+                        //necess√°rio para atualizara a arvore do processo e mostra caneta preta de imediato
                         die;
                     }
                 } catch (Exception $e) {
@@ -116,7 +116,7 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
 
@@ -152,7 +152,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="fldOrientacoesDestinatarios" class="infraFieldset sizeFieldset form-control" style="width:auto; min-height: 250px">
-                <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Destinat·rio</legend>
+                <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Destinat√°rio</legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <div class="mb-5">
@@ -172,7 +172,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <label class="infraRadioLabel" for="tipoPessoaFisica"></label>
                                 </div>
                                 <span id="spnFisica">
-                                    <label id="lblFisica" for="tipoPessoaFisica" accesskey="" class="infraLabelRadio">Pessoa FÌsica</label><br>
+                                    <label id="lblFisica" for="tipoPessoaFisica" accesskey="" class="infraLabelRadio">Pessoa F√≠sica</label><br>
                                 </span>
                             </div>
                         </div>
@@ -186,7 +186,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <label class="infraRadioLabel" for="tipoPessoaJuridica"></label>
                                 </div>
                                 <span id="spnJuridica">
-                                    <label id="lblJuridica" for="tipoPessoaJuridica" accesskey="" class="infraLabelRadio">Pessoa JurÌdica</label>
+                                    <label id="lblJuridica" for="tipoPessoaJuridica" accesskey="" class="infraLabelRadio">Pessoa Jur√≠dica</label>
                                 </span>
                             </div>
                         </div>
@@ -208,11 +208,6 @@ PaginaSEI::getInstance()->fecharHtml();
 
 <script type="text/javascript">
 
-
-    function OnSubmitForm() {
-        return false;
-    }
-
     function intimacaoTipoPessoa(tipo) {
 
         try {
@@ -224,7 +219,7 @@ PaginaSEI::getInstance()->fecharHtml();
 
                 tipoPessoa = document.getElementById('hdnTipoPessoa').value == "J" ? "tipoPessoaJuridica" : "tipoPessoaFisica";
 
-                var r = confirm("Os dados preenchidos ser„o desconsiderados. Deseja Continuar?");
+                var r = confirm("Os dados preenchidos ser√£o desconsiderados. Deseja Continuar?");
 
                 if (r == false) {
                     document.getElementById(tipoPessoa).checked = true;
@@ -259,7 +254,7 @@ PaginaSEI::getInstance()->fecharHtml();
                 }
             },
             error: function (msgError) {
-                msgCommit = "Erro selecionar tipo de destinat·rio: " + msgError.responseText;
+                msgCommit = "Erro selecionar tipo de destinat√°rio: " + msgError.responseText;
                 console.log(msgCommit);
             },
             complete: function (result) {

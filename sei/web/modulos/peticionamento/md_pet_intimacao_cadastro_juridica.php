@@ -16,7 +16,7 @@ $objDocumentoRN = new DocumentoRN();
 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
 
-//  Buscar Intimações cadastradas.
+//  Buscar IntimaÃ§Ãµes cadastradas.
 $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasJuridico($idDocumento);
 
 $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
@@ -40,7 +40,7 @@ $idProcedimento             = array_key_exists('id_procedimento', $_REQUEST) ? $
 $strLinkAjaxDestinatarios   = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_juridica&tipo_selecao=2&id_object=objLupaInteressados&id_documento=' . $idDocumento);
 $strLinkInteressados        = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
 
-//Pessoa Jurídica - Lupa do multiselect
+//Pessoa JurÃ­dica - Lupa do multiselect
 $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_juridica_lote&id_documento=' . $idDocumento);
 // Destinatarios em Massa
 
@@ -55,9 +55,9 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
         <fieldset id="fldDestinatarios" class="infraFieldset sizeFieldset form-control">
-            <legend class="infraLegend" class="infraLabelObrigatorio"> Destinatários</legend>
+            <legend class="infraLegend" class="infraLabelObrigatorio"> DestinatÃ¡rios</legend>
 
-            <!-- Destinatários em Massa START -->
+            <!-- DestinatÃ¡rios em Massa START -->
 
             <div class="row">
                 <div class="col-md-12">
@@ -67,7 +67,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                 class="infraButton"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
                                 accesskey="V">
-                            <span class="infraTeclaAtalho">V</span>er intimações do processo
+                            <span class="infraTeclaAtalho">V</span>er intimaÃ§Ãµes do processo
                         </button>
                     </div>
                 </div>
@@ -78,17 +78,17 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                     <div id="divInteressados" class="infraAreaDados" style="height:14em;">
 
                         <div class="form-group mb-0">
-                            <label id="lbltxtUsuario2" for="txtUsuario2" class="infraLabelObrigatorio mb-0">Pessoa Jurídica:</label>
-                            <?= printHelp('A pesquisa é realizada somente sobre Pessoas Jurídicas que já tenham vinculado pelo menos o Responsável Legal no âmbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela Razão Social ou CNPJ da Pessoa Jurídica.'); ?>
-                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
+                            <label id="lbltxtUsuario2" for="txtUsuario2" class="infraLabelObrigatorio mb-0">Pessoa JurÃ­dica:</label>
+                            <?= printHelp('A pesquisa Ã© realizada somente sobre Pessoas JurÃ­dicas que jÃ¡ tenham vinculado pelo menos o ResponsÃ¡vel Legal no Ã¢mbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela RazÃ£o Social ou CNPJ da Pessoa JurÃ­dica.'); ?>
+                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" autofocus/>
                             <select id="selDadosUsuario2" name="selDadosUsuario2" class="infraSelect" multiple="multiple" size="6" style="height: 110px; margin-top: -34px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
 								<?=$strItensSelParticipante?>
                             </select>
                         </div>
 
                         <div id="divOpcoesDadosUsuario2">
-                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Pessoa Jurídica" alt="Selecionar Pessoa Jurídica" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-                            <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Pessoa Jurídica Selecionada" title="Remover Pessoa Jurídica Selecionada" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Pessoa JurÃ­dica" alt="Selecionar Pessoa JurÃ­dica" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Pessoa JurÃ­dica Selecionada" title="Remover Pessoa JurÃ­dica Selecionada" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                         </div>
 
                     </div>
@@ -97,15 +97,15 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                 </div>
             </div>
 
-            <!-- Destinatários em Massa END -->
+            <!-- DestinatÃ¡rios em Massa END -->
 
-            <!-- Todo: Destinatários em Massa Remover -->
-            <!-- Pessoa Jurídica -->
+            <!-- Todo: DestinatÃ¡rios em Massa Remover -->
+            <!-- Pessoa JurÃ­dica -->
             <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-7 col-lg-7 col-xl-7">
-                    <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Pessoa Jurídica: </label>
+                    <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Pessoa JurÃ­dica: </label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/ajuda.svg" name="ajuda"
-                         id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Pessoas Jurídicas que já tenham vinculado pelo menos o Responsável Legal no âmbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela Razão Social ou CNPJ da Pessoa Jurídica.', 'Ajuda') ?>
+                         id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa Ã© realizada somente sobre Pessoas JurÃ­dicas que jÃ¡ tenham vinculado pelo menos o ResponsÃ¡vel Legal no Ã¢mbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela RazÃ£o Social ou CNPJ da Pessoa JurÃ­dica.', 'Ajuda') ?>
                          class="infraImgModulo"/><br>
                     <div class="input-group mb-3">
                         <input style="width: 85%; margin-top:1px;" type="text" id="txtUsuario" name="txtUsuario"
@@ -114,8 +114,8 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                         <img id="imgLupaTipoProcesso"
                              onclick="objLupaJuridico.selecionar(700,500);"
                              src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
-                             alt="Selecionar Pessoa Jurídica"
-                             title="Selecionar Pessoa Jurídica" class="infraImg"/>
+                             alt="Selecionar Pessoa JurÃ­dica"
+                             title="Selecionar Pessoa JurÃ­dica" class="infraImg"/>
                     </div>
                     <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
                            value="<?php echo $idTipoProcesso ?>"/>
@@ -143,34 +143,34 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                 </div>
 
                 <!--
-                 TODO: Mostrar avisos para os usuários com links para as páginas de Procurações Conhecidas da Anatel e da Wiki de como Gerar Intimação Eletrônica
+                 TODO: Mostrar avisos para os usuÃ¡rios com links para as pÃ¡ginas de ProcuraÃ§Ãµes Conhecidas da Anatel e da Wiki de como Gerar IntimaÃ§Ã£o EletrÃ´nica
                 <div class="grid" width="98%">
                     <br/>
-                    <label class="infraLabelObrigatorio">Atenção: Consulte o <a href="https://sistemasnet/wiki/doku.php?id=artigos:processo_eletronico:sei_roteiro_usuario_gerar_intimacao_eletronica" target="_blank" title="Orientações sobre expedição de Intimações Eletrônicas">Artigo na Wiki</a> com orientações sobre expedição de Intimações Eletrônicas. Especialmente quando se tratar de Intimação de Pessoa Jurídica, verifique previamente a lista de <a href="http://integra/Lists/Procuraes%20Conhecidas%20na%20Anatel/AllItems.aspx" target="_blank" title="Acesse a Lista de Procurações Conhecidas">Procurações Conhecidas da Anatel</a> e confira se existe indicação formal para fins de recebimento de intimação.</label>
+                    <label class="infraLabelObrigatorio">AtenÃ§Ã£o: Consulte o <a href="https://sistemasnet/wiki/doku.php?id=artigos:processo_eletronico:sei_roteiro_usuario_gerar_intimacao_eletronica" target="_blank" title="OrientaÃ§Ãµes sobre expediÃ§Ã£o de IntimaÃ§Ãµes EletrÃ´nicas">Artigo na Wiki</a> com orientaÃ§Ãµes sobre expediÃ§Ã£o de IntimaÃ§Ãµes EletrÃ´nicas. Especialmente quando se tratar de IntimaÃ§Ã£o de Pessoa JurÃ­dica, verifique previamente a lista de <a href="http://integra/Lists/Procuraes%20Conhecidas%20na%20Anatel/AllItems.aspx" target="_blank" title="Acesse a Lista de ProcuraÃ§Ãµes Conhecidas">ProcuraÃ§Ãµes Conhecidas da Anatel</a> e confira se existe indicaÃ§Ã£o formal para fins de recebimento de intimaÃ§Ã£o.</label>
                 </div>
                 -->
 
             </div>
 
-            <!-- Todo: Destinatários em Massa Remover -->
+            <!-- Todo: DestinatÃ¡rios em Massa Remover -->
 <!--            <div class="tabUsuario clear height_2" style="--><?php //echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?><!--"></div>-->
             <div class="tabUsuario clear height_2" style="display:none"></div>
-            <!-- Tabela de Destinatários -->
-            <!-- Todo: Destinatários em Massa Remover -->
+            <!-- Tabela de DestinatÃ¡rios -->
+            <!-- Todo: DestinatÃ¡rios em Massa Remover -->
             <div class="row" style="display: none">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                     <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela"
                          style="<?php echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?>">
                         <div id="hiddeTable">
-                            <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jurídicas disponiveis" class="infraTable">
-                                <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Jurídicas disponiveis", count($arrIntimacoes)) ?></caption>
+                            <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas JurÃ­dicas disponiveis" class="infraTable">
+                                <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas JurÃ­dicas disponiveis", count($arrIntimacoes)) ?></caption>
                                 <tr>
                                     <th style="display:none;">ID</th>
-                                    <th class="infraTh">Razão Social</th>
+                                    <th class="infraTh">RazÃ£o Social</th>
                                     <th class="infraTh" width="20%">CNPJ</th>
-                                    <th class="infraTh" width="15%">Data de Expedição</th>
-                                    <th class="infraTh" width="20%">Situação da Intimação</th>
-                                    <th class="infraTh" width="10%">Ações</th>
+                                    <th class="infraTh" width="15%">Data de ExpediÃ§Ã£o</th>
+                                    <th class="infraTh" width="20%">SituaÃ§Ã£o da IntimaÃ§Ã£o</th>
+                                    <th class="infraTh" width="10%">AÃ§Ãµes</th>
                                 </tr>
                                 <? if ($_REQUEST['is_alterar']) { ?>
                                     <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= $arrIntimacoes ?>"/>
@@ -189,8 +189,8 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                             <td class="text-center"><?= $intimacao['Situacao'] ?></td>
                                             <td class="text-center">
                                                 <a href='#' onclick="abrirIntimacaoCadastradaJuridico('<?= $intimacao['Url'] ?>','<?= $key ?>')">
-                                                    <img title='Consultar Intimação Eletrônica'
-                                                         alt='Consultar Intimação Eletrônica'
+                                                    <img title='Consultar IntimaÃ§Ã£o EletrÃ´nica'
+                                                         alt='Consultar IntimaÃ§Ã£o EletrÃ´nica'
                                                          src='<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/consultar.svg'
                                                          class='infraImg'/>
                                                 </a>
@@ -215,7 +215,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
             <div class="form-group">
-                <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de Intimação:</label>
+                <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de IntimaÃ§Ã£o:</label>
                 <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)" class="campoPadrao infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strTipoIntimacao ?>
                 </select>
@@ -236,17 +236,17 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div id="hiddeAll2">
                 <fieldset id="fldDocumentosIntimacao" class="infraFieldset sizeFieldset form-control" style="width: 100%">
-                    <legend class="infraLegend" class="infraLabelOpcional"> Documentos da Intimação
+                    <legend class="infraLegend" class="infraLabelOpcional"> Documentos da IntimaÃ§Ã£o
                         <img style="margin-top:1px; margin-bottom: -3px"
                              src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                             id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até ' . $numNumPrazo . ' dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.', 'Ajuda') ?> />
+                             id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-Ã¡ cumprida a IntimaÃ§Ã£o EletrÃ´nica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da IntimaÃ§Ã£o. \n\n Caso a consulta nÃ£o seja efetuada em atÃ© ' . $numNumPrazo . ' dias corridos da data de geraÃ§Ã£o da IntimaÃ§Ã£o EletrÃ´nica, automaticamente ocorrerÃ¡ seu Cumprimento por Decurso do Prazo TÃ¡cito. \n\n O Documento Principal e possÃ­veis Anexos terÃ£o o acesso ao seu teor protegidos atÃ© o cumprimento da IntimaÃ§Ã£o.', 'Ajuda') ?> />
                     </legend>
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                             <!-- Documento Principal-->
                             <label id="lblDocPrincIntimacao" for="lblDocPrincIntimacao" class="infraLabelOpcional">Documento
                                 Principal da
-                                Intimação: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')'; ?></label>
+                                IntimaÃ§Ã£o: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')'; ?></label>
                         </div>
                     </div>
                     <div class="row">
@@ -257,7 +257,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                        class="infraCheckboxInput" <?= (false ? 'checked="checked"' : '') ?>
                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                 <label class="infraCheckboxLabel " for="optPossuiAnexo"></label></div>
-                            <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelCheckbox">Intimação
+                            <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelCheckbox">IntimaÃ§Ã£o
                                 possui Anexos
                             </label>
                         </div>
@@ -266,7 +266,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                         <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                             <label id="lblAnexosIntimacao" for="lblAnexosIntimacao" accesskey=""
                                    class="infraLabelObrigatorio">Protocolos
-                                dos Anexos da Intimação:</label>
+                                dos Anexos da IntimaÃ§Ã£o:</label>
                             <div class="input-group mb-3">
                                 <select id="selAnexosIntimacao" style="width: 80%"
                                         name="selAnexosIntimacao" size="7"
@@ -307,7 +307,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                 </div>
                                 <span id="spnFisica">
                                     <label id="lblIntegral" for="optIntegral" accesskey="" class="infraLabelRadio">Integral
-                                        <? printHelp('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.'); ?>
+                                        <? printHelp('AtenÃ§Ã£o! Toda IntimaÃ§Ã£o EletrÃ´nica ocorre por meio da funcionalidade de DisponibilizaÃ§Ã£o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serÃ£o disponibilizados ao DestinatÃ¡rio, independentemente de seus NÃ­veis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que nÃ£o ocorra nulidade da IntimaÃ§Ã£o, o Acesso Externo Integral somente poderÃ¡ ser cancelado depois de cumprida a IntimaÃ§Ã£o e concluÃ­do o Prazo Externo correspondente (se indicado para possÃ­vel Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela IntimaÃ§Ã£o EletrÃ´nica seja cancelado, ele serÃ¡ automaticamente substituÃ­do por um Acesso Externo Parcial abrangendo o Documento Principal e possÃ­veis Anexos da IntimaÃ§Ã£o, alÃ©m de Documentos peticionados pelo prÃ³prio UsuÃ¡rio Externo.'); ?>
                                     </label>
                                 </span>
                             </div>
@@ -318,14 +318,14 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                 </div>
                                 <span id="spnJuridica">
                                     <label id="lblParcial" for="optParcial" accesskey="" class="infraLabelRadio">Parcial  &nbsp;
-                                        <? printHelp('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE serão disponibilizados ao Destinatário o Documento Principal, os Protocolos dos Anexos da Intimação (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos serão automaticamente incluídos no Acesso Parcial. \n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Parcial não poderá ser alterado nem cancelado. Todos os Protocolos incluídos no Acesso Externo Parcial poderão ser visualizados pelo Destinatário, independentemente de seus Níveis de Acesso, não abrangendo Protocolos futuros que forem adicionados ao processo.'); ?>
+                                        <? printHelp('AtenÃ§Ã£o! Toda IntimaÃ§Ã£o EletrÃ´nica ocorre por meio da funcionalidade de DisponibilizaÃ§Ã£o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE serÃ£o disponibilizados ao DestinatÃ¡rio o Documento Principal, os Protocolos dos Anexos da IntimaÃ§Ã£o (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos serÃ£o automaticamente incluÃ­dos no Acesso Parcial. \n\n Para que nÃ£o ocorra nulidade da IntimaÃ§Ã£o, o Acesso Externo Parcial nÃ£o poderÃ¡ ser alterado nem cancelado. Todos os Protocolos incluÃ­dos no Acesso Externo Parcial poderÃ£o ser visualizados pelo DestinatÃ¡rio, independentemente de seus NÃ­veis de Acesso, nÃ£o abrangendo Protocolos futuros que forem adicionados ao processo.'); ?>
                                     </label>
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Protocolos Disponíveis -->
+                    <!-- Protocolos DisponÃ­veis -->
                     <div class="row">
                         <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                             <label id="lblProtocolosDisponibilizados" for="lblProtocolosDisponibilizados" accesskey="" class="infraLabelObrigatorio">Protocolos Disponibilizados:</label>

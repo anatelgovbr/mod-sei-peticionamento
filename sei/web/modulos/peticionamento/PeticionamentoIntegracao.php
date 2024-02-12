@@ -27,7 +27,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getNome()
     {
-        return 'SEI Peticionamento, IntimaÁ„o e ProcuraÁ„o';
+        return 'SEI Peticionamento, Intima√ß√£o e Procura√ß√£o';
     }
 
     public function getVersao()
@@ -37,7 +37,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getInstituicao()
     {
-        return 'Anatel - AgÍncia Nacional de TelecomunicaÁıes';
+        return 'Anatel - Ag√™ncia Nacional de Telecomunica√ß√µes';
     }
 
     public function inicializar($strVersaoSEI)
@@ -356,8 +356,34 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_intercorrente_tipo_processo_auto_completar':
-                $arrObjTipoProcessoDTO = MdPetTipoProcessoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa'], $_POST['itens_selecionados']);
+
+				$escaparTiposProcesso = [];
+
+				$listaLimpa = ((isset($_GET['listaLimpa']) && $_GET['listaLimpa'] == 1) || (isset($_POST['listaLimpa']) && $_POST['listaLimpa'] == 1)) ? true : false;
+
+				if($listaLimpa){
+
+					$objMdPetCriterioDTO = new MdPetCriterioDTO();
+					$objMdPetCriterioDTO->retNumIdTipoProcedimento();
+					$objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
+					$objMdPetCriterioDTO->setDistinct(true);
+					$arrObjMdPetCriterioDTO = (new MdPetCriterioRN())->listar($objMdPetCriterioDTO);
+
+					if(!empty($arrObjMdPetCriterioDTO)){
+
+						$escaparTiposProcesso =  InfraArray::converterArrInfraDTO($arrObjMdPetCriterioDTO,'IdTipoProcedimento');
+
+						if(is_array($_POST['itens_selecionados']) && count($_POST['itens_selecionados']) > 0){
+							$escaparTiposProcesso = array_merge($_POST['itens_selecionados'], $escaparTiposProcesso);
+						}
+
+					}
+
+				}
+
+                $arrObjTipoProcessoDTO = MdPetTipoProcessoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa'], $escaparTiposProcesso);
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO, 'IdTipoProcedimento', 'Nome');
+
                 break;
 
             case 'md_pet_unidade_auto_completar':
@@ -462,7 +488,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'usuario_dados_tabela_juridica_lote':
-                $xml = $total = MdPetContatoINT::getDadosContatosJuridico($_POST['paramsBusca'], $_POST['paramsIdDocumento']);
+                $xml = $total = MdPetContatoINT::getDadosContatosJuridicoLote($_POST['paramsBusca'], $_POST['paramsIdDocumento']);
                 break;
 
             case 'md_pet_int_serie_auto_completar':
@@ -563,7 +589,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_vinc_usu_ext_dados_usuario_externo_procuracao' :
                 $xml = MdPetVincUsuarioExternoINT::consultarDadosUsuarioExternoProcuracao($_POST);
                 break;
-            //VerificaÁ„ de Existencia de ProcuraÁ„o
+            //Verifica√ß√£ de Existencia de Procura√ß√£o
             case 'md_pet_vinc_usu_ext_dados_usuario_externo_validar_procuracao' :
                 $xml = MdPetVincUsuarioExternoINT::validarExistenciaProcuracao($_POST);
                 break;
@@ -894,7 +920,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 return true;
 
             /**
-             * Tela de conclus„o
+             * Tela de conclus√£o
              */
             case 'md_pet_usuario_ext_vinc_pj_concluir_cad':
             case 'md_pet_usuario_ext_vinc_pj_concluir_alt':
@@ -905,7 +931,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'peticionamento_usuario_externo_vinc_pe':
                 require_once dirname(__FILE__) . '/md_pet_vinc_pe_usu_externo_concluir.php';
                 return true;
-            //ValidaÁ„o PRocuraÁ„o 
+            //Valida√ß√£o PRocura√ß√£o 
             case 'peticionamento_usuario_externo_vinc_validacao_procuracao':
                 require_once dirname(__FILE__) . '/md_pet_vinc_pe_usu_externo_existencia_proc.php';
                 return true;
@@ -966,7 +992,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $icone = "";
             $id = "";
             $tipo = "";
-            //recibo mais atual È de resposta a intimaÁao
+            //recibo mais atual √© de resposta a intima√ßao
             if (in_array(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO, $recibo)) {
 
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
@@ -986,7 +1012,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 $tipoRESP = 'PETICIONAMENTO';
                 $idRESP = 'PET' . $dblIdProcedimento;
-                $titleRESP = 'Peticionamento EletrÙnico\nResposta a IntimaÁ„o: ' . $data . '\nDocumento Principal: SEI n∫ ' . $numeroDocPrincipal . '';
+                $titleRESP = 'Peticionamento Eletr√¥nico\nResposta a Intima√ß√£o: ' . $data . '\nDocumento Principal: SEI n¬∫ ' . $numeroDocPrincipal . '';
                 $iconeRESP = 'modulos/peticionamento/imagens/svg/peticionamento_resposta_a_intimacao.svg?'.Icone::VERSAO;
 
                 $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
@@ -1000,7 +1026,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objArvoreAcaoItemAPI->setSinHabilitado('S');
                 $arrObjArvoreAcaoItemAPI[] = $objArvoreAcaoItemAPI;
 
-            } //recibo mais atual È de pet intercorrente
+            } //recibo mais atual √© de pet intercorrente
             if (in_array(MdPetReciboRN::$TP_RECIBO_INTERCORRENTE, $recibo)) {
 
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
@@ -1017,7 +1043,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $data = MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
 
 
-                $titleINT = 'Peticionamento EletrÙnico\nIntercorrente: ' . $data;
+                $titleINT = 'Peticionamento Eletr√¥nico\nIntercorrente: ' . $data;
                 $tipoINT = 'PETICIONAMENTO';
                 $idINT = 'PET' . $dblIdProcedimento;
                 $iconeINT = 'modulos/peticionamento/imagens/svg/peticionamento_intercorrente.svg?'.Icone::VERSAO;
@@ -1032,7 +1058,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objArvoreAcaoItemAPI->setHref('javascript:;');
                 $objArvoreAcaoItemAPI->setSinHabilitado('S');
                 $arrObjArvoreAcaoItemAPI[] = $objArvoreAcaoItemAPI;
-            } //recibo mais atual È de pet de processo novo
+            } //recibo mais atual √© de pet de processo novo
             if (in_array(MdPetReciboRN::$TP_RECIBO_NOVO, $recibo)) {
 
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
@@ -1048,7 +1074,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $data = MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
 
 
-                $titleNOVO = 'Peticionamento EletrÙnico\nProcesso Novo: ' . $data;
+                $titleNOVO = 'Peticionamento Eletr√¥nico\nProcesso Novo: ' . $data;
                 $tipoNOVO = 'PETICIONAMENTO';
                 $idNOVO = 'PET' . $dblIdProcedimento;
                 $iconeNOVO = 'modulos/peticionamento/imagens/svg/peticionamento_processo_novo.svg?'.Icone::VERSAO;
@@ -1111,7 +1137,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         return $arrObjArvoreAcaoItemAPI;
     }
 
-    //mÈtodo geral para apoio na montagem de icones para as 3 telas (Controle de Processos, Tela interna/arvore do processo e Acompanhamento Especial)
+    //m√©todo geral para apoio na montagem de icones para as 3 telas (Controle de Processos, Tela interna/arvore do processo e Acompanhamento Especial)
     private function retornarArrDadosParaIcones($idProcedimento)
     {
 
@@ -1119,7 +1145,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $arrDados = array();
         $acesso = false;
 
-        //pegar o recibo mais atual disponivel (caso haja um) e verificar se È de resposta a intimaÁ„o, intercorrente ou de peticionamento de processo novo e aplicar icone+tooltip correspondente
+        //pegar o recibo mais atual disponivel (caso haja um) e verificar se √© de resposta a intima√ß√£o, intercorrente ou de peticionamento de processo novo e aplicar icone+tooltip correspondente
 
         $reciboIntercorrenteDTO = new MdPetReciboDTO();
         //$reciboIntercorrenteDTO->setNumMaxRegistrosRetorno(1);
@@ -1189,7 +1215,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $linhaDeBaixo = '';
             $img = '';
 
-            //Tipos de recibos para pegar a data do "⁄ltimo Peticionamento de AtualizaÁ„o".
+            //Tipos de recibos para pegar a data do "√öltimo Peticionamento de Atualiza√ß√£o".
             $arrTipoReciboVinculacao = array(
                 MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO,
                 MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS,
@@ -1199,7 +1225,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA
             );
 
-            //recibo mais atual È de resposta a intimaÁao
+            //recibo mais atual √© de resposta a intima√ßao
             if (in_array(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO, $tipoPet)) {
 
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
@@ -1215,11 +1241,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 $data = MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
                 $numeroDocPrincipal = $arrRecibosResposta->getStrTextoDocumentoPrincipalIntimac();
-                $linhaDeCima = '"Peticionamento EletrÙnico"';
-                $linhaDeBaixo = '"Resposta a IntimaÁ„o: ' . $data . '\nDocumento Principal: SEI n∫ ' . $numeroDocPrincipal . '"';
+                $linhaDeCima = '"Peticionamento Eletr√¥nico"';
+                $linhaDeBaixo = '"Resposta a Intima√ß√£o: ' . $data . '\nDocumento Principal: SEI n¬∫ ' . $numeroDocPrincipal . '"';
                 $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_resposta_a_intimacao.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px;' />";
 
-            } //recibo mais atual È de peticionamento intercorrente
+            } //recibo mais atual √© de peticionamento intercorrente
 
             if (in_array(MdPetReciboRN::$TP_RECIBO_INTERCORRENTE, $tipoPet)) {
 
@@ -1235,11 +1261,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $arrRecibosResposta = $reciboRN->consultar($reciboIntercorrenteDTO);
 
                 $data = MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy');
-                $linhaDeCima = '"Peticionamento EletrÙnico"';
+                $linhaDeCima = '"Peticionamento Eletr√¥nico"';
                 $linhaDeBaixo = '"Intercorrente: ' . $data . '"';
                 $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_intercorrente.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px;' />";
 
-            } //recibo mais atual È de peticionamento de processo novo
+            } //recibo mais atual √© de peticionamento de processo novo
 
             if (in_array(MdPetReciboRN::$TP_RECIBO_NOVO, $tipoPet)) {
 
@@ -1253,7 +1279,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $reciboIntercorrenteDTO->setNumIdProtocolo($idProcedimento);
                 $arrRecibosResposta = $reciboRN->consultar($reciboIntercorrenteDTO);
 
-                $linhaDeCima = '"Peticionamento EletrÙnico"';
+                $linhaDeCima = '"Peticionamento Eletr√¥nico"';
                 $linhaDeBaixo = '"Processo Novo: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy') . '"';
                 $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixo . "," . $linhaDeCima . ");' style='width:24px;'  />";
 
@@ -1332,10 +1358,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $objContatoRN = new ContatoRN();
                         $arrObjContatoRN = $objContatoRN->consultarRN0324($objContatoDTO);
 
-                        $linhaDeCimaPJ = '"Controle de RepresentaÁ„o de Pessoa JurÌdica"';
-                        $linhaDeBaixoPJ .= '"' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getDblCnpj()) . ')<br/><br/> ⁄ltimo Peticionamento de AtualizaÁ„o: ' . $dataPJ . '"';
-                        $linhaDeCimaTxt = 'Controle de RepresentaÁ„o de Pessoa JurÌdica\n' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getDblCnpj()) . ')';
-                        $linhaDeBaixoTxt = '⁄ltimo Peticionamento de AtualizaÁ„o: ' . $dataPJ;
+                        $linhaDeCimaPJ = '"Controle de Representa√ß√£o de Pessoa Jur√≠dica"';
+                        $linhaDeBaixoPJ .= '"' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getDblCnpj()) . ')<br/><br/> √öltimo Peticionamento de Atualiza√ß√£o: ' . $dataPJ . '"';
+                        $linhaDeCimaTxt = 'Controle de Representa√ß√£o de Pessoa Jur√≠dica\n' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getDblCnpj()) . ')';
+                        $linhaDeBaixoTxt = '√öltimo Peticionamento de Atualiza√ß√£o: ' . $dataPJ;
                         $textoSeparado = $linhaDeCimaTxt . ' \n' . $linhaDeBaixoTxt;
 
                     }
@@ -1360,10 +1386,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $reciboIntercorrenteDTO->setNumIdProtocolo($idProcedimento);
                 $arrRecibosResposta = $reciboRN->consultar($reciboIntercorrenteDTO);
 
-                $linhaDeCimaPF = '"Controle de RepresentaÁ„o de Pessoa FÌsica"';
-                $linhaDeBaixoPF .= '"' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')<br/><br/>⁄ltimo Peticionamento de AtualizaÁ„o: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s') . '"';
-                $linhaDeCimaTexto = 'Controle de RepresentaÁ„o de Pessoa FÌsica\n' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')';
-                $linhaDeBaixoTexto .= '⁄ltimo Peticionamento de AtualizaÁ„o: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
+                $linhaDeCimaPF = '"Controle de Representa√ß√£o de Pessoa F√≠sica"';
+                $linhaDeBaixoPF .= '"' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')<br/><br/>√öltimo Peticionamento de Atualiza√ß√£o: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s') . '"';
+                $linhaDeCimaTexto = 'Controle de Representa√ß√£o de Pessoa F√≠sica\n' . PaginaSEI::tratarHTML($nome) . ' (' . infraUtil::formatarCpf($cpf) . ')';
+                $linhaDeBaixoTexto .= '√öltimo Peticionamento de Atualiza√ß√£o: ' . MdPetDataUtils::setFormat($arrRecibosResposta->getDthDataHoraRecebimentoFinal(), 'dd/mm/yyyy Y:i:s');
                 $textoSeparado = $linhaDeCimaTexto . ' \n' . $linhaDeBaixoTexto;
                 $img .= "<img src='modulos/peticionamento/imagens/svg/peticionamento_processo_novo_cinza_.svg?".Icone::VERSAO."' onmouseout='return infraTooltipOcultar();' onmouseover='return infraTooltipMostrar(" . $linhaDeBaixoPF . "," . $linhaDeCimaPF . ");' style='width:24px;' />";
 
@@ -1441,11 +1467,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objLista = $menuExternoRN->listar($menuExternoDTO);
         $numRegistros = (is_array($objLista) ? count($objLista) : 0);
 
-        //utilizado para ordenaÁ„o
+        //utilizado para ordena√ß√£o
         $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
         $arrMenusNomes = array();
 
-        //Configurado: Tipo de Processo de VinculaÁ„o JurÌdica
+        //Configurado: Tipo de Processo de Vincula√ß√£o Jur√≠dica
         $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retNumIdMdPetVincTpProcesso();
@@ -1454,7 +1480,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
         $objMdPetVincUsuExtPj = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
-        //Configurado: Tipo de Processo de VinculaÁ„o FÌsica
+        //Configurado: Tipo de Processo de Vincula√ß√£o F√≠sica
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retNumIdMdPetVincTpProcesso();
         $objMdPetVincTpProcessoDTO->setNumMaxRegistrosRetorno(1);
@@ -1462,17 +1488,17 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objMdPetVincTpProcessoDTO->setStrTipoVinculo('F');
         $objMdPetVincUsuExtPf = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
-        //Configurado: "IntegraÁ„o" com funcionalidade "Consultar Dados CNPJ Receita Federal"
+        //Configurado: "Integra√ß√£o" com funcionalidade "Consultar Dados CNPJ Receita Federal"
         $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
         $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado(null, MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL, null);
 
-	    $arrMenusNomes["Pessoas JurÌdicas"] = '';
+	    $arrMenusNomes["Pessoas Jur√≠dicas"] = '';
 
         $arrMenusNomes["Peticionamento"] = $urlBase . '/controlador_externo.php?acao=md_pet_usu_ext_iniciar';
 
-        $arrMenusNomes["Recibos EletrÙnicos de Protocolo"] = $urlBase . '/controlador_externo.php?acao=md_pet_usu_ext_recibo_listar';
+        $arrMenusNomes["Recibos Eletr√¥nicos de Protocolo"] = $urlBase . '/controlador_externo.php?acao=md_pet_usu_ext_recibo_listar';
 
-        $arrMenusNomes['IntimaÁıes EletrÙnicas'] = $urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_listar';
+        $arrMenusNomes['Intima√ß√µes Eletr√¥nicas'] = $urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_listar';
 
         if (is_array($objLista) && $numRegistros > 0) {
 
@@ -1510,17 +1536,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $qtdArrObjMdPetTipoProcessoDTO = (is_array($arrObjMdPetTipoProcessoDTO) ? count($arrObjMdPetTipoProcessoDTO) : 0);
         $objMdPetTipoProcessoDTO = $qtdArrObjMdPetTipoProcessoDTO > 0 ? current($arrObjMdPetTipoProcessoDTO) : null;
 
-        $objMdPetTpProcessoOrientacoesDTO = new MdPetTpProcessoOrientacoesDTO();
-        $objMdPetTpProcessoOrientacoesDTO->setNumIdTipoProcessoOrientacoesPet(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
-        $objMdPetTpProcessoOrientacoesDTO->retStrSinAtivoMenuExt();
-        $arrObjMdPetTpProcessoOrientacoesDTO = (new MdPetTpProcessoOrientacoesRN())->listar($objMdPetTpProcessoOrientacoesDTO);
-
+        $objMdPetCriterioRN = new MdPetCriterioRN();
         $objMdPetCriterioDTO = new MdPetCriterioDTO();
         $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
         $objMdPetCriterioDTO->setStrSinAtivo('S');
         $objMdPetCriterioDTO->retTodos();
-        $arrObjMdPetCriterioDTO = (new MdPetCriterioRN())->listar($objMdPetCriterioDTO);
-
+        $arrObjMdPetCriterioDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
         $qtdArrObjMdPetCriterioDTO = (is_array($arrObjMdPetCriterioDTO) ? count($arrObjMdPetCriterioDTO) : 0);
         $objMdPetCriterioDTO = $qtdArrObjMdPetCriterioDTO > 0 ? current($arrObjMdPetCriterioDTO) : null;
 
@@ -1546,12 +1567,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             $arrLink[] = '--^' . $urlLinkIntercorrente . '^^' . 'Intercorrente' . '^';
                         }
                         break;
-                    case 'Pessoas JurÌdicas' :
+                    case 'Pessoas Jur√≠dicas' :
                         if (!is_null($objMdPetVincUsuExtPj) > 0 && !is_null($arrIdMdPetIntegFuncionalidUtilizado)) {
-                            $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinculacao_listar' . '^^' . 'Respons·vel Legal de Pessoa JurÌdica' . '^';
-                            $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar' . '^^' . 'ProcuraÁıes EletrÙnicas' . '^';
+                            $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinculacao_listar' . '^^' . 'Respons√°vel Legal de Pessoa Jur√≠dica' . '^';
+                            $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar' . '^^' . 'Procura√ß√µes Eletr√¥nicas' . '^';
                         } elseif (!is_null($objMdPetVincUsuExtPf)) {
-                            $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar' . '^^' . 'ProcuraÁıes EletrÙnicas' . '^';
+                            $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar' . '^^' . 'Procura√ß√µes Eletr√¥nicas' . '^';
                         }
                         break;
                     default :
@@ -1621,14 +1642,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         $objTipoDTO = new TipoDTO();
         $objTipoDTO->setStrStaTipo(MdPetAssinaturaRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO);
-        $objTipoDTO->setStrDescricao('Assinatura EletrÙnica por Usu·rios Externos');
+        $objTipoDTO->setStrDescricao('Assinatura Eletr√¥nica por Usu√°rios Externos');
         $objArrTipoDTO[] = $objTipoDTO;
 
         return $objArrTipoDTO;
     }
 
     /**
-     * Valida se o Documento que est· sendo cancelado foi peticionado
+     * Valida se o Documento que est√° sendo cancelado foi peticionado
      *
      * @access public
      * @param DocumentoAPI $objDocumentoAPI
@@ -1662,14 +1683,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $numRecibo = $objReciboPetDTO->getStrNumeroProcessoFormatadoDoc();
             }
 
-            $msg = 'N„o È permitido cancelar este documento, pois ele È oriundo de Peticionamento EletrÙnico, conforme Recibo EletrÙnico de Protocolo SEI n∫ ' . $numRecibo . '.';
+            $msg = 'N√£o √© permitido cancelar este documento, pois ele √© oriundo de Peticionamento Eletr√¥nico, conforme Recibo Eletr√¥nico de Protocolo SEI n¬∫ ' . $numRecibo . '.';
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
             return null;
         }
 
-        // Rotina para verificar se o documento È objeto de intimaÁ„o e impedir o cancelamento, caso o seja
+        // Rotina para verificar se o documento √© objeto de intima√ß√£o e impedir o cancelamento, caso o seja
         $dto = new MdPetIntProtocoloDTO();
         $dto->retTodos();
         $dto->setDblIdDocumento($objDocumentoAPI->getIdDocumento());
@@ -1679,7 +1700,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         if ($total > 0) {
 
-            $msg = 'N„o È permitido cancelar este documento, pois ele faz parte de IntimaÁ„o EletrÙnica.';
+            $msg = 'N√£o √© permitido cancelar este documento, pois ele faz parte de Intima√ß√£o Eletr√¥nica.';
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -1689,7 +1710,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarDocumentoIndisponibilidade(array($objDocumentoAPI, 'cancelar'));
 
-        // condiÁ„o para saber  o documento est· sendo utilizado em um indisponibilidade
+        // condi√ß√£o para saber  o documento est√° sendo utilizado em um indisponibilidade
         if ($msg != '') {
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
@@ -1699,7 +1720,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         return parent::cancelarDocumento($objDocumentoAPI);
     }
 
-    //nao permite mover documento que compoe intimacao (doc principal, doc anexo E doc de resposta a intimaÁ„o incluindo certidoes e recibos)
+    //nao permite mover documento que compoe intimacao (doc principal, doc anexo E doc de resposta a intima√ß√£o incluindo certidoes e recibos)
     public function moverDocumento(DocumentoAPI $objDocumentoAPI, ProcedimentoAPI $objProcedimentoAPIOrigem, ProcedimentoAPI $objProcedimentoAPIDestino)
     {
 
@@ -1721,7 +1742,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         if ($total > 0 || $totalDocDisponivel > 0) {
 
-            $msg = 'N„o È permitido mover este documento, pois ele faz parte de IntimaÁ„o EletrÙnica.';
+            $msg = 'N√£o √© permitido mover este documento, pois ele faz parte de Intima√ß√£o Eletr√¥nica.';
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -1794,16 +1815,16 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
 
                 //Icone Sinalizador do Processo com Intimacao Eletronica
-                $strMsgTooltipSinalizadorProcesso = "IntimaÁ„o EletrÙnica";
+                $strMsgTooltipSinalizadorProcesso = "Intima√ß√£o Eletr√¥nica";
                 $strMsgTooltipTextoSinalizadorProcesso = "Expedida em {$dtIntimacao}\n";
                 $strMsgTooltipTextoSinalizadorProcesso .= "Documento Principal: ";
                 $strMsgTooltipTextoSinalizadorProcesso .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
                 if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()) {
                     $strMsgTooltipTextoSinalizadorProcesso .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' ';
                 }
-                $strMsgTooltipTextoSinalizadorProcesso .= "(SEI n∫ {$numeroDocumento})\n\n";
+                $strMsgTooltipTextoSinalizadorProcesso .= "(SEI n¬∫ {$numeroDocumento})\n\n";
 
-                $strMsgTooltipTextoSinalizadorProcesso .= 'Clique para acessar o processo e consultar a IntimaÁ„o.';
+                $strMsgTooltipTextoSinalizadorProcesso .= 'Clique para acessar o processo e consultar a Intima√ß√£o.';
 
                 $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $objAcessoExternoAPI->getIdAcessoExterno());
 
@@ -1840,25 +1861,25 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
         if ($intQntdIntimacao > 0 && SessaoSEI::getInstance()->verificarPermissao('md_pet_intimacao_eletronica_listar')) {
-            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg?'.Icone::VERSAO.'" class="infraCorBarraSistema" alt="Ver IntimaÁıes EletrÙnicas" title="Ver IntimaÁıes EletrÙnicas" widtt="30"/></a>';
+            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg?'.Icone::VERSAO.'" class="infraCorBarraSistema" alt="Ver Intima√ß√µes Eletr√¥nicas" title="Ver Intima√ß√µes Eletr√¥nicas" widtt="30"/></a>';
         }
 
         if (!SessaoSEI::getInstance()->verificarPermissao('md_pet_adm_vinc_consultar') && $objProcedimentoAPI->getCodigoAcesso() > 0)
             return array();
 
-        // VinculaÁ„o ‡ Pessoa JurÌdica
+        // Vincula√ß√£o √† Pessoa Jur√≠dica
         $objMdPetVinculoRN = new MdPetVinculoRN();
         $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->consultarProcedimentoVinculo(array($objProcedimentoAPI->getIdProcedimento(), 'retornoDTO' => true, 'isAtivos' => false));
         $qtdArrObjMdPetVinculoDTO = (is_array($arrObjMdPetVinculoDTO) ? count($arrObjMdPetVinculoDTO) : 0);
         if ($arrObjMdPetVinculoDTO && $qtdArrObjMdPetVinculoDTO > 0) {
-            $arrBotoes [] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_consultar&acao_origem=procedimento_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento() . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/visualizar_vinculacoes.svg?11" alt="Visualizar VinculaÁıes e ProcuraÁıes EletrÙnicas" title="Visualizar VinculaÁıes e ProcuraÁıes EletrÙnicas" style="width: 38px;" /></a>';
+            $arrBotoes [] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_consultar&acao_origem=procedimento_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento() . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/visualizar_vinculacoes.svg?11" alt="Visualizar Vincula√ß√µes e Procura√ß√µes Eletr√¥nicas" title="Visualizar Vincula√ß√µes e Procura√ß√µes Eletr√¥nicas" style="width: 38px;" /></a>';
         }
 
         return $arrBotoes;
     }
 
-    //encapsulamento da logica de inclusao de botoes na coluna "AÁıes" da tela de processo do usuario externo
-    //a mesma logica aqui È chamada pelo ponto de extensao dos documentos autorizados (ponto de ext antigo) e
+    //encapsulamento da logica de inclusao de botoes na coluna "A√ß√µes" da tela de processo do usuario externo
+    //a mesma logica aqui √© chamada pelo ponto de extensao dos documentos autorizados (ponto de ext antigo) e
     //pelo ponto de extensao dos documentos negados (ponto de ext novo, adicionado no SEI 3.0.7)
     private function montarBotaoAcessoExternoPeticionamento($arrObjProtocoloAPI2, $isProcedimento = false)
     {
@@ -1959,7 +1980,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                         if ($existeInt) {
                             foreach ($objMdPetIntRelDestDTO as $obj) {
-                                //Bot„o
+                                //Bot√£o
                                 $idMdPetDest = $obj->getNumIdMdPetIntRelDestinatario();
                                 $sitIntimacao = $obj->getStrStaSituacaoIntimacao();
 
@@ -2003,7 +2024,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                                     $objMdPetReciboRN = new MdPetReciboRN();
 
-                                    //PrÛprio Processo
+                                    //Pr√≥prio Processo
                                     $objMdPetReciboDTO->setNumIdProtocolo($idProcedimento);
                                     $objMdPetReciboDTO->unSetDblIdProtocoloRelacionado();
 
@@ -2082,7 +2103,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                                     }
 
-                                    //necessario fazer  isso para nao quebrar a navegaÁao (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario È enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
+                                    //necessario fazer  isso para nao quebrar a navega√ßao (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario √© enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
                                     SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
                                 }
                             }
@@ -2111,7 +2132,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $arrPessoaJuridica = $arrPessoaFisica = [];
         $vinculoRepresentanteInativo = false;
 
-        //Recupera os documentos da IntimaÁ„o.
+        //Recupera os documentos da Intima√ß√£o.
         $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
         $objMdPetIntDocumentoDTO->setDblIdProtocolo($idProtocolo);
         $objMdPetIntDocumentoDTO->retDblIdDocumento();
@@ -2300,7 +2321,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $strLink    = (new MdPetIntCertidaoRN())->retornaLinkAcessoDocumento($idProtocolo, $idAcessoExterno, $isProcedimento);
 
                         $initMsg    = $isProcedimento ? 'Processo' : 'Documento';
-                        $alertMsg   = $initMsg . ' bloqueado, pois est· vinculado a uma IntimaÁ„o ainda n„o Cumprida.';
+                        $alertMsg   = $initMsg . ' bloqueado, pois est√° vinculado a uma Intima√ß√£o ainda n√£o Cumprida.';
                         $js         = $isValido ? 'window.open(\'' . $strLink . '\');' : 'alert(\'' . $alertMsg . '\')';
 
                         if ($objRelIntDoc->getStrSinPrincipal() == 'S') {
@@ -2340,7 +2361,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                             if ($situacao == $this::$INTIMACAO_CUMPRIDA_PARCIAL) {
                                 $img = $htmlImgIntAguardandoCumprGeralPrinc;
-                                $informeTooltipACG = "Observe que esta IntimaÁ„o possui destaque, pois envolve pelo menos um Destinat·rio que vocÍ representa em comum e outro Representante j· cumpriu a IntimaÁ„o. Ao consultar esta IntimaÁ„o vocÍ estar· cumprindo-a para os Destinat·rios ainda pendentes.";
+                                $informeTooltipACG = "Observe que esta Intima√ß√£o possui destaque, pois envolve pelo menos um Destinat√°rio que voc√™ representa em comum e outro Representante j√° cumpriu a Intima√ß√£o. Ao consultar esta Intima√ß√£o voc√™ estar√° cumprindo-a para os Destinat√°rios ainda pendentes.";
                             } else {
                                 $img = ($situacao == $this::$INTIMACAO_CUMPRIDA) ? $htmlImgIntCumpridaPrinc : $htmlImgIntNaoCumpPrinc;
                             }
@@ -2349,7 +2370,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                             if ($situacao == $this::$INTIMACAO_CUMPRIDA_PARCIAL) {
                                 $img = $htmlImgIntAguardandoCumprGeralAnex;
-                                $informeTooltipACG = "Observe que esta IntimaÁ„o possui destaque, pois envolve pelo menos um Destinat·rio que vocÍ representa em comum e outro Representante j· cumpriu a IntimaÁ„o. Ao consultar esta IntimaÁ„o vocÍ estar· cumprindo-a para os Destinat·rios ainda pendentes.";
+                                $informeTooltipACG = "Observe que esta Intima√ß√£o possui destaque, pois envolve pelo menos um Destinat√°rio que voc√™ representa em comum e outro Representante j√° cumpriu a Intima√ß√£o. Ao consultar esta Intima√ß√£o voc√™ estar√° cumprindo-a para os Destinat√°rios ainda pendentes.";
                             } else {
                                 $img = ($situacao == $this::$INTIMACAO_CUMPRIDA) ? $htmlImgIntCumpridaAnex : $htmlImgIntNaoCumprAnex;
                             }
@@ -2373,13 +2394,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $docNum     = $retorno[4];
                     }
 
-                    // Verifico a situaÁ„o do usuario perante os destinatarios da intimacao:
+                    // Verifico a situa√ß√£o do usuario perante os destinatarios da intimacao:
                     $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocolo, $idAcessoExterno);
 
                     $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
                     $informeTooltipACG = null;
 
-                    // Verificando a situaÁ„o e determinando botıes e as aÁıes dos links
+                    // Verificando a situa√ß√£o e determinando bot√µes e as a√ß√µes dos links
 
                     $vinculoRepresentanteInativo = true;
                     $img = $objRelIntDoc->getStrSinPrincipal() == 'S' ? $htmlImgIntNaoCumprVinculoInativoPrinc : $htmlImgIntNaoCumprVinculoInativoAnex;
@@ -2397,7 +2418,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $vinculoRepresentanteInativo = false;
                         $img = $objRelIntDoc->getStrSinPrincipal() == 'S' ? $htmlImgIntAguardandoCumprGeralPrinc : $htmlImgIntAguardandoCumprGeralAnex;
                         $idsIntsCumprir = '&id_intimacao[]=' . implode('&id_intimacao[]=', array_unique($situacao['int_cumprir']));
-                        $informeTooltipACG = 'Observe que esta IntimaÁ„o possui destaque, pois envolve pelo menos um Destinat·rio que vocÍ representa em comum e outro Representante j· cumpriu a IntimaÁ„o. Ao consultar esta IntimaÁ„o vocÍ estar· cumprindo-a para os Destinat·rios ainda pendentes.';
+                        $informeTooltipACG = 'Observe que esta Intima√ß√£o possui destaque, pois envolve pelo menos um Destinat√°rio que voc√™ representa em comum e outro Representante j√° cumpriu a Intima√ß√£o. Ao consultar esta Intima√ß√£o voc√™ estar√° cumprindo-a para os Destinat√°rios ainda pendentes.';
                         $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo . $idsIntsCumprir);
                         $js = "infraAbrirJanelaModal('" . $strLink . "', 900, 400);";
 
@@ -2456,7 +2477,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     }
 
-                    //Preparar Texto ExibiÁ„o Tool Tip
+                    //Preparar Texto Exibi√ß√£o Tool Tip
                     if ($existeInt && !$vinculoRepresentanteInativo) {
 
                         $tooltip = (new MdPetIntimacaoRN())->getTextoTolTipIntimacaoEletronicaCumprida(array($dataAceite, $docPrinc, $docTipo, $docNum, $objRelIntDoc->getStrSinPrincipal(), $arrPessoaJuridica, $arrPessoaFisica, $informeTooltipACG));
@@ -2535,7 +2556,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objContato     = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
                 $arrDados       = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
 
-                //Ser· exibida uma certid„o para cada intimaÁ„o cumprida por pessoa (FÌsica ou JurÌdica)
+                //Ser√° exibida uma certid√£o para cada intima√ß√£o cumprida por pessoa (F√≠sica ou Jur√≠dica)
 
                 if ($arrDados) {
 
@@ -2584,7 +2605,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 $arrDestinatarios[] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($cpfCnpj) . ')';
 
                                 if ($existeInt && !in_array($cpfCnpj, $arrExibidos)) {
-                                    //Bot„o
+                                    //Bot√£o
                                     $conteudoHtml .= $objMdPetCertidaoRN->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcessoExterno, $aceite['ID_DOCUMENTO_CERTIDAO'], $arrDestinatarios, $aceite['DATA_ACEITE']));
                                     $arrExibidos[] = $cpfCnpj;
                                 }
@@ -2684,7 +2705,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $objMdPetVinculoDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
                         $procuracaoSimplesValida = true;
 
-                        //Caso seja uma procuraÁ„o simples È verificada se a mesma est· valida
+                        //Caso seja uma procura√ß√£o simples √© verificada se a mesma est√° valida
                         foreach ($objMdPetVinculoDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
                             if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                                 $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
@@ -2696,7 +2717,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             }
                         }
 
-                        //Verifica se a situaÁ„o da vinculaÁ„o/intimacao È diferente de ativa
+                        //Verifica se a situa√ß√£o da vincula√ß√£o/intimacao √© diferente de ativa
                         if ((!$procuracaoSimplesValida || $contarobjMdPetVincRepresentantDTO == 0) && $objContato->getNumIdContato() != $obj->getNumIdContato()) {
                             $qntDestRevogado++;
                         }
@@ -2722,7 +2743,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         }
                     }
 
-                    //se a quantidade de intimaÁıes for igual a quantidade de vinculos diferente de ativo È exibido o Ìcone de vinculo inativo
+                    //se a quantidade de intima√ß√µes for igual a quantidade de vinculos diferente de ativo √© exibido o √≠cone de vinculo inativo
                     if ($qntDest == $qntDestRevogado) {
                         $vinculoRepresentanteInativo = true;
                         $img = $htmlImgIntNaoCumprVinculoInativoPrinc;
@@ -2774,7 +2795,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     if ($existeInt) {
 
-                        //Bot„o
+                        //Bot√£o
                         $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
                         $objDestinatarioDTO->retTodos();
                         $objDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idMdPetDest, InfraDTO::$OPER_IN);
@@ -2894,20 +2915,20 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $idProtocoloDoProcesso[] = $objDocumentoAPI->getIdDocumento();
             }
 
-            //add ids dos processos anexados pois podem ser anexados no mesmo nÌvel do documento e adicionado como anexo da IntimaÁ„o
+            //add ids dos processos anexados pois podem ser anexados no mesmo n√≠vel do documento e adicionado como anexo da Intima√ß√£o
 
             foreach ($arrObjProcedimentoAPI as $objProcedimentoAPI) {
                 $idProtocoloDoProcesso[] = $objProcedimentoAPI->getIdProcedimento();
             }
 
-            //se o processo nao tiver documentos ja pode passar direto a verificaÁ„o
+            //se o processo nao tiver documentos ja pode passar direto a verifica√ß√£o
             if (count($idProtocoloDoProcesso) == 0) {
                 return array();
             }
 
             /*
-             * saber exatamente quais docs estao envolvidos com a intimaÁ„o
-             * (e com a resposta a intimaÁao? por enquanto ignorar esses):
+             * saber exatamente quais docs estao envolvidos com a intima√ß√£o
+             * (e com a resposta a intima√ßao? por enquanto ignorar esses):
              * aqueles que nao estiverem, nao adicionar no array de retorno
              * para que o controle de acesso a eles siga para a logica
              * padrao aplicada pelo Core do SEI
@@ -2917,7 +2938,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $arrIntimacoesContato = $objMdPetIntimacaoRN->getIntimacoesPorContato($idProtocoloDoProcesso);
 
             if ($arrIntimacoesContato) {
-                //ids de documentos envolvidos na intimaÁ„o
+                //ids de documentos envolvidos na intima√ß√£o
                 $idDocumentosEnvolvidosNaIntimacao = array();
 
                 $objIntimacaoDocDTO = new MdPetIntProtocoloDTO();
@@ -2963,7 +2984,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     $permissao = SeiIntegracao::$TAM_NEGADO;
 
-                    //Verifica se o documento possui intimaÁıes
+                    //Verifica se o documento possui intima√ß√µes
                     $arrRetIntimacao = $objMdPetIntimacaoRN->retornaIntimacoesVinculadasDocumento($idProtocoloDaIntimacao);
 
                     $arrIntimacao = $arrRetIntimacao['I'];
@@ -2978,33 +2999,33 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     if ($arrObjMdPetRelIntDestExternoDTO == 0) {
                         $permissao = SeiIntegracao::$TAM_PERMITIDO;
                     } else {
-                        //Se possui intimaÁ„o realiza verificaÁıes
+                        //Se possui intima√ß√£o realiza verifica√ß√µes
                         $qtdArrIntimacao = (is_array($arrIntimacao) ? count($arrIntimacao) : 0);
                         if ($qtdArrIntimacao > 0) {
 
                             $isAnexoDisponib = $arrRetIntimacao['T'] == 2;
                             $disp = $arrRetIntimacao['T'] == 1;
 
-                            //se for somente disponibilizado permite visualizaÁ„o
+                            //se for somente disponibilizado permite visualiza√ß√£o
                             if ($disp) {
                                 $permissao = SeiIntegracao::$TAM_PERMITIDO;
 
-                                //Se for disponibilizado e anexo, ignora os disponiblizados e  verifica se os anexos j· aest„o aceitos
+                                //Se for disponibilizado e anexo, ignora os disponiblizados e  verifica se os anexos j√° aest√£o aceitos
                                 //Se for anexo, verifica os aceites
                             } else {
                                 //Verifica se todos os documentos  anexo possuem aceite
                                 $intAnexo = $arrRetIntimacao['A'];
                                 $todasIntAceit = $objMdPetAceiteRN->todasIntimacoesAceitas($intAnexo);
 
-                                //Se todas as intimaÁıes possuem aceite para o anexo  permite visualizaÁ„o
+                                //Se todas as intima√ß√µes possuem aceite para o anexo  permite visualiza√ß√£o
                                 if ($todasIntAceit['todasAceitas']) {
                                     $permissao = SeiIntegracao::$TAM_PERMITIDO;
                                 } else {
 
                                     if (empty($idProtocoloDaIntimacao) || empty($idAcessoExterno)) {
-                                        throw new InfraException("Par‚metros IdProtocoloDaIntimacao e IdAcessoExterno n„o podem ser nulos");
+                                        throw new InfraException("Par√¢metros IdProtocoloDaIntimacao e IdAcessoExterno n√£o podem ser nulos");
                                     } else {
-                                        // Verifica a situaÁ„o do usu·rio logado perante os destinat·rios e o cumprimento das intimaÁıes as quais o documento est· vinculado
+                                        // Verifica a situa√ß√£o do usu√°rio logado perante os destinat√°rios e o cumprimento das intima√ß√µes as quais o documento est√° vinculado
                                         $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocoloDaIntimacao, $idAcessoExterno);
                                         if (in_array($situacao['btn_cumprir'], ['cumprida_geral'])) {
                                             $permissao = SeiIntegracao::$TAM_PERMITIDO;
@@ -3013,8 +3034,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 }
                             }
                         } else {
-                            //Se n„o possuir intimaÁıes e o acesso for integral permite visualizaÁ„o.
-                            //Se for parcial, n„o permite.
+                            //Se n√£o possuir intima√ß√µes e o acesso for integral permite visualiza√ß√£o.
+                            //Se for parcial, n√£o permite.
                             $isIntAcessoExt = $objMdPetIntAcExtRN->getTipoConcessaoAcesso($_GET['id_acesso_externo']);
                             if ($isIntAcessoExt == MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL) {
                                 $permissao = SeiIntegracao::$TAM_PERMITIDO;
@@ -3053,7 +3074,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             $dblIdDocumento = $objDocumentoAPI->getIdDocumento();
 
-            // Gerar IntimaÁ„o
+            // Gerar Intima√ß√£o
             if ($objProcedimentoAPI->getCodigoAcesso() > 0 && $objProcedimentoAPI->getSinAberto() == 'S') {
                 if ($objDocumentoAPI->getCodigoAcesso() > 0) {
 
@@ -3085,7 +3106,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             $strStaDocumento = $objDocumentoAPI->getTipo();
                             $idSerie = $objDocumentoAPI->getIdSerie();
 
-                            //TODO: Ajuste local para a Anatel no if acima para exibir o bot„o da Gerar IntimaÁ„o para os tipos de documento de id 184 (Comunicado de CobranÁa) e 186 (NotificaÁ„o de LanÁamento). Para ativar, descomentar a linha abaixo e comentar a linha acima
+                            //TODO: Ajuste local para a Anatel no if acima para exibir o bot√£o da Gerar Intima√ß√£o para os tipos de documento de id 184 (Comunicado de Cobran√ßa) e 186 (Notifica√ß√£o de Lan√ßamento). Para ativar, descomentar a linha abaixo e comentar a linha acima
                             if (($strSinAssinado == 'S' && $strStaDocumento <> 'X') || $idSerie == 184 || $idSerie == 186) {
 
                                 $rnPetIntSerie = new MdPetIntSerieRN();
@@ -3098,7 +3119,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
                                 $qtdArrDtoPetIntSerie = (is_array($arrDtoPetIntSerie) ? count($arrDtoPetIntSerie) : 0);
                                 if ($qtdArrDtoPetIntSerie > 0 && $objSessaoSEI->verificarPermissao('md_pet_intimacao_cadastrar')) {
-                                    $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg?'.Icone::VERSAO.'" alt="Gerar IntimaÁ„o EletrÙnica" title="Gerar IntimaÁ„o EletrÙnica" style="width: 38px" /></a>';
+                                    $arrBotoes[$dblIdDocumento][] = '<a href="' . $objSessaoSEI->assinarLink('controlador.php?acao=md_pet_intimacao_cadastrar&acao_origem=arvore_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $dblIdProcedimento . '&id_documento=' . $dblIdDocumento . '&arvore=1') . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/intimacao_eletronica_gerar.svg?'.Icone::VERSAO.'" alt="Gerar Intima√ß√£o Eletr√¥nica" title="Gerar Intima√ß√£o Eletr√¥nica" style="width: 38px" /></a>';
                                 }
                             }
                         }
@@ -3113,10 +3134,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
     public function montarAcaoDocumentoAcessoExternoNegado($arrObjDocumentoAPI)
     {
 
-        //sÛ È necess·rio adicionar botao por este ponto SE o processo estiver numa situaÁao em que nao foi adicionado nenhum
+        //s√≥ √© necess√°rio adicionar botao por este ponto SE o processo estiver numa situa√ßao em que nao foi adicionado nenhum
         // botao pelo ponto de extensao do acesso externo autorizado (o que deixaria em alguns casos
-        // a coluna "AÁıes" sem quaisquer icones
-        // Exemplo: Processo com apenas 1 documento assinado, com intimaÁao gerada do tipo integral e sem anexos
+        // a coluna "A√ß√µes" sem quaisquer icones
+        // Exemplo: Processo com apenas 1 documento assinado, com intima√ßao gerada do tipo integral e sem anexos
         $qtdArrDocumentosLiberados = (is_array($this->arrDocumentosLiberados) ? count($this->arrDocumentosLiberados) : 0);
         if ($qtdArrDocumentosLiberados == 0) {
             return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
@@ -3128,10 +3149,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
     public function montarAcaoProcessoAnexadoAcessoExternoNegado($arrObjProcedimentoAPI)
     {
 
-        //sÛ È necess·rio adicionar botao por este ponto SE o processo estiver numa situaÁao em que nao foi adicionado nenhum
+        //s√≥ √© necess√°rio adicionar botao por este ponto SE o processo estiver numa situa√ßao em que nao foi adicionado nenhum
         // botao pelo ponto de extensao do acesso externo autorizado (o que deixaria em alguns casos
-        // a coluna "AÁıes" sem quaisquer icones
-        // Exemplo: Processo com apenas 1 documento assinado, com intimaÁao gerada do tipo integral e sem anexos
+        // a coluna "A√ß√µes" sem quaisquer icones
+        // Exemplo: Processo com apenas 1 documento assinado, com intima√ßao gerada do tipo integral e sem anexos
         $qtdArrProcessosLiberados = (is_array($this->arrProcessosLiberados) ? count($this->arrProcessosLiberados) : 0);
         if ($qtdArrProcessosLiberados == 0) {
             return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentoAPI, true);
@@ -3155,7 +3176,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     if (!$docTipoIntegral) {
                         $objInfraException = new InfraException();
-                        $objInfraException->adicionarValidacao('N„o È permitido cancelar a disponibilizaÁ„o para esse usu·rio, pois existem vinculos no mÛdulo Peticionamento e IntimaÁ„o EletrÙnicos.');
+                        $objInfraException->adicionarValidacao('N√£o √© permitido cancelar a disponibiliza√ß√£o para esse usu√°rio, pois existem vinculos no m√≥dulo Peticionamento e Intima√ß√£o Eletr√¥nicos.');
                         $objInfraException->lancarValidacoes();
                         return null;
                     } else {
@@ -3164,7 +3185,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         //TODO: Se forem comentadas as linhas 3230 ate 3248, ou seja, este if com o seu else (segunda chave depois do segunto return null), suspende a regra que impossibilita o cancelamento de Acesso Externo quando a intimacao ainda esta em curso
                         /*if (!$cumprimentoValido) {
                             $objInfraException = new InfraException();
-                            $objInfraException->adicionarValidacao('N„o È permitido cancelar esta disponibilizaÁ„o de Acesso Externo, pois existem IntimaÁıes EletrÙnicas destinadas ao Usu·rio Externo ainda n„o cumpridas.');
+                            $objInfraException->adicionarValidacao('N√£o √© permitido cancelar esta disponibiliza√ß√£o de Acesso Externo, pois existem Intima√ß√µes Eletr√¥nicas destinadas ao Usu√°rio Externo ainda n√£o cumpridas.');
                             $objInfraException->lancarValidacoes();
                             return null;
                         } else {
@@ -3176,7 +3197,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                             if ($isRespIntPeriodo) {
                                 $objInfraException = new InfraException();
-                                $objInfraException->adicionarValidacao('N„o È permitido cancelar esta disponibilizaÁ„o de Acesso Externo, pois existem IntimaÁıes EletrÙnicas destinadas ao Usu·rio Externo com Prazo Externo ainda vigente para Responder a IntimaÁ„o.');
+                                $objInfraException->adicionarValidacao('N√£o √© permitido cancelar esta disponibiliza√ß√£o de Acesso Externo, pois existem Intima√ß√µes Eletr√¥nicas destinadas ao Usu√°rio Externo com Prazo Externo ainda vigente para Responder a Intima√ß√£o.');
                                 $objInfraException->lancarValidacoes();
                                 return null;
                             }
@@ -3194,7 +3215,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
     }
 
     /**
-     * Valida se o Processo onde est· realizando a anexaÁ„o de processo possui VÌnculo com IntimaÁ„o
+     * Valida se o Processo onde est√° realizando a anexa√ß√£o de processo possui V√≠nculo com Intima√ß√£o
      */
     public function anexarProcesso(ProcedimentoAPI $objProcedimentoAPIPrincipal, ProcedimentoAPI $objProcedimentoAPIAnexado)
     {
@@ -3204,7 +3225,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $isRespIntPeriodo = $objRN->existeIntimacaoPrazoValido($idProcedimento);
 
         if ($isRespIntPeriodo) {
-            $msg = 'N„o È permitido anexar este processo, pois o mesmo possui IntimaÁ„o EletrÙnica ainda em curso.';
+            $msg = 'N√£o √© permitido anexar este processo, pois o mesmo possui Intima√ß√£o Eletr√¥nica ainda em curso.';
 
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
@@ -3215,7 +3236,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
     }
 
     /**
-     * Valida se o Processo onde est· realizando a anexaÁ„o de processo possui VÌnculo com IntimaÁ„o
+     * Valida se o Processo onde est√° realizando a anexa√ß√£o de processo possui V√≠nculo com Intima√ß√£o
      */
     public function sobrestarProcesso(ProcedimentoAPI $objProcedimentoAPI, $objProcedimentoAPIVinculado)
     {
@@ -3226,7 +3247,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $isRespIntPeriodo = $objRN->existeIntimacaoPrazoValido($idProcedimento);
 
         if ($isRespIntPeriodo) {
-            $msg = 'N„o È permitido sobrestar este processo, pois o mesmo possui IntimaÁ„o EletrÙnica ainda em curso.';
+            $msg = 'N√£o √© permitido sobrestar este processo, pois o mesmo possui Intima√ß√£o Eletr√¥nica ainda em curso.';
 
 
             $objInfraException = new InfraException();
@@ -3238,7 +3259,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
     }
 
     /**
-     * Valida se o Processo onde est· realizando o bloqueio de processo possui VÌnculo com IntimaÁ„o
+     * Valida se o Processo onde est√° realizando o bloqueio de processo possui V√≠nculo com Intima√ß√£o
      */
     public function bloquearProcesso($objProcedimentoAPI)
     {
@@ -3249,7 +3270,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $isRespIntPeriodo = $objRN->existeIntimacaoPrazoValido($idProcedimento);
 
         if ($isRespIntPeriodo) {
-            $msg = 'N„o È permitido Bloquear este processo, pois o mesmo possui IntimaÁ„o EletrÙnica ainda em curso.';
+            $msg = 'N√£o √© permitido Bloquear este processo, pois o mesmo possui Intima√ß√£o Eletr√¥nica ainda em curso.';
 
 
             $objInfraException = new InfraException();
@@ -3261,7 +3282,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
     }
 
     /**
-     * Valida se o Processo que est· sendo desanexado est· como anexo de uma IntimaÁ„o
+     * Valida se o Processo que est√° sendo desanexado est√° como anexo de uma Intima√ß√£o
      */
     public function desanexarProcesso(ProcedimentoAPI $objProcedimentoAPIPrincipal, ProcedimentoAPI $objProcedimentoAPIAnexado)
     {
@@ -3275,9 +3296,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         if ($isIntimacao || $isIntimacaoDisp) {
             if ($isIntimacao) {
-                $msg = 'N„o È permitido desanexar este processo, pois o mesmo È anexo de Documento Principal de IntimaÁ„o EletrÙnica neste processo.';
+                $msg = 'N√£o √© permitido desanexar este processo, pois o mesmo √© anexo de Documento Principal de Intima√ß√£o Eletr√¥nica neste processo.';
             } else {
-                $msg = 'N„o È permitido desanexar este processo, pois o mesmo È Documento DisponÌvel de IntimaÁ„o EletrÙnica neste processo.';
+                $msg = 'N√£o √© permitido desanexar este processo, pois o mesmo √© Documento Dispon√≠vel de Intima√ß√£o Eletr√¥nica neste processo.';
             }
 
             $objInfraException = new InfraException();
@@ -3335,7 +3356,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaTipoDocumento(array($arrObjSerieAPI, 'desativar'));
 
-        // condiÁ„o para saber se existe um documento sendo usado
+        // condi√ß√£o para saber se existe um documento sendo usado
         if ($msg != '') {
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
@@ -3359,7 +3380,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 	}
 
 	/*
-	 * TODO: Desativado ‡ espera do novo evento no SeiIntegracao.php previsto para o SEI v4.1
+	 * TODO: Desativado √† espera do novo evento no SeiIntegracao.php previsto para o SEI v4.1
 	 */
 //	public function desativarUsuario($arrObjUsuarioAPI)
 //	{
@@ -3406,7 +3427,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaTipoDocumento(array($arrObjSerieAPI, 'excluir'));
 
-        // condiÁ„o para saber se existe um documento sendo usado
+        // condi√ß√£o para saber se existe um documento sendo usado
         if ($msg != '') {
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
@@ -3426,7 +3447,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarDocumentoIndisponibilidade(array($objDocumentoAPI, 'excluir'));
 
-        // condiÁ„o para saber  o documento est· sendo utilizado em um indisponibilidade
+        // condi√ß√£o para saber  o documento est√° sendo utilizado em um indisponibilidade
         if ($msg != '') {
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
@@ -3540,7 +3561,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             if($objContatoAPI->getStaNatureza() == 'F'){
 
-                // Pega os Vinculos onde o contato È o Outorgado:
+                // Pega os Vinculos onde o contato √© o Outorgado:
                 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
                 $objMdPetVincRepresentantDTO->setNumIdContato($idContato);
                 $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
@@ -3559,7 +3580,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
                 $arrObjVinculosOutorgado = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
 
-                // Pega os Vinculos onde o contato È o Outorgante:
+                // Pega os Vinculos onde o contato √© o Outorgante:
                 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
                 $objMdPetVincRepresentantDTO->setNumIdContatoOutorg($idContato);
                 $objMdPetVincRepresentantDTO->setNumIdContatoVinc($idContato);
@@ -3623,8 +3644,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             }
 
             if(!empty($msgVinc)){
-                $preMsg = 'N„o È permitido alterar Contato que possua registro de VinculaÁ„o ou ProcuraÁ„o EletrÙnica ativa.\n\n';
-                $msg .= ''. $objContatoAPI->getNome() . ' ainda possui as seguintes VinculaÁıes ou ProcuraÁıes ativas:\n\n'.$msgVinc.'\n';
+                $preMsg = 'N√£o √© permitido alterar Contato que possua registro de Vincula√ß√£o ou Procura√ß√£o Eletr√¥nica ativa.\n\n';
+                $msg .= ''. $objContatoAPI->getNome() . ' ainda possui as seguintes Vincula√ß√µes ou Procura√ß√µes ativas:\n\n'.$msgVinc.'\n';
                 if(!empty($msg)){ (new InfraException())->lancarValidacao(substr($preMsg.$msg, 0, -2)); }
             }
 
@@ -3634,7 +3655,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public static function validarXssFormulario($arrPost, $arrayCampos, $objInfraException)
     {
-        //ValidaÁ„o Xss
+        //Valida√ß√£o Xss
         $retorno = false;
         foreach ($arrPost as $chave => $elemento) {
             try {
@@ -3642,7 +3663,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             } catch (Exception $e) {
                 $retorno = true;
                 if (strpos($e->__toString(), SeiINT::$MSG_ERRO_XSS) !== false) {
-                    $objInfraException->adicionarValidacao('O texto do campo ' . $arrayCampos[$chave] . ' possui conte˙do n„o permitido.');
+                    $objInfraException->adicionarValidacao('O texto do campo ' . $arrayCampos[$chave] . ' possui conte√∫do n√£o permitido.');
                 } else {
                     throw $e;
                 }

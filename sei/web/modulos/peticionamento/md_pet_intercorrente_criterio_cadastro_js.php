@@ -30,6 +30,9 @@
     }
 
     function inicializar() {
+
+        $('select[multiple][name="selTipoProcesso"] option').prop('selected', true);
+
         if ('<?=$_GET['acao']?>' == 'md_pet_intercorrente_criterio_cadastrar') {
             carregarComponenteTipoProcessoNovo();
             document.getElementById('txtTipoProcesso').focus();
@@ -57,6 +60,30 @@
             objLupaTipoProcesso.atualizar();
         };
 
+        objLupaTipoProcesso.montar = function () {
+            var me = this;
+            me.sel.options.length = 0;
+            me.hdn.value = document.getElementById('hdnIdTipoProcessoFilter').value;
+            if (infraTrim(me.hdn.value) != '') {
+                var arrItens = me.hdn.value.split('Â¥');
+                for (var i = 0; i < arrItens.length; i++) {
+                    var arrItem = arrItens[i].split('Â±');
+                    infraSelectAdicionarOption(me.sel, arrItem[1], arrItem[0]);
+                }
+            }
+        }
+
+        objLupaTipoProcesso.atualizar = function () {
+            var me = this;
+            me.hdn.value = document.getElementById('hdnIdTipoProcessoFilter').value;
+            for (var i = 0; i < me.sel.length; i++) {
+                if (me.hdn.value != '') {
+                    me.hdn.value = me.hdn.value + 'Â¥';
+                }
+                me.hdn.value = me.hdn.value + me.sel.options[i].value + 'Â±' + me.sel.options[i].text;
+            }
+        };
+
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar('hdnIdTipoProcesso', 'txtTipoProcesso', '<?=$strLinkAjaxTipoProcesso?>');
         objAutoCompletarTipoProcesso.limparCampo = false;
         objAutoCompletarTipoProcesso.tamanhoMinimo = 3;
@@ -78,7 +105,7 @@
 
                 for (var i = 0; i < options.length; i++) {
                     if (options[i].value == id) {
-                        self.setTimeout('alert(\'Tipo de Processo [' + descricao + '] já consta na lista.\')', 100);
+                        self.setTimeout('alert(\'Tipo de Processo [' + descricao + '] jÃ¡ consta na lista.\')', 100);
                         break;
                     }
                 }
@@ -143,7 +170,7 @@
             return false;
         }
 
-        //Validar Nível Acesso
+        //Validar NÃ­vel Acesso
         var elemsNA = document.getElementsByName("rdNivelAcesso[]");
 
         var validoNA = false, valorNA = 0;
@@ -156,19 +183,19 @@
         }
 
         if (validoNA === false) {
-            alert('Informe o Nível de Acesso.');
+            alert('Informe o NÃ­vel de Acesso.');
             return false;
         }
 
         if (infraTrim(document.getElementById('selNivelAcesso').value) == '' && valorNA != 1) {
-            alert('Informe o Nível de Acesso.');
+            alert('Informe o NÃ­vel de Acesso.');
             document.getElementById('selNivelAcesso').focus();
             return false;
         } else if (document.getElementById('selNivelAcesso').value == 'I' && valorHipoteseLegal != '0') {
 
             //validar hipotese legal
             if (document.getElementById('selHipoteseLegal').value == '') {
-                alert('Informe a Hipótese legal padrão.');
+                alert('Informe a HipÃ³tese legal padrÃ£o.');
                 document.getElementById('selHipoteseLegal').focus();
                 return false;
             }
@@ -204,7 +231,15 @@
         return true;
     }
 
+    function selectAll(){
+        options = document.getElementsByTagName("option");
+        for ( i = 0; i < options.length; i++){
+            options[i].selected = 'true';
+        }
+    }
+
     function OnSubmitForm() {
+        selectAll();
         return validarCadastro();
     }
 

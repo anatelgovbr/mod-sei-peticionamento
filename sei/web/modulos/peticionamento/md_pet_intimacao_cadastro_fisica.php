@@ -16,7 +16,7 @@ $objDocumentoRN = new DocumentoRN();
 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
 
-//  Buscar IntimaÁıes cadastradas.
+//  Buscar Intima√ß√µes cadastradas.
 $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocumento);
 
 $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
@@ -40,7 +40,7 @@ $idProcedimento             = array_key_exists('id_procedimento', $_REQUEST) ? $
 $strLinkAjaxDestinatarios   = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_lote'); // Input Autocomplete
 $strLinkInteressados        = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
 
-//Pessoa FÌsica - Lupa do multiselect
+//Pessoa F√≠sica - Lupa do multiselect
 $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_fisica&tipo_selecao=2&id_object=objLupaInteressados&id_procedimento=' . $idProcedimento.'&id_documento=' . $idDocumento);
 
 // Destinatarios em Massa
@@ -56,8 +56,8 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
         <fieldset id="fldDestinatarios" class="infraFieldset sizeFieldset form-control">
-            <legend class="infraLegend" class="infraLabelObrigatorio"> Destinat·rios</legend>
-            <!-- Destinat·rios em Massa START -->
+            <legend class="infraLegend" class="infraLabelObrigatorio"> Destinat√°rios</legend>
+            <!-- Destinat√°rios em Massa START -->
 
             <div class="row">
                 <div class="col-md-12">
@@ -67,7 +67,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                 class="infraButton"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
                                 accesskey="V">
-                            <span class="infraTeclaAtalho">V</span>er intimaÁıes do processo
+                            <span class="infraTeclaAtalho">V</span>er intima√ß√µes do processo
                         </button>
                     </div>
                 </div>
@@ -78,9 +78,9 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                     <div id="divInteressados" class="infraAreaDados" style="height:14em;">
 
                         <div class="form-group mb-0">
-                            <label id="lbltxtUsuario2" for="txtUsuario2" class="infraLabelObrigatorio mb-0">Usu·rio Externo:</label>
-                            <?= printHelp('A pesquisa È realizada somente sobre Usu·rios Externos liberados. \n \n A pesquisa pode ser efetuada pelo Nome, E-mail ou CPF do Usu·rio Externo.'); ?>
-                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"/>
+                            <label id="lbltxtUsuario2" for="txtUsuario2" class="infraLabelObrigatorio mb-0">Usu√°rio Externo:</label>
+                            <?= printHelp('A pesquisa √© realizada somente sobre Usu√°rios Externos liberados. \n \n A pesquisa pode ser efetuada pelo Nome, E-mail ou CPF do Usu√°rio Externo.'); ?>
+                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" autofocus/>
 
                         </div>
 
@@ -89,8 +89,8 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                         </select>
 
                         <div id="divOpcoesDadosUsuario2">
-                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Usu·rio Externo" alt="Selecionar Usu·rio Externo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-                            <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Usu·rio Externo Selecionado" title="Remover Usu·rio Externo Selecionado" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Usu√°rio Externo" alt="Selecionar Usu√°rio Externo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Usu√°rio Externo Selecionado" title="Remover Usu√°rio Externo Selecionado" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                         </div>
 
                     </div>
@@ -98,16 +98,16 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                     <input type="hidden" id="hdnDadosUsuario2" name="hdnDadosUsuario2" class="infraText campoPadrao" value="" />
                 </div>
             </div>
-            <!-- Destinat·rios em Massa END -->
+            <!-- Destinat√°rios em Massa END -->
 
 
             <!-- Usuario Externo -->
-            <!-- Todo: Destinat·rios em Massa Remover -->
+            <!-- Todo: Destinat√°rios em Massa Remover -->
             <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                    <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Usu·rio Externo: </label>
+                    <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Usu√°rio Externo: </label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/ajuda.svg" name="ajuda"
-                         id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa È realizada somente sobre Usu·rios Externos liberados. \n \n A pesquisa pode ser efetuada pelo Nome, E-mail ou CPF do Usu·rio Externo.', 'Ajuda') ?>
+                         id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa √© realizada somente sobre Usu√°rios Externos liberados. \n \n A pesquisa pode ser efetuada pelo Nome, E-mail ou CPF do Usu√°rio Externo.', 'Ajuda') ?>
                          class="infraImgModulo"/><br>
                     <div class="input-group mb-3">
                         <input style="width:91%;margin-top:1px;" type="text" id="txtUsuario" name="txtUsuario"
@@ -115,8 +115,8 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
                              src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg"
-                             alt="Selecionar Usu·rio Externo"
-                             title="Selecionar Usu·rio Externo" class="infraImg"/>
+                             alt="Selecionar Usu√°rio Externo"
+                             title="Selecionar Usu√°rio Externo" class="infraImg"/>
                         <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
                                value="<?php echo $idTipoProcesso ?>"/>
                         <input type="hidden" id="hdnIdUsuario" name="hdnIdUsuario" value="0"/>
@@ -126,7 +126,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                 </div>
                 <!-- Email -->
                 <div class="col-sm-10 col-md-4 col-lg-4 col-xl-5" style="padding-top: 5px">
-                    <label id="lblEmail" for="txtEmail" class="infraLabelObrigatorio">E-mail do Usu·rio Externo:</label>
+                    <label id="lblEmail" for="txtEmail" class="infraLabelObrigatorio">E-mail do Usu√°rio Externo:</label>
                     <input type="text" id="txtEmail" name="txtEmail" class="infraText campoPadrao infraAutoCompletar"
                            disabled="disabled" onkeypress="return infraMascaraTexto(this,event,50);" maxlength="50"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -144,24 +144,24 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
             </div>
 
 
-            <!-- Todo: Destinat·rios em Massa Remover -->
+            <!-- Todo: Destinat√°rios em Massa Remover -->
             <div class="tabUsuario clear height_2" style="display:none"></div>
-            <!-- Tabela de Destinat·rios -->
+            <!-- Tabela de Destinat√°rios -->
 
-            <!-- Todo: Destinat·rios em Massa Remover -->
+            <!-- Todo: Destinat√°rios em Massa Remover -->
             <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                     <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="<?php echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?>">
-                        <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas JurÌdicas disponÌveis" class="infraTable">
-                            <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas FÌsicas disponÌveis", count($arrIntimacoes)) ?></caption>
+                        <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jur√≠dicas dispon√≠veis" class="infraTable">
+                            <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas F√≠sicas dispon√≠veis", count($arrIntimacoes)) ?></caption>
                             <tr>
                                 <th style="display:none;">ID</th>
-                                <th class="infraTh">Destinat·rio</th>
+                                <th class="infraTh">Destinat√°rio</th>
                                 <th class="infraTh" width="30%">E-mail</th>
                                 <th class="infraTh" width="17%">CPF</th>
-                                <th class="infraTh" width="10%">Data de ExpediÁ„o</th>
-                                <th class="infraTh" width="15%">SituaÁ„o da IntimaÁ„o</th>
-                                <th class="infraTh" width="10%">AÁıes</th>
+                                <th class="infraTh" width="10%">Data de Expedi√ß√£o</th>
+                                <th class="infraTh" width="15%">Situa√ß√£o da Intima√ß√£o</th>
+                                <th class="infraTh" width="10%">A√ß√µes</th>
                             </tr>
                             <? if ($_REQUEST['is_alterar']) { ?>
                                 <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= $arrIntimacoes ?>"/>
@@ -178,8 +178,8 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                         <td class="text-center"><?= $intimacao['Situacao'] ?></td>
                                         <td class="text-center">
                                             <a href='#' onclick="abrirIntimacaoCadastrada('<?= $intimacao['Url'] ?>','<?= $key ?>')">
-                                                <img title='Consultar IntimaÁ„o EletrÙnica'
-                                                     alt='Consultar IntimaÁ„o EletrÙnica'
+                                                <img title='Consultar Intima√ß√£o Eletr√¥nica'
+                                                     alt='Consultar Intima√ß√£o Eletr√¥nica'
                                                      src='<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/consultar.svg'
                                                      class='infraImg'/>
                                             </a>
@@ -205,7 +205,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
             <div class="form-group">
                 <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de
-                    IntimaÁ„o:</label>
+                    Intima√ß√£o:</label>
                 <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)"
                         class="campoPadrao infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -227,17 +227,17 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="fldDocumentosIntimacao" class="infraFieldset sizeFieldset form-control" style="width: 100%;">
-                <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da IntimaÁ„o <img
+                <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intima√ß√£o <img
                             style="margin-top:1px; margin-bottom: -3px"
                             src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                            id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-· cumprida a IntimaÁ„o EletrÙnica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da IntimaÁ„o. \n\n Caso a consulta n„o seja efetuada em atÈ ' . $numNumPrazo . ' dias corridos da data de geraÁ„o da IntimaÁ„o EletrÙnica, automaticamente ocorrer· seu Cumprimento por Decurso do Prazo T·cito. \n\n O Documento Principal e possÌveis Anexos ter„o o acesso ao seu teor protegidos atÈ o cumprimento da IntimaÁ„o.', 'Ajuda') ?> />
+                            id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-√° cumprida a Intima√ß√£o Eletr√¥nica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intima√ß√£o. \n\n Caso a consulta n√£o seja efetuada em at√© ' . $numNumPrazo . ' dias corridos da data de gera√ß√£o da Intima√ß√£o Eletr√¥nica, automaticamente ocorrer√° seu Cumprimento por Decurso do Prazo T√°cito. \n\n O Documento Principal e poss√≠veis Anexos ter√£o o acesso ao seu teor protegidos at√© o cumprimento da Intima√ß√£o.', 'Ajuda') ?> />
                 </legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label id="lblDocPrincIntimacao" for="lblDocPrincIntimacao" class="infraLabelOpcional">Documento
                             Principal
                             da
-                            IntimaÁ„o: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')'; ?></label>
+                            Intima√ß√£o: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' . $strProtocoloDocumentoFormatado . ')'; ?></label>
                     </div>
                 </div>
                 <!-- Documento Principal-->
@@ -250,7 +250,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <label class="infraCheckboxLabel " for="optPossuiAnexo"></label>
                         </div>
-                        <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelCheckbox">IntimaÁ„o
+                        <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelCheckbox">Intima√ß√£o
                             possui
                             Anexos </label>
                     </div>
@@ -259,7 +259,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                     <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                         <label id="lblAnexosIntimacao" for="lblAnexosIntimacao" accesskey=""
                                class="infraLabelObrigatorio">Protocolos
-                            dos Anexos da IntimaÁ„o:</label>
+                            dos Anexos da Intima√ß√£o:</label>
                         <div class="input-group mb-3">
                             <select id="selAnexosIntimacao" style="width: 80%"
                                     name="selAnexosIntimacao" size="7"
@@ -304,7 +304,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                        class="infraLabelRadio">Integral
                                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                          name="ajuda"
-                                         id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('AtenÁ„o! Toda IntimaÁ„o EletrÙnica ocorre por meio da funcionalidade de DisponibilizaÁ„o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo ser„o disponibilizados ao Destinat·rio, independentemente de seus NÌveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que n„o ocorra nulidade da IntimaÁ„o, o Acesso Externo Integral somente poder· ser cancelado depois de cumprida a IntimaÁ„o e concluÌdo o Prazo Externo correspondente (se indicado para possÌvel Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela IntimaÁ„o EletrÙnica seja cancelado, ele ser· automaticamente substituÌdo por um Acesso Externo Parcial abrangendo o Documento Principal e possÌveis Anexos da IntimaÁ„o, alÈm de Documentos peticionados pelo prÛprio Usu·rio Externo.', 'Ajuda') ?>
+                                         id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Aten√ß√£o! Toda Intima√ß√£o Eletr√¥nica ocorre por meio da funcionalidade de Disponibiliza√ß√£o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo ser√£o disponibilizados ao Destinat√°rio, independentemente de seus N√≠veis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que n√£o ocorra nulidade da Intima√ß√£o, o Acesso Externo Integral somente poder√° ser cancelado depois de cumprida a Intima√ß√£o e conclu√≠do o Prazo Externo correspondente (se indicado para poss√≠vel Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intima√ß√£o Eletr√¥nica seja cancelado, ele ser√° automaticamente substitu√≠do por um Acesso Externo Parcial abrangendo o Documento Principal e poss√≠veis Anexos da Intima√ß√£o, al√©m de Documentos peticionados pelo pr√≥prio Usu√°rio Externo.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                                 </label>
                             </span>
@@ -321,7 +321,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                     class="infraLabelRadio">Parcial
                                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                     name="ajuda"
-                                    id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('AtenÁ„o! Toda IntimaÁ„o EletrÙnica ocorre por meio da funcionalidade de DisponibilizaÁ„o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE ser„o disponibilizados ao Destinat·rio o Documento Principal, os Protocolos dos Anexos da IntimaÁ„o (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos ser„o automaticamente incluÌdos no Acesso Parcial. \n\n Para que n„o ocorra nulidade da IntimaÁ„o, o Acesso Externo Parcial n„o poder· ser alterado nem cancelado. Todos os Protocolos incluÌdos no Acesso Externo Parcial poder„o ser visualizados pelo Destinat·rio, independentemente de seus NÌveis de Acesso, n„o abrangendo Protocolos futuros que forem adicionados ao processo.', 'Ajuda') ?>
+                                    id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Aten√ß√£o! Toda Intima√ß√£o Eletr√¥nica ocorre por meio da funcionalidade de Disponibiliza√ß√£o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE ser√£o disponibilizados ao Destinat√°rio o Documento Principal, os Protocolos dos Anexos da Intima√ß√£o (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos ser√£o automaticamente inclu√≠dos no Acesso Parcial. \n\n Para que n√£o ocorra nulidade da Intima√ß√£o, o Acesso Externo Parcial n√£o poder√° ser alterado nem cancelado. Todos os Protocolos inclu√≠dos no Acesso Externo Parcial poder√£o ser visualizados pelo Destinat√°rio, independentemente de seus N√≠veis de Acesso, n√£o abrangendo Protocolos futuros que forem adicionados ao processo.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                                 </label>
                         </span>

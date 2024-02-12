@@ -1,6 +1,6 @@
 <?php
     /**
-     * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+     * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
      * @since  04/04/2017
      */
 
@@ -57,7 +57,7 @@
             $objMdPetIntRelTipoRespRN     = new MdPetIntRelTipoRespRN();
             
             $arrObjMdPetIntRelTipoRespDTO = $objMdPetIntRelTipoRespRN->listarTipoRespostaExterno(array($numIdMdPetIntimacao,$idMdPetDest));
-           //A contagem do Prazo Externo deve ser iniciada somente no dia ˙til seguinte ao da "Data de Cumprimento da IntimaÁ„o",
+           //A contagem do Prazo Externo deve ser iniciada somente no dia √∫til seguinte ao da "Data de Cumprimento da Intima√ß√£o",
           
             InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespDTO, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
 
@@ -92,9 +92,9 @@
 
                             $tipoDia = '';
                             if ($objMdPetIntRelTipoRespDTO->getStrTipoDia() == 'U') {
-                                $tipoDia = ' ⁄til';
+                                $tipoDia = ' √ötil';
                                 if ($objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno() > 1) {
-                                    $tipoDia = ' ⁄teis';
+                                    $tipoDia = ' √öteis';
                                 }
                             }
                             $nome .= $objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno() > 1 ?  ' Dias'.$tipoDia : ' Dia'.$tipoDia;
@@ -110,7 +110,7 @@
                         if ($retornaNomeComposto){
                             $nome .=  ' (';
                             $nome .= $objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno();
-                            $nome .= $objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno() > 1 ?  ' meses' : ' mÍs';
+                            $nome .= $objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno() > 1 ?  ' meses' : ' m√™s';
                             $nome .= ') - Data Limite: ' . $dataFinal;
                         }
                     }
@@ -161,7 +161,7 @@
 //            InfraArray::ordenarArrInfraDTO($arrObjMdPetIntRelTipoRespValido, 'Nome', InfraArray::$TIPO_ORDENACAO_ASC);
             // Pode mais de uma tipo de resposta?
             foreach ($arrObjMdPetIntRelTipoRespDTO as $objMdPetIntRelTipoRespDTO) {
-                //FACULTATIVA ou outra com Prazo = 0 n„o s„o permitidas?
+                //FACULTATIVA ou outra com Prazo = 0 n√£o s√£o permitidas?
                 if ($objMdPetIntRelTipoRespDTO->getNumValorPrazoExterno()>0) {
                     $objMdPetIntRelTipoRespDestDTO = new MdPetIntRelTipoRespDestDTO();
                     $objMdPetIntRelTipoRespDestDTO->setNumIdMdPetIntRelTipoResp($objMdPetIntRelTipoRespDTO->getNumIdMdPetIntRelTipoResp());
@@ -197,7 +197,7 @@
             $count = 0;
             while ($count < $numQtde) {
                 $strData = InfraData::calcularData(1, InfraData::$UNIDADE_DIAS, InfraData::$SENTIDO_ADIANTE, $strData);
-                if (!in_array(InfraData::obterDescricaoDiaSemana($strData), ['s·bado', 'domingo']) && !in_array($strData, $arrFeriados)) {
+                if (!in_array(InfraData::obterDescricaoDiaSemana($strData), ['s√°bado', 'domingo']) && !in_array($strData, $arrFeriados)) {
                     $count++;
                 }
             }
@@ -218,6 +218,7 @@
 			        $objOrgaoDTO = new OrgaoDTO();
 			        $objOrgaoDTO->retNumIdOrgao();
 			        $objOrgaoDTO->setBolExclusaoLogica(false);
+			        $objOrgaoDTO->setStrSinConsultaProcessual('S');
 			        $objOrgaoDTO->adicionarCriterio(array('SinAtivo','Sigla'),array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),array('S',ConfiguracaoSEI::getInstance()->getValor('SessaoSEI','SiglaOrgaoSistema')),InfraDTO::$OPER_LOGICO_AND);
 
 			        $objOrgaoRN = new OrgaoRN();
@@ -294,7 +295,7 @@
             $novaData      = $objData->modify($numMes);
             $dataCalculada = $novaData->format('d/m/Y');
 
-            while (InfraData::obterDescricaoDiaSemana($dataCalculada) == 's·bado' ||
+            while (InfraData::obterDescricaoDiaSemana($dataCalculada) == 's√°bado' ||
                 InfraData::obterDescricaoDiaSemana($dataCalculada) == 'domingo' ||
                 in_array($dataCalculada, $arrFeriados)) {
                 $dataCalculada = InfraData::calcularData(1, InfraData::$UNIDADE_DIAS, InfraData::$SENTIDO_ADIANTE, $dataCalculada);
@@ -316,7 +317,7 @@
             $novaData      = $objData->modify($numAno);
             $dataCalculada = $novaData->format('d/m/Y');
 
-            while (InfraData::obterDescricaoDiaSemana($dataCalculada) == 's·bado' ||
+            while (InfraData::obterDescricaoDiaSemana($dataCalculada) == 's√°bado' ||
                 InfraData::obterDescricaoDiaSemana($dataCalculada) == 'domingo' ||
                 in_array($dataCalculada, $arrFeriados)) {
                 $dataCalculada = InfraData::calcularData(1, InfraData::$UNIDADE_DIAS, InfraData::$SENTIDO_ADIANTE, $dataCalculada);
@@ -337,7 +338,7 @@
 
         public function calcularDataPrazo($prazoTacita, $dataCumprimentoIntimacao = null, $numIdOrgao = null)
         {
-            // DATA INÕCIO
+            // DATA IN√çCIO
             if (is_null($dataCumprimentoIntimacao)) {
                 $dataCumprimentoIntimacao = InfraData::getStrDataAtual();
             }
@@ -357,7 +358,7 @@
 
         public function calcularDataPrazoPorTipo($tipo, $prazo, $dataCumprimentoIntimacao = null, $tipoDia = null, $numIdOrgao = null) {
 
-            // DATA INÕCIO
+            // DATA IN√çCIO
             if (is_null($dataCumprimentoIntimacao)) {
                 $dataCumprimentoIntimacao = InfraData::getStrDataAtual();
             }

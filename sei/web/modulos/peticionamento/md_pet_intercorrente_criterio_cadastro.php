@@ -9,16 +9,39 @@ try {
 
     require_once 'md_pet_intercorrente_criterio_cadastro_inicializar.php';
 
+	$objInfraException = new InfraException();
+
     $strItensSelHipoteseLegal = MdPetTipoProcessoINT::montarSelectHipoteseLegal(null, null, ProtocoloRN::$NA_RESTRITO);
     $optionTemplate = '<option value="%s" %s>%s</option>';
     $arrNivelAcesso = array(
-        'P' => 'P˙blico',
+        'P' => 'P√∫blico',
         'I' => 'Restrito'
     );
     foreach ($arrNivelAcesso as $i => $nivelAcesso) {
         $selected = '';
         $strItensSelNivelAcesso .= sprintf($optionTemplate, $i, $selected, $nivelAcesso);
     }
+	
+	// Pegar os Tipos de Processo ja cadastrados
+	$strTipoProcessoCadastrado = '';
+	$objMdPetCriterioDTO = new MdPetCriterioDTO();
+	$objMdPetCriterioDTO->retNumIdTipoProcedimento();
+	$objMdPetCriterioDTO->retStrNomeProcesso();
+	$objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
+	$objMdPetCriterioDTO->setDistinct(true);
+	$arrObjMdPetCriterioDTO = (new MdPetCriterioRN())->listar($objMdPetCriterioDTO);
+	
+	$idsTiposProcedimentosCadastrados = InfraArray::converterArrInfraDTO($arrObjMdPetCriterioDTO,'IdTipoProcedimento');
+	
+	$arrIdsMdPetCriteriosCadastrados = [];
+	$optionsIdsMdPetCriteriosCadastrados = '';
+	
+	foreach ($arrObjMdPetCriterioDTO as $tipoProcesso) {
+		$optionsIdsMdPetCriteriosCadastrados .= '<option value="'.$tipoProcesso->getNumIdTipoProcedimento().'">'.$tipoProcesso->getStrNomeProcesso().'';
+	    array_push($arrIdsMdPetCriteriosCadastrados, $tipoProcesso->getNumIdTipoProcedimento().'¬±'.$tipoProcesso->getStrNomeProcesso());
+	}
+	$strIdsMdPetCriteriosCadastrados = implode('¬•', $arrIdsMdPetCriteriosCadastrados);
+	// Tipos de Processo ja cadastrados
 
     $objInfraParametroDTO = new InfraParametroDTO();
     $objInfraParametroDTO->retTodos();
@@ -86,11 +109,11 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_pet_intercorrente_criterio_consultar':
-            $strTitulo = 'Consultar CritÈrio Intercorrente';
+            $strTitulo = 'Consultar Crit√©rio Intercorrente';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Fechar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
             break;
         case 'md_pet_intercorrente_criterio_alterar':
-            $strTitulo = 'Alterar CritÈrio para Intercorrente';
+            $strTitulo = 'Alterar Crit√©rio para Intercorrente';
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmAlterarCriterio" id="sbmAlterarCriterio" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_criterio_intercorrente_peticionamento']))) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -111,50 +134,54 @@ try {
             break;
         case 'md_pet_intercorrente_criterio_cadastrar':
         case 'md_pet_intercorrente_criterio_padrao':
+            
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarTpProcessoPeticionamento" id="sbmCadastrarTpProcessoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
-            // cadastrando o critÈrio intercorrente
-            $strTitulo = 'Novo CritÈrio para Intercorrente';
-            if ($_GET['acao'] == 'md_pet_intercorrente_criterio_padrao') {
-                $strTitulo = 'Intercorrente Padr„o';
-            }
+            $strTitulo = 'Novo Crit√©rio para Intercorrente';
 
             if (isset($_POST['sbmCadastrarTpProcessoPeticionamento'])) {
-                $objMdPetCriterioDTO = new MdPetCriterioDTO();
-                $objMdPetCriterioDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
-                $objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
-                $objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento('');
-                $objMdPetCriterioDTO->setStrSinAtivo('S');
+	
+	            if (!empty($_POST['hdnIdTipoProcesso'])) {
+		
+		            $arrTipoProcessoTmp = array_unique(PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnIdTipoProcesso']));
+		            $arrTipoProcesso = [];
+		
+		            foreach ($arrTipoProcessoTmp as $tipoProcesso) {
+			            if (!in_array((int)$tipoProcesso, $idsTiposProcedimentosCadastrados)) {
+				            $arrTipoProcesso[] = (int)$tipoProcesso;
+			            }
+		            }
+		
+		            foreach ($arrTipoProcesso as $numTipoProcesso) {
+			
+			            $objMdPetCriterioDTO = new MdPetCriterioDTO();
+			            $objMdPetCriterioDTO->setStrStaNivelAcesso($_POST['rdNivelAcesso'][0]);
+			            $objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
+			            $objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento('');
+			            $objMdPetCriterioDTO->setStrSinAtivo('S');
+			
+			            if (isset($_POST['selNivelAcesso']) && !empty($_POST['selNivelAcesso']) && $_POST['rdNivelAcesso'][0] == '2') {
+				            $strStaTipoNivelAcesso = $_POST['selNivelAcesso'];
+				            if ($_POST['selNivelAcesso'] == 'I') {
+					            $objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
+				            }
+				            $objMdPetCriterioDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
+			            }
+			            
+			            $objMdPetCriterioDTO->setNumIdTipoProcedimento($numTipoProcesso);
+                        (new MdPetCriterioRN())->cadastrar($objMdPetCriterioDTO);
+			
+		            }
+		
+	            }
 
-                if (isset($_POST['selNivelAcesso']) && !empty($_POST['selNivelAcesso']) && $_POST['rdNivelAcesso'][0] == '2') {
-                    $strStaTipoNivelAcesso = $_POST['selNivelAcesso'];
-                    if ($_POST['selNivelAcesso'] == 'I') {
-                        $objMdPetCriterioDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
-                    }
-                    $objMdPetCriterioDTO->setStrStaTipoNivelAcesso($strStaTipoNivelAcesso);
-                }
-
-                $objMdPetCriterioRN = new MdPetCriterioRN();
-                if ($_GET['acao'] == 'md_pet_intercorrente_criterio_padrao') {
-                    $objMdPetCriterioRN->cadastrarPadrao($objMdPetCriterioDTO);
-                } else {
-                    if (empty($_POST['hdnIdTipoProcesso'])) {
-                        $objMdPetCriterioDTO->setNumIdTipoProcedimento($_POST['selTipoProcesso']);
-                        $objMdPetCriterioRN->cadastrar($objMdPetCriterioDTO);
-                    } else {
-                        $arrTipoProcesso = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnIdTipoProcesso']);
-                        foreach ($arrTipoProcesso as $numTipoProcesso) {
-                            $objMdPetCriterioDTO->setNumIdTipoProcedimento($numTipoProcesso);
-                            $objMdPetCriterioRN->cadastrar($objMdPetCriterioDTO);
-                        }
-                    }
-                }
                 header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']));
+	            
             }
             break;
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecidas.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecidas.");
     }
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
@@ -180,7 +207,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
       action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
     <?
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-    PaginaSEI::getInstance()->abrirAreaDados('98%');
+    PaginaSEI::getInstance()->abrirAreaDados('100%');
     ?>
     <!--  Tipo de Processo  -->
     <div class="infraAreaDados" id="divInfraAreaDados">
@@ -227,7 +254,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipos de
                             Processos:</label>
                         <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                             onmouseover="return infraTooltipMostrar('A indicaÁ„o de mais de um Tipo de Processo apenas facilita aplicar o mesmo CritÈrio para os Tipos indicados. Ou seja, em seguida, cada um ter· registro prÛprio de CritÈrio para Intercorrente.', 'Ajuda');"
+                             onmouseover="return infraTooltipMostrar('A indica√ß√£o de mais de um Tipo de Processo apenas facilita aplicar o mesmo Crit√©rio para os Tipos indicados. Ou seja, em seguida, cada um ter√° registro pr√≥prio de Crit√©rio para Intercorrente.', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();"
                              alt="Ajuda" class="infraImgModulo"/>
                         <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
@@ -242,7 +269,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <?php if ($_GET['acao'] != 'md_pet_intercorrente_criterio_consultar') { ?>
                                     <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect form-control" multiple="multiple"
                                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                        <?= $strTipoProcesso; ?>
+                                        <?= $strTipoProcesso.$optionsIdsMdPetCriteriosCadastrados; ?>
                                     </select>
                                 <?php } ?>
                                 <div class="divOpcoesUnidades">
@@ -266,26 +293,26 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row rowFieldSet2 rowFieldSet">
             <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8">
                 <fieldset class="infraFieldset form-control">
-                    <legend class="infraLegend">&nbsp;NÌvel de Acesso dos Documentos&nbsp;</legend>
+                    <legend class="infraLegend">&nbsp;N√≠vel de Acesso dos Documentos&nbsp;</legend>
                     <div class="form-group">
                         <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
                                                         id="rdUsuExternoIndicarEntrePermitidos" class="infraRadio"
                                                         onclick="changeNivelAcesso();" value="1"
                                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usu·rio
+                        <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usu√°rio
                             Externo indica diretamente</label><br/>
 
                         <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
                                                         onclick="changeNivelAcesso();" value="2" class="infraRadio"
                                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padr„o prÈ
+                        <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padr√£o pr√©
                             definido</label>
                     </div>
                     <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: flex;"' : 'style="display: none;"' ?>>
                         <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
                             <div class="form-group">
                                 <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
-                                    class="infraLabelObrigatorio">NÌvel de Acesso: </label><br/>
+                                    class="infraLabelObrigatorio">N√≠vel de Acesso: </label><br/>
                                 <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()"
                                         class="infraSelect form-control"
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -296,7 +323,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9"  id="divHipoteseLegal" <?php echo $hipoteseLegal ?>>
                             <div class="form-group">
                                 <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
-                                    class="infraLabelObrigatorio">HipÛtese Legal:</label><br/>
+                                    class="infraLabelObrigatorio">Hip√≥tese Legal:</label><br/>
                                 <select id="selHipoteseLegal" name="selHipoteseLegal" class="infraSelect form-control"
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                     <?= $strItensSelHipoteseLegal ?>
@@ -313,7 +340,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <input type="hidden" id="hdnIdCriterioIntercorrentePeticionamento"
                    name="hdnIdCriterioIntercorrentePeticionamento"
                    value="<?php echo $IdCriterioIntercorrentePeticionamento ?>"/>
-            <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" value="<?php echo $idTipoProcesso ?>"/>
+            <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso" class="infraText form-control" value="<?= $idTipoProcesso ?>"/>
+            <input type="hidden" id="hdnIdTipoProcessoFilter" name="hdnIdTipoProcessoFilter" class="infraText form-control" value="<?= $strIdsMdPetCriteriosCadastrados ?>"/>
         </div>
     </div>
 

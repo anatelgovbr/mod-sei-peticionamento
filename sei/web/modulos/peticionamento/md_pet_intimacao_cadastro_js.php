@@ -68,7 +68,7 @@
 
     //Validando troca radio
 
-    // Todo: Destinat·rios em Massa Remover
+    // Todo: Destinat√°rios em Massa Remover
     function preparaPessoaFisica() {
 
         //try {
@@ -125,7 +125,7 @@
         //     return duplicado;
         // };
 
-        //Protocolos da IntimaÁ„o
+        //Protocolos da Intima√ß√£o
         carregarComponenteProtocoloIntimacao();
 
         //Protocolos Disponibilizados
@@ -160,7 +160,7 @@
         //}
     }
 
-    // Todo: Destinat·rios em Massa Remover
+    // Todo: Destinat√°rios em Massa Remover
     function preparaPessoaJuridica(tipo) {
 
         //objAutoCompletarUsuario = new infraAjaxAutoCompletar('hdnIdDadosUsuario', 'txtUsuario', '<?//= $strLinkAjaxUsuariosJuridicos ?>//');
@@ -200,7 +200,7 @@
         //    return duplicado;
         //};
 
-        //Protocolos da IntimaÁ„o
+        //Protocolos da Intima√ß√£o
         carregarComponenteProtocoloIntimacao();
 
         //Protocolos Disponibilizados
@@ -219,7 +219,7 @@
         //         var qtdEmGeracao = (tbUsuarios.rows.length - 1) - document.getElementById('intimacoes').value;
         //
         //         if (document.getElementById('intimacoes').value != 0) {
-        //             //Com intimaÁ„o j· gerada
+        //             //Com intima√ß√£o j√° gerada
         //             if (document.getElementById('intimacoes').value >= 1 && qtdEmGeracao == 0) {
         //
         //                 document.getElementById("hiddeAll1").style.display = "none";
@@ -477,7 +477,7 @@
 
     function preencherObjSelecao(item, anexo) {
         var idCampoSel = anexo ? 'selAnexosIntimacao' : 'selProtocolosDisponibilizados';
-        var tpLimpar = anexo ? 'P' : 'A'; //Se for anexo limpa o campo de protocolo, se n„o limpa o campo de anexo; (problema da remoÁ„o)
+        var tpLimpar = anexo ? 'P' : 'A'; //Se for anexo limpa o campo de protocolo, se n√£o limpa o campo de anexo; (problema da remo√ß√£o)
         var campoMultiplo = document.getElementById(idCampoSel);
         var opcao = document.createElement("option");
 
@@ -514,7 +514,7 @@
             for (var i = 1; i < tbUsuarios.rows.length; i++) {
                 var razao = tbUsuarios.rows[i].cells[0].innerText;
                 if (razao.trim() == document.getElementById('hdnIdDadosUsuario').value) {
-                    alert("A Pessoa FÌsica informada j· foi adicionada ‡ lista de destinat·rios ou j· possui intimaÁ„o gerada para este documento.");
+                    alert("A Pessoa F√≠sica informada j√° foi adicionada √† lista de destinat√°rios ou j√° possui intima√ß√£o gerada para este documento.");
                     return true;
                     break;
                 }
@@ -531,7 +531,7 @@
                     console.log(r);
 
                     if ($(r).find('Quantidade').text() >= 1 && $(r).find('Cadastro').text() > 0) {
-                        alert("A Pessoa FÌsica selecionada j· foi intimada deste documento principal por meio do destinat·rio: " + $(r).find('Vinculo').text());
+                        alert("A Pessoa F√≠sica selecionada j√° foi intimada deste documento principal por meio do destinat√°rio: " + $(r).find('Vinculo').text());
                         return;
                     }
 
@@ -555,7 +555,7 @@
                     var registroDuplicado = objTabelaDinamicaUsuarios.registroDuplicadoPorId(idContato);
 
                     if (registroDuplicado) {
-                        alert("O usu·rio externo informado j· possui intimaÁ„o gerada para este documento.");
+                        alert("O usu√°rio externo informado j√° possui intima√ß√£o gerada para este documento.");
                         return false;
                     }
 
@@ -568,12 +568,12 @@
                     if ($(r).find('Intimacao').text() > 0) {
                         objTabelaDinamicaUsuarios.adicionar([conteudoHide, $(r).find('Nome').text(), $(r).find('Email').text(), cpf, $(r).find('DataIntimacao').text(), $(r).find('Situacao').text()]);
                     } else {
-                        objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), $(r).find('Email').text(), cpf, infraDataAtual(), 'Em geraÁ„o']);
+                        objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), $(r).find('Email').text(), cpf, infraDataAtual(), 'Em gera√ß√£o']);
                     }
 
                     if ($(r).find('Intimacao').text() > 0) {
                         objTabelaDinamicaUsuarios.adicionarAcoes(document.getElementById('hdnIdDadosUsuario').value,
-                            "<a href='#' onclick=\"abrirIntimacaoCadastrada('" + $(r).find('Url').text() + "')\"><img title='Consultar Destinat·rio' alt='Consultar Destinat·rio' src='/infra_css/imagens/consultar.gif' class='infraImg' /></a>",
+                            "<a href='#' onclick=\"abrirIntimacaoCadastrada('" + $(r).find('Url').text() + "')\"><img title='Consultar Destinat√°rio' alt='Consultar Destinat√°rio' src='/infra_css/imagens/consultar.gif' class='infraImg' /></a>",
                             false, false);
                         document.getElementById('hdnDadosUsuario').value = usuariosCadastro;
                     } else {
@@ -606,7 +606,7 @@
                 var razao = tbUsuarios.rows[i].cells[0].innerText;
 
                 if (razao.trim() == document.getElementById('hdnIdDadosUsuario').value) {
-                    alert("A Pessoa JurÌdica informada j· foi adicionada ‡ lista de destinat·rios ou j· possui intimaÁ„o gerada para este documento.");
+                    alert("A Pessoa Jur√≠dica informada j√° foi adicionada √† lista de destinat√°rios ou j√° possui intima√ß√£o gerada para este documento.");
 
                     return true;
                     break;
@@ -639,7 +639,7 @@
                     var registroDuplicado = objTabelaDinamicaUsuarios.registroDuplicado(cpf);
 
                     if (registroDuplicado) {
-                        alert("O usu·rio externo informado j· possui intimaÁ„o gerada para este documento.");
+                        alert("O usu√°rio externo informado j√° possui intima√ß√£o gerada para este documento.");
                         return false;
                     }
 
@@ -652,12 +652,12 @@
                     if ($(r).find('Intimacao').text() > 0) {
                         objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), $(r).find('Nome').text(), infraFormatarCnpj(cpf), $(r).find('DataIntimacao').text(), $(r).find('Situacao').text()]);
                     } else {
-                        objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), nomeTratado, infraFormatarCnpj(cpf), infraDataAtual(), 'Em geraÁ„o']);
+                        objTabelaDinamicaUsuarios.adicionar([$(r).find('Id').text(), nomeTratado, infraFormatarCnpj(cpf), infraDataAtual(), 'Em gera√ß√£o']);
                     }
 
                     if ($(r).find('Intimacao').text() > 0) {
                         objTabelaDinamicaUsuarios.adicionarAcoes(document.getElementById('hdnIdDadosUsuario').value,
-                            "<a href='#' onclick=\"abrirIntimacaoCadastradaJuridico('" + $(r).find('Url').text() + "','valor')\"><img title='Consultar Destinat·rio' alt='Consultar Destinat·rio' src='/infra_css/imagens/consultar.gif' class='infraImg' /></a>",
+                            "<a href='#' onclick=\"abrirIntimacaoCadastradaJuridico('" + $(r).find('Url').text() + "','valor')\"><img title='Consultar Destinat√°rio' alt='Consultar Destinat√°rio' src='/infra_css/imagens/consultar.gif' class='infraImg' /></a>",
                             false, false);
                         document.getElementById('hdnDadosUsuario').value = usuariosCadastro;
                     } else {
@@ -729,7 +729,7 @@
 
     function limparCamposGerarIntimacao() {
 
-        //Sel Tipo de IntimaÁ„o e Resposta
+        //Sel Tipo de Intima√ß√£o e Resposta
         var selTipoIntimacao = document.getElementById('selTipoIntimacao');
         selTipoIntimacao.value = '0';
         mostraTipoResposta(selTipoIntimacao);
@@ -753,7 +753,7 @@
 
     function validarCamposObrigatoriosUsuario() {
         if (document.getElementById('txtUsuario').value == "") {
-            alert("Informe o Usu·rio Externo.");
+            alert("Informe o Usu√°rio Externo.");
             return false;
         } else {
             return true;
@@ -936,11 +936,11 @@
                     selectMultiple.multiple = '';
                     //  selectMultiple.style.width = '40%';
 
-                    var id = ids.split("•");
+                    var id = ids.split("¬•");
 
                     for (var x = 0; x < id.length; x++) {
                         // TODO: refatorar este trecho, para nao usar este delimitador '-#-', retornar em formato XML usando atributos ou subtags na tags Ids retornada pelo ajax
-                        var montaCheck = id[x].split("±");
+                        var montaCheck = id[x].split("¬±");
 
                         var opt = document.createElement('option');
                         opt.value = montaCheck[0];
@@ -996,16 +996,16 @@
     }
 
     function validarCadastro() {
-        //valido Destinat·rios
+        //valido Destinat√°rios
         if (document.getElementById("hdnDadosUsuario2").value == "") {
-            alert("Insira um Destinat·rio.");
+            alert("Insira um Destinat√°rio.");
             document.getElementById("hdnDadosUsuario2").focus();
             return false;
         }
 
-        //Validar tipo de IntimaÁ„o
+        //Validar tipo de Intima√ß√£o
         if (document.getElementById("selTipoIntimacao").value == 0) {
-            alert("Selecione um Tipo de IntimaÁ„o.");
+            alert("Selecione um Tipo de Intima√ß√£o.");
             document.getElementById("selTipoIntimacao").focus();
             return false;
         }
@@ -1033,9 +1033,9 @@
 
         }
 
-        //Validar Anexos da IntimaÁ„o
+        //Validar Anexos da Intima√ß√£o
         if (document.getElementById("optPossuiAnexo").checked && document.getElementById("hdnAnexosIntimacao").value == "") {
-            alert("Insira um Protocolo dos Anexos da IntimaÁ„o.");
+            alert("Insira um Protocolo dos Anexos da Intima√ß√£o.");
             document.getElementById("optPossuiAnexo").focus();
             return false;
         }
@@ -1074,7 +1074,7 @@
         var documentosAnexos = retornarJsonIdsAnexos();
 
         var paramsAjax = {
-            hdnDadosUsuario: document.getElementById('hdnDadosUsuario').value,
+            hdnDadosUsuario: document.getElementById('hdnDadosUsuario2').value,
             tpAcessoSelecao: tpAcesso,
             idProcedimento: document.getElementById('hdnIdProcedimento').value,
             stringDocAnex: documentosAnexos,
@@ -1151,7 +1151,7 @@
 
                 for (var i = 0; i < options.length; i++) {
                     if (options[i].value == id) {
-                        self.setTimeout('alert(\'Tipo de Processo [' + descricao + '] j· consta na lista.\')', 100);
+                        self.setTimeout('alert(\'Tipo de Processo [' + descricao + '] j√° consta na lista.\')', 100);
                         break;
                     }
                 }
@@ -1213,7 +1213,7 @@
     function onSubmitForm() {
 
         if (document.getElementById('tipoPessoaFisica').checked == false && document.getElementById('tipoPessoaJuridica').checked == false) {
-            alert("Selecione um tipo de Destinat·rio");
+            alert("Selecione um tipo de Destinat√°rio");
         }
 
         preencherHiddenComponente('A');

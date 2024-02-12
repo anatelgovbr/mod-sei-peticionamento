@@ -4,7 +4,7 @@
  *
  * 
  * 22/07/2016 - criado por marcelo.bezerra@cast.com.br - CAST
- * Arquivo para realizar controle requisiÁ„o ajax de usuario externo no modulo peticionamento.
+ * Arquivo para realizar controle requisi√ß√£o ajax de usuario externo no modulo peticionamento.
  */
 
 try{
@@ -101,7 +101,7 @@ try{
         break;
 
 	case 'md_pet_cargo_montar_select_genero':
-		// para uso com usu·rio externo - clone de controlador.ajax->cargo_montar_select_genero
+		// para uso com usu√°rio externo - clone de controlador.ajax->cargo_montar_select_genero
 		SessaoSEIExterna::getInstance();
 
 		$strOptions = MdPetTpCtxContatoINT::montarSelectGeneroComTratamentoEVocativo($_POST['primeiroItemValor'],$_POST['primeiroItemDescricao'],$_POST['valorItemSelecionado'],$_POST['staGenero']);
@@ -112,7 +112,7 @@ try{
 		break;
 
 	case 'md_pet_cargo_dados':
-		// para uso com usu·rio externo - clone de controlador.ajax->cargo_dados 
+		// para uso com usu√°rio externo - clone de controlador.ajax->cargo_dados 
 		SessaoSEIExterna::getInstance();
 
 		$objCargoDTO = new CargoDTO();
@@ -131,8 +131,130 @@ try{
 		InfraAjax::enviarXML($xml);
 		break;
 
+
+	 case 'get_acoes_intimacao_lista':
+
+		 SessaoSEIExterna::getInstance();
+
+		 $idMdPetDest		= $_POST['dataAttributes']['idmdpetdest'];
+		 $docPrinc 			= $_POST['dataAttributes']['docprinc'];
+		 $docTipo			= $_POST['dataAttributes']['doctipo'];
+		 $idSituacao 		= $_POST['dataAttributes']['idsituacao'];
+		 $descricao 		= $_POST['dataAttributes']['descricao'];
+		 $idAcExt 			= $_POST['dataAttributes']['idacext'];
+		 $tpProcesso 		= $_POST['dataAttributes']['tpprocesso'];
+		 $idProcesso 		= $_POST['dataAttributes']['idprocesso'];
+		 $idIntimacao 		= $_POST['dataAttributes']['idintimacao'];
+		 $idUsuarioExterno 	= $_POST['dataAttributes']['idusuariouxterno'];
+		 $idDocCert 		= (new MdPetIntAceiteRN())->getIdCertidaoPorIntimacao(array($idIntimacao, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
+
+		 $strResultado 		= '';
+
+		 //A√ß√£o Consulta
+		 if (!is_null($idProcesso)) {
+
+			 $strResultado .= (new MdPetIntRelDestinatarioRN())->addConsultarProcesso($idProcesso, $tpProcesso, $idAcExt, $descricao);
+
+			 if (!is_null($idSituacao) && $idSituacao != MdPetIntimacaoRN::$INTIMACAO_PENDENTE) {
+
+				 $docNum = '';
+				 $idDocCert = (new MdPetIntAceiteRN())->getIdCertidaoPorIntimacao(array($idIntimacao, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
+
+				 $strResultado .= (new MdPetIntCertidaoRN())->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcExt, $idDocCert));
+
+				 //RECIBO
+				 //Pr√≥prio Processo
+				 $isRelacionado = false;
+				 $objMdPetReciboDTO = new MdPetReciboDTO();
+				 $objMdPetReciboDTO->retTodos();
+				 $objMdPetReciboDTO->setStrStaTipoPeticionamento(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO);
+				 $objMdPetReciboDTO->setNumIdProtocolo($idProcesso);
+				 $objMdPetReciboDTO->unSetDblIdProtocoloRelacionado();
+				 $arrObjMdPetReciboDTO = (new MdPetReciboRN())->listar($objMdPetReciboDTO);
+
+				 if (empty($arrObjMdPetReciboDTO)) {
+					 //Relacionado
+					 $isRelacionado = true;
+					 $objMdPetReciboDTO = new MdPetReciboDTO();
+					 $objMdPetReciboDTO->retTodos();
+					 $objMdPetReciboDTO->setStrStaTipoPeticionamento(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO);
+					 $objMdPetReciboDTO->unSetNumIdProtocolo();
+					 $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcesso);
+					 $arrObjMdPetReciboDTO = (new MdPetReciboRN())->listar($objMdPetReciboDTO);
+				 }
+
+				 if(!empty($arrObjMdPetReciboDTO)){
+
+					 foreach ($arrObjMdPetReciboDTO as $objMdPetReciboDTO) {
+
+						 $usuarioDTO = new UsuarioDTO();
+						 $usuarioDTO->retNumIdUsuario();
+						 $usuarioDTO->retNumIdContato();
+						 $usuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+						 $usuarioDTO = (new UsuarioRN())->consultarRN0489($usuarioDTO);
+
+						 $emailDestinatario = SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno();
+						 $acessoExtDTO = new AcessoExternoDTO();
+						 $acessoExtDTO->retTodos();
+						 $acessoExtDTO->setOrd("IdAcessoExterno", InfraDTO::$TIPO_ORDENACAO_DESC);
+						 $acessoExtDTO->retDblIdProtocoloAtividade();
+						 $acessoExtDTO->retNumIdContatoParticipante();
+
+						 //trazer acesso externo  mais recente, deste processo, para este usuario externo, que estejam dentro da data de validade
+						 $acessoExtDTO->setDblIdProtocoloAtividade($objMdPetReciboDTO->getNumIdProtocolo());
+
+						 $acessoExtDTO->setNumIdContatoParticipante($usuarioDTO->getNumIdContato());
+						 $acessoExtDTO->setStrEmailDestinatario($emailDestinatario);
+						 $acessoExtDTO->setStrStaTipo(AcessoExternoRN::$TA_USUARIO_EXTERNO);
+						 $acessoExtDTO->setStrSinAtivo('S');
+
+						 //Verificar se traz somente o do acesso atual ou do relacionado desta intima√ß√£o (linha 1215)
+						 //$acessoExtDTO->setNumIdAcessoExterno($idAcessoExterno);
+						 //@todo adicionar verifica√ßao de data de validade do acesso externo
+
+						 $arrAcessosExternos = (new AcessoExternoRN())->listar($acessoExtDTO);
+
+						 if (is_array($arrAcessosExternos) && count($arrAcessosExternos) > 0) {
+
+							 $id_acesso_ext_link = $arrAcessosExternos[0]->getNumIdAcessoExterno();
+
+							 $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
+							 $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
+							 $docLink .= "&id_orgao_acesso_externo=0";
+
+							 //se nao configurar acesso externo ANTES, a assinatura do link falha:
+							 SessaoSEIExterna::getInstance()->configurarAcessoExterno($id_acesso_ext_link);
+							 $linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($docLink));
+
+							 $strResultado .= (new MdPetIntReciboRN())->addIconeRecibo(array($objMdPetReciboDTO->getDthDataHoraRecebimentoFinal(), $docPrinc, $docTipo, $docNum, $linkAssinado, $objMdPetReciboDTO->getDblIdDocumento(), $idMdPetDest));
+
+						 }
+
+					 }
+
+				 }
+
+			 }
+
+		 }
+
+		 if (!is_numeric($strResultado)) {
+			 $strResultado = str_replace('&', '&amp;', $strResultado);
+			 $strResultado = str_replace('<', '&amp;lt;', $strResultado);
+			 $strResultado = str_replace('>', '&amp;gt;', $strResultado);
+			 $strResultado = str_replace('\"', '&amp;quot;', $strResultado);
+			 $strResultado = str_replace('"', '&amp;quot;', $strResultado);
+		 }
+
+		 if(!empty($strResultado)){
+			 InfraAjax::enviarXML('<actions>'.$strResultado.'</actions>');
+		 }
+
+	 	break;
+
+
 	default:
-      throw new InfraException("AÁ„o '".$_GET['acao_ajax_externo']."' n„o reconhecida pelo controlador AJAX externo.");
+      throw new InfraException("A√ß√£o '".$_GET['acao_ajax_externo']."' n√£o reconhecida pelo controlador AJAX externo.");
   }
   
 }catch(Exception $e){

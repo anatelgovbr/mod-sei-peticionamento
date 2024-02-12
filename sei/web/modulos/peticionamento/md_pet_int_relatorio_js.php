@@ -22,7 +22,7 @@ function inicializar() {
     //     }
     // }
 
-    //animate scroll quando é grafico
+    //animate scroll quando Ã© grafico
     var url_string = window.location.href;
     var url = new URL(url_string);
     var c = url.searchParams.get("grafico");
@@ -102,9 +102,9 @@ function validarPesquisa(){
     var dataInicialPreenchida = (infraTrim(document.getElementById('txtDataInicio').value)!='') && (infraTrim(document.getElementById('txtDataFim').value)=='');
     var dataFinalPreenchida = (infraTrim(document.getElementById('txtDataInicio').value)=='') && (infraTrim(document.getElementById('txtDataFim').value)!='');
 
-    //Validações de Data
+    //ValidaÃ§Ãµes de Data
     if (dataInicialPreenchida || dataFinalPreenchida){
-        alert('O período da geração está incompleto.');
+        alert('O perÃ­odo da geraÃ§Ã£o estÃ¡ incompleto.');
         document.getElementById('txtDataInicio').focus();
         return false;
     }
@@ -128,7 +128,7 @@ function validarPesquisa(){
     var selSituacao = document.getElementById('selSituacao');
 
     if(selSituacao.options.selectedIndex == '-1'){
-        alert('A Situação da Intimação é de preenchimento obrigatório.');
+        alert('A SituaÃ§Ã£o da IntimaÃ§Ã£o Ã© de preenchimento obrigatÃ³rio.');
         return false;
     }
 
@@ -157,7 +157,7 @@ function preencherObjHdnSituacao(){
 }
 
 function abrirModalHistorico(link){
-    infraAbrirJanela(link,'janelaHistoricoIntimacao',700,400,'location=0,status=1,resizable=1,scrollbars=1');
+    infraAbrirJanelaModal(link,900,400);
 }
 
 function exportarExcel(){
@@ -255,7 +255,7 @@ function carregarComponenteUnidade(){
             if(options != null){
                 for(var i=0;i < options.length;i++){
                     if (options[i].value == id){
-                        alert('Unidade já consta na lista.');
+                        alert('Unidade jÃ¡ consta na lista.');
                         break;
                     }
                 }
@@ -300,7 +300,7 @@ function carregarComponenteDestinatario(){
            if(options != null){
                for(var i=0;i < options.length;i++){
                    if (options[i].value == id){
-                       alert('Destinatário já consta na lista.');
+                       alert('DestinatÃ¡rio jÃ¡ consta na lista.');
                        break;
                    }
                }
@@ -342,7 +342,7 @@ function carregarComponenteTipoIntimacao(){
             if(options != null){
                 for(var i=0;i < options.length;i++){
                     if (options[i].value == id){
-                        alert('Tipo de Intimação já consta na lista.');
+                        alert('Tipo de IntimaÃ§Ã£o jÃ¡ consta na lista.');
                         break;
                     }
                 }

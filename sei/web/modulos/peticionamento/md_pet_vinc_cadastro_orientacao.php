@@ -17,7 +17,7 @@ $retEditor = $objEditorRN->montarSimples($objEditorDTO);
 echo $retEditor->getStrInicializacao();
 ?>
 
-<div id="divOritentacao" style="overflow: auto; width:100%">
+<div id="divOritentacao" style="overflow: auto; width:100%; padding-top: 0px">
 <table id="tbOrientacao">
     <td>
         <div id="divEditores" style="overflow: auto; width:100%">

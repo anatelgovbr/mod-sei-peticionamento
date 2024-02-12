@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 08/12/2016 - criado por Marcelo Bezerra -CAST
  *
- * Vers„o do Gerador de CÛdigo: 1.39.0
+ * Vers√£o do Gerador de C√≥digo: 1.39.0
  */
 
 try {
@@ -37,7 +37,7 @@ try {
                 }
                 $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
                 $objMdPetIntTipoRespRN->excluir($arrObjMdPetIntTipoRespDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('OperaÁ„o realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('Opera√ß√£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -56,7 +56,7 @@ try {
                 }
                 $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
                 $objMdPetIntTipoRespRN->desativar($arrObjMdPetIntTipoRespDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('OperaÁ„o realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('Opera√ß√£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -79,7 +79,7 @@ try {
                     }
                     $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
                     $objMdPetIntTipoRespRN->reativar($arrObjMdPetIntTipoRespDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('OperaÁ„o realizada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('Opera√ß√£o realizada com sucesso.');
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
@@ -107,7 +107,7 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -220,10 +220,10 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Tipo de Resposta', 'Nome', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Prazo Externo', 'TipoPrazoExterno', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Resposta do Usu·rio Externo', 'TipoRespostaAceita', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">AÁıes</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Tipo de Resposta', 'Nome', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Prazo Externo', 'TipoPrazoExterno', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntTipoRespDTO, 'Resposta do Usu√°rio Externo', 'TipoRespostaAceita', $arrObjMdPetIntTipoRespDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh">A√ß√µes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         for ($i = 0; $i < $numRegistros; $i++) {
@@ -235,20 +235,20 @@ try {
             }
 
             if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'N') {
-                $prazo = 'N„o Possui Prazo Externo';
+                $prazo = 'N√£o Possui Prazo Externo';
             } else {
                 $prazo = $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno();
                 if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'D') {
                     $tipoDia = null;
                     if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoDia() == 'U') {
-                        $tipoDia = ' ⁄til';
+                        $tipoDia = ' √ötil';
                         if ($arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1) {
-                            $tipoDia = ' ⁄teis';
+                            $tipoDia = ' √öteis';
                         }
                     }
                     $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Dias' . $tipoDia : ' Dia' . $tipoDia;
                 } else if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'M') {
-                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Meses' : ' MÍs';
+                    $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Meses' : ' M√™s';
                 } else if ($arrObjMdPetIntTipoRespDTO[$i]->getStrTipoPrazoExterno() == 'A') {
                     $prazo .= $arrObjMdPetIntTipoRespDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Anos' : ' Ano';
                 }
@@ -345,7 +345,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
         <? if ($bolAcaoDesativar){ ?>
         function acaoDesativar(id, desc) {
             desc = $('<pre>').html(desc).text();
-            if (confirm("Confirma desativaÁ„o do Tipo de Resposta \"" + desc + "\"?")) {
+            if (confirm("Confirma desativa√ß√£o do Tipo de Resposta \"" + desc + "\"?")) {
                 document.getElementById('hdnInfraItemId').value = id;
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkDesativar?>';
                 document.getElementById('frmMdPetIntTipoRespLista').submit();
@@ -357,7 +357,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
                 alert('Nenhuma selecionada.');
                 return;
             }
-            if (confirm("Confirma desativaÁ„o dos  selecionados?")) {
+            if (confirm("Confirma desativa√ß√£o dos  selecionados?")) {
                 document.getElementById('hdnInfraItemId').value = '';
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkDesativar?>';
                 document.getElementById('frmMdPetIntTipoRespLista').submit();
@@ -368,7 +368,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
         <? if ($bolAcaoReativar){ ?>
         function acaoReativar(id, desc) {
             desc = $('<pre>').html(desc).text();
-            if (confirm("Confirma reativaÁ„o do Tipo de Resposta \"" + desc + "\"?")) {
+            if (confirm("Confirma reativa√ß√£o do Tipo de Resposta \"" + desc + "\"?")) {
                 document.getElementById('hdnInfraItemId').value = id;
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkReativar?>';
                 document.getElementById('frmMdPetIntTipoRespLista').submit();
@@ -380,7 +380,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
                 alert('Nenhuma  selecionada.');
                 return;
             }
-            if (confirm("Confirma reativaÁ„o dos  selecionados?")) {
+            if (confirm("Confirma reativa√ß√£o dos  selecionados?")) {
                 document.getElementById('hdnInfraItemId').value = '';
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkReativar?>';
                 document.getElementById('frmMdPetIntTipoRespLista').submit();
@@ -390,7 +390,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
         <? if ($bolAcaoExcluir){ ?>
         function acaoExcluir(id, desc) {
             desc = $('<pre>').html(desc).text();
-            if (confirm("Confirma exclus„o do Tipo de Resposta \"'" + desc + "'\"?")) {
+            if (confirm("Confirma exclus√£o do Tipo de Resposta \"'" + desc + "'\"?")) {
                 document.getElementById('hdnInfraItemId').value = id;
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkExcluir?>';
                 document.getElementById('frmMdPetIntTipoRespLista').submit();
@@ -402,7 +402,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
                 alert('Nenhuma  selecionada.');
                 return;
             }
-            if (confirm("Confirma exclus„o dos selecionados?")) {
+            if (confirm("Confirma exclus√£o dos selecionados?")) {
                 document.getElementById('hdnInfraItemId').value = '';
                 document.getElementById('frmMdPetIntTipoRespLista').action = '<?=$strLinkExcluir?>';
                 document.getElementById('frmMdPetIntTipoRespLista').submit();
@@ -416,6 +416,7 @@ PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
+    <style type="text/css"> th.text-left .infraDivOrdenacao { margin-left: 0px } </style>
     <form id="frmMdPetIntTipoRespLista" method="post"
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
@@ -442,7 +443,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <label id="lblRespostaUsuarioEx" for="selRespostaUsuarioEx" accesskey="" class="infraLabelOpicional">Resposta
                     do
-                    Usu·rio Externo:</label>
+                    Usu√°rio Externo:</label>
                 <select id="selRespostaUsuarioEx" name="selRespostaUsuarioEx" onchange="this.form.submit()"
                         class="infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">

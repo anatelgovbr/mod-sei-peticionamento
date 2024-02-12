@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
- * 25/01/2018 - criado por Usu·rio
+ * 25/01/2018 - criado por Usu√°rio
  *
- * Vers„o do Gerador de CÛdigo: 1.41.0
+ * Vers√£o do Gerador de C√≥digo: 1.41.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -80,14 +80,14 @@ class MdPetIntegracaoRN extends InfraRN
 
         if (!InfraUtil::validarCnpj($cnpj)) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>CNPJ informado È inv·lido.</msg>\n";
+            $xml .= "<msg>CNPJ informado √© inv√°lido.</msg>\n";
             $xml .= '</dados-pj>';
             return $xml;
         }
 
         if ($captcha != $dadosCaptcha) {
             $xml .= "<success>false</success>";
-            $xml .= "<msg>CÛdigo de confirmaÁ„o inv·lido.</msg>";
+            $xml .= "<msg>C√≥digo de confirma√ß√£o inv√°lido.</msg>";
             $xml .= '</dados-pj>';
             return $xml;
         }
@@ -138,7 +138,7 @@ class MdPetIntegracaoRN extends InfraRN
                 }
 
                 if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'identificacaoOrigem' && $itemParam->getStrNomeCampo() == 'origem') {
-                    //VerificaÁ„o da Origem
+                    //Verifica√ß√£o da Origem
                     $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
                     $idUsuario = $objInfraParametro->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
 
@@ -192,7 +192,7 @@ class MdPetIntegracaoRN extends InfraRN
 
 	    if (!empty($objMdPetIntegracao->getStrCodReceitaSuspAuto()) && in_array(intval($consulta['PessoaJuridica']['situacaoCadastral']['codigo']), explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto()))) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>O cadastro do CNPJ indicado est· suspenso na Receita Federal. Dessa forma, n„o pode ser efetivada a vinculaÁ„o do Respons·vel Legal ‡ Pessoa JurÌdica.</msg>\n";
+            $xml .= "<msg>O cadastro do CNPJ indicado est√° suspenso na Receita Federal. Dessa forma, n√£o pode ser efetivada a vincula√ß√£o do Respons√°vel Legal √† Pessoa Jur√≠dica.</msg>\n";
             $xml .= '</dados-pj>';
             return $xml;
         }
@@ -208,8 +208,8 @@ class MdPetIntegracaoRN extends InfraRN
 
         if ($cpfUsuarioLogado != $cpfResponsavelLegalReceita) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>Em consulta ‡ base da Receita Federal do Brasil (RFB), verificou-se que o seu CPF n„o consta como Respons·vel Legal pelo CNPJ n∫ " . $dados['txtNumeroCnpj'] . ", o que impede a presente vinculaÁ„o.\n \nRespons·vel Legal n„o se confunde com o conceito de sÛcio, havendo apenas um CPF na RFB como Respons·vel Legal pelo CNPJ.\n \n";
-            $xml .= "Entre em contato com a RFB para verificar eventuais pendÍncias.</msg>\n";
+            $xml .= "<msg>Em consulta √† base da Receita Federal do Brasil (RFB), verificou-se que o seu CPF n√£o consta como Respons√°vel Legal pelo CNPJ n¬∫ " . $dados['txtNumeroCnpj'] . ", o que impede a presente vincula√ß√£o.\n \nRespons√°vel Legal n√£o se confunde com o conceito de s√≥cio, havendo apenas um CPF na RFB como Respons√°vel Legal pelo CNPJ.\n \n";
+            $xml .= "Entre em contato com a RFB para verificar eventuais pend√™ncias.</msg>\n";
             $xml .= '</dados-pj>';
             return $xml;
         } else {
@@ -342,14 +342,14 @@ class MdPetIntegracaoRN extends InfraRN
     private function validarNumIdMdPetIntegFuncionalid(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getNumIdMdPetIntegFuncionalid())) {
-            $objInfraException->adicionarValidacao('Funcionalidade n„o informada.');
+            $objInfraException->adicionarValidacao('Funcionalidade n√£o informada.');
         }
     }
 
     private function validarStrNome(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getStrNome())) {
-            $objInfraException->adicionarValidacao('Nome n„o informado.');
+            $objInfraException->adicionarValidacao('Nome n√£o informado.');
         } else {
             $objMdPetIntegracaoDTO->setStrNome(trim($objMdPetIntegracaoDTO->getStrNome()));
 
@@ -362,12 +362,12 @@ class MdPetIntegracaoRN extends InfraRN
     private function validarStrEnderecoWsdl(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getStrEnderecoWsdl())) {
-            $objInfraException->adicionarValidacao('EndereÁo do Webservice n„o informado.');
+            $objInfraException->adicionarValidacao('Endere√ßo do Webservice n√£o informado.');
         } else {
             $objMdPetIntegracaoDTO->setStrEnderecoWsdl(trim($objMdPetIntegracaoDTO->getStrEnderecoWsdl()));
 
             if (strlen($objMdPetIntegracaoDTO->getStrEnderecoWsdl()) > 100) {
-                $objInfraException->adicionarValidacao('EndereÁo do Webservice possui tamanho superior a 100 caracteres.');
+                $objInfraException->adicionarValidacao('Endere√ßo do Webservice possui tamanho superior a 100 caracteres.');
             }
         }
     }
@@ -380,7 +380,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objMdPetIntegracaoDTO->setStrOperacaoWsdl(trim($objMdPetIntegracaoDTO->getStrOperacaoWsdl()));
 
             if (strlen($objMdPetIntegracaoDTO->getStrOperacaoWsdl()) > 50) {
-                $objInfraException->adicionarValidacao('OperaÁ„o possui tamanho superior a 50 caracteres.');
+                $objInfraException->adicionarValidacao('Opera√ß√£o possui tamanho superior a 50 caracteres.');
             }
         }
     }
@@ -388,10 +388,10 @@ class MdPetIntegracaoRN extends InfraRN
     private function validarStrSinCache(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getStrSinCache())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha controle de expiraÁ„o de cache n„o informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha controle de expira√ß√£o de cache n√£o informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinCache())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha controle de expiraÁ„o de cache inv·lid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha controle de expira√ß√£o de cache inv√°lid.');
             }
         }
     }
@@ -399,10 +399,10 @@ class MdPetIntegracaoRN extends InfraRN
     private function validarStrSinTpLogradouro(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getStrSinTpLogradouro())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Tipo do Logradouro n„o informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Tipo do Logradouro n√£o informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinTpLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Tipo do Logradouro inv·lid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Tipo do Logradouro inv√°lid.');
             }
         }
     }
@@ -410,10 +410,10 @@ class MdPetIntegracaoRN extends InfraRN
     private function validarStrSinNuLogradouro(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getStrSinNuLogradouro())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o N˙mero do Logradouro n„o informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o N√∫mero do Logradouro n√£o informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinNuLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o N˙mero do Logradouro inv·lid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o N√∫mero do Logradouro inv√°lid.');
             }
         }
     }
@@ -421,10 +421,10 @@ class MdPetIntegracaoRN extends InfraRN
     private function validarStrSinCompLogradouro(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getStrSinCompLogradouro())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro n„o informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro n√£o informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinCompLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro de cache inv·lid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro de cache inv√°lid.');
             }
         }
     }
@@ -432,10 +432,10 @@ class MdPetIntegracaoRN extends InfraRN
     private function validarStrSinAtivo(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntegracaoDTO->getStrSinAtivo())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica n„o informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica n√£o informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinAtivo())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica inv·lido.');
+                $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica inv√°lido.');
             }
         }
     }
@@ -470,7 +470,7 @@ class MdPetIntegracaoRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando IntegraÁ„o.', $e);
+            throw new InfraException('Erro cadastrando Integra√ß√£o.', $e);
         }
     }
 
@@ -522,7 +522,7 @@ class MdPetIntegracaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando IntegraÁ„o.', $e);
+            throw new InfraException('Erro alterando Integra√ß√£o.', $e);
         }
     }
 
@@ -546,7 +546,7 @@ class MdPetIntegracaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo IntegraÁ„o.', $e);
+            throw new InfraException('Erro excluindo Integra√ß√£o.', $e);
         }
     }
 
@@ -569,7 +569,7 @@ class MdPetIntegracaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando IntegraÁ„o.', $e);
+            throw new InfraException('Erro consultando Integra√ß√£o.', $e);
         }
     }
 
@@ -593,7 +593,7 @@ class MdPetIntegracaoRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando IntegraÁıes.', $e);
+            throw new InfraException('Erro listando Integra√ß√µes.', $e);
         }
     }
 
@@ -616,7 +616,7 @@ class MdPetIntegracaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando IntegraÁıes.', $e);
+            throw new InfraException('Erro contando Integra√ß√µes.', $e);
         }
     }
 
@@ -640,7 +640,7 @@ class MdPetIntegracaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro desativando IntegraÁ„o.', $e);
+            throw new InfraException('Erro desativando Integra√ß√£o.', $e);
         }
     }
 
@@ -654,7 +654,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objMdPetIntegracaoBD = new MdPetIntegracaoBD($this->getObjInfraIBanco());
             for ($i = 0; $i < count($arrObjMdPetIntegracaoDTO); $i++) {
 
-                //Funcionalidade utilizada em outra integraÁ„o
+                //Funcionalidade utilizada em outra integra√ß√£o
                 $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
                 $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado($arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao(), $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegFuncionalid());
 
@@ -662,7 +662,7 @@ class MdPetIntegracaoRN extends InfraRN
                     //Regras de Negocio
                     $objInfraException = new InfraException();
 
-                    $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra IntegraÁ„o.');
+                    $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra Integra√ß√£o.');
 
                     $objInfraException->lancarValidacoes();
                 }
@@ -673,7 +673,7 @@ class MdPetIntegracaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro reativando IntegraÁ„o.', $e);
+            throw new InfraException('Erro reativando Integra√ß√£o.', $e);
         }
     }
 
@@ -696,7 +696,7 @@ class MdPetIntegracaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro bloqueando IntegraÁ„o.', $e);
+            throw new InfraException('Erro bloqueando Integra√ß√£o.', $e);
         }
     }
 
@@ -719,12 +719,12 @@ class MdPetIntegracaoRN extends InfraRN
             }
             $this->validarStrSinAtivo($objMdPetIntegracaoDTO, $objInfraException);
 
-            //Funcionalidade utilizada em outra integraÁ„o
+            //Funcionalidade utilizada em outra integra√ß√£o
             $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
             $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado(null, $objMdPetIntegracaoDTO->getNumIdMdPetIntegFuncionalid());
 
             if ($arrIdMdPetIntegFuncionalidUtilizado) {
-                $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra IntegraÁ„o.');
+                $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra Integra√ß√£o.');
             }
 
             $objInfraException->lancarValidacoes();
@@ -738,7 +738,7 @@ class MdPetIntegracaoRN extends InfraRN
             return $objMdPetIntegracaoDTO;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando IntegraÁ„o.', $e);
+            throw new InfraException('Erro cadastrando Integra√ß√£o.', $e);
         }
     }
 
@@ -780,12 +780,12 @@ class MdPetIntegracaoRN extends InfraRN
                 if ($objMdPetIntegracaoDTO->isSetStrSinAtivo()) {
                     $this->validarStrSinAtivo($objMdPetIntegracaoDTO, $objInfraException);
                 }
-                //Funcionalidade utilizada em outra integraÁ„o
+                //Funcionalidade utilizada em outra integra√ß√£o
                 $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
                 $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao(), $objMdPetIntegracaoDTO->getNumIdMdPetIntegFuncionalid());
 
                 if ($arrIdMdPetIntegFuncionalidUtilizado) {
-                    $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra IntegraÁ„o.');
+                    $objInfraException->adicionarValidacao('Funcionalidade sendo utilizada por outra Integra√ß√£o.');
                 }
 
                 $objInfraException->lancarValidacoes();
@@ -801,7 +801,7 @@ class MdPetIntegracaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando IntegraÁ„o.', $e);
+            throw new InfraException('Erro alterando Integra√ß√£o.', $e);
         }
     }
 
@@ -828,7 +828,7 @@ class MdPetIntegracaoRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo IntegraÁ„o.', $e);
+            throw new InfraException('Erro excluindo Integra√ß√£o.', $e);
         }
     }
 
@@ -839,7 +839,7 @@ class MdPetIntegracaoRN extends InfraRN
         $arrParametrosEntradaMontado['mesesExpiraCache'] = $_POST['txtPrazo'];
         $arrParametros = array(
             'paramentrosEntrada' => $arrParametrosEntradaMontado,
-            'parametrosSaida' => $_POST['nomeFuncionalDadosSaida']
+            'parametrosSaida' => $_POST['nomeFuncionalDadosSaida'] ?: []
         );
 
         if ($objMdPetIntegracaoDTO) {
@@ -941,7 +941,7 @@ class MdPetIntegracaoRN extends InfraRN
         $xml = '<dados-pf>';
         if (!InfraUtil::validarCpf($cpf)) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>CPF informado È inv·lido.</msg>\n";
+            $xml .= "<msg>CPF informado √© inv√°lido.</msg>\n";
             $xml .= '</dados-pf>';
             return $xml;
         }
@@ -963,7 +963,7 @@ class MdPetIntegracaoRN extends InfraRN
 
         if (is_null($arrContatoDTO)) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>CPF n„o encontrado.</msg>\n";
+            $xml .= "<msg>CPF n√£o encontrado.</msg>\n";
             $xml .= '</dados-pf>';
             return $xml;
         }
@@ -972,7 +972,7 @@ class MdPetIntegracaoRN extends InfraRN
 
         if ($userIsProcurador) {
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>O CPF informado j· se encontra vinculado ao CNPJ. Para incluÌ-lo como Respons·vel Legal a ProcuraÁ„o Especial deve ser revogada/ renunciada. </msg>\n";
+            $xml .= "<msg>O CPF informado j√° se encontra vinculado ao CNPJ. Para inclu√≠-lo como Respons√°vel Legal a Procura√ß√£o Especial deve ser revogada/ renunciada. </msg>\n";
             $xml .= '</dados-pf>';
             return $xml;
         }

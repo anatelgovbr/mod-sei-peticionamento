@@ -98,7 +98,7 @@ try {
 			break;
 	
 		default:
-			throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+			throw new InfraException("AÃ§Ã£o '".$_GET['acao']."' nÃ£o reconhecida.");
 	}
 
     $arrComandos = array();
@@ -159,8 +159,8 @@ try {
         $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
         
 
-        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoPoderLegalDTO,'Nome do Tipo de Poder Legal','Nome',$arrObjMdPetTipoPoderLegalDTO).'</th>'."\n";
-        $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
+        $strResultado .= '<th class="infraTh text-left">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoPoderLegalDTO,'Nome do Tipo de Poder Legal','Nome',$arrObjMdPetTipoPoderLegalDTO).'</th>'."\n";
+        $strResultado .= '<th class="infraTh" width="15%">AÃ§Ãµes</th>'."\n";
         $strResultado .= '</tr>'."\n";
         $strCssTr='';
         for($i = 0;$i < $numRegistros; $i++){
@@ -182,14 +182,14 @@ try {
                 $strResultado .= '<td valign="middle">'.PaginaSEI::getInstance()->getTrCheck($i,$arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal(), $arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal()).'</td>';
             }
 
-            //Caso o Id do registro seja igual á 1, destacar em verde e sumir com os icones.
+            //Caso o Id do registro seja igual Ã¡ 1, destacar em verde e sumir com os icones.
             //if($arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal() == 1 ){
             $strResultado .= '<td valign="middle">'.$arrObjMdPetTipoPoderLegalDTO[$i]->getStrNome().'</td>';
             //}
         
             $strResultado .= '<td align="center" valign="middle">';
             if($arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal() == 1 ){
-                $strResultado .= "<img align=\"top\" style=\"\" src=\"" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg?".Icone::VERSAO."\" name=\"ajuda\" onmouseover='return infraTooltipMostrar(\"O Tipo de Poder Legal para - Receber, Cumprir e Responder Intimação Eletrônica - não pode ser editado, desativado ou excluído, em razão de sua dependência com outros recursos do sistema. :::Somente se esse Poder constar na Procuração Eletrônica simples e a Procuração estando vigente é que o Usuário Externo participará do fluxo das Intimações Eletrônicas destinadas ao Outorgante.   :::O mencionado Poder é intrínseco das Procurações Eletrônicas Especiais e do Responsável Legal.\", \"Ajuda\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+                $strResultado .= "<img align=\"top\" style=\"\" src=\"" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg?".Icone::VERSAO."\" name=\"ajuda\" onmouseover='return infraTooltipMostrar(\"O Tipo de Poder Legal para - Receber, Cumprir e Responder IntimaÃ§Ã£o EletrÃ´nica - nÃ£o pode ser editado, desativado ou excluÃ­do, em razÃ£o de sua dependÃªncia com outros recursos do sistema. :::Somente se esse Poder constar na ProcuraÃ§Ã£o EletrÃ´nica simples e a ProcuraÃ§Ã£o estando vigente Ã© que o UsuÃ¡rio Externo participarÃ¡ do fluxo das IntimaÃ§Ãµes EletrÃ´nicas destinadas ao Outorgante.   :::O mencionado Poder Ã© intrÃ­nseco das ProcuraÃ§Ãµes EletrÃ´nicas Especiais e do ResponsÃ¡vel Legal.\", \"Ajuda\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
             $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_poder_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&IdTipoPoderLegal='.$arrObjMdPetTipoPoderLegalDTO[$i]->getNumIdTipoPoderLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg?'.Icone::VERSAO.'" title="Consultar Tipo de Poder" alt="Consultar Tipo de Poder" class="infraImg" /></a>&nbsp;';
@@ -230,9 +230,9 @@ PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
 $arrNivelAcesso = array(
-    '1-' => 'Usuário Externo indicar diretamente',
-    '2-I' => 'Padrão pré definido - Restrito',
-    '2-P' => 'Padrão pré definido - Público',
+    '1-' => 'UsuÃ¡rio Externo indicar diretamente',
+    '2-I' => 'PadrÃ£o prÃ© definido - Restrito',
+    '2-P' => 'PadrÃ£o prÃ© definido - PÃºblico',
 );
 ?>
 

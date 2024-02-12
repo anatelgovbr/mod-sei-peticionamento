@@ -85,3 +85,12 @@ fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {margin-left: 0;}
         width: 94% !important;
     }
 }
+
+/*
+* Destinatarios em massa:
+*/
+
+.divBotoes{margin-top:5px; width:30px}
+.input-group-text-semBorda{background: none; border: none; height: 30px}
+.btnConsultarDocumento{display: block; position: relative; left: -7px;}
+.btnExcluirDocumento{display: block; position: relative; left:  -30px; top: 26px;}

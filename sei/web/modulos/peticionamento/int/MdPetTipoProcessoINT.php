@@ -159,7 +159,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $arrUni = array();
         $arrCid = array();
 
-        //RestriÁ„o Org„o
+        //Restri√ß√£o Org√£o
         $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
         $arrRestricaoOrgao = $objMdPetTipoProcessoRN->restricaoOrgao();
 
@@ -274,7 +274,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $ufId = array();
         $uf = array();
 
-        //RestriÁ„o Org„o
+        //Restri√ß√£o Org√£o
         $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
         $arrRestricaoOrgao = $objMdPetTipoProcessoRN->restricaoOrgao();
 
@@ -349,7 +349,7 @@ class MdPetTipoProcessoINT extends InfraINT
             $arrIdsUnidade = InfraArray::converterArrInfraDTO($arrIdsUnidade, 'IdUnidade');
         }
 
-        //Mostra somente org„o
+        //Mostra somente org√£o
         if (array_key_exists("orgao", $ids) == true && array_key_exists("uf", $ids) == false) {
             $filtroDinamico = "ORGAO";
             $objUnidadeDTO = new UnidadeDTO();
@@ -360,7 +360,7 @@ class MdPetTipoProcessoINT extends InfraINT
 
             $arrIdsUnidade = InfraArray::converterArrInfraDTO($arrIdsUnidade, 'IdUnidade');
 
-        } //Mostra org„o e Uf
+        } //Mostra org√£o e Uf
         else if (array_key_exists("orgao", $ids) == true && array_key_exists("uf", $ids) == true && array_key_exists("cidade", $ids) == false) {
             $filtroDinamico = "ORGAO_UF";
             $objUnidadeDTO = new UnidadeDTO();
@@ -390,7 +390,7 @@ class MdPetTipoProcessoINT extends InfraINT
             $arrIdsUnidade = InfraArray::converterArrInfraDTO($arrIdsUnidade, 'IdUnidade');
 
 
-        } //Mostra org„o, uf e cidade
+        } //Mostra org√£o, uf e cidade
         else if (array_key_exists("orgao", $ids) == true && array_key_exists("uf", $ids) == true && array_key_exists("cidade", $ids) == true) {
             $filtroDinamico = "ORGAO_UF_CIDADE";
 
@@ -522,7 +522,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
         $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdTipoProcessoPeticionamento');
 
-        //ValidaÁ„o Cidade Unica
+        //Valida√ß√£o Cidade Unica
         $objTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, infraDTO::$OPER_IN);
         $objTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
@@ -593,13 +593,13 @@ class MdPetTipoProcessoINT extends InfraINT
 
             }
         }
-//Fim validaÁ„o cidade Unica
+//Fim valida√ß√£o cidade Unica
 
-//RestriÁ„o
+//Restri√ß√£o
         $arrRestricao = array();
         foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
 
-            //Verifica se existe restriÁ„o para o tipo de processo
+            //Verifica se existe restri√ß√£o para o tipo de processo
             $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
             $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
             $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -627,7 +627,7 @@ class MdPetTipoProcessoINT extends InfraINT
 
             foreach ($arrobjMdPetRelTpProcessoUnidDTO as $objDTO) {
 
-                //Verifica se tem alguma unidade ou Ûrg„o diferente dos restritos
+                //Verifica se tem alguma unidade ou √≥rg√£o diferente dos restritos
                 if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)) {
                     $arrRestricao [] = $tpProc->getNumIdProcedimento();
                 }
@@ -638,7 +638,7 @@ class MdPetTipoProcessoINT extends InfraINT
             }
 
         }
-//Fim restriÁ„o
+//Fim restri√ß√£o
 
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
@@ -696,7 +696,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $idOrgao = array();
         $orgao = array();
 
-        //RestriÁ„o Org„o
+        //Restri√ß√£o Org√£o
         $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
         $arrRestricaoOrgao = $objMdPetTipoProcessoRN->restricaoOrgao();
 
@@ -714,7 +714,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $arrObjTipoProcedimentoFiltroDTO = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
         //$arrTipoPet = InfraArray::converterArrInfraDTO($arrObjTipoProcedimentoFiltroDTO, 'IdTipoProcessoPeticionamento');
 
-        //ValidaÁ„o Cidade Unica
+        //Valida√ß√£o Cidade Unica
         $arrTipoProcessoOrgaoCidade = array();
         $arrIdTipoProcesso = array();
         foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
@@ -771,7 +771,7 @@ class MdPetTipoProcessoINT extends InfraINT
 
             }
         }
-        //ValidaÁ„o Cidade Unida - FIM
+        //Valida√ß√£o Cidade Unida - FIM
 
         $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
         $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
@@ -815,13 +815,13 @@ class MdPetTipoProcessoINT extends InfraINT
     {
 
         $arrRestricaoOrgao = null;
-        ////RestriÁ„o Org„o
+        ////Restri√ß√£o Org√£o
 
         if (!array_key_exists("idTpProc", $idOrgao)) {
             $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
             $arrRestricaoOrgao = $objMdPetTipoProcessoRN->restricaoOrgao();
         }
-        //RestriÁ„o Org„o - FIM
+        //Restri√ß√£o Org√£o - FIM
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->retTodos();
@@ -852,7 +852,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $arrIdsUnidade = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
 
 
-        //ValidaÁ„o Cidade Unica
+        //Valida√ß√£o Cidade Unica
         //$objTipoProcedimentoRN = new MdPetTipoProcessoRN();
         //$arrIdsUnidade = $objTipoProcedimentoRN->validacaoCidadeDuplcada($arrobjMdPetRelTpProcessoUnidDTO);
 
@@ -885,7 +885,7 @@ class MdPetTipoProcessoINT extends InfraINT
     public static function montarSelectOrgaoTpProcessoOrgaoCidade($id)
     {
 
-        //RestriÁ„o Org„o
+        //Restri√ß√£o Org√£o
         $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
         $arrRestricaoOrgao = $objMdPetTipoProcessoRN->restricaoOrgao();
 
@@ -1002,12 +1002,31 @@ class MdPetTipoProcessoINT extends InfraINT
 
     public static function validarNivelAcesso($params)
     {
+	
+	    $objMdPetCriterioDTO = new MdPetCriterioDTO();
+	    $objMdPetCriterioDTO->retNumIdTipoProcedimento();
+	    $objMdPetCriterioDTO->retStrNomeProcesso();
+	    $objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
+	    $objMdPetCriterioDTO->setDistinct(true);
+	    $arrObjMdPetCriterioDTO = (new MdPetCriterioRN())->listar($objMdPetCriterioDTO);
+	
+	    $idsTiposProcedimentosCadastrados = InfraArray::converterArrInfraDTO($arrObjMdPetCriterioDTO,'IdTipoProcedimento');
+	
+	    $arrTipoProcessoTmp = array_unique(PaginaSEI::getInstance()->getArrValuesSelect($params['hdnIdTipoProcesso']));
+	    $arrTipoProcedimento = [];
+	
+	    foreach ($arrTipoProcessoTmp as $tipoProcesso) {
+		    if (!in_array((int)$tipoProcesso, $idsTiposProcedimentosCadastrados)) {
+			    $arrTipoProcedimento[] = (int)$tipoProcesso;
+		    }
+	    }
+	    
         $objNivelAcessoRN = new NivelAcessoPermitidoRN();
         $objNivelAcessoDTO = new NivelAcessoPermitidoDTO();
         $objNivelAcessoDTO->retTodos();
         $objNivelAcessoDTO->setOrd('StaNivelAcesso', InfraDTO::$TIPO_ORDENACAO_ASC);
         $arrayDescricoes = array(
-            'P' => 'P˙blico',
+            'P' => 'P√∫blico',
             'I' => 'Restrito'
         );
         $msg = '';
@@ -1016,10 +1035,9 @@ class MdPetTipoProcessoINT extends InfraINT
         if ($params['selNivelAcesso'] == 'P') {
             $staTipoNivelAcesso = 0;
         }
-        if ($params['hdnIdTipoProcesso'] != '') {
-            $arrTipoProcedimento = PaginaSEI::getInstance()->getArrItensTabelaDinamica($params['hdnIdTipoProcesso']);
+        if (!empty($arrTipoProcedimento)) {
             foreach ($arrTipoProcedimento as $tipoProcedimento) {
-                $objNivelAcessoDTO->setNumIdTipoProcedimento($tipoProcedimento[0]);
+                $objNivelAcessoDTO->setNumIdTipoProcedimento($tipoProcedimento);
                 $objNivelAcessoDTO->setStrStaNivelAcesso($staTipoNivelAcesso);
                 $contador = $objNivelAcessoRN->contar($objNivelAcessoDTO);
                 if ($contador <= 0) {
@@ -1041,7 +1059,7 @@ class MdPetTipoProcessoINT extends InfraINT
         }
 
         if ($msg != '') {
-            $msg = 'O CritÈrio n„o pÙde ser cadastrado, pois os Tipo de Processo abaixo n„o permite o NÌvel de Acesso [ ' . $arrayDescricoes[$params['selNivelAcesso']] . " ]\n\r" . $msg;
+            $msg = 'O Crit√©rio n√£o p√¥de ser cadastrado, pois os Tipo de Processo abaixo n√£o permite o N√≠vel de Acesso [ ' . $arrayDescricoes[$params['selNivelAcesso']] . " ]\n\r" . $msg;
             $xml .= '<MensagemValidacao>' . $msg . '</MensagemValidacao>';
         }
 
@@ -1083,7 +1101,7 @@ class MdPetTipoProcessoINT extends InfraINT
         //montarItemSelect
         $stringFim = '';
         $arrayDescricoes = array();
-        $arrayDescricoes[ProtocoloRN::$NA_PUBLICO] = 'P˙blico';
+        $arrayDescricoes[ProtocoloRN::$NA_PUBLICO] = 'P√∫blico';
         $arrayDescricoes[ProtocoloRN::$NA_RESTRITO] = 'Restrito';
         $arrayDescricoes[''] = '';
 
@@ -1149,7 +1167,7 @@ class MdPetTipoProcessoINT extends InfraINT
         }
 
         if ($msg != '') {
-            $msg = 'O CritÈrio n„o pÙde ser cadastrado, pois existe Tipo de Processo que n„o possue indicaÁ„o de pelo menos uma sugest„o de assunto' . "\n\r" . $msg;
+            $msg = 'O Crit√©rio n√£o p√¥de ser cadastrado, pois existe Tipo de Processo que n√£o possue indica√ß√£o de pelo menos uma sugest√£o de assunto' . "\n\r" . $msg;
             $xml .= '<MensagemValidacao>' . $msg . '</MensagemValidacao>';
         }
 

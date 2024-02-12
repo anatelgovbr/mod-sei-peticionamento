@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 08/12/2016 - criado por Marcelo Bezerra - CAST
  *
- * Versão do Gerador de Código: 1.39.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.39.0
  *
  */
 
@@ -93,7 +93,7 @@ try {
                 $objMdPetIntTipoRespRN = new MdPetIntTipoRespRN();
                 $objMdPetIntTipoRespDTO = $objMdPetIntTipoRespRN->consultar($objMdPetIntTipoRespDTO);
                 if ($objMdPetIntTipoRespDTO == null) {
-                    throw new InfraException("Registro de tipo de resposta não encontrado.");
+                    throw new InfraException("Registro de tipo de resposta nÃ£o encontrado.");
                 }
 
             } else {
@@ -154,13 +154,13 @@ try {
             $objMdPetIntTipoRespDTO = $objMdPetIntTipoRespRN->consultar($objMdPetIntTipoRespDTO);
 
             if ($objMdPetIntTipoRespDTO === null) {
-                throw new InfraException("Registro não encontrado.");
+                throw new InfraException("Registro nÃ£o encontrado.");
             }
 
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 } catch (Exception $e) {
@@ -187,11 +187,11 @@ $title = '';
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
 
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                 <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:</label>
                 <a href="javascript:void(0);" id="tipoAjuda"
-                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita a possível Resposta do Usuário Externo a ser intimado. Exemplos: Recurso de 1ª Instância, Embargos de Declaração, Pedido de Reconsideração.', 'Ajuda') ?>>
+                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita a possÃ­vel Resposta do UsuÃ¡rio Externo a ser intimado. Exemplos: Recurso de 1Âª InstÃ¢ncia, Embargos de DeclaraÃ§Ã£o, Pedido de ReconsideraÃ§Ã£o.', 'Ajuda') ?>>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" class="infraImgModulo"/></a>
                 <input type="text" id="txtNome" name="txtNome" class="infraText form-control"
                        value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoRespDTO->getStrNome()); ?>"
@@ -199,9 +199,9 @@ $title = '';
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
-                <fieldset id="fldPrazo" class="form-control">
+                <fieldset id="fldPrazo" class="infraFieldset">
                     <legend class="infraLegend"> Prazo Externo</legend>
                     <div class="row">
                         <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2" style="padding-top: 5px; padding-bottom: 5px">
@@ -236,7 +236,7 @@ $title = '';
                                     value="U"
                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <label for="rdTipoDiaU" class="infraLabelRadio">
-                                Úteis
+                                Ãšteis
                             </label>
                         </div>
                     </div>
@@ -250,7 +250,7 @@ $title = '';
                                    class="infraRadio"
                                    onclick="verificaPrazo('M')"
                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <label id="lblMes" for="optPrazoMes" class="infraLabelRadio">Mês</label>
+                            <label id="lblMes" for="optPrazoMes" class="infraLabelRadio">MÃªs</label>
                         </div>
                         <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
                             <input type="text" id="txtValorPrazoExternoMes" name="txtValorPrazoExternoMes"
@@ -280,25 +280,32 @@ $title = '';
                 </fieldset>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
-                <fieldset id="fldResposta" class="form-control">
-                    <legend class="infraLegend"> Resposta do Usuário Externo</legend>
+                <fieldset id="fldResposta" class="infraFieldset">
+                    <legend class="infraLegend"> Resposta do UsuÃ¡rio Externo</legend>
 
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'F' ? 'checked="checked"' : ''; ?>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'F' ? 'checked="checked"' : ''; ?>
 
-                    <input type="radio" name="rdoResposta" id="optTipoRespostaFacultativa" <? echo $checked ?>
-                           value="F"
-                           class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    <label id="lblAno" for="optTipoRespostaFacultativa" class="infraLabelRadio">Resposta Facultativa</label>
-                    <br/>
-                    <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'E' ? 'checked="checked"' : ''; ?>
+                            <input type="radio" name="rdoResposta" id="optTipoRespostaFacultativa" <? echo $checked ?>
+                                   value="F"
+                                   class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblAno" for="optTipoRespostaFacultativa" class="infraLabelRadio">Resposta Facultativa</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <? $checked = $objMdPetIntTipoRespDTO->getStrTipoRespostaAceita() == 'E' ? 'checked="checked"' : ''; ?>
 
-                    <input type="radio" name="rdoResposta" id="optTipoRespostaExige" <? echo $checked ?> value="E"
-                           class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    <label id="lblExige" for="optTipoRespostaExige" class="infraLabelRadio">
-                        Exige Resposta (intimação destacará o Tipo de Resposta e Prazo Externo esperado e emitirá
-                        reiterações por e-mail) </label>
+                            <input type="radio" name="rdoResposta" id="optTipoRespostaExige" <? echo $checked ?> value="E"
+                                   class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblExige" for="optTipoRespostaExige" class="infraLabelRadio">
+                                Exige Resposta (intimaÃ§Ã£o destacarÃ¡ o Tipo de Resposta e Prazo Externo esperado e emitirÃ¡
+                                reiteraÃ§Ãµes por e-mail) </label>
+                        </div>
+                    </div>
 
                 </fieldset>
             </div>

@@ -6,3 +6,20 @@
 .bloco {float: left;margin-top: 1%;margin-right: 1%;}
 .clear {clear: both;}
 .infraLabelOpcional { margin-bottom: 0px !important }
+
+.text-placeholder {
+    display: inline-block;
+    background-color: #444;
+    height: 20px;
+    margin: 0;
+    border-radius: 4px;
+    min-width: 20px;
+    opacity: .1;
+    animation: fading 1.5s infinite;
+}
+
+@keyframes fading {
+    0% { opacity: .1; }
+    50% { opacity: .25; }
+    100% { opacity: .1; }
+}

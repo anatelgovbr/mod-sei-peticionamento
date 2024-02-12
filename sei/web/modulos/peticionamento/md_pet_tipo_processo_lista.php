@@ -33,7 +33,7 @@ try {
                 //Tipos de Processos para Peticionamento
                 $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
                 $objMdPetTipoProcessoRN->excluir($arrObjMdPetTipoProcessoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -78,7 +78,7 @@ try {
                     }
                     $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
                     $objMdPetTipoProcessoRN->reativar($arrObjMdPetTipoProcessoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
@@ -111,7 +111,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -129,7 +129,7 @@ try {
         $objMdPetTipoProcessoDTO->setStrNomeProcesso('%' . $_POST ['txtTipoProcesso'] . '%', InfraDTO::$OPER_LIKE);
     }
 
-    //Órgão
+    //Ã“rgÃ£o
     if (($_POST['selOrgao'] != '') && $_POST['selOrgao'] != 'null') {
         $objMdPetTipoProcessoDTO->setDistinct(true);
 
@@ -164,7 +164,7 @@ try {
                     }
                 }
             }
-            //Caso tenha mais que um nesta situação eu incluo no filtro da pesquisa
+            //Caso tenha mais que um nesta situaÃ§Ã£o eu incluo no filtro da pesquisa
             if (is_array($arrTipoProcessoOrgaoM)) {
                 $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($arrTipoProcessoOrgaoM, InfraDTO::$OPER_IN);
             } else {
@@ -175,7 +175,7 @@ try {
         }
     }
 
-    //caso o filtro de órgão mude para todos ou vazio será limpado o filtro de unidade.
+    //caso o filtro de Ã³rgÃ£o mude para todos ou vazio serÃ¡ limpado o filtro de unidade.
     if ($_POST['selOrgao'] == 'null') {
         $_POST['selUnidade'] = 'null';
     }
@@ -190,7 +190,7 @@ try {
         }
     }
 
-    //Indicação Interessado
+    //IndicaÃ§Ã£o Interessado
     if (($_POST['selIndicacaoInteressado'] != '') && $_POST['selIndicacaoInteressado'] != 'null') {
         $vlIndicacaoDireta = $_POST['selIndicacaoInteressado'] == MdPetTipoProcessoRN::$INDICACAO_DIRETA ? 'S' : 'N';
         $vlIndicacaoPrUExt = $_POST['selIndicacaoInteressado'] == MdPetTipoProcessoRN::$PROPRIO_USUARIO_EXTERNO ? 'S' : 'N';
@@ -215,7 +215,7 @@ try {
     $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
     $arrObjMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
 
-    //Caso o filtro orgao seja selecionado com Multiplo e não exista nenhum tipo de processo com orgao multiplo a pesquisa deve retornar vazia.
+    //Caso o filtro orgao seja selecionado com Multiplo e nÃ£o exista nenhum tipo de processo com orgao multiplo a pesquisa deve retornar vazia.
     if ($nenhumOrgaoMultiplo) {
         $arrObjMdPetTipoProcessoDTO = null;
     }
@@ -227,7 +227,7 @@ try {
     $strLinkPesquisar = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&acao_retorno=md_pet_tipo_processo_listar'));
     $arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
 
-    $arrComandos[] = '<button type="button" accesskey="c" id="btnConfiguracoesGerais" value="Configurações Gerais" class="infraButton" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_cadastrar_orientacoes&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'])) . '\'"><span class="infraTeclaAtalho">C</span>onfigurações Gerais</button>';
+    $arrComandos[] = '<button type="button" accesskey="c" id="btnConfiguracoesGerais" value="ConfiguraÃ§Ãµes Gerais" class="infraButton" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_tipo_processo_cadastrar_orientacoes&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'])) . '\'"><span class="infraTeclaAtalho">C</span>onfiguraÃ§Ãµes Gerais</button>';
 
     $bolAcaoCadastrar = SessaoSEI::getInstance()->verificarPermissao('md_pet_tipo_processo_cadastrar');
     if ($bolAcaoCadastrar) {
@@ -290,14 +290,14 @@ try {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
 
-        $strResultado .= '<th class="infraTh" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Tipo de Processo', 'NomeProcesso', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
-//        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Órgão', 'SinIIIndicacaoDireta', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Tipo de Processo', 'NomeProcesso', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
+//        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Ã“rgÃ£o', 'SinIIIndicacaoDireta', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
 //        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Unidade para Abertura', 'SinDocExterno', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . 'Órgão' . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . 'Unidade para Abertura' . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Indicação de Interessado', 'SinIIIndicacaoDireta', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Documento Principal', 'SinDocExterno', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="15%">Ações</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . 'Ã“rgÃ£o' . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . 'Unidade para Abertura' . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'IndicaÃ§Ã£o de Interessado', 'SinIIIndicacaoDireta', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetTipoProcessoDTO, 'Documento Principal', 'SinDocExterno', $arrObjMdPetTipoProcessoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="15%">AÃ§Ãµes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         $filtroOrgaoMultiplo = false;
@@ -308,7 +308,7 @@ try {
             $arrUnidades = array();
             $arrOrgao = array();
 
-            //Verifica se existe restrição para o tipo de processo
+            //Verifica se existe restriÃ§Ã£o para o tipo de processo
             $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
             $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
             $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -346,24 +346,24 @@ try {
                 $tpUnidadeMult = $objDTO->getStrStaTipoUnidade() == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS ? true : false;
 
                 if ($tpUnidadeMult) {
-                    $strUnidades = 'Múltiplas';
+                    $strUnidades = 'MÃºltiplas';
                     $tdUnidade = '<td valign="middle">' . $strUnidades . '</td>';
                 } else {
                     $strUnidades = $siglaUnidade;
                     $tdUnidade = '<td valign="middle"><a alt="' . $objDTO->getStrdescricaoUnidade() . '" title="' . $objDTO->getStrdescricaoUnidade() . '" class="ancoraSigla">' . $strUnidades . '</a></td>';
                 }
 
-                //Criação do array de unidade para filtro
+                //CriaÃ§Ã£o do array de unidade para filtro
                 if (!in_array($siglaUnidade, $arrUnidades)) {
                     $arrUnidades[$objDTO->getNumIdUnidade()] = $siglaUnidade;
                 }
 
-                //Criação do array de orgao para filtro
+                //CriaÃ§Ã£o do array de orgao para filtro
                 if (!in_array($objDTO->getStrSiglaOrgao(), $arrOrgao)) {
                     $arrOrgao[$objDTO->getNumIdOrgaoUnidade()] = $objDTO->getStrSiglaOrgao();
                 }
 
-                //Criação do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
+                //CriaÃ§Ã£o do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
                 if (!key_exists($objDTO->getNumIdOrgaoUnidade(), $arrTipoProcessoOrgaoCidade)) {
                     $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()] = array();
                 }
@@ -373,7 +373,7 @@ try {
                     $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] = $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] + 1;
                 }
 
-                //Verifica se tem alguma unidade ou órgão diferente dos restritos
+                //Verifica se tem alguma unidade ou Ã³rgÃ£o diferente dos restritos
                 if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)) {
                     $tipoProcessoRestricaoErro = true;
                 }
@@ -418,13 +418,13 @@ try {
                 $strResultado .= '<td valign="middle">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento(), $arrObjMdPetTipoProcessoDTO[$i]->getStrNomeProcesso()) . '</td>';
             }
 
-            $indicacaoInteressado = $arrObjMdPetTipoProcessoDTO[$i]->getStrSinIIProprioUsuarioExterno() === 'S' ? 'Próprio Usuário Externo' : 'Indicação Direta';
+            $indicacaoInteressado = $arrObjMdPetTipoProcessoDTO[$i]->getStrSinIIProprioUsuarioExterno() === 'S' ? 'PrÃ³prio UsuÃ¡rio Externo' : 'IndicaÃ§Ã£o Direta';
             $docExterno = $arrObjMdPetTipoProcessoDTO[$i]->getStrSinDocExterno() === 'S' ? 'Externo' : 'Gerado';
             $strResultado .= '<td valign="middle">' . $arrObjMdPetTipoProcessoDTO[$i]->getStrNomeProcesso() . '</td>';
 
-            //Caso o array de orgaos do tipo de processa tenha mais de 1 opção o mesmo é múltiplo
+            //Caso o array de orgaos do tipo de processa tenha mais de 1 opÃ§Ã£o o mesmo Ã© mÃºltiplo
             if (count($arrOrgao) > 1) {
-                $tdOrgao = '<td valign="middle">Múltiplos</td>';
+                $tdOrgao = '<td valign="middle">MÃºltiplos</td>';
                 $filtroOrgaoMultiplo = true;
             } else {
                 $tdOrgao = '<td valign="middle"><a alt="' . $objDTO->getStrDescricaoOrgao() . '" title="' . $objDTO->getStrDescricaoOrgao() . '" class="ancoraSigla">' . $objDTO->getStrSiglaOrgao() . '</a></td>';
@@ -437,11 +437,11 @@ try {
             $strResultado .= '<td align="center" valign="middle">';
 
             if ($tipoProcessoDivergencia || $tipoProcessoRestricaoErro) {
-                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg?".Icone::VERSAO."' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Neste Tipo de Peticionamento para Processo Novo constam Unidades que não podem utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. Dessa forma, o Usuário Externo não visualiza a opção da UF ou Cidade para abertura do Processo correspondente à Unidade do conflito.<br><br> Clique na Ação Editar para ver detalhes e sugestões de providências.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg?".Icone::VERSAO."' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Neste Tipo de Peticionamento para Processo Novo constam Unidades que nÃ£o podem utilizar o Tipo de Processo indicado, em razÃ£o de restriÃ§Ã£o de uso do Tipo de Processo configurado pela AdministraÃ§Ã£o do SEI. Dessa forma, o UsuÃ¡rio Externo nÃ£o visualiza a opÃ§Ã£o da UF ou Cidade para abertura do Processo correspondente Ã  Unidade do conflito.<br><br> Clique na AÃ§Ã£o Editar para ver detalhes e sugestÃµes de providÃªncias.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
             if(!in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)){
-                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg?".Icone::VERSAO."' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Este Tipo de Processo para Peticionamento de Processo Novo não é mais exibido para os Usuários Externos, pois o Nível de Acesso do Tipo de Processo não está configurado como Público.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
+                $strResultado .= "<img src='modulos/peticionamento/imagens/svg/icone_restricao.svg?".Icone::VERSAO."' style='width: 21px' onmouseover='return infraTooltipMostrar(\"Este Tipo de Processo para Peticionamento de Processo Novo nÃ£o Ã© mais exibido para os UsuÃ¡rios Externos, pois o NÃ­vel de Acesso do Tipo de Processo nÃ£o estÃ¡ configurado como PÃºblico.\",\"\");' onmouseout='return infraTooltipOcultar();'/>&nbsp;";
             }
 
             if ($bolAcaoConsultar) {
@@ -496,13 +496,13 @@ $objMdPetTipoProcessoUnidadeDTO->retNumIdUnidade();
 $objMdPetTipoProcessoUnidadeDTO->retNumIdUnidade();
 $objMdPetTipoProcessoUnidadeDTO->retStrStaTipoUnidade();
 $objMdPetTipoProcessoUnidadeDTO->setOrdStrSiglaUnidade(InfraDTO::$TIPO_ORDENACAO_ASC);
-//Caso o filtro Órgão tenha sido preenchido a listagem será exibida conforme a escolha feita pelo usuário
+//Caso o filtro Ã“rgÃ£o tenha sido preenchido a listagem serÃ¡ exibida conforme a escolha feita pelo usuÃ¡rio
 if (($_POST['selOrgao'] != '') && $_POST['selOrgao'] != 'null' && $_POST['selOrgao'] != MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
     $objMdPetTipoProcessoUnidadeDTO->setNumIdOrgaoUnidade($_POST['selOrgao']);
 }
 $arrFiltroUnidade = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoUnidadeDTO);
 
-//Verifica se tem algum tipo de processo com multiplas unidades para adicionar a opção no filtro de unidade
+//Verifica se tem algum tipo de processo com multiplas unidades para adicionar a opÃ§Ã£o no filtro de unidade
 if ($arrFiltroUnidade) {
     $filtroUnidadeMultiplo = false;
     foreach ($arrFiltroUnidade as $unidadeMultiplo) {
@@ -514,14 +514,14 @@ if ($arrFiltroUnidade) {
 }
 $arrFiltroUnidade = InfraArray::distinctArrInfraDTO($arrFiltroUnidade, 'IdUnidade');
 //Fim campo de filtro unidade
-//Campo de filtro Órgão
+//Campo de filtro Ã“rgÃ£o
 $objMdPetTipoProcessoOrgaoDTO = new MdPetTipoProcessoDTO();
 $objMdPetTipoProcessoOrgaoDTO->retNumIdOrgaoUnidade();
 $objMdPetTipoProcessoOrgaoDTO->retStrSiglaOrgaoUnidade();
 $objMdPetTipoProcessoOrgaoDTO->retNumIdTipoProcessoPeticionamento();
 $arrFiltroOrgao = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoOrgaoDTO);
 
-//Verifica se tem algum tipo de processo com multiplos orgao para adicionar a opção no filtro de órgão
+//Verifica se tem algum tipo de processo com multiplos orgao para adicionar a opÃ§Ã£o no filtro de Ã³rgÃ£o
 if ($arrFiltroOrgao) {
     $arrOrgaoMultiplo = array();
     foreach ($arrFiltroOrgao as $orgaoMultiplo) {
@@ -544,7 +544,7 @@ if ($arrOrgaoMultiplo) {
 }
 $arrFiltroOrgao = InfraArray::distinctArrInfraDTO($arrFiltroOrgao, 'IdOrgaoUnidade');
 $numRegistrosOrgao = count($arrFiltroOrgao);
-//Fim campo de filtro órgão
+//Fim campo de filtro Ã³rgÃ£o
 
 PaginaSEI::getInstance()->montarDocType();
 PaginaSEI::getInstance()->abrirHtml();
@@ -572,7 +572,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
 <? if ($bolAcaoDesativar) { ?>
     function acaoDesativar(id,desc){
-    if (confirm("Confirma desativação do Tipo de Processo para Peticionamento \""+desc+"\"?")){
+    if (confirm("Confirma desativaÃ§Ã£o do Tipo de Processo para Peticionamento \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkDesativar ?>';
     document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
@@ -584,7 +584,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
     alert('Nenhum Tipo de Processo selecionado.');
     return;
     }
-    if (confirm("Confirma a desativação dos Tipos de Processo selecionados?")){
+    if (confirm("Confirma a desativaÃ§Ã£o dos Tipos de Processo selecionados?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkDesativar ?>';
     document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
@@ -593,7 +593,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 <? } ?>
 
     function acaoReativar(id,desc){
-    if (confirm("Confirma reativação do Tipo de Processo para Peticionamento \""+desc+"\"?")){
+    if (confirm("Confirma reativaÃ§Ã£o do Tipo de Processo para Peticionamento \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkReativar ?>';
     document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
@@ -605,7 +605,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
     alert('Nenhum Tipo de Processo selecionado.');
     return;
     }
-    if (confirm("Confirma a reativação dos Tipo de Processos selecionadas?")){
+    if (confirm("Confirma a reativaÃ§Ã£o dos Tipo de Processos selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkReativar ?>';
     document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
@@ -614,7 +614,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
 <? if ($bolAcaoExcluir) { ?>
     function acaoExcluir(id,desc){
-    if (confirm("Confirma exclusão do Tipo de Processo para Peticionamento \""+desc+"\"?")){
+    if (confirm("Confirma exclusÃ£o do Tipo de Processo para Peticionamento \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkExcluir ?>';
     document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
@@ -627,7 +627,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
     alert('Nenhuma Tipo de Processo selecionado.');
     return;
     }
-    if (confirm("Confirma a exclusão dos Tipos de Processo selecionados?")){
+    if (confirm("Confirma a exclusÃ£o dos Tipos de Processo selecionados?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkExcluir ?>';
     document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
@@ -647,6 +647,8 @@ PaginaSEI::getInstance()->fecharJavaScript();
 ?>
     <style type="text/css">
         .row div{margin-top: 5px;}
+        .thLeft {text-align: left !important;}
+        .thLeft .infraDivOrdenacao {margin-left: 0px !important;}
     </style>
 <?php
 PaginaSEI::getInstance()->fecharHead();
@@ -668,16 +670,16 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
             <?php if ($numRegistrosOrgao > 1) { ?>
                 <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
-                    <label id="lblOrgao" for="txtOrgao" class="infraLabelOpcional">Órgão:</label>
+                    <label id="lblOrgao" for="txtOrgao" class="infraLabelOpcional">Ã“rgÃ£o:</label>
                     <select id="selOrgao" name="selOrgao" onchange="pesquisar();" class="infraSelect form-control">
                         <?php
                         echo "<option value='null'>&nbsp;</option>";
                         echo "<option value='null' selected='selected'>Todos</option>";
                         if ($filtroOrgaoMultiplo) {
                             if ($_POST['selOrgao'] == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
-                                echo "<option value='M' selected='selected'>Múltiplos</option>";
+                                echo "<option value='M' selected='selected'>MÃºltiplos</option>";
                             } else {
-                                echo "<option value='M'>Múltiplos</option>";
+                                echo "<option value='M'>MÃºltiplos</option>";
                             }
                         }
                         foreach ($arrFiltroOrgao as $objOrgaoDTO) {
@@ -700,9 +702,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         echo "<option value='' selected='selected'>Todos</option>";
                         if ($filtroUnidadeMultiplo) {
                             if ($_POST['selUnidade'] == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
-                                echo "<option value='M' selected='selected'>Múltiplas</option>";
+                                echo "<option value='M' selected='selected'>MÃºltiplas</option>";
                             } else {
-                                echo "<option value='M'>Múltiplas</option>";
+                                echo "<option value='M'>MÃºltiplas</option>";
                             }
                         }
                         foreach ($arrFiltroUnidade as $objUnidadeDTO) {
@@ -717,7 +719,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </select>
             </div>
             <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
-                <label id="lblIndicacaoInteressado" for="selIndicacaoInteressado" class="infraLabelOpcional">Indicação
+                <label id="lblIndicacaoInteressado" for="selIndicacaoInteressado" class="infraLabelOpcional">IndicaÃ§Ã£o
                     de
                     Interessado:</label>
                 <select onchange="pesquisar();" id="selIndicacaoInteressado" name="selIndicacaoInteressado"

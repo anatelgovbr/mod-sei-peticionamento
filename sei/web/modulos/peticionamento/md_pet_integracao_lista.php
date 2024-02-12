@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
- * 25/01/2018 - criado por Usuário
+ * 25/01/2018 - criado por UsuÃ¡rio
  *
- * Versão do Gerador de Código: 1.41.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.41.0
  */
 
 try {
@@ -38,7 +38,7 @@ try {
                 }
                 $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
                 $objMdPetIntegracaoRN->excluirCompleto($arrObjMdPetIntegracaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -57,7 +57,7 @@ try {
                 }
                 $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
                 $objMdPetIntegracaoRN->desativar($arrObjMdPetIntegracaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -65,7 +65,7 @@ try {
             die;
 
         case 'md_pet_integracao_reativar':
-            $strTitulo = 'Reativar Integração';
+            $strTitulo = 'Reativar IntegraÃ§Ã£o';
             if ($_GET['acao_confirmada'] == 'sim') {
                 try {
                     $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
@@ -85,7 +85,7 @@ try {
 
                     $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
                     $objMdPetIntegracaoRN->reativar($arrObjMdPetIntegracaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
@@ -96,7 +96,7 @@ try {
 
 
         case 'md_pet_integracao_selecionar':
-            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Integração', 'Selecionar Integrações');
+            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar IntegraÃ§Ã£o', 'Selecionar IntegraÃ§Ãµes');
 
             //Se cadastrou alguem
             if ($_GET['acao_origem'] == 'md_pet_integracao_cadastrar') {
@@ -107,11 +107,11 @@ try {
             break;
 
         case 'md_pet_integracao_listar':
-            $strTitulo = 'Integrações';
+            $strTitulo = 'IntegraÃ§Ãµes';
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -228,11 +228,11 @@ try {
         $strResultado = '';
 
         if ($_GET['acao'] != 'md_pet_integracao_reativar') {
-            $strSumarioTabela = 'Tabela de Integrações.';
-            $strCaptionTabela = 'Integrações';
+            $strSumarioTabela = 'Tabela de IntegraÃ§Ãµes.';
+            $strCaptionTabela = 'IntegraÃ§Ãµes';
         } else {
-            $strSumarioTabela = 'Tabela de Integrações Inativas.';
-            $strCaptionTabela = 'Integrações Inativas';
+            $strSumarioTabela = 'Tabela de IntegraÃ§Ãµes Inativas.';
+            $strCaptionTabela = 'IntegraÃ§Ãµes Inativas';
         }
 
         $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
@@ -241,13 +241,13 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO, 'Nome', 'Nome', $arrObjMdPetIntegracaoDTO) . '</th>' . "\n";
-        //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Endereço do Webservice','EnderecoWsdl',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
-        //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Operação','OperacaoWsdl',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
-        //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Marque caso seu Webservice tenha controle de expiração de cache','SinCache',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
+        $strResultado .= '<th class="infraTh" style="text-align: left">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO, 'Nome', 'Nome', $arrObjMdPetIntegracaoDTO) . '</th>' . "\n";
+        //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'EndereÃ§o do Webservice','EnderecoWsdl',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
+        //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'OperaÃ§Ã£o','OperacaoWsdl',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
+        //$strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO,'Marque caso seu Webservice tenha controle de expiraÃ§Ã£o de cache','SinCache',$arrObjMdPetIntegracaoDTO).'</th>'."\n";
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO, 'Funcionalidade', 'NomeMdPetIntegFuncionalid', $arrObjMdPetIntegracaoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIntegracaoDTO, 'Tipo Cliente WS', 'TpClienteWs', $arrObjMdPetIntegracaoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" style="width:140px">Ações</th>' . "\n";
+        $strResultado .= '<th class="infraTh" style="width:140px">AÃ§Ãµes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         for ($i = 0; $i < $numRegistros; $i++) {
@@ -275,11 +275,11 @@ try {
             $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i, $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao());
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_integracao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_integracao=' . $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Integração" alt="Consultar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_integracao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_integracao=' . $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar IntegraÃ§Ã£o" alt="Consultar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_integracao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_integracao=' . $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar Integração" alt="Alterar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_integracao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_pet_integracao=' . $arrObjMdPetIntegracaoDTO[$i]->getNumIdMdPetIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Alterar IntegraÃ§Ã£o" alt="Alterar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -288,13 +288,13 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdPetIntegracaoDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar Integração" alt="Desativar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg?'.Icone::VERSAO.'" title="Desativar IntegraÃ§Ã£o" alt="Desativar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             } else {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar Integração" alt="Reativar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/reativar.svg?'.Icone::VERSAO.'" title="Reativar IntegraÃ§Ã£o" alt="Reativar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir Integração" alt="Excluir Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/excluir.svg?'.Icone::VERSAO.'" title="Excluir IntegraÃ§Ã£o" alt="Excluir IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             $strResultado .= '</td></tr>' . "\n";
@@ -336,7 +336,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
 <? if ($bolAcaoDesativar) { ?>
     function acaoDesativar(id,desc){
-    if (confirm("Confirma desativação da Integração \""+desc+"\"?")){
+    if (confirm("Confirma desativaÃ§Ã£o da IntegraÃ§Ã£o \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmMdPetIntegracaoLista').action='<?= $strLinkDesativar ?>';
     document.getElementById('frmMdPetIntegracaoLista').submit();
@@ -345,10 +345,10 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
     //function acaoDesativacaoMultipla(){
     //  if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    //    alert('Nenhuma Integração selecionada.');
+    //    alert('Nenhuma IntegraÃ§Ã£o selecionada.');
     //    return;
     //  }
-    //  if (confirm("Confirma desativação das Integrações selecionadas?")){
+    //  if (confirm("Confirma desativaÃ§Ã£o das IntegraÃ§Ãµes selecionadas?")){
     //    document.getElementById('hdnInfraItemId').value='';
     //    document.getElementById('frmMdPetIntegracaoLista').action='<?= $strLinkDesativar ?>';
     //    document.getElementById('frmMdPetIntegracaoLista').submit();
@@ -358,7 +358,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
 <? if ($bolAcaoReativar) { ?>
     function acaoReativar(id,desc){
-    if (confirm("Confirma reativação da Integração \""+desc+"\"?")){
+    if (confirm("Confirma reativaÃ§Ã£o da IntegraÃ§Ã£o \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmMdPetIntegracaoLista').action='<?= $strLinkReativar ?>';
     document.getElementById('frmMdPetIntegracaoLista').submit();
@@ -367,10 +367,10 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
     //function acaoReativacaoMultipla(){
     //  if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    //    alert('Nenhuma Integração selecionada.');
+    //    alert('Nenhuma IntegraÃ§Ã£o selecionada.');
     //    return;
     //  }
-    //  if (confirm("Confirma reativação das Integrações selecionadas?")){
+    //  if (confirm("Confirma reativaÃ§Ã£o das IntegraÃ§Ãµes selecionadas?")){
     //    document.getElementById('hdnInfraItemId').value='';
     //    document.getElementById('frmMdPetIntegracaoLista').action='<?= $strLinkReativar ?>';
     //    document.getElementById('frmMdPetIntegracaoLista').submit();
@@ -381,7 +381,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 <?
 if ($bolAcaoExcluir) { ?>
     function acaoExcluir(id,desc){
-    if (confirm("Confirma exclusão da Integração \""+desc+"\"?")){
+    if (confirm("Confirma exclusÃ£o da IntegraÃ§Ã£o \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmMdPetIntegracaoLista').action='<?= $strLinkExcluir ?>';
     document.getElementById('frmMdPetIntegracaoLista').submit();
@@ -390,10 +390,10 @@ if ($bolAcaoExcluir) { ?>
 
     //function acaoExclusaoMultipla(){
     //  if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    //    alert('Nenhuma Integração selecionada.');
+    //    alert('Nenhuma IntegraÃ§Ã£o selecionada.');
     //    return;
     //  }
-    //  if (confirm("Confirma exclusão das Integrações selecionadas?")){
+    //  if (confirm("Confirma exclusÃ£o das IntegraÃ§Ãµes selecionadas?")){
     //    document.getElementById('hdnInfraItemId').value='';
     //    document.getElementById('frmMdPetIntegracaoLista').action='<?= $strLinkExcluir ?>';
     //    document.getElementById('frmMdPetIntegracaoLista').submit();

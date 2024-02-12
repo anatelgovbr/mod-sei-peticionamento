@@ -106,10 +106,10 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
-    //TODO: Marcelo, qual È a utilidade dessa funcionalidade de Transportar seleÁ„o neste tela?
+    //TODO: Marcelo, qual √© a utilidade dessa funcionalidade de Transportar sele√ß√£o neste tela?
     $arrComandos = array();
     if ($_GET['acao'] == 'indisponibilidade_peticionamento_selecionar') {
         $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
@@ -179,7 +179,7 @@ try {
             $bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('md_pet_indisponibilidade_desativar');
         }
 
-        //TODO: Marcelo, se n„o vai ter o bot„o de DesativaÁ„o em lote, melhor retirar todo este bloco de cÛdigo.
+        //TODO: Marcelo, se n√£o vai ter o bot√£o de Desativa√ß√£o em lote, melhor retirar todo este bloco de c√≥digo.
         if ($bolAcaoDesativar) {
             $bolCheck = true;
             $strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_desativar&acao_origem=' . $_GET['acao']);
@@ -187,7 +187,7 @@ try {
 
         $strLinkReativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_reativar&acao_origem=' . $_GET['acao'] . '&acao_confirmada=sim');
 
-        //TODO: Marcelo, se n„o vai ter o bot„o de Excluir em lote, melhor retirar todo este bloco de cÛdigo.
+        //TODO: Marcelo, se n√£o vai ter o bot√£o de Excluir em lote, melhor retirar todo este bloco de c√≥digo.
         if ($bolAcaoExcluir) {
             $bolCheck = true;
             $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_indisponibilidade_excluir&acao_origem=' . $_GET['acao']);
@@ -209,10 +209,10 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'InÌcio', 'DataInicio', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Fim', 'DataFim', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'ProrrogaÁ„o Autom·tica dos Prazos', 'SinProrrogacao', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="15%">AÁıes</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-center" width="30%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'In√≠cio', 'DataInicio', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-center">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Fim', 'DataFim', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-center">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Prorroga√ß√£o Autom√°tica dos Prazos', 'SinProrrogacao', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="15%">A√ß√µes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         for ($i = 0; $i < $numRegistros; $i++) {
@@ -232,11 +232,11 @@ try {
             $dataInicio = isset($arrObjMdPetIndisponibilidadeDTO[$i]) && $arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataInicio() != '' ? str_replace(' ', ' - ', substr($arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataInicio(), 0, -3)) : '';
             $dataFim = isset($arrObjMdPetIndisponibilidadeDTO[$i]) && $arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataFim() != '' ? str_replace(' ', ' - ', substr($arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataFim(), 0, -3)) : '';
 
-            $sinProrrogacao = $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao() === 'S' ? 'Sim' : 'N„o';
+            $sinProrrogacao = $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao() === 'S' ? 'Sim' : 'N√£o';
 
-            $strResultado .= '<td>' . $dataInicio . '</td>';
-            $strResultado .= '<td>' . $dataFim . '</td>';
-            $strResultado .= '<td>' . $sinProrrogacao . '</td>';
+            $strResultado .= '<td class="text-center">' . $dataInicio . '</td>';
+            $strResultado .= '<td class="text-center">' . $dataFim . '</td>';
+            $strResultado .= '<td class="text-center">' . $sinProrrogacao . '</td>';
             $strResultado .= '<td align="center">';
 
 
@@ -336,7 +336,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
         <div class="row">
             <div class="col-sm-12 col-md-3 col-lg-3 e col-xl-2">
-                <label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">InÌcio:</label>
+                <label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">In√≠cio:</label>
                 <div class="input-group mb-3">
                     <input type="text" name="txtDtInicio" id="txtDtInicio" onchange="validDate('I');"
                            value="<?= PaginaSEI::tratarHTML($strDtInicio) ?>"
@@ -364,7 +364,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
             <div class="col-sm-12 col-md-5 col-lg-5 e col-xl-4">
-                <label id="lblSinProrrogacao" for="selSinProrrogacao" class="infraLabelOpcional">ProrrogaÁ„o Autom·tica
+                <label id="lblSinProrrogacao" for="selSinProrrogacao" class="infraLabelOpcional">Prorroga√ß√£o Autom√°tica
                     dos
                     Prazos:</label><br/>
                 <select onchange="pesquisar()" id="selSinProrrogacao" name="selSinProrrogacao"

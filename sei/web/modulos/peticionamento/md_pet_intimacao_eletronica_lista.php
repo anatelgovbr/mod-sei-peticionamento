@@ -14,14 +14,14 @@ PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '1024M');
 
-//Acao ˙nica
+//Acao √∫nica
 $acaoPrincipal = 'md_pet_intimacao_eletronica_listar';
 
 //URL Base
 $strUrlPadrao = 'controlador.php?acao=' . $acaoPrincipal;
 
 
-$strTitulo = 'Ver IntimaÁıes EletrÙnicas';
+$strTitulo = 'Ver Intima√ß√µes Eletr√¥nicas';
 
 switch ($_GET['acao']) {
 
@@ -32,12 +32,12 @@ switch ($_GET['acao']) {
 
     //region Erro
     default:
-        throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+        throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     //endregion
 }
 
 
-//Botıes de aÁ„o do topo
+//Bot√µes de a√ß√£o do topo
 $arrComandos[] = '<button type="button" accesskey="c" id="btnFecharSelecao" value="Fechar" onclick="fechar();" class="infraButton">
                                     Fe<span class="infraTeclaAtalho">c</span>har
                             </button>';
@@ -53,7 +53,7 @@ $arrDadosAnexo      = $arrDados[2];
 $arrIds             = InfraArray::converterArrInfraDTO($arrObjIntimacao, 'IdMdPetIntRelDestinatario');
 $arrStrSituacao     = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
 
-//ConfiguraÁ„o da PaginaÁ„o
+//Configura√ß√£o da Pagina√ß√£o
 
 PaginaSEI::getInstance()->prepararOrdenacao($objMdPetIntDestDTO, 'NomeSerie', InfraDTO::$TIPO_ORDENACAO_ASC);
 PaginaSEI::getInstance()->prepararPaginacao($objMdPetIntDestDTO, 200);
@@ -64,11 +64,11 @@ $numRegistros = count($arrObjIntimacao);
 //Tabela de resultado.
 if ($numRegistros > 0) {
 
-    $strResultado .= '<table width="99%" class="infraTable" summary="ServiÁos">';
+    $strResultado .= '<table width="99%" class="infraTable" summary="Servi√ßos">';
     $strResultado .= '<caption class="infraCaption">';
-    $strResultado .= PaginaSEI::getInstance()->gerarCaptionTabela('IntimaÁıes EletrÙnicas', $numRegistros);
+    $strResultado .= PaginaSEI::getInstance()->gerarCaptionTabela('Intima√ß√µes Eletr√¥nicas', $numRegistros);
     $strResultado .= '</caption>';
-    //CabeÁalho da Tabela
+    //Cabe√ßalho da Tabela
 
     $strResultado .= '<tr style="height: 25px;">';
 
@@ -78,22 +78,22 @@ if ($numRegistros > 0) {
     //Anexos
     $strResultado .= '<th class="infraTh" width="50px">Anexos</th>';
 
-    //Tipo de Destinat·rio
-    $strResultado .= '<th class="infraTh">Tipo de Destinat·rio</th>';
+    //Tipo de Destinat√°rio
+    $strResultado .= '<th class="infraTh">Tipo de Destinat√°rio</th>';
 
-    //Destinat·rio
-    $strResultado .= '<th class="infraTh">Destinat·rio</th>';
+    //Destinat√°rio
+    $strResultado .= '<th class="infraTh">Destinat√°rio</th>';
 
-    //Nome Tipo de IntimaÁ„o
-    $strResultado .= '<th class="infraTh" width="20%">Tipo de IntimaÁ„o</th>';
+    //Nome Tipo de Intima√ß√£o
+    $strResultado .= '<th class="infraTh" width="20%">Tipo de Intima√ß√£o</th>';
 
     //Data de Cadastro
-    $strResultado .= '<th class="infraTh" width="66px">Data de ExpediÁ„o</th>';
+    $strResultado .= '<th class="infraTh" width="66px">Data de Expedi√ß√£o</th>';
 
-    //SituaÁ„o da IntimaÁ„o
-    $strResultado .= '<th class="infraTh" width="215px">SituaÁ„o da IntimaÁ„o</th>';
+    //Situa√ß√£o da Intima√ß√£o
+    $strResultado .= '<th class="infraTh" width="215px">Situa√ß√£o da Intima√ß√£o</th>';
 
-    $strResultado .= '<th class="infraTh" width="40px">AÁıes</th>';
+    $strResultado .= '<th class="infraTh" width="40px">A√ß√µes</th>';
     $strResultado .= '</tr>';
 
     //Linhas
@@ -123,21 +123,21 @@ if ($numRegistros > 0) {
         $strResultado .= $strAnexo;
         $strResultado .= '</td>';
 
-        //Tipo de Destinat·rio
+        //Tipo de Destinat√°rio
         $strResultado .= '<td>';
         if($arrObjIntimacao[$i]->getStrSinPessoaJuridica() == "S"){
-        $strResultado .= PaginaSEI::tratarHTML("Pessoa JurÌdica");
+        $strResultado .= PaginaSEI::tratarHTML("Pessoa Jur√≠dica");
         }else{
-          $strResultado .= PaginaSEI::tratarHTML("Pessoa FÌsica");  
+          $strResultado .= PaginaSEI::tratarHTML("Pessoa F√≠sica");  
         }
         $strResultado .= '</td>';
         
-        //Destinat·rio
+        //Destinat√°rio
         $strResultado .= '<td>';
         $strResultado .= PaginaSEI::tratarHTML($arrObjIntimacao[$i]->getStrNomeContato());
         $strResultado .= '</td>';
 
-        //Tipo de IntimaÁ„o
+        //Tipo de Intima√ß√£o
         $strResultado .= '<td>';
         $strResultado .= PaginaSEI::tratarHTML($arrObjIntimacao[$i]->getStrNomeTipoIntimacao());
         $strResultado .= '</td>';
@@ -148,21 +148,23 @@ if ($numRegistros > 0) {
         $strResultado .= $arrDt[0];
         $strResultado .= '</td>';
 
-        //SituaÁ„o da IntimaÁ„o
+        //Situa√ß√£o da Intima√ß√£o
         $strSituacao =   !is_null($arrObjIntimacao[$i]->getStrStaSituacaoIntimacao()) && $arrObjIntimacao[$i]->getStrStaSituacaoIntimacao() != 0 ? $arrStrSituacao[$arrObjIntimacao[$i]->getStrStaSituacaoIntimacao()] : MdPetIntimacaoRN::$STR_SITUACAO_NAO_CADASTRADA;
         $strResultado .= '<td>';
         $strResultado .= PaginaSEI::tratarHTML($strSituacao);
         $strResultado .= '</td>';
 
         $strResultado .= '<td align="center">';
-        //AÁ„o Consulta
+        //A√ß√£o Consulta
         $strUrlConsulta = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_consulta&arvore=1&id_documento='.$arrObjIntimacao[$i]->getDblIdDocumento().'&lista_int=1&id_intimacao='.$arrObjIntimacao[$i]->getNumIdMdPetIntimacao().'&id_contato='.$arrObjIntimacao[$i]->getNumIdContato());
-        $strResultado .= '<a tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" onclick="abrirModal(\''. $strUrlConsulta .'\', '.$strId.');" title="Consultar IntimaÁ„o" alt="Consultar IntimaÁ„o" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" onclick="abrirModal(\''. $strUrlConsulta .'\', '.$strId.');" title="Consultar Intima√ß√£o" alt="Consultar Intima√ß√£o" class="infraImg" /></a>&nbsp;';
         $strResultado .= '</td>';
         $strResultado .= '</tr>';
 
     }
     $strResultado .= '</table>';
+}else{
+    $strResultado = '<p class="alert alert-warning text-center my-5">Nenhuma Intima√ß√£o Eletr√¥nica encontrada neste processo.</p>';
 }
 
 
@@ -217,18 +219,25 @@ PaginaSEI::getInstance()->abrirJavaScript(); ?>
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmServicoLista" method="post"
-          action="<?= PaginaSEI::getInstance()->formatarXHTML(
-              SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])
-          ) ?>">
-
-        <?php PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
-        <?php PaginaSEI::getInstance()->abrirAreaDados('auto'); ?>
+    <form id="frmServicoLista" method="post" action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
 
         <?php
-        PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-        PaginaSEI::getInstance()->fecharAreaDados();
-        PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+
+            if($numRegistros > 0){
+
+                PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+                PaginaSEI::getInstance()->abrirAreaDados('auto');
+                PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+                PaginaSEI::getInstance()->fecharAreaDados();
+
+            }else {
+
+                echo $strResultado;
+
+            }
+
+            PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+
         ?>
 
     </form>

@@ -32,7 +32,7 @@ try {
 
                 $objMdPetMenuUsuarioExternoRN = new MdPetMenuUsuarioExternoRN();
                 $objMdPetMenuUsuarioExternoRN->excluir($arrObjMdPetMenuUsuarioExternoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
 
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
@@ -75,7 +75,7 @@ try {
                     }
                     $objMdPetMenuUsuarioExternoRN = new MdPetMenuUsuarioExternoRN();
                     $objMdPetMenuUsuarioExternoRN->reativar($arrObjMdPetMenuUsuarioExternoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
@@ -103,13 +103,13 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
     $arrComandos = array();
     $arrComandos[] = '<button type="button" accesskey="p" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
 
-    //TODO: Marcelo, qual é a utilidade dessa funcionalidade de Transportar seleção neste tela?
+    //TODO: Marcelo, qual Ã© a utilidade dessa funcionalidade de Transportar seleÃ§Ã£o neste tela?
     if ($_GET['acao'] == 'menu_peticionamento_usuario_externo_selecionar') {
         $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
     }
@@ -176,7 +176,7 @@ try {
             $bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('md_pet_menu_usu_ext_desativar');
         }
 
-        //TODO: Marcelo, se não vai ter o botão de Desativar em lote, melhor retirar todo este bloco de código.
+        //TODO: Marcelo, se nÃ£o vai ter o botÃ£o de Desativar em lote, melhor retirar todo este bloco de cÃ³digo.
         if ($bolAcaoDesativar) {
             $bolCheck = true;
             $strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo=' . $_GET['id_menu_peticionamento_usuario_externo'] . '&acao=md_pet_menu_usu_ext_desativar&acao_origem=' . $_GET['acao']);
@@ -184,7 +184,7 @@ try {
 
         $strLinkReativar = SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo=' . $_GET['id_menu_peticionamento_usuario_externo'] . '&acao=md_pet_menu_usu_ext_reativar&acao_origem=' . $_GET['acao'] . '&acao_confirmada=sim');
 
-        //TODO: Marcelo, se não vai ter o botão de Excluir em lote, melhor retirar todo este bloco de código.
+        //TODO: Marcelo, se nÃ£o vai ter o botÃ£o de Excluir em lote, melhor retirar todo este bloco de cÃ³digo.
         if ($bolAcaoExcluir) {
             $bolCheck = true;
             $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?id_menu_peticionamento_usuario_externo=' . $_GET['id_menu_peticionamento_usuario_externo'] . '&acao=md_pet_menu_usu_ext_excluir&acao_origem=' . $_GET['acao']);
@@ -210,9 +210,9 @@ try {
         if ($bolCheck) {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck() . '</th>' . "\n";
         }
-        $strResultado .= '<th class="infraTh" width="50%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Nome do Menu', 'Nome', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Tipo de Menu', 'Tipo', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="15%">Ações</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft" width="50%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Nome do Menu', 'Nome', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh thLeft">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetMenuUsuarioExternoDTO, 'Tipo de Menu', 'Tipo', $arrObjMdPetMenuUsuarioExternoDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="15%">AÃ§Ãµes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         for ($i = 0; $i < $numRegistros; $i++) {
@@ -237,7 +237,7 @@ try {
             if ($arrObjMdPetMenuUsuarioExternoDTO[$i]->getStrTipo() == MdPetMenuUsuarioExternoRN::$TP_EXTERNO) {
                 $strDescricaoTipo = "Link Externo";
             } else if ($arrObjMdPetMenuUsuarioExternoDTO[$i]->getStrTipo() == MdPetMenuUsuarioExternoRN::$TP_CONTEUDO_HTML) {
-                $strDescricaoTipo = "Conteúdo HTML";
+                $strDescricaoTipo = "ConteÃºdo HTML";
             }
 
             $strResultado .= '<td>' . PaginaSEI::tratarHTML($strDescricaoTipo) . '</td>';
@@ -324,7 +324,7 @@ $strTipo = $_POST['selTipo'];;
                             </option>
                             <option value="E" <? if ($strTipo == "E") echo " selected='selected' "; ?> >Link Externo
                             </option>
-                            <option value="H" <? if ($strTipo == "H") echo " selected='selected' "; ?> >Conteúdo HTML
+                            <option value="H" <? if ($strTipo == "H") echo " selected='selected' "; ?> >ConteÃºdo HTML
                             </option>
                         </select>
                         <input type="submit" style="visibility: hidden;"/>

@@ -1,4 +1,34 @@
 <script type="text/javascript">
+
+    $(document).ready(function() {
+        $('tr.tr-acoes-dinamicas').each(function() {
+
+            var dadosColuna = $(this).find('.td-acoes-dinamicas');
+            var dataAttributes = $(this).data();
+
+            $.ajax({
+                type: 'POST',
+                url: '<?= $strUrlAcaoLinhas ?>',
+                data: { dataAttributes: dataAttributes },
+                success: function(result) {
+                    var strResultado = $(result).find('actions').text();
+
+                    // Substituindo as entidades HTML pelos caracteres originais
+                    strResultado = strResultado.replace(/&amp;/g, '&');
+                    strResultado = strResultado.replace(/&lt;/g, '<');
+                    strResultado = strResultado.replace(/&gt;/g, '>');
+                    strResultado = strResultado.replace(/&quot;/g, '"');
+
+                    dadosColuna.html(strResultado);
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', xhr, status, error);
+                }
+            });
+
+        });
+    });
+
     function inicializar() {
 
         infraEfeitoTabelas();
@@ -20,13 +50,13 @@
 
         if (dataInicio.value.trim() != '' && dataFim.value.trim() == '') {
             dataFim.focus();
-            alert('Informe o período final!');
+            alert('Informe o perÃ­odo final!');
             return false;
         }
 
         if (dataInicio.value.trim() == '' && dataFim.value.trim() != '') {
             dataInicio.focus();
-            alert('Informe o período inicial!');
+            alert('Informe o perÃ­odo inicial!');
             return false;
         }
 
@@ -38,7 +68,7 @@
             dtFim = new Date(dtFim);
 
             if (dtInicio.getTime() > dtFim.getTime()) {
-                alert('Período inicial maior que final!');
+                alert('PerÃ­odo inicial maior que final!');
                 dataInicio.focus();
                 return false;
             }

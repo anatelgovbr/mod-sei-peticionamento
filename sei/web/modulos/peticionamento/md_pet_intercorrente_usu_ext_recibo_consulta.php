@@ -173,7 +173,7 @@ try {
     $OrgaoDTO = new OrgaoDTO();
     $OrgaoDTO->retTodos();
     $OrgaoDTO->setNumIdOrgao(  $protocoloDTO->getNumIdOrgaoUnidadeGeradora() );
-	$OrgaoDTO->SinConsultaProcessual('S');
+	$OrgaoDTO->setStrSinConsultaProcessual('S');
     $OrgaoDTO = $OrgaoRN->consultarRN1352( $OrgaoDTO );
 
 } catch (Exception $e) {

@@ -87,7 +87,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                         </div>
 
                         <div id="divOpcoesDadosUsuario2">
-                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Pessoa Jurídica" alt="Selecionar Pessoa Jurídica" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(800,800);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Pessoa Jurídica" alt="Selecionar Pessoa Jurídica" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                             <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Pessoa Jurídica Selecionada" title="Remover Pessoa Jurídica Selecionada" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                         </div>
 
@@ -233,7 +233,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
     </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+        <div class="col-12">
             <div id="hiddeAll2">
                 <fieldset id="fldDocumentosIntimacao" class="infraFieldset sizeFieldset form-control" style="width: 100%">
                     <legend class="infraLegend" class="infraLabelOpcional"> Documentos da Intimação

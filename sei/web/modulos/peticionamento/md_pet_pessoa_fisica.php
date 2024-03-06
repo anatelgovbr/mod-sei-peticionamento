@@ -38,8 +38,8 @@ try {
   }
 
   $arrComandos = array();
-  
-  $arrComandos[] = '<input type="submit" id="btnPesquisar" value="Pesquisar" class="infraButton" />';  
+  $arrComandos[] = '<input type="submit" id="btnToggleLote" value="Selecionar em Lote" class="infraButton btnToggleLote" style="cursor: pointer" />';
+  $arrComandos[] = '<input type="submit" id="btnPesquisar" value="Pesquisar" class="infraButton" />';
   
   if ($_GET['acao'] == 'md_pet_pessoa_fisica'){
     $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
@@ -170,7 +170,6 @@ try {
       }
 
       $strResultado .= '</td></tr>'."\n";
-
       $strCssTr = $strCssTr == 'Clara' ? 'Escura' : 'Clara';
 
     }
@@ -214,57 +213,329 @@ function inicializar(){
 }
 
 <?
-PaginaSEI::getInstance()->fecharJavaScript();
-PaginaSEI::getInstance()->fecharHead();
-PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
+    PaginaSEI::getInstance()->fecharJavaScript();
+    PaginaSEI::getInstance()->fecharHead();
+    PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
+    //PaginaSEI::getInstance()->montarBarraLocalizacao($strTitulo);
+    PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+    PaginaSEI::getInstance()->abrirAreaDados();
 ?>
+
+    <div class="row pesquisa-usuarios-lote my-2" style="display: none">
+        <div class="col">
+            <div class="wrapper bg-light py-3 px-4 mb-3">
+                <div class="mb-3">
+                    <div class="cpf-validation-check">
+                        <div class="row">
+                            <div class="col-7">
+                                <div class="form-group">
+                                    <label for="cpfList">Seleção em lote por CPF:
+                                        <img src="/infra_css/svg/ajuda.svg" name="ajuda" id="imgAjudaUsuario" onmouseover="return infraTooltipMostrar('Cole no campo abaixo a lista de CPFs válidos para pesquisa em lote, contento um CPF por linha, com ou sem formatação conforme os exemplos abaixo: \n\n 99999999999 ou 777.777.777-77','Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                                    </label><br>
+                                    <textarea class="infraTextarea" id="cpfList" rows="5" style="width: 100%"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-5 pt-4">
+                                <button type="button" class="infraButton mt-1" id="validateBtn" style="display: inline-block">Pesquisar em lote</button>
+                                <button type="button" class="infraButton mt-3" id="transportBtn" style="display: none">Transportar Localizados</button>
+<!--                                <a role="button" id="copyFounds" class="d-block text-primary mt-2 clipboardBtn" style="cursor:pointer" data-clipboard-target="#foundCpfs"></a>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cpf-validation-result" style="display: none">
+                        <div class="mt-3" style="position: absolute; margin-left -999999999px; height: 0px; width: 0px; overflow: hidden; opacity: 0;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="">Lista de CPFs Localizados:</label>
+                                    <textarea class="infraTextarea" id="foundCpfs" rows="5" style="width: 100%" readonly></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-7">
+                                    <label for="">Lista de CPFs Não localizados:</label><br>
+                                    <textarea class="infraTextarea" id="notFoundCpfs" rows="5" style="width: 100%" readonly></textarea>
+                                </div>
+                                <div class="col-5 pt-1">
+                                    <!--  <button type="button" class="infraButton mt-3" id="downloadBtn">Exportar lista de CPFs não localizados</button>-->
+                                    <button type="button" class="infraButton mt-3 clipboardBtn" id="copyNotFounds" data-clipboard-target="#notFoundCpfs">Copiar lista de CPFs não localizados</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--Destinatarios em massa: Adicionado parametro id_documento para a validacao funcionar quando realizada a pesquisa dentro da modal:-->
-    <form id="frmUsuarioLista" method="post" action="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao'].'&id_documento='.$idDocumento)?>">
-  <?
-  //PaginaSEI::getInstance()->montarBarraLocalizacao($strTitulo);
-  PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-  PaginaSEI::getInstance()->abrirAreaDados();
-  ?>
+    <form id="frmUsuarioLista" method="post" class="" action="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao'].'&id_documento='.$idDocumento)?>">
 
-  <div class="row">
-    <div class="col-xl-3 col-lg-4 col-md-5 col-sm-4 col-6">
-      <div class="form-group">
-        <label for="txtSiglaUsuario" class="infraLabelOpcional">E-mail:</label>
-        <input type="text" id="txtSiglaUsuario" name="txtSiglaUsuario" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strSiglaPesquisa)?>" maxlength="100" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-      </div>
-    </div>
-    <div class="col-xl-3 col-lg-4 col-md-5 col-sm-4 col-6">
-      <div class="form-group">
-        <label for="txtNomeUsuario" accesskey="N" class="infraLabelOpcional"><span class="infraTeclaAtalho">N</span>ome:</label>
-        <input type="text" id="txtNomeUsuario" name="txtNomeUsuario" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strNomePesquisa)?>" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-      </div>
-    </div>
-    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-4 col-4">
-      <div class="form-group">
-        <label for="txtCpfUsuario" class="infraLabelOpcional">CPF:</label>
-        <input type="text" id="txtCpfUsuario" name="txtCpfUsuario" onkeypress="return infraMascaraCpf(this, event)" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strCpfPesquisa);?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
-      </div>
-    </div>
-  </div>
+        <div class="row">
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-4 col-6">
+                <div class="form-group">
+                    <label for="txtSiglaUsuario" class="infraLabelOpcional">E-mail:</label>
+                    <input type="text" id="txtSiglaUsuario" name="txtSiglaUsuario" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strSiglaPesquisa)?>" maxlength="100" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-4 col-6">
+                <div class="form-group">
+                    <label for="txtNomeUsuario" accesskey="N" class="infraLabelOpcional"><span class="infraTeclaAtalho">N</span>ome:</label>
+                    <input type="text" id="txtNomeUsuario" name="txtNomeUsuario" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strNomePesquisa)?>" maxlength="50" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-4 col-4">
+                <div class="form-group">
+                    <label for="txtCpfUsuario" class="infraLabelOpcional">CPF:</label>
+                    <input type="text" id="txtCpfUsuario" name="txtCpfUsuario" onkeypress="return infraMascaraCpf(this, event)" class="infraText form-control" value="<?=PaginaSEI::tratarHTML($strCpfPesquisa);?>" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                </div>
+            </div>
+        </div>
+    
+    
+        <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive ">
+                    <!-- Destinatarios em massa: Melhorando a usabilidade para usuario saber que os Usuarios Externos ticados ja foram selecionados ou ja receberam o documento em outra intimacao: -->
+                    <? if(!empty($arrContatosIntimados) && !empty(array_intersect($contatosPagina, $arrContatosIntimados))): ?>
+                        <p class="alert alert-warning">Os Usuários Externos pré-selecionados já receberam o documento principal em Intimação Eletrônica anterior. Para verificar a lista de destinatários que já receberam o documento principal, consulte "Ver intimações do processo".</p>
+                    <? endif; ?>
+                    <? PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros); ?>
+                </div>
+            </div>
+        </div>
+        <?
+    
+            PaginaSEI::getInstance()->montarAreaDebug();
+            PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+            $strLinkUsuariosMassa = SessaoSEI::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax.php?acao_ajax=md_pet_verifica_usuarios_intimacao&id_documento='.$idDocumento);
+    
+        ?>
+    </form>
 
+    <script>
+        $(document).ready(function() {
 
-  <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
-  <div class="row">
-   <div class="col-12">
-     <div class="table-responsive">
-        <!-- Destinatarios em massa: Melhorando a usabilidade para usuario saber que os Usuarios Externos ticados ja foram selecionados ou ja receberam o documento em outra intimacao: -->
-        <? if(!empty($arrContatosIntimados) && !empty(array_intersect($contatosPagina, $arrContatosIntimados))): ?>
-        <p class="alert alert-warning">Os Usuários Externos pré-selecionados já receberam o documento principal em Intimação Eletrônica anterior. Para verificar a lista de destinatários que já receberam o documento principal, consulte "Ver intimações do processo".</p>
-        <? endif; ?>
-        <? PaginaSEI::getInstance()->montarAreaTabela($strResultado,$numRegistros); ?>
-     </div>
-   </div>
- </div>
-  <? 
-  PaginaSEI::getInstance()->montarAreaDebug();
-  PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
-  ?>
-</form>
+            let timer;
+
+            $('#cpfList').off('input paste keyup').on('input paste keyup', function() {
+                $('.cpf-validation-result textarea').val('');
+                $('.cpf-validation-result, #transportBtn, #clipboardFoundCpfs').hide();
+                $('#validateBtn').prop('disabled', false).html('Pesquisar em lote');
+            });
+
+            $('#downloadBtn').click(function() {
+                var notFoundCpfs = $('#notFoundCpfs').val();
+                if (notFoundCpfs.trim() !== '') {
+                    download('SEI-ANATEL-CPFs-usuarios-externos-nao-localizados.txt', notFoundCpfs);
+                } else {
+                    alert('Não há CPFs não encontrados para baixar.');
+                }
+            });
+
+            $('body').on('click', '.clipboardBtn', function() {
+                clearTimeout(timer);
+                var textarea = $($(this).data('clipboard-target'));
+                textarea.select();
+                timer = setTimeout(function() {
+                    document.execCommand('copy');
+                    alert('Conteúdo copiado para a área de transferência.');
+                }, 500);
+            });
+
+            function download(filename, text) {
+                var element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }
+
+            // Função para validar CPFs
+            function validarCPFs() {
+                
+                const cpfsTexto = $('#cpfList').val().trim();
+                const cpfs = cpfsTexto.split('\n');
+                const cpfRegex = /^(\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{11})$/;
+                
+                let cpfsInvalidos = [];
+                
+                for (let cpf of cpfs) {
+
+                    let cpfClean = cpf.replace(/\D/g, '');
+
+                    if (/[^0-9.-]/.test(cpf)) {
+                        cpfsInvalidos.push(cpf + ' - Caracteres inválidos');
+                        continue; // Pula para o próximo CPF
+                    }
+                    
+                    if(cpfClean.trim().length != 11){
+                        cpfsInvalidos.push(cpf + ' - Tamanho inválido');
+                        continue; // Pula para o próximo CPF
+                    }
+
+                    if (/^(\d)\1{10}$/.test(cpfClean)) {
+                        cpfsInvalidos.push(cpf + ' - Sequëncia inválida');
+                        continue; // Pula para o próximo CPF
+                    }
+
+                    if (!cpfRegex.test(cpf)) {
+                        cpfsInvalidos.push(cpf + ' -  Formato inválido');
+                        continue; // Pula para o próximo CPF
+                    }
+                    
+                }
+
+                if (cpfsInvalidos.length > 0) {
+                    alert('Os seguintes CPFs são inválidos:\n\n' + cpfsInvalidos.join('\n'));
+                } else {
+                    $('#validateBtn').fadeIn(100);
+                }
+                
+            }
+
+            $('body').on('click', '.btnToggleLote', function(){
+                $('.pesquisa-usuarios-lote').fadeToggle(200);
+                
+                let mode = $('#divInfraBarraLocalizacao').html() == 'Selecionar Usuários Externos' ? 'normal' : 'lote';
+                
+                if(mode == 'normal'){
+                    $('#divInfraBarraLocalizacao').html('Selecionar Usuários Externos em Lote');
+                    $('.btnToggleLote').val('Fechar seleção em Lote');
+                    $('.fecharLote').css('display', 'none');
+                    $('#cpfList').focus();
+                }else{
+                    $('#divInfraBarraLocalizacao').html('Selecionar Usuários Externos');
+                    $('.btnToggleLote').val('Selecionar em Lote');
+                    $('form.fecharLote, div.fecharLote').fadeIn(100);
+                    $('input.fecharLote, button.fecharLote').css('display', 'inline-block');
+                }
+                
+            });
+            
+            $('body').off('click', '#validateBtn').on('click', '#validateBtn', function() {
+                
+                var btnClicked = $(this);
+                var cpfList = $('#cpfList').val().split('\n').filter(Boolean); // Filtrar linhas vazias
+
+                if(cpfList.length > 0){
+
+                    $.ajax({
+                        url: '<?= $strLinkUsuariosMassa ?>',
+                        method: 'POST',
+                        data: { cpfList: cpfList },
+                        beforeSend: function(){
+
+                            btnClicked.prop('disabled', true).html('Pesquisando em lote ('+ cpfList.length +')...');
+                            $('#foundCpfs, #notFoundCpfs').val('');
+                            $('.cpf-validation-result, #transportBtn').hide();
+
+                        },
+                        success: function(response) {
+
+                            var data = JSON.parse(response);
+
+                            if(data.foundCpfs.length > 0){
+
+                                $('#foundCpfs').val(data.foundCpfs.join('\n'));
+                                $('#transportBtn').html('Transportar Localizados ('+data.foundCpfs.length+')').fadeIn(100);
+                                $('#copyFounds').html('Copiar lista de localizados ('+data.foundCpfs.length+')').fadeIn(100);
+
+                            }else{
+
+                                $('#transportBtn').hide();
+
+                                let text = 'Na lista de CPFs informada não foram localizados Usuários Externos que possam ser adicionados como remetentes da intimação. ';
+
+                                if(data.notAbleCpfs.length > 0){
+                                    let i = 0;
+                                    text = text+'\n\nOs seguintes Usuários Externos encontrados já receberam este documento em intimação anterior:\n\n';
+
+                                    while (i < data.notAbleCpfs.length) {
+                                        text = text + data.notAbleCpfs[i] + '\n';
+                                        i++;
+                                    }
+                                }
+
+                                text = text+'\n\nPara verificar a lista de destinatários que já receberam o documento principal, consulte "Ver intimações do processo"';
+                                // alert(text);
+
+                            }
+
+                            if(data.notFoundCpfs.length > 0){
+                                $('#notFoundCpfs').val(data.notFoundCpfs.join('\n'));
+                                $('#copyNotFounds').html('Copiar lista de não localizados ('+data.notFoundCpfs.length+')').show();
+                                $('.cpf-validation-result').show();
+                            }else{
+                                $('#downloadBtn, #notFoundCpfs, .cpf-validation-result').hide();
+                            }
+                            btnClicked.prop('disabled', false).html('Pesquisar em lote ('+ cpfList.length +')');
+
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                            alert(xhr.responseText);
+                        },
+                        complete: function(){
+                            btnClicked.prop('disabled', false).html('Pesquisar em lote');
+                        }
+                    });
+                    
+                }else{
+                    alert('Informe a lista de CPFs válidos.');
+                    $('#cpfList').focus();
+                }
+                
+            });
+            
+            $('body').on('click', '#transportBtn', function(){
+
+                let i = 0;
+                let toTransport = $('#foundCpfs').val().split('\n');
+                let contextChanges = window.top.document.getElementById('ifrVisualizacao').contentWindow.document;
+                
+                while (i < toTransport.length) {
+                    
+                    let valuesTransport = toTransport[i].split("|");
+                    let valueExist = $("#selDadosUsuario2 option[value='"+valuesTransport[0]+"']", contextChanges).length;
+                    
+                    if(valueExist == 0){
+                        
+                        // Adicionando o novo valor no Select
+                        $('#selDadosUsuario2', contextChanges)
+                        .append($('<option>', {
+                            value: valuesTransport[0],
+                            text : valuesTransport[1]+' - '+valuesTransport[2]+' - '+ valuesTransport[3]
+                        }));
+
+                        $('#selDadosUsuario2 option', contextChanges).attr('selected', 'selected');
+
+                        // Adicionando o novo valor ao campo oculto
+                        let hiddenField = $('#hdnDadosUsuario2', contextChanges);
+                        let complement = hiddenField.val() != '' ? '¥' : '';
+
+                        hiddenField.val(hiddenField.val()+complement+valuesTransport[0]+'±'+valuesTransport[1]+' - '+valuesTransport[2]+' - '+ valuesTransport[3]);
+                        
+                    }
+                    
+                    i++;
+                }
+                
+                if($('#hdnDadosUsuario2', contextChanges).val() != ''){
+                    $('#conteudoHide', contextChanges).show();
+                }
+
+                $('#btnFecharSelecao').trigger('click');
+                
+            });
+            
+        });
+
+    </script>
 <?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

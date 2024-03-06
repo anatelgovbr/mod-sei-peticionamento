@@ -173,7 +173,6 @@ class MdPetContatoINT extends ContatoINT
     public static function getDadosContatos($idContato, $idDocumento, $xml = true)
     {
 
-
         $arrSituacao = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
         $possuiIntimacao = 0;
 
@@ -184,8 +183,6 @@ class MdPetContatoINT extends ContatoINT
         $objContatoRN = new ContatoRN();
         $arrContextoContatoDTO = $objContatoRN->consultarRN0324($objContextoContatoDTO);
 
-
-
         //BuscaDestinatrio
         $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
         $objDestinatarioDTO->retTodos();
@@ -194,7 +191,7 @@ class MdPetContatoINT extends ContatoINT
         $objDestinatarioRN = new MdPetIntRelDestinatarioRN();
         $arrDestinatarioDTO = $objDestinatarioRN->listar($objDestinatarioDTO);
 
-        if (is_iterable($arrDestinatarioDTO)) {
+        if (is_iterable($arrDestinatarioDTO) && !empty($arrContextoContatoDTO)) {
             //Busca Intimacao Documento Principal
             foreach ($arrDestinatarioDTO as $destinatario) {
                 $objDocumentoIntimacaoDTO = new MdPetIntProtocoloDTO();
@@ -215,7 +212,7 @@ class MdPetContatoINT extends ContatoINT
             $objIntimacaoRN = new MdPetIntimacaoRN();
             $idIntimacao = $possuiIntimacao ? $possuiIntimacao : '';
 
-            $montaLink = str_replace('&', '&amp;', SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_consulta&arvore=1&id_documento=' . $idDocumento . '&id_intimacao=' . $possuiIntimacao . '&id_contato=' . $arrContextoContatoDTO->getNumIdContato()));
+            $montaLink = str_replace('&', '&amp;', SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_consulta&arvore=1&id_documento=' . $idDocumento . '&id_intimacao=' . $possuiIntimacao . '&id_contato=' . $idContato));
         } else {
             $situacao = 'Pendente';
             $possuiIntimacao = 0;
@@ -300,33 +297,37 @@ class MdPetContatoINT extends ContatoINT
             }
 
             //Fim validação
-
-            $xml = '<Documento>';
-            $xml .= '<Id>' . $arrContextoContatoDTO->getNumIdContato() . '</Id>';
-            $xml .= '<Nome>' . $arrContextoContatoDTO->getStrNome() . '</Nome>';
-            $xml .= '<Email>' . $arrContextoContatoDTO->getStrEmail() . '</Email>';
-            $xml .= '<Cpf>' . $arrContextoContatoDTO->getDblCpf() . '</Cpf>';
-            $xml .= '<Data>' . substr($arrContextoContatoDTO->getDthCadastro(), 0, 10) . '</Data>';
-            $xml .= '<Situacao>' . $situacao . '</Situacao>';
-            $xml .= '<Intimacao>' . $possuiIntimacao . '</Intimacao>';
-            $xml .= '<Url>' . $montaLink . '</Url>';
-            $xml .= '<DataIntimacao>' . $dataIntimacao . '</DataIntimacao>';
-            $xml .= '<Cadastro>' . $arrDestinatarioDTO . '</Cadastro>';
-            $xml .= '<Vinculo>' . $contato . '</Vinculo>';
-            $xml .= '<Quantidade>' . $total . '</Quantidade>';
-            $xml .= '</Documento>';
+	        
+	        if(!empty($arrContextoContatoDTO)){
+		        $xml = '<Documento>';
+		        $xml .= '<Id>' . $arrContextoContatoDTO->getNumIdContato() . '</Id>';
+		        $xml .= '<Nome>' . $arrContextoContatoDTO->getStrNome() . '</Nome>';
+		        $xml .= '<Email>' . $arrContextoContatoDTO->getStrEmail() . '</Email>';
+		        $xml .= '<Cpf>' . $arrContextoContatoDTO->getDblCpf() . '</Cpf>';
+		        $xml .= '<Data>' . substr($arrContextoContatoDTO->getDthCadastro(), 0, 10) . '</Data>';
+		        $xml .= '<Situacao>' . $situacao . '</Situacao>';
+		        $xml .= '<Intimacao>' . $possuiIntimacao . '</Intimacao>';
+		        $xml .= '<Url>' . $montaLink . '</Url>';
+		        $xml .= '<DataIntimacao>' . $dataIntimacao . '</DataIntimacao>';
+		        $xml .= '<Cadastro>' . $arrDestinatarioDTO . '</Cadastro>';
+		        $xml .= '<Vinculo>' . $contato . '</Vinculo>';
+		        $xml .= '<Quantidade>' . $total . '</Quantidade>';
+		        $xml .= '</Documento>';
+	        }
         
         } else {
-
-            $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
-            $xml['Nome'] = $arrContextoContatoDTO->getStrNome();
-            $xml['Email'] = $arrContextoContatoDTO->getStrEmail();
-            $xml['Cpf'] = $arrContextoContatoDTO->getDblCpf();
-            $xml['Data'] = substr($arrContextoContatoDTO->getDthCadastro(), 0, 10);
-            $xml['Situacao'] = $situacao;
-            $xml['Intimacao'] = $possuiIntimacao;
-            $xml['Url'] = $montaLink;
-            $xml['DataIntimacao'] = $dataIntimacao;
+	
+	        if(!empty($arrContextoContatoDTO)){
+		        $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
+		        $xml['Nome'] = $arrContextoContatoDTO->getStrNome();
+		        $xml['Email'] = $arrContextoContatoDTO->getStrEmail();
+		        $xml['Cpf'] = $arrContextoContatoDTO->getDblCpf();
+		        $xml['Data'] = substr($arrContextoContatoDTO->getDthCadastro(), 0, 10);
+		        $xml['Situacao'] = $situacao;
+		        $xml['Intimacao'] = $possuiIntimacao;
+		        $xml['Url'] = $montaLink;
+		        $xml['DataIntimacao'] = $dataIntimacao;
+	        }
 
         }
 

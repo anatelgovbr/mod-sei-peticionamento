@@ -89,7 +89,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                         </select>
 
                         <div id="divOpcoesDadosUsuario2">
-                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(700,500);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Usuário Externo" alt="Selecionar Usuário Externo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(800,800);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Usuário Externo" alt="Selecionar Usuário Externo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                             <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Usuário Externo Selecionado" title="Remover Usuário Externo Selecionado" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                         </div>
 

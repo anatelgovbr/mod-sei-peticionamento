@@ -1536,14 +1536,19 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $qtdArrObjMdPetTipoProcessoDTO = (is_array($arrObjMdPetTipoProcessoDTO) ? count($arrObjMdPetTipoProcessoDTO) : 0);
         $objMdPetTipoProcessoDTO = $qtdArrObjMdPetTipoProcessoDTO > 0 ? current($arrObjMdPetTipoProcessoDTO) : null;
 
-        $objMdPetCriterioRN = new MdPetCriterioRN();
         $objMdPetCriterioDTO = new MdPetCriterioDTO();
         $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
         $objMdPetCriterioDTO->setStrSinAtivo('S');
         $objMdPetCriterioDTO->retTodos();
-        $arrObjMdPetCriterioDTO = $objMdPetCriterioRN->listar($objMdPetCriterioDTO);
+        $arrObjMdPetCriterioDTO = (new MdPetCriterioRN())->listar($objMdPetCriterioDTO);
         $qtdArrObjMdPetCriterioDTO = (is_array($arrObjMdPetCriterioDTO) ? count($arrObjMdPetCriterioDTO) : 0);
         $objMdPetCriterioDTO = $qtdArrObjMdPetCriterioDTO > 0 ? current($arrObjMdPetCriterioDTO) : null;
+	
+        // Trazendo dados para mostrar o menu de Processo Novo
+	    $objMdPetTpProcessoOrientacoesDTO2 = new MdPetTpProcessoOrientacoesDTO();
+	    $objMdPetTpProcessoOrientacoesDTO2->setNumIdTipoProcessoOrientacoesPet(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
+	    $objMdPetTpProcessoOrientacoesDTO2->retTodos();
+	    $objMdPetTpProcessoOrientacoesDTO2 = (new MdPetTpProcessoOrientacoesRN())->listar($objMdPetTpProcessoOrientacoesDTO2);
 
         if (is_array($arrMenusNomes) && $numRegistrosMenu > 0) {
 
@@ -1555,11 +1560,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 switch ($nomeMenu) {
                     case 'Peticionamento' :
                         $urlLinkIntercorrente = $urlBase . '/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar';
-                        if (!is_null($objMdPetCriterioDTO) || (!empty($arrObjMdPetTpProcessoOrientacoesDTO) && $arrObjMdPetTpProcessoOrientacoesDTO[0]->getStrSinAtivoMenuExt() == 'S')) {
+                        if (!is_null($objMdPetCriterioDTO) || (!empty($objMdPetTpProcessoOrientacoesDTO2) && $objMdPetTpProcessoOrientacoesDTO2[0]->getStrSinAtivoMenuExt() == 'S')) {
                             $arrLink[] = '-^#^^' . $nomeMenu . '^';
                         };
 
-	                    if (!empty($arrObjMdPetTpProcessoOrientacoesDTO) && $arrObjMdPetTpProcessoOrientacoesDTO[0]->getStrSinAtivoMenuExt() == 'S') {
+	                    if (!empty($objMdPetTpProcessoOrientacoesDTO2) && $objMdPetTpProcessoOrientacoesDTO2[0]->getStrSinAtivoMenuExt() == 'S') {
 		                    $arrLink[] = '--^' . $urlLink . '^^' . 'Processo Novo' . '^';
 	                    }
 

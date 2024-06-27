@@ -73,8 +73,8 @@ class MdPetInfraReciboPDF extends InfraPDF {
 		'8600'=>array('name'=>'8600', 	'paper-size'=>'letter',	'metric'=>'mm',	'marginLeft'=>7.1, 		'marginTop'=>19, 		  'NX'=>3, 	'NY'=>10, 'SpaceX'=>9.5, 		'SpaceY'=>3.1, 	'width'=>66.6, 		'height'=>25.4,		'font-size'=>8),
 		'L7163'=>array('name'=>'L7163',	'paper-size'=>'A4',		  'metric'=>'mm',	'marginLeft'=>5,		  'marginTop'=>15, 		  'NX'=>2,	'NY'=>7,	'SpaceX'=>25,		  'SpaceY'=>0,	 'width'=>99.1,		'height'=>38.1,		'font-size'=>9),
 				
-		//SpaceY - espaÁo vertical entre etiquetas
-		//SpaceX - espaÁo horizontal entre etiquetas
+		//SpaceY - espa√ßo vertical entre etiquetas
+		//SpaceX - espa√ßo horizontal entre etiquetas
 
 		'contato'=>array('name'=>'teste',	'paper-size'=>'letter',	'metric'=>'mm',	'marginLeft'=>6,	'marginTop'=>0, 'NX'=>2,	'NY'=>10,	'SpaceX'=>5,	
 		'SpaceY'=>1,	'width'=>65,		'height'=>25.2,		'font-size'=>8, 'orientacao'=>'V', 'style'=>''),
@@ -88,6 +88,38 @@ class MdPetInfraReciboPDF extends InfraPDF {
 		'autuacao'=>array('name'=>'teste',	'paper-size'=>'letter',	'metric'=>'mm',	'marginLeft'=>10,	'marginTop'=>8, 'NX'=>1,	'NY'=>5,	'SpaceX'=>0,	
 		'SpaceY'=>3,	'width'=>190.6,		'height'=>50.2,		'font-size'=>10, 'orientacao'=>'V', 'style'=>'')
 	);
+	
+	// Constructor
+	function __construct ($format, $unit='mm', $posX=1, $posY=1) {
+		if (is_array($format)) {
+			// Custom format
+			$Tformat = $format;
+		} else {
+			// Avery format
+			$Tformat = $this->_Avery_Labels[$format];
+		}
+		
+		parent::InfraPDF('P', $Tformat['metric'], $Tformat['paper-size']);
+		$this->_Set_Format($Tformat);
+		$this->Set_Font_Name('Arial',$Tformat['style']);
+		$this->SetMargins(5,5);
+		$this->SetAutoPageBreak(false);
+		
+		$this->_Metric_Doc = $unit;
+		// Start at the given label position
+		if ($posX > 1) $posX--; else $posX=0;
+		if ($posY > 1) $posY--; else $posY=0;
+		if ($posX >=  $this->_X_Number) $posX =  $this->_X_Number-1;
+		if ($posY >=  $this->_Y_Number) $posY =  $this->_Y_Number-1;
+		
+		if($Tformat['orientacao'] == 'V'){
+			$this->_COUNTX = $posX;
+			$this->_COUNTY = $posY;
+		}elseif ($Tformat['orientacao'] == 'H'){
+			$this->_COUNTX = $posY;
+			$this->_COUNTY = $posX;
+		}
+	}
  
 	// convert units (in to mm, mm to in)
 	// $src and $dest must be 'in' or 'mm'
@@ -125,38 +157,6 @@ class MdPetInfraReciboPDF extends InfraPDF {
 		$this->_Width 		= $this->_Convert_Metric ($format['width'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Height	 	= $this->_Convert_Metric ($format['height'], $this->_Metric, $this->_Metric_Doc);
 		$this->Set_Font_Size($format['font-size']);
-	}
-
-	// Constructor
-	function MdPetInfraReciboPDF ($format, $unit='mm', $posX=1, $posY=1) {
-		if (is_array($format)) {
-			// Custom format
-			$Tformat = $format;
-		} else {
-			// Avery format
-			$Tformat = $this->_Avery_Labels[$format];
-		}
-
-		parent::InfraPDF('P', $Tformat['metric'], $Tformat['paper-size']);
-		$this->_Set_Format($Tformat);
-		$this->Set_Font_Name('Arial',$Tformat['style']);
-		$this->SetMargins(5,5); 
-		$this->SetAutoPageBreak(false); 
-
-		$this->_Metric_Doc = $unit;
-		// Start at the given label position
-		if ($posX > 1) $posX--; else $posX=0;
-		if ($posY > 1) $posY--; else $posY=0;
-		if ($posX >=  $this->_X_Number) $posX =  $this->_X_Number-1;
-		if ($posY >=  $this->_Y_Number) $posY =  $this->_Y_Number-1;
-
-		if($Tformat['orientacao'] == 'V'){
-			$this->_COUNTX = $posX;
-			$this->_COUNTY = $posY;
-		}elseif ($Tformat['orientacao'] == 'H'){
-			$this->_COUNTX = $posY;
-			$this->_COUNTY = $posX;
-		}
 	}
 
 	// Sets the character size
@@ -201,7 +201,7 @@ class MdPetInfraReciboPDF extends InfraPDF {
 
 	}
 
-	//sobrescrevendo mÈtodo original que n„o permite controlar quebra de linha
+	//sobrescrevendo m√©todo original que n√£o permite controlar quebra de linha
 	function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $quebra=0)
 	{
 		

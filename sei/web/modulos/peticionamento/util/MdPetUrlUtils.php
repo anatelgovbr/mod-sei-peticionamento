@@ -1,8 +1,6 @@
 <?php
+
 class MdPetUrlUtils extends InfraPDF {
-	
-	function MdPetUrlUtils () {
-	}
 	
 	/**
 	 * Validate field "Url - Dispositivo Normativo".
@@ -13,14 +11,14 @@ class MdPetUrlUtils extends InfraPDF {
 	 */
 	public static function validarStrURL($url, InfraException $objInfraException, $msgTamanho='', $msgInvalida='') {
 	
-		// Se não mandou mensagem, utiliza a padrão
+		// Se nÃ£o mandou mensagem, utiliza a padrÃ£o
 		if ($msgTamanho==''){
 			$msgTamanho=='Url possui tamanho superior a 2083 caracteres.';
 		}
 
-		// Se não mandou mensagem, utiliza a padrão
+		// Se nÃ£o mandou mensagem, utiliza a padrÃ£o
 		if ($msgInvalida=='') {
-			$msgTamanho=='URL da Norma inválido.';
+			$msgTamanho=='URL da Norma invÃ¡lido.';
 		}		
 		
 		
@@ -45,4 +43,3 @@ class MdPetUrlUtils extends InfraPDF {
 	}
 
 }
-?>

@@ -218,7 +218,6 @@
 			        $objOrgaoDTO = new OrgaoDTO();
 			        $objOrgaoDTO->retNumIdOrgao();
 			        $objOrgaoDTO->setBolExclusaoLogica(false);
-			        $objOrgaoDTO->setStrSinConsultaProcessual('S');
 			        $objOrgaoDTO->adicionarCriterio(array('SinAtivo','Sigla'),array(InfraDTO::$OPER_IGUAL,InfraDTO::$OPER_IGUAL),array('S',ConfiguracaoSEI::getInstance()->getValor('SessaoSEI','SiglaOrgaoSistema')),InfraDTO::$OPER_LOGICO_AND);
 
 			        $objOrgaoRN = new OrgaoRN();

@@ -46,7 +46,6 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 		$objOrgaoDTO->retStrSitioInternetContato();
 		$objOrgaoDTO->setNumIdOrgao( $objUnidadeDTO->getNumIdOrgao() );
 		$objOrgaoDTO->setStrSinAtivo('S');
-		$objOrgaoDTO->setStrSinConsultaProcessual('S');
 		$objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
 
 		//pegar a lista de email da unidade, a unidade pode não ter, email unidade

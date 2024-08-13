@@ -619,7 +619,6 @@ class MdPetReciboRN extends InfraRN
         $objOrgaoDTO->retTodos();
         $objOrgaoDTO->setNumIdOrgao($objUnidadeDTO->getNumIdOrgao());
         $objOrgaoDTO->setStrSinAtivo('S');
-	    $objOrgaoDTO->setStrSinConsultaProcessual('S');
         $objOrgaoDTO = (new OrgaoRN())->consultarRN1352($objOrgaoDTO);
         
         $orgaoDescricao = (!empty($objOrgaoDTO)) ? $objOrgaoDTO->getStrDescricao() : '';

@@ -31,7 +31,6 @@ try {
     $objOrgaoDTO->retNumIdOrgao();
     $objOrgaoDTO->setDistinct(true);
     $objOrgaoDTO->retStrSigla();
-	$objOrgaoDTO->setStrSinConsultaProcessual('S');
     $arrFiltroOrgao = $objOrgaoRN->listarRN1353($objOrgaoDTO);
 
     $numRegistrosOrgao = count($arrFiltroOrgao);

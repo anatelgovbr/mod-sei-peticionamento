@@ -153,82 +153,74 @@ class MdPetTipoProcessoINT extends InfraINT
     }
 
     //Recuperando Cidades
-
-    public static function montarSelectCidade($id = null, $orgao = null, $uf = null, $cidade = null)
+    public static function montarSelectCidade($idTipoProcedimento = null, $idOrgao = null, $idUF = null)
     {
-        $arrUni = array();
-        $arrCid = array();
+    	
+        $arrUni = $arrCid = [];
 
         //Restrição Orgão
-        $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-        $arrRestricaoOrgao = $objMdPetTipoProcessoRN->restricaoOrgao();
-
-
+        $arrRestricaoOrgao = (new MdPetTipoProcessoRN())->restricaoOrgao();
+        
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->retStrNomeProcesso();
         $objMdPetTipoProcessoDTO->retStrOrientacoes();
         $objMdPetTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
-        if ($id != null) {
-            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($id);
+        if (!empty($idTipoProcedimento)) {
+            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($idTipoProcedimento);
+        }else{
+	        if (count($arrRestricaoOrgao)) {
+		        $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrRestricaoOrgao, infraDTO::$OPER_NOT_IN);
+	        }
         }
-        if ($id == null) {
-            if (count($arrRestricaoOrgao)) {
-                $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrRestricaoOrgao, infraDTO::$OPER_NOT_IN);
-            }
-        }
-        $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-        $arrObjMdPetTipoProcessoRN = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
+        $arrObjMdPetTipoProcessoRN = (new MdPetTipoProcessoRN())->listar($objMdPetTipoProcessoDTO);
+        
         $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrObjMdPetTipoProcessoRN, 'IdTipoProcessoPeticionamento');
 
-
-        $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
         $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
         $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, InfraDTO::$OPER_IN);
         $objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
         $objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
         $objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
-        $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
+        $arrobjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
+        
         $arrIdsUnidade = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
-
 
         $objUnidadeDTO = new UnidadeDTO();
         $objUnidadeDTO->retNumIdCidadeContato();
         $objUnidadeDTO->retNumIdUnidade();
-        if ($orgao != null) {
-            $objUnidadeDTO->setNumIdOrgao($orgao);
+        if (!empty($idOrgao)) {
+            $objUnidadeDTO->setNumIdOrgao($idOrgao);
         }
         $objUnidadeDTO->setNumIdUnidade($arrIdsUnidade, InfraDTO::$OPER_IN);
-        $objUnidadeRN = new UnidadeRN();
-        $arrIdsCidadeArr = $objUnidadeRN->listarRN0127($objUnidadeDTO);
-        $arrIdsCidade = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdCidadeContato');
-        $arrUnidades = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdUnidade');
+        $arrIdsCidadeArr = (new UnidadeRN())->listarRN0127($objUnidadeDTO);
+        
+        $arrIdsCidade   = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdCidadeContato');
+        $arrUnidades    = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdUnidade');
 
         $objUnidadeDTO = new CidadeDTO();
         $objUnidadeDTO->setNumIdCidade($arrIdsCidade, InfraDTO::$OPER_IN);
         $objUnidadeDTO->retStrNome();
         $objUnidadeDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
-        if ($uf != null) {
-
-            $objUnidadeDTO->setNumIdUf($uf);
+        if (!empty($idUF)) {
+            $objUnidadeDTO->setNumIdUf($idUF);
         }
         $objUnidadeDTO->retNumIdCidade();
-        $objUnidadeRN = new CidadeRN();
-        $arrObjCidadeDTO = $objUnidadeRN->listarRN0410($objUnidadeDTO);
-        $arrCidade = InfraArray::converterArrInfraDTO($arrObjCidadeDTO, 'Nome');
-
-
-        if ($id == null) {
+        $arrObjCidadeDTO = (new CidadeRN())->listarRN0410($objUnidadeDTO);
+	
+	    $arrCidade = InfraArray::converterArrInfraDTO($arrObjCidadeDTO, 'Nome');
+	
+	    if (empty($idTipoProcedimento)) {
 
             $arrCidadeId = InfraArray::converterArrInfraDTO($arrObjCidadeDTO, 'IdCidade');
             foreach ($arrCidadeId as $idCidade) {
-                $arrIdCidade [] = $idCidade;
+                $arrIdCidade[] = $idCidade;
             }
             //Recuperando Cidade
             foreach ($arrCidade as $cidade) {
-                $arrCid [] = $cidade;
+                $arrCid[] = $cidade;
             }
 
-            return array($arrIdCidade, $arrCid);
+            return [$arrIdCidade, $arrCid];
 
         } else {
 
@@ -238,81 +230,69 @@ class MdPetTipoProcessoINT extends InfraINT
 
                 $objUnidadeDTO = new UnidadeDTO();
                 $objUnidadeDTO->setNumIdUnidade($idUnidade);
-
                 $objUnidadeDTO->retNumIdContato();
-                $objUnidadeRN = new UnidadeRN();
-                $arrIdUnidade = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+                $arrIdUnidade = (new UnidadeRN())->consultarRN0125($objUnidadeDTO);
 
                 $objContatoDTO = new ContatoDTO();
                 $objContatoDTO->setNumIdContato($arrIdUnidade->getNumIdContato());
-                if ($uf != null) {
-                    $objContatoDTO->setNumIdUf($uf);
+                if (!empty($idUF)) {
+                    $objContatoDTO->setNumIdUf($idUF);
                 }
                 $objContatoDTO->retStrNomeCidade();
                 $objContatoDTO->setOrdStrNomeCidade(InfraDTO::$TIPO_ORDENACAO_ASC);
-                $objContatoRN = new ContatoRN();
-                $arrIdsContato = $objContatoRN->listarRN0325($objContatoDTO);
+                $arrIdsContato = (new ContatoRN())->listarRN0325($objContatoDTO);
 
                 foreach ($arrIdsContato as $key => $value) {
                     $arrUni [] = $idUnidade;
                     $arrCid [] = $value->getStrNomeCidade();
-
                 }
-
-
             }
 
-
-            return array($arrUni, $arrCid);
+            return [$arrUni, $arrCid];
 
         }
+	    
     }
 
     //Recuperando Uf
-    public static function montarSelectUf($id = null, $orgao = null, $uf = null, $cidade = null)
+    public static function montarSelectUf($idTipoProcedimento = null, $idOrgao = null)
     {
-        $ufId = array();
-        $uf = array();
+    	
+        $ufId = $uf = [];
 
         //Restrição Orgão
-        $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-        $arrRestricaoOrgao = $objMdPetTipoProcessoRN->restricaoOrgao();
+        $arrRestricaoOrgao = (new MdPetTipoProcessoRN())->restricaoOrgao();
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->retStrNomeProcesso();
         $objMdPetTipoProcessoDTO->retStrOrientacoes();
         $objMdPetTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
-        if ($id != null) {
-            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($id);
+        if (!empty($idTipoProcedimento)) {
+            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($idTipoProcedimento);
+        }else{
+	        if (count($arrRestricaoOrgao)) {
+		        $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrRestricaoOrgao, infraDTO::$OPER_NOT_IN);
+	        }
         }
-        if ($id == null) {
-            if (count($arrRestricaoOrgao)) {
-                $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrRestricaoOrgao, infraDTO::$OPER_NOT_IN);
-            }
-        }
-        $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-        $arrObjMdPetTipoProcessoRN = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
+        $arrObjMdPetTipoProcessoRN = (new MdPetTipoProcessoRN())->listar($objMdPetTipoProcessoDTO);
+        
         $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrObjMdPetTipoProcessoRN, 'IdTipoProcessoPeticionamento');
 
-
-        $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
         $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
         $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, InfraDTO::$OPER_IN);
         $objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
         $objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
         $objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
-        $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
+        $arrobjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
         $arrIdsUnidade = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
-
 
         $objUnidadeDTO = new UnidadeDTO();
         $objUnidadeDTO->retNumIdContato();
         $objUnidadeDTO->setNumIdUnidade($arrIdsUnidade, InfraDTO::$OPER_IN);
-        if ($orgao != null) {
-            $objUnidadeDTO->setNumIdOrgao($orgao);
+        if (!empty($idOrgao)) {
+            $objUnidadeDTO->setNumIdOrgao($idOrgao);
         }
-        $objUnidadeRN = new UnidadeRN();
-        $arrObjUnidadeDTO = $objUnidadeRN->listarRN0127($objUnidadeDTO);
+        $arrObjUnidadeDTO = (new UnidadeRN())->listarRN0127($objUnidadeDTO);
         $arrIdsContato = InfraArray::converterArrInfraDTO($arrObjUnidadeDTO, 'IdContato');
 
         $objContatoDTO = new ContatoDTO();
@@ -321,8 +301,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $objContatoDTO->retStrSiglaUf();
         $objContatoDTO->setOrdStrSiglaUf(InfraDTO::$TIPO_ORDENACAO_ASC);
         $objContatoDTO->retStrNomeCidade();
-        $objContatoRN = new ContatoRN();
-        $arrObjContato = $objContatoRN->listarRN0325($objContatoDTO);
+        $arrObjContato = (new ContatoRN())->listarRN0325($objContatoDTO);
         $arrIdsContatoDistinct = infraArray::distinctArrInfraDTO($arrObjContato, 'IdUf');
 
         foreach ($arrIdsContatoDistinct as $key => $value) {
@@ -330,7 +309,8 @@ class MdPetTipoProcessoINT extends InfraINT
             $uf[] = $value->getStrSiglaUf();
         }
 
-        return array($ufId, $uf);
+        return [$ufId, $uf];
+        
     }
 
 
@@ -691,7 +671,7 @@ class MdPetTipoProcessoINT extends InfraINT
 
 
     //Tela Externa
-    public static function montarSelectOrgaoTpProcesso($id = null, $orgao = null)
+    public static function montarSelectOrgaoTpProcesso($idTipoProcedimento = null)
     {
         $idOrgao = array();
         $orgao = array();
@@ -702,10 +682,10 @@ class MdPetTipoProcessoINT extends InfraINT
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->retTodos();
-        if ($id != null) {
-            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($id);
+        if ($idTipoProcedimento != null) {
+            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($idTipoProcedimento);
         }
-        if ($id == null) {
+        if ($idTipoProcedimento == null) {
             if (count($arrRestricaoOrgao)) {
                 $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrRestricaoOrgao, infraDTO::$OPER_NOT_IN);
             }

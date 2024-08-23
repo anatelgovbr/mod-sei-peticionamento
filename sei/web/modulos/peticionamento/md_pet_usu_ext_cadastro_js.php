@@ -808,18 +808,19 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         }
 
         //Validar combos
-        if (document.getElementById('selOrgao').value === '') {
+        if (document.getElementById('selOrgao') && document.getElementById('selOrgao').value === '') {
             alert("Informe o Orgão.");
             document.getElementById("selOrgao").focus();
             return false;
         }
 
-        if (document.getElementById('selUF').value === '') {
+        if (document.getElementById('selUF') && document.getElementById('selUF').value === '') {
             alert("Informe a UF.");
             document.getElementById("selUF").focus();
             return false;
         }
-        if (document.getElementById("selUFAberturaProcesso").value === '') {
+
+        if (document.getElementById("selUFAberturaProcesso") && document.getElementById("selUFAberturaProcesso").value === '') {
             alert("Informe a Cidade.");
             document.getElementById("selUFAberturaProcesso").focus();
             return false;
@@ -946,32 +947,26 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             var conteudoDocumento = "";
 
-            // $(document).ready(function () {
-
-                //var  formData = "";
-
-                $.ajax({
-                    url: "<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_validar_documento_principal'))?>",
-                    type: "POST",
-                    //data : formData,
-                    async: false,
-                    success: function (data, textStatus, jqXHR) {
-                        conteudoDocumento = data;
-                        if (data == '') {
-                            alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes é necessário acessar o Editor do SEI no link clique aqui para editar conteúdo em frente ao campo Documento Principal, preencher apenas os campos pertinentes com os dados da demanda e clicar no botão Salvar no canto superior esquerdo do Editor.");
-                            return;
-                        } else {
-                            DocPrincipalValidado = true;
-                        }
-
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        alert('Erro ao validar documento principal.');
-                        console.log('Erro' + textStatus);
+            $.ajax({
+                url: "<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_validar_documento_principal'))?>",
+                type: "POST",
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    conteudoDocumento = data;
+                    if (data == '') {
+                        alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes é necessário acessar o Editor do SEI no link clique aqui para editar conteúdo em frente ao campo Documento Principal, preencher apenas os campos pertinentes com os dados da demanda e clicar no botão Salvar no canto superior esquerdo do Editor.");
                         return;
+                    } else {
+                        DocPrincipalValidado = true;
                     }
-                });
-            // });
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Erro ao validar documento principal.');
+                    console.log('Erro' + textStatus);
+                    return;
+                }
+            });
 
         }
 

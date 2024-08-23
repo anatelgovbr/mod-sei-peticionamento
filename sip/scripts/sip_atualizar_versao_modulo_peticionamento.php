@@ -66,15 +66,6 @@ class MdPetAtualizadorSipRN extends InfraRN
         die;
     }
 
-	protected function normalizaVersao($versao)
-    {
-		$ultimoPonto = strrpos($versao, '.');
-		if ($ultimoPonto !== false) {
-			$versao = substr($versao, 0, $ultimoPonto) . substr($versao, $ultimoPonto + 1);
-		}
-		return $versao;
-	}
-
     protected function atualizarVersaoConectado()
     {
         
@@ -90,7 +81,7 @@ class MdPetAtualizadorSipRN extends InfraRN
 
             //testando versao do framework
 	        $numVersaoInfraRequerida = '2.7.6';
-	        if ($this->normalizaVersao(VERSAO_INFRA) < $this->normalizaVersao($numVersaoInfraRequerida)) {
+	        if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
 

@@ -1,6 +1,6 @@
 <?
 /*
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 16/03/2022 - criado por mga
 *
@@ -19,7 +19,7 @@ abstract class MdPetUtilWS extends InfraWS {
       SessaoSEI::getInstance(false);
 
       if (!method_exists($this, $func.'Monitorado')) {
-        throw new InfraException('ServiÁo ['.get_class($this).'.'.$func.'] n„o encontrado.');
+        throw new InfraException('Servi√ßo ['.get_class($this).'.'.$func.'] n√£o encontrado.');
       }
 
       BancoSEI::getInstance()->abrirConexao();
@@ -33,7 +33,7 @@ abstract class MdPetUtilWS extends InfraWS {
       $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 
       if ($objUsuarioDTO==null){
-        throw new InfraException('Sistema ['.$params[0].'] n„o encontrado.');
+        throw new InfraException('Sistema ['.$params[0].'] n√£o encontrado.');
       }
 
       $objServicoRN = new ServicoRN();
@@ -57,16 +57,16 @@ abstract class MdPetUtilWS extends InfraWS {
         $objServicoDTO = $objServicoRN->consultar($objServicoDTO);
 
         if ($objServicoDTO==null){
-          throw new InfraException('ServiÁo do sistema ['.$params[0].'] n„o encontrado.' );
+          throw new InfraException('Servi√ßo do sistema ['.$params[0].'] n√£o encontrado.' );
         }
 
         if ($objServicoDTO->getStrSinChaveAcesso() == 'N'){
-          throw new InfraException('ServiÁo ['.$objServicoDTO->getStrIdentificacao().'] do sistema ['.$objServicoDTO->getStrSiglaUsuario().'] n„o possui autenticaÁ„o por Chave de Acesso.');
+          throw new InfraException('Servi√ßo ['.$objServicoDTO->getStrIdentificacao().'] do sistema ['.$objServicoDTO->getStrSiglaUsuario().'] n√£o possui autentica√ß√£o por Chave de Acesso.');
         }
 
         $objInfraBcrypt = new InfraBcrypt();
         if (!$objInfraBcrypt->verificar(md5(substr($params[1],8)), $objServicoDTO->getStrChaveAcesso())) {
-          throw new InfraException('Chave de Acesso inv·lida para o serviÁo ['.$objServicoDTO->getStrIdentificacao().'] do sistema ['.$objServicoDTO->getStrSiglaUsuario().'].');
+          throw new InfraException('Chave de Acesso inv√°lida para o servi√ßo ['.$objServicoDTO->getStrIdentificacao().'] do sistema ['.$objServicoDTO->getStrSiglaUsuario().'].');
         }
 
       }else{
@@ -76,18 +76,18 @@ abstract class MdPetUtilWS extends InfraWS {
         $objServicoDTO = $objServicoRN->consultar($objServicoDTO);
 
         if ($objServicoDTO==null){
-          throw new InfraException('ServiÁo ['.$params[1].'] do sistema ['.$params[0].'] n„o encontrado.');
+          throw new InfraException('Servi√ßo ['.$params[1].'] do sistema ['.$params[0].'] n√£o encontrado.');
         }
 
         if ($objServicoDTO->getStrSinServidor() == 'N'){
-          throw new InfraException('ServiÁo ['.$params[1].'] do sistema ['.$params[0].'] n„o possui autenticaÁ„o por EndereÁo.');
+          throw new InfraException('Servi√ßo ['.$params[1].'] do sistema ['.$params[0].'] n√£o possui autentica√ß√£o por Endere√ßo.');
         }
 
         $this->validarAcessoAutorizado(explode(',',str_replace(' ','',$objServicoDTO->getStrServidor())));
 
       }
 
-      // Valida se ao menos a operaÁ„o * Listar Contatos * est· configurada no ServiÁo:
+      // Valida se ao menos a opera√ß√£o * Listar Contatos * est√° configurada no Servi√ßo:
       if (!is_null($objServicoDTO)){
           $operacaoServicoDTO = new OperacaoServicoDTO();
           $operacaoServicoRN = new OperacaoServicoRN();
@@ -97,7 +97,7 @@ abstract class MdPetUtilWS extends InfraWS {
           $objOperacaoServicoDTO = $operacaoServicoRN->listar($operacaoServicoDTO);
 
           if (empty($objOperacaoServicoDTO)) {
-              throw new InfraException('OperaÁ„o n„o permitida pois n„o consta para a integraÁ„o deste Sistema e ServiÁo ao menos a operaÁ„o "Listar Contatos". Entre em contato com a AdministraÁ„o do SEI.');
+              throw new InfraException('Opera√ß√£o n√£o permitida pois n√£o consta para a integra√ß√£o deste Sistema e Servi√ßo ao menos a opera√ß√£o "Listar Contatos". Entre em contato com a Administra√ß√£o do SEI.');
           }
       }
 
@@ -112,7 +112,7 @@ abstract class MdPetUtilWS extends InfraWS {
         InfraDebug::getInstance()->setBolDebugInfra(($debugWebServices==2));
         InfraDebug::getInstance()->limpar();
 
-        InfraDebug::getInstance()->gravar("ServiÁo: ".$func."\nPar‚metros: ".$this->debugParametros($params));
+        InfraDebug::getInstance()->gravar("Servi√ßo: ".$func."\nPar√¢metros: ".$this->debugParametros($params));
 
         if ($debugWebServices==1) {
           LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$DEBUG);
@@ -143,7 +143,7 @@ abstract class MdPetUtilWS extends InfraWS {
 
       }catch(Throwable $e){
         try{
-          LogSEI::getInstance()->gravar('Erro monitorando acesso do serviÁo.'."\n".InfraException::inspecionar($e));
+          LogSEI::getInstance()->gravar('Erro monitorando acesso do servi√ßo.'."\n".InfraException::inspecionar($e));
         }catch (Throwable $e){}
       }
 

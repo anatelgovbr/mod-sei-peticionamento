@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 27/06/2019 - criado por Renato Chaves
 *
-* Versão do Gerador de Código: 1.39.0 - CAST
+* VersÃ£o do Gerador de CÃ³digo: 1.39.0 - CAST
 */
 
 require_once dirname(__FILE__).'/../../../SEI.php';

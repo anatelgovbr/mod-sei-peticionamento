@@ -97,7 +97,7 @@ try {
     //$hiddenUF
 
 
-//Validação Cidade Unica
+//ValidaÃ§Ã£o Cidade Unica
     $objTipoProcessoDTO = new MdPetTipoProcessoDTO();
     $objTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
     $objTipoProcessoDTO->retStrNomeProcesso();
@@ -169,13 +169,13 @@ try {
 
         }
     }
-//Fim validação cidade Unica
+//Fim validaÃ§Ã£o cidade Unica
 
-//Restrição
+//RestriÃ§Ã£o
     $arrRestricao = array();
     foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
 
-        //Verifica se existe restrição para o tipo de processo
+        //Verifica se existe restriÃ§Ã£o para o tipo de processo
         $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
         $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
         $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -203,7 +203,7 @@ try {
 
         foreach ($arrobjMdPetRelTpProcessoUnidDTO as $objDTO) {
 
-            //Verifica se tem alguma unidade ou órgão diferente dos restritos
+            //Verifica se tem alguma unidade ou ?rg?o diferente dos restritos
             if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)) {
                 $arrRestricao [] = $tpProc->getNumIdProcedimento();
             }
@@ -215,7 +215,7 @@ try {
 
     }
 
-    //Fim restrição
+    //Fim restriÃ§Ã£o
 
     $objTipoProcessoDTO = new MdPetTipoProcessoDTO();
     $objTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($arrIdsTpProcesso, infraDTO::$OPER_IN);
@@ -271,7 +271,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 } catch (Exception $e) {
@@ -308,7 +308,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <fieldset id="orientacoesGerais" class="infraFieldset sizeFieldset form-control">
-                    <legend class="infraLegend">&nbsp; Orientações Gerais &nbsp;</legend>
+                    <legend class="infraLegend">&nbsp; OrientaÃ§Ãµes Gerais &nbsp;</legend>
                     <?
                     echo '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_iniciar&iframe=S') . '"></iframe>';
                     ?>
@@ -325,10 +325,10 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             </div>
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-2" style="<?php echo $hiddenOrgao ?>" id="OrgaoHidd">
                 <label id="lblOrgao" for="selOrgao" class="infraLabelOpcional">
-                    Órgão:
+                    ?rg?o:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda" align="top"
-                        <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinado Órgão.", 'Ajuda') ?>
+                        <?= PaginaSEI::montarTitleTooltip("Por meio deste campo ? poss?vel filtrar a lista de Tipos de Processos que podem ser abertos em determinado ?rg?o.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/>
                 </label>
                 <select onchange="pesquisarUF(this)" id="selOrgao" name="selOrgao"
@@ -350,7 +350,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                     UF:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinada UF.", 'Ajuda') ?>
+                        <?= PaginaSEI::montarTitleTooltip("Por meio deste campo ? poss?vel filtrar a lista de Tipos de Processos que podem ser abertos em determinada UF.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/>
                 </label>
                 <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-control">
@@ -374,7 +374,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 <label id="lblCidade" for="selCidade" class="infraLabelOpcional">Cidade:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda" align="top"
-                        <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinada Cidade.", 'Ajuda') ?>
+                        <?= PaginaSEI::montarTitleTooltip("Por meio deste campo ? poss?vel filtrar a lista de Tipos de Processos que podem ser abertos em determinada Cidade.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/></label>
                 <select onchange="pesquisarFinal(this)" id="selCidade" name="selCidade"
                         class="infraSelect form-control">

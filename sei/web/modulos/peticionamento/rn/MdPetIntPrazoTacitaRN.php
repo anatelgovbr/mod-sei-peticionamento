@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
- * 06/12/2016 - criado por Wilton J˙nior - CAST
+ * 06/12/2016 - criado por Wilton J√∫nior - CAST
  *
- * Vers„o do Gerador de CÛdigo: 1.39.0
+ * Vers√£o do Gerador de C√≥digo: 1.39.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -25,14 +25,14 @@ class MdPetIntPrazoTacitaRN extends InfraRN
     private function validarNumIdMdPetIntPrazoTacita(MdPetIntPrazoTacitaDTO $objMdPetIntPrazoTacitaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntPrazoTacitaDTO->getNumIdMdPetIntPrazoTacita())) {
-            $objInfraException->adicionarValidacao('Id n„o informado.');
+            $objInfraException->adicionarValidacao('Id n√£o informado.');
         }
     }
 
     private function validarNumNumPrazo(MdPetIntPrazoTacitaDTO $objMdPetIntPrazoTacitaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntPrazoTacitaDTO->getNumNumPrazo())) {
-            $objInfraException->adicionarValidacao('Prazo n„o informado.');
+            $objInfraException->adicionarValidacao('Prazo n√£o informado.');
         }
     }
 

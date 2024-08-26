@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 02/04/2018 - criado por jose vieira
 *
-* Versão do Gerador de Código: 1.41.0
+* VersÃ£o do Gerador de CÃ³digo: 1.41.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -21,22 +21,22 @@ class MdPetVinculoRN extends InfraRN {
 
   private function validarNumIdMdPetVinculo(MdPetVinculoDTO $objMdPetVinculoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVinculoDTO->getNumIdMdPetVinculo())){
-      $objInfraException->adicionarValidacao(' não informad.');
+      $objInfraException->adicionarValidacao(' nÃ£o informad.');
     }
   }
 
   private function validarNumIdContato(MdPetVinculoDTO $objMdPetVinculoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVinculoDTO->getNumIdContato())){
-      $objInfraException->adicionarValidacao(' não informad.');
+      $objInfraException->adicionarValidacao(' nÃ£o informad.');
     }
   }
 
   private function validarStrSinValidado(MdPetVinculoDTO $objMdPetVinculoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVinculoDTO->getStrSinValidado())){
-      $objInfraException->adicionarValidacao('Sinalizador de  não informado.');
+      $objInfraException->adicionarValidacao('Sinalizador de  nÃ£o informado.');
     }else{
       if (!InfraUtil::isBolSinalizadorValido($objMdPetVinculoDTO->getStrSinValidado())){
-        $objInfraException->adicionarValidacao('Sinalizador de  inválid.');
+        $objInfraException->adicionarValidacao('Sinalizador de  invÃ¡lid.');
       }
     }
   }
@@ -62,7 +62,7 @@ class MdPetVinculoRN extends InfraRN {
 
     }catch(Exception $e){
       var_dump($e);die;
-      throw new InfraException('Erro cadastrando Vínculo.',$e);
+      throw new InfraException('Erro cadastrando VÃ­nculo.',$e);
     }
   }
 
@@ -93,7 +93,7 @@ class MdPetVinculoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro alterando Vínculo.',$e);
+      throw new InfraException('Erro alterando VÃ­nculo.',$e);
     }
   }
 
@@ -116,7 +116,7 @@ class MdPetVinculoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro excluindo Vínculo.',$e);
+      throw new InfraException('Erro excluindo VÃ­nculo.',$e);
     }
   }
 
@@ -138,7 +138,7 @@ class MdPetVinculoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro consultando Vínculo.',$e);
+      throw new InfraException('Erro consultando VÃ­nculo.',$e);
     }
   }
 
@@ -160,7 +160,7 @@ class MdPetVinculoRN extends InfraRN {
       return $ret;
 
     }catch(Exception $e){
-      throw new InfraException('Erro listando Vínculo.',$e);
+      throw new InfraException('Erro listando VÃ­nculo.',$e);
     }
   }
 
@@ -182,7 +182,7 @@ class MdPetVinculoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro contando Vínculo.',$e);
+      throw new InfraException('Erro contando VÃ­nculo.',$e);
     }
   }
 
@@ -206,7 +206,7 @@ class MdPetVinculoRN extends InfraRN {
         $arrIdContato = InfraArray::converterArrInfraDTO($arrParticipanteDTO,'IdContato');
 
         if(count($arrIdContato)>0) {
-            // Vinculação PJ
+            // VinculaÃ§Ã£o PJ
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
             $objMdPetVinculoRN = new MdPetVinculoRN();
 
@@ -263,7 +263,7 @@ class MdPetVinculoRN extends InfraRN {
 
       $idProcedimento = isset($params[0]) ? $params[0] : null;
 
-      // Documento do Vinculo - Principal (último)
+      // Documento do Vinculo - Principal (Ãºltimo)
       $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN;
 
       $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
@@ -336,7 +336,7 @@ class MdPetVinculoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro desativando Vínculo.',$e);
+      throw new InfraException('Erro desativando VÃ­nculo.',$e);
     }
   }
 
@@ -359,7 +359,7 @@ class MdPetVinculoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro reativando Vínculo.',$e);
+      throw new InfraException('Erro reativando VÃ­nculo.',$e);
     }
   }
 
@@ -381,7 +381,7 @@ class MdPetVinculoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro bloqueando Vínculo.',$e);
+      throw new InfraException('Erro bloqueando VÃ­nculo.',$e);
     }
   }
 

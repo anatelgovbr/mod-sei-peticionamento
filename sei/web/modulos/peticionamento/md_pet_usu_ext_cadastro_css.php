@@ -1,4 +1,5 @@
 <style type="text/css">
+    
     #orientacoesTipoProcesso {height: auto; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}
     #formularioPeticionamento {height: auto; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}
     .sizeFieldset {
@@ -45,4 +46,5 @@
     #ifrProgressofrmDocumentoPrincipal {
         max-width: 100%;
     }
+    
 </style>

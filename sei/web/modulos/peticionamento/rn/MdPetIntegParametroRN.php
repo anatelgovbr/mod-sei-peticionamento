@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
-* 25/01/2018 - criado por Usu·rio
+* 25/01/2018 - criado por Usu√°rio
 *
-* Vers„o do Gerador de CÛdigo: 1.41.0
+* Vers√£o do Gerador de C√≥digo: 1.41.0
 */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -23,30 +23,30 @@ class MdPetIntegParametroRN extends InfraRN {
 
   private function validarNumIdMdPetIntegracao(MdPetIntegParametroDTO $objMdPetIntegParametroDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntegParametroDTO->getNumIdMdPetIntegracao())){
-      $objInfraException->adicionarValidacao('IntegraÁ„o n„o informada.');
+      $objInfraException->adicionarValidacao('Integra√ß√£o n√£o informada.');
     }
   }
 
   private function validarStrNome(MdPetIntegParametroDTO $objMdPetIntegParametroDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntegParametroDTO->getStrNome())){
-      $objInfraException->adicionarValidacao('Nome do Par‚metro n„o informado.');
+      $objInfraException->adicionarValidacao('Nome do Par√¢metro n√£o informado.');
     }else{
       $objMdPetIntegParametroDTO->setStrNome(trim($objMdPetIntegParametroDTO->getStrNome()));
 
       if (strlen($objMdPetIntegParametroDTO->getStrNome())>30){
-        $objInfraException->adicionarValidacao('Nome do Par‚metro possui tamanho superior a 30 caracteres.');
+        $objInfraException->adicionarValidacao('Nome do Par√¢metro possui tamanho superior a 30 caracteres.');
       }
     }
   }
 
   private function validarStrTpParametro(MdPetIntegParametroDTO $objMdPetIntegParametroDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntegParametroDTO->getStrTpParametro())){
-      $objInfraException->adicionarValidacao('Tipo do Par‚metro n„o informad.');
+      $objInfraException->adicionarValidacao('Tipo do Par√¢metro n√£o informad.');
     }else{
       $objMdPetIntegParametroDTO->setStrTpParametro(trim($objMdPetIntegParametroDTO->getStrTpParametro()));
 
       if (strlen($objMdPetIntegParametroDTO->getStrTpParametro())>1){
-        $objInfraException->adicionarValidacao('Tipo do Par‚metro possui tamanho superior a 1 caracteres.');
+        $objInfraException->adicionarValidacao('Tipo do Par√¢metro possui tamanho superior a 1 caracteres.');
       }
     }
   }
@@ -55,7 +55,7 @@ class MdPetIntegParametroRN extends InfraRN {
     try{
 
       //Valida Permissao
-      //Cadastro atravÈs do IntegraÁ„o
+      //Cadastro atrav√©s do Integra√ß√£o
       //SessaoSEI::getInstance()->validarPermissao('md_pet_integ_parametro_cadastrar');
       SessaoSEI::getInstance()->validarPermissao('md_pet_integracao_cadastrar');
     	
@@ -76,7 +76,7 @@ class MdPetIntegParametroRN extends InfraRN {
       return $ret;
 
     }catch(Exception $e){
-      throw new InfraException('Erro cadastrando Par‚metro.',$e);
+      throw new InfraException('Erro cadastrando Par√¢metro.',$e);
     }
   }
 
@@ -110,7 +110,7 @@ class MdPetIntegParametroRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro alterando Par‚metro.',$e);
+      throw new InfraException('Erro alterando Par√¢metro.',$e);
     }
   }
 
@@ -134,7 +134,7 @@ class MdPetIntegParametroRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro excluindo Par‚metro.',$e);
+      throw new InfraException('Erro excluindo Par√¢metro.',$e);
     }
   }
 
@@ -156,7 +156,7 @@ class MdPetIntegParametroRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro consultando Par‚metro.',$e);
+      throw new InfraException('Erro consultando Par√¢metro.',$e);
     }
   }
 
@@ -180,7 +180,7 @@ class MdPetIntegParametroRN extends InfraRN {
       return $ret;
 
     }catch(Exception $e){
-      throw new InfraException('Erro listando Par‚metros.',$e);
+      throw new InfraException('Erro listando Par√¢metros.',$e);
     }
   }
 
@@ -202,7 +202,7 @@ class MdPetIntegParametroRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro contando Par‚metros.',$e);
+      throw new InfraException('Erro contando Par√¢metros.',$e);
     }
   }
 /* 
@@ -225,7 +225,7 @@ class MdPetIntegParametroRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro desativando Par‚metro.',$e);
+      throw new InfraException('Erro desativando Par√¢metro.',$e);
     }
   }
 
@@ -248,7 +248,7 @@ class MdPetIntegParametroRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro reativando Par‚metro.',$e);
+      throw new InfraException('Erro reativando Par√¢metro.',$e);
     }
   }
 
@@ -270,7 +270,7 @@ class MdPetIntegParametroRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro bloqueando Par‚metro.',$e);
+      throw new InfraException('Erro bloqueando Par√¢metro.',$e);
     }
   }
 

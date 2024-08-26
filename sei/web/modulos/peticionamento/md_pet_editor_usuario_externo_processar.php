@@ -34,7 +34,7 @@
   		$serieDTO->setNumIdSerie( $_GET['id_serie'] );
   		$serieDTO = $serieRN->consultarRN0644( $serieDTO );
   		
-  		//recupera seÁıes do modelo
+  		//recupera se√ß√µes do modelo
   		$objSecaoModeloRN = new SecaoModeloRN();
   		$objSecaoModeloDTO = new SecaoModeloDTO();
   		$objSecaoModeloDTO->retNumIdSecaoModelo();
@@ -55,7 +55,7 @@
   		$arrObjSecaoModeloDTO = $objSecaoModeloRN->listar($objSecaoModeloDTO);
   		  		
   		if (empty($arrObjSecaoModeloDTO)) {
-  			throw new InfraException('Modelo do documento n„o contÈm seÁıes.');
+  			throw new InfraException('Modelo do documento n√£o cont√©m se√ß√µes.');
   		}
   		
   		//======================= INICIO APLICANDO ESTILOS
@@ -65,7 +65,7 @@
   		$conjuntoEstilosDTO->retTodos();
   		$conjuntoEstilosDTO = $conjuntoEstilosRN->consultar($conjuntoEstilosDTO);
 
-  		//busca os estilos permitidos por seÁ„o-modelo
+  		//busca os estilos permitidos por se√ß√£o-modelo
   		$objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
   		$objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
   		$objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
@@ -127,7 +127,7 @@
   		  		
   		if (isset($_POST['hdnSubmit'])) {
   			try{
-  				//TODO: PossÌvel risco de consumo excessivo de memÛria do servidor
+  				//TODO: Poss?vel risco de consumo excessivo de mem?ria do servidor
   				SessaoSEIExterna::getInstance()->setAtributo('docPrincipalConteudoHTML', $_POST['txaConteudo']);
   				SessaoSEIExterna::getInstance()->setAtributo('idConjuntoEstilo', $_POST['idConjuntoEstilo']);
   				$txtConteudo = $_POST['txaConteudo'];
@@ -139,7 +139,7 @@
   		break;
   		
   		default:
-  			throw new InfraException("AÁ„o '".$_GET['acao']."' n„o reconhecida.");
+  			throw new InfraException("A√ß√£o '".$_GET['acao']."' n√£o reconhecida.");
   	break;
   	
   }

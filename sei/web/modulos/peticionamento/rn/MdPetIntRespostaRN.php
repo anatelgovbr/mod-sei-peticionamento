@@ -32,7 +32,7 @@ class MdPetIntRespostaRN extends InfraRN {
 
         if(count($arr) > 0) {
 
-            //necess·rio fazer calculo manual de hash por estar adicionando parametros nao padrao via GET e por conta do calculo manual de hash dispensou o uso da funÁao assinarLink
+            //necess√°rio fazer calculo manual de hash por estar adicionando parametros nao padrao via GET e por conta do calculo manual de hash dispensou o uso da fun√ßao assinarLink
             $strParam = 'acao=md_pet_responder_intimacao_usu_ext&id_orgao_acesso_externo=0&id_intimacao=' . $idIntimacao . '&id_aceite=' . $idAceite . '&id_procedimento=' . $idProcedimento;
 
             $hash = md5($strParam.'#'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'@'.SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
@@ -42,10 +42,10 @@ class MdPetIntRespostaRN extends InfraRN {
 
             $js = 'window.location = \''.$strLink.'\';';
             $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta.svg?'.Icone::VERSAO.'" style="width: 24px">';
-            $ToolTipTitulo = 'Responder IntimaÁ„o EletrÙnica';
+            $ToolTipTitulo = 'Responder Intima√ß√£o Eletr√¥nica';
             $ToolTipText = 'Documento Principal: ';
 
-            //obter informacoes do doc principal da intimaÁ„o
+            //obter informacoes do doc principal da intima√ß√£o
             $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
             $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
             $objMdPetIntDocumentoDTO->retTodos();
@@ -58,9 +58,9 @@ class MdPetIntRespostaRN extends InfraRN {
             $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
             $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar( $objMdPetIntDocumentoDTO );
 
-            $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI n∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+            $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI n¬∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
-            $ToolTipText .= '<br />Clique para Peticionar Resposta a IntimaÁ„o.';
+            $ToolTipText .= '<br />Clique para Peticionar Resposta a Intima√ß√£o.';
 
             $conteudoHtml  = '<a onclick="'.$js.'"';
             $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitulo.'\')"';
@@ -96,7 +96,7 @@ class MdPetIntRespostaRN extends InfraRN {
                 $linkIdIntimacao .= '&id_intimacao[]='.$id;
             }
 
-            //necess·rio fazer calculo manual de hash por estar adicionando parametros nao padrao via GET e por conta do calculo manual de hash dispensou o uso da funÁao assinarLink
+            //necess√°rio fazer calculo manual de hash por estar adicionando parametros nao padrao via GET e por conta do calculo manual de hash dispensou o uso da fun√ßao assinarLink
             $strParam = 'acao=md_pet_responder_intimacao_usu_ext&id_orgao_acesso_externo=0' . $linkIdIntimacao . $linkIdAceite . '&id_procedimento=' . $idProcedimento;
 
             $hash = md5($strParam.'#'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'@'.SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
@@ -106,10 +106,10 @@ class MdPetIntRespostaRN extends InfraRN {
 
             $js = 'window.location = \''.$strLink.'\';';
             $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta.svg?'.Icone::VERSAO.'" style="width: 24px">';
-            $ToolTipTitulo = 'Responder IntimaÁ„o EletrÙnica';
+            $ToolTipTitulo = 'Responder Intima√ß√£o Eletr√¥nica';
             $ToolTipText = 'Documento Principal: ';
 
-            //obter informacoes do doc principal da intimaÁ„o
+            //obter informacoes do doc principal da intima√ß√£o
             $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
             $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
             $objMdPetIntDocumentoDTO->retTodos();
@@ -122,10 +122,10 @@ class MdPetIntRespostaRN extends InfraRN {
             $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
             $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar( $objMdPetIntDocumentoDTO );
 
-            $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI n∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+            $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI n¬∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
             if($cnpjs || $cpfs){
-                $ToolTipText .= '<br/><br/>Destinat·rios:<br/>';
+                $ToolTipText .= '<br/><br/>Destinat√°rios:<br/>';
                 if($cnpjs){
                     foreach (array_unique($cnpjs) as $emp) {
                         $ToolTipText .= $emp.'<br/>';
@@ -138,7 +138,7 @@ class MdPetIntRespostaRN extends InfraRN {
                 }
             }
 
-            $ToolTipText .= '<br />Clique para Peticionar Resposta a IntimaÁ„o.';
+            $ToolTipText .= '<br />Clique para Peticionar Resposta a Intima√ß√£o.';
 
             $conteudoHtml  = '<a onclick="'.$js.'"';
             $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitulo.'\')"';
@@ -186,10 +186,10 @@ class MdPetIntRespostaRN extends InfraRN {
             $js = "infraAbrirJanelaModal('" . $strLink . "', 700, 250);";
 
             $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta_negada.svg?'.Icone::VERSAO.'" style="width: 24px">';
-            $ToolTipTitle = 'Responder IntimaÁ„o EletrÙnica';
+            $ToolTipTitle = 'Responder Intima√ß√£o Eletr√¥nica';
             $ToolTipText .= 'Documento Principal: ';
 
-            //obter informacoes do doc principal da intimaÁ„o
+            //obter informacoes do doc principal da intima√ß√£o
             $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
             $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
             $objMdPetIntDocumentoDTO->retTodos();
@@ -202,10 +202,10 @@ class MdPetIntRespostaRN extends InfraRN {
             $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
             $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
 
-            $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' (SEI n∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+            $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' (SEI n¬∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
             if ($cnpjs || $cpfs) {
-                $ToolTipText .= '<br/><br/>Destinat·rios:<br/>';
+                $ToolTipText .= '<br/><br/>Destinat√°rios:<br/>';
                 if ($cnpjs) {
                     foreach ($cnpjs as $emp) {
                         $ToolTipText .= $emp . '<br/>';
@@ -218,7 +218,7 @@ class MdPetIntRespostaRN extends InfraRN {
                 }
             }
 
-            $ToolTipText .= "<br />VocÍ n„o possui mais permiss„o para responder a IntimaÁ„o EletrÙnica. Verifique seus Poderes de RepresentaÁ„o.";
+            $ToolTipText .= "<br />Voc√™ n√£o possui mais permiss√£o para responder a Intima√ß√£o Eletr√¥nica. Verifique seus Poderes de Representa√ß√£o.";
 
             $conteudoHtml = '<a onclick="' . $js . '"';
             $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitle . '\')"';

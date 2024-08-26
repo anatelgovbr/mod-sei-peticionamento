@@ -155,7 +155,7 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 		}
 		
 	if($erro){
-		$objInfraException->adicionarValidacao('Limite em Mb superior ao limite global do SEI indicado em Infra > Parâmetros. Informar valor menor.');
+		$objInfraException->adicionarValidacao('Limite em Mb superior ao limite global do SEI indicado em Infra > ParÃ¢metros. Informar valor menor.');
 	}		
 		
 	}
@@ -213,7 +213,7 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 		
 		// VERIFICA SE O CAMPO FOI PREENCHIDO
 		if (InfraString::isBolVazia (trim($campo))) {
-			$msg1 = $nomeCampo. ' não informado.';
+			$msg1 = $nomeCampo. ' nÃ£o informado.';
 			$objInfraException->adicionarValidacao($msg1);
 			$valido = false;
 		}

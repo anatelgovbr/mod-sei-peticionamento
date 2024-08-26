@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/03/2017 - criado por pedro.cast
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -21,13 +21,13 @@ class MdPetIntProtDisponivelRN extends InfraRN {
 
     private function validarNumIdMdPetIntimacao(MdPetIntProtDisponivelDTO $objMdPetIntDocDisponivelDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntDocDisponivelDTO->getNumIdMdPetIntimacao())){
-            $objInfraException->adicionarValidacao('IntimaÁ„o n„o informada.');
+            $objInfraException->adicionarValidacao('Intima√ß√£o n√£o informada.');
         }
     }
 
     private function validarDblIdProtocolo(MdPetIntProtDisponivelDTO $objMdPetIntDocDisponivelDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntDocDisponivelDTO->getDblIdProtocolo())){
-            $objInfraException->adicionarValidacao('Documento n„o informado.');
+            $objInfraException->adicionarValidacao('Documento n√£o informado.');
         }
     }
 
@@ -149,7 +149,7 @@ class MdPetIntProtDisponivelRN extends InfraRN {
             return $ret;
 
         }catch(Exception $e){
-            throw new InfraException('Erro listando Documentos DisponÌveis.',$e);
+            throw new InfraException('Erro listando Documentos Dispon√≠veis.',$e);
         }
     }
 
@@ -171,7 +171,7 @@ class MdPetIntProtDisponivelRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro contando Documentos DisponÌveis.',$e);
+            throw new InfraException('Erro contando Documentos Dispon√≠veis.',$e);
         }
     }
 

@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
-* 25/01/2018 - criado por Usuário
+* 25/01/2018 - criado por UsuÃ¡rio
 *
-* Versão do Gerador de Código: 1.41.0
+* VersÃ£o do Gerador de CÃ³digo: 1.41.0
 */
 
 require_once dirname(__FILE__).'/../../../SEI.php';

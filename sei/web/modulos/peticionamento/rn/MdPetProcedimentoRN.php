@@ -172,41 +172,41 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
      }
   }
   
-  //M»TODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
+  //M√àTODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
   private function validarNumIdTipoProcedimentoRN0204(ProcedimentoDTO $objProcedimentoDTO, InfraException $objInfraException){
   	if (InfraString::isBolVazia($objProcedimentoDTO->getNumIdTipoProcedimento())){
-  		$objInfraException->adicionarValidacao('Tipo do Processo n„o informado.');
+  		$objInfraException->adicionarValidacao('Tipo do Processo n√£o informado.');
   	}
   }
   
-  //M»TODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
+  //M√àTODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
   private function validarStrSinGerarPendenciaRN0901(ProcedimentoDTO $objProcedimentoDTO, InfraException $objInfraException){
   	if (InfraString::isBolVazia($objProcedimentoDTO->getStrSinGerarPendencia())){
-  		$objInfraException->adicionarValidacao('Sinalizador de geraÁ„o de andamento autom·tico n„o informado.');
+  		$objInfraException->adicionarValidacao('Sinalizador de gera√ß√£o de andamento autom√°tico n√£o informado.');
   	}else{
   		if (!InfraUtil::isBolSinalizadorValido($objProcedimentoDTO->getStrSinGerarPendencia())){
-  			$objInfraException->adicionarValidacao('Sinalizador de geraÁ„o de andamento autom·tico inv·lido.');
+  			$objInfraException->adicionarValidacao('Sinalizador de gera√ß√£o de andamento autom√°tico inv√°lido.');
   		}
   	}
   }
   
-  //M»TODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
+  //M√àTODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
   private function validarStrSinCiencia(ProcedimentoDTO $objProcedimentoDTO, InfraException $objInfraException){
   	if (InfraString::isBolVazia($objProcedimentoDTO->getStrSinCiencia())){
-  		$objInfraException->adicionarValidacao('Sinalizador de ciÍncia n„o informado.');
+  		$objInfraException->adicionarValidacao('Sinalizador de ci√™ncia n√£o informado.');
   	}else{
   		if (!InfraUtil::isBolSinalizadorValido($objProcedimentoDTO->getStrSinCiencia())){
-  			$objInfraException->adicionarValidacao('Sinalizador de ciÍncia inv·lido.');
+  			$objInfraException->adicionarValidacao('Sinalizador de ci√™ncia inv√°lido.');
   		}
   	}
   }
   
-  //M»TODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
+  //M√àTODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
   private function validarAnexosRN0751(ProcedimentoDTO $objProcedimentoDTO, InfraException $objInfraException){
   
   }
   
-  //M»TODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
+  //M√àTODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
   private function validarNivelAcesso(ProcedimentoDTO $objProcedimentoDTO, InfraException $objInfraException){
   	 
   	$objMdPetProtocoloRN = new MdPetProtocoloRN();
@@ -218,11 +218,11 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
   
   	$objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
   	if ($objNivelAcessoPermitidoRN->contar($objNivelAcessoPermitidoDTO)==0){
-  		$objInfraException->adicionarValidacao('NÌvel de acesso n„o permitido para o tipo de procedimento.');
+  		$objInfraException->adicionarValidacao('N√≠vel de acesso n√£o permitido para o tipo de procedimento.');
   	}
   }
   
-  //M»TODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
+  //M√àTODOS SOBRESCRITOS PORQUE NO PAI ESTAVA COMO PRIVATE E NAO PERMITIA CHAMAR
   private function validarProcessoIndividual(ProcedimentoDTO $parObjProcedimentoDTO, InfraException $objInfraException){
   
   	$objTipoProcedimentoDTO = new TipoProcedimentoDTO();
@@ -258,7 +258,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
   		}
   
   		if ($numInteressadosUsuario==0){
-  			$objInfraException->adicionarValidacao('Interessado n„o informado.');
+  			$objInfraException->adicionarValidacao('Interessado n√£o informado.');
   		}else if ($numInteressadosUsuario > 1){
   			$objInfraException->adicionarValidacao('Mais de um Interessado informado.');
   		}else{
@@ -278,7 +278,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
   			$arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
   
   			if (count($arrObjUsuarioDTO)==0){
-  				$objInfraException->lancarValidacao('Interessado n„o È um usu·rio.');
+  				$objInfraException->lancarValidacao('Interessado n√£o √© um usu√°rio.');
   			}
   
   			$arrIdPessoaRh = array();
@@ -289,7 +289,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
   			}
   
   			if (count($arrIdPessoaRh)>1){
-  				throw new InfraException('Usu·rio '.$arrObjUsuarioDTO[0]->getStrNome().' n„o contÈm identificador do RH ˙nico.');
+  				throw new InfraException('Usu√°rio '.$arrObjUsuarioDTO[0]->getStrNome().' n√£o cont√©m identificador do RH √∫nico.');
   
   				//Um ou mais ID PESSOA RH nulo
   			}else if (count($arrIdPessoaRh) == 0){
@@ -297,7 +297,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
   				//pega primeiro
   				$arrIdContatos = array($arrObjUsuarioDTO[0]->getNumIdContato());
   
-  				//ID PESSOA RH n„o nulo
+  				//ID PESSOA RH n√£o nulo
   			}else{
   
   				//busca todos os contatos com o mesmo IdPessoaRh
@@ -355,9 +355,9 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
   
   			$numProtocolos = count($arrObjProtocoloDTO);
   			if ($numProtocolos==1){
-  				$objInfraException->adicionarValidacao('J· existe um processo no Ûrg„o "'.$strSiglaOrgaoProtocolo.'" do tipo "'.$objTipoProcedimentoDTO->getStrNome().'" para o interessado "'.$objUsuarioDTO->getStrNome().'" com o n∫ '.$arrObjProtocoloDTO[0]->getStrProtocoloFormatado().'.');
+  				$objInfraException->adicionarValidacao('J√° existe um processo no √≥rg√£o "'.$strSiglaOrgaoProtocolo.'" do tipo "'.$objTipoProcedimentoDTO->getStrNome().'" para o interessado "'.$objUsuarioDTO->getStrNome().'" com o n¬∫ '.$arrObjProtocoloDTO[0]->getStrProtocoloFormatado().'.');
   			}else if ($numProtocolos>1){
-  				$strMsg = 'Existem '.$numProtocolos.' processos no Ûrg„o "'.$strSiglaOrgaoProtocolo.'" do tipo "'.$objTipoProcedimentoDTO->getStrNome().'" para o interessado "'.$objUsuarioDTO->getStrNome().'":\n';
+  				$strMsg = 'Existem '.$numProtocolos.' processos no √≥rg√£o "'.$strSiglaOrgaoProtocolo.'" do tipo "'.$objTipoProcedimentoDTO->getStrNome().'" para o interessado "'.$objUsuarioDTO->getStrNome().'":\n';
   				foreach($arrObjProtocoloDTO as $objProtocoloDTO){
   					$strMsg .= $objProtocoloDTO->getStrProtocoloFormatado().'\n';
   				}
@@ -368,7 +368,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
   }
   
   //alteracoes seiv3
-  //metodo foi removido, esta È uma versao migrada do seiv2
+  //metodo foi removido, esta √© uma versao migrada do seiv2
   //inicio
   protected function lancarAcessoControleInternoControlado(ProcedimentoDTO $objProcedimentoDTO){
     try{
@@ -418,7 +418,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
         }
       }
     }catch(Exception $e){
-      throw new InfraException('Erro lanÁando acesso para o Controle Interno.',$e);
+      throw new InfraException('Erro lan√ßando acesso para o Controle Interno.',$e);
     }
   }
   //fim
@@ -440,7 +440,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                 $numIdUsuarioAcesso  = $arrAtividadeDTO[0]->getNumIdUsuario();
                 $numIdUnidadeAcesso  = $arrAtividadeDTO[0]->getNumIdUnidade();
 
-                // Verificar se a credencial j· existe
+                // Verificar se a credencial j√° existe
                 $arrObjAtividadeDTO = $this->listarCredenciais( array($objProcedimentoDTO->getDblIdProcedimento(), null, $numIdUnidadeAcesso, $numIdUsuarioCredencial, TarefaRN::getArrTarefasConcessaoCredencial(false)) );
 
                 if (count($arrObjAtividadeDTO)>0){
@@ -462,13 +462,13 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                     }
                 }
 
-                // Usu·rio antes de tratamento de SIGILOSO
+                // Usu√°rio antes de tratamento de SIGILOSO
                 if ( is_numeric(SessaoSEI::getInstance()->getNumIdUsuario()) && is_numeric(SessaoSEI::getInstance()->getNumIdUnidadeAtual()) ){
                     $numIdUsuarioAntesSigiloso = SessaoSEI::getInstance()->getNumIdUsuario();
                     $numIdUnidadeAtualAntesSigiloso = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
                 }
 
-                //Simulando para usu·rio que tem credencial
+                //Simulando para usu√°rio que tem credencial
                 SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAcesso, $numIdUnidadeAcesso);
 
                 $objAtividadeRN = new AtividadeRN();
@@ -479,14 +479,14 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                 $arrObjProcedimentoDTO = $objAtividadeRN->listarPendenciasRN0754($objPesquisaPendenciaDTO);
 
                 if (count($arrObjProcedimentoDTO)==0){
-                    // Usu·rio antes de tratamento de SIGILOSO - RETORNANDO
+                    // Usu√°rio antes de tratamento de SIGILOSO - RETORNANDO
                     if ( is_numeric($numIdUsuarioAntesSigiloso) && is_numeric($numIdUnidadeAtualAntesSigiloso) ){
                         SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAntesSigiloso, $numIdUnidadeAtualAntesSigiloso);
                     }else{
-                        // destruir sess„o
+                        // destruir sess√£o
                     }
 
-                    throw new InfraException('concederCredencial - Processo n„o encontrado.');
+                    throw new InfraException('concederCredencial - Processo n√£o encontrado.');
                 }
 
                 $arrAtividadesOrigem = InfraArray::converterArrInfraDTO($arrObjProcedimentoDTO[0]->getArrObjAtividadeDTO(),'IdAtividade');
@@ -498,15 +498,15 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
 
                 $objConcederCredencialDTO->setArrAtividadesOrigem(InfraArray::gerarArrInfraDTO('AtividadeDTO','IdAtividade',$arrAtividadesOrigem));
 
-                // atribuindo credencial provisÛria
+                // atribuindo credencial provis√≥ria
                 $objAtividadeRN = new AtividadeRN();
                 $objConcederCredencial = $objAtividadeRN->concederCredencial($objConcederCredencialDTO);
 
-                // Usu·rio antes de tratamento de SIGILOSO - RETORNANDO
+                // Usu√°rio antes de tratamento de SIGILOSO - RETORNANDO
                 if ( is_numeric($numIdUsuarioAntesSigiloso) && is_numeric($numIdUnidadeAtualAntesSigiloso) ){
                     SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAntesSigiloso, $numIdUnidadeAtualAntesSigiloso);
                 }else{
-                    // destruir sess„o
+                    // destruir sess√£o
                 }
 
                 $retorno = array();
@@ -551,7 +551,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                 $numIdUnidadeAcesso  = $arrObjAtividadeDTO[0]->getNumIdUnidade();
             }
 
-            // Usu·rio antes de tratamento de SIGILOSO
+            // Usu√°rio antes de tratamento de SIGILOSO
             if ( is_numeric(SessaoSEI::getInstance()->getNumIdUsuario()) && is_numeric(SessaoSEI::getInstance()->getNumIdUnidadeAtual()) ){
                 $numIdUsuarioAntesSigiloso = SessaoSEI::getInstance()->getNumIdUsuario();
                 $numIdUnidadeAtualAntesSigiloso = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
@@ -568,7 +568,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
             $objAtividadeRN = new AtividadeRN();
             $arrObjAtividadeConcessaoDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
 
-            //cassando credencial usu·rio externo
+            //cassando credencial usu√°rio externo
             $objAtividadeRN = new AtividadeRN();
             $objAtividadeRN->cassarCredenciais($arrObjAtividadeDTO);
 //            $objAtividadeRN->anularCredenciaisProcesso($ret);
@@ -583,11 +583,11 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                 }
             }
 
-            // Usu·rio antes de tratamento de SIGILOSO - RETORNANDO
+            // Usu√°rio antes de tratamento de SIGILOSO - RETORNANDO
             if ($numIdUnidadeAtualAntesSigiloso!='' && $numIdUsuarioAntesSigiloso!=''){
                 SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAntesSigiloso, $numIdUnidadeAtualAntesSigiloso);
             //}else{
-				// destruir sess„o
+				// destruir sess√£o
             }
 
             $retorno = array();
@@ -624,7 +624,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
       $objProtocoloRN = new ProtocoloRN();
       $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 
-      //N„o verifica se usu·rio tem credencial de acesso
+      //N√£o verifica se usu√°rio tem credencial de acesso
 
       $objAtividadeDTO = new AtividadeDTO();
       $objAtividadeDTO->retNumIdAtividade();
@@ -693,7 +693,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
         if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
             || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
 
-            //concess„o
+            //concess√£o
             $objAtividadeRN = new AtividadeRN();
             $objAtividadeDTOLiberacao = new AtividadeDTO();
             $objAtividadeDTOLiberacao->retTodos();
@@ -729,7 +729,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                 $objAtividadeRN->excluirRN0034( $arrDTOAtividades );
             }
 
-            //conclus„o autom·tica
+            //conclus√£o autom√°tica
             $objAtividadeRN = new AtividadeRN();
             $objAtividadeDTOLiberacao = new AtividadeDTO();
             $objAtividadeDTOLiberacao->retTodos();
@@ -757,7 +757,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                 }
             }
 
-            //cassac„o
+            //cassac√£o
             $objAtividadeRN = new AtividadeRN();
             $objAtividadeDTOLiberacao = new AtividadeDTO();
             $objAtividadeDTOLiberacao->retTodos();
@@ -788,7 +788,7 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
             $arrAtividadeDTO = $objMdPetIntimacaoRN->verificarUnidadeAberta( array($objProcedimentoDTO) );
             if (count($arrAtividadeDTO)==0){
-                    // Usu·rio antes de tratamento de SIGILOSO
+                    // Usu√°rio antes de tratamento de SIGILOSO
                     if ( is_numeric(SessaoSEI::getInstance()->getNumIdUsuario()) && is_numeric(SessaoSEI::getInstance()->getNumIdUnidadeAtual()) ){
                         $numIdUsuarioAntesSigiloso = SessaoSEI::getInstance()->getNumIdUsuario();
                         $numIdUnidadeAtualAntesSigiloso = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
@@ -801,11 +801,11 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
                     $objReabrirProcessoDTO->setNumIdUsuario( $objConcederCredencial->getNumIdUsuarioOrigem() );
                     $this->reabrirRN0966Controlado($objReabrirProcessoDTO);
 
-                    // Usu·rio antes de tratamento de SIGILOSO - RETORNANDO
+                    // Usu√°rio antes de tratamento de SIGILOSO - RETORNANDO
                     if ($numIdUnidadeAtualAntesSigiloso!='' && $numIdUsuarioAntesSigiloso!=''){
                         SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAntesSigiloso, $numIdUnidadeAtualAntesSigiloso);
                     //}else{
-                    // destruir sess„o
+                    // destruir sess√£o
                     }
                     
                 //}

@@ -10,7 +10,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
 
-    //mÈtodo utilizado para gerar recibo ao final do cadastramento de um processo de peticionamento de usuario externo
+    //m√©todo utilizado para gerar recibo ao final do cadastramento de um processo de peticionamento de usuario externo
     protected function montarReciboControlado($arrParams) {
 
         $reciboDTO = $arrParams[4];
@@ -56,7 +56,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         $objSeiRN = new SeiRN();
         $saidaDocExternoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
 
-        //necessario forÁar update da coluna sta_documento da tabela documento
+        //necessario for√ßar update da coluna sta_documento da tabela documento
         //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
         $parObjDocumentoDTO = new DocumentoDTO();
         $parObjDocumentoDTO->retTodos();
@@ -99,16 +99,16 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         
         if ($arrParametros['sin_pessoa_juridica'] == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA) {
             $html .= '<tr>';
-            $html .= '<td style="font-weight: bold; width: 400px;">Pessoa JurÌdica:</td>';
+            $html .= '<td style="font-weight: bold; width: 400px;">Pessoa Jur√≠dica:</td>';
             $html .= '<td>' . $arrParametros['nome_contato'] . '</td>';
             $html .= '</tr>';
             $html .= '<tr>';
-            $html .= '<td style="font-weight: bold; width: 400px;">Usu·rio Externo (Representante):</td>';
+            $html .= '<td style="font-weight: bold; width: 400px;">Usu√°rio Externo (Representante):</td>';
             $html .= '<td>' . $arrParametros['nome_usuario'] . '</td>';
             $html .= '</tr>';
         } else {
             $html .= '<tr>';
-            $html .= '<td style="font-weight: bold; width: 400px;">Usu·rio Externo (signat·rio):</td>';
+            $html .= '<td style="font-weight: bold; width: 400px;">Usu√°rio Externo (signat√°rio):</td>';
             $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
             $html .= '</tr>';
         }
@@ -118,7 +118,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         //$html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Data e Hor·rio:</td>';
+        $html .= '<td style="font-weight: bold;">Data e Hor√°rio:</td>';
         $html .= '<td>' . $reciboDTO->getDthDataHoraRecebimentoFinal() . '</td>';
         $html .= '</tr>';
 
@@ -128,7 +128,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">N˙mero do Processo:</td>';
+        $html .= '<td style="font-weight: bold;">N√∫mero do Processo:</td>';
         $html .= '<td>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . '</td>';
         $html .= '</tr>';
 
@@ -158,7 +158,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         //se for recibo de resposta adicionar campos especificos
         if (isset($arrParametros['isRespostaIntimacao'])) {
 
-            //obter tipo da intimÁ„o
+            //obter tipo da intim√ß√£o
             $id_intimacao = $arrParametros['id_intimacao'];
             $dtoIntimacao = new MdPetIntimacaoDTO();
             $rnIntimacao = new MdPetIntimacaoRN();
@@ -167,7 +167,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
             $dtoIntimacao->setNumIdMdPetIntimacao($id_intimacao);
             $dtoIntimacao = $rnIntimacao->consultar($dtoIntimacao);
 
-            //obter documento principal da intimaÁ„o
+            //obter documento principal da intima√ß√£o
             $rnDocIntimacao = new MdPetIntProtocoloRN();
             $dtoDocIntimacao = new MdPetIntProtocoloDTO();
             $dtoDocIntimacao->setStrSinPrincipal('S');
@@ -196,12 +196,12 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
             $dtoTipoResposta = $rnTipoResposta->consultar($dtoTipoResposta);
 
             $html .= '<tr>';
-            $html .= '<td style="font-weight: bold;">Tipo de IntimaÁ„o:</td>';
+            $html .= '<td style="font-weight: bold;">Tipo de Intima√ß√£o:</td>';
             $html .= '<td> ' . $dtoIntimacao->getStrNomeTipoIntimacao() . ' </td>';
             $html .= '</tr>';
 
             $html .= '<tr>';
-            $html .= '<td style="font-weight: bold;">Documento Principal da IntimaÁ„o:</td>';
+            $html .= '<td style="font-weight: bold;">Documento Principal da Intima√ß√£o:</td>';
             $html .= '<td> ' . $texto_doc . ' </td>';
             $html .= '</tr>';
 
@@ -229,7 +229,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
             $objContatoDTO = new ContatoDTO();
             $objContatoDTO->setNumIdContato($objParticipanteDTO->getNumIdContato());
             $objContatoDTO->retStrNome();
-            $objContatoDTO->setBolExclusaoLogica(false); //È possivel e permitido usar aqui contato desativado!!!
+            $objContatoDTO->setBolExclusaoLogica(false); //√© possivel e permitido usar aqui contato desativado!!!
             $arrInteressados[] = $objContatoRN->consultarRN0324($objContatoDTO);
         }
 
@@ -247,7 +247,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         }
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Protocolos dos Documentos (N˙mero SEI):</td>';
+        $html .= '<td style="font-weight: bold;">Protocolos dos Documentos (N√∫mero SEI):</td>';
         $html .= '<td></td>';
         $html .= '</tr>';
 
@@ -272,7 +272,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         $objOrgaoDTO->setStrSinAtivo('S');
         $objOrgaoDTO = $orgaoRN->consultarRN1352($objOrgaoDTO);
 
-        $html .= '<p>O Usu·rio Externo acima identificado foi previamente avisado que o peticionamento importa na aceitaÁ„o dos termos e condiÁıes que regem o processo eletrÙnico, alÈm do disposto no credenciamento prÈvio, e na assinatura dos documentos nato-digitais e declaraÁ„o de que s„o autÍnticos os digitalizados, sendo respons·vel civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os nÌveis de acesso indicados para os documentos estariam condicionados ‡ an·lise por servidor p˙blico, que poder· alter·-los a qualquer momento sem necessidade de prÈvio aviso, e de que s„o de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservaÁ„o dos originais em papel de documentos digitalizados atÈ que decaia o direito de revis„o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferÍncia;</li><li>a realizaÁ„o por meio eletrÙnico de todos os atos e comunicaÁıes processuais com o prÛprio Usu·rio Externo ou, por seu intermÈdio, com a entidade porventura representada;</li><li>a observ‚ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados atÈ as 23h59min59s do ˙ltimo dia do prazo, considerado sempre o hor·rio oficial de BrasÌlia, independente do fuso hor·rio em que se encontre;</li><li>a consulta periÛdica ao SEI, a fim de verificar o recebimento de intimaÁıes eletrÙnicas.</li></ul><p>A existÍncia deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
+        $html .= '<p>O Usu√°rio Externo acima identificado foi previamente avisado que o peticionamento importa na aceita√ß√£o dos termos e condi√ß√µes que regem o processo eletr√¥nico, al√©m do disposto no credenciamento pr√©vio, e na assinatura dos documentos nato-digitais e declara√ß√£o de que s√£o aut√™nticos os digitalizados, sendo respons√°vel civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os n√≠veis de acesso indicados para os documentos estariam condicionados √† an√°lise por servidor p√∫blico, que poder√° alter√°-los a qualquer momento sem necessidade de pr√©vio aviso, e de que s√£o de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conserva√ß√£o dos originais em papel de documentos digitalizados at√© que decaia o direito de revis√£o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de confer√™ncia;</li><li>a realiza√ß√£o por meio eletr√¥nico de todos os atos e comunica√ß√µes processuais com o pr√≥prio Usu√°rio Externo ou, por seu interm√©dio, com a entidade porventura representada;</li><li>a observ√¢ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados at√© as 23h59min59s do √∫ltimo dia do prazo, considerado sempre o hor√°rio oficial de Bras√≠lia, independente do fuso hor√°rio em que se encontre;</li><li>a consulta peri√≥dica ao SEI, a fim de verificar o recebimento de intima√ß√µes eletr√¥nicas.</li></ul><p>A exist√™ncia deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
 
         return $html;
     }

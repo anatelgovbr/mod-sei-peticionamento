@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 02/04/2018 - criado por jose vieira
 *
-* Versão do Gerador de Código: 1.41.0
+* VersÃ£o do Gerador de CÃ³digo: 1.41.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -23,7 +23,7 @@ class MdPetVincDocumentoRN extends InfraRN {
   public static $TP_PROTOCOLO_DILIGENCIA_SUSPENSAO = 'D';
   public static $TP_PROTOCOLO_DILIGENCIA_RESTABELECIMENTO = 'I';
 
-  //Representação tipo de disvinculo
+  //RepresentaÃ§Ã£o tipo de disvinculo
   public static $TP_ATO_REVOGACAO = 'V';
   public static $TP_ATO_RENUNCIA  = 'R';
 
@@ -37,19 +37,19 @@ class MdPetVincDocumentoRN extends InfraRN {
 
   private function validarNumIdMdPetVincDocumento(MdPetVincDocumentoDTO $objMdPetVincDocumentoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVincDocumentoDTO->getNumIdMdPetVincDocumento())){
-      $objInfraException->adicionarValidacao('IdMdPetVincDocumento não informad.');
+      $objInfraException->adicionarValidacao('IdMdPetVincDocumento nÃ£o informad.');
     }
   }
 
   private function validarDblIdDocumento(MdPetVincDocumentoDTO $objMdPetVincDocumentoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVincDocumentoDTO->getDblIdDocumento())){
-      $objInfraException->adicionarValidacao('IdDocumento não informad.');
+      $objInfraException->adicionarValidacao('IdDocumento nÃ£o informad.');
     }
   }
 
   private function validarStrTipoDocumento(MdPetVincDocumentoDTO $objMdPetVincDocumentoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVincDocumentoDTO->getStrTipoDocumento())){
-      $objInfraException->adicionarValidacao('TipoDocumento não informad.');
+      $objInfraException->adicionarValidacao('TipoDocumento nÃ£o informad.');
     }else{
       $objMdPetVincDocumentoDTO->setStrTipoDocumento(trim($objMdPetVincDocumentoDTO->getStrTipoDocumento()));
 
@@ -82,7 +82,7 @@ class MdPetVincDocumentoRN extends InfraRN {
       return $ret;
 
     }catch(Exception $e){
-      throw new InfraException('Erro cadastrando Documento do Vínculo.',$e);
+      throw new InfraException('Erro cadastrando Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -113,7 +113,7 @@ class MdPetVincDocumentoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro alterando Documento do Vínculo.',$e);
+      throw new InfraException('Erro alterando Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -136,7 +136,7 @@ class MdPetVincDocumentoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro excluindo Documento do Vínculo.',$e);
+      throw new InfraException('Erro excluindo Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -158,7 +158,7 @@ class MdPetVincDocumentoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro consultando Documento do Vínculo.',$e);
+      throw new InfraException('Erro consultando Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -180,7 +180,7 @@ class MdPetVincDocumentoRN extends InfraRN {
       return $ret;
 
     }catch(Exception $e){
-      throw new InfraException('Erro listando Documento do Vínculo.',$e);
+      throw new InfraException('Erro listando Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -202,7 +202,7 @@ class MdPetVincDocumentoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro contando Documento do Vínculo.',$e);
+      throw new InfraException('Erro contando Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -244,7 +244,7 @@ class MdPetVincDocumentoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro desativando Documento do Vínculo.',$e);
+      throw new InfraException('Erro desativando Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -267,7 +267,7 @@ class MdPetVincDocumentoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro reativando Documento do Vínculo.',$e);
+      throw new InfraException('Erro reativando Documento do VÃ­nculo.',$e);
     }
   }
 
@@ -289,7 +289,7 @@ class MdPetVincDocumentoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro bloqueando Documento do Vínculo.',$e);
+      throw new InfraException('Erro bloqueando Documento do VÃ­nculo.',$e);
     }
   }
 

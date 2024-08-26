@@ -10,14 +10,14 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdPetVinUsuExtProcRN extends InfraRN
 {
-//    public static $TIPO_PETICIONAMENTO_RECIBO_VINC_PJ = 'VinculaÁ„o ‡ Pessoa JurÌdica';
-    public static $TIPO_PETICIONAMENTO_RECIBO_PROCURACAOE_VINC_PJ = 'ProcuraÁ„o EletrÙnica - Emiss„o';
-    public static $TIPO_PETICIONAMENTO_RECIBO_PROCURACAOE_VINC_PF = 'ProcuraÁ„o EletrÙnica';
-    public static $TIPO_PETICIONAMENTO_RECIBO_RENUNCIA_VINC_PJ = 'ProcuraÁ„o EletrÙnica - Ren˙ncia';
-    public static $TIPO_PETICIONAMENTO_RECIBO_REVOGACAO_VINC_PJ = 'ProcuraÁ„o EletrÙnica - RevogaÁ„o';
-//    public static $TIPO_PETICIONAMENTO_PROC_VINC_PJ = 'ProcuraÁ„o Especial da VinculaÁ„o ‡ Pessoa JurÌdica';
-    public static $TIPO_PETICIONAMENTO_REN_VINC_PJ = 'de ProcuraÁ„o Especial - Ren˙ncia';
-    public static $TIPO_PETICIONAMENTO_REV_VINC_PJ = 'de ProcuraÁ„o Especial - RevogaÁ„o';
+//    public static $TIPO_PETICIONAMENTO_RECIBO_VINC_PJ = 'Vincula√ß√£o √† Pessoa Jur√≠dica';
+    public static $TIPO_PETICIONAMENTO_RECIBO_PROCURACAOE_VINC_PJ = 'Procura√ß√£o Eletr√¥nica - Emiss√£o';
+    public static $TIPO_PETICIONAMENTO_RECIBO_PROCURACAOE_VINC_PF = 'Procura√ß√£o Eletr√¥nica';
+    public static $TIPO_PETICIONAMENTO_RECIBO_RENUNCIA_VINC_PJ = 'Procura√ß√£o Eletr√¥nica - Ren√∫ncia';
+    public static $TIPO_PETICIONAMENTO_RECIBO_REVOGACAO_VINC_PJ = 'Procura√ß√£o Eletr√¥nica - Revoga√ß√£o';
+//    public static $TIPO_PETICIONAMENTO_PROC_VINC_PJ = 'Procura√ß√£o Especial da Vincula√ß√£o √† Pessoa Jur√≠dica';
+    public static $TIPO_PETICIONAMENTO_REN_VINC_PJ = 'de Procura√ß√£o Especial - Ren√∫ncia';
+    public static $TIPO_PETICIONAMENTO_REV_VINC_PJ = 'de Procura√ß√£o Especial - Revoga√ß√£o';
 
     public function __construct()
     {
@@ -82,10 +82,10 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $arrObjMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
             if (is_null($arrObjMdPetVincTpProcesso)) {
-                throw new InfraException('VinculaÁ„o n„o configurada');
+                throw new InfraException('Vincula√ß√£o n√£o configurada');
             }
 
-            //Recuperando Vinculo j· existente
+            //Recuperando Vinculo j√° existente
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
             if ($dados['hdnOutorgante'] == "PJ" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
@@ -125,7 +125,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
 
             if ($objTipoProcedimentoDTO == null) {
-		        throw new InfraException('Tipo de processo n„o encontrado.');
+		        throw new InfraException('Tipo de processo n√£o encontrado.');
 	        }
 
             //obter unidade configurada no "Tipo de Processo para peticionamento"
@@ -136,7 +136,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
             if (is_null($unidadeDTO)) {
-                throw new InfraException('Tipo de unidade n„o encontrada.');
+                throw new InfraException('Tipo de unidade n√£o encontrada.');
             }
 
             if (isset($_POST['hdnTbUsuarioProcuracao']) && $_POST['hdnTbUsuarioProcuracao'] != "") {
@@ -189,12 +189,12 @@ class MdPetVinUsuExtProcRN extends InfraRN
             if (count($mdPetVinculacao) == 0) {
 
                 //Criando Processo Novo Caso seja o primeiro acesso
-                //Recuperando ConfiguraÁ„o Estabelecida de Pessoa JurÌdica
+                //Recuperando Configura√ß√£o Estabelecida de Pessoa Jur√≠dica
 
                 $arrObjMdPetVincTpProcesso  = $this->getConfiguracaoVinculo();
                 $objTipoProcedimentoDTO     = $this->_getTipoProcesso($arrObjMdPetVincTpProcesso);
                 $objUnidadeDTO              = $this->_getUnidade($arrObjMdPetVincTpProcesso); // Obtendo a unidade de abertura do processo
-                $idProc                     = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados, $arrObjMdPetVincTpProcesso); // CriaÁ„o do Processo
+                $idProc                     = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados, $arrObjMdPetVincTpProcesso); // Cria√ß√£o do Processo
                 $id_vinc                    = $this->_adicionarVinculoPF($dados, $idProc);
 
             } else {
@@ -207,7 +207,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 //obtendo a unidade de abertura do processo
                 $objUnidadeDTO = $this->_getUnidade($arrObjMdPetVincTpProcesso);
                 //Unidade Atual do Processo Diferente do Parametrizado
-                //Busca Unidade do Processo j· Existente
+                //Busca Unidade do Processo j√° Existente
 
                 $objProtocoloDTO = new ProtocoloDTO();
                 $objProtocoloDTO->setDblIdProtocolo($idProc);
@@ -218,11 +218,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
                 if (!empty($objUnidadeGeradora) && ($objUnidadeDTO->getNumIdUnidade() != $objUnidadeGeradora->getNumIdUnidadeGeradora())) {
 
-                	//Realiza TramitaÁ„o
+                	//Realiza Tramita√ß√£o
                     $arrObjAtributoAndamentoDTO = array();
                     $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                     $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-                    $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' • ' . $objUnidadeDTO->getStrDescricao());
+                    $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' ¬• ' . $objUnidadeDTO->getStrDescricao());
                     $objAtributoAndamentoDTO->setStrIdOrigem($objUnidadeGeradora->getNumIdUnidadeGeradora());
                     $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -253,7 +253,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
 
-            //Caso a Pessoa Seja Juridica da Tela de ProcuraÁ„o Especial
+            //Caso a Pessoa Seja Juridica da Tela de Procura√ß√£o Especial
             if ($dados['selTipoProcuracao'] == "E") {
                 $objMdPetVinculoDTO->setNumIdContato($dados['selPessoaJuridica']);
             }
@@ -306,7 +306,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $contatoPj = $contatoRN->consultarRN0324($contatoDTO);
                 $dadosRetornoProcuracao['contatoPj'] = $contatoPj;
 
-                // consultar dados Respons·vel Legal
+                // consultar dados Respons√°vel Legal
                 $contatoDTO = new ContatoDTO();
                 $contatoDTO->retDblCpf();
                 $contatoDTO->retStrNome();
@@ -320,7 +320,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $numRegistro = count($arrIdContato);
 
-            //Caso seja ProcuraÁ„o Especial
+            //Caso seja Procura√ß√£o Especial
             if ($dados['selTipoProcuracao'] == "E") {
 
                 for ($i = 0; $i < $numRegistro; $i++) {
@@ -359,7 +359,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             }
 
-            //RECUPERA ID_MD_PET_REPRESENTANT DO VINCULO PRINCIPAL CASO TENHA MAIS DE UMA PROCURA«√O
+            //RECUPERA ID_MD_PET_REPRESENTANT DO VINCULO PRINCIPAL CASO TENHA MAIS DE UMA PROCURA√á√ÉO
 
 	        $idMdPetVinculoRepresent = $dadosRetornoProcuracao['Procuracao'][0]['IdMdPetVinculoRepresent'];
 
@@ -395,9 +395,9 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 }
 
             }
-            //Caso seja Simples a ProcuraÁ„o, inserir dinamicamente os Processos
+            //Caso seja Simples a Procura√ß√£o, inserir dinamicamente os Processos
             if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                //Caso os Dados Venha da tela de ProcuraÁ„o Simples
+                //Caso os Dados Venha da tela de Procura√ß√£o Simples
                 if (isset($_POST['hdnTbProcessos']) && $_POST['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $_POST['hdnTbProcessos'] != "") {
                     $dadosProcesso = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbProcessos']);
                     foreach ($dadosProcesso as $key => $idProtocolo) {
@@ -411,8 +411,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     }
                 }
             }
-            //Peticionamento EletrÙnico - Alerta ‡s Unidades
-            //Peticionamento EletrÙnico - ConfirmaÁ„o ao Usu·rio Externo
+            //Peticionamento Eletr√¥nico - Alerta √†s Unidades
+            //Peticionamento Eletr√¥nico - Confirma√ß√£o ao Usu√°rio Externo
             if (!isset($params['tela'])) {
 
                 if ($dados['hdnOutorgante'] == "PF") {
@@ -504,7 +504,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     if (!is_null($objRelProtocoloProtocoloDTO)) {
                         $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
                     }
-                    // 2) ⁄ltima aberta
+                    // 2) √öltima aberta
                 } else if (count($arrUnidadeProcesso) == 0) {
                     $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
                 }
@@ -575,7 +575,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $arrObjAtributoAndamentoDTO = array();
                 $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                 $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-                $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' • ' . $objUnidadeDTO->getStrDescricao());
+                $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' ¬• ' . $objUnidadeDTO->getStrDescricao());
                 $objAtributoAndamentoDTO->setStrIdOrigem($objUnidadeDTO->getNumIdUnidade());
                 $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -591,7 +591,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
                 $mdPetVinculoUsuExtRN->enviarEmail($arrParams);
 
-                //Disponibilazando Acesso Externo ao Respons·vel Legal
+                //Disponibilazando Acesso Externo ao Respons√°vel Legal
                 $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
                 $objMdPetAcessoExternoRN->gerarAcessoExternoVinculo(array($idVinculo, $idProcedimento));
 
@@ -641,7 +641,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $arrObjMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
         if (is_null($arrObjMdPetVincTpProcesso)) {
-            throw new InfraException('VinculaÁ„o n„o configurada');
+            throw new InfraException('Vincula√ß√£o n√£o configurada');
         }
 
         return $arrObjMdPetVincTpProcesso;
@@ -661,7 +661,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
 
         if ($objTipoProcedimentoDTO == null) {
-            throw new InfraException('Tipo de processo n„o encontrado.');
+            throw new InfraException('Tipo de processo n√£o encontrado.');
         }
 
 
@@ -721,7 +721,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objProcedimentoAPI = new ProcedimentoAPI();
         $objProcedimentoAPI->setIdTipoProcedimento($idTipoProcesso);
         $objProcedimentoAPI->setIdUnidadeGeradora($objUnidadeDTO->getNumIdUnidade());
-        //ESPECIFICA«√O
+        //ESPECIFICA√á√ÉO
         $arrContatosAPI = [];
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retStrNome();
@@ -739,7 +739,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $nome_cpf = str_replace("@cpf@", InfraUtil::formatarCpf($objContatoRN->getDblCpf()), $nomeModificado);
 
         //trata campo especificacao limite de 100 caracteres
-        //Se o conte˙do for superior a 100 caracteres, deve ser considerado somente o conte˙do atÈ a ˙ltima palavra inteira antes do 100∫ caracter.
+        //Se o conte√∫do for superior a 100 caracteres, deve ser considerado somente o conte√∫do at√© a √∫ltima palavra inteira antes do 100¬∫ caracter.
         $nome_cpf = trim($nome_cpf);
         if (strlen($nome_cpf) > 100) {
             $nome_cpf = substr($nome_cpf, 0, 100);
@@ -777,7 +777,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
         if (is_null($unidadeDTO)) {
-            throw new InfraException('Tipo de unidade n„o encontrada.');
+            throw new InfraException('Tipo de unidade n√£o encontrada.');
         }
 
         return $unidadeDTO;
@@ -795,11 +795,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $arrObjMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
             if (is_null($arrObjMdPetVincTpProcesso)) {
-                throw new InfraException('VinculaÁ„o n„o configurada');
+                throw new InfraException('Vincula√ß√£o n√£o configurada');
             }
 
             //obtendo a unidade de abertura do processo
-            //Recuperando Vinculo j· existente
+            //Recuperando Vinculo j√° existente
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
             if ($dados['tpVinc'] == "J" && $dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
@@ -838,7 +838,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
 
             if ($objTipoProcedimentoDTO == null) {
-                throw new InfraException('Tipo de processo n„o encontrado.');
+                throw new InfraException('Tipo de processo n√£o encontrado.');
             }
 
             //obter unidade configurada no "Tipo de Processo para peticionamento"
@@ -849,7 +849,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
             if (is_null($unidadeDTO)) {
-                throw new InfraException('Tipo de unidade n„o encontrada.');
+                throw new InfraException('Tipo de unidade n√£o encontrada.');
             }
 
             //dados do procurador e Pj
@@ -868,7 +868,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
-            // Dados do Respons·vel legal
+            // Dados do Respons√°vel legal
             $contatoRN = new ContatoRN();
             $contatoDTO = new ContatoDTO();
             $contatoDTO->setNumIdContato($objMdPetVincRepresentantDTO->getNumIdContatoOutorg());
@@ -896,7 +896,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
 
-            //gerar modelo de RevogaÁ„o
+            //gerar modelo de Revoga√ß√£o
             $objMdPetVincRepresentantDTO = $this->_gerarModeloDesvinculoProcuracao($dados, $objProcedimentoDTO, $objMdPetVincRepresentantDTO, $unidadeDTO);
 
             return true;
@@ -908,7 +908,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
     }
 
     /*
-     * gerar modelo de RevogaÁ„o
+     * gerar modelo de Revoga√ß√£o
      */
 
     private function _gerarModeloDesvinculoProcuracao($dados, $objProcedimentoDTO, $objMdPetVincRepresentantDTO, $objUnidadeDTO)
@@ -940,10 +940,10 @@ class MdPetVinUsuExtProcRN extends InfraRN
             }
 
         }
-        //Revogar procuraÁ„o simples
+        //Revogar procura√ß√£o simples
         if ($dados['hdnTpDocumento'] == 'revogar' || $dados['hdnTpDocumento'] == 'renunciar') {
             if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J") {
-                //Caso seja procuraÁ„o simples com outorgante PJ
+                //Caso seja procura√ß√£o simples com outorgante PJ
                 if ($dados['hdnTpDocumento'] == 'revogar') {
                     $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_revogacao_pessoa_juridica.php';
                 } else if ($dados['hdnTpDocumento'] == 'renunciar') {
@@ -976,7 +976,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objMdPetVincRepresentantOutorganteRN = $objMdPetVincRepresentantOutorganteRN->consultar($objMdPetVincRepresentantOutorganteDTO);
 
                 //Recuperando responsave legal
-                //Recuperando Pessoa JurÌdica Outorgante
+                //Recuperando Pessoa Jur√≠dica Outorgante
                 $contatoDTO = new ContatoDTO();
                 $contatoDTO->setNumIdContato($objMdPetVincRepresentantOutorganteRN->getNumIdContatoOutorg());
                 $contatoDTO->retStrNome();
@@ -994,7 +994,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objMdPetVinculoRN = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
 
 
-                //Recuperando Pessoa JurÌdica Outorgante
+                //Recuperando Pessoa Jur√≠dica Outorgante
                 $contatoDTO = new ContatoDTO();
                 $contatoDTO->setNumIdContato($objMdPetVinculoRN->getNumIdContato());
                 $contatoDTO->retStrNome();
@@ -1017,7 +1017,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             }
 
             if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F") {
-                //Caso seja procuraÁ„o simples com outorgante PJ
+                //Caso seja procura√ß√£o simples com outorgante PJ
                 if ($dados['hdnTpDocumento'] == 'revogar') {
                     $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_revogacao_pessoa_fisica.php';
                 } else if ($dados['hdnTpDocumento'] == 'renunciar') {
@@ -1054,7 +1054,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objMdPetVinculoRN = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
 
 
-                //Recuperando Pessoa FÌsica Outorgante
+                //Recuperando Pessoa F√≠sica Outorgante
                 $contatoDTO = new ContatoDTO();
                 $contatoDTO->setNumIdContato($objMdPetVinculoRN->getNumIdContato());
                 $contatoDTO->retStrNome();
@@ -1077,7 +1077,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             }
         }
 
-        //ProcuraÁ„o Dados
+        //Procura√ß√£o Dados
         $docRN = new DocumentoRN();
         $parObjDocumentoDTO = new DocumentoDTO();
         $parObjDocumentoDTO->retStrProtocoloProcedimentoFormatado();
@@ -1102,7 +1102,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $dataAtual .= '  ' . $horaAtual;
 
 
-        //consultar org„o
+        //consultar org√£o
         $idOrgao = SessaoSEIExterna::getInstance()->getNumIdOrgaoUsuarioExterno();
         $orgaoDTO = new  OrgaoDTO();
         $orgaoRN = new  OrgaoRN();
@@ -1164,16 +1164,16 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J") {
 
-            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "ProcuraÁ„o EletrÙnica", $htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "Procura√ß√£o Eletr√¥nica", $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcuracao', $numProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
         } else if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F") {
 
-            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "ProcuraÁ„o EletrÙnica", $htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "Procura√ß√£o Eletr√¥nica", $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcuracao', $numProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
         } else if ($dados['tpProc'] == "E") {
-            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "ProcuraÁ„o Especial", $htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "Procura√ß√£o Especial", $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcuracao', $numProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
         }
@@ -1223,7 +1223,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objDocumentoBD->alterar($parObjDocumentoDTO);
 
 
-        //Alterando Conteudo do Documento com as InformÁıes atualizadas
+        //Alterando Conteudo do Documento com as Inform√ß√µes atualizadas
         //$parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
         //$parObjDocumentoConteudoDTO->setStrConteudo($htmlModeloRevogacao);
         //$parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
@@ -1273,7 +1273,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
                 }
 
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p·gina de erro padr„o
+                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p√°gina de erro padr√£o
             }
 
         }
@@ -1357,7 +1357,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             if (count($objRelProtocoloProtocoloDTO) == 1) {
                 $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
             }
-            // 2) ⁄ltima aberta
+            // 2) √öltima aberta
         } else if (count($arrUnidadeProcesso) == 0) {
             $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
         }
@@ -1386,7 +1386,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $arrObjAtributoAndamentoDTO = array();
         $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
         $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-        $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' • ' . $objUnidadeDTO->getStrDescricao());
+        $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' ¬• ' . $objUnidadeDTO->getStrDescricao());
         $objAtributoAndamentoDTO->setStrIdOrigem($objUnidadeDTO->getNumIdUnidade());
         $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -1419,7 +1419,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
     }
 
     /*
-    * gerar modelo ProcuraÁ„o Simples
+    * gerar modelo Procura√ß√£o Simples
     */
 
     protected function gerarFormularioProcuracaoSimplesControlado($params)
@@ -1486,7 +1486,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $contatoRN = new ContatoRN();
         $contatoPjPf = $contatoRN->consultarRN0324($contatoDTO);
 
-        // consultar dados Respons·vel Legal
+        // consultar dados Respons√°vel Legal
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retDblCpf();
         $contatoDTO->retStrNome();
@@ -1512,7 +1512,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $horaAtual = InfraData::getStrHoraAtual();
         $dataAtual .= '  ' . $horaAtual;
 
-        //consultar org„o
+        //consultar org√£o
         $idOrgao = SessaoSEIExterna::getInstance()->getNumIdOrgaoUsuarioExterno();
         $orgaoDTO = new  OrgaoDTO();
         $orgaoRN = new  OrgaoRN();
@@ -1541,7 +1541,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         // Fim Tipo Poderes
 
 
-        //Tabela de abrangÍncia
+        //Tabela de abrang√™ncia
         if ($params['dados']['hdnTbProcessos'] != "") {
             $dadosProcessos = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($params['dados']['hdnTbProcessos']);
             $tblAbrangencia = '';
@@ -1554,15 +1554,15 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }
 
-        //Verificando se o outorgante È PF ou PJ
+        //Verificando se o outorgante √© PF ou PJ
 
         if ($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PJ") {
-            //Outorgante Pessoa JurÌdica
+            //Outorgante Pessoa Jur√≠dica
             $htmlModeloProcuracao = str_replace('@RazaoSocial', $contatoPjPf->getStrNome(), $htmlModeloProcuracao);
             $htmlModeloProcuracao = str_replace('@Cnpj', InfraUtil::formatarCnpj($contatoPj->getDblCnpj()), $htmlModeloProcuracao);
 
         } else if ($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PF") {
-            //Outorgante Pessoa FÌsica
+            //Outorgante Pessoa F√≠sica
             $htmlModeloProcuracao = str_replace('@pessoaFisica', $contatoPjPf->getStrNome(), $htmlModeloProcuracao);
             //$htmlModeloProcuracao = str_replace('@nomeOutorgado',InfraUtil::formatarCnpj($contatoPj->getDblCnpj()),$htmlModeloProcuracao);
 
@@ -1632,7 +1632,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $parObjDocumentoDTO->retDblIdDocumento();
         $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
 
-        //Setando os par‚metros no Documento
+        //Setando os par√¢metros no Documento
         $htmlModeloProcuracao = str_replace('@numProcuracao', $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(), $htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@numDoc', $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(), $htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@numProcesso', $parObjDocumentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModeloProcuracao);
@@ -1643,7 +1643,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
         $objDocumentoBD->alterar($parObjDocumentoDTO);
 
-        //Alterando Conteudo do Documento com as InformÁıes atualizadas
+        //Alterando Conteudo do Documento com as Inform√ß√µes atualizadas
 //        $parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
 //        $parObjDocumentoConteudoDTO->setStrConteudo($htmlModeloProcuracao);
 //        $parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
@@ -1692,7 +1692,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
                 }
 
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p·gina de erro padr„o
+                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p√°gina de erro padr√£o
             }
 
         }
@@ -1743,7 +1743,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
     }
 
     /*
-     * gerar modelo ProcuraÁ„o Especial
+     * gerar modelo Procura√ß√£o Especial
      */
 
     protected function gerarFormularioProcuracaoControlado($params)
@@ -1759,7 +1759,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $isProcuracao = false;
 
 
-        // Caso a chamada venha da tela de VinculaÁ„o
+        // Caso a chamada venha da tela de Vincula√ß√£o
         if (isset($params['tela'])) {
             $idContatoVinc = $params['dados']['idContato'];
             $idResponsavelLegal = $params['dados']['IdRepresentanteLegal'];
@@ -1793,7 +1793,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $contatoRN = new ContatoRN();
         $contatoPj = $contatoRN->consultarRN0324($contatoDTO);
 
-        // consultar dados Respons·vel Legal
+        // consultar dados Respons√°vel Legal
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retDblCpf();
         $contatoDTO->retStrNome();
@@ -1820,7 +1820,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $horaAtual = InfraData::getStrHoraAtual();
         $dataAtual .= '  ' . $horaAtual;
 
-        //consultar org„o
+        //consultar org√£o
         $idOrgao = SessaoSEIExterna::getInstance()->getNumIdOrgaoUsuarioExterno();
         $orgaoDTO = new  OrgaoDTO();
         $orgaoRN = new  OrgaoRN();
@@ -1880,7 +1880,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $parObjDocumentoDTO->retDblIdDocumento();
         $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
 
-        //Setando os par‚metros no Documento
+        //Setando os par√¢metros no Documento
         $htmlModeloProcuracao = str_replace('@numProcuracao', $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(), $htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@numDoc', $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(), $htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@numProcesso', $parObjDocumentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModeloProcuracao);
@@ -1891,7 +1891,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
         $objDocumentoBD->alterar($parObjDocumentoDTO);
 
-        //Alterando Conteudo do Documento com as InformÁıes atualizadas
+        //Alterando Conteudo do Documento com as Inform√ß√µes atualizadas
 //        $parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
 //        $parObjDocumentoConteudoDTO->setStrConteudo($htmlModeloProcuracao);
 //        $parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
@@ -1941,7 +1941,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
                 }
 
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p·gina de erro padr„o
+                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p√°gina de erro padr√£o
             }
 
         }
@@ -2159,7 +2159,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $numDocVinc = $arrObjMdPetVincDocumentoDTO[0]->getStrProtocoloFormatadoProtocolo();
             }
 
-	        // ORG√O
+	        // ORG√ÉO
 	        $usuarioDTO = new UsuarioDTO();
 	        $usuarioDTO->retStrSiglaOrgao();
 	        $usuarioDTO->retStrDescricaoOrgao();
@@ -2185,7 +2185,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
             $htmlModelo = str_replace('@RepLegalCpf', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
 
-            // Novos valores para suspens„o/restabelecimento em cascata:
+            // Novos valores para suspens√£o/restabelecimento em cascata:
 
             $cascata                = $this->getParagrafoCascataSuspensaoRestabelecimento($params, $tipoLista = 'suspensas');
             $itemListaProcuradores  = $cascata['itemListaProcuradores'];
@@ -2194,7 +2194,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }else{
 
-            // RETORNANDO DADOS DO VÕNCULO
+            // RETORNANDO DADOS DO V√çNCULO
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->retTodos();
             $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
@@ -2223,7 +2223,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $procuracaoDocNum       = $dados['procuracao_doc_num'];
             $procuracaoTipo         = $tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ? 'Especial' : 'Simples';
-            $outorganteTipoPessoa   = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Pessoa JurÌdica' : 'Pessoa FÌsica';
+            $outorganteTipoPessoa   = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Pessoa Jur√≠dica' : 'Pessoa F√≠sica';
             $outorganteNome         = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
             $outorganteDoc          = PaginaSEI::tratarHTML(InfraUtil::formatarCpfCnpj(($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? $objMdPetVincRepresentantDTO->getStrCNPJ() : $objMdPetVincRepresentantDTO->getStrCPF())));
             $procuracaoDados        = '';
@@ -2233,10 +2233,10 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModelo = str_replace('@procuracaoDocNum', $procuracaoDocNum, $htmlModelo);
             $htmlModelo = str_replace('@outorganteTipoPessoa', $outorganteTipoPessoa, $htmlModelo);
 
-            // DADOS DA PROCURA«√O SIMPLES
+            // DADOS DA PROCURA√á√ÉO SIMPLES
             if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
 
-                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2">Dados da ProcuraÁ„o EletrÙnica:</td></tr>';
+                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2">Dados da Procura√ß√£o Eletr√¥nica:</td></tr>';
                 $procuracaoDados .= '<tr>';
                 $procuracaoDados .= '<td class="tdTabulacao">Validade:</td>';
                 $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getDthDataLimiteValidade().'</td>';
@@ -2246,7 +2246,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getStrTipoPoderesLista().'</td>';
                 $procuracaoDados .= '</tr>';
                 $procuracaoDados .= '<tr>';
-                $procuracaoDados .= '<td class="tdTabulacao">AbrangÍncia:</td>';
+                $procuracaoDados .= '<td class="tdTabulacao">Abrang√™ncia:</td>';
 
                 if($objMdPetVincRepresentantDTO->getStrStaAbrangencia() == MdPetVincRepresentantRN::$PR_ESPECIFICO){
 
@@ -2290,7 +2290,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             // DADOS DO OUTORGANTE
             $outorganteDados .= '<tr>';
-            $outorganteDados .= '<td class="tdTabulacao">'.($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Raz„o Social' : 'Nome').':</td>';
+            $outorganteDados .= '<td class="tdTabulacao">'.($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Raz√£o Social' : 'Nome').':</td>';
             $outorganteDados .= '<td style="font-weight: normal">'.$outorganteNome.'</td>';
             $outorganteDados .= '</tr>';
 
@@ -2353,7 +2353,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $parObjDocumentoDTO->retDblIdDocumento();
         $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
 
-        //Setando os par‚metros no Documento
+        //Setando os par√¢metros no Documento
         $htmlModelo = str_replace('@numSuspensao', $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(), $htmlModelo);
 
         //$parObjDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_FORMULARIO_AUTOMATICO);
@@ -2362,7 +2362,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
         $objDocumentoBD->alterar($parObjDocumentoDTO);
 
-        // Alterando Conteudo do Documento com as InformÁıes atualizadas
+        // Alterando Conteudo do Documento com as Inform√ß√µes atualizadas
         // $parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
         // $parObjDocumentoConteudoDTO->setStrConteudo($htmlModelo);
         // $parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
@@ -2411,7 +2411,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
                 }
 
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p·gina de erro padr„o
+                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p√°gina de erro padr√£o
             }
 
         }
@@ -2538,7 +2538,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModelo = str_replace('@nomeRespLegal', $RepLegalNome, $htmlModelo);
             $htmlModelo = str_replace('@cpfRespLegal', InfraUtil::formatarCpf($RepLegalCpf), $htmlModelo);
 
-            // Novos valores para suspens„o/restabelecimento em cascata:
+            // Novos valores para suspens√£o/restabelecimento em cascata:
 
             $cascata                = $this->getParagrafoCascataSuspensaoRestabelecimento($params, $tipoLista = 'restabelecidas');
             $itemListaProcuradores  = $cascata['itemListaProcuradores'];
@@ -2547,7 +2547,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }else{
 
-            // RETORNANDO DADOS DO VÕNCULO
+            // RETORNANDO DADOS DO V√çNCULO
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->retTodos();
             $objMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
@@ -2576,7 +2576,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $procuracaoDocNum     = $dados['procuracao_doc_num'];
             $procuracaoTipo       = $tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ? 'Especial' : 'Simples';
-            $outorganteTipoPessoa = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Pessoa JurÌdica' : 'Pessoa FÌsica';
+            $outorganteTipoPessoa = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Pessoa Jur√≠dica' : 'Pessoa F√≠sica';
             $outorganteNome       = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
             $outorganteDoc        = PaginaSEI::tratarHTML(InfraUtil::formatarCpfCnpj(($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? $objMdPetVincRepresentantDTO->getStrCNPJ() : $objMdPetVincRepresentantDTO->getStrCPF())));
             $procuracaoDados      = '';
@@ -2587,10 +2587,10 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModelo = str_replace('@procuracaoDocNum', $procuracaoDocNum, $htmlModelo);
             $htmlModelo = str_replace('@outorganteTipoPessoa', $outorganteTipoPessoa, $htmlModelo);
 
-            // DADOS DA PROCURA«√O SIMPLES
+            // DADOS DA PROCURA√á√ÉO SIMPLES
             if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
 
-                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2">Dados da ProcuraÁ„o EletrÙnica:</td></tr>';
+                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2">Dados da Procura√ß√£o Eletr√¥nica:</td></tr>';
                 $procuracaoDados .= '<tr>';
                 $procuracaoDados .= '<td class="tdTabulacao">Validade:</td>';
                 $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getDthDataLimiteValidade().'</td>';
@@ -2600,7 +2600,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $procuracaoDados .= '<td style="font-weight: normal">'.$objMdPetVincRepresentantDTO->getStrTipoPoderesLista().'</td>';
                 $procuracaoDados .= '</tr>';
                 $procuracaoDados .= '<tr>';
-                $procuracaoDados .= '<td class="tdTabulacao">AbrangÍncia:</td>';
+                $procuracaoDados .= '<td class="tdTabulacao">Abrang√™ncia:</td>';
 
                 if($objMdPetVincRepresentantDTO->getStrStaAbrangencia() == MdPetVincRepresentantRN::$PR_ESPECIFICO){
 
@@ -2644,7 +2644,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             // DADOS DO OUTORGANTE
             $outorganteDados .= '<tr>';
-            $outorganteDados .= '<td class="tdTabulacao">'.($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Raz„o Social' : 'Nome').':</td>';
+            $outorganteDados .= '<td class="tdTabulacao">'.($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Raz√£o Social' : 'Nome').':</td>';
             $outorganteDados .= '<td style="font-weight: normal">'.$outorganteNome.'</td>';
             $outorganteDados .= '</tr>';
 
@@ -2661,18 +2661,18 @@ class MdPetVinUsuExtProcRN extends InfraRN
             // INJETA OS DADOS DO OUTORGADO NO TEMPLATE
             $htmlModelo = str_replace('@outorgadoNome', $objMdPetVincRepresentantDTO->getStrNomeProcurador(), $htmlModelo);
 
-            // MONTA PARAGRAFO ESPECÕFICO PARA RESTABELECIMENTO DE PROCURADOR ESPECIAL
+            // MONTA PARAGRAFO ESPEC√çFICO PARA RESTABELECIMENTO DE PROCURADOR ESPECIAL
             if($tipoVinculo == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL){
                 $paragrafoComunicado .= '<p class="Texto_Justificado">Comunicamos que:</p>';
-                $paragrafoComunicado .= '<ul class="paragrafoEspecial"><li><span class="Texto_Justificado">Fica restabelecido seu direito de peticionar e emitir ProcuraÁıes EletrÙnicas Simples em nome do Outorgante;</span></li></ul>';
+                $paragrafoComunicado .= '<ul class="paragrafoEspecial"><li><span class="Texto_Justificado">Fica restabelecido seu direito de peticionar e emitir Procura√ß√µes Eletr√¥nicas Simples em nome do Outorgante;</span></li></ul>';
             }
             if(in_array($tipoVinculo, [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])){
                 $paragrafoComunicado .= '<p class="Texto_Justificado">Comunicamos que:</p>';
-                $paragrafoComunicado .= '<ul class="paragrafoEspecial"><li><span class="Texto_Justificado">Ficam restabelecidos os Poderes de RepresentaÁ„o e de peticionar em nome do Outorgante; </span></li></ul>';
+                $paragrafoComunicado .= '<ul class="paragrafoEspecial"><li><span class="Texto_Justificado">Ficam restabelecidos os Poderes de Representa√ß√£o e de peticionar em nome do Outorgante; </span></li></ul>';
 
             }
 
-            // INJETA PARAGRAFO ESPECÕFICO PARA PROCURADOR ESPECIAL
+            // INJETA PARAGRAFO ESPEC√çFICO PARA PROCURADOR ESPECIAL
             $htmlModelo = str_replace('@paragrafoComunicado', $paragrafoComunicado, $htmlModelo);
 
         }
@@ -2721,7 +2721,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $parObjDocumentoDTO->retDblIdDocumento();
         $parObjDocumentoDTO = $docRN->consultarRN0005($parObjDocumentoDTO);
 
-        //Setando os par‚metros no Documento
+        //Setando os par√¢metros no Documento
         $htmlModelo = str_replace('@numRestabelecimento', $parObjDocumentoDTO->getStrProtocoloDocumentoFormatado(), $htmlModelo);
 
         //$parObjDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_FORMULARIO_AUTOMATICO);
@@ -2731,7 +2731,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objDocumentoBD->alterar($parObjDocumentoDTO);
 
 
-        //Alterando Conteudo do Documento com as InformÁıes atualizadas
+        //Alterando Conteudo do Documento com as Inform√ß√µes atualizadas
 //        $parObjDocumentoConteudoDTO = new DocumentoConteudoDTO();
 //        $parObjDocumentoConteudoDTO->setStrConteudo($htmlModelo);
 //        $parObjDocumentoConteudoDTO->setDblIdDocumento($saidaDocExternoAPI->getIdDocumento());
@@ -2781,7 +2781,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
                 }
 
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p·gina de erro padr„o
+                PaginaSEI::getInstance()->processarExcecao($e); //vai para a p√°gina de erro padr√£o
             }
 
         }
@@ -2836,7 +2836,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         if($params['dados']['hdnCascata'] == 'S'){
 
             $commonStyle = 'font: normal 12pt Calibri; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;';
-            $commonText  = 'ProcuraÁıes EletrÙnicas, abaixo listadas, concedidas para representaÁ„o da Pessoa JurÌdica restam igualmente '.$tipoLista.':';
+            $commonText  = 'Procura√ß√µes Eletr√¥nicas, abaixo listadas, concedidas para representa√ß√£o da Pessoa Jur√≠dica restam igualmente '.$tipoLista.':';
 
             if(is_array($params['arrListaProcuradores']) && count($params['arrListaProcuradores']) > 0){
                 $ulListaProcuradores .= '<ul>';
@@ -2861,7 +2861,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     }
 
-    /*GERA RECIBO QUANDO OCORRE UMA NOVA PROCURA«√O ELETRONICA */
+    /*GERA RECIBO QUANDO OCORRE UMA NOVA PROCURA√á√ÉO ELETRONICA */
 
     private function gerarReciboProcuracao($arrParams)
     {
@@ -2873,7 +2873,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $unidadeDTO = array_key_exists(5, $arrParams) ? $arrParams[5] : null;
         $dados = array_key_exists(6, $arrParams) ? $arrParams[6] : null;
 
-        //consultar org„o externo
+        //consultar org√£o externo
         $idOrgao = SessaoSEIExterna::getInstance()->getNumIdOrgaoUsuarioExterno();
         $orgaoDTO = new  OrgaoDTO();
         $orgaoRN = new  OrgaoRN();
@@ -2911,7 +2911,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($dadosPj->getDblCnpj()), $htmlModeloRecibo); // Cnpj do vinculo
         }
         $htmlModeloRecibo = str_replace('@nomeRazaoSocial', $dadosPj->getStrNome(), $htmlModeloRecibo); // Razao Social
-        $htmlModeloRecibo = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRecibo); // Descricao do Org„o
+        $htmlModeloRecibo = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRecibo); // Descricao do Org√£o
 
         $tblPessoaJuridica = '';
         $htmlModeloRecibo = str_replace('@tblPessoaJuridica', $tblPessoaJuridica, $htmlModeloRecibo);
@@ -2928,11 +2928,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $tblAtos = '';
         $htmlModeloRecibo = str_replace('@tblAtosConstitutivos', $tblAtos, $htmlModeloRecibo); // Atos Constitutivos
 
-        //ProcuraÁıes Especiais
+        //Procura√ß√µes Especiais
         $tblProcuracoes = '';
         if (!is_null($modeloProcuracao)) {
             $tblProcuracoes .= '    <tr>';
-            $tblProcuracoes .= '        <td colspan="2" style="font-weight: bold;">Protocolos dos Documentos (N˙mero SEI):</td>';
+            $tblProcuracoes .= '        <td colspan="2" style="font-weight: bold;">Protocolos dos Documentos (N√∫mero SEI):</td>';
             $tblProcuracoes .= '    </tr>';
 
             for ($i = 0; $i < count($modeloProcuracao); $i++) {
@@ -2988,7 +2988,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $tpProtocolo = MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO;
         $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idRepresentante, $tpProtocolo);
 
-        //necessario forÁar update da coluna sta_documento da tabela documento
+        //necessario for√ßar update da coluna sta_documento da tabela documento
         //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
         $parObjDocumentoDTO = new DocumentoDTO();
         $parObjDocumentoDTO->retTodos();
@@ -3018,7 +3018,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $idContato = array_key_exists(5, $arrParams) ? $arrParams[5] : null;
         $unidadeDTO = array_key_exists(6, $arrParams) ? $arrParams[6] : null;
 
-        //consultar org„o externo
+        //consultar org√£o externo
         $idOrgao = SessaoSEIExterna::getInstance()->getNumIdOrgaoUsuarioExterno();
         $orgaoDTO = new  OrgaoDTO();
         $orgaoRN = new  OrgaoRN();
@@ -3062,7 +3062,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $htmlModeloRecibo = str_replace('@cpfResponsavel', InfraUtil::formatarCpf($dadosRepresentante->getDblCpf()), $htmlModeloRecibo); // Nome do CPF
         $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($objMdPetVincRepresentantDTO->getStrCNPJ()), $htmlModeloRecibo); // Cnpj do vinculo
         $htmlModeloRecibo = str_replace('@nomeRazaoSocial', $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc(), $htmlModeloRecibo); // Razao Social
-        $htmlModeloRecibo = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRecibo); // Descricao do Org„o
+        $htmlModeloRecibo = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRecibo); // Descricao do Org√£o
 
 
         $tblPessoaJuridica = '';
@@ -3076,7 +3076,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $tblAtos = '';
         $htmlModeloRecibo = str_replace('@tblAtosConstitutivos', $tblAtos, $htmlModeloRecibo); // Atos Constitutivos
 
-        //ProcuraÁıes Especiais - RevogaÁ„o / Ren˙ncia
+        //Procura√ß√µes Especiais - Revoga√ß√£o / Ren√∫ncia
         $objDocumentoRN = new DocumentoRN();
         $objDocumentoDTO = new DocumentoDTO();
         $objDocumentoDTO->retStrNomeSerie();
@@ -3089,7 +3089,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         if (is_countable($arrObjDocumentoDTO) && count($arrObjDocumentoDTO) > 0) {
             $tblProcuracoes = '';
             $tblProcuracoes .= '    <tr>';
-            $tblProcuracoes .= '        <td colspan="2" style="font-weight: bold;">Protocolos dos Documentos (N˙mero SEI):</td>';
+            $tblProcuracoes .= '        <td colspan="2" style="font-weight: bold;">Protocolos dos Documentos (N√∫mero SEI):</td>';
             $tblProcuracoes .= '    </tr>';
             $tblProcuracoes .= '    <tr>';
             $tblProcuracoes .= '        <td>&nbsp;&nbsp;&nbsp;&nbsp;- ' . $arrObjDocumentoDTO[0]->getStrNomeSerie();
@@ -3134,7 +3134,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $tpProtocolo = MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO;
         $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idRepresentante, $tpProtocolo);
 
-        //necessario forÁar update da coluna sta_documento da tabela documento
+        //necessario for√ßar update da coluna sta_documento da tabela documento
         //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
         $parObjDocumentoDTO = new DocumentoDTO();
         $parObjDocumentoDTO->retTodos();

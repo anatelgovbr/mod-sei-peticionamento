@@ -1,4 +1,5 @@
 <style type="text/css">
+    
     #orientacoesGerais {min-height: 165px; height: auto; width: 100%; margin-bottom: 11px;}
     .sizeFieldset {height: auto; width: 86%;}
     .fieldsetClear { border: none !important;}
@@ -13,4 +14,5 @@
     .infraImgModulo{width: 20px; height: 20px}
     .pesquisaTipoNovo{margin-top: 7px}
     #lblUF{border: none; margin-bottom: 0px;}
+    
 </style>

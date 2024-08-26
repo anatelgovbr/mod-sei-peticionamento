@@ -1,17 +1,17 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/03/2017 - criado por pedro.cast
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
 
 class MdPetIntProtocoloRN extends InfraRN {
 
-    //Vars para Sta Tipo de Documento na IntimaÁ„o
+    //Vars para Sta Tipo de Documento na Intima√ß√£o
     public static $TP_INT_DOC_ANEXO      = 'A';
     public static $TP_INT_DOC_PRINCIPAL  = 'P';
     public static $TP_INT_DOC_DISPONIVEL = 'D';
@@ -26,23 +26,23 @@ class MdPetIntProtocoloRN extends InfraRN {
 
     private function validarStrSinPrincipal(MdPetIntProtocoloDTO $objMdPetIntDocumentoDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntDocumentoDTO->getStrSinPrincipal())){
-            $objInfraException->adicionarValidacao('Sinalizador de Documento Principal n„o informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Documento Principal n√£o informado.');
         }else{
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntDocumentoDTO->getStrSinPrincipal())){
-                $objInfraException->adicionarValidacao('Sinalizador de Documento Principal inv·lido.');
+                $objInfraException->adicionarValidacao('Sinalizador de Documento Principal inv√°lido.');
             }
         }
     }
 
     private function validarNumIdMdPetIntimacao(MdPetIntProtocoloDTO $objMdPetIntDocumentoDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntDocumentoDTO->getNumIdMdPetIntimacao())){
-            $objInfraException->adicionarValidacao('IntimaÁ„o n„o informada.');
+            $objInfraException->adicionarValidacao('Intima√ß√£o n√£o informada.');
         }
     }
 
     private function validarDblIdProtocolo(MdPetIntProtocoloDTO $objMdPetIntDocumentoDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntDocumentoDTO->getDblIdProtocolo())){
-            $objInfraException->adicionarValidacao('Protocolo n„o informado.');
+            $objInfraException->adicionarValidacao('Protocolo n√£o informado.');
         }
     }
 
@@ -69,7 +69,7 @@ class MdPetIntProtocoloRN extends InfraRN {
             return $ret;
 
         }catch(Exception $e){
-            throw new InfraException('Erro cadastrando Documento da IntimaÁ„o.',$e);
+            throw new InfraException('Erro cadastrando Documento da Intima√ß√£o.',$e);
         }
     }
 
@@ -100,7 +100,7 @@ class MdPetIntProtocoloRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro alterando Documento da IntimaÁ„o.',$e);
+            throw new InfraException('Erro alterando Documento da Intima√ß√£o.',$e);
         }
     }
 
@@ -123,7 +123,7 @@ class MdPetIntProtocoloRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro excluindo Documento da IntimaÁ„o.',$e);
+            throw new InfraException('Erro excluindo Documento da Intima√ß√£o.',$e);
         }
     }
 
@@ -145,7 +145,7 @@ class MdPetIntProtocoloRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro consultando Documento da IntimaÁ„o.',$e);
+            throw new InfraException('Erro consultando Documento da Intima√ß√£o.',$e);
         }
     }
 
@@ -168,7 +168,7 @@ class MdPetIntProtocoloRN extends InfraRN {
             return $ret;
 
         }catch(Exception $e){
-            throw new InfraException('Erro listando Documentos da IntimaÁ„o.',$e);
+            throw new InfraException('Erro listando Documentos da Intima√ß√£o.',$e);
         }
     }
 
@@ -190,7 +190,7 @@ class MdPetIntProtocoloRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro contando Documentos da IntimaÁ„o.',$e);
+            throw new InfraException('Erro contando Documentos da Intima√ß√£o.',$e);
         }
     }
 

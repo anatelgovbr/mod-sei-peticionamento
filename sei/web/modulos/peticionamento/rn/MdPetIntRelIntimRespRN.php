@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 08/12/2016 - criado por Marcelo Bezerra - CAST
 *
-* Vers„o do Gerador de CÛdigo: 1.39.0
+* Vers√£o do Gerador de C√≥digo: 1.39.0
 */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -21,22 +21,22 @@ class MdPetIntRelIntimRespRN extends InfraRN {
 
   private function validarNumIdMdPetIntTipoIntimacao(MdPetIntRelIntimRespDTO $objMdPetIntRelIntimRespDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelIntimRespDTO->getNumIdMdPetIntTipoIntimacao())){
-      $objInfraException->adicionarValidacao(' n„o informado.');
+      $objInfraException->adicionarValidacao(' n√£o informado.');
     }
   }
 
   private function validarNumIdMdPetIntTipoResp(MdPetIntRelIntimRespDTO $objMdPetIntRelIntimRespDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelIntimRespDTO->getNumIdMdPetIntTipoResp())){
-      $objInfraException->adicionarValidacao(' n„o informado.');
+      $objInfraException->adicionarValidacao(' n√£o informado.');
     }
   }
 
   private function validarStrSinAtivo(MdPetIntRelIntimRespDTO $objMdPetIntRelIntimRespDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelIntimRespDTO->getStrSinAtivo())){
-      $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica n„o informado.');
+      $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica n√£o informado.');
     }else{
       if (!InfraUtil::isBolSinalizadorValido($objMdPetIntRelIntimRespDTO->getStrSinAtivo())){
-        $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica inv·lido.');
+        $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica inv√°lido.');
       }
     }
   }

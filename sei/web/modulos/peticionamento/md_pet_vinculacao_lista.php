@@ -157,10 +157,6 @@ if ($numRegistros > 0) {
 
   foreach ($arrRegistro as $registro) {
 
-    if (!($objMdPetVincRepresentantDTO instanceof MdPetVincRepresentantDTO)) {
-        //$objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->getResponsavelLegal(array('idVinculo' => $registro->getNumIdMdPetVinculo()));
-    }
-
     //Acesso Externo
     $objUsuarioDTO = new UsuarioDTO();
     $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
@@ -204,10 +200,9 @@ if ($numRegistros > 0) {
 
     $strResultado .= '<td class="text-center">'. $strSituacao . '</td>';
 
-    $strResultado .= '<input type="hidden" value="'.$url.'" id="urlLinkDesativar'.$registro->getNumIdMdPetVinculoRepresent().'"/>';
-    $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Cadastro da Pessoa Jurídica" alt="Consultar Cadastro da Pessoa Jurídica" class="infraImg" /></a>';
+    $iconeConsulta = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'].'&id_vinculo='.$registro->getNumIdMdPetVinculo().'&id_representante='.$registro->getNumIdMdPetVinculoRepresent().'&estado='.$registro->getStrStaEstado()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg?'.Icone::VERSAO.'" title="Consultar Cadastro da Pessoa Jurídica" alt="Consultar Cadastro da Pessoa Jurídica" class="infraImg" /></a>';
     if($registro->getStrTipoRepresentante()==MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL && $registro->getStrStaEstado()==MdPetVincRepresentantRN::$RP_ATIVO) {
-        $iconeAlterar = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_vinculo=' . $registro->getNumIdMdPetVinculo()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Atualizar Atos Constitutivos da Pessoa Jurídica" alt="Atualizar Atos Constitutivos da Pessoa Jurídica" class="infraImg" /></a>';
+        $iconeAlterar = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_vinculo=' . $registro->getNumIdMdPetVinculo().'&id_representante='.$registro->getNumIdMdPetVinculoRepresent().'&estado='.$registro->getStrStaEstado()) . '"><img src="' . PaginaSEIExterna::getInstance()->getDiretorioSvgGlobal() . '/alterar.svg?'.Icone::VERSAO.'" title="Atualizar Atos Constitutivos da Pessoa Jurídica" alt="Atualizar Atos Constitutivos da Pessoa Jurídica" class="infraImg" /></a>';
     }
     $strResultado .= '<td class="text-center">' . $iconeConsulta . $iconeAlterar . '</td>';
     $strResultado .= '</tr>';

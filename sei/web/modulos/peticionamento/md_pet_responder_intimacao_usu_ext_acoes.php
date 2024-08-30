@@ -4,7 +4,7 @@ switch ($_GET['acao']) {
         case 'md_pet_responder_intimacao_usu_ext':
 
             $contador = null;
-            $strTitulo     = "Peticionamento de Resposta a IntimaÁ„o EletrÙnica";
+            $strTitulo     = "Peticionamento de Resposta a Intima√ß√£o Eletr√¥nica";
             $arrComandos[] = '<button type="button" accesskey="P" name="btnResponder"  onclick = "responderIntimacao()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" id="btnFechar" class="infraButton" onclick="fechar()">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
@@ -51,16 +51,17 @@ switch ($_GET['acao']) {
             
             //Aceite
             $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+	        $objMdPetIntAceiteDTO->retTodos();
             $objMdPetIntAceiteDTO->setNumIdMdPetIntAceite($idMdPetIntAceite);
-            $objMdPetIntAceiteDTO->retTodos();
-            $objMdPetIntAceiteRN  = new MdPetIntAceiteRN();
-            $objMdPetIntAceiteDTO = $objMdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+	        $objMdPetIntAceiteDTO->setOrdDthData(InfraDTO::$TIPO_ORDENACAO_ASC);
+	        $objMdPetIntAceiteDTO->setNumMaxRegistrosRetorno(1);
+            $objMdPetIntAceiteDTO = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
 
             //Data Intimacao
             $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
             $strDataIntimacao = $objMdPetIntRelDestinatarioRN->consultarDadosIntimacao($idMdPetIntimacao);
 
-            //InformaÁıes Fieldset IntimaÁ„o
+            //Informa√ß√µes Fieldset Intima√ß√£o
             $strNumeroProcesso    = $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoProcedimento();
             $strNomeTipoIntimacao = $objMdPetIntDocumentoDTO->getStrNomeTipoIntimacao();
             $strNumeroProcesso .= ' (' . $objProcedimentoDTO->getStrNomeTipoProcedimento() . ')';
@@ -72,7 +73,7 @@ switch ($_GET['acao']) {
 
             $strTipoCumprimento = $objMdPetIntAceiteDTO->getStrTipoAceite() == MdPetIntimacaoRN::$TP_MANUAL_USUARIO_EXTERNO_ACEITE ? MdPetIntimacaoRN::$STR_INTIMACAO_CUMPRIDA_POR_ACESSO_ACEITE : MdPetIntimacaoRN::$STR_INTIMACAO_CUMPRIDA_PRAZO_ACEITE;
 
-            //reaproveitando funcionalidade j· em uso no Intercorrente para saber a situaÁao do processo
+            //reaproveitando funcionalidade j√° em uso no Intercorrente para saber a situa√ßao do processo
             $stRespostaIntimacao = true;
             $xml = MdPetIntercorrenteINT::gerarXMLvalidacaoNumeroProcesso( $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoProcedimento() , $stRespostaIntimacao);
             $arr = MdPetIntercorrenteINT::xmlToArray( utf8_encode( $xml ) );
@@ -145,7 +146,7 @@ switch ($_GET['acao']) {
 
             if (isset($_POST['hdnTbDocumento']) && $_POST['hdnTbDocumento'] != '') {
 
-                //Selecionando um dos contatos - Raz„o Social
+                //Selecionando um dos contatos - Raz√£o Social
                 if(!empty($_POST['selRazaoSocial'])){
                 $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
                 $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($_POST['selRazaoSocial']);
@@ -190,6 +191,6 @@ switch ($_GET['acao']) {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
             
 }

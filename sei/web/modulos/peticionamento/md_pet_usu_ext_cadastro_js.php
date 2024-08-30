@@ -2008,7 +2008,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var mes = parseInt(data[1]) - 1;
             var horas = valorArray[1].split(':');
 
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : 00;
+            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
             var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
             return dataCompleta;
         }

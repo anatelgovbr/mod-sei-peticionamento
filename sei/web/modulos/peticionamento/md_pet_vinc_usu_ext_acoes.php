@@ -3,7 +3,7 @@ switch ($_GET['acao']) {
 
   case 'md_pet_vinc_usu_ext_cadastrar':
     $stAlterar = false;
-    $strTitulo = "Novo Responsável Legal de Pessoa Jurídica";
+    $strTitulo = "Novo ResponsÃ¡vel Legal de Pessoa JurÃ­dica";
     $strTipo = 'Cadastro';
     $strItensSelTipoInteressado = MdPetTpCtxContatoINT::montarSelectTipoInteressado($strPrimeiroItemValor, $strPrimeiroItemDescricao, $numIdTipoContextoContato, 'Cadastro');
 
@@ -32,41 +32,46 @@ switch ($_GET['acao']) {
   case 'md_pet_vinc_usu_ext_alterar' :
 
     if ($_GET['acao']=='md_pet_vinc_usu_ext_consultar'){
-      $strTitulo = "Consultar Cadastro da Pessoa Jurídica";
+      $strTitulo = "Consultar Cadastro da Pessoa JurÃ­dica";
       $stConsultar = true;
     }else{
-      $strTitulo = "Atualizar Atos Constitutivos da Pessoa Jurídica";
+      $strTitulo = "Atualizar Atos Constitutivos da Pessoa JurÃ­dica";
       $stAlterar = true;
-      $strTipo = 'Alteração';
+      $strTipo = 'AlteraÃ§Ã£o';
     }
 
-    $idMdPetVinculo = $_GET['id_vinculo'];
-
-    //Recuperar dados para Pessoa Juridica.
-    $objMdPetVinculoRN = new MdPetVinculoRN();
-    $objMdPetVinculoDTO = new MdPetVinculoDTO();
-    $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-    $objMdPetVinculoDTO->retDblCNPJ();
-    $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
-    $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
-    $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
-    $objMdPetVinculoDTO->retStrSinValidado();
-    $objMdPetVinculoDTO->retStrSinWebService();
-    $objMdPetVinculoDTO->retNumIdContato();
-    $objMdPetVinculoDTO->retNumIdContatoRepresentante();
-    $objMdPetVinculoDTO->setNumIdMdPetVinculo($idMdPetVinculo);
-    $objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-    $objMdPetVinculoDTO->setDistinct(true);
-    $arrDadosPessoaJuridicaVinculo = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
-
-    $numIdUsuarioLogado = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+    $idMdPetVinculo     = $_GET['id_vinculo'];
+	$idRepresentante    = $_GET['id_representante'];
+	$staEstado          = $_GET['estado'];
+	
+	//Recuperar dados para Pessoa Juridica.
+	$objMdPetVinculoDTO = new MdPetVinculoDTO();
+	$objMdPetVinculoDTO->retNumIdMdPetVinculo();
+	$objMdPetVinculoDTO->retDblCNPJ();
+	$objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
+	$objMdPetVinculoDTO->retStrCpfContatoRepresentante();
+	$objMdPetVinculoDTO->retStrNomeContatoRepresentante();
+	$objMdPetVinculoDTO->retStrSinValidado();
+	$objMdPetVinculoDTO->retStrSinWebService();
+	$objMdPetVinculoDTO->retNumIdContato();
+	$objMdPetVinculoDTO->retNumIdContatoRepresentante();
+	$objMdPetVinculoDTO->retDthDataVinculo();
+	$objMdPetVinculoDTO->setStrStaEstado($staEstado);
+	$objMdPetVinculoDTO->setNumIdMdPetVinculoRepresent($idRepresentante);
+	$objMdPetVinculoDTO->setNumIdMdPetVinculo($idMdPetVinculo);
+	$objMdPetVinculoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+	$objMdPetVinculoDTO->setDistinct(true);
+	$objMdPetVinculoDTO->setNumMaxRegistrosRetorno(1);
+	$arrDadosPessoaJuridicaVinculo = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
+	
+	$numIdUsuarioLogado = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
     $usuarioRN = new UsuarioRN();
     $usuarioDTO = new UsuarioDTO();
     $usuarioDTO->retNumIdContato();
     $usuarioDTO->setNumIdUsuario($numIdUsuarioLogado);
     $arrContato = $usuarioRN->consultarRN0489($usuarioDTO);
 
-    //Verifica se quem acessa é o Responsável Legal
+    //Verifica se quem acessa Ã© o ResponsÃ¡vel Legal
     if($arrDadosPessoaJuridicaVinculo->getNumIdContatoRepresentante() != $arrContato->getNumIdContato()){
       $stConsultar = true;
     }
@@ -130,7 +135,7 @@ switch ($_GET['acao']) {
 
     $arrArquivo = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
 
-    //Procurações
+    //ProcuraÃ§Ãµes
     $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
     $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
     $objMdPetVincRepresentantDTO->retStrNomeProcurador();
@@ -142,7 +147,7 @@ switch ($_GET['acao']) {
 
     $arrRepresentante = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
-    //Separando número e endereço
+    //Separando nÃºmero e endereÃ§o
     $strEnderecoCompleto = !is_null($arrContatoDTO) ? $arrContatoDTO->getStrEndereco() : null;
     $arrEndereco         = !is_null($strEnderecoCompleto) ? explode(',', $strEnderecoCompleto) : null;
     $intUltimaPosition   = count($arrEndereco) > 1 ? count($arrEndereco) - 1 : null;
@@ -151,7 +156,7 @@ switch ($_GET['acao']) {
     $strEndereco = '';
 	$strEndereco = $strEnderecoCompleto;
 
-    $arrDescricaoNivelAcesso = ['0' => 'Público', '1' => 'Restrito', '2' => 'Sigiloso'];
+    $arrDescricaoNivelAcesso = ['0' => 'PÃºblico', '1' => 'Restrito', '2' => 'Sigiloso'];
     if(!$stConsultar){
     $arrComandos[] = '<button type="button" accesskey="P" name="btnResponder"  onclick = "peticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
     $arrComandos[] = '<button type="button" accesskey="C" id="btnFechar" class="infraButton" onclick="fechar()"><span class="infraTeclaAtalho">C</span>ancelar</button>';
@@ -162,7 +167,7 @@ switch ($_GET['acao']) {
     break;
 
   default:
-    throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+    throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
 
 }
 
@@ -204,8 +209,8 @@ $verificaNivelAcessoPadrao = $objMdPetVincUsuExtPj->getStrSinNaPadrao();
 //Tipo de Processo para vinculo
 $idTipoProcesso = $objMdPetVincUsuExtPj->getNumIdTipoProcedimento();
 
-//Usuário Externo indica diretamente
-$arrDescricaoNivelAcesso = ['0' => 'Público', '1' => 'Restrito', '2' => 'Sigiloso'];
+//UsuÃ¡rio Externo indica diretamente
+$arrDescricaoNivelAcesso = ['0' => 'PÃºblico', '1' => 'Restrito', '2' => 'Sigiloso'];
 
 $objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
 $exibirHipoteseLegal = $objMdPetIntDestRespostaRN->verificarHipoteseLegal();

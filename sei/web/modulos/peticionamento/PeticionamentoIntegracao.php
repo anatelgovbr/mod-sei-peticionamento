@@ -32,7 +32,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.2.1';
+        return '4.2.2';
     }
 
     public function getInstituicao()
@@ -2457,6 +2457,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                             $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
                             $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($obj->getNumIdMdPetIntRelDestinatario());
+	                        $objMdPetIntAceiteDTO->setOrdDthData(InfraDTO::$TIPO_ORDENACAO_ASC);
+	                        $objMdPetIntAceiteDTO->setNumMaxRegistrosRetorno(1);
                             $objMdPetIntAceiteDTO->retTodos();
                             $objMdPetIntAceiteDTO = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
 

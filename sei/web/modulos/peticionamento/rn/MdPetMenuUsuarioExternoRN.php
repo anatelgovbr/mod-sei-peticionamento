@@ -209,22 +209,22 @@ class MdPetMenuUsuarioExternoRN extends InfraRN {
 	
 		//Nome do Menu
 		if (InfraString::isBolVazia ($objMdPetMenuUsuarioExternoDTO->getStrNome())) {
-			$objInfraException->adicionarValidacao('Nome do Menu não informado.');
+			$objInfraException->adicionarValidacao('Nome do Menu nÃ£o informado.');
 		} else if( strlen($objMdPetMenuUsuarioExternoDTO->getStrNome()) > 30 ){
 			$objInfraException->adicionarValidacao('Nome do Menu possui tamanho superior a 30 caracteres.');
 		}
 		
 		//Tipo de Menu
 		if (InfraString::isBolVazia ($objMdPetMenuUsuarioExternoDTO->getStrTipo())) {
-			$objInfraException->adicionarValidacao('Tipo de Menu não informado.');
+			$objInfraException->adicionarValidacao('Tipo de Menu nÃ£o informado.');
 		}elseif ($objMdPetMenuUsuarioExternoDTO->getStrTipo()=='E'){
 			//Url
 			if (InfraString::isBolVazia ($objMdPetMenuUsuarioExternoDTO->getStrUrl())) {
-					$objInfraException->adicionarValidacao('URL de Link Externo não informado.');
+					$objInfraException->adicionarValidacao('URL de Link Externo nÃ£o informado.');
 			} else {
 				// RN10 - Validando
 				require_once dirname(__FILE__).'/../util/MdPetUrlUtils.php';
-				$UrlRetorno = MdPetUrlUtils::validarStrURL($objMdPetMenuUsuarioExternoDTO->getStrUrl(),$objInfraException,'Tamanho do campo excedido (máximo 2083 caracteres).', 'URL do Link Externo inválido.');
+				$UrlRetorno = MdPetUrlUtils::validarStrURL($objMdPetMenuUsuarioExternoDTO->getStrUrl(),$objInfraException,'Tamanho do campo excedido (mÃ¡ximo 2083 caracteres).', 'URL do Link Externo invÃ¡lido.');
 				if($UrlRetorno!== true){
 					$objInfraException->adicionarValidacao($UrlRetorno);
 				}
@@ -232,7 +232,7 @@ class MdPetMenuUsuarioExternoRN extends InfraRN {
 		}elseif ($objMdPetMenuUsuarioExternoDTO->getStrTipo()=='H'){
 			//ConteudoHtml
 			if (InfraString::isBolVazia ($objMdPetMenuUsuarioExternoDTO->getStrConteudoHtml())) {
-				$objInfraException->adicionarValidacao('Conteúdo HTML não informado.');
+				$objInfraException->adicionarValidacao('ConteÃºdo HTML nÃ£o informado.');
 			}
 		}
 		
@@ -250,11 +250,11 @@ class MdPetMenuUsuarioExternoRN extends InfraRN {
 	 */
 	private function _validarDuplicidade(MdPetMenuUsuarioExternoDTO $objMdPetMenuUsuarioExternoDTO, InfraException $objInfraException, $cadastrar){
 		
-		// VALIDA DUPLICAÇÃO
-		// VALIDACAO A SER EXECUTADA NA INSERÇAO DE NOVOS REGISTROS
+		// VALIDA DUPLICAÃ‡ÃƒO
+		// VALIDACAO A SER EXECUTADA NA INSERÃ‡AO DE NOVOS REGISTROS
 		//nao permitir nome duplicado
 		
-		$msg = 'Já existe Menu cadastrado.';
+		$msg = 'JÃ¡ existe Menu cadastrado.';
 		$objMdPetMenuUsuarioExternoDTO2 = new MdPetMenuUsuarioExternoDTO();
 		$objMdPetMenuUsuarioExternoDTO2->setStrNome($objMdPetMenuUsuarioExternoDTO->getStrNome());
 		$objMdPetMenuUsuarioExternoBD = new MdPetMenuUsuarioExternoBD($this->getObjInfraIBanco());

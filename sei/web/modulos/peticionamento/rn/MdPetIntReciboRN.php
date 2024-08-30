@@ -33,7 +33,7 @@ class MdPetIntReciboRN extends InfraRN {
 
         $arrObjDTO = $objMdPetRespostaRN->listar($objMdPetRespostaDTO);
 
-        //Get todos os ids de resposta deste destinat·rio
+        //Get todos os ids de resposta deste destinat√°rio
         if (count($arrObjDTO) > 0) {
             $ids = InfraArray::converterArrInfraDTO($arrObjDTO, 'IdMdPetIntDestResposta');
         }
@@ -121,7 +121,7 @@ class MdPetIntReciboRN extends InfraRN {
         $idRelDest = array_key_exists(6, $params) ? $params[6] : false;
         $idAcessoExterno = array_key_exists(7, $params) ? $params[7] : false;
         
-        //Verifica se esse recibo pertence a essa intimaÁ„o
+        //Verifica se esse recibo pertence a essa intima√ß√£o
         $isReciboDoc = $this->_verificaReciboIntimacao($idRelDest, $idProtocolo, $idAcessoExterno);
         
         if ($isReciboDoc) {
@@ -132,7 +132,7 @@ class MdPetIntReciboRN extends InfraRN {
                 $isValido = $objMdPetCertidaoRN->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($idProtocolo, false, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
 
                 if (!$isValido) {
-                    $js = 'alert(\'Recibo EletrÙnico bloqueado, pois est· vinculado a uma IntimaÁ„o ainda n„o Cumprida.\')';
+                    $js = 'alert(\'Recibo Eletr√¥nico bloqueado, pois est√° vinculado a uma Intima√ß√£o ainda n√£o Cumprida.\')';
                 }
             }
 
@@ -143,7 +143,7 @@ class MdPetIntReciboRN extends InfraRN {
 
             $imgRecibo = '<img src="modulos/peticionamento/imagens/svg/intimacao_recibo_peticionamento_resposta.svg?'.Icone::VERSAO.'" style="width: 24px">';
 
-            $ToolTipTitle = 'Recibo da Resposta ‡ IntimaÁ„o';
+            $ToolTipTitle = 'Recibo da Resposta √† Intima√ß√£o';
 
             $ToolTipText = 'Peticionada em ';
             $ToolTipText .= $data . ' ';
@@ -152,11 +152,11 @@ class MdPetIntReciboRN extends InfraRN {
             if ($docNum) {
                 $ToolTipText .= $docNum . ' ';
             }
-            $ToolTipText .= '(SEI n∫ ';
+            $ToolTipText .= '(SEI n¬∫ ';
             $ToolTipText .= $docPrinc;
             $ToolTipText .= ')';
 
-            $ToolTipText .= '<br/><br/>Clique para visualizar o Recibo EletrÙnico de Protocolo.';
+            $ToolTipText .= '<br/><br/>Clique para visualizar o Recibo Eletr√¥nico de Protocolo.';
 
             $conteudoHtml = '<a onclick="' . $js . '"';
             $conteudoHtml .= ' onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitle . '\')"';

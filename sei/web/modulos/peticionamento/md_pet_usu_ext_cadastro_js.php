@@ -3,11 +3,12 @@
  * ANATEL
  *
  * 01/08/2016 - criado por marcelo.bezerra@cast.com.br - CAST
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
  *
- * FunÁıes de JS para cadastro de peticionamento de usuario externo
- * Essa p·gina È incluida na p·gina principal do cadastro de peticionamento
+ * Fun√ß√µes de JS para cadastro de peticionamento de usuario externo
+ * Essa p√°gina √© incluida na p√°gina principal do cadastro de peticionamento
  *
- * Documento com este mesmo nome de arquivo j· foi adicionado.
+ * Documento com este mesmo nome de arquivo j√° foi adicionado.
  *
  */
 
@@ -17,25 +18,25 @@ $strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_exter
 $strLinkPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_principal&id_tipo_procedimento='
     . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
 
-//Acao para upload de documento principal
+//A√ß√£o para upload de documento principal
 $strLinkUploadDocPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_principal');
 
-//Acao para upload de documento essencial
+//A√ß√£o para upload de documento essencial
 $strLinkUploadDocEssencial = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_essencial');
 
-//Acao para upload de documento complementar
+//A√ß√£o para upload de documento complementar
 $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_complementar');
 
-//Acao para apagar o arquivo temp
+//A√ß√£o para apagar o arquivo temp
 $strUrlMdPetUsuExtRemoverUploadArquivo = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_usu_ext_remover_upload_arquivo');
 
 //==================================================================
-//saber se o documento principal È externo ou gerado
+//saber se o documento principal √© externo ou gerado
 //==================================================================
 $externo = $ObjMdPetTipoProcessoDTO->getStrSinDocExterno();
 
 //==================================================================
-//saber se tem documento essencial configurado na parametrizaÁ„o
+//saber se tem documento essencial configurado na parametriza√ß√£o
 //==================================================================
 $objMdPetRelTpProcSerieDTO = new MdPetRelTpProcSerieDTO();
 $objMdPetRelTpProcSerieDTO->retTodos();
@@ -57,7 +58,7 @@ if (is_array($arrMdPetRelTpProcSerieDTO) && count($arrMdPetRelTpProcSerieDTO) > 
 }
 
 //==================================================================
-//saber se tem documento Complementar configurado na parametrizaÁ„o
+//saber se tem documento Complementar configurado na parametriza√ß√£o
 //==================================================================
 $objMdPetRelTpProcSerieDTO = new MdPetRelTpProcSerieDTO();
 $objMdPetRelTpProcSerieDTO->retTodos();
@@ -219,7 +220,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                 //validar campo Complemento
                 if (strTxtComplemento == "") {
-                    alert('Informe o Complemento do Tipo de Documento. Para mais informaÁıes, clique no Ìcone de Ajuda ao lado do nome do campo.');
+                    alert('Informe o Complemento do Tipo de Documento. Para mais informa√ß√µes, clique no √≠cone de Ajuda ao lado do nome do campo.');
                     isValido = false;
                     document.getElementById('complemento' + complemento).focus();
                     return;
@@ -229,7 +230,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //validar campo Complemento
             if (strTxtComplemento == "") {
-                alert('Informe o Complemento do Tipo de Documento. Para mais informaÁıes, clique no Ìcone de Ajuda ao lado do nome do campo.');
+                alert('Informe o Complemento do Tipo de Documento. Para mais informa√ß√µes, clique no √≠cone de Ajuda ao lado do nome do campo.');
                 isValido = false;
                 document.getElementById('complemento' + complemento).focus();
                 return;
@@ -237,7 +238,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //validar campo nivel de acesso
             else if (strNivelAcesso == "") {
-                alert('Informe o NÌvel de Acesso.');
+                alert('Informe o N√≠vel de Acesso.');
                 isValido = false;
                 cbNivelAcesso.focus();
                 return;
@@ -246,7 +247,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             //se informou Nivel de Acesso restrito, entao precisa informar tambem a hipotese legal
             else if ((cbHipoteseLegal != null && cbHipoteseLegal != undefined) && strNivelAcesso == '1' && strHipoteseLegal == '') {
 
-                alert('Informe a HipÛtese Legal.');
+                alert('Informe a Hip√≥tese Legal.');
                 isValido = false;
                 cbHipoteseLegal.focus();
                 return;
@@ -259,7 +260,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //se marcou formato de documento Digitalizado, verificar se selecione o tipo de conferencia
             else if (strFormatoDocumento == 'digitalizado' && strTipoConferencia == '') {
-                alert('Informe a ConferÍncia com o documento digitalizado.');
+                alert('Informe a Confer√™ncia com o documento digitalizado.');
                 isValido = false;
                 cbTipoConferencia.focus();
                 return;
@@ -345,7 +346,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //validar campo Complemento
             if (strTxtComplemento == "") {
-                alert('Informe o Complemento do Tipo de Documento. Para mais informaÁıes, clique no Ìcone de Ajuda ao lado do nome do campo.');
+                alert('Informe o Complemento do Tipo de Documento. Para mais informa√ß√µes, clique no √≠cone de Ajuda ao lado do nome do campo.');
                 isValido = false;
                 document.getElementById('complemento' + complemento).focus();
                 return;
@@ -353,7 +354,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //validar campo Complemento
             if (strTxtComplemento == "") {
-                alert('Informe o Complemento do Tipo de Documento. Para mais informaÁıes, clique no Ìcone de Ajuda ao lado do nome do campo.');
+                alert('Informe o Complemento do Tipo de Documento. Para mais informa√ß√µes, clique no √≠cone de Ajuda ao lado do nome do campo.');
                 isValido = false;
                 document.getElementById('complemento' + complemento).focus();
                 return;
@@ -361,7 +362,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //validar campo nivel de acesso
             else if (strNivelAcesso == "") {
-                alert('Informe o NÌvel de Acesso.');
+                alert('Informe o N√≠vel de Acesso.');
                 isValido = false;
                 cbNivelAcesso.focus();
                 return;
@@ -370,7 +371,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             //se informou Nivel de Acesso restrito, entao precisa informar tambem a hipotese legal
             else if ((cbHipoteseLegal != null && cbHipoteseLegal != undefined) && strNivelAcesso == '1' && strHipoteseLegal == '') {
 
-                alert('Informe a HipÛtese Legal.');
+                alert('Informe a Hip√≥tese Legal.');
                 isValido = false;
                 cbHipoteseLegal.focus();
                 return;
@@ -383,7 +384,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //se marcou formato de documento Digitalizado, verificar se selecione o tipo de conferencia
             else if (strFormatoDocumento == 'digitalizado' && strTipoConferencia == '') {
-                alert('Informe a ConferÍncia com o documento digitalizado.');
+                alert('Informe a Confer√™ncia com o documento digitalizado.');
                 isValido = false;
                 cbTipoConferencia.focus();
                 return;
@@ -476,12 +477,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         //limpar o campo Complemento
         document.getElementById('complemento' + complemento).value = '';
 
-        //retornar a combo "Nivel de Acesso" para a primeira opÁao selecionada
+        //retornar a combo "Nivel de Acesso" para a primeira op√ßao selecionada
         if (cbNivelAcesso.getAttribute("type") != 'hidden') {
             cbNivelAcesso.options[0].selected = 'selected';
         }
 
-        //se nao for o "Principal", resetar a seleÁao da combo "Tipo"
+        //se nao for o "Principal", resetar a sele√ßao da combo "Tipo"
         if (numero != '1') {
             document.getElementById('tipoDocumento' + complemento).options[0].selected = 'selected';
             document.querySelector('select[name="hipoteseLegal' + numero + '"]').removeAttribute("disabled");
@@ -547,12 +548,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function receberInteressado(arrDadosInteressado, InteressadoCustomizado) {
 
-        //antes de adicionar verificar se o interessado ja est· na grid
+        //antes de adicionar verificar se o interessado ja est√° na grid
         var strHash = document.getElementById('hdnListaInteressadosIndicados').value;
         var strUsuarioLogado = document.getElementById('hdnUsuarioLogado').value;
 
         //caractere de quebra de linha/registro
-        var arrHash = strHash.split('•');
+        var arrHash = strHash.split('¬•');
         var qtdX = arrHash.length;
 
         if (qtdX == 1 && arrHash[0] == "") {
@@ -567,11 +568,11 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             for (var i = 0; i < qtdX; i++) {
 
                 //caractere de quebra de coluna/campo
-                var arrLocal = arrHash[i].split('±');
+                var arrLocal = arrHash[i].split('¬±');
                 var idContato = arrLocal[0];
 
                 if (idContato == arrDadosInteressado[0]) {
-                    alert('O Interessado informado j· foi selecionado.');
+                    alert('O Interessado informado j√° foi selecionado.');
                     document.getElementById('txtCPF').value = '';
                     document.getElementById('txtNomeRazaoSocial').value = '';
                     return false;
@@ -662,11 +663,11 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         var cell4 = row.insertCell(3);
         cell4.className = 'infraTdSetaOrdenacao';
 
-        //NÌvel de acesso
+        //N√≠vel de acesso
         var cell5 = row.insertCell(4);
         cell5.className = 'infraTdSetaOrdenacao';
 
-        //AÁıes
+        //A√ß√µes
         var cell6 = row.insertCell(5);
         cell6.className = 'infraTdSetaOrdenacao';
 
@@ -745,12 +746,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         cell4.align = 'center';
         cell4.className = 'infraTdSetaOrdenacao';
 
-        //NÌvel de acesso
+        //N√≠vel de acesso
         var cell5 = row.insertCell(4);
         cell5.align = 'center';
         cell5.className = 'infraTdSetaOrdenacao';
 
-        //AÁıes
+        //A√ß√µes
         var cell6 = row.insertCell(5);
         cell6.align = 'center';
         cell6.className = 'infraTdSetaOrdenacao';
@@ -774,7 +775,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         alert('Formato documento');
     }
 
-    //funÁ„o de apoio para debug
+    //fun√ß√£o de apoio para debug
     function dump(obj) {
 
         var out = '';
@@ -789,7 +790,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function validarFormulario() {
 
-        //valida campo especificaÁ„o
+        //valida campo especifica√ß√£o
         var textoEspecificacao = document.getElementById("txtEspecificacao").value;
         var cbUF = document.getElementById("selUFAberturaProcesso");
         var ufSelecionada = '';
@@ -803,7 +804,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
 
         if (textoEspecificacao == '') {
-            alert('Informe a EspecificaÁ„o.');
+            alert('Informe a Especifica√ß√£o.');
             document.getElementById("txtEspecificacao").focus();
             return false;
         }
@@ -811,7 +812,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         //Validar combos
         try {
             if (document.getElementById('selOrgao').value === '') {
-                alert("Informe o Org„o.");
+                alert("Informe o Org√£o.");
                 return false;
             }
 
@@ -834,7 +835,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-        //aplicando validaÁao de interessados informados no cenario de indicaÁao por cpf ou cnpj
+        //aplicando valida√ßao de interessados informados no cenario de indica√ßao por cpf ou cnpj
         var tbInteressadosIndicados = document.getElementById("tbInteressadosIndicados");
         var hdnListaInteressadosIndicados = document.getElementById("hdnListaInteressadosIndicados");
         var optTipoPessoaFisica = document.getElementById("optTipoPessoaFisica");
@@ -846,7 +847,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-        //aplicando validaÁıes relacionadas ao documento principal
+        //aplicando valida√ß√µes relacionadas ao documento principal
         var fileArquivoPrincipal = document.getElementById('fileArquivoPrincipal');
         var complementoPrincipal = document.getElementById('complementoPrincipal');
         var nivelAcessoPrincipal = document.getElementById('nivelAcesso1');
@@ -856,10 +857,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             hipoteseLegalPrincipal = document.getElementById('hipoteseLegal1');
         }
 
-        //validando seleÁao de nivel de acesso principal e hipotese legal principal
+        //validando sele√ßao de nivel de acesso principal e hipotese legal principal
         var tbDocumentoPrincipal = document.getElementById('tbDocumentoPrincipal');
 
-        //se for documento principao do tipo externo, sÛ validar complemento,
+        //se for documento principao do tipo externo, s√≥ validar complemento,
         // nivel de acesso e hipotese legal SE a grid estiver ainda sem nenhum documento
         if (tbDocumentoPrincipal != null &&
             tbDocumentoPrincipal != undefined) {
@@ -885,24 +886,24 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 return false;
 
             } else if (hdnDocPrincipal == "" && complementoPrincipal.value == '') {
-                alert('Informe o Complemento do Tipo de Documento. Para mais informaÁıes, clique no Ìcone de Ajuda ao lado do nome do campo.');
+                alert('Informe o Complemento do Tipo de Documento. Para mais informa√ß√µes, clique no √≠cone de Ajuda ao lado do nome do campo.');
                 complementoPrincipal.focus();
                 return false;
 
             } else if (hdnDocPrincipal == "" && nivelAcessoPrincipal.value == '') {
-                alert('Informe o NÌvel de Acesso.');
+                alert('Informe o N√≠vel de Acesso.');
                 nivelAcessoPrincipal.focus();
                 return false;
 
             } else if (hdnDocPrincipal == "" && nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal != null && hipoteseLegalPrincipal.value == '') {
-                alert('Informe a HipÛtese Legal.');
+                alert('Informe a Hip√≥tese Legal.');
                 hipoteseLegalPrincipal.focus();
                 return false;
             } else if (hdnDocPrincipal == "" && strFormatoDocumento == '') {
                 alert('Informe o Formato do Documento.');
                 return false;
             } else if (hdnDocPrincipal == "" && strFormatoDocumento == 'digitalizado' && strTipoConferencia == '') {
-                alert('Informe a ConferÍncia com o documento digitalizado.');
+                alert('Informe a Confer√™ncia com o documento digitalizado.');
                 return false;
             }
 
@@ -912,12 +913,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         else {
 
             if (nivelAcessoPrincipal.value == '') {
-                alert('Informe o NÌvel de Acesso.');
+                alert('Informe o N√≠vel de Acesso.');
                 nivelAcessoPrincipal.focus();
                 return false;
 
             } else if (nivelAcessoPrincipal.value == '1' && hipoteseLegalPrincipal != null && hipoteseLegalPrincipal.value == '') {
-                alert('Informe a HipÛtese Legal.');
+                alert('Informe a Hip√≥tese Legal.');
                 hipoteseLegalPrincipal.focus();
                 return false;
             }
@@ -925,7 +926,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         }
 
         //validar se pelo menos um doc principal foi adicionado CASO
-        //a grid de doc principal exista na tela (ou seja, quando a parametrizaÁ„o)
+        //a grid de doc principal exista na tela (ou seja, quando a parametriza√ß√£o)
         //informar doc principal do tipo Externo
 
         if (tbDocumentoPrincipal != null &&
@@ -942,8 +943,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             }
         }
 
-            //caso doc principal seja do tipo "Gerado", fazer requisiÁ„o AJAX
-            //para validar se usu·rio salvou na sessao algum conteudo para o documento
+            //caso doc principal seja do tipo "Gerado", fazer requisi√ß√£o AJAX
+            //para validar se usu√°rio salvou na sessao algum conteudo para o documento
         //caso nao tenha conteudo obrigar usuario a informar
         else {
 
@@ -961,7 +962,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     success: function (data, textStatus, jqXHR) {
                         conteudoDocumento = data;
                         if (data == '') {
-                            alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes È necess·rio acessar o Editor do SEI no link ìclique aqui para editar conte˙doî em frente ao campo ìDocumento Principalî, preencher apenas os campos pertinentes com os dados da demanda e clicar no bot„o ìSalvarî no canto superior esquerdo do Editor.");
+                            alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes √© necess√°rio acessar o Editor do SEI no link ¬ìclique aqui para editar conte√∫do¬î em frente ao campo ¬ìDocumento Principal¬î, preencher apenas os campos pertinentes com os dados da demanda e clicar no bot√£o ¬ìSalvar¬î no canto superior esquerdo do Editor.");
                             return;
                         } else {
                             DocPrincipalValidado = true;
@@ -989,7 +990,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 var strHashEssencial = document.getElementById('hdnDocEssencial').value;
 
                 //caractere de quebra de linha/registro
-                var arrHashEssencial = strHashEssencial.split('•');
+                var arrHashEssencial = strHashEssencial.split('¬•');
                 var qtdX = arrHashEssencial.length;
 
                 if (qtdX == 1 && arrHashEssencial[0] == "") {
@@ -1008,7 +1009,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     for (var i = 0; i < qtdX; i++) {
 
                         //caractere de quebra de coluna/campo
-                        var arrLocal = arrHashEssencial[i].split('±');
+                        var arrLocal = arrHashEssencial[i].split('¬±');
                         var tipo = arrLocal[local];
 
                         if (tiposIncluidos.indexOf(tipo) <= -1) {
@@ -1053,7 +1054,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     function abrirPeticionar() {
 
         if (validarFormulario()) {
-            console.log(1234);
             parent.infraAbrirJanelaModal('<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&acao=peticionamento_usuario_externo_concluir&tipo_selecao=2'))?>',
                 800,
                 520,
@@ -1074,9 +1074,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         $strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=0');
         ?>
 
-        if (tipo == 'Pessoa FÌsica') {
+        if (tipo == 'Pessoa F√≠sica') {
             var str = '<?= $strLinkEdicaoPF ?>';
-        } else if (tipo == 'Pessoa JurÌdica') {
+        } else if (tipo == 'Pessoa Jur√≠dica') {
             var str = '<?= $strLinkEdicaoPJ ?>';
         }
 
@@ -1114,7 +1114,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             return;
         }
 
-        //checar se o CPF/CNPJ est· no formato v·lido e se estiver, consultar via AJAX para tentar obter um interessado cadastrado
+        //checar se o CPF/CNPJ est√° no formato v√°lido e se estiver, consultar via AJAX para tentar obter um interessado cadastrado
         else {
 
             if (chkTipoPessoaFisica) {
@@ -1122,10 +1122,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 ponto = txtcpf.split(".");
                 traco = txtcpf.split("-");
 
-                //cpf tem que ser valido , ter 2 pontos e um traÁo (ou seja, estar na mascara)
+                //cpf tem que ser valido , ter 2 pontos e um tra√ßo (ou seja, estar na mascara)
                 if (!infraValidarCpf(infraTrim(txtcpf)) || (ponto.length - 1) != 2 || (traco.length - 1) != 1) {
 
-                    alert('CPF Inv·lido.');
+                    alert('CPF Inv√°lido.');
                     document.getElementById('txtCPF').focus();
                     document.getElementById('txtNomeRazaoSocial').value = '';
                     return;
@@ -1140,7 +1140,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                 if (!infraValidarCnpj(infraTrim(txtcnpj)) || ponto.length != 3 || traco != 15 || barra != 10) {
 
-                    alert('CNPJ Inv·lido.');
+                    alert('CNPJ Inv√°lido.');
                     document.getElementById('txtCNPJ').focus();
                     document.getElementById('txtNomeRazaoSocial').value = '';
                     return;
@@ -1149,7 +1149,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             }
 
-            //se chegar aqui o CPF/CNPJ est· valido, entao consultar via AJAX para ver se o contato j· est· cadastrado
+            //se chegar aqui o CPF/CNPJ est√° valido, entao consultar via AJAX para ver se o contato j√° est√° cadastrado
             var formData = "cpfcnpj=" + conteudo;  //Name value Pair
             $.ajax({
                 url: "<?= $strLinkAjaxContato ?>",
@@ -1360,7 +1360,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                 for (var i = 0; i < options.length; i++) {
                     if (options[i].value == id) {
-                        self.setTimeout('alert(\'Interessado j· consta na lista.\')', 100);
+                        self.setTimeout('alert(\'Interessado j√° consta na lista.\')', 100);
                         break;
                     }
                 }
@@ -1400,7 +1400,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         infraEfeitoTabelas();
         document.getElementById('txtEspecificacao').focus();
 
-        //Preenchimento com o endereÁo do contexto
+        //Preenchimento com o endere√ßo do contexto
         objAjaxContato = new infraAjaxComplementar(null, '<?=$strLinkAjaxContato?>');
         objAjaxContato.limparCampo = false;
 
@@ -1446,7 +1446,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     function getStrNivelAcesso(nivel) {
 
         if (nivel == '0') {
-            return 'P˙blico';
+            return 'P√∫blico';
         } else if (nivel == '1') {
             return 'Restrito';
         } else if (nivel == '') {
@@ -1511,7 +1511,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 objTabelaDocPrincipal.adicionar([nome, dataHora, tamanhoFormatado, documento, nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoPrincipal.value, strComplemento, formatoDocumentoLbl, '']);
 
                 var strHashPrincipal = document.getElementById('hdnDocPrincipal').value;
-                var arrHashPrincipal = strHashPrincipal.split('±');
+                var arrHashPrincipal = strHashPrincipal.split('¬±');
 
                 <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0')); ?>
                 var urlBase = "<?= $linkBase ?>";
@@ -1531,7 +1531,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 limparCampoUpload('1');
 
                 //aplicando valign='middle' nas colunas  da tabela
-                //(necess·rio especificamente para alinhar coluna aÁıes)
+                //(necess√°rio especificamente para alinhar coluna a√ß√µes)
                 var table = document.getElementById("tbDocumentoPrincipal");
 
                 for (var i = 0, row; row = table.rows[i]; i++) {
@@ -1547,7 +1547,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 //INICIO VALIDACAO EXTENSOES
                 var arrExtensoesPermitidas = [<?=$strSelExtensoesPrin?>];
                 if ($("#fileArquivoPrincipal").val().replace(/^.*\./, '') != '' && $.inArray($("#fileArquivoPrincipal").val().replace(/^.*\./, '').toLowerCase(), arrExtensoesPermitidas) == -1) {
-                    alert("O arquivo selecionado n„o È permitido.\nSomente s„o permitidos arquivos com as extensıes:\n<?=preg_replace("%'%", " ", $strSelExtensoesPrin)?> .");
+                    alert("O arquivo selecionado n√£o √© permitido.\nSomente s√£o permitidos arquivos com as extens√µes:\n<?=preg_replace("%'%", " ", $strSelExtensoesPrin)?> .");
                     return false;
                 }
                 //FIM VALIDACAO EXTENSOES
@@ -1569,7 +1569,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 //INICIO VALIDACAO EXTENSOES
                 if (ext != undefined && ext != '' && !extPermitida) {
                     document.getElementById('fileArquivoPrincipal').value = '';
-                    alert('A extens„o do arquivo n„o È permitida.');
+                    alert('A extens√£o do arquivo n√£o √© permitida.');
                 }
                 //FIM VALIDACAO EXTENSOES
 
@@ -1635,7 +1635,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             for (var i = 1; i < linhas.length; i++) {
                 //Nome igual
                 if (nome.toLowerCase().trim() == linhas[i].cells[0].innerText.toLowerCase().trim()) {
-                    alert('N„o È permitido adicionar documento com o mesmo nome de arquivo.');
+                    alert('N√£o √© permitido adicionar documento com o mesmo nome de arquivo.');
                     return false;
                 }
             }
@@ -1671,7 +1671,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             objTabelaDocEssencial.adicionar([nome, dataHora, tamanhoFormatado, documento, nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoEssencial.value, strComplemento, formatoDocumentoLbl, '']);
 
             var strHashEssencial = document.getElementById('hdnDocEssencial').value;
-            var arrHashEssencial = strHashEssencial.split('±');
+            var arrHashEssencial = strHashEssencial.split('¬±');
 
             <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0')); ?>
             var urlBase = "<?= $linkBase ?>";
@@ -1708,7 +1708,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             //INICIO VALIDACAO EXTENSOES
             var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];
             if ($("#fileArquivoEssencial").val().replace(/^.*\./, '') != '' && $.inArray($("#fileArquivoEssencial").val().replace(/^.*\./, '').toLowerCase(), arrExtensoesPermitidas) == -1) {
-                alert("O arquivo selecionado n„o È permitido.\nSomente s„o permitidos arquivos com as extensıes:\n<?=preg_replace("%'%", " ", $strSelExtensoesComp)?> .");
+                alert("O arquivo selecionado n√£o √© permitido.\nSomente s√£o permitidos arquivos com as extens√µes:\n<?=preg_replace("%'%", " ", $strSelExtensoesComp)?> .");
                 return false;
             }
             //FIM VALIDACAO EXTENSOES
@@ -1729,7 +1729,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             if (ext != undefined && ext != '' && !extPermitida) {
                 document.getElementById('fileArquivoEssencial').value = '';
-                alert('A extens„o do arquivo n„o È permitida.');
+                alert('A extens√£o do arquivo n√£o √© permitida.');
             }
 
             return extPermitida;
@@ -1791,7 +1791,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             for (var i = 1; i < linhas.length; i++) {
                 //Nome igual
                 if (nome.toLowerCase().trim() == linhas[i].cells[0].innerText.toLowerCase().trim()) {
-                    alert('N„o È permitido adicionar documento com o mesmo nome de arquivo.');
+                    alert('N√£o √© permitido adicionar documento com o mesmo nome de arquivo.');
                     return false;
                 }
             }
@@ -1826,7 +1826,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             objTabelaDocComplementar.adicionar([nome, dataHora, tamanhoFormatado, documento, nivelAcesso, hipoteseLegal, formatoDocumento, tipoConferencia, nomeUpload, cbTpoComplementar.value, strComplemento, formatoDocumentoLbl, '']);
 
             var strHashComplementar = document.getElementById('hdnDocComplementar').value;
-            var arrHashComplementar = strHashComplementar.split('±');
+            var arrHashComplementar = strHashComplementar.split('¬±');
 
             <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0')); ?>
             var urlBase = "<?= $linkBase ?>";
@@ -1860,7 +1860,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             //INICIO VALIDACAO EXTENSOES
             var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];
             if ($("#fileArquivoComplementar").val().replace(/^.*\./, '') != '' && $.inArray($("#fileArquivoComplementar").val().replace(/^.*\./, '').toLowerCase(), arrExtensoesPermitidas) == -1) {
-                alert("O arquivo selecionado n„o È permitido.\nSomente s„o permitidos arquivos com as extensıes:\n<?=preg_replace("%'%", " ", $strSelExtensoesComp)?> .");
+                alert("O arquivo selecionado n√£o √© permitido.\nSomente s√£o permitidos arquivos com as extens√µes:\n<?=preg_replace("%'%", " ", $strSelExtensoesComp)?> .");
                 return false;
             }
             //FIM VALIDACAO EXTENSOES
@@ -1881,7 +1881,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             if (ext != undefined && ext != '' && !extPermitida) {
                 document.getElementById('fileArquivoComplementar').value = '';
-                alert('A extens„o do arquivo n„o È permitida.');
+                alert('A extens√£o do arquivo n√£o √© permitida.');
             }
 
             return extPermitida;
@@ -1958,7 +1958,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     function selecionarPJ() {
 
         document.getElementById('descTipoPessoa').innerHTML = 'CNPJ:';
-        document.getElementById('descNomePessoa').innerHTML = 'Raz„o Social:';
+        document.getElementById('descNomePessoa').innerHTML = 'Raz√£o Social:';
 
         document.getElementById('divSel1').style.display = 'inline';
         document.getElementById('divSel2').style.display = 'inline';
@@ -2021,7 +2021,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var mes = parseInt(data[1]) - 1;
             var horas = valorArray[1].split(':');
 
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : 00;
+            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
             var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
             return dataCompleta;
         }
@@ -2070,7 +2070,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             }
             document.getElementById('div' + idHipoteseLegal).style.display = 'block';
         } else {
-            //ocultar combo e limpar a seleÁ„o da combo
+            //ocultar combo e limpar a sele√ß√£o da combo
             if (document.getElementById(idHipoteseLegal) != null) {
                 document.getElementById(idHipoteseLegal).selectedIndex = 0;
             }
@@ -2102,10 +2102,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         if (txtNomeRazaoSocial == '') {
 
             if (chkTipoPessoaFisica) {
-                alert('Antes È necess·rio validar o CPF.');
+                alert('Antes √© necess√°rio validar o CPF.');
                 return;
             } else if (chkTipoPessoaJuridica) {
-                alert('Antes È necess·rio validar o CNPJ.');
+                alert('Antes √© necess√°rio validar o CNPJ.');
                 return;
             }
 
@@ -2115,9 +2115,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         var arrDadosInteressadoValido = [];
 
         if (txtCPF != "") {
-            arrDadosInteressadoValido[1] = "Pessoa FÌsica";
+            arrDadosInteressadoValido[1] = "Pessoa F√≠sica";
         } else if (txtCNPJ != "") {
-            arrDadosInteressadoValido[1] = "Pessoa JurÌdica";
+            arrDadosInteressadoValido[1] = "Pessoa Jur√≠dica";
         }
 
         arrDadosInteressadoValido[2] = txtCPFCNPJ;
@@ -2127,13 +2127,13 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         var bolInteressadoCustomizado = hdnCustomizado;
 
-        //checar se o cpf ou cnpj informado j· existe na grid
+        //checar se o cpf ou cnpj informado j√° existe na grid
         var hdnListaInteressadosIndicados = document.getElementById('hdnListaInteressadosIndicados').value;
 
         if (hdnListaInteressadosIndicados != "") {
 
             //caractere de quebra de linha
-            var arrHash = hdnListaInteressadosIndicados.split('•');
+            var arrHash = hdnListaInteressadosIndicados.split('¬•');
             var quantidadeRegistro = arrHash.length;
 
             if (quantidadeRegistro == 0) {
@@ -2141,11 +2141,11 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 var cpfInserido = arrDadosInteressadoValido[2];
 
                 //caractere de quebra de coluna
-                var arrLocal = hdnListaInteressadosIndicados.split('±');
+                var arrLocal = hdnListaInteressadosIndicados.split('¬±');
                 var cpfLocal = arrLocal[2];
 
                 if (cpfInserido == cpfLocal) {
-                    alert('N„o È permitido adicionar interessado com CPF ou CNPJ j· adicionado.');
+                    alert('N√£o √© permitido adicionar interessado com CPF ou CNPJ j√° adicionado.');
                     return;
                 }
 
@@ -2155,11 +2155,11 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                 for (var i = 0; i < quantidadeRegistro; i++) {
 
-                    var arrLocal = arrHash[i].split('±');
+                    var arrLocal = arrHash[i].split('¬±');
                     var cpfLocal = arrLocal[2];
 
                     if (cpfInserido == cpfLocal) {
-                        alert('N„o È permitido adicionar interessado com CPF ou CNPJ j· adicionado.');
+                        alert('N√£o √© permitido adicionar interessado com CPF ou CNPJ j√° adicionado.');
                         return;
                     }
 
@@ -2219,7 +2219,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById("selUF").disabled = false;
         document.getElementById("selUFAberturaProcesso").disabled = false;
         document.getElementById('hdnIdOrgao').value = idOrgao.value;
-        //Caso selecione vazio na combo org„o, sumir com a combo uf
+        //Caso selecione vazio na combo org√£o, sumir com a combo uf
         if (document.getElementById("selOrgao").value == "") {
             document.getElementById("ufHidden").style.display = "none";
             document.getElementById("cidadeHidden").style.display = "none";
@@ -2352,7 +2352,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById("selUFAberturaProcesso").disabled = false;
         document.getElementById('hdnIdUf').value = idUf.value;
         document.getElementById('hdnIdCidade').value = '';
-        //Caso o usu·rio n„o tenha selecionado o combo org„o na combo da tela anterior
+        //Caso o usu√°rio n√£o tenha selecionado o combo org√£o na combo da tela anterior
         if (document.getElementById('hdnIdOrgao').value == '') {
             document.getElementById('hdnIdOrgao').value = document.getElementById('hdnIdOrgaoTelaAnterior').value;
         }

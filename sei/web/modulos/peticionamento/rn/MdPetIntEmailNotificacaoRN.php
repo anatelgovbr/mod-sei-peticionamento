@@ -17,7 +17,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
     public function __construct()
     {
         /**
-         * Retirada do método nativo que estava entrando em conflito com o AgendamentoRN :: otimizarIndicesSolr
+         * Retirada do mÃ©todo nativo que estava entrando em conflito com o AgendamentoRN :: otimizarIndicesSolr
          */
 //		session_start();
         //////////////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $qtdEnviadas = 0;
             $arrDadosEmail = array();
 
-            //Usuário do Módulo de Peticionamento
+            //UsuÃ¡rio do MÃ³dulo de Peticionamento
             $objUsuarioPetRN = new MdPetIntUsuarioRN();
             $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
@@ -315,11 +315,11 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                             if (is_object($objUsuarioDTO)) {
                                 if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
-//                                $objInfraException->lancarValidacao('Usuário externo "' . $objUsuarioDTO->getStrSigla() . '" ainda não foi liberado.');
+//                                $objInfraException->lancarValidacao('UsuÃ¡rio externo "' . $objUsuarioDTO->getStrSigla() . '" ainda nÃ£o foi liberado.');
                                 }
 
                                 if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
-//                                $objInfraException->lancarValidacao('Usuário "' . $objUsuarioDTO->getStrSigla() . '" não é um usuário externo.');
+//                                $objInfraException->lancarValidacao('UsuÃ¡rio "' . $objUsuarioDTO->getStrSigla() . '" nÃ£o Ã© um usuÃ¡rio externo.');
                                 }
                                 //contato - fim
                                 $enviaEmail = true;
@@ -336,7 +336,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                                 $arrDadosEmail['tipo_intimacao'] = $destinatario->getStrNomeTipoIntimacao();
 
-                                //Get Prazo Tácito
+                                //Get Prazo TÃ¡cito
                                 $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
                                 $objPrazoTacitoDTO->retNumNumPrazo();
                                 $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
@@ -346,10 +346,10 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                                 $dtIntimacao = !is_null($destinatario->getDthDataCadastro()) ? explode(' ', $destinatario->getDthDataCadastro()) : null;
 
-                                //Data Expedição Intimação
+                                //Data ExpediÃ§Ã£o IntimaÃ§Ã£o
                                 $arrDadosEmail['data_expedicao_intimacao'] = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
 
-                                //Calcular Data Final do Prazo Tácito
+                                //Calcular Data Final do Prazo TÃ¡cito
                                 $dataFimPrazoTacito = '';
                                 $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
                                 $arrDadosEmail['data_final_prazo_intimacao_tacita'] = $objMdPetIntPrazoRN->calcularDataPrazo($arrDadosEmail['prazo_intimacao_tacita'], $arrDadosEmail['data_expedicao_intimacao']);
@@ -385,7 +385,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                                     $retornoIntimacaoPF = $this->enviarEmailProcuradorPf($idContato, $destinatario, $idIntimacao, $params[1], $arrDadosEmail);
                                     $qtdEnviadas += $retornoIntimacaoPF['qtdEnviadas'];
-                                    $qtdNaoEnviadas += $retornoIntimacaoPF['qtdNãoEnviadas'];
+                                    $qtdNaoEnviadas += $retornoIntimacaoPF['qtdNÃ£oEnviadas'];
                                     array_merge($arrDadosEmailNaoEnviados, $retornoIntimacaoPF['arrDadosEmailNaoEnviados']);
                                 } else {
                                     $qtdNaoEnviadas++;
@@ -399,7 +399,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                     }
                 }
             }
-            return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
+            return array('qtdEnviadas' => $qtdEnviadas, 'qtdNÃ£oEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
         } catch (Exception $e) {
             LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
             throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
@@ -419,7 +419,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $arrDadosEmailNaoEnviados = array();
             $arrDadosEmail = array();
 
-            //Usuário do Módulo de Peticionamento
+            //UsuÃ¡rio do MÃ³dulo de Peticionamento
             $objUsuarioPetRN = new MdPetIntUsuarioRN();
             $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
@@ -528,7 +528,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                             $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
                             $arrMdPetVincRepRN = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
 
-                            //Recuperando Vinculo, Razão Social e CNPJ
+                            //Recuperando Vinculo, RazÃ£o Social e CNPJ
                             //Para cada pessoa vinculada a empresa
 
                             foreach ($arrMdPetVincRepRN as $key => $value) {
@@ -565,11 +565,11 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                                     if (is_object($objUsuarioDTO)) {
 
                                         if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
-//                                        $objInfraException->lancarValidacao('Usuário externo "' . $objUsuarioDTO->getStrSigla() . '" ainda não foi liberado.');
+//                                        $objInfraException->lancarValidacao('UsuÃ¡rio externo "' . $objUsuarioDTO->getStrSigla() . '" ainda nÃ£o foi liberado.');
                                         }
 
                                         if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
-//                                        $objInfraException->lancarValidacao('Usuário "' . $objUsuarioDTO->getStrSigla() . '" não é um usuário externo.');
+//                                        $objInfraException->lancarValidacao('UsuÃ¡rio "' . $objUsuarioDTO->getStrSigla() . '" nÃ£o Ã© um usuÃ¡rio externo.');
                                         }
                                         //contato - fim
                                         $enviaEmail = true;
@@ -586,7 +586,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                                         $arrDadosEmail['tipo_intimacao'] = $destinatario->getStrNomeTipoIntimacao();
 
-                                        //Get Prazo Tácito
+                                        //Get Prazo TÃ¡cito
                                         $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
                                         $objPrazoTacitoDTO->retNumNumPrazo();
                                         $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
@@ -596,10 +596,10 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                                         $dtIntimacao = !is_null($destinatario->getDthDataCadastro()) ? explode(' ', $destinatario->getDthDataCadastro()) : null;
 
-                                        //Data Expedição Intimação
+                                        //Data ExpediÃ§Ã£o IntimaÃ§Ã£o
                                         $arrDadosEmail['data_expedicao_intimacao'] = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
 
-                                        //Calcular Data Final do Prazo Tácito
+                                        //Calcular Data Final do Prazo TÃ¡cito
                                         $dataFimPrazoTacito = '';
                                         $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
                                         $arrDadosEmail['data_final_prazo_intimacao_tacita'] = $objMdPetIntPrazoRN->calcularDataPrazo($arrDadosEmail['prazo_intimacao_tacita'], $arrDadosEmail['data_expedicao_intimacao']);
@@ -643,7 +643,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                     }
                 }
             }
-            return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
+            return array('qtdEnviadas' => $qtdEnviadas, 'qtdNÃ£oEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
         } catch (Exception $e) {
             LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
             throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
@@ -660,7 +660,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $idVinculo = isset($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
         $numeroSEI = isset($dados['hdnNumeroSei']) ? $dados['hdnNumeroSei'] : null;
         $numeroSEIVinculacao = isset($dados['numeroSeiVinculacao']) ? $dados['numeroSeiVinculacao'] : null;
-        //Usuário do Módulo de Peticionamento
+        //UsuÃ¡rio do MÃ³dulo de Peticionamento
 //        $objUsuarioPetRN  = new MdPetIntUsuarioRN();
 //        $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
@@ -679,7 +679,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $itemListaProcuradores = '';
 
         if(is_array($params['arrListaProcuradores']) && count($params['arrListaProcuradores']) > 0){
-            $itemListaProcuradores = "- As Procurações Eletrônicas, abaixo listadas, concedidas para representação da Pessoa Jurídica restam igualmente suspensas:
+            $itemListaProcuradores = "- As ProcuraÃ§Ãµes EletrÃ´nicas, abaixo listadas, concedidas para representaÃ§Ã£o da Pessoa JurÃ­dica restam igualmente suspensas:
 ";
             for ($i=0; $i < count($params['arrListaProcuradores']); $i++) { 
                 $itemListaProcuradores .= "
@@ -781,7 +781,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $itemListaProcuradores = '';
 
         if(is_array($params['arrListaProcuradores']) && count($params['arrListaProcuradores']) > 0){
-            $itemListaProcuradores = "- As Procurações Eletrônicas, abaixo listadas, que tenham sido suspensas restam igualmente restabelecidas:
+            $itemListaProcuradores = "- As ProcuraÃ§Ãµes EletrÃ´nicas, abaixo listadas, que tenham sido suspensas restam igualmente restabelecidas:
 ";
             for ($i=0; $i < count($params['arrListaProcuradores']); $i++) { 
                 $itemListaProcuradores .= "
@@ -903,7 +903,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $arrDadosEmail['dadosUsuario']['processo']               = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
             $arrDadosEmail['dadosUsuario']['outorgado_nome']         = mb_strtoupper($objMdPetVincRepresentantDTO->getStrNomeProcurador());
             $arrDadosEmail['dadosUsuario']['outorgado_email']        = $objMdPetVincRepresentantDTO->getStrEmail();
-            $arrDadosEmail['dadosUsuario']['outorgante_tipo_pessoa'] = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Jurídica' : 'Física';
+            $arrDadosEmail['dadosUsuario']['outorgante_tipo_pessoa'] = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'JurÃ­dica' : 'FÃ­sica';
 
             $arrDadosEmail['dadosUsuario']['outorgante_nome']        = mb_strtoupper($objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc());
             if($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J'){
@@ -918,8 +918,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             if($dados['hdnOperacao'] == 'S'){
                 $arrDadosEmail['dadosUsuario']['documento_suspensao_procuracao'] = $objProtocoloDTO->getStrProtocoloFormatado();
             }else{
-                $paragrafoSimples   = '- Ficam restabelecidos os Poderes de Representação e de peticionar em nome do Outorgante;';
-                $paragrafoEspecial  = '- Ficam restabelecidos os Poderes de Representação, o seu direito de peticionar e emitir Procurações Eletrônicas Simples em nome do Outorgante;';
+                $paragrafoSimples   = '- Ficam restabelecidos os Poderes de RepresentaÃ§Ã£o e de peticionar em nome do Outorgante;';
+                $paragrafoEspecial  = '- Ficam restabelecidos os Poderes de RepresentaÃ§Ã£o, o seu direito de peticionar e emitir ProcuraÃ§Ãµes EletrÃ´nicas Simples em nome do Outorgante;';
                 
                 $arrDadosEmail['dadosUsuario']['paragrafo_comunicado'] = $dados['hdnStrTipoVinculo'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES ? $paragrafoSimples : $paragrafoEspecial;
                 $arrDadosEmail['dadosUsuario']['documento_restabelecimento_procuracao'] = $objProtocoloDTO->getStrProtocoloFormatado();
@@ -1381,7 +1381,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         if ($arrDadosEmail['tipo_prazo_externo_tipo_resposta'] == 'D') {
             $prazo .= $prazo > 1 ? ' dias' : ' dia';
         } else if ($arrDadosEmail['tipo_prazo_externo_tipo_resposta'] == 'M') {
-            $prazo .= $prazo > 1 ? ' meses' : ' mês';
+            $prazo .= $prazo > 1 ? ' meses' : ' mÃªs';
         } else if ($arrDadosEmail['tipo_prazo_externo_tipo_resposta'] == 'A') {
             $prazo .= $prazo > 1 ? ' anos' : ' ano';
         }
@@ -1418,7 +1418,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         if (is_null($objEmailSistemaDTO)) {
-            throw new InfraException('Tipo de email '.$emailSistemaModulo.' não encontrado');
+            throw new InfraException('Tipo de email '.$emailSistemaModulo.' nÃ£o encontrado');
         }
 
         //Monta Email
@@ -1472,7 +1472,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = (new EmailSistemaRN())->consultar($objEmailSistemaDTO);
 
         if (is_null($objEmailSistemaDTO)) {
-            throw new InfraException('Tipo de email '.$emailSistemaModulo.' não encontrado');
+            throw new InfraException('Tipo de email '.$emailSistemaModulo.' nÃ£o encontrado');
         }
 
         // Monta Email
@@ -1567,7 +1567,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                     $arrDadosEmail['tipo_intimacao'] = $destinatario->getStrNomeTipoIntimacao();
 
-                    //Get Prazo Tácito
+                    //Get Prazo TÃ¡cito
                     $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
                     $objPrazoTacitoDTO->retNumNumPrazo();
                     $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
@@ -1577,10 +1577,10 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
                     $dtIntimacao = !is_null($destinatario->getDthDataCadastro()) ? explode(' ', $destinatario->getDthDataCadastro()) : null;
 
-                    //Data Expedição Intimação
+                    //Data ExpediÃ§Ã£o IntimaÃ§Ã£o
                     $arrDadosEmail['data_expedicao_intimacao'] = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
 
-                    //Calcular Data Final do Prazo Tácito
+                    //Calcular Data Final do Prazo TÃ¡cito
                     $dataFimPrazoTacito = '';
                     $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
                     $arrDadosEmail['data_final_prazo_intimacao_tacita'] = $objMdPetIntPrazoRN->calcularDataPrazo($arrDadosEmail['prazo_intimacao_tacita'], $arrDadosEmail['data_expedicao_intimacao']);
@@ -1620,14 +1620,14 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                 }
             }
         }
-        return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
+        return array('qtdEnviadas' => $qtdEnviadas, 'qtdNÃ£oEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
     }
 
     public function verificaPoder($tipoRepresentante, $numIdVincRepresent)
     {
         $temPoder = true;
-        //Caso o tipo de procuração seja "Simples" será necessário
-        //fazer algumas validações para criação dos destinatários externos da intimação
+        //Caso o tipo de procuraÃ§Ã£o seja "Simples" serÃ¡ necessÃ¡rio
+        //fazer algumas validaÃ§Ãµes para criaÃ§Ã£o dos destinatÃ¡rios externos da intimaÃ§Ã£o
         if ($tipoRepresentante == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
             $dtoMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
             $rnMdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
@@ -1636,7 +1636,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $dtoMdPetRelVincRepTpPoderDTO->retNumIdVinculoRepresent();
             $arrObjMdPetRelVincRepTpPoderDTO = $rnMdPetRelVincRepTpPoderRN->listar($dtoMdPetRelVincRepTpPoderDTO);
 
-            //Verifica se o usuário em questão possui o poder "Recebimento e Cumprimento de Intimação Eletrônica"
+            //Verifica se o usuÃ¡rio em questÃ£o possui o poder "Recebimento e Cumprimento de IntimaÃ§Ã£o EletrÃ´nica"
             if (!count($arrObjMdPetRelVincRepTpPoderDTO)) {
                 $temPoder = false;
             }

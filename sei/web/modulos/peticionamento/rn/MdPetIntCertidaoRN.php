@@ -4,7 +4,7 @@ class MdPetIntCertidaoRN extends InfraRN
 {
 
     public static $STR_TP_CUMPRIMENTO_CERTIDAO_ACESSO_DIRETO = 'Consulta Direta';
-    public static $STR_TP_CUMPRIMENTO_CERTIDAO_PRAZO_TACITO = 'Por Decurso do Prazo T·cito';
+    public static $STR_TP_CUMPRIMENTO_CERTIDAO_PRAZO_TACITO = 'Por Decurso do Prazo T√°cito';
     public static $STR_ID_SERIE_CERTIDAO = 'MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA';
 
     public function __construct()
@@ -17,12 +17,12 @@ class MdPetIntCertidaoRN extends InfraRN
         return BancoSEI::getInstance();
     }
 
-    //funcao nao fazendo menÁao a elementos de sessao do SEI Interno (classe SessaoSEI, PaginaSEI) apenas do externo (SessaoSEIExterna, PaginaSEIExterna)
+    //funcao nao fazendo men√ßao a elementos de sessao do SEI Interno (classe SessaoSEI, PaginaSEI) apenas do externo (SessaoSEIExterna, PaginaSEIExterna)
     public function gerarCertidaoExternaControlado($arrParams)
     {
 
 
-        //gerando documento certid„o (nao assinada) dentro do processo do SEI
+        //gerando documento certid√£o (nao assinada) dentro do processo do SEI
         try {
 
             $objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
@@ -32,7 +32,7 @@ class MdPetIntCertidaoRN extends InfraRN
             $objUsuarioPetRN = new MdPetIntUsuarioRN();
             $objMdPetIntDocAcessoExt = new MdPetIntAcessoExternoDocumentoRN();
             //Get parametros do Array
-            $idIntimacao = $arrParams[0]; //Id IntimaÁ„o
+            $idIntimacao = $arrParams[0]; //Id Intima√ß√£o
             $objUnidadeDTO = $arrParams[1]; //UnidadeDTO da unidade geradora do processo
             $objProcedimentoDTO = $arrParams[2]; //ProcedimentoDTO para vincular o recibo ao processo correto
             $objMdPetIntAceiteDTO = $arrParams[3];
@@ -43,8 +43,8 @@ class MdPetIntCertidaoRN extends InfraRN
             $idUsuario = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
             if (is_null($objUnidadeDTO)) {
-                $detalhes = "Certid„o de IntimaÁ„o Cumprida referente ao Documento Principal " . $arrParams[6] . " no ‚mbito do Processo " . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . ", tendo em vista que todas as Unidades de tramitaÁ„o est„o desativadas.";
-                throw new InfraException('Unidades de tramitaÁ„o est„o desativadas', null, $detalhes);
+                $detalhes = "Certid√£o de Intima√ß√£o Cumprida referente ao Documento Principal " . $arrParams[6] . " no √¢mbito do Processo " . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . ", tendo em vista que todas as Unidades de tramita√ß√£o est√£o desativadas.";
+                throw new InfraException('Unidades de tramita√ß√£o est√£o desativadas', null, $detalhes);
             }
             SessaoSEI::getInstance()->setNumIdUnidadeAtual($objUnidadeDTO->getNumIdUnidade());
             SessaoSEI::getInstance()->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
@@ -57,7 +57,7 @@ class MdPetIntCertidaoRN extends InfraRN
             }
 
             if (is_null($objContato)) {
-                $detalhes = "O contato " . $objMdPetIntRelDestinatarioDTO->getNumIdContato() . " est· inativo.";
+                $detalhes = "O contato " . $objMdPetIntRelDestinatarioDTO->getNumIdContato() . " est√° inativo.";
                 throw new InfraException('Contato inativo', null, $detalhes);
             }
 
@@ -84,8 +84,8 @@ class MdPetIntCertidaoRN extends InfraRN
 
             $objSaidaDocumentoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
 
-            //necessario forÁar update da coluna sta_documento da tabela documento
-            //Add conte˙do atualizado com o nome do documento formatado gerado.
+            //necessario for√ßar update da coluna sta_documento da tabela documento
+            //Add conte√∫do atualizado com o nome do documento formatado gerado.
             //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
 
             $objDocumentoDTO = new DocumentoDTO();
@@ -104,7 +104,7 @@ class MdPetIntCertidaoRN extends InfraRN
 
             $objMdPetIntDocAcessoExt->verificarConcessaoAcessoExterno($job, $objDocumentoDTO, $objMdPetIntAceiteDTO);
 
-            //Adicionando usu·rio no documento
+            //Adicionando usu√°rio no documento
             $objParticipante = new ParticipanteDTO();
             $objParticipante->setDblIdProtocolo($objSaidaDocumentoAPI->getIdDocumento());
             $objParticipante->setNumIdContato($objMdPetIntRelDestinatarioDTO->getNumIdContato());
@@ -123,7 +123,7 @@ class MdPetIntCertidaoRN extends InfraRN
 
     protected function gerarCertidaoControlado($arrParams)
     {
-        //gerando documento certid„o (nao assinada) dentro do processo do SEI
+        //gerando documento certid√£o (nao assinada) dentro do processo do SEI
 
         $objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
         $objSeiRN = new SeiRN();
@@ -133,7 +133,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $objMdPetIntDocAcessoExt = new MdPetIntAcessoExternoDocumentoRN();
 
         //Get parametros do Array
-        $idIntimacao = $arrParams[0]; //Id IntimaÁ„o
+        $idIntimacao = $arrParams[0]; //Id Intima√ß√£o
         $objUnidadeDTO = $arrParams[1]; //UnidadeDTO da unidade geradora do processo
         $objProcedimentoDTO = $arrParams[2]; //ProcedimentoDTO para vincular o recibo ao processo correto
         $objMdPetIntAceiteDTO = $arrParams[3];
@@ -151,8 +151,8 @@ class MdPetIntCertidaoRN extends InfraRN
         $idUsuario = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
         if (is_null($objUnidadeDTO)) {
-            $detalhes = "Certid„o de IntimaÁ„o Cumprida referente ao Documento Principal " . $arrParams[6] . " no ‚mbito do Processo " . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . ", tendo em vista que todas as Unidades de tramitaÁ„o est„o desativadas.";
-            throw new InfraException('Unidades de tramitaÁ„o est„o desativadas', null, $detalhes);
+            $detalhes = "Certid√£o de Intima√ß√£o Cumprida referente ao Documento Principal " . $arrParams[6] . " no √¢mbito do Processo " . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . ", tendo em vista que todas as Unidades de tramita√ß√£o est√£o desativadas.";
+            throw new InfraException('Unidades de tramita√ß√£o est√£o desativadas', null, $detalhes);
         }
 
         SessaoSEI::getInstance()->setNumIdUnidadeAtual($objUnidadeDTO->getNumIdUnidade());
@@ -189,8 +189,8 @@ class MdPetIntCertidaoRN extends InfraRN
 
         $objSaidaDocumentoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
 
-        //necessario forÁar update da coluna sta_documento da tabela documento
-        //Add conte˙do atualizado com o nome do documento formatado gerado.
+        //necessario for√ßar update da coluna sta_documento da tabela documento
+        //Add conte√∫do atualizado com o nome do documento formatado gerado.
         //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
         $objDocumentoDTO = new DocumentoDTO();
 
@@ -244,7 +244,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $objMdPetIntAcessoExtDocDTO->setStrEmailUsuarioExterno($objContato->getStrEmail());
         $objMdPetIntAcessoExtDocDTO->setStrSinVisualizacaoIntegral('N');
         $objMdPetIntAcessoExtDocDTO->setStrStaConcessao($staConcessao);
-        $objMdPetIntAcessoExtDocDTO->setStrMotivo('Em raz„o do aceite da IntimaÁ„o EletrÙnica.');
+        $objMdPetIntAcessoExtDocDTO->setStrMotivo('Em raz√£o do aceite da Intima√ß√£o Eletr√¥nica.');
 
         $objMdPetIntAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
         $objMdPetIntAcessoExtDocRN->concederAcessoExternoParaDocumentos($objMdPetIntAcessoExtDocDTO);
@@ -265,7 +265,7 @@ class MdPetIntCertidaoRN extends InfraRN
 
         if (count($lista) > 0) {
             if (current($lista)->getStrSinAtivo() == 'N') {
-                throw new InfraException('O contato - ' . $idContato . ' n„o est· ativo.');
+                throw new InfraException('O contato - ' . $idContato . ' n√£o est√° ativo.');
             }
             return current($lista);
         }
@@ -301,22 +301,22 @@ class MdPetIntCertidaoRN extends InfraRN
         $html .= '<table align="center" style="width: 98%" border="0">';
         $html .= '<tbody>';
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold; width: 300px">Tipo de Destinat·rio:</td>';
-        $html .= '<td>Pessoa '.($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S' ? 'JurÌdica' : 'FÌsica').'</td>';
+        $html .= '<td style="font-weight: bold; width: 300px">Tipo de Destinat√°rio:</td>';
+        $html .= '<td>Pessoa '.($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S' ? 'Jur√≠dica' : 'F√≠sica').'</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold; width: 300px">Destinat·rio:</td>';
+        $html .= '<td style="font-weight: bold; width: 300px">Destinat√°rio:</td>';
         $html .= '<td>' . $objMdPetIntDestDTO->getStrNomeContato() . '</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Tipo de IntimaÁ„o:</td>';
+        $html .= '<td style="font-weight: bold;">Tipo de Intima√ß√£o:</td>';
         $html .= '<td>' . $objIntimacao->getStrNomeTipoIntimacao() . '</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Documento Principal da IntimaÁ„o:</td>';
+        $html .= '<td style="font-weight: bold;">Documento Principal da Intima√ß√£o:</td>';
 
         //se tiver numero montar o numero no texto
         if (isset($dadosDocPrinc[4]) && $dadosDocPrinc[4] != "") {
@@ -328,7 +328,7 @@ class MdPetIntCertidaoRN extends InfraRN
         $html .= count($dadosDocPrinc) > 0 ? $strTexto : '';
         $html .= '</tr>';
 
-        // Caso haja, lista os documentos anexos na Certid„o
+        // Caso haja, lista os documentos anexos na Certid√£o
         $arr_protocolos_anexos = (new MdPetIntimacaoRN())->retornaArrDocumentosAnexosIntimacao($idIntimacao);
 
         if(!empty($arr_protocolos_anexos) && count($arr_protocolos_anexos) > 0){
@@ -344,12 +344,12 @@ class MdPetIntCertidaoRN extends InfraRN
         $dtIntimacao = count($arrDtIntimacao) > 0 ? current($arrDtIntimacao) : null;
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Data de ExpediÁ„o da IntimaÁ„o:</td>';
+        $html .= '<td style="font-weight: bold;">Data de Expedi√ß√£o da Intima√ß√£o:</td>';
         $html .= '<td>' . $objIntimacao->getDthDataCadastro() . '</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Tipo de Cumprimento da IntimaÁ„o:</td>';
+        $html .= '<td style="font-weight: bold;">Tipo de Cumprimento da Intima√ß√£o:</td>';
         $html .= '<td>' . $situacaoCertidao . '</td>';
         $html .= '</tr>';
 
@@ -364,12 +364,12 @@ class MdPetIntCertidaoRN extends InfraRN
 
         if ($situacaoInt == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO && $dataAtual != null && $dataAtual != $dataCumprimento) {
             $html .= '<tr>';
-            $html .= '<td> &ensp;&nbsp; Data da Consulta em dia n„o ˙til:</td>';
+            $html .= '<td> &ensp;&nbsp; Data da Consulta em dia n√£o √∫til:</td>';
             $html .= '<td>' . $dataAtual . '</td>';
             $html .= '</tr>';
         }
         if ($situacaoInt == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO) {
-            //Recuperando o usu·rio que cumpriu a intimaÁ„o;
+            //Recuperando o usu√°rio que cumpriu a intima√ß√£o;
 
             $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
             $objMdPetIntAceiteDTO->retNumIdUsuario();
@@ -391,35 +391,35 @@ class MdPetIntCertidaoRN extends InfraRN
             $objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
 
             $html .= '<tr>';
-            $html .= '<td style="font-weight: bold;">Usu·rio Respons·vel pelo Cumprimento:</td>';
+            $html .= '<td style="font-weight: bold;">Usu√°rio Respons√°vel pelo Cumprimento:</td>';
             $html .= '<td>' . $objContatoDTO->getStrNome() . '</td>';
             $html .= '</tr>';
         }
 
         $html .= '</tbody></table>';
 
-        $html .= '<p>Esta Certid„o formaliza o cumprimento da intimaÁ„o eletrÙnica referente aos dados acima, observado o seguinte:</p>
+        $html .= '<p>Esta Certid√£o formaliza o cumprimento da intima√ß√£o eletr√¥nica referente aos dados acima, observado o seguinte:</p>
         <ul>
-        <li>O Tipo de Cumprimento "Consulta Direta" indica que o "Destinat·rio" realizou a consulta aos documentos da intimaÁ„o diretamente no sistema antes do tÈrmino do Prazo T·cito para intimaÁ„o.
+        <li>O Tipo de Cumprimento "Consulta Direta" indica que o "Destinat√°rio" realizou a consulta aos documentos da intima√ß√£o diretamente no sistema antes do t√©rmino do Prazo T√°cito para intima√ß√£o.
             <ul>
-                <li>O Prazo T·cito para intimaÁ„o È definido conforme normativo aplic·vel ao Ûrg„o, em que, a partir da "Data de ExpediÁ„o da IntimaÁ„o", o Destinat·rio possui o referido prazo para consultar os documentos diretamente no sistema, sob pena de ser considerado automaticamente intimado na data de tÈrmino desse prazo.</li>
+                <li>O Prazo T√°cito para intima√ß√£o √© definido conforme normativo aplic√°vel ao √≥rg√£o, em que, a partir da "Data de Expedi√ß√£o da Intima√ß√£o", o Destinat√°rio possui o referido prazo para consultar os documentos diretamente no sistema, sob pena de ser considerado automaticamente intimado na data de t√©rmino desse prazo.</li>
             </ul>
         </li>
-        <li>O Tipo de Cumprimento "Por Decurso do Prazo T·cito" indica que n„o ocorreu a mencionada consulta aos documentos da intimaÁ„o diretamente no sistema, situaÁ„o na qual a Certid„o È gerada automaticamente na data de tÈrmino desse prazo.
+        <li>O Tipo de Cumprimento "Por Decurso do Prazo T√°cito" indica que n√£o ocorreu a mencionada consulta aos documentos da intima√ß√£o diretamente no sistema, situa√ß√£o na qual a Certid√£o √© gerada automaticamente na data de t√©rmino desse prazo.
             <ul>
-                <li>No caso do Prazo T·cito terminar em dia n„o ˙til, a geraÁ„o autom·tica da Certid„o ocorrer· somente no primeiro dia ˙til seguinte.</li>
+                <li>No caso do Prazo T√°cito terminar em dia n√£o √∫til, a gera√ß√£o autom√°tica da Certid√£o ocorrer√° somente no primeiro dia √∫til seguinte.</li>
             </ul>
         </li>
-        <li>Conforme regras de contagem de prazo processual e normas afetas a processo eletrÙnico, tanto no Prazo T·cito para intimaÁ„o como nos possÌveis prazos externos para Peticionamento de Resposta:
+        <li>Conforme regras de contagem de prazo processual e normas afetas a processo eletr√¥nico, tanto no Prazo T√°cito para intima√ß√£o como nos poss√≠veis prazos externos para Peticionamento de Resposta:
             <ul>
-                <li>sempre È excluÌdo da contagem o dia do comeÁo e incluÌdo o do vencimento;</li>
-                <li>o dia do comeÁo e o do vencimento nunca ocorrem em dia n„o ˙til, prorrogando-o para o primeiro dia ˙til seguinte;</li>
-                <li>a consulta a intimaÁ„o ocorrida em dia n„o ˙til tem a correspondente data apresentada em linha separada, sendo a "Data do Cumprimento" a do primeiro dia ˙til seguinte.</li>
+                <li>sempre √© exclu√≠do da contagem o dia do come√ßo e inclu√≠do o do vencimento;</li>
+                <li>o dia do come√ßo e o do vencimento nunca ocorrem em dia n√£o √∫til, prorrogando-o para o primeiro dia √∫til seguinte;</li>
+                <li>a consulta a intima√ß√£o ocorrida em dia n√£o √∫til tem a correspondente data apresentada em linha separada, sendo a "Data do Cumprimento" a do primeiro dia √∫til seguinte.</li>
             </ul>
         </li>
-        <li>Para todos os efeitos legais, somente apÛs a geraÁ„o da presente Certid„o e com base exclusivamente na "Data do Cumprimento" È que o Destinat·rio, ou a Pessoa JurÌdica ou FÌsica por ele representada, È considerado efetivamente intimado e s„o iniciados os possÌveis prazos externos para Peticionamento de Resposta.
+        <li>Para todos os efeitos legais, somente ap√≥s a gera√ß√£o da presente Certid√£o e com base exclusivamente na "Data do Cumprimento" √© que o Destinat√°rio, ou a Pessoa Jur√≠dica ou F√≠sica por ele representada, √© considerado efetivamente intimado e s√£o iniciados os poss√≠veis prazos externos para Peticionamento de Resposta.
             <ul>
-                <li>Caso a intimaÁ„o se dirija a Pessoa JurÌdica, ela ser· considerada efetivamente intimada na "Data do Cumprimento" correspondente ‡ primeira Certid„o gerada referente a Usu·rio Externo que possua poderes de representaÁ„o.</li>
+                <li>Caso a intima√ß√£o se dirija a Pessoa Jur√≠dica, ela ser√° considerada efetivamente intimada na "Data do Cumprimento" correspondente √† primeira Certid√£o gerada referente a Usu√°rio Externo que possua poderes de representa√ß√£o.</li>
             </ul>
         </li>
         </ul>';
@@ -460,15 +460,15 @@ class MdPetIntCertidaoRN extends InfraRN
 
         $strLink = $this->retornaLinkAcessoDocumento($idCertidao, $idAcessoExt);
 
-        //Var que verifica se a certid„o È anexo de uma IntimaÁ„o que n„o est· aceita
+        //Var que verifica se a certid√£o √© anexo de uma Intima√ß√£o que n√£o est√° aceita
         $isValido = $this->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($idCertidao, $idAcessoExt));
 
-        $alertMsg = 'Documento bloqueado, pois est· vinculado a uma IntimaÁ„o ainda n„o Cumprida.';
+        $alertMsg = 'Documento bloqueado, pois est√° vinculado a uma Intima√ß√£o ainda n√£o Cumprida.';
         $js = $isValido ? 'window.open(\'' . $strLink . '\');' : 'alert(\'' . $alertMsg . '\')';
 
         $imgCertidao = '<img src="modulos/peticionamento/imagens/svg/intimacao_certidao.svg?'.Icone::VERSAO.'" style="height: 24px">';
 
-        //obter informacoes do doc principal da intimaÁ„o
+        //obter informacoes do doc principal da intima√ß√£o
         $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
         $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
         $objMdPetIntDocumentoDTO->retTodos();
@@ -488,18 +488,18 @@ class MdPetIntCertidaoRN extends InfraRN
         if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()) {
             $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' ';
         }
-        $ToolTipText .= '(SEI n∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+        $ToolTipText .= '(SEI n¬∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
         if ($cnpjs) {
-            $ToolTipText .= '<br/><br/>Destinat·rios:';
+            $ToolTipText .= '<br/><br/>Destinat√°rios:';
             foreach ($cnpjs as $emp) {
                 $ToolTipText .= '<br/>' . $emp ;
             }
         }
 
-        $ToolTipTitulo = 'Certid„o de IntimaÁ„o Cumprida';
+        $ToolTipTitulo = 'Certid√£o de Intima√ß√£o Cumprida';
 
-        $ToolTipText .= '<br/><br/>Clique para visualizar a Certid„o.';
+        $ToolTipText .= '<br/><br/>Clique para visualizar a Certid√£o.';
 
         $conteudoHtml = '<a onclick="' . $js . '"';
         $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitulo . '\')"';
@@ -522,15 +522,15 @@ class MdPetIntCertidaoRN extends InfraRN
 //        }
 //        $strLink = $this->retornaLinkAcessoDocumento($idCertidao, $idAcessoExt);
 //
-//        //Var que verifica se a certid„o È anexo de uma IntimaÁ„o que n„o est· aceita
+//        //Var que verifica se a certid√£o √© anexo de uma Intima√ß√£o que n√£o est√° aceita
 //        $isValido = $this->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($idCertidao, $idAcessoExt));
 //
-//        $alertMsg = 'Documento bloqueado, pois est· vinculado a uma IntimaÁ„o ainda n„o Cumprida.';
+//        $alertMsg = 'Documento bloqueado, pois est√° vinculado a uma Intima√ß√£o ainda n√£o Cumprida.';
 //        $js       = $isValido ? 'window.open(\''.$strLink.'\');' : 'alert(\''.$alertMsg.'\')';
 //
 //        $imgCertidao = '<img src="modulos/peticionamento/imagens/intimacao_certidao.png">';
 //
-//        //obter informacoes do doc principal da intimaÁ„o
+//        //obter informacoes do doc principal da intima√ß√£o
 //        $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
 //        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
 //        $objMdPetIntDocumentoDTO->retTodos();
@@ -543,16 +543,16 @@ class MdPetIntCertidaoRN extends InfraRN
 //        $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
 //        $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar( $objMdPetIntDocumentoDTO );
 //
-//        $ToolTipTitle = 'Certid„o de IntimaÁ„o Cumprida';
+//        $ToolTipTitle = 'Certid√£o de Intima√ß√£o Cumprida';
 //        $ToolTipTitle .= '<br/>Documento Principal: ';
 //        $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
 //        if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()){
 //            $ToolTipTitle .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento(). ' ' ;
 //        }
-//        $ToolTipTitle .= '(SEI n∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
+//        $ToolTipTitle .= '(SEI n¬∫ ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 //
 //        $ToolTipText  = '';
-//        $ToolTipText .= 'Clique para visualizar a Certid„o.';
+//        $ToolTipText .= 'Clique para visualizar a Certid√£o.';
 //
 //        $conteudoHtml  = '<a onclick="'.$js.'"';
 //        $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitle.'\')"';
@@ -646,7 +646,7 @@ class MdPetIntCertidaoRN extends InfraRN
 
             $qtdAceites = $objMdPetIntAcRN->contar($objMdPetIntAcDTO);
 
-            //condiÁ„o
+            //condi√ß√£o
             $isValido = $qtdIntimacoes == $qtdAceites;
         }
 

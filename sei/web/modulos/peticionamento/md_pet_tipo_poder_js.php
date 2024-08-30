@@ -1,4 +1,12 @@
 <script type="text/javascript">
+
+	/**
+	 * ANATEL
+	 *
+	 * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
+	 *
+	 */
+
     function inicializar() {
         if ('<?=$_GET['acao']?>' == 'md_pet_tipo_poder_listar') {
             infraReceberSelecao();
@@ -11,7 +19,7 @@
 
 
     function acaoDesativar(id, desc) {
-        if (confirm("Confirma desativaÁ„o do Tipo de Poder Legal \"" + desc + "\"?")) {
+        if (confirm("Confirma desativa√ß√£o do Tipo de Poder Legal \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmLista').action = '<?=$strLinkDesativar?>';
             document.getElementById('frmLista').submit();
@@ -20,7 +28,7 @@
 
 
     function acaoReativar(id, desc) {
-        if (confirm("Confirma reativaÁ„o do Tipo de Poder Legal \"" + desc + "\"?")) {
+        if (confirm("Confirma reativa√ß√£o do Tipo de Poder Legal \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmLista').action = '<?=$strLinkReativar?>';
             document.getElementById('frmLista').submit();
@@ -29,7 +37,7 @@
 
 
     function acaoExcluir(id, desc) {
-        if (confirm("Confirma exclus„o do Tipo de Poder Legal \"" + desc + "\"?")) {
+        if (confirm("Confirma exclus√£o do Tipo de Poder Legal \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmLista').action = '<?=$strLinkExcluir?>';
             document.getElementById('frmLista').submit();

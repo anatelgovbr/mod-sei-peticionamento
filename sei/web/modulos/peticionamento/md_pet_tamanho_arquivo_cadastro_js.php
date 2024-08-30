@@ -1,5 +1,12 @@
 <script type="text/javascript">
 
+	/**
+	 * ANATEL
+	 *
+	 * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	 *
+	 */
+
     function validarCampo(obj, event, tamanho){
         if(!somenteNumeros(event)){
             return somenteNumeros(event)

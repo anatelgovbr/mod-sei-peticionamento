@@ -50,7 +50,7 @@ class MdPetProcessoRN extends InfraRN {
 		$stringSenha = base64_decode($arrParametros['pwdsenhaSEI']);
 
 		if (!$bcrypt->verificar($stringSenha,$senhaBanco)) {
-			$objInfraException->adicionarValidacao("Senha inválida.");
+			$objInfraException->adicionarValidacao("Senha invÃ¡lida.");
 			$objInfraException->lancarValidacoes();
 		} 
 
@@ -182,7 +182,7 @@ class MdPetProcessoRN extends InfraRN {
             $objSeiRN = new SeiRN();
             SessaoSEI::getInstance()->simularLogin(null, null , SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() , $unidadeDTO->getNumIdUnidade() );
 			
-            // Tipo de Procedimento - Nivel de Acesso e Hipótese Legal permitidos
+            // Tipo de Procedimento - Nivel de Acesso e HipÃ³tese Legal permitidos
             $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
             $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
             $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($objMdPetTipoProcessoDTO[0]->getNumIdProcedimento());
@@ -207,7 +207,7 @@ class MdPetProcessoRN extends InfraRN {
                 $objProcedimentoAPI->setNivelAcesso( ProtocoloRN::$NA_PUBLICO );
                 $objProcedimentoAPI->setIdHipoteseLegal( null );
             }else{
-                // Documento Principal - determina Nivel Acesso e Hipótese Legal do Procedimento ação
+                // Documento Principal - determina Nivel Acesso e HipÃ³tese Legal do Procedimento aÃ§Ã£o
                 $arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocPrincipal']  );
                 $contador = 0;
 
@@ -226,7 +226,7 @@ class MdPetProcessoRN extends InfraRN {
 
             if ( is_null($objProcedimentoAPI->getNivelAcesso()) ){
                 $objInfraException = new InfraException();
-                $objInfraException->adicionarValidacao('Nível de Acesso não definido');
+                $objInfraException->adicionarValidacao('NÃ­vel de Acesso nÃ£o definido');
                 $objInfraException->lancarValidacoes();
             }
 			
@@ -371,7 +371,7 @@ class MdPetProcessoRN extends InfraRN {
     		$arrObjAtributoAndamentoDTO = array();
     		$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
     		$objAtributoAndamentoDTO->setStrNome('UNIDADE');
-    		$objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla().'¥'.$unidadeDTO->getStrDescricao());
+    		$objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla().'Â¥'.$unidadeDTO->getStrDescricao());
     		$objAtributoAndamentoDTO->setStrIdOrigem($unidadeDTO->getNumIdUnidade());
     		$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -420,8 +420,8 @@ class MdPetProcessoRN extends InfraRN {
 	
 	
 	/*
-	 * Método responsavel por incluir documento externo (ANEXO) no processo, travar documento para ediçao e assinar o documento
-	 * customizando sua tarja de assinatura. As operaçoes já fazem uso da classe SeiRN e classes de API do SEI 3.0
+	 * MÃ©todo responsavel por incluir documento externo (ANEXO) no processo, travar documento para ediÃ§ao e assinar o documento
+	 * customizando sua tarja de assinatura. As operaÃ§oes jÃ¡ fazem uso da classe SeiRN e classes de API do SEI 3.0
 	 * */
 	private function gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO , $arrParametros, $docDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, $tipoDocRecibo ){
 
@@ -485,7 +485,7 @@ class MdPetProcessoRN extends InfraRN {
 			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
 						
 			//====================================
-			//gera no sistema as informações referentes ao documento principal
+			//gera no sistema as informaÃ§Ãµes referentes ao documento principal
 			//====================================
 			//seiv3
 			$documentoDTOPrincipal = $this->montarDocumentoPrincipal( $objProcedimentoDTO, 
@@ -508,7 +508,7 @@ class MdPetProcessoRN extends InfraRN {
 
 		} 
 
-		//verificar se o documento principal é do tipo externo (ANEXO)
+		//verificar se o documento principal Ã© do tipo externo (ANEXO)
 		else {
 			
 			$idTipoProc = $arrParametros['id_tipo_procedimento'];
@@ -560,7 +560,7 @@ class MdPetProcessoRN extends InfraRN {
 								
 				$idNivelAcesso = null;
 				
-				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
+				if( $arrLinhasAnexos[ $contador ][4] == "PÃºblico" ){
 					
 					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
 					$idHipoteseLegal = null;
@@ -601,14 +601,14 @@ class MdPetProcessoRN extends InfraRN {
 				$objDocumentoDTO->setNumIdUnidadeResponsavel( SessaoSEI::getInstance()->getNumIdUnidadeAtual() );
 				$objDocumentoDTO->setNumIdTipoConferencia( $idTipoConferencia );
                 
-                // alterações sei v3
+                // alteraÃ§Ãµes sei v3
                 $objDocumentoDTO->setNumIdTipoFormulario(null);
                 $objDocumentoDTO->setStrSinBloqueado('N');
                 $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EXTERNO);
 				
                 $arrObjUnidadeDTOReabertura = array();
 				
-				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo." 
+				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> nÃ£o estÃ¡ sinalizada como protocolo." 
 				//nao esta fazendo reabertura de processo - trata-se de processo novo
 				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
 
@@ -675,7 +675,7 @@ class MdPetProcessoRN extends InfraRN {
 					
 				$idNivelAcesso = null;
 					
-				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
+				if( $arrLinhasAnexos[ $contador ][4] == "PÃºblico" ){
 					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
 					$idHipoteseLegal = null;
 				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
@@ -713,7 +713,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EXTERNO);
 				
 				$arrObjUnidadeDTOReabertura = array();
-				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo."
+				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> nÃ£o estÃ¡ sinalizada como protocolo."
 				//nao esta fazendo reabertura de processo - trata-se de processo novo
 				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
 
@@ -777,7 +777,7 @@ class MdPetProcessoRN extends InfraRN {
 					
 				$idNivelAcesso = null;
 					
-				if( $arrLinhasAnexos[ $contador ][4] == "Público" ){
+				if( $arrLinhasAnexos[ $contador ][4] == "PÃºblico" ){
 					$idNivelAcesso = ProtocoloRN::$NA_PUBLICO;
 					$idHipoteseLegal = null;
 				} else if( $arrLinhasAnexos[ $contador ][4] == "Restrito" ){
@@ -814,7 +814,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objDocumentoDTO->setNumVersao(0);
 				
 				$arrObjUnidadeDTOReabertura = array();
-				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> não está sinalizada como protocolo."
+				//se setar array da unidade pode cair na regra: "Unidade <nome-Unidade> nÃ£o estÃ¡ sinalizada como protocolo."
 				//nao esta fazendo reabertura de processo - trata-se de processo novo
 				$objDocumentoDTO->setArrObjUnidadeDTO($arrObjUnidadeDTOReabertura);
 
@@ -863,13 +863,13 @@ class MdPetProcessoRN extends InfraRN {
 			$grauSigiloDocPrincipal = $arrParametros['grauSigiloDocPrincipal'];
 			$hipoteseLegalDocPrincipal = $arrParametros['hipoteseLegalDocPrincipal'];
 
-			//o proprio usuario externo logado é remetente do documento
+			//o proprio usuario externo logado Ã© remetente do documento
 			$contatoDTO = $this->getContatoDTOUsuarioLogado();
 
 			//Incluir documento interno
 			$objDocumentoAPI = new DocumentoAPI();
 			
-			//Se o ID do processo é conhecido utilizar setIdProcedimento no lugar de
+			//Se o ID do processo Ã© conhecido utilizar setIdProcedimento no lugar de
 			$objDocumentoAPI->setIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
 			$objDocumentoAPI->setTipo( ProtocoloRN::$TP_DOCUMENTO_GERADO );
 			$objDocumentoAPI->setIdHipoteseLegal( $hipoteseLegalDocPrincipal );
@@ -915,7 +915,7 @@ class MdPetProcessoRN extends InfraRN {
 				$cargoDTO = $cargoRN->consultarRN0301($cargoDTO);
 
 				if (!is_null($cargoDTO)){
-					$cargoExpressao = "Usuário Externo - " . $cargoDTO->getStrExpressao();
+					$cargoExpressao = "UsuÃ¡rio Externo - " . $cargoDTO->getStrExpressao();
 				}
 			}else{
 				$cargoExpressao = $arrParametros['selCargoFuncao'];
@@ -924,7 +924,7 @@ class MdPetProcessoRN extends InfraRN {
 			//liberando assinatura externa para o documento
 			$objAcessoExternoDTO = new AcessoExternoDTO();
 			
-			//trocado de $TA_ASSINATURA_EXTERNA para $TA_SISTEMA para evitar o envio de email de notificação
+			//trocado de $TA_ASSINATURA_EXTERNA para $TA_SISTEMA para evitar o envio de email de notificaÃ§Ã£o
 			$objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_ASSINATURA_EXTERNA ); 
 			
 			//checar se o proprio usuario ja foi adicionado como interessado (participante) do processo
@@ -986,7 +986,7 @@ class MdPetProcessoRN extends InfraRN {
 
 			//realmente assinando o documento depois da assinatura externa ser liberada
 
-			//seiv3 - só permite assinar doc externo (upload) nato-digital se tiver o tipo de conferencia setado
+			//seiv3 - sÃ³ permite assinar doc externo (upload) nato-digital se tiver o tipo de conferencia setado
 			//setar temporariamente e depois remover da entidade
 			$documentoRN = new DocumentoRN();
 			$documentoPetRN = new MdPetDocumentoRN();
@@ -1005,7 +1005,7 @@ class MdPetProcessoRN extends InfraRN {
                 $numIdTipoConferencia = $arrTipoConferenciaDTO[0]->getNumIdTipoConferencia();
                 // fim buscando o menor tipo de conferencia
 
-				//setando um tipo de conferencia padrao (que sera removido depois), apenas para passar na validação
+				//setando um tipo de conferencia padrao (que sera removido depois), apenas para passar na validaÃ§Ã£o
 				$documentoDTO->setNumIdTipoConferencia($numIdTipoConferencia);
 				$documentoAlteracaoDTO = new DocumentoDTO();
 				$documentoAlteracaoDTO->retDblIdDocumento();
@@ -1029,7 +1029,7 @@ class MdPetProcessoRN extends InfraRN {
 //					$objAssinaturaDTO->setNumIdContextoUsuario( null );
 				}
 
-				$documentoDTO->setStrDescricaoTipoConferencia("do próprio documento nato-digital");
+				$documentoDTO->setStrDescricaoTipoConferencia("do prÃ³prio documento nato-digital");
 				$objAssinaturaDTO->setArrObjDocumentoDTO(array($documentoDTO));
 				
 			} else {
@@ -1056,7 +1056,7 @@ class MdPetProcessoRN extends InfraRN {
 			$documentoBD->alterar( $documentoDTO );
 
 			if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
-				//remover a liberação de acesso externo -> AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
+				//remover a liberaÃ§Ã£o de acesso externo -> AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
 				$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
 				$objAcessoExternoBD->excluir( $objAcessoExternoDTO );
 			}
@@ -1098,7 +1098,7 @@ class MdPetProcessoRN extends InfraRN {
 			$objAtividadeRN = new AtividadeRN();
 			$objAtualizarAndamentoDTO = new AtualizarAndamentoDTO();
 	
-			//Buscar último andamento registrado do processo
+			//Buscar Ãºltimo andamento registrado do processo
 			$objAtividadeDTO = new AtividadeDTO();
 			$objAtividadeDTO->retDthAbertura();
 			$objAtividadeDTO->retNumIdAtividade();
@@ -1115,7 +1115,7 @@ class MdPetProcessoRN extends InfraRN {
 	protected function atribuirDadosUnidade(ProcedimentoDTO $objProcedimentoDTO, $objUnidadeDTOEnvio){
 	
 		if(!isset($objUnidadeDTOEnvio)){
-			throw new InfraException('Parâmetro $objUnidadeDTOEnvio não informado.');
+			throw new InfraException('ParÃ¢metro $objUnidadeDTOEnvio nÃ£o informado.');
 		}
 		
 		$arrObjUnidadeDTO = array();
@@ -1125,8 +1125,8 @@ class MdPetProcessoRN extends InfraRN {
 		return $objUnidadeDTOEnvio;
 	}
 		
-	//TODO: Método identico ao localizado na classe SeiRN:2214
-	//Refatorar código para evitar problemas de manutenção
+	//TODO: MÃ©todo identico ao localizado na classe SeiRN:2214
+	//Refatorar cÃ³digo para evitar problemas de manutenÃ§Ã£o
 	private function prepararParticipantes($arrObjParticipanteDTO)
 	{
 		$objContatoRN = new ContatoRN();
@@ -1154,7 +1154,7 @@ class MdPetProcessoRN extends InfraRN {
 					throw new InfraException('Remetente vazio ou nulo.');
 				}
 				else if ($objParticipanteDTO->getStrStaParticipacao()==ParticipanteRN::$TP_DESTINATARIO) {
-					throw new InfraException('Destinatário vazio ou nulo.');
+					throw new InfraException('DestinatÃ¡rio vazio ou nulo.');
 				}
 			}
 	
@@ -1195,7 +1195,7 @@ class MdPetProcessoRN extends InfraRN {
 	{
 				
 		if(!isset($numIdTipoProcedimento)){
-			throw new InfraException('Parâmetro $numIdTipoProcedimento não informado.');
+			throw new InfraException('ParÃ¢metro $numIdTipoProcedimento nÃ£o informado.');
 		}
 	
 		$objTipoProcedimentoDTO = new TipoProcedimentoDTO();
@@ -1207,7 +1207,7 @@ class MdPetProcessoRN extends InfraRN {
 		$objTipoProcedimentoDTO = $objTipoProcedimentoRN->consultarRN0267($objTipoProcedimentoDTO);
 	
 		if ($objTipoProcedimentoDTO==null){
-			throw new InfraException('Tipo de processo não encontrado.');
+			throw new InfraException('Tipo de processo nÃ£o encontrado.');
 		}
 	
 		$objProcedimentoDTO->setNumIdTipoProcedimento($objTipoProcedimentoDTO->getNumIdTipoProcedimento());
@@ -1236,7 +1236,7 @@ class MdPetProcessoRN extends InfraRN {
 	// public para que possa, eventualmente, ser usado por outras estorias de usuario
 	// nao foi possivel usar a classe AnexoINT para processar a string de anexos, por conta da quantidade diferenciada 
 	// de campos da grid da tela de peticionamento
-	// dentre outras especificidades técnicas desta tela
+	// dentre outras especificidades tÃ©cnicas desta tela
 	public function processarStringAnexos($strDelimitadaAnexos, $idUnidade, $strSiglaUsuario, $bolDocumentoPrincipal, $idProtocolo, 
 			                              $numTamanhoArquivoPermitido, $strAreaDocumento ){
 		
@@ -1250,16 +1250,16 @@ class MdPetProcessoRN extends InfraRN {
 			$tamanhoDoAnexo = $anexo[2];
 			
 			//o tamanho do arquivo pode vir em Mb ou em Kb
-			//se vier em Mb compara o tamanho, se vier em Kb é porque é menor do que 1Mb e portanto deixar passar (nao havera limite inferior a 1Mb)
+			//se vier em Mb compara o tamanho, se vier em Kb Ã© porque Ã© menor do que 1Mb e portanto deixar passar (nao havera limite inferior a 1Mb)
 			if (strpos( $tamanhoDoAnexo , 'Mb') !== false) {
 				
 				$tamanhoDoAnexo = str_replace(" Mb","", $tamanhoDoAnexo );
 								
-				//validando tamanho máximo do arquivo
+				//validando tamanho mÃ¡ximo do arquivo
 				if( floatval($tamanhoDoAnexo) > floatval($numTamanhoArquivoPermitido) ){
 					
 					$objInfraException = new InfraException();
-					$objInfraException->adicionarValidacao('Um dos documentos ' . $strAreaDocumento . ' adicionados excedeu o tamanho máximo permitido (Limite: ' . $numTamanhoArquivoPermitido . ' Mb).');
+					$objInfraException->adicionarValidacao('Um dos documentos ' . $strAreaDocumento . ' adicionados excedeu o tamanho mÃ¡ximo permitido (Limite: ' . $numTamanhoArquivoPermitido . ' Mb).');
 					$objInfraException->lancarValidacoes();
 					
 				} else {

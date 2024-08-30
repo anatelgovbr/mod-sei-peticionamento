@@ -1,5 +1,12 @@
 <script type="text/css">
 
+	/**
+	 * ANATEL
+	 *
+	 * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	 *
+	 */
+
     .infraImgModulo {
         width: 20px;
     }

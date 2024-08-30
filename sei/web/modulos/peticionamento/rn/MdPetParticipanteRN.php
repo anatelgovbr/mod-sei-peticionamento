@@ -62,7 +62,7 @@ class MdPetParticipanteRN extends InfraRN {
 
 		$arrObjParticipantesDTO = $participantes;
 
-        // PROTOCOLO - participantes já cadastrados
+        // PROTOCOLO - participantes jÃ¡ cadastrados
         $objParticipanteDTO = new ParticipanteDTO();
         $objParticipanteDTO->retNumIdParticipante();
         $objParticipanteDTO->retNumIdContato();
@@ -99,7 +99,7 @@ class MdPetParticipanteRN extends InfraRN {
           }else if ($participanteNovo->getNumSequencia()!=$objParticipanteDTOAntigo->getNumSequencia()){
             //altera sequencia
             $participanteNovo->setNumIdParticipante($participanteAntigo->getNumIdParticipante());
-            //garante que não vai alterar a unidade
+            //garante que nÃ£o vai alterar a unidade
             $participanteNovo->unSetNumIdUnidade();
        	    $objParticipanteRN->alterarRN0889($participanteNovo);
           }

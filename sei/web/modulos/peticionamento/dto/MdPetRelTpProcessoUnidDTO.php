@@ -3,6 +3,7 @@
 * ANATEL
 *
 * 04/08/2016 - criado por jaqueline.mendes@castgroup.com.br - CAST  (EU6155 - SM)
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
 *
 */
 

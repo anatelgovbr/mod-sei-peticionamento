@@ -28,7 +28,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $objAtributoAndamentoAPI->setValor($valor);
 
         if($idOrigem != null){
-            $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do prédio, pode ser null
+            $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do prÃ©dio, pode ser null
         }
 
         return $objAtributoAndamentoAPI;
@@ -93,7 +93,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $existeDocumento = $objMdPetIndisponibilidadeDocRN->contar($objMdPetIndisponibilidadeDocDTO)>0;
 
         if($existeDocumento){
-            $msg.='Não é permitido '.$acao.' o documento pois o mesmo está vinculado à uma indisponilidade.';
+            $msg.='NÃ£o Ã© permitido '.$acao.' o documento pois o mesmo estÃ¡ vinculado Ã  uma indisponilidade.';
         }
         return $msg;
     }
@@ -140,7 +140,7 @@ class MdPetRegrasGeraisRN extends InfraRN
 
         }
 
-        $preMsg = 'Não é permitido '.$acao.' os Usuários Externos abaixo porque possuem registro de Vinculação, Procuração Eletrônica '.($acao == 'desativar' ? 'ativa' : '').' ou Intimação Eletrônica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
+        $preMsg = 'NÃ£o Ã© permitido '.$acao.' os UsuÃ¡rios Externos abaixo porque possuem registro de VinculaÃ§Ã£o, ProcuraÃ§Ã£o EletrÃ´nica '.($acao == 'desativar' ? 'ativa' : '').' ou IntimaÃ§Ã£o EletrÃ´nica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
 
         if(!empty($msgVinc)){
             $msg .= $msgVinc.'\n';
@@ -189,13 +189,13 @@ class MdPetRegrasGeraisRN extends InfraRN
 
         }
 
-        $preMsg = 'Não é permitido '.$acao.' Contato que possua registro de Vinculação, Procuração Eletrônica '.($acao == 'desativar' ? 'ativa' : '').' ou Intimação Eletrônica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
+        $preMsg = 'NÃ£o Ã© permitido '.$acao.' Contato que possua registro de VinculaÃ§Ã£o, ProcuraÃ§Ã£o EletrÃ´nica '.($acao == 'desativar' ? 'ativa' : '').' ou IntimaÃ§Ã£o EletrÃ´nica'.($acao == 'desativar' ? ' em curso' : '').'.\n\n';
 
         if(!empty($msgVinc)){
-            $msg .= 'Contatos com registros de Vinculações ou Procurações Eletrônicas'.($acao == 'desativar' ? ' ainda ativas' : '').':\n'.$msgVinc.'\n';
+            $msg .= 'Contatos com registros de VinculaÃ§Ãµes ou ProcuraÃ§Ãµes EletrÃ´nicas'.($acao == 'desativar' ? ' ainda ativas' : '').':\n'.$msgVinc.'\n';
         }else{
             if(!empty($msgInt) || !empty($msgIntVinc)){
-                $msg .= 'Contatos com registros de Intimação Eletrônica'.($acao == 'desativar' ? ' ainda em curso' : '').':\n'.$msgInt.$msgIntVinc.'\n';
+                $msg .= 'Contatos com registros de IntimaÃ§Ã£o EletrÃ´nica'.($acao == 'desativar' ? ' ainda em curso' : '').':\n'.$msgInt.$msgIntVinc.'\n';
             }
         }
 
@@ -263,7 +263,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $existeVinculo = $objMdPetVincTpProcessoRN->contar($objMdPetVincTpProcessoDTO)>0;
 
         if($existeVinculo){
-            $msg ="Não é permitido " . $acao . " esta Unidade, pois ela é utilizada pelo Módulo de Peticionamento e Intimação Eletrônicos em Vínculo de Usuário Externo.";
+            $msg ="NÃ£o Ã© permitido " . $acao . " esta Unidade, pois ela Ã© utilizada pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em VÃ­nculo de UsuÃ¡rio Externo.";
             return $msg;
         }
 
@@ -274,12 +274,12 @@ class MdPetRegrasGeraisRN extends InfraRN
 
     }
 
-    // Retorna o Id's do MdPetIntimacao que ainda estão em curso
+    // Retorna o Id's do MdPetIntimacao que ainda estÃ£o em curso
     private function  _prazoIntimacaoUnidade($objMdPetIntRelDestDTO){
 
             $arrIdsInt = InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntimacao');
             $arrIdsInt = array_unique($arrIdsInt);
-        //Dto com intimações ainda em curso
+        //Dto com intimaÃ§Ãµes ainda em curso
         $objIntimacaoCursoDTO = array();
             if (count($arrIdsInt) > 0) {
 
@@ -317,7 +317,7 @@ class MdPetRegrasGeraisRN extends InfraRN
                     }
 
                     /**
-                     * Verifica se o tipo de resposta da intimação é sem resposta
+                     * Verifica se o tipo de resposta da intimaÃ§Ã£o Ã© sem resposta
                      */
                     if($objDTO->getStrNomeTipoRespostaAceita() != 'S'){
                         $objMdPetIntDestRespostaDto->setNumIdMdPetIntRelDestinatario($objDTO->getNumIdMdPetIntRelDestinatario());
@@ -325,7 +325,7 @@ class MdPetRegrasGeraisRN extends InfraRN
                         $objMdPetIntTpRespDTO->setNumIdMdPetIntimacao($objDTO->getNumIdMdPetIntimacao());
 
                         /**
-                         * Verifica se o tipo de resposta, para verificar se tem mais de uma intimação a ser respondida
+                         * Verifica se o tipo de resposta, para verificar se tem mais de uma intimaÃ§Ã£o a ser respondida
                          */
                         $arrRespostaFacultada = $objMdPetIntTpRespRN->listar($objMdPetIntTpRespDTO);
                         foreach ($arrRespostaFacultada as $arrResposta){
@@ -367,11 +367,11 @@ class MdPetRegrasGeraisRN extends InfraRN
             $arrIds[] = $objTipoProcedimentoAPI->getIdTipoProcedimento();
         }
 
-        //Mensagem padrão de erro para 1 ou mais processos
+        //Mensagem padrÃ£o de erro para 1 ou mais processos
         if (count($arrIds) > 1)
-            $msgErro = 'Não é permitido ' . $acao . ' estes Tipos de Processos, pois eles são utilizados';
+            $msgErro = 'NÃ£o Ã© permitido ' . $acao . ' estes Tipos de Processos, pois eles sÃ£o utilizados';
         else
-            $msgErro = 'Não é permitido ' . $acao . ' este Tipo de Processo, pois ele é utilizado';
+            $msgErro = 'NÃ£o Ã© permitido ' . $acao . ' este Tipo de Processo, pois ele Ã© utilizado';
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrIds, InfraDTO::$OPER_IN);
@@ -384,27 +384,27 @@ class MdPetRegrasGeraisRN extends InfraRN
         if (!$existeProcesso) {
 
           /**
-           * Retirada a validação de desativar tipo de processo para peticionamento a partir de criterios
+           * Retirada a validaÃ§Ã£o de desativar tipo de processo para peticionamento a partir de criterios
            * cadastrados Item 103.2 - Planilha de peticionamento
            * @since 10/01/2018
            */
           /**
-           * Fim de retirada de validação de tipo de processo para peticionamento a partir de criterios
+           * Fim de retirada de validaÃ§Ã£o de tipo de processo para peticionamento a partir de criterios
            * Para descomentar devera ser retirado o bloco de codigo  $existeProcesso = false;
           */
             $existeProcesso = false;
 
         }
 
-        //Condições para retornar a mensagem de erro
+        //CondiÃ§Ãµes para retornar a mensagem de erro
         if ($existeProcesso) {
 
-            $msgErro .= ' pelo Módulo de Peticionamento e Intimação Eletrônicos. Verifique as parametrizações no menu';
+            $msgErro .= ' pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos. Verifique as parametrizaÃ§Ãµes no menu';
 
             if ($existeMdPetTipoProcesso)
-                $msgErro .= ' Administração > Peticionamento Eletrônico > Tipos para Peticionamento';
+                $msgErro .= ' AdministraÃ§Ã£o > Peticionamento EletrÃ´nico > Tipos para Peticionamento';
             else
-                $msgErro .= ' Administração > Peticionamento Eletrônico > Critérios para Intercorrente .';
+                $msgErro .= ' AdministraÃ§Ã£o > Peticionamento EletrÃ´nico > CritÃ©rios para Intercorrente .';
 
             return $msgErro;
         }
@@ -416,7 +416,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $existeVinculo = $objMdPetVincTpProcessoRN->contar($objMdPetVincTpProcessoDTO)>0;
 
         if($existeVinculo){
-            $msgErro .=' pelo Módulo de Peticionamento e Intimação Eletrônicos em Vínculo de Usuário Externo.';
+            $msgErro .=' pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em VÃ­nculo de UsuÃ¡rio Externo.';
             return $msgErro;
         }
 
@@ -445,8 +445,8 @@ class MdPetRegrasGeraisRN extends InfraRN
         $objMdPetIndisponibilidadeRN = new MdPetIndisponibilidadeRN();
         $objMdPetIndisponibilidade = $objMdPetIndisponibilidadeRN->listar($objMdPetIndisponibilidadeDTO);
 
-        $msg ="Não é permitido ".$acao ." esta Unidade, pois ela é utilizada pelo Módulo de Peticionamento e Intimação ";
-        $msg.="Eletrônicos. Verifique os Documentos vinculados a esta Unidade no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI.\n\n Referente ao periodo:\n\n";
+        $msg ="NÃ£o Ã© permitido ".$acao ." esta Unidade, pois ela Ã© utilizada pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o ";
+        $msg.="EletrÃ´nicos. Verifique os Documentos vinculados a esta Unidade no menu AdministraÃ§Ã£o > Peticionamento EletrÃ´nico > Indisponibilidades do SEI.\n\n Referente ao periodo:\n\n";
         foreach ($objMdPetIndisponibilidade as $obj){
             $dtInicio = str_replace(' ', ' - ',substr($obj->getDthDataInicio(), 0, -3));
             $dtFim= str_replace(' ', ' - ',substr($obj->getDthDataFim(), 0, -3));
@@ -459,16 +459,16 @@ class MdPetRegrasGeraisRN extends InfraRN
     private function _retornaMsgIntimacaoUnidadeDestinatario($objMdPetIntRelDestDTO, $acao)
     {
 
-        $msg = "Não é permitido " . $acao . " esta Unidade, pois ela é utilizada pelo Módulo de Peticionamento e Intimação Eletrônicos ";
-        $msg .= "para as intimações abaixo criadas nesta Unidade, que ainda estão em curso (não cumpridas ou com prazo externo não vencido):\n\n";
+        $msg = "NÃ£o Ã© permitido " . $acao . " esta Unidade, pois ela Ã© utilizada pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos ";
+        $msg .= "para as intimaÃ§Ãµes abaixo criadas nesta Unidade, que ainda estÃ£o em curso (nÃ£o cumpridas ou com prazo externo nÃ£o vencido):\n\n";
 
         foreach ($objMdPetIntRelDestDTO as $obj) {
             $numeroDoc='';
             if($obj->getStrNumero()>0){
-                $numeroDoc = 'n°'.$obj->getStrNumero();
+                $numeroDoc = 'nÂ°'.$obj->getStrNumero();
             }
 
-            $msg .= "     - Intimação do Documento Principal ". $obj->getStrNomeSerie() ." ".$numeroDoc . " ( SEI nº" . $obj->getStrProtocoloFormatadoDocumento() . " )\n";
+            $msg .= "     - IntimaÃ§Ã£o do Documento Principal ". $obj->getStrNomeSerie() ." ".$numeroDoc . " ( SEI nÂº" . $obj->getStrProtocoloFormatadoDocumento() . " )\n";
         }
 
         return $msg;
@@ -522,8 +522,8 @@ class MdPetRegrasGeraisRN extends InfraRN
         }
 
 
-        $msg = "Não é permitido " . $acao . " esta Unidade, pois ela é utilizada pelo Módulo de Peticionamento e Intimação Eletrônicos.";
-        $msg .= "Verifique as parametrizações no menu Administração > Peticionamento Eletrônico > Tipos para Peticionamento relativo aos Tipos de Processos:";
+        $msg = "NÃ£o Ã© permitido " . $acao . " esta Unidade, pois ela Ã© utilizada pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos.";
+        $msg .= "Verifique as parametrizaÃ§Ãµes no menu AdministraÃ§Ã£o > Peticionamento EletrÃ´nico > Tipos para Peticionamento relativo aos Tipos de Processos:";
         $msg .= "\n\n* Tipo de processo:\n";
 
         foreach ($arrayUnidade['NomeProcesso'] as $tipoProcesso) {
@@ -621,8 +621,8 @@ class MdPetRegrasGeraisRN extends InfraRN
     private function _retornaMsgTipoDocumento($arrObj, $acao)
     {
 
-        $msg = 'Não é permitido ' . $acao . ' este Tipo de Documento, pois ele é utilizado pelo Módulo de Peticionamento e Intimação ';
-        $msg .= 'Eletrônicos. Verifique as parametrizações no menu Administração > Peticionamento Eletrônico > Tipos para ';
+        $msg = 'NÃ£o Ã© permitido ' . $acao . ' este Tipo de Documento, pois ele Ã© utilizado pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o ';
+        $msg .= 'EletrÃ´nicos. Verifique as parametrizaÃ§Ãµes no menu AdministraÃ§Ã£o > Peticionamento EletrÃ´nico > Tipos para ';
         $msg .= "Peticionamento relativo aos Tipos de Processos:\n";
 
         for ($i = 0; $i < count($arrObj); $i++) {
@@ -724,9 +724,9 @@ class MdPetRegrasGeraisRN extends InfraRN
             $existeDocumento = $existeMdPetIntSerie;
 
             if ($existeDocumento) {
-                $msg = "Não é permitido " . $acao . " este Tipo de Documento, pois ele é utilizado pelo Módulo de Peticionamento e Intimação ";
-                $msg .= "Eletrônicos. Verifique as parametrizações no menu Administração > Peticionamento Eletrônico > Intimação Eletrônica > ";
-                $msg .= "Tipos de Documentos para Intimação.";
+                $msg = "NÃ£o Ã© permitido " . $acao . " este Tipo de Documento, pois ele Ã© utilizado pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o ";
+                $msg .= "EletrÃ´nicos. Verifique as parametrizaÃ§Ãµes no menu AdministraÃ§Ã£o > Peticionamento EletrÃ´nico > IntimaÃ§Ã£o EletrÃ´nica > ";
+                $msg .= "Tipos de Documentos para IntimaÃ§Ã£o.";
                 return $msg;
             }
         }
@@ -738,7 +738,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $numRegistros = $objMdPetVincRelSerieRN->contar($objMdPetVincRelSerieDTO);
 
         if($numRegistros>0){
-            $msg ="Não é permitido " . $acao . " este Tipo de Documento, pois ele é utilizado pelo Módulo de Peticionamento e Intimação Eletrônicos em Vínculo de Usuário Externo.";
+            $msg ="NÃ£o Ã© permitido " . $acao . " este Tipo de Documento, pois ele Ã© utilizado pelo MÃ³dulo de Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em VÃ­nculo de UsuÃ¡rio Externo.";
             return $msg;
         }
 
@@ -772,7 +772,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO');
 
         if (array_intersect($arrIds, array_map('intval', $arrayTiposDocumento))) {
-	        return 'Não é possível ' . $acao . ' este Tipo de Documento, pois o seu ID ainda está associado a parâmetros afetos a geração de documentos do módulo SEI Peticionamento, Intimação e Procuração.';
+	        return 'NÃ£o Ã© possÃ­vel ' . $acao . ' este Tipo de Documento, pois o seu ID ainda estÃ¡ associado a parÃ¢metros afetos a geraÃ§Ã£o de documentos do mÃ³dulo SEI Peticionamento, IntimaÃ§Ã£o e ProcuraÃ§Ã£o.';
         }
     }
 
@@ -800,36 +800,36 @@ class MdPetRegrasGeraisRN extends InfraRN
     }
 
     /*
-     * Realiza uma consulta verificando todas as situações das intimações, em cima dos ids enviados
+     * Realiza uma consulta verificando todas as situaÃ§Ãµes das intimaÃ§Ãµes, em cima dos ids enviados
      *
      */
     protected function retornaSituacoesIntimacoesConectado($arrDados){
 
-        //Ids das situação (Vínculo de Intimação x Contato = MdPetIntRelDestinatario)
+        //Ids das situaÃ§Ã£o (VÃ­nculo de IntimaÃ§Ã£o x Contato = MdPetIntRelDestinatario)
         $idsRelDest         = array_key_exists(0, $arrDados) ? $arrDados[0] : null;
 
-        //Se for setado para TRUE irá retornar além das situações padrões, retornara uma situação para o prazo da resposta vencido.
+        //Se for setado para TRUE irÃ¡ retornar alÃ©m das situaÃ§Ãµes padrÃµes, retornara uma situaÃ§Ã£o para o prazo da resposta vencido.
         $addSitPrazoVencido = array_key_exists(1, $arrDados) ? $arrDados[1] : false;
 
         $arrIdsRelDest = array();
 
         if(!is_null($idsRelDest) && count($idsRelDest) > 0)
         {
-            //Gera um array com o id do relacionamento do contato e intimação como Key
+            //Gera um array com o id do relacionamento do contato e intimaÃ§Ã£o como Key
             $arrIdsRelDest = $this->_formatarArrayChaveIdRelDest($idsRelDest);
 
             //Verifica a primeira condicional-> Respondida
             $arrIdsRelDest = $this->_verificaSituacaoRespondida($idsRelDest, $arrIdsRelDest);
 
-            // Remove os ids que já possuem situação identificada
+            // Remove os ids que jÃ¡ possuem situaÃ§Ã£o identificada
             $idsRelDest = $this->_removerIdsSituacoesIdentificadas($idsRelDest, $arrIdsRelDest);
 
-            // Verifica se Situacao é cumprida, prazo tácito, ou vencida
+            // Verifica se Situacao Ã© cumprida, prazo tÃ¡cito, ou vencida
             $arrIdsRelDest = $this->_verificaSituacaoCumpridaEPrazoExterno($idsRelDest, $arrIdsRelDest, $addSitPrazoVencido);
 
         }
 
-        //Retorna um array com todas as situações e como key o idRelDest da intimação
+        //Retorna um array com todas as situaÃ§Ãµes e como key o idRelDest da intimaÃ§Ã£o
         return $arrIdsRelDest;
     }
 
@@ -885,7 +885,7 @@ class MdPetRegrasGeraisRN extends InfraRN
 
         if(count($idsIntimacoesCumpridas) > 0)
         {
-            //Verifica quais intimações devem possuir resposta
+            //Verifica quais intimaÃ§Ãµes devem possuir resposta
             $objMdPetIntRelRpDtDTO2 = $this->_retornaObjPadraoIntRelTipoRespDest($idsIntimacoesCumpridas);
             $arrDadosComResposta = $objMdPetIntRelRpDtRN->listar($objMdPetIntRelRpDtDTO2);
             $arrControleIntResp  = count($arrDadosComResposta) > 0 ? InfraArray::converterArrInfraDTO($arrDadosComResposta, 'IdMdPetIntRelDest') : array();
@@ -906,7 +906,7 @@ class MdPetRegrasGeraisRN extends InfraRN
 
                 foreach ($arrObjDTOPrazoVenc as $objDTO)
                 {
-                    //Verifica se não possue a data solicitada
+                    //Verifica se nÃ£o possue a data solicitada
                     if(!array_key_exists($objDTO->getNumIdMdPetIntRelDest(), $arrControle))
                     {
                         $arrControle[$objDTO->getNumIdMdPetIntRelDest()] = 0;
@@ -935,7 +935,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $ids = array();
 
         foreach($idsRelDest as $key => $id){
-            //Condição para verificar se o id deve ser adicionado ou não
+            //CondiÃ§Ã£o para verificar se o id deve ser adicionado ou nÃ£o
             $addSituacao = array_key_exists($id, $arrIdsRelDest) && $arrIdsRelDest[$id] == MdPetIntimacaoRN::$INTIMACAO_PENDENTE;
             if($addSituacao){
                 array_push($ids, $id);
@@ -964,10 +964,10 @@ class MdPetRegrasGeraisRN extends InfraRN
         $arrIdsRelDest = array();
 
         if (!is_null($idsRelDest) && count($idsRelDest) > 0) {
-            //Gera um array com o id do relacionamento do contato e intimação como Key
+            //Gera um array com o id do relacionamento do contato e intimaÃ§Ã£o como Key
             $arrIdsRelDest = $this->_formatarArrayChaveIdRelDest($idsRelDest, false);
 
-            //Busca todas as intimações que possuem anexo
+            //Busca todas as intimaÃ§Ãµes que possuem anexo
             $arrObjMdPetRelDestDTO = $this->_buscaIntimacoesComAnexo($idsRelDest);
 
             foreach ($arrIdsRelDest as $keyId => $idRelDest) {
@@ -1061,7 +1061,7 @@ class MdPetRegrasGeraisRN extends InfraRN
                 return $objDTORetorno;
             }
         }catch(Exception $e){
-            throw new InfraException('Não foi consultar a Unidade.',$e);
+            throw new InfraException('NÃ£o foi consultar a Unidade.',$e);
         }
     }
 

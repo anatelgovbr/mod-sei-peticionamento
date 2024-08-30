@@ -4,6 +4,7 @@
  *
  * @dataProvider 21/05/2021
  * @author Lino - Felipe Lino <felipe.silva@gt1tecnologia.com.br>
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
  *
  */
 

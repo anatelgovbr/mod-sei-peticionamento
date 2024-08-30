@@ -19,12 +19,12 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
 	}
 	
 	/*
-	 * Função responsável por verificar se o processo não está aberto em nenhuma unidade e se é necessário reabri-lo para poder inserir documentos nele
+	 * FunÃ§Ã£o responsÃ¡vel por verificar se o processo nÃ£o estÃ¡ aberto em nenhuma unidade e se Ã© necessÃ¡rio reabri-lo para poder inserir documentos nele
 	 * */
 	public function isNecessarioReabrirProcedimentoConectado ( ProcedimentoDTO $objProcedimentoDTO ){
 		
 		$objSEIRN = new SeiRN();
-		//Reabre o Processo quando necessário de Critério Intercorrente
+		//Reabre o Processo quando necessÃ¡rio de CritÃ©rio Intercorrente
 		$objEntradaConsultaProcApi = new EntradaConsultarProcedimentoAPI();
 		$objEntradaConsultaProcApi->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
 		$objEntradaConsultaProcApi->setSinRetornarUnidadesProcedimentoAberto('S');
@@ -42,12 +42,12 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
 	}
 	
 	/*
-	 * Função responsável pela reabertura de processo
+	 * FunÃ§Ã£o responsÃ¡vel pela reabertura de processo
 	 * */
 	protected function reabrirProcessoApiConectado(ProcedimentoDTO $objProcedimentoDTO) {
 		
 		$objSEIRN = new SeiRN();
-		//Reabre o Processo quando necessário de Critério Intercorrente
+		//Reabre o Processo quando necessÃ¡rio de CritÃ©rio Intercorrente
 		$objEntradaConsultaProcApi = new EntradaConsultarProcedimentoAPI();
 		$objEntradaConsultaProcApi->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
 		$objEntradaConsultaProcApi->setSinRetornarUnidadesProcedimentoAberto('S');
@@ -113,7 +113,7 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
     
     /**
      * Retorna a ultima unidade que o processo foi
-     * Pesquisa o processo exatamente como foi digitado SEM considerar a formatação
+     * Pesquisa o processo exatamente como foi digitado SEM considerar a formataÃ§Ã£o
      * @access protected
      * @author Jaqueline Mendes <jaqueline.mendes@cast.com.br>
      * @param  ProtocoloDTO $parObjProtocoloDTO
@@ -127,10 +127,10 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
     	$objAtividadeDTO->retNumIdUnidade();
     	$objAtividadeDTO->setOrdDthConclusao(InfraDTO::$TIPO_ORDENACAO_DESC);
     	
-    	//só considerar para reaburtura se a tarefa for 28, 41 ou 63 a saber:
-    	//- 28: Conclusão do processo na unidade
-    	//- 41: Conclusão automática de processo na unidade
-    	//- 63: Processo concluído
+    	//sÃ³ considerar para reaburtura se a tarefa for 28, 41 ou 63 a saber:
+    	//- 28: ConclusÃ£o do processo na unidade
+    	//- 41: ConclusÃ£o automÃ¡tica de processo na unidade
+    	//- 63: Processo concluÃ­do
     	
     	$objAtividadeDTO->setNumIdTarefa( array( TarefaRN::$TI_CONCLUSAO_PROCESSO_UNIDADE , TarefaRN::$TI_CONCLUSAO_AUTOMATICA_UNIDADE, TarefaRN::$TI_CONCLUSAO_PROCESSO_USUARIO), InfraDTO::$OPER_IN );
     	

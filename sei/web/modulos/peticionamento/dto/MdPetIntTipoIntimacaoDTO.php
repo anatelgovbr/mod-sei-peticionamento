@@ -1,10 +1,11 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4� REGI�O
+* ANATEL
 *
 * 08/12/2016 - criado por Marcelo Bezerra
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
 *
-* Vers�o do Gerador de C�digo: 1.39.0
+* Versão do Gerador de Código: 1.39.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';

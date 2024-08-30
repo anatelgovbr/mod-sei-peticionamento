@@ -1,8 +1,5 @@
 <?php
 
-
-
-
 /**
 * Contains information for a SOAP fault.
 * Mainly used for returning faults from deployed functions
@@ -10,6 +7,7 @@
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @version  $Id: class.soap_fault.php,v 1.14 2007/04/11 15:49:47 snichol Exp $
 * @access public
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
 */
 class nusoap_fault extends nusoap_base {
 	/**

@@ -36,13 +36,13 @@ class MdPetVincRelSerieRN extends InfraRN
             }
             return $arrRetorno;
         } catch (Exception $e) {
-            throw  new InfraException('Erro cadastrando tipo documento relacionado ao tipo processo da vinculação.', $e);
+            throw  new InfraException('Erro cadastrando tipo documento relacionado ao tipo processo da vinculaÃ§Ã£o.', $e);
         }
     }
 
     protected function excluirControlado($arrObjMdPetVincRelSerieDTO){
 
-        // TODO refatorar a tela para retitar a exclusão desnecessária
+        // TODO refatorar a tela para retitar a exclusÃ£o desnecessÃ¡ria
 //        SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $arrObjMdPetVincRelSerieDTO );
 
         try {
@@ -51,7 +51,7 @@ class MdPetVincRelSerieRN extends InfraRN
             	$objMdPetVincRelSerieBD->excluir($arrObjMdPetVincRelSerieDTO[$i]);
             }
         } catch (Exception $e) {
-            throw  new InfraException('Erro excluindo tipo documento relacionado ao tipo processo da vinculação.', $e);
+            throw  new InfraException('Erro excluindo tipo documento relacionado ao tipo processo da vinculaÃ§Ã£o.', $e);
         }
     }
 
@@ -66,7 +66,7 @@ class MdPetVincRelSerieRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando tipo documento relacionado ao tipo processo da vinculação', $e);
+            throw new InfraException('Erro consultando tipo documento relacionado ao tipo processo da vinculaÃ§Ã£o', $e);
         }
     }
 
@@ -81,7 +81,7 @@ class MdPetVincRelSerieRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando tipo documento relacionado ao tipo processo da vinculação', $e);
+            throw new InfraException('Erro contando tipo documento relacionado ao tipo processo da vinculaÃ§Ã£o', $e);
         }
     }
 

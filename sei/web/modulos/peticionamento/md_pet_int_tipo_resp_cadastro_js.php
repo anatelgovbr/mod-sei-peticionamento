@@ -1,4 +1,5 @@
 <script type="text/javascript">
+	// 26/08/2024 - Atualização por gabrielg.colab - SPASSU
     function inicializar() {
         <? if ($_GET['acao'] == 'md_pet_int_tipo_resp_cadastrar') { ?>
         document.getElementById('txtNome').focus();

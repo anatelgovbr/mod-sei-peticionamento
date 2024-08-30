@@ -1,10 +1,11 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 02/04/2018 - criado por jose vieira
+* 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
 *
-* Versão do Gerador de Código: 1.41.0
+* VersÃ£o do Gerador de CÃ³digo: 1.41.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -31,7 +32,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdPetVinculo', 'id_md_pet_vinculo');
 		
-		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'NomeTipoVinculação');
+		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'NomeTipoVinculaÃ§Ã£o');
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdContato', 'id_contato');
 		
@@ -113,7 +114,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 	// Traz a natureza do vinculo:
 	public function getNaturezaVinculo()
 	{
-		return 'Pessoa ' . ($this->getStrTpVinc() == 'F' ? 'Física' : 'Jurídica');
+		return 'Pessoa ' . ($this->getStrTpVinc() == 'F' ? 'FÃ­sica' : 'JurÃ­dica');
 	}
 	
 	public function getArrTipoPoderes(){
@@ -184,7 +185,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 			$retorno = 'Procurador Especial';
 			break;
 			case MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL :
-			$retorno = 'Responsável Legal';
+			$retorno = 'ResponsÃ¡vel Legal';
 			break;
 			case MdPetVincRepresentantRN::$PE_PROCURADOR :
 			$retorno = 'Procurador';
@@ -193,7 +194,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 			$retorno = 'Procurador Simples';
 			break;
 			case MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO :
-			$retorno = 'Autorrepresentação';
+			$retorno = 'AutorrepresentaÃ§Ã£o';
 			break;
 		}
 		
@@ -208,7 +209,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		
 		switch ($sta_abrangencia){
 			case MdPetVincRepresentantRN::$PR_ESPECIFICO :
-			$retorno = 'Processos Específicos';
+			$retorno = 'Processos EspecÃ­ficos';
 			break;
 			case MdPetVincRepresentantRN::$PR_QUALQUER :
 			$retorno = 'Qualquer Processo em Nome do Outorgante';
@@ -236,9 +237,9 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		$tipo_representante = is_null($tipo_representante) ? $this->getStrTipoRepresentante() : $tipo_representante;
 		
 		switch ($tipo_representante){
-			case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL : $retorno = 'Procuração Eletrônica Especial';break;
-			case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES : $retorno = 'Procuração Eletrônica';break;
-			case MdPetVincRepresentantRN::$PE_PROCURADOR : $retorno = 'Procuração Eletrônica';break;
+			case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL : $retorno = 'ProcuraÃ§Ã£o EletrÃ´nica Especial';break;
+			case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES : $retorno = 'ProcuraÃ§Ã£o EletrÃ´nica';break;
+			case MdPetVincRepresentantRN::$PE_PROCURADOR : $retorno = 'ProcuraÃ§Ã£o EletrÃ´nica';break;
 		}
 		
 		return $retorno;
@@ -252,8 +253,9 @@ class MdPetVincRepresentantDTO extends InfraDTO
             case MdPetVincRepresentantRN::$RP_REVOGADA : $estado = 'Revogada'; break;
             case MdPetVincRepresentantRN::$RP_RENUNCIADA : $estado = 'Renunciada'; break;
             case MdPetVincRepresentantRN::$RP_VENCIDA : $estado = 'Vencida'; break;
-            case MdPetVincRepresentantRN::$RP_SUBSTITUIDA : $estado = 'Substituída'; break;
+            case MdPetVincRepresentantRN::$RP_SUBSTITUIDA : $estado = 'SubstituÃ­da'; break;
             case MdPetVincRepresentantRN::$RP_INATIVO : $estado = 'Inativa'; break;
+			case MdPetVincRepresentantRN::$RP_ATIVO : $estado = 'Ativa'; break;
         }
 		
 		return $estado;
@@ -302,7 +304,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 
 			case MdPetVincRepresentantRN::$RP_SUBSTITUIDA :
                 $idSerieFormulario = $objInfraParametro->getValor(MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO);
-                $retorno = array('strSituacao'=>'Substituída', 'numSerie'=>$idSerieFormulario);
+                $retorno = array('strSituacao'=>'SubstituÃ­da', 'numSerie'=>$idSerieFormulario);
             break;
 
             case MdPetVincRepresentantRN::$RP_INATIVO :

@@ -46,7 +46,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
     /**
      * Short description of method validarUnidadeProcessoConectado
-     * Valida se as unidades dos processos abertos para esse procedimento est„o ativas
+     * Valida se as unidades dos processos abertos para esse procedimento est√£o ativas
      * @access protected
      * @param ProcedimentoDTO $objProcedimentoDTO
      * @return boolean
@@ -66,7 +66,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
     /**
      * Short description of method pesquisarProtocoloFormatadoConectado
-     * Pesquisa o processo exatamente como foi digitado SEM considerar a formataÁ„o
+     * Pesquisa o processo exatamente como foi digitado SEM considerar a formata√ß√£o
      * @access protected
      * @param ProtocoloDTO $parObjProtocoloDTO
      * @return mixed
@@ -108,7 +108,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
     /**
      * Retorna a ultima unidade que o processo foi
-     * Pesquisa o processo exatamente como foi digitado SEM considerar a formataÁ„o
+     * Pesquisa o processo exatamente como foi digitado SEM considerar a formata√ß√£o
      * @access protected
      * @param ProtocoloDTO $parObjProtocoloDTO
      * @return mixed
@@ -144,7 +144,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $protocoloRN = new ProtocoloRN();
         $protocoloDTO = $protocoloRN->consultarRN0186($protocoloDTO);
 
-        // Verifica se o processo È anexado, se for, retorna a unidade do processo pai.
+        // Verifica se o processo √© anexado, se for, retorna a unidade do processo pai.
         if ($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO) {
             $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
             $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
@@ -168,11 +168,11 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $idUnidadeAbrirNovoProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
         }
 
-        //Se n„o existe Unidade em Aberto, busca pelas ConcluÌdas
+        //Se n√£o existe Unidade em Aberto, busca pelas Conclu√≠das
         if (is_null($idUnidadeAbrirNovoProcesso)) {
             $idUnidadeAbrirNovoProcesso = $this->_getUnidadesProcessoConcluido($objProcedimentoDTO->getDblIdProcedimento());
         } else {
-            // inicio da verificaÁ„o da unidade ativa, caso n„o esteja tenta buscar uma unidade ativa para reabrir o processo.
+            // inicio da verifica√ß√£o da unidade ativa, caso n√£o esteja tenta buscar uma unidade ativa para reabrir o processo.
             $objRNGerais = new MdPetRegrasGeraisRN();
             $objUnidadeDTO = $objRNGerais->getObjUnidadePorId($idUnidadeAbrirNovoProcesso);
 
@@ -192,13 +192,13 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
         if ($idUnidadeAbrirNovoProcesso == null) {
             $objInfraException = new InfraException();
-            $objInfraException->adicionarValidacao('O processo indicado n„o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
+            $objInfraException->adicionarValidacao('O processo indicado n√£o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
             $objInfraException->lancarValidacoes();
             return false;
         }
-        // fim da verificaÁ„o da unidade ativa
+        // fim da verifica√ß√£o da unidade ativa
 
-        // Salva um processo do tipo padr„o selecionado
+        // Salva um processo do tipo padr√£o selecionado
         $this->simularLogin($idUnidadeAbrirNovoProcesso);
 
         $objEntradaGerarProcedimentoAPI = new EntradaGerarProcedimentoAPI();
@@ -295,12 +295,12 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $objTipoProcedRestricaoDTO->setNumIdTipoProcedimento($idTpProcedimento);
             $objTipoProcedRestricaoDTO->retNumIdUnidade();
 
-            //Se n„o encontrar nenhum dado vinculado a esse Tipo de Processo na tabela de Rel, È porque n„o existe restriÁ„o
+            //Se n√£o encontrar nenhum dado vinculado a esse Tipo de Processo na tabela de Rel, √© porque n√£o existe restri√ß√£o
             if ($objTipoProcedRestricaoRN->contar($objTipoProcedRestricaoDTO) == 0) {
                 return true;
             } else {
 
-                //Se a Unidade estiver nula È porque pode ser Utilizada em qualquer uma do org„o logado em quest„o
+                //Se a Unidade estiver nula √© porque pode ser Utilizada em qualquer uma do org√£o logado em quest√£o
                 $objTipoProcedRestricaoDTO2 = clone($objTipoProcedRestricaoDTO);
                 $objTipoProcedRestricaoDTO2->setNumMaxRegistrosRetorno(1);
                 $objTipoProcedRestricaoDTO2->setNumIdUnidade(null);
@@ -309,7 +309,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                     return true;
                 }
 
-                //Se a Unidade estiver nula e um org„o diferente do da Unidade Atual estiver cadastrado
+                //Se a Unidade estiver nula e um org√£o diferente do da Unidade Atual estiver cadastrado
                 $objTipoProcedRestricaoDTO3 = clone($objTipoProcedRestricaoDTO);
                 $objTipoProcedRestricaoDTO3->setNumMaxRegistrosRetorno(1);
                 $objTipoProcedRestricaoDTO3->setNumIdUnidade(null);
@@ -319,7 +319,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 }
 
 
-                //Se n„o, verifica se a Unidade em Quest„o possui autorizaÁ„o para o Tipo de Processo
+                //Se n√£o, verifica se a Unidade em Quest√£o possui autoriza√ß√£o para o Tipo de Processo
                 $objTipoProcedRestricaoDTO4 = clone($objTipoProcedRestricaoDTO);
                 $objTipoProcedRestricaoDTO4->setNumIdUnidade($idUnidadeAbertura);
                 $objTipoProcedRestricaoDTO4->setNumIdOrgao($idOrgaoUnidade);
@@ -349,7 +349,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     }
 
     /**
-     * FunÁ„o respons·vel por Retornar a ˙ltima unidade em que o processo EST¡ aberto agora
+     * Fun√ß√£o respons√°vel por Retornar a √∫ltima unidade em que o processo EST√Å aberto agora
      * @param $idProcedimento
      * @return  string $idUnidade
      */
@@ -388,7 +388,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $saidaConsultarProcedimentoAPI = $objSEIRN->consultarProcedimento($objEntradaConsultaProcApi);
         }
 
-        //informaÁıes da tarefa de conclusao de processo na unidade
+        //informa√ß√µes da tarefa de conclusao de processo na unidade
         $tarefaRN = new TarefaRN();
         $tarefaDTO = new TarefaDTO();
         $tarefaDTO->retNumIdTarefa();
@@ -454,7 +454,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     }
 
     /**
-     * FunÁ„o respons·vel por Retornar todas as unidades em que o processo est· aberto
+     * Fun√ß√£o respons√°vel por Retornar todas as unidades em que o processo est√° aberto
      *   buscado em: ProcedimentoINT.php - montarAcoesArvore() - linhas 766 a 870
      * @param $idProcedimento
      * @return AtividadeDTO $arrObjAtividadeDTO
@@ -498,8 +498,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $objAtividadeDTO->retStrSiglaUsuarioAtribuicao();
             $objAtividadeDTO->retStrNomeUsuarioAtribuicao();
 
-            //ordena descendente pois no envio de processo que j· existe na unidade e est· atribuÌdo ficar· com mais de um andamento em aberto
-            //desta forma os andamentos com usu·rio nulo (envios do processo) ser„o listados depois
+            //ordena descendente pois no envio de processo que j√° existe na unidade e est√° atribu√≠do ficar√° com mais de um andamento em aberto
+            //desta forma os andamentos com usu√°rio nulo (envios do processo) ser√£o listados depois
             $objAtividadeDTO->setOrdStrSiglaUsuarioAtribuicao(InfraDTO::$TIPO_ORDENACAO_DESC);
         }
         $objAtividadeDTO->setDblIdProtocolo($idProcedimento);
@@ -521,7 +521,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
 
         if ($strStaNivelAcessoGlobal != ProtocoloRN::$NA_SIGILOSO) {
-            //filtra andamentos com indicaÁ„o de usu·rio atribuÌdo
+            //filtra andamentos com indica√ß√£o de usu√°rio atribu√≠do
             $arrObjAtividadeDTO = InfraArray::distinctArrInfraDTO($arrObjAtividadeDTO, 'SiglaUnidade');
         }
         return $arrObjAtividadeDTO;
@@ -534,7 +534,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objSEIRN = new SeiRN();
 
         /**
-         * Identifica se a aÁ„o È para resposta a intimaÁ„o
+         * Identifica se a a√ß√£o √© para resposta a intima√ß√£o
          */
         if (is_null($idUnidadeRespostaIntimacao)) {
             $idUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto($objProcedimentoDTO->getDblIdProcedimento());
@@ -542,7 +542,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $idUnidadeProcesso = $idUnidadeRespostaIntimacao;
         }
 
-        // inicio da verificaÁ„o da unidade ativa, caso n„o esteja tenta buscar uma unidade ativa para reabrir o processo.
+        // inicio da verifica√ß√£o da unidade ativa, caso n√£o esteja tenta buscar uma unidade ativa para reabrir o processo.
         if (is_numeric($idUnidadeProcesso)) {
             $unidadeDTO = new UnidadeDTO();
             $unidadeDTO->retTodos();
@@ -598,12 +598,12 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
         // SIGILOSO - conceder credencial - FIM
 
-        // se n„o usar o //$this->simularLogin($idUnidadeProcesso);
+        // se n√£o usar o //$this->simularLogin($idUnidadeProcesso);
         if(!empty($idUnidade)){
             $this->setUnidadeDTO($idUnidade);
         }else{
             $objInfraException = new InfraException();
-            $objInfraException->lancarValidacao('O processo indicado n„o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
+            $objInfraException->lancarValidacao('O processo indicado n√£o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
         }
 
         foreach ($arrObjDocumentoAPI as $documentoAPI) {
@@ -679,7 +679,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $numIdTipoConferencia = $arrTipoConferenciaDTO[0]->getNumIdTipoConferencia();
             // fim buscando o menor tipo de conferencia
 
-            //setando um tipo de conferencia padrao (que sera removido depois), apenas para passar na validaÁ„o
+            //setando um tipo de conferencia padrao (que sera removido depois), apenas para passar na valida√ß√£o
             $documentoDTO->setNumIdTipoConferencia($numIdTipoConferencia);
             $documentoAlteracaoDTO = new DocumentoDTO();
             $documentoAlteracaoDTO->retDblIdDocumento();
@@ -704,7 +704,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         //nao aplicando metodo alterar da RN de Documento por conta de regras de negocio muito especificas aplicadas ali
         $documentoDTO->setStrSinBloqueado('S');
         $documentoBD->alterar($documentoDTO);
-        //remover a liberaÁ„o de acesso externo //AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
+        //remover a libera√ß√£o de acesso externo //AcessoRN.excluir nao permite exclusao, por isso chame AcessoExternoBD diretamente daqui
     }
 
     private function abrirAcessoParaAssinatura($orgaoDTO, $documentoDTO, $objParticipanteDTO)
@@ -712,7 +712,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         //liberando assinatura externa para o documento
         $objAcessoExternoDTO = new AcessoExternoDTO();
 
-        //trocado de $TA_ASSINATURA_EXTERNA para $TA_SISTEMA para evitar o envio de email de notificaÁ„o
+        //trocado de $TA_ASSINATURA_EXTERNA para $TA_SISTEMA para evitar o envio de email de notifica√ß√£o
         $objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_ASSINATURA_EXTERNA);
         $objAcessoExternoDTO->setStrEmailUnidade($orgaoDTO->getStrEmailContato()); //informando o email do orgao associado a unidade
         $objAcessoExternoDTO->setDblIdDocumento($documentoDTO->getDblIdDocumento());
@@ -739,7 +739,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objParticipanteDTO->retNumIdUnidade();
         $objParticipanteDTO->retDblIdProtocolo();
         $objParticipanteDTO->retNumIdParticipante();
-        //FK de BD (ak1_participante) trata somente id_contato, id_protocolo, sta_participacao, ent„o desconsiderar unidade
+        //FK de BD (ak1_participante) trata somente id_contato, id_protocolo, sta_participacao, ent√£o desconsiderar unidade
         $objParticipanteDTO->setNumIdContato($objUsuarioDTO->getNumIdContato());
         $objParticipanteDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
 
@@ -791,7 +791,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objAssinaturaDTO->setStrStaFormaAutenticacao(AssinaturaRN::$TA_SENHA);
         $objAssinaturaDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
         $objAssinaturaDTO->setStrSenhaUsuario($this->getSenha());
-        $objAssinaturaDTO->setStrCargoFuncao("Usu·rio Externo - " . $cargoDTO->getStrExpressao());
+        $objAssinaturaDTO->setStrCargoFuncao("Usu√°rio Externo - " . $cargoDTO->getStrExpressao());
         $objAssinaturaDTO->setArrObjDocumentoDTO(array($documentoDTO));
 
         $objMdPetDocumentoRN = new MdPetDocumentoRN();
@@ -854,7 +854,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
         //Gerar Recibo Docs
         foreach ($arrObjReciboDocPet as $objReciboDocPet) {
-            //Remover Depois - Campo est· como NOT NULL, deve ser NULL na adaptaÁ„o
+            //Remover Depois - Campo est√° como NOT NULL, deve ser NULL na adapta√ß√£o
             $objReciboDocPet->setStrClassificacaoDocumento('A');
             $objReciboDocPet->setNumIdReciboPeticionamento($numIdReciboPeticionamento);
             $objMdPetRelReciboDocumentoAnexoRN->cadastrar($objReciboDocPet);
@@ -862,7 +862,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     }
 
     /*
-     * Respons·vel por enviar emails ao final do processo do peticionamento intercorrente
+     * Respons√°vel por enviar emails ao final do processo do peticionamento intercorrente
      * */
     protected function enviarEmailConectado($params)
     {
@@ -880,19 +880,19 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     }
 
     /*
-     * MÈtodo principal respons·vel por coordenar todo o processamento , regras e cadastros do
-     * peticionamento intercorrente e resposta a intimaÁ„o
-     * chamando v·rias classes e mÈtodos auxiliares para realizar operaÁoes especificas
+     * M√©todo principal respons√°vel por coordenar todo o processamento , regras e cadastros do
+     * peticionamento intercorrente e resposta a intima√ß√£o
+     * chamando v√°rias classes e m√©todos auxiliares para realizar opera√ßoes especificas
      * */
     protected function cadastrarControlado($params)
     {
 
-        // Bloco de validaÁıes
+        // Bloco de valida√ß√µes
         $this->validarCadastro($params);
 
         $atividadeRN = new AtividadeRN();
 
-        // setando atributos que ser„o utilizados em outros mÈtodos
+        // setando atributos que ser√£o utilizados em outros m√©todos
         $this->setCargoDTO($params['selCargo']);
 //		$this->setSenha($params['pwdsenhaSEI']);
         $params['pwdsenhaSEI'] = '***********';
@@ -936,8 +936,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objMdPetCriterioDTO->retTodos(true);
         $objCriterioIntercorrentePadraoDTO = (new MdPetCriterioRN())->consultar($objMdPetCriterioDTO);
 
-        // Verifica se o processo possui critÈrio intercorrente cadastrado
-        //Se n„o possui busca o padr„o e cria um processo relacionado ao processo selecionado
+        // Verifica se o processo possui crit√©rio intercorrente cadastrado
+        //Se n√£o possui busca o padr√£o e cria um processo relacionado ao processo selecionado
         $arrObjReciboDocPet = array();
         $arrDadosRecibo = array();
         $arrDadosRecibo['idProcedimento'] = $params['id_procedimento'];
@@ -961,19 +961,19 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado))
                 || ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == 2 && $objCriterioIntercorrentePadraoDTO->getStrSinIntercorrenteSigiloso() == 'N')
         ) {
-            $especificacao = 'Peticionamento Intercorrente relacionado ao Processo n∫ ' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
+            $especificacao = 'Peticionamento Intercorrente relacionado ao Processo n¬∫ ' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
             $objSaidaGerarProcedimentoAPI = $this->gerarProcedimentoApi(array($objProcedimentoDTO, $objCriterioIntercorrenteDTO, $especificacao));
 
             $arrDadosRecibo['idProcedimentoRel'] = $params['id_procedimento'];
             $arrDadosRecibo['idProcedimento'] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
             $params['id_procedimento'] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
-            //Se possui critÈrios intercorrentes setta os documentos no processo existente
+            //Se possui crit√©rios intercorrentes setta os documentos no processo existente
             $this->setProcedimentoDTO($objSaidaGerarProcedimentoAPI->getIdProcedimento());
 
-            //SE o criterio existe, e NAO È o criterio padrao, tenta incluir documento no proprio processo (caso o mesmo esteja aberto) ou reabrir o processo (caso o mesmo esteja fechado)
+            //SE o criterio existe, e NAO √© o criterio padrao, tenta incluir documento no proprio processo (caso o mesmo esteja aberto) ou reabrir o processo (caso o mesmo esteja fechado)
         } else if ($params['isRespostaIntimacao'] == true || ($objCriterioIntercorrenteDTO != null && $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'N')) {
 
-            //se for intimaÁ„o
+            //se for intima√ß√£o
             if (isset($params['isRespostaIntimacao'])) {
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
                 $objUnidadeDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($params['id_intimacao']));
@@ -1008,7 +1008,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
                     //if (!$idUnidadeReabrirProcesso) {
                     //	$objInfraException = new InfraException();
-                    //	$objInfraException->lancarValidacao('O processo indicado n„o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
+                    //	$objInfraException->lancarValidacao('O processo indicado n√£o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
                     //}
                 }
             }
@@ -1047,7 +1047,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
                 $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
             }
-            // 2) ⁄ltima aberta
+            // 2) √öltima aberta
         } else if ($qtdArrUnidadeProcesso == 0) {
             $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
             $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
@@ -1124,10 +1124,10 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc('I');
             if(!empty($nivelAcessoDoc) && is_array($nivelAcessoDoc['documentos']) && count($nivelAcessoDoc['documentos']) > 0){
 
-                $rows = explode("•", $params['hdnTbDocumento']);
+                $rows = explode("¬•", $params['hdnTbDocumento']);
 
                 $matrix = array_map(function ($row) use ($nivelAcessoDoc) {
-                    $values = explode("±", $row);
+                    $values = explode("¬±", $row);
                     if (in_array($values[1], $nivelAcessoDoc['documentos'])) {
                         $values[3] = $nivelAcessoDoc['nivel'];
                         $values[4] = $nivelAcessoDoc['hipotese'];
@@ -1135,8 +1135,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                     return $values;
                 }, $rows);
 
-                $params['hdnTbDocumento'] = implode("•", array_map(function ($row) {
-                    return implode("±", $row);
+                $params['hdnTbDocumento'] = implode("¬•", array_map(function ($row) {
+                    return implode("¬±", $row);
                 }, $matrix));
             }
         }
@@ -1267,7 +1267,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $arrObjAtributoAndamentoDTO = array();
             $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
             $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-            $objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla() . ' • ' . $unidadeDTO->getStrDescricao());
+            $objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla() . ' ¬• ' . $unidadeDTO->getStrDescricao());
             $objAtributoAndamentoDTO->setStrIdOrigem($unidadeDTO->getNumIdUnidade());
             $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -1305,10 +1305,10 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
             $this->enviarEmail($params);
 
-            //se for resposta, atualizar status da intimaÁ„o
+            //se for resposta, atualizar status da intima√ß√£o
 
 
-            // Tempor·rios apagando
+            // Tempor√°rios apagando
             $arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($params['hdnTbDocumento']);
             foreach ($arquivos_enviados as $arquivo_enviado) {
                 unlink(DIR_SEI_TEMP . '/' . $arquivo_enviado[7]);
@@ -1387,7 +1387,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
 
 
-        //Recuperando Id IntimaÁ„o
+        //Recuperando Id Intima√ß√£o
 
         $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
         $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($params['id_int_rel_dest']);
@@ -1427,10 +1427,10 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objMdPetIntDestRespostaDTO->setNumIdMdPetIntRelTipoResp($id_tipo_resposta);
         $objMdPetIntDestRespostaDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 
-        //cadastrando a resposta do destinatario nesta intimaÁ„o
+        //cadastrando a resposta do destinatario nesta intima√ß√£o
         $objMdPetIntDestRespostaDTO = $objMdPetIntDestRespostaRN->cadastrar($objMdPetIntDestRespostaDTO);
 
-        //Atualiza o novo campo de SituaÁ„o da IntimaÁ„o
+        //Atualiza o novo campo de Situa√ß√£o da Intima√ß√£o
         $objMdPetIntRelDestRN->atualizarStatusIntimacao(array(MdPetIntimacaoRN::$INTIMACAO_RESPONDIDA, $idRelDest));
 
         //vinculado documentos anexados que compoem esta resposta
@@ -1471,7 +1471,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
             $contatoDTO = $contatoRN->consultarRN0324($contatoDTO);
 
-            //so precisa intervir no acesso externo (para adicionar docs a mais nele, ou seja, ampliar o acesso ext) caso se trate de acesso ext parcial, para acesso integral nao È necess·rio intervir
+            //so precisa intervir no acesso externo (para adicionar docs a mais nele, ou seja, ampliar o acesso ext) caso se trate de acesso ext parcial, para acesso integral nao √© necess√°rio intervir
 
 
             if (!is_null($sinTipoAcesso) && $sinTipoAcesso == MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL) {
@@ -1490,7 +1490,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
                 $objRelAcessoExtProtocoloBD = new RelAcessoExtProtocoloBD($this->getObjInfraIBanco());
 
-                //Verifica o Tipo de Destinat·rio
+                //Verifica o Tipo de Destinat√°rio
 
                 //Pessoa Juridica
                 $mdPetVinculoRN = new MdPetVinculoRN();
@@ -1604,7 +1604,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
     private function validarCadastro($params)
     {
-        // Bloco de validaÁıes
+        // Bloco de valida√ß√µes
         $objInfraException = new InfraException();
         $this->validarSenhaSei($params['pwdsenhaSEI'], $objInfraException);
         $this->validarDocumentos($params['hdnTbDocumento'], $objInfraException);
@@ -1616,7 +1616,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     private function validarSenhaSei($senha, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($senha)) {
-            $objInfraException->adicionarValidacao('Senha n„o informada.');
+            $objInfraException->adicionarValidacao('Senha n√£o informada.');
         }
         $objMdPetProcessoRN = new MdPetProcessoRN();
         $objMdPetProcessoRN->validarSenha(array('pwdsenhaSEI' => $senha));
@@ -1632,14 +1632,14 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     private function validarNumIdProcedimento($numIdProcedimento, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($numIdProcedimento)) {
-            $objInfraException->adicionarValidacao('Processo n„o informado.');
+            $objInfraException->adicionarValidacao('Processo n√£o informado.');
         }
     }
 
     private function validarNumIdTipoProcedimento($numIdTipoProcedimento, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($numIdTipoProcedimento)) {
-            $objInfraException->adicionarValidacao('Senha n„o informada.');
+            $objInfraException->adicionarValidacao('Senha n√£o informada.');
         }
     }
 

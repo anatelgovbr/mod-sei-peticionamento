@@ -56,7 +56,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
             SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_poder_cadastrar', __METHOD__, $objDTO );
 			//Regras de Negocio
             $objInfraException = new InfraException();
-			//Validação de nome já existente
+			//ValidaÃ§Ã£o de nome jÃ¡ existente
 			$this->validarStrNome($objDTO,$objInfraException);
 			$objInfraException->lancarValidacoes();
 			$objBD = new MdPetTipoPoderLegalBD($this->getObjInfraIBanco());
@@ -71,7 +71,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 	private function validarStrNome(MdPetTipoPoderLegalDTO $objMdPetTipoPoderLegalDTO, InfraException $objInfraException){
 		try {
         if (InfraString::isBolVazia($objMdPetTipoPoderLegalDTO->getStrNome())){
-            $objInfraException->adicionarValidacao('Nome não informado.');
+            $objInfraException->adicionarValidacao('Nome nÃ£o informado.');
         }else{
           
             if (strlen($objMdPetTipoPoderLegalDTO->getStrNome())>100){
@@ -97,7 +97,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
 				}
 			}
 			if($exite && $alteracao == false){
-                $objInfraException->adicionarValidacao('Este Tipo de Poder Legal já está cadastrado.');
+                $objInfraException->adicionarValidacao('Este Tipo de Poder Legal jÃ¡ estÃ¡ cadastrado.');
             }
             
 		}
@@ -112,7 +112,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
             SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_poder_alterar', __METHOD__, $objDTO );
             //Regras de Negocio
             $objInfraException = new InfraException();
-            //Validação de nome já existente
+            //ValidaÃ§Ã£o de nome jÃ¡ existente
             $this->validarStrNome($objDTO,$objInfraException);
             $objInfraException->lancarValidacoes();
 			$objBD = new MdPetTipoPoderLegalBD($this->getObjInfraIBanco());
@@ -149,7 +149,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
              $arrObjMdPetRelVincRepTpPoderRN = $objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO);
 			
 			 if(count($arrObjMdPetRelVincRepTpPoderRN) > 0){
-				$objInfraException->adicionarValidacao('Não é possivel excluir este Tipo de Poder Legal, pois ele já foi utilizado no sistema.');
+				$objInfraException->adicionarValidacao('NÃ£o Ã© possivel excluir este Tipo de Poder Legal, pois ele jÃ¡ foi utilizado no sistema.');
 				$objInfraException->lancarValidacoes();
 			 }
 

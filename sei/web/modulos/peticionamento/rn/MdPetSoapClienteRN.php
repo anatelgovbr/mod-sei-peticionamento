@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 03/04/2017 - criado por Ellyson de Jesus Silva
  *
- * Versão do Gerador de Código: 1.40.1
+ * VersÃ£o do Gerador de CÃ³digo: 1.40.1
  */
  
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -35,9 +35,9 @@ class MdPetSoapClienteRN extends nusoap_client
             if ($this->getError())
                 return false;
         }
-        //escrevendo nome de cada operaçao disponivel
+        //escrevendo nome de cada operaÃ§ao disponivel
         foreach ($this->operations as $op) {
-            $functions[] = $op['name']; //nome da operaçao
+            $functions[] = $op['name']; //nome da operaÃ§ao
         }
         return $functions;
     }
@@ -52,7 +52,7 @@ class MdPetSoapClienteRN extends nusoap_client
             $returnType = $nameOperations;
         } else {
             if (!$operations) {
-                throw new InfraException('Nome da operação não existe.');
+                throw new InfraException('Nome da operaÃ§Ã£o nÃ£o existe.');
             }
 
             $nameType = $this->getEntidadePorUrlWSDL($operations['input']['parts']['parameters']);
@@ -93,7 +93,7 @@ class MdPetSoapClienteRN extends nusoap_client
     }
 
     /*
-     * Verifica se o tipo retornado é um tipo ou realmente o nome.
+     * Verifica se o tipo retornado Ã© um tipo ou realmente o nome.
      * */
     private function _verificaTipoDadosWebService($returnType, $nameType)
     {
@@ -117,22 +117,22 @@ class MdPetSoapClienteRN extends nusoap_client
         $outputArr = array();
 
         if (!$operations)
-            throw new InfraException('Nome da operação não existe.');
+            throw new InfraException('Nome da operaÃ§Ã£o nÃ£o existe.');
 
         /**
-         * @todo if para tratar o web-service da ANATEL de serviço aonde o wsdl não possui assinatura de output
+         * @todo if para tratar o web-service da ANATEL de serviÃ§o aonde o wsdl nÃ£o possui assinatura de output
          */
         if (empty($operations['output']['parts'])) {
             $resp = $this->call($nameOperations, array());
             if ($this->responseData === false) {
                 $objInfraException = new InfraException();
-                $objInfraException->adicionarValidacao('Não foi possível comunicação com o servidor.');
+                $objInfraException->adicionarValidacao('NÃ£o foi possÃ­vel comunicaÃ§Ã£o com o servidor.');
                 $objInfraException->lancarValidacoes();
             }
 
             if (!$resp) {
                 $objInfraException = new InfraException();
-                $objInfraException->adicionarValidacao('Não possui resposta do web-service.');
+                $objInfraException->adicionarValidacao('NÃ£o possui resposta do web-service.');
                 $objInfraException->lancarValidacoes();
             }
 
@@ -205,7 +205,7 @@ class MdPetSoapClienteRN extends nusoap_client
             $opData = $this->getOperationData($objMdLitIntegracaoDTO->getStrOperacaWsdl());
 
             if (!empty($opData['endpoint'])) {
-                //@todo retirar quanto verificar a configuração do wso2 da anatel
+                //@todo retirar quanto verificar a configuraÃ§Ã£o do wso2 da anatel
                 $this->forceEndpoint = str_replace('https', 'http', $opData['endpoint']);
             }
 
@@ -218,19 +218,19 @@ class MdPetSoapClienteRN extends nusoap_client
 
                 if ($objMdLitIntegracaoDTO->getNumIdMdLitFuncionalidade() == MdLitIntegracaoRN::$ARRECADACAO_CONSULTAR_LANCAMENTO) {
                     $exception = new InfraException();
-                    $exception->lancarValidacao('Não foi possível a comunicação com o Webservice da Arrecadação. Contate o Gestor do Controle.', null, new Exception($err));
+                    $exception->lancarValidacao('NÃ£o foi possÃ­vel a comunicaÃ§Ã£o com o Webservice da ArrecadaÃ§Ã£o. Contate o Gestor do Controle.', null, new Exception($err));
                 }
 
                 InfraDebug::getInstance()->setBolLigado(true);
                 InfraDebug::getInstance()->setBolDebugInfra(false);
                 InfraDebug::getInstance()->limpar();
                 InfraDebug::getInstance()->gravar($this->request);
-                InfraDebug::getInstance()->gravar('Ocorreu erro ao conectar com a operação(' . $objMdLitIntegracaoDTO->getStrOperacaWsdl() . ').' . $err);
+                InfraDebug::getInstance()->gravar('Ocorreu erro ao conectar com a operaÃ§Ã£o(' . $objMdLitIntegracaoDTO->getStrOperacaWsdl() . ').' . $err);
 
                 LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 
                 $objInfraException = new InfraException();
-                $objInfraException->adicionarValidacao('Ocorreu erro ao conectar com a operação(' . $objMdLitIntegracaoDTO->getStrOperacaWsdl() . '). ' . $err);
+                $objInfraException->adicionarValidacao('Ocorreu erro ao conectar com a operaÃ§Ã£o(' . $objMdLitIntegracaoDTO->getStrOperacaWsdl() . '). ' . $err);
                 $objInfraException->lancarValidacoes();
             }
 
@@ -239,7 +239,7 @@ class MdPetSoapClienteRN extends nusoap_client
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Ocorreu erro ao executar o serviço de lançamento. ', $e);
+            throw new InfraException('Ocorreu erro ao executar o serviÃ§o de lanÃ§amento. ', $e);
         }
 
         if (count($arrResultado) > 0) {

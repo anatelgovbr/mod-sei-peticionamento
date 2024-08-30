@@ -18,7 +18,7 @@ class MdPetIntRelatorioRN extends InfraRN {
     public static $STR_GRAFICO_BARRA    = 'Barra';
     public static $STR_GRAFICO_PIZZA    = 'Pizza';
     public static $STR_GRAFICO_RADAR    = 'Radar';
-    public static $STR_GRAFICO_AR_POLAR = '¡rea Polar';
+    public static $STR_GRAFICO_AR_POLAR = '√Årea Polar';
     
     public static $GRAFICO_TAMANHO_PADRAO = '300px';
     public static $ID_TP_INT_FILTRO_GRAFICO = 'ID_TP_INT_FILTRO_GRAFICO';
@@ -83,7 +83,7 @@ class MdPetIntRelatorioRN extends InfraRN {
 
     public function _addFiltroListagem($objDTO){
         
-        //Tipo de IntimaÁ„o
+        //Tipo de Intima√ß√£o
         $arrTipoIntimacao = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnTpIntimacao']);
 
         if($_POST['idTipoIntimacao'] == 0){
@@ -117,7 +117,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $bolTxtDtInicio = array_key_exists('txtDataInicio', $_POST) && $_POST['txtDataInicio'] != '';
         $bolTxtDtFim    = array_key_exists('txtDataFim', $_POST) && $_POST['txtDataFim'] != '';
 
-        //Add Data de ExpediÁ„o
+        //Add Data de Expedi√ß√£o
         if($bolTxtDtInicio && $bolTxtDtFim)
         {
             $dtInicio = $_POST['txtDataInicio'].' 00:00:00';
@@ -135,7 +135,7 @@ class MdPetIntRelatorioRN extends InfraRN {
             $arrSituacaoFiltro = json_decode($hdnSituacao);
         }
 
-        //Destinat·rio
+        //Destinat√°rio
         $arrDestinatario = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnDestinatario']);
         if(count($arrDestinatario) > 0) {
           $objDTO->setNumIdContato($arrDestinatario, InfraDTO::$OPER_IN);
@@ -165,23 +165,23 @@ class MdPetIntRelatorioRN extends InfraRN {
         $arrAnexos              = $objMdPetRegrasGeraisRN->retornarArrIntimacaoAnexo($idsRelDest);
         $arrDescricaoSituacao   = MdPetIntRelatorioINT::retornaArraySituacaoRelatorio();
 
-        //Formatar Dados pra exibiÁ„o
+        //Formatar Dados pra exibi√ß√£o
         foreach($arrObjDTO as $objDTO){
             //Doc Principal
             $docFormat = $this->_getDocPrincipalFormatado($objDTO);
             $objDTO->setStrDocumentoPrincipal($docFormat);
 
-            //Data Cadastro da IntimaÁ„o Formatada
+            //Data Cadastro da Intima√ß√£o Formatada
             $dataForm = !is_null($objDTO->getDthDataCadastro()) ? explode(' ', $objDTO->getDthDataCadastro()) : null;
             $dataForm = count($dataForm) > 0 ? $dataForm[0] : '';
             $objDTO->setDthDataCadastro($dataForm);
 
-            //Data Cumprimento da IntimaÁ„o
+            //Data Cumprimento da Intima√ß√£o
             $dataForm = !is_null($objDTO->getDthDataAceite()) ? explode(' ', $objDTO->getDthDataAceite()) : null;
             $dataForm = !is_null($dataForm) > 0 ? $dataForm[0] : '';
             $objDTO->setDthDataAceite($dataForm);
 
-            //Define SituaÁ„o IntimaÁ„o
+            //Define Situa√ß√£o Intima√ß√£o
             $idSituacao    = $objDTO->getStrStaSituacaoIntimacao();
             $strSituacao   = !is_null($idSituacao) ? $arrDescricaoSituacao[$idSituacao] : '';
             $objDTO->setStrSituacaoIntimacao($strSituacao);
@@ -189,7 +189,7 @@ class MdPetIntRelatorioRN extends InfraRN {
 
             //Define Anexo
             $strAnexo = array_key_exists($objDTO->getNumIdMdPetIntRelDestinatario(), $arrAnexos) ? $arrAnexos[$objDTO->getNumIdMdPetIntRelDestinatario()] : null;
-            $strAnexo = $strAnexo == 'S' ? 'Sim' : 'N„o';
+            $strAnexo = $strAnexo == 'S' ? 'Sim' : 'N√£o';
             $objDTO->setStrAnexos($strAnexo);
         }
 
@@ -532,7 +532,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         return $strReturn;
     }
 
-    //FunÁ„o tempor·ria, validar o modelo de dados para corrigir
+    //Fun√ß√£o tempor√°ria, validar o modelo de dados para corrigir
     private function _getArrNomesTpResposta($arrIds){
         $str = '';
         $objMdPetIntRelTipoRespRN  = new MdPetIntRelTipoRespRN();

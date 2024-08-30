@@ -46,7 +46,7 @@ class MdPetTpProcessoOrientacoesRN extends InfraRN {
 	
 			return $objMdPetTpProcessoOrientacoesDTO;
 		} catch ( Exception $e ) {
-			throw new InfraException ('Erro cadastrando Orientações do Tipo de Processo Peticionamento.', $e );
+			throw new InfraException ('Erro cadastrando OrientaÃ§Ãµes do Tipo de Processo Peticionamento.', $e );
 		}
 	}
 	
@@ -76,7 +76,7 @@ class MdPetTpProcessoOrientacoesRN extends InfraRN {
 			return $ret;
 	
 		}catch(Exception $e){
-			throw new InfraException('Erro listando Orientações do Tipo de Processo.',$e);
+			throw new InfraException('Erro listando OrientaÃ§Ãµes do Tipo de Processo.',$e);
 		}
 	}
 	
@@ -104,7 +104,7 @@ class MdPetTpProcessoOrientacoesRN extends InfraRN {
 			
 			return $ret;
 		} catch ( Exception $e ) {
-			throw new InfraException ('Erro alterando Orientações do Tipo de Processo Peticionamento.', $e );
+			throw new InfraException ('Erro alterando OrientaÃ§Ãµes do Tipo de Processo Peticionamento.', $e );
 		}
 	}
 	

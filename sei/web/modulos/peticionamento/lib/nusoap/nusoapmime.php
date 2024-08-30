@@ -35,6 +35,8 @@ http://dietrich.ganx4.com/nusoap
 NuSphere Corporation
 http://www.nusphere.com
 
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
+
 */
 
 /*require_once('nusoap.php');*/

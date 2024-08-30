@@ -1,3 +1,9 @@
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+ *
+ */
 
 #lblNome {left:0%;top:0%;width:30%;}
 #txtNome {left:0%;top:40%;}

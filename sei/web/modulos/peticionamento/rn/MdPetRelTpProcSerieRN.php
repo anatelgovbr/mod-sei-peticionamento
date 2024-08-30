@@ -38,7 +38,7 @@ class MdPetRelTpProcSerieRN extends InfraRN{
 	     	return $ret;
 	     	
 		} catch (Exception $e) {
-			throw new InfraException ('Erro listando Relacionamento de Tipo de Processo e Série Peticionamento.', $e);
+			throw new InfraException ('Erro listando Relacionamento de Tipo de Processo e SÃ©rie Peticionamento.', $e);
 		}
 	}
 

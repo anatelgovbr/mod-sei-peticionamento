@@ -1,12 +1,13 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 08/02/2012 - criado por bcu
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
  *
- * Vers„o do Gerador de CÛdigo: 1.32.1
+ * Vers√£o do Gerador de C√≥digo: 1.32.1
  *
- * Vers„o no CVS: $Id$
+ * Vers√£o no CVS: $Id$
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -21,7 +22,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
             $poderes = explode('-', $dados['poderes']);
 
-            //ValidaÁ„o para ProcuraÁ„o Especial
+            //Valida√ß√£o para Procura√ß√£o Especial
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
@@ -35,7 +36,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
             $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
             $objMdPetVincRepresentantDTO = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantDTO, 'IdMdPetVinculoRepresent');
 
-            //ValidaÁ„o para ProcuraÁ„o Simples
+            //Valida√ß√£o para Procura√ß√£o Simples
             $objMdPetVincRepresentantSimplesDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantSimplesRN = new MdPetVincRepresentantRN();
             $objMdPetVincRepresentantSimplesDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
@@ -182,7 +183,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $usuarioRN = new UsuarioRN();
         $objUsuarioRN = $usuarioRN->consultarRN0489($usuarioDTO);
 
-        // Igual a 2 È Pendente
+        // Igual a 2 √© Pendente
 	    return '<dados><existe>'.($objUsuarioRN->getStrStaTipo() == "2" ? 0 : 1).'</existe></dados>';
 
     }
@@ -193,7 +194,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
     	$xml = '';
 
         if (isset($dados['hdnSelPessoaJuridica'])) {
-            //verifica se o procurador indicado j· possui uma procuraÁ„o naquele mesmo vinculo
+            //verifica se o procurador indicado j√° possui uma procura√ß√£o naquele mesmo vinculo
             if (self::_consultarExistenciaVinculo($dados)) {
 	            return '<dados><sucesso>0</sucesso></dados>';
             }
@@ -374,7 +375,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
                     $xml .= ' complemento="' . $params['cpf'] . '"';
                 } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
                     $xml .= ' sucesso="false" ';
-                    $xml .= ' mensagem="Usu·rio Externo com cadastro pendente de liberaÁ„o. FaÁa contato com a administraÁ„o do SEI do ”rg„o." ';
+                    $xml .= ' mensagem="Usu√°rio Externo com cadastro pendente de libera√ß√£o. Fa√ßa contato com a administra√ß√£o do SEI do √ìrg√£o." ';
                 }
                 $xml .= '></contato>';
             }

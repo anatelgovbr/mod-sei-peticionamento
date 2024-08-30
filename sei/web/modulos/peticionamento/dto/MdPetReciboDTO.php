@@ -3,6 +3,7 @@
 * ANATEL
 *
 * 28/06/2016 - criado por marcelo.bezerra - CAST
+* 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
 *
 */
 
@@ -86,12 +87,12 @@ class MdPetReciboDTO extends InfraDTO  {
 				'IdDocumento',
 				'id_documento');
 
-		//INICIO - atributos usados para exibir informaçoes da resposta a intimaçao
+		//INICIO - atributos usados para exibir informaÃ§oes da resposta a intimaÃ§ao
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'TextoDocumentoPrincipalIntimac',
 				'txt_doc_principal_intimacao');
 
-		//FIM - atributos usados para exibir informaçoes da resposta a intimaçao
+		//FIM - atributos usados para exibir informaÃ§oes da resposta a intimaÃ§ao
 
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,
 				'IdProtocoloProcedimento',

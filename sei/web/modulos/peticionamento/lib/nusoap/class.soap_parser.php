@@ -11,6 +11,7 @@
 * @author   Scott Nichol <snichol@users.sourceforge.net>
 * @version  $Id: class.soap_parser.php,v 1.42 2010/04/26 20:15:08 snichol Exp $
 * @access   public
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
 */
 class nusoap_parser extends nusoap_base {
 

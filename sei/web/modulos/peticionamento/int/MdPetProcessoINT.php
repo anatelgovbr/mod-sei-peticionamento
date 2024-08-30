@@ -2,6 +2,7 @@
 /**
  *
  * 19/04/2016 - criado por Lino - GT1 Tecnologia <felipe.silva@gt1tecnologia.com.br>
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
  *
  */
 
@@ -10,7 +11,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetProcessoINT extends InfraINT
 {
     /**
-     * FunÁ„o respons·vel pela transformaÁ„o da senha SEI, Recebe ela em base64, decodifica, converte em MD5
+     * Fun√ß√£o respons√°vel pela transforma√ß√£o da senha SEI, Recebe ela em base64, decodifica, converte em MD5
      * e devolve o MD5 em base64 novamente.
      * @param String $strSenhaSEI
      * @return string

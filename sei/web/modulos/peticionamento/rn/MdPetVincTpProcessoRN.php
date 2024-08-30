@@ -30,7 +30,7 @@ class MdPetVincTpProcessoRN extends InfraRN
 
             SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_vinc_tp_processo_cadastrar', __METHOD__, $objMdPetVincTpProcessoDTO);
 
-            //Para cada vinculo é setado um id fixo
+            //Para cada vinculo Ã© setado um id fixo
             if($objMdPetVincTpProcessoDTO->getStrTipoVinculo() == 'F'){
                 $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(self::$ID_FIXO_MD_PET_VINCULO_USU_EXT_PF);
             }else{
@@ -48,7 +48,7 @@ class MdPetVincTpProcessoRN extends InfraRN
             }
             return $objMdPetVincTpProcesso;
         } catch (Exception $e) {
-            throw  new InfraException('Erro cadastrando Tipo de Processo do Vínculo.', $e);
+            throw  new InfraException('Erro cadastrando Tipo de Processo do VÃ­nculo.', $e);
         }
     }
 
@@ -74,7 +74,7 @@ class MdPetVincTpProcessoRN extends InfraRN
             return $objMdPetVincTpProcesso;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Tipo de Processo do Vínculo.', $e);
+            throw new InfraException('Erro consultando Tipo de Processo do VÃ­nculo.', $e);
         }
     }
 
@@ -88,7 +88,7 @@ class MdPetVincTpProcessoRN extends InfraRN
             return $objMdPetVincTpProcesso;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Tipo de Processo do Vínculo.', $e);
+            throw new InfraException('Erro listando Tipo de Processo do VÃ­nculo.', $e);
         }
     }
 
@@ -101,7 +101,7 @@ class MdPetVincTpProcessoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Tipo de Processo do Vínculo.', $e);
+            throw new InfraException('Erro contando Tipo de Processo do VÃ­nculo.', $e);
         }
     }
 
@@ -115,7 +115,7 @@ class MdPetVincTpProcessoRN extends InfraRN
             $objMdPetVincTpProcesso = $objMdPetVincTpProcessoBD->alterar($objMdPetVincTpProcessoDTO);
             return $objMdPetVincTpProcesso;
         } catch (Exception $e) {
-            throw  new InfraException('Erro alterando Tipo de Processo do Vínculo.', $e);
+            throw  new InfraException('Erro alterando Tipo de Processo do VÃ­nculo.', $e);
         }
     }
 

@@ -3,6 +3,7 @@
  * ANATEL
  *
  * 01/08/2016 - criado por marcelo.bezerra@cast.com.br - CAST
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
  *
  * Funções de JS para cadastro de peticionamento de usuario externo
  * Essa página é incluida na página principal do cadastro de peticionamento
@@ -11,22 +12,20 @@
  *
  */
 
-$strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_anexo&id_tipo_procedimento='
-    . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
+$strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_anexo&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
 
-$strLinkPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_principal&id_tipo_procedimento='
-    . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
+$strLinkPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_principal&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
 
-//Acao para upload de documento principal
+//Ação para upload de documento principal
 $strLinkUploadDocPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_principal');
 
-//Acao para upload de documento essencial
+//Ação para upload de documento essencial
 $strLinkUploadDocEssencial = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_essencial');
 
-//Acao para upload de documento complementar
+//Ação para upload de documento complementar
 $strLinkUploadDocComplementar = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_complementar');
 
-//Acao para apagar o arquivo temp
+//Ação para apagar o arquivo temp
 $strUrlMdPetUsuExtRemoverUploadArquivo = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_usu_ext_remover_upload_arquivo');
 
 //==================================================================
@@ -530,10 +529,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function abrirJanelaDocumento() {
 
-        <?php
-        $linkEditor = PaginaSEIExterna::getInstance()->formatarXHTML(
-            SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_editor_montar&id_serie=' . $objTipoProcDTO->getNumIdSerie()));
-        ?>
+        <?php $linkEditor = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_editor_montar&id_serie=' . $objTipoProcDTO->getNumIdSerie())); ?>
 
         var janelaEditor = infraAbrirJanela('', 'janelaEditor_<?=SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()?>', infraClientWidth(), infraClientHeight(), 'location=0,status=0,resizable=1,scrollbars=1', false);
 
@@ -940,8 +936,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             }
         }
 
-            //caso doc principal seja do tipo "Gerado", fazer requisição AJAX
-            //para validar se usuário salvou na sessao algum conteudo para o documento
+        //caso doc principal seja do tipo "Gerado", fazer requisição AJAX
+        //para validar se usuário salvou na sessao algum conteudo para o documento
         //caso nao tenha conteudo obrigar usuario a informar
         else {
 
@@ -1190,7 +1186,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function inicializar() {
-//Caso tenha somente um ORGAO dentro do processo
+		//Caso tenha somente um ORGAO dentro do processo
         try {
             if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled") {
                 var idOrgao = document.getElementById('hdnIdOrgaoUnico').value;
@@ -2465,6 +2461,5 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     });
 
     <?php endif; ?>
-
 
 </script>

@@ -2,6 +2,7 @@
 /**
 *
 * 19/04/2016 - criado por jaqueline.mendes - CAST
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
 *
 */
 
@@ -40,7 +41,7 @@ class MdPetSerieINT extends SerieINT {
   		$aplicalidade = SerieRN::$TA_EXTERNO;
   	}
 
-	//Alterado o Ajax para ter o mesmo comportamento da Modal - Instru��o do Gestor.
+	//Alterado o Ajax para ter o mesmo comportamento da Modal - Instrução do Gestor.
 	$objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
 			array(InfraDTO::$OPER_IN),
 			array(array(SerieRN::$TA_INTERNO_EXTERNO, $aplicalidade)));

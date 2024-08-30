@@ -13,6 +13,7 @@
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @version  $Id: class.soap_val.php,v 1.11 2007/04/06 13:56:32 snichol Exp $
 * @access   public
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
 */
 class soapval extends nusoap_base {
 	/**

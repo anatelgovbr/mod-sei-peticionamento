@@ -1,3 +1,10 @@
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+ *
+ */
+ 
 #frmIntimacaoEletronicaLista label[for^=txt],
 #frmIntimacaoEletronicaLista label[for^=sel] {display: block;white-space: nowrap;}
 #frmIntimacaoEletronicaLista img[id^='imgData'] {vertical-align: middle;}

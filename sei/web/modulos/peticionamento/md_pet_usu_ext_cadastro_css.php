@@ -1,4 +1,11 @@
 <style type="text/css">
+
+	/**
+	 * ANATEL
+	 *
+	 * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	 *
+	 */
     
     #orientacoesTipoProcesso {height: auto; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}
     #formularioPeticionamento {height: auto; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;}

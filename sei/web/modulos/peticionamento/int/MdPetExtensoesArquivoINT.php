@@ -3,6 +3,7 @@
 * ANATEL
 *
 * 29/04/2016 - criado por alan.campos@castgroup.com.br - CAST
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
 *
 */
 

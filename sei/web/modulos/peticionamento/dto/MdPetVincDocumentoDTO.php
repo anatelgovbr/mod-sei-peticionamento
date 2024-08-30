@@ -1,10 +1,11 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 02/04/2018 - criado por jose vieira
+* 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
 *
-* Versão do Gerador de Código: 1.41.0
+* VersÃ£o do Gerador de CÃ³digo: 1.41.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -58,7 +59,7 @@ class MdPetVincDocumentoDTO extends InfraDTO {
     //Representante
     $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,'IdMdPetVinculo','mvr.id_md_pet_vinculo','md_pet_vinculo_represent mvr');
 
-    //Vínculação à Pessoa Jurídica
+    //VÃ­nculaÃ§Ã£o Ã  Pessoa JurÃ­dica
     $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL,'IdProcedimentoVinculo', 'vinc.id_procedimento', 'md_pet_vinculo vinc');
 
   }

@@ -3,6 +3,7 @@
  * ANATEL
  *
  * 26/07/2016 - criado por marcelo.bezerra@cast.com.br
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
  *
  */
 

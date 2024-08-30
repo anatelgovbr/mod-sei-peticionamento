@@ -3,6 +3,7 @@
  * ANATEL
  *
  * 22/04/2016 - criado por Ramon Veloso - ramon.onix@gmail.com
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
  *
  */
 

@@ -1,11 +1,12 @@
 <?
 
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/03/2017 - criado por pedro.cast
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
@@ -68,7 +69,7 @@ class MdPetIntimacaoINT extends InfraINT {
         $arrSituacoes = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
         foreach ($arrSituacoes as $key => $situacao) {
             if ($key != MdPetIntimacaoRN::$INTIMACAO_PRAZO_VENCIDO) {
-                //Verifica se no post temos id de situaÁ„o para aplicar no filtro
+                //Verifica se no post temos id de situa√ß√£o para aplicar no filtro
                 $hdnSituacao = array_key_exists('selCumprimentoIntimacao', $_POST) ? $_POST['selCumprimentoIntimacao'] : null;
 
                 //Verifica se esse valor deve ser selecionado
@@ -89,7 +90,7 @@ class MdPetIntimacaoINT extends InfraINT {
     }
 
     public static function validarProcuracao($idRelDest, $idProcedimento) {
-        //Recupera o id contato do usu·rio logado
+        //Recupera o id contato do usu√°rio logado
         $idUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
         $usuarioDTO = new UsuarioDTO();
         $usuarioRN = new UsuarioRN();
@@ -107,10 +108,10 @@ class MdPetIntimacaoINT extends InfraINT {
         $xml = '';
         $xml .= '<resposta>';
 
-        //Caso o contato do usu·rio logado seja diferente do contato da intimaÁ„o 
-        //È verificado a procuraÁ„o do mesmo
+        //Caso o contato do usu√°rio logado seja diferente do contato da intima√ß√£o 
+        //√© verificado a procura√ß√£o do mesmo
         if ($arrObjMdPetIntRelDestinatarioDTO->getNumIdContato() != $idContatoExterno) {
-            //recupera os dados da procuraÁ„o do mesmo
+            //recupera os dados da procura√ß√£o do mesmo
             $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
             $dtoMdPetVincReptDTO->setNumIdContato($idContatoExterno);
             $dtoMdPetVincReptDTO->setNumIdContatoVinc($arrObjMdPetIntRelDestinatarioDTO->getNumIdContato());
@@ -127,8 +128,8 @@ class MdPetIntimacaoINT extends InfraINT {
 
             if (count($arrObjMdPetVincRepresentantDTO)) {
                 foreach ($arrObjMdPetVincRepresentantDTO as $value) {
-                    //Caso o tipo de procuraÁ„o seja "Simples" ser· necess·rio 
-                    //fazer algumas validaÁıes para liberar o usu·rio responder a intimaÁ„o
+                    //Caso o tipo de procura√ß√£o seja "Simples" ser√° necess√°rio 
+                    //fazer algumas valida√ß√µes para liberar o usu√°rio responder a intima√ß√£o
                     if ($value->getStrTipoRepresentante() == 'S') {
                         $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
                         $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($value->getNumIdMdPetVinculoRepresent(), $value->getStrStaEstado(), $value->getDthDataLimite(), null, $value->getStrStaAbrangencia(), $idProcedimento);
@@ -137,8 +138,8 @@ class MdPetIntimacaoINT extends InfraINT {
                         } else {
                             $verificacao = "<valor>F</valor>";
                         }
-                        //Caso a procuraÁ„o seja especial, como j· foi verificado que a mesma È ativa na consulta
-                        //o contato pode responder a intimaÁ„o 
+                        //Caso a procura√ß√£o seja especial, como j√° foi verificado que a mesma √© ativa na consulta
+                        //o contato pode responder a intima√ß√£o 
                     } else {
                         $verificacao = "<valor>T</valor>";
                     }                    
@@ -147,11 +148,11 @@ class MdPetIntimacaoINT extends InfraINT {
                     $contatoVinculado = "<contato>" . PaginaSEI::tratarHTML($url) . "</contato>";
                 }
 
-                //Caso n„o tenha procuraÁ„o ativa, o mesmo n„o pode responder a intimaÁ„o    
+                //Caso n√£o tenha procura√ß√£o ativa, o mesmo n√£o pode responder a intima√ß√£o    
             } else {
                 $verificacao = "<valor>F</valor>";
             }
-            // O contato da intimaÁ„o pode responder a mesma
+            // O contato da intima√ß√£o pode responder a mesma
         } else {
             $verificacao = "<valor>T</valor>";
         }

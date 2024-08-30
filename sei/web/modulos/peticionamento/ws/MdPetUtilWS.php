@@ -3,6 +3,7 @@
 * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
 *
 * 16/03/2022 - criado por mga
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
 *
 *
 */

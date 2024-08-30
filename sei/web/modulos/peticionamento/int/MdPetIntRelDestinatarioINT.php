@@ -1,10 +1,11 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/03/2017 - criado por pedro.cast
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -54,7 +55,7 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
 			$objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
 			$objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
 
-            // filtra a empresa para saber se aquela representaÁ„o est· ativa
+            // filtra a empresa para saber se aquela representa√ß√£o est√° ativa
 			$MdPetVincRepresentantRN = new MdPetVincRepresentantRN();
             $arrObjMdPetIntRelDestinatarioFiltrado = [];
             foreach ($objMdPetIntRelDestinatarioDTO as $objMdPetIntRelDestinatario){

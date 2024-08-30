@@ -1,3 +1,10 @@
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+ *
+ */
+ 
 .infraImgModulo{width:20px; height: 20px}
 #selPrincipal {width:calc(100% - 60px) !important;}
 #selPrincipal2 {width:calc(100% - 60px) !important;}

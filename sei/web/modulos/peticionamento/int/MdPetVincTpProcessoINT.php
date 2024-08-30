@@ -5,6 +5,7 @@
  * User: jhon.carvalho
  * Date: 15/05/2018
  * Time: 16:32
+ * 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU 
  */
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
@@ -49,7 +50,7 @@ class MdPetVincTpProcessoINT extends InfraINT {
     }
 
     public static function confirmarRestricao($idTipoProcesso, $idOrgaoUnidadeMultipla, $idUnidadeMultipla) {
-        //Verifica se existe restrição para este tipo de processo em questão
+        //Verifica se existe restriÃ§Ã£o para este tipo de processo em questÃ£o
         $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
         $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
         $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -63,11 +64,11 @@ class MdPetVincTpProcessoINT extends InfraINT {
         $xml .= '<resposta>';
         if ($idOrgaoRestricao || $idUnidadeRestricao) {
             $restricao = "<valor>A</valor>";
-            //Verifica se tem algum órgão diferente dos restritos, caso exista restrições para o tipo de processo
+            //Verifica se tem algum Ã³rgÃ£o diferente dos restritos, caso exista restriÃ§Ãµes para o tipo de processo
             if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($idOrgaoUnidadeMultipla, $idOrgaoRestricao)) {
                 $restricao = "<valor>R</valor>";
             }
-            //Verifica se tem alguma unidade diferente dos restritos, caso exista restrições para o tipo de processo
+            //Verifica se tem alguma unidade diferente dos restritos, caso exista restriÃ§Ãµes para o tipo de processo
             if (($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($idUnidadeMultipla, $idUnidadeRestricao)) {
                 $restricao = "<valor>R</valor>";
             }
@@ -81,7 +82,7 @@ class MdPetVincTpProcessoINT extends InfraINT {
     }
 
     public static function confirmarRestricaoSalvar($idTipoProcesso, $idUnidadeMultipla) {
-        //Caso tenha alguma restrição não pode salvar os dados   
+        //Caso tenha alguma restriÃ§Ã£o nÃ£o pode salvar os dados   
         $idUnidadeMultipla = $idUnidadeMultipla != '' ? json_decode($idUnidadeMultipla) : array();
         
         $objUnidadeDTO = new UnidadeDTO();
@@ -99,7 +100,7 @@ class MdPetVincTpProcessoINT extends InfraINT {
         $xml = '';
         $xml .= '<resposta>';
         foreach ($objUnidadeDTO as $objDTO) {
-            //Criação do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
+            //CriaÃ§Ã£o do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
             if (!key_exists($objDTO->getNumIdOrgao(), $arrTipoProcessoOrgaoCidade)) {
                 $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgao()] = array();
             }
@@ -123,7 +124,7 @@ class MdPetVincTpProcessoINT extends InfraINT {
             }
         }
         
-        //Verifica se existe restrição para este tipo de processo em questão
+        //Verifica se existe restriÃ§Ã£o para este tipo de processo em questÃ£o
         $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
         $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
         $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -135,14 +136,14 @@ class MdPetVincTpProcessoINT extends InfraINT {
         
         if ($idOrgaoRestricao || $idUnidadeRestricao) {
             foreach ($idUnidadeMultipla as $idUnidade) {
-               //Verifica se tem alguma unidade diferente dos restritos, caso exista restrições para o tipo de processo
+               //Verifica se tem alguma unidade diferente dos restritos, caso exista restriÃ§Ãµes para o tipo de processo
                 if (($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($idUnidade, $idUnidadeRestricao)) {
                     $tipoProcessoRestricaoErro = true;
                 } 
             }
             
             foreach ($objUnidadeDTO as $orgao) {
-                //Verifica se tem algum órgão diferente dos restritos, caso exista restrições para o tipo de processo
+                //Verifica se tem algum Ã³rgÃ£o diferente dos restritos, caso exista restriÃ§Ãµes para o tipo de processo
                 if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($orgao->getNumIdOrgao(), $idOrgaoRestricao)) {
                     $tipoProcessoRestricaoErro = true;
                 }

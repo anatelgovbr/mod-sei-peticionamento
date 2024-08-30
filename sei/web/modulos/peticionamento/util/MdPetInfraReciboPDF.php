@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+ *
+ */
+
 ////////////////////////////////////////////////////
 // PDF_Label 
 //

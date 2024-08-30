@@ -1,4 +1,12 @@
 <style type="text/css">
+
+	/**
+	 * ANATEL
+	 *
+	 * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	 *
+	 */
+
     <?php if ($_GET['acao'] == 'md_pet_integracao_consultar') { ?>
     #btnValidar {
         display: none

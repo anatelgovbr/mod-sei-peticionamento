@@ -1,3 +1,10 @@
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+ *
+ */
+	 
 .clear{clear:both}
 .grid{display:inline;float:left;margin-right:6px}
 .height{height:3px}

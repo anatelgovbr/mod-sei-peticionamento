@@ -3,6 +3,7 @@
 * ANATEL 
 *
 * 21/06/2019 - criado por renato.monteiro - CAST
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
 *
 */
 

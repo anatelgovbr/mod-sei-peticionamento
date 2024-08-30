@@ -5,6 +5,7 @@
  * User: jhon.carvalho
  * Date: 20/12/2017
  * Time: 11:00
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
  */
 require_once dirname(__FILE__).'/../../../SEI.php';
 class MdPetVincTpProcessoDTO extends InfraDTO

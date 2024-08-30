@@ -1,5 +1,11 @@
 <style type="text/css">
-
+	/**
+	 * ANATEL
+	 *
+	 * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	 *
+	 */	
+	 
     #txtDtInicio {width: 80%;}
     #txtDtFim {width: 80%;}
 

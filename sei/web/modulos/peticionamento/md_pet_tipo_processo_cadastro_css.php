@@ -1,4 +1,10 @@
-
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+ *
+ */
+ 
 .fieldsetUnidade {
     border: 1px solid #ddd;
     padding: 0 1.4em 1.4em 1.4em;

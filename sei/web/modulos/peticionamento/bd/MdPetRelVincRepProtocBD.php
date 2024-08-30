@@ -3,6 +3,7 @@
 * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
 *
 * 04/07/2019 - criado por Renato Monteiro
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
 *
 * Versão do Gerador de Código: 1.41.0
 */

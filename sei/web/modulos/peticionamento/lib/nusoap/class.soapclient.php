@@ -22,6 +22,7 @@
 * @author   Scott Nichol <snichol@users.sourceforge.net>
 * @version  $Id: class.soapclient.php,v 1.69 2010/04/26 20:15:08 snichol Exp $
 * @access   public
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
 */
 class nusoap_client extends nusoap_base  {
 

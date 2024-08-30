@@ -3,6 +3,7 @@
 * ANATEL
 *
 * 30/08/2016 - criado por jaqueline.mendes@castgroup.com.br - CAST
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
 *
 */
 
@@ -13,7 +14,7 @@ class MdPetForcarNivelAcessoDocINT extends InfraINT {
     public static function forcarNivelAcessoDocumento($tipoPeticionamento){
 
         if(!in_array($tipoPeticionamento, ['N','I'])){
-            throw new InfraException('Par�metro "$tipoPeticionamento" fora valor esperado.');
+            throw new InfraException('Parâmetro "$tipoPeticionamento" fora valor esperado.');
         }
 
         if(isset($_POST['hdnForcarNivelAcessoDoc']) && $_POST['hdnForcarNivelAcessoDoc'] == 'S'){

@@ -1,12 +1,13 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 08/02/2012 - criado por bcu
+* 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
 *
-* Versão do Gerador de Código: 1.32.1
+* VersÃ£o do Gerador de CÃ³digo: 1.32.1
 *
-* Versão no CVS: $Id$
+* VersÃ£o no CVS: $Id$
 */
 
 require_once dirname(__FILE__).'/../../../SEI.php';

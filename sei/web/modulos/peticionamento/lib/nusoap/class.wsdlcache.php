@@ -14,6 +14,7 @@ nusoap-general@lists.sourceforge.net
 * @author	Ingo Fischer <ingo@apollon.de>
 * @version  $Id: class.wsdlcache.php,v 1.7 2007/04/17 16:34:03 snichol Exp $
 * @access public 
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
 */
 class nusoap_wsdlcache {
 	/**

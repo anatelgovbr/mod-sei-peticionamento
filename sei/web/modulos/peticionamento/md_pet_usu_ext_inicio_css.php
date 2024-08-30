@@ -1,4 +1,11 @@
 <style type="text/css">
+
+	/**
+	* ANATEL
+	*
+	* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	*
+	*/
     
     #orientacoesGerais {min-height: 165px; height: auto; width: 100%; margin-bottom: 11px;}
     .sizeFieldset {height: auto; width: 86%;}

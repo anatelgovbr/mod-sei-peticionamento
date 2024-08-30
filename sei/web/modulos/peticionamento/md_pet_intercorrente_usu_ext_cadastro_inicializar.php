@@ -1,6 +1,7 @@
 <?php
-    //INICIALIZACAO DE VARIAVEIS DA PAGINA
-    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao número do processo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluídos diretamente no processo indicado ou em processo novo relacionado.";
+
+    //INICIALIZAÃ‡ÃƒO DE VARIÃVEIS DA PÃGINA
+    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos jÃ¡ existentes. Condicionado ao nÃºmero do processo e parametrizaÃ§Ãµes da administraÃ§Ã£o sobre o Tipo de Processo correspondente, os documentos poderÃ£o ser incluÃ­dos diretamente no processo indicado ou em processo novo relacionado.";
 
     $arrComandos   = array();
     $arrComandos[] = '<button tabindex="-1" type="button" accesskey="p" name="Peticionar" id="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
@@ -16,39 +17,34 @@
 
     //Msgs dos Tooltips de Ajuda
     $strMsgTooltipTipoDocumento						= 'Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.';
-    $strMsgTooltipComplementoTipoDocumento			= 'O Complemento do Tipo de Documento é o texto que completa a identificação do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo “Recurso” e Complemento “de 1ª Instância” identificará o documento como “Recurso de 1ª Instância”).\n\n\n Exemplos: O Complemento do Tipo “Nota” pode ser “Fiscal Eletrônica” ou “Fiscal nº 75/2016”. O Complemento do Tipo “Comprovante” pode ser “de Pagamento” ou “de Endereço”.';
-    $strMsgTooltipNivelAcesso						= 'O Nível de Acesso que for indicado é de sua exclusiva responsabilidade e estará condicionado à análise por servidor público, que poderá alterá-lo a qualquer momento sem necessidade de prévio aviso.\n\n\n Selecione “Público” se no teor do documento a ser carregado não existir informações restritas. Se no teor do documento existir informações restritas, selecione “Restrito”.';
-    $strMsgTooltipHipoteseLegal						= 'Para o Nível de Acesso “Restrito” é obrigatória a indicação da Hipótese Legal correspondente à informação restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indicação. Em caso de dúvidas, pesquise sobre a legislação indicada entre parênteses em cada Hipótese listada.';
-    $strMsgTooltipNivelAcessoPadraoPreDefinido		= 'Para o Número de Processo indicado o Nível de Acesso é previamente definido.';
-    $strMsgTooltipHipoteseLegalPadraoPreDefinido	= 'Para o Número de Processo indicado o Nível de Acesso é previamente definido como “Restrito” e, assim, a Hipótese Legal também é previamente definida.';
-    $strMsgTooltipFormato							= 'Selecione a opção “Nato-digital” se o arquivo a ser carregado foi criado originalmente em meio eletrônico.\n\n\n Selecione a opção “Digitalizado” somente se o arquivo a ser carregado foi produzido da digitalização de um documento em papel.';
+    $strMsgTooltipComplementoTipoDocumento			= 'O Complemento do Tipo de Documento Ã© o texto que completa a identificaÃ§Ã£o do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo "Recurso" e Complemento "de 1Âª InstÃ¢ncia" identificarÃ¡ o documento como "Recurso de 1Âª InstÃ¢ncia").\n\n\n Exemplos: O Complemento do Tipo "Nota" pode ser "Fiscal EletrÃ´nica" ou "Fiscal nÂº 75/2016". O Complemento do Tipo "Comprovante" pode ser "de Pagamento" ou "de EndereÃ§o".';
+    $strMsgTooltipNivelAcesso						= 'O NÃ­vel de Acesso que for indicado Ã© de sua exclusiva responsabilidade e estarÃ¡ condicionado Ã  anÃ¡lise por servidor pÃºblico, que poderÃ¡ alterÃ¡-lo a qualquer momento sem necessidade de prÃ©vio aviso.\n\n\n Selecione "PÃºblico" se no teor do documento a ser carregado nÃ£o existir informaÃ§Ãµes restritas. Se no teor do documento existir informaÃ§Ãµes restritas, selecione "Restrito".';
+    $strMsgTooltipHipoteseLegal						= 'Para o NÃ­vel de Acesso "Restrito" Ã© obrigatÃ³ria a indicaÃ§Ã£o da HipÃ³tese Legal correspondente Ã  informaÃ§Ã£o restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indicaÃ§Ã£o. Em caso de dÃºvidas, pesquise sobre a legislaÃ§Ã£o indicada entre parÃªnteses em cada HipÃ³tese listada.';
+    $strMsgTooltipNivelAcessoPadraoPreDefinido		= 'Para o NÃºmero de Processo indicado o NÃ­vel de Acesso Ã© previamente definido.';
+    $strMsgTooltipHipoteseLegalPadraoPreDefinido	= 'Para o NÃºmero de Processo indicado o NÃ­vel de Acesso Ã© previamente definido como "Restrito" e, assim, a HipÃ³tese Legal tambÃ©m Ã© previamente definida.';
+    $strMsgTooltipFormato							= 'Selecione a opÃ§Ã£o "Nato-digital" se o arquivo a ser carregado foi criado originalmente em meio eletrÃ´nico.\n\n\n Selecione a opÃ§Ã£o "Digitalizado" somente se o arquivo a ser carregado foi produzido da digitalizaÃ§Ã£o de um documento em papel.';
     //Fim Msgs
 
     $selHipoteseLegal = MdPetHipoteseLegalINT::montarSelectHipoteseLegal($booOptionsOnly = true);
     
-//RN Tamanho Maximo Arquivo
+	//RN Tamanho MÃ¡ximo Arquivo
     $tamanhoMaximo = MdPetIntercorrenteINT::tamanhoMaximoArquivoPermitido();
     //Fim RN
 
-    //RN Extensoes Permitidas
+    //RN ExtensÃµes Permitidas
     $extensoesPermitidas = MdPetExtensoesArquivoINT::recuperaExtensoes(null, null, null, "N");
     //Fim RN
 
-    //RN para exibir Hipotese Legal
+    //RN para exibir HipÃ³tese Legal
 
     $objInfraParametroDTO = new InfraParametroDTO();
-    $objMdPetParametroRN = new MdPetParametroRN();
     $objInfraParametroDTO->retTodos();
     $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
-    $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
+    $objInfraParametroDTO = (new MdPetParametroRN())->consultar($objInfraParametroDTO);
     $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
 
-    if ($valorParametroHipoteseLegal=='0') {
-    	$exibirHipoteseLegal = false;
-    }else{
-    	$exibirHipoteseLegal = true;
-    }
+    $exibirHipoteseLegal = ($valorParametroHipoteseLegal=='0') ? false : true;
     //Fim RN
 
-    // Forcar o Nivel de Acesso parametrizado
+    // Forcar o NÃ­vel de Acesso parametrizado
     $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc($tipoPeticionamento = 'I');

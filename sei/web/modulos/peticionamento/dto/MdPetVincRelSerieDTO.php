@@ -5,6 +5,7 @@
  * User: jhon.carvalho
  * Date: 27/12/2017
  * Time: 08:50
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
  */
 class MdPetVincRelSerieDTO extends InfraDTO
 {

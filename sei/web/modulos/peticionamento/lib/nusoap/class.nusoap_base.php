@@ -147,6 +147,7 @@ class nusoap_base {
 	*
 	* @var      string
 	* @access   public
+    * 26/08/2024 - Atualização por gabrielg.colab - SPASSU - Forçando para ISO-8859-1
 	*/
     var $soap_defencoding = 'ISO-8859-1';
 	//var $soap_defencoding = 'UTF-8';

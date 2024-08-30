@@ -3,8 +3,9 @@
 * ANATEL
 *
 * 01/08/2016 - criado por marcelo.bezerra@cast.com.br - CAST
+* 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
 *
-* Definição de objetos e variaveis necessárias para a inicialização da página
+* DefiniÃ§Ã£o de objetos e variaveis necessÃ¡rias para a inicializaÃ§Ã£o da pÃ¡gina
 *
 */
 //=====================================================
@@ -18,7 +19,7 @@ if( $_GET['acao'] != "md_pet_usu_ext_download"){
 
 	$arrComandos = array();
 
-	//pegar lista de extensoes parametrizadas do módulo
+	//pegar lista de extensoes parametrizadas do mÃ³dulo
 	$dtoTamanhoArquivoPrincipal = new MdPetExtensoesArquivoDTO();
 	$dtoTamanhoArquivoPrincipal->retTodos();
 	$dtoTamanhoArquivoPrincipal->setStrSinAtivo('S');
@@ -96,18 +97,18 @@ $objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 $txtOrientacoes = $objTipoProcDTO->getStrOrientacoes();
 
 //Msgs dos Tooltips de Ajuda
-$strMsgTooltipInteressadoProprioUsuarioExterno	= 'Para o Tipo de Processo escolhido o Interessado do processo a ser aberto somente pode ser o próprio Usuário Externo logado no sistema.';
-$strMsgTooltipInteressadoInformandoCPFeCNPJ		= 'Para o Tipo de Processo escolhido é possível adicionar os Interessados do processo a ser aberto por meio da indicação de CPF ou CNPJ válidos, devendo complementar seus cadastros caso necessário.';
-$strMsgTooltipInteressadoDigitadoNomeExistente	= 'Para o Tipo de Processo escolhido é possível adicionar os Interessados do processo a ser aberto a partir da base de Interessados já existentes. Caso necessário, clique na Lupa "Localizar Interessados" para uma pesquisa mais detalhada ou, na janela aberta, acessar o botão "Cadastrar Novo Interessado".';
-$strMsgTooltipTipoDocumentoPrincipal			= 'Como somente pode ter um Documento Principal, o Tipo de Documento correspondente já é previamente definido. Deve, ainda, ser complementado no campo ao lado.';
+$strMsgTooltipInteressadoProprioUsuarioExterno	= 'Para o Tipo de Processo escolhido o Interessado do processo a ser aberto somente pode ser o prÃ³prio UsuÃ¡rio Externo logado no sistema.';
+$strMsgTooltipInteressadoInformandoCPFeCNPJ		= 'Para o Tipo de Processo escolhido Ã© possÃ­vel adicionar os Interessados do processo a ser aberto por meio da indicaÃ§Ã£o de CPF ou CNPJ vÃ¡lidos, devendo complementar seus cadastros caso necessÃ¡rio.';
+$strMsgTooltipInteressadoDigitadoNomeExistente	= 'Para o Tipo de Processo escolhido Ã© possÃ­vel adicionar os Interessados do processo a ser aberto a partir da base de Interessados jÃ¡ existentes. Caso necessÃ¡rio, clique na Lupa "Localizar Interessados" para uma pesquisa mais detalhada ou, na janela aberta, acessar o botÃ£o "Cadastrar Novo Interessado".';
+$strMsgTooltipTipoDocumentoPrincipal			= 'Como somente pode ter um Documento Principal, o Tipo de Documento correspondente jÃ¡ Ã© previamente definido. Deve, ainda, ser complementado no campo ao lado.';
 $strMsgTooltipTipoDocumentoPrincipalFormulario	= 'O documento principal deste tipo de peticionamento possui modelo previamente definido, o qual deve ser acessado no Editor do SEI no link ao lado.';
 $strMsgTooltipTipoDocumento						= 'Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.';
-$strMsgTooltipComplementoTipoDocumento			= 'O Complemento do Tipo de Documento é o texto que completa a identificação do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo “Recurso” e Complemento “de 1ª Instância” identificará o documento como “Recurso de 1ª Instância”).\n\n\n Exemplos: O Complemento do Tipo “Nota” pode ser “Fiscal Eletrônica” ou “Fiscal nº 75/2016”. O Complemento do Tipo “Comprovante” pode ser “de Pagamento” ou “de Endereço”.';
-$strMsgTooltipNivelAcesso						= 'O Nível de Acesso que for indicado é de sua exclusiva responsabilidade e estará condicionado à análise por servidor público, que poderá alterá-lo a qualquer momento sem necessidade de prévio aviso.\n\n\n Selecione "Público" se no teor do documento a ser carregado não existir informações restritas. Se no teor do documento existir informações restritas, selecione "Restrito".';
-$strMsgTooltipHipoteseLegal						= 'Para o Nível de Acesso "Restrito" é obrigatória a indicação da Hipótese Legal correspondente à informação restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indicação. Em caso de dúvidas, pesquise sobre a legislação indicada entre parênteses em cada Hipótese listada.';
-$strMsgTooltipNivelAcessoPadraoPreDefinido		= 'Para o Tipo de Processo escolhido o Nível de Acesso é previamente definido.';
-$strMsgTooltipHipoteseLegalPadraoPreDefinido	= 'Para o Tipo de Processo escolhido o Nível de Acesso é previamente definido como "Restrito" e, assim, a Hipótese Legal também é previamente definida.';
-$strMsgTooltipFormato							= 'Selecione a opção “Nato-digital” se o arquivo a ser carregado foi criado originalmente em meio eletrônico.\n\n\n Selecione a opção “Digitalizado” somente se o arquivo a ser carregado foi produzido da digitalização de um documento em papel.';
+$strMsgTooltipComplementoTipoDocumento			= 'O Complemento do Tipo de Documento Ã© o texto que completa a identificaÃ§Ã£o do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo "Recurso" e Complemento "de 1Âª InstÃ¢ncia" identificarÃ¡ o documento como "Recurso de 1Âª InstÃ¢ncia").\n\n\n Exemplos: O Complemento do Tipo "Nota" pode ser "Fiscal EletrÃ´nica" ou "Fiscal nÂº 75/2016". O Complemento do Tipo "Comprovante" pode ser "de Pagamento" ou "de EndereÃ§o".';
+$strMsgTooltipNivelAcesso						= 'O NÃ­vel de Acesso que for indicado Ã© de sua exclusiva responsabilidade e estarÃ¡ condicionado Ã  anÃ¡lise por servidor pÃºblico, que poderÃ¡ alterÃ¡-lo a qualquer momento sem necessidade de prÃ©vio aviso.\n\n\n Selecione "PÃºblico" se no teor do documento a ser carregado nÃ£o existir informaÃ§Ãµes restritas. Se no teor do documento existir informaÃ§Ãµes restritas, selecione "Restrito".';
+$strMsgTooltipHipoteseLegal						= 'Para o NÃ­vel de Acesso "Restrito" Ã© obrigatÃ³ria a indicaÃ§Ã£o da HipÃ³tese Legal correspondente Ã  informaÃ§Ã£o restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indicaÃ§Ã£o. Em caso de dÃºvidas, pesquise sobre a legislaÃ§Ã£o indicada entre parÃªnteses em cada HipÃ³tese listada.';
+$strMsgTooltipNivelAcessoPadraoPreDefinido		= 'Para o Tipo de Processo escolhido o NÃ­vel de Acesso Ã© previamente definido.';
+$strMsgTooltipHipoteseLegalPadraoPreDefinido	= 'Para o Tipo de Processo escolhido o NÃ­vel de Acesso Ã© previamente definido como "Restrito" e, assim, a HipÃ³tese Legal tambÃ©m Ã© previamente definida.';
+$strMsgTooltipFormato							= 'Selecione a opÃ§Ã£o "Nato-digital" se o arquivo a ser carregado foi criado originalmente em meio eletrÃ´nico.\n\n\n Selecione a opÃ§Ã£o "Digitalizado" somente se o arquivo a ser carregado foi produzido da digitalizaÃ§Ã£o de um documento em papel.';
 //Fim Msgs
 
 //obtendo a unidade do tipo de processo selecionado - pode ser uma ou MULTIPLAS unidades selecionadas
@@ -157,11 +158,11 @@ $ObjMdPetRelTpProcSerieDTO->retTodos();
 $ObjMdPetRelTpProcSerieDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
 $arrTiposDocumentosComplementares = $ObjMdPetRelTpProcSerieRN->listar( $ObjMdPetRelTpProcSerieDTO );
 
-//ler configuraçoes necessarias para aplicar a RN 8
+//ler configuraÃ§oes necessarias para aplicar a RN 8
 /*
- [RN8]	O sistema deve verificar na funcionalidade “Gerir Tipos de Processo para Peticionamento” se o documento principal
-selecionado foi “Externo (Anexação de Arquivo)”. Caso tenha sido selecionado ao preencher os dados do
-	novo peticionamento, o sistema permitirá anexar o arquivo conforme o tipo informado.
+ [RN8]	O sistema deve verificar na funcionalidade "Gerir Tipos de Processo para Peticionamento" se o documento principal
+selecionado foi "Externo (AnexaÃ§Ã£o de Arquivo)". Caso tenha sido selecionado ao preencher os dados do
+	novo peticionamento, o sistema permitirÃ¡ anexar o arquivo conforme o tipo informado.
 */
 $isDocPrincipalGerado = $objTipoProcDTO->getStrSinDocGerado();
 $isDocPrincipalExterno = $objTipoProcDTO->getStrSinDocExterno();
@@ -173,16 +174,16 @@ $serieDTO->setNumIdSerie( $objTipoProcDTO->getNumIdSerie() );
 $serieDTO = $serieRN->consultarRN0644( $serieDTO );
 $strTipoDocumentoPrincipal = $serieDTO->getStrNome();
 
-//ler configuraçoes necessarias para aplicar RN18
+//ler configuraÃ§oes necessarias para aplicar RN18
 /*
- [RN18]	Os campos “Níveis de Acesso” e “Hipótese Legal” deve conter as opções de acordo com o cadastro realizado:
+ [RN18]	Os campos "NÃ­veis de Acesso" e "HipÃ³tese Legal" deve conter as opÃ§Ãµes de acordo com o cadastro realizado:
 
-- CENARIO 1 ::: Na funcionalidade “Gerir Tipo de Processo” tenha sido selecionado como nível de acesso a opção “Padrão”, o sistema
-deve apresentar o nível de acesso para o tipo cadastrado na própria funcionalidade de Gerir Tipo de Processo,
+- CENARIO 1 ::: Na funcionalidade "Gerir Tipo de Processo" tenha sido selecionado como nÃ­vel de acesso a opÃ§Ã£o "PadrÃ£o", o sistema
+deve apresentar o nÃ­vel de acesso para o tipo cadastrado na prÃ³pria funcionalidade de Gerir Tipo de Processo,
 apresentando somente o registro cadastrado.
 
-- CENARIO 2 ::: Caso tenha sido selecionada a opção “Usuário Externo pode Indicar dentre os permitidos para o Tipo de Processo”
-deverá ser apresentada as opções: Público, Restrito e Sigiloso.
+- CENARIO 2 ::: Caso tenha sido selecionada a opÃ§Ã£o "UsuÃ¡rio Externo pode Indicar dentre os permitidos para o Tipo de Processo"
+deverÃ¡ ser apresentada as opÃ§Ãµes: PÃºblico, Restrito e Sigiloso.
 */
 
 $isNivelAcessoPadrao = $objTipoProcDTO->getStrSinNaPadrao();
@@ -204,13 +205,13 @@ $strNomeNivelAcessoPadrao = "";
 
 if( $isNivelAcessoPadrao == 'S'){
 	 
-	if( $nivelAcessoPadrao == "0"){ $strNomeNivelAcessoPadrao = "Público"; }
+	if( $nivelAcessoPadrao == "0"){ $strNomeNivelAcessoPadrao = "PÃºblico"; }
 	else if( $nivelAcessoPadrao == "1"){ $strNomeNivelAcessoPadrao = "Restrito"; }
 	else if( $nivelAcessoPadrao == "2"){ $strNomeNivelAcessoPadrao = "Sigiloso"; }
 	 
 }
 
-//checando se Documento Principal está parametrizado para "Externo (Anexação de Arquivo) ou Gerador (editor do SEI)
+//checando se Documento Principal estÃ¡ parametrizado para "Externo (AnexaÃ§Ã£o de Arquivo) ou Gerador (editor do SEI)
 $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
 $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
 $objMdPetTipoProcessoDTO->setStrSinAtivo('S', InfraDTO::$OPER_IGUAL);
@@ -236,8 +237,8 @@ $arrNivelAcesso = array();
 $strItensSelNivelAcesso  = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, null, $objTipoProcDTO->getNumIdProcedimento());
 
 //ler valor do parametro SEI_HABILITAR_HIPOTESE_LEGAL
-//aplicar RA 5: Os campos “Hipótese Legal” somente serão apresentados se na funcionalidade Infra > Parâmetros
-//a opção SEI_HABILITAR_HIPOTESE_LEGAL estiver configurado como 1 ou 2 sendo assim obrigatório.
+//aplicar RA 5: Os campos "HipÃ³tese Legal" somente serÃ£o apresentados se na funcionalidade Infra > ParÃ¢metros
+//a opÃ§Ã£o SEI_HABILITAR_HIPOTESE_LEGAL estiver configurado como 1 ou 2 sendo assim obrigatÃ³rio.
 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 $valorConfigHipoteseLegal = $objInfraParametro->getValor('SEI_HABILITAR_HIPOTESE_LEGAL', false);
 $isConfigHipoteseLegal = false;
@@ -246,7 +247,7 @@ if( $valorConfigHipoteseLegal == 1 || $valorConfigHipoteseLegal == 2){
 
 	$isConfigHipoteseLegal = true;
 	 
-	//verificar se irei trazer hipoteses legais da parametrizaçao do peticionamento ou se irei consultar as hipoteses cadastradas no sistema
+	//verificar se irei trazer hipoteses legais da parametrizaÃ§ao do peticionamento ou se irei consultar as hipoteses cadastradas no sistema
 	$objMdPetHipoteseLegalRN = new MdPetHipoteseLegalRN();
 	$objMdPetHipoteseLegalDTO = new MdPetHipoteseLegalDTO();
 	$objMdPetHipoteseLegalDTO->retTodos(true);
@@ -276,7 +277,7 @@ if( $valorConfigHipoteseLegal == 1 || $valorConfigHipoteseLegal == 2){
 	}
 }
 
-//preenche a combo "Documento Objeto da Digitalização era"
+//preenche a combo "Documento Objeto da DigitalizaÃ§Ã£o era"
 $arrDocumentoObjetoDigitalizacao = array();
 
 //preenche tabela de documentos (final da tela)
@@ -285,7 +286,7 @@ $arrTabelaDocumentos = array();
 //DTO basico de Processo Peticionamento Novo
 $objMdPetIndisponibilidadeDTO = new MdPetIndisponibilidadeDTO();
 
-//listagem da combo "Documento objeto da Digitalização era:”
+//listagem da combo "Documento objeto da DigitalizaÃ§Ã£o era:"
 $tipoConferenciaRN = new TipoConferenciaRN();
 $tipoConferenciaDTO = new TipoConferenciaDTO();
 $tipoConferenciaDTO->retTodos();
@@ -293,12 +294,12 @@ $tipoConferenciaDTO->setStrSinAtivo('S');
 $tipoConferenciaDTO->setOrdStrDescricao(InfraDTO::$TIPO_ORDENACAO_ASC);
 $arrTipoConferencia = $tipoConferenciaRN->listar( $tipoConferenciaDTO );
 
-//tamanho maximo de arquivo, tem o interno do SEI e tem o da parametrizaçao 
+//tamanho maximo de arquivo, tem o interno do SEI e tem o da parametrizaÃ§ao 
 $numSeiTamMbDocExterno = $objInfraParametro->getValor('SEI_TAM_MB_DOC_EXTERNO');
 $numSeiTamMbDocExterno = ($numSeiTamMbDocExterno < 1024 ? $numSeiTamMbDocExterno." MB" : (round($numSeiTamMbDocExterno/1024,2))." GB");
 
 //limpando variavel de sessao que controla detalhes de exibicao internos 
-//da janela de cadastro de interessado (quando é indicacao por nome)
+//da janela de cadastro de interessado (quando Ã© indicacao por nome)
 SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
 
 $urlBaseLink = "";

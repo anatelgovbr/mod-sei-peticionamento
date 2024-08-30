@@ -1,5 +1,12 @@
 <style type="text/css">
 
+	/**
+	* ANATEL
+	*
+	* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	*
+	*/
+
     .sizeFieldset{height: 340px;}
     .sizeFieldset2{height: 1420px;}
 

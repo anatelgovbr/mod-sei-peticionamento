@@ -8,7 +8,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 	private function validarNumIdUnidadeGeradoraRN0213(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		
 		if (InfraString::isBolVazia($objProtocoloDTO->getNumIdUnidadeGeradora())){
-			$objInfraException->adicionarValidacao('IdentificaÁ„o da unidade geradora n„o informada.');
+			$objInfraException->adicionarValidacao('Identifica√ß√£o da unidade geradora n√£o informada.');
 		}
 	
 	}
@@ -35,7 +35,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			$strNumeracao = $objOrgaoDTO->getStrNumeracao();
 	
 			if (InfraString::isBolVazia($strNumeracao)){
-				throw new InfraException('Formato da numeraÁ„o n„o configurado para o Ûrg„o '.$objOrgaoDTO->getStrSigla().'.');
+				throw new InfraException('Formato da numera√ß√£o n√£o configurado para o √≥rg√£o '.$objOrgaoDTO->getStrSigla().'.');
 			}
 		
 			//Padrao SEI
@@ -65,7 +65,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			if (strpos($strNumeracao,'@cod_orgao_sei')!==false){
 	
 				if (InfraString::isBolVazia($objOrgaoDTO->getStrCodigoSei())){
-					throw new InfraException('CÛdigo SEI n„o configurado para o Ûrg„o '.$objOrgaoDTO->getStrSigla().'.');
+					throw new InfraException('C√≥digo SEI n√£o configurado para o √≥rg√£o '.$objOrgaoDTO->getStrSigla().'.');
 				}
 	
 				$strNumeracao = str_replace('@cod_orgao_sei@', $objOrgaoDTO->getStrCodigoSei(), $strNumeracao);
@@ -91,7 +91,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			if (strpos($strNumeracao,'@cod_unidade_sei')!==false){
 								
 				if (InfraString::isBolVazia($objUnidadeDTO->getStrCodigoSei())){
-					throw new InfraException('CÛdigo SEI n„o configurado para a unidade '.$objUnidadeDTO->getStrSigla().' / '.$objOrgaoDTO->getStrSigla().'.');
+					throw new InfraException('C√≥digo SEI n√£o configurado para a unidade '.$objUnidadeDTO->getStrSigla().' / '.$objOrgaoDTO->getStrSigla().'.');
 				}
 	
 				$strNumeracao = str_replace('@cod_unidade_sei@', $objUnidadeDTO->getStrCodigoSei(), $strNumeracao);
@@ -126,7 +126,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			if (strpos($strNumeracao,'@seq_anual_cod_orgao_sei')!==false){
 	
 				if (InfraString::isBolVazia($objOrgaoDTO->getStrCodigoSei())){
-					throw new InfraException('CÛdigo SEI n„o configurado para o Ûrg„o '.$objOrgaoDTO->getStrSigla().'.');
+					throw new InfraException('C√≥digo SEI n√£o configurado para o √≥rg√£o '.$objOrgaoDTO->getStrSigla().'.');
 				}
 	
 				$strNomeSequencia = 'seq_'.substr(InfraData::getStrDataAtual(),6).'_org_sei_'.$objOrgaoDTO->getStrCodigoSei();
@@ -164,7 +164,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			if (strpos($strNumeracao,'@seq_anual_cod_unidade_sei')!==false){
 	
 				if (InfraString::isBolVazia($objUnidadeDTO->getStrCodigoSei())){
-					throw new InfraException('CÛdigo SEI n„o configurado para a unidade '.$objUnidadeDTO->getStrSigla().' / '.$objOrgaoDTO->getStrSigla().'.');
+					throw new InfraException('C√≥digo SEI n√£o configurado para a unidade '.$objUnidadeDTO->getStrSigla().' / '.$objOrgaoDTO->getStrSigla().'.');
 				}
 	
 				$strNomeSequencia = 'seq_'.substr(InfraData::getStrDataAtual(),6).'_uni_sei_'.$objUnidadeDTO->getStrCodigoSei();
@@ -207,7 +207,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			return $strNumeracao;
 		  
 		} catch(Exception $e){
-			throw new InfraException('Erro gerando numeraÁ„o de processo.',$e);
+			throw new InfraException('Erro gerando numera√ß√£o de processo.',$e);
 		}
 	}
 	
@@ -245,7 +245,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			$objInfraException = new InfraException();
 	
 			if ($objProtocoloDTO->isSetDblIdProtocoloAgrupador()){
-				$objInfraException->adicionarValidacao('N˙mero do protocolo agrupador n„o pode ser informado na geraÁ„o.');
+				$objInfraException->adicionarValidacao('N√∫mero do protocolo agrupador n√£o pode ser informado na gera√ß√£o.');
 			}
 	
 			$this->validarStrStaProtocoloRN0212($objProtocoloDTO, $objInfraException);
@@ -284,12 +284,12 @@ class MdPetProtocoloRN extends ProtocoloRN {
 				if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_PROCEDIMENTO){
 					$objProcedimentoRN = new ProcedimentoRN();
 					if (!$objProcedimentoRN->verificarLiberacaoNumeroProcesso()){
-						$objInfraException->adicionarValidacao('N„o È possÌvel informar o n˙mero do processo.');
+						$objInfraException->adicionarValidacao('N√£o √© poss√≠vel informar o n√∫mero do processo.');
 					}else{
 						$this->validarProtocoloInformado($objProtocoloDTO,$objInfraException);
 					}
 				}else{
-					$objInfraException->adicionarValidacao('Protocolo do documento n„o pode ser informado na geraÁ„o.');
+					$objInfraException->adicionarValidacao('Protocolo do documento n√£o pode ser informado na gera√ß√£o.');
 				}
 			}else{
 				if ($objProtocoloDTO->getStrStaProtocolo()==self::$TP_PROCEDIMENTO){
@@ -399,11 +399,11 @@ class MdPetProtocoloRN extends ProtocoloRN {
 	
 	private function validarStrStaProtocoloRN0212(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objProtocoloDTO->getStrStaProtocolo())){
-			$objInfraException->adicionarValidacao('Tipo do protocolo n„o informado.');
+			$objInfraException->adicionarValidacao('Tipo do protocolo n√£o informado.');
 		}else{
 			$arr = InfraArray::converterArrInfraDTO($this->listarTiposRN0684(),'StaTipo');
 			if (!in_array($objProtocoloDTO->getStrStaProtocolo(),$arr)){
-				$objInfraException->adicionarValidacao('Tipo do protocolo inv·lido.');
+				$objInfraException->adicionarValidacao('Tipo do protocolo inv√°lido.');
 			}
 		}
 	}
@@ -423,7 +423,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			$objAssuntoDTO->setNumIdAssunto(InfraArray::converterArrInfraDTO($objProtocoloDTO->getArrObjRelProtocoloAssuntoDTO(),'IdAssunto'),InfraDTO::$OPER_IN);
 
 			if ($objAssuntoRN->contarRN0249($objAssuntoDTO)==0){
-				$objInfraException->adicionarValidacao('Assuntos n„o s„o suficientes para classificaÁ„o.');
+				$objInfraException->adicionarValidacao('Assuntos n√£o s√£o suficientes para classifica√ß√£o.');
 			}
 		}
 	}
@@ -438,11 +438,11 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			foreach($arrParticipantes as $objParticipanteDTO){
 	
 				if (!$objParticipanteDTO->isSetNumIdContato()){
-					$objInfraException->lancarValidacao('Identificador do participante n„o informado.');
+					$objInfraException->lancarValidacao('Identificador do participante n√£o informado.');
 				}
 		   
 				if (!$objParticipanteDTO->isSetStrStaParticipacao()){
-					$objInfraException->lancarValidacao('Tipo de participaÁ„o do participante n„o informada.');
+					$objInfraException->lancarValidacao('Tipo de participa√ß√£o do participante n√£o informada.');
 				}
 		   
 				$arrDuplicados[] = $objParticipanteDTO->getNumIdContato().'-'.$objParticipanteDTO->getStrStaParticipacao();
@@ -456,32 +456,32 @@ class MdPetProtocoloRN extends ProtocoloRN {
 	
 	private function validarArrObjObservacaoRN0573(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		if (count($objProtocoloDTO->getArrObjObservacaoDTO())>1){
-			$objInfraException->adicionarValidacao('Mais de uma observaÁ„o informada para a unidade.');
+			$objInfraException->adicionarValidacao('Mais de uma observa√ß√£o informada para a unidade.');
 		}
 	}
 	
 	private function validarArrAnexoRN0227(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
-		//TODO checar se pode remover este mÈtodo
+		//TODO checar se pode remover este m√©todo
 		//Nada a validar
 	}
 	
 	private function validarNumIdUsuarioGeradorRN0214(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		
 		if (InfraString::isBolVazia($objProtocoloDTO->getNumIdUsuarioGerador())){
-			$objInfraException->adicionarValidacao('IdentificaÁ„o do usu·rio gerador n„o informada.');
+			$objInfraException->adicionarValidacao('Identifica√ß√£o do usu√°rio gerador n√£o informada.');
 		}
 	}
 	
 	private function validarDtaGeracaoRN0215(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objProtocoloDTO->getDtaGeracao())){
-			$objInfraException->adicionarValidacao('Data do protocolo n„o informada.');
+			$objInfraException->adicionarValidacao('Data do protocolo n√£o informada.');
 		}else{
 			if (!InfraData::validarData($objProtocoloDTO->getDtaGeracao())){
-				$objInfraException->adicionarValidacao('Data do protocolo inv·lida.');
+				$objInfraException->adicionarValidacao('Data do protocolo inv√°lida.');
 			}
 		}
 		if (InfraData::compararDatas(InfraData::getStrDataHoraAtual(),$objProtocoloDTO->getDtaGeracao())>0){
-			$objInfraException->adicionarValidacao('Data do protocolo n„o pode estar no futuro.');
+			$objInfraException->adicionarValidacao('Data do protocolo n√£o pode estar no futuro.');
 		}
 	}
 	
@@ -494,18 +494,18 @@ class MdPetProtocoloRN extends ProtocoloRN {
 	
 		if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_PROCEDIMENTO){
 			if (strlen($objProtocoloDTO->getStrDescricao())>50){
-				$objInfraException->adicionarValidacao('EspecificaÁ„o possui tamanho superior a 50 caracteres.');
+				$objInfraException->adicionarValidacao('Especifica√ß√£o possui tamanho superior a 50 caracteres.');
 			}
 		}else{
 			if (strlen($objProtocoloDTO->getStrDescricao())>250){
-				$objInfraException->adicionarValidacao('DescriÁ„o possui tamanho superior a 250 caracteres.');
+				$objInfraException->adicionarValidacao('Descri√ß√£o possui tamanho superior a 250 caracteres.');
 			}
 		}
 	}
 	
 	private function validarStrMotivoCancelamento(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objProtocoloDTO->getStrMotivoCancelamento())){
-			$objInfraException->adicionarValidacao('Motivo n„o informado.');
+			$objInfraException->adicionarValidacao('Motivo n√£o informado.');
 		}
 	}
 	
@@ -519,17 +519,17 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			if ($objProtocoloDTO->getStrStaNivelAcessoLocal()==ProtocoloRN::$NA_SIGILOSO){
 	
 				if ($numHabilitarGrauSigilo==2 && InfraString::isBolVazia($objProtocoloDTO->getStrStaGrauSigilo())){
-					$objInfraException->adicionarValidacao('Grau do sigilo n„o informado.');
+					$objInfraException->adicionarValidacao('Grau do sigilo n√£o informado.');
 				}
 	
 				if (!InfraString::isBolVazia($objProtocoloDTO->getStrStaGrauSigilo()) && !in_array($objProtocoloDTO->getStrStaGrauSigilo(),InfraArray::converterArrInfraDTO(self::listarGrausSigiloso(),'StaGrau'))){
-					$objInfraException->adicionarValidacao('Grau do sigilo inv·lido.');
+					$objInfraException->adicionarValidacao('Grau do sigilo inv√°lido.');
 				}
 	
 			}else{
 				 
 				if (!InfraString::isBolVazia($objProtocoloDTO->getStrStaGrauSigilo())){
-					$objInfraException->adicionarValidacao('Grau do sigilo n„o aplic·vel ao protocolo.');
+					$objInfraException->adicionarValidacao('Grau do sigilo n√£o aplic√°vel ao protocolo.');
 				}
 	
 			}
@@ -548,7 +548,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			if($objProtocoloDTO->getStrStaNivelAcessoLocal()==ProtocoloRN::$NA_SIGILOSO || $objProtocoloDTO->getStrStaNivelAcessoLocal()==ProtocoloRN::$NA_RESTRITO){
 								
 				if ($numHabilitarHipoteseLegal==2 && InfraString::isBolVazia($objProtocoloDTO->getNumIdHipoteseLegal())){
-					$objInfraException->adicionarValidacao('HipÛtese Legal n„o informada.');
+					$objInfraException->adicionarValidacao('Hip√≥tese Legal n√£o informada.');
 				}
 	
 				if (!InfraString::isBolVazia($objProtocoloDTO->getNumIdHipoteseLegal())){
@@ -561,14 +561,14 @@ class MdPetProtocoloRN extends ProtocoloRN {
 					$objHipoteseLegalDTO = $objHipoteseLegalRN->consultar($objHipoteseLegalDTO);
 	
 					if ($objHipoteseLegalDTO==null){
-						$objInfraException->adicionarValidacao('HipÛtese Legal n„o encontrada.');
+						$objInfraException->adicionarValidacao('Hip√≥tese Legal n√£o encontrada.');
 					}
 				}
 	
 			}else{
 								
 				if ( $objProtocoloDTO->isSetNumIdHipoteseLegal() && !InfraString::isBolVazia($objProtocoloDTO->getNumIdHipoteseLegal())){
-					$objInfraException->adicionarValidacao('HipÛtese Legal n„o aplic·vel ao protocolo.');
+					$objInfraException->adicionarValidacao('Hip√≥tese Legal n√£o aplic√°vel ao protocolo.');
 				}
 	
 			}
@@ -583,7 +583,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 			return $this->getObjInfraIBanco()->getValorSequencia('seq_protocolo');
 	
 		}catch(Exception $e){
-			throw new InfraException('Erro gerando numeraÁ„o interna.',$e);
+			throw new InfraException('Erro gerando numera√ß√£o interna.',$e);
 		}
 	}
 	
@@ -595,20 +595,20 @@ class MdPetProtocoloRN extends ProtocoloRN {
 		if(InfraString::isBolVazia($strMascara)) return;
 	
 		if (!InfraUtil::validarMascara($objProtocoloDTO->getStrProtocoloFormatado(),$strMascara)) {
-			$objInfraException->adicionarValidacao("N˙mero de processo informado inv·lido.");
+			$objInfraException->adicionarValidacao("N√∫mero de processo informado inv√°lido.");
 		}
 	}
 	
 	private function validarStrProtocoloFormatadoRN0211(ProtocoloDTO $objProtocoloDTO, InfraException $objInfraException){
 		
 		if (InfraString::isBolVazia($objProtocoloDTO->getStrProtocoloFormatado())){
-			$objInfraException->adicionarValidacao('N˙mero do protocolo n„o informado.');
+			$objInfraException->adicionarValidacao('N√∫mero do protocolo n√£o informado.');
 		}else{
 	
 			$objProtocoloDTO->setStrProtocoloFormatado(trim($objProtocoloDTO->getStrProtocoloFormatado()));
 	
 			if (strlen($objProtocoloDTO->getStrProtocoloFormatado())>40){
-				$objInfraException->adicionarValidacao('N˙mero do protocolo possui tamanho superior a 40 caracteres.');
+				$objInfraException->adicionarValidacao('N√∫mero do protocolo possui tamanho superior a 40 caracteres.');
 			}
 	
 			$objProtocoloDTOBanco = new ProtocoloDTO();
@@ -618,9 +618,9 @@ class MdPetProtocoloRN extends ProtocoloRN {
 	
 			if ($objProtocoloDTOBanco!=null){
 				if ($objProtocoloDTOBanco->getStrStaProtocolo()==ProtocoloRN::$TP_PROCEDIMENTO){
-					$objInfraException->adicionarValidacao('Existe um processo utilizando este n˙mero de protocolo: '.$objProtocoloDTO->getStrProtocoloFormatado());
+					$objInfraException->adicionarValidacao('Existe um processo utilizando este n√∫mero de protocolo: '.$objProtocoloDTO->getStrProtocoloFormatado());
 				}else{
-					$objInfraException->adicionarValidacao('Existe um documento utilizando este n˙mero de protocolo: '.$objProtocoloDTO->getStrProtocoloFormatado());
+					$objInfraException->adicionarValidacao('Existe um documento utilizando este n√∫mero de protocolo: '.$objProtocoloDTO->getStrProtocoloFormatado());
 				}
 			}
 		}
@@ -632,7 +632,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 	
 		if (!$objProtocoloDTO->isSetStrStaProtocolo() || InfraString::isBolVazia($objProtocoloDTO->getStrStaProtocolo())){
 			if ($objProtocoloDTO->getDblIdProtocolo()==null){
-				$objInfraException->adicionarValidacao('Tipo do protocolo n„o informado manipulando atributos.');
+				$objInfraException->adicionarValidacao('Tipo do protocolo n√£o informado manipulando atributos.');
 			}else{
 				$dto = new ProtocoloDTO(true);
 	
@@ -698,7 +698,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 	
 		for ($i=0;$i<count($arrObjAtributoDTO);$i++){
 				
-			//Se È um atributo obrigatÛrio
+			//Se √© um atributo obrigat√≥rio
 			if($arrObjAtributoDTO[$i]->getStrSinObrigatorio()=='S'){
 	
 				$flag = 0;
@@ -712,7 +712,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 					}
 				}
 				if($flag == 0){
-					$objInfraException->adicionarValidacao('Atributo \"'.$arrObjAtributoDTO[$i]->getStrNome().'\" obrigatÛrio n„o informado.');
+					$objInfraException->adicionarValidacao('Atributo \"'.$arrObjAtributoDTO[$i]->getStrNome().'\" obrigat√≥rio n√£o informado.');
 				}
 			}
 		}

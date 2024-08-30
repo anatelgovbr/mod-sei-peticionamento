@@ -1,10 +1,11 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 02/04/2018 - criado por jose vieira
+ * 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
  *
- * Versão do Gerador de Código: 1.41.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.41.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -61,14 +62,14 @@ class MdPetVinculoDTO extends InfraDTO
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CpfContatoRepresentante', 'contrep.cpf', 'contato contrep');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'EmailContatoRepresentante', 'contrep.email', 'contato contrep');
 
-        // Contato do Vínculo
+        // Contato do VÃ­nculo
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'RazaoSocialNomeVinc', 'contvinc.nome', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CNPJ', 'contvinc.cnpj', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CNPJPesquisa', 'contvinc.cnpj', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdCidadeContatoVinc', 'contvinc.id_cidade', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUfContatoVinc', 'contvinc.id_uf', 'contato contvinc');
 
-        // Cidade e Uf do Vínculo
+        // Cidade e Uf do VÃ­nculo
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeCidadeContatoVinc', 'cidvinc.nome', 'cidade cidvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SiglaUfContatoVinc', 'ufvinc.sigla', 'uf ufvinc');
 

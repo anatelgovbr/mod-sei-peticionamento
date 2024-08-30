@@ -2,6 +2,7 @@
 /**
  *
  * 26/02/2018 - criado por jose.vieira - CAST
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
  *
  */
 

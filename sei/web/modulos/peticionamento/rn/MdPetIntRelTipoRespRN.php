@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/03/2017 - criado por pedro.cast
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -21,23 +21,23 @@ class MdPetIntRelTipoRespRN extends InfraRN {
 
     private function validarStrSinAtivo(MdPetIntRelTipoRespDTO $objMdPetIntRelTipoRespDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntRelTipoRespDTO->getStrSinAtivo())){
-            $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica n„o informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica n√£o informado.');
         }else{
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntRelTipoRespDTO->getStrSinAtivo())){
-                $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica inv·lido.');
+                $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica inv√°lido.');
             }
         }
     }
 
     private function validarNumIdMdPetIntimacao(MdPetIntRelTipoRespDTO $objMdPetIntRelTipoRespDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntRelTipoRespDTO->getNumIdMdPetIntimacao())){
-            $objInfraException->adicionarValidacao('IntimaÁ„o n„o informada.');
+            $objInfraException->adicionarValidacao('Intima√ß√£o n√£o informada.');
         }
     }
 
     private function validarNumIdMdPetIntTipoResp(MdPetIntRelTipoRespDTO $objMdPetIntRelTipoRespDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntRelTipoRespDTO->getNumIdMdPetIntTipoResp())){
-            $objInfraException->adicionarValidacao('Tipo de Resposta n„o informado.');
+            $objInfraException->adicionarValidacao('Tipo de Resposta n√£o informado.');
         }
     }
 
@@ -64,7 +64,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             return $ret;
 
         }catch(Exception $e){
-            throw new InfraException('Erro cadastrando Tipo De Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro cadastrando Tipo De Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -95,7 +95,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro alterando Tipo De Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro alterando Tipo De Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -118,7 +118,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro excluindo Tipo De Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro excluindo Tipo De Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -140,7 +140,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro consultando Tipo De Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro consultando Tipo De Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -163,7 +163,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             return $ret;
 
         }catch(Exception $e){
-            throw new InfraException('Erro listando Tipos de Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro listando Tipos de Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -185,7 +185,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro contando Tipos de Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro contando Tipos de Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -208,7 +208,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro desativando Tipo De Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro desativando Tipo De Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -231,7 +231,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro reativando Tipo De Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro reativando Tipo De Resposta da Intima√ß√£o.',$e);
         }
     }
 
@@ -253,7 +253,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro bloqueando Tipo De Resposta da IntimaÁ„o.',$e);
+            throw new InfraException('Erro bloqueando Tipo De Resposta da Intima√ß√£o.',$e);
         }
     }
 

@@ -29,7 +29,7 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 	
 			return $ret;
 		}catch(Exception $e){
-			throw new InfraException('Erro consultando Usuário Externo.',$e);
+			throw new InfraException('Erro consultando UsuÃ¡rio Externo.',$e);
 		}
 	}
 
@@ -44,7 +44,7 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro consultando Usuário Externo.',$e);
+            throw new InfraException('Erro consultando UsuÃ¡rio Externo.',$e);
         }
     }
 	
@@ -56,10 +56,10 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 	
 			$objUsuarioExternoDTO = new MdPetWsUsuarioExternoDTO();
 
-			//Retorna apenas usuários externos
+			//Retorna apenas usuÃ¡rios externos
             $objUsuarioExternoDTO->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO_PENDENTE,UsuarioRN::$TU_EXTERNO),InfraDTO::$OPER_IN);
 				
-			//campos que serão retornados
+			//campos que serÃ£o retornados
 			$objUsuarioExternoDTO->retNumIdUsuario();
 			$objUsuarioExternoDTO->retStrSigla();
 			$objUsuarioExternoDTO->retStrNome();
@@ -77,7 +77,7 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 			$objUsuarioExternoDTO->retStrCepContato();
 			$objUsuarioExternoDTO->retDthDataCadastroContato();
 				
-			//Parâmetros para consulta
+			//ParÃ¢metros para consulta
 			$objUsuarioExternoDTO->setStrCpf($Cpf, InfraDTO::$OPER_IGUAL);
 			if($Sigla != "") {
                 $objUsuarioExternoDTO->setStrSigla($Sigla, InfraDTO::$OPER_IGUAL);
@@ -86,13 +86,13 @@ class MdPetWsUsuarioExternoRN extends InfraRN {
 				
 			if (is_null($objUsuarioExternoDTO)) {
 				$textoValidacao = $Sigla != "" ? 'E-mail e CPF informados' : 'CPF informado';
-				$objInfraException->lancarValidacao('Não existe cadastro de Usuário Externo no SEI com o '.$textoValidacao.'.');
+				$objInfraException->lancarValidacao('NÃ£o existe cadastro de UsuÃ¡rio Externo no SEI com o '.$textoValidacao.'.');
 			}
 	
 			return $objUsuarioExternoDTO;
 			 
 		} catch(Exception $e){
-			throw new InfraException('Erro ao consultar cadastro de Usuário Externo no SEI.',$e);
+			throw new InfraException('Erro ao consultar cadastro de UsuÃ¡rio Externo no SEI.',$e);
 		}
 	}
 }

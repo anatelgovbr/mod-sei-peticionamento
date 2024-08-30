@@ -14,7 +14,7 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_pet_vinc_usu_ext_pe_listar':
-            $strTitulo = 'Procurações Eletrônicas';
+            $strTitulo = 'ProcuraÃ§Ãµes EletrÃ´nicas';
             break;
     }
     $arrObj = array();
@@ -73,7 +73,7 @@ try {
 
     $arrObjMdPetVincRepresentantSuspensoDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantSuspensoDTO);
 
-    //Recuperando os documentos da suspensão
+    //Recuperando os documentos da suspensÃ£o
     $staEstadoRepresentantSuspenso = '';
     if ($arrObjMdPetVincRepresentantSuspensoDTO) {
         $staEstadoRepresentantSuspenso = current($arrObjMdPetVincRepresentantSuspensoDTO)->getStrStaEstado();
@@ -177,7 +177,7 @@ try {
 
     $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
-    //Recuperando os documentos da procuração
+    //Recuperando os documentos da procuraÃ§Ã£o
     $arrIdVincRepresentant = InfraArray::converterArrInfraDTO($arrObjMdPetVincRepresentantDTO, 'IdMdPetVinculoRepresent');
 
     PaginaSEIExterna::getInstance()->processarPaginacao($objMdPetVincRepresentantDTO);
@@ -202,23 +202,23 @@ $numRegistros = count($arrIdVincRepresentant);
 if ($numRegistros > 0) {
 
     $strResultado = '';
-    $strSumarioTabela = 'Procurações Eletrônicas';
-    $strCaptionTabela = 'Procurações Eletrônicas';
+    $strSumarioTabela = 'ProcuraÃ§Ãµes EletrÃ´nicas';
+    $strCaptionTabela = 'ProcuraÃ§Ãµes EletrÃ´nicas';
     $strResultado .= '<table width="100%" class="infraTable" summary="' . $strSumarioTabela . '">';
     $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
 
     $strResultado .= '<tr>';
     //$strResultado .= '<th class="infraTh" width="1%">' . PaginaSEIExterna::getInstance()->getThCheck() . '</th>' . "\n";
-    //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'N° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
+    //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'NÂ° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
     $strResultado .= '<th class="infraTh"><div style="width:130px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF/CNPJ Outorgante', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:170px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome/Razão Social do Outorgante', 'RazaoSocialNomeVinc', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:170px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome/RazÃ£o Social do Outorgante', 'RazaoSocialNomeVinc', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:100px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'CPF Outorgado', 'CpfProcurador', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:180px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Nome do Outorgado', 'NomeProcurador', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:130px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo de Procuração', 'TipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:150px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Abrangência', 'StaAbrangencia', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:130px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo de ProcuraÃ§Ã£o', 'TipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:150px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'AbrangÃªncia', 'StaAbrangencia', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:120px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Validade', 'DataLimite', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:70px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Situação', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:60px" class="text-center">Ações</div></th>';
+    $strResultado .= '<th class="infraTh text-center"><div style="width:70px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'SituaÃ§Ã£o', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh text-center"><div style="width:60px" class="text-center">AÃ§Ãµes</div></th>';
     $strResultado .= '</tr>';
 
     $arrSelectTipoVinculo = array();
@@ -240,7 +240,7 @@ if ($numRegistros > 0) {
             $arrSelectTipoVinculo[$arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante()] = $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante();
         }
 
-        //Buscar documento da procuração
+        //Buscar documento da procuraÃ§Ã£o
         $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
         $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
         $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent());
@@ -299,7 +299,7 @@ if ($numRegistros > 0) {
         $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante() /*$strTipoRepresentante*/ . '</td>';
         $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getStrStaAbrangenciaTipo() . '</td>';
         $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getDthDataLimiteValidade() . '</td>';
-        $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstadoTipo() . '</td>';
+        $strResultado .= '<td class="text-center">' . $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstadoTipo() . '</td>';
 
 
         /*if (count($arrObjUsuarioDTO)>0){
@@ -316,7 +316,7 @@ if ($numRegistros > 0) {
             SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
             $strLinkConsultaDocumento = SessaoSEIExterna::getInstance()->assinarLink('documento_consulta_externa.php?id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $listaDocumento);
 
-            $iconeConsulta = 'Consultar Procuração';
+            $iconeConsulta = 'Consultar ProcuraÃ§Ã£o';
 
             $iconeConsulta = '<img style="width:24px;"  src="modulos/peticionamento/imagens/svg/visualizar_procuracao_especial.svg?'.Icone::VERSAO.'" title="' . $iconeConsulta . '" alt="' . $iconeConsulta . '" class="infraImg" />';
 
@@ -328,9 +328,9 @@ if ($numRegistros > 0) {
 
         if ($arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO) {
             if ($arrObjMdPetVincRepresentantDTO[$i]->getNumIdContato() == $idContatoExterno) {
-                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_renunciar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=renunciar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) .'"><img style="width:24px;"  src="modulos/peticionamento/imagens/svg/renunciar_procuracao.svg?'.Icone::VERSAO.'" title="Renunciar Procuração" alt="Renunciar Procuração" class="infraImg" /></a>';
+                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_renunciar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=renunciar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) .'"><img style="width:24px;"  src="modulos/peticionamento/imagens/svg/renunciar_procuracao.svg?'.Icone::VERSAO.'" title="Renunciar ProcuraÃ§Ã£o" alt="Renunciar ProcuraÃ§Ã£o" class="infraImg" /></a>';
             } else if ($staEstadoRepresentantSuspenso != MdPetVincRepresentantRN::$RP_SUSPENSO || $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() != MdPetVincRepresentantRN::$RP_REVOGADA || $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstado() != MdPetVincRepresentantRN::$RP_RENUNCIADA) {
-                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_revogar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=revogar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) . '"><img style="width:24px;"  src="modulos/peticionamento/imagens/svg/revogar_renunciar_procuracao.svg?'.Icone::VERSAO.'" title="Revogar Procuração" alt="Revogar Procuração" class="infraImg" /></a>';
+                $iconeAcao = '<a href="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=processo_eletronico_responder_motivo_revogar&id_contato_vinc=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoVinc() . '&tpDocumento=revogar&tpProc=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() . '&tpVinculo=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrTpVinc() . '&id_procedimento=' . $arrObjMdPetVincRepresentantDTO[$i]->getDblIdProcedimentoVinculo() . '&id_documento=' . $listaDocumento . '&cpf=' . $arrObjMdPetVincRepresentantDTO[$i]->getStrCpfProcurador() . '&id_vinculacao=' . $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()) . '"><img style="width:24px;"  src="modulos/peticionamento/imagens/svg/revogar_renunciar_procuracao.svg?'.Icone::VERSAO.'" title="Revogar ProcuraÃ§Ã£o" alt="Revogar ProcuraÃ§Ã£o" class="infraImg" /></a>';
             }
         }
 
@@ -340,7 +340,7 @@ if ($numRegistros > 0) {
     $strResultado .= '</table>';
 }
 
-//Responsável Legal
+//ResponsÃ¡vel Legal
 $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 
@@ -372,7 +372,7 @@ foreach ($arrObjMdPetVincTpProcessoDTO as $objMdPetVincTpProcessoDTO) {
 $arrComandos = array();
 $arrComandos[] = '<button type="submit" accesskey="p" id="btnPesquisar" onclick="validarCampoData();" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
 if ($flagMostrarBotao) {
-    $arrComandos[] = '<button type="button" accesskey="N" id="btnNova" value="Nova Procuração Eletrônica" onclick="location.href=\'' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_cadastrar&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">N</span>ova Procuração Eletrônica</button>';
+    $arrComandos[] = '<button type="button" accesskey="N" id="btnNova" value="Nova ProcuraÃ§Ã£o EletrÃ´nica" onclick="location.href=\'' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_cadastrar&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">N</span>ova ProcuraÃ§Ã£o EletrÃ´nica</button>';
 }
 $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=usuario_externo_controle_acessos&id_orgao_acesso_externo=0')) . '\';" class="infraButton" >Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
@@ -425,7 +425,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="form-group">
                 <label id="lblRazaoSocial"
                     for="txtRazaoSocial"
-                    class="infraLabelOpcional">Nome/Razão Social do Outorgante:</label>
+                    class="infraLabelOpcional">Nome/RazÃ£o Social do Outorgante:</label>
                 <input type="text"
                     id="txtRazaoSocial"
                     name="txtRazaoSocial"
@@ -469,7 +469,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="form-group">
                 <label id="lblSituacao"
                     for="slSituacao"
-                    class="infraLabelOpcional">Situação:</label>
+                    class="infraLabelOpcional">SituaÃ§Ã£o:</label>
                 <select name="slSituacao" id="slSituacao" class="infraSelect form-control"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
                     <option value=""></option>
@@ -514,7 +514,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="form-group">
                 <label id="lblTipoVinculo"
                     for="slTipoVinculo"
-                    class="infraLabelOpcional">Tipo de Procuração:</label>
+                    class="infraLabelOpcional">Tipo de ProcuraÃ§Ã£o:</label>
                 <select name="slTipoProcuracao" id="slTipoViculo" class="infraSelect form-control"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
                     <option value=""></option>
@@ -535,7 +535,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="form-group">
                 <label id="lblAbrangencia"
                     for="lblAbrangencia"
-                    class="infraLabelOpcional">Abrangência:</label>
+                    class="infraLabelOpcional">AbrangÃªncia:</label>
                 <br>
                 <select name="sllblAbrangencia" id="sllblAbrangencia" class="infraSelect form-control"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
@@ -550,7 +550,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         <?php if (MdPetVincRepresentantRN::$PR_ESPECIFICO == $strAbrangencia) { ?>
                             selected="selected"
                         <?php } ?>>
-                        Processos Específicos
+                        Processos EspecÃ­ficos
                     </option>
                 </select>
             </div>

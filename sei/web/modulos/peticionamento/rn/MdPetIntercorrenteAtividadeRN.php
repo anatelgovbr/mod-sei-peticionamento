@@ -1,12 +1,12 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 05/06/2008 - criado por fbv
 *
-* Versão do Gerador de Código: 1.17.0
+* VersÃ£o do Gerador de CÃ³digo: 1.17.0
 *
-* Versão no CVS: $Id$ 
+* VersÃ£o no CVS: $Id$ 
 */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -65,7 +65,7 @@ class MdPetIntercorrenteAtividadeRN extends AtividadeRN {
 			return $arrObjUnidadeDTO;
 
 		}catch(Exception $e){
-			throw new InfraException('Erro listando unidades de tramitação.',$e);
+			throw new InfraException('Erro listando unidades de tramitaÃ§Ã£o.',$e);
 		}
 	}
 

@@ -1,12 +1,12 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 31/01/2008 - criado por marcio_db
  *
- * Versão do Gerador de Código: 1.13.1
+ * VersÃ£o do Gerador de CÃ³digo: 1.13.1
  *
- * Versão no CVS: $Id$
+ * VersÃ£o no CVS: $Id$
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -80,7 +80,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
         try {
 
             //Valida Permissao
-  //trecho comentado porque a funcao é acessada por usuario externo          //SessaoSEI::getInstance()->validarAuditarPermissao('procedimento_consultar_historico', __METHOD__, $parObjProcedimentoHistoricoDTO);
+  //trecho comentado porque a funcao Ã© acessada por usuario externo          //SessaoSEI::getInstance()->validarAuditarPermissao('procedimento_consultar_historico', __METHOD__, $parObjProcedimentoHistoricoDTO);
 
             //Regras de Negocio
             if (!$parObjProcedimentoHistoricoDTO->isSetStrSinGerarLinksHistorico()) {
@@ -101,13 +101,13 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
             $arrObjProtocoloDTO = $objProtocoloRN->pesquisarRN0967($objPesquisaProtocoloDTO);
 
             if (count($arrObjProtocoloDTO) == 0) {
-                throw new InfraException('Processo não encontrado.', null, null, false);
+                throw new InfraException('Processo nÃ£o encontrado.', null, null, false);
             }
 
             $objProtocoloDTO = $arrObjProtocoloDTO[0];
             /*
             if ($objProtocoloDTO->getStrStaNivelAcessoGlobal()==ProtocoloRN::$NA_SIGILOSO && $objProtocoloDTO->getNumCodigoAcesso()<0 && $parObjProcedimentoHistoricoDTO->getStrStaHistorico()!=ProcedimentoRN::$TH_EXTERNO){
-              throw new InfraException('Processo não encontrado para exibição do histórico.');
+              throw new InfraException('Processo nÃ£o encontrado para exibiÃ§Ã£o do histÃ³rico.');
             }
             */
 
@@ -240,14 +240,14 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
 
             $objAtividadeDTO->setOrdNumIdAtividade(InfraDTO::$TIPO_ORDENACAO_DESC);
 
-            //paginação
+            //paginaÃ§Ã£o
             $objAtividadeDTO->setNumMaxRegistrosRetorno($parObjProcedimentoHistoricoDTO->getNumMaxRegistrosRetorno());
             $objAtividadeDTO->setNumPaginaAtual($parObjProcedimentoHistoricoDTO->getNumPaginaAtual());
 
             $objAtividadeRN = new AtividadeRN();
             $arrObjAtividadeDTO = InfraArray::indexarArrInfraDTO($objAtividadeRN->listarRN0036($objAtividadeDTO), 'IdAtividade');
 
-            //paginação
+            //paginaÃ§Ã£o
             $parObjProcedimentoHistoricoDTO->setNumTotalRegistros($objAtividadeDTO->getNumTotalRegistros());
             $parObjProcedimentoHistoricoDTO->setNumRegistrosPaginaAtual($objAtividadeDTO->getNumRegistrosPaginaAtual());
 
@@ -276,7 +276,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                         $bolAcaoDocumentoVisualizar = false;
                         $bolAcaoRelBlocoProtocoloListar = false;
 
-                        //monta link de arquivo mesmo se não tem acesso
+                        //monta link de arquivo mesmo se nÃ£o tem acesso
                         $bolAcaoLocalizadorProtocolosListar = SessaoSEI::getInstance()->verificarPermissao('localizador_protocolos_listar');
 
                     } else {
@@ -414,7 +414,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                                     $objAtributoAndamentoDTO->getNumIdTarefaAtividade() == TarefaRN::$TI_ALTERACAO_HIPOTESE_LEGAL_DOCUMENTO
                                 ) {
                                     if ($objAtributoAndamentoDTO->getStrIdOrigem() == null) {
-                                        $strNomeTarefa = str_replace('@HIPOTESE_LEGAL@', '"não informada"', $strNomeTarefa);
+                                        $strNomeTarefa = str_replace('@HIPOTESE_LEGAL@', '"nÃ£o informada"', $strNomeTarefa);
                                     } else {
                                         $strNomeTarefa = str_replace('@HIPOTESE_LEGAL@', HipoteseLegalINT::formatarHipoteseLegal($arrObjHipoteseLegalDTO[$objAtributoAndamentoDTO->getStrIdOrigem()]->getStrNome(), $arrObjHipoteseLegalDTO[$objAtributoAndamentoDTO->getStrIdOrigem()]->getStrBaseLegal()), $strNomeTarefa);
                                     }
@@ -425,12 +425,12 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
 
                             case 'VISUALIZACAO':
                                 if ($objAtributoAndamentoDTO->getStrIdOrigem() == null || $objAtributoAndamentoDTO->getStrIdOrigem() == AcessoExternoRN::$TV_INTEGRAL) {
-                                    $strNomeTarefa = str_replace('@VISUALIZACAO@', ' Com visualização integral do processo.', $strNomeTarefa);
+                                    $strNomeTarefa = str_replace('@VISUALIZACAO@', ' Com visualizaÃ§Ã£o integral do processo.', $strNomeTarefa);
                                 } else if ($objAtributoAndamentoDTO->getStrIdOrigem() == AcessoExternoRN::$TV_PARCIAL) {
                                     if ($objAtividadeDTO->getNumIdTarefa() == TarefaRN::$TI_LIBERACAO_ACESSO_EXTERNO) {
-                                        $strNomeTarefa = str_replace('@VISUALIZACAO@', ' Para disponibilização de documentos.', $strNomeTarefa);
+                                        $strNomeTarefa = str_replace('@VISUALIZACAO@', ' Para disponibilizaÃ§Ã£o de documentos.', $strNomeTarefa);
                                     } else {
-                                        $strNomeTarefa = str_replace('@VISUALIZACAO@', ' Com visualização parcial do processo.', $strNomeTarefa);
+                                        $strNomeTarefa = str_replace('@VISUALIZACAO@', ' Com visualizaÃ§Ã£o parcial do processo.', $strNomeTarefa);
                                     }
                                 } else if ($objAtributoAndamentoDTO->getStrIdOrigem() == AcessoExternoRN::$TV_NENHUM) {
                                     $strNomeTarefa = str_replace('@VISUALIZACAO@', ' Sem acesso ao processo.', $strNomeTarefa);
@@ -446,7 +446,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                             case 'TIPO_CONFERENCIA':
                                 if ($objAtributoAndamentoDTO->getNumIdTarefaAtividade() == TarefaRN::$TI_ALTERACAO_TIPO_CONFERENCIA_DOCUMENTO) {
                                     if ($objAtributoAndamentoDTO->getStrIdOrigem() == null) {
-                                        $strNomeTarefa = str_replace('@TIPO_CONFERENCIA@', '"não informado"', $strNomeTarefa);
+                                        $strNomeTarefa = str_replace('@TIPO_CONFERENCIA@', '"nÃ£o informado"', $strNomeTarefa);
                                     } else {
                                         $strNomeTarefa = str_replace('@TIPO_CONFERENCIA@', $arrObjTipoConferenciaDTO[$objAtributoAndamentoDTO->getStrIdOrigem()]->getStrDescricao(), $strNomeTarefa);
                                     }
@@ -461,7 +461,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
 
                             case 'USUARIO':
                                 if ($objAtributoAndamentoDTO->getStrValor() != null) {
-                                    $arrValor = explode('¥', $objAtributoAndamentoDTO->getStrValor());
+                                    $arrValor = explode('Â¥', $objAtributoAndamentoDTO->getStrValor());
                                     $strSubstituicao = '<a href="javascript:void(0);" alt="' . $arrValor[1] . '" title="' . $arrValor[1] . '" class="ancoraSigla">' . $arrValor[0] . '</a>';
                                 } else {
                                     $strSubstituicao = '';
@@ -474,7 +474,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                                 break;
 
                             case 'UNIDADE':
-                                $arrValor = explode('¥', $objAtributoAndamentoDTO->getStrValor());
+                                $arrValor = explode('Â¥', $objAtributoAndamentoDTO->getStrValor());
                                 $strSubstituicao = '<a href="javascript:void(0);" alt="' . $arrValor[1] . '" title="' . $arrValor[1] . '" class="ancoraSigla">' . $arrValor[0] . '</a>';
                                 $strNomeTarefa = str_replace('@UNIDADE@', $strSubstituicao, $strNomeTarefa);
                                 break;
@@ -488,13 +488,13 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                                 break;
 
                             case 'USUARIO_ANULACAO':
-                                $arrValor = explode('¥', $objAtributoAndamentoDTO->getStrValor());
+                                $arrValor = explode('Â¥', $objAtributoAndamentoDTO->getStrValor());
                                 $strSubstituicao = '<a href="javascript:void(0);" alt="' . $arrValor[1] . '" title="' . $arrValor[1] . '" class="ancoraSigla">' . $arrValor[0] . '</a>';
                                 $strNomeTarefa = str_replace('@USUARIO_ANULACAO@', $strSubstituicao, $strNomeTarefa);
                                 break;
 
                             case 'INTERESSADO':
-                                $arrValor = explode('¥', $objAtributoAndamentoDTO->getStrValor());
+                                $arrValor = explode('Â¥', $objAtributoAndamentoDTO->getStrValor());
                                 $strSubstituicao = '<a href="javascript:void(0);" alt="' . $arrValor[1] . '" title="' . $arrValor[1] . '" class="ancoraSigla">' . $arrValor[0] . '</a>';
                                 $strNomeTarefa = str_replace('@INTERESSADO@', $strSubstituicao, $strNomeTarefa);
                                 break;
@@ -517,7 +517,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                                     if ($objAnexoRN->consultarRN0736($objAnexoDTO) != null) {
                                         $strSubstituicao = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_download_anexo&id_anexo=' . $objAtributoAndamentoDTO->getStrIdOrigem()) . '" target="_blank" class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
                                     } else {
-                                        $strSubstituicao = '<a href="javascript:void(0);" onclick="alert(\'Este anexo foi excluído.\');"  class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
+                                        $strSubstituicao = '<a href="javascript:void(0);" onclick="alert(\'Este anexo foi excluÃ­do.\');"  class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
                                     }
                                 }
                                 $strNomeTarefa = str_replace('@ANEXO@', $strSubstituicao, $strNomeTarefa);
@@ -528,9 +528,9 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                         }
 
                         if ($parObjProcedimentoHistoricoDTO->getStrStaHistorico() == ProcedimentoRN::$TH_AUDITORIA && $objAtributoAndamentoDTO->getStrNome() == 'USUARIO_EMULADOR') {
-                            $arrValor = explode('±', $objAtributoAndamentoDTO->getStrValor());
-                            $arrUsuario = explode('¥', $arrValor[0]);
-                            $arrOrgaoUsuario = explode('¥', $arrValor[1]);
+                            $arrValor = explode('Â±', $objAtributoAndamentoDTO->getStrValor());
+                            $arrUsuario = explode('Â¥', $arrValor[0]);
+                            $arrOrgaoUsuario = explode('Â¥', $arrValor[1]);
                             $strUsuario = '<a href="javascript:void(0);" alt="' . $arrUsuario[1] . '" title="' . $arrUsuario[1] . '" class="ancoraSigla">' . $arrUsuario[0] . '</a>';
                             $strOrgaoUsuario = '<a href="javascript:void(0);" alt="' . $arrOrgaoUsuario[1] . '" title="' . $arrOrgaoUsuario[1] . '" class="ancoraSigla">' . $arrOrgaoUsuario[0] . '</a>';
                             $strNomeTarefa .= ' (emulado por ' . $strUsuario . ' / ' . $strOrgaoUsuario . ')';
@@ -619,7 +619,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
             return $objProcedimentoDTO;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando histórico do processo.', $e);
+            throw new InfraException('Erro consultando histÃ³rico do processo.', $e);
         }
     }
 
@@ -627,7 +627,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     {
 
         if (!isset($arrObjDocumentoDTO[$objAtributoAndamentoDTO->getStrIdOrigem()])) {
-            $strSubstituicao = '<a href="javascript:void(0);" onclick="alert(\'Este documento foi excluído.\');" class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
+            $strSubstituicao = '<a href="javascript:void(0);" onclick="alert(\'Este documento foi excluÃ­do.\');" class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
         } else {
             $objDocumentoDTO = $arrObjDocumentoDTO[$objAtributoAndamentoDTO->getStrIdOrigem()];
             $strIdentificacao = PaginaSEI::tratarHTML(trim($objDocumentoDTO->getStrNomeSerie() . ' ' . $objDocumentoDTO->getStrNumero()));
@@ -694,7 +694,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
                         $strValorMultiplo .= ', ';
                     }
                 }
-                $arrValor = explode('¥', $arr[$i]->getStrValor());
+                $arrValor = explode('Â¥', $arr[$i]->getStrValor());
                 $strValorMultiplo .= '<a href="javascript:void(0);" alt="' . $arrValor[1] . '" title="' . $arrValor[1] . '" class="ancoraSigla">' . $arrValor[0] . '</a>';
             }
 
@@ -733,7 +733,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
             if (isset($arrObjProcedimentoDTO[$objAtributoAndamentoDTO->getStrIdOrigem()])) {
                 $strSubstituicao = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_trabalhar&id_procedimento=' . $objAtributoAndamentoDTO->getStrIdOrigem()) . '" target="_blank" class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
             } else {
-                $strSubstituicao = '<a href="javascript:void(0);" onclick="alert(\'Este processo foi excluído.\');" class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
+                $strSubstituicao = '<a href="javascript:void(0);" onclick="alert(\'Este processo foi excluÃ­do.\');" class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
             }
         }
 
@@ -745,7 +745,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
 
         $strIdOrigem = $objAtributoAndamentoDTO->getStrIdOrigem();
 
-        //só mostra link se o localizador é da unidade atual
+        //sÃ³ mostra link se o localizador Ã© da unidade atual
         if ($bolAcaoLocalizadorProtocoloListar && isset($arrObjLocalizadorDTO[$strIdOrigem]) && $arrObjLocalizadorDTO[$strIdOrigem]->getNumIdUnidade() == SessaoSEI::getInstance()->getNumIdUnidadeAtual()) {
             $strSubstituicao = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=localizador_protocolos_listar&id_localizador=' . $strIdOrigem) . '" target="_blank" class="ancoraHistoricoProcesso">' . $objAtributoAndamentoDTO->getStrValor() . '</a>';
         } else {
@@ -755,7 +755,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
         $strNomeTarefa = str_replace('@LOCALIZADOR@', $strSubstituicao, $strNomeTarefa);
     }
 
-    //método que retorna a unidade de abertura de processo novo relacionado ao processo sigiloso que foi informado pelo usuario na tela de processo intercorrente
+    //mÃ©todo que retorna a unidade de abertura de processo novo relacionado ao processo sigiloso que foi informado pelo usuario na tela de processo intercorrente
     public function retornaIdUnidadeAberturaProcessoConectado( $idProcedimento ){
 
     	//encontra a unidade de abertura e setar aqui
@@ -779,7 +779,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     		    		
     		foreach( $arrCredenciais as $itemCredencial ){
     			
-    			//descobrir se a unidade vinculada a esta credencial ainda está ativa
+    			//descobrir se a unidade vinculada a esta credencial ainda estÃ¡ ativa
     			$idUnidade = $itemCredencial->getNumIdUnidade();
     			$unidadeDTO = new UnidadeDTO();
     			$unidadeDTO->retNumIdUnidade();
@@ -836,7 +836,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
 
     	 	foreach( $arrObjAtividadeDTO as $atividade ){
     	 		
-    	 		//verificando se a unidade desta atividade está ativa
+    	 		//verificando se a unidade desta atividade estÃ¡ ativa
     	 		$idUnidade = $atividade->getNumIdUnidade();
     	 		
     	 		$unidadeDTO = new UnidadeDTO();
@@ -846,7 +846,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	 		
     	 		$unidadeDTO = $unidadeRN->consultarRN0125( $unidadeDTO );
     	 		    	 		
-    	 		//verificar se a unidade está ativa
+    	 		//verificar se a unidade estÃ¡ ativa
     	 		if( $unidadeDTO->getStrSinAtivo() == 'S' ){
     	 			
     	 			$idUnidadeSigiloso = $unidadeDTO->getNumIdUnidade();
@@ -859,7 +859,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	 }
     	 
     	//====================================================================================
-    	//CASO 3 - Nao possui credencial apontada para unidade ativa, os andamentos de concessao e revogaçao de credencial nao estao apontados para unidade ativa
+    	//CASO 3 - Nao possui credencial apontada para unidade ativa, os andamentos de concessao e revogaÃ§ao de credencial nao estao apontados para unidade ativa
     	// Resta fazer a checagem "padrao" em todo o andamento do processo para ver a ultima unidade ativa por onde o processo tramitou
     	//====================================================================================
     	    	
@@ -873,7 +873,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	 * Tarefas que implicam na abertura do processo na Unidade  (ID/Nome):
     	 * MESCLANDO TAREFAS DE PROCESSOS PUBLICO/RESTRITO + SIGILOSO
     	   1 - Processo @NIVEL_ACESSO@@GRAU_SIGILO@ gerado @DATA_AUTUACAO@@HIPOTESE_LEGAL@
-           21 - Remoção de sobrestamento        
+           21 - RemoÃ§Ã£o de sobrestamento        
            29 - Reabertura do processo na unidade 
            32 - Processo remetido pela unidade @UNIDADE@ 
            64 - Reabertura do processo    
@@ -908,7 +908,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     			
     			$unidadeDTO = $unidadeRN->consultarRN0125( $unidadeDTO );
     			
-    			//1- verificar se a unidade está ativa
+    			//1- verificar se a unidade estÃ¡ ativa
     			if( $unidadeDTO != null && $unidadeDTO->getStrSinAtivo() == 'S' ){
     				
     				$idUnidadeSigiloso = $unidadeDTO->getNumIdUnidade();
@@ -921,7 +921,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	} 
     	
     	//====================================================================================
-    	//CASO 4 - Nao há nenhuma unidade ativa dentre aquelas em que o processo tramitou, deve dar erro / msg de validação
+    	//CASO 4 - Nao hÃ¡ nenhuma unidade ativa dentre aquelas em que o processo tramitou, deve dar erro / msg de validaÃ§Ã£o
     	//====================================================================================
     	if( $idUnidadeSigiloso == null ){
     		
@@ -932,7 +932,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
 }
 
 /**
- * Função responsável por Retornar a última unidade em que o processo ESTÀ aberto agora (método válido apenas para processos sigilosos)
+ * FunÃ§Ã£o responsÃ¡vel por Retornar a Ãºltima unidade em que o processo ESTÃ€ aberto agora (mÃ©todo vÃ¡lido apenas para processos sigilosos)
  * @param $idProcedimento
  * @return  string $idUnidade
  */
@@ -954,16 +954,16 @@ protected function retornaUltimaUnidadeProcessoSigilosoAbertoConectado($idProced
 	$saidaConsultarProcedimentoAPI = $this->consultarProcedimento($objEntradaConsultaProcApi);
 
 	/*  
-	Tarefas que implicam na conclusão do processo na Unidade  (ID - Nome):
-    28 - Conclusão do processo na unidade
-    41 - Conclusão automática de processo na unidade
-    63 - Processo concluído
-    70 - Conclusão Automática de Processo do Usuário @USUARIO@
-    77 - Renúncia de credencial
-    117 Cancelamento de credencial por Coordenador de Acervo do usuário na unidade
+	Tarefas que implicam na conclusÃ£o do processo na Unidade  (ID - Nome):
+    28 - ConclusÃ£o do processo na unidade
+    41 - ConclusÃ£o automÃ¡tica de processo na unidade
+    63 - Processo concluÃ­do
+    70 - ConclusÃ£o AutomÃ¡tica de Processo do UsuÃ¡rio @USUARIO@
+    77 - RenÃºncia de credencial
+    117 Cancelamento de credencial por Coordenador de Acervo do usuÃ¡rio na unidade
 	*/
 	
-	//informaçoes das tarefas de conclusao de processo na unidade
+	//informaÃ§oes das tarefas de conclusao de processo na unidade
 	$tarefaRN = new TarefaRN();
 	$tarefaDTO = new TarefaDTO();
 	$tarefaDTO->retNumIdTarefa( );

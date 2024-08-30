@@ -3,8 +3,9 @@
  * TRIBUNAL REGIONAL FEDERAL DA 4? REGI?O
  *
  * 08/12/2016 - criado por Marcelo Bezerra - CAST
+ * 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
  *
- * Vers?o do Gerador de C?digo: 1.39.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.39.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -93,20 +94,20 @@ class MdPetIntTipoIntimacaoINT extends InfraINT
         for ($i = 0; $i < count($arrMdPetIntRelIntimRespDTO); $i++){
             $id = $arrMdPetIntRelIntimRespDTO[$i]->getNumIdMdPetIntTipoIntimacao() . '_' .$arrMdPetIntRelIntimRespDTO[$i]->getNumIdMdPetIntTipoResp();
             if ($arrMdPetIntRelIntimRespDTO[$i]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'N') {
-              $prazo = '(Não Possui Prazo Externo)';
+              $prazo = '(NÃ£o Possui Prazo Externo)';
             }else{ 
               $prazo = '(' . $arrMdPetIntRelIntimRespDTO[$i]->getNumValorPrazoExternoMdPetIntTipoResp();
               if ($arrMdPetIntRelIntimRespDTO[$i]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'D') {
                 $tipoDia = '';
                 if ($arrMdPetIntRelIntimRespDTO[$i]->getStrTipoDia() == 'U') {
-                  $tipoDia = ' Útil';
+                  $tipoDia = ' Ãštil';
                   if ($arrMdPetIntRelIntimRespDTO[$i]->getNumValorPrazoExternoMdPetIntTipoResp() > 1) {
-                    $tipoDia = ' Úteis';
+                    $tipoDia = ' Ãšteis';
                   }
                 }
                 $prazo .= $arrMdPetIntRelIntimRespDTO[$i]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ?  ' Dias'.$tipoDia : ' Dia'.$tipoDia;
               } else if ($arrMdPetIntRelIntimRespDTO[$i]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'M') {
-                $prazo .= $arrMdPetIntRelIntimRespDTO[$i]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ?  ' Meses' : ' Mês';
+                $prazo .= $arrMdPetIntRelIntimRespDTO[$i]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ?  ' Meses' : ' MÃªs';
               } else if ($arrMdPetIntRelIntimRespDTO[$i]->getStrTipoPrazoExternoMdPetIntTipoResp() == 'A') {
                 $prazo .= $arrMdPetIntRelIntimRespDTO[$i]->getNumValorPrazoExternoMdPetIntTipoResp() > 1 ?  ' Anos' : ' Ano';
               }
@@ -124,13 +125,13 @@ class MdPetIntTipoIntimacaoINT extends InfraINT
             $nome = $nomeTpResp . ' ' . $prazo . ' - ' . $resposta;
             
             // TODO: refatorar este trecho, para nao usar este delimitador '-#-', retornar em formato XML usando atributos ou subtags na tags Ids retornada pelo ajax
-            $tipoResposta[$i] = $arrMdPetIntRelIntimRespDTO[$i]->getNumIdMdPetIntTipoResp() . '±' . $nome . '±' . $arrMdPetIntRelIntimRespDTO[$i]->getStrTipoRespostaAceitaMdPetIntTipoResp();
+            $tipoResposta[$i] = $arrMdPetIntRelIntimRespDTO[$i]->getNumIdMdPetIntTipoResp() . 'Â±' . $nome . 'Â±' . $arrMdPetIntRelIntimRespDTO[$i]->getStrTipoRespostaAceitaMdPetIntTipoResp();
         }
 
         if($retornaXml){
             $xml = '<Documento>';
             $xml .= '<TipoRespostaAceita>'. $tipoRespostaAceita .'</TipoRespostaAceita>';
-            $xml .= '<Ids>'. implode("¥", $tipoResposta) .'</Ids>';
+            $xml .= '<Ids>'. implode("Â¥", $tipoResposta) .'</Ids>';
             $xml .= '</Documento>';
         }else{
             $xml = $tipoResposta;

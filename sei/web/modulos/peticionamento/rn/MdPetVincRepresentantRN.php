@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 02/04/2018 - criado por jose vieira
  *
- * Versão do Gerador de Código: 1.41.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.41.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -12,14 +12,14 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetVincRepresentantRN extends InfraRN
 {
 
-    //Procuração Eletrônica
+    //ProcuraÃ§Ã£o EletrÃ´nica
     public static $PE_RESPONSAVEL_LEGAL = 'L';
     public static $PE_PROCURADOR_ESPECIAL = 'E';
     public static $PE_PROCURADOR = 'C';
     public static $PE_PROCURADOR_SIMPLES = 'S';
     public static $PE_AUTORREPRESENTACAO = 'U';
 
-    //Representação - Estado
+    //RepresentaÃ§Ã£o - Estado
     public static $RP_ATIVO = 'A';
     public static $RP_SUSPENSO = 'S';
     public static $RP_REVOGADA = 'R';
@@ -28,14 +28,14 @@ class MdPetVincRepresentantRN extends InfraRN
     public static $RP_SUBSTITUIDA = 'T';
     public static $RP_INATIVO = 'I';
 
-    //Abrangência
+    //AbrangÃªncia
     public static $PR_ESPECIFICO = 'E';
     public static $PR_QUALQUER = 'Q';
 
     public static $STR_PROCURADOR_ESPECIAL = 'Procurador Especial';
-    public static $STR_RESPONSAVEL_LEGAL = 'Responsável Legal';
+    public static $STR_RESPONSAVEL_LEGAL = 'ResponsÃ¡vel Legal';
     public static $STR_PROCURADOR_SIMPLES = 'Procurador Simples';
-    public static $STR_AUTORREPRESENTACAO = 'Autorrepresentação de Usuário Externo';
+    public static $STR_AUTORREPRESENTACAO = 'AutorrepresentaÃ§Ã£o de UsuÃ¡rio Externo';
 
     //Natureza
     public static $NT_FISICA = 'F';
@@ -54,42 +54,42 @@ class MdPetVincRepresentantRN extends InfraRN
     private function validarNumIdMdPetVinculoRepresent(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent())) {
-            $objInfraException->adicionarValidacao('IdMdPetVinculoRepresent não informado.');
+            $objInfraException->adicionarValidacao('IdMdPetVinculoRepresent nÃ£o informado.');
         }
     }
 
     private function validarNumIdMdPetVinculo(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getNumIdMdPetVinculo())) {
-            $objInfraException->adicionarValidacao('IdMdPetVinculo não informado.');
+            $objInfraException->adicionarValidacao('IdMdPetVinculo nÃ£o informado.');
         }
     }
 
     private function validarNumIdContato(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getNumIdContato())) {
-            $objInfraException->adicionarValidacao('IdContato não informado.');
+            $objInfraException->adicionarValidacao('IdContato nÃ£o informado.');
         }
     }
 
     private function validarNumIdContatoOutorg(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getNumIdContatoOutorg())) {
-            $objInfraException->adicionarValidacao('IdContatoOutorg não informado.');
+            $objInfraException->adicionarValidacao('IdContatoOutorg nÃ£o informado.');
         }
     }
 
     private function validarNumIdAcessoExterno(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getNumIdAcessoExterno())) {
-            $objInfraException->adicionarValidacao('IdAcessoExterno não informado.');
+            $objInfraException->adicionarValidacao('IdAcessoExterno nÃ£o informado.');
         }
     }
 
     private function validarStrTipoRepresentante(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getStrTipoRepresentante())) {
-            $objInfraException->adicionarValidacao(' TipoRepresentante não informado.');
+            $objInfraException->adicionarValidacao(' TipoRepresentante nÃ£o informado.');
         } else {
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante(trim($objMdPetVincRepresentantDTO->getStrTipoRepresentante()));
 
@@ -102,17 +102,17 @@ class MdPetVincRepresentantRN extends InfraRN
     private function validarDthDataCadastro(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getDthDataCadastro())) {
-            $objInfraException->adicionarValidacao('DthDataCadastro não informad.');
+            $objInfraException->adicionarValidacao('DthDataCadastro nÃ£o informad.');
         }
     }
 
     private function validarStrStaEstado(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getStrStaEstado())) {
-            $objInfraException->adicionarValidacao('StaEstado não informad.');
+            $objInfraException->adicionarValidacao('StaEstado nÃ£o informad.');
         } else {
             if (!in_array($objMdPetVincRepresentantDTO->getStrStaEstado(), InfraArray::converterArrInfraDTO($this->listarValoresEstado(), 'StaEstado'))) {
-                $objInfraException->adicionarValidacao(' inválid.');
+                $objInfraException->adicionarValidacao(' invÃ¡lid.');
             }
         }
     }
@@ -143,7 +143,7 @@ class MdPetVincRepresentantRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Representante do Vínculo.', $e);
+            throw new InfraException('Erro cadastrando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -184,7 +184,7 @@ class MdPetVincRepresentantRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Representante do Vínculo.', $e);
+            throw new InfraException('Erro alterando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -208,7 +208,7 @@ class MdPetVincRepresentantRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Representante do Vínculo.', $e);
+            throw new InfraException('Erro excluindo Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -232,7 +232,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Representante do Vínculo.', $e);
+            throw new InfraException('Erro consultando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -254,7 +254,7 @@ class MdPetVincRepresentantRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Representante do Vínculo.', $e);
+            throw new InfraException('Erro listando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -278,7 +278,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Representante do Vínculo.', $e);
+            throw new InfraException('Erro contando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -302,7 +302,7 @@ class MdPetVincRepresentantRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro desativando Representante do Vínculo.', $e);
+            throw new InfraException('Erro desativando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -326,7 +326,7 @@ class MdPetVincRepresentantRN extends InfraRN
             //Auditoria
 
         } catch (Exception $e) {
-            throw new InfraException('Erro reativando Representante do Vínculo.', $e);
+            throw new InfraException('Erro reativando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -349,7 +349,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro bloqueando Representante do Vínculo.', $e);
+            throw new InfraException('Erro bloqueando Representante do VÃ­nculo.', $e);
         }
     }
 
@@ -397,7 +397,7 @@ class MdPetVincRepresentantRN extends InfraRN
         $idRepresentante = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
 
         if (is_numeric($numeroSEI)) {
-            // Justificativa é um documento
+            // Justificativa Ã© um documento
             $objDocumentoRN = new DocumentoRN();
             $objDocumentoDTO = new DocumentoDTO();
             $numeroSEIFormt = '%' . trim($numeroSEI);
@@ -412,7 +412,7 @@ class MdPetVincRepresentantRN extends InfraRN
         }
 
         $objMdPetVincRepresentantDTO->setStrMotivo($_POST['txtMotivo']);
-        $objMdPetVincRepresentantDTO->setStrStaEstado(self::$RP_SUBSTITUIDA); // Marcar como Procuração como Substituída
+        $objMdPetVincRepresentantDTO->setStrStaEstado(self::$RP_SUBSTITUIDA); // Marcar como ProcuraÃ§Ã£o como SubstituÃ­da
         $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentantDTO);
 
         // retornando representante anterior
@@ -459,7 +459,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
                 $bolNaoReestabelecer = false;
-                $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+                $strMensagemNaoReestabelecer = 'NÃ£o Ã© possÃ­vel Reestabelecer desta Pessoa JurÃ­dica, tendo em vista que os UsuÃ¡rios Externos abaixo estÃ£o desativados: \n \n';
                 $usuariosExternosDesativados = [];
 
                 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
@@ -478,7 +478,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 if ($bolNaoReestabelecer) {
 
                     $strMensagemNaoReestabelecer .= implode('', array_unique($usuariosExternosDesativados));
-                    $strMensagemNaoReestabelecer .= '\n Caso necessário, primeiramente regularize os cadastros dos Usuários Externos acima.';
+                    $strMensagemNaoReestabelecer .= '\n Caso necessÃ¡rio, primeiramente regularize os cadastros dos UsuÃ¡rios Externos acima.';
                     $objInfraException = new InfraException();
                     $objInfraException->adicionarValidacao($strMensagemNaoReestabelecer);
                     $objInfraException->lancarValidacoes();
@@ -514,7 +514,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
                 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
 
-                    // Usuário do vínculo
+                    // UsuÃ¡rio do vÃ­nculo
                     $objUsuarioDTO = new UsuarioDTO();
                     $objUsuarioDTO->setNumIdContato($objMdPetVincRepresentantDTO->getNumIdContato());
                     $objUsuarioDTO->retStrSinAtivo();
@@ -531,7 +531,7 @@ class MdPetVincRepresentantRN extends InfraRN
                     $arrObjMdPetVincDocumentoDTO = (new MdPetVincDocumentoRN)->consultar($objMdPetVincDocumentoDTO);
 
                     if(!empty($objUsuarioDTO) && !empty($arrObjMdPetVincDocumentoDTO)){
-                        $procurador = $objUsuarioDTO->getStrNome() . ' - '.$objMdPetVincRepresentantDTO->getStrNomeTipoVinculacao().' nº ' . $arrObjMdPetVincDocumentoDTO->getStrProtocoloFormatadoProtocolo();
+                        $procurador = $objUsuarioDTO->getStrNome() . ' - '.$objMdPetVincRepresentantDTO->getStrNomeTipoVinculacao().' nÂº ' . $arrObjMdPetVincDocumentoDTO->getStrProtocoloFormatadoProtocolo();
                         if(!in_array($procurador, $arrListaProcuradores)){
                             array_push($arrListaProcuradores, $procurador);
                         }
@@ -570,7 +570,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
                 if (is_numeric($numeroSEI)) {
 
-                    // Justificativa é um documento
+                    // Justificativa Ã© um documento
                     $objDocumentoDTO = new DocumentoDTO();
                     $numeroSEIFormt = '%' . trim($numeroSEI);
                     $objDocumentoDTO->setStrProtocoloDocumentoFormatado($numeroSEIFormt, InfraDTO::$OPER_LIKE);
@@ -613,7 +613,7 @@ class MdPetVincRepresentantRN extends InfraRN
                         $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
                     }
 
-               // 2) Última aberta
+               // 2) Ãšltima aberta
                 } else if (count($arrUnidadeProcesso) == 0) {
                     $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
                 }
@@ -643,7 +643,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $arrObjAtributoAndamentoDTO = array();
                 $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                 $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-                $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' ¥ ' . $objUnidadeDTO->getStrDescricao());
+                $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' Â¥ ' . $objUnidadeDTO->getStrDescricao());
                 $objAtributoAndamentoDTO->setStrIdOrigem($objUnidadeDTO->getNumIdUnidade());
                 $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -727,10 +727,10 @@ class MdPetVincRepresentantRN extends InfraRN
 
             $dados['procuracao_tipo'] = $objMdPetVincRepresentantDTO->getStrNomeTipoVinculacao();
 
-            $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer o Procurador, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+            $strMensagemNaoReestabelecer = 'NÃ£o Ã© possÃ­vel Reestabelecer o Procurador, tendo em vista que os UsuÃ¡rios Externos abaixo estÃ£o desativados: \n \n';
             $bolNaoReestabelecer = false;
 
-            // BUSCA OS DADOS DO USUÁRIO EXTERNO DO PROCURADOR:
+            // BUSCA OS DADOS DO USUÃRIO EXTERNO DO PROCURADOR:
             $objUsuarioDTO = new UsuarioDTO();
             $objUsuarioDTO->setNumIdContato($idContatoProc);
             $objUsuarioDTO->retStrSinAtivo();
@@ -743,7 +743,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $strMensagemNaoReestabelecer .= '    - ' . $objUsuarioDTO->getStrNome() . ' (' . InfraUtil::formatarCpf($objMdPetVincRepresentantDTO->getStrCpfProcurador()) . ') \n';
             }
 
-            $strMensagemNaoReestabelecer .= '\n Caso necessário, primeiramente regularize os cadastros dos Usuários Externos acima.';
+            $strMensagemNaoReestabelecer .= '\n Caso necessÃ¡rio, primeiramente regularize os cadastros dos UsuÃ¡rios Externos acima.';
 
             if ($bolNaoReestabelecer) {
                 $objInfraException = new InfraException();
@@ -781,7 +781,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             if (is_numeric($numeroSEI)) {
 
-                // JUSTIFICATIVA É UM DOCUMENTO
+                // JUSTIFICATIVA Ã‰ UM DOCUMENTO
                 $objDocumentoDTO = new DocumentoDTO();
                 $numeroSEIFormt = '%' . trim($numeroSEI);
                 $objDocumentoDTO->setStrProtocoloDocumentoFormatado($numeroSEIFormt, InfraDTO::$OPER_LIKE);
@@ -824,7 +824,7 @@ class MdPetVincRepresentantRN extends InfraRN
                     $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
                 }
 
-                // 2) ÚLTIMA ABERTA
+                // 2) ÃšLTIMA ABERTA
             } else if (count($arrUnidadeProcesso) == 0) {
                 $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
             }
@@ -852,7 +852,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $arrObjAtributoAndamentoDTO = array();
             $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
             $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-            $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' ¥ ' . $objUnidadeDTO->getStrDescricao());
+            $objAtributoAndamentoDTO->setStrValor($objUnidadeDTO->getStrSigla() . ' Â¥ ' . $objUnidadeDTO->getStrDescricao());
             $objAtributoAndamentoDTO->setStrIdOrigem($objUnidadeDTO->getNumIdUnidade());
             $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -866,7 +866,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
             $objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
 
-            // Email apenas se não estiver em localhost pra evitar estouro de tela
+            // Email apenas se nÃ£o estiver em localhost pra evitar estouro de tela
             if ($dados['hdnStrTipoVinculo'] == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL){
                 if($operacao == MdPetVincRepresentantRN::$RP_SUSPENSO) {
                     (new MdPetIntEmailNotificacaoRN())->enviarEmailVincSuspensao($params);

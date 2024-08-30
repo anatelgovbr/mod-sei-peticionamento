@@ -1,10 +1,11 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
- * 25/01/2018 - criado por Usu·rio
+ * 25/01/2018 - criado por Usu√°rio
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
  *
- * Vers„o do Gerador de CÛdigo: 1.41.0
+ * Vers√£o do Gerador de C√≥digo: 1.41.0
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -41,7 +42,7 @@ class MdPetIntegracaoINT extends InfraINT {
 
             if (!filter_var($enderecoWSDL, FILTER_VALIDATE_URL) || !InfraUtil::isBolUrlValida( $enderecoWSDL, FILTER_VALIDATE_URL )) {
                 $xml .= "<success>false</success>\n";
-                $xml .= "<msg>O endereÁo WSDL n„o È uma URL v·lida.</msg>\n";
+                $xml .= "<msg>O endere√ßo WSDL n√£o √© uma URL v√°lida.</msg>\n";
                 $xml .= "</operacoes>\n";
                 return $xml;
             }
@@ -51,7 +52,7 @@ class MdPetIntegracaoINT extends InfraINT {
 
             if(empty($operacaoArr)){
                 $xml .= "<success>false</success>\n";
-                $xml .= "<msg>N„o existe operaÁ„o.</msg>\n";
+                $xml .= "<msg>N√£o existe opera√ß√£o.</msg>\n";
                 $xml .= "</operacoes>\n";
                 return $xml;
             }
@@ -65,7 +66,7 @@ class MdPetIntegracaoINT extends InfraINT {
         }catch(Exception $e){
             $xml = "<operacoes>\n";
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>Erro na conex„o SOAP: {$e->getMessage()}</msg>\n";
+            $xml .= "<msg>Erro na conex√£o SOAP: {$e->getMessage()}</msg>\n";
         }
 
         $xml .= '</operacoes>';
@@ -80,7 +81,7 @@ class MdPetIntegracaoINT extends InfraINT {
         /*
               if (!filter_var($enderecoWSDL, FILTER_VALIDATE_URL) || !InfraUtil::isBolUrlValida( $enderecoWSDL, FILTER_VALIDATE_URL )) {
                 $xml .= "<success>false</success>\n";
-                $xml .= "<msg>O endereÁo WSDL n„o È uma URL v·lida.</msg>\n";
+                $xml .= "<msg>O endere√ßo WSDL n√£o √© uma URL v√°lida.</msg>\n";
                 $xml .= "</parametros>\n";
                 return $xml;
               }
@@ -90,7 +91,7 @@ class MdPetIntegracaoINT extends InfraINT {
 
               if(empty($operacaoArr)){
                 $xml .= "<success>false</success>\n";
-                $xml .= "<msg>N„o existe parametro.</msg>\n";
+                $xml .= "<msg>N√£o existe parametro.</msg>\n";
                 $xml .= "</parametros>\n";
                 return $xml;
               }
@@ -146,18 +147,18 @@ class MdPetIntegracaoINT extends InfraINT {
                     $arrObjMdLitMapearParamSaidaDTO = $objMdLitMapearParamSaidaRN->listar($objMdLitMapearParamSaidaDTO);
                 }
 
-                //tabela de dados de saÌda
+                //tabela de dados de sa√≠da
                 $numRegistrosParametroSaida = count($arrParametroSaida);
                 if($numRegistrosParametroSaida > 0){
-                    $strSumarioTabela = 'Tabela de configuraÁ„o dos dados de saÌda do web-service.';
-                    $strCaptionTabela = 'Dados de saÌda';
+                    $strSumarioTabela = 'Tabela de configura√ß√£o dos dados de sa√≠da do web-service.';
+                    $strCaptionTabela = 'Dados de sa√≠da';
 
                     $strResultadoParamSaida .= '<table width="90%" id="tableParametroSaida" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
                     $strResultadoParamSaida .= '<tr>';
 
-                    $strResultadoParamSaida .= '<th class="infraTh" width="20%">&nbsp;Dados de SaÌda no Webservice&nbsp;</th>' . "\n";
+                    $strResultadoParamSaida .= '<th class="infraTh" width="20%">&nbsp;Dados de Sa√≠da no Webservice&nbsp;</th>' . "\n";
                     $strResultadoParamSaida .= '<th class="infraTh" width="20%">&nbsp;Campo de Destino no SEI&nbsp;</th>' . "\n";
-                    $strResultadoParamSaida .= '<th class="infraTh" width="5%">&nbsp;Chave ⁄nica da IntegraÁ„o&nbsp;</th>' . "\n";
+                    $strResultadoParamSaida .= '<th class="infraTh" width="5%">&nbsp;Chave √önica da Integra√ß√£o&nbsp;</th>' . "\n";
                     $strResultadoParamSaida .= '</tr>' . "\n";
                     $strCssTr = '';
 
@@ -205,7 +206,7 @@ class MdPetIntegracaoINT extends InfraINT {
 //    }catch(Exception $e){
         /*
               $xml .= "<success>false</success>\n";
-              $xml .= "<msg>Erro na conex„o SOAP: {$e->getMessage()}</msg>\n";
+              $xml .= "<msg>Erro na conex√£o SOAP: {$e->getMessage()}</msg>\n";
         */
 //    }
 
@@ -215,14 +216,14 @@ class MdPetIntegracaoINT extends InfraINT {
 
     public static function confirmarWsConsultaDadosCNPJReceitaFederal() {
 
-        //Caso n„o exista a integraÁ„o do tipo 'consultarCnpj' ativo È exibido um alerta para usu·rio
+        //Caso n√£o exista a integra√ß√£o do tipo 'consultarCnpj' ativo √© exibido um alerta para usu√°rio
         $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retNumIdMdPetVincTpProcesso();
         $objMdPetVincTpProcessoDTO->setNumMaxRegistrosRetorno(1);
         $objMdPetVincUsuExtPj = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
 
-        //Configurado: "IntegraÁ„o" com funcionalidade "Consultar Dados CNPJ Receita Federal"
+        //Configurado: "Integra√ß√£o" com funcionalidade "Consultar Dados CNPJ Receita Federal"
         $objMdPetIntegFuncionalidRN = new MdPetIntegFuncionalidRN();
         $arrIdMdPetIntegFuncionalidUtilizado = $objMdPetIntegFuncionalidRN->verificarMdPetIntegFuncionalidUtilizado(null, null, 'Consultar Dados CNPJ Receita Federal');
 

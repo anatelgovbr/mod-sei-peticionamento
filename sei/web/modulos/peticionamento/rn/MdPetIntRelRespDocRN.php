@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 22/03/2017 - criado por jaqueline.cast
 *
-* Vers„o do Gerador de CÛdigo: 1.40.1
+* Vers√£o do Gerador de C√≥digo: 1.40.1
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -21,19 +21,19 @@ class MdPetIntRelRespDocRN extends InfraRN {
 
   private function validarNumIdMdPetIntRespDocumento(MdPetIntRelRespDocDTO $objMdPetIntRelRespDocDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelRespDocDTO->getNumIdMdPetIntRespDocumento())){
-      $objInfraException->adicionarValidacao(' n„o informad.');
+      $objInfraException->adicionarValidacao(' n√£o informad.');
     }
   }
 
   private function validarNumIdMdPetIntDestResposta(MdPetIntRelRespDocDTO $objMdPetIntRelRespDocDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelRespDocDTO->getNumIdMdPetIntDestResposta())){
-      $objInfraException->adicionarValidacao(' n„o informad.');
+      $objInfraException->adicionarValidacao(' n√£o informad.');
     }
   }
 
   private function validarDblIdDocumento(MdPetIntRelRespDocDTO $objMdPetIntRelRespDocDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelRespDocDTO->getDblIdDocumento())){
-      $objInfraException->adicionarValidacao(' n„o informad.');
+      $objInfraException->adicionarValidacao(' n√£o informad.');
     }
   }
 

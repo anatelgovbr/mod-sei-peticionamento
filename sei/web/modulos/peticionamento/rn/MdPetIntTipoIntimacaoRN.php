@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 08/12/2016 - criado por Marcelo Bezerra - CAST
  *
- * Versão do Gerador de Código: 1.39.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.39.0
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -25,7 +25,7 @@ class MdPetIntTipoIntimacaoRN extends InfraRN {
 
     private function validarStrNome(MdPetIntTipoIntimacaoDTO $objMdPetIntTipoIntimacaoDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntTipoIntimacaoDTO->getStrNome())){
-            $objInfraException->adicionarValidacao('Nome não informado.');
+            $objInfraException->adicionarValidacao('Nome nÃ£o informado.');
         }else{
             $objMdPetIntTipoIntimacaoDTO->setStrNome(trim($objMdPetIntTipoIntimacaoDTO->getStrNome()));
 
@@ -40,24 +40,24 @@ class MdPetIntTipoIntimacaoRN extends InfraRN {
 
             $dto = $this->consultar($dto);
             if($dto){
-                $objInfraException->adicionarValidacao('Nome já existente.');
+                $objInfraException->adicionarValidacao('Nome jÃ¡ existente.');
             }
         }
     }
 
     private function validarStrSinAtivo(MdPetIntTipoIntimacaoDTO $objMdPetIntTipoIntimacaoDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntTipoIntimacaoDTO->getStrSinAtivo())){
-            $objInfraException->adicionarValidacao('Sinalizador de Exclusão Lógica não informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de ExclusÃ£o LÃ³gica nÃ£o informado.');
         }else{
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntTipoIntimacaoDTO->getStrSinAtivo())){
-                $objInfraException->adicionarValidacao('Sinalizador de Exclusão Lógica inválido.');
+                $objInfraException->adicionarValidacao('Sinalizador de ExclusÃ£o LÃ³gica invÃ¡lido.');
             }
         }
     }
 
     private function validarStrTipoRespostaAceita(MdPetIntTipoIntimacaoDTO $objMdPetIntTipoIntimacaoDTO, InfraException $objInfraException){
         if ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() == ''){
-            $objInfraException->adicionarValidacao('Tipo de Resposta não informado.');
+            $objInfraException->adicionarValidacao('Tipo de Resposta nÃ£o informado.');
         }
     }
 
@@ -203,7 +203,7 @@ class MdPetIntTipoIntimacaoRN extends InfraRN {
         if (!$permiteExclusao) {
             $nomeTpIntimacao   = $this->_getNomeTipoIntimacao($idTipoIntimacao);
             $objInfraException = new InfraException();
-            $objInfraException->adicionarValidacao('O Tipo de Intimação Eletrônica "'.$nomeTpIntimacao.'" não pode ser excluído pois está vinculado à uma Intimação.');
+            $objInfraException->adicionarValidacao('O Tipo de IntimaÃ§Ã£o EletrÃ´nica "'.$nomeTpIntimacao.'" nÃ£o pode ser excluÃ­do pois estÃ¡ vinculado Ã  uma IntimaÃ§Ã£o.');
             $objInfraException->lancarValidacoes();
             return false;
         }

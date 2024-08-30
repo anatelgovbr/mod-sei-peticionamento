@@ -1,12 +1,12 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 11/01/2008 - criado por marcio_db
 *
-* Vers„o do Gerador de CÛdigo: 1.12.0
+* Vers√£o do Gerador de C√≥digo: 1.12.0
 *
-* Vers„o no CVS: $Id$
+* Vers√£o no CVS: $Id$
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -55,7 +55,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       //Auditoria
 
     }catch(Exception $e){
-      throw new InfraException('Erro cadastrando Usu·rio Externo.',$e);
+      throw new InfraException('Erro cadastrando Usu√°rio Externo.',$e);
     }
   }
 
@@ -77,7 +77,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro consultando Usu·rio.',$e);
+      throw new InfraException('Erro consultando Usu√°rio.',$e);
     }
   }
 
@@ -100,7 +100,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       return $ret;
 
     }catch(Exception $e){
-      throw new InfraException('Erro listando Usu·rios.',$e);
+      throw new InfraException('Erro listando Usu√°rios.',$e);
     }
   }
   
@@ -173,7 +173,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       return $this->listarRN0490($objUsuarioDTO);
 
     }catch(Exception $e){
-      throw new InfraException('Erro pesquisando Usu·rios.',$e);
+      throw new InfraException('Erro pesquisando Usu√°rios.',$e);
     }
   }
 
@@ -195,37 +195,37 @@ class MdPetUsuarioExternoRN extends InfraRN {
 
       return $ret;
     }catch(Exception $e){
-      throw new InfraException('Erro contando Usu·rios.',$e);
+      throw new InfraException('Erro contando Usu√°rios.',$e);
     }
   }
 
 
   private function validarStrStaTipo(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getStrStaTipo())){
-      $objInfraException->adicionarValidacao('Tipo do usu·rio n„o informado.');
+      $objInfraException->adicionarValidacao('Tipo do usu√°rio n√£o informado.');
     }else{
       if (!in_array($objUsuarioDTO->getStrStaTipo(), array(self::$TU_SIP, self::$TU_SISTEMA, self::$TU_EXTERNO_PENDENTE, self::$TU_EXTERNO))){
-        $objInfraException->adicionarValidacao('Tipo do usu·rio inv·lido.');
+        $objInfraException->adicionarValidacao('Tipo do usu√°rio inv√°lido.');
       }
     }
   }
 
   private function validarStrSinAcessibilidade(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getStrSinAcessibilidade())){
-      $objInfraException->adicionarValidacao('Sinalizador de Acessibilidade n„o informado.');
+      $objInfraException->adicionarValidacao('Sinalizador de Acessibilidade n√£o informado.');
     }else{
       if (!InfraUtil::isBolSinalizadorValido($objUsuarioDTO->getStrSinAcessibilidade())){
-        $objInfraException->adicionarValidacao('Sinalizador de Acessibilidade inv·lido.');
+        $objInfraException->adicionarValidacao('Sinalizador de Acessibilidade inv√°lido.');
       }
     }
   }
 
   private function validarStrSinAtivoRN0694(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getStrSinAtivo())){
-      $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica n„o informado.');
+      $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica n√£o informado.');
     }else{
       if (!InfraUtil::isBolSinalizadorValido($objUsuarioDTO->getStrSinAtivo())){
-        $objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica inv·lido.');
+        $objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica inv√°lido.');
       }
     }
   }
@@ -271,7 +271,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
   private function validarStrSiglaRN0955(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     
     if (InfraString::isBolVazia($objUsuarioDTO->getStrSigla())){
-      $objInfraException->adicionarValidacao('Sigla n„o informada.');
+      $objInfraException->adicionarValidacao('Sigla n√£o informada.');
     }else{
       $objUsuarioDTO->setStrSigla(trim($objUsuarioDTO->getStrSigla()));
   
@@ -287,7 +287,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       $dto->setStrSigla($objUsuarioDTO->getStrSigla());
       $dto = $this->consultarRN0489($dto);
       if ($dto!=null){
-      	$objInfraException->adicionarValidacao('J· existe registro para o usu·rio "'.$objUsuarioDTO->getStrSigla().'".');
+      	$objInfraException->adicionarValidacao('J√° existe registro para o usu√°rio "'.$objUsuarioDTO->getStrSigla().'".');
       	return;
       }    
     }
@@ -296,13 +296,13 @@ class MdPetUsuarioExternoRN extends InfraRN {
   
   private function validarNumIdOrgao(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getNumIdOrgao())){    
-      $objInfraException->adicionarValidacao('”rg„o do usu·rio n„o informado.');
+      $objInfraException->adicionarValidacao('√ìrg√£o do usu√°rio n√£o informado.');
     }
   }
   
   private function validarStrNomeRN0956(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getStrNome())){
-      $objInfraException->adicionarValidacao('Nome n„o informado.');
+      $objInfraException->adicionarValidacao('Nome n√£o informado.');
     }else{
       $objUsuarioDTO->setStrNome(trim($objUsuarioDTO->getStrNome()));
   
@@ -319,7 +319,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       $objUsuarioDTO->setStrIdxUsuario(trim($objUsuarioDTO->getStrIdxUsuario()));
 
       if (strlen($objUsuarioDTO->getStrIdxUsuario())>500){
-        $objInfraException->adicionarValidacao('IndexaÁ„o possui tamanho superior a 500 caracteres.');
+        $objInfraException->adicionarValidacao('Indexa√ß√£o possui tamanho superior a 500 caracteres.');
       }
     }
   }
@@ -329,7 +329,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
     $objInfraException = new InfraException();
 
     if (InfraString::isBolVazia($strSenha)){
-      $objInfraException->lancarValidacao('Senha n„o informada.');
+      $objInfraException->lancarValidacao('Senha n√£o informada.');
     }
 
     $numTamSenhaUsuarioExterno = ConfiguracaoSEI::getInstance()->getValor('SEI', 'TamSenhaUsuarioExterno', false, TAM_SENHA_USUARIO_EXTERNO);
@@ -339,7 +339,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
     }
 
     if(!preg_match("#[0-9]+#", $strSenha)) {
-      $objInfraException->lancarValidacao("Senha deve conter pelo menos um n˙mero.");
+      $objInfraException->lancarValidacao("Senha deve conter pelo menos um n√∫mero.");
     }
 
     if(is_numeric($strSenha)) {
@@ -375,15 +375,15 @@ class MdPetUsuarioExternoRN extends InfraRN {
   		$objUsuarioDTO = $this->consultarRN0489($objUsuarioDTO);
   		
   		if ($objUsuarioDTO==null) {
-  			$objInfraException->lancarValidacao('Usu·rio n„o encontrado.');
+  			$objInfraException->lancarValidacao('Usu√°rio n√£o encontrado.');
   		}
   		
   		if ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO_PENDENTE){
-  			$objInfraException->lancarValidacao('Cadastro do usu·rio pendente.');
+  			$objInfraException->lancarValidacao('Cadastro do usu√°rio pendente.');
   		}
   		
   		if ($objUsuarioDTO->getStrStaTipo()!=UsuarioRN::$TU_EXTERNO){
-  			$objInfraException->lancarValidacao('Usu·rio n„o È externo.');
+  			$objInfraException->lancarValidacao('Usu√°rio n√£o √© externo.');
   		}
   		
   		$numCaracteresNovaSenha = ConfiguracaoSEI::getInstance()->getValor('SEI', 'TamSenhaUsuarioExterno', false, TAM_SENHA_USUARIO_EXTERNO);
@@ -451,7 +451,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
 			}
 			      
     } catch(Exception $e){
-      throw new InfraException('Erro gerando nova senha para usu·rio externo.',$e);
+      throw new InfraException('Erro gerando nova senha para usu√°rio externo.',$e);
     }
   }
 
@@ -476,22 +476,22 @@ class MdPetUsuarioExternoRN extends InfraRN {
   		$objUsuarioDTO = $this->consultarRN0489($objUsuarioDTO);
   		
   		if ($objUsuarioDTO==null) {
-  			$objInfraException->lancarValidacao('Usu·rio n„o encontrado.');
+  			$objInfraException->lancarValidacao('Usu√°rio n√£o encontrado.');
   		}
   		
   		if ($objUsuarioDTO->getStrStaTipo()==UsuarioRN::$TU_EXTERNO_PENDENTE){
-  			$objInfraException->lancarValidacao('Cadastro do usu·rio pendente.');
+  			$objInfraException->lancarValidacao('Cadastro do usu√°rio pendente.');
   		}
   		
   		if ($objUsuarioDTO->getStrStaTipo()!=UsuarioRN::$TU_EXTERNO){
-  			$objInfraException->lancarValidacao('Usu·rio n„o È externo.');
+  			$objInfraException->lancarValidacao('Usu√°rio n√£o √© externo.');
   		}
       $bcrypt = new InfraBcrypt();
 
       $senhaBanco=$objUsuarioDTO->getStrSenha();
       $senhaInformada=md5($parObjUsuarioDTO->getStrSenha());
       if (!$bcrypt->verificar($senhaInformada,$senhaBanco)) {
-        $objInfraException->lancarValidacao('Senha Atual inv·lida.');
+        $objInfraException->lancarValidacao('Senha Atual inv√°lida.');
       }
 
       $this->validarSenha($parObjUsuarioDTO->getStrSenhaNova());
@@ -504,7 +504,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       $objUsuarioBD->alterar($dto);		  
       
     } catch(Exception $e){
-      throw new InfraException('Erro alterando senha de usu·rio externo.',$e);
+      throw new InfraException('Erro alterando senha de usu√°rio externo.',$e);
     }
   }
 
@@ -518,8 +518,8 @@ class MdPetUsuarioExternoRN extends InfraRN {
 
         $objTipoContatoDTO = new TipoContatoDTO();
         $objTipoContatoDTO->setNumIdTipoContato(null);
-        $objTipoContatoDTO->setStrNome('Usu·rios ' . $objOrgaoDTO->getStrSigla());
-        $objTipoContatoDTO->setStrDescricao('Usu·rios ' . $objOrgaoDTO->getStrSigla());
+        $objTipoContatoDTO->setStrNome('Usu√°rios ' . $objOrgaoDTO->getStrSigla());
+        $objTipoContatoDTO->setStrDescricao('Usu√°rios ' . $objOrgaoDTO->getStrSigla());
         $objTipoContatoDTO->setStrStaAcesso(TipoContatoRN::$TA_CONSULTA_RESUMIDA);
         $objTipoContatoDTO->setStrSinSistema('S');
         $objTipoContatoDTO->setStrSinAtivo('S');
@@ -543,7 +543,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       return $numIdTipoContato;
 
     } catch (Exception $e) {
-      throw new InfraException('Erro obtendo tipo do contato associado com o usu·rio.', $e);
+      throw new InfraException('Erro obtendo tipo do contato associado com o usu√°rio.', $e);
     }
   }
 
@@ -615,7 +615,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
       return $arrObjUsuarioDTO;
 
     } catch (Exception $e) {
-      throw new InfraException('Erro obtendo usu·rios relacionados.');
+      throw new InfraException('Erro obtendo usu√°rios relacionados.');
     }
   }
 
@@ -676,13 +676,13 @@ class MdPetUsuarioExternoRN extends InfraRN {
               $objWS = new SoapClient($strWSDL, array('encoding' => 'ISO-8859-1'));
 
             } catch (Exception $e) {
-              throw new InfraException('Falha na conex„o com o sistema de RH.', $e);
+              throw new InfraException('Falha na conex√£o com o sistema de RH.', $e);
             }
 
             try {
               $ret = $objWS->listarCargoFuncao($objUsuarioDTO->getNumIdOrgao(), $objUsuarioDTO->getStrIdOrigem(), $objUsuarioDTO->getStrSigla());
             } catch (Exception $e) {
-              throw new InfraException('Erro obtendo dados de cargo/funÁ„o do sistema de RH.', $e);
+              throw new InfraException('Erro obtendo dados de cargo/fun√ß√£o do sistema de RH.', $e);
             }
 
             if ($ret != null && $ret->CargoFuncao != null) {
@@ -711,7 +711,7 @@ class MdPetUsuarioExternoRN extends InfraRN {
           $arrCargoFuncao[] = $objUsuarioDTO->getStrExpressaoCargoContato();
         }
 
-        $arrCargoFuncao[] = 'Usu·rio Externo';
+        $arrCargoFuncao[] = 'Usu√°rio Externo';
       }
     }
 
@@ -720,45 +720,45 @@ class MdPetUsuarioExternoRN extends InfraRN {
 
   private function validarStrNumeroPassaporte(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if(InfraString::isBolVazia($objUsuarioDTO->getStrNumeroPassaporte())){
-      $objInfraException->adicionarValidacao(_('N˙mero do Passaporte n„o informado.'));
+      $objInfraException->adicionarValidacao(_('N√∫mero do Passaporte n√£o informado.'));
     }else if (preg_match("/[^0-9A-Z-\s]/",$objUsuarioDTO->getStrNumeroPassaporte())){
-      $objInfraException->adicionarValidacao(_('N˙mero do Passaporte possui caracteres inv·lidos.'));
+      $objInfraException->adicionarValidacao(_('N√∫mero do Passaporte possui caracteres inv√°lidos.'));
     }
   }
 
   private function validarStrSinEstrangeiro(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getStrSinEstrangeiro())){
-      $objInfraException->adicionarValidacao(_('Sinalizador de usu·rio estrangeiro n„o informado.'));
+      $objInfraException->adicionarValidacao(_('Sinalizador de usu√°rio estrangeiro n√£o informado.'));
     }else{
       if (!InfraUtil::isBolSinalizadorValido($objUsuarioDTO->getStrSinEstrangeiro())){
-        $objInfraException->adicionarValidacao(_('Sinalizador de usu·rio estrangeiro inv·lido.'));
+        $objInfraException->adicionarValidacao(_('Sinalizador de usu√°rio estrangeiro inv√°lido.'));
       }
     }
   }
 
   private function validarNumIdPaisPassaporte(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getNumIdPaisPassaporte())){
-      $objInfraException->adicionarValidacao(_('PaÌs de Emiss„o n„o selecionado.'));
+      $objInfraException->adicionarValidacao(_('Pa√≠s de Emiss√£o n√£o selecionado.'));
     }
   }
 
   private function validarDblCpf(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if(!InfraUtil::validarCpf($objUsuarioDTO->getDblCpfContato())){
-      $objInfraException->adicionarValidacao(_('N˙mero de CPF inv·lido.'));
+      $objInfraException->adicionarValidacao(_('N√∫mero de CPF inv√°lido.'));
     }
   }
 
   private function validarDblRg(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getDblRgContato())){
-      $objInfraException->adicionarValidacao(_('RG n„o informado.'));
+      $objInfraException->adicionarValidacao(_('RG n√£o informado.'));
     }
   }
 
   private function validarStrOrgaoExpedidor(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getStrOrgaoExpedidorContato())){
-      $objInfraException->adicionarValidacao(_('”rg„o Expedidor n„o informado.'));
+      $objInfraException->adicionarValidacao(_('√ìrg√£o Expedidor n√£o informado.'));
     }else if (strlen($objUsuarioDTO->getStrOrgaoExpedidorContato()) > 50) {
-      $objInfraException->adicionarValidacao(_('”rg„o Expedidor possui tamanho superior a 50 caracteres.'));
+      $objInfraException->adicionarValidacao(_('√ìrg√£o Expedidor possui tamanho superior a 50 caracteres.'));
     }
   }
 

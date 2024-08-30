@@ -1,3 +1,10 @@
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+ *
+ */
+ 
 .infraImgModulo{width: 20px;height:20px;}
 .infraFieldset{height:100%;}
 #divIcones{<?php if ($_GET['acao'] == 'md_pet_intercorrente_criterio_consultar') echo 'display:none;'?>}

@@ -1,6 +1,7 @@
 <?
 /**
  * 19/02/2018 - criado por jaqueline.cast
+ * 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
  */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -17,7 +18,7 @@ class MdPetIntRelatorioINT extends InfraINT {
 
         foreach($arrSituacoes as $key => $situacao)
         {
-            //Verifica se no post temos id de situação para aplicar no filtro
+            //Verifica se no post temos id de situaÃ§Ã£o para aplicar no filtro
             $hdnSituacao  = array_key_exists('hdnIdsSituacao', $_POST) ? $_POST['hdnIdsSituacao'] : null;
             if(!is_null($hdnSituacao) && $hdnSituacao != ''){
                  $arrSituacaoFiltro = json_decode($hdnSituacao);
@@ -161,9 +162,9 @@ class MdPetIntRelatorioINT extends InfraINT {
     public static function converterParaArrInfraDTO($arrObjDTO, $inicioLinha = 1){
         $arrAlfabeto = array('A','B','C','D','E','F','G', 'H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
         $arrRetorno = array();
-        //obs : a key não foi reutilizada, pois a pesquisa  não segue uma ordem correta .
+        //obs : a key nÃ£o foi reutilizada, pois a pesquisa  nÃ£o segue uma ordem correta .
 
-        $arrCabecalho = array('Processo', 'Documento Principal', 'Anexos', 'Destinatário','Tipo de Destinatário', 'Tipo de Intimação', 'Unidade Geradora', 'Data de Expedição', 'Situação da Intimação','Data de Cumprimento');
+        $arrCabecalho = array('Processo', 'Documento Principal', 'Anexos', 'DestinatÃ¡rio','Tipo de DestinatÃ¡rio', 'Tipo de IntimaÃ§Ã£o', 'Unidade Geradora', 'Data de ExpediÃ§Ã£o', 'SituaÃ§Ã£o da IntimaÃ§Ã£o','Data de Cumprimento');
 
         //Cabecalho
         $contador = 0;
@@ -181,9 +182,9 @@ class MdPetIntRelatorioINT extends InfraINT {
             $arrRetorno[$linhaExcel][$arrAlfabeto[2]] = $objDTO->getStrAnexos();
             $arrRetorno[$linhaExcel][$arrAlfabeto[3]] = $objDTO->getStrNomeContato();
             if($objDTO->getStrSinPessoaJuridica() == "S"){
-                $arrRetorno[$linhaExcel][$arrAlfabeto[4]] = "Pessoa Jurídica";
+                $arrRetorno[$linhaExcel][$arrAlfabeto[4]] = "Pessoa JurÃ­dica";
             }else{
-                $arrRetorno[$linhaExcel][$arrAlfabeto[4]] = "Pessoa Física";
+                $arrRetorno[$linhaExcel][$arrAlfabeto[4]] = "Pessoa FÃ­sica";
             }
             $arrRetorno[$linhaExcel][$arrAlfabeto[5]] = $objDTO->getStrNomeTipoIntimacao();
             $arrRetorno[$linhaExcel][$arrAlfabeto[6]] = $objDTO->getStrSiglaUnidadeIntimacao();

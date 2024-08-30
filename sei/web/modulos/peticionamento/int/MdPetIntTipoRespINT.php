@@ -1,10 +1,11 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 08/12/2016 - criado por Marcelo Bezerra - CAST
+ * 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
  *
- * Versão do Gerador de Código: 1.39.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.39.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -58,22 +59,22 @@ class MdPetIntTipoRespINT extends InfraINT
     public static function montaAjaxTipoResposta($objMdPetIntTipoRespDTO)
     {
         if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'N') {
-            $prazo = '(Não Possui Prazo Externo)';
+            $prazo = '(NÃ£o Possui Prazo Externo)';
         } else {
             $prazo = '(' . $objMdPetIntTipoRespDTO->getNumValorPrazoExterno();
 
             if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'D') {
                 $tipoDia = null;
                 if($objMdPetIntTipoRespDTO->getStrTipoDia() == 'U'){
-                  $tipoDia = ' Útil';
+                  $tipoDia = ' Ãštil';
                   if($objMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1){
-                    $tipoDia = ' Úteis';
+                    $tipoDia = ' Ãšteis';
                   }
                 }
 
                 $prazo .= $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Dias'.$tipoDia.')' : ' Dia'.$tipoDia.')';
             } else if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'M') {
-                $prazo .= $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Meses)' : ' Mês)';
+                $prazo .= $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Meses)' : ' MÃªs)';
             } else if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'A') {
                 $prazo .= $objMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Anos)' : ' Ano)';
             }
@@ -119,15 +120,15 @@ class MdPetIntTipoRespINT extends InfraINT
         if(count($arrObjUnidadeDTO) > 0){
             for($i = 0; $i < count($arrObjUnidadeDTO); $i++){
                 if($arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno() == 'N'){
-                        $value['0-N'] = "Não Possui Prazo Externo";
+                        $value['0-N'] = "NÃ£o Possui Prazo Externo";
                 }else{
                     $chave = $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno() . '-' . $arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno();
                      if($arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno() == 'D'){
                         $tipoDia = '';
                         if($arrObjUnidadeDTO[$i]->getStrTipoDia() == 'U'){
-                            $tipoDia = ' Útil';
+                            $tipoDia = ' Ãštil';
                             if($arrObjUnidadeDTO[$i]->getNumValorPrazoExterno() > 1){
-                                $tipoDia = ' Úteis';
+                                $tipoDia = ' Ãšteis';
                             }
                         }
                         $chave .= '-' . $arrObjUnidadeDTO[$i]->getStrTipoDia();
@@ -135,7 +136,7 @@ class MdPetIntTipoRespINT extends InfraINT
                         $value[$chave] .= $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Dias'.$tipoDia : ' Dia'.$tipoDia;
                     }else if($arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno() == 'M'){
                         $value[$chave] = $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno();
-                        $value[$chave] .= $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Meses' : ' Mês';
+                        $value[$chave] .= $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Meses' : ' MÃªs';
                     }else if($arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno() == 'A'){
                         $value[$chave] = $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno();
                         $value[$chave] .= $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno() > 1 ? ' Anos' : ' Ano';
@@ -183,20 +184,20 @@ class MdPetIntTipoRespINT extends InfraINT
         $arrMdPetIntTipoRespDTO = $objMdPetIntTipoRespRN->consultar($objMdPetIntTipoRespDTO);
 
         if ($arrMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'N') {
-            $prazo = '(Não Possui Prazo Externo)';
+            $prazo = '(NÃ£o Possui Prazo Externo)';
         } else{
             $prazo = '(' . $arrMdPetIntTipoRespDTO->getNumValorPrazoExterno();
             if ($arrMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'D') {
                 $tipoDia = null;
                 if($arrMdPetIntTipoRespDTO->getStrTipoDia() == 'U'){
-                  $tipoDia = 'Útil';
+                  $tipoDia = 'Ãštil';
                   if($arrMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1){
-                    $tipoDia = 'Úteis';
+                    $tipoDia = 'Ãšteis';
                   }
                 }
                 $prazo .= $arrMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Dias '.$tipoDia.')' : ' Dia '.$tipoDia.')';
             } else if ($arrMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'M') {
-                $prazo .= $arrMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Meses)' : ' Mês)';
+                $prazo .= $arrMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Meses)' : ' MÃªs)';
             } else if ($arrMdPetIntTipoRespDTO->getStrTipoPrazoExterno() == 'A') {
                 $prazo .= $arrMdPetIntTipoRespDTO->getNumValorPrazoExterno() > 1 ? ' Anos)' : ' Ano)';
             }
@@ -234,7 +235,7 @@ class MdPetIntTipoRespINT extends InfraINT
         if(count($arrObjUnidadeDTO)){
             for($i = 0; $i < count($arrObjUnidadeDTO); $i++){
                 if ($arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno() == 'N') {
-                    $prazo = '(Não Possui Prazo Externo)';
+                    $prazo = '(NÃ£o Possui Prazo Externo)';
                 } else if ($arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno() == 'D') {
                     $prazo = '(' . $arrObjUnidadeDTO[$i]->getNumValorPrazoExterno() . ' Dias)';
                 } else if ($arrObjUnidadeDTO[$i]->getStrTipoPrazoExterno() == 'M') {

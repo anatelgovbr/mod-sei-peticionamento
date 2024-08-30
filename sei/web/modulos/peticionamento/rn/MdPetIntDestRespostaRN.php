@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 22/03/2017 - criado por jaqueline.cast
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -13,10 +13,10 @@ class MdPetIntDestRespostaRN extends InfraRN
 {
 
 
-    //Id Tarefa MÛdulo
+    //Id Tarefa M√≥dulo
     public static $ID_TAREFA_MODULO_RESPOSTA_INTIMACAO = 'MD_PET_INTIMACAO_RESPONDIDA';
     public static $ID_TAREFA_MODULO_RESPOSTA_EFETIVADO = 'MD_PET_PETICIONAMENTO_EFETIVADO';
-    public static $TIPO_PETICIONAMENTO_INTIMACAO = 'de Resposta a IntimaÁ„o';
+    public static $TIPO_PETICIONAMENTO_INTIMACAO = 'de Resposta a Intima√ß√£o';
     public static $TIPO_PROCESSO_NOVO = 'de Processo Novo';
     public static $PETICIONAMENTO_INTERCORRENTE= 'Intercorrente';
 
@@ -33,14 +33,14 @@ class MdPetIntDestRespostaRN extends InfraRN
     private function validarNumIdMdPetIntDestResposta(MdPetIntDestRespostaDTO $objMdPetIntDestRespostaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntDestRespostaDTO->getNumIdMdPetIntDestResposta())) {
-            $objInfraException->adicionarValidacao(' n„o informad.');
+            $objInfraException->adicionarValidacao(' n√£o informad.');
         }
     }
 
     private function validarNumIdMdPetIntRelDestinatario(MdPetIntDestRespostaDTO $objMdPetIntDestRespostaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntDestRespostaDTO->getNumIdMdPetIntRelDestinatario())) {
-            $objInfraException->adicionarValidacao(' n„o informad.');
+            $objInfraException->adicionarValidacao(' n√£o informad.');
         }
     }
 
@@ -67,7 +67,7 @@ class MdPetIntDestRespostaRN extends InfraRN
     private function validarNumIdMdPetIntRelTipoResp(MdPetIntDestRespostaDTO $objMdPetIntDestRespostaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntDestRespostaDTO->getNumIdMdPetIntRelTipoResp())) {
-            $objInfraException->adicionarValidacao(' n„o informad.');
+            $objInfraException->adicionarValidacao(' n√£o informad.');
         }
     }
 
@@ -165,7 +165,7 @@ class MdPetIntDestRespostaRN extends InfraRN
     {
         try {
 
-            //Permiss„o herdada de:
+            //Permiss√£o herdada de:
             //  md_pet_intimacao_cadastrar
             //    MdPetIntimacaoRN->cadastrarIntimacao
             //      MdPetIntimacaoRN->dadosIntimacaoByID
@@ -315,7 +315,7 @@ class MdPetIntDestRespostaRN extends InfraRN
         $objCriterioIntercorrenteRN = new MdPetCriterioRN();
         $objCriterioIntercorrenteDTO = $objCriterioIntercorrenteRN->consultar($objCriterioIntercorrenteDTO);
 
-        //Se n„o tem criterio intercorrente cadastrado, verifica se tem interorrente padr„o cadastrado.
+        //Se n√£o tem criterio intercorrente cadastrado, verifica se tem interorrente padr√£o cadastrado.
         if (is_null($objCriterioIntercorrenteDTO)) {
             $objCriterioIntercorrenteDTO = new MdPetCriterioDTO();
             $objCriterioIntercorrenteDTO->setStrSinCriterioPadrao('S');
@@ -331,10 +331,10 @@ class MdPetIntDestRespostaRN extends InfraRN
         $arrRetorno = array();
         if (!is_null($objCriterioIntercorrenteDTO)) {
 
-            $arrDescricaoNivelAcesso = ['P' => 'P˙blico', 'I' => 'Restrito'];
+            $arrDescricaoNivelAcesso = ['P' => 'P√∫blico', 'I' => 'Restrito'];
             $arrIdNivelAcesso = ['P' => 0, 'I' => 1];
 
-            if ($objCriterioIntercorrenteDTO->getStrStaNivelAcesso() == 2) { //2 = Padr„o PrÈ-definido
+            if ($objCriterioIntercorrenteDTO->getStrStaNivelAcesso() == 2) { //2 = Padr√£o Pr√©-definido
                 $descricaoNivel = $arrDescricaoNivelAcesso[$objCriterioIntercorrenteDTO->getStrStaTipoNivelAcesso()];
 
                 $arrRetorno['nivelAcesso'] = array(
@@ -389,7 +389,7 @@ class MdPetIntDestRespostaRN extends InfraRN
 
         if (isset($arrParametros['idMdPetIntimacao'])) {
             $objUnidade = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($arrParametros['idMdPetIntimacao']));
-            //Unidade da intimaÁ„o ainda tem credencial
+            //Unidade da intima√ß√£o ainda tem credencial
             if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
                 || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
                 if ($idUnidade!=$idUnidadeIntimacao){
@@ -417,7 +417,7 @@ class MdPetIntDestRespostaRN extends InfraRN
         $objSeiRN = new SeiRN();
         $objSeiRN->lancarAndamento($objEntradaLancarAndamentoAPI);
 
-        // SIGILOSO - retirando credencial provisÛria
+        // SIGILOSO - retirando credencial provis√≥ria
         if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
             || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
             if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
@@ -426,7 +426,7 @@ class MdPetIntDestRespostaRN extends InfraRN
                 $objMdPetProcedimentoRN->excluirAndamentoCredencial( $objConcederCredencial );
             }
         }
-        // SIGILOSO - retirando credencial provisÛria - FIM
+        // SIGILOSO - retirando credencial provis√≥ria - FIM
     }
 
     private function _retornaObjAtributoAndamentoAPI($nome, $valor, $idOrigem = null)
@@ -436,7 +436,7 @@ class MdPetIntDestRespostaRN extends InfraRN
         $objAtributoAndamentoAPI->setValor($valor);
         
         if($idOrigem != null){
-            $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do prÈdio, pode ser null
+            $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do pr√©dio, pode ser null
         }
         
         return $objAtributoAndamentoAPI;

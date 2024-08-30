@@ -1,10 +1,11 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 08/12/2016 - criado por Marcelo Bezerra - CAST
+* 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
 *
-* Versão do Gerador de Código: 1.39.0
+* VersÃ£o do Gerador de CÃ³digo: 1.39.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';

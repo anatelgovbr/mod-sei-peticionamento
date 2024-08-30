@@ -18,25 +18,25 @@ class MdPetReciboRN extends InfraRN
     public static $STR_TP_RECIBO_INTERCORRENTE = 'Intercorrente';
 
     public static $TP_RECIBO_RESPOSTA_INTIMACAO = 'R';
-    public static $STR_TP_RECIBO_RESPOSTA_INTIMACAO = 'Resposta a IntimaÁ„o';
+    public static $STR_TP_RECIBO_RESPOSTA_INTIMACAO = 'Resposta a Intima√ß√£o';
 
     public static $TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL = 'V';
-    public static $STR_TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL = 'Respons·vel Legal - Inicial';
+    public static $STR_TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL = 'Respons√°vel Legal - Inicial';
 
     public static $TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO = 'A';
-    public static $STR_TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO = 'Respons·vel Legal - AlteraÁ„o';
+    public static $STR_TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO = 'Respons√°vel Legal - Altera√ß√£o';
 
     public static $TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS = 'C';
-    public static $STR_TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS = 'AtualizaÁ„o de Atos Constitutivos';
+    public static $STR_TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS = 'Atualiza√ß√£o de Atos Constitutivos';
 
     public static $TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO = 'P';
-    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO = 'ProcuraÁ„o EletrÙnica - Emiss„o';
+    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO = 'Procura√ß√£o Eletr√¥nica - Emiss√£o';
 
     public static $TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO = 'G';
-    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO = 'ProcuraÁ„o EletrÙnica - RevogaÁ„o';
+    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO = 'Procura√ß√£o Eletr√¥nica - Revoga√ß√£o';
 
     public static $TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA = 'U';
-    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA = 'ProcuraÁ„o EletrÙnica - Ren˙ncia';
+    public static $STR_TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA = 'Procura√ß√£o Eletr√¥nica - Ren√∫ncia';
 
     public function __construct()
     {
@@ -65,7 +65,7 @@ class MdPetReciboRN extends InfraRN
 
             if ($objDTO->isSetDthInicial() || $objDTO->isSetDthFinal()) {
 
-                // Data InÌcio
+                // Data In√≠cio
                 if ($objDTO->isSetDthInicial()) {
                     if (strlen($objDTO->getDthInicial()) == '10') {
                         $objDTO->setDthInicial($objDTO->getDthInicial() . ' 00:00:00');
@@ -73,7 +73,7 @@ class MdPetReciboRN extends InfraRN
                         $objDTO->setDthInicial($objDTO->getDthInicial() . ':00');
                     }
                     if (!InfraData::validarDataHora($objDTO->getDthInicial())) {
-                        $objInfraException->lancarValidacao('Data/Hora Inv·lida.');
+                        $objInfraException->lancarValidacao('Data/Hora Inv√°lida.');
                     }
                 }
 
@@ -85,7 +85,7 @@ class MdPetReciboRN extends InfraRN
                         $objDTO->setDthFinal($objDTO->getDthFinal() . ':59');
                     }
                     if (!InfraData::validarDataHora($objDTO->getDthFinal())) {
-                        $objInfraException->lancarValidacao('Data/Hora Inv·lida.');
+                        $objInfraException->lancarValidacao('Data/Hora Inv√°lida.');
                     }
                 }
 
@@ -191,8 +191,8 @@ class MdPetReciboRN extends InfraRN
     }
 
     /*
-     produz recibo pesquisavel, inserindo dados consult·veis pela consulta de recibos
-     (diferente do documento de recibo que È anexado ao processo do SEI)(
+     produz recibo pesquisavel, inserindo dados consult√°veis pela consulta de recibos
+     (diferente do documento de recibo que √© anexado ao processo do SEI)(
      */
     protected function cadastrarControlado($arrParams)
     {
@@ -221,13 +221,13 @@ class MdPetReciboRN extends InfraRN
 
     }
 
-    //mÈtodo utilizado para gerar recibo ao final do cadastramento de um processo de peticionamento de usuario externo
+    //m√©todo utilizado para gerar recibo ao final do cadastramento de um processo de peticionamento de usuario externo
     protected function montarReciboControlado($arrParams)
     {
 
         $reciboDTO = $arrParams[4];
 
-        //Verifica se retorna o objeto antes ou depois da alteraÁ„o - soluÁ„o adaptada em decorrencia do trycatch
+        //Verifica se retorna o objeto antes ou depois da altera√ß√£o - solu√ß√£o adaptada em decorrencia do trycatch
         $returnObjDTO = array_key_exists(5, $arrParams) ? $arrParams[5] : false;
 
         //gerando documento recibo (nao assinado) dentro do processo do SEI
@@ -264,7 +264,7 @@ class MdPetReciboRN extends InfraRN
         $objSeiRN = new SeiRN();
         $saidaDocExternoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
 
-        //necessario forÁar update da coluna sta_documento da tabela documento
+        //necessario for√ßar update da coluna sta_documento da tabela documento
         //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
         $parObjDocumentoDTO = new DocumentoDTO();
         $parObjDocumentoDTO->retTodos();
@@ -309,7 +309,7 @@ class MdPetReciboRN extends InfraRN
         $html .= '<table align="center" style="width: 95%" border="0">';
         $html .= '<tbody>';
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold; width: 400px;">Usu·rio Externo (signat·rio):</td>';
+        $html .= '<td style="font-weight: bold; width: 400px;">Usu√°rio Externo (signat√°rio):</td>';
         $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
         $html .= '</tr>';
 
@@ -319,7 +319,7 @@ class MdPetReciboRN extends InfraRN
         //$html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Data e Hor·rio:</td>';
+        $html .= '<td style="font-weight: bold;">Data e Hor√°rio:</td>';
         $html .= '<td>' . $reciboDTO->getDthDataHoraRecebimentoFinal() . '</td>';
         $html .= '</tr>';
 
@@ -329,7 +329,7 @@ class MdPetReciboRN extends InfraRN
         $html .= '</tr>';
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">N˙mero do Processo:</td>';
+        $html .= '<td style="font-weight: bold;">N√∫mero do Processo:</td>';
         $html .= '<td>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . '</td>';
         $html .= '</tr>';
 
@@ -365,7 +365,7 @@ class MdPetReciboRN extends InfraRN
         }
 
         $html .= '<tr>';
-        $html .= '<td style="font-weight: bold;">Protocolos dos Documentos (N˙mero SEI):</td>';
+        $html .= '<td style="font-weight: bold;">Protocolos dos Documentos (N√∫mero SEI):</td>';
         $html .= '<td></td>';
         $html .= '</tr>';
 
@@ -596,7 +596,7 @@ class MdPetReciboRN extends InfraRN
         $contador = 0;
         foreach ($erroDocumentos as $chave => $erro) {
             if($contador == 0){
-                $objInfraException->adicionarValidacao('N„o foi possÌvel gerar o Recibo do Peticionamento devido a ausÍncia de:');
+                $objInfraException->adicionarValidacao('N√£o foi poss√≠vel gerar o Recibo do Peticionamento devido a aus√™ncia de:');
             }
             if ($chave == 'documentoPrincipal') {
                 $objInfraException->adicionarValidacao(' - Documento Principal.');
@@ -622,7 +622,7 @@ class MdPetReciboRN extends InfraRN
         $objOrgaoDTO->setStrSinAtivo('S');
         $objOrgaoDTO = $orgaoRN->consultarRN1352($objOrgaoDTO);
 
-        $html .= '<p>O Usu·rio Externo acima identificado foi previamente avisado que o peticionamento importa na aceitaÁ„o dos termos e condiÁıes que regem o processo eletrÙnico, alÈm do disposto no credenciamento prÈvio, e na assinatura dos documentos nato-digitais e declaraÁ„o de que s„o autÍnticos os digitalizados, sendo respons·vel civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os nÌveis de acesso indicados para os documentos estariam condicionados ‡ an·lise por servidor p˙blico, que poder· alter·-los a qualquer momento sem necessidade de prÈvio aviso, e de que s„o de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservaÁ„o dos originais em papel de documentos digitalizados atÈ que decaia o direito de revis„o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferÍncia;</li><li>a realizaÁ„o por meio eletrÙnico de todos os atos e comunicaÁıes processuais com o prÛprio Usu·rio Externo ou, por seu intermÈdio, com a entidade porventura representada;</li><li>a observ‚ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados atÈ as 23h59min59s do ˙ltimo dia do prazo, considerado sempre o hor·rio oficial de BrasÌlia, independente do fuso hor·rio em que se encontre;</li><li>a consulta periÛdica ao SEI, a fim de verificar o recebimento de intimaÁıes eletrÙnicas.</li></ul><p>A existÍncia deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
+        $html .= '<p>O Usu√°rio Externo acima identificado foi previamente avisado que o peticionamento importa na aceita√ß√£o dos termos e condi√ß√µes que regem o processo eletr√¥nico, al√©m do disposto no credenciamento pr√©vio, e na assinatura dos documentos nato-digitais e declara√ß√£o de que s√£o aut√™nticos os digitalizados, sendo respons√°vel civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os n√≠veis de acesso indicados para os documentos estariam condicionados √† an√°lise por servidor p√∫blico, que poder√° alter√°-los a qualquer momento sem necessidade de pr√©vio aviso, e de que s√£o de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conserva√ß√£o dos originais em papel de documentos digitalizados at√© que decaia o direito de revis√£o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de confer√™ncia;</li><li>a realiza√ß√£o por meio eletr√¥nico de todos os atos e comunica√ß√µes processuais com o pr√≥prio Usu√°rio Externo ou, por seu interm√©dio, com a entidade porventura representada;</li><li>a observ√¢ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados at√© as 23h59min59s do √∫ltimo dia do prazo, considerado sempre o hor√°rio oficial de Bras√≠lia, independente do fuso hor√°rio em que se encontre;</li><li>a consulta peri√≥dica ao SEI, a fim de verificar o recebimento de intima√ß√µes eletr√¥nicas.</li></ul><p>A exist√™ncia deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
 
         return $html;
 
@@ -716,7 +716,7 @@ class MdPetReciboRN extends InfraRN
         $idDocumentoRecibo = $objMdPetReciboDTO->getDblIdDocumento();
         $linkAssinado = '';
 
-        //Se n„o possui o documento do sei de Recibo salva, redireciona para antiga tela
+        //Se n√£o possui o documento do sei de Recibo salva, redireciona para antiga tela
         if (is_null($idDocumentoRecibo)) {
             $linkAssinado = $this->_retornaLinkAntigoRecibo($intercorrente, $objMdPetReciboDTO->getNumIdReciboPeticionamento());
         } else {
@@ -730,7 +730,7 @@ class MdPetReciboRN extends InfraRN
 
                 $linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($docLink));
 
-                //necessario fazer isso para nao quebrar a navegaÁao (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario È enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
+                //necessario fazer isso para nao quebrar a navega√ßao (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario √© enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
                 SessaoSEIExterna::getInstance()->configurarAcessoExterno(0);
             } else {
                 $linkAssinado = $this->_retornaLinkAntigoRecibo($intercorrente, $objMdPetReciboDTO->getNumIdReciboPeticionamento());

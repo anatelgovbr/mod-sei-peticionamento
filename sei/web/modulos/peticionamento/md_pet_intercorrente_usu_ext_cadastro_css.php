@@ -1,5 +1,11 @@
 <style>
-
+	/**
+	 * ANATEL
+	 *
+	 * 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+	 *
+	 */
+ 
     .fieldSetOrientacoes{
         padding-top: 15px;
         padding-bottom: 15px;

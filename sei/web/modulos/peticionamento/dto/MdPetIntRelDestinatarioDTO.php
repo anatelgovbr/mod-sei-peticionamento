@@ -1,10 +1,11 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 14/03/2017 - criado por pedro.cast
+ * 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU
  *
- * Versão do Gerador de Código: 1.40.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.40.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -77,7 +78,7 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		//Acesso Externo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DTA, 'ValidadeAcessoExterno', 'a.dta_validade', 'acesso_externo a');
 		
-		//Acesso Externo do Módulo
+		//Acesso Externo do MÃ³dulo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SinAtivoModulo', 'mpa.sin_ativo', 'md_pet_acesso_externo mpa');
 	
 		//Atividade do Acesso Externo
@@ -86,16 +87,16 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		//Unidade da Atividade do Acesso Externo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUnidadeAcessoExterno','atv.id_unidade','atividade atv');
 
-		//Unidade da Intimação
+		//Unidade da IntimaÃ§Ã£o
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SiglaUnidadeIntimacao','uint.sigla','unidade uint');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'DescricaoUnidadeIntimacao','uint.descricao','unidade uint');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdOrgao','uint.id_orgao','unidade uint');
 
-		//Intimação
+		//IntimaÃ§Ã£o
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetIntimacaoMdPetIntimacao', 'mpi.id_md_pet_intimacao', 'md_pet_intimacao mpi');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetTipoIntimacao','mpi.id_md_pet_int_tipo_intimacao','md_pet_intimacao mpi');
 
-		//Tipo de Intimação
+		//Tipo de IntimaÃ§Ã£o
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeTipoIntimacao','mpit.nome','md_pet_int_tipo_intimacao mpit');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeTipoRespostaAceita','mpit.tipo_resposta_aceita','md_pet_int_tipo_intimacao mpit');
 
@@ -105,7 +106,7 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CnpjContato', 'c.cnpj','contato c');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CpfContato', 'c.cpf','contato c');
 
-		// Intimação x Protocolo
+		// IntimaÃ§Ã£o x Protocolo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'IdProtocolo', 'mpd.id_protocolo', 'md_pet_int_protocolo mpd');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SinPrincipalDoc', 'mpd.sin_principal', 'md_pet_int_protocolo mpd');
 
@@ -181,9 +182,9 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 
 	public function getStrTipoDestinatario(){
 			if($this->getStrSinPessoaJuridica() == "S"){
-				return "Pessoa Jurídica"; 
+				return "Pessoa JurÃ­dica"; 
 			}else{
-				return "Pessoa Física"; 
+				return "Pessoa FÃ­sica"; 
 
 			}
 		}

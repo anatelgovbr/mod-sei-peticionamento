@@ -1,8 +1,9 @@
-    #field1 {
-        height: auto;
-        width: 97%;
-        margin-bottom: 11px;
-    }
+/**
+* ANATEL
+*
+* 26/08/2024 - Atualização por gabrielg.colab - SPASSU
+*
+*/
 
     #field2 {
         height: auto;

@@ -3,6 +3,8 @@
  * ANATEL
  *
  * 22/04/2016 - criado por Ramon Veloso - ramon.onix@gmail.com
+
+ * 26/08/2024 - AtualizaÃ§Ã£o por gabrielg.colab - SPASSU 
  *
  */
 
@@ -49,7 +51,7 @@ class PeticionamentoWS extends MdPetUtilWS
                 }
 
             } else {
-                throw new InfraException('Lista de poderes legais não encontrada.');
+                throw new InfraException('Lista de poderes legais nÃ£o encontrada.');
             }
 
             return $ret;
@@ -99,13 +101,13 @@ class PeticionamentoWS extends MdPetUtilWS
                     $ret[] = $objMdPetTipoRepresentacao;
                 }
             } else {
-                $infraException->lancarValidacao('Lista de tipos de representações não encontrada.');
+                $infraException->lancarValidacao('Lista de tipos de representaÃ§Ãµes nÃ£o encontrada.');
             }
 
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro Listando Tipos de Representação.', $e);
+            throw new InfraException('Erro Listando Tipos de RepresentaÃ§Ã£o.', $e);
         }
     }
 
@@ -139,7 +141,7 @@ class PeticionamentoWS extends MdPetUtilWS
 		                case MdPetVincRepresentantRN::$RP_REVOGADA:     $estado = "Revogada"; break;
 		                case MdPetVincRepresentantRN::$RP_RENUNCIADA:   $estado = "Renunciada"; break;
 		                case MdPetVincRepresentantRN::$RP_VENCIDA:      $estado = "Vencida"; break;
-		                case MdPetVincRepresentantRN::$RP_SUBSTITUIDA:  $estado = "Substituída"; break;
+		                case MdPetVincRepresentantRN::$RP_SUBSTITUIDA:  $estado = "SubstituÃ­da"; break;
 		                case MdPetVincRepresentantRN::$RP_INATIVO:      $estado = "Inativa"; break;
 	                }
 
@@ -149,13 +151,13 @@ class PeticionamentoWS extends MdPetUtilWS
                     $ret[] = $objMdPetSituacaoRepresentacao;
                 }
             } else {
-                $infraException->lancarValidacao('Lista de tipos de representações não encontrada.');
+                $infraException->lancarValidacao('Lista de tipos de representaÃ§Ãµes nÃ£o encontrada.');
             }
 //            $ret = asort($ret);
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro ao listar Situações de de Representação.', $e);
+            throw new InfraException('Erro ao listar SituaÃ§Ãµes de de RepresentaÃ§Ã£o.', $e);
         }
     }
 
@@ -165,7 +167,7 @@ class PeticionamentoWS extends MdPetUtilWS
             $infraException = new InfraException();
 
             if (strlen(trim($cnpjOutorgante)) > 0 && !InfraUtil::validarCnpj($cnpjOutorgante)) {
-                $infraException->lancarValidacao('Número de CNPJ inválido.');
+                $infraException->lancarValidacao('NÃºmero de CNPJ invÃ¡lido.');
             }
 
             if (!empty($idsTipoPoderLegal)) {
@@ -281,14 +283,14 @@ class PeticionamentoWS extends MdPetUtilWS
                 if (!empty($staSituacao) || !empty($idsTipoPoderLegal)) {
                     $infraException->lancarValidacao('Nenhum Representante encontrato para o CNPJ informado com os filtros utilizados.');
                 }
-                $infraException->lancarValidacao('O CNPJ informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
+                $infraException->lancarValidacao('O CNPJ informado nÃ£o tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
             }
 
             return $ret;
 
         } catch
         (Exception $e) {
-            throw new InfraException('Erro ao consultar Representações de Pessoa Jurídica.', $e);
+            throw new InfraException('Erro ao consultar RepresentaÃ§Ãµes de Pessoa JurÃ­dica.', $e);
         }
     }
 
@@ -298,7 +300,7 @@ class PeticionamentoWS extends MdPetUtilWS
             $infraException = new InfraException();
 
             if (strlen(trim($cpfOutorgante)) > 0 && !InfraUtil::validarCpf($cpfOutorgante)) {
-                $infraException->lancarValidacao('Número de CPF inválido.');
+                $infraException->lancarValidacao('NÃºmero de CPF invÃ¡lido.');
             }
 
             if (!empty($idsTipoPoderLegal)) {
@@ -415,13 +417,13 @@ class PeticionamentoWS extends MdPetUtilWS
                 if (!empty($staSituacao) || !empty($idsTipoPoderLegal)) {
                     $infraException->lancarValidacao('Nenhum Representante encontrado para o CPF informado com os filtros utilizados.');
                 }
-                $infraException->lancarValidacao('O CPF informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
+                $infraException->lancarValidacao('O CPF informado nÃ£o tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
             }
 
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro Consultar Representação de Pessoa Física.', $e);
+            throw new InfraException('Erro Consultar RepresentaÃ§Ã£o de Pessoa FÃ­sica.', $e);
         }
     }
 
@@ -432,12 +434,12 @@ class PeticionamentoWS extends MdPetUtilWS
 
             // Valida E-mail.
             if(!empty($Email) && !InfraUtil::validarEmail($Email)) {
-                $InfraException->lancarValidacao('E-mail inválido.');
+                $InfraException->lancarValidacao('E-mail invÃ¡lido.');
             }
 
             // Valida CPF se informado.
             if (strlen(trim($Cpf)) > 0 && !InfraUtil::validarCpf($Cpf)) {
-                $InfraException->lancarValidacao('Número de CPF inválido.');
+                $InfraException->lancarValidacao('NÃºmero de CPF invÃ¡lido.');
             }
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -458,14 +460,14 @@ class PeticionamentoWS extends MdPetUtilWS
                 $contatoDTO = $contatoRN->consultarRN0324($contatoDTO);
 
                 if (strlen(trim($Cpf)) > 0 && (InfraUtil::formatarCpf($contatoDTO->getDblCpf()) !== InfraUtil::formatarCpf($Cpf))) {
-                    $InfraException->lancarValidacao('CPF informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
+                    $InfraException->lancarValidacao('CPF informado nÃ£o corresponde ao registrado no cadastro do UsuÃ¡rio Externo no SEI.');
                 }
 
                 if (!empty($Email) && $Email != $usuarioExterno->getStrSigla()) {
-                    $InfraException->lancarValidacao('E-mail informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
+                    $InfraException->lancarValidacao('E-mail informado nÃ£o corresponde ao registrado no cadastro do UsuÃ¡rio Externo no SEI.');
                 }
 
-                // Usuário Externo Liberado = L, Pendente = P
+                // UsuÃ¡rio Externo Liberado = L, Pendente = P
                 switch ($usuarioExterno->getStrStaTipo()) {
                     case UsuarioRN::$TU_EXTERNO_PENDENTE :
                         $usuarioExterno->setStrStaTipo('P');
@@ -476,7 +478,7 @@ class PeticionamentoWS extends MdPetUtilWS
                         break;
 
                     default :
-                        $InfraException->lancarValidacao('Erro ao consultar o cadastro do Usuário Externo no SEI.');
+                        $InfraException->lancarValidacao('Erro ao consultar o cadastro do UsuÃ¡rio Externo no SEI.');
                         break;
                 }
 
@@ -504,7 +506,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro ao Consultar Usuário Externo.', $e);
+            throw new InfraException('Erro ao Consultar UsuÃ¡rio Externo.', $e);
         }
     }
 
@@ -515,12 +517,12 @@ class PeticionamentoWS extends MdPetUtilWS
 
             // Valida CPF se informado.
             if (empty($cpfOutorgado) || $cpfOutorgado == null) {
-                throw new InfraException('CPF não informado.');
+                throw new InfraException('CPF nÃ£o informado.');
             }
 
             // Valida CPF.
             if (strlen(trim($cpfOutorgado)) > 0 && !InfraUtil::validarCpf($cpfOutorgado)) {
-                $infraException->lancarValidacao('Número de CPF inválido.');
+                $infraException->lancarValidacao('NÃºmero de CPF invÃ¡lido.');
             }
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -664,13 +666,13 @@ class PeticionamentoWS extends MdPetUtilWS
                     $infraException->lancarValidacao('Nenhum Representante encontrado para o CPF informado com os filtros utilizados.');
                 }
             } else {
-                $infraException->lancarValidacao('O CPF informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
+                $infraException->lancarValidacao('O CPF informado nÃ£o tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
             }
 
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro Listando Representações.', $e);
+            throw new InfraException('Erro Listando RepresentaÃ§Ãµes.', $e);
         }
     }
 
@@ -695,7 +697,7 @@ class PeticionamentoWS extends MdPetUtilWS
                 $UsuarioExternoDTO->setStrSinAtivo($staSituacao);
             }
 
-            // Usuário Externo Liberado = L, Pendente = P
+            // UsuÃ¡rio Externo Liberado = L, Pendente = P
             switch (strtoupper($liberacaoCadastro)) {
                 case 'P' :
                     $UsuarioExternoDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO_PENDENTE);
@@ -720,7 +722,7 @@ class PeticionamentoWS extends MdPetUtilWS
             $objUsuarioBD = new UsuarioBD(BancoSEI::getInstance());
             $totalRegistros = $objUsuarioBD->contar($UsuarioExternoDTO);
 
-            // caso a pagina seja -1 não realiza a paginação
+            // caso a pagina seja -1 nÃ£o realiza a paginaÃ§Ã£o
             if ($pagina !== '-1') {
                 $UsuarioExternoDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
                 $UsuarioExternoDTO->setNumPaginaAtual($pagina - 1 );
@@ -733,7 +735,7 @@ class PeticionamentoWS extends MdPetUtilWS
             $ret = array();
             foreach ($arrUsuarioExterno as $usuarioExterno) {
 
-                // Usuário Externo Liberado = L, Pendente = P
+                // UsuÃ¡rio Externo Liberado = L, Pendente = P
                 switch ($usuarioExterno->getStrStaTipo()) {
                     case UsuarioRN::$TU_EXTERNO_PENDENTE :
                         $usuarioExterno->setStrStaTipo('P');
@@ -744,7 +746,7 @@ class PeticionamentoWS extends MdPetUtilWS
                         break;
 
                     default :
-                        $InfraException->lancarValidacao('Erro ao consultar o cadastro do Usuário Externo no SEI.');
+                        $InfraException->lancarValidacao('Erro ao consultar o cadastro do UsuÃ¡rio Externo no SEI.');
                         break;
                 }
 
@@ -766,7 +768,7 @@ class PeticionamentoWS extends MdPetUtilWS
 
             return $retorno;
         } catch (Exception $e) {
-            throw new InfraException('Erro Listando Usuários Externos.', $e);
+            throw new InfraException('Erro Listando UsuÃ¡rios Externos.', $e);
         }
     }
 
@@ -809,7 +811,7 @@ class PeticionamentoWS extends MdPetUtilWS
             $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
             $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
 
-            // caso a pagina seja -1 não realiza a paginação
+            // caso a pagina seja -1 nÃ£o realiza a paginaÃ§Ã£o
             if ($pagina !== '-1') {
                 $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
                 $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
@@ -868,7 +870,7 @@ class PeticionamentoWS extends MdPetUtilWS
 
             return $retorno;
         } catch (Exception $e) {
-            throw new InfraException('Erro Listando Representações.', $e);
+            throw new InfraException('Erro Listando RepresentaÃ§Ãµes.', $e);
         }
     }
 
@@ -911,7 +913,7 @@ class PeticionamentoWS extends MdPetUtilWS
 //            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
 //            $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
 //
-//            // caso a pagina seja -1 não realiza a paginação
+//            // caso a pagina seja -1 nÃ£o realiza a paginaÃ§Ã£o
 //            if ($pagina !== '-1') {
 //                $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
 //                $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
@@ -961,7 +963,7 @@ class PeticionamentoWS extends MdPetUtilWS
 //
 //            return $retorno;
 //        } catch (Exception $e) {
-//            throw new InfraException('Erro Listando Representações de Pessoa Jurídica.', $e);
+//            throw new InfraException('Erro Listando RepresentaÃ§Ãµes de Pessoa JurÃ­dica.', $e);
 //        }
 //    }
 //
@@ -1003,7 +1005,7 @@ class PeticionamentoWS extends MdPetUtilWS
 //            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
 //            $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
 //
-//            // caso a pagina seja -1 não realiza a paginação
+//            // caso a pagina seja -1 nÃ£o realiza a paginaÃ§Ã£o
 //            if ($pagina !== '-1') {
 //                $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
 //                $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
@@ -1052,7 +1054,7 @@ class PeticionamentoWS extends MdPetUtilWS
 //
 //            return $retorno;
 //        } catch (Exception $e) {
-//            throw new InfraException('Erro Listando Representações de Pessoa Física.', $e);
+//            throw new InfraException('Erro Listando RepresentaÃ§Ãµes de Pessoa FÃ­sica.', $e);
 //        }
 //    }
 
@@ -1066,14 +1068,14 @@ class PeticionamentoWS extends MdPetUtilWS
     private function validarPagina($pagina)
     {
         if ($pagina < -1) {
-            throw new InfraException('Página informada inválida.');
+            throw new InfraException('PÃ¡gina informada invÃ¡lida.');
         }
     }
 
     private function validarPaginaVazia($arr, $pagina)
     {
         if (empty($arr) && $pagina > 1) {
-            throw new InfraException('Não exite registro para página informada.');
+            throw new InfraException('NÃ£o exite registro para pÃ¡gina informada.');
         }
     }
 
@@ -1081,7 +1083,7 @@ class PeticionamentoWS extends MdPetUtilWS
     {
         $InfraException = new InfraException();
         if (strtoupper($staSituacao) != '' && strtoupper($staSituacao) != 'S' && strtoupper($staSituacao) != 'N') {
-            $InfraException->lancarValidacao('Erro ao consultar o cadastro do Usuário Externo no SEI.');
+            $InfraException->lancarValidacao('Erro ao consultar o cadastro do UsuÃ¡rio Externo no SEI.');
         }
     }
 
@@ -1173,7 +1175,7 @@ class PeticionamentoWS extends MdPetUtilWS
         $arrObjUsuarioDTO = $mdPetAcessoExternoRN->listarRN0490($objUsuarioDTO);
 
         if (!count($arrObjUsuarioDTO)) {
-            $infraException->lancarValidacao('O CPF informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
+            $infraException->lancarValidacao('O CPF informado nÃ£o tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
         }
 
     }
@@ -1184,7 +1186,7 @@ $servidorSoap = new SoapServer("wspeticionamento.wsdl", array('encoding' => 'ISO
 
 $servidorSoap->setClass("PeticionamentoWS");
 
-//Só processa se acessado via POST
+//SÃ³ processa se acessado via POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $servidorSoap->handle();
 }

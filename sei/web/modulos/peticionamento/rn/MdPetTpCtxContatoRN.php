@@ -30,7 +30,7 @@ class MdPetTpCtxContatoRN extends InfraRN {
 		
 		try {
 	
-			//Valida Permissao TO DO revisar a tela para não deixar o log duplicado
+			//Valida Permissao TO DO revisar a tela para nÃ£o deixar o log duplicado
 //			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tp_ctx_contato_cadastrar', __METHOD__, $objDTO );
 
 			$objExtArqPermBD = new MdPetRelTpCtxContatoBD($this->getObjInfraIBanco());
@@ -41,7 +41,7 @@ class MdPetTpCtxContatoRN extends InfraRN {
 			//Auditoria
 	
 		}catch(Exception $e){
-			throw new InfraException('Erro excluindo Extensão.',$e);
+			throw new InfraException('Erro excluindo ExtensÃ£o.',$e);
 		}
 	}
 	
@@ -150,7 +150,7 @@ class MdPetTpCtxContatoRN extends InfraRN {
 		}
 				
 		if( $strMensagem != ""){
-		  $objInfraException->adicionarValidacao( " Não permitido adicionar Tipos de Contatos reservados do Sistema. Os seguintes Tipos não são permitidos: \n\n ". $strMensagem );
+		  $objInfraException->adicionarValidacao( " NÃ£o permitido adicionar Tipos de Contatos reservados do Sistema. Os seguintes Tipos nÃ£o sÃ£o permitidos: \n\n ". $strMensagem );
 		}
 
 	}
@@ -179,7 +179,7 @@ class MdPetTpCtxContatoRN extends InfraRN {
 
             $lista = $this->listar($objDTO);
             $listaExclusao = array_merge($listaExclusao, $lista);
-            //quando for Cadastro, impedir tipos reservados, quando for seleçao, nao deve impedir
+            //quando for Cadastro, impedir tipos reservados, quando for seleÃ§ao, nao deve impedir
             if ($cadastro == 'S') {
                 $this->validarTiposReservados($arrPrincipal, $objInfraException);
             }

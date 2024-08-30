@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 08/12/2016 - criado por Marcelo Bezerra - CAST
  *
- * Versão do Gerador de Código: 1.39.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.39.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -35,11 +35,11 @@ class MdPetIntTipoRespRN extends InfraRN
     private function validarStrTipoPrazoExterno(MdPetIntTipoRespDTO $objMdPetIntTipoRespDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno())) {
-            $objInfraException->adicionarValidacao('Prazo Externo não informado.');
+            $objInfraException->adicionarValidacao('Prazo Externo nÃ£o informado.');
             $objInfraException->lancarValidacoes();
         } else {
             if ($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno()=='D' && $_POST['rdTipoDia']=='') {
-                $objInfraException->adicionarValidacao('Tipo de Prazo Externo (Corridos ou Úteis) não informado');
+                $objInfraException->adicionarValidacao('Tipo de Prazo Externo (Corridos ou Ãšteis) nÃ£o informado');
                 $objInfraException->lancarValidacoes();
             }
 
@@ -55,7 +55,7 @@ class MdPetIntTipoRespRN extends InfraRN
     private function validarNumValorPrazoExterno(MdPetIntTipoRespDTO $objMdPetIntTipoRespDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntTipoRespDTO->getNumValorPrazoExterno())) {
-            $objInfraException->adicionarValidacao('Valor do Prazo Externo não informado.');
+            $objInfraException->adicionarValidacao('Valor do Prazo Externo nÃ£o informado.');
             $objInfraException->lancarValidacoes();
         }
     }
@@ -63,7 +63,7 @@ class MdPetIntTipoRespRN extends InfraRN
     private function validarStrNome(MdPetIntTipoRespDTO $objMdPetIntTipoRespDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntTipoRespDTO->getStrNome())) {
-            $objInfraException->adicionarValidacao('Nome não informado.');
+            $objInfraException->adicionarValidacao('Nome nÃ£o informado.');
             $objInfraException->lancarValidacoes();
         } else {
             $objMdPetIntTipoRespDTO->setStrNome(trim($objMdPetIntTipoRespDTO->getStrNome()));
@@ -73,14 +73,14 @@ class MdPetIntTipoRespRN extends InfraRN
                 $objInfraException->lancarValidacoes();
             }
 
-            //validação de duplicidade alterada para englobar nome, prazo e tipo de resposta
+            //validaÃ§Ã£o de duplicidade alterada para englobar nome, prazo e tipo de resposta
         }
     }
     
     private function validarDuplicidade(MdPetIntTipoRespDTO $objMdPetIntTipoRespDTO, InfraException $objInfraException)
     {
        
-        //Cadastro ou alteração de Tipos de Respostas para aceitar mais de uma Resposta com:
+        //Cadastro ou alteraÃ§Ã£o de Tipos de Respostas para aceitar mais de uma Resposta com:
         // 1) o mesmo Nome, 
         // 2) mesmo Prazo e 
         // 3)mesmo Tipo (Resposta Facultativa ou Exige Resposta).
@@ -97,7 +97,7 @@ class MdPetIntTipoRespRN extends InfraRN
             }else if ($objMdPetIntTipoRespDTO->getStrTipoDia()) {
                 $objComparacaoDTO->setStrTipoDia( $objMdPetIntTipoRespDTO->getStrTipoDia() );
             }else{
-	            $objInfraException->adicionarValidacao('Para Tipo de Prazo em Dias é obrigatório informar Tipo de Prazo (Corridos ou Úteis).');
+	            $objInfraException->adicionarValidacao('Para Tipo de Prazo em Dias Ã© obrigatÃ³rio informar Tipo de Prazo (Corridos ou Ãšteis).');
                 $objInfraException->lancarValidacoes();
             }
         }
@@ -108,7 +108,7 @@ class MdPetIntTipoRespRN extends InfraRN
         $total = $this->contar( $objComparacaoDTO );
         
         if( $total > 0){
-            $objInfraException->adicionarValidacao('Tipo de Resposta já existente.');
+            $objInfraException->adicionarValidacao('Tipo de Resposta jÃ¡ existente.');
             $objInfraException->lancarValidacoes();
         }
         
@@ -117,13 +117,13 @@ class MdPetIntTipoRespRN extends InfraRN
     private function validarStrTipoRespostaAceita(MdPetIntTipoRespDTO $objMdPetIntTipoRespDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntTipoRespDTO->getStrTipoRespostaAceita())) {
-            $objInfraException->adicionarValidacao('Resposta do Usuário Externo não informado.');
+            $objInfraException->adicionarValidacao('Resposta do UsuÃ¡rio Externo nÃ£o informado.');
             $objInfraException->lancarValidacoes();
         } else {
             $objMdPetIntTipoRespDTO->setStrTipoRespostaAceita(trim($objMdPetIntTipoRespDTO->getStrTipoRespostaAceita()));
 
             if (strlen($objMdPetIntTipoRespDTO->getStrTipoRespostaAceita()) > 1) {
-                $objInfraException->adicionarValidacao('Resposta do Usuário Externo possui tamanho superior a 1 caracteres.');
+                $objInfraException->adicionarValidacao('Resposta do UsuÃ¡rio Externo possui tamanho superior a 1 caracteres.');
                 $objInfraException->lancarValidacoes();
             }
         }
@@ -132,10 +132,10 @@ class MdPetIntTipoRespRN extends InfraRN
     private function validarStrSinAtivo(MdPetIntTipoRespDTO $objMdPetIntTipoRespDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntTipoRespDTO->getStrSinAtivo())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Exclusão Lógica não informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de ExclusÃ£o LÃ³gica nÃ£o informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntTipoRespDTO->getStrSinAtivo())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Exclusão Lógica inválido.');
+                $objInfraException->adicionarValidacao('Sinalizador de ExclusÃ£o LÃ³gica invÃ¡lido.');
             }
         }
     }
@@ -236,7 +236,7 @@ class MdPetIntTipoRespRN extends InfraRN
                 } else {
                     $nomeTpResp = $this->_getNomeTipoResposta($arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp());
                     $objInfraException = new InfraException();
-                    $objInfraException->adicionarValidacao('O Tipo de Resposta "'.$nomeTpResp.'" não pode ser excluído pois está vinculado à uma Intimação.');
+                    $objInfraException->adicionarValidacao('O Tipo de Resposta "'.$nomeTpResp.'" nÃ£o pode ser excluÃ­do pois estÃ¡ vinculado Ã  uma IntimaÃ§Ã£o.');
                     $objInfraException->lancarValidacoes();
                 }
             }

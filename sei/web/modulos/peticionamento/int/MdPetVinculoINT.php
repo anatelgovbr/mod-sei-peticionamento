@@ -1,10 +1,11 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 02/04/2018 - criado por jose vieira
+* 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
 *
-* Vers„o do Gerador de CÛdigo: 1.41.0
+* Vers√£o do Gerador de C√≥digo: 1.41.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -24,7 +25,7 @@ class MdPetVinculoINT extends InfraINT {
   }
 
   /**
-   * FunÁ„o respons·vel por montar os options do select "HipÛtese Legal" para a tela de vinculacao
+   * Fun√ß√£o respons√°vel por montar os options do select "Hip√≥tese Legal" para a tela de vinculacao
    * @return string
    */
   public static function montarSelectHipoteseLegal()
@@ -56,7 +57,7 @@ class MdPetVinculoINT extends InfraINT {
   }
 
   /**
-   * FunÁ„o respons·vel por montar os options do select "Tipo de Documento"
+   * Fun√ß√£o respons√°vel por montar os options do select "Tipo de Documento"
    * @param $strPrimeiroItemValor
    * @param $strPrimeiroItemDescricao
    * @param $strValorItemSelecionado
@@ -79,7 +80,7 @@ class MdPetVinculoINT extends InfraINT {
     $idsAdd = array();
     $arrRetornoDTO = array();
 
-    //Remove a duplicaÁ„o caso seja salvo o mesmo tipo de documento como obrigatÛrio e n„o obrigatÛrio.
+    //Remove a duplica√ß√£o caso seja salvo o mesmo tipo de documento como obrigat√≥rio e n√£o obrigat√≥rio.
     foreach($arrObjMdPetVincRelSerieDTO as $objMdPetVincRelSerieDTO){
      if(!in_array($objMdPetVincRelSerieDTO->getNumIdSerie(), $idsAdd)) {
        $idsAdd[] = $objMdPetVincRelSerieDTO->getNumIdSerie();
@@ -91,7 +92,7 @@ class MdPetVinculoINT extends InfraINT {
   }
 
   /**
-   * FunÁ„o respons·vel por montar os options do select "Estado"
+   * Fun√ß√£o respons√°vel por montar os options do select "Estado"
    * @param $strPrimeiroItemValor
    * @param $strPrimeiroItemDescricao
    * @param $strValorItemSelecionado
@@ -106,7 +107,7 @@ class MdPetVinculoINT extends InfraINT {
         MdPetVincRepresentantRN::$RP_REVOGADA =>'Revogada',
         MdPetVincRepresentantRN::$RP_RENUNCIADA =>'Renunciada',
         MdPetVincRepresentantRN::$RP_VENCIDA =>'Vencida',
-        MdPetVincRepresentantRN::$RP_SUBSTITUIDA =>'SubstituÌda',
+        MdPetVincRepresentantRN::$RP_SUBSTITUIDA =>'Substitu√≠da',
         MdPetVincRepresentantRN::$RP_INATIVO =>'Inativa'
     );
     return InfraINT::montarSelectArray($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arr);
@@ -126,7 +127,7 @@ class MdPetVinculoINT extends InfraINT {
           $xml = "<dados-pj>";
           $xml .= "<success>false</success>\n";
           $xml .= "<procuracao>false</procuracao>\n";
-          $xml .= "<msg>CÛdigo de confirmaÁ„o inv·lido.</msg>\n";
+          $xml .= "<msg>C√≥digo de confirma√ß√£o inv√°lido.</msg>\n";
           $xml .= "</dados-pj>";
           return $xml;
       }
@@ -180,7 +181,7 @@ class MdPetVinculoINT extends InfraINT {
                                 $xml = "<dados-pj>";
                                 $xml .= "<success>false</success>\n";
                                 $xml .= "<procuracao>false</procuracao>\n";
-                                $xml .= "<msg>O Usu·rio logado (".$arrObjUsuarioDTO->getStrNome().") j· possui vinculo de Respons·vel Legal com este CNPJ.</msg>\n";
+                                $xml .= "<msg>O Usu√°rio logado (".$arrObjUsuarioDTO->getStrNome().") j√° possui vinculo de Respons√°vel Legal com este CNPJ.</msg>\n";
                                 $xml .= "</dados-pj>";
                             }
 

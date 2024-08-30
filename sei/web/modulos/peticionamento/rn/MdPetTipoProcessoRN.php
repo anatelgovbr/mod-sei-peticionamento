@@ -68,19 +68,19 @@ class MdPetTipoProcessoRN extends InfraRN {
 		
 		$objMdPetIndicacaoInteressadoDTO = new MdPetIndicacaoInteressadoDTO();
 		$objMdPetIndicacaoInteressadoDTO->setStrSinIndicacao(self::$INDICACAO_DIRETA);
-		$objMdPetIndicacaoInteressadoDTO->setStrDescricao('Indicação Direta');
+		$objMdPetIndicacaoInteressadoDTO->setStrDescricao('IndicaÃ§Ã£o Direta');
 		$objArrMdPetIndicacaoInteressadoDTO[] = $objMdPetIndicacaoInteressadoDTO;
 
 		$objMdPetIndicacaoInteressadoDTO = new MdPetIndicacaoInteressadoDTO();
 		$objMdPetIndicacaoInteressadoDTO->setStrSinIndicacao(self::$PROPRIO_USUARIO_EXTERNO);
-		$objMdPetIndicacaoInteressadoDTO->setStrDescricao('Próprio Usuário Externo');
+		$objMdPetIndicacaoInteressadoDTO->setStrDescricao('PrÃ³prio UsuÃ¡rio Externo');
 		$objArrMdPetIndicacaoInteressadoDTO[] = $objMdPetIndicacaoInteressadoDTO;
 		
 		
 		
 		return $objArrMdPetIndicacaoInteressadoDTO;
 		}catch(Exception $e){
-			throw new InfraException('Erro listando valores de Indicação de Interessado.',$e);
+			throw new InfraException('Erro listando valores de IndicaÃ§Ã£o de Interessado.',$e);
 		}
 	}
 
@@ -224,7 +224,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 				$objMdPetRelTpProcSerieRN->excluir( $arrSeriePetiocionamento );
 				
 				
-				//removendo dependência com TipoProcessoPeticionamentoUnidade
+				//removendo dependÃªncia com TipoProcessoPeticionamentoUnidade
 				$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
 				$objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrMdPetTipoProcessoDTO[$i]->getNumIdTipoProcessoPeticionamento() , InfraDTO::$OPER_IGUAL);
 				$objMdPetRelTpProcessoUnidDTO->retTodos();
@@ -313,41 +313,41 @@ class MdPetTipoProcessoRN extends InfraRN {
 		$valorParametroHipoteseLegal = $this->_retornaValorParametroHipoteseLegal();
 		//Tipo de Processo
 		if (InfraString::isBolVazia ($objMdPetTipoProcessoDTO->getNumIdProcedimento())) {
-			$objInfraException->adicionarValidacao('Tipo de Processo Associado não informado.');
+			$objInfraException->adicionarValidacao('Tipo de Processo Associado nÃ£o informado.');
 		}
 		
 		if (InfraString::isBolVazia ($objMdPetTipoProcessoDTO->getStrOrientacoes())) {
-			$objInfraException->adicionarValidacao('Orientações não informada.');
+			$objInfraException->adicionarValidacao('OrientaÃ§Ãµes nÃ£o informada.');
 		}
 		
 		else if ( strlen($objMdPetTipoProcessoDTO->getStrOrientacoes()) > 1000 ) {
-			$objInfraException->adicionarValidacao('Orientações possui tamanho superior a 1000 caracteres.');
+			$objInfraException->adicionarValidacao('OrientaÃ§Ãµes possui tamanho superior a 1000 caracteres.');
 		}
 
 		if (($objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'N' && $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'N')) {
-			$objInfraException->adicionarValidacao('Indicação de Interessado não informada.');
+			$objInfraException->adicionarValidacao('IndicaÃ§Ã£o de Interessado nÃ£o informada.');
 		}
 		
 		if (($objMdPetTipoProcessoDTO->getStrSinNaPadrao() == 'S' && InfraString::isBolVazia($objMdPetTipoProcessoDTO->getStrStaNivelAcesso()))) {
-			$objInfraException->adicionarValidacao('Nível de Acesso não informado.');
+			$objInfraException->adicionarValidacao('NÃ­vel de Acesso nÃ£o informado.');
 		} 
 		
 		//se informar nivel de acesso E o nivel for restrito ou sigiloso, PRECISA informar hipotese legal padrao
 		else if($objMdPetTipoProcessoDTO->getStrSinNaPadrao() == 'S' && $objMdPetTipoProcessoDTO->getStrStaNivelAcesso() == ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0'){
 			
 			if( InfraString::isBolVazia( $objMdPetTipoProcessoDTO->getNumIdHipoteseLegal() ) ){
-				$objInfraException->adicionarValidacao('Hipótese legal não informada.');
+				$objInfraException->adicionarValidacao('HipÃ³tese legal nÃ£o informada.');
 			}
 
 		}
 
 		if (($objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'N' && $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'N')) {
-			$objInfraException->adicionarValidacao('Documento Principal não informado.');
+			$objInfraException->adicionarValidacao('Documento Principal nÃ£o informado.');
 		}
 		
 		if (($objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' || $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S')) {
 			if (InfraString::isBolVazia ($objMdPetTipoProcessoDTO->getNumIdSerie())) {
-				$objInfraException->adicionarValidacao('Tipo de Documento principal não informada.');
+				$objInfraException->adicionarValidacao('Tipo de Documento principal nÃ£o informada.');
 			}
 		}
 		
@@ -441,12 +441,12 @@ class MdPetTipoProcessoRN extends InfraRN {
   $arrObjTipoProcedimentoFiltroDTO = $objTipoProcedimentoRN->listar($objTipoProcessoDTO);
   $arrObjTipoProcedimentoRestricaoDTO = InfraArray::converterArrInfraDTO($arrObjTipoProcedimentoFiltroDTO, 'IdProcedimento');
 
-  //Restrição
+  //RestriÃ§Ã£o
   $arrRestricao = array();
 
   foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
    
-    //Verifica se existe restrição para o tipo de processo
+    //Verifica se existe restriÃ§Ã£o para o tipo de processo
     $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
     $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
     $objTipoProcedRestricaoDTO->retNumIdOrgao();
@@ -474,7 +474,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 
       foreach ($arrobjMdPetRelTpProcessoUnidDTO as $objDTO) {
       
-        //Verifica se tem alguma unidade ou órgão diferente dos restritos
+        //Verifica se tem alguma unidade ou Ã³rgÃ£o diferente dos restritos
         if(($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)){
           $arrRestricao [] = $tpProc->getNumIdProcedimento();
         }
@@ -486,12 +486,12 @@ class MdPetTipoProcessoRN extends InfraRN {
 
   }
   	return $arrRestricao;
-  //Fim restrição
+  //Fim restriÃ§Ã£o
 	}
 
 	public function validacaoCidadeDuplcada($arrobjMdPetRelTpProcessoUnidDTO){
 
-		//VALIDAÇÃO CIDADE UNICA
+		//VALIDAÃ‡ÃƒO CIDADE UNICA
 
 		$unidade_cidade = array_map(function ($item) {
 			return [
@@ -530,7 +530,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 				  $unidadesFiltro[] = $unidade_cidade[$value];
 			    }
 
-	            //Verifica se todas as unidades são iguais
+	            //Verifica se todas as unidades sÃ£o iguais
 		        $status = true;
 			    foreach(array_column($unidadesFiltro,'IdUnidade') as $value) {
 					if(array_column($unidadesFiltro,'IdUnidade')[0] != $value) {
@@ -588,7 +588,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 				}
 			}
 
-			//se todos os elementos são iguais, adiciona no array
+			//se todos os elementos sÃ£o iguais, adiciona no array
 			if($status == true){
 
 				foreach ($unidades as $key => $value) {
@@ -625,7 +625,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 		}
 
 		return array($arrIdsUnidade, $tpProcsNegados);
-		//VALIDAÇÃO CIDADE UNICA - FIM
+		//VALIDAÃ‡ÃƒO CIDADE UNICA - FIM
 
 	}
 	
@@ -641,10 +641,10 @@ class MdPetTipoProcessoRN extends InfraRN {
 	 * @return mixed
 	 */
 	private function _validarDuplicidade(MdPetTipoProcessoDTO $objMdPetTipoProcessoDTO, InfraException $objInfraException, $cadastrar){
-	// VALIDA DUPLICAÇÃO
-		// VALIDACAO A SER EXECUTADA NA INSERÇAO DE NOVOS REGISTROS
+	// VALIDA DUPLICAÃ‡ÃƒO
+		// VALIDACAO A SER EXECUTADA NA INSERÃ‡AO DE NOVOS REGISTROS
 		
-		$msg = 'Este Tipo de Processo já possui cadastro para peticionamento. Não é possível fazer dois cadastros de peticionamento para o mesmo Tipo de Processo.';
+		$msg = 'Este Tipo de Processo jÃ¡ possui cadastro para peticionamento. NÃ£o Ã© possÃ­vel fazer dois cadastros de peticionamento para o mesmo Tipo de Processo.';
 		$objMdPetTipoProcessoDTO2 = new MdPetTipoProcessoDTO();
 		$objMdPetTipoProcessoDTO2->setNumIdProcedimento($objMdPetTipoProcessoDTO->getNumIdProcedimento());
 		
@@ -656,7 +656,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 				
 			if ($ret > 0) {
 				$objInfraException->adicionarValidacao ($msg);
-			} // VALIDACAO A SER EXECUTADA QUANDO É FEITO UPDATE DE REGISTROS
+			} // VALIDACAO A SER EXECUTADA QUANDO Ã‰ FEITO UPDATE DE REGISTROS
 				
 		} else {
 				
@@ -684,8 +684,8 @@ class MdPetTipoProcessoRN extends InfraRN {
 	public function _validarTipoProcessoAssociado(MdPetTipoProcessoDTO $objMdPetTipoProcessoDTO, InfraException $objInfraException){
 
 		//VALIDA NOVA REGRA ADICIONADA
-		// somente aceita tipo de processo que na parametrização do SEI tenha
-		//indicação de pelo menos uma sugestao de assunto
+		// somente aceita tipo de processo que na parametrizaÃ§Ã£o do SEI tenha
+		//indicaÃ§Ã£o de pelo menos uma sugestao de assunto
 		
 		$relTipoProcedimentoDTO = new RelTipoProcedimentoAssuntoDTO();
 		$relTipoProcedimentoDTO->retTodos();
@@ -695,7 +695,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 		$arrLista = $relTipoProcedimentoRN->listarRN0192( $relTipoProcedimentoDTO );
 		
 		if( !is_array( $arrLista ) || count( $arrLista ) == 0 ){
-			$msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
+			$msg = "Por favor informe um tipo de processo que na parametrizaÃ§Ã£o do SEI tenha indicaÃ§Ã£o de pelo menos uma sugestÃ£o de assunto.";
 			$objInfraException->adicionarValidacao ($msg);
 		}
 

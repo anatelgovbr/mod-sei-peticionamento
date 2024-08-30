@@ -4,6 +4,7 @@
  * ANATEL
  *
  * 30/03/2016 - criado por jaqueline.mendes@cast.com.br - CAST
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
  *
  */
 
@@ -16,7 +17,7 @@ class MdPetTipoPoderLegalINT extends InfraINT {
     }
 
     /**
-     * FunÁ„o respons·vel por montar os options do select "HipÛtese Legal" para a tela de vinculacao
+     * Fun√ß√£o respons√°vel por montar os options do select "Hip√≥tese Legal" para a tela de vinculacao
      * @return string
      */
     public static function montarOptionsTipoPoder($default)

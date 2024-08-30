@@ -1,10 +1,10 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 07/12/2016 - criado por Marcelo Bezerra
 *
-* Vers„o do Gerador de CÛdigo: 1.39.0
+* Vers√£o do Gerador de C√≥digo: 1.39.0
 */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -21,7 +21,7 @@ class MdPetIntRelDestExternoRN extends InfraRN {
 
   private function validarNumIdSerie(MdPetIntSerieDTO $objMdPetIntSerieDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntSerieDTO->getNumIdSerie())){
-      $objInfraException->adicionarValidacao('Tipo de Documento n„o informado.');
+      $objInfraException->adicionarValidacao('Tipo de Documento n√£o informado.');
     }
   }
 

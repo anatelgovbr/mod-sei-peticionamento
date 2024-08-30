@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * ANATEL
+ *
+ * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
+ *
+ */
+ 
 //URL's
 $strUrlAcaoForm = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']);
     
@@ -11,24 +19,24 @@ $strUrlAjaxMontarHipoteseLegal = SessaoSEIExterna::getInstance()->assinarLink('c
 $strUrlUploadArquivo = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_resposta_upload_anexo');
 
 //Msgs dos Tooltips de Ajuda
-$strMsgTooltipFormato = 'Selecione a opÁ„o "Nato-digital" se o arquivo a ser carregado foi criado originalmente em meio eletrÙnico.\n\n\n Selecione a opÁ„o "Digitalizado" somente se o arquivo a ser carregado foi produzido da digitalizaÁ„o de um documento em papel.';
+$strMsgTooltipFormato = 'Selecione a op√ß√£o "Nato-digital" se o arquivo a ser carregado foi criado originalmente em meio eletr√¥nico.\n\n\n Selecione a op√ß√£o "Digitalizado" somente se o arquivo a ser carregado foi produzido da digitaliza√ß√£o de um documento em papel.';
 
 $strMsgTooltipTipoDocumento = 'Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.';
 
-$strMsgTooltipComplementoTipoDocumento = 'O Complemento do Tipo de Documento È o texto que completa a identificaÁ„o do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo "Recurso" e Complemento "de 1™ Inst‚ncia" identificar· o documento como "Recurso de 1™ Inst‚ncia").\n\n\n Exemplos: O Complemento do Tipo "Nota" pode ser "Fiscal EletrÙnica" ou "Fiscal n∫ 75/2016". O Complemento do Tipo "Comprovante" pode ser "de Pagamento" ou "de EndereÁo".';
+$strMsgTooltipComplementoTipoDocumento = 'O Complemento do Tipo de Documento √© o texto que completa a identifica√ß√£o do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo "Recurso" e Complemento "de 1¬™ Inst√¢ncia" identificar√° o documento como "Recurso de 1¬™ Inst√¢ncia").\n\n\n Exemplos: O Complemento do Tipo "Nota" pode ser "Fiscal Eletr√¥nica" ou "Fiscal n¬∫ 75/2016". O Complemento do Tipo "Comprovante" pode ser "de Pagamento" ou "de Endere√ßo".';
 
-$strMsgTooltipNivelAcesso = 'O NÌvel de Acesso que for indicado È de sua exclusiva responsabilidade e estar· condicionado ‡ an·lise por servidor p˙blico, que poder· alter·-lo a qualquer momento sem necessidade de prÈvio aviso.\n\n\n Selecione ìP˙blicoî se no teor do documento a ser carregado n„o existir informaÁıes restritas. Se no teor do documento existir informaÁıes restritas, selecione ìRestritoî.';
-$strMsgTooltipHipoteseLegal = 'Para o NÌvel de Acesso ìRestritoî È obrigatÛria a indicaÁ„o da HipÛtese Legal correspondente ‡ informaÁ„o restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indicaÁ„o. Em caso de d˙vidas, pesquise sobre a legislaÁ„o indicada entre parÍnteses em cada HipÛtese listada.';
+$strMsgTooltipNivelAcesso = 'O N√≠vel de Acesso que for indicado √© de sua exclusiva responsabilidade e estar√° condicionado √† an√°lise por servidor p√∫blico, que poder√° alter√°-lo a qualquer momento sem necessidade de pr√©vio aviso.\n\n\n Selecione "P√∫blico" se no teor do documento a ser carregado n√£o existir informa√ß√µes restritas. Se no teor do documento existir informa√ß√µes restritas, selecione "Restrito".';
+$strMsgTooltipHipoteseLegal = 'Para o N√≠vel de Acesso "Restrito" √© obrigat√≥ria a indica√ß√£o da Hip√≥tese Legal correspondente √† informa√ß√£o restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indica√ß√£o. Em caso de d√∫vidas, pesquise sobre a legisla√ß√£o indicada entre par√™nteses em cada Hip√≥tese listada.';
 
-$strMsgTooltipTipoResposta = 'Este campo lista as Respostas possÌveis para a presente IntimaÁ„o EletrÙnica e somente se ainda estiverem dentro do prazo.\n\n\nSe n„o listar Tipo de Resposta e ainda pretender protocolizar documentos neste processo, pode acessar o menu Peticionamento > Intercorrente.';
+$strMsgTooltipTipoResposta = 'Este campo lista as Respostas poss√≠veis para a presente Intima√ß√£o Eletr√¥nica e somente se ainda estiverem dentro do prazo.\n\n\nSe n√£o listar Tipo de Resposta e ainda pretender protocolizar documentos neste processo, pode acessar o menu Peticionamento > Intercorrente.';
 //Fim Msgs
 
-//RN Tamanho Maximo Arquivo
+//RN Tamanho M√°ximo Arquivo
 $tamanhoMaximo = MdPetIntercorrenteINT::tamanhoMaximoArquivoPermitido();
 
-//RN Extensoes Permitidas
+//RN Extens√µes Permitidas
 $extensoesPermitidas = MdPetExtensoesArquivoINT::recuperaExtensoes(null, null, null, "N");
 //Fim RN
 
-// Forcar o Nivel de Acesso parametrizado
+// For√ßar o N√≠vel de Acesso parametrizado
 $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc($tipoPeticionamento = 'I');

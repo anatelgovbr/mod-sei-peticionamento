@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 26/10/2017 - criado por jaqueline.cast
  *
@@ -11,7 +11,7 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 
 class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
 
-    //Id Tarefa Módulo
+    //Id Tarefa MÃ³dulo
     public static $ID_PET_LIBERAR_ANDAMENTOS_CONCLUIDOS = 'LIBERAR_ACESSO_EXTERNO_INTIMACAO';
 
     public function __construct(){
@@ -46,31 +46,31 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
                 //Realiza as condicionais para manter os acessos externos por contato prioritarios
                 $arrIdsUserAcExtPrior = $this->_retornarArrAcessosExternosPrioritarios($arrUserAcessoExt, $arrAcessosExtTipos);
 
-                //Formata Array, removendo os prioritarios, com a intenção de verificar quais acessos devem ser cancelados
+                //Formata Array, removendo os prioritarios, com a intenÃ§Ã£o de verificar quais acessos devem ser cancelados
                 $arrIdsAcessosExternosCancelar = $this->_retornaArrIdsAcessoExternoCancelar($arrUserAcessoExt, $arrIdsUserAcExtPrior);
 
 
                 //Formata um array, verificando quais usuarios possuem o tipo de acesso parcial
                 $arrIdsUsComAcessoExtParcial = $this->_retornaArrIdsUsuarioUnidadeAcessoParcial($arrIdsUserAcExtPrior, $arrAcessosExtTipos);
 
-                //Busca todos os documentos que estão vinculado aos usuários que terão acessos parciais cancelados
+                //Busca todos os documentos que estÃ£o vinculado aos usuÃ¡rios que terÃ£o acessos parciais cancelados
                 $arrUsuarioDocVinculados = $this->_buscarDocumentosAcessosExternosParciaisCancelados($arrIdsUsComAcessoExtParcial, $arrIdsAcessosExternosCancelar, $arrUserAcessoExt);
 
-                //Adiciona para os acessos parciais prioritarios os documentos que estavam vinculados aos acessos externos que serão cancelados
+                //Adiciona para os acessos parciais prioritarios os documentos que estavam vinculados aos acessos externos que serÃ£o cancelados
                 $this->_inserirNovosRelacionamentosAcessoParcial($arrUsuarioDocVinculados, $arrIdsUserAcExtPrior);
 
-                //Atualiza as antiga intimações com  o novo id de acesso externo
+                //Atualiza as antiga intimaÃ§Ãµes com  o novo id de acesso externo
                 if (count($arrIdsAcessosExternosCancelar) > 0)
                 {
                     $this->_atualizarAntigasIntimacoes($arrIdsUserAcExtPrior);
                 }
 
-                //Cancela os acessos externos que não serão utilizados
+                //Cancela os acessos externos que nÃ£o serÃ£o utilizados
                 $this->_cancelarAcessosExternosNaoUtilizados($arrIdsAcessosExternosCancelar);
             }
 
         }catch(Exception $e){
-            throw new InfraException('Não foi possível atualizar os acessos externos para as novas regras.',$e);
+            throw new InfraException('NÃ£o foi possÃ­vel atualizar os acessos externos para as novas regras.',$e);
         }
     }
 
@@ -233,7 +233,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
     private function _formatarArrayRetornoAcessosExternosCancelar($arrIdsAcessosExternosCancelar){
         $arrRetorno = array();
         foreach($arrIdsAcessosExternosCancelar as $usuario => $arrAcessoExt){
-            //Função feita por passagem de parametro por valor.
+            //FunÃ§Ã£o feita por passagem de parametro por valor.
             $this->_retornaIdsAcessoExt($arrAcessoExt, $arrRetorno);
         }
 
@@ -270,7 +270,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
                     $arrObjAcessosExternosDTO = $objAcessoExternoRN->listar($objAcessoExternoDTO);
 
                     if ($count > 0) {
-                        $arrParams = array($arrObjAcessosExternosDTO, 'Cancelado automaticamente em razão de evolução para unificação de Acessos Externos concedidos em Intimações Eletrônicas para o mesmo Destinatário e Processo.');
+                        $arrParams = array($arrObjAcessosExternosDTO, 'Cancelado automaticamente em razÃ£o de evoluÃ§Ã£o para unificaÃ§Ã£o de Acessos Externos concedidos em IntimaÃ§Ãµes EletrÃ´nicas para o mesmo DestinatÃ¡rio e Processo.');
                         $this->_cancelarAcessosExternos($arrParams);
                     }
                 }
@@ -421,7 +421,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
                 $objAcessoExternoDTO = $arrObjAcessoExternoDTO[$parObjAcessoExternoDTO->getNumIdAcessoExterno()];
 
                 if ($objAcessoExternoDTO == null) {
-                    throw new InfraException('Registro de acesso externo ['.$parObjAcessoExternoDTO->getNumIdAcessoExterno().'] não encontrado.');
+                    throw new InfraException('Registro de acesso externo ['.$parObjAcessoExternoDTO->getNumIdAcessoExterno().'] nÃ£o encontrado.');
                 }
 
                 $objAcessoExternoDTO->setStrMotivo($parObjAcessoExternoDTO->getStrMotivo());
@@ -430,13 +430,13 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
                     $objAcessoExternoDTO->getStrStaTipo() != AcessoExternoRN::$TA_DESTINATARIO_ISOLADO &&
                     $objAcessoExternoDTO->getStrStaTipo() != AcessoExternoRN::$TA_USUARIO_EXTERNO
                 ) {
-                    $objInfraException->adicionarValidacao('Registro ['.$objAcessoExternoDTO->getNumIdAcessoExterno().'] não é uma Disponibilização de Acesso Externo.');
+                    $objInfraException->adicionarValidacao('Registro ['.$objAcessoExternoDTO->getNumIdAcessoExterno().'] nÃ£o Ã© uma DisponibilizaÃ§Ã£o de Acesso Externo.');
                 }
 
                 if ($objAcessoExternoDTO->getNumIdTarefaAtividade() == TarefaRN::$TI_LIBERACAO_ACESSO_EXTERNO_CANCELADA) {
-                    $objInfraException->adicionarValidacao('Disponibilização de acesso externo para "'.$objAcessoExternoDTO->getStrNomeContato().'" já consta como cancelada.');
+                    $objInfraException->adicionarValidacao('DisponibilizaÃ§Ã£o de acesso externo para "'.$objAcessoExternoDTO->getStrNomeContato().'" jÃ¡ consta como cancelada.');
                 } else if ($objAcessoExternoDTO->getNumIdTarefaAtividade() != TarefaRN::$TI_LIBERACAO_ACESSO_EXTERNO) {
-                    $objInfraException->adicionarValidacao('Andamento do processo ['.$objAcessoExternoDTO->getNumIdTarefaAtividade().'] não é uma Disponibilização de Acesso Externo.');
+                    $objInfraException->adicionarValidacao('Andamento do processo ['.$objAcessoExternoDTO->getNumIdTarefaAtividade().'] nÃ£o Ã© uma DisponibilizaÃ§Ã£o de Acesso Externo.');
                 }
 
             }
@@ -466,7 +466,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
                     }
                 }
 
-                //lança andamento para o usuário atual registrando o cancelamento da liberação
+                //lanÃ§a andamento para o usuÃ¡rio atual registrando o cancelamento da liberaÃ§Ã£o
                 $objAtividadeDTO = new AtividadeDTO();
                 $objAtividadeDTO->setDblIdProtocolo($objAcessoExternoDTO->getDblIdProtocoloAtividade());
                 $objAtividadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
@@ -481,7 +481,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
 
                 $ret = $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
 
-                //altera andamento original de concessão ou transferência
+                //altera andamento original de concessÃ£o ou transferÃªncia
                 $objAtividadeDTO = new AtividadeDTO();
 
                 $objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_LIBERACAO_ACESSO_EXTERNO_CANCELADA);
@@ -492,7 +492,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
 
                 $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                 $objAtributoAndamentoDTO->setStrNome('USUARIO');
-                $objAtributoAndamentoDTO->setStrValor(SessaoSEI::getInstance()->getStrSiglaUsuario().'¥'.SessaoSEI::getInstance()->getStrNomeUsuario());
+                $objAtributoAndamentoDTO->setStrValor(SessaoSEI::getInstance()->getStrSiglaUsuario().'Â¥'.SessaoSEI::getInstance()->getStrNomeUsuario());
                 $objAtributoAndamentoDTO->setStrIdOrigem(SessaoSEI::getInstance()->getNumIdUsuario());
                 $objAtributoAndamentoDTO->setNumIdAtividade($objAcessoExternoDTO->getNumIdAtividade());
                 $objAtributoAndamentoRN->cadastrarRN1363($objAtributoAndamentoDTO);
@@ -500,7 +500,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
                 $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                 $objAtributoAndamentoDTO->setStrNome('DATA_HORA');
                 $objAtributoAndamentoDTO->setStrValor($strDataHoraAtual);
-                $objAtributoAndamentoDTO->setStrIdOrigem($ret->getNumIdAtividade()); //relaciona com o andamento de cassação
+                $objAtributoAndamentoDTO->setStrIdOrigem($ret->getNumIdAtividade()); //relaciona com o andamento de cassaÃ§Ã£o
                 $objAtributoAndamentoDTO->setNumIdAtividade($objAcessoExternoDTO->getNumIdAtividade());
                 $objAtributoAndamentoRN->cadastrarRN1363($objAtributoAndamentoDTO);
 
@@ -518,7 +518,7 @@ class MdPetIntAtualizarAcessoExternoRN extends InfraRN{
 
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cancelando disponibilização de acesso externo.', $e);
+            throw new InfraException('Erro cancelando disponibilizaÃ§Ã£o de acesso externo.', $e);
         }
     }
 

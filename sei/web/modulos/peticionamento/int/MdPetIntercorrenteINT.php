@@ -3,6 +3,7 @@
      * ANATEL
      *
      * 25/11/2016 - criado por jaqueline.mendes@cast.com.br - CAST
+	 * 26/08/2024 - Atualiza√ß√£o por gabrielg.colab - SPASSU
      *
      */
 
@@ -24,7 +25,7 @@
     	}
         
         /**
-         * FunÁ„o respons·vel por gerar o XML para validaÁ„o do n˙mero Processo
+         * Fun√ß√£o respons√°vel por gerar o XML para valida√ß√£o do n√∫mero Processo
          * @param int $numeroProcesso
          * @return string
          * @since  28/11/2016
@@ -33,8 +34,8 @@
         {
 
             $xmlMensagemErro = '<Validacao><MensagemValidacao>%s</MensagemValidacao></Validacao>';
-            $strMsgProcessoNaoExiste = 'O n˙mero de processo indicado n„o existe no sistema. Verifique se o n˙mero est· correto e completo, inclusive com o DÌgito Verificador.';
-            $strMsgProcessoNaoAceitaPeticionamento = 'O processo indicado n„o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.';
+            $strMsgProcessoNaoExiste = 'O n√∫mero de processo indicado n√£o existe no sistema. Verifique se o n√∫mero est√° correto e completo, inclusive com o D√≠gito Verificador.';
+            $strMsgProcessoNaoAceitaPeticionamento = 'O processo indicado n√£o aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.';
 
             $objMdPetIntercorrenteRN = new MdPetIntercorrenteProcessoRN();
             $objProtocoloDTO         = new ProtocoloDTO();
@@ -127,7 +128,7 @@
               $objRelProtocoloProtocoloDTO->setOrdDthAssociacao(InfraDTO::$TIPO_ORDENACAO_DESC);
 
               $dadosProtocoloAnexador = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
-              $processoIntercorrente = 'Diretamente no Processo Anexador n∫ ' . $dadosProtocoloAnexador->getStrProtocoloFormatadoProtocolo1();
+              $processoIntercorrente = 'Diretamente no Processo Anexador n¬∫ ' . $dadosProtocoloAnexador->getStrProtocoloFormatadoProtocolo1();
 
             }
 
@@ -148,13 +149,13 @@
 
 
         /**
-         * FunÁ„o respons·vel por montar os options do select "ConferÍncia com o documento digitalizado"
+         * Fun√ß√£o respons√°vel por montar os options do select "Confer√™ncia com o documento digitalizado"
          * @param $strPrimeiroItemValor
          * @param $strPrimeiroItemDescricao
          * @param $strValorItemSelecionado
          * @return string
          * @since  29/11/2016
-         * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+         * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
          */
         public static function montarSelectTipoConferencia($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado)
         {
@@ -171,13 +172,13 @@
 
 
         /**
-         * FunÁ„o respons·vel por montar os options do select "Tipo de Documento"
+         * Fun√ß√£o respons√°vel por montar os options do select "Tipo de Documento"
          * @param $strPrimeiroItemValor
          * @param $strPrimeiroItemDescricao
          * @param $strValorItemSelecionado
          * @return string
          * @since  29/11/2016
-         * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+         * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
          */
         public static function montarSelectTipoDocumento($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado)
         {
@@ -198,15 +199,15 @@
         }
 
         /**
-         * FunÁ„o respons·vel por retornoar o tamanho maximo permitido para upload
-         * ConfiguraÁ„o realizada em AdministraÁ„o > Peticionamento EletrÙnico > Tamanho M·ximo de Arquivos
+         * Fun√ß√£o respons√°vel por retornoar o tamanho maximo permitido para upload
+         * Configura√ß√£o realizada em Administra√ß√£o > Peticionamento Eletr√¥nico > Tamanho M√°ximo de Arquivos
          * @return string
          * @since  29/11/2016
-         * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+         * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
          */
         public static function tamanhoMaximoArquivoPermitido()
         {
-            $tamanhoMaximo          = "Limite n„o configurado na AdministraÁ„o do Sistema.";
+            $tamanhoMaximo          = "Limite n√£o configurado na Administra√ß√£o do Sistema.";
             $objTamanhoPermitidoDTO = new MdPetTamanhoArquivoDTO();
             $objTamanhoPermitidoDTO->setNumIdTamanhoArquivo(MdPetTamanhoArquivoRN::$ID_FIXO_TAMANHO_ARQUIVO);
             $objTamanhoPermitidoDTO->setStrSinAtivo('S');
@@ -222,12 +223,12 @@
         }
 
         /**
-         * FunÁ„o respons·vel por verificar se a hipotese legal vai ser exibida ou n„o no fieldset Documentos
-         * SOMENTE deve ser exibido SE no Infra > Par‚metros a opÁ„o SEI_HABILITAR_HIPOTESE_LEGAL estiver configurado
+         * Fun√ß√£o respons√°vel por verificar se a hipotese legal vai ser exibida ou n√£o no fieldset Documentos
+         * SOMENTE deve ser exibido SE no Infra > Par√¢metros a op√ß√£o SEI_HABILITAR_HIPOTESE_LEGAL estiver configurado
          * como 1 ou 2.
          * @return string
          * @since  05/12/2016
-         * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+         * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
          */
         public static function verificarHipoteseLegal()
         {
@@ -244,12 +245,12 @@
 
 
         /**
-         * FunÁ„o respons·vel por verificar se existe criterio intercorrente cadastrado ou intercorrente padr„o
+         * Fun√ß√£o respons√°vel por verificar se existe criterio intercorrente cadastrado ou intercorrente padr√£o
          * cadastrado.
          * @param $idTipoProcessoPeticionamento
          * @return array
          * @since  06/12/2016
-         * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+         * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
          */
         public static function verificarCriterioIntercorrente($idTipoProcessoPeticionamento)
         {
@@ -264,7 +265,7 @@
             $objMdPetCriterioRN  = new MdPetCriterioRN();
             $arrMdPetCriterioDTO = $objMdPetCriterioRN->consultar($objMdPetCriterioDTO);
 
-            //Se n„o tem criterio intercorrente cadastrado, verifica se tem interorrente padr„o cadastrado.
+            //Se n√£o tem criterio intercorrente cadastrado, verifica se tem interorrente padr√£o cadastrado.
             if (is_null($arrMdPetCriterioDTO)) {
                 $objMdPetCriterioDTO = new MdPetCriterioDTO();
                 $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
@@ -278,10 +279,10 @@
             $arrRetorno = array();
             if (!is_null($arrMdPetCriterioDTO)) {
 
-                $arrDescricaoNivelAcesso = ['P' => 'P˙blico', 'I' => 'Restrito'];
+                $arrDescricaoNivelAcesso = ['P' => 'P√∫blico', 'I' => 'Restrito'];
                 $arrIdNivelAcesso        = ['P' => 0, 'I' => 1];
 
-                if ($arrMdPetCriterioDTO->getStrStaNivelAcesso() == 2) { //2 = Padr„o PrÈ-definido
+                if ($arrMdPetCriterioDTO->getStrStaNivelAcesso() == 2) { //2 = Padr√£o Pr√©-definido
                     $descricaoNivel = $arrDescricaoNivelAcesso[$arrMdPetCriterioDTO->getStrStaTipoNivelAcesso()];
 
                     $arrRetorno['nivelAcesso'] = array(
@@ -307,11 +308,11 @@
         }
 
         /**
-         * FunÁ„o respons·vel por montar os options do select "HipÛtese Legal"
+         * Fun√ß√£o respons√°vel por montar os options do select "Hip√≥tese Legal"
          * @param $objEntradaListarHipotesesLegaisAPI
          * @return string
          * @since  08/12/2016
-         * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+         * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
          */
         public static function montarSelectHipoteseLegal($booOnlyOptions = false)
         {
@@ -345,13 +346,13 @@
         }
 
         /**
-         * FunÁ„o respons·vel por montar o array com os documentos que foram adicionados na grid da tela Peticionamento
+         * Fun√ß√£o respons√°vel por montar o array com os documentos que foram adicionados na grid da tela Peticionamento
          * Interorrente
          * @param $idProcedimento
          * @param $hdnTabelaDinamicaDocumento
          * @return  array $arrDocumentoAPI
          * @since  15/12/2016
-         * @author AndrÈ Luiz <andre.luiz@castgroup.com.br>
+         * @author Andr√© Luiz <andre.luiz@castgroup.com.br>
          */
         public static function montarArrDocumentoAPI($idProcedimento, $hdnTabelaDinamicaDocumento)
         {
@@ -385,7 +386,7 @@
         }
 
         /**
-         * FunÁ„o respons·vel por Retornar o Id do Anexo Salvo
+         * Fun√ß√£o respons√°vel por Retornar o Id do Anexo Salvo
          * @param SaidaIncluirDocumentoAPI $ret
          * @return  string $idAnexo
          * @since  20/12/2016
@@ -406,7 +407,7 @@
         }
 
         /**
-         * FunÁ„o respons·vel por gerar o XML para validaÁ„o do n˙mero Processo
+         * Fun√ß√£o respons√°vel por gerar o XML para valida√ß√£o do n√∫mero Processo
          * @param array $params
          * @return MdPetRelReciboDocumentoAnexoDTO $objMdPetRelReciboDocumentoAnexoDTO
          * @since  20/12/2016
@@ -427,7 +428,7 @@
 
 
         /**
-         * FunÁ„o que verifica o tipo de formato de acorodo com o Documento
+         * Fun√ß√£o que verifica o tipo de formato de acorodo com o Documento
          * @param SaidaIncluirDocumentoAPI $objRetornoDoc
          * @return array $arrRetorno
          * @since  21/12/2016
@@ -472,7 +473,7 @@
         }
         
         /**
-         * FunÁ„o respons·vel por montar os options do select "HipÛtese Legal" para a tela de resposta a intimacao
+         * Fun√ß√£o respons√°vel por montar os options do select "Hip√≥tese Legal" para a tela de resposta a intimacao
          * @return string
          * @author Marcelo Bezerra
          */

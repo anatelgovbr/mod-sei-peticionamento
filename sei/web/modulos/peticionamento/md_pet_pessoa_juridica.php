@@ -33,8 +33,8 @@ try {
     }
 
     $arrComandos = [];
-	$arrComandos[] = '<input type="submit" id="btnToggleLote" value="Selecionar em Lote" class="infraButton btnToggleLote" style="cursor: pointer" />';
-    $arrComandos[] = '<button type="submit" accesskey="P" id="sbmPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
+	$arrComandos[] = '<input type="button" id="btnToggleLote" value="Selecionar em Lote" class="infraButton btnToggleLote" style="cursor: pointer" />';
+    $arrComandos[] = '<button type="submit" accesskey="P" id="sbmPesquisar" value="Pesquisar" class="infraButton submitSearchForm"><span class="infraTeclaAtalho">P</span>esquisar</button>';
 
     if ($_GET['acao'] == 'md_pet_pessoa_juridica'){
         $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
@@ -213,6 +213,8 @@ PaginaSEI::getInstance()->abrirAreaDados();
 </div>
 
 <form id="frmSerieLista" method="post" action="<?=PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&filtro='. $_GET['filtro'].'&tipoDoc='.$_GET['tipoDoc'].'&acao_origem='.$_GET['acao'].'&id_documento='.$idDocumento))?>">
+    <input type="submit" class="d-none" />
+
     <div class="row">
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-6">
             <div class="form-group">
@@ -267,6 +269,11 @@ PaginaSEI::getInstance()->abrirAreaDados();
     }
     
     $(document).ready(function() {
+
+        $('.submitSearchForm').off('click').on('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            $('form#frmSerieLista')[0].submit();
+        });
 
         let timer;
 

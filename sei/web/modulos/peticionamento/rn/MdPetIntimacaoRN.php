@@ -1380,6 +1380,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntDestDTO1->retDblIdDocumento();
             $objMdPetIntDestDTO1->retDblIdProtocolo();
             $objMdPetIntDestDTO1->retStrSinPrincipalDoc();
+            $objMdPetIntDestDTO1->retStrSinPessoaJuridica();
 
             $arrObjDTOAdd = $objMdPetIntDestRN->listar($objMdPetIntDestDTO1);
 
@@ -1404,6 +1405,7 @@ class MdPetIntimacaoRN extends InfraRN
                 $objMdPetIntDestDTO2->retStrProtocoloFormatadoDocumento();
                 $objMdPetIntDestDTO2->retNumIdMdPetIntimacao();
                 $objMdPetIntDestDTO2->retStrSinPrincipalDoc();
+	            $objMdPetIntDestDTO2->retStrSinPessoaJuridica();
 
                 $arrObjDTOMain = $objMdPetIntDestRN->listar($objMdPetIntDestDTO2);
 
@@ -1415,6 +1417,7 @@ class MdPetIntimacaoRN extends InfraRN
                             $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['idDocMain'] = $objDTOMain->getDblIdProtocolo();
                             $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['nomeDocMain'] = $this->_formataNomeDocumentoParaIntimacao($objDTOMain);
                             $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['isPrincipal'] = $objDTOAdd->getDblIdProtocolo() == $objDTOMain->getDblIdProtocolo() ? 'S' : 'N';
+	                        $arrRetorno[$objDTOAdd->getDblIdProtocolo()][$objDTOAdd->getNumIdMdPetIntimacao()]['sinPessoaJuridica'] = $objDTOMain->getStrSinPessoaJuridica();
                         }
                     }
                 }
@@ -1425,7 +1428,7 @@ class MdPetIntimacaoRN extends InfraRN
     }
 
 
-    private function _verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $hdnIdsUsuarios, $idProcedimento)
+    private function _verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $hdnIdsUsuarios, $idProcedimento, $tipoPessoa)
     {
         $msg = '';
         $msgFim = "\nNão será possível concluir esta intimação. Para prosseguir, antes é necessário remover o Destinatário acima sobre o qual constam os conflitos indicados ou retirar os protocolos do conflito da presente Intimação.";
@@ -1438,9 +1441,10 @@ class MdPetIntimacaoRN extends InfraRN
         $arrDadosAllDocs = $this->_getDadosDocumentoIntimacao($idsDocs);
 
         foreach ($hdnIdsUsuarios as $usuario) {
-            $idContato = $usuario;
-            $nomeContato = $this->_getNomeContato($idContato);
-            $msgInicio = "O Destinatário " . PaginaSEI::tratarHTML($nomeContato) . " já possui protocolos indicados nesta Intimação a ser gerada vinculados a Intimação anterior neste processo. Veja a lista abaixo: \n\n";
+        	
+            $idContato      = $usuario;
+            $nomeContato    = $this->_getNomeContato($idContato);
+            $msgInicio      = "O Destinatário " . PaginaSEI::tratarHTML($nomeContato) . " já possui protocolos indicados nesta Intimação a ser gerada vinculados a Intimação anterior neste processo. Veja a lista abaixo: \n\n";
 
             $objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
             $objMdPetIntDestDTO->retNumIdMdPetIntimacao();
@@ -1449,6 +1453,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntDestDTO->setDblIdProtocoloProcedimento($idProcedimento);
             $objMdPetIntDestDTO->retDblIdDocumento();
             $objMdPetIntDestDTO->retDblIdProtocolo();
+            $objMdPetIntDestDTO->retStrSinPessoaJuridica();
             $objMdPetIntDestDTO->retDblIdProtocoloProcedimento();
 
             //Dados Documento
@@ -1459,36 +1464,56 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntDestDTO->setOrdStrSinPrincipalDoc(InfraDTO::$TIPO_ORDENACAO_DESC);
 
             $countDoc = $objMdPetIntDestRN->contar($objMdPetIntDestDTO);
+            
             $arrDuplicados = array();
+            
             if ($countDoc > 0) {
+            	
                 $arrObjDTOUtilizados = $objMdPetIntDestRN->listar($objMdPetIntDestDTO);
+                
                 foreach ($arrObjDTOUtilizados as $objDTO) {
-                    $arrDadosDocMain = array_key_exists($objDTO->getDblIdProtocolo(), $arrDadosAllDocs) ? $arrDadosAllDocs[$objDTO->getDblIdProtocolo()] : null;
+	
+	                $arrDadosDocMain = array_key_exists($objDTO->getDblIdProtocolo(), $arrDadosAllDocs) ? $arrDadosAllDocs[$objDTO->getDblIdProtocolo()] : null;
                     $dadosDoc = $this->_formatarNomeProtocolo($objDTO);
 
                     foreach ($arrDadosDocMain as $idIntimacao => $arrDadoDoc) {
+                    	
                         if (!is_null($arrDadoDoc)) {
-
-                            $idDocPrincipal = $arrDadoDoc['idDocMain'];
-                            $idValidacao = $idDocPrincipal . '_' . $objDTO->getDblIdProtocolo();
-                            $notDuplicado = (!array_key_exists($idValidacao, $arrDuplicados));
-
-                            if (array_key_exists($idDocPrincipal, $arrMsgAnexo) && $notDuplicado) {
-                                $arrDuplicados[$idValidacao] = '';
-                                $arrMsgAnexo[$idDocPrincipal]['dadosDoc'] .= "    " . $dadosDoc . "\n";
-                            } else {
-                                if ($notDuplicado) {
-                                    $arrDuplicados[$idValidacao] = '';
-                                    $arrMsgAnexo[$idDocPrincipal]['dadosDoc'] = "    " . $dadosDoc . "\n";
-                                    $arrMsgAnexo[$idDocPrincipal]['dadosIntimacao'] = $arrDadoDoc['nomeDocMain'];
-                                }
-                            }
+	
+							// Contorno para que documentos objetos de intimações à PF não impeça a PJ de ser intimada
+	                        if(($arrDadoDoc['sinPessoaJuridica'] == 'N' && $tipoPessoa == 'F') || ($arrDadoDoc['sinPessoaJuridica'] == 'S' && in_array($tipoPessoa, ['F', 'J']))){
+	
+		                        $idDocPrincipal = $arrDadoDoc['idDocMain'];
+	                            $idValidacao = $idDocPrincipal . '_' . $objDTO->getDblIdProtocolo();
+	                            $notDuplicado = (!array_key_exists($idValidacao, $arrDuplicados));
+	
+	                            if (array_key_exists($idDocPrincipal, $arrMsgAnexo) && $notDuplicado) {
+	                                
+	                                $arrDuplicados[$idValidacao] = '';
+	                                $arrMsgAnexo[$idDocPrincipal]['dadosDoc'] .= "    " . $dadosDoc . "\n";
+	                                
+	                            } else {
+	                                
+	                                if ($notDuplicado) {
+	                                    
+	                                    $arrDuplicados[$idValidacao] = '';
+	                                    $arrMsgAnexo[$idDocPrincipal]['dadosDoc'] = "    " . $dadosDoc . "\n";
+	                                    $arrMsgAnexo[$idDocPrincipal]['dadosIntimacao'] = $arrDadoDoc['nomeDocMain'];
+	                                    
+	                                }
+	                                
+	                            }
+		
+	                        }
                         }
+                        
                     }
                 }
 
                 if (count($arrMsgAnexo) > 0) {
+                	
                     $corpoMsg = "";
+                    
                     foreach ($arrMsgAnexo as $arrMsg) {
                         $inicioInt = $corpoMsg != "" ? "\n " : "";
                         $inicioInt .= "* Intimação referente ao Documento Principal ";
@@ -1499,6 +1524,7 @@ class MdPetIntimacaoRN extends InfraRN
                     }
 
                     $msg = $msgInicio . $corpoMsg . $msgFim;
+                    
                 }
             }
 
@@ -1508,6 +1534,7 @@ class MdPetIntimacaoRN extends InfraRN
         }
 
         return '';
+        
     }
 
     private function _formatarNomeProtocolo($objDTO)
@@ -1646,14 +1673,15 @@ class MdPetIntimacaoRN extends InfraRN
             foreach ($hdnUsuarios as $key => $value) {
                 $ids [] = $value[0];
             }
-            $msg = $this->_verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $ids, $idProcedimento);
+            $msg = $this->_verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $ids, $idProcedimento, $arr[5]);
+            
 
             if ($msg != '') {
                 return (array($msg, true, false));
             }
         } else {
 
-            $msg = $this->_verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $hdnIdsUsuarios, $idProcedimento);
+            $msg = $this->_verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $hdnIdsUsuarios, $idProcedimento, $arr[5]);
 
             if ($msg != '') {
                 return (array($msg, true, false));

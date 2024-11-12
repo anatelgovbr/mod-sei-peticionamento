@@ -4,9 +4,9 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
 $strLinkConsultaDadosUsuario = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_usu_ext_dados_usuario_externo_procuracao');
 $strLinkConsultaResponsavelLegal = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_validar_representante');
 $strLinkConsultaUsuarioExternoValido = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_consulta_usuext_valido_procuracao');
-//ValidaÁ„o Usuario Externo
+//Valida√ß√£o Usuario Externo
 $strLinkAjaxValidarUsuarioExternoPendente = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_consulta_usuext_validacao');
-//ValidaÁ„o de Existencia de ProcuraÁ„o
+//Valida√ß√£o de Existencia de Procura√ß√£o
 $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_usu_ext_dados_usuario_externo_validar_procuracao');
 ?>
 <script type="text/javascript">
@@ -25,7 +25,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
         $("#lvbFisica").on('click', function () {
             if ($('#rbOutorgante1').prop('disabled')) {
-                alert('Essa opÁ„o esta desabilitada, Verifique junto ao ”rg„o.');
+                alert('Essa op√ß√£o esta desabilitada, Verifique junto ao √ìrg√£o.');
             }
         });
 
@@ -44,7 +44,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
     }
 
-    //Funcıes ProcuraÁ„o Simples
+    //Func√µes Procura√ß√£o Simples
 
     function showPessoaOutorganteHidden() {
         document.getElementById('lvbPJProSimples').style.display = "none";
@@ -104,7 +104,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
         var numeroProcessoPreenchido = document.getElementById('txtNumeroProcesso').value != '';
         if (!numeroProcessoPreenchido) {
-            alert('Informe o N˙mero do Processo.');
+            alert('Informe o N√∫mero do Processo.');
             return false;
         }
 
@@ -157,13 +157,13 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
     function removerProcesso(IdProcedimento){
 
-        var clean = '', arrhdnTbProcessos = $('input#hdnTbProcessos').val().split('•');
+        var clean = '', arrhdnTbProcessos = $('input#hdnTbProcessos').val().split('¬•');
 
         if (arrhdnTbProcessos.length > 0) {
             for (i = 0; i < arrhdnTbProcessos.length; i++) {
-                var hdnLinha = arrhdnTbProcessos[i].split('±');
+                var hdnLinha = arrhdnTbProcessos[i].split('¬±');
                 if(IdProcedimento != hdnLinha[0]){
-                    clean += (clean != '' ? '•' : '') + arrhdnTbProcessos[i];
+                    clean += (clean != '' ? '¬•' : '') + arrhdnTbProcessos[i];
                 }
             }
         }
@@ -173,7 +173,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
     }
 
-    //Funcıes ProcuraÁ„o Simples - FIM
+    //Func√µes Procura√ß√£o Simples - FIM
 
     var objTabelaDinamicaUsuarioProcuracao = null;
     iniciarTabelaDinamicaUsuarioProcuracao();
@@ -206,12 +206,12 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         dsNome = dsNome.trim();
 
         if (nuCpf.length == 0) {
-            alert('CPF do usu·rio externo È de preenchimento obrig·torio.');
+            alert('CPF do usu√°rio externo √© de preenchimento obrig√°torio.');
             return false;
         }
 
         if (dsNome.length == 0) {
-            alert('Nome do usu·rio externo È de preenchimento obrig·torio.');
+            alert('Nome do usu√°rio externo √© de preenchimento obrig√°torio.');
             return false;
         }
 
@@ -244,8 +244,8 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     dados.push(valor);
                 });
 
-                //Inicio - Ajax ValidaÁ„o Usu·rio
-                //Validando para ver se o usu·rio externo n„o È pendente
+                //Inicio - Ajax Valida√ß√£o Usu√°rio
+                //Validando para ver se o usu√°rio externo n√£o √© pendente
                 $.ajax({
                     dataType: 'xml',
                     method: 'POST',
@@ -257,7 +257,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     success: function (data) {
 
                         if ($(data).find('existe').text() == 0) {
-                            alert("Usu·rio Externo com pendÍncia de liberaÁ„o de cadastro.");
+                            alert("Usu√°rio Externo com pend√™ncia de libera√ß√£o de cadastro.");
                             dados = [];
                             return false;
                         } else {
@@ -301,9 +301,9 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
     function peticionar() {
 
         console.log(456);
-        //Validando combo Tipo de PRocuraÁ„o
+        //Validando combo Tipo de PRocura√ß√£o
         if (document.getElementById('selTipoProcuracao').value == "") {
-            alert("Escolha um Tipo de ProcuraÁ„o.");
+            alert("Escolha um Tipo de Procura√ß√£o.");
             return false;
         }
         //Pegando o Outorgante
@@ -343,7 +343,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     if (valor > 0)
                         validarCampos();
                     else
-                        alert('Usuario n„o È um Respons·vel Legal.');
+                        alert('Usuario n√£o √© um Respons√°vel Legal.');
                 })
             }
         });
@@ -355,13 +355,13 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         $tpProc = document.getElementById('selTipoProcuracao').value;
 
         if(document.getElementById('hdnCpfContExterno').value.replace(/\D/g, "") == ""){
-            alert('O seu cadastro est· incompleto, faltando o CPF. \n\nEntre em contato com a gest„o do SEI deste Ûrg„o pedindo que atualize dados do seu cadastro como Usu·rio Externo.');
+            alert('O seu cadastro est√° incompleto, faltando o CPF. \n\nEntre em contato com a gest√£o do SEI deste √≥rg√£o pedindo que atualize dados do seu cadastro como Usu√°rio Externo.');
             return false;
         }
 
-        //Validando combo Tipo de PRocuraÁ„o
+        //Validando combo Tipo de PRocura√ß√£o
         if (document.getElementById('selTipoProcuracao').value == "") {
-            alert("Escolha um Tipo de ProcuraÁ„o.");
+            alert("Escolha um Tipo de Procura√ß√£o.");
             return false;
         }
         if ($tpProc == "S") {
@@ -371,10 +371,10 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 return false;
             }
 
-            //Validando Combo Usu·rio Externo
+            //Validando Combo Usu√°rio Externo
 
             if (document.getElementById('selUsuarioSimples').value == "") {
-                alert("Selecione o Nome do Usu·rio Externo.");
+                alert("Selecione o Nome do Usu√°rio Externo.");
                 return false;
             }
 
@@ -409,39 +409,39 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     return false;
                 }
             }
-            //Verifica se a data È posteriar a data atua
+            //Verifica se a data √© posteriar a data atua
             if (document.getElementById('txtDt').value != "") {
                 if (!infraValidarData(document.getElementById('txtDt').value, false)) {
-                    alert("Formato de data inv·lido.");
+                    alert("Formato de data inv√°lido.");
                     return false;
                 }
 
                 var data = document.getElementById('txtDt').value;
                 if (infraCompararDatas(document.getElementById('hdnDtAtual').value, data) < 0) {
-                    alert("A data informada no campo Validade n„o È permitida. Informe uma data posterior a data atual.");
+                    alert("A data informada no campo Validade n√£o √© permitida. Informe uma data posterior a data atual.");
                     return false;
                 }
             }
 
             if (document.getElementById('hdnRbAbrangencia').value == "") {
-                alert("Informe um tipo de AbrangÍncia.");
+                alert("Informe um tipo de Abrang√™ncia.");
                 return false;
             }
 
-            //Caso a AbrangÍncia seja Especifica, validar Table
+            //Caso a Abrang√™ncia seja Especifica, validar Table
             if (document.getElementById('hdnRbAbrangencia').value == "E") {
                 var tbUsuarioProcesso = document.getElementById('tbProcessos');
                 var qtdLinhas = tbUsuarioProcesso.rows.length;
 
                 if (qtdLinhas == 1) {
-                    alert('Adicione ao menos um Processo ao gerar a ProcuraÁ„o EletrÙnica sob a AbrangÍncia: Processos EspecÌficos.');
+                    alert('Adicione ao menos um Processo ao gerar a Procura√ß√£o Eletr√¥nica sob a Abrang√™ncia: Processos Espec√≠ficos.');
                     return false;
                 }
             }
         }
 
         if ($tpProc == "S") {
-            //ProcuraÁ„o Simples
+            //Procura√ß√£o Simples
             var dados = {
                 idOutorgado: document.getElementById('hdnIdContExterno').value,
                 tipoProc: document.getElementById('selTipoProcuracao').value
@@ -474,55 +474,63 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 };
             }
 
-            //Verificando Pendencia de Usu·rio Externo
+            //Verificando Pendencia de Usu√°rio Externo
+            //$.ajax({
+            //    dataType: 'xml',
+            //    method: 'POST',
+            //    url: '<?php //echo $strLinkAjaxValidarUsuarioExternoPendente?>//',
+            //    data: {
+            //        'idContato': document.getElementById('hdnIdUsuario').value,
+            //        'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
+            //    },
+            //    beforeSend: function(){
+            //      console.log({
+            //          'idContato': document.getElementById('hdnIdUsuario').value,
+            //          'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
+            //      });
+            //    },
+            //    success: function (data) {
+            //        if ($(data).find('existe').text() == 0) {
+            //            alert('Usu√°rio Externo n√£o existe ou possui pend√™ncia de libera√ß√£o do cadastro. Favor contactar administra√ß√£o do sistema para regulariza√ß√£o da situa√ß√£o cadastral do Usu√°rio.');
+            //        } else {
+
+                        //Abre Modal de assinatura ou conflito
+
+            //         }
+            //
+            //     }
+            //
+            // });
+
             $.ajax({
                 dataType: 'xml',
                 method: 'POST',
-                url: '<?php echo $strLinkAjaxValidarUsuarioExternoPendente?>',
-                data: {
-                    'idContato': document.getElementById('hdnIdUsuario').value,
-                    'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
-                },
+                url: '<?= $strLinkAjaxValidarExistenciaProc ?>',
+                data: dados,
                 success: function (data) {
-                    if ($(data).find('existe').text() == 0) {
-                        alert("Usu·rio Externo com pendÍncia de liberaÁ„o de cadastro.");
-                    } else {
-                        //Abre Modal
-                        $.ajax({
-                            dataType: 'xml',
-                            method: 'POST',
-                            url: '<?php echo $strLinkAjaxValidarExistenciaProc?>',
-                            data: dados,
-                            success: function (data) {
-                                $.each($(data).find('item'), function (i, j) {
-                                    var valor = $(this)[i].innerHTML;
-                                    if ($(j).attr("id") == 0) {
+                    $.each($(data).find('item'), function (i, j) {
+                        var valor = $(this)[i].innerHTML;
+                        if ($(j).attr("id") == 0) {
 
-                                        //Modal para Assinatura
-                                        parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
-                                            770,
-                                            520,
-                                            '', //options
-                                            false);
+                            //Modal para Assinatura
+                            parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
+                                770,
+                                520,
+                                '', //options
+                                false);
 
-                                    } else {
+                        } else {
 
-                                        //Modal para Existencia de ProcuraÁ„o
-                                        parent.infraAbrirJanelaModal($(j).attr("id"),
-                                            1200,
-                                            300,
-                                            '', //options
-                                            false);
+                            //Modal para Existencia de Procura√ß√£o
+                            parent.infraAbrirJanelaModal($(j).attr("id"),
+                                1200,
+                                300,
+                                '', //options
+                                false);
 
-                                    }
+                        }
 
-                                });
-
-                            }
-
-                        });
-
-                    }
+                    });
 
                 }
 
@@ -530,14 +538,14 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
         }
 
-        //Caso seja procuraÁ„o especial
+        //Caso seja procura√ß√£o especial
         if ($tpProc == "E") {
 
             var tbUsuarioProcuracao = document.getElementById('tbUsuarioProcuracao');
             var qtdLinhas = tbUsuarioProcuracao.rows.length;
 
             if (qtdLinhas == 1) {
-                alert('Usu·rio Externo n„o foi selecionado.');
+                alert('Usu√°rio Externo n√£o foi selecionado.');
                 return false;
             }
 
@@ -557,7 +565,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             $.ajax({
                 dataType: 'xml',
                 method: 'POST',
-                url: '<?php echo $strLinkAjaxValidarExistenciaProc?>',
+                url: '<?= $strLinkAjaxValidarExistenciaProc ?>',
                 data: dados,
                 success: function (data) {
                     $.each($(data).find('item'), function (i, j) {
@@ -573,7 +581,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
                         } else {
 
-                            //Modal para Existencia de ProcuraÁ„o
+                            //Modal para Existencia de Procura√ß√£o
                             parent.infraAbrirJanelaModal($(j).attr("id"),
                                 1200,
                                 300,
@@ -590,89 +598,89 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
     }
 
     var textoProcEsp = '<div class="espacamentoConteudo">';
-    textoProcEsp += 'A ProcuraÁ„o EletrÙnica Especial concede, no ‚mbito do(a) <?=$siglaOrgao?>, ';
-    textoProcEsp += 'ao Usu·rio Externo poderes para:';
+    textoProcEsp += 'A Procura√ß√£o Eletr√¥nica Especial concede, no √¢mbito do(a) <?=$siglaOrgao?>, ';
+    textoProcEsp += 'ao Usu√°rio Externo poderes para:';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';
-    textoProcEsp += '1. Gerenciar o cadastro da Pessoa JurÌdica Outorgante ';
-    textoProcEsp += '(exceto alterar o Respons·vel Legal ou outros Procuradores Especiais).';
+    textoProcEsp += '1. Gerenciar o cadastro da Pessoa Jur√≠dica Outorgante ';
+    textoProcEsp += '(exceto alterar o Respons√°vel Legal ou outros Procuradores Especiais).';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';
-    textoProcEsp += '2. Receber, Cumprir e Responder IntimaÁıes EletrÙnicas e realizar Peticionamento EletrÙnico ';
-    textoProcEsp += 'em nome da Pessoa JurÌdica Outorgante.';
+    textoProcEsp += '2. Receber, Cumprir e Responder Intima√ß√µes Eletr√¥nicas e realizar Peticionamento Eletr√¥nico ';
+    textoProcEsp += 'em nome da Pessoa Jur√≠dica Outorgante.';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';
-    textoProcEsp += '3. Representar a Pessoa JurÌdica Outorgante com todos os poderes previstos no sistema, ';
-    textoProcEsp += 'inclusive no substabelecimento ao emitir ProcuraÁıes EletrÙnicas Simples, habilitando-o a praticar todos os atos processuais, inclusive confessar, reconhecer a procedÍncia do pedido, transigir, desistir, renunciar, receber, dar quitaÁ„o e firmar compromisso.';
+    textoProcEsp += '3. Representar a Pessoa Jur√≠dica Outorgante com todos os poderes previstos no sistema, ';
+    textoProcEsp += 'inclusive no substabelecimento ao emitir Procura√ß√µes Eletr√¥nicas Simples, habilitando-o a praticar todos os atos processuais, inclusive confessar, reconhecer a proced√™ncia do pedido, transigir, desistir, renunciar, receber, dar quita√ß√£o e firmar compromisso.';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';
-    textoProcEsp += '4. Substabelecer os poderes outorgados pela presente ProcuraÁ„o, ao conceder ProcuraÁıes EletrÙnicas Simples ';
-    textoProcEsp += 'a outros Usu·rios Externos, em ‚mbito geral ou para processos especÌficos, conforme poderes ';
-    textoProcEsp += 'definidos, para representaÁ„o da Pessoa JurÌdica Outorgante.';
+    textoProcEsp += '4. Substabelecer os poderes outorgados pela presente Procura√ß√£o, ao conceder Procura√ß√µes Eletr√¥nicas Simples ';
+    textoProcEsp += 'a outros Usu√°rios Externos, em √¢mbito geral ou para processos espec√≠ficos, conforme poderes ';
+    textoProcEsp += 'definidos, para representa√ß√£o da Pessoa Jur√≠dica Outorgante.';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="espacamentoConteudo">';
-    textoProcEsp += 'Ao conceder a ProcuraÁ„o EletrÙnica Especial, vocÍ se declara ciente de que:';
+    textoProcEsp += 'Ao conceder a Procura√ß√£o Eletr√¥nica Especial, voc√™ se declara ciente de que:';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';
     textoProcEsp += '&bullet; ';
-    textoProcEsp += 'Poder·, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, ';
-    textoProcEsp += 'revogar a ProcuraÁ„o EletrÙnica Especial;';
+    textoProcEsp += 'Poder√°, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, ';
+    textoProcEsp += 'revogar a Procura√ß√£o Eletr√¥nica Especial;';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';
     textoProcEsp += '&bullet; ';
-    textoProcEsp += 'O Outorgado poder·, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, ';
-    textoProcEsp += 'renunciar a ProcuraÁ„o EletrÙnica Especial;';
+    textoProcEsp += 'O Outorgado poder√°, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, ';
+    textoProcEsp += 'renunciar a Procura√ß√£o Eletr√¥nica Especial;';
     textoProcEsp += '</div>';
 
     textoProcEsp += '<div class="margemConteudo">';
     textoProcEsp += '&bullet; ';
-    textoProcEsp += 'A validade desta ProcuraÁ„o est· circunscrita ao(‡) <?=$siglaOrgao?> ';
-    textoProcEsp += 'e por tempo indeterminado, salvo se revogada ou renunciada, de modo que ela n„o pode ser usada para convalidar quaisquer atos praticados pelo Outorgado em representaÁ„o da Pessoa JurÌdica no ‚mbito de outros Ûrg„os ou entidades.';
+    textoProcEsp += 'A validade desta Procura√ß√£o est√° circunscrita ao(√†) <?=$siglaOrgao?> ';
+    textoProcEsp += 'e por tempo indeterminado, salvo se revogada ou renunciada, de modo que ela n√£o pode ser usada para convalidar quaisquer atos praticados pelo Outorgado em representa√ß√£o da Pessoa Jur√≠dica no √¢mbito de outros √≥rg√£os ou entidades.';
     textoProcEsp += '</div>';
 
     var igualHtml = '<div class="espacamentoConteudo">';
-    igualHtml += '<label class="label-bold">AtenÁ„o:</label> ';
-    igualHtml += 'Para poder receber uma ProcuraÁ„o EletrÙnica o ';
-    igualHtml += 'Usu·rio Externo j· deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.';
+    igualHtml += '<label class="label-bold">Aten√ß√£o:</label> ';
+    igualHtml += 'Para poder receber uma Procura√ß√£o Eletr√¥nica o ';
+    igualHtml += 'Usu√°rio Externo j√° deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.';
     igualHtml += '</div>';
 
-    //ProcuraÁ„o Simples
+    //Procura√ß√£o Simples
     var textoProcSimp = '<div class="espacamentoConteudo">';
-    textoProcSimp += 'A ProcuraÁ„o EletrÙnica Simples concede, no ‚mbito do(a) <?=$siglaOrgao?>, ao Usu·rio Externo, os Poderes expressamente estabelecidos e em conformidade com a Validade e AbrangÍncia definidos.';
+    textoProcSimp += 'A Procura√ß√£o Eletr√¥nica Simples concede, no √¢mbito do(a) <?=$siglaOrgao?>, ao Usu√°rio Externo, os Poderes expressamente estabelecidos e em conformidade com a Validade e Abrang√™ncia definidos.';
     textoProcSimp += '</div>';
 
     textoProcSimp += '<div class="espacamentoConteudo">';
-    textoProcSimp += 'Ao conceder a ProcuraÁ„o EletrÙnica Simples, vocÍ se declara ciente de que:';
+    textoProcSimp += 'Ao conceder a Procura√ß√£o Eletr√¥nica Simples, voc√™ se declara ciente de que:';
     textoProcSimp += '</div>';
 
     textoProcSimp += '<div class="margemConteudo">';
     textoProcSimp += '&bullet; '
-    textoProcSimp += 'Poder·, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, revogar a ProcuraÁ„o EletrÙnica Simples;';
+    textoProcSimp += 'Poder√°, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, revogar a Procura√ß√£o Eletr√¥nica Simples;';
     textoProcSimp += '</div>';
 
     textoProcSimp += '<div class="margemConteudo">';
     textoProcSimp += '&bullet; '
-    textoProcSimp += 'O Outorgado poder·, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, renunciar a ProcuraÁ„o EletrÙnica Simples;';
+    textoProcSimp += 'O Outorgado poder√°, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, renunciar a Procura√ß√£o Eletr√¥nica Simples;';
     textoProcSimp += '</div>';
 
     textoProcSimp += '<div class="margemConteudo">';
     textoProcSimp += '&bullet; '
-    textoProcSimp += 'A validade desta ProcuraÁ„o est· circunscrita ao(‡) <?=$siglaOrgao?> e em conformidade com os Poderes, Validade e AbrangÍncia definidos, salvo se revogada ou renunciada, de modo que ela n„o pode ser usada para convalidar quaisquer atos praticados pelo Outorgado em representaÁ„o do Outorgante no ‚mbito de outros Ûrg„os ou entidades.';
+    textoProcSimp += 'A validade desta Procura√ß√£o est√° circunscrita ao(√†) <?=$siglaOrgao?> e em conformidade com os Poderes, Validade e Abrang√™ncia definidos, salvo se revogada ou renunciada, de modo que ela n√£o pode ser usada para convalidar quaisquer atos praticados pelo Outorgado em representa√ß√£o do Outorgante no √¢mbito de outros √≥rg√£os ou entidades.';
     textoProcSimp += '</div>';
 
     var igualHtml = '<div class="espacamentoConteudo">';
-    igualHtml += '<label class="label-bold">AtenÁ„o:</label> ';
-    igualHtml += 'Para poder receber uma ProcuraÁ„o EletrÙnica o ';
-    igualHtml += 'Usu·rio Externo j· deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.';
+    igualHtml += '<label class="label-bold">Aten√ß√£o:</label> ';
+    igualHtml += 'Para poder receber uma Procura√ß√£o Eletr√¥nica o ';
+    igualHtml += 'Usu√°rio Externo j√° deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.';
     igualHtml += '</div>';
-    //Fim ProcuraÁ„o Simples
+    //Fim Procura√ß√£o Simples
 
     var textoProcElt = '';
     var textoProcSub = '';
@@ -699,7 +707,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
         }
         if (el.value == '<?php echo MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL?>') {
-            //Caso a IntimaÁ„o seja Especial, apagar os campos da Simples caso estejam preenchidos
+            //Caso a Intima√ß√£o seja Especial, apagar os campos da Simples caso estejam preenchidos
             document.getElementById('txtNumeroCpfProcuradorSimples').value = "";
             infraSelectLimpar('selUsuarioSimples');
             document.getElementById('rbValidade').checked = false;
@@ -720,12 +728,12 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             document.getElementById('hdnExiteProc').value = "";
             document.getElementById('hdnRbAbrangencia').value = "";
 
-            //Desbloqueando botıes da tela de procuraÁ„o especial
+            //Desbloqueando bot√µes da tela de procura√ß√£o especial
 
             document.getElementById('btnValidarEspecial').disabled = false;
             document.getElementById('btnAdicionarProcurador').disabled = false;
 
-            //Bloqueando botıes da tela de procuraÁ„o simples
+            //Bloqueando bot√µes da tela de procura√ß√£o simples
             document.getElementById('btnValidarSimples').disabled = true;
             document.getElementById('btnValidarProcesso').disabled = true;
 
@@ -740,7 +748,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             objTabelaDinamicaUsuarioProcessos = new infraTabelaDinamica('tbProcessos', 'hdnTbProcessos', false, true);
             objTabelaDinamicaUsuarioProcessos.limpar();
 
-            //Mostrando os Botıes Peticionar e Cancelar Inferior
+            //Mostrando os Bot√µes Peticionar e Cancelar Inferior
             document.getElementById("sbmPeticionarInferior").style.display = "";
             document.getElementById("btnCancelarInferior").style.display = "";
 
@@ -773,10 +781,10 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             html = textoProcElt;
         }
 
-        //ProcuraÁ„o Simples
+        //Procura√ß√£o Simples
         if (el.value == '<?php echo MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES?>') {
 
-            //Limpando campos caso o Tipo de PRocuraÁ„o seja Especial
+            //Limpando campos caso o Tipo de PRocura√ß√£o seja Especial
             objTabelaDinamicaUsuarioProcuracao.limpar();
             document.getElementById('tbUsuarioProcuracao').style.display = "none";
             document.getElementById('hdnIdUsuario').value = "";
@@ -813,16 +821,16 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 document.getElementById("hiddenOutorgante").style.display = "";
 
 
-                //Mostrando os Botıes Peticionar e Cancelar Inferior
+                //Mostrando os Bot√µes Peticionar e Cancelar Inferior
                 document.getElementById("sbmPeticionarInferior").style.display = "";
                 document.getElementById("btnCancelarInferior").style.display = "";
 
-                //Bloqueando botıes da tela de procuraÁ„o especial
+                //Bloqueando bot√µes da tela de procura√ß√£o especial
 
                 document.getElementById('btnValidarEspecial').disabled = true;
                 document.getElementById('btnAdicionarProcurador').disabled = true;
 
-                //Desbloqueando botıes da tela de procuraÁ„o simples
+                //Desbloqueando bot√µes da tela de procura√ß√£o simples
                 document.getElementById('btnValidarSimples').disabled = false;
                 document.getElementById('txtNumeroCpfProcurador').value = "";
                 infraSelectLimpar('selUsuario');
@@ -852,17 +860,17 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         if (valor.length == 11) {
             if (!infraValidarCpf(valor)) {
                 erro = true;
-                msg = 'Informe o CPF do usu·rio externo completo ou v·lido para realizar a pesquisa.';
+                msg = 'Informe o CPF do usu√°rio externo completo ou v√°lido para realizar a pesquisa.';
             }
         } else {
-            msg = '… necess·rio preecher o campo CPF do Usu·rio Externo com 11 caracteres.';
+            msg = '√â necess√°rio preecher o campo CPF do Usu√°rio Externo com 11 caracteres.';
             erro = true;
         }
 
-        //Verificando Usu·rio Logado
+        //Verificando Usu√°rio Logado
         if (valor == cpfUsuariologado) {
             erro = true;
-            msg = "N„o È permitida a geraÁ„o de ProcuraÁ„o EletrÙnica para vocÍ mesmo. \n Informe o CPF da Pessoa FÌsica que ir· te representar.";
+            msg = "N√£o √© permitida a gera√ß√£o de Procura√ß√£o Eletr√¥nica para voc√™ mesmo. \n Informe o CPF da Pessoa F√≠sica que ir√° te representar.";
         }
 
         if (erro) {
@@ -894,7 +902,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             return false;
         }
 
-        //Verificar se o cnpj j· esta sendo utilizado num vinculo
+        //Verificar se o cnpj j√° esta sendo utilizado num vinculo
         if (document.getElementById('txtNumeroCpfProcurador').value.trim().length == 0) {
             alert('Informe o CPF completo');
             return false;
@@ -912,9 +920,9 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             success: function (data) {
                 var resultado = $(data).find('resultado');
                 //Caso retorne somente um item, desativar a combo
-                //Caso retorne nada, o cpf n„o existe
+                //Caso retorne nada, o cpf n√£o existe
                 if (resultado[0].childElementCount == 0) {
-                    alert('Cadastro de Usu·rio Externo n„o localizado no sistema. Oriente o Usu·rio a realizar o Cadastro no Acesso Externo do SEI.');
+                    alert('Cadastro de Usu√°rio Externo n√£o localizado no sistema. Oriente o Usu√°rio a realizar o Cadastro no Acesso Externo do SEI.');
                     return false;
                 }
 
@@ -967,6 +975,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
     }
 
     function consultarUsuarioExternoValidoSimples() {
+        
         infraSelectLimpar('selUsuarioSimples');
 
         var valido = validaCpf(document.getElementById('txtNumeroCpfProcuradorSimples').value);
@@ -975,7 +984,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             return false;
         }
 
-        //Verificar se o cnpj j· esta sendo utilizado num vinculo
+        //Verificar se o cnpj j√° esta sendo utilizado num vinculo
         if (document.getElementById('txtNumeroCpfProcuradorSimples').value.trim().length == 0) {
             alert('Informe o CPF completo');
             return false;
@@ -993,9 +1002,9 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             success: function (data) {
                 var resultado = $(data).find('resultado');
                 //Caso retorne somente um item, desativar a combo
-                //Caso retorne nada, o cpf n„o existe
+                //Caso retorne nada, o cpf n√£o existe
                 if (resultado[0].childElementCount == 0) {
-                    alert('Cadastro de Usu·rio Externo n„o localizado no sistema. Oriente o Usu·rio a realizar o Cadastro no Acesso Externo do SEI.');
+                    alert('Cadastro de Usu√°rio Externo n√£o localizado no sistema. Oriente o Usu√°rio a realizar o Cadastro no Acesso Externo do SEI.');
                     return false;
                 }
                 //document.getElementById('txtNomeProcurador').value = '';

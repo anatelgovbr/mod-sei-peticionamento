@@ -221,5 +221,29 @@ class MdPetVinculoINT extends InfraINT {
       return $xml;
 
     }
+	
+	
+	
+	public static function validarExistenciaVinculoCnpjOutroUsuarioMesmoCPF($dados){
+  	
+  	    $dtoMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+		$dtoMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
+		$dtoMdPetVincRepresentantDTO->retNumIdContatoVinc();
+		$dtoMdPetVincRepresentantDTO->retStrNomeProcurador();
+		$dtoMdPetVincRepresentantDTO->retStrCpfProcurador();
+		$dtoMdPetVincRepresentantDTO->retNumIdContatoProcurador();
+		$dtoMdPetVincRepresentantDTO->setStrCpfProcurador($dados['cpfUsuarioLogado']);
+		$dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+		$dtoMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
+		$dtoMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+		$dtoMdPetVincRepresentantDTO->setStrIdxContato('%' . InfraUtil::retirarFormatacao($dados['cnpjNovaVinculacao']) . '%', InfraDTO::$OPER_LIKE);
+		$dtoMdPetVincRepresentantDTO->setDistinct(true);
+		$arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincRepresentantDTO);
+		
+		if(!empty($arrObjMdPetVincRepresentantDTO)){
+			return '<dados-pj><success>false</success></dados-pj>';
+		}
+		
+	}
 
 }

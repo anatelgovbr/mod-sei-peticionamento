@@ -27,12 +27,12 @@ try {
     case 'peticionamento_usuario_externo_vinc_validacao_procuracao':
 
       $objMdPetProcessoRN = new MdPetProcessoRN();
-      $strTitulo = 'Conflito de Procuração Eletrônica Existente';
+      $strTitulo = 'Conflito de ProcuraÃ§Ã£o EletrÃ´nica Existente';
 
       break;
 
     default:
-      throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+      throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
   }
 
 } catch (Exception $e) {
@@ -63,14 +63,16 @@ PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
 
 $arrComandos = array();
+$formAction = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&id_represent='.$_GET['id_represent'].'&acao_origem=' . $_GET['acao']);
+
 ?>
-<form id="frmConcluir" method="post"
-      action="<?= PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&id_represent='.$_GET['id_represent'].'&acao_origem=' . $_GET['acao'])) ?>">
+
+<form id="frmConcluir" method="post" action="<?= PaginaSEIExterna::getInstance()->formatarXHTML($formAction) ?>">
   <?
   PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
   PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
   ?>
-    <label>Conforme listagem abaixo, não foi possível emitir a nova Procuração Eletrônica em razão de conflito com Procuração Eletrônica já existente. Para emitir a nova Procuração deve-se revogar a Procuração existente.</label>
+    <label>Conforme listagem abaixo, nÃ£o foi possÃ­vel emitir a nova ProcuraÃ§Ã£o EletrÃ´nica em razÃ£o de conflito com ProcuraÃ§Ã£o EletrÃ´nica jÃ¡ existente. Para emitir a nova ProcuraÃ§Ã£o deve-se revogar a ProcuraÃ§Ã£o existente.</label>
    <?php 
    //Inicio da Lista
    
@@ -101,16 +103,16 @@ $arrComandos = array();
     
        $strResultado = '';
 
-       $strResultado .= '<table width="100%" class="infraTable" summary="Lista de Procurações Eletrônicas">'."\n";
-       $strResultado .= '<caption class="infraCaption">'.PaginaSEI::getInstance()->gerarCaptionTabela("Procurações Eletrônicas",$numRegistros).'</caption>';
+       $strResultado .= '<table width="100%" class="infraTable" summary="Lista de ProcuraÃ§Ãµes EletrÃ´nicas">'."\n";
+       $strResultado .= '<caption class="infraCaption">'.PaginaSEI::getInstance()->gerarCaptionTabela("ProcuraÃ§Ãµes EletrÃ´nicas",$numRegistros).'</caption>';
        $strResultado .= '<tr>';
        $strResultado .= '<th class="infraTh" style="width: 190px">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Processo','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
-       $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Procuração','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
+       $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'ProcuraÃ§Ã£o','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Tipo','RazaoSocialNomeVinc',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Outorgante','RazaoSocialNomeVinc',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Outorgado','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Poderes Legais','StaAbrangencia',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
-       $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Abrangência','StaAbrangencia',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
+       $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'AbrangÃªncia','StaAbrangencia',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
        $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO,'Validade','TipoRepresentante',$arrObjMdPetVincRepresentantDTO).'</th>'."\n";
 
        $strResultado .= '</tr>'."\n";
@@ -119,14 +121,13 @@ $arrComandos = array();
            
            $strCssTr = ($strCssTr=='<tr class="infraTrClara">')?'<tr class="infraTrEscura">':'<tr class="infraTrClara">';
            $strResultado .= $strCssTr;
-
            
            //Recuperando Processo
            $objMdPetVinculoDTO = new MdPetVinculoDTO();
            $objMdPetVinculoDTO->retStrProtocoloFormatado();
            $objMdPetVinculoDTO->setNumIdMdPetVinculo($arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo());
-           $objMdPetVinculoRN = new MdPetVinculoRN();
-           $objMdPetVinculoRN = $objMdPetVinculoRN->consultar($objMdPetVinculoDTO);
+           $objMdPetVinculoRN = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
+           
            if(!empty($objMdPetVinculoRN)){
                 $strResultado .= '<td valign="middle">'.$objMdPetVinculoRN->getStrProtocoloFormatado().'</td>';
            }
@@ -136,23 +137,17 @@ $arrComandos = array();
            $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent());
            $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
            $objMdPetVincDocumentoDTO->setStrTipoDocumento("E");
-           $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
-           $arrObjMdPetVincDocumentoRN = $objMdPetVincDocumentoRN->consultar($objMdPetVincDocumentoDTO);
-           $strResultado .= '<td valign="middle" style="width: 190px">'.$arrObjMdPetVincDocumentoRN->getStrProtocoloFormatadoProtocolo().'</td>';
-
+           $arrObjMdPetVincDocumentoRN = (new MdPetVincDocumentoRN())->consultar($objMdPetVincDocumentoDTO);
            
+           $strResultado .= '<td valign="middle" style="width: 190px">'.$arrObjMdPetVincDocumentoRN->getStrProtocoloFormatadoProtocolo().'</td>';
            $strResultado .= '<td valign="middle">'.$arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante().'</td>';
            $strResultado .= '<td valign="middle">'.$arrObjMdPetVincRepresentantDTO[$i]->getStrRazaoSocialNomeVinc().'</td>';
            $strResultado .= '<td valign="middle">'.$arrObjMdPetVincRepresentantDTO[$i]->getStrNomeOutorgado().'</td>';
            $strResultado .= '<td valign="middle">'.$arrObjMdPetVincRepresentantDTO[$i]->getStrTipoPoderes().'</td>';
 
-
-           //Detectando Abrangência e Tratando
-           if($arrObjMdPetVincRepresentantDTO[$i]->getStrStaAbrangencia() == "Q" || $arrObjMdPetVincRepresentantDTO[$i]->getStrStaAbrangencia() == null){
-                $strResultado .= '<td valign="middle">Qualquer Processo em Nome do Outorgante</td>';
-           }else{
-                $strResultado .= '<td valign="middle">Processos Específicos</td>';
-           }
+           //Detectando AbrangÃªncia e Tratando
+           $abrangencia = (in_array($arrObjMdPetVincRepresentantDTO[$i]->getStrStaAbrangencia(), ['Q', null])) ? 'Qualquer Processo em Nome do Outorgante' : 'Processos EspecÃ­ficos';
+	       $strResultado .= '<td valign="middle">'.$abrangencia.'</td>';
 
            $strResultado .= '<td valign="middle">'.$arrObjMdPetVincRepresentantDTO[$i]->getDthDataLimiteValidade().'</td>';
            $strResultado .= '</td></tr>'."\n";
@@ -179,7 +174,6 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 <script type="text/javascript">
 
     function inicializar() {
-        
         infraEfeitoTabelas();
     }
 

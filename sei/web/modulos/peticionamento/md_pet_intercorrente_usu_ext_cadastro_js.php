@@ -1,6 +1,6 @@
 <?php
     /**
-     * Include de JS chamado pela pagina principal de cadastro/ediÁao de peticionamento intercorrente
+     * Include de JS chamado pela pagina principal de cadastro/edi√ßao de peticionamento intercorrente
      */
 
     $strUrlAjaxNumeroProcesso = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_processo_validar_numero');
@@ -34,7 +34,7 @@
     }
 
     /**
-     * Inicia Grid Din‚mica do Processo
+     * Inicia Grid Din√¢mica do Processo
      */
     function iniciarGridDinamicaProcesso() {
         objTabelaDinamicaProcesso = new infraTabelaDinamica('tbProcesso', 'hdnTbProcesso', false, true);
@@ -45,7 +45,7 @@
     }
 
     /**
-     * Add um processo na Grid Din‚mica
+     * Add um processo na Grid Din√¢mica
      */
     function adicionarProcesso() {
         iniciarGridDinamicaProcesso();
@@ -98,7 +98,7 @@
 
 
     /**
-     * Validar Campos obrigataÛrios
+     * Validar Campos obrigata√≥rios
      */
     function validarCamposObrigatorios() {
         var linhasTbProcesso = document.getElementById('tbProcesso').rows.length;
@@ -117,13 +117,13 @@
     }
 
     /**
-     * FunÁıes respons·veis pela validaÁ„o do processo
+     * Fun√ß√µes respons√°veis pela valida√ß√£o do processo
      */
     function validarNumeroProcesso() {
 
         var numeroProcessoPreenchido = document.getElementById('txtNumeroProcesso').value != '';
         if (!numeroProcessoPreenchido) {
-            alert('Informe o N˙mero.');
+            alert('Informe o N√∫mero.');
             return false;
         }
 
@@ -171,7 +171,7 @@
     //===============================================================================================================//
 
     /**
-     * FunÁıes respons·veis pelo controle do fieldset Documentos
+     * Fun√ß√µes respons√°veis pelo controle do fieldset Documentos
      */
     var NATO_DIGITAL = 'N';
     var DIGITAL = 'D';
@@ -276,7 +276,7 @@
         iniciarObjAjaxSelectTipoDocumento();
 
         //=======================================================//
-        //------ ValidaÁ„o para Browse com suporte a HTML5 ------//
+        //------ Valida√ß√£o para Browse com suporte a HTML5 ------//
         //=======================================================//
         if (window.FileReader && window.File && window.FileList && window.Blob) {
             var input = document.getElementById('fileArquivo');
@@ -285,7 +285,7 @@
             });
         }
         //=======================================================//
-        //------------------ Fim da ValidaÁ„o -------------------//
+        //------------------ Fim da Valida√ß√£o -------------------//
         //=======================================================//
     }
 
@@ -445,7 +445,7 @@
             }
         }
 
-        //Ajusta a posiÁ„o quando o browser È o IE;
+        //Ajusta a posi√ß√£o quando o browser √© o IE;
         if (isInternetExplorer()) {
             selTipoConferencia.style.marginTop = '-3px';
             selTipoConferencia.style.display = 'inline-block';
@@ -503,7 +503,7 @@
         };
     }
 
-    //Essa validaÁ„o sÛ È executada em browsers com suport ao HTML5
+    //Essa valida√ß√£o s√≥ √© executada em browsers com suport ao HTML5
     function validarArquivo(input) {
         if (input.value != '') {
             var tamanhoArquivo = input.files[0].size;
@@ -511,7 +511,7 @@
 
             var tamanhoConfigurado = parseInt(TAMANHO_MAXIMO) > 0;
             if (!tamanhoConfigurado) {
-                alert('Limite n„o configurado na AdministraÁ„o do Sistema.');
+                alert('Limite n√£o configurado na Administra√ß√£o do Sistema.');
                 input.value = '';
                 input.focus();
                 return false;
@@ -519,7 +519,7 @@
 
             var extensaoConfigurada = arrExtensoesPermitidas.length > 0;
             if (!extensaoConfigurada) {
-                alert('Extens„o de Arquivos Permitidos n„o foi configurado na AdministraÁ„o do Sistema.');
+                alert('Extens√£o de Arquivos Permitidos n√£o foi configurado na Administra√ß√£o do Sistema.');
                 input.value = '';
                 input.focus();
                 return false;
@@ -528,15 +528,15 @@
             var arquivoPermitido = arrExtensoesPermitidas.indexOf(ext) != -1;
             var tamanhoArquivo = (tamanhoArquivo / 1024 / 1024).toFixed(2);
             if (tamanhoArquivo > parseInt(TAMANHO_MAXIMO)) {
-                alert('Tamanho m·ximo para o arquivo È de ' + TAMANHO_MAXIMO + 'Mb');
+                alert('Tamanho m√°ximo para o arquivo √© de ' + TAMANHO_MAXIMO + 'Mb');
                 input.value = '';
                 input.focus();
                 return false;
             }
 
             if (!arquivoPermitido) {
-                alert("O arquivo selecionado n„o È permitido.\n" +
-                    "Somente s„o permitidos arquivos com as extensıes:\n" +
+                alert("O arquivo selecionado n√£o √© permitido.\n" +
+                    "Somente s√£o permitidos arquivos com as extens√µes:\n" +
                     arrExtensoesPermitidas.join().replace(/,/g, ' '));
                 input.value = '';
                 input.focus();
@@ -560,7 +560,7 @@
         }
         var complementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento').value.trim();
         if (complementoTipoDocumento == '') {
-            alert('Informe o Complemento do Tipo de Documento. Para mais informaÁıes, clique no Ìcone de Ajuda ao lado do nome do campo.');
+            alert('Informe o Complemento do Tipo de Documento. Para mais informa√ß√µes, clique no √≠cone de Ajuda ao lado do nome do campo.');
             document.getElementById('txtComplementoTipoDocumento').focus();
             return false;
         }
@@ -568,7 +568,7 @@
 
         if (nivelAcesso) {
             if (nivelAcesso == null || nivelAcesso.value == '') {
-                alert('Informe o NÌvel de Acesso.');
+                alert('Informe o N√≠vel de Acesso.');
                 document.getElementById('selNivelAcesso').focus();
                 return false;
             }
@@ -580,7 +580,7 @@
 
         if (nivelAcesso.value == RESTRITO) {
             if (selHipoteseLegal && selHipoteseLegal.value == '') {
-                alert('Informe a HipÛtese Legal');
+                alert('Informe a Hip√≥tese Legal');
                 selHipoteseLegal.focus();
                 return false;
             } else {
@@ -606,7 +606,7 @@
         var selTipoConferencia = document.getElementById('selTipoConferencia');
         if (selTipoConferencia.offsetHeight > 0) {
             if (selTipoConferencia == null || selTipoConferencia.value == 'null') {
-                alert('Informe a ConferÍncia com o documento digitalizado.');
+                alert('Informe a Confer√™ncia com o documento digitalizado.');
                 selTipoConferencia.focus();
                 return false;
             }
@@ -740,7 +740,7 @@
         var tbDocumento = document.getElementById('tbDocumento');
 
         if (tbDocumento.rows.length > 1) {
-            remover = confirm('Ao remover este processo os documentos abaixo carregados ser„o desconsiderados e somente poder„o ser carregados novamente apÛs adicionar novo n˙mero de processo.\n\n Deseja continuar?');
+            remover = confirm('Ao remover este processo os documentos abaixo carregados ser√£o desconsiderados e somente poder√£o ser carregados novamente ap√≥s adicionar novo n√∫mero de processo.\n\n Deseja continuar?');
         }
 
         if (remover) {
@@ -791,24 +791,24 @@
         objUploadArquivo = new infraUpload('frmPeticionamentoIntercorrente', '<?=$strLinkUploadArquivo?>');
         objUploadArquivo.finalizou = function (arr) {
             //===========================================//
-            //--------- ValidaÁıes pÛs-upload  ----------//
+            //--------- Valida√ß√µes p√≥s-upload  ----------//
             //===========================================//
             //Tamanho do Arquivo
             var fileArquivo = document.getElementById('fileArquivo');
             var tamanhoArquivo = (arr['tamanho'] / 1024 / 1024).toFixed(2);
             if (tamanhoArquivo > parseInt(TAMANHO_MAXIMO)) {
-                alert('Tamanho m·ximo para o arquivo È de ' + TAMANHO_MAXIMO + 'Mb');
+                alert('Tamanho m√°ximo para o arquivo √© de ' + TAMANHO_MAXIMO + 'Mb');
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 verificarTabelaVazia(1);
                 return false;
             }
 
-            //Arquivo com o mesmo nome j· adicionado
+            //Arquivo com o mesmo nome j√° adicionado
             for (var i = 1; i < tbDocumento.rows.length; i++) {
                 var tr = tbDocumento.getElementsByTagName('tr')[i];
                 if (arr['nome'].toLowerCase().trim() == tr.cells[9].innerText.toLowerCase().trim()) {
-                    alert('N„o È permitido adicionar documento com o mesmo nome de arquivo.');
+                    alert('N√£o √© permitido adicionar documento com o mesmo nome de arquivo.');
                     fileArquivo.value = '';
                     fileArquivo.focus();
                     verificarTabelaVazia(1);
@@ -817,7 +817,7 @@
             }
 
             //===========================================//
-            //------------- Fim ValidaÁıes --------------//
+            //------------- Fim Valida√ß√µes --------------//
             //===========================================//
 
             criarRegistroTabelaDocumento(arr);
@@ -831,14 +831,14 @@
             var extensaoConfigurada = arrExtensoesPermitidas.length > 0;
             var tamanhoConfigurado = parseInt(TAMANHO_MAXIMO) > 0;
             if (!tamanhoConfigurado) {
-                alert('Limite n„o configurado na AdministraÁ„o do Sistema.');
+                alert('Limite n√£o configurado na Administra√ß√£o do Sistema.');
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 return false;
             }
 
             if (!extensaoConfigurada) {
-                alert('Extens„o de Arquivos Permitidos n„o foi configurado na AdministraÁ„o do Sistema.');
+                alert('Extens√£o de Arquivos Permitidos n√£o foi configurado na Administra√ß√£o do Sistema.');
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 return false;
@@ -846,7 +846,7 @@
 
             var arquivoPermitido = arrExtensoesPermitidas.indexOf(ext) != -1;
             if (!arquivoPermitido) {
-                alert("O arquivo selecionado n„o È permitido.\n Somente s„o permitidos arquivos com as extensıes:\n" + arrExtensoesPermitidas.join().replace(/,/g, ' '));
+                alert("O arquivo selecionado n√£o √© permitido.\n Somente s√£o permitidos arquivos com as extens√µes:\n" + arrExtensoesPermitidas.join().replace(/,/g, ' '));
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 return false;
@@ -918,7 +918,7 @@
                 selectHipoteseLegal.val('').prop('disabled', false);
                 selectHipoteseLegal.closest('div').find('input[id="'+selectHipoteseLegal.attr('id')+'"]').remove();
 
-                self.closest('form').find('div[id^="divBlcHipoteseLegal"]').hide();
+                // self.closest('form').find('div[id^="divBlcHipoteseLegal"]').hide();
                 if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == ''){
                     self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
                 }else{

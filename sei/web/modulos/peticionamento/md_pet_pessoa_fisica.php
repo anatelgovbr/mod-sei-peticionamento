@@ -503,6 +503,10 @@ function inicializar(){
                 let toTransport = $('#foundCpfs').val().split('\n');
                 let contextChanges = window.top.document.getElementById('ifrVisualizacao').contentWindow.document;
                 
+                if(contextChanges == null){
+                    contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
+                }
+                
                 while (i < toTransport.length) {
                     
                     let valuesTransport = toTransport[i].split("|");

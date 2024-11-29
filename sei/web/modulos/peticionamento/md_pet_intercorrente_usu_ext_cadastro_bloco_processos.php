@@ -1,11 +1,11 @@
 <!-- INICIO FIELDSET PROCESSOS -->
 
-<fieldset id="field_processos" class="infraFieldset sizeFieldset form-control" style="height: auto">
+<fieldset id="field_processos" class="infraFieldset sizeFieldset form-control mb-4" style="height: auto">
     <legend class="infraLegend">&nbsp; Processo &nbsp;</legend>
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
             <label id="lblNumeroSei" for="txtNumeroProcesso" accesskey="n" class="infraLabelObrigatorio"><span
-                        class="infraTeclaAtalho">N</span>úmero:</label>
+                        class="infraTeclaAtalho">N</span>Ãºmero:</label>
             <div class="input-group mb-3">
                 <input onchange="controlarChangeNumeroProcesso();" type="text" id="txtNumeroProcesso"
                        name="txtNumeroProcesso"
@@ -39,8 +39,8 @@
                         <th class="infraTh" align="center">Processo</th>
                         <th class="infraTh" align="center">Tipo</th>
                         <th class="infraTh" align="center">Peticionamento Intercorrente</th>
-                        <th class="infraTh" align="center">Data de Autuação</th>
-                        <th class="infraTh" align="center">Ações</th>
+                        <th class="infraTh" align="center">Data de AutuaÃ§Ã£o</th>
+                        <th class="infraTh" align="center">AÃ§Ãµes</th>
                     </tr>
 
                 </table>

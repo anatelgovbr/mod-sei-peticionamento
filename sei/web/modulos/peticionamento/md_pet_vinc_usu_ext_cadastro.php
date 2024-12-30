@@ -46,7 +46,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12">
         <fieldset id="fldOrientacoes" class="infraFieldset form-control sizeFieldset" style="width:auto">
-            <legend class="infraLegend" class="infraLabelObrigatorio"> &nbsp; Orientações &nbsp;</legend>
+            <legend class="infraLegend" class="infraLabelObrigatorio"> &nbsp; OrientaÃ§Ãµes &nbsp;</legend>
             <?=PaginaSEI::tratarHTML($txtConteudo)?>
             <?php echo $txtConteudo; ?>
             <?= '<iframe id=ifrConteudoHTML name=ifrConteudoHTML style="height:100%;width:100%" frameborder="0" marginheight="0" marginwidth="0" src="' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vincpf_usu_ext_bloco_orientacoes&iframe=S') . '"></iframe>'; ?>
@@ -56,7 +56,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
 
 <?
-//Verificar se é alteração ou cadastro
+//Verificar se Ã© alteraÃ§Ã£o ou cadastro
 $blcPessoaJuridica =  'md_pet_vinc_usu_ext_bloco_pessoajuridica.php';
 $blcInformacao =  'md_pet_vinc_usu_ext_bloco_informacao_pj.php';
 
@@ -74,11 +74,13 @@ if(!$stConsultar) {
 
 ?>
 <input type="hidden" name="hdnIdDocumento" id="hdnIdDocumento" value="0"/>
-<input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?php echo $idMdPetVinculo?>"/>
+<input type="hidden" name="hdnIdVinculo" id="hdnIdVinculo" value="<?= $idMdPetVinculo?>"/>
 <input type="hidden" name="hdnStaWebService" id="hdnStaWebService" value="<?= $stWebService ?>"/>
 <input type="hidden" name="hdnIsWebServiceHabilitado" id="hdnIsWebServiceHabilitado" value=""/>
 <input type="hidden" name="hdnVinculoPreExistente" id="hdnVinculoPreExistente" value='<?= $objVinculosExistentes ?>'>
 <input type="hidden" name="hdnStrTipo" id="hdnStrTipo" value="<?= $strTipo ?>"/>
+<input type="hidden" name="hdnCpfUsuarioExternoLogado" id="hdnCpfUsuarioExternoLogado" value="<?= $cpfUsuarioExterno ?>"/>
+<input type="hidden" name="hdnIdUsuarioExternoLogado" id="hdnIdUsuarioExternoLogado" value="<?= $idUsuarioExterno ?>"/>
 
 <?php
 PaginaSEIExterna::getInstance()->fecharAreaDados();

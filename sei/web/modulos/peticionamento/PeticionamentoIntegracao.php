@@ -32,7 +32,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.2.6';
+        return '4.2.7';
     }
 
     public function getInstituicao()
@@ -579,6 +579,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_vinc_usu_ext_consulta_vinculo' :
                 $xml = MdPetVinculoINT::validarExistenciaVinculoCnpj($_POST);
                 break;
+	        case 'md_pet_vinc_usu_ext_consulta_vinculo_mesmo_cpf' :
+		        $xml = MdPetVinculoINT::validarExistenciaVinculoCnpjOutroUsuarioMesmoCPF($_POST);
+		        break;
             case 'md_pet_vinc_usu_ext_dados_usuario' :
                 $xml = MdPetVincUsuarioExternoINT::consultarDadosUsuario($_POST);
                 break;

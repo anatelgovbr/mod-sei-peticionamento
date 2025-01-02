@@ -1446,7 +1446,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         try {
 
-            objPrincipalUpload = new infraUpload('frmDocumentoPrincipal', '<?=$strLinkUploadDocPrincipal?>', true);
+            objPrincipalUpload = new infraUpload('frmDocumentoPrincipal', '<?=$strLinkUploadDocPrincipal?>');
 
             objPrincipalUpload.finalizou = function (arr) {
 
@@ -1750,7 +1750,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     //campo de upload de documentos essenciais
     function carregarCamposDocComplementarUpload() {
 
-        objComplementarUpload = new infraUpload('frmDocumentosComplementares', '<?=$strLinkUploadDocComplementar?>', true);
+        objComplementarUpload = new infraUpload('frmDocumentosComplementares', '<?=$strLinkUploadDocComplementar?>');
 
         objComplementarUpload.finalizou = function (arr) {
 

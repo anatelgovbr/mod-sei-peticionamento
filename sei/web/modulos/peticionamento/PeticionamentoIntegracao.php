@@ -19,7 +19,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
     public static $INTIMACAO_CUMPRIDA_PARCIAL = 1;
     public static $INTIMACAO_CUMPRIDA = 2;
     public static $INTIMACAO_NEGADA = 3;
-    private $strNomeModulo = $this->getNome();
 
     public function __construct()
     {

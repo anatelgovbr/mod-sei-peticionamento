@@ -21,7 +21,7 @@ class MdPetRelIntDestExternoDTO extends InfraDTO
       
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdPetIntRelDestinatario', 'id_md_pet_int_rel_dest');
 
-	$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdAcessoExterno', 'id_acesso_externo');
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdAcessoExterno', 'id_acesso_externo');
 
         $this->configurarFK('IdMdPetIntRelDestinatario', 'id_md_pet_int_rel_dest', 'id_md_pet_int_rel_dest');
 

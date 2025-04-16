@@ -38,8 +38,8 @@ try {
   }
 
   $arrComandos = array();
-  $arrComandos[] = '<input type="submit" id="btnToggleLote" value="Selecionar em Lote" class="infraButton btnToggleLote" style="cursor: pointer" />';
-  $arrComandos[] = '<input type="submit" id="btnPesquisar" value="Pesquisar" class="infraButton" />';
+  $arrComandos[] = '<input type="button" id="btnToggleLote" value="Selecionar em Lote" class="infraButton btnToggleLote" style="cursor: pointer" />';
+  $arrComandos[] = '<input type="submit" id="btnPesquisar" value="Pesquisar" class="infraButton submitSearchForm" />';
   
   if ($_GET['acao'] == 'md_pet_pessoa_fisica'){
     $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
@@ -271,7 +271,7 @@ function inicializar(){
 
     <!--Destinatarios em massa: Adicionado parametro id_documento para a validacao funcionar quando realizada a pesquisa dentro da modal:-->
     <form id="frmUsuarioLista" method="post" class="" action="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao'].'&id_documento='.$idDocumento)?>">
-
+        <input type="submit" class="d-none" />
         <div class="row">
             <div class="col-xl-3 col-lg-4 col-md-4 col-sm-4 col-6">
                 <div class="form-group">
@@ -317,6 +317,11 @@ function inicializar(){
 
     <script>
         $(document).ready(function() {
+
+            $('.submitSearchForm').off('click').on('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
+                $('form#frmUsuarioLista')[0].submit();
+            });
 
             let timer;
 
@@ -497,6 +502,10 @@ function inicializar(){
                 let i = 0;
                 let toTransport = $('#foundCpfs').val().split('\n');
                 let contextChanges = window.top.document.getElementById('ifrVisualizacao').contentWindow.document;
+                
+                if(contextChanges == null){
+                    contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
+                }
                 
                 while (i < toTransport.length) {
                     

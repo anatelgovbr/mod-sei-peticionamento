@@ -38,17 +38,12 @@
     //RN para exibir Hipótese Legal
 
     $objInfraParametroDTO = new InfraParametroDTO();
-    $objMdPetParametroRN = new MdPetParametroRN();
     $objInfraParametroDTO->retTodos();
     $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
-    $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
+    $objInfraParametroDTO = (new MdPetParametroRN())->consultar($objInfraParametroDTO);
     $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
 
-    if ($valorParametroHipoteseLegal=='0') {
-    	$exibirHipoteseLegal = false;
-    }else{
-    	$exibirHipoteseLegal = true;
-    }
+    $exibirHipoteseLegal = ($valorParametroHipoteseLegal=='0') ? false : true;
     //Fim RN
 
     // Forcar o Nível de Acesso parametrizado

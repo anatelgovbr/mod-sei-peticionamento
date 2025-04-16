@@ -210,16 +210,6 @@ class MdPetUsuarioExternoRN extends InfraRN {
     }
   }
 
-  private function validarStrSinAcessibilidade(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
-    if (InfraString::isBolVazia($objUsuarioDTO->getStrSinAcessibilidade())){
-      $objInfraException->adicionarValidacao('Sinalizador de Acessibilidade não informado.');
-    }else{
-      if (!InfraUtil::isBolSinalizadorValido($objUsuarioDTO->getStrSinAcessibilidade())){
-        $objInfraException->adicionarValidacao('Sinalizador de Acessibilidade inválido.');
-      }
-    }
-  }
-
   private function validarStrSinAtivoRN0694(UsuarioDTO $objUsuarioDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objUsuarioDTO->getStrSinAtivo())){
       $objInfraException->adicionarValidacao('Sinalizador de Exclusão Lógica não informado.');

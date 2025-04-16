@@ -116,7 +116,7 @@
                 idProcedimento: document.getElementById('hdnIdProcedimento').value
             };
             
-            //verifica caso o usu·rio logado seja procurador se a procuraÁ„o do mesmo est· vigente
+            //verifica caso o usu√°rio logado seja procurador se a procura√ß√£o do mesmo est√° vigente
             $.ajax({
                 url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_procuracao')?>',
                 type: 'POST',
@@ -132,12 +132,12 @@
                             '', //options
                             false); //modal
                     }else{                
-//                        var texto = 'VocÍ n„o possui mais permiss„o para responder a IntimaÁ„o EletrÙnica, conforme abaixo:\n\n';
+//                        var texto = 'Voc√™ n√£o possui mais permiss√£o para responder a Intima√ß√£o Eletr√¥nica, conforme abaixo:\n\n';
 //                        
 //                        if($(result).find('tipo').text() == 'F'){
-//                            texto = texto + 'Pessoa FÌsica: '+$(result).find('nome').text()+' ('+$(result).find('documento').text()+'), verifique seus Poderes de RepresentaÁ„o.';
+//                            texto = texto + 'Pessoa F√≠sica: '+$(result).find('nome').text()+' ('+$(result).find('documento').text()+'), verifique seus Poderes de Representa√ß√£o.';
 //                        }else{
-//                            texto = texto + 'Pessoa JurÌdica: '+$(result).find('nome').text()+' ('+$(result).find('documento').text()+'), verifique seus Poderes de RepresentaÁ„o.';
+//                            texto = texto + 'Pessoa Jur√≠dica: '+$(result).find('nome').text()+' ('+$(result).find('documento').text()+'), verifique seus Poderes de Representa√ß√£o.';
 //                        }
                         infraAbrirJanela(atob($(result).find('contato').text()), 'janelaConsultarIntimacao', 900, 350)
                         return false;
@@ -156,7 +156,7 @@
             var fileArquivo = document.getElementById('fileArquivo');
             var tamanhoArquivo = (arr['tamanho'] / 1024 / 1024).toFixed(2);
             if (tamanhoArquivo > parseInt(TAMANHO_MAXIMO)) {
-                alert('Tamanho m·ximo para o arquivo È de ' + TAMANHO_MAXIMO + 'Mb');
+                alert('Tamanho m√°ximo para o arquivo √© de ' + TAMANHO_MAXIMO + 'Mb');
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 verificarTabelaVazia(1);
@@ -164,13 +164,13 @@
             }
 
 
-            //Arquivo com o mesmo nome j· adicionado
+            //Arquivo com o mesmo nome j√° adicionado
             for (var i = 0; i < tbDocumento.rows.length; i++) {
 
                 var tr = tbDocumento.getElementsByTagName('tr')[i];
 
                 if (arr['nome'].toLowerCase().trim() == tr.cells[9].innerText.toLowerCase().trim()) {
-                    alert('N„o È permitido adicionar documento com o mesmo nome de arquivo.');
+                    alert('N√£o √© permitido adicionar documento com o mesmo nome de arquivo.');
                     fileArquivo.value = '';
                     fileArquivo.focus();
                     verificarTabelaVazia(1);
@@ -191,14 +191,14 @@
 
             var tamanhoConfigurado = parseInt(TAMANHO_MAXIMO) > 0;
             if (!tamanhoConfigurado) {
-                alert('Limite n„o configurado na AdministraÁ„o do Sistema.');
+                alert('Limite n√£o configurado na Administra√ß√£o do Sistema.');
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 return false;
             }
 
             if (!extensaoConfigurada) {
-                alert('Extens„o de Arquivos Permitidos n„o foi configurado na AdministraÁ„o do Sistema.');
+                alert('Extens√£o de Arquivos Permitidos n√£o foi configurado na Administra√ß√£o do Sistema.');
                 fileArquivo.value = '';
                 fileArquivo.focus();
                 return false;
@@ -206,8 +206,8 @@
 
             var arquivoPermitido = arrExtensoesPermitidas.indexOf(ext) != -1;
             if (!arquivoPermitido) {
-                alert("O arquivo selecionado n„o È permitido.\n" +
-                        "Somente s„o permitidos arquivos com as extensıes:\n" +
+                alert("O arquivo selecionado n√£o √© permitido.\n" +
+                        "Somente s√£o permitidos arquivos com as extens√µes:\n" +
                         arrExtensoesPermitidas.join().replace(/,/g, ' '));
                 fileArquivo.value = '';
                 fileArquivo.focus();
@@ -293,7 +293,7 @@
         }
 
         if (complementoTipoDocumento == '') {
-            alert('Informe o Complemento do Tipo de Documento. \nPara mais informaÁıes, clique no Ìcone de Ajuda ao lado do nome do campo.');
+            alert('Informe o Complemento do Tipo de Documento. \nPara mais informa√ß√µes, clique no √≠cone de Ajuda ao lado do nome do campo.');
             document.getElementById('txtComplementoTipoDocumento').focus();
             return false;
         }
@@ -303,7 +303,7 @@
         if (selNivelAcesso.nodeName == 'SELECT') {
             var nivelAcesso = selNivelAcesso.options[selNivelAcesso.selectedIndex];
             if (nivelAcesso == null || nivelAcesso.value == '') {
-                alert('Informe o NÌvel de Acesso.');
+                alert('Informe o N√≠vel de Acesso.');
                 document.getElementById('selNivelAcesso').focus();
                 return false;
             }
@@ -314,7 +314,7 @@
             if (selHipoteseLegal.nodeName == 'SELECT' && selHipoteseLegal.offsetHeight > 0) {
                 var hipoteseLegal = selHipoteseLegal.options[selHipoteseLegal.selectedIndex];
                 if (hipoteseLegal == null || hipoteseLegal.value == '') {
-                    alert('Informe a HipÛtese Legal.');
+                    alert('Informe a Hip√≥tese Legal.');
                     selHipoteseLegal.focus();
                     return false;
                 }
@@ -329,7 +329,7 @@
 
         if (selTipoConferencia.offsetHeight > 0) {
             if (tipoConferencia == null || tipoConferencia.value == 'null') {
-                alert('Informe a ConferÍncia com o documento digitalizado.');
+                alert('Informe a Confer√™ncia com o documento digitalizado.');
                 selTipoConferencia.focus();
                 return false;
             }
@@ -511,7 +511,7 @@
         var selRazaoSocial = document.getElementById('selRazaoSocial');
 <?php if ($contador == 2) { ?>
             if (selRazaoSocial.value == 'null') {
-                alert('Informe a Raz„o Social!');
+                alert('Informe a Raz√£o Social!');
                 selRazaoSocial.focus();
                 return false;
             }
@@ -557,7 +557,6 @@
                 self.closest('form').find('select[id^="selHipoteseLegal"], select[id^="selNivelAcesso"]').prop('disabled', false);
                 $('input[name="hdnNivelAcesso"], input[name="hdnHipoteseLegal"]').val('');
 
-                self.closest('form').find('div[id^="divBlcHipoteseLegal"]').hide();
                 if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == ''){
                     self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
                 }else{

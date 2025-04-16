@@ -231,15 +231,7 @@
         return true;
     }
 
-    function selectAll(){
-        options = document.getElementsByTagName("option");
-        for ( i = 0; i < options.length; i++){
-            options[i].selected = 'true';
-        }
-    }
-
     function OnSubmitForm() {
-        selectAll();
         return validarCadastro();
     }
 

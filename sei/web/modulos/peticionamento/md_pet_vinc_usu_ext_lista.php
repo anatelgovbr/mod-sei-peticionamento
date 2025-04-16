@@ -217,8 +217,8 @@ if ($numRegistros > 0) {
     $strResultado .= '<th class="infraTh"><div style="width:130px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo de Procuração', 'TipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:150px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Abrangência', 'StaAbrangencia', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:120px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Validade', 'DataLimite', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh text-center"><div style="width:70px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Situação', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
-    $strResultado .= '<th class="infraTh text-center"><div style="width:60px" class="text-center">Ações</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:70px" class="text-center">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Situação', 'StaEstado', $arrObjMdPetVincRepresentantDTO) . '</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="width:60px" class="text-center">Ações</div></th>';
     $strResultado .= '</tr>';
 
     $arrSelectTipoVinculo = array();
@@ -299,7 +299,7 @@ if ($numRegistros > 0) {
         $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getStrNomeTipoRepresentante() /*$strTipoRepresentante*/ . '</td>';
         $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getStrStaAbrangenciaTipo() . '</td>';
         $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getDthDataLimiteValidade() . '</td>';
-        $strResultado .= '<td class="text-center">' . $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstadoTipo() . '</td>';
+        $strResultado .= '<td>' . $arrObjMdPetVincRepresentantDTO[$i]->getStrStaEstadoTipo() . '</td>';
 
 
         /*if (count($arrObjUsuarioDTO)>0){

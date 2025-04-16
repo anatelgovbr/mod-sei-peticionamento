@@ -5,10 +5,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.1.0';
-    private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
+    private $versaoAtualDesteModulo = '4.2.0';
+    private $nomeDesteModulo = 'MÃ“DULO DE PETICIONAMENTO E INTIMAÃ‡ÃƒO ELETRÃ”NICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -61,7 +61,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
     {
         if (!$bolErro) {
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
-            $this->logar('TEMPO TOTAL DE EXECUÇÃO: ' . $this->numSeg . ' s');
+            $this->logar('TEMPO TOTAL DE EXECUÃ‡ÃƒO: ' . $this->numSeg . ' s');
         } else {
             $strMsg = 'ERRO: ' . $strMsg;
         }
@@ -77,32 +77,23 @@ class MdPetAtualizadorSeiRN extends InfraRN
         die;
     }
 
-	protected function normalizaVersao($versao)
-    {
-		$ultimoPonto = strrpos($versao, '.');
-		if ($ultimoPonto !== false) {
-			$versao = substr($versao, 0, $ultimoPonto) . substr($versao, $ultimoPonto + 1);
-		}
-		return $versao;
-	}
-
     protected function atualizarVersaoConectado()
     {
         
         try {
-            $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SEI VERSÃO ' . SEI_VERSAO);
+            $this->inicializar('INICIANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DO ' . $this->nomeDesteModulo . ' NO SEI VERSÃƒO ' . SEI_VERSAO);
 
             //checando BDs suportados
             if (!(BancoSEI::getInstance() instanceof InfraMySql) &&
                 !(BancoSEI::getInstance() instanceof InfraSqlServer) &&
                 !(BancoSEI::getInstance() instanceof InfraOracle)) {
-                $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSEI::getInstance()), true);
+                $this->finalizar('BANCO DE DADOS NÃƒO SUPORTADO: ' . get_parent_class(BancoSEI::getInstance()), true);
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '2.0.18';
-	        if ($this->normalizaVersao(VERSAO_INFRA) < $this->normalizaVersao($numVersaoInfraRequerida)) {
-                $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
+            $numVersaoInfraRequerida = '2.7.6';
+	        if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
+                $this->finalizar('VERSÃƒO DO FRAMEWORK PHP INCOMPATÃVEL (VERSÃƒO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃƒO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
 
             //checando permissoes na base de dados
@@ -171,10 +162,12 @@ class MdPetAtualizadorSeiRN extends InfraRN
                     $this->instalarv404();
                 case '4.0.4':
                     $this->instalarv410();
+                case '4.1.0':
+                    $this->instalarv420();
                     break;
 
                 default:
-                    $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
+                    $this->finalizar('A VERSÃƒO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÃ ESTÃ INSTALADA.');
                     break;
 
             }
@@ -186,7 +179,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(true);
             InfraDebug::getInstance()->setBolEcho(true);
-            throw new InfraException('Erro instalando/atualizando versão.', $e);
+            throw new InfraException('Erro instalando/atualizando versÃ£o.', $e);
         }
     }
 
@@ -195,7 +188,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
         $nmVersao = '0.0.1';
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->logar('CRIANDO A TABELA md_pet_tipo_processo');
 
@@ -332,20 +325,19 @@ class MdPetAtualizadorSeiRN extends InfraRN
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_04', 'md_pet_indisp_doc', array('id_documento'), 'documento', array('id_documento'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_indisp_doc_05', 'md_pet_indisp_doc', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
 
-
         $this->logar('CRIANDO A SEQUENCE seq_md_pet_indisp_doc');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_indisp_doc', 1);
 
-        $this->logar('ADICIONANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        $this->logar('ADICIONANDO PARÃ‚METRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃƒO DO MÃ“DULO');
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome) VALUES(\''.$nmVersao.'\',  \'' . $this->nomeParametroModulo . '\' )');
-        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+        $this->logar('INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
     }
 
     protected function instalarv002()
     {
         $nmVersao = '0.0.2';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
@@ -373,19 +365,19 @@ class MdPetAtualizadorSeiRN extends InfraRN
         //INSERCAO DE DOIS NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
         $this->logar('INSERINDO EMAILS MD_PET_CONFIRMACAO_PETICIONAMENTO_USUARIO_EXTERNO e MD_PET_ALERTA_PETICIONAMENTO_UNIDADES NA TABELA email_sistema');
 
-        //Parametrizar Email de Alerta às Unidades
-        $conteudo1 = "      :: Este é um e-mail automático ::
+        //Parametrizar Email de Alerta Ã s Unidades
+        $conteudo1 = "      :: Este Ã© um e-mail automÃ¡tico ::
 
-O Usuário Externo @nome_usuario_externo@ (@email_usuario_externo@) efetivou o Peticionamento Eletrônico do tipo @tipo_peticionamento@ (@tipo_processo@), no âmbito do processo nº @processo@, conforme disposto no Recibo Eletrônico de Protocolo SEI nº @documento_recibo_eletronico_de_protocolo@.
+O UsuÃ¡rio Externo @nome_usuario_externo@ (@email_usuario_externo@) efetivou o Peticionamento EletrÃ´nico do tipo @tipo_peticionamento@ (@tipo_processo@), no Ã¢mbito do processo nÂº @processo@, conforme disposto no Recibo EletrÃ´nico de Protocolo SEI nÂº @documento_recibo_eletronico_de_protocolo@.
 
-O mencionado processo se encontra aberto em sua Unidade (@sigla_unidade_abertura_do_processo@). Entre no SEI e confira! Caso não seja de competência de sua Unidade, verifique se já está aberto na Unidade correta e, do contrário, envie-o para a Unidade competente para que seja devidamente tratado.
+O mencionado processo se encontra aberto em sua Unidade (@sigla_unidade_abertura_do_processo@). Entre no SEI e confira! Caso nÃ£o seja de competÃªncia de sua Unidade, verifique se jÃ¡ estÃ¡ aberto na Unidade correta e, do contrÃ¡rio, envie-o para a Unidade competente para que seja devidamente tratado.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaAlertaUnidades = $this->retornarMaxIdEmailSistema();
 
@@ -401,31 +393,31 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             )
         VALUES
             (" . $maxIdEmailSistemaAlertaUnidades . ",
-              'Peticionamento Eletrônico - Alerta às Unidades',
+              'Peticionamento EletrÃ´nico - Alerta Ã s Unidades',
               '@sigla_sistema@ <@email_sistema@>',
               '@emails_unidade@',
-              'SEI Peticionamento Eletrônico - Processo nº @processo@',
+              'SEI Peticionamento EletrÃ´nico - Processo nÂº @processo@',
               '" . $conteudo1 . "',
               'S',
             'MD_PET_ALERTA_PETICIONAMENTO_UNIDADES'
             )";
         BancoSEI::getInstance()->executarSql($insert1);
 
-        //Parametrizar Email de Confirmação ao Usuario Externo
-        $conteudo2 = "      :: Este é um e-mail automático ::
+        //Parametrizar Email de ConfirmaÃ§Ã£o ao Usuario Externo
+        $conteudo2 = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-Este e-mail confirma a realização do Peticionamento Eletrônico do tipo @tipo_peticionamento@ no SEI-@sigla_orgao@, no âmbito do processo nº @processo@, conforme disposto no Recibo Eletrônico de Protocolo SEI nº @documento_recibo_eletronico_de_protocolo@.
+Este e-mail confirma a realizaÃ§Ã£o do Peticionamento EletrÃ´nico do tipo @tipo_peticionamento@ no SEI-@sigla_orgao@, no Ã¢mbito do processo nÂº @processo@, conforme disposto no Recibo EletrÃ´nico de Protocolo SEI nÂº @documento_recibo_eletronico_de_protocolo@.
 
-Caso no futuro precise realizar novo peticionamento, sempre acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em seu Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Caso no futuro precise realizar novo peticionamento, sempre acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em seu Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaConfirmacaoUsuarioExterno = $this->retornarMaxIdEmailSistema();
 
@@ -441,10 +433,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         )
         VALUES
         (" . $maxIdEmailSistemaConfirmacaoUsuarioExterno . ",
-              'Peticionamento Eletrônico - Confirmação ao Usuário Externo',
+              'Peticionamento EletrÃ´nico - ConfirmaÃ§Ã£o ao UsuÃ¡rio Externo',
               '@sigla_sistema@ <@email_sistema@>',
               '@email_usuario_externo@',
-              'SEI - Confirmação de Peticionamento Eletrônico (Processo nº @processo@)',
+              'SEI - ConfirmaÃ§Ã£o de Peticionamento EletrÃ´nico (Processo nÂº @processo@)',
               '" . $conteudo2 . "',
               'S',
             'MD_PET_CONFIRMACAO_PETICIONAMENTO_USUARIO_EXTERNO'
@@ -453,7 +445,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->executarSql($insert2);
 
 
-        //Tabelas relacionais com Tipos de Contatos permitidos para Cadastro e para Seleção
+        //Tabelas relacionais com Tipos de Contatos permitidos para Cadastro e para SeleÃ§Ã£o
         $this->logar('CRIANDO A TABELA md_pet_rel_tp_ctx_contato');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_rel_tp_ctx_contato (
@@ -528,7 +520,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '1.0.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
@@ -543,7 +535,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $objInfraMetaBD->adicionarChaveEstrangeira('fk_id_md_pet_hip_legal1', 'md_pet_hipotese_legal', array('id_md_pet_hipotese_legal'), 'hipotese_legal', array('id_hipotese_legal'));
         }
 
-        $this->logar('DROP DA COLUNA id_unidade (Não é mais unidade única. Agora terá opção para Peticionamento de Processo Novo para Múltiplas Unidades)');
+        $this->logar('DROP DA COLUNA id_unidade (NÃ£o Ã© mais unidade Ãºnica. Agora terÃ¡ opÃ§Ã£o para Peticionamento de Processo Novo para MÃºltiplas Unidades)');
 
         $objInfraMetaBD->excluirChaveEstrangeira('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
         $objInfraMetaBD->excluirIndice('md_pet_tipo_processo', 'fk_pet_tp_proc_unidade_02');
@@ -562,7 +554,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         );
 
 
-        //Tabelas Abaixo é o problema da modificação da PK (Pk deixou de ser composta e passou a ter SEQ)
+        //Tabelas Abaixo Ã© o problema da modificaÃ§Ã£o da PK (Pk deixou de ser composta e passou a ter SEQ)
         $this->logar('RECRIANDO A TABELA md_pet_rel_tp_processo_serie (renomeada para md_pet_rel_tp_proc_serie)');
 
         BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_rel_tp_processo_serie');
@@ -585,7 +577,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_rel_tp_proc_serie', 1);
 
 
-        //CRIANDO NOVO TIPO DE DOCUMENTO "Recibo Eletrônico de Protocolo"
+        //CRIANDO NOVO TIPO DE DOCUMENTO "Recibo EletrÃ´nico de Protocolo"
         $this->logar('CRIANDO MODELO "Modulo_Peticionamento_Recibo_Eletronico_Protocolo"');
         $modeloRN = new ModeloRN();
         $modeloDTO = new ModeloDTO();
@@ -596,8 +588,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
 
-        //adicionando as seções do modelo: Corpo de Texto e Rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto e RodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -619,8 +611,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -636,7 +628,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     </table>';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlConteudo);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinSomenteLeitura('S');
@@ -655,7 +647,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -670,13 +662,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -692,8 +684,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO = $grupoSerieRN->cadastrarRN0775($grupoSerieDTO);
 
 
-        //Criar o Tipo de Documento "Recibo Eletrônico de Protocolo"
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Recibo Eletrônico de Protocolo');
+        //Criar o Tipo de Documento "Recibo EletrÃ´nico de Protocolo"
+        $this->logar('CRIANDO TIPO DE DOCUMENTO Recibo EletrÃ´nico de Protocolo');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -704,10 +696,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Recibo Eletrônico de Protocolo');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática do Recibo Eletrônico de Protocolo nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('Recibo EletrÃ´nico de Protocolo');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica do Recibo EletrÃ´nico de Protocolo nos Peticionamentos EletrÃ´nicos realizados por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -721,8 +714,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('ATUALIZANDO INFRA_PARAMETRO (' . MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO . ')');
         $nomeParamIdSerie = MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO;
-
-        BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome)  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
+		    BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome)  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -731,11 +723,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '1.0.4';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
-        //Caso exista a coluna na tabela a instalação é nova, então não é necessario executar a migração de dados
+        //Caso exista a coluna na tabela a instalaÃ§Ã£o Ã© nova, entÃ£o nÃ£o Ã© necessario executar a migraÃ§Ã£o de dados
         $colunasTabela = $objInfraMetaBD->obterColunasTabela('md_pet_rel_tp_ctx_contato', 'id_tipo_contato');
 
         if (count($colunasTabela) <= 0 || $colunasTabela[0]['column_name'] != 'id_tipo_contato') {
@@ -758,7 +750,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //inclusao de nova tarja de assinatura customizada, para uso pelo modulo peticionamento em caso de documento nato-digital
         $objTarjaAssinaturaDTO = new TarjaAssinaturaDTO();
         $objTarjaAssinaturaDTO->setStrStaTarjaAssinatura(MdPetAssinaturaRN::$TT_ASSINATURA_SENHA_PETICIONAMENTO);
-        $objTarjaAssinaturaDTO->setStrTexto('<hr style="margin: 0 0 4px 0;" />  <table>    <tr>      <td>  @logo_assinatura@      </td>      <td>  <p style="margin:0;text-align: left; font-size:11pt;font-family: Calibri;">Documento assinado eletronicamente por <b>@nome_assinante@</b>, <b>@tratamento_assinante@</b>, em @data_assinatura@, às @hora_assinatura@, conforme horário oficial de Brasília, com fundamento no art. 6º, § 1º, do <a title="Acesse o Decreto" href="http://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2015/Decreto/D8539.htm" target="_blank">Decreto nº 8.539, de 8 de outubro de 2015</a>.</p>      </td>    </tr>  </table>');
+        $objTarjaAssinaturaDTO->setStrTexto('<hr style="margin: 0 0 4px 0;" />  <table>    <tr>      <td>  @logo_assinatura@      </td>      <td>  <p style="margin:0;text-align: left; font-size:11pt;font-family: Calibri;">Documento assinado eletronicamente por <b>@nome_assinante@</b>, <b>@tratamento_assinante@</b>, em @data_assinatura@, Ã s @hora_assinatura@, conforme horÃ¡rio oficial de BrasÃ­lia, com fundamento no art. 6Âº, Â§ 1Âº, do <a title="Acesse o Decreto" href="http://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2015/Decreto/D8539.htm" target="_blank">Decreto nÂº 8.539, de 8 de outubro de 2015</a>.</p>      </td>    </tr>  </table>');
         $objTarjaAssinaturaDTO->setStrLogo('iVBORw0KGgoAAAANSUhEUgAAAFkAAAA8CAMAAAA67OZ0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAADTtpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDQuMi4yLWMwNjMgNTMuMzUyNjI0LCAyMDA4LzA3LzMwLTE4OjEyOjE4ICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICAgeG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOklwdGM0eG1wQ29yZT0iaHR0cDovL2lwdGMub3JnL3N0ZC9JcHRjNHhtcENvcmUvMS4wL3htbG5zLyIKICAgeG1wUmlnaHRzOldlYlN0YXRlbWVudD0iIgogICBwaG90b3Nob3A6QXV0aG9yc1Bvc2l0aW9uPSIiPgogICA8ZGM6cmlnaHRzPgogICAgPHJkZjpBbHQ+CiAgICAgPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ii8+CiAgICA8L3JkZjpBbHQ+CiAgIDwvZGM6cmlnaHRzPgogICA8ZGM6Y3JlYXRvcj4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGk+QWxiZXJ0byBCaWdhdHRpPC9yZGY6bGk+CiAgICA8L3JkZjpTZXE+CiAgIDwvZGM6Y3JlYXRvcj4KICAgPGRjOnRpdGxlPgogICAgPHJkZjpBbHQ+CiAgICAgPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ii8+CiAgICA8L3JkZjpBbHQ+CiAgIDwvZGM6dGl0bGU+CiAgIDx4bXBSaWdodHM6VXNhZ2VUZXJtcz4KICAgIDxyZGY6QWx0PgogICAgIDxyZGY6bGkgeG1sOmxhbmc9IngtZGVmYXVsdCIvPgogICAgPC9yZGY6QWx0PgogICA8L3htcFJpZ2h0czpVc2FnZVRlcm1zPgogICA8SXB0YzR4bXBDb3JlOkNyZWF0b3JDb250YWN0SW5mbwogICAgSXB0YzR4bXBDb3JlOkNpQWRyRXh0YWRyPSIiCiAgICBJcHRjNHhtcENvcmU6Q2lBZHJDaXR5PSIiCiAgICBJcHRjNHhtcENvcmU6Q2lBZHJSZWdpb249IiIKICAgIElwdGM0eG1wQ29yZTpDaUFkclBjb2RlPSIiCiAgICBJcHRjNHhtcENvcmU6Q2lBZHJDdHJ5PSIiCiAgICBJcHRjNHhtcENvcmU6Q2lUZWxXb3JrPSIiCiAgICBJcHRjNHhtcENvcmU6Q2lFbWFpbFdvcms9IiIKICAgIElwdGM0eG1wQ29yZTpDaVVybFdvcms9IiIvPgogIDwvcmRmOkRlc2NyaXB0aW9uPgogPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgIAo8P3hwYWNrZXQgZW5kPSJ3Ij8+RO84nQAAAwBQTFRFamts+fn5mp6hc3Nz9fX1U1NTS0tKnaGk6unqzM3P7e3u8fHxuLm7/Pz8lZmc2dnZxcXGWlpavr29wsLCp6eniYmKhYaGZWZmkpaZ0dHS5eXlkZGSrq2utbW2XV1d4uHhfX1+sbGy1dXW3d3dqampgYGCjY2OyMnKYWJihYaIjY6RnZ2ejpGSra+xeHl7lZWVmJiYgoKFpKaptre5vb7Aurq8oaGikpSWmJufh4iKkZKVysrMtrq7ioyOdXZ4fn+ArrGywcLEzc7QiYqMt7W1/v/8mZqcxsbIpqqrZGFhztDSeXp7iIWGnJqalJKSf4CCg4B/amZmoaSm5+fmvLy6ys3OzMzL2tze3dzaa2hny8nH0M7NiYiGbG5v19jYWFVVcG5s2drcxMTD0dPUx8jJ/P79sbO1j46OmZWU1dfXhIKC1NLTd3h68fL0wsTGb3By+vf3YV1d2NjW7u7u6Ojpe3x9fHp54eLkxMLAvLq5/f39+vr63t7fXFtamZiW6urqzMnKwL+98PHvrKytq6qq7evpr62toKKkvr/BOzk42dvad3V06OjmpaSj5efnnZyblpWT/fz6ZWZo9/f3jYyKqquteXd47u3rhYSC5eTisbCueXh2qaimWlhXjImIY2Bfc3Bw////UFBP/v7+/v////7///3+g4SHaGlpYmNj8vPzZ2dn/vz9WFhYtbO0ztDPWltbbW9u/v7/xcPEiouLrayq4+Tms7S2VldX7/DyqKel+/z++Pj4+ff4cXBuuru7u7y+7+/vx8fH8/HysK+wXFxc/fv8s7OztrWzZWRio6Ohl5eZ1NTUZGRkraus2NbX4N/d0dDP3dzc9ff14ODg9/n4oaCg4eHf+/v76+vrQD4+7Ozs/f3/7evsRUJCvLy87vDtysvLXl9fzczNwsPDYGBgw7+/ysjJgH19gH9/29rbwMC/Tk1MlJCPoaCeX1tb6ufo4uPjx8fF5OPht7e3X15cuLe4tLKzn56f09TW1dXTYWJkh4eHZGJj3+Diq6urXLJJJAAAC8BJREFUeNqsmAtYE1cWgAcmJLwSwjMJAYxiQhIeITyEgCGiAioCaiqWaoCiFQVKtgWsJFRapEpFatuodetKHYaQkIiipZVWqqBQ64OqrduGuquVR1sDu62u69JdW/fOZCCJovjttyffl9yZ3PvfM2fOOffcC6UgJ1a5R1GeJI6OjvHx8TQgTCYzLiEsTCgU8qRSQcaN4VNsWWpsndep7u7u2NhY9+7UkpKSJFnqkApBIOTrufFgJDb2MUIQ4xLYAMnjSRf4+koEAoGupLcMdQtVRBs0JA3JImovpVKpUED6SAMCnZhLo1Dmrlzp8hhJxCQkJGRdGhA6nV5aWjrs7T08nJw8Ono6hD7aXZd2ml5ALygoGAb33QPvBs68ACsZIjXkAcBLmpH/RVC7H7xlaZ86qmTcgY47UsKbEW3LU4Mmx9tTJwWYGJFAeh4URXGc2/yUCqJTaGrLRlFi3khIAUMUCxl9Kjj4qFQo1WYeC27ie6KjSK+AMHIsuDu92qpq8wCK+P+6cdasGvRRM6G21yI9hJPdn+Z1vTCfJvZlNccIgQt6IIj2iZ0zjY+Q0SnfGvZ921EiMC645kKjxNOen06NTMaTdH5oklwhl8OHdyyhUWgJudOS+yG9HRl9RGWrzm/FKfRNHYZEWnyCdON0ZHa/Xv8kO9u9FJSlY3DNzclMmtD34rTkVr1xajKKpFgaVIcu9URkkKq7EFW3MEEiZk1L5hsfJqtfrP74lXK3LhTDqQy/r+uOTX7egIUVKbhKvmOGQ7dEKpaxpvN/Np/BsLdzWeJWkDMpi+reAv5NNftIsjjpEekXLgJ0bgUDapf2JIsFnIgj0+o8YkMGuQMtX8SkgbTpyGTSEcTkIuX6CsTcLJkyAlzmRvD1nR1lXhXcJNjl4fTxsBSO9Pfb6IwaFjG3UxxXrKDQHF9B0F+lAp5AOH5BnM5RyF5Gnk9vVbR3lMUmVcBHb05lDXwm4nbhYH/rJBmY1QWAKe65q+avX09CB1LFPMF4VZchWQxH6MdR834+1OZbFg0nKfQhdo5Dch0YcHYu7zFZ/Yk3yG+10blrHo3iGK4G/1JdUWoal6eLm4Hli25FEsSZcTVp0Nh5v+w4BBtbT9u4peFITF1dTMyN7ple8kkD8YL4fCv5mGZRPIWynhjRM0cs0bljHY9VySDo6OmP69sZTvfLZr6raA2iW5+/pjSKsvb34FWrqrZXsM0TobY7iD9iq3N4PLDyuhfxQTMWSHSSdSiJZHCokjIUrXdvw56tTX6uvXx9X9vwpM7Hopes2h7uHh14/LhIEiF0Jf7Y3TcyaGNndSITXDAD1oL/UVaWRCcIDZ8d1eATWgFBg1uD4c4RcpHrg3Z+Z97w5Bv7mFI3b3ag+73AwMAGXwFcSrWQO9oHrWTQ75M9NEdHmlAYdaRLlVYh0GUlgVXY2M+Ajur7onJhp0FA9ukMcsLJ+HM3r3WUht0mgixUnBTVRZA9bcmgc3k4M4FJCxNIujXrSnRiTokSLA16Bn8waGzcA27qI+9znUNuc3LyBp0t4b8yXrjiE2L4VhkcqrE0fduCgmysAeQT+oowaUKYQJecXcLlyETbx0NDIyNFIrZvmhkCZL9rqdedxsijk2QXmnROGUHew1FSSBPkwT47ncHK4UwPFUil4oQbHE4JJw3RdHVpcEGK9WN9ZG519vjs83OCJ1VxuSChlFmax/ZUKLdP6NzZ5/lIrnvh9rhOIpb0LigpgWfa+G0xoymILCt/KO7qhIK4UtYQVuzMT4AhHuEckjxPTxtrEM5IXVKhyxK4z1FEKGWzrOVAsbGpncypPrG2O61nYj6VSxxPKJX4+XFlsor0iJIkRUbPo2SAHPDH0qU6OV3HEbMS34WVUBa9vMvk0ONxcwC5aAR25pYvYQqSomoIdHXc9vmzWNnZiUNHbp6mh4TcPB9UgPvdfSc7skN0agzL7FEnzBKXSNxqeIPw0X6935ZQkS/EGEZYmM5+ueESiQJiEY/isSARxZ8UdbCULLf7A9TYtZ892ZCqE0jZPLFMXAIHHkNyZUFGqLU9z8mpiUz2QS7qgZ0lG1ekVwwGzSfywyrpOrwhj5L0GrCGf384npcIcny05dleEesEYhmHE6FMegC8R2Vm97e1tXViYPIu5Erbd+Q395bHQJ1kdg9R+ezwpWP2+0sql62IVYPprvID1FayI0FGetzHpTpAFqSmGfBnqykY58IKCL7FPvsVMkPkx/ZrMJBOZdZWEzlNtUNQipEN6RdmKSOBMujVwQdWMohnQmeE6hzMCkk8Eoy7vhYb3SU35+Z+Jce81ERyc6shqRCVxpqHPcSlKqwRKhNCoyYsjwXZkwMfrYhQrdam4kBtVyfU2jtXh+mMojWi/4Tj0VfVNwV5wp/BF6CabhSqrfUm+tln9lMT9Fxusgq/2Ws047/BbbU25HjacaK/CWO3oGhKi4n64zcqAnZIiw5EHp7QFEsXVCoB
 3wjiH7ea+0l/vK+8rcFhkhwfz7SsI2UiTuOlzxcWRbpd2VcYXDx+5nDGT2zDQObezKob3x34MGSraX7tzoLdmffG6wu/smi9sWS9BqWaTIj/SoMJ+50/5mOa9Od4moWM9Cz02r9JPpZhvpoPm3cG5LgeXJzh+aXmVOXBwtU/wzPG8x1q859dQ/7mtTs/LM50sEQAO4nH5nV0SDo6/Li3blVwRposRQ5OTqXFncW7/Xlh5smcr/curjS8nfcnUu1yZ/jtmk085HDm4qVvbArVhsLUXtjMLULdvsjIW2qw2OZqQ0eH732/fUXcW6Dk2Qune1mmtCNTh/NW716c0rOtafM7r3+w695y5/pxTdHu0Zw7t5a9AW/R7jK+tyUneFkm4nPyuYNFZyYqgoGBakxAVVBeLpdfI14HTqbR4nBrqH68viY/p3rpTwfunN/00vszR+T5W7r276aP7ftg2R8av/sh22nxq3Dwpkbko7w1efvcpq7iJ27h5AvMhHmW6V9beKRYQ194STMUkK3xH3JgVakuehxaXfmcBzJj5iztjwuHzGcumRFSQWVBlRqx2wXZxYKVHEYk+BbcFVuaX9CasLSAZ4bmQ+oW0L25GbW6MVX1GE2tgpNFcWHzrNO5iR5YulJVzRjboXd5LbEJHe2oslHv2BRA1J4cFxcWbg2sayd5WLPlzDe7QEy0IN9v/sKbZFG/+MtyEJ1EtKOP6os+rPMEGVF/eHDT6jP1mSnPHFz2cvb1po8ub2k8//Xfzq35x19rRQc3vDOU8d7Oxg+e8WjMKfRHp96IoXZ2jgsThuO9nv353vv/lHM2fPuS16fL/52zfEfBdU7Blpy6+qWXc/K3BHlXnnyZnV97h5V959zfU560H8QiBVsHE9jScGwuauX1xv2d5qK3R683wucuFxaleB0I/jZnA7ItZ3P9pzvza73g1+HzKSnv1S4dy6BOs43G10FA3ooZjup1/crOPzrvFXmTL/3yS/WyZSleL8nlOY0p53Oy92/7Hv7Iq35zfkbKO0s3FednTkO2WCNMKN2Kvxb5b78tTehRFrr+zCjaRY18s+HGgatow1iO57bL/bU9xk8rzz3bQH61IXPxMvIG6jRnCvcJ8h7LPed7hz3QWVVa/38trEJcn2H1DGkQUvb7qxFSsVx90f8ai6ShH/Ynfeh95bZqmvMK3M5Coe8eyyvVfq5WYYs8SlXjDo2AK0SlPgS8D7QRVIVlZrSZapr+xMLiG1LJnscnAIsrt9itUehjDmNsROLUxod8BJJQ1HYQShx1aK1orR1IO/2RRX2nUwW0VrxAQkf+vxLQ6Tl2AzoxO0si8ekG26OYmG7sQK/S3f3evbt3o6MDwebj7NmzMzHpBRIQELAVyIPa2trZPk+SfZ6eZD8HCCHNlnFBLSnjVIByEtSTQGAYVlqO9EDJrzcaGYz+Vj6fPzIY1Nfe7gnqpk5Qkz1WmpyamvxqECgFURX78HQ6MdgHZ+F8vF618MEER5VHIWwCI5igH5tgEEhfu+cTpN/PGzj8fwUYAEHf/4ET3ikCAAAAAElFTkSuQmCC');
@@ -774,10 +766,10 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
     {
         $nmVersao = '1.1.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
-        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+		
         $this->logar('CRIANDO A TABELA md_pet_criterio');
 
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_criterio (
@@ -858,33 +850,33 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
     {
         $nmVersao = '2.0.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
         $this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS NA TABELA email_sistema');
 
-        //Parametrizar Email de Alerta às Unidades
-        $conteudoRespostaFacultativa = "      :: Este é um e-mail automático ::
+        //Parametrizar Email de Alerta Ã s Unidades
+        $conteudoRespostaFacultativa = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+No SEI-@sigla_orgao@ foi expedida IntimaÃ§Ã£o EletrÃ´nica referente a @tipo_intimacao@, no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-Caso tenha interesse, a resposta à Intimação Eletrônica deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação Responder Intimação Eletrônica.
+Caso tenha interesse, a resposta Ã  IntimaÃ§Ã£o EletrÃ´nica deve ser realizada na Ã¡rea destinada aos UsuÃ¡rios Externos indicada acima. Com o processo aberto, acesse o botÃ£o de AÃ§Ã£o Responder IntimaÃ§Ã£o EletrÃ´nica.
 
-Lembramos que, independentemente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+Lembramos que, independentemente de e-mail de alerta, Ã© de responsabilidade exclusiva do UsuÃ¡rio Externo a consulta periÃ³dica ao SEI a fim de verificar o recebimento de IntimaÃ§Ãµes, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, nÃ£o efetuada a consulta, em @prazo_intimacao_tacita@ dias apÃ³s a data de sua expediÃ§Ã£o.
 
-Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+Dessa forma, como a presente IntimaÃ§Ã£o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nÂº 9.784/1999, mesmo se nÃ£o ocorrer a consulta direta no sistema aos documentos correspondentes, a IntimaÃ§Ã£o serÃ¡ considerada cumprida por decurso do prazo tÃ¡cito ao final do dia @data_final_prazo_intimacao_tacita@.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaRespostaFacultativa = $this->retornarMaxIdEmailSistema();
 
@@ -900,10 +892,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             )
         VALUES
             (" . $maxIdEmailSistemaRespostaFacultativa . ",
-              'Peticionamento Eletrônico - Intimação Eletrônica apenas com Respostas Facultativas',
+              'Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica apenas com Respostas Facultativas',
               '@sigla_sistema@ <@email_sistema@>',
               '@email_usuario_externo@',
-              'SEI - Intimação Eletrônica Gerada no Processo nº @processo@',
+              'SEI - IntimaÃ§Ã£o EletrÃ´nica Gerada no Processo nÂº @processo@',
               '" . $conteudoRespostaFacultativa . "',
               'S',
             'MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS'
@@ -914,28 +906,28 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA NA TABELA email_sistema');
 
-        $conteudoExigeResposta = "      :: Este é um e-mail automático ::
+        $conteudoExigeResposta = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+No SEI-@sigla_orgao@ foi expedida IntimaÃ§Ã£o EletrÃ´nica referente a @tipo_intimacao@, no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-A mencionada Intimação exige resposta para @tipo_resposta@, no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia útil seguinte ao da data de cumprimento da presente Intimação.
+A mencionada IntimaÃ§Ã£o exige resposta para @tipo_resposta@, no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia Ãºtil seguinte ao da data de cumprimento da presente IntimaÃ§Ã£o.
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-A resposta à Intimação Eletrônica que é exigida deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação Responder Intimação Eletrônica.
+A resposta Ã  IntimaÃ§Ã£o EletrÃ´nica que Ã© exigida deve ser realizada na Ã¡rea destinada aos UsuÃ¡rios Externos indicada acima. Com o processo aberto, acesse o botÃ£o de AÃ§Ã£o Responder IntimaÃ§Ã£o EletrÃ´nica.
 
-Lembramos que, independentemente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+Lembramos que, independentemente de e-mail de alerta, Ã© de responsabilidade exclusiva do UsuÃ¡rio Externo a consulta periÃ³dica ao SEI a fim de verificar o recebimento de IntimaÃ§Ãµes, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, nÃ£o efetuada a consulta, em @prazo_intimacao_tacita@ dias apÃ³s a data de sua expediÃ§Ã£o.
 
-Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+Dessa forma, como a presente IntimaÃ§Ã£o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nÂº 9.784/1999, mesmo se nÃ£o ocorrer a consulta direta no sistema aos documentos correspondentes, a IntimaÃ§Ã£o serÃ¡ considerada cumprida por decurso do prazo tÃ¡cito ao final do dia @data_final_prazo_intimacao_tacita@.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaExigeResposta = $this->retornarMaxIdEmailSistema();
 
@@ -951,10 +943,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             )
             VALUES
             (" . $maxIdEmailSistemaExigeResposta . ",
-                'Peticionamento Eletrônico - Intimação Eletrônica que Exige Resposta',
+                'Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta',
                 '@sigla_sistema@ <@email_sistema@>',
                 '@email_usuario_externo@',
-                'SEI - Intimação Eletrônica que Exige Resposta no Processo nº @processo@',
+                'SEI - IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta no Processo nÂº @processo@',
                 '" . $conteudoExigeResposta . "',
                 'S',
                 'MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA'
@@ -964,26 +956,26 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_SEM_RESPOSTA NA TABELA email_sistema');
 
-        $conteudoSemResposta = "      :: Este é um e-mail automático ::
+        $conteudoSemResposta = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+No SEI-@sigla_orgao@ foi expedida IntimaÃ§Ã£o EletrÃ´nica referente a @tipo_intimacao@, no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-OBSERVAÇÃO: A presente intimação não demanda qualquer tipo de resposta, por geralmente encaminhar documento para mero conhecimento, o que não dispensa a necessidade de acesso aos documentos para ciência de seu teor. Após o cumprimento da intimação, observar que neste caso não será disponibilizada a funcionalidade para Peticionamento de Resposta a Intimação Eletrônica, sem que isso impeça o uso do Peticionamento Intercorrente, caso ainda seja necessário protocolizar documento no processo acima indicado.
+OBSERVAÃ‡ÃƒO: A presente intimaÃ§Ã£o nÃ£o demanda qualquer tipo de resposta, por geralmente encaminhar documento para mero conhecimento, o que nÃ£o dispensa a necessidade de acesso aos documentos para ciÃªncia de seu teor. ApÃ³s o cumprimento da intimaÃ§Ã£o, observar que neste caso nÃ£o serÃ¡ disponibilizada a funcionalidade para Peticionamento de Resposta a IntimaÃ§Ã£o EletrÃ´nica, sem que isso impeÃ§a o uso do Peticionamento Intercorrente, caso ainda seja necessÃ¡rio protocolizar documento no processo acima indicado.
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-Lembramos que, independentemente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+Lembramos que, independentemente de e-mail de alerta, Ã© de responsabilidade exclusiva do UsuÃ¡rio Externo a consulta periÃ³dica ao SEI a fim de verificar o recebimento de IntimaÃ§Ãµes, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, nÃ£o efetuada a consulta, em @prazo_intimacao_tacita@ dias apÃ³s a data de sua expediÃ§Ã£o.
 
-Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+Dessa forma, como a presente IntimaÃ§Ã£o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nÂº 9.784/1999, mesmo se nÃ£o ocorrer a consulta direta no sistema aos documentos correspondentes, a IntimaÃ§Ã£o serÃ¡ considerada cumprida por decurso do prazo tÃ¡cito ao final do dia @data_final_prazo_intimacao_tacita@.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaSemResposta = $this->retornarMaxIdEmailSistema();
 
@@ -999,10 +991,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             )
         VALUES
             (" . $maxIdEmailSistemaSemResposta . ",
-            'Peticionamento Eletrônico - Intimação Eletrônica Sem Resposta',
+            'Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica Sem Resposta',
             '@sigla_sistema@ <@email_sistema@>',
             '@email_usuario_externo@',
-            'SEI - Intimação Eletrônica Gerada no Processo nº @processo@',
+            'SEI - IntimaÃ§Ã£o EletrÃ´nica Gerada no Processo nÂº @processo@',
             '" . $conteudoSemResposta . "',
             'S',
             'MD_PET_INTIMACAO_SEM_RESPOSTA'
@@ -1013,26 +1005,26 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('INSERINDO EMAIL MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA NA TABELA email_sistema');
 
-        $conteudoReiteracaoExigeResposta = "      :: Este é um e-mail automático ::
+        $conteudoReiteracaoExigeResposta = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-Reiteramos a necessidade de Resposta à Intimação Eletrônica expedida no SEI-@sigla_orgao@ referente a @tipo_intimacao@, no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+Reiteramos a necessidade de Resposta Ã  IntimaÃ§Ã£o EletrÃ´nica expedida no SEI-@sigla_orgao@ referente a @tipo_intimacao@, no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-A mencionada Intimação exige resposta para @tipo_resposta@, no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia útil seguinte ao da data de cumprimento da Intimação, que ocorreu em @data_cumprimento_intimacao@.
+A mencionada IntimaÃ§Ã£o exige resposta para @tipo_resposta@, no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia Ãºtil seguinte ao da data de cumprimento da IntimaÃ§Ã£o, que ocorreu em @data_cumprimento_intimacao@.
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-A resposta à Intimação Eletrônica que é exigida deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação Responder Intimação Eletrônica.
+A resposta Ã  IntimaÃ§Ã£o EletrÃ´nica que Ã© exigida deve ser realizada na Ã¡rea destinada aos UsuÃ¡rios Externos indicada acima. Com o processo aberto, acesse o botÃ£o de AÃ§Ã£o Responder IntimaÃ§Ã£o EletrÃ´nica.
 
-OBSERVAÇÃO: A presente reiteração ocorre quando a resposta ainda não tenha sido efetivada pelo Destinatário da Intimação, em 5 dias e 1 dia antes da Data Limite para Resposta. Caso a Intimação já tenha sido respondida por outro Destinatário da mesma Intimação ou por outro Usuário Externo (por exemplo, utilizando o Peticionamento Intercorrente), por favor, ignorar esta reiteração.
+OBSERVAÃ‡ÃƒO: A presente reiteraÃ§Ã£o ocorre quando a resposta ainda nÃ£o tenha sido efetivada pelo DestinatÃ¡rio da IntimaÃ§Ã£o, em 5 dias e 1 dia antes da Data Limite para Resposta. Caso a IntimaÃ§Ã£o jÃ¡ tenha sido respondida por outro DestinatÃ¡rio da mesma IntimaÃ§Ã£o ou por outro UsuÃ¡rio Externo (por exemplo, utilizando o Peticionamento Intercorrente), por favor, ignorar esta reiteraÃ§Ã£o.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaReiteracaoExigeResposta = $this->retornarMaxIdEmailSistema();
 
@@ -1048,10 +1040,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             )
             VALUES
             (" . $maxIdEmailSistemaReiteracaoExigeResposta . ",
-                'Peticionamento Eletrônico - Reiteração de Intimação Eletrônica que Exige Resposta',
+                'Peticionamento EletrÃ´nico - ReiteraÃ§Ã£o de IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta',
                 '@sigla_sistema@ <@email_sistema@>',
                 '@email_usuario_externo@',
-                'SEI - Reiteração de Intimação Eletrônica que Exige Resposta no Processo nº @processo@',
+                'SEI - ReiteraÃ§Ã£o de IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta no Processo nÂº @processo@',
                 '" . $conteudoReiteracaoExigeResposta . "',
                 'S',
                 'MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA'
@@ -1060,7 +1052,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->executarSql($insertReiteracaoExigeResposta);
 
 
-        $this->logar('CRIANDO USUÁRIO do Módulo de Peticionamento');
+        $this->logar('CRIANDO USUÃRIO do MÃ³dulo de Peticionamento');
 
         $objRN = new MdPetIntUsuarioRN();
         $objRN->realizarInsercoesUsuarioModuloPet();
@@ -1079,7 +1071,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_prazo_tacita', 1);
 
 
-        $this->logar('INSERINDO Prazo Tácito com valor default 15');
+        $this->logar('INSERINDO Prazo TÃ¡cito com valor default 15');
 
         $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
         $objMdPetIntPrazoTacitaDTO->setNumNumPrazo(15);
@@ -1156,15 +1148,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_pet_acesso_externo', 'md_pet_acesso_externo', array('id_acesso_externo'), 'acesso_externo', array('id_acesso_externo'));
 
 
-        $this->logar('CRIAÇÃO DE HISTÓRICOS E GERAÇÃO DE ANDAMENTOS NO PROCESSO DA INTIMAÇÃO ELETRÔNICA');
+        $this->logar('CRIAÃ‡ÃƒO DE HISTÃ“RICOS E GERAÃ‡ÃƒO DE ANDAMENTOS NO PROCESSO DA INTIMAÃ‡ÃƒO ELETRÃ”NICA');
 
-        $texto1 = " Intimação Eletrônica expedida em @DATA_EXPEDICAO_INTIMACAO@, sobre o Documento Principal @DOCUMENTO@, para @USUARIO_EXTERNO_NOME@";
+        $texto1 = " IntimaÃ§Ã£o EletrÃ´nica expedida em @DATA_EXPEDICAO_INTIMACAO@, sobre o Documento Principal @DOCUMENTO@, para @USUARIO_EXTERNO_NOME@";
 
-        $texto2 = "Intimação cumprida em @DATA_CUMPRIMENTO_INTIMACAO@, conforme Certidão @DOC_CERTIDAO_INTIMACAO@, por @TIPO_CUMPRIMENTO_INTIMACAO@, sobre a Intimação expedida em @DATA_EXPEDICAO_INTIMACAO@ e Documento Principal @DOCUMENTO@ para @USUARIO_EXTERNO_NOME@";
+        $texto2 = "IntimaÃ§Ã£o cumprida em @DATA_CUMPRIMENTO_INTIMACAO@, conforme CertidÃ£o @DOC_CERTIDAO_INTIMACAO@, por @TIPO_CUMPRIMENTO_INTIMACAO@, sobre a IntimaÃ§Ã£o expedida em @DATA_EXPEDICAO_INTIMACAO@ e Documento Principal @DOCUMENTO@ para @USUARIO_EXTERNO_NOME@";
 
-        $texto3 = "O Usuário Externo @USUARIO_EXTERNO_NOME@ efetivou Peticionamento @TIPO_PETICIONAMENTO@, tendo gerado o recibo @DOCUMENTO@";
+        $texto3 = "O UsuÃ¡rio Externo @USUARIO_EXTERNO_NOME@ efetivou Peticionamento @TIPO_PETICIONAMENTO@, tendo gerado o recibo @DOCUMENTO@";
 
-        $texto4 = "Prorrogação Automática do Prazo Externo de possível Resposta a Intimação, relativa à Intimação expedida em @DATA_EXPEDICAO_INTIMACAO@ e ao Documento Principal @DOCUMENTO@, para @DATA_LIMITE_RESPOSTAS@";
+        $texto4 = "ProrrogaÃ§Ã£o AutomÃ¡tica do Prazo Externo de possÃ­vel Resposta a IntimaÃ§Ã£o, relativa Ã  IntimaÃ§Ã£o expedida em @DATA_EXPEDICAO_INTIMACAO@ e ao Documento Principal @DOCUMENTO@, para @DATA_LIMITE_RESPOSTAS@";
 
         //@todo incrementar a seq de um jeito diferente para cada modelo de SGBD (ver pagina 8 do manual)
         $arrMaxIdTarefa = BancoSEI::getInstance()->consultarSql('SELECT MAX(id_tarefa) as max FROM tarefa');
@@ -1184,13 +1176,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             BancoSEI::getInstance()->executarSql("CREATE SEQUENCE seq_tarefa START WITH " . $numIdTarefaMax . " INCREMENT BY 1 NOCACHE NOCYCLE");
         }
 
-        //campo setStrSinFecharAndamentosAbertos de N para S por estar lançando andamento em processo que estara aberto na unidade (seguindo recomendação do manual do SEI)
+        //campo setStrSinFecharAndamentosAbertos de N para S por estar lanÃ§ando andamento em processo que estara aberto na unidade (seguindo recomendaÃ§Ã£o do manual do SEI)
         $tarefaDTO1 = new TarefaDTO();
         $tarefaDTO1->setNumIdTarefa($numIdTarefaMax);
         $tarefaDTO1->setStrIdTarefaModulo('MD_PET_INTIMACAO_EXPEDIDA');
         $tarefaDTO1->setStrNome($texto1);
         $tarefaDTO1->setStrSinHistoricoResumido('S');
         $tarefaDTO1->setStrSinHistoricoCompleto('S');
+        $tarefaDTO1->setStrSinConsultaProcessual('N');
         $tarefaDTO1->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO1->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO1->setStrSinPermiteProcessoFechado('N');
@@ -1211,6 +1204,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaDTO2->setStrNome($texto2);
         $tarefaDTO2->setStrSinHistoricoResumido('S');
         $tarefaDTO2->setStrSinHistoricoCompleto('S');
+        $tarefaDTO2->setStrSinConsultaProcessual('N');
         $tarefaDTO2->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO2->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO2->setStrSinPermiteProcessoFechado('N');
@@ -1231,6 +1225,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaDTO3->setStrNome($texto3);
         $tarefaDTO3->setStrSinHistoricoResumido('S');
         $tarefaDTO3->setStrSinHistoricoCompleto('S');
+        $tarefaDTO3->setStrSinConsultaProcessual('N');
         $tarefaDTO3->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO3->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO3->setStrSinPermiteProcessoFechado('N');
@@ -1251,6 +1246,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaDTO4->setStrNome($texto4);
         $tarefaDTO4->setStrSinHistoricoResumido('S');
         $tarefaDTO4->setStrSinHistoricoCompleto('S');
+        $tarefaDTO4->setStrSinConsultaProcessual('N');
         $tarefaDTO4->setStrSinFecharAndamentosAbertos('S');
         $tarefaDTO4->setStrSinLancarAndamentoFechado('N');
         $tarefaDTO4->setStrSinPermiteProcessoFechado('S');
@@ -1261,7 +1257,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $tarefaRN->cadastrar($tarefaDTO3);
         $tarefaRN->cadastrar($tarefaDTO4);
 
-        //CRIANDO NOVO TIPO DE DOCUMENTO "Certidão"
+        //CRIANDO NOVO TIPO DE DOCUMENTO "CertidÃ£o"
         $this->logar('CRIANDO MODELO "Modulo_Peticionamento_Certidao"');
         $modeloRN = new ModeloRN();
         $modeloDTO = new ModeloDTO();
@@ -1271,8 +1267,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto e Rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto e RodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -1293,8 +1289,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -1310,7 +1306,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     </table>';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlConteudo);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinSomenteLeitura('S');
@@ -1334,7 +1330,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrSinAtivo('S');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        //Criar o Tipo de Documento "Recibo Eletrônico de Protocolo"
+        //Criar o Tipo de Documento "Recibo EletrÃ´nico de Protocolo"
         $this->logar('CRIANDO TIPO DE DOCUMENTO Certidao');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
@@ -1346,10 +1342,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Certidão de Intimação Cumprida');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática da Certidao em Intimações feitas pelo Peticionamentos Eletrônicos realizados por Usuário Externo.');
+        $serieDTO->setStrNome('CertidÃ£o de IntimaÃ§Ã£o Cumprida');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica da Certidao em IntimaÃ§Ãµes feitas pelo Peticionamentos EletrÃ´nicos realizados por UsuÃ¡rio Externo.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -1382,7 +1379,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_intimacao', 'md_pet_intimacao', array('id_md_pet_int_tipo_intimacao'), 'md_pet_int_tipo_intimacao', array('id_md_pet_int_tipo_intimacao'));
 
 
-        $this->logar('CRIAÇÃO DA SEQUENCE seq_md_pet_intimacao');
+        $this->logar('CRIAÃ‡ÃƒO DA SEQUENCE seq_md_pet_intimacao');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_intimacao', 1);
 
 
@@ -1400,7 +1397,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tipo_resp', array('id_md_pet_intimacao'), 'md_pet_intimacao', array('id_md_pet_intimacao'));
 
 
-        $this->logar('CRIAÇÃO DA SEQUENCE seq_md_pet_int_rel_tipo_resp');
+        $this->logar('CRIAÃ‡ÃƒO DA SEQUENCE seq_md_pet_int_rel_tipo_resp');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_tipo_resp', 1);
 
 
@@ -1425,7 +1422,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk4_md_pet_int_rel_dest', 'md_pet_int_rel_dest', array('id_unidade'), 'unidade', array('id_unidade'));
 
 
-        $this->logar('CRIAÇÃO DA SEQUENCE seq_md_pet_int_rel_dest');
+        $this->logar('CRIAÃ‡ÃƒO DA SEQUENCE seq_md_pet_int_rel_dest');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_dest', 1);
 
 
@@ -1443,7 +1440,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_protocolo', 'md_pet_int_protocolo', array('id_md_pet_intimacao'), 'md_pet_intimacao', array('id_md_pet_intimacao'));
 
 
-        $this->logar('CRIAÇÃO DA SEQUENCE seq_md_pet_int_protocolo');
+        $this->logar('CRIAÃ‡ÃƒO DA SEQUENCE seq_md_pet_int_protocolo');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_protocolo', 1);
 
 
@@ -1474,7 +1471,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pet_int_dest_resposta', 'md_pet_int_dest_resposta', array('id_md_pet_int_rel_tipo_resp'), 'md_pet_int_rel_tipo_resp', array('id_md_pet_int_rel_tipo_resp'));
 
 
-        $this->logar('CRIAÇÃO DA SEQUENCE seq_md_pet_int_dest_resposta');
+        $this->logar('CRIAÃ‡ÃƒO DA SEQUENCE seq_md_pet_int_dest_resposta');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_dest_resposta', 1);
 
 
@@ -1533,19 +1530,19 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_pt_it_rl_dst_tp_rp_dst', 'md_pet_int_rel_tpo_res_des', array('id_md_pet_int_rel_dest'), 'md_pet_int_rel_dest', array('id_md_pet_int_rel_dest'));
 
 
-        $this->logar('CRIAÇÃO DA SEQUENCE seq_md_pet_int_rel_tpo_res_des');
+        $this->logar('CRIAÃ‡ÃƒO DA SEQUENCE seq_md_pet_int_rel_tpo_res_des');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_rel_tpo_res_des', 1);
 
 
-        $this->logar('CRIAÇÃO DA SEQUENCE seq_md_pet_int_resp_documento');
+        $this->logar('CRIAÃ‡ÃƒO DA SEQUENCE seq_md_pet_int_resp_documento');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_int_resp_documento', 1);
 
 
-        $this->logar('CRIAÇÃO DOS AGENDAMENTOS AUTOMÁTICOS DO MÓDULO');
+        $this->logar('CRIAÃ‡ÃƒO DOS AGENDAMENTOS AUTOMÃTICOS DO MÃ“DULO');
 
         $infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoDTO->retTodos();
-        $infraAgendamentoDTO->setStrDescricao('Script para cumprimento automático de intimação por decurso de prazo');
+        $infraAgendamentoDTO->setStrDescricao('Script para cumprimento automÃ¡tico de intimaÃ§Ã£o por decurso de prazo');
 
         $infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::CumprirPorDecursoPrazoTacito');
 
@@ -1563,7 +1560,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoDTO->retTodos();
-        $infraAgendamentoDTO->setStrDescricao('Script para atualizar os estados das Intimações com Prazo Externo Vencido');
+        $infraAgendamentoDTO->setStrDescricao('Script para atualizar os estados das IntimaÃ§Ãµes com Prazo Externo Vencido');
 
         $infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::atualizarEstadoIntimacoesPrazoExternoVencido');
 
@@ -1581,7 +1578,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoDTO->retTodos();
-        $infraAgendamentoDTO->setStrDescricao('Dispara E-mails do Sistema do Módulo de Peticionamento e Intimação Eletrônicos de Reiteração de Intimação Eletrônica que Exige Resposta pendentes de Resposta pelo Usuário Externo');
+        $infraAgendamentoDTO->setStrDescricao('Dispara E-mails do Sistema do MÃ³dulo de Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos de ReiteraÃ§Ã£o de IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta pendentes de Resposta pelo UsuÃ¡rio Externo');
 
         $infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::ReiterarIntimacaoExigeResposta');
 
@@ -1610,7 +1607,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             BancoSEI::getInstance()->executarSql("UPDATE infra_parametro SET nome ='" . MdPetIntSerieRN::$MD_PET_ID_SERIE_RECIBO . "'  WHERE nome = '" . $idParamAntigo . "'");
         }
 
-        //Alteração na tarefa "Cancelada disponibilização de acesso externo", passando a permitir em PROCESSO FECHADO
+        //AlteraÃ§Ã£o na tarefa "Cancelada disponibilizaÃ§Ã£o de acesso externo", passando a permitir em PROCESSO FECHADO
         $tarefaDTO = new TarefaDTO();
         $tarefaDTO->setNumIdTarefa(90);
         $tarefaDTO->setStrSinPermiteProcessoFechado('S');
@@ -1625,7 +1622,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '2.0.1';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -1634,7 +1631,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '2.0.2';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         //checando permissoes na base de dados
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
@@ -1701,7 +1698,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '2.0.3';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -1710,7 +1707,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '2.0.4';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -1719,7 +1716,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '2.0.5';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -1728,17 +1725,17 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.0.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
-        $this->logar('ATUALIZANDO A DESCRIÇÃO DOS E-MAILS DE SISTEMA DE INTIMAÇÃO ELETRÔNICA DE PESSOA FÍSICA');
+        $this->logar('ATUALIZANDO A DESCRIÃ‡ÃƒO DOS E-MAILS DE SISTEMA DE INTIMAÃ‡ÃƒO ELETRÃ”NICA DE PESSOA FÃSICA');
 
         $arrEmailSistemas = array(
-            'MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS' => 'Peticionamento Eletrônico - Intimação Eletrônica apenas com Respostas Facultativas - Pessoa Física',
-            'MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA' => 'Peticionamento Eletrônico - Intimação Eletrônica que Exige Resposta - Pessoa Física',
-            'MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA' => 'Peticionamento Eletrônico - Reiteração de Intimação Eletrônica que Exige Resposta - Pessoa Física',
-            'MD_PET_INTIMACAO_SEM_RESPOSTA' => 'Peticionamento Eletrônico - Intimação Eletrônica Sem Resposta - Pessoa Física'
+            'MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS' => 'Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica apenas com Respostas Facultativas - Pessoa FÃ­sica',
+            'MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA' => 'Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta - Pessoa FÃ­sica',
+            'MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA' => 'Peticionamento EletrÃ´nico - ReiteraÃ§Ã£o de IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta - Pessoa FÃ­sica',
+            'MD_PET_INTIMACAO_SEM_RESPOSTA' => 'Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica Sem Resposta - Pessoa FÃ­sica'
         );
 
         $emailSistemasRN = new EmailSistemaRN();
@@ -1752,7 +1749,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         }
 
         //===============================
-        //INICIO - Tabelas e Colunas novas do Módulo Peticionamento v3.0.0
+        //INICIO - Tabelas e Colunas novas do MÃ³dulo Peticionamento v3.0.0
         //==============================
         $this->logar('CRIANDO A TABELA md_pet_adm_integ_funcion');
 
@@ -1943,13 +1940,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objMdPetFuncionalidadeDTO->setStrNome('Consultar Dados CNPJ Receita Federal');
         $objMdPetFuncionalidadeRN->cadastrar($objMdPetFuncionalidadeDTO);
 
-        //Gerar Tipo de Documento para Formulário
+        //Gerar Tipo de Documento para FormulÃ¡rio
         $this->_gerarModeloFormularioVinculo();
 
-        //Gerar tipo de Documento Procuração eletronica
+        //Gerar tipo de Documento ProcuraÃ§Ã£o eletronica
         $this->_gerarModeloProcuracaoEletronica();
 
-        //Gerar Tipo de Documento Revogação
+        //Gerar Tipo de Documento RevogaÃ§Ã£o
         $this->_gerarModeloRevogacao();
 
         //Gerar Tipo de Documento Renuncia
@@ -1973,7 +1970,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objInfraMetaBD->adicionarChavePrimaria('md_pet_int_tp_int_orient', 'pk_md_pet_int_tp_int_orient', array('id_md_pet_int_tp_int_orient'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_int_tp_int_orient', 'md_pet_int_tp_int_orient', array('id_conjunto_estilos'), 'conjunto_estilos', array('id_conjunto_estilos'));
 
-        $this->logar('INSERINDO texto(orientação) padrão da tabela md_pet_int_tp_int_orient');
+        $this->logar('INSERINDO texto(orientaÃ§Ã£o) padrÃ£o da tabela md_pet_int_tp_int_orient');
 
         $objMdPetIntOrientacoesDTO = new MdPetIntOrientacoesDTO();
         $objMdPetIntOrientacoesRN = new MdPetIntOrientacoesRN();
@@ -2059,11 +2056,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $aceiteDTOLista->retTodos(true);
         $aceiteDTOLista->setStrTipoAceite(MdPetIntimacaoRN::$TP_MANUAL_USUARIO_EXTERNO_ACEITE);
 
-        $this->logar('LISTANDO OS DADOS DE USUÁRIO EXTERNO DA TABELA md_pet_int_aceite');
+        $this->logar('LISTANDO OS DADOS DE USUÃRIO EXTERNO DA TABELA md_pet_int_aceite');
         $arrListaAceiteUsuarioExterno = $aceiteRN->listar($aceiteDTOLista);
 
         if ($arrListaAceiteUsuarioExterno) {
-            $this->logar('ATUALIZANDO A TABELA md_pet_int_aceite COM DADOS USUÁRIO EXTERNO');
+            $this->logar('ATUALIZANDO A TABELA md_pet_int_aceite COM DADOS USUÃRIO EXTERNO');
             $objMdPetUsuarioRN = new MdPetIntUsuarioRN();
             foreach ($arrListaAceiteUsuarioExterno as $objMdPetIntAceiteDTO) {
                 $aceiteDTOLista = new MdPetIntAceiteDTO();
@@ -2107,145 +2104,145 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
         $this->logar('INSERINDO EMAIL MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA_J NA TABELA email_sistema');
 
-        $textoEmailExigeResposta = '      :: Este é um e-mail automático ::
+        $textoEmailExigeResposta = '      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a "@tipo_intimacao@", no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+No SEI-@sigla_orgao@ foi expedida IntimaÃ§Ã£o EletrÃ´nica referente a "@tipo_intimacao@", no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-A presente Intimação foi destinada à Pessoa Jurídica @razao_social@ (@cnpj@), à qual você possui vinculação na qualidade de @tipo_vinculo@, com poderes de recebimento de Intimação.
+A presente IntimaÃ§Ã£o foi destinada Ã  Pessoa JurÃ­dica @razao_social@ (@cnpj@), Ã  qual vocÃª possui vinculaÃ§Ã£o na qualidade de @tipo_vinculo@, com poderes de recebimento de IntimaÃ§Ã£o.
 
-A mencionada Intimação exige resposta para "@tipo_resposta@", no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia útil seguinte ao da data de cumprimento da presente Intimação.
+A mencionada IntimaÃ§Ã£o exige resposta para "@tipo_resposta@", no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia Ãºtil seguinte ao da data de cumprimento da presente IntimaÃ§Ã£o.
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-A resposta à Intimação Eletrônica que é exigida deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação "Responder Intimação Eletrônica".
+A resposta Ã  IntimaÃ§Ã£o EletrÃ´nica que Ã© exigida deve ser realizada na Ã¡rea destinada aos UsuÃ¡rios Externos indicada acima. Com o processo aberto, acesse o botÃ£o de AÃ§Ã£o "Responder IntimaÃ§Ã£o EletrÃ´nica".
 
-Lembramos que, independentemente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+Lembramos que, independentemente de e-mail de alerta, Ã© de responsabilidade exclusiva do UsuÃ¡rio Externo a consulta periÃ³dica ao SEI a fim de verificar o recebimento de IntimaÃ§Ãµes, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, nÃ£o efetuada a consulta, em @prazo_intimacao_tacita@ dias apÃ³s a data de sua expediÃ§Ã£o.
 
-Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+Dessa forma, como a presente IntimaÃ§Ã£o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nÂº 9.784/1999, mesmo se nÃ£o ocorrer a consulta direta no sistema aos documentos correspondentes, a IntimaÃ§Ã£o serÃ¡ considerada cumprida por decurso do prazo tÃ¡cito ao final do dia @data_final_prazo_intimacao_tacita@.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
         $maxIdEmailSistemaExigeRespostaPJ = $this->retornarMaxIdEmailSistema();
         $objEmailSistemaDTO = new EmailSistemaDTO();
         $objEmailSistemaRN = new EmailSistemaRN();
-        $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica que Exige Resposta - Pessoa Jurídica');
+        $objEmailSistemaDTO->setStrDescricao('Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta - Pessoa JurÃ­dica');
         $objEmailSistemaDTO->setStrDe('@sigla_sistema@ <@email_sistema@>');
         $objEmailSistemaDTO->setStrPara('@email_usuario_externo@');
-        $objEmailSistemaDTO->setStrAssunto('SEI - Intimação Eletrônica que Exige Resposta no Processo nº @processo@');
+        $objEmailSistemaDTO->setStrAssunto('SEI - IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta no Processo nÂº @processo@');
         $objEmailSistemaDTO->setStrConteudo($textoEmailExigeResposta);
         $objEmailSistemaDTO->setStrSinAtivo('S');
         $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_QUE_EXIGE_RESPOSTA_J');
         $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaExigeRespostaPJ);
         $objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
-        $this->logar('INSERINDO texto padrão para e-mail com respostas facultativas para pessoa juridica da tabela email_sistema');
-        $textoEmailRespostasFacultativas = '      :: Este é um e-mail automático ::
+        $this->logar('INSERINDO texto padrÃ£o para e-mail com respostas facultativas para pessoa juridica da tabela email_sistema');
+        $textoEmailRespostasFacultativas = '      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a "@tipo_intimacao@", no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+No SEI-@sigla_orgao@ foi expedida IntimaÃ§Ã£o EletrÃ´nica referente a "@tipo_intimacao@", no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-A presente Intimação foi destinada à Pessoa Jurídica @razao_social@ (@cnpj@), à qual você possui vinculação na qualidade de @tipo_vinculo@, com poderes de recebimento de Intimação.
+A presente IntimaÃ§Ã£o foi destinada Ã  Pessoa JurÃ­dica @razao_social@ (@cnpj@), Ã  qual vocÃª possui vinculaÃ§Ã£o na qualidade de @tipo_vinculo@, com poderes de recebimento de IntimaÃ§Ã£o.
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-Caso tenha interesse, a resposta à Intimação Eletrônica deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação "Responder Intimação Eletrônica".
+Caso tenha interesse, a resposta Ã  IntimaÃ§Ã£o EletrÃ´nica deve ser realizada na Ã¡rea destinada aos UsuÃ¡rios Externos indicada acima. Com o processo aberto, acesse o botÃ£o de AÃ§Ã£o "Responder IntimaÃ§Ã£o EletrÃ´nica".
 
-Lembramos que, independentemente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+Lembramos que, independentemente de e-mail de alerta, Ã© de responsabilidade exclusiva do UsuÃ¡rio Externo a consulta periÃ³dica ao SEI a fim de verificar o recebimento de IntimaÃ§Ãµes, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, nÃ£o efetuada a consulta, em @prazo_intimacao_tacita@ dias apÃ³s a data de sua expediÃ§Ã£o.
 
-Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+Dessa forma, como a presente IntimaÃ§Ã£o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nÂº 9.784/1999, mesmo se nÃ£o ocorrer a consulta direta no sistema aos documentos correspondentes, a IntimaÃ§Ã£o serÃ¡ considerada cumprida por decurso do prazo tÃ¡cito ao final do dia @data_final_prazo_intimacao_tacita@.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
         $maxIdEmailSistemaRespostaFacultativaPJ = $this->retornarMaxIdEmailSistema();
         $objEmailSistemaDTO = new EmailSistemaDTO();
         $objEmailSistemaRN = new EmailSistemaRN();
-        $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica apenas com Respostas Facultativas - Pessoa Jurídica');
+        $objEmailSistemaDTO->setStrDescricao('Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica apenas com Respostas Facultativas - Pessoa JurÃ­dica');
         $objEmailSistemaDTO->setStrDe('@sigla_sistema@ <@email_sistema@>');
         $objEmailSistemaDTO->setStrPara('@email_usuario_externo@');
-        $objEmailSistemaDTO->setStrAssunto('SEI - Intimação Eletrônica Gerada no Processo nº @processo@');
+        $objEmailSistemaDTO->setStrAssunto('SEI - IntimaÃ§Ã£o EletrÃ´nica Gerada no Processo nÂº @processo@');
         $objEmailSistemaDTO->setStrConteudo($textoEmailRespostasFacultativas);
         $objEmailSistemaDTO->setStrSinAtivo('S');
         $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_APENAS_RESPOSTAS_FACULTATIVAS_J');
         $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaRespostaFacultativaPJ);
         $objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
-        $this->logar('INSERINDO texto padrão para e-mail reiteração para pessoa juridica da tabela email_sistema');
-        $textoEmailReiteracao = '      :: Este é um e-mail automático ::
+        $this->logar('INSERINDO texto padrÃ£o para e-mail reiteraÃ§Ã£o para pessoa juridica da tabela email_sistema');
+        $textoEmailReiteracao = '      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-Reiteramos a necessidade de Resposta à Intimação Eletrônica expedida no SEI-@sigla_orgao@ referente a "@tipo_intimacao@", no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+Reiteramos a necessidade de Resposta Ã  IntimaÃ§Ã£o EletrÃ´nica expedida no SEI-@sigla_orgao@ referente a "@tipo_intimacao@", no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-A mencionada Intimação exige resposta para "@tipo_resposta@", no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia útil seguinte ao da data de cumprimento da Intimação, que ocorreu em @data_cumprimento_intimacao@.
+A mencionada IntimaÃ§Ã£o exige resposta para "@tipo_resposta@", no prazo de @prazo_externo_tipo_resposta@, contados a partir do dia Ãºtil seguinte ao da data de cumprimento da IntimaÃ§Ã£o, que ocorreu em @data_cumprimento_intimacao@.
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-A resposta à Intimação Eletrônica que é exigida deve ser realizada na área destinada aos Usuários Externos indicada acima. Com o processo aberto, acesse o botão de Ação "Responder Intimação Eletrônica".
+A resposta Ã  IntimaÃ§Ã£o EletrÃ´nica que Ã© exigida deve ser realizada na Ã¡rea destinada aos UsuÃ¡rios Externos indicada acima. Com o processo aberto, acesse o botÃ£o de AÃ§Ã£o "Responder IntimaÃ§Ã£o EletrÃ´nica".
 
-OBSERVAÇÃO: A presente reiteração ocorre quando a resposta ainda não tenha sido efetivada pelo Destinatário da Intimação, em 5 dias e 1 dia antes da Data Limite para Resposta. Caso a Intimação já tenha sido respondida, por favor, ignorar esta reiteração.
+OBSERVAÃ‡ÃƒO: A presente reiteraÃ§Ã£o ocorre quando a resposta ainda nÃ£o tenha sido efetivada pelo DestinatÃ¡rio da IntimaÃ§Ã£o, em 5 dias e 1 dia antes da Data Limite para Resposta. Caso a IntimaÃ§Ã£o jÃ¡ tenha sido respondida, por favor, ignorar esta reiteraÃ§Ã£o.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
         $maxIdEmailSistemaReiteracaoExigeRespostaPJ = $this->retornarMaxIdEmailSistema();
-        $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Reiteração de Intimação Eletrônica que Exige Resposta - Pessoa Jurídica');
+        $objEmailSistemaDTO->setStrDescricao('Peticionamento EletrÃ´nico - ReiteraÃ§Ã£o de IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta - Pessoa JurÃ­dica');
         $objEmailSistemaDTO->setStrDe('@sigla_sistema@ <@email_sistema@>');
         $objEmailSistemaDTO->setStrPara('@email_usuario_externo@');
-        $objEmailSistemaDTO->setStrAssunto('SEI - Reiteração de Intimação Eletrônica que Exige Resposta no Processo nº @processo@');
+        $objEmailSistemaDTO->setStrAssunto('SEI - ReiteraÃ§Ã£o de IntimaÃ§Ã£o EletrÃ´nica que Exige Resposta no Processo nÂº @processo@');
         $objEmailSistemaDTO->setStrConteudo($textoEmailReiteracao);
         $objEmailSistemaDTO->setStrSinAtivo('S');
         $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_REITERACAO_INTIMACAO_QUE_EXIGE_RESPOSTA_J');
         $objEmailSistemaDTO->setNumIdEmailSistema($maxIdEmailSistemaReiteracaoExigeRespostaPJ);
         $objEmailSistemaRN->cadastrar($objEmailSistemaDTO);
 
-        $this->logar('INSERINDO texto padrão para e-mail sem resposta para pessoa juridica da tabela email_sistema');
-        $textoEmailSemResposta = '      :: Este é um e-mail automático ::
+        $this->logar('INSERINDO texto padrÃ£o para e-mail sem resposta para pessoa juridica da tabela email_sistema');
+        $textoEmailSemResposta = '      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-No SEI-@sigla_orgao@ foi expedida Intimação Eletrônica referente a "@tipo_intimacao@", no âmbito do processo nº @processo@, conforme documento principal de protocolo nº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
+No SEI-@sigla_orgao@ foi expedida IntimaÃ§Ã£o EletrÃ´nica referente a "@tipo_intimacao@", no Ã¢mbito do processo nÂº @processo@, conforme documento principal de protocolo nÂº @documento_principal_intimacao@ (@tipo_documento_principal_intimacao@).
 
-A presente Intimação foi destinada à Pessoa Jurídica @razao_social@ (@cnpj@), à qual você possui vinculação na qualidade de @tipo_vinculo@, com poderes de recebimento de Intimação.
+A presente IntimaÃ§Ã£o foi destinada Ã  Pessoa JurÃ­dica @razao_social@ (@cnpj@), Ã  qual vocÃª possui vinculaÃ§Ã£o na qualidade de @tipo_vinculo@, com poderes de recebimento de IntimaÃ§Ã£o.
 
-OBSERVAÇÃO: A presente intimação não demanda qualquer tipo de resposta, por geralmente encaminhar documento para mero conhecimento, o que não dispensa a necessidade de acesso aos documentos para ciência de seu teor. Após o cumprimento da intimação, observar que neste caso não será disponibilizada a funcionalidade para Peticionamento de Resposta a Intimação Eletrônica, sem que isso impeça o uso do Peticionamento Intercorrente, caso ainda seja necessário protocolizar documento no processo acima indicado.
+OBSERVAÃ‡ÃƒO: A presente intimaÃ§Ã£o nÃ£o demanda qualquer tipo de resposta, por geralmente encaminhar documento para mero conhecimento, o que nÃ£o dispensa a necessidade de acesso aos documentos para ciÃªncia de seu teor. ApÃ³s o cumprimento da intimaÃ§Ã£o, observar que neste caso nÃ£o serÃ¡ disponibilizada a funcionalidade para Peticionamento de Resposta a IntimaÃ§Ã£o EletrÃ´nica, sem que isso impeÃ§a o uso do Peticionamento Intercorrente, caso ainda seja necessÃ¡rio protocolizar documento no processo acima indicado.
 
-Para visualizar o documento principal da Intimação Eletrônica e possíveis anexos, acesse a área destinada aos Usuários Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
+Para visualizar o documento principal da IntimaÃ§Ã£o EletrÃ´nica e possÃ­veis anexos, acesse a Ã¡rea destinada aos UsuÃ¡rios Externos no SEI-@sigla_orgao@ destacada em nosso Portal na Internet ou acesse diretamente o link a seguir: @link_login_usuario_externo@
 
-Lembramos que, independentemente de e-mail de alerta, é de responsabilidade exclusiva do Usuário Externo a consulta periódica ao SEI a fim de verificar o recebimento de Intimações, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, não efetuada a consulta, em @prazo_intimacao_tacita@ dias após a data de sua expedição.
+Lembramos que, independentemente de e-mail de alerta, Ã© de responsabilidade exclusiva do UsuÃ¡rio Externo a consulta periÃ³dica ao SEI a fim de verificar o recebimento de IntimaÃ§Ãµes, considerando-se realizadas na data em que efetuar sua consulta no sistema ou, nÃ£o efetuada a consulta, em @prazo_intimacao_tacita@ dias apÃ³s a data de sua expediÃ§Ã£o.
 
-Dessa forma, como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta direta no sistema aos documentos correspondentes, a Intimação será considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.
+Dessa forma, como a presente IntimaÃ§Ã£o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem de prazo dispostas no art. 66 da Lei nÂº 9.784/1999, mesmo se nÃ£o ocorrer a consulta direta no sistema aos documentos correspondentes, a IntimaÃ§Ã£o serÃ¡ considerada cumprida por decurso do prazo tÃ¡cito ao final do dia @data_final_prazo_intimacao_tacita@.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.';
 
         $maxIdEmailSistemaSemRespostaPJ = $this->retornarMaxIdEmailSistema();
         $objEmailSistemaDTO = new EmailSistemaDTO();
         $objEmailSistemaRN = new EmailSistemaRN();
-        $objEmailSistemaDTO->setStrDescricao('Peticionamento Eletrônico - Intimação Eletrônica Sem Resposta - Pessoa Jurídica');
+        $objEmailSistemaDTO->setStrDescricao('Peticionamento EletrÃ´nico - IntimaÃ§Ã£o EletrÃ´nica Sem Resposta - Pessoa JurÃ­dica');
         $objEmailSistemaDTO->setStrDe('@sigla_sistema@ <@email_sistema@>');
         $objEmailSistemaDTO->setStrPara('@email_usuario_externo@');
-        $objEmailSistemaDTO->setStrAssunto('SEI - Intimação Eletrônica Gerada no Processo nº @processo@');
+        $objEmailSistemaDTO->setStrAssunto('SEI - IntimaÃ§Ã£o EletrÃ´nica Gerada no Processo nÂº @processo@');
         $objEmailSistemaDTO->setStrConteudo($textoEmailSemResposta);
         $objEmailSistemaDTO->setStrSinAtivo('S');
         $objEmailSistemaDTO->setStrIdEmailSistemaModulo('MD_PET_INTIMACAO_SEM_RESPOSTA_J');
@@ -2255,23 +2252,23 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
         $this->logar('INSERINDO EMAIL MD_PET_VINC_SUSPENSAO NA TABELA email_sistema');
 
-        $conteudoVinculoSuspensao = "      :: Este é um e-mail automático ::
+        $conteudoVinculoSuspensao = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-A Administração do SEI-@sigla_orgao@ suspendeu sua vinculação como Responsável Legal da Pessoa Jurídica @razao_social@ (@cnpj@), conforme instrumento de Suspensão de Vinculação a Pessoa Jurídica SEI nº @documento_suspensao_responsavel_pj@.
+A AdministraÃ§Ã£o do SEI-@sigla_orgao@ suspendeu sua vinculaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica @razao_social@ (@cnpj@), conforme instrumento de SuspensÃ£o de VinculaÃ§Ã£o a Pessoa JurÃ­dica SEI nÂº @documento_suspensao_responsavel_pj@.
 
 Comunicamos que:
-- A suspensão da sua vinculação como Responsável Legal da Pessoa Jurídica não impede o peticionamento em nome próprio;
-- Poderá realizar Peticionamento Intercorrente no processo citado no assunto deste e-mail para comprovar seus poderes de representação como Responsável Legal da Pessoa Jurídica;
-- As Procurações Eletrônicas concedidas para representação da Pessoa Jurídica restam igualmente suspensas até que seja restabelecida a vinculação como Responsável Legal.
+- A suspensÃ£o da sua vinculaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica nÃ£o impede o peticionamento em nome prÃ³prio;
+- PoderÃ¡ realizar Peticionamento Intercorrente no processo citado no assunto deste e-mail para comprovar seus poderes de representaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica;
+- As ProcuraÃ§Ãµes EletrÃ´nicas concedidas para representaÃ§Ã£o da Pessoa JurÃ­dica restam igualmente suspensas atÃ© que seja restabelecida a vinculaÃ§Ã£o como ResponsÃ¡vel Legal.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaVinculoSuspensao = $this->retornarMaxIdEmailSistema();
 
@@ -2287,10 +2284,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
              )
         VALUES
             (" . $maxIdEmailSistemaVinculoSuspensao . ",
-            'Peticionamento Eletrônico - Suspensão de Vinculação a Pessoa Jurídica',
+            'Peticionamento EletrÃ´nico - SuspensÃ£o de VinculaÃ§Ã£o a Pessoa JurÃ­dica',
             '@sigla_sistema@ <@email_sistema@>',
             '@email_usuario_externo@',
-            'SEI - Suspensão de Vinculação a Pessoa Jurídica no Processo nº @processo@',
+            'SEI - SuspensÃ£o de VinculaÃ§Ã£o a Pessoa JurÃ­dica no Processo nÂº @processo@',
             '" . $conteudoVinculoSuspensao . "',
             'S',
             'MD_PET_VINC_SUSPENSAO'
@@ -2301,22 +2298,22 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
         $this->logar('INSERINDO EMAIL MD_PET_VINC_RESTABELECIMENTO NA TABELA email_sistema');
 
-        $conteudoVinculoRestabelecimento = "      :: Este é um e-mail automático ::
+        $conteudoVinculoRestabelecimento = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-A Administração do SEI-@sigla_orgao@ restabeleceu sua vinculação como Responsável Legal da Pessoa Jurídica @razao_social@ (@cnpj@), conforme instrumento de Restabelecimento de Vinculação a Pessoa Jurídica SEI nº @documento_restabelecimento_responsavel_pj@.
+A AdministraÃ§Ã£o do SEI-@sigla_orgao@ restabeleceu sua vinculaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica @razao_social@ (@cnpj@), conforme instrumento de Restabelecimento de VinculaÃ§Ã£o a Pessoa JurÃ­dica SEI nÂº @documento_restabelecimento_responsavel_pj@.
 
 Comunicamos que:
-- Fica restabelecido seu direito de peticionar e emitir Procurações Eletrônicas em nome da Pessoa Jurídica, bem como realizar alterações de seus dados cadastrais e atos constitutivos;
-- As Procurações Eletrônicas concedidas que tenham sido suspensas restam igualmente restabelecidas.
+- Fica restabelecido seu direito de peticionar e emitir ProcuraÃ§Ãµes EletrÃ´nicas em nome da Pessoa JurÃ­dica, bem como realizar alteraÃ§Ãµes de seus dados cadastrais e atos constitutivos;
+- As ProcuraÃ§Ãµes EletrÃ´nicas concedidas que tenham sido suspensas restam igualmente restabelecidas.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaVinculoRestabelecimento = $this->retornarMaxIdEmailSistema();
 
@@ -2332,10 +2329,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
              )
         VALUES
             (" . $maxIdEmailSistemaVinculoRestabelecimento . ",
-            'Peticionamento Eletrônico - Restabelecimento de Vinculação a Pessoa Jurídica',
+            'Peticionamento EletrÃ´nico - Restabelecimento de VinculaÃ§Ã£o a Pessoa JurÃ­dica',
             '@sigla_sistema@ <@email_sistema@>',
             '@email_usuario_externo@',
-            'SEI - Restabelecimento de Vinculação a Pessoa Jurídica no Processo nº @processo@',
+            'SEI - Restabelecimento de VinculaÃ§Ã£o a Pessoa JurÃ­dica no Processo nÂº @processo@',
             '" . $conteudoVinculoRestabelecimento . "',
             'S',
             'MD_PET_VINC_RESTABELECIMENTO'
@@ -2350,7 +2347,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.0.1';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -2359,9 +2356,9 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.1.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
-        $this->logar('CRIANDO DOCUMENTO/MODELO DE PROCURAÇÃO ELETRÔNICA SIMPLES');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+		
+        $this->logar('CRIANDO DOCUMENTO/MODELO DE PROCURAÃ‡ÃƒO ELETRÃ”NICA SIMPLES');
         $this->_gerarModeloProcuracaoEletronicaSimples();
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
@@ -2395,9 +2392,9 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_adm_tipo_poder', 1);
 
         //Adicionando Registros
-        $this->logar('Adicionando Registro Padrão na TABELA md_pet_adm_tipo_poder');
+        $this->logar('Adicionando Registro PadrÃ£o na TABELA md_pet_adm_tipo_poder');
         $objMdPetTipoPoderLegalDTO = new MdPetTipoPoderLegalDTO();
-        $objMdPetTipoPoderLegalDTO->setStrNome("Receber, Cumprir e Responder Intimação Eletrônica");
+        $objMdPetTipoPoderLegalDTO->setStrNome("Receber, Cumprir e Responder IntimaÃ§Ã£o EletrÃ´nica");
         $objMdPetTipoPoderLegalDTO->setDtaDtaCadastro(InfraData::getStrDataHoraAtual());
         $objMdPetTipoPoderLegalDTO->setStrStaSistema("I");
         $objMdPetTipoPoderLegalDTO->setStrSinAtivo('S');
@@ -2411,7 +2408,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoRN = $objMdPetVincTpProcessoRN->listar($objMdPetVincTpProcessoDTO);
         if (count($objMdPetVincTpProcessoRN)) {
-            $this->logar('Atualizando Registro da Pessoa Jurídica na TABELA md_pet_adm_vinc_tp_proced');
+            $this->logar('Atualizando Registro da Pessoa JurÃ­dica na TABELA md_pet_adm_vinc_tp_proced');
             $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
             $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(1);
             $objMdPetVincTpProcessoDTO->setStrTipoVinculo("J");
@@ -2447,11 +2444,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //Montando REl com Tabela Protocolo
         $objInfraMetaBD->adicionarChaveEstrangeira('FK_Reference_214', 'md_pet_rel_vincrep_protoc', array('id_protocolo'), 'protocolo', array('id_protocolo'));
 
-        $this->logar('CRIAÇÃO DOS AGENDAMENTOS AUTOMÁTICOS PARA ALTERAR O STATUS DA PROCURAÇÃO ELETRÔNICA SIMPLES PARA VENCIDA');
+        $this->logar('CRIAÃ‡ÃƒO DOS AGENDAMENTOS AUTOMÃTICOS PARA ALTERAR O STATUS DA PROCURAÃ‡ÃƒO ELETRÃ”NICA SIMPLES PARA VENCIDA');
 
         $infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoDTO->retTodos();
-        $infraAgendamentoDTO->setStrDescricao('Script para alteração da situação de Procuração Simples com Data Limite Vencida.');
+        $infraAgendamentoDTO->setStrDescricao('Script para alteraÃ§Ã£o da situaÃ§Ã£o de ProcuraÃ§Ã£o Simples com Data Limite Vencida.');
 
         $infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::AtualizarSituacaoProcuracaoSimplesVencida');
 
@@ -2481,7 +2478,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.2.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
@@ -2489,7 +2486,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $arrTabelas = array('md_pet_acesso_externo', 'md_pet_criterio', 'md_pet_ext_arquivo_perm', 'md_pet_hipotese_legal', 'md_pet_indisp_doc', 'md_pet_indisponibilidade', 'md_pet_int_aceite', 'md_pet_int_dest_resposta', 'md_pet_int_prazo_tacita', 'md_pet_int_prot_disponivel', 'md_pet_int_protocolo', 'md_pet_int_rel_dest', 'md_pet_int_rel_intim_resp', 'md_pet_int_rel_resp_doc', 'md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tpo_res_des', 'md_pet_int_serie', 'md_pet_int_tipo_intimacao', 'md_pet_int_tipo_resp', 'md_pet_intimacao', 'md_pet_rel_recibo_docanexo', 'md_pet_rel_recibo_protoc', 'md_pet_rel_tp_ctx_contato', 'md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_unid', 'md_pet_tamanho_arquivo', 'md_pet_tipo_processo', 'md_pet_tp_processo_orientacoes', 'md_pet_usu_externo_menu', 'md_pet_adm_integ_funcion', 'md_pet_adm_integ_param', 'md_pet_adm_integracao', 'md_pet_adm_tipo_poder', 'md_pet_adm_vinc_rel_serie', 'md_pet_adm_vinc_tp_proced', 'md_pet_int_tp_int_orient', 'md_pet_rel_int_dest_extern', 'md_pet_rel_vincrep_protoc', 'md_pet_rel_vincrep_tipo_poder', 'md_pet_vinculo', 'md_pet_vinculo_documento', 'md_pet_vinculo_represent');
 
         $this->fixIndices($objInfraMetaBD, $arrTabelas);
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2497,7 +2494,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.3.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
@@ -2505,10 +2502,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $this->logar('ALTERANDO TAMANHO DA COLUNA nome_campo NA TABELA md_pet_adm_integ_param');
         $objInfraMetaBD->alterarColuna('md_pet_adm_integ_param', 'nome_campo', $objInfraMetaBD->tipoTextoVariavel(500), 'NULL');
 
-        $this->logar('ALTERANDO O NOME DO TIPO DO DOCUMENTO DA SÉRIE MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES');
+        $this->logar('ALTERANDO O NOME DO TIPO DO DOCUMENTO DA SÃ‰RIE MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES');
         $idSerie = BancoSEI::getInstance()->consultarSql('SELECT valor FROM infra_parametro WHERE nome  = \'' . MdPetAtualizadorSeiRN::$MD_PET_ID_SERIE_PROCURACAOS . '\' ');
-        BancoSEI::getInstance()->executarSql('UPDATE serie SET nome = \'Procuração Eletrônica Simples\' WHERE id_serie = \'' . $idSerie[0]['valor'] . '\' ');
-        
+        BancoSEI::getInstance()->executarSql('UPDATE serie SET nome = \'ProcuraÃ§Ã£o EletrÃ´nica Simples\' WHERE id_serie = \'' . $idSerie[0]['valor'] . '\' ');
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2516,7 +2513,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.4.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -2525,7 +2522,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.4.1';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -2534,7 +2531,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.4.2';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -2543,7 +2540,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '3.4.3';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -2552,7 +2549,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '4.0.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
@@ -2560,15 +2557,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $arrTabelas = array('md_pet_acesso_externo', 'md_pet_criterio', 'md_pet_ext_arquivo_perm', 'md_pet_hipotese_legal', 'md_pet_indisp_doc', 'md_pet_indisponibilidade', 'md_pet_int_aceite', 'md_pet_int_dest_resposta', 'md_pet_int_prazo_tacita', 'md_pet_int_prot_disponivel', 'md_pet_int_protocolo', 'md_pet_int_rel_dest', 'md_pet_int_rel_intim_resp', 'md_pet_int_rel_resp_doc', 'md_pet_int_rel_tipo_resp', 'md_pet_int_rel_tpo_res_des', 'md_pet_int_serie', 'md_pet_int_tipo_intimacao', 'md_pet_int_tipo_resp', 'md_pet_intimacao', 'md_pet_rel_recibo_docanexo', 'md_pet_rel_recibo_protoc', 'md_pet_rel_tp_ctx_contato', 'md_pet_rel_tp_proc_serie', 'md_pet_rel_tp_processo_unid', 'md_pet_tamanho_arquivo', 'md_pet_tipo_processo', 'md_pet_tp_processo_orientacoes', 'md_pet_usu_externo_menu', 'md_pet_adm_integ_funcion', 'md_pet_adm_integ_param', 'md_pet_adm_integracao', 'md_pet_adm_tipo_poder', 'md_pet_adm_vinc_rel_serie', 'md_pet_adm_vinc_tp_proced', 'md_pet_int_tp_int_orient', 'md_pet_rel_int_dest_extern', 'md_pet_rel_vincrep_protoc', 'md_pet_rel_vincrep_tipo_poder', 'md_pet_vinculo', 'md_pet_vinculo_documento', 'md_pet_vinculo_represent');
 
         $this->fixIndices($objInfraMetaBD, $arrTabelas);
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
     protected function instalarv401()
     {
         $nmVersao = '4.0.1';
-        
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -2576,16 +2573,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     protected function instalarv402()
     {
         $nmVersao = '4.0.2';
-        
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
 
-        $this->logar('ALTERAÇÃO NO TAMANHO DA COLUNA ORIENTACOES, TABELA: md_pet_tipo_processo');
+        $this->logar('ALTERAÃ‡ÃƒO NO TAMANHO DA COLUNA ORIENTACOES, TABELA: md_pet_tipo_processo');
         $objInfraMetaBD->alterarColuna('md_pet_tipo_processo', 'orientacoes', $objInfraMetaBD->tipoTextoVariavel(1000), 'not null');
-        $this->logar('FIM DA ALTERAÇÃO NO TAMANHO DA COLUNA ORIENTACOES, TABELA: md_pet_tipo_processo');
-
+        $this->logar('FIM DA ALTERAÃ‡ÃƒO NO TAMANHO DA COLUNA ORIENTACOES, TABELA: md_pet_tipo_processo');
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2593,8 +2590,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '4.0.3';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2602,7 +2599,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     {
         $nmVersao = '4.0.4';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
@@ -2630,16 +2627,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
             $this->_gerarNovoTipoDocumentoInterno([
                 'grupo_tipo'        => 'Internos do Sistema',
-                'nome'              => 'Suspensão de Procuração Eletrônica',
-                'descricao'         => 'Utilizado para a geração automática da Suspensão de Procuração Eletrônica por Usuário Interno do SEI.',
+                'nome'              => 'SuspensÃ£o de ProcuraÃ§Ã£o EletrÃ´nica',
+                'descricao'         => 'Utilizado para a geraÃ§Ã£o automÃ¡tica da SuspensÃ£o de ProcuraÃ§Ã£o EletrÃ´nica por UsuÃ¡rio Interno do SEI.',
                 'id_modelo'         => $idModelo,
                 'nome_parametro'    => $this::$MD_PET_ID_SERIE_PROCURACAO_SUSPENSAO
             ]);
 
             $this->_gerarNovoTipoDocumentoInterno([
                 'grupo_tipo'        => 'Internos do Sistema',
-                'nome'              => 'Restabelecimento de Procuração Eletrônica',
-                'descricao'         => 'Utilizado para a geração automática do Restabelecimento de Procuração Eletrônica por Usuário Interno do SEI.',
+                'nome'              => 'Restabelecimento de ProcuraÃ§Ã£o EletrÃ´nica',
+                'descricao'         => 'Utilizado para a geraÃ§Ã£o automÃ¡tica do Restabelecimento de ProcuraÃ§Ã£o EletrÃ´nica por UsuÃ¡rio Interno do SEI.',
                 'id_modelo'         => $idModelo,
                 'nome_parametro'    => $this::$MD_PET_ID_SERIE_PROCURACAO_RESTABELECIMENTO
             ]);
@@ -2653,16 +2650,16 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
             $this->_atualizarEmailVinculoSuspensaoRestabelecimento();
 
         }
-
+		
         $this->atualizarNumeroVersao($nmVersao);
     }
 
     protected function instalarv410()
     {
         $nmVersao = '4.1.0';
-
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
-        
+		
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+		
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
         $objInfraMetaBD->setBolValidarIdentificador(true);
         $this->adicionarConsultaCPF();
@@ -2672,22 +2669,22 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $this->logar('>>>> CRIANDO AGENDAMENTO PARA ATUALIZAR AUTORREPRESENTACOES ');
 
-		    // IMPEDE ERRO DE CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO:
-        $this->logar('----- VERIFICANDO CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO');
-        $arrMaxIdInfraAgendamentoTarefaSelect = BancoSEI::getInstance()->consultarSql("SELECT MAX(id_infra_agendamento_tarefa) as max FROM infra_agendamento_tarefa");
-        $arrMaxIdInfraSequenciaSelect = BancoSEI::getInstance()->consultarSql("SELECT num_atual as max FROM infra_sequencia WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
+		// IMPEDE ERRO DE CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO:
+	    $this->logar('----- VERIFICANDO CHAVE DUPLICADA NA HORA DE CADASTRAR O AGENDAMENTO');
+	    $arrMaxIdInfraAgendamentoTarefaSelect = BancoSEI::getInstance()->consultarSql("SELECT MAX(id_infra_agendamento_tarefa) as max FROM infra_agendamento_tarefa");
+	    $arrMaxIdInfraSequenciaSelect = BancoSEI::getInstance()->consultarSql("SELECT num_atual as max FROM infra_sequencia WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
 
-        if($arrMaxIdInfraSequenciaSelect[0]['max'] < $arrMaxIdInfraAgendamentoTarefaSelect[0]['max']){
-          BancoSEI::getInstance()->executarSql("UPDATE infra_sequencia SET num_atual = ".$arrMaxIdInfraAgendamentoTarefaSelect[0]['max']." WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
-        }
+	    if($arrMaxIdInfraSequenciaSelect[0]['max'] < $arrMaxIdInfraAgendamentoTarefaSelect[0]['max']){
+		    BancoSEI::getInstance()->executarSql("UPDATE infra_sequencia SET num_atual = ".$arrMaxIdInfraAgendamentoTarefaSelect[0]['max']." WHERE infra_sequencia.nome_tabela = 'infra_agendamento_tarefa'");
+	    }
 
-        $this->logar('----- CADASTRANDO O AGENDAMENTO DE AUTOREPRESENTAÇÃO');
+	    $this->logar('----- CADASTRANDO O AGENDAMENTO DE AUTOREPRESENTAÃ‡ÃƒO');
         $infraAgendamentoDTO    = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoRN     = new InfraAgendamentoTarefaRN();
         $objInfraParametro      = new InfraParametro(BancoSEI::getInstance());
 
         $infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::atualizarAutorrepresentacaoUsuarioExterno');
-        $infraAgendamentoDTO->setStrDescricao('Agendamento para cadastrar autorrepresentações de ususários externos');
+        $infraAgendamentoDTO->setStrDescricao('Agendamento para cadastrar autorrepresentaÃ§Ãµes de ususÃ¡rios externos');
         $infraAgendamentoDTO->setStrSinAtivo('S');
         $infraAgendamentoDTO->setStrStaPeriodicidadeExecucao(InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_MINUTO);
         $infraAgendamentoDTO->setStrPeriodicidadeComplemento('0,30');
@@ -2760,17 +2757,17 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_pet_rel_cont_sit_rf', 'md_pet_rel_cont_sit_rf', array('id_contato'), 'contato', array('id_contato'));
 
-	      $this->logar('EXCLUINDO A COLUNA sin_ativo DA TABELA md_pet_vinculo_represent');
-	      $objInfraMetaBD->excluirColuna('md_pet_vinculo_represent', 'sin_ativo');
+	    $this->logar('EXCLUINDO A COLUNA sin_ativo DA TABELA md_pet_vinculo_represent');
+	    $objInfraMetaBD->excluirColuna('md_pet_vinculo_represent', 'sin_ativo');
 
-        $this->logar('----- CADASTRANDO O AGENDAMENTO PARA SUSPENDER VINCULAÇÕES');
+        $this->logar('----- CADASTRANDO O AGENDAMENTO PARA SUSPENDER VINCULAÃ‡Ã•ES');
         $infraAgendamentoDTO    = new InfraAgendamentoTarefaDTO();
         $infraAgendamentoRN     = new InfraAgendamentoTarefaRN();
         $objInfraParametro      = new InfraParametro(BancoSEI::getInstance());
 
-        $descricao  = "Agendamento para consulta periódica de Usuários Externos para conferir se a situação cadastral na Receita Federal ainda está ativa.\n";
-        $descricao .= "- As Pessoas Físicas com CPF inativo na Receita terão suas vinculações de representação como Outorgante ou Outorgado suspensas e o cadastro como Usuário Externo será desativado. \n \n";
-        $descricao .= ":: O parâmetro 'QtConsulta' define a quantidade de consultas na execução do agendamento para evitar consumo excessivo de consultas na base da Receita Federal em um período.";
+        $descricao  = "Agendamento para consulta periÃ³dica de UsuÃ¡rios Externos para conferir se a situaÃ§Ã£o cadastral na Receita Federal ainda estÃ¡ ativa.\n";
+        $descricao .= "- As Pessoas FÃ­sicas com CPF inativo na Receita terÃ£o suas vinculaÃ§Ãµes de representaÃ§Ã£o como Outorgante ou Outorgado suspensas e o cadastro como UsuÃ¡rio Externo serÃ¡ desativado. \n \n";
+        $descricao .= ":: O parÃ¢metro 'QtConsulta' define a quantidade de consultas na execuÃ§Ã£o do agendamento para evitar consumo excessivo de consultas na base da Receita Federal em um perÃ­odo.";
 
         $infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::ConsultarSituacaoReceitaCpf');
         $infraAgendamentoDTO->setStrDescricao($descricao);
@@ -2788,9 +2785,9 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $infraAgendamentoRN     = new InfraAgendamentoTarefaRN();
         $objInfraParametro      = new InfraParametro(BancoSEI::getInstance());
 
-        $descricao  = "Agendamento para consulta periódica de Pessoas Jurídicas com Representação ativa no SEI para conferir se a situação cadastral na Receita Federal ainda está ativa.\n";
-        $descricao .= "- As Pessoas Jurídicas com CNPJ inativo na Receita terão suas vinculações de representação suspensas.\n \n";
-        $descricao .= ":: O parâmetro 'QtConsulta' define a quantidade de consultas na execução do agendamento para evitar consumo excessivo de consultas na base da Receita Federal em um período.";
+        $descricao  = "Agendamento para consulta periÃ³dica de Pessoas JurÃ­dicas com RepresentaÃ§Ã£o ativa no SEI para conferir se a situaÃ§Ã£o cadastral na Receita Federal ainda estÃ¡ ativa.\n";
+        $descricao .= "- As Pessoas JurÃ­dicas com CNPJ inativo na Receita terÃ£o suas vinculaÃ§Ãµes de representaÃ§Ã£o suspensas.\n \n";
+        $descricao .= ":: O parÃ¢metro 'QtConsulta' define a quantidade de consultas na execuÃ§Ã£o do agendamento para evitar consumo excessivo de consultas na base da Receita Federal em um perÃ­odo.";
         $infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::ConsultarSituacaoReceitaCnpj');
         $infraAgendamentoDTO->setStrDescricao($descricao);
         $infraAgendamentoDTO->setStrSinAtivo('S');
@@ -2802,7 +2799,23 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $infraAgendamentoDTO->setStrSinSucesso('S');
         $infraAgendamentoDTO->setStrEmailErro($objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR'));
         $infraAgendamentoRN->cadastrar($infraAgendamentoDTO);
-        
+		
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv420()
+    {
+        $nmVersao = '4.2.0';
+
+        $this->logar('EXECUTANDO A INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+        $objInfraMetaBD->setBolValidarIdentificador(true);
+
+        $objInfraMetaBD->adicionarColuna('md_pet_tp_processo_orientacoes', 'sin_ativo_menu_ext', $objInfraMetaBD->tipoTextoFixo(1), 'NULL');
+        BancoSEI::getInstance()->executarSql("update md_pet_tp_processo_orientacoes set sin_ativo_menu_ext = 'S'");
+        $objInfraMetaBD->alterarColuna('md_pet_tp_processo_orientacoes','sin_ativo_menu_ext',$objInfraMetaBD->tipoTextoFixo(1),'NOT NULL');
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -2857,15 +2870,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Cabeçalho
-        $this->logar('CRIANDO SEÇAO DO MODELO - Cabeçalho');
+        //adicionando as seÃ§Ãµes do modelo: CabeÃ§alho
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - CabeÃ§alho');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCabecalhoTextoDTO = new SecaoModeloDTO();
         $secaoModeloCabecalhoTextoDTO->retTodos();
         $secaoModeloCabecalhoTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloCabecalhoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloCabecalhoTextoDTO->setStrNome('Cabeçalho');
+        $secaoModeloCabecalhoTextoDTO->setStrNome('CabeÃ§alho');
 
         $htmlCabecalho = '<div align="center">@timbre_orgao@</div>
 
@@ -2886,15 +2899,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCabecalhoTextoDTO);
 
-        //adicionando as seções do modelo: Título do Documento
-        $this->logar('CRIANDO SEÇAO DO MODELO - Título do Documento');
+        //adicionando as seÃ§Ãµes do modelo: TÃ­tulo do Documento
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - TÃ­tulo do Documento');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloTituloTextoDTO = new SecaoModeloDTO();
         $secaoModeloTituloTextoDTO->retTodos();
         $secaoModeloTituloTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloTituloTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloTituloTextoDTO->setStrNome('Título do Documento');
+        $secaoModeloTituloTextoDTO->setStrNome('TÃ­tulo do Documento');
 
         $htmlTitulo = '<p style="font-size:13pt; font-family:Calibri; text-align:center; text-transform:uppercase; word-wrap:normal">@serie@ n&ordm; @numeracao_serie@</p>';
 
@@ -2911,8 +2924,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloTituloTextoDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -2933,8 +2946,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //adicionando as seções do modelo: Assinatura
-        $this->logar('CRIANDO SEÇAO DO MODELO - Assinatura');
+        //adicionando as seÃ§Ãµes do modelo: Assinatura
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Assinatura');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloAssinaturaTextoDTO = new SecaoModeloDTO();
@@ -2955,8 +2968,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloAssinaturaTextoDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -2973,7 +2986,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     ';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlRodape);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinCabecalho('N');
@@ -2992,7 +3005,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -3007,13 +3020,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -3024,7 +3037,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrNome('Internos do Sistema');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Vinculação de Responsável Legal a Pessoa Jurídica');
+        $this->logar('CRIANDO TIPO DE DOCUMENTO VinculaÃ§Ã£o de ResponsÃ¡vel Legal a Pessoa JurÃ­dica');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -3035,10 +3048,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Vinculação de Responsável Legal a Pessoa Jurídica');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática do formulário de Vinculação de Responsável Legal a Pessoa Jurídica por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('VinculaÃ§Ã£o de ResponsÃ¡vel Legal a Pessoa JurÃ­dica');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica do formulÃ¡rio de VinculaÃ§Ã£o de ResponsÃ¡vel Legal a Pessoa JurÃ­dica por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3056,7 +3070,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
     }
 
-    //Procuração Eletrônica Simples
+    //ProcuraÃ§Ã£o EletrÃ´nica Simples
     private function _gerarModeloProcuracaoEletronicaSimples()
     {
 
@@ -3069,15 +3083,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Cabeçalho
-        $this->logar('CRIANDO SEÇAO DO MODELO - Cabeçalho');
+        //adicionando as seÃ§Ãµes do modelo: CabeÃ§alho
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - CabeÃ§alho');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCabecalhoTextoDTO = new SecaoModeloDTO();
         $secaoModeloCabecalhoTextoDTO->retTodos();
         $secaoModeloCabecalhoTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloCabecalhoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloCabecalhoTextoDTO->setStrNome('Cabeçalho');
+        $secaoModeloCabecalhoTextoDTO->setStrNome('CabeÃ§alho');
 
         $htmlCabecalho = '<div align="center">@timbre_orgao@</div>
 
@@ -3098,15 +3112,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCabecalhoTextoDTO);
 
-        //adicionando as seções do modelo: Título do Documento
-        $this->logar('CRIANDO SEÇAO DO MODELO - Título do Documento');
+        //adicionando as seÃ§Ãµes do modelo: TÃ­tulo do Documento
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - TÃ­tulo do Documento');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloTituloTextoDTO = new SecaoModeloDTO();
         $secaoModeloTituloTextoDTO->retTodos();
         $secaoModeloTituloTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloTituloTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloTituloTextoDTO->setStrNome('Título do Documento');
+        $secaoModeloTituloTextoDTO->setStrNome('TÃ­tulo do Documento');
 
         $htmlTitulo = '<p style="font-size:13pt; font-family:Calibri; text-align:center; text-transform:uppercase; word-wrap:normal">@serie@ n&ordm; @numeracao_serie@</p>';
 
@@ -3123,8 +3137,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloTituloTextoDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -3145,8 +3159,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //adicionando as seções do modelo: Assinatura
-        $this->logar('CRIANDO SEÇAO DO MODELO - Assinatura');
+        //adicionando as seÃ§Ãµes do modelo: Assinatura
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Assinatura');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloAssinaturaDTO = new SecaoModeloDTO();
@@ -3167,8 +3181,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloAssinaturaDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -3185,7 +3199,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 		';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlRodape);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinCabecalho('N');
@@ -3204,7 +3218,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -3219,13 +3233,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -3236,7 +3250,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrNome('Internos do Sistema');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Modelo de Procuração Eletrônica Simples');
+        $this->logar('CRIANDO TIPO DE DOCUMENTO Modelo de ProcuraÃ§Ã£o EletrÃ´nica Simples');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -3247,10 +3261,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Procuração Eletrônica');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática da Procuração Eletrônica nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('ProcuraÃ§Ã£o EletrÃ´nica');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica da ProcuraÃ§Ã£o EletrÃ´nica nos Peticionamentos EletrÃ´nicos realizados por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3268,7 +3283,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( valor, nome )  VALUES (\'' . $serieDTO->getNumIdSerie() . '\' , \'' . $nomeParamIdSerie . '\' ) ');
     }
 
-    //Fim Procuração Eletrônica Simples
+    //Fim ProcuraÃ§Ã£o EletrÃ´nica Simples
 
     private function _gerarModeloProcuracaoEletronica()
     {
@@ -3282,15 +3297,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Cabeçalho
-        $this->logar('CRIANDO SEÇAO DO MODELO - Cabeçalho');
+        //adicionando as seÃ§Ãµes do modelo: CabeÃ§alho
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - CabeÃ§alho');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCabecalhoTextoDTO = new SecaoModeloDTO();
         $secaoModeloCabecalhoTextoDTO->retTodos();
         $secaoModeloCabecalhoTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloCabecalhoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloCabecalhoTextoDTO->setStrNome('Cabeçalho');
+        $secaoModeloCabecalhoTextoDTO->setStrNome('CabeÃ§alho');
 
         $htmlCabecalho = '<div align="center">@timbre_orgao@</div>
 
@@ -3311,15 +3326,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCabecalhoTextoDTO);
 
-        //adicionando as seções do modelo: Título do Documento
-        $this->logar('CRIANDO SEÇAO DO MODELO - Título do Documento');
+        //adicionando as seÃ§Ãµes do modelo: TÃ­tulo do Documento
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - TÃ­tulo do Documento');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloTituloTextoDTO = new SecaoModeloDTO();
         $secaoModeloTituloTextoDTO->retTodos();
         $secaoModeloTituloTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloTituloTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloTituloTextoDTO->setStrNome('Título do Documento');
+        $secaoModeloTituloTextoDTO->setStrNome('TÃ­tulo do Documento');
 
         $htmlTitulo = '<p style="font-size:13pt; font-family:Calibri; text-align:center; text-transform:uppercase; word-wrap:normal">@serie@ n&ordm; @numeracao_serie@</p>';
 
@@ -3336,8 +3351,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloTituloTextoDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -3358,8 +3373,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //adicionando as seções do modelo: Assinatura
-        $this->logar('CRIANDO SEÇAO DO MODELO - Assinatura');
+        //adicionando as seÃ§Ãµes do modelo: Assinatura
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Assinatura');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloAssinaturaDTO = new SecaoModeloDTO();
@@ -3380,8 +3395,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloAssinaturaDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -3398,7 +3413,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     ';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlRodape);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinCabecalho('N');
@@ -3417,7 +3432,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -3432,13 +3447,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -3449,7 +3464,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrNome('Internos do Sistema');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Modelo de Procuração Eletrônica Especial');
+        $this->logar('CRIANDO TIPO DE DOCUMENTO Modelo de ProcuraÃ§Ã£o EletrÃ´nica Especial');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -3460,10 +3475,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Procuração Eletrônica Especial');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática da Procuração Eletrônica Especial nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('ProcuraÃ§Ã£o EletrÃ´nica Especial');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica da ProcuraÃ§Ã£o EletrÃ´nica Especial nos Peticionamentos EletrÃ´nicos realizados por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3493,15 +3509,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Cabeçalho
-        $this->logar('CRIANDO SEÇAO DO MODELO - Cabeçalho');
+        //adicionando as seÃ§Ãµes do modelo: CabeÃ§alho
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - CabeÃ§alho');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCabecalhoTextoDTO = new SecaoModeloDTO();
         $secaoModeloCabecalhoTextoDTO->retTodos();
         $secaoModeloCabecalhoTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloCabecalhoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloCabecalhoTextoDTO->setStrNome('Cabeçalho');
+        $secaoModeloCabecalhoTextoDTO->setStrNome('CabeÃ§alho');
 
         $htmlCabecalho = '<div align="center">@timbre_orgao@</div>
 
@@ -3522,15 +3538,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCabecalhoTextoDTO);
 
-        //adicionando as seções do modelo: Título do Documento
-        $this->logar('CRIANDO SEÇAO DO MODELO - Título do Documento');
+        //adicionando as seÃ§Ãµes do modelo: TÃ­tulo do Documento
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - TÃ­tulo do Documento');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloTituloTextoDTO = new SecaoModeloDTO();
         $secaoModeloTituloTextoDTO->retTodos();
         $secaoModeloTituloTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloTituloTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloTituloTextoDTO->setStrNome('Título do Documento');
+        $secaoModeloTituloTextoDTO->setStrNome('TÃ­tulo do Documento');
 
         $htmlTitulo = '<p style="font-size:13pt; font-family:Calibri; text-align:center; text-transform:uppercase; word-wrap:normal">@serie@ n&ordm; @numeracao_serie@</p>';
 
@@ -3547,8 +3563,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloTituloTextoDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -3569,8 +3585,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //adicionando as seções do modelo: Assinatura
-        $this->logar('CRIANDO SEÇAO DO MODELO - Assinatura');
+        //adicionando as seÃ§Ãµes do modelo: Assinatura
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Assinatura');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloAssinaturaTextoDTO = new SecaoModeloDTO();
@@ -3591,8 +3607,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloAssinaturaTextoDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -3609,7 +3625,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     ';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlRodape);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinCabecalho('N');
@@ -3628,7 +3644,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -3643,13 +3659,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -3660,7 +3676,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrNome('Internos do Sistema');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Revogação de Procuração Eletrônica');
+        $this->logar('CRIANDO TIPO DE DOCUMENTO RevogaÃ§Ã£o de ProcuraÃ§Ã£o EletrÃ´nica');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -3671,10 +3687,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Revogação de Procuração Eletrônica');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática da Revogação de Procuração Eletrônica nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('RevogaÃ§Ã£o de ProcuraÃ§Ã£o EletrÃ´nica');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica da RevogaÃ§Ã£o de ProcuraÃ§Ã£o EletrÃ´nica nos Peticionamentos EletrÃ´nicos realizados por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3704,15 +3721,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Cabeçalho
-        $this->logar('CRIANDO SEÇAO DO MODELO - Cabeçalho');
+        //adicionando as seÃ§Ãµes do modelo: CabeÃ§alho
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - CabeÃ§alho');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCabecalhoTextoDTO = new SecaoModeloDTO();
         $secaoModeloCabecalhoTextoDTO->retTodos();
         $secaoModeloCabecalhoTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloCabecalhoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloCabecalhoTextoDTO->setStrNome('Cabeçalho');
+        $secaoModeloCabecalhoTextoDTO->setStrNome('CabeÃ§alho');
 
         $htmlCabecalho = '<div align="center">@timbre_orgao@</div>
 
@@ -3733,15 +3750,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCabecalhoTextoDTO);
 
-        //adicionando as seções do modelo: Título do Documento
-        $this->logar('CRIANDO SEÇAO DO MODELO - Título do Documento');
+        //adicionando as seÃ§Ãµes do modelo: TÃ­tulo do Documento
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - TÃ­tulo do Documento');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloTituloTextoDTO = new SecaoModeloDTO();
         $secaoModeloTituloTextoDTO->retTodos();
         $secaoModeloTituloTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloTituloTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloTituloTextoDTO->setStrNome('Título do Documento');
+        $secaoModeloTituloTextoDTO->setStrNome('TÃ­tulo do Documento');
 
         $htmlTitulo = '<p style="font-size:13pt; font-family:Calibri; text-align:center; text-transform:uppercase; word-wrap:normal">@serie@ n&ordm; @numeracao_serie@</p>';
 
@@ -3758,8 +3775,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloTituloTextoDTO = $secaoModeloRN->cadastrar($secaoModeloTituloTextoDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -3780,8 +3797,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //adicionando as seções do modelo: Assinatura
-        $this->logar('CRIANDO SEÇAO DO MODELO - Assinatura');
+        //adicionando as seÃ§Ãµes do modelo: Assinatura
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Assinatura');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloAssinaturaTextoDTO = new SecaoModeloDTO();
@@ -3802,8 +3819,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloAssinaturaTextoDTO = $secaoModeloRN->cadastrar($secaoModeloAssinaturaTextoDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -3820,7 +3837,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     ';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlRodape);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinCabecalho('N');
@@ -3839,7 +3856,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -3854,13 +3871,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -3871,7 +3888,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrNome('Internos do Sistema');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Renúncia de Procuração Eletrônica');
+        $this->logar('CRIANDO TIPO DE DOCUMENTO RenÃºncia de ProcuraÃ§Ã£o EletrÃ´nica');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -3882,10 +3899,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Renúncia de Procuração Eletrônica');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática da Renúncia de Procuração Eletrônica nos Peticionamentos Eletrônicos realizados por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('RenÃºncia de ProcuraÃ§Ã£o EletrÃ´nica');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica da RenÃºncia de ProcuraÃ§Ã£o EletrÃ´nica nos Peticionamentos EletrÃ´nicos realizados por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -3915,15 +3933,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Cabeçalho
-        $this->logar('CRIANDO SEÇAO DO MODELO - Cabeçalho');
+        //adicionando as seÃ§Ãµes do modelo: CabeÃ§alho
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - CabeÃ§alho');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCabecalhoTextoDTO = new SecaoModeloDTO();
         $secaoModeloCabecalhoTextoDTO->retTodos();
         $secaoModeloCabecalhoTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloCabecalhoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloCabecalhoTextoDTO->setStrNome('Cabeçalho');
+        $secaoModeloCabecalhoTextoDTO->setStrNome('CabeÃ§alho');
 
         $htmlCabecalho = '<div align="center">@timbre_orgao@</div>
 
@@ -3944,15 +3962,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCabecalhoTextoDTO);
 
-        //adicionando as seções do modelo: Título do Documento
-        $this->logar('CRIANDO SEÇAO DO MODELO - Título do Documento');
+        //adicionando as seÃ§Ãµes do modelo: TÃ­tulo do Documento
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - TÃ­tulo do Documento');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloTituloTextoDTO = new SecaoModeloDTO();
         $secaoModeloTituloTextoDTO->retTodos();
         $secaoModeloTituloTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloTituloTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloTituloTextoDTO->setStrNome('Título do Documento');
+        $secaoModeloTituloTextoDTO->setStrNome('TÃ­tulo do Documento');
 
         $htmlTitulo = '<p style="font-size:13pt; font-family:Calibri; text-align:center; text-transform:uppercase; word-wrap:normal">@serie@ n&ordm; @numeracao_serie@</p>';
 
@@ -3969,8 +3987,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloTituloTextoDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -3991,8 +4009,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //adicionando as seções do modelo: Assinatura
-        $this->logar('CRIANDO SEÇAO DO MODELO - Assinatura');
+        //adicionando as seÃ§Ãµes do modelo: Assinatura
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Assinatura');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloAssinaturaDTO = new SecaoModeloDTO();
@@ -4013,8 +4031,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloAssinaturaDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -4031,7 +4049,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     ';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlRodape);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinCabecalho('N');
@@ -4050,7 +4068,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -4065,13 +4083,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -4082,7 +4100,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrNome('Internos do Sistema');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Suspensão de Vinculação a Pessoa Jurídica');
+        $this->logar('CRIANDO TIPO DE DOCUMENTO SuspensÃ£o de VinculaÃ§Ã£o a Pessoa JurÃ­dica');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -4093,10 +4111,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Suspensão de Vinculação a Pessoa Jurídica');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática da Suspensão de Vinculação a Pessoa Jurídica por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('SuspensÃ£o de VinculaÃ§Ã£o a Pessoa JurÃ­dica');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica da SuspensÃ£o de VinculaÃ§Ã£o a Pessoa JurÃ­dica por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -4126,15 +4145,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $modeloDTO->setStrSinAtivo('S');
         $modeloDTO = $modeloRN->cadastrar($modeloDTO);
 
-        //adicionando as seções do modelo: Cabeçalho
-        $this->logar('CRIANDO SEÇAO DO MODELO - Cabeçalho');
+        //adicionando as seÃ§Ãµes do modelo: CabeÃ§alho
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - CabeÃ§alho');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCabecalhoTextoDTO = new SecaoModeloDTO();
         $secaoModeloCabecalhoTextoDTO->retTodos();
         $secaoModeloCabecalhoTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloCabecalhoTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloCabecalhoTextoDTO->setStrNome('Cabeçalho');
+        $secaoModeloCabecalhoTextoDTO->setStrNome('CabeÃ§alho');
 
         $htmlCabecalho = '<div align="center">@timbre_orgao@</div>
 
@@ -4155,15 +4174,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCabecalhoTextoDTO);
 
-        //adicionando as seções do modelo: Título do Documento
-        $this->logar('CRIANDO SEÇAO DO MODELO - Título do Documento');
+        //adicionando as seÃ§Ãµes do modelo: TÃ­tulo do Documento
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - TÃ­tulo do Documento');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloTituloTextoDTO = new SecaoModeloDTO();
         $secaoModeloTituloTextoDTO->retTodos();
         $secaoModeloTituloTextoDTO->setNumIdSecaoModelo(null);
         $secaoModeloTituloTextoDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloTituloTextoDTO->setStrNome('Título do Documento');
+        $secaoModeloTituloTextoDTO->setStrNome('TÃ­tulo do Documento');
 
         $htmlTitulo = '<p style="font-size:13pt; font-family:Calibri; text-align:center; text-transform:uppercase; word-wrap:normal">@serie@ n&ordm; @numeracao_serie@</p>';
 
@@ -4180,8 +4199,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCabecalhoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloTituloTextoDTO);
 
-        //adicionando as seções do modelo: Corpo de Texto
-        $this->logar('CRIANDO SEÇAO DO MODELO - Corpo do Texto');
+        //adicionando as seÃ§Ãµes do modelo: Corpo de Texto
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Corpo do Texto');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloCorpoTextoDTO = new SecaoModeloDTO();
@@ -4202,8 +4221,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloCorpoTextoDTO);
 
-        //adicionando as seções do modelo: Assinatura
-        $this->logar('CRIANDO SEÇAO DO MODELO - Assinatura');
+        //adicionando as seÃ§Ãµes do modelo: Assinatura
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - Assinatura');
         $secaoModeloRN = new SecaoModeloRN();
 
         $secaoModeloAssinaturaDTO = new SecaoModeloDTO();
@@ -4224,8 +4243,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         $secaoModeloCorpoTextoDTO = $secaoModeloRN->cadastrar($secaoModeloAssinaturaDTO);
 
-        //secao do rodapé
-        $this->logar('CRIANDO SEÇAO DO MODELO - Rodapé');
+        //secao do rodapÃ©
+        $this->logar('CRIANDO SEÃ‡AO DO MODELO - RodapÃ©');
         $secaoModeloRodapeDTO = new SecaoModeloDTO();
         $secaoModeloRodapeDTO->retTodos();
         $secaoModeloRodapeDTO->setNumIdSecaoModelo(null);
@@ -4242,7 +4261,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     ';
 
         $secaoModeloRodapeDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $secaoModeloRodapeDTO->setStrNome('Rodapé');
+        $secaoModeloRodapeDTO->setStrNome('RodapÃ©');
         $secaoModeloRodapeDTO->setStrConteudo($htmlRodape);
         $secaoModeloRodapeDTO->setNumOrdem(1000);
         $secaoModeloRodapeDTO->setStrSinCabecalho('N');
@@ -4261,7 +4280,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         if (BancoSEI::getInstance() instanceof InfraMySql) {
 
-            //verificando antes a situaçao da tabela seq_grupo_serie
+            //verificando antes a situaÃ§ao da tabela seq_grupo_serie
             $arrDados = BancoSEI::getInstance()->consultarSql('SELECT * FROM seq_grupo_serie ORDER BY id DESC LIMIT 1 ');
 
             $grupoSerieDTOLista = new GrupoSerieDTO();
@@ -4276,13 +4295,13 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
                 if ($arrDados[0]['id'] < $arrListaGrupoSerie[0]->getNumIdGrupoSerie()) {
 
-                    //INSERT para garantir a SEQ na posiçao correta
+                    //INSERT para garantir a SEQ na posiÃ§ao correta
                     BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
                 }
             } //nao tem registro na SEQ ainda, colocar o ID do grupo_serie mais atual
             else {
 
-                //INSERT para garantir a SEQ na posiçao correta
+                //INSERT para garantir a SEQ na posiÃ§ao correta
                 BancoSEI::getInstance()->executarSql('INSERT INTO seq_grupo_serie ( id ) VALUES ( ' . $arrListaGrupoSerie[0]->getNumIdGrupoSerie() . ') ');
             }
         }
@@ -4293,7 +4312,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $grupoSerieDTO->setStrNome('Internos do Sistema');
         $grupoSerieDTO = $grupoSerieRN->consultarRN0777($grupoSerieDTO);
 
-        $this->logar('CRIANDO TIPO DE DOCUMENTO Restabelecimento de Vinculação a Pessoa Jurídica');
+        $this->logar('CRIANDO TIPO DE DOCUMENTO Restabelecimento de VinculaÃ§Ã£o a Pessoa JurÃ­dica');
         $serieDTO = new SerieDTO();
         $serieDTO->retTodos();
         $serieRN = new SerieRN();
@@ -4304,10 +4323,11 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         $serieDTO->setStrStaAplicabilidade(SerieRN::$TA_INTERNO);
         $serieDTO->setNumIdModeloEdoc(null);
         $serieDTO->setNumIdModelo($modeloDTO->getNumIdModelo());
-        $serieDTO->setStrNome('Restabelecimento de Vinculação a Pessoa Jurídica');
-        $serieDTO->setStrDescricao('Utilizado para a geração automática do Restabelecimento de Vinculação a Pessoa Jurídica por Usuário Externo diretamente no Acesso Externo do SEI.');
+        $serieDTO->setStrNome('Restabelecimento de VinculaÃ§Ã£o a Pessoa JurÃ­dica');
+        $serieDTO->setStrDescricao('Utilizado para a geraÃ§Ã£o automÃ¡tica do Restabelecimento de VinculaÃ§Ã£o a Pessoa JurÃ­dica por UsuÃ¡rio Externo diretamente no Acesso Externo do SEI.');
         $serieDTO->setStrSinInteressado('S');
         $serieDTO->setStrSinDestinatario('N');
+        $serieDTO->setStrSinValorMonetario('N');
         $serieDTO->setStrSinAssinaturaPublicacao('S');
         $serieDTO->setStrSinInterno('S');
         $serieDTO->setStrSinAtivo('S');
@@ -4427,6 +4447,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 		    $serieDTO->setStrDescricao($novoDocumento['descricao']);
 		    $serieDTO->setStrSinInteressado('S');
 		    $serieDTO->setStrSinDestinatario('N');
+            $serieDTO->setStrSinValorMonetario('N');
 		    $serieDTO->setStrSinAssinaturaPublicacao('S');
 		    $serieDTO->setStrSinInterno('S');
 		    $serieDTO->setStrSinAtivo('S');
@@ -4448,7 +4469,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
 	    if($countSerie == 1){
 
-		    $this->logar('-------- NOVO TIPO DE DOCUMENTO "'.$novoDocumento['nome'].'" JÁ EXISTE!');
+		    $this->logar('-------- NOVO TIPO DE DOCUMENTO "'.$novoDocumento['nome'].'" JÃ EXISTE!');
 
 	    	// Verificando se parametro existe
 		    $objInfraParamDTO = new InfraParametroDTO();
@@ -4478,21 +4499,21 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
         $this->logar('>>>> INSERINDO EMAIL MD_PET_PROCURACAO_SUSPENSAO NA TABELA "email_sistema" ');
 
-        $conteudoVinculoSuspensao = "      :: Este é um e-mail automático ::
+        $conteudoVinculoSuspensao = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-A Administração do SEI-@sigla_orgao@ suspendeu seus poderes como Procurador da Pessoa @outorgante_tipo_pessoa@ @outorgante_nome@, conforme instrumento de Suspensão de Procuração Eletrônica SEI nº @procuracao_doc_num@.
+A AdministraÃ§Ã£o do SEI-@sigla_orgao@ suspendeu seus poderes como Procurador da Pessoa @outorgante_tipo_pessoa@ @outorgante_nome@, conforme instrumento de SuspensÃ£o de ProcuraÃ§Ã£o EletrÃ´nica SEI nÂº @procuracao_doc_num@.
 
 Comunicamos que:
-- A suspensão da seus poderes como Procurador não impede o peticionamento em nome próprio no SEI e o uso de outras funcionalidades no sistema;
+- A suspensÃ£o da seus poderes como Procurador nÃ£o impede o peticionamento em nome prÃ³prio no SEI e o uso de outras funcionalidades no sistema;
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaVinculoSuspensao = $this->retornarMaxIdEmailSistema();
 
@@ -4508,10 +4529,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
              )
         VALUES
             (" . $maxIdEmailSistemaVinculoSuspensao . ",
-            'Peticionamento Eletrônico - Suspensão de Procuração Eletrônica',
+            'Peticionamento EletrÃ´nico - SuspensÃ£o de ProcuraÃ§Ã£o EletrÃ´nica',
             '@sigla_sistema@ <@email_sistema@>',
             '@email_usuario_externo@',
-            'SEI - Suspensão de Procuração Eletrônica no Processo nº @processo@',
+            'SEI - SuspensÃ£o de ProcuraÃ§Ã£o EletrÃ´nica no Processo nÂº @processo@',
             '" . $conteudoVinculoSuspensao . "',
             'S',
             'MD_PET_PROCURACAO_SUSPENSAO'
@@ -4526,20 +4547,20 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
         //INSERCAO DE NOVOS MODELOS DE EMAIL NO MENU E-MAILS DO SISTEMA
         $this->logar('>>>> INSERINDO EMAIL MD_PET_PROCURACAO_RESTABELECIMENTO NA TABELA "email_sistema" ');
 
-        $conteudoVinculoRestabelecimento = "      :: Este é um e-mail automático ::
+        $conteudoVinculoRestabelecimento = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-A Administração do SEI-@sigla_orgao@ restabeleceu seus poderes como Procurador da Pessoa @outorgante_tipo_pessoa@ @outorgante_nome@, conforme instrumento de Restabelecimento de Procuração Eletrônica SEI nº @procuracao_doc_num@.
+A AdministraÃ§Ã£o do SEI-@sigla_orgao@ restabeleceu seus poderes como Procurador da Pessoa @outorgante_tipo_pessoa@ @outorgante_nome@, conforme instrumento de Restabelecimento de ProcuraÃ§Ã£o EletrÃ´nica SEI nÂº @procuracao_doc_num@.
 
-Assim, comunicamos que ficam restabelecidos os poderes de representação conforme consta na citada @procuracao_tipo@ nº @procuracao_doc_num@.
+Assim, comunicamos que ficam restabelecidos os poderes de representaÃ§Ã£o conforme consta na citada @procuracao_tipo@ nÂº @procuracao_doc_num@.
 
 
 @sigla_orgao@
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $maxIdEmailSistemaVinculoRestabelecimento = $this->retornarMaxIdEmailSistema();
 
@@ -4555,10 +4576,10 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
              )
         VALUES
             (" . $maxIdEmailSistemaVinculoRestabelecimento . ",
-            'Peticionamento Eletrônico - Restabelecimento de Procuração Eletrônica',
+            'Peticionamento EletrÃ´nico - Restabelecimento de ProcuraÃ§Ã£o EletrÃ´nica',
             '@sigla_sistema@ <@email_sistema@>',
             '@email_usuario_externo@',
-            'SEI - Restabelecimento de Procuração Eletrônica no Processo nº @processo@',
+            'SEI - Restabelecimento de ProcuraÃ§Ã£o EletrÃ´nica no Processo nÂº @processo@',
             '" . $conteudoVinculoRestabelecimento . "',
             'S',
             'MD_PET_PROCURACAO_RESTABELECIMENTO'
@@ -4573,15 +4594,15 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         // ATUALIZANDO O CONTEUDO DO EMAIL DE SUSPENSAO DE VINCULO PARA ABRANGER TAMBEM OS DADOS DE CASCATA
         $this->logar('>>>> ATUALIZANDO O CONTEUDO DO EMAIL DE SUSPENSAO DE VINCULO PARA ABRANGER TAMBEM OS DADOS DE CASCATA ');
-        $conteudoVinculoSuspensao = "      :: Este é um e-mail automático ::
+        $conteudoVinculoSuspensao = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-A Administração do SEI-@sigla_orgao@ suspendeu sua vinculação como Responsável Legal da Pessoa Jurídica @razao_social@ (@cnpj@), conforme instrumento de Suspensão de Vinculação a Pessoa Jurídica SEI nº @documento_suspensao_responsavel_pj@.
+A AdministraÃ§Ã£o do SEI-@sigla_orgao@ suspendeu sua vinculaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica @razao_social@ (@cnpj@), conforme instrumento de SuspensÃ£o de VinculaÃ§Ã£o a Pessoa JurÃ­dica SEI nÂº @documento_suspensao_responsavel_pj@.
 
 Comunicamos que:
-- A suspensão da sua vinculação como Responsável Legal da Pessoa Jurídica não impede o peticionamento em nome próprio;
-- Poderá realizar Peticionamento Intercorrente no processo citado no assunto deste e-mail para comprovar seus poderes de representação como Responsável Legal da Pessoa Jurídica;
+- A suspensÃ£o da sua vinculaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica nÃ£o impede o peticionamento em nome prÃ³prio;
+- PoderÃ¡ realizar Peticionamento Intercorrente no processo citado no assunto deste e-mail para comprovar seus poderes de representaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica;
 @item_lista_procuradores@
 
 
@@ -4589,7 +4610,7 @@ Comunicamos que:
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $updateEmailVinculoSuspensao = "UPDATE email_sistema SET conteudo = '".$conteudoVinculoSuspensao."' WHERE id_email_sistema_modulo = 'MD_PET_VINC_SUSPENSAO'";
         BancoSEI::getInstance()->executarSql($updateEmailVinculoSuspensao);
@@ -4598,14 +4619,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 
         // ATUALIZANDO O CONTEUDO DO EMAIL DE RESTABELECIMENTO DE VINCULO PARA ABRANGER TAMBEM OS DADOS DE CASCATA
         $this->logar('>>>> ATUALIZANDO O CONTEUDO DO EMAIL DE RESTABELECIMENTO DE VINCULO PARA ABRANGER TAMBEM OS DADOS DE CASCATA ');
-        $conteudoVinculoRestabelecimento = "      :: Este é um e-mail automático ::
+        $conteudoVinculoRestabelecimento = "      :: Este Ã© um e-mail automÃ¡tico ::
 
 Prezado(a) @nome_usuario_externo@,
 
-A Administração do SEI-@sigla_orgao@ restabeleceu sua vinculação como Responsável Legal da Pessoa Jurídica @razao_social@ (@cnpj@), conforme instrumento de Restabelecimento de Vinculação a Pessoa Jurídica SEI nº @documento_restabelecimento_responsavel_pj@.
+A AdministraÃ§Ã£o do SEI-@sigla_orgao@ restabeleceu sua vinculaÃ§Ã£o como ResponsÃ¡vel Legal da Pessoa JurÃ­dica @razao_social@ (@cnpj@), conforme instrumento de Restabelecimento de VinculaÃ§Ã£o a Pessoa JurÃ­dica SEI nÂº @documento_restabelecimento_responsavel_pj@.
 
 Comunicamos que:
-- Fica restabelecido seu direito de peticionar e emitir Procurações Eletrônicas em nome da Pessoa Jurídica, bem como realizar alterações de seus dados cadastrais e atos constitutivos; 
+- Fica restabelecido seu direito de peticionar e emitir ProcuraÃ§Ãµes EletrÃ´nicas em nome da Pessoa JurÃ­dica, bem como realizar alteraÃ§Ãµes de seus dados cadastrais e atos constitutivos; 
 @item_lista_procuradores@
 
 
@@ -4613,7 +4634,7 @@ Comunicamos que:
 @descricao_orgao@
 @sitio_internet_orgao@
 
-ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas à pessoa ou entidade para a qual foi endereçada. Se você não é o destinatário ou a pessoa responsável por encaminhar esta mensagem ao destinatário, você está, por meio desta, notificado que não deverá rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
+ATENÃ‡ÃƒO: As informaÃ§Ãµes contidas neste e-mail, incluindo seus anexos, podem ser restritas apenas Ã  pessoa ou entidade para a qual foi endereÃ§ada. Se vocÃª nÃ£o Ã© o destinatÃ¡rio ou a pessoa responsÃ¡vel por encaminhar esta mensagem ao destinatÃ¡rio, vocÃª estÃ¡, por meio desta, notificado que nÃ£o deverÃ¡ rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem ou quaisquer anexos. Caso vocÃª tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e em seguida apague esta mensagem.";
 
         $updateEmailVinculoRestabelecimento = "UPDATE email_sistema SET conteudo = '".$conteudoVinculoRestabelecimento."' WHERE id_email_sistema_modulo = 'MD_PET_VINC_RESTABELECIMENTO'";
         BancoSEI::getInstance()->executarSql($updateEmailVinculoRestabelecimento);
@@ -4630,6 +4651,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 		
 		InfraDebug::getInstance()->setBolDebugInfra(false);
     }
+    
     protected function adicionarConsultaCPF()
     {
 
@@ -4649,14 +4671,14 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
     }
 
 	/**
-	 * Atualiza o número de versão do módulo na tabela de parâmetro do sistema
+	 * Atualiza o nÃºmero de versÃ£o do mÃ³dulo na tabela de parÃ¢metro do sistema
 	 *
 	 * @param string $parStrNumeroVersao
 	 * @return void
 	 */
 	private function atualizarNumeroVersao($parStrNumeroVersao)
     {
-		$this->logar('ATUALIZANDO PARÂMETRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+		$this->logar('ATUALIZANDO PARÃ‚METRO '. $this->nomeParametroModulo .' NA TABELA infra_parametro PARA CONTROLAR A VERSÃƒO DO MÃ“DULO');
 
 		$objInfraParametroDTO = new InfraParametroDTO();
 		$objInfraParametroDTO->setStrNome($this->nomeParametroModulo);
@@ -4669,7 +4691,7 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem ser 
 			$objInfraParametroBD->alterar($objInfraParametroDTO);
 		}
         
-		$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $parStrNumeroVersao .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SEI');
+		$this->logar('INSTALAÃ‡ÃƒO/ATUALIZAÃ‡ÃƒO DA VERSÃƒO '. $parStrNumeroVersao .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SEI');
 	}
 
 }
@@ -4683,16 +4705,16 @@ try {
     $arrConfig = $configuracaoSEI->getInstance()->getArrConfiguracoes();
 
     if (!isset($arrConfig['SEI']['Modulos'])) {
-        throw new InfraException('PARÂMETRO DE MÓDULOS NO CONFIGURAÇÃO DO SEI NÃO DECLARADO');
+        throw new InfraException('PARÃ‚METRO DE MÃ“DULOS NO CONFIGURAÃ‡ÃƒO DO SEI NÃƒO DECLARADO');
     } else {
         $arrModulos = $arrConfig['SEI']['Modulos'];
         if (!key_exists('PeticionamentoIntegracao', $arrModulos)) {
-            throw new InfraException('MÓDULO PETICIONAMENTO NÃO DECLARADO NO CONFIGURAÇÃO DO SEI');
+            throw new InfraException('MÃ“DULO PETICIONAMENTO NÃƒO DECLARADO NO CONFIGURAÃ‡ÃƒO DO SEI');
         }
     }
 
     if (!class_exists('PeticionamentoIntegracao')) {
-        throw new InfraException('A CLASSE PRINCIPAL "PeticionamentoIntegracao" DO MÓDULO NÃO FOI ENCONTRADA');
+        throw new InfraException('A CLASSE PRINCIPAL "PeticionamentoIntegracao" DO MÃ“DULO NÃƒO FOI ENCONTRADA');
     }
 
     InfraScriptVersao::solicitarAutenticacao(BancoSEI::getInstance());

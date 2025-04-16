@@ -12,11 +12,9 @@
  *
  */
 
-$strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_anexo&id_tipo_procedimento='
-    . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
+$strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_anexo&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
 
-$strLinkPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_principal&id_tipo_procedimento='
-    . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
+$strLinkPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_principal&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
 
 //Ação para upload de documento principal
 $strLinkUploadDocPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_principal');
@@ -148,6 +146,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         alert('Somente pode ter um Documento Principal.');
 
                         document.getElementById("fileArquivoPrincipal").value = '';
+                        $(document).find('#ifrProgressofrmDocumentoPrincipal').hide();
                         limparCampoUpload('1');
 
                         isValido = false;
@@ -531,10 +530,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function abrirJanelaDocumento() {
 
-        <?php
-        $linkEditor = PaginaSEIExterna::getInstance()->formatarXHTML(
-            SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_editor_montar&id_serie=' . $objTipoProcDTO->getNumIdSerie()));
-        ?>
+        <?php $linkEditor = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_editor_montar&id_serie=' . $objTipoProcDTO->getNumIdSerie())); ?>
 
         var janelaEditor = infraAbrirJanela('', 'janelaEditor_<?=SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()?>', infraClientWidth(), infraClientHeight(), 'location=0,status=0,resizable=1,scrollbars=1', false);
 
@@ -802,7 +798,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             ufSelecionada = cbUF.value;
         }
 
-
         if (textoEspecificacao == '') {
             alert('Informe a Especificação.');
             document.getElementById("txtEspecificacao").focus();
@@ -810,24 +805,23 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         }
 
         //Validar combos
-        try {
-            if (document.getElementById('selOrgao').value === '') {
-                alert("Informe o Orgão.");
-                return false;
-            }
-
-            if (document.getElementById('selUF').value === '') {
-                alert("Informe a UF.");
-                return false;
-            }
-            if (document.getElementById("selUFAberturaProcesso").value === '') {
-                alert("Informe a Cidade.");
-                return false;
-            }
-        } catch (err) {
-
+        if (document.getElementById('selOrgao') && document.getElementById('selOrgao').value === '') {
+            alert("Informe o Orgão.");
+            document.getElementById("selOrgao").focus();
+            return false;
         }
 
+        if (document.getElementById('selUF') && document.getElementById('selUF').value === '') {
+            alert("Informe a UF.");
+            document.getElementById("selUF").focus();
+            return false;
+        }
+
+        if (document.getElementById("selUFAberturaProcesso") && document.getElementById("selUFAberturaProcesso").value === '') {
+            alert("Informe a Cidade.");
+            document.getElementById("selUFAberturaProcesso").focus();
+            return false;
+        }
 
         if (selInteressados != undefined && selInteressados != null && selInteressados.value == '') {
             alert('Informe o(s) Interessado(s).');
@@ -943,39 +937,33 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             }
         }
 
-            //caso doc principal seja do tipo "Gerado", fazer requisição AJAX
-            //para validar se usuário salvou na sessao algum conteudo para o documento
+        //caso doc principal seja do tipo "Gerado", fazer requisição AJAX
+        //para validar se usuário salvou na sessao algum conteudo para o documento
         //caso nao tenha conteudo obrigar usuario a informar
         else {
 
             var conteudoDocumento = "";
 
-            // $(document).ready(function () {
-
-                //var  formData = "";
-
-                $.ajax({
-                    url: "<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_validar_documento_principal'))?>",
-                    type: "POST",
-                    //data : formData,
-                    async: false,
-                    success: function (data, textStatus, jqXHR) {
-                        conteudoDocumento = data;
-                        if (data == '') {
-                            alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes é necessário acessar o Editor do SEI no link clique aqui para editar conteúdo em frente ao campo Documento Principal, preencher apenas os campos pertinentes com os dados da demanda e clicar no botão Salvar no canto superior esquerdo do Editor.");
-                            return;
-                        } else {
-                            DocPrincipalValidado = true;
-                        }
-
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        alert('Erro ao validar documento principal.');
-                        console.log('Erro' + textStatus);
+            $.ajax({
+                url: "<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_validar_documento_principal'))?>",
+                type: "POST",
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    conteudoDocumento = data;
+                    if (data == '') {
+                        alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes é necessário acessar o Editor do SEI no link clique aqui para editar conteúdo em frente ao campo Documento Principal, preencher apenas os campos pertinentes com os dados da demanda e clicar no botão Salvar no canto superior esquerdo do Editor.");
                         return;
+                    } else {
+                        DocPrincipalValidado = true;
                     }
-                });
-            // });
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Erro ao validar documento principal.');
+                    console.log('Erro' + textStatus);
+                    return;
+                }
+            });
 
         }
 
@@ -1199,7 +1187,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function inicializar() {
-//Caso tenha somente um ORGAO dentro do processo
+		//Caso tenha somente um ORGAO dentro do processo
         try {
             if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled") {
                 var idOrgao = document.getElementById('hdnIdOrgaoUnico').value;
@@ -1231,7 +1219,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                 var opt = document.createElement('option');
                                 opt.value = "";
                                 opt.innerHTML = "";
-                                selectMultiple.appendChild(opt);
+                                selectMultiple.empty().end().appendChild(opt);
                                 $.each($(data).find('item'), function (i, j) {
                                     var opt = document.createElement('option');
                                     opt.value = $(j).attr("id");
@@ -1459,7 +1447,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         try {
 
-            objPrincipalUpload = new infraUpload('frmDocumentoPrincipal', '<?=$strLinkUploadDocPrincipal?>', true);
+            objPrincipalUpload = new infraUpload('frmDocumentoPrincipal', '<?=$strLinkUploadDocPrincipal?>');
 
             objPrincipalUpload.finalizou = function (arr) {
 
@@ -1687,7 +1675,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 true);
 
             document.getElementById("fileArquivoEssencial").value = '';
-
+            $(document).find('#ifrProgressofrmDocumentosEssenciais').hide();
             limparCampoUpload('2');
 
             var table = document.getElementById("tbDocumentoEssencial");
@@ -1763,7 +1751,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     //campo de upload de documentos essenciais
     function carregarCamposDocComplementarUpload() {
 
-        objComplementarUpload = new infraUpload('frmDocumentosComplementares', '<?=$strLinkUploadDocComplementar?>', true);
+        objComplementarUpload = new infraUpload('frmDocumentosComplementares', '<?=$strLinkUploadDocComplementar?>');
 
         objComplementarUpload.finalizou = function (arr) {
 
@@ -1841,7 +1829,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 true);
 
             document.getElementById("fileArquivoComplementar").value = '';
-
+            $(document).find('#ifrProgressofrmDocumentosComplementares').hide();
             limparCampoUpload('3');
 
             var table = document.getElementById("tbDocumentoComplementar");
@@ -2438,6 +2426,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var self = $(this);
             var selectNivelAcesso = self.closest('form').find('select[id^="nivelAcesso"]');
             var selectHipoteseLegal = self.closest('form').find('select[id^="hipoteseLegal"]');
+            var inputComplemento = self.closest('form').find('input[id^="complemento"]');
 
             if(arrDocForcaNivelAcesso.indexOf(self.val()) !== -1){
 
@@ -2447,9 +2436,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 selectHipoteseLegal.val(hipotese).prop('disabled', true);
                 selectHipoteseLegal.closest('div').append('<input type="hidden" value="'+hipotese+'" id="'+selectHipoteseLegal.attr('id')+'" name="'+selectHipoteseLegal.attr('id')+'" tabindex="-1"/>');
 
-                self.closest('form').find('div[id^="divhipoteseLegal"]').show();
-                if(self.closest('form').find('input[id^="complemento"]').val() == '') {
-                    self.closest('form').find('input[id^="complemento"]').focus();
+                selectHipoteseLegal.closest('div.form-group').show();
+                if(inputComplemento.val() == '') {
+                    inputComplemento.focus();
                 }
 
             }else{
@@ -2460,9 +2449,14 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 selectHipoteseLegal.val('').prop('disabled', false);
                 selectHipoteseLegal.closest('div').find('input[id="'+selectHipoteseLegal.attr('id')+'"]').remove();
 
-                self.closest('form').find('div[id^="divhipoteseLegal"]').hide();
-                if(self.closest('form').find('input[id^="complemento"]').val() == ''){
-                    self.closest('form').find('input[id^="complemento"]').focus();
+                if(selectNivelAcesso.is(':disabled') === false){
+                    selectHipoteseLegal.closest('div.form-group').hide();
+                }else{
+                    selectHipoteseLegal.closest('div.form-group').show();
+                }
+                
+                if(inputComplemento.val() == ''){
+                    inputComplemento.focus();
                 }else{
                     selectNivelAcesso.focus();
                 }
@@ -2474,6 +2468,5 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     });
 
     <?php endif; ?>
-
 
 </script>

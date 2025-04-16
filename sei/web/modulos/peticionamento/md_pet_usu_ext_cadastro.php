@@ -5,12 +5,12 @@
  * 23/06/2016 - criado por marcelo.bezerra@cast.com.br - CAST
  *
  * ========================================================================================================
- * P·gina principal do cadastro de peticionamento, ela invoca p·ginas auxiliares (via require) contendo:
+ * P√°gina principal do cadastro de peticionamento, ela invoca p√°ginas auxiliares (via require) contendo:
  *
  *  - variaveis e consultas de inicializacao da pagina
- *  - switch case controlador de aÁıes principais da p·gina
- *  - funÁıes JavaScript
- *  - ·rea / bloco de documentos
+ *  - switch case controlador de a√ß√µes principais da p√°gina
+ *  - fun√ß√µes JavaScript
+ *  - √°rea / bloco de documentos
  * ===========================================================================================================
  */
 
@@ -40,78 +40,53 @@ try {
     //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
     //=====================================================
 
-    //inclusao de script com o controle das aÁıes principais da tela
+    //inclusao de script com o controle das a√ß√µes principais da tela
     require_once('md_pet_usu_ext_cadastro_acoes.php');
 
 } catch (Exception $e) {
     PaginaSEIExterna::getInstance()->processarExcecao($e);
 }
 
-$hashAnexo = "";
-$idAnexo = "";
+// Inicializando variaveis e controles de visibilidade dos combos de Orgao, UF e Cidade do formulario
 
-$oragao = '';
-$uf = '';
-$cidadeHidden = '';
+$hashAnexo = $idAnexo = $selectOrgaoDisabled = '';
+$selectOrgaoHidden = $selectUfHidden = $selectCidadeHidden = false;
 
-if (isset($_GET['id_orgao'])) {
-    $oragao = $_GET['id_orgao'];
-}
-if (isset($_GET['id_uf'])) {
-    $uf = $_GET['id_uf'];
-}
-if (isset($_GET['id_cidade'])) {
-    $cidadeHidden = $_GET['id_cidade'];
+$idOrgao            = isset($_GET['id_orgao']) ? $_GET['id_orgao'] : isset($_GET['id_orgao_acesso_externo']) ? $_GET['id_orgao_acesso_externo'] : null;
+$idUF               = isset($_GET['id_uf']) ? $_GET['id_uf'] : null;
+$idCidade           = isset($_GET['id_cidade']) ? $_GET['id_cidade'] : null;
+$idTipoProcedimento = isset($_GET['id_tipo_procedimento']) ? $_GET['id_tipo_procedimento'] : null;
+
+if (!empty($idCidade)) {
 
     $objCidadeDTO = new CidadeDTO();
-    $objCidadeDTO->setNumIdCidade($cidadeHidden);
+    $objCidadeDTO->setNumIdCidade($idCidade);
     $objCidadeDTO->retStrNome();
-    $objCidadeRN = new CidadeRN();
-    $objCidadeDTO = $objCidadeRN->consultarRN0409($objCidadeDTO);
-    $cidadeHidden = $objCidadeDTO->getStrNome();
+    $objCidadeDTO->retNumCodigoIbge();
+    $objCidadeDTO = (new CidadeRN())->consultarRN0409($objCidadeDTO);
+    
+    $nomeCidade = $objCidadeDTO->getStrNome();
+    
 }
 
+$selectOrgao    = MdPetTipoProcessoINT::montarSelectOrgaoTpProcesso($idTipoProcedimento, $idOrgao);
+$selectUf       = MdPetTipoProcessoINT::montarSelectUf($idTipoProcedimento, $idOrgao);
+$selectCidade   = MdPetTipoProcessoINT::montarSelectCidade($idTipoProcedimento, $idOrgao, $idUF);
 
-//combo disabled
-$disabled = '';
-//Option vazio
-//Recuperando Oragao
-
-$selectOrgao = MdPetTipoProcessoINT::montarSelectOrgaoTpProcesso($_GET['id_tipo_procedimento'], $oragao);
-if (($cidadeHidden != "" || $uf != "") || ($oragao != "" && count($selectOrgao[0]) > 1 && $cidadeHidden != "")) {
-    $selectCidade = MdPetTipoProcessoINT::montarSelectCidade($_GET['id_tipo_procedimento'], $oragao, $uf, $cidadeHidden);
+// Caso haja apenas um Orgao nao precisa mostrar a combo:
+if (count($selectOrgao[0]) == 1) {
+	$selectOrgaoDisabled    = 'disabled';
+	$selectOrgaoHidden      = true;
+    $idOrgaoUnico           = $selectOrgao[0][0];
+    $orgaoDuplo             = false;
 }
 
-if (count($selectOrgao[0]) < 2) {
-    $disabled = "disabled";
-    $unicoOrgao = $selectOrgao[0];
-    $orgaoDuplo = false;
-}
+// Caso o combo retorne somente uma opcao, esconder a combo:
+$selectUfHidden     = count($selectUf[0]) == 1 ? true : false;
+$selectCidadeHidden = (empty($idCidade) && empty($idUF)) ? true : false;
 
-if (($uf != "" && $orgaoDuplo == false) || ($oragao != "" && count($selectOrgao[0]) > 0)) {
-    $selectUf = MdPetTipoProcessoINT::montarSelectUf($_GET['id_tipo_procedimento'], $oragao, $uf, $cidadeHidden);
-} else {
-    $selectUf = MdPetTipoProcessoINT::montarSelectUf($_GET['id_tipo_procedimento']);
-}
-
-//Caso o usu·rio tenha selecionado na uf e retorne somente uma, esconder combo
-$qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
-$hiddUF = $qtdSelectUf == 1 ? "display:none" : "";
-
-if ($selectCidade == null) {
-    $selectCidade = MdPetTipoProcessoINT::montarSelectCidade($_GET['id_tipo_procedimento'], $oragao, $selectUf[0][0], $cidadeHidden);
-}
-
-//Caso retorne somente uma cidade, esconder combo
-$qtdSelectCidade = isset($selectCidade[0]) ? count($selectCidade[0]) : 0;
-$cidadeHidde = $qtdSelectCidade == 1 ? "display:none" : "";
-
-$objInfraParametroDTO = new InfraParametroDTO();
-$objMdPetParametroRN = new MdPetParametroRN();
-$objInfraParametroDTO->retTodos();
-$objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
-$objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
-$valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
+// Retorna opcao da Hipotese Legal
+$valorParametroHipoteseLegal = (new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_HABILITAR_HIPOTESE_LEGAL');
 
 PaginaSEIExterna::getInstance()->montarDocType();
 PaginaSEIExterna::getInstance()->abrirHtml();
@@ -128,12 +103,11 @@ PaginaSEIExterna::getInstance()->fecharJavaScript();
 require_once('md_pet_usu_ext_cadastro_css.php');
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
-?>
-<!--  tela ter· multiplos forms por conta dos uploads, logo nao far· sentido ter um form geral -->
-<?
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 ?>
+
+<!--  tela ter√° multiplos forms por conta dos uploads, logo nao far√° sentido ter um form geral -->
 <div class="infraAreaGlobal">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -146,117 +120,104 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="orientacoesTipoProcesso" class="infraFieldset sizeFieldset form-control">
-                <legend class="infraLegend">&nbsp; OrientaÁıes sobre o Tipo de Processo &nbsp;</legend>
-                <label>
-                    <?= $txtOrientacoes ?>
-                </label>
+                <legend class="infraLegend">&nbsp; Orienta√ß√µes sobre o Tipo de Processo &nbsp;</legend>
+                <label><?= $txtOrientacoes ?></label>
             </fieldset>
         </div>
     </div>
     <fieldset id="formularioPeticionamento" class="infraFieldset sizeFieldset form-control">
-        <legend class="infraLegend px-3">Formul·rio de Peticionamento</legend>
+        <legend class="infraLegend px-3">Formul√°rio de Peticionamento</legend>
         <div class="row">
             <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6">
                 <div class="form-group">
-                    <label class="infraLabelObrigatorio">EspecificaÁ„o (resumo limitado a 100 caracteres):</label>
+                    <label class="infraLabelObrigatorio">Especifica√ß√£o (resumo limitado a 100 caracteres):</label>
                     <input type="text" class="infraText form-control" name="txtEspecificacao" id="txtEspecificacao" maxlength="100"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" autofocus/>
                 </div>
             </div>
         </div>
 
-        <?php
-
-            if (count($selectOrgao[0]) < 2) {
-                $hiddenOrgao    = "display:none;";
-                $unicoOrgao     = $selectOrgao[0];
-                $orgaoDuplo     = false;
-            }
-            if (count($selectOrgao[0]) > 1 && $_GET['id_orgao'] == "") {
-                $cidadeHidde    = "display:none;";
-            }
-        ?>
-
         <!-- Settar unidade no lugar da idCidade -->
-        <!-- ValidaÁ„o para quando deve aparecer as 3 combos -->
+        <!-- Valida√ß√£o para quando deve aparecer as 3 combos -->
         <? if ($arrUnidadeUFDTO != null && count($arrUnidadeUFDTO) > 1): ?>
-            <!-- Org„o -->
-            <?php $display = ($hiddenOrgao == "display:none;") ? "float: inherit;" : "float: inherit; padding-right:10px;"; ?>
+            <!-- Org√£o -->
+            <?php $displayMode = $selectOrgaoHidden ? 'float: inherit;' : 'float: inherit; padding-right:10px;'; ?>
 
-            <div class="row" style="<?php echo $display ?>">
+            <div class="row" style="<?= $displayMode ?>">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="form-group">
-                        <label id="lblPublico" style="<?php echo $hiddenOrgao; ?>" class="infraLabelObrigatorio">
-                            ”rg„o:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente s„o listados os ”rg„os em que È possÌvel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo o ”rg„o no qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
+                        <label id="lblPublico" style="<?= $selectOrgaoHidden ? 'display:none' : '' ?>" class="infraLabelObrigatorio">
+                            √ìrg√£o:
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente s√£o listados os √ìrg√£os em que √© poss√≠vel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo o √ìrg√£o no qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label>
-                        <select onchange="pesquisarUF(this)" style="<?php echo $hiddenOrgao; ?>" id="selOrgao" name="selOrgao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
-                            <?php
-                                if (($orgaoDuplo && empty($oragao)) || ($orgaoDuplo == false && count($selectOrgao[0]) > 1)){
-                                    echo '<option value=""></option>';
-                                }
-
-                                $idOrgao    = $selectOrgao[0];
-                                $orgao      = $selectOrgao[1];
-
-                                for ($i = 0; $i < count($idOrgao); $i++) {
-                                    echo '<option value="' . $idOrgao[$i] . '">' . $orgao[$i] . '</option>';
-                                }
-                            ?>
+                        
+                        <select onchange="pesquisarUF(this)" style="<?= $selectOrgaoHidden ? 'display:none' : '' ?>" id="selOrgao" name="selOrgao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+					        <?php
+              
+						        if (($orgaoDuplo && empty($idOrgao)) || (!$orgaoDuplo && count($selectOrgao[0]) > 1)){
+							        echo '<option value=""></option>';
+						        }
+						
+						        $orgaoId    = $selectOrgao[0];
+						        $orgaoNome  = $selectOrgao[1];
+						
+						        for ($i = 0; $i < count($orgaoId); $i++) {
+							        $selectedOrgao = !empty($idOrgao) && $orgaoId[$i] == $idOrgao ? 'selected="selected"' : '';
+							        echo '<option value="' . $orgaoId[$i] . '" ' . $selectedOrgao . '>' . $orgaoNome[$i] . '</option>';
+						        }
+						        
+					        ?>
                         </select>
                     </div>
                 </div>
             </div>
+            
             <div class="row">
-                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2" style="<?php echo $hiddUF; ?>" id="ufHidden">
-                    <!-- UF -->
+                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2" style="<?= $selectUfHidden ? 'display:none' : '' ?>" id="ufHidden">
                     <div class="form-group">
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             UF:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente s„o listadas as UFs em que È possÌvel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente s√£o listadas as UFs em que √© poss√≠vel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
 
                         <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
                             <? if(count($selectUf[0]) == 1): ?>
-                                <option value="<?= $selectUf[0][0]; ?>"><?= $selectUf[1][0]; ?></option>
+                                <option value="<?= $selectUf[0][0] ?>" selected="selected"><?= $selectUf[1][0] ?></option>
                             <? elseif(count($selectUf[0]) > 1): ?>
                                 <option value=""></option>
-	                            <? for($i = 0; $i < $qtdSelectUf; $i++): ?>
-                                    <option value="<?= $selectUf[0][$i]; ?>"><?= $selectUf[1][$i]; ?></option>
+	                            <? for($i = 0; $i < count($selectUf[0]); $i++): ?>
+		                            <? $selectedUF = !empty($idUF) && $selectUf[0][$i] == $idUF ? 'selected="selected"' : '' ?>
+                                    <option value="<?= $selectUf[0][$i] ?>" <?= $selectedUF ?>><?= $selectUf[1][$i] ?></option>
 	                            <? endfor; ?>
                             <? endif; ?>
                         </select>
                     </div>
                 </div>
 
-                <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4" style="<?php echo $cidadeHidde; ?>" id="cidadeHidden">
+                <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4" style="<?= $selectCidadeHidden ? 'display:none' : '' ?>" id="cidadeHidden">
                     <div class="form-group">
-                        <!-- Cidade -->
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             Cidade:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente s„o listadas as Cidades em que È possÌvel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a Cidade na qual deseja que este Processo seja aberto.", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente s√£o listadas as Cidades em que √© poss√≠vel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a Cidade na qual deseja que este Processo seja aberto.", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
+                        
                         <select onchange="pesquisarFinal(this)" id="selUFAberturaProcesso" name="selUFAberturaProcesso" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
-                            <?php
-                                $qtdSelectCidade = isset($selectCidade[0]) ? count($selectCidade[0]) : 0;
-                                if ($qtdSelectCidade > 1) {
-                                    echo '<option value=""></option>';
-                                }
-
-                                $unidade    = $selectCidade[0];
-                                $cidade     = $selectCidade[1];
-
-                                for ($i = 0; $i < $qtdSelectCidade; $i++) {
-                                    echo '<option value="' . $unidade[$i] . '">' . $cidade[$i] . '</option>';
-                                }
-                            ?>
+	                        <? if(count($selectCidade[0]) == 1): ?>
+                                <option value="<?= $selectCidade[0][0] ?>" selected="selected"><?= $selectCidade[1][0] ?></option>
+	                        <? elseif(count($selectCidade[0]) > 1): ?>
+                                <option value=""></option>
+		                        <? for($i = 0; $i < count($selectCidade[0]); $i++): ?>
+                                    <? $selectedCidade = !empty($nomeCidade) && $selectCidade[1][$i] == $nomeCidade ? 'selected="selected"' : ''; ?>
+                                    <option value="<?= $selectCidade[0][$i] ?>" <?= $selectedCidade ?>><?= $selectCidade[1][$i] ?></option>
+		                        <? endfor; ?>
+	                        <? endif; ?>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <input type="hidden" name="hdnIdUfTelaAnterior" id="hdnIdUfTelaAnterior" value="<?php echo $_GET['id_uf'] ?>" tabindex="-1"/>
-            <input type="hidden" name="hdnIdCidadeTelaAnterior" id="hdnIdCidadeTelaAnterior" value="<?php echo $cidadeHidden; ?>" tabindex="-1"/>
-            <input type="hidden" name="hdnIdOrgaoTelaAnterior" id="hdnIdOrgaoTelaAnterior" value="<?php echo $_GET['id_orgao'] ?>" tabindex="-1"/>
+            <input type="hidden" name="hdnIdUfTelaAnterior" id="hdnIdUfTelaAnterior" value="<?= $idUF ?>" tabindex="-1"/>
+            <input type="hidden" name="hdnIdCidadeTelaAnterior" id="hdnIdCidadeTelaAnterior" value="<?= $idCidade ?>" tabindex="-1"/>
+            <input type="hidden" name="hdnIdOrgaoTelaAnterior" id="hdnIdOrgaoTelaAnterior" value="<?= $idOrgao ?>" tabindex="-1"/>
             <input type="hidden" name="hdnIdUfUnico" id="hdnIdUfUnico" value="" tabindex="-1"/>
 
         <? endif ?>
@@ -287,11 +248,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
                         <div class="form-check form-check-inline">
                             <input class="form-check-input infraRadio" style="position: absolute" type="radio" name="tipoPessoa" id="optTipoPessoaFisica" onclick="selecionarPF()" value="pf" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                            <label class="form-check-label" for="optTipoPessoaFisica">Pessoa FÌsica</label>
+                            <label class="form-check-label" for="optTipoPessoaFisica">Pessoa F√≠sica</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input infraRadio" style="position: absolute" type="radio" name="tipoPessoa" id="optTipoPessoaJuridica" onclick="selecionarPJ()" value="pj">
-                            <label class="form-check-label" for="optTipoPessoaJuridica">Pessoa JurÌdica</label>
+                            <label class="form-check-label" for="optTipoPessoaJuridica">Pessoa Jur√≠dica</label>
                         </div>
                     </div>
 
@@ -324,8 +285,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                                         <th class="infraTh" style="display: none;"> ID Contato</th>
                                         <th class="infraTh" width="15%" id="tdDescTipoPessoaSelecao"> Natureza</th>
                                         <th class="infraTh" width="15%" id="tdDescTipoPessoa"> CPF/CNPJ</th>
-                                        <th class="infraTh" id="tdDescNomePessoa"> Nome/Raz„o Social</th>
-                                        <th align="center" class="infraTh" style="width:100px;"> AÁıes</th>
+                                        <th class="infraTh" id="tdDescNomePessoa"> Nome/Raz√£o Social</th>
+                                        <th align="center" class="infraTh" style="width:100px;"> A√ß√µes</th>
                                     </tr>
                                     <tbody></tbody>
                                 </table>
@@ -349,7 +310,6 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     $strLinkInteressadosSelecao = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_processo_peticionamento=' . $objTipoProcDTO->getNumIdTipoProcessoPeticionamento() . '&acao=md_pet_contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
 
                 ?>
-
                     <!--  CASO 3 -->
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-lx-12" id="divSel0">
@@ -405,19 +365,18 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <input type="hidden" id="hdnInteressados" name="hdnInteressados" value="<?= $_POST['hdnInteressados'] ?>"/>
     <input type="hidden" id="hdnIdInteressado" name="hdnIdInteressado" class="infraText" value=""/>
 
-    <input type="hidden" id="hdnArquivosPermitidos" name="hdnArquivosPermitidos"
-           value='<?php echo isset($jsonExtPermitidas) && (!is_null($jsonExtPermitidas)) ? $jsonExtPermitidas : '' ?>'/>
+    <input type="hidden" id="hdnArquivosPermitidos" name="hdnArquivosPermitidos" value='<?= isset($jsonExtPermitidas) && (!is_null($jsonExtPermitidas)) ? $jsonExtPermitidas : '' ?>'/>
     <input type="hidden" id="hdnArquivosPermitidosEssencialComplementar"
            name="hdnArquivosPermitidosEssencialComplementar"
-           value='<?php echo isset($jsonExtEssencialComplementarPermitidas) && (!is_null($jsonExtEssencialComplementarPermitidas)) ? $jsonExtEssencialComplementarPermitidas : '' ?>'/>
+           value='<?= isset($jsonExtEssencialComplementarPermitidas) && (!is_null($jsonExtEssencialComplementarPermitidas)) ? $jsonExtEssencialComplementarPermitidas : '' ?>'/>
 
     <input type="hidden" id="hdnAnexos" name="hdnAnexos" value="<?= $_POST['hdnAnexos'] ?>"/>
     <input type="hidden" id="hdnAnexosInicial" name="hdnAnexosInicial" value="<?= $_POST['hdnAnexosInicial'] ?>"/>
 
     <input type="hidden" id="hdnNomeArquivoDownload" name="hdnNomeArquivoDownload" value=""/>
     <input type="hidden" id="hdnNomeArquivoDownloadReal" name="hdnNomeArquivoDownloadReal" value=""/>
-    <input type="hidden" id="hdnIdOrgaoDisabled" name="hdnIdOrgaoDisabled" value="<?php echo $disabled ?>"/>
-    <input type="hidden" id="hdnIdOrgaoUnico" name="hdnIdOrgaoUnico" value="<?php echo $unicoOrgao[0] ?>"/>
+    <input type="hidden" id="hdnIdOrgaoDisabled" name="hdnIdOrgaoDisabled" value="<?= $selectOrgaoDisabled ?>"/>
+    <input type="hidden" id="hdnIdOrgaoUnico" name="hdnIdOrgaoUnico" value="<?= $idOrgaoUnico ?>"/>
 </div>
 <?
 PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);
@@ -433,5 +392,5 @@ require_once('md_pet_usu_ext_cadastro_js.php');
 <input type="hidden" id="hdnIdOrgao" name="hdnIdOrgao" value=""/>
 <input type="hidden" id="hdnIdUf" name="hdnIdUf" value=""/>
 <input type="hidden" id="hdnIdCidade" name="hdnIdCidade" value=""/>
-<input type="hidden" id="hdnTpProcesso" name="hdnTpProcesso" value="<?php echo $_GET['id_tipo_procedimento'] ?>"/>
-<input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?php echo $_GET['id_tipo_procedimento'] ?>"/>
+<input type="hidden" id="hdnTpProcesso" name="hdnTpProcesso" value="<?= $idTipoProcedimento ?>"/>
+<input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $idTipoProcedimento ?>"/>

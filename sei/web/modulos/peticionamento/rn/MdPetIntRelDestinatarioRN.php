@@ -356,7 +356,8 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
     }
 
     protected function listarDadosUsuInternoConectado($idProcedimento)
-    {  
+    {
+	    
         //Busca os dados gerais
         $objMdPetRelDestDTO = new MdPetIntRelDestinatarioDTO();
 
@@ -987,8 +988,11 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
 
                         // Verifica se o destinatário cumpriu a intimação
                         $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+	                    $objMdPetIntAceiteDTO->retNumIdMdPetIntAceite();
                         $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($destinatario->getNumIdMdPetIntRelDestinatario());
-                        $objMdPetIntAceiteDTO->retNumIdMdPetIntAceite();
+	                    $objMdPetIntAceiteDTO->setNumIdMdPetIntimacao($intimacao->getNumIdMdPetIntimacao());
+	                    $objMdPetIntAceiteDTO->setOrdDthData(InfraDTO::$TIPO_ORDENACAO_ASC);
+	                    $objMdPetIntAceiteDTO->setNumMaxRegistrosRetorno(1);
                         $aceite = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
 
                         // Verifica os usuários que têm poderes para cumprir:

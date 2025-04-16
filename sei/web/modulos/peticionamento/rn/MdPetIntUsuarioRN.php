@@ -25,20 +25,26 @@ class MdPetIntUsuarioRN extends InfraRN {
 
     protected function realizarInsercoesUsuarioModuloPetConectado()
     {
-        $objMdPetIntContatoRN = new MdPetContatoRN();
-        $objContatoDTO = $objMdPetIntContatoRN->inserirContatoModuloPet();
-        
-        if(!is_null($objContatoDTO)){
-          $objUsuarioDTO = $this->_inserirUsuarioModuloPeticionamento($objContatoDTO);
-        }
-
-        if(!is_null($objUsuarioDTO)){
-           $objInfraParametroDTO = $this->_inserirNovoUsuarioInfraParametro($objUsuarioDTO);
-        }
-
-        if(!is_null($objInfraParametroDTO)){
-            return true;
-        }
+	
+	    $retorno = false;
+	
+	    $objContatoDTO = (new MdPetContatoRN())->inserirContatoModuloPet();
+	
+	    if(!is_null($objContatoDTO)){
+		    $objUsuarioDTO = $this->_inserirUsuarioModuloPeticionamento($objContatoDTO);
+		    if(!is_null($objUsuarioDTO)){
+			    $objInfraParametroDTO = $this->_inserirNovoUsuarioInfraParametro($objUsuarioDTO);
+			    if(!is_null($objInfraParametroDTO)){
+				    $retorno = true;
+			    }
+		    }
+	    }
+	
+	    if(!$retorno){
+		    throw new InfraException('NÃO FOI POSSÍVEL INSERIR O USUÁRIO DO MÓDULO PETICIONAMENTO.');
+	    }
+	
+	    return true;
 
     }
 
@@ -75,7 +81,6 @@ class MdPetIntUsuarioRN extends InfraRN {
             $objUsuarioDTO->setStrIdxUsuario($idxUsuario);
             $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_SISTEMA);
             $objUsuarioDTO->setStrSenha(null);
-            $objUsuarioDTO->setStrSinAcessibilidade(MdPetIntUsuarioRN::$NAO);
             $objUsuarioDTO->setStrSinAtivo(MdPetIntUsuarioRN::$SIM);
 
             $objUsuarioDTO = $objUsuarioRN->cadastrarRN0487($objUsuarioDTO);
@@ -100,7 +105,6 @@ class MdPetIntUsuarioRN extends InfraRN {
                 $objOrgaoDTO = new OrgaoDTO();
                 $objOrgaoDTO->setStrSigla($sigla);
                 $objOrgaoDTO->retNumIdOrgao();
-
                 $objOrgaoDTO = $objOrgaoRN->consultarRN1352($objOrgaoDTO);
 
                 if($objOrgaoDTO){

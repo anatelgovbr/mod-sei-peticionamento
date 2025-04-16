@@ -77,3 +77,4 @@
 .btnExcluirDocumento{display: block; position: relative; left:  -30px; top: 26px;}
 
 .infraFieldset { padding: 15px; }
+

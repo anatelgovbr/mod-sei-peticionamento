@@ -98,8 +98,8 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 		            $arrObjMdPetRelVincRepTpPoderDTO = (new MdPetRelVincRepTpPoderRN())->listar($objMdPetRelVincRepTpPoderDTO);
 		            $arrIdTipoPoderLegalSimplesExistente = InfraArray::converterArrInfraDTO($arrObjMdPetRelVincRepTpPoderDTO, 'IdTipoPoderLegal');
 		            
-					$possuiProcessoComum = array_intersect($abrangenciaNova, $arrIdProtocoloSimplesExistente);
-		            $possuiPoderComum = array_intersect($poderesNova, $arrIdTipoPoderLegalSimplesExistente);
+					$possuiProcessoComum = array_intersect((array) $abrangenciaNova, (array) $arrIdProtocoloSimplesExistente);
+		            $possuiPoderComum = array_intersect((array) $poderesNova, (array) $arrIdTipoPoderLegalSimplesExistente);
 		
 		            if( $abrangenciaSimplesExistente == 'E' && $abrangenciaSimplesNova == 'E' && !empty($possuiProcessoComum) && !empty($possuiPoderComum) ){
 			            $gerarProcuracao = false;
@@ -127,8 +127,8 @@ class MdPetVincUsuarioExternoINT extends InfraINT
             if( !empty($arrIdMdPetVinculoRepresentSimplesFinal) ){
 	
 	            $conflitoRepresentacao  = implode('-', $arrIdMdPetVinculoRepresentSimplesFinal);
-	            $conflitoPoderes    = implode('-', $arrPoderesConflitantesFinal);
-	            $conflitoProcessos  = implode('-', $arrProcessosConflitantesFinal);
+	            $conflitoPoderes        = implode('-', $arrPoderesConflitantesFinal);
+	            $conflitoProcessos      = implode('-', $arrProcessosConflitantesFinal);
 	            
 	            $msg_conflito = $conflito_processos_poderes ? 'processos_e_poderes' : 'poderes';
 	            

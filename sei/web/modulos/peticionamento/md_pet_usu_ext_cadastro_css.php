@@ -47,10 +47,8 @@
     fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
         margin-left: 0em;
     }
-    #ifrProgressofrmDocumentosComplementares {
+    #ifrProgressofrmDocumentoPrincipal, #ifrProgressofrmDocumentosEssenciais, #ifrProgressofrmDocumentosComplementares {
         max-width: 100%;
     }
-    #ifrProgressofrmDocumentoPrincipal {
-        max-width: 100%;
-    }
+    
 </style>

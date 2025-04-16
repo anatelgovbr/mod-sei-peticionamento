@@ -10,8 +10,8 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 texto">
             <label class="d-block my-3">
                 Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre
-                os dados informados e os documentos. Os NÌveis de Acesso que forem indicados abaixo estar„o condicionados ‡
-                an·lise por servidor p˙blico, que poder· alter·-los a qualquer momento sem necessidade de prÈvio aviso.
+                os dados informados e os documentos. Os N√≠veis de Acesso que forem indicados abaixo estar√£o condicionados √†
+                an√°lise por servidor p√∫blico, que poder√° alter√°-los a qualquer momento sem necessidade de pr√©vio aviso.
             </label>
         </div>
     </div>
@@ -20,7 +20,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             <div class="form-group mb-4">
                 <div class="input-group">
                     <label class="infraLabelObrigatorio d-block" for="fileArquivo">
-                        Documento (tamanho m·ximo: <?= is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):
+                        Documento (tamanho m√°ximo: <?= is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):
                     </label><br/>
                     <input type="file" name="fileArquivo" class="form-control-file" id="fileArquivo" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
                 </div>
@@ -55,7 +55,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
     <div class="row">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
             <div class="form-group">
-                <label class="infraLabelObrigatorio" for="selNivelAcesso">NÌvel de Acesso: <img
+                <label class="infraLabelObrigatorio" for="selNivelAcesso">N√≠vel de Acesso: <img
                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                             name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?>
                             alt="Ajuda"
@@ -79,7 +79,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         <?php if ($exibirHipoteseLegal): ?>
         <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9" id="divBlcHipoteseLegal" <?= !isset($arrHipoteseNivel['hipoteseLegal']) ? 'style="display: none;"' : '' ?>>
             <div class="form-group">
-                <label class="infraLabelObrigatorio" for="selHipoteseLegal">HipÛtese Legal: <img
+                <label class="infraLabelObrigatorio" for="selHipoteseLegal">Hip√≥tese Legal: <img
                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                             name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal, 'Ajuda') ?>
                             alt="Ajuda"
@@ -90,7 +90,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                     </select>
                 <?php else: ?>
                     <label class="infraLabelRadio" id="selHipoteseLegal">
-                        <?= utf8_decode($arrHipoteseNivel['hipoteseLegal']['descricao']) ?>
+                        <?= $arrHipoteseNivel['hipoteseLegal']['descricao'] ?>
                     </label>
                 <?php endif; ?>
                 <input type="hidden" name="hdnHipoteseLegal" id="hdnHipoteseLegal"
@@ -122,7 +122,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
             <div class="form-group">
                 <div id="divTipoConferencia" style="display: none;">
-                    <label class="infraLabelObrigatorio" for="selTipoConferencia">ConferÍncia com o documento digitalizado:</label><br/>
+                    <label class="infraLabelObrigatorio" for="selTipoConferencia">Confer√™ncia com o documento digitalizado:</label><br/>
                     <div class="input-group">
                         <select id="selTipoConferencia" name="selTipoConferencia" class="infraSelect form-control mr-1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                             <?= $strSelectTipoConferencia ?>
@@ -162,9 +162,9 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                         <th class="infraTh" align="center" width="15%">Data</th> <!--10-->
                         <th class="infraTh" align="center" width="10%">Tamanho</th> <!--11-->
                         <th class="infraTh" align="center" width="25%">Documento</th> <!--12-->
-                        <th class="infraTh" align="center" width="10%">NÌvel de Acesso</th> <!--13-->
+                        <th class="infraTh" align="center" width="10%">N√≠vel de Acesso</th> <!--13-->
                         <th class="infraTh" align="center" width="10%">Formato</th> <!--14-->
-                        <th class="infraTh" align="center" width="5%">AÁıes</th> <!--15-->
+                        <th class="infraTh" align="center" width="5%">A√ß√µes</th> <!--15-->
                     </tr>
                 </table>
             </div>

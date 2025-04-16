@@ -39,8 +39,8 @@ switch ($_GET['acao']) {
       $stAlterar = true;
       $strTipo = 'Alteração';
     }
-	
-	$idMdPetVinculo     = $_GET['id_vinculo'];
+
+    $idMdPetVinculo     = $_GET['id_vinculo'];
 	$idRepresentante    = $_GET['id_representante'];
 	$staEstado          = $_GET['estado'];
 	
@@ -63,8 +63,8 @@ switch ($_GET['acao']) {
 	$objMdPetVinculoDTO->setDistinct(true);
 	$objMdPetVinculoDTO->setNumMaxRegistrosRetorno(1);
 	$arrDadosPessoaJuridicaVinculo = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
-
-    $numIdUsuarioLogado = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+	
+	$numIdUsuarioLogado = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
     $usuarioRN = new UsuarioRN();
     $usuarioDTO = new UsuarioDTO();
     $usuarioDTO->retNumIdContato();

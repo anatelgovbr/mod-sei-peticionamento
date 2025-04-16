@@ -299,3 +299,4 @@ class MdPetInfraReciboPDF extends InfraPDF {
 	}
 
 }
+?>

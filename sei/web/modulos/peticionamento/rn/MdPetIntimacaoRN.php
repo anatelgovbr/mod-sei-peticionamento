@@ -1911,7 +1911,7 @@ class MdPetIntimacaoRN extends InfraRN
             $ids [] = $value[0];
         }
 
-        return $msg = '<message>'.(new MdPetIntimacaoRN())->_verificarDocumentosDuplicados($_POST['hdnIdDocumento'], $arrIdsDocAnexo, $ids, $_POST['hdnIdProcedimento']).'</message>';
+        return $msg = '<message>'.(new MdPetIntimacaoRN())->_verificarDocumentosDuplicados($_POST['hdnIdDocumento'], $arrIdsDocAnexo, $ids, $_POST['hdnIdProcedimento'], $_POST['tipoPessoa']).'</message>';
 
     }
 

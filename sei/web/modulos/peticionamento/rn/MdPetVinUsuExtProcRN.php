@@ -61,57 +61,60 @@ class MdPetVinUsuExtProcRN extends InfraRN
     
     public function gerarProcedimentoVinculoProcuracaoInterno($dados)
     {
+    	
         $existeProc = false;
 
         try {
-            if ($dados['hdnOutorgante'] != "") {
-                $outorgant = $dados['hdnOutorgante'];
-            }
-
-            $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
-            $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
-            $objMdPetVincTpProcessoDTO->retTodos();
-            if ($dados['hdnOutorgante'] == "PJ" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
-            } else if ($dados['hdnOutorgante'] == "PF" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                $objMdPetVincTpProcessoDTO->setStrTipoVinculo('F');
-            } else if ($dados['selTipoProcuracao'] == "E") {
-                $objMdPetVincTpProcessoDTO->setStrTipoVinculo('J');
-            }
-
-            $arrObjMdPetVincTpProcesso = $objMdPetVincTpProcessoRN->consultar($objMdPetVincTpProcessoDTO);
-
-            if (is_null($arrObjMdPetVincTpProcesso)) {
-                throw new InfraException('Vinculação não configurada');
-            }
-
-            //Recuperando Vinculo já existente
-            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-            $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
-            if ($dados['hdnOutorgante'] == "PJ" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnSelPJSimples']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
-            } else if ($dados['hdnOutorgante'] == "PF" && $dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['idContatoExterno']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_FISICA);
-            }
-            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-            $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
-            $arrProcessos = InfraArray::converterArrInfraDTO($arrObjMdPetVincRepresentantDTO, 'IdProcedimentoVinculo');
-
+        	
+	        $idContatoVinc  = $dados['hdnOutorgante'] == "PJ" ? $dados['idContato'] : $dados['idContatoExterno'];
+	        $strTpVinc      = $dados['hdnOutorgante'] == "PJ" ? MdPetVincRepresentantRN::$NT_JURIDICA : MdPetVincRepresentantRN::$NT_FISICA;
+	
+	        $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
+	        $objMdPetVincTpProcessoDTO->retTodos();
+	        $objMdPetVincTpProcessoDTO->setStrTipoVinculo($strTpVinc);
+	        $arrObjMdPetVincTpProcesso = (new MdPetVincTpProcessoRN())->consultar($objMdPetVincTpProcessoDTO);
+	
+	        if (is_null($arrObjMdPetVincTpProcesso)) {
+		        throw new InfraException('Vinculação não configurada');
+	        }
+	        
+	        /*
+	         * Todo: Remover após testes
+	         */
+//          $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+//          $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+//	        $objMdPetVincRepresentantDTO->setNumIdContatoVinc($idContatoVinc);
+//	        $objMdPetVincRepresentantDTO->setStrTpVinc($strTpVinc);
+//	        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+//          $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
+	
+	        //Recuperando Vinculo já existente
+            $objMdPetVinculoDTO = new MdPetVinculoDTO();
+            $objMdPetVinculoDTO->retNumIdMdPetVinculoRepresent();
+	        $objMdPetVinculoDTO->setNumIdContato($idContatoVinc);
+	        $objMdPetVinculoDTO->setStrTpVinculo($strTpVinc);
+	        $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+	        $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
+	        
+            $arrProcessos = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoDTO, 'IdMdPetVinculoRepresent');
+	        
             if (count(array_unique($arrProcessos))) {
+            	
                 $objProtocoloDTO = new ProtocoloDTO();
                 $objProtocoloDTO->setDblIdProtocolo($arrProcessos[0]);
                 $objProtocoloDTO->retNumIdUnidadeGeradora();
-                $objProtocoloRN = new ProtocoloRN();
-                $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
+                $objUnidadeGeradora = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
+                
                 if (!empty($objUnidadeGeradora) && $objUnidadeGeradora->getNumIdUnidadeGeradora() == $arrObjMdPetVincTpProcesso->getNumIdUnidade()) {
                     $idTipoUnidadeAberturaProcesso = $objUnidadeGeradora->getNumIdUnidadeGeradora();
                 } else {
                     $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
                 }
+                
             } else {
+            	
                 $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();
+                
             }
 
             $idTipoProcesso = $arrObjMdPetVincTpProcesso->getNumIdTipoProcedimento(); // Obtendo tipo do processo
@@ -798,19 +801,12 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 throw new InfraException('Vinculação não configurada');
             }
 
-            //obtendo a unidade de abertura do processo
-            //Recuperando Vinculo já existente
+            //Recuperando Vinculo já existente para obter a unidade de abertura
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
-            if ($dados['tpVinc'] == "J" && $dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnIdContatoVinc']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
-            } else if ($dados['tpVinc'] == "F" && $dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnIdContatoVinc']);
-                $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_FISICA);
-            }
-            $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-            $objMdPetVincRepresentantRN = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+	        $objMdPetVincRepresentantDTO->setNumIdContatoVinc($dados['hdnIdContatoVinc']);
+	        $objMdPetVincRepresentantDTO->setStrTpVinc($dados['tpVinc']);
+            $objMdPetVincRepresentantRN = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
             $arrProcessos = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantRN, 'IdProcedimentoVinculo');
 
             $idTipoUnidadeAberturaProcesso = $arrObjMdPetVincTpProcesso->getNumIdUnidade();

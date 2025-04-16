@@ -21,4 +21,5 @@
     .infraImgModulo{width: 20px; height: 20px}
     .pesquisaTipoNovo{margin-top: 7px}
     #lblUF{border: none; margin-bottom: 0px;}
+    
 </style>

@@ -221,9 +221,7 @@ class MdPetVinculoINT extends InfraINT {
       return $xml;
 
     }
-	
-	
-	
+
 	public static function validarExistenciaVinculoCnpjOutroUsuarioMesmoCPF($dados){
   	
   	    $dtoMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();

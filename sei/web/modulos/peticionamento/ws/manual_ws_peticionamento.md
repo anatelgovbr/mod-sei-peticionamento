@@ -9,15 +9,15 @@
 | Os métodos abaixo documentados somente funcionarão se o Serviço correspondente do Sistema indicado possuir pelo menos a operação "Listar Constatos" no menu Administração > Sistemas. |
 
 # Sumário das Operações Disponíveis
-- **[Consultar Usuário Externo](#1-consultar-usuário-externo)**: Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
-- **Listar Poderes Legais**: Lista os tipos de poderes legais que podem ser utilizados na emissão de Procurações Eletrônicas Simples geradas no SEI.
-- **Listar Representação de Pessoa Física**: Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
-- **Listar Representação de Pessoa Jurídica**: Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
-- **Listar Representados**: Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
-- **Listar Representantes**: Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
-- **Listar Situações de Representação**: Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
-- **Listar Tipos de Representação**: Lista os tipos de representação que existem sobre as representações geradas no SEI (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação).
-- **Listar Usuários Externos**: Lista todos os Usuários Externos cadastrados no SEI.
+1. **[Consultar Usuário Externo](#1-consultar-usuário-externo)**: Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
+2. **[Listar Poderes Legais](#2-listar-poderes-legais)**: Lista os tipos de poderes legais que podem ser utilizados na emissão de Procurações Eletrônicas Simples geradas no SEI.
+3. **[Listar Representação de Pessoa Física](#3-listar-representação-de-pessoa-física)**: Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
+4. **[Listar Representação de Pessoa Jurídica](#4-listar-representação-de-pessoa-jurídica)**: Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
+5. **[Listar Representados](#5-listar-representados)**: Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
+6. **[Listar Representantes](#6-listar-representantes)**: Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
+7. **[Listar Situações de Representação](#7-listar-situações-de-representação)**: Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
+8. **[Listar Tipos de Representação](#8-listar-tipos-de-representação)**: Lista os tipos de representação que existem sobre as representações geradas no SEI (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação).
+9. **[Listar Usuários Externos](#9-listar-usuários-externos)**: Lista todos os Usuários Externos cadastrados no SEI.
 
 ## 1. Consultar Usuário Externo
 Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.

@@ -8,8 +8,19 @@
 | ---- |
 | Os métodos abaixo documentados somente funcionarão se o Serviço correspondente do Sistema indicado possuir pelo menos a operação "Listar Constatos" no menu Administração > Sistemas. |
 
-## 1. Consultar Usuário Externo
+# Sumário das Operações Disponíveis
+- **[Consultar Usuário Externo](#1-consultar-usuário-externo)**: Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
+- **Listar Poderes Legais**: Lista os tipos de poderes legais que podem ser utilizados na emissão de Procurações Eletrônicas Simples geradas no SEI.
+- **Listar Representação de Pessoa Física**: Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
+- **Listar Representação de Pessoa Jurídica**: Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
+- **Listar Representados**: Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
+- **Listar Representantes**: Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
+- **Listar Situações de Representação**: Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
+- **Listar Tipos de Representação**: Lista os tipos de representação que existem sobre as representações geradas no SEI (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação).
+- **Listar Usuários Externos**: Lista todos os Usuários Externos cadastrados no SEI.
 
+## 1. Consultar Usuário Externo
+Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
 ### Método “consultarUsuarioExterno”:
 
 | Parâmetros de Entrada |  |
@@ -56,7 +67,7 @@
 | LiberacaoCadastro | Estado da aprovação do cadastro do Usuário Externo (L=Liberado e P=Pendente). |
 
 ## 2. Listar Poderes Legais
-
+Lista os tipos de poderes legais que podem ser utilizados na emissão de Procurações Eletrônicas Simples geradas no SEI.
 ### Método “listarPoderesLegais”:
 
 | Parâmetros de Entrada |  |
@@ -69,7 +80,7 @@
 | PoderesLegais | Uma lista de ocorrências da estrutura [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 3. Listar Representação de Pessoa Física
-
+Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
 ### Método “listarRepresentacaoPessoaFisica”:
 
 | Parâmetros de Entrada |  |
@@ -103,7 +114,7 @@
 | TipoPoderesLegais |  Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 4. Listar Representação de Pessoa Jurídica
-
+Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
 ### Método “listarRepresentacaoPessoaJuridica”:
 
 | Parâmetros de Entrada |  |
@@ -136,7 +147,7 @@
 | TipoPoderesLegais | Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 5. Listar Representados
-
+Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
 ### Método “listarRepresentados”:
 
 | Parâmetros de Entrada |  |
@@ -177,7 +188,7 @@
 | TipoPoderesLegais | Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 6. Listar Representantes
-
+Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
 ### Método “listarRepresentantes”:
 
 | Parâmetros de Entrada |  |
@@ -208,7 +219,7 @@
 | TipoPoderesLegais | Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 7. Listar Situações de Representação
-
+Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
 ### Método “listarSituacoesRepresentacao”:
 
 | Parâmetros de Entrada |  |
@@ -228,7 +239,7 @@
 | Nome | Nome do Estado da Representação. |
 
 ## 8. Listar Tipos de Representação
-
+Lista os tipos de representação que existem sobre as representações geradas no SEI (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação).
 ### Método “listarTiposRepresentacao”:
 
 | Parâmetros de Entrada |  |
@@ -248,7 +259,7 @@
 | StrTipoRepresentacao | Identificador do Tipo de Representação (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação). |
 
 ## 9. Listar Usuários Externos
-
+Lista todos os Usuários Externos cadastrados no SEI.
 ### Método “listarUsuariosExternos”:
 
 | Parâmetros de Entrada |  |

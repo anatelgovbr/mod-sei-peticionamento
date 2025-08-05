@@ -1690,8 +1690,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             if ($objReciboPetDTO) {
                 $numRecibo = $objReciboPetDTO->getStrNumeroProcessoFormatadoDoc();
             }
-
-            $msg = 'Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI nº ' . $numRecibo . '.';
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI nº $numRecibo .";
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -1709,6 +1709,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         if ($total > 0) {
 
             $msg = 'Não é permitido cancelar este documento, pois ele faz parte de Intimação Eletrônica.';
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -1720,6 +1722,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         // condição para saber  o documento está sendo utilizado em um indisponibilidade
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
             return null;
@@ -1749,8 +1753,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $totalDocDisponivel = $rnDocDisponivel->contar($dtoDocDisponivel);
 
         if ($total > 0 || $totalDocDisponivel > 0) {
-
             $msg = 'Não é permitido mover este documento, pois ele faz parte de Intimação Eletrônica.';
+            
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -3185,8 +3191,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $docTipoIntegral = $objMdPetRegrasGeraisRN->verificarDocumentoTipoIntegral($idAcessoExt);
 
                     if (!$docTipoIntegral) {
+                        $strNomeModulo = $this->getNome();
                         $objInfraException = new InfraException();
-                        $objInfraException->adicionarValidacao('Não é permitido cancelar a disponibilização para esse usuário, pois existem vinculos no módulo Peticionamento e Intimação Eletrônicos.');
+                        $objInfraException->adicionarValidacao("$strNomeModulo: Não é permitido cancelar a disponibilização para esse usuário, pois existem vinculos no módulo Peticionamento e Intimação Eletrônicos.");
                         $objInfraException->lancarValidacoes();
                         return null;
                     } else {
@@ -3236,7 +3243,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         if ($isRespIntPeriodo) {
             $msg = 'Não é permitido anexar este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
-
+            
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -3259,7 +3268,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         if ($isRespIntPeriodo) {
             $msg = 'Não é permitido sobrestar este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
 
-
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -3282,7 +3292,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         if ($isRespIntPeriodo) {
             $msg = 'Não é permitido Bloquear este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
 
-
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -3310,7 +3321,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             } else {
                 $msg = 'Não é permitido desanexar este processo, pois o mesmo é Documento Disponível de Intimação Eletrônica neste processo.';
             }
-
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -3338,6 +3350,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaUnidade(array($arrObjUnidadeAPI, 'desativar'));
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
@@ -3353,6 +3367,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         //verifica se existe um processo sendo utilizado
         if ($msg != "") {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
@@ -3368,11 +3384,15 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         // condição para saber se existe um documento sendo usado
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
             $msg = $mdPetRegrasGeraisRN->verificarParametroTipoDocumento(array($arrObjSerieAPI, 'desativar'));
             if ($msg != '') {
+                $strNomeModulo = $this->getNome();
+                $msg = "$strNomeModulo: $msg";
                 $objInfraException = new InfraException();
                 $objInfraException->lancarValidacao($msg);
             } else {
@@ -3385,6 +3405,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 	{
         $msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarUsuarioExterno([$arrObjUsuarioAPI, 'excluir']);
 		if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
 			(new InfraException())->lancarValidacao($msg);
 		}
 	}
@@ -3406,6 +3428,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaUnidade(array($arrObjUnidadeAPI, 'excluir'));
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
@@ -3421,6 +3445,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         //verifica se existe um processo sendo utilizado
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
@@ -3439,11 +3465,15 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         // condição para saber se existe um documento sendo usado
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
             $msg = $mdPetRegrasGeraisRN->verificarParametroTipoDocumento(array($arrObjSerieAPI, 'excluir'));
             if ($msg != '') {
+                $strNomeModulo = $this->getNome();
+                $msg = "$strNomeModulo: $msg";
                 $objInfraException = new InfraException();
                 $objInfraException->lancarValidacao($msg);
             } else {
@@ -3459,6 +3489,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         // condição para saber  o documento está sendo utilizado em um indisponibilidade
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
@@ -3470,6 +3502,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
     {
         $msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarContato([$arrObjContatoAPI, 'excluir']);
         if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             (new InfraException())->lancarValidacao($msg);
         }
     }
@@ -3478,6 +3512,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
     {
         $msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarContato([$arrObjContatoAPI, 'desativar']);
 		if ($msg != '') {
+            $strNomeModulo = $this->getNome();
+            $msg = "$strNomeModulo: $msg";
             (new InfraException())->lancarValidacao($msg);
 		}
     }
@@ -3654,7 +3690,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             }
 
             if(!empty($msgVinc)){
-                $preMsg = 'Não é permitido alterar Contato que possua registro de Vinculação ou Procuração Eletrônica ativa.\n\n';
+                $strNomeModulo = $this->getNome();
+                $preMsg = "$strNomeModulo: Não é permitido alterar Contato que possua registro de Vinculação ou Procuração Eletrônica ativa.\n\n";
                 $msg .= ''. $objContatoAPI->getNome() . ' ainda possui as seguintes Vinculações ou Procurações ativas:\n\n'.$msgVinc.'\n';
                 if(!empty($msg)){ (new InfraException())->lancarValidacao(substr($preMsg.$msg, 0, -2)); }
             }

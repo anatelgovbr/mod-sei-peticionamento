@@ -367,9 +367,64 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         $objMdPetRelDestDTO->retNumIdContato();
         $objMdPetRelDestDTO->retStrStaSituacaoIntimacao();
         $objMdPetRelDestDTO->retStrSinPessoaJuridica();
+	    $objMdPetRelDestDTO->retDthDataAceite();
+	    $objMdPetRelDestDTO->retDblCnpjContato();
+	    $objMdPetRelDestDTO->retDblCpfContato();
+	
+	    if(isset($_POST['txtTermoPesquisa']) && !empty($_POST['txtTermoPesquisa'])){
+	    	
+	    	$termoPesquisa = PaginaSEI::tratarHTML($_POST['txtTermoPesquisa']);
+		
+		    $objMdPetRelDestDTO->adicionarCriterio(
+			    array('NomeContato', 'ProtocoloFormatadoDocumento', 'NomeSerie'),
+			    array(InfraDTO::$OPER_LIKE, InfraDTO::$OPER_LIKE, InfraDTO::$OPER_LIKE),
+			    array('%' . $termoPesquisa . '%', '%' . $termoPesquisa . '%', '%' . $termoPesquisa . '%'),
+			    array(InfraDTO::$OPER_LOGICO_OR, InfraDTO::$OPER_LOGICO_OR)
+		    );
+		    
+	    }
+	
+	    if(isset($_POST['selSituacaoIntimacao']) && is_numeric($_POST['selSituacaoIntimacao'])){
+		    $objMdPetRelDestDTO->setStrStaSituacaoIntimacao($_POST['selSituacaoIntimacao']);
+	    }
+	
+	    if(isset($_POST['selNaturezaVinculo']) && !empty($_POST['selNaturezaVinculo']) && in_array($_POST['selNaturezaVinculo'], ['F', 'J'])){
+	    	$sinPessoaJuridica = $_POST['selNaturezaVinculo'] == 'J' ? 'S' : 'N';
+		    $objMdPetRelDestDTO->setStrSinPessoaJuridica($sinPessoaJuridica);
+	    }
+	
+	    if(isset($_POST['selTipoIntimacao']) && is_numeric($_POST['selTipoIntimacao'])){
+		    $objMdPetRelDestDTO->setNumIdMdPetTipoIntimacao($_POST['selTipoIntimacao']);
+	    }
+	
+	    if(isset($_POST['txtDataInicio']) || isset($_POST['txtDataFim'])){
+
+	    	$dataInicio = PaginaSEI::tratarHTML($_POST['txtDataInicio']) . ' 00:00:00';
+		    $dataFim    = PaginaSEI::tratarHTML($_POST['txtDataFim']) . ' 23:59:59';
+
+	    	if(!empty($_POST['txtDataInicio']) && !empty($_POST['txtDataFim'])){
+			    $objMdPetRelDestDTO->adicionarCriterio(
+				    array('DataCadastro', 'DataCadastro'),
+				    array(InfraDTO::$OPER_MAIOR_IGUAL, InfraDTO::$OPER_MENOR_IGUAL),
+				    array($dataInicio, $dataFim),
+				    array(InfraDTO::$OPER_LOGICO_AND));
+		    }
+
+		    if(!empty($_POST['txtDataInicio']) && empty($_POST['txtDataFim'])){
+			    $objMdPetRelDestDTO->setDthDataCadastro($dataInicio, InfraDTO::$OPER_MAIOR_IGUAL);
+		    }
+
+		    if(empty($_POST['txtDataInicio']) && !empty($_POST['txtDataFim'])){
+			    $objMdPetRelDestDTO->setDthDataCadastro($dataFim, InfraDTO::$OPER_MENOR_IGUAL);
+		    }
+
+	    }
+	    
         $objMdPetRelDestDTO->setDblIdProcedimento($idProcedimento);
         $objMdPetRelDestDTO->setStrSinPrincipalDoc('S');
         $objMdPetRelDestDTO->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
+	
+	    $objMdPetRelDestDTO->setOrdDthDataCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
 
         $arrObjDTORetorno = $this->listar($objMdPetRelDestDTO);
 
@@ -380,6 +435,29 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
 
         return $arrRetorno;
     }
+	
+	protected function listarDadosUsuInternoSemFiltroConectado($idProcedimento)
+	{
+		
+		//Busca os dados gerais
+		$objMdPetRelDestDTO = new MdPetIntRelDestinatarioDTO();
+		
+		$this->_addSelectsListaIntimacao($objMdPetRelDestDTO);
+		
+		$objMdPetRelDestDTO->retStrNomeContato();
+		$objMdPetRelDestDTO->retNumIdContato();
+		$objMdPetRelDestDTO->retStrStaSituacaoIntimacao();
+		$objMdPetRelDestDTO->retStrSinPessoaJuridica();
+		$objMdPetRelDestDTO->setDblIdProcedimento($idProcedimento);
+		$objMdPetRelDestDTO->setStrSinPrincipalDoc('S');
+		$objMdPetRelDestDTO->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
+		
+		$arrObjDTORetorno = $this->listar($objMdPetRelDestDTO);
+		
+		$arrRetorno = array($arrObjDTORetorno);
+		
+		return $arrRetorno;
+	}
 
     private function _formatarArrPrincipalDadosSituacao(&$dados, $arrSituacao){
         $sit = '';
@@ -471,6 +549,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
 
         $objMdPetRelDestDTO->setDblIdProcedimento($idProcedimento);
         $objMdPetRelDestDTO->setStrSinPrincipalDoc('N');
+	    $objMdPetRelDestDTO->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
 
         $count    = $this->contarConectado($objMdPetRelDestDTO);
 
@@ -765,7 +844,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
 
         if(!$idContato){
 			$objContato = $objContatoEnv ? $objContatoEnv : $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
-            $idContato 	= $objContato->getNumIdContato();
+            $idContato 	= !empty($objContato) ? $objContato->getNumIdContato() : null;
         }
         
         $objMdPetIntDestDTO->setNumIdContatoParticipante($idContato);
@@ -774,12 +853,15 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         $objMdPetIntDestDTO->retNumIdMdPetIntimacao();
         $objMdPetIntDestDTO->retDblIdProtocolo();
         $objMdPetIntDestDTO->retDblIdDocumento();
+        $objMdPetIntDestDTO->retStrProtocoloFormatadoDocumento();
         $objMdPetIntDestDTO->retDthDataCadastro();
         $objMdPetIntDestDTO->retNumIdMdPetTipoIntimacao();
         $objMdPetIntDestDTO->retStrNomeTipoIntimacao();
         $objMdPetIntDestDTO->retNumIdMdPetIntRelDestinatario();
         $objMdPetIntDestDTO->retStrStaSituacaoIntimacao();
         $objMdPetIntDestDTO->retStrSinPessoaJuridica();
+        $objMdPetIntDestDTO->retDblIdProcedimento();
+        $objMdPetIntDestDTO->retStrProtocoloFormatadoProcedimento();
         $retLista = $this->listarConectado($objMdPetIntDestDTO);
 
         $objMdPetIntDestDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;

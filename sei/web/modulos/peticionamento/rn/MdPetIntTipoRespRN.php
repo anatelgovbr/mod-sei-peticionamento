@@ -57,6 +57,13 @@ class MdPetIntTipoRespRN extends InfraRN
         if (InfraString::isBolVazia($objMdPetIntTipoRespDTO->getNumValorPrazoExterno())) {
             $objInfraException->adicionarValidacao('Valor do Prazo Externo não informado.');
             $objInfraException->lancarValidacoes();
+        }else{
+            $objMdPetIntTipoRespDTO->setNumValorPrazoExterno(intval(trim($objMdPetIntTipoRespDTO->getNumValorPrazoExterno())));
+
+            if ($objMdPetIntTipoRespDTO->getNumValorPrazoExterno() <= 0) {
+                $objInfraException->adicionarValidacao('Valor do Prazo Externo deve ser maior ou igual a 1.');
+                $objInfraException->lancarValidacoes();
+            }
         }
     }
 

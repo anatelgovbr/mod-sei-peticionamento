@@ -19,7 +19,7 @@
         if (tamanhoCampo < 16 || tamanhoCampo === 18) {
             campo.focus();
             campo.value = "";
-            alert('Data/Hora Inv·lida');
+            alert('Data/Hora Inv√°lida');
             return false;
         }
 
@@ -42,7 +42,7 @@
         }
 
         if (erro) {
-            alert("Data/Hora Inv·lida");
+            alert("Data/Hora Inv√°lida");
             campo.focus();
             campo.value = "";
             return false;
@@ -53,7 +53,7 @@
             var minutos = arrayHoras[1];
             var segundos = arrayHoras[2];
             if (horas > 23 || minutos > 59 || segundos > 59) {
-                alert('Data/Hora Inv·lida');
+                alert('Data/Hora Inv√°lida');
                 campo.focus();
                 campo.value = "";
                 return false
@@ -89,7 +89,7 @@
             var mes = parseInt(data[1]) - 1;
             var horas = valorArray[1].split(':');
 
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : 00;
+            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
             var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
             return dataCompleta;
         }
@@ -100,7 +100,7 @@
 
     <? if ($bolAcaoDesativar){ ?>
     function acaoDesativar(id, dataInicio, dataFim) {
-        if (confirm("Confirma desativaÁ„o da Indisponibilidade referente ao perÌodo \"" + dataInicio + " a " + dataFim + "\"?")) {
+        if (confirm("Confirma desativa√ß√£o da Indisponibilidade referente ao per√≠odo \"" + dataInicio + " a " + dataFim + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmIndisponibilidadePeticionamentoLista').action = '<?=$strLinkDesativar?>';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').submit();
@@ -112,7 +112,7 @@
             alert('Nenhuma Indisponibilidade selecionada.');
             return;
         }
-        if (confirm("Confirma a desativaÁ„o das Indisponibilidades selecionadas?")) {
+        if (confirm("Confirma a desativa√ß√£o das Indisponibilidades selecionadas?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').action = '<?=$strLinkDesativar?>';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').submit();
@@ -121,7 +121,7 @@
     <? } ?>
 
     function acaoReativar(id, dataInicio, dataFim) {
-        if (confirm("Confirma reativaÁ„o da Indisponibilidade referente ao perÌodo \"" + dataInicio + " a " + dataFim + "\"?")) {
+        if (confirm("Confirma reativa√ß√£o da Indisponibilidade referente ao per√≠odo \"" + dataInicio + " a " + dataFim + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmIndisponibilidadePeticionamentoLista').action = '<?=$strLinkReativar?>';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').submit();
@@ -133,7 +133,7 @@
             alert('Nenhuma Indisponibilidade selecionada.');
             return;
         }
-        if (confirm("Confirma a reativaÁ„o das Indisponibilidades selecionadas?")) {
+        if (confirm("Confirma a reativa√ß√£o das Indisponibilidades selecionadas?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').action = '<?=$strLinkReativar?>';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').submit();
@@ -144,8 +144,8 @@
     function acaoExcluir(id, dataInicio, dataFim, prorrogacao) {
 
         if (prorrogacao === 'S') {
-            alert('A exclus„o da Indisponibilidade n„o È permitida, pois a indisponibilidade justificou prorrogaÁ„o autom·tica de prazos.');
-        } else if (confirm("Confirma exclus„o da Indisponibilidade referente ao perÌodo \"" + dataInicio + " a " + dataFim + "\"?")) {
+            alert('A exclus√£o da Indisponibilidade n√£o √© permitida, pois a indisponibilidade justificou prorroga√ß√£o autom√°tica de prazos.');
+        } else if (confirm("Confirma exclus√£o da Indisponibilidade referente ao per√≠odo \"" + dataInicio + " a " + dataFim + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmIndisponibilidadePeticionamentoLista').action = '<?=$strLinkExcluir?>';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').submit();
@@ -158,7 +158,7 @@
             alert('Nenhuma Indisponibilidade selecionada.');
             return;
         }
-        if (confirm("Confirma a exclus„o das Indisponibilidades selecionadas?")) {
+        if (confirm("Confirma a exclus√£o das Indisponibilidades selecionadas?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').action = '<?=$strLinkExcluir?>';
             document.getElementById('frmIndisponibilidadePeticionamentoLista').submit();

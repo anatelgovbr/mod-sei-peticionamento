@@ -1,7 +1,7 @@
 <?php
 try {
 /**
-   * @author Andr� Luiz <andre.luiz@castgroup.com.br>
+   * @author André Luiz <andre.luiz@castgroup.com.br>
    * @since  09/03/2017
 */
      require_once dirname(__FILE__) . '/../../SEI.php';
@@ -45,6 +45,11 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     require_once 'md_pet_responder_intimacao_usu_ext_bloco_intimacao.php';
     require_once 'md_pet_responder_intimacao_usu_ext_bloco_tipo_resposta.php';
     //require_once 'md_pet_responder_intimacao_usu_ext_bloco_empresa.php';
+
+    // INICIO FIELDSET OBJETIVOS DE DESENVOLVIMENTO SUSTENTÁVEL DA ONU
+    require_once'md_pet_obj_desenv_sust_onu.php';
+    // FIM FIELDSET OBJETIVOS DE DESENVOLVIMENTO SUSTENTÁVEL DA ONU
+
     require_once 'md_pet_responder_intimacao_usu_ext_bloco_documento.php';
     PaginaSEIExterna::getInstance()->fecharAreaDados();
     PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos); ?>

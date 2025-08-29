@@ -8,7 +8,7 @@
     ul.poderesLista, ul.abrangenciaLista { padding-left: 0px; margin: 0px; list-style-type: disc; list-style-position: inside; }
     .Tabela_Justificado_Negrito tr td { vertical-align: top; }
 </style>
-<p class="Texto_Justificado">Procuração Eletrônica @procuracaoTipo nº @procuracaoDocNum, emitida por @outorganteTipoPessoa, que por meio deste ato é restabelecida:</p>
+<p class="Texto_Justificado">ProcuraÃ§Ã£o EletrÃ´nica @procuracaoTipo nÂº @procuracaoDocNum, emitida por @outorganteTipoPessoa, que por meio deste ato Ã© restabelecida:</p>
 <div>
     <table align="center" style="width: 90%" class="Tabela_Justificado_Negrito" border="0">
         <tbody>
@@ -41,5 +41,5 @@
         </tbody>
     </table>
 </div>
-<p class="Texto_Justificado">Pelo presente instrumento de Restabelecimento de Procuração Eletrônica, a Administração do SEI-@sigla_orgao@ restabeleceu os poderes de representação do Procurador acima identificado no que tange à Procuração Eletrônica @procuracaoTipo nº @procuracaoDocNum, de acordo com o Documento de Justificativa acima enumerado. </p>
-<p class="Texto_Justificado">A existência deste instrumento de Restabelecimento de Procuração, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>
+<p class="Texto_Justificado">Pelo presente instrumento de Restabelecimento de ProcuraÃ§Ã£o EletrÃ´nica, a AdministraÃ§Ã£o do SEI-@sigla_orgao@ restabeleceu os poderes de representaÃ§Ã£o do Procurador acima identificado no que tange Ã  ProcuraÃ§Ã£o EletrÃ´nica @procuracaoTipo nÂº @procuracaoDocNum, de acordo com a Justificativa acima. </p>
+<p class="Texto_Justificado">A existÃªncia deste instrumento de Restabelecimento de ProcuraÃ§Ã£o, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>

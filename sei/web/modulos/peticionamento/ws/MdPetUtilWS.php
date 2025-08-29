@@ -142,21 +142,21 @@ abstract class MdPetUtilWS extends InfraWS {
         $objMonitoramentoServicoRN = new MonitoramentoServicoRN();
         $objMonitoramentoServicoRN->cadastrar($objMonitoramentoServicoDTO);
 
-      }catch(Throwable $e){
+      }catch(Exception $e){
         try{
           LogSEI::getInstance()->gravar('Erro monitorando acesso do serviço.'."\n".InfraException::inspecionar($e));
-        }catch (Throwable $e){}
+        }catch (Exception $e){}
       }
 
       BancoSEI::getInstance()->fecharConexao();
 
       return $ret;
 
-    }catch(Throwable $e){
+    }catch(Exception $e){
 
       try{
         BancoSEI::getInstance()->fecharConexao();
-      }catch(Throwable $e2){}
+      }catch(Exception $e2){}
 
       $this->processarExcecao($e);
     }

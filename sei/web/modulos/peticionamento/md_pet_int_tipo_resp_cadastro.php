@@ -195,8 +195,8 @@ $title = '';
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" class="infraImgModulo"/></a>
                 <input type="text" id="txtNome" name="txtNome" class="infraText form-control"
                        value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoRespDTO->getStrNome()); ?>"
-                       onkeypress="return infraMascaraTexto(this,event,70);" maxlength="70"
-                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                       onkeypress="return infraMascaraTexto(this,event,70); "minlength="3" maxlength="70"
+                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" required/>
             </div>
         </div>
         <div class="row mb-3">
@@ -215,10 +215,10 @@ $title = '';
                             <label id="lblDias" for="optPrazoDia" class="infraLabelRadio">Dias</label>
                         </div>
                         <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
-                            <input type="text" id="txtValorPrazoExternoDia"
-                                   onkeypress="return infraMascaraTexto(this,event,3);"
+                            <input type="number" id="txtValorPrazoExternoDia"
+                                   onkeypress="return infraMascaraNumero(this,event,3);"
                                    name="txtValorPrazoExternoDia" class="infraText form-control"
-                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3"
+                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3" min="1"
                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
                         <div class="col-sm-6 col-md-6 col-lg-5 col-xl-4" id="spnTipoDias">
@@ -253,9 +253,9 @@ $title = '';
                             <label id="lblMes" for="optPrazoMes" class="infraLabelRadio">Mês</label>
                         </div>
                         <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
-                            <input type="text" id="txtValorPrazoExternoMes" name="txtValorPrazoExternoMes"
-                                   onkeypress="return infraMascaraTexto(this,event,2);" class="infraText form-control"
-                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3"
+                            <input type="number" id="txtValorPrazoExternoMes" name="txtValorPrazoExternoMes"
+                                   onkeypress="return infraMascaraNumero(this,event,2);" class="infraText form-control"
+                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3" min="1"
                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
                     </div>
@@ -271,9 +271,9 @@ $title = '';
                             <label id="lblAno" for="optPrazoAno" class="infraLabelRadio">Ano</label>
                         </div>
                         <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
-                            <input type="text" id="txtValorPrazoExternoAno" name="txtValorPrazoExternoAno"
-                                   onkeypress="return infraMascaraTexto(this,event,1);" class="infraText form-control"
-                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3"
+                            <input type="number" id="txtValorPrazoExternoAno" name="txtValorPrazoExternoAno"
+                                   onkeypress="return infraMascaraNumero(this,event,1);" class="infraText form-control"
+                                   value="<?= PaginaSEI::tratarHTML($valor); ?>" maxlength="3" min="1"
                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
                     </div>

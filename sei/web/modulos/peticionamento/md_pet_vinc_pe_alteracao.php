@@ -14,7 +14,7 @@ try{
     switch ($_GET['acao']) {
 
         case 'md_pet_vinc_pe_alterar':
-            $strTitulo = 'Alterar o Respons·vel Legal';
+            $strTitulo = 'Alterar o Respons√°vel Legal';
             $siglaOrgao = SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioExterno();
             break;
     }
@@ -166,43 +166,43 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <?
     PaginaSEI::getInstance()->abrirAreaDados('53em;');
     ?>
-    <p id="txtInformativo1">Os dados aqui dispostos dizem respeito ao Respons·vel Legal pela Pessoa JurÌdica indicada, conforme constante no SEI.</p>
+    <p id="txtInformativo1">Os dados aqui dispostos dizem respeito ao Respons√°vel Legal pela Pessoa Jur√≠dica indicada, conforme constante no SEI.</p>
 
     <label id="lblCnpj" for="txtCnpj" class="infraLabelObrigatorio">CNPJ:</label>
     <input type="text" id="txtCnpj" name="txtCnpj" class="infraText"
-           value="<?= PaginaSEI::tratarHTML($strSiglaPesquisa) ?>" maxlength="100"
+           value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-    <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelObrigatorio">Raz„o Social:</label>
+    <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelObrigatorio">Raz√£o Social:</label>
     <input type="text" id="txtRazaoSocial" name="txtRazaoSocial" class="infraText"
-           value="<?= PaginaSEI::tratarHTML($strSiglaPesquisa) ?>" maxlength="100"
+           value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-    <label id="lblCpf" for="txtCpf" class="infraLabelObrigatorio">CPF do Respons·vel Legal:</label>
+    <label id="lblCpf" for="txtCpf" class="infraLabelObrigatorio">CPF do Respons√°vel Legal:</label>
     <input type="text" id="txtCpf" name="txtCpf" class="infraText"
-           value="<?= PaginaSEI::tratarHTML($strSiglaPesquisa) ?>" maxlength="100"
+           value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-    <label id="lblNomeResp" for="txtNomeResp" class="infraLabelObrigatorio">Nome do Respons·vel Legal:</label>
+    <label id="lblNomeResp" for="txtNomeResp" class="infraLabelObrigatorio">Nome do Respons√°vel Legal:</label>
     <input type="text" id="txtNomeResp" name="txtNomeResp" class="infraText"
-           value="<?= PaginaSEI::tratarHTML($strSiglaPesquisa) ?>" maxlength="100"
+           value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-    <p id="txtInformativo2">Informe abaixo o CPF do Usu·rio Externo que deseja indicar como novo Respons·vel Legal por esta Pessoa JurÌdica.</p>
+    <p id="txtInformativo2">Informe abaixo o CPF do Usu√°rio Externo que deseja indicar como novo Respons√°vel Legal por esta Pessoa Jur√≠dica.</p>
 
-    <label id="lblCpfUsu" for="txtCpfUsu" class="infraLabelObrigatorio">CPF do Usu·rio Externo:</label>
+    <label id="lblCpfUsu" for="txtCpfUsu" class="infraLabelObrigatorio">CPF do Usu√°rio Externo:</label>
     <input type="text" id="txtCpfUsu" name="txtCpfUsu" class="infraText"
-           value="<?= PaginaSEI::tratarHTML($strSiglaPesquisa) ?>" maxlength="100"
+           value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-    <label id="lblNomeUsu" for="txtNomeUsu" class="infraLabelObrigatorio">Nome do Usu·rio Externo:</label>
+    <label id="lblNomeUsu" for="txtNomeUsu" class="infraLabelObrigatorio">Nome do Usu√°rio Externo:</label>
     <input type="text" id="txtNomeUsu" name="txtNomeUsu" class="infraText"
-           value="<?= PaginaSEI::tratarHTML($strSiglaPesquisa) ?>" maxlength="100"
+           value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-    <label id="lblNumSei" for="txtNumSei" class="infraLabelObrigatorio">N˙mero SEI da Justificativa:</label>
+    <label id="lblNumSei" for="txtNumSei" class="infraLabelObrigatorio">N√∫mero SEI da Justificativa:</label>
     <input type="text" id="txtNumSei" name="txtNumSei" class="infraText"
-           value="<?= PaginaSEI::tratarHTML($strSiglaPesquisa) ?>" maxlength="100"
+           value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
     <button type="button" name="sbmAdicionarNumeroSei" onclick="adicionarDocInstaurador();"

@@ -53,11 +53,11 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     habilitaWs();
 
                     $('div#tipoLogradouro, div#numeroLogradouro, div#tipoLogradouro, div#expiracacaoCache, #blcUsarIntegracaoWs, #blcTipoClienteWs, #blcParamsSuspensaoAutomatica').css('display', 'block');
-                    document.getElementById('lbltxtCodRFBSuspensaoAutomatica').innerText = 'CÛdigos de SituaÁ„o Cadastral que identifica Pessoas JurÌdicas Inativas na Receita:';
+                    document.getElementById('lbltxtCodRFBSuspensaoAutomatica').innerText = 'C√≥digos de Situa√ß√£o Cadastral que identifica Pessoas Jur√≠dicas Inativas na Receita:';
 
                     $('[id^="paramSaidaTable_"]').css('display', 'table-row');
                     $('#paramEntradaTable_cnpjEmpresa').css('display', 'table-row');
-                    $('#paramSaidaTable_cpfPessoa, #paramSaidaTable_tpLogradouro, #paramSaidaTable_numero, #paramSaidaTable_complemento, #paramEntradaTable_cpfPessoa').css('display', 'none');
+                    $('#paramSaidaTable_cpfPessoa, #paramSaidaTable_tpLogradouro, #paramSaidaTable_numero, #paramSaidaTable_complemento').css('display', 'none');
 
                     if($('#chkSinCache:checked').length){
                         $('#paramEntradaTable_periodoCache').css('display', 'table-row');
@@ -72,9 +72,9 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                         $('#paramSaidaTable_complemento').css('display', 'table-row');
                     }
 
-                    $('#imgAjuda2').attr('onmouseover', 'return infraTooltipMostrar(\'… extremamente recomendado que se utilize IntegraÁ„o com a base de dados da Receita Federal para validar se o CPF do Usu·rio Externo que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica È de fato do Respons·vel Legal pelo CNPJ constante na Receita Federal. \\n \\n Caso opte por ativar as funcionalidades afetas a Pessoa JurÌdica e ProcuraÁ„o EletrÙnica para os Usu·rios Externos Sem IntegraÁ„o com a base da Receita Federal, os Usu·rios Externos continuar„o a declarar a responsabilidade, atÈ penal, sobre as informaÁıes prestadas, mas poder„o ocorrer contradiÁ„o e, caso necessite, Suspens„o e AlteraÁ„o da vinculaÁ„o podem ser efetivadas pelo menu AdministraÁ„o > Peticionamento EletrÙnico > VinculaÁıes e ProcuraÁıes EletrÙnicas.\',\'Ajuda\');');
-                    $('#imgAjuda3').attr('onmouseover', 'return infraTooltipMostrar(\'Ao selecionar esta opÁ„o, n„o ocorrer· qualquer validaÁ„o se o CPF do Usu·rio Externo que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica È de fato do Respons·vel Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, atÈ penal, da auto declaraÁ„o efetivada pelo Usu·rio Externo e documentos que anexar no Peticionamento de formalizaÁ„o.\',\'Ajuda\');');
-                    $('#imgAjuda4').attr('onmouseover', 'return infraTooltipMostrar(\'Ao selecionar esta opÁ„o, o CPF do Usu·rio Externo que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica ser· validado por integraÁ„o configurada abaixo se È de fato do Respons·vel Legal pelo CNPJ constante na Receita Federal. \\n \\n Se n„o ocorrer a validaÁ„o o Usu·rio Externo n„o poder· prosseguir com o Peticionamento inicial de Respons·vel Legal de Pessoa JurÌdica.\',\'Ajuda\');');
+                    $('#imgAjuda2').attr('onmouseover', 'return infraTooltipMostrar(\'√â extremamente recomendado que se utilize Integra√ß√£o com a base de dados da Receita Federal para validar se o CPF do Usu√°rio Externo que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica √© de fato do Respons√°vel Legal pelo CNPJ constante na Receita Federal. \\n \\n Caso opte por ativar as funcionalidades afetas a Pessoa Jur√≠dica e Procura√ß√£o Eletr√¥nica para os Usu√°rios Externos Sem Integra√ß√£o com a base da Receita Federal, os Usu√°rios Externos continuar√£o a declarar a responsabilidade, at√© penal, sobre as informa√ß√µes prestadas, mas poder√£o ocorrer contradi√ß√£o e, caso necessite, Suspens√£o e Altera√ß√£o da vincula√ß√£o podem ser efetivadas pelo menu Administra√ß√£o > Peticionamento Eletr√¥nico > Vincula√ß√µes e Procura√ß√µes Eletr√¥nicas.\',\'Ajuda\');');
+                    $('#imgAjuda3').attr('onmouseover', 'return infraTooltipMostrar(\'Ao selecionar esta op√ß√£o, n√£o ocorrer√° qualquer valida√ß√£o se o CPF do Usu√°rio Externo que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica √© de fato do Respons√°vel Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, at√© penal, da auto declara√ß√£o efetivada pelo Usu√°rio Externo e documentos que anexar no Peticionamento de formaliza√ß√£o.\',\'Ajuda\');');
+                    $('#imgAjuda4').attr('onmouseover', 'return infraTooltipMostrar(\'Ao selecionar esta op√ß√£o, o CPF do Usu√°rio Externo que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica ser√° validado por integra√ß√£o configurada abaixo se √© de fato do Respons√°vel Legal pelo CNPJ constante na Receita Federal. \\n \\n Se n√£o ocorrer a valida√ß√£o o Usu√°rio Externo n√£o poder√° prosseguir com o Peticionamento inicial de Respons√°vel Legal de Pessoa Jur√≠dica.\',\'Ajuda\');');
 
                     $('#txtNome').focus();
 
@@ -98,7 +98,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                         $('#paramEntradaTable_periodoCache').css('display', 'table-row');
                     }
 
-                    $('#imgAjuda2').attr('onmouseover', 'return infraTooltipMostrar(\'Esta integraÁ„o ativa a consulta de dados sobre o CPF de Usu·rios Externos ativos e liberados no SEI do Ûrg„o junto ‡ base da Receita Federal para automatizar sua desativaÁ„o se retornar SituaÁıes Cadastrais especÌficas listadas no campo prÛprio abaixo. \\n\\n\\n Por exemplo, quando na Receita Federal o CPF constar na situaÁ„o &ldquo;Cancelada por Encerramento de EspÛlio&rdquo; e &ldquo;Cancelada por ”bito sem Espolio&rdquo; o Agendamento relacionado vai desativar o cadastro do Usu·rio Externo.\',\'Ajuda\');');
+                    $('#imgAjuda2').attr('onmouseover', 'return infraTooltipMostrar(\'Esta integra√ß√£o ativa a consulta de dados sobre o CPF de Usu√°rios Externos ativos e liberados no SEI do √≥rg√£o junto √† base da Receita Federal para automatizar sua desativa√ß√£o se retornar Situa√ß√µes Cadastrais espec√≠ficas listadas no campo pr√≥prio abaixo. \\n\\n\\n Por exemplo, quando na Receita Federal o CPF constar na situa√ß√£o &ldquo;Cancelada por Encerramento de Esp√≥lio&rdquo; e &ldquo;Cancelada por √ìbito sem Espolio&rdquo; o Agendamento relacionado vai desativar o cadastro do Usu√°rio Externo.\',\'Ajuda\');');
                     $('#imgAjuda4').hide();
 
                     staUtilizaWsCheck = true;
@@ -146,13 +146,13 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
         }
 
         if (infraTrim(document.getElementById('txtNome').value) == '') {
-            alert('Informe o Nome da integraÁ„o.');
+            alert('Informe o Nome da integra√ß√£o.');
             document.getElementById('txtNome').focus();
             return false;
         }
 
         if (staUtilizaWsCheck == null) {
-            alert('Informe IndicaÁ„o de IntegraÁ„o com a Receita Federal.');
+            alert('Informe Indica√ß√£o de Integra√ß√£o com a Receita Federal.');
             document.getElementById('txtNome').focus();
             return false;
         }
@@ -160,19 +160,19 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
         if (staUtilizaWs == true) {
 
             if (infraTrim(document.getElementById('selNuVersao').value) == '') {
-                alert('Informe a vers„o SOAP.');
+                alert('Informe a vers√£o SOAP.');
                 document.getElementById('selNuVersao').focus();
                 return false;
             }
 
             if (infraTrim(document.getElementById('txtEnderecoWsdl').value) == '') {
-                alert('Informe EndereÁo do Webservice.');
+                alert('Informe Endere√ßo do Webservice.');
                 document.getElementById('txtEnderecoWsdl').focus();
                 return false;
             }
 
             if (infraTrim(document.getElementById('selOperacaoWsdl').value) == '') {
-                alert('Informe OperaÁ„o.');
+                alert('Informe Opera√ß√£o.');
                 document.getElementById('selOperacaoWsdl').focus();
                 return false;
             }
@@ -180,31 +180,31 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             if(document.getElementById('selOperacaoWsdl').value.includes('PessoaFisica')){
 
                 if (infraTrim(document.getElementById('txtCodRFBSuspensaoAutomatica').value) == '') {
-                    alert('Informe os CÛdigos das SituaÁıes Cadastrais do CPF na Receita Federal para bloquear Usu·rios Externos.');
+                    alert('Informe os C√≥digos das Situa√ß√µes Cadastrais do CPF na Receita Federal para bloquear Usu√°rios Externos.');
                     document.getElementById('txtCodRFBSuspensaoAutomatica').focus();
                     return false;
                 }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_cpfPessoa').value) == '') {
-                    alert('Indique o dado de entrada no webservice para CPF da Pessoa FÌsica.');
+                    alert('Indique o dado de entrada no webservice para CPF da Pessoa F√≠sica.');
                     document.getElementById('nomeFuncionalDadosEntrada_cpfPessoa').focus();
                     return false;
                 }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').value) == '') {
-                    alert('Indique o dado de entrada no webservice para IdentificaÁ„o Origem.');
+                    alert('Indique o dado de entrada no webservice para Identifica√ß√£o Origem.');
                     document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').focus();
                     return false;
                 }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosSaida_codSituacaoCadastral').value) == '') {
-                    alert('Indique o dado de saida do webservice para CÛdigo da SituaÁ„o Cadastral.');
+                    alert('Indique o dado de saida do webservice para C√≥digo da Situa√ß√£o Cadastral.');
                     document.getElementById('nomeFuncionalDadosSaida_codSituacaoCadastral').focus();
                     return false;
                 }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosSaida_descSituacaoCadastral').value) == '') {
-                    alert('Indique o dado de saida do webservice para DescriÁ„o da SituaÁ„o Cadastral.');
+                    alert('Indique o dado de saida do webservice para Descri√ß√£o da Situa√ß√£o Cadastral.');
                     document.getElementById('nomeFuncionalDadosSaida_descSituacaoCadastral').focus();
                     return false;
                 }
@@ -218,7 +218,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     return false;
                 }
                 if (infraTrim(document.getElementById('selCachePrazoExpiracao').value) == '') {
-                    alert('Informe Prazo de ExpiraÁ„o do Cache.');
+                    alert('Informe Prazo de Expira√ß√£o do Cache.');
                     document.getElementById('selCachePrazoExpiracao').focus();
                     return false;
                 }
@@ -255,8 +255,10 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
     function validarWsdl() {
 
         var enderecoWsdl = document.getElementById('txtEnderecoWsdl').value;
+        var versao = document.getElementById('selNuVersao').value;
+
         if (enderecoWsdl == '') {
-            alert('Preenche o campo EndereÁo WSDL.');
+            alert('Preenche o campo Endere√ßo WSDL.');
             return false;
         }
 
@@ -265,7 +267,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             url: "<?= $strLinkAjaxValidarWsdl ?>",
             dataType: "xml",
             data: {
-                endereco_wsdl: enderecoWsdl
+                endereco_wsdl: enderecoWsdl,
+                versao: versao
             },
             beforeSend: function () {
                 if( document.querySelector('#bolIsConsultar').value == 'N' ) infraExibirAviso(false);
@@ -326,10 +329,11 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
         var enderecoWsdl = document.getElementById('txtEnderecoWsdl').value;
         var operacaoWsdl = document.getElementById('selOperacaoWsdl').value;
+        var versao = document.getElementById('selNuVersao').value;
 
         /*
         if(enderecoWsdl == ''){
-            alert('Preenche o campo EndereÁo WSDL.');
+            alert('Preenche o campo Endere√ßo WSDL.');
             return false;
         }
         */
@@ -341,7 +345,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             data: {
                 endereco_wsdl: enderecoWsdl,
                 operacao_wsdl: operacaoWsdl,
-                tipo_parametro: tipo_parametro
+                tipo_parametro: tipo_parametro,
+                versao: versao
             },
             beforeSend: function () {
                 infraExibirAviso(false);
@@ -372,7 +377,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
                         //document.getElementById('gridOperacao').style.display = "inherit";
                     } else {
-                        alert('Erro ao montar par‚metros.');
+                        alert('Erro ao montar par√¢metros.');
                         //document.getElementById('gridOperacao').style.display = "none";
                     }
 
@@ -429,8 +434,9 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
     }
 
     function cacheMarcaDesmarca(objeto) {
+        infraExibirAviso(false);
         if (infraTrim(document.getElementById('selOperacaoWsdl').value) == '') {
-            alert('Informe OperaÁ„o.');
+            alert('Informe Opera√ß√£o.');
             document.getElementById('selOperacaoWsdl').focus();
             return false;
         }
@@ -446,6 +452,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             var select = document.getElementById('selCacheDataArmazenamento');
             select.options.length = 0;
         }
+        infraAvisoCancelar();
     }
 
     function tipoMarcaDesmarca(objeto) {
@@ -474,7 +481,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
 
     function operacaoSelecionar() {
-        checkbox = document.getElementById('chkSinCache');
+        console.log('Passou aqui ');
+        let checkbox = document.getElementById('chkSinCache');
         if (!preencheCache) {
             checkbox.checked = false;
         }
@@ -488,10 +496,9 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
             if($('#selMdPetIntegFuncionalid').val() == '2'){
                 $('#blcParamsSuspensaoAutomatica').css('display', 'block');
-                document.getElementById('lbltxtCodRFBSuspensaoAutomatica').innerText = 'CÛdigos de SituaÁ„o Cadastral na Receita para Suspender Usu·rios Externos';
+                document.getElementById('lbltxtCodRFBSuspensaoAutomatica').innerText = 'C√≥digos de Situa√ß√£o Cadastral na Receita para Suspender Usu√°rios Externos';
             }
         }
-
     }
 
     function popularSelect(tipo_parametro, select, arrayValores) {

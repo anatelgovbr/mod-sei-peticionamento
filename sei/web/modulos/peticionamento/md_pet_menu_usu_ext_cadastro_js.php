@@ -24,7 +24,7 @@
 
         infraEfeitoTabelas();
 
-        <? if( $tipo == 'E' || $tipo == 'H' ){ ?>
+        <? if( isset($tipo) && in_array($tipo, ['E', 'H']) ){ ?>
         rdTipo();
         <? } ?>
 
@@ -43,7 +43,7 @@
             return false;
 
         } else if (txtNome.length > 30) {
-            alert('Tamanho do campo excedido (máximo 30 caracteres).');
+            alert('Tamanho do campo excedido (mÃ¡ximo 30 caracteres).');
             document.getElementById('txtNome').focus();
             return false;
         } else if (tipo == '') {
@@ -56,7 +56,7 @@
                 return false;
 
             } else if (txtUrl.length > 2083) {
-                alert('Tamanho do campo excedido (máximo 2083 caracteres).');
+                alert('Tamanho do campo excedido (mÃ¡ximo 2083 caracteres).');
                 document.getElementById('txtUrl').focus();
                 return false;
             }
@@ -65,7 +65,7 @@
                 $("#containerEditor  iframe").contents().find("body").html() == '<br>'
                 || $("#containerEditor  iframe").contents().find("body").html() == ''
             ) {
-                alert('Informe o Conteúdo HTML.');
+                alert('Informe o ConteÃºdo HTML.');
                 return false;
             }
         }

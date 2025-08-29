@@ -17,4 +17,3 @@ class MdPetIntRelIntimRespBD extends InfraBD {
   }
 
 }
-?>

@@ -35,7 +35,7 @@ try{
              if($valor > 0){
                  array_push($arrRetorno, [
                      'valor'    => $valor,
-                     'cor'      => MdPetIntRelatorioINT::retornaArrayCorGrafico($label),
+                     'cor'      => MdPetIntRelatorioINT::retornaArrayCorGrafico(),
                      'label'    => $value
                  ]);
              }
@@ -265,6 +265,75 @@ try{
 		 echo json_encode($response);
 	 	
 	 	break;
+	
+	case 'contato_auto_completar':
+		
+		$strPalavrasPesquisa = utf8_decode(urldecode($_POST['palavras_pesquisa']));
+		$numIdGrupoContato = $_POST['id_grupo_contato'];
+		$natureza = $_POST['tipo_contato'];
+		
+		$arrObjContatoDTO = array();
+		
+		$objPesquisaTipoContatoDTO = new PesquisaTipoContatoDTO();
+		$objPesquisaTipoContatoDTO->setStrStaAcesso(TipoContatoRN::$TA_CONSULTA_RESUMIDA);
+		
+		$objTipoContatoRN = new TipoContatoRN();
+		$arrIdTipoContatoAcesso = $objTipoContatoRN->pesquisarAcessoUnidade($objPesquisaTipoContatoDTO);
+		
+		if (count($arrIdTipoContatoAcesso)) {
+			
+			$objContatoDTO = new ContatoDTO();
+			$objContatoDTO->retNumIdContato();
+			$objContatoDTO->retStrSigla();
+			$objContatoDTO->retStrNome();
+			$objContatoDTO->retStrSiglaContatoAssociado();
+			
+			$objContatoDTO->setStrPalavrasPesquisa($strPalavrasPesquisa);
+			
+			if ($numIdGrupoContato != '') {
+				$objContatoDTO->setNumIdGrupoContato($numIdGrupoContato);
+			}
+			
+			$objContatoDTO->adicionarCriterio(array('StaAcessoTipoContato', 'IdTipoContato'),
+				array(InfraDTO::$OPER_DIFERENTE, InfraDTO::$OPER_IN),
+				array(TipoContatoRN::$TA_NENHUM, $arrIdTipoContatoAcesso),
+				InfraDTO::$OPER_LOGICO_OR);
+			
+			$objContatoDTO->setStrSinAtivoTipoContato('S');
+			$objContatoDTO->setNumMaxRegistrosRetorno(50);
+			$objContatoDTO->setOrdStrNome(InfraDTO::$TIPO_ORDENACAO_ASC);
+			
+			$objContatoDTO->setStrStaNatureza($natureza);
+			
+			$objContatoRN = new ContatoRN();
+			$arrObjContatoDTO = $objContatoRN->pesquisarRN0471($objContatoDTO);
+			
+			$arrTemp = array();
+			foreach($arrObjContatoDTO as $objContatoDTO){
+				if ($objContatoDTO->getStrSigla()!=null && $objContatoDTO->getStrSiglaContatoAssociado()!= null) {
+					$strChave = strtolower($objContatoDTO->getStrNome().'-'.$objContatoDTO->getStrSigla());
+					if (!isset($arrTemp[$strChave])) {
+						$arrTemp[$strChave] = array($objContatoDTO);
+					} else {
+						$arrTemp[$strChave][] = $objContatoDTO;
+					}
+				}
+			}
+			
+			foreach($arrTemp as $arr){
+				if (count($arr) == 1){
+					$arr[0]->setStrNome($arr[0]->getStrNome().' ('.$arr[0]->getStrSigla().')');
+				}else{
+					foreach($arr as $dto){
+						$dto->setStrNome($dto->getStrNome().' ('.$dto->getStrSigla().' / '.$dto->getStrSiglaContatoAssociado().')');
+					}
+				}
+			}
+		}
+		
+		$xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
+		InfraAjax::enviarXML($xml);
+		break;
 
 	default:
       throw new InfraException("Ação '".$_GET['acao_ajax']."' não reconhecida pelo controlador AJAX do Peticionamento.");

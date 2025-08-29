@@ -92,7 +92,7 @@
         var isAlteracao = document.getElementById('hdnIsAlteracaoGrid').value == 1;
 
         if (numeroSEI == '') {
-            alert('Preencha o N˙mero SEI.');
+            alert('Preencha o N√∫mero SEI.');
             return false;
         } else if (qtd == 2 && !isAlteracao) {
             alert('Para adicionar um novo documento remova o que estava vinculado anteriormente, cada indisponibilidade deve possuir somente um documento.');
@@ -155,7 +155,7 @@
         var isVazioTipo = $.trim(document.getElementById('txtTipo').value) == '';
 
         if (isVazioTipo) {
-            alert('… necess·rio Validar o n˙mero SEI antes de adicion·-lo.');
+            alert('√â necess√°rio Validar o n√∫mero SEI antes de adicion√°-lo.');
         } else {
             var nomeDocCompleto = document.getElementById('txtTipo').value + ' (' + document.getElementById('txtNumeroSei').value + ')';
             var htmlDoc = addLinkExibicaoDocumento(nomeDocCompleto, document.getElementById('txtTipo').value);
@@ -202,7 +202,7 @@
     function validarPeriodoIndisp(dataInicio, dataFim) {
 
         msg = '';
-        // #EU4864 - INFRAAJAX - n„o encontrado mÈtodo que retorna somente dados, sem componentes
+        // #EU4864 - INFRAAJAX - n√£o encontrado m√©todo que retorna somente dados, sem componentes
         $.ajax({
             type: "POST",
             url: "<?= $strUrlAjaxValidacaoPeridoDta ?>",
@@ -252,7 +252,7 @@
             var mes = parseInt(data[1]) - 1;
             var horas = valorArray[1].split(':');
 
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : 00;
+            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
             var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
             return dataCompleta;
         }
@@ -274,7 +274,7 @@
         var dataFim = campoDtFim.value;
 
         if (infraTrim(document.getElementById('txtDtInicio').value) == '') {
-            alert('Informe o InÌcio.');
+            alert('Informe o In√≠cio.');
             document.getElementById('txtDtInicio').focus();
             return false;
         }
@@ -297,7 +297,7 @@
         }
 
         if (!prorrogacao) {
-            alert('Informe se a Indisponibilidade justifica prorrogaÁ„o autom·tica dos prazos.');
+            alert('Informe se a Indisponibilidade justifica prorroga√ß√£o autom√°tica dos prazos.');
             document.getElementById('rdProrrogacaoSim').focus();
             return false;
         }
@@ -315,14 +315,14 @@
 
 
         if (tamanhoDataInicio < 16 || tamanhoDataInicio === 18) {
-            alert('Data/Hora Inv·lida');
+            alert('Data/Hora Inv√°lida');
             document.getElementById('txtDtInicio').focus();
             document.getElementById('txtDtInicio').value = '';
             return false;
         }
 
         if (tamanhoDataFim < 16 || tamanhoDataFim === 18) {
-            alert('Data/Hora Inv·lida');
+            alert('Data/Hora Inv√°lida');
             document.getElementById('txtDtFim').focus();
             document.getElementById('txtDtFim').value = '';
             return false;
@@ -336,7 +336,7 @@
 
 
         if (tipoDocumento != '' && qtdDocAdicionado < 2) {
-            alert('O documento informado no n˙mero SEI n„o foi adicionado e n„o ser· salvo.Caso seja necess·rio vincular o documento È preciso antes adicion·-lo.');
+            alert('O documento informado no n√∫mero SEI n√£o foi adicionado e n√£o ser√° salvo.Caso seja necess√°rio vincular o documento √© preciso antes adicion√°-lo.');
             return false;
         }
 
@@ -345,7 +345,7 @@
         var validoDtFutura = (dataFinal.getTime() < dataAtual.getTime());
 
         if (!validoDtFutura) {
-            alert('N„o È permitido o cadastro de Indisponibilidades Programadas.');
+            alert('N√£o √© permitido o cadastro de Indisponibilidades Programadas.');
             return false;
         }
 
@@ -373,7 +373,7 @@
         if (tamanhoCampo < 16 || tamanhoCampo === 18) {
             campo.focus();
             campo.value = "";
-            alert('Data/Hora Inv·lida');
+            alert('Data/Hora Inv√°lida');
             return false;
         }
 
@@ -396,7 +396,7 @@
         }
 
         if (erro) {
-            alert("Data/Hora Inv·lida");
+            alert("Data/Hora Inv√°lida");
             campo.focus();
             campo.value = "";
             return false;
@@ -408,7 +408,7 @@
             var segundos = arrayHoras[2];
 
             if (horas > 23 || minutos > 59 || segundos > 59) {
-                alert('Data/Hora Inv·lida');
+                alert('Data/Hora Inv√°lida');
                 campo.focus();
                 campo.value = "";
                 return false
@@ -443,7 +443,7 @@
         if (validarCadastro()) {
 
             if (prorrogacaoSim && !isSalvoAnteriormente) {
-                var msg = 'Ao marcar que a presente indisponibilidade justifica a prorrogaÁ„o autom·tica dos prazos, as IntimaÁıes EletrÙnicas que venceriam durante o perÌodo da indisponibilidade ter„o seus Prazos Externos prorrogados para o primeiro dia ˙til seguinte ao fim da respectiva indisponibilidade. E uma vez salva a indisponibilidade com a opÁ„o SIM selecionada no campo citado, N√O ser· possÌvel alterar o campo de SIM para N√O e tambÈm n„o ser· possÌvel alterar o PerÌodo de Indisponibilidade informado.\n\nConfirma a prorrogaÁ„o autom·tica dos prazos?';
+                var msg = 'Ao marcar que a presente indisponibilidade justifica a prorroga√ß√£o autom√°tica dos prazos, as Intima√ß√µes Eletr√¥nicas que venceriam durante o per√≠odo da indisponibilidade ter√£o seus Prazos Externos prorrogados para o primeiro dia √∫til seguinte ao fim da respectiva indisponibilidade. E uma vez salva a indisponibilidade com a op√ß√£o SIM selecionada no campo citado, N√ÉO ser√° poss√≠vel alterar o campo de SIM para N√ÉO e tamb√©m n√£o ser√° poss√≠vel alterar o Per√≠odo de Indisponibilidade informado.\n\nConfirma a prorroga√ß√£o autom√°tica dos prazos?';
                 periodoExistente = validarPeriodoIndisp(campoDtIni, campoDtFim);
 
                 if (periodoExistente == 'N') {
@@ -453,7 +453,7 @@
                         return false;
                     }
                 } else {
-                    alert('J· existe uma indisponibilidade gerada nesse perÌodo estabelecido.');
+                    alert('J√° existe uma indisponibilidade gerada nesse per√≠odo estabelecido.');
                     return false;
                 }
 

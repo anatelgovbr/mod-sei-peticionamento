@@ -203,9 +203,11 @@ try {
     if (($_POST['selDocumentoPrincipal'] != '') && $_POST['selDocumentoPrincipal'] != 'null') {
         $vlIndicacaoDocGerado = $_POST['selDocumentoPrincipal'] == MdPetTipoProcessoRN::$DOC_GERADO ? 'S' : 'N';
         $vlIndicacaoDocExterno = $_POST['selDocumentoPrincipal'] == MdPetTipoProcessoRN::$DOC_EXTERNO ? 'S' : 'N';
+        $vlIndicacaoDocFormulario = $_POST['selDocumentoPrincipal'] == MdPetTipoProcessoRN::$DOC_FORMULARIO ? 'S' : 'N';
 
         $objMdPetTipoProcessoDTO->setStrSinDocGerado($vlIndicacaoDocGerado);
         $objMdPetTipoProcessoDTO->setStrSinDocExterno($vlIndicacaoDocExterno);
+        $objMdPetTipoProcessoDTO->setStrSinDocFormulario($vlIndicacaoDocFormulario);
     }
 
     PaginaSEI::getInstance()->prepararOrdenacao($objMdPetTipoProcessoDTO, 'NomeProcesso', InfraDTO::$TIPO_ORDENACAO_ASC);
@@ -419,7 +421,16 @@ try {
             }
 
             $indicacaoInteressado = $arrObjMdPetTipoProcessoDTO[$i]->getStrSinIIProprioUsuarioExterno() === 'S' ? 'Próprio Usuário Externo' : 'Indicação Direta';
-            $docExterno = $arrObjMdPetTipoProcessoDTO[$i]->getStrSinDocExterno() === 'S' ? 'Externo' : 'Gerado';
+            
+            $tipoDocPrincipal = '';
+            if($arrObjMdPetTipoProcessoDTO[$i]->getStrSinDocExterno() === 'S'){
+	            $tipoDocPrincipal = 'Externo';
+            }else if($arrObjMdPetTipoProcessoDTO[$i]->getStrSinDocGerado() === 'S'){
+	            $tipoDocPrincipal = 'Gerado';
+            }else if($arrObjMdPetTipoProcessoDTO[$i]->getStrSinDocFormulario() === 'S'){
+	            $tipoDocPrincipal = 'Formulário';
+            }
+            
             $strResultado .= '<td valign="middle">' . $arrObjMdPetTipoProcessoDTO[$i]->getStrNomeProcesso() . '</td>';
 
             //Caso o array de orgaos do tipo de processa tenha mais de 1 opção o mesmo é múltiplo
@@ -433,7 +444,7 @@ try {
             $strResultado .= $tdOrgao;
             $strResultado .= $tdUnidade;
             $strResultado .= '<td valign="middle">' . $indicacaoInteressado . '</td>';
-            $strResultado .= '<td valign="middle">' . $docExterno . '</td>';
+            $strResultado .= '<td valign="middle">' . $tipoDocPrincipal . '</td>';
             $strResultado .= '<td align="center" valign="middle">';
 
             if ($tipoProcessoDivergencia || $tipoProcessoRestricaoErro) {

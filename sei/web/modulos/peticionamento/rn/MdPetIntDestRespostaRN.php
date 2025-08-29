@@ -392,8 +392,8 @@ class MdPetIntDestRespostaRN extends InfraRN
             //Unidade da intimação ainda tem credencial
             if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
                 || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
-                if ($idUnidade!=$idUnidadeIntimacao){
-                    $objUnidade = $objMdPetIntimacaoRN->retornaObjUnidadePorId($idUnidade, $retTodos);
+                if ($idUnidade!=$objUnidade->getNumIdUnidade()){
+                    $objUnidade = $objMdPetIntimacaoRN->retornaObjUnidadePorId($idUnidade, true);
                 }
             }
             SessaoSEI::getInstance()->simularLogin(null, null, $idUsuario, $objUnidade->getNumIdUnidade());

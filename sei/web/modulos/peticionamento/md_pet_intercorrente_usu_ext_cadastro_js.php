@@ -15,6 +15,7 @@
         iniciarGridDinamicaProcesso();
         inicializarDocumento();
         document.getElementById("txtNumeroProcesso").addEventListener("keyup", controlarEnterValidarProcesso, false);
+        if($('#filset-onu').length){ $('#filset-onu').css('display', 'none'); }
 
         <?php if( isset( $_POST['id_procedimento'] ) ) {
 
@@ -307,6 +308,8 @@
 
         //RN da Hipotese Legal
         verificarCriterioIntercorrente();
+
+        if($('#filset-onu').length){ $('#filset-onu').css('display', 'block'); }
 
         document.getElementById('field_documentos').style.display = 'block';
 

@@ -13,7 +13,6 @@ PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
 
 $arrComandos = array();
 $texto = '';
-
 switch($_GET['acao']) {
 	
     case 'md_pet_intimacao_cadastro_confirmar':
@@ -23,10 +22,18 @@ switch($_GET['acao']) {
             $arrComandos[] = '<button type="button" accesskey="G" name="sbmConfirmarIntimacao" id="sbmConfirmarIntimacao" value="Ciente e Gerar Intimação" class="infraButton">Ciente e <span class="infraTeclaAtalho">G</span>erar Intimação</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar" onclick="infraFecharJanelaModal();" value="Cancelar" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
-            $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
-            $objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
-            $objMdPetIntPrazoTacitaDTO->retNumNumPrazo();
-            $objMdPetIntPrazoTacitaDTO = (new MdPetIntPrazoTacitaRN())->consultar($objMdPetIntPrazoTacitaDTO);
+            // CODIGO ADD
+                $objDocumentoDTO = new DocumentoDTO();
+                $objDocumentoDTO->retDblIdDocumento();
+                $objDocumentoDTO->retDblIdProcedimento();
+                $objDocumentoDTO->retNumIdTipoProcedimentoProcedimento();
+                $objDocumentoDTO->setDblIdDocumento($_GET['id_documento']);
+
+                $objDocumentoRN = new DocumentoRN();
+                $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+
+                $objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $objDocumentoDTO->getNumIdTipoProcedimentoProcedimento() );
+            // FIM
 
 	        $numNumPrazo = !empty($objMdPetIntPrazoTacitaDTO) ? $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() : 0;
 

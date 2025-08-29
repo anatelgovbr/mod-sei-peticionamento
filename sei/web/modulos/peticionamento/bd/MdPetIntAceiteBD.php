@@ -17,4 +17,3 @@ class MdPetIntAceiteBD extends InfraBD {
     }
 
 }
-?>

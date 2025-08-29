@@ -1,13 +1,13 @@
 <?
 
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
- * 25/01/2018 - criado por Usu·rio
+ * 25/01/2018 - criado por Usu√°rio
  *
- * Vers„o do Gerador de CÛdigo: 1.41.0
+ * Vers√£o do Gerador de C√≥digo: 1.41.0
  *
- * Vers„o no SVN: $Id$
+ * Vers√£o no SVN: $Id$
  */
 
 try {
@@ -47,7 +47,7 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_pet_integracao_cadastrar':
-            $strTitulo = 'Nova IntegraÁ„o';
+            $strTitulo = 'Nova Integra√ß√£o';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarMdPetIntegracao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -88,7 +88,7 @@ try {
                     $objMdPetIntegracaoDTO->setStrSinCompLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinComplemento']));
                     $objMdPetIntegracaoDTO = $objMdPetIntegracaoRN->cadastrarCompleto($objMdPetIntegracaoDTO);
 
-                    PaginaSEI::getInstance()->adicionarMensagem('IntegraÁ„o "' . $objMdPetIntegracaoDTO->getStrNome() . '" cadastrada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('Integra√ß√£o "' . $objMdPetIntegracaoDTO->getStrNome() . '" cadastrada com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_pet_integracao=' . $objMdPetIntegracaoDTO->getNumIdMdPetIntegracao() . PaginaSEI::getInstance()->montarAncora($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao())));
                     die;
                 } catch (Exception $e) {
@@ -99,7 +99,7 @@ try {
 
         case 'md_pet_integracao_alterar':
 
-            $strTitulo = 'Alterar IntegraÁ„o';
+            $strTitulo = 'Alterar Integra√ß√£o';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarMdPetIntegracao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $strDesabilitar = 'disabled="disabled"';
 
@@ -110,7 +110,7 @@ try {
                 $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
                 $objMdPetIntegracaoDTO = $objMdPetIntegracaoRN->consultar($objMdPetIntegracaoDTO);
                 if ($objMdPetIntegracaoDTO == null) {
-                    throw new InfraException("Registro n„o encontrado.");
+                    throw new InfraException("Registro n√£o encontrado.");
                 }
             } else {
                 $objMdPetIntegracaoDTO->setNumIdMdPetIntegracao($_POST['hdnIdMdPetIntegracao']);
@@ -118,7 +118,7 @@ try {
                 $objMdPetIntegracaoDTO->setStrNome($_POST['txtNome']);
                 $objMdPetIntegracaoDTO->setStrStaUtilizarWs($_POST['rdStaUtilizarWs']);
 
-                # Independente do input StaUtilizarWs ser [S e N], preenche todos os dados abaixo, de acordo com a estÛria: 5838
+                # Independente do input StaUtilizarWs ser [S e N], preenche todos os dados abaixo, de acordo com a est√≥ria: 5838
                 $objMdPetIntegracaoDTO->setStrEnderecoWsdl($_POST['txtEnderecoWsdl']);
                 $objMdPetIntegracaoDTO->setStrOperacaoWsdl($_POST['selOperacaoWsdl']);
                 $objMdPetIntegracaoDTO->setStrCodReceitaSuspAuto($_POST['txtCodRFBSuspensaoAutomatica']);
@@ -139,7 +139,7 @@ try {
                 try {
                     $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
                     $objMdPetIntegracaoRN->alterarCompleto($objMdPetIntegracaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('IntegraÁ„o "' . $objMdPetIntegracaoDTO->getStrNome() . '" alterada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('Integra√ß√£o "' . $objMdPetIntegracaoDTO->getStrNome() . '" alterada com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao())));
                     die;
                 } catch (Exception $e) {
@@ -149,7 +149,7 @@ try {
             break;
 
         case 'md_pet_integracao_consultar':
-            $strTitulo = 'Consultar IntegraÁ„o';
+            $strTitulo = 'Consultar Integra√ß√£o';
             $bolIsConsultar = true;
             $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_md_pet_integracao'])) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
             $objMdPetIntegracaoDTO->setNumIdMdPetIntegracao($_GET['id_md_pet_integracao']);
@@ -158,12 +158,12 @@ try {
             $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
             $objMdPetIntegracaoDTO = $objMdPetIntegracaoRN->consultar($objMdPetIntegracaoDTO);
             if ($objMdPetIntegracaoDTO === null) {
-                throw new InfraException("Registro n„o encontrado.");
+                throw new InfraException("Registro n√£o encontrado.");
             }
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
     $numNuVersao = 1.2;
     $tpLogradouro = '';
@@ -244,31 +244,45 @@ try {
     }
 
     $arrParametrosEntradas = array(
-        'cnpjEmpresa' => 'CNPJ da Pessoa JurÌdica',
-        'cpfPessoa' => 'CPF da Pessoa FÌsica',
-        'identificacaoOrigem' => 'IdentificaÁ„o Origem',
-        'periodoCache' => 'PerÌodo de ExpiraÁ„o do Cache'
+        'cnpjEmpresa' => 'CNPJ da Pessoa Jur√≠dica',
+        'cpfPessoa' => 'CPF Usu√°rio Requisitante',
+        'identificacaoOrigem' => 'Identifica√ß√£o Origem',
+        'periodoCache' => 'Per√≠odo de Expira√ß√£o do Cache',
     );
+
+    $arrParametrosEntradaObrig = [
+        'cnpjEmpresa',
+        'cpfPessoa',
+        'periodoCache',
+    ];
 
     $arrParametrosSaida = array(
-        'cnpjEmpresa' => 'CNPJ da Pessoa JurÌdica',
-        'cpfPessoa' => 'CPF da Pessoa FÌsica',
-        'razaoSocial' => 'Raz„o Social',
-        'codSituacaoCadastral' => 'CÛdigo da SituaÁ„o Cadastral',
-        'descSituacaoCadastral' => 'DescriÁ„o da SituaÁ„o Cadastral',
-        'dtUltAltSituacaoCadastral' => 'Data da ⁄ltima AlteraÁ„o da SituaÁ„o Cadastral',
-        'tpLogradouro' => 'Tipo Logradouro do EndereÁo',
-        'logradouro' => 'Logradouro do EndereÁo',
-        'numero' => 'N˙mero do EndereÁo',
-        'complemento' => 'Complemento do EndereÁo',
-        'cep' => 'CEP do EndereÁo',
-        'bairro' => 'Bairro do EndereÁo',
-        'codIbgeMunicipio' => 'CÛdigo IBGE do MunicÌpio do EndereÁo',
-        'cpfRespLegal' => 'CPF do Respons·vel Legal',
-        'nomeRespLegal' => 'Nome do Respons·vel Legal'
+        'cnpjEmpresa' => 'CNPJ da Pessoa Jur√≠dica',
+        'cpfPessoa' => 'CPF da Pessoa F√≠sica',
+        'razaoSocial' => 'Raz√£o Social',
+        'codSituacaoCadastral' => 'C√≥digo da Situa√ß√£o Cadastral',
+        'descSituacaoCadastral' => 'Descri√ß√£o da Situa√ß√£o Cadastral',
+        'dtUltAltSituacaoCadastral' => 'Data da √öltima Altera√ß√£o da Situa√ß√£o Cadastral',
+        'tpLogradouro' => 'Tipo Logradouro do Endere√ßo',
+        'logradouro' => 'Logradouro do Endere√ßo',
+        'numero' => 'N√∫mero do Endere√ßo',
+        'complemento' => 'Complemento do Endere√ßo',
+        'cep' => 'CEP do Endere√ßo',
+        'bairro' => 'Bairro do Endere√ßo',
+        'codIbgeMunicipio' => 'C√≥digo IBGE do Munic√≠pio do Endere√ßo',
+        'cpfRespLegal' => 'CPF do Respons√°vel Legal',
+        'nomeRespLegal' => 'Nome do Respons√°vel Legal',
     );
+    
+    $arrParametrosSaidaObrig = [
+        'cnpjEmpresa',
+        'codSituacaoCadastral',
+        'descSituacaoCadastral',
+        'cpfRespLegal',
+        'nomeRespLegal',
+    ];
 
-    $strSumarioTabelaEntrada = 'Tabela de configuraÁ„o dos dados de entrada do web-service.';
+    $strSumarioTabelaEntrada = 'Tabela de configura√ß√£o dos dados de entrada do web-service.';
     $strCaptionTabelaEntrada = 'Dados de entrada';
 
     $strResultadoParamEntrada .= '<table width="100%" id="tableParametroEntrada" class="infraTable" summary="' . $strSumarioTabelaEntrada . '">' . "\n";
@@ -289,30 +303,32 @@ try {
         $strResultadoParamEntrada .= $strCssTr;
         $strResultadoParamEntrada .= "<td id='campo_{$chave}'  style='padding: 8px;' >";
         $strResultadoParamEntrada .= "<input type='hidden' name='hdnArrayDadosEntrada[" . $chave . "]' value='" . $itemParametroEntrada . "' />";
-        $strResultadoParamEntrada .= PaginaSEI::tratarHTML($itemParametroEntrada);
+        $strResultadoParamEntrada .= '<span style="font-weight:'.(in_array($chave, $arrParametrosEntradaObrig) ? 'bold' : 'normal' ).'">'.PaginaSEI::tratarHTML($itemParametroEntrada).'</span>';
         $strResultadoParamEntrada .= "</td>";
         $strResultadoParamEntrada .= "<td align='left'  style='padding: 8px;' >";
+
         if ($chave == 'periodoCache') {
-            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-control' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da OperaÁ„o que define o Prazo de ExpiraÁ„o do Cache das informaÁıes da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
-            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informaÁıes em cache atualizadas. Se atribuÌdo valor igual a 0 (zero), o SEI ir· ignorar o cache e obter· as informaÁıes direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-control' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Opera√ß√£o que define o Prazo de Expira√ß√£o do Cache das informa√ß√µes da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informa√ß√µes em cache atualizadas. Se atribu√≠do valor igual a 0 (zero), o SEI ir√° ignorar o cache e obter√° as informa√ß√µes direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
         } else {
-            $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS  form-control' name='nomeFuncionalDadosEntrada[$chave]'></select>";
+            $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS  form-control' name='nomeFuncionalDadosEntrada[$chave]' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'required' : '' )."></select>";
         }
 
         $strResultadoParamEntrada .= '</td>';
-
         $strResultadoParamEntrada .= '</tr>' . "\n";
         $i++;
+
     }
+
     $strResultadoParamEntrada .= '</table>';
 
-    $strSumarioTabelaSaida = 'Tabela de configuraÁ„o dos dados de Saida do web-service.';
+    $strSumarioTabelaSaida = 'Tabela de configura√ß√£o dos dados de Saida do web-service.';
     $strCaptionTabelaSaida = 'Dados de Saida';
 
     $strResultadoParamSaida .= '<table width="100%" id="tableParametroSaida" class="infraTable" summary="' . $strSumarioTabelaSaida . '">' . "\n";
     $strResultadoParamSaida .= '<tr>';
 
-    $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Campo de Saida no SEI&nbsp;</th>' . "\n";
+    $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Campo de Destino no SEI &nbsp;</th>' . "\n";
     $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Dados de Saida no Webservice&nbsp;</th>' . "\n";
     $strResultadoParamSaida .= '</tr>' . "\n";
     $strCssTr = '';
@@ -334,9 +350,9 @@ try {
         $strResultadoParamSaida .= $strCssTr;
         $strResultadoParamSaida .= "<td id='campo_{$chave}' style='padding: 8px;' >";
         $strResultadoParamSaida .= "<input type='hidden' name='hdnArrayDadosSaida[" . $chave . "]' value='" . $itemParametroSaida . "' />";
-        $strResultadoParamSaida .= PaginaSEI::tratarHTML($itemParametroSaida);
+        $strResultadoParamSaida .= '<span style="font-weight:'.(in_array($chave, $arrParametrosSaidaObrig) ? 'bold' : 'normal' ).'">'.PaginaSEI::tratarHTML($itemParametroSaida).'</span>';
         $strResultadoParamSaida .= "</td>";
-        $strResultadoParamSaida .= "<td align='left' style='padding: 8px;' ><select id='nomeFuncionalDadosSaida_$chave' class='infraSelect selParametrosS  form-control' name='nomeFuncionalDadosSaida[$chave]'></select></td>";
+        $strResultadoParamSaida .= "<td align='left' style='padding: 8px;' ><select id='nomeFuncionalDadosSaida_$chave' class='infraSelect selParametrosS  form-control' name='nomeFuncionalDadosSaida[$chave]' ".(in_array($chave, $arrParametrosSaidaObrig) ? 'required' : '' )."></select></td>";
 
         $strResultadoParamSaida .= '</tr>' . "\n";
         $i++;
@@ -392,20 +408,20 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
             <div class="col-12 col-xl-10">
                 <fieldset class="infraFieldset fieldSetIntegracao form-control">
-                    <legend class="infraLegend">&nbsp;IndicaÁ„o de IntegraÁ„o com a Receita Federal&nbsp; <img
+                    <legend class="infraLegend">&nbsp;Indica√ß√£o de Integra√ß√£o com a Receita Federal&nbsp; <img
                                 id="imgAjuda2"
                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
-                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('… extremamente recomendado que se utilize IntegraÁ„o com a base de dados da Receita Federal para validar se o CPF do Usu·rio Externo que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica È de fato do Respons·vel Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa JurÌdica e ProcuraÁ„o EletrÙnica para os Usu·rios Externos Sem IntegraÁ„o com a base da Receita Federal, os Usu·rios Externos continuar„o a declarar a responsabilidade, atÈ penal, sobre as informaÁıes prestadas, mas poder„o ocorrer contradiÁ„o e, caso necessite, Suspens„o e AlteraÁ„o da vinculaÁ„o podem ser efetivadas pelo menu AdministraÁ„o > Peticionamento EletrÙnico > VinculaÁıes e ProcuraÁıes EletrÙnicas.', 'Ajuda') ?>
+                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('√â extremamente recomendado que se utilize Integra√ß√£o com a base de dados da Receita Federal para validar se o CPF do Usu√°rio Externo que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica √© de fato do Respons√°vel Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jur√≠dica e Procura√ß√£o Eletr√¥nica para os Usu√°rios Externos Sem Integra√ß√£o com a base da Receita Federal, os Usu√°rios Externos continuar√£o a declarar a responsabilidade, at√© penal, sobre as informa√ß√µes prestadas, mas poder√£o ocorrer contradi√ß√£o e, caso necessite, Suspens√£o e Altera√ß√£o da vincula√ß√£o podem ser efetivadas pelo menu Administra√ß√£o > Peticionamento Eletr√¥nico > Vincula√ß√µes e Procura√ß√µes Eletr√¥nicas.', 'Ajuda') ?>
                                 alt="Ajuda" class="infraImgFielset"/></legend>
                     <div class="form-group">
                         <span>
                             <input <?php echo $staUtilizarWsNao; ?> type="radio" name="rdStaUtilizarWs" class="infraRadio"
                                                                     id="rdStaUtilizarWsNao" value="N"
                                                                     onclick="habilitaWs()">
-                            <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem IntegraÁ„o
+                            <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integra√ß√£o
                                 <img id="imgAjuda3"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opÁ„o, n„o ocorrer· qualquer validaÁ„o se o CPF do Usu·rio Externo que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica È de fato do Respons·vel Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, atÈ penal, da auto declaraÁ„o efetivada pelo Usu·rio Externo e documentos que anexar no Peticionamento de formalizaÁ„o.', 'Ajuda') ?>
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta op√ß√£o, n√£o ocorrer√° qualquer valida√ß√£o se o CPF do Usu√°rio Externo que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica √© de fato do Respons√°vel Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, at√© penal, da auto declara√ß√£o efetivada pelo Usu√°rio Externo e documentos que anexar no Peticionamento de formaliza√ß√£o.', 'Ajuda') ?>
                                     alt="Ajuda" class="infraImgModulo"/></label>
                         </span>
                         <span>
@@ -413,10 +429,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                     id="rdStaUtilizarWsSim" value="S"
                                                                     onclick="habilitaWs()">
                             <label name="rdStaUtilizarWsSim" id="lblStaUtilizarWsSim" for="rdStaUtilizarWsSim"
-                               class="infraLabelRadio">Com IntegraÁ„o
+                               class="infraLabelRadio">Com Integra√ß√£o
                             <img id="imgAjuda4"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opÁ„o, o CPF do Usu·rio Externo que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica ser· validado por integraÁ„o configurada abaixo se È de fato do Respons·vel Legal pelo CNPJ constante na Receita Federal. \n \n Se n„o ocorrer a validaÁ„o o Usu·rio Externo n„o poder· prosseguir com o Peticionamento inicial de Respons·vel Legal de Pessoa JurÌdica.', 'Ajuda') ?>
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta op√ß√£o, o CPF do Usu√°rio Externo que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica ser√° validado por integra√ß√£o configurada abaixo se √© de fato do Respons√°vel Legal pelo CNPJ constante na Receita Federal. \n \n Se n√£o ocorrer a valida√ß√£o o Usu√°rio Externo n√£o poder√° prosseguir com o Peticionamento inicial de Respons√°vel Legal de Pessoa Jur√≠dica.', 'Ajuda') ?>
                                 alt="Ajuda" class="infraImgModulo"/></label>
                         </span>
                     </div>
@@ -426,21 +442,21 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row initHidden" id="blcTextoSemWs" style="display: none;">
             <div class="col-12 col-xl-10">
                 <p style="font-size: 12px; padding-top: 10px">
-                    <span STYLE="color: red; font-weight: bold">ATEN«AO</span>: … extremamente recomendado que se
-                    utilize IntegraÁ„o com a base de dados da Receita Federal para validar se o CPF do Usu·rio Externo
-                    que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica È de fato do
-                    Respons·vel Legal pelo CNPJ constante na Receita Federal.<br/>
+                    <span STYLE="color: red; font-weight: bold">ATEN√áAO</span>: √â extremamente recomendado que se
+                    utilize Integra√ß√£o com a base de dados da Receita Federal para validar se o CPF do Usu√°rio Externo
+                    que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica √© de fato do
+                    Respons√°vel Legal pelo CNPJ constante na Receita Federal.<br/>
                     <br/>
-                    Caso opte por ativar as funcionalidades afetas a Pessoa JurÌdica e ProcuraÁ„o EletrÙnica para os
-                    Usu·rios Externos Sem IntegraÁ„o com a base da Receita Federal, n„o ocorrer· qualquer validaÁ„o se o
-                    CPF do Usu·rio Externo que est· formalizando a vinculaÁ„o como Respons·vel Legal de Pessoa JurÌdica
-                    È de fato do Respons·vel Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob
-                    responsabilidade, atÈ penal, da auto declaraÁ„o efetivada pelo Usu·rio Externo e documentos que
-                    anexar no Peticionamento de formalizaÁ„o.<br/>
+                    Caso opte por ativar as funcionalidades afetas a Pessoa Jur√≠dica e Procura√ß√£o Eletr√¥nica para os
+                    Usu√°rios Externos Sem Integra√ß√£o com a base da Receita Federal, n√£o ocorrer√° qualquer valida√ß√£o se o
+                    CPF do Usu√°rio Externo que est√° formalizando a vincula√ß√£o como Respons√°vel Legal de Pessoa Jur√≠dica
+                    √© de fato do Respons√°vel Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob
+                    responsabilidade, at√© penal, da auto declara√ß√£o efetivada pelo Usu√°rio Externo e documentos que
+                    anexar no Peticionamento de formaliza√ß√£o.<br/>
                     <br/>
-                    Ao selecionar a opÁ„o Sem IntegraÁ„o, contradiÁıes podem ocorrer e, caso necessite, Suspens„o e
-                    AlteraÁ„o da vinculaÁ„o podem ser efetivadas pelo menu AdministraÁ„o > Peticionamento EletrÙnico >
-                    VinculaÁıes e ProcuraÁıes EletrÙnicas.
+                    Ao selecionar a op√ß√£o Sem Integra√ß√£o, contradi√ß√µes podem ocorrer e, caso necessite, Suspens√£o e
+                    Altera√ß√£o da vincula√ß√£o podem ser efetivadas pelo menu Administra√ß√£o > Peticionamento Eletr√¥nico >
+                    Vincula√ß√µes e Procura√ß√µes Eletr√¥nicas.
                 </p>
             </div>
         </div>
@@ -456,7 +472,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                    </div>
                    <div class="col-6 col-xl-5">
                        <div class="form-group">
-                           <label id="lblNuVersao" for="txtNuVersao" class="infraLabelObrigatorio">Vers„o SOAP:</label>
+                           <label id="lblNuVersao" for="txtNuVersao" class="infraLabelObrigatorio">Vers√£o SOAP:</label>
                            <select id="selNuVersao" name="selNuVersao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                <option value=""></option>
                                <option value="1.1" <?php echo ($numNuVersao == "1,1") ? 'selected' : ''; ?> >1.1</option>
@@ -470,7 +486,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row initHidden" id="blcEnderecoWs"  style="display: none;">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
-                    <label id="lblEnderecoWsdl" for="txtEnderecoWsdl" class="infraLabelObrigatorio">EndereÁo do Webservice:</label>
+                    <label id="lblEnderecoWsdl" for="txtEnderecoWsdl" class="infraLabelObrigatorio">Endere√ßo do Webservice:</label>
                     <div class="input-group mb-3">
                         <input type="text" id="txtEnderecoWsdl" name="txtEnderecoWsdl" class="infraText form-control"
                             value="<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrEnderecoWsdl()); ?>"
@@ -486,7 +502,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row initHidden" id="blcOperacaoWs" style="display: none;">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
-                    <label id="lblOperacaoWsdl" for="selOperacaoWsdl" class="infraLabelObrigatorio">OperaÁ„o:</label>
+                    <label id="lblOperacaoWsdl" for="selOperacaoWsdl" class="infraLabelObrigatorio">Opera√ß√£o:</label>
                     <select id="selOperacaoWsdl" name="selOperacaoWsdl" onchange="operacaoSelecionar()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
                     <select id="selParametrosE" name="selParametrosE[]" multiple style="left:400px;display:none"></select>
                     <select id="selParametrosS" name="selParametrosS[]" multiple style="left:500px;display:none"></select>
@@ -496,9 +512,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row initHidden" id="blcParamsSuspensaoAutomatica" style="display: none;">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
-                    <label id="lbltxtCodRFBSuspensaoAutomatica" for="txtCodRFBSuspensaoAutomatica" class="infraLabelObrigatorio">CÛdigos de SituaÁ„o Cadastral que identifica Pessoas FÌsicas Inativas na Receita:
+                    <label id="lbltxtCodRFBSuspensaoAutomatica" for="txtCodRFBSuspensaoAutomatica" class="infraLabelObrigatorio">C√≥digos de Situa√ß√£o Cadastral que identifica Pessoas F√≠sicas Inativas na Receita:
                         <img id="imgAjuda5" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Lista de cÛdigos numÈricos que representam as situaÁıes na Receita Federal que ir„o implicar na desativaÁ„o do Usu·rio Externo ativo e liberado. Os cÛdigos precisar ser separados por ponto e vÌrgula ( ; ). \n\n\n Por exemplo, para a situaÁ„o "Cancelada por Encerramento de EspÛlio" o webservice retorna o cÛdigo "1" e a situaÁ„o "Cancelada por ”bito sem Espolio" o webservice retorna o cÛdigo "3". A lista nesse campo deve ser "1;3".', 'Ajuda') ?>
+                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Lista de c√≥digos num√©ricos que representam as situa√ß√µes na Receita Federal que ir√£o implicar na desativa√ß√£o do Usu√°rio Externo ativo e liberado. Os c√≥digos precisar ser separados por ponto e v√≠rgula ( ; ). \n\n\n Por exemplo, para a situa√ß√£o "Cancelada por Encerramento de Esp√≥lio" o webservice retorna o c√≥digo "1" e a situa√ß√£o "Cancelada por √ìbito sem Espolio" o webservice retorna o c√≥digo "3". A lista nesse campo deve ser "1;3".', 'Ajuda') ?>
                              alt="Ajuda" class="infraImgModulo"/>
                     </label>
                     <input type="text" id="txtCodRFBSuspensaoAutomatica" name="txtCodRFBSuspensaoAutomatica" class="infraText form-control" value="<?= $codReceitaSuspAuto ?>"
@@ -513,9 +529,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinCache()) ?>
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     <label id="lblSinCache" for="chkSinCache" class="infraLabelCheckbox">Marque caso seu Webservice tenha
-                        controle de expiraÁ„o de cache</label>
+                        controle de expira√ß√£o de cache</label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip('Marque caso a operaÁ„o selecionada acima utilize controle de expiraÁ„o de cache das informaÁıes recuperadas da Receita Federal.', 'Ajuda') ?> alt="Ajuda"
+                        <?= PaginaSEI::montarTitleTooltip('Marque caso a opera√ß√£o selecionada acima utilize controle de expira√ß√£o de cache das informa√ß√µes recuperadas da Receita Federal.', 'Ajuda') ?> alt="Ajuda"
                         class="infraImgModulo"/>
                 </div>
                 <div class="form-group" id="tipoLogradouro">
@@ -523,9 +539,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinTpLogradouro()) ?>
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     <label id="lblSinTipo" for="chkSinTipo" class="infraLabelCheckbox">Marque caso seu Webservice tenha o
-                        Tipo do Logradouro separado do prÛprio Logradouro</label>
+                        Tipo do Logradouro separado do pr√≥prio Logradouro</label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip('Ao marcar esta opÁ„o, o Tipo de Logradouro ser· agrupado com o Logradouro. \n \nIsso È v·lido somente para OperaÁıes que possuem em sua estrutura as duas informaÁıes separadamente.') ?>alt="Ajuda"
+                        <?= PaginaSEI::montarTitleTooltip('Ao marcar esta op√ß√£o, o Tipo de Logradouro ser√° agrupado com o Logradouro. \n \nIsso √© v√°lido somente para Opera√ß√µes que possuem em sua estrutura as duas informa√ß√µes separadamente.') ?>alt="Ajuda"
                         class="infraImgModulo"/>
                 </div>
                 <div class="form-group" id="numeroLogradouro">
@@ -533,9 +549,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinNuLogradouro()) ?>
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     <label id="lblSinNumero" for="chkSinNumero" class="infraLabelCheckbox">Marque caso seu Webservice tenha
-                        o N˙mero do Logradouro separado do prÛprio Logradouro</label>
+                        o N√∫mero do Logradouro separado do pr√≥prio Logradouro</label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip('Ao marcar esta opÁ„o, o N˙mero de Logradouro ser· agrupado com o Logradouro. \n \nIsso È v·lido somente para OperaÁıes que possuem em sua estrutura as duas informaÁıes separadamente.') ?>alt="Ajuda"
+                        <?= PaginaSEI::montarTitleTooltip('Ao marcar esta op√ß√£o, o N√∫mero de Logradouro ser√° agrupado com o Logradouro. \n \nIsso √© v√°lido somente para Opera√ß√µes que possuem em sua estrutura as duas informa√ß√µes separadamente.') ?>alt="Ajuda"
                         class="infraImgModulo"/>
                 </div>
                 <div class="form-group" id="complementoLogradouro">
@@ -544,9 +560,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         class="infraCheckbox" <?= PaginaSEI::getInstance()->setCheckbox($objMdPetIntegracaoDTO->getStrSinCompLogradouro()) ?>
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     <label id="lblSinComplemento" for="chkSinComplemento" class="infraLabelCheckbox">Marque caso seu
-                        Webservice tenha o Complemento do Logradouro separado do prÛprio Logradouro</label>
+                        Webservice tenha o Complemento do Logradouro separado do pr√≥prio Logradouro</label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip('Ao marcar esta opÁ„o, o Complemento de Logradouro ser· agrupado com o Logradouro. \n \nIsso È v·lido somente para OperaÁıes que possuem em sua estrutura as duas informaÁıes separadamente.') ?>alt="Ajuda"
+                        <?= PaginaSEI::montarTitleTooltip('Ao marcar esta op√ß√£o, o Complemento de Logradouro ser√° agrupado com o Logradouro. \n \nIsso √© v√°lido somente para Opera√ß√µes que possuem em sua estrutura as duas informa√ß√µes separadamente.') ?>alt="Ajuda"
                         class="infraImgModulo"/>
                 </div>
             </div>
@@ -563,11 +579,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
         <div class="container initHidden"  style="display: none;">
             <fieldset style="display:none" id="fldParametrosCache" class="infraFieldset">
-                <legend class="infraLegend">&nbsp;Par‚metros do Cache&nbsp;</legend>
+                <legend class="infraLegend">&nbsp;Par√¢metros do Cache&nbsp;</legend>
                 <div class="container">
                     <div class="bloco" style="display:none;">
                         <div class="form-group">
-                            <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento" class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione o campo da OperaÁ„o que retorna a Data de Armazenamento do cache da informaÁıes da Receita Federal e que foi utilizado na validaÁ„o do perÌodo de expiraÁ„o definido nos campo abaixo.', 'Ajuda') ?>alt="Ajuda" class="infraImgModulo" /></label>
+                            <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento" class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Opera√ß√£o que retorna a Data de Armazenamento do cache da informa√ß√µes da Receita Federal e que foi utilizado na valida√ß√£o do per√≠odo de expira√ß√£o definido nos campo abaixo.', 'Ajuda') ?>alt="Ajuda" class="infraImgModulo" /></label>
                             <select id="selCacheDataArmazenamento" style="width:300px;" name="selCacheDataArmazenamento" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
                         </div>
                     </div>
@@ -575,11 +591,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <div class="clear">&nbsp;</div>
 
                     <div class="bloco">
-                        <label id="lblCachePrazoExpiracao" for="selCachePrazoExpiracao" class="infraLabelObrigatorio">Campo de Entrada para Prazo de ExpiraÁ„o do Cache:</label>
+                        <label id="lblCachePrazoExpiracao" for="selCachePrazoExpiracao" class="infraLabelObrigatorio">Campo de Entrada para Prazo de Expira√ß√£o do Cache:</label>
                     </div>
 
                     <div class="bloco">
-                        <label class="infraLabelObrigatorio" for="txtPrazo" id="lblPrazo">Par‚metro de Meses de ExpiraÁ„o: </label>
+                        <label class="infraLabelObrigatorio" for="txtPrazo" id="lblPrazo">Par√¢metro de Meses de Expira√ß√£o: </label>
                     </div>
 
                     <div class="clear">&nbsp;</div>

@@ -16,4 +16,3 @@ class MdPetTipoProcessoBD extends InfraBD {
   }
 
 }
-?>

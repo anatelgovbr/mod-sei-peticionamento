@@ -9,15 +9,15 @@
 | Os métodos abaixo documentados somente funcionarão se o Serviço correspondente do Sistema indicado possuir pelo menos a operação "Listar Constatos" no menu Administração > Sistemas. |
 
 # Sumário das Operações Disponíveis
-1. **[Consultar Usuário Externo](#1-consultar-usuário-externo)**: Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
-2. **[Listar Poderes Legais](#2-listar-poderes-legais)**: Lista os tipos de poderes legais que podem ser utilizados na emissão de Procurações Eletrônicas Simples geradas no SEI.
-3. **[Listar Representação de Pessoa Física](#3-listar-representação-de-pessoa-física)**: Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
-4. **[Listar Representação de Pessoa Jurídica](#4-listar-representação-de-pessoa-jurídica)**: Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
-5. **[Listar Representados](#5-listar-representados)**: Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
-6. **[Listar Representantes](#6-listar-representantes)**: Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
-7. **[Listar Situações de Representação](#7-listar-situações-de-representação)**: Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
-8. **[Listar Tipos de Representação](#8-listar-tipos-de-representação)**: Lista os tipos de representação que existem sobre as representações geradas no SEI (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação).
-9. **[Listar Usuários Externos](#9-listar-usuários-externos)**: Lista todos os Usuários Externos cadastrados no SEI.
+1. **[Consultar Usuário Externo](#1-consultar-usuário-externo)**: Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
+2. **[Listar Poderes Legais](#2-listar-poderes-legais)**: Lista os tipos de poderes legais que podem ser utilizados na emissão de Procurações Eletrônicas Simples geradas no SEI.
+3. **[Listar Representação de Pessoa Física](#3-listar-representação-de-pessoa-física)**: Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
+4. **[Listar Representação de Pessoa Jurídica](#4-listar-representação-de-pessoa-jurídica)**: Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
+5. **[Listar Representados](#5-listar-representados)**: Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
+6. **[Listar Representantes](#6-listar-representantes)**: Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
+7. **[Listar Situações de Representação](#7-listar-situações-de-representação)**: Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
+8. **[Listar Tipos de Representação](#8-listar-tipos-de-representação)**: Lista os tipos de representação que existem sobre as representações geradas no SEI (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação).
+9. **[Listar Usuários Externos](#9-listar-usuários-externos)**: Lista todos os Usuários Externos cadastrados no SEI.
 
 ## 1. Consultar Usuário Externo
 Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
@@ -104,6 +104,7 @@ Lista os representantes de determinada pessoa física outorgante, se houver emit
 
 | Dado | Descrição |
 | ---- | ---- |
+| IdVinculoRepresentante | Id do Vínculo. |
 | Cpf | Número do CPF do Usuário Externo (sem formatação). |
 | Nome | Nome do Usuário Externo. |
 | Email | Endereço de e-mail utilizado pelo Usuário Externo para acesso à tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usuário Externo.. |
@@ -137,6 +138,7 @@ Lista os representantes de determinada pessoa jurídica outorgante, se houver em
 
 | Dado | Descrição |
 | ---- | ---- |
+| IdVinculoRepresentante | Id do Vínculo. |
 | Cpf | Número do CPF do Usuário Externo (sem formatação). |
 | Nome | Nome do Usuário Externo. |
 | Email | Endereço de e-mail utilizado pelo Usuário Externo para acesso à tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usuário Externo. |
@@ -170,6 +172,7 @@ Lista todos os representados por determinada pessoa física, se alguém houver e
 
 | Dado | Descrição |
 | ---- | ---- |
+| IdVinculoRepresentante | Id do Vínculo. |
 | CnpjCpf | CPF ou CNPJ do Representado. |
 | RazaoSocial | Razão Social do Representado. |
 | DataLimite | Data limite da representação. Retorna vazio caso seja representação por tempo indeterminado. |
@@ -188,7 +191,7 @@ Lista todos os representados por determinada pessoa física, se alguém houver e
 | TipoPoderesLegais | Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 6. Listar Representantes
-Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
+Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
 ### Método “listarRepresentantes”:
 
 | Parâmetros de Entrada |  |
@@ -206,6 +209,7 @@ Lista todos os representantes e representados que possuem alguma emissão de re
 
 | Dado | Descrição |
 | ---- | ---- |
+| IdVinculoRepresentante | Id do Vínculo. |
 | TipoVinculo | Tipo da Natureza do Vínculo (J=Pessoa Jurídica, F=Pessoa Física) |
 | CnpjRepresentado | CNPJ do Representado caso o Tipo de Vínculo seja de Pessoa Jurídica (com formatação). |
 | RazaoSocialRepresentado | Razão Social do Representado caso o Tipo de Vínculo seja de Pessoa Jurídica. |

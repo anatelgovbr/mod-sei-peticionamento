@@ -36,13 +36,13 @@ try {
             $objMdPetIndisponibilidadeDTO = $objMdPetIndisponibilidadeRN->consultar($objMdPetIndisponibilidadeDTO);
 
             if ($objMdPetIndisponibilidadeDTO == null) {
-                throw new InfraException("Registro não encontrado.");
+                throw new InfraException("Registro nÃ£o encontrado.");
             }
 
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao_externa'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao_externa'] . "' nÃ£o reconhecida.");
     }
 
 } catch (Exception $e) {
@@ -52,7 +52,7 @@ try {
 $hashAnexo = "";
 $idAnexo = "";
 
-//Na primeira vez que entrar na tela de geração de nova versão não deve processar os anexos (a tabela deve ser montada com os anexos do clone)
+//Na primeira vez que entrar na tela de geraÃ§Ã£o de nova versÃ£o nÃ£o deve processar os anexos (a tabela deve ser montada com os anexos do clone)
 if (isset($_GET['id_indisponibilidade_peticionamento'])) {
 
     $objMdPetIndispDocRN = new MdPetIndisponibilidadeDocRN();
@@ -109,11 +109,11 @@ PaginaPeticionamentoExterna::getInstance()->fecharJavaScript();
 PaginaPeticionamentoExterna::getInstance()->fecharHead();
 PaginaPeticionamentoExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 $urlBaseLink = "";
-$qtdArrAcoesRemover = (is_array($arrAcoesRemover) ? count($arrAcoesRemover) : 0);
+$qtdArrAcoesRemover = (isset($arrAcoesRemover) && is_array($arrAcoesRemover) ? count($arrAcoesRemover) : 0);
 if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
 
     if ($_GET['acao_externa'] == 'md_pet_usu_ext_indisponibilidade_consultar') {
-        $arrDados = explode("±", $_POST['hdnAnexos'], 3);
+        $arrDados = explode("Â±", $_POST['hdnAnexos'], 3);
         array_push($arrAcoesRemover, $arrDados[0]);
     }
 
@@ -137,9 +137,9 @@ if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
         <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6">
             <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset form-control">
                 <!--  Data Inicio  -->
-                <legend class="infraLegend">&nbsp;Período de Indisponibilidade&nbsp;</legend>
+                <legend class="infraLegend">&nbsp;PerÃ­odo de Indisponibilidade&nbsp;</legend>
                 <label class="infraLabel">
-                    <span style="font-weight: bold;">Início:</span> <?= $objMdPetIndisponibilidadeDTO->getDthDataInicioFormatada() ?>
+                    <span style="font-weight: bold;">InÃ­cio:</span> <?= $objMdPetIndisponibilidadeDTO->getDthDataInicioFormatada() ?>
                 </label>
                 <!--  Data Fim  -->
                 <label class="infraLabel">
@@ -162,20 +162,20 @@ if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6">
-            <label id="fldProrrogacao" class="infraLabelObrigatorio">Indisponibilidade justificou prorrogação automática
+            <label id="fldProrrogacao" class="infraLabelObrigatorio">Indisponibilidade justificou prorrogaÃ§Ã£o automÃ¡tica
                 dos
                 prazos:</label>
             <label class="infraLabel">
                 <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'S') ? 'Sim' : '' ?>
-                <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'N') ? 'Não' : '' ?>
+                <?php echo isset($objMdPetIndisponibilidadeDTO) && ($objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() && $objMdPetIndisponibilidadeDTO->getStrSinProrrogacao() == 'N') ? 'NÃ£o' : '' ?>
             </label>
             <div>
                 <label id="lblDescricao" class="infraLabelOpcional">
-                    <ul>Observação: Conforme normativo próprio, algumas indisponibilidades justificam a prorrogação
-                        automática
-                        dos prazos externos de Intimações Eletrônicas que venceriam durante o período da
+                    <ul>ObservaÃ§Ã£o: Conforme normativo prÃ³prio, algumas indisponibilidades justificam a prorrogaÃ§Ã£o
+                        automÃ¡tica
+                        dos prazos externos de IntimaÃ§Ãµes EletrÃ´nicas que venceriam durante o perÃ­odo da
                         indisponibilidade,
-                        prorrogando-os para o primeiro dia útil seguinte ao fim da respectiva indisponibilidade.
+                        prorrogando-os para o primeiro dia Ãºtil seguinte ao fim da respectiva indisponibilidade.
                     </ul>
                 </label>
             </div>
@@ -258,7 +258,7 @@ $strLink = $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_
             var mes = parseInt(data[1]) - 1;
             var horas = valorArray[1].split(':');
 
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : 00;
+            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
             var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
             return dataCompleta;
         }

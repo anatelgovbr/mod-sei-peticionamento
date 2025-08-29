@@ -16,4 +16,3 @@ class MdPetExtensoesArquivoBD extends InfraBD {
   }
 
 }
-?>

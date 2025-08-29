@@ -672,11 +672,12 @@ class MdPetVinculoUsuExtRN extends InfraRN
             }
 
             if (is_null($idVinculo)) {
+            	
                 $arrDados = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados,$arrObjMdPetVincTpProcesso);
-                $existePeticionamento = true;
                 $idRepresentant = $arrDados['idRepresentante'];
+                $existePeticionamento = true;
+                
             } else {
-
 
                 $mdPetVinculoRepresentant = new MdPetVincRepresentantRN();
                 $objMdPetVinculoRepresentantDTORL = new MdPetVincRepresentantDTO();
@@ -686,12 +687,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $objMdPetVinculoRepresentantDTORL->retStrCpfProcurador();
                 $arrObjMdPetVinculoRepresentantDTORL = $mdPetVinculoRepresentant->consultar($objMdPetVinculoRepresentantDTORL);
 
-                $strCpfRespLegalAntigo = "";
-                if ($arrObjMdPetVinculoRepresentantDTORL) {
-                    $strCpfRespLegalAntigo = $arrObjMdPetVinculoRepresentantDTORL->getStrCpfProcurador();
-                } else {
-                    $strCpfRespLegalAntigo = $dados['txtCpfResponsavelAntigo'];
-                }
+                $strCpfRespLegalAntigo = $arrObjMdPetVinculoRepresentantDTORL ? $arrObjMdPetVinculoRepresentantDTORL->getStrCpfProcurador() : $dados['txtCpfResponsavelAntigo'];
 
                 $isAlteracao = true;
                 $isAlteradoRespLegal = $strCpfRespLegalAntigo != InfraUtil::retirarFormatacao($dados['txtNumeroCpfResponsavel']) ? true : false;
@@ -699,19 +695,23 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $existePeticionamento = $this->_verificaExistePeticionamento($isAlteracao, $isAlteradoRespLegal, $addDocumento);
                 $idProcedimento = $this->_getIdProcessoPorVinculo($idVinculo);
                 $reciboDTOBasico = null;
+                
                 if ($acessoExterno == true) {
                     $reciboDTOBasico = $this->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' => $tipoPeticionamento));
                 }
+                
                 $idRepresentant = null;
 
                 if ($isAlteradoRespLegal) {
-                    $idRepresentant = $this->_adicionarProcuracaoEspecialRepresentante($idVinculo, $dados, $isAlteracao, $isAlteradoRespLegal);
 
+                    $idRepresentant = $this->_adicionarProcuracaoEspecialRepresentante($idVinculo, $dados, $isAlteracao, $isAlteradoRespLegal);
                     $arrDados = $this->_realizarVinculosProcessoAlteracao($idVinculo, $dados, $objUnidadeDTO, $reciboDTOBasico, $idProcedimento, $idRepresentant);
 
                 } else {
+                	
                     $arrDados['idVinculo'] = $idVinculo;
                     $idRepresentant = $this->_getIdRepresentanteAtivoPorVinculo($idVinculo);
+                
                 }
 
                 if ($idRepresentant == null) {
@@ -721,6 +721,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $objProcedimentoDTO = $this->_getObjProcedimentoPorVinculo($idVinculo);
                 $arrDados['objProcedimentoDTO'] = $objProcedimentoDTO;
                 $arrDados['reciboDTOBasico'] = $reciboDTOBasico;
+                
             }
 
             $objArquivoPrincipal = array_key_exists('objFormularioVinc', $arrDados) ? $arrDados['objFormularioVinc'] : null;
@@ -763,18 +764,15 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $parObjDocumentoDTO->retTodos();
                 $parObjDocumentoDTO->setDblIdDocumento($objArquivoPrincipal->getIdDocumento());
                 //$parObjDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EDITOR_INTERNO);
+				$parObjDocumentoDTO = (new DocumentoRN())->consultarRN0005($parObjDocumentoDTO);
 
-                $objDocumentoRN = new DocumentoRN();
-                $parObjDocumentoDTO = $objDocumentoRN->consultarRN0005($parObjDocumentoDTO);
-
-                $mdPetProcessoRN = new mdPetProcessoRN();
-                $mdPetProcessoRN->assinarETravarDocumentoProcesso($objUnidadeDTO, $dados, $parObjDocumentoDTO, $objProcedimentoDTO);
+                (new mdPetProcessoRN())->assinarETravarDocumentoProcesso($objUnidadeDTO, $dados, $parObjDocumentoDTO, $objProcedimentoDTO);
             }
 
-            $objMdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
-
-            $tipoPeticionamento = !is_null($reciboDTOBasico) ? $reciboDTOBasico->getStrStaTipoPeticionamento() : null;
-            $strTipoPeticionamento = $objMdPetRegrasGeraisRN->getTipoPeticionamento($tipoPeticionamento, true);
+            $tipoPeticionamento     = !is_null($reciboDTOBasico) ? $reciboDTOBasico->getStrStaTipoPeticionamento() : null;
+	        $idDocumentoRecibo      = !is_null($reciboDTOBasico) && property_exists($reciboDTOBasico, 'IdDocumento') ? $reciboDTOBasico->getDblIdDocumento() : null;
+            $strTipoPeticionamento  = (new MdPetRegrasGeraisRN())->getTipoPeticionamento($tipoPeticionamento, true);
+            
             $this->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
 
             if ($isAlteradoRespLegal) {
@@ -1827,6 +1825,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetVinculoDTO->setStrSinValidado($ckDeclaracao);
         $objMdPetVinculoDTO->setDblIdProtocolo($idProcedimento);
         $objMdPetVinculoDTO->setStrTpVinculo('J');
+        $objMdPetVinculoDTO->setDthDataUltimaConsultaRFB(InfraData::getStrDataHoraAtual());
 
         $stWebservice = 'N';
         if (!empty($dados['hdnStaWebService'])) {

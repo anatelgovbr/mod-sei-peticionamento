@@ -36,7 +36,7 @@ var objAutoCompletarComplementar = null;
 
         for(var i=0;i < options.length;i++){
           if (options[i].value == id){
-            self.setTimeout('alert(\'Extens„o j· consta na lista.\')',100);
+            self.setTimeout('alert(\'Extens√£o j√° consta na lista.\')',100);
             break;
           }
         }
@@ -64,7 +64,7 @@ var objAutoCompletarComplementar = null;
 
         for(var i=0;i < options.length;i++){
           if (options[i].value == id){
-            self.setTimeout('alert(\'Extens„o j· consta na lista.\')',100);
+            self.setTimeout('alert(\'Extens√£o j√° consta na lista.\')',100);
             break;
           }
         }
@@ -86,8 +86,8 @@ var objAutoCompletarComplementar = null;
       document.getElementById('txtComplementar').focus();
     }};
 
-    objAutoCompletarPrincipal.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strDescricaoUnidade))?>');
-    objAutoCompletarComplementar.selecionar('<?=$strIdUnidade?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strDescricaoUnidade))?>');
+    objAutoCompletarPrincipal.selecionar('<?= isset($strIdUnidade) ? $strIdUnidade : '' ?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML((isset($strDescricaoUnidade) ? $strDescricaoUnidade : '')))?>');
+    objAutoCompletarComplementar.selecionar('<?= isset($strIdUnidade) ? $strIdUnidade : '' ?>','<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML((isset($strDescricaoUnidade) ? $strDescricaoUnidade : '')))?>');
 
     infraEfeitoTabelas();
 }
@@ -98,11 +98,11 @@ function OnSubmitForm() {
 
 function validarCadastro() {
   if (infraTrim(document.getElementById('hdnPrincipal').value)=='') {
-    alert('Informe pelo menos uma extens„o para documento principal.');
+    alert('Informe pelo menos uma extens√£o para documento principal.');
     return false;
   }
    if (infraTrim(document.getElementById('hdnComplementar').value)=='') {
-    alert('Informe pelo menos uma extens„o para documento complementar.');
+    alert('Informe pelo menos uma extens√£o para documento complementar.');
     return false;
   }
   return true;

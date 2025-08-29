@@ -32,7 +32,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.2.13';
+        return '4.3.0';
+    }
+
+    public function getIaMenorVersaoRequerida()
+    {
+        return '1.1.0';
     }
 
     public function getInstituicao()
@@ -94,6 +99,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_serie_selecionar':
                 require_once dirname(__FILE__) . '/md_pet_serie_lista.php';
                 return true;
+
+          case 'md_pet_formulario_selecionar':
+            require_once dirname(__FILE__) . '/md_pet_formulario_lista.php';
+            return true;
 
             case 'md_pet_pessoa_fisica':
                 require_once dirname(__FILE__) . '/md_pet_pessoa_fisica.php';
@@ -293,6 +302,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 return true;
 
             case 'md_pet_vinc_suspender_restabelecer':
+            case 'md_pet_vinc_suspender_autorepresentacao':
                 require_once dirname(__FILE__) . '/md_pet_vinc_pe_suspender_restabelecer.php';
                 return true;
 
@@ -307,6 +317,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_intimacao_cadastro_juridica':
                 require_once dirname(__FILE__) . '/md_pet_intimacao_cadastro_juridica.php';
                 return true;
+	
+	        case 'md_pet_int_relatorio_fisica':
+		        require_once dirname(__FILE__) . '/md_pet_int_relatorio_filtro_pf.php';
+		        return true;
+	
+	        case 'md_pet_int_relatorio_juridica':
+		        require_once dirname(__FILE__) . '/md_pet_int_relatorio_filtro_pj.php';
+		        return true;
 
             //Tipo de Poderes Legais
             case 'md_pet_tipo_poder_listar':
@@ -344,6 +362,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $arrObjSerieDTO = MdPetSerieINT::autoCompletarSeries($_POST['palavras_pesquisa'], $_POST['tipoDoc']);
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjSerieDTO, 'IdSerie', 'Nome');
                 break;
+	
+	        case 'md_pet_formulario_auto_completar':
+		        $arrObjFormDTO =  MdPetSerieINT::autoCompletarFormulario($_POST['palavras_pesquisa'], $_POST['tipoDoc']);
+		        $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjFormDTO, 'IdTipoFormulario', 'Nome');
+		        break;
 
             case 'md_pet_tipo_processo_auto_completar':
                 $arrObjTipoProcessoDTO = TipoProcedimentoINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa']);
@@ -514,10 +537,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_integracao_busca_operacao_wsdl':
-                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDL($_POST['endereco_wsdl']);
+                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDL($_POST['endereco_wsdl'], $_POST['versao']);
                 break;
             case 'md_pet_integracao_busca_parametro_wsdl':
-                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDLParametro($_POST['endereco_wsdl'], $_POST['operacao_wsdl'], $_POST['tipo_parametro']);
+                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDLParametro($_POST['endereco_wsdl'], $_POST['operacao_wsdl'], $_POST['tipo_parametro'], $_POST['versao']);
                 break;
 
             case 'md_pet_vinc_responsavellegal_cpf_consultar' :
@@ -780,6 +803,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_pet_editor_usuario_externo_processar.php';
                 return true;
 
+            case 'md_pet_formulario_gerar':
+                require_once dirname(__FILE__) . '/md_pet_formulario.php';
+                return true;
+
             case 'md_pet_validar_documento_principal':
 
                 $conteudo = "";
@@ -954,6 +981,26 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_intimacao_usu_ext_negar_resposta_peticionar':
                 require_once dirname(__FILE__) . '/md_pet_intimacao_usu_ext_negar_resposta_peticionar.php';
                 return true;
+
+            case 'md_pet_classificar_ods':
+                require_once dirname(__FILE__) . '/md_pet_classificar_ods.php';
+                return true;
+
+            case 'md_pet_ods_consultar_objetivos_selecionados_ajax':
+                $json = MdIaAdmObjetivoOdsINT::consultarObjetivoSelecionados($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+            case 'md_pet_ods_salvar_metas_selecionadas_sessao_ajax':
+                $json = MdIaAdmObjetivoOdsINT::salvarMetasSelecionadasSessao($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+            case 'md_pet_ods_consultar_metas_selecionadas_sessao_ajax':
+                echo MdIaAdmObjetivoOdsINT::consultarMetasSelecionadasSessao();
+                return true;
+            case 'md_pet_ods_consultar_metas_ods_ajax':
+                $json = MdIaAdmObjetivoOdsINT::consultarObjetivoParaClassificacaoUsuExt($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit();
         }
 
         return false;
@@ -1655,6 +1702,68 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         return $objArrTipoDTO;
     }
+	
+	
+	
+	/**
+	 *  Verifica se está na última conclusão
+	 * @param $idProtocolo
+	 * @return bool
+	 */
+	public function verificaUltimaConclusao($idProtocolo)
+	{
+		$objAtividadeDTO = new AtividadeDTO();
+		$objAtividadeDTO->setDblIdProtocolo($idProtocolo);
+		$objAtividadeDTO->setDthConclusao(null);
+		$objAtividadeDTO->retNumIdUnidade();
+		$objAtividadeDTO = (new AtividadeRN())->contarRN0035($objAtividadeDTO);
+		
+		return ($objAtividadeDTO > 0) ? false : true;
+	}
+	
+	/**
+	 * @param $idProcedimento
+	 * @return mixed
+	 * @throws InfraException
+	 */
+	public function listarDocumentos($idProcedimento)
+	{
+		
+		if (!isset($idProcedimento)) {
+			throw new InfraException('Parâmetro $idProcedimento não informado.');
+		}
+		
+		$objDocumentoDTO = new DocumentoDTO();
+		$objDocumentoDTO->retDblIdDocumento();
+		$objDocumentoDTO->retNumIdSerie();
+		$objDocumentoDTO->retDblIdProcedimento();
+		$objDocumentoDTO->retStrStaNivelAcessoLocalProtocolo();
+		$objDocumentoDTO->setDblIdProcedimento($idProcedimento);
+		return (new DocumentoRN())->listarRN0008($objDocumentoDTO);
+		
+	}
+	
+	/**
+	 * Lista processos anexados ao processo principal
+	 * @param $idProcedimento
+	 * @return mixed
+	 * @throws InfraException
+	 */
+	public function listarProcessosAnexado($idProcedimento)
+	{
+		if (!isset($idProcedimento)) {
+			throw new InfraException('Parâmetro $idProcedimento não informado.');
+		}
+		
+		$objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
+		$objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+		$objRelProtocoloProtocoloDTO->retDblIdProtocolo2();
+		$objRelProtocoloProtocoloDTO->setDblIdProtocolo1($idProcedimento);
+		$objRelProtocoloProtocoloDTO->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO);
+		$objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->listarRN0187($objRelProtocoloProtocoloDTO);
+		
+		return $objRelProtocoloProtocoloDTO;
+	}
 
     /**
      * Valida se o Documento que está sendo cancelado foi peticionado
@@ -1664,69 +1773,131 @@ class PeticionamentoIntegracao extends SeiIntegracao
      * @return mixed
      * @author Jaqueline Mendes <jaqueline.mendes@castgroup.com.br>
      */
-    public function cancelarDocumento(DocumentoAPI $objDocumentoAPI)
-    {
-        $numRecibo = '';
-        $idDoc = $_GET['id_documento'];
-
-
-        $objReciboDocAnexPetDTO = new MdPetRelReciboDocumentoAnexoDTO();
-        $objReciboDocAnexPetDTO->setNumIdDocumento($idDoc);
-
-        $objReciboDocAnexPetRN = new MdPetRelReciboDocumentoAnexoRN();
-        $cont = $objReciboDocAnexPetRN->contar($objReciboDocAnexPetDTO);
-
-        if ($cont > 0) {
-            $objReciboDocAnexPetDTO->retNumIdReciboPeticionamento();
-            $objReciboDocAnexPetDTO = $objReciboDocAnexPetRN->consultar($objReciboDocAnexPetDTO);
-
-            $objReciboPetDTO = new MdPetReciboDTO();
-            $objReciboPetDTO->setNumIdReciboPeticionamento($objReciboDocAnexPetDTO->getNumIdReciboPeticionamento());
-            $objReciboPetDTO->retStrNumeroProcessoFormatadoDoc();
-
-            $objReciboPetRN = new MdPetReciboRN();
-            $objReciboPetDTO = $objReciboPetRN->consultar($objReciboPetDTO);
-
-            if ($objReciboPetDTO) {
-                $numRecibo = $objReciboPetDTO->getStrNumeroProcessoFormatadoDoc();
-            }
-
-            $msg = 'Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI nº ' . $numRecibo . '.';
-            $objInfraException = new InfraException();
-            $objInfraException->adicionarValidacao($msg);
-            $objInfraException->lancarValidacoes();
-            return null;
-        }
-
-        // Rotina para verificar se o documento é objeto de intimação e impedir o cancelamento, caso o seja
-        $dto = new MdPetIntProtocoloDTO();
-        $dto->retTodos();
-        $dto->setDblIdDocumento($objDocumentoAPI->getIdDocumento());
-
-        $rn = new MdPetIntProtocoloRN();
-        $total = $rn->contar($dto);
-
-        if ($total > 0) {
-
-            $msg = 'Não é permitido cancelar este documento, pois ele faz parte de Intimação Eletrônica.';
-            $objInfraException = new InfraException();
-            $objInfraException->adicionarValidacao($msg);
-            $objInfraException->lancarValidacoes();
-            return null;
-        }
-
-        $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
-        $msg = $mdPetRegrasGeraisRN->verificarDocumentoIndisponibilidade(array($objDocumentoAPI, 'cancelar'));
-
-        // condição para saber  o documento está sendo utilizado em um indisponibilidade
-        if ($msg != '') {
-            $objInfraException = new InfraException();
-            $objInfraException->lancarValidacao($msg);
-            return null;
-        }
-
-        return parent::cancelarDocumento($objDocumentoAPI);
-    }
+	
+	
+	/**
+	 * Valida se o Documento que está sendo cancelado foi peticionado
+	 *
+	 * @access public
+	 * @param DocumentoAPI $objDocumentoAPI
+	 * @return mixed
+	 */
+	public function cancelarDocumento(DocumentoAPI $objDocumentoAPI)
+	{
+		$numRecibo  = '';
+		$idDoc      = $_GET['id_documento'];
+		
+		// INICIO MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+		$paramPet           = 'MODULO_PETICIONAMENTO_ID_TIPO_DOCUMENTO_EXIGIDO_CANCELAR';
+		$idProcedimento     = $_GET['id_procedimento'];
+		$idSerieDocumento   = (new InfraParametro(BancoSEI::getInstance()))->getValor($paramPet, false);
+		$usuarioLogado      = SessaoSEI::getInstance()->getStrSiglaUsuario();
+		
+		if ((!empty($idSerieDocumento) && is_numeric($idSerieDocumento)) && $usuarioLogado != SessaoSEI::$USUARIO_SEI) {
+			$serieRN = new SerieRN();
+			$objSerieDTO = new SerieDTO();
+			$objSerieDTO->retNumIdSerie();
+			$objSerieDTO->retStrNome();
+			$objSerieDTO->setStrSinAtivo('S');
+			$objSerieDTO->setStrStaAplicabilidade(array(SerieRN::$TA_INTERNO_EXTERNO, SerieRN::$TA_INTERNO), InfraDTO::$OPER_IN);
+			$objSerieDTO->setNumIdSerie($idSerieDocumento);
+			
+			$arrObjSerieDTO = $serieRN->listarRN0646($objSerieDTO);
+			
+			if ($arrObjSerieDTO) {
+				$semTermoCancelamento = true;
+				$documentos = $this->listarDocumentos($idProcedimento);
+				
+				foreach ($documentos as $documento) {
+					if ($documento->getNumIdSerie() == $idSerieDocumento) {
+						$objPesquisaProtocoloDTO = new PesquisaProtocoloDTO();
+						$objPesquisaProtocoloDTO->setStrStaTipo(ProtocoloRN::$TPP_DOCUMENTOS_GERADOS);
+						$objPesquisaProtocoloDTO->setStrStaAcesso(ProtocoloRN::$TAP_TODOS);
+						$objPesquisaProtocoloDTO->setDblIdProtocolo($documento->getDblIdDocumento());
+						
+						$objProtocoloRN = new ProtocoloRN();
+						$objProtocoloDTO = $objProtocoloRN->pesquisarRN0967($objPesquisaProtocoloDTO);
+						
+						if ($objProtocoloDTO) {
+							if ($objProtocoloDTO[0]->getStrSinAssinado() == 'S') {
+								$semTermoCancelamento = false;
+							}
+						}
+					}
+					
+				}
+				
+				if ($semTermoCancelamento) {
+					$nomeSerie = $arrObjSerieDTO[0]->getStrNome();
+					
+					$msg = $this->getNome() . ': Não é possível Cancelar o Documento, pois no processo não consta ' . $nomeSerie . ' devidamente formalizado.';
+					$objInfraException = new InfraException();
+					$objInfraException->adicionarValidacao($msg);
+					$objInfraException->lancarValidacoes();
+					return null;
+				}
+			}
+		}
+		// FIM MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+		
+		$objReciboDocAnexPetDTO = new MdPetRelReciboDocumentoAnexoDTO();
+		$objReciboDocAnexPetDTO->setNumIdDocumento($idDoc);
+		
+		$objReciboDocAnexPetRN = new MdPetRelReciboDocumentoAnexoRN();
+		$cont = $objReciboDocAnexPetRN->contar($objReciboDocAnexPetDTO);
+		
+		if ($cont > 0) {
+			$objReciboDocAnexPetDTO->retNumIdReciboPeticionamento();
+			$objReciboDocAnexPetDTO = $objReciboDocAnexPetRN->consultar($objReciboDocAnexPetDTO);
+			
+			$objReciboPetDTO = new MdPetReciboDTO();
+			$objReciboPetDTO->setNumIdReciboPeticionamento($objReciboDocAnexPetDTO->getNumIdReciboPeticionamento());
+			$objReciboPetDTO->retStrNumeroProcessoFormatadoDoc();
+			
+			$objReciboPetRN = new MdPetReciboRN();
+			$objReciboPetDTO = $objReciboPetRN->consultar($objReciboPetDTO);
+			
+			if ($objReciboPetDTO) {
+				$numRecibo = $objReciboPetDTO->getStrNumeroProcessoFormatadoDoc();
+			}
+			
+			$msg = $this->getNome() . ': Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI nº ' . $numRecibo . '.';
+			$objInfraException = new InfraException();
+			$objInfraException->adicionarValidacao($msg);
+			$objInfraException->lancarValidacoes();
+			return null;
+		}
+		
+		// Rotina para verificar se o documento é objeto de intimação e impedir o cancelamento, caso o seja
+		$dto = new MdPetIntProtocoloDTO();
+		$dto->retTodos();
+		$dto->setDblIdDocumento($objDocumentoAPI->getIdDocumento());
+		
+		$rn = new MdPetIntProtocoloRN();
+		$total = $rn->contar($dto);
+		
+		if ($total > 0) {
+			
+			$msg = $this->getNome() . ': Não é permitido cancelar este documento, pois ele faz parte de Intimação Eletrônica.';
+			$objInfraException = new InfraException();
+			$objInfraException->adicionarValidacao($msg);
+			$objInfraException->lancarValidacoes();
+			return null;
+		}
+		
+		$mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
+		$msg = $mdPetRegrasGeraisRN->verificarDocumentoIndisponibilidade(array($objDocumentoAPI, 'cancelar'));
+		
+		// condição para saber  o documento está sendo utilizado em um indisponibilidade
+		if ($msg != '') {
+			$objInfraException = new InfraException();
+			$objInfraException->lancarValidacao($msg);
+			return null;
+		}
+		
+		return parent::cancelarDocumento($objDocumentoAPI);
+		
+	}
 
     //nao permite mover documento que compoe intimacao (doc principal, doc anexo E doc de resposta a intimação incluindo certidoes e recibos)
     public function moverDocumento(DocumentoAPI $objDocumentoAPI, ProcedimentoAPI $objProcedimentoAPIOrigem, ProcedimentoAPI $objProcedimentoAPIDestino)
@@ -1750,7 +1921,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         if ($total > 0 || $totalDocDisponivel > 0) {
 
-            $msg = 'Não é permitido mover este documento, pois ele faz parte de Intimação Eletrônica.';
+            $msg = $this->getNome() . ': Não é permitido mover este documento, pois ele faz parte de Intimação Eletrônica.';
             $objInfraException = new InfraException();
             $objInfraException->adicionarValidacao($msg);
             $objInfraException->lancarValidacoes();
@@ -2454,7 +2625,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                 }
                             } else {
                                 if (!key_exists(InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()), $arrPessoaFisica)) {
-                                    $arrPessoaFisica[InfraUtil::formatarCpfCnpj($obj->getDblCpfContato())] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()) . ')';
+                                	if(!empty($obj->getDblCpfContato())){
+		                                $arrPessoaFisica[InfraUtil::formatarCpfCnpj($obj->getDblCpfContato())] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()) . ')';
+	                                }else{
+		                                $arrPessoaFisica[InfraUtil::formatarCpfCnpj($obj->getDblCpfContato())] = $obj->getStrNomeContato() . ' (Usuário não possui CPF)';
+	                                }
+                                 
                                 }
                             }
 
@@ -3186,7 +3362,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     if (!$docTipoIntegral) {
                         $objInfraException = new InfraException();
-                        $objInfraException->adicionarValidacao('Não é permitido cancelar a disponibilização para esse usuário, pois existem vinculos no módulo Peticionamento e Intimação Eletrônicos.');
+                        $objInfraException->adicionarValidacao($this->getNome() . ': Não é permitido cancelar a disponibilização para esse usuário, pois existem vinculos no módulo Peticionamento e Intimação Eletrônicos.');
                         $objInfraException->lancarValidacoes();
                         return null;
                     } else {
@@ -3225,24 +3401,60 @@ class PeticionamentoIntegracao extends SeiIntegracao
     }
 
     /**
-     * Valida se o Processo onde está realizando a anexação de processo possui Vínculo com Intimação
+     * Valida se o Processo onde está realizando a anexação de processo possui Vínculo com Intimação ou se possui Documento não assinado
      */
     public function anexarProcesso(ProcedimentoAPI $objProcedimentoAPIPrincipal, ProcedimentoAPI $objProcedimentoAPIAnexado)
     {
-        $idProcedimento = $objProcedimentoAPIAnexado->getIdProcedimento();
+	
+	    $existeIntimacaoPrazoValido = (new MdPetIntimacaoRN())->existeIntimacaoPrazoValido($objProcedimentoAPIAnexado->getIdProcedimento());
 
-        $objRN = new MdPetIntimacaoRN();
-        $isRespIntPeriodo = $objRN->existeIntimacaoPrazoValido($idProcedimento);
-
-        if ($isRespIntPeriodo) {
-            $msg = 'Não é permitido anexar este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
-
+        if ($existeIntimacaoPrazoValido) {
             $objInfraException = new InfraException();
-            $objInfraException->adicionarValidacao($msg);
+            $objInfraException->adicionarValidacao($this->getNome() . ': Não é permitido anexar este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.');
             $objInfraException->lancarValidacoes();
         }
-
-        return parent::anexarProcesso($objProcedimentoAPIPrincipal, $objProcedimentoAPIAnexado);
+	
+	    // INICIO MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+	    $paramPet = 'MODULO_PETICIONAMENTO_BLOQUEAR_ANEXAR_PROCESSO_COM_DOCUMENTO_NAO_ASSINADO';
+	    $blockAnexarProcDocNaoAssinado = (new InfraParametro(BancoSEI::getInstance()))->getValor($paramPet, false);
+	
+	    if (!empty($blockAnexarProcDocNaoAssinado) && $blockAnexarProcDocNaoAssinado == '1') {
+	    	
+		    $processos      = $this->listarDocumentos($objProcedimentoAPIAnexado->getIdProcedimento());
+		    $listaProcessos = '';
+		    $docNaoAssinado = false;
+		
+		    foreach ($processos as $processo) {
+		    	
+			    $objPesquisaProtocoloDTO = new PesquisaProtocoloDTO();
+			    $objPesquisaProtocoloDTO->setStrStaTipo(ProtocoloRN::$TPP_DOCUMENTOS_GERADOS);
+			    $objPesquisaProtocoloDTO->setStrStaAcesso(ProtocoloRN::$TAP_TODOS);
+			    $objPesquisaProtocoloDTO->setDblIdProtocolo($processo->getDblIdDocumento());
+			    $arrObjProtocoloDTO = (new ProtocoloRN())->pesquisarRN0967($objPesquisaProtocoloDTO);
+			
+			    if ($arrObjProtocoloDTO) {
+				    $staDocumento   = $arrObjProtocoloDTO[0]->getStrStaDocumentoDocumento();
+				    $sinAssinado    = $arrObjProtocoloDTO[0]->getStrSinAssinado();
+				    $staProtocolo   = $arrObjProtocoloDTO[0]->getStrStaProtocolo();
+				    $staEstado      = $arrObjProtocoloDTO[0]->getStrStaEstado();
+				
+				    if ($staProtocolo === ProtocoloRN::$TP_DOCUMENTO_GERADO && $staDocumento != DocumentoRN::$TD_FORMULARIO_AUTOMATICO && $staEstado != ProtocoloRN::$TE_DOCUMENTO_CANCELADO && $sinAssinado == 'N') {
+					    $listaProcessos = $listaProcessos . '- '.$arrObjProtocoloDTO[0]->getStrNomeSerieDocumento().' '.$arrObjProtocoloDTO[0]->getStrNumeroDocumento().' ('.$arrObjProtocoloDTO[0]->getStrProtocoloFormatado(). ")\n";
+					    $docNaoAssinado = true;
+				    }
+			    }
+			    
+		    }
+		
+		    if ($docNaoAssinado) {
+			    return (new InfraException())->lancarValidacao("Não é possível anexar o processo indicado, pois nele ainda constam documentos gerados não assinados: \n" . $listaProcessos);
+		    }
+		    
+	    }
+	    // FIM MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+	
+	    return parent::anexarProcesso($objProcedimentoAPIPrincipal, $objProcedimentoAPIAnexado);
+	
     }
 
     /**
@@ -3257,7 +3469,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $isRespIntPeriodo = $objRN->existeIntimacaoPrazoValido($idProcedimento);
 
         if ($isRespIntPeriodo) {
-            $msg = 'Não é permitido sobrestar este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
+            $msg = $this->getNome() . ': Não é permitido sobrestar este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
 
 
             $objInfraException = new InfraException();
@@ -3280,7 +3492,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $isRespIntPeriodo = $objRN->existeIntimacaoPrazoValido($idProcedimento);
 
         if ($isRespIntPeriodo) {
-            $msg = 'Não é permitido Bloquear este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
+            $msg = $this->getNome() . ': Não é permitido Bloquear este processo, pois o mesmo possui Intimação Eletrônica ainda em curso.';
 
 
             $objInfraException = new InfraException();
@@ -3306,9 +3518,9 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         if ($isIntimacao || $isIntimacaoDisp) {
             if ($isIntimacao) {
-                $msg = 'Não é permitido desanexar este processo, pois o mesmo é anexo de Documento Principal de Intimação Eletrônica neste processo.';
+                $msg = $this->getNome() . ': Não é permitido desanexar este processo, pois o mesmo é anexo de Documento Principal de Intimação Eletrônica neste processo.';
             } else {
-                $msg = 'Não é permitido desanexar este processo, pois o mesmo é Documento Disponível de Intimação Eletrônica neste processo.';
+                $msg = $this->getNome() . ': Não é permitido desanexar este processo, pois o mesmo é Documento Disponível de Intimação Eletrônica neste processo.';
             }
 
             $objInfraException = new InfraException();
@@ -3320,6 +3532,59 @@ class PeticionamentoIntegracao extends SeiIntegracao
             return parent::desanexarProcesso($objProcedimentoAPIPrincipal, $objProcedimentoAPIAnexado);
         }
     }
+	
+	// FUNCTION ADICIONADAS PARA ATENDER A MIGRAÇÃO DOS PARAMETROS DO MÓDULO UTILIDADES PARA O PETICIONAMENTO
+	public function concluirProcesso($arrObjProcedimentoAPI)
+	{
+		
+		// INICIO MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+		$paramPet = 'MODULO_PETICIONAMENTO_BLOQUEAR_CONCLUIR_PROCESSO_COM_DOCUMENTO_NAO_ASSINADO';
+		$ultimaConclusao = $this->verificaUltimaConclusao($arrObjProcedimentoAPI[0]->getIdProcedimento());
+		$blockConcluirProcDocNaoAssinado = (new InfraParametro(BancoSEI::getInstance()))->getValor($paramPet, false);
+		
+		if (!empty($blockConcluirProcDocNaoAssinado) && $blockConcluirProcDocNaoAssinado == '1' && $ultimaConclusao) {
+			
+			$protocolosDocumentosProcesso = $this->listarDocumentos($arrObjProcedimentoAPI[0]->getIdProcedimento());
+			$listaProtocolosDocumentosNaoAssinados = '';
+			$docNaoAssinado = false;
+			
+			foreach ($protocolosDocumentosProcesso as $documentosProcesso) {
+				
+				$objPesquisaProtocoloDTO = new PesquisaProtocoloDTO();
+				$objPesquisaProtocoloDTO->setStrStaTipo(ProtocoloRN::$TPP_DOCUMENTOS_GERADOS);
+				$objPesquisaProtocoloDTO->setStrStaAcesso(ProtocoloRN::$TAP_TODOS);
+				$objPesquisaProtocoloDTO->setDblIdProtocolo($documentosProcesso->getDblIdDocumento());
+				$arrObjProtocoloDTO = (new ProtocoloRN())->pesquisarRN0967($objPesquisaProtocoloDTO);
+				
+				if ($arrObjProtocoloDTO) {
+					
+					$staDocumento   = $arrObjProtocoloDTO[0]->getStrStaDocumentoDocumento();
+					$sinAssinado    = $arrObjProtocoloDTO[0]->getStrSinAssinado();
+					$staProtocolo   = $arrObjProtocoloDTO[0]->getStrStaProtocolo();
+					$staEstado      = $arrObjProtocoloDTO[0]->getStrStaEstado();
+					
+					if ($staProtocolo === ProtocoloRN::$TP_DOCUMENTO_GERADO && $staDocumento != DocumentoRN::$TD_FORMULARIO_AUTOMATICO && $staEstado != ProtocoloRN::$TE_DOCUMENTO_CANCELADO && $sinAssinado == 'N') {
+						$listaProtocolosDocumentosNaoAssinados = $listaProtocolosDocumentosNaoAssinados . '- '.$arrObjProtocoloDTO[0]->getStrNomeSerieDocumento().' '.$arrObjProtocoloDTO[0]->getStrNumeroDocumento().' ('.$arrObjProtocoloDTO[0]->getStrProtocoloFormatado(). ")\n";
+						$docNaoAssinado = true;
+					}
+					
+				}
+				
+			}
+			
+			if ($docNaoAssinado) {
+				$objInfraException = new InfraException();
+				$msg = "Não é possível concluir o processo, pois nele ainda constam documentos gerados não assinados: \n\n" . $listaProtocolosDocumentosNaoAssinados;
+				return $objInfraException->lancarValidacao($msg);
+			}
+			
+		}
+		// FIM MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+
+
+        (new MdPetIntimacaoRN())->bloquearUltimaConclusaoProcessoSigilosoIntimacaoEmCurso($arrObjProcedimentoAPI[0]->getIdProcedimento());
+		
+	}
 
     public function permitirAndamentoConcluido(AndamentoAPI $objAndamentoAPI)
     {
@@ -3330,6 +3595,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
 
         return false;
+        
     }
 
     public function desativarUnidade($arrObjUnidadeAPI)
@@ -3473,14 +3739,93 @@ class PeticionamentoIntegracao extends SeiIntegracao
             (new InfraException())->lancarValidacao($msg);
         }
     }
-
-    public function desativarContato($arrObjContatoAPI)
-    {
-        $msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarContato([$arrObjContatoAPI, 'desativar']);
-		if ($msg != '') {
-            (new InfraException())->lancarValidacao($msg);
+		
+	/**
+	 * @param $arrValor
+	 * @return bool
+	 */
+	public function verificaExistenciaIdGrupo($arrValor)
+	{
+		$objGrupoContatoRN = new GrupoContatoRN();
+		foreach ($arrValor as $item) {
+			$objGrupoContatoDTO = new GrupoContatoDTO();
+			$objGrupoContatoDTO->setNumIdGrupoContato($item);
+			$objGrupoContatoDTO->setStrSinAtivo('S');
+			$objGrupoContatoDTO->retNumIdGrupoContato();
+			
+			$objGrupoContatoDTO = $objGrupoContatoRN->listarRN0477($objGrupoContatoDTO);
+			
+			if ($objGrupoContatoDTO) {
+				return true;
+				break;
+			}
 		}
-    }
+		
+		return false;
+	}
+		
+	public function desativarContato($arrObjContatoAPI)
+	{
+		
+		// INICIO MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+		$paramPet  = 'MODULO_PETICIONAMENTO_ID_GRUPOS_CONTATO_TRAVAR_CONTATOS';
+		$strValor  = (new InfraParametro(BancoSEI::getInstance()))->getValor($paramPet, false);
+		$arrValor  = [];
+		
+		if (!empty($strValor) && preg_match('/^\d+(,\d+)*$/', $strValor) && $_GET['acao'] === 'contato_desativar' && $_GET['acao_origem'] === 'contato_listar') {
+			$arrValor = array_merge($arrValor, explode(',', $strValor));
+			$idExistente = $this->verificaExistenciaIdGrupo($arrValor);
+			
+			if ($idExistente) {
+				
+				$objRelGrupoContatoDTO = new RelGrupoContatoDTO();
+				$objRelGrupoContatoDTO->retNumIdGrupoContato();
+				$objRelGrupoContatoDTO->setNumIdContato($arrObjContatoAPI[0]->getIdContato());
+				$objRelGrupoContatoDTO->setOrd('IdGrupoContato', 'desc');
+				$objRelGrupoContatoDTO = (new RelGrupoContatoRN())->listarRN0463($objRelGrupoContatoDTO);
+				
+				if ($objRelGrupoContatoDTO) {
+					
+					foreach ($objRelGrupoContatoDTO as $objContato) {
+						
+						if (in_array($objContato->getNumIdGrupoContato(), $arrValor)) {
+							$objGrupoContatoRN = new GrupoContatoRN();
+							$objDTO = new GrupoContatoDTO();
+							$objDTO->setNumIdGrupoContato($objContato->getNumIdGrupoContato());
+							$objDTO->setStrSinAtivo('S');
+							$objDTO->retNumIdUnidade();
+							$objDTO->retStrNome();
+							$objDTO = $objGrupoContatoRN->listarRN0477($objDTO);
+							
+							// Verifica se a unidade do usuario logado é a mesma unidade do grupo
+							if ($objDTO && SessaoSEI::getInstance()->getNumIdUnidadeAtual() != $objDTO[0]->getNumIdUnidade()) {
+								$objUnidadeRN  = new UnidadeRN();
+								$objUnidadeDTO = new UnidadeDTO();
+								$objUnidadeDTO->retStrDescricao();
+								$objUnidadeDTO->retStrSigla();
+								$objUnidadeDTO->setNumIdUnidade($objDTO[0]->getNumIdUnidade());
+								$objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+								
+								$msg = $this->getNome() . ': Não é possível Desativar o Contato, pois ele está no Grupo de Contato ' . $objDTO[0]->getStrNome() .
+									' sob controle centralizado da Unidade ' . $objUnidadeDTO->getStrDescricao() . ' ('. $objUnidadeDTO->getStrSigla() . ').';
+								$objInfraException = new InfraException();
+								$objInfraException->adicionarValidacao($msg);
+								$objInfraException->lancarValidacoes();
+								return null;
+							}
+						}
+					}
+				}
+			}
+		}
+		// FIM MIGRACAO PARAMETROS DO UTILIDADES PARA O PETICIONAMENTO
+		
+		$msg = (new MdPetRegrasGeraisRN())->verificarExcluirDesativarContato([$arrObjContatoAPI, 'desativar']);
+		if ($msg != '') {
+			(new InfraException())->lancarValidacao($msg);
+		}
+		
+	}
 
     public function verificarAcessoProtocolo($arrObjProcedimentoAPI, $arrObjDocumentoAPI)
     {
@@ -3548,9 +3893,73 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         return $ret;
     }
+    
+    public function verificaGrupoContatoTravarContato(ContatoAPI $objContatoAPI){
+		
+		// Verifica se o Contato pertence a algum Grupo de Contato:
+	    $objRelGrupoContatoDTO = new RelGrupoContatoDTO();
+	    $objRelGrupoContatoDTO->retNumIdGrupoContato();
+	    $objRelGrupoContatoDTO->setNumIdContato($objContatoAPI->getIdContato());
+	    $objRelGrupoContatoDTO->setOrd('IdGrupoContato', 'desc');
+	    $objRelGrupoContatoDTO = (new RelGrupoContatoRN())->listarRN0463($objRelGrupoContatoDTO);
+	
+	    if ($objRelGrupoContatoDTO) {
+		
+		    // Ids dos Grupos de Contato aos quais o Contato pertence:
+		    $arrIdGruposContatoUsuario = InfraArray::converterArrInfraDTO($objRelGrupoContatoDTO, 'IdGrupoContato');
+		
+	    	// Busca os Grupos de Contato parametrizados:
+		    $arrIdGruposContatoBloquear = array_map('trim', explode(',', (new InfraParametro(BancoSEI::getInstance()))->getValor('MODULO_PETICIONAMENTO_ID_GRUPOS_CONTATO_TRAVAR_CONTATOS', false)));
+		    
+		    // Verifica se os Grupos do Contato fazem parte dos Grupos de Contato parametrizados para bloqueio:
+		    $intersectedGruposContato   = array_values(array_intersect($arrIdGruposContatoUsuario, $arrIdGruposContatoBloquear));
+		    
+		    if(!empty($intersectedGruposContato)){
+			
+			    $msg = $this->getNome() . ': Não é possível Atualizar o Contato pois o mesmo está sob controle apenas das Unidades gestoras dos Grupos de Contato abaixo:\n\n';
+			    $idUnidadesPodemEditar = [];
+		    	
+			    for ($i = 0; $i < count($intersectedGruposContato); $i++){
+				
+				    $objGrupoContatoDTO = new GrupoContatoDTO();
+				    $objGrupoContatoDTO->setNumIdGrupoContato($intersectedGruposContato[$i]);
+				    $objGrupoContatoDTO->setStrSinAtivo('S');
+				    $objGrupoContatoDTO->retNumIdUnidade();
+				    $objGrupoContatoDTO->retStrNome();
+				    $objGrupoContatoDTO = (new GrupoContatoRN())->consultarRN0474($objGrupoContatoDTO);
+				
+				    $objUnidadeDTO = new UnidadeDTO();
+				    $objUnidadeDTO->retStrDescricao();
+				    $objUnidadeDTO->retStrSigla();
+				    $objUnidadeDTO->setNumIdUnidade($objGrupoContatoDTO->getNumIdUnidade());
+				    $objUnidadeDTO = (new UnidadeRN())->consultarRN0125($objUnidadeDTO);
+				
+				    array_push($idUnidadesPodemEditar, $objGrupoContatoDTO->getNumIdUnidade());
+				
+				    $msg .= '- ' . $objGrupoContatoDTO->getStrNome() . ' - Sob controle da Unidade: ' . $objUnidadeDTO->getStrDescricao() . ' ('. $objUnidadeDTO->getStrSigla() . ').\n';
+				
+			    }
+			
+			    if(!in_array(SessaoSEI::getInstance()->getNumIdUnidadeAtual(), $idUnidadesPodemEditar)){
+				
+				    $objInfraException = new InfraException();
+				    $objInfraException->adicionarValidacao($msg);
+				    $objInfraException->lancarValidacoes();
+				
+				    return null;
+				
+			    }
+			    
+		    }
+		    
+	    }
+	   
+    }
 
     public function alterarContato(ContatoAPI $objContatoAPI)
     {
+	
+	    $this->verificaGrupoContatoTravarContato($objContatoAPI);
 
         $isMesmaUnidade = false;
 
@@ -3673,7 +4082,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             } catch (Exception $e) {
                 $retorno = true;
                 if (strpos($e->__toString(), SeiINT::$MSG_ERRO_XSS) !== false) {
-                    $objInfraException->adicionarValidacao('O texto do campo ' . $arrayCampos[$chave] . ' possui conteúdo não permitido.');
+                    $objInfraException->adicionarValidacao(self::getNome() . ': O texto do campo ' . $arrayCampos[$chave] . ' possui conteúdo não permitido.');
                 } else {
                     throw $e;
                 }
@@ -3681,6 +4090,68 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
         return $retorno;
     }
+		
+		public static function verificaSeModIAVersaoMinima()
+		{
+            $bolVersaoValida = false;
+            $arrModulos = ConfiguracaoSEI::getInstance()->getValor('SEI','Modulos');
+
+            if(is_array($arrModulos) && array_key_exists('IaIntegracao', $arrModulos)){
+                $objInfraParametroDTO = new InfraParametroDTO();
+                $objInfraParametroDTO->setStrNome('VERSAO_MODULO_IA');
+                $objInfraParametroDTO->retStrValor();
+                $objInfraParametroBD = new InfraParametroBD(BancoSEI::getInstance());
+                $arrObjInfraParametroDTO = $objInfraParametroBD->consultar($objInfraParametroDTO);
+                $strVersaoInstalada = $arrObjInfraParametroDTO->getStrValor();
+                $bolVersaoValida = version_compare($strVersaoInstalada, self::getIaMenorVersaoRequerida(), '>=');
+            }
+            return $bolVersaoValida;
+		}
+
+        public static function permitirClassificacaoODSUsuarioExterno(){
+
+          $bolPermitir = false;
+
+          $objMdIaAdmOdsOnuDTO = new MdIaAdmOdsOnuDTO();
+          $objMdIaAdmOdsOnuDTO->setNumIdMdIaAdmOdsOnu(1);
+          $objMdIaAdmOdsOnuDTO->retStrSinClassificacaoExterno();
+          $objMdIaAdmOdsOnuDTO->retStrSinExibirFuncionalidade();
+          $objMdIaAdmOdsOnuDTO = (new MdIaAdmOdsOnuRN())->consultar($objMdIaAdmOdsOnuDTO);
+
+          if(!empty($objMdIaAdmOdsOnuDTO) && $objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == 'S' && $objMdIaAdmOdsOnuDTO->getStrSinClassificacaoExterno() == 'S'){
+              $bolPermitir = true;
+          }
+
+          return $bolPermitir;
+
+        }
+
+        public function classificarMetaOds($idProtocolo)
+        {
+            $arrMetasSelecionadas = SessaoSEIExterna::getInstance()->getAtributo('METAS_SELECIONADAS');
+            $idUsuario = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+            $staTipoUsuario = 'E';
+
+            if(!empty($arrMetasSelecionadas)){
+
+              foreach ($arrMetasSelecionadas as $metaSelecionada) {
+                //recupera a meta para cadastrar na classificação da meta
+                $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
+                $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmMetaOds($metaSelecionada);
+                $objMdIaAdmMetaOdsDTO->retStrIdentificacaoMeta();
+                $objMdIaAdmMetaOdsDTO = (new MdIaAdmMetaOdsRN())->consultar($objMdIaAdmMetaOdsDTO);
+
+                MdIaAdmObjetivoOdsINT::classificarOdsWS($idProtocolo, $objMdIaAdmMetaOdsDTO->getStrIdentificacaoMeta(), $idUsuario, $staTipoUsuario );
+              }
+
+              // apos realizar a classificacao deve limpar os dados da sessao
+              if( SessaoSEIExterna::getInstance()->isSetAtributo('arrMetasSelecionadas') ){
+                SessaoSEIExterna::getInstance()->removerAtributo('arrMetasSelecionadas');
+              }
+
+            }
+
+        }
 
 }
 

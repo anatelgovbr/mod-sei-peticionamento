@@ -19,25 +19,17 @@ try {
 
     require_once 'md_pet_tipo_processo_cadastro_inicializacao.php';
 
-    $objInfraParametroDTO = new InfraParametroDTO();
-    $objMdPetParametroRN = new MdPetParametroRN();
-    $objInfraParametroDTO->retTodos();
-    $objInfraParametroDTO->setStrNome('SEI_HABILITAR_HIPOTESE_LEGAL');
-    $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
-    $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
-
+    $valorParametroHipoteseLegal = (new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_HABILITAR_HIPOTESE_LEGAL', false);
+    
     $objOrgaoDTO = new OrgaoDTO();
-    $objOrgaoRN = new OrgaoRN();
     $objOrgaoDTO->retNumIdOrgao();
     $objOrgaoDTO->setDistinct(true);
     $objOrgaoDTO->retStrSigla();
-    $arrFiltroOrgao = $objOrgaoRN->listarRN1353($objOrgaoDTO);
+    $arrFiltroOrgao = (new OrgaoRN())->listarRN1353($objOrgaoDTO);
 
-    $numRegistrosOrgao = count($arrFiltroOrgao);
-
-    if ($numRegistrosOrgao > 0) {
+    if (count($arrFiltroOrgao) > 0) {
         foreach ($arrFiltroOrgao as $objOrgaoDTO) {
-            $strHtmlOrgaoUnidades .= '<input type="hidden" id="hdnOrgao' . $objOrgaoDTO->getNumIdOrgao() . '" name="hdnOrgao' . $objOrgaoDTO->getNumIdOrgao() . '" value="' . $strValor . '" />' . "\n";
+            $strHtmlOrgaoUnidades .= '<input type="hidden" id="hdnOrgao' . $objOrgaoDTO->getNumIdOrgao() . '" name="hdnOrgao' . $objOrgaoDTO->getNumIdOrgao() . '" value="' . $objOrgaoDTO->getNumIdOrgao() . '" />' . "\n";
             $strHtmlOrgaoUnidades .= '<input type="hidden" id="lnkOrgao' . $objOrgaoDTO->getNumIdOrgao() . '" name="lnkOrgao' . $objOrgaoDTO->getNumIdOrgao() . '" value="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_orgao&tipo_selecao=1&id_object=objLupaUnidadeMultipla&id_orgao=' . $objOrgaoDTO->getNumIdOrgao()) . '" />' . "\n";
         }
     }
@@ -45,18 +37,19 @@ try {
     if ($_GET['acao'] === 'md_pet_tipo_processo_consultar' || $_GET['acao'] === 'md_pet_tipo_processo_alterar') {
 
         if (isset($_GET['id_tipo_processo_peticionamento'])) {
+            
             $alterar = true;
+            
             $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
             $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($_GET['id_tipo_processo_peticionamento']);
             $objMdPetTipoProcessoDTO->retTodos();
             $objMdPetTipoProcessoDTO->retStrNomeProcesso();
             $objMdPetTipoProcessoDTO->retStrNomeSerie();
+            $objMdPetTipoProcessoDTO->retStrNomeFormulario();
+            $objMdPetTipoProcessoDTO = (new MdPetTipoProcessoRN())->consultar($objMdPetTipoProcessoDTO);
 
-            $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-            $objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->consultar($objMdPetTipoProcessoDTO);
-
-            $idTipoProcedimento = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
-            $strItensSelHipoteseLegal = MdPetVincTpProcessoINT::montarSelectHipoteseLegal(null, null, $objMdPetTipoProcessoDTO->getNumIdHipoteseLegal());
+            $idTipoProcedimento         = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
+            $strItensSelHipoteseLegal   = MdPetVincTpProcessoINT::montarSelectHipoteseLegal(null, null, $objMdPetTipoProcessoDTO->getNumIdHipoteseLegal());
 
             //Carregando Unidades
             $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
@@ -68,33 +61,35 @@ try {
             $objMdPetRelTpProcessoUnidDTO->setOrd('NomeCidade', InfraDTO::$TIPO_ORDENACAO_ASC);
             $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($_GET['id_tipo_processo_peticionamento']);
             $objMdPetRelTpProcessoUnidDTO->retTodos();
-
-            $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-            $arrObjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
+            $arrObjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
 
             if (!empty($arrObjMdPetRelTpProcessoUnidDTO)) {
-                $unica = $arrObjMdPetRelTpProcessoUnidDTO[0]->getStrStaTipoUnidade() === MdPetTipoProcessoRN::$UNIDADE_UNICA ? true : false;
-                $multipla = $arrObjMdPetRelTpProcessoUnidDTO[0]->getStrStaTipoUnidade() === MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS ? true : false;
+                
+                $unica      = $arrObjMdPetRelTpProcessoUnidDTO[0]->getStrStaTipoUnidade() === MdPetTipoProcessoRN::$UNIDADE_UNICA ? true : false;
+                $multipla   = $arrObjMdPetRelTpProcessoUnidDTO[0]->getStrStaTipoUnidade() === MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS ? true : false;
 
-                $objUnidadeRN = new UnidadeRN();
                 if ($unica) {
+                    
                     $idUnidade = $arrObjMdPetRelTpProcessoUnidDTO[0]->getNumIdUnidade();
+                    
                     $objUnidadeDTO = new UnidadeDTO();
                     $objUnidadeDTO->setNumIdUnidade($idUnidade);
                     $objUnidadeDTO->retTodos();
-                    $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+                    $objUnidadeDTO = (new UnidadeRN())->consultarRN0125($objUnidadeDTO);
+                    
                     $nomeUnidade = $objUnidadeDTO->getStrSigla() . ' - ' . $objUnidadeDTO->getStrDescricao();
                     $arrObjUnidadesMultiplas[] = $objUnidadeDTO;
 
                     //Verifica se existe restrição para este tipo de processo
-                    $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
                     $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
                     $objTipoProcedRestricaoDTO->retNumIdOrgao();
                     $objTipoProcedRestricaoDTO->retNumIdUnidade();
                     $objTipoProcedRestricaoDTO->setNumIdTipoProcedimento($idTipoProcedimento);
-                    $arrObjTipoProcedRestricaoDTO = $objTipoProcedRestricaoRN->listar($objTipoProcedRestricaoDTO);
+                    $arrObjTipoProcedRestricaoDTO = (new TipoProcedRestricaoRN())->listar($objTipoProcedRestricaoDTO);
+                    
                     $idOrgaoRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdOrgao');
                     $idUnidadeRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdUnidade');
+                    
                     $tipoProcessoRestricaoErroUU = false;
 
                     foreach ($arrObjUnidadesMultiplas as $cadaObjUnidadeDTO) {
@@ -110,9 +105,13 @@ try {
                 }
 
                 if ($multipla) {
-                    $arrTipoProcessoOrgaoCidade = array();
+                    
+                    $arrTipoProcessoOrgaoCidade = [];
+                    
                     foreach ($arrObjMdPetRelTpProcessoUnidDTO as $objRelUnidade) {
+                        
                         $idUnidade = $objRelUnidade->getNumIdUnidade();
+                        
                         $objUnidadeDTO = new UnidadeDTO();
                         $objUnidadeDTO->setNumIdUnidade($idUnidade);
                         $objUnidadeDTO->retStrDescricaoOrgao();
@@ -120,7 +119,8 @@ try {
                         $objUnidadeDTO->retNumIdOrgao();
                         $objUnidadeDTO->retNumIdCidadeContato();
                         $objUnidadeDTO->retTodos();
-                        $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+                        $objUnidadeDTO = (new UnidadeRN())->consultarRN0125($objUnidadeDTO);
+                        
                         $arrObjUnidadesMultiplas[] = $objUnidadeDTO;
 
                         //Criação do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
@@ -132,31 +132,50 @@ try {
                         } else {
                             $arrTipoProcessoOrgaoCidade[$objRelUnidade->getNumIdOrgaoUnidade()][$objRelUnidade->getNumIdCidadeContato()] = $arrTipoProcessoOrgaoCidade[$objRelUnidade->getNumIdOrgaoUnidade()][$objRelUnidade->getNumIdCidadeContato()] + 1;
                         }
+                        
                     }
+                    
                 }
+                
             }
 
-            $idMdPetTipoProcesso = $_GET['id_tipo_processo_peticionamento'];
-            $nomeTipoProcesso = $objMdPetTipoProcessoDTO->getStrNomeProcesso();
-            $idTipoProcesso = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
-            $orientacoes = $objMdPetTipoProcessoDTO->getStrOrientacoes();
-            $idUnidade = $unica ? $arrObjMdPetRelTpProcessoUnidDTO[0]->getNumIdUnidade() : null;
-            $sinIndIntUsExt = $objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'S' ? 'checked = checked' : '';
-            $sinIndIntIndIndir = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'S' ? 'checked = checked' : '';
-            $sinIndIntIndConta = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaContato() == 'S' ? 'checked = checked' : '';
-            $sinIndIntIndCpfCn = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaCpfCnpj() == 'S' ? 'checked = checked' : '';
-            $sinNAUsuExt = $objMdPetTipoProcessoDTO->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
-            $sinNAPadrao = $objMdPetTipoProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
-            $gerado = $objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' ? 'checked = checked' : '';
-            $externo = $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S' ? 'checked = checked' : '';
-            $nomeSerie = $objMdPetTipoProcessoDTO->getStrNomeSerie();
-            $idSerie = $objMdPetTipoProcessoDTO->getNumIdSerie();
-
-            $hipoteseLegal = $objMdPetTipoProcessoDTO->getStrStaNivelAcesso() === ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit; margin-top: 0px"' : 'style="display:none;  margin-top: 0px"';
-
-            $strItensSelNivelAcesso = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, $objMdPetTipoProcessoDTO->getStrStaNivelAcesso(), $idTipoProcesso);
-
-            $objRelTipoProcessoSerieRN = new MdPetRelTpProcSerieRN();
+            $idMdPetTipoProcesso    = $_GET['id_tipo_processo_peticionamento'];
+            $nomeTipoProcesso       = $objMdPetTipoProcessoDTO->getStrNomeProcesso();
+            $idTipoProcesso         = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
+            $orientacoes            = $objMdPetTipoProcessoDTO->getStrOrientacoes();
+            $idUnidade              = $unica ? $arrObjMdPetRelTpProcessoUnidDTO[0]->getNumIdUnidade() : null;
+            $sinIndIntUsExt         = $objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'S' ? 'checked = checked' : '';
+            $sinIndIntIndIndir      = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'S' ? 'checked = checked' : '';
+            $sinIndIntIndConta      = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaContato() == 'S' ? 'checked = checked' : '';
+            $sinIndIntIndCpfCn      = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaCpfCnpj() == 'S' ? 'checked = checked' : '';
+            $sinNAUsuExt            = $objMdPetTipoProcessoDTO->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
+            $sinNAPadrao            = $objMdPetTipoProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
+            $gerado                 = $objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' ? 'checked = checked' : '';
+            $externo                = $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S' ? 'checked = checked' : '';
+            $formulario             = $objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'S' ? 'checked = checked' : '';
+            $nomeSerie              = $objMdPetTipoProcessoDTO->getStrNomeSerie();
+            $nomeFormulario         = $objMdPetTipoProcessoDTO->getStrNomeFormulario();
+	        $nomeDocumentoPrincipal = $nomeSerie;
+	        
+	        $idSerie                = $objMdPetTipoProcessoDTO->getNumIdSerie(); // Reutilizado tanto para tipos comuns quanto para formulário
+	
+	        $hipoteseLegal          = $objMdPetTipoProcessoDTO->getStrStaNivelAcesso() === ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit; margin-top: 0px"' : 'style="display:none;  margin-top: 0px"';
+	
+	        $strItensSelNivelAcesso = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, $objMdPetTipoProcessoDTO->getStrStaNivelAcesso(), $idTipoProcesso);
+            
+            
+            if($objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'S'){
+                
+                $objTipoFormularioDTO = new TipoFormularioDTO();
+	            $objTipoFormularioDTO->retStrNome();
+	            $objTipoFormularioDTO->setNumIdTipoFormulario($objMdPetTipoProcessoDTO->getNumIdSerie());
+	            $objTipoFormularioDTO = (new TipoFormularioRN())->consultar($objTipoFormularioDTO);
+	            
+	            if(!empty($objTipoFormularioDTO)){
+		            $nomeDocumentoPrincipal = $objTipoFormularioDTO->getStrNome();
+                }
+	            
+            }
 
             $objMdPetRelTpProcSerieDTO = new MdPetRelTpProcSerieDTO();
             $objMdPetRelTpProcSerieDTO->retTodos();
@@ -164,8 +183,8 @@ try {
             $objMdPetRelTpProcSerieDTO->setStrStaTipoDoc(MdPetRelTpProcSerieRN::$DOC_COMPLEMENTAR);
             $objMdPetRelTpProcSerieDTO->setNumIdTipoProcessoPeticionamento($_GET['id_tipo_processo_peticionamento']);
             $objMdPetRelTpProcSerieDTO->setOrdStrNomeSerie(InfraDTO::$TIPO_ORDENACAO_ASC);
-
-            $arrSeries = $objRelTipoProcessoSerieRN->listar($objMdPetRelTpProcSerieDTO);
+            $arrSeries = (new MdPetRelTpProcSerieRN())->listar($objMdPetRelTpProcSerieDTO);
+            
             $objMdPetTipoProcessoDTO->setArrObjRelTipoProcessoSerieDTO($arrSeries);
 
             $strItensSelSeries = "";
@@ -180,40 +199,39 @@ try {
             $objMdPetRelTpProcSerieEssDTO->setStrStaTipoDoc(MdPetRelTpProcSerieRN::$DOC_ESSENCIAL);
             $objMdPetRelTpProcSerieEssDTO->setNumIdTipoProcessoPeticionamento($_GET['id_tipo_processo_peticionamento']);
             $objMdPetRelTpProcSerieEssDTO->setOrdStrNomeSerie(InfraDTO::$TIPO_ORDENACAO_ASC);
-
-            $arrSeriesEss = $objRelTipoProcessoSerieRN->listar($objMdPetRelTpProcSerieEssDTO);
+            $arrSeriesEss = (new MdPetRelTpProcSerieRN())->listar($objMdPetRelTpProcSerieEssDTO);
+            
             $objMdPetTipoProcessoDTO->setArrObjRelTipoProcessoSerieEssDTO($arrSeriesEss);
 
             $strItensSelSeriesEss = "";
             for ($x = 0; $x < count($arrSeriesEss); $x++) {
                 $strItensSelSeriesEss .= "<option value='" . $arrSeriesEss[$x]->getNumIdSerie() . "'>" . $arrSeriesEss[$x]->getStrNomeSerie() . "</option>";
             }
+            
         }
+        
     }
 
     switch ($_GET['acao']) {
 
         case 'md_pet_tipo_processo_cadastrar':
 
-            $strItensSelHipoteseLegal = MdPetVincTpProcessoINT::montarSelectHipoteseLegal(null, null, null);
+            $strItensSelHipoteseLegal   = MdPetVincTpProcessoINT::montarSelectHipoteseLegal(null, null, null);
 
             //Carregando campos select
-            $strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
-            $strItensSelUnidades = UnidadeINT::montarSelectSiglaDescricao(null, null, $_POST['selUnidade']);
+            $strItensSelTipoProcesso    = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
+            $strItensSelUnidades        = UnidadeINT::montarSelectSiglaDescricao(null, null, $_POST['selUnidade']);
 
-            $strItensSelDoc = SerieINT::montarSelectNomeRI0802(null, null, $_POST['selDocumento']);
+            $strItensSelDoc             = SerieINT::montarSelectNomeRI0802(null, null, $_POST['selDocumento']);
 
-            $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
-            $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-
-            $strTitulo = 'Novo Tipo de Processo para Peticionamento de Processo Novo';
+            $strTitulo                  = 'Novo Tipo de Processo para Peticionamento de Processo Novo';
 
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarTpProcessoPeticionamento" id="sbmCadastrarTpProcessoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
-
+	
+	        $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
             $objMdPetTipoProcessoDTO->setNumIdProcedimento($_POST['hdnIdTipoProcesso']);
             $objMdPetTipoProcessoDTO->setStrOrientacoes($_POST['txtOrientacoes']);
-
             $objMdPetTipoProcessoDTO->setStrSinIIProprioUsuarioExterno('N');
             $objMdPetTipoProcessoDTO->setStrSinIIIndicacaoDireta('N');
             $objMdPetTipoProcessoDTO->setStrSinIIIndicacaoDiretaCpfCnpj('N');
@@ -222,6 +240,7 @@ try {
             $objMdPetTipoProcessoDTO->setStrSinNaPadrao('N');
             $objMdPetTipoProcessoDTO->setStrSinDocGerado('N');
             $objMdPetTipoProcessoDTO->setStrSinDocExterno('N');
+	        $objMdPetTipoProcessoDTO->setStrSinDocFormulario('N');
 
             // indicacao interessado
             if ($_POST['indicacaoInteressado'][0] == 1)
@@ -255,26 +274,28 @@ try {
             //Tipo de Documento Principal
             if ($_POST['rdDocPrincipal'][0] == 1) { // campos: modelo, tipo de documento principal
                 $objMdPetTipoProcessoDTO->setStrSinDocGerado('S');
-                $objMdPetTipoProcessoDTO->setStrSinDocExterno('N');
             } else if ($_POST['rdDocPrincipal'][0] == 2) { //campos: tipo de documento principal
-                $objMdPetTipoProcessoDTO->setStrSinDocGerado('N');
                 $objMdPetTipoProcessoDTO->setStrSinDocExterno('S');
+            }else if ($_POST['rdDocPrincipal'][0] == 3){ //campos: tipo de documento principal - FORMULARIO
+	            $objMdPetTipoProcessoDTO->setStrSinDocFormulario('S');
             }
 
             $objMdPetTipoProcessoDTO->setNumIdSerie($_POST['hdnIdTipoDocPrinc']);
             $objMdPetTipoProcessoDTO->setStrSinAtivo('S');
 
             if (isset($_POST['sbmCadastrarTpProcessoPeticionamento'])) {
+                
                 try {
+                    
                     $objInfraException = new InfraException();
 
                     $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
                     $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
                     $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($objMdPetTipoProcessoDTO->getNumIdProcedimento());
-                    $objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
-                    $arrObjNivelAcessoPermitidoDTO = $objNivelAcessoPermitidoRN->listar($objNivelAcessoPermitidoDTO);
+                    $arrObjNivelAcessoPermitidoDTO = (new NivelAcessoPermitidoRN())->listar($objNivelAcessoPermitidoDTO);
 
-                    $arrDadosNivelAcessoPermitido = array();
+                    $arrDadosNivelAcessoPermitido = [];
+                    
                     foreach ($arrObjNivelAcessoPermitidoDTO as $ObjNivelAcessoPermitido){
                         $arrDadosNivelAcessoPermitido[] = $ObjNivelAcessoPermitido->getStrStaNivelAcesso();
                     }
@@ -300,13 +321,14 @@ try {
                         $sinNAPadrao = $objMdPetTipoProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
                         $gerado = $objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' ? 'checked = checked' : '';
                         $externo = $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S' ? 'checked = checked' : '';
+	                    $formulario = $objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'S' ? 'checked = checked' : '';
                         $nomeSerie = $_POST['txtTipoDocPrinc'];
                         $idSerie = $objMdPetTipoProcessoDTO->getNumIdSerie();
                         $multipla = $tipoUnidade == 'M' ? true : false;
                         $unica = $tipoUnidade == 'U' ? true : false;
                         $hdnCorpoTabela = isset($_POST['hdnCorpoTabela']) ? $_POST['hdnCorpoTabela'] : '';
                         $idUnidade = $unica ? $_POST['hdnIdUnidade'] : null;
-                        $numTipoProcessoPeticionamento = $objMdPetTipoProcessoRN->cadastrar($objMdPetTipoProcessoDTO)->getNumIdTipoProcessoPeticionamento();
+                        $numTipoProcessoPeticionamento = (new MdPetTipoProcessoRN())->cadastrar($objMdPetTipoProcessoDTO)->getNumIdTipoProcessoPeticionamento();
 
                         $objMdPetRelTpProcSerieRN = new MdPetRelTpProcSerieRN();
 
@@ -366,16 +388,14 @@ try {
             $strTitulo = 'Alterar Tipo de Processo para Peticionamento de Processo Novo';
             $strDesabilitar = 'disabled="disabled"';
 
-            $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
-            $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-
             $strItensSelTipoProcesso = MdPetTipoProcessoINT::montarSelectTipoProcesso(null, null, $_POST['selTipoProcesso']);
             $strItensSelUnidades = UnidadeINT::montarSelectSiglaDescricao(null, null, $_POST['selUnidade']);
             $strItensSelDoc = SerieINT::montarSelectNomeRI0802(null, null, $_POST['selDocumento']);
 
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmAlterarTipoPeticionamento" id="sbmAlterarTipoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_tipo_processo_peticionamento']))) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
-
+	
+	        $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
             $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($_POST['hdnIdMdPetTipoProcesso']);
             $objMdPetTipoProcessoDTO->setNumIdProcedimento($_POST['hdnIdTipoProcesso']);
             $objMdPetTipoProcessoDTO->setStrOrientacoes($_POST['txtOrientacoes']);
@@ -388,6 +408,7 @@ try {
             $objMdPetTipoProcessoDTO->setStrSinNaPadrao('N');
             $objMdPetTipoProcessoDTO->setStrSinDocGerado('N');
             $objMdPetTipoProcessoDTO->setStrSinDocExterno('N');
+	        $objMdPetTipoProcessoDTO->setStrSinDocFormulario('N');
 
             // indicacao interessado
             if ($_POST['indicacaoInteressado'][0] == 1)
@@ -408,15 +429,31 @@ try {
                 $objMdPetTipoProcessoDTO->setStrStaNivelAcesso($_POST['selNivelAcesso']);
             }
             //documento principal
-            if ($_POST['rdDocPrincipal'][0] == 1) {
+            switch ($_POST['rdDocPrincipal'][0]) {
+              case 1:
                 $objMdPetTipoProcessoDTO->setStrSinDocGerado('S');
                 $objMdPetTipoProcessoDTO->setStrSinDocExterno('N');
-            } else if ($_POST['rdDocPrincipal'][0] == 2) {
+                $objMdPetTipoProcessoDTO->setStrSinDocFormulario('N');
+                $objMdPetTipoProcessoDTO->setNumIdSerie($_POST['hdnIdTipoDocPrinc']);
+                $objMdPetTipoProcessoDTO->setNumIdTipoFormulario(null);
+                break;
+
+              case 2:
                 $objMdPetTipoProcessoDTO->setStrSinDocGerado('N');
                 $objMdPetTipoProcessoDTO->setStrSinDocExterno('S');
-            }
+                $objMdPetTipoProcessoDTO->setStrSinDocFormulario('N');
+                $objMdPetTipoProcessoDTO->setNumIdSerie($_POST['hdnIdTipoDocPrinc']);
+                $objMdPetTipoProcessoDTO->setNumIdTipoFormulario(null);
+                break;
 
-            $objMdPetTipoProcessoDTO->setNumIdSerie($_POST['hdnIdTipoDocPrinc']);
+              case 3:
+                $objMdPetTipoProcessoDTO->setStrSinDocGerado('N');
+                $objMdPetTipoProcessoDTO->setStrSinDocExterno('N');
+                $objMdPetTipoProcessoDTO->setStrSinDocFormulario('S');
+                $objMdPetTipoProcessoDTO->setNumIdSerie($_POST['hdnIdTipoDocPrinc']);
+
+                break;
+            }
 
             $objMdPetTipoProcessoDTO->setStrSinAtivo('S');
 
@@ -424,153 +461,166 @@ try {
             if (isset($_POST['sbmAlterarTipoPeticionamento'])) {
 
                 try {
+	                
                     $objInfraException = new InfraException();
 
                     $objNivelAcessoPermitidoDTO = new NivelAcessoPermitidoDTO();
                     $objNivelAcessoPermitidoDTO->retStrStaNivelAcesso();
                     $objNivelAcessoPermitidoDTO->setNumIdTipoProcedimento($objMdPetTipoProcessoDTO->getNumIdProcedimento());
-                    $objNivelAcessoPermitidoRN = new NivelAcessoPermitidoRN();
-                    $arrObjNivelAcessoPermitidoDTO = $objNivelAcessoPermitidoRN->listar($objNivelAcessoPermitidoDTO);
+                    $arrObjNivelAcessoPermitidoDTO = (new NivelAcessoPermitidoRN())->listar($objNivelAcessoPermitidoDTO);
 
-                    $arrDadosNivelAcessoPermitido = array();
+                    $arrDadosNivelAcessoPermitido = [];
                     foreach ($arrObjNivelAcessoPermitidoDTO as $ObjNivelAcessoPermitido){
                         $arrDadosNivelAcessoPermitido[] = $ObjNivelAcessoPermitido->getStrStaNivelAcesso();
                     }
 
                     if(!in_array(ProtocoloRN::$NA_PUBLICO, $arrDadosNivelAcessoPermitido)){
+                        
                         $objInfraException->lancarValidacao('Tipo de Processo para Peticionamento de Processo Novo não pode ser alterado, pois o Nível de Acesso do Tipo de Processo não está configurado como Público.');
                         $objInfraException->lancarValidacoes();
+                    
                     } else {
-                        $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
-                        $arrIdTipoDocumentoEssencial = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
-                        $arrIdUnidadesSelecionadas = $_POST['hdnUnidadesSelecionadas'] != '' ? json_decode($_POST['hdnUnidadesSelecionadas']) : array();
+                        
+                        $arrIdTipoDocumento             = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
+                        $arrIdTipoDocumentoEssencial    = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
+                        $arrIdUnidadesSelecionadas      = $_POST['hdnUnidadesSelecionadas'] != '' ? json_decode($_POST['hdnUnidadesSelecionadas']) : array();
 
                         //para nao limpar os campos em caso de erro de duplicidade
-                        $idMdPetTipoProcesso = $_POST['hdnIdMdPetTipoProcesso'];
-                        $nomeTipoProcesso = $_POST['txtTipoProcesso'];
-                        $tipoUnidade = is_array($_POST['rdUnidade']) ? current($_POST['rdUnidade']) : array();
-                        $idTipoProcesso = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
-                        $orientacoes = $objMdPetTipoProcessoDTO->getStrOrientacoes();
-                        $idUnidade = null /* $objMdPetTipoProcessoDTO->getNumIdUnidade() */
-                        ;
-                        $nomeUnidade = $_POST['txtUnidade'];
-                        $sinIndIntUsExt = $objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'S' ? 'checked = checked' : '';
-                        $sinIndIntIndIndir = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'S' ? 'checked = checked' : '';
-                        $sinIndIntIndConta = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaContato() == 'S' ? 'checked = checked' : '';
-                        $sinIndIntIndCpfCn = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaCpfCnpj() == 'S' ? 'checked = checked' : '';
-                        $sinNAUsuExt = $objMdPetTipoProcessoDTO->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
-                        $sinNAPadrao = $objMdPetTipoProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
-                        $gerado = $objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' ? 'checked = checked' : '';
-                        $externo = $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S' ? 'checked = checked' : '';
-                        $nomeSerie = $_POST['txtTipoDocPrinc'];
-                        $idSerie = $objMdPetTipoProcessoDTO->getNumIdSerie();
+                        
+                        $idMdPetTipoProcesso    = $_POST['hdnIdMdPetTipoProcesso'];
+                        $nomeTipoProcesso       = $_POST['txtTipoProcesso'];
+                        $tipoUnidade            = is_array($_POST['rdUnidade']) ? current($_POST['rdUnidade']) : array();
+                        $idTipoProcesso         = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
+                        $orientacoes            = $objMdPetTipoProcessoDTO->getStrOrientacoes();
+                        $idUnidade              = null; /* $objMdPetTipoProcessoDTO->getNumIdUnidade() */
+                        
+                        $nomeUnidade            = $_POST['txtUnidade'];
+                        $sinIndIntUsExt         = $objMdPetTipoProcessoDTO->getStrSinIIProprioUsuarioExterno() == 'S' ? 'checked = checked' : '';
+                        $sinIndIntIndIndir      = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDireta() == 'S' ? 'checked = checked' : '';
+                        $sinIndIntIndConta      = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaContato() == 'S' ? 'checked = checked' : '';
+                        $sinIndIntIndCpfCn      = $objMdPetTipoProcessoDTO->getStrSinIIIndicacaoDiretaCpfCnpj() == 'S' ? 'checked = checked' : '';
+                        $sinNAUsuExt            = $objMdPetTipoProcessoDTO->getStrSinNaUsuarioExterno() == 'S' ? 'checked = checked' : '';
+                        $sinNAPadrao            = $objMdPetTipoProcessoDTO->getStrSinNaPadrao() == 'S' ? 'checked = checked' : '';
+                        $gerado                 = $objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' ? 'checked = checked' : '';
+                        $externo                = $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S' ? 'checked = checked' : '';
+                        $formulario             = $objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'S' ? 'checked = checked' : '';
+                        $nomeSerie              = $_POST['txtTipoDocPrinc'];
+                        $idSerie                = $objMdPetTipoProcessoDTO->getNumIdSerie();
 
-                        $multipla = $tipoUnidade == 'M' ? true : false;
-                        $unica = $tipoUnidade == 'U' ? true : false;
-                        $hdnCorpoTabela = isset($_POST['hdnCorpoTabela']) ? $_POST['hdnCorpoTabela'] : '';
+                        $multipla               = $tipoUnidade == 'M' ? true : false;
+                        $unica                  = $tipoUnidade == 'U' ? true : false;
+                        $hdnCorpoTabela         = isset($_POST['hdnCorpoTabela']) ? $_POST['hdnCorpoTabela'] : '';
 
                         $objMdPetTipoProcessoDTO->setNumIdHipoteseLegal(null);
+	                    $objMdPetTipoProcessoDTO->setStrStaNivelAcesso(null);
 
                         if ($_POST['selNivelAcesso'] != '') {
 
                             $objMdPetTipoProcessoDTO->setStrStaNivelAcesso($_POST['selNivelAcesso']);
-
-                            if ($_POST['selNivelAcesso'] === ProtocoloRN::$NA_RESTRITO) {
-                                $objMdPetTipoProcessoDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
-                            } else {
-                                $objMdPetTipoProcessoDTO->setNumIdHipoteseLegal(null);
+                            
+                            if($_POST['selNivelAcesso'] === ProtocoloRN::$NA_RESTRITO){
+	                            $objMdPetTipoProcessoDTO->setNumIdHipoteseLegal($_POST['selHipoteseLegal']);
                             }
-                        } else {
-                            $objMdPetTipoProcessoDTO->setStrStaNivelAcesso(null);
+	                        
                         }
 
-                        $objAlterado = $objMdPetTipoProcessoRN->alterar($objMdPetTipoProcessoDTO);
+                        $objAlterado = (new MdPetTipoProcessoRN())->alterar($objMdPetTipoProcessoDTO);
 
                         if ($objAlterado) {
+                            
                             //EXCLUSÕES DAS RNS
                             //Exclusão de Tipo de Documento Essencial e Complementar
                             $numIdTpProcessoPet = isset($_GET['id_tipo_processo_peticionamento']) && $_GET['id_tipo_processo_peticionamento'] != '' ? $_GET['id_tipo_processo_peticionamento'] : $_POST['hdnIdMdPetTipoProcesso'];
-                            $objMdPetRelTpProcSerieRN = new MdPetRelTpProcSerieRN();
-                            $arrMdPetRelTpProcSerieDTO = array();
+                            
+                            $arrMdPetRelTpProcSerieDTO = [];
+                            
                             $objMdPetRelTpProcSerieDTO = new MdPetRelTpProcSerieDTO();
                             $objMdPetRelTpProcSerieDTO->setNumIdTipoProcessoPeticionamento($numIdTpProcessoPet);
                             $arrMdPetRelTpProcSerieDTO[] = $objMdPetRelTpProcSerieDTO;
-
                             $objMdPetRelTpProcSerieDTO->retTodos();
-                            $arrMdPetRelTpProcSerieDTO = $objMdPetRelTpProcSerieRN->listar($objMdPetRelTpProcSerieDTO);
+                            $arrMdPetRelTpProcSerieDTO = (new MdPetRelTpProcSerieRN())->listar($objMdPetRelTpProcSerieDTO);
 
                             if (is_array($arrMdPetRelTpProcSerieDTO) && count($arrMdPetRelTpProcSerieDTO) > 0) {
-                                $objMdPetRelTpProcSerieRN->excluir($arrMdPetRelTpProcSerieDTO);
+	                            (new MdPetRelTpProcSerieRN())->excluir($arrMdPetRelTpProcSerieDTO);
                             }
 
                             //Exclusão de Unidade
-                            $arrMdPetRelTpProcessoUnidDTO = array();
-                            $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
+                            $arrMdPetRelTpProcessoUnidDTO = [];
                             $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
                             $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($numIdTpProcessoPet);
                             $objMdPetRelTpProcessoUnidDTO->retTodos();
-                            $arrMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
+                            $arrMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
 
                             if (is_array($arrMdPetRelTpProcessoUnidDTO) && count($arrMdPetRelTpProcessoUnidDTO) > 0) {
-                                $objMdPetRelTpProcessoUnidRN->excluir($arrMdPetRelTpProcessoUnidDTO);
+	                            (new MdPetRelTpProcessoUnidRN())->excluir($arrMdPetRelTpProcessoUnidDTO);
                             }
 
-                            //CADASTROS RNS
                             //Cadastro de Unidade
-                            $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
 
                             if ($tipoUnidade === MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS) {
+                                
                                 foreach ($arrIdUnidadesSelecionadas as $idUnidadeSelecionada) {
+                                    
                                     $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-
                                     $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($numIdTpProcessoPet);
                                     $objMdPetRelTpProcessoUnidDTO->setNumIdUnidade($idUnidadeSelecionada);
                                     $objMdPetRelTpProcessoUnidDTO->setStrStaTipoUnidade(MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS);
-                                    $objMdPetRelTpProcessoUnidRN->cadastrar($objMdPetRelTpProcessoUnidDTO);
+                                    (new MdPetRelTpProcessoUnidRN())->cadastrar($objMdPetRelTpProcessoUnidDTO);
+                                    
                                 }
+                                
                             } else {
+                                
                                 $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
                                 $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($numIdTpProcessoPet);
                                 $objMdPetRelTpProcessoUnidDTO->setNumIdUnidade($_POST['hdnIdUnidade']);
                                 $objMdPetRelTpProcessoUnidDTO->setStrStaTipoUnidade(MdPetTipoProcessoRN::$UNIDADE_UNICA);
-
-                                $objMdPetRelTpProcessoUnidRN->cadastrar($objMdPetRelTpProcessoUnidDTO);
+                                (new MdPetRelTpProcessoUnidRN())->cadastrar($objMdPetRelTpProcessoUnidDTO);
+                                
                             }
-
 
                             //Tipo de Documento Essencial
                             if (!empty($arrIdTipoDocumentoEssencial)) {
+                                
                                 foreach ($arrIdTipoDocumentoEssencial as $numIdTipoDocumentoEss) {
-
+                                    
                                     $objMdPetRelTpProcSerieEssDTO = new MdPetRelTpProcSerieDTO();
                                     $objMdPetRelTpProcSerieEssDTO->setNumIdRelTipoProcessoSeriePeticionamento(null);
                                     $objMdPetRelTpProcSerieEssDTO->setNumIdTipoProcessoPeticionamento($numIdTpProcessoPet);
                                     $objMdPetRelTpProcSerieEssDTO->setNumIdSerie($numIdTipoDocumentoEss);
                                     $objMdPetRelTpProcSerieEssDTO->setStrStaTipoDoc(MdPetRelTpProcSerieRN::$DOC_ESSENCIAL);
-
-                                    $objRelTipoProcSerieEssPetDTO = $objMdPetRelTpProcSerieRN->cadastrar($objMdPetRelTpProcSerieEssDTO);
+                                    $objRelTipoProcSerieEssPetDTO = (new MdPetRelTpProcSerieRN())->cadastrar($objMdPetRelTpProcSerieEssDTO);
+                                    
                                 }
+                                
                             }
 
                             //Tipo de Documento Complementar
                             if (!empty($arrIdTipoDocumento)) {
+                                
                                 foreach ($arrIdTipoDocumento as $numIdTipoDocumento) {
+                                    
                                     $objMdPetRelTpProcSerieDTO = new MdPetRelTpProcSerieDTO();
                                     $objMdPetRelTpProcSerieDTO->setNumIdRelTipoProcessoSeriePeticionamento(null);
                                     $objMdPetRelTpProcSerieDTO->setNumIdTipoProcessoPeticionamento($numIdTpProcessoPet);
                                     $objMdPetRelTpProcSerieDTO->setNumIdSerie($numIdTipoDocumento);
                                     $objMdPetRelTpProcSerieDTO->setStrStaTipoDoc(MdPetRelTpProcSerieRN::$DOC_COMPLEMENTAR);
-
-                                    $objRelTipoProcSeriePetDTO = $objMdPetRelTpProcSerieRN->cadastrar($objMdPetRelTpProcSerieDTO);
+                                    $objRelTipoProcSeriePetDTO = (new MdPetRelTpProcSerieRN())->cadastrar($objMdPetRelTpProcSerieDTO);
+                                    
                                 }
+                                
                             }
+                            
                         }
 
                         header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento() . PaginaSEI::getInstance()->montarAncora($objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento())));
+                    
                     }
+                    
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
+                
             }
             break;
 
@@ -586,13 +636,12 @@ try {
 
         case 'md_pet_tipo_processo_salvar':
 
-
             break;
-
 
         default:
             throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
     }
+    
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
@@ -608,10 +657,6 @@ require_once 'md_pet_tipo_processo_cadastro_css.php';
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-?>
-
-
-<?
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
@@ -1111,6 +1156,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá anexar um Arquivo como Documento Principal, respeitadas as parametrizações na Administração > Peticionamento Eletrônico > Extensão de Arquivos Permitidos e Tamanho Máximo de Arquivos.') ?>
                                                 class="infraImg"/></label>
                             </div>
+                            <div class="divDocumentoPrincipalFormulario">
+                                <input type="radio" name="rdDocPrincipal[]" id="rdDocFormulario"
+                                       onclick="changeDocPrincipal();"
+                                       value="3" <?php echo $formulario ?> class="infraRadio"
+                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                <label name="lblDocFormulario" id="lblDocFormulario" for="rdDocFormulario" class="infraLabelRadio">Formulário (Preenchimento de campos)
+                                    <img align="top"
+                                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                                  name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá incluir um Formulário como Documento Principal.') ?>
+                                                  class="infraImg"/></label>
+                            </div>
                         </div>
                         <div <?php echo $gerado != '' || $externo != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?>
                                 id="divDocPrincipal">
@@ -1124,7 +1180,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             <div class="input-group mb-3">
                                                 <input type="text" id="txtTipoDocPrinc" name="txtTipoDocPrinc"
                                                     class="infraText form-control"
-                                                    value="<?= PaginaSEI::tratarHTML($nomeSerie) ?>"
+                                                    value="<?= PaginaSEI::tratarHTML($nomeDocumentoPrincipal) ?>"
                                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                                 <input type="hidden" id="hdnIdTipoDocPrinc" name="hdnIdTipoDocPrinc"
                                                     value="<?= $idSerie ?>"/>

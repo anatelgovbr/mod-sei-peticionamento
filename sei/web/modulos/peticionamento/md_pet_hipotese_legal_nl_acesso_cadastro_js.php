@@ -18,7 +18,7 @@
         var optionsSub = document.getElementById('selDescricaoHpLegalNvAcesso').options;
 
         if (optionsSub.length == 0) {
-            alert('Informe ao menos uma Hipótese Legal.');
+            alert('Informe ao menos uma HipÃ³tese Legal.');
             document.getElementById('selDescricaoHpLegalNvAcesso').focus();
             return false;
         }
@@ -33,7 +33,7 @@
 
     function carregarComponenteHipoteseLegal() {
 
-        objAutoCompletarHipLegal = new infraAjaxAutoCompletar('hdnIdHipoteseLgl', 'txtHipoteseLgl', '<?=$strLinkAjaxHipLegal?>');
+        objAutoCompletarHipLegal = new infraAjaxAutoCompletar('hdnIdHipoteseLgl', 'txtHipoteseLgl', '<?= isset($strLinkAjaxHipLegal) ? $strLinkAjaxHipLegal : '' ?>');
         objAutoCompletarHipLegal.limparCampo = true;
         objAutoCompletarHipLegal.tamanhoMinimo = 3;
         objAutoCompletarHipLegal.prepararExecucao = function () {
@@ -48,7 +48,7 @@
                 if (options != null) {
                     for (var i = 0; i < options.length; i++) {
                         if (options[i].value == id) {
-                            alert('Hipótese Legal já consta na lista.');
+                            alert('HipÃ³tese Legal jÃ¡ consta na lista.');
                             break;
                         }
                     }
@@ -73,7 +73,7 @@
             }
         };
 
-        objLupaHipLegal = new infraLupaSelect('selDescricaoHpLegalNvAcesso', 'hdnHipoteseLgl', '<?=$strLinkHipoteseLglSelecao?>');
+        objLupaHipLegal = new infraLupaSelect('selDescricaoHpLegalNvAcesso', 'hdnHipoteseLgl', '<?= isset($strLinkHipoteseLglSelecao) ? $strLinkHipoteseLglSelecao : '' ?>');
 
     }
 

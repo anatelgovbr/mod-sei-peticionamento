@@ -4,22 +4,22 @@ $readOnly = $stWebService ? 'readonly="readonly"' : null;
 $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
 ?>
 <fieldset id="registroPessoaJuridica" class="infraFieldset form-control sizeFieldset">
-    <legend class="infraLegend">&nbsp; Registro da Pessoa JurÌdica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; Registro da Pessoa Jur√≠dica &nbsp;</legend>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12">
             <p>
-                <label>Os dados aqui dispostos dizem respeito ao vÌnculo mais recente estabelecido no
+                <label>Os dados aqui dispostos dizem respeito ao v√≠nculo mais recente estabelecido no
                     SEI-<?= $siglaOrgao ?>
-                    entre o Respons·vel Legal e a Pessoa JurÌdica. … permitido atualizar os Atos Constitutivos por meio
+                    entre o Respons√°vel Legal e a Pessoa Jur√≠dica. √â permitido atualizar os Atos Constitutivos por meio
                     da
-                    seÁ„o
+                    se√ß√£o
                     mais abaixo.</label>
             </p>
             <p>
-                <label class="infraLabelObrigatorio">AtenÁ„o: </label>
-                <label>Somente por meio da tela anterior, acessando o bot„o "Novo Respons·vel Legal" por Usu·rio Externo
-                    que j· conste como Respons·vel Legal junto ‡ Receita Federal que È possÌvel a alteraÁ„o do
-                    Respons·vel Legal da Pessoa JurÌdica.</label>
+                <label class="infraLabelObrigatorio">Aten√ß√£o: </label>
+                <label>Somente por meio da tela anterior, acessando o bot√£o "Novo Respons√°vel Legal" por Usu√°rio Externo
+                    que j√° conste como Respons√°vel Legal junto √† Receita Federal que √© poss√≠vel a altera√ß√£o do
+                    Respons√°vel Legal da Pessoa Jur√≠dica.</label>
             </p>
         </div>
     </div>
@@ -39,7 +39,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
         <div class="col-sm-12 col-md-7 col-lg-6">
             <div class="form-group">
             <label class="infraLabelObrigatorio" for="txtRazaoSocial" id="lblRazaoSocial">
-                Raz„o Social:
+                Raz√£o Social:
             </label>
             <input type="text" class="infraText blocInformacaoPj" id="txtRazaoSocialAlt" name="txtRazaoSocialAlt" readonly="readonly"
                 <?php echo $readOnly ?>
@@ -53,7 +53,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
             <div class="form-group">
             <label class="infraLabelObrigatorio" for="txtNumeroCpfResponsavelAlt">
-                CPF do Respons·vel Legal:
+                CPF do Respons√°vel Legal:
             </label>
             <input type="text" class="infraText" id="txtNumeroCpfResponsavelAlt" name="txtNumeroCpfResponsavelAlt"
                    readonly
@@ -64,7 +64,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
         <div class="col-sm-12 col-md-7 col-lg-6">
             <div class="form-gruop">
             <label class="infraLabelObrigatorio" for="txtNomeResponsavelLegalAlt">
-                Nome do Respons·vel Legal:
+                Nome do Respons√°vel Legal:
             </label>
             <input type="text" class="infraText" id="txtNomeResponsavelLegalAlt" name="txtNomeResponsavelLegalAlt"
                    maxlength="250"
@@ -74,34 +74,34 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top:20;">
+        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
             <br />
-            <label class="infraLabelObrigatorio" for="txt">AtenÁ„o:</label>
+            <label class="infraLabelObrigatorio" for="txt">Aten√ß√£o:</label>
             <ol class="Numerada" style="margin-top: 0%;">
-                <li class="Numerada">Somente quem È de fato Respons·vel Legal pela Pessoa JurÌdica junto ‡ Receita
-                    Federal do Brasil (RFB) pode exercer a presente vinculaÁ„o.
+                <li class="Numerada">Somente quem √© de fato Respons√°vel Legal pela Pessoa Jur√≠dica junto √† Receita
+                    Federal do Brasil (RFB) pode exercer a presente vincula√ß√£o.
                 </li>
-                <li class="Numerada">Ao efetivar a vinculaÁ„o como Respons·vel Legal, no ‚mbito
-                    do(a) <?= $descricaoOrgao ?>, vocÍ ter· poderes para:
+                <li class="Numerada">Ao efetivar a vincula√ß√£o como Respons√°vel Legal, no √¢mbito
+                    do(a) <?= $descricaoOrgao ?>, voc√™ ter√° poderes para:
                     <ol class="Numerada">
-                        <li class="Numerada">Gerenciar o cadastro da Pessoa JurÌdica;</li>
-                        <li class="Numerada">Receber IntimaÁıes EletrÙnicas e realizar Peticionamento EletrÙnico em
+                        <li class="Numerada">Gerenciar o cadastro da Pessoa Jur√≠dica;</li>
+                        <li class="Numerada">Receber Intima√ß√µes Eletr√¥nicas e realizar Peticionamento Eletr√¥nico em
                             nome
-                            da Pessoa JurÌdica, com todos os poderes previstos no sistema;
+                            da Pessoa Jur√≠dica, com todos os poderes previstos no sistema;
                         </li>
-                        <li class="Numerada">Conceder ProcuraÁıes EletrÙnicas Especiais a outros Usu·rios Externos,
+                        <li class="Numerada">Conceder Procura√ß√µes Eletr√¥nicas Especiais a outros Usu√°rios Externos,
                             bem
-                            como revog·-las quando lhe convier;
+                            como revog√°-las quando lhe convier;
                         </li>
-                        <li class="Numerada">Conceder ProcuraÁıes EletrÙnicas Simples a outros Usu·rios Externos, em
-                            ‚mbito geral ou para processos especÌficos, conforme poderes estabelecidos, para
-                            representaÁ„o da Pessoa JurÌdica Outorgante, bem como revog·-las quando lhe convier.
+                        <li class="Numerada">Conceder Procura√ß√µes Eletr√¥nicas Simples a outros Usu√°rios Externos, em
+                            √¢mbito geral ou para processos espec√≠ficos, conforme poderes estabelecidos, para
+                            representa√ß√£o da Pessoa Jur√≠dica Outorgante, bem como revog√°-las quando lhe convier.
                         </li>
                     </ol>
                 </li>
-                <li class="Numerada">… sua responsabilidade zelar pela veracidade e validade dos dados sobre a
+                <li class="Numerada">√â sua responsabilidade zelar pela veracidade e validade dos dados sobre a
                     Pessoa
-                    JurÌdica ‡ qual se vincula no ‚mbito do SEI-<?= $siglaOrgao ?>.
+                    Jur√≠dica √† qual se vincula no √¢mbito do SEI-<?= $siglaOrgao ?>.
                 </li>
             </ol>
         </div>
@@ -118,7 +118,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
                                 <?php echo !is_null($readOnlyConsultar) ? 'disabled="disabled"' : null; ?>
                                 <?php echo $arrDadosPessoaJuridicaVinculo->getStrSinValidado() == 'S' ? 'checked="checked" disabled="disabled"' : null; ?>/>
                             <span id="textoDeclaracao">
-                        <span style="font-weight: bold"> Declaro </span> ser o Respons·vel Legal pela Pessoa JurÌdica cujo CNPJ informei e que concordo com os termos acima dispostos. Declaro ainda estar ciente de que o ato de inserir ou fazer inserir declaraÁ„o falsa ou diversa da que devia ser escrita È crime, conforme disposto no art. 299 do CÛdigo Penal Brasileiro.
+                        <span style="font-weight: bold"> Declaro </span> ser o Respons√°vel Legal pela Pessoa Jur√≠dica cujo CNPJ informei e que concordo com os termos acima dispostos. Declaro ainda estar ciente de que o ato de inserir ou fazer inserir declara√ß√£o falsa ou diversa da que devia ser escrita √© crime, conforme disposto no art. 299 do C√≥digo Penal Brasileiro.
                     </span>
                         </ul>
                     </label>

@@ -43,7 +43,7 @@ try {
         }
         $objSerieRN = new SerieRN();
         $objSerieRN->excluirRN0645($arrObjSerieDTO);
-        PaginaSEI::getInstance()->setStrMensagem('OperaÁ„o realizada com sucesso.');
+        PaginaSEI::getInstance()->setStrMensagem('Opera√ß√£o realizada com sucesso.');
       }catch(Exception $e){
         PaginaSEI::getInstance()->processarExcecao($e);
       } 
@@ -62,7 +62,7 @@ try {
         }
         $objSerieRN = new SerieRN();
         $objSerieRN->desativarRN0648($arrObjSerieDTO);
-        PaginaSEI::getInstance()->setStrMensagem('OperaÁ„o realizada com sucesso.');
+        PaginaSEI::getInstance()->setStrMensagem('Opera√ß√£o realizada com sucesso.');
       }catch(Exception $e){
         PaginaSEI::getInstance()->processarExcecao($e);
       } 
@@ -82,7 +82,7 @@ try {
           }
           $objSerieRN = new SerieRN();
           $objSerieRN->reativarRN0649($arrObjSerieDTO);
-          PaginaSEI::getInstance()->setStrMensagem('OperaÁ„o realizada com sucesso.');
+          PaginaSEI::getInstance()->setStrMensagem('Opera√ß√£o realizada com sucesso.');
         }catch(Exception $e){
           PaginaSEI::getInstance()->processarExcecao($e);
         } 
@@ -93,7 +93,7 @@ try {
 
 
     case 'md_pet_serie_selecionar':
-      $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Tipo de Documento','Selecionar Tipos de Documento');
+      $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Tipo de Documento a','Selecionar Tipos de Documento');
 
       //Se cadastrou alguem
       if ($_GET['acao_origem']=='serie_cadastrar'){
@@ -108,7 +108,7 @@ try {
       break;
 
     default:
-      throw new InfraException("AÁ„o '".$_GET['acao']."' n„o reconhecida.");
+      throw new InfraException("A√ß√£o '".$_GET['acao']."' n√£o reconhecida.");
   }
 
   $arrComandos = array();
@@ -141,14 +141,14 @@ try {
   }
 
   if($filtro == '2'){
-  //Add filtro para Tipos de Documentos para IntimaÁ„o EletrÙnica
+  //Add filtro para Tipos de Documentos para Intima√ß√£o Eletr√¥nica
     $objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
         array(InfraDTO::$OPER_IN),
         array(array(SerieRN::$TA_INTERNO, SerieRN::$TA_INTERNO_EXTERNO)));
   }
 
     if($filtro == '3'){
-        //Add filtro para Tipos de Documentos para IntimaÁ„o EletrÙnica
+        //Add filtro para Tipos de Documentos para Intima√ß√£o Eletr√¥nica
         $objSerieDTO->adicionarCriterio(array('StaAplicabilidade'),
             array(InfraDTO::$OPER_IN),
             array(array(SerieRN::$TA_EXTERNO, SerieRN::$TA_INTERNO_EXTERNO)));
@@ -261,7 +261,7 @@ try {
     $strResultado .= '<th class="infraTh" width="10%">ID</th>'."\n";
     $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objSerieDTO,'Nome','Nome',$arrObjSerieDTO).'</th>'."\n";
     $strResultado .= '<th class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objSerieDTO,'Grupo','NomeGrupoSerie',$arrObjSerieDTO).'</th>'."\n";
-    $strResultado .= '<th class="infraTh" width="15%">AÁıes</th>'."\n";
+    $strResultado .= '<th class="infraTh" width="15%">A√ß√µes</th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
     for($i = 0;$i < $numRegistros; $i++){
@@ -338,8 +338,8 @@ PaginaSEI::getInstance()->abrirStyle();
 #lblGrupoSerie {position:absolute;left:0%;top:0%;width:20%;}
 #selGrupoSerie {position:absolute;left:0%;top:40%;width:20%;}
 
-#lblNomeSeriePesquisa {position:absolute;left:0%;top:0%;width:20%;}
-#txtNomeSeriePesquisa {position:absolute;left:0%;top:40%;width:20%;}
+#lblNomeSeriePesquisa {position:absolute;left:0%;top:0%;width:50%;}
+#txtNomeSeriePesquisa {position:absolute;left:0%;top:40%;width:50%;}
 
 #lblModeloPesquisa {position:absolute;left:50%;top:0%;width:24%;}
 #selModeloPesquisa {position:absolute;left:50%;top:40%;width:24%;}
@@ -366,7 +366,7 @@ function inicializar(){
 
 <? if ($bolAcaoDesativar){ ?>
 function acaoDesativar(id,desc){
-  if (confirm("Confirma desativaÁ„o do Tipo de Documento \""+desc+"\"?")){
+  if (confirm("Confirma desativa√ß√£o do Tipo de Documento \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmSerieLista').action='<?=$strLinkDesativar?>';
     document.getElementById('frmSerieLista').submit();
@@ -378,7 +378,7 @@ function acaoDesativacaoMultipla(){
     alert('Nenhum Tipo de Documento selecionado.');
     return;
   }
-  if (confirm("Confirma desativaÁ„o dos Tipos de Documento selecionados?")){
+  if (confirm("Confirma desativa√ß√£o dos Tipos de Documento selecionados?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmSerieLista').action='<?=$strLinkDesativar?>';
     document.getElementById('frmSerieLista').submit();
@@ -388,7 +388,7 @@ function acaoDesativacaoMultipla(){
 
 <? if ($bolAcaoReativar){ ?>
 function acaoReativar(id,desc){
-  if (confirm("Confirma reativaÁ„o do Tipo de Documento \""+desc+"\"?")){
+  if (confirm("Confirma reativa√ß√£o do Tipo de Documento \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmSerieLista').action='<?=$strLinkReativar?>';
     document.getElementById('frmSerieLista').submit();
@@ -400,7 +400,7 @@ function acaoReativacaoMultipla(){
     alert('Nenhum Tipo de Documento selecionado.');
     return;
   }
-  if (confirm("Confirma reativaÁ„o dos Tipos de Documento selecionados?")){
+  if (confirm("Confirma reativa√ß√£o dos Tipos de Documento selecionados?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmSerieLista').action='<?=$strLinkReativar?>';
     document.getElementById('frmSerieLista').submit();
@@ -410,7 +410,7 @@ function acaoReativacaoMultipla(){
 
 <? if ($bolAcaoExcluir){ ?>
 function acaoExcluir(id,desc){
-  if (confirm("Confirma exclus„o do Tipo de Documento \""+desc+"\"?")){
+  if (confirm("Confirma exclus√£o do Tipo de Documento \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmSerieLista').action='<?=$strLinkExcluir?>';
     document.getElementById('frmSerieLista').submit();
@@ -422,7 +422,7 @@ function acaoExclusaoMultipla(){
     alert('Nenhum Tipo de Documento selecionado.');
     return;
   }
-  if (confirm("Confirma exclus„o dos Tipos de Documento selecionados?")){
+  if (confirm("Confirma exclus√£o dos Tipos de Documento selecionados?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmSerieLista').action='<?=$strLinkExcluir?>';
     document.getElementById('frmSerieLista').submit();

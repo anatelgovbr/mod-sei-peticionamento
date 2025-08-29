@@ -12,7 +12,7 @@
 
 require_once dirname(__FILE__).'/../../../SEI.php';
 
-class MdPetUsuarioExternoDTO extends InfraDTO
+class MdPetUsuarioExternoDTO extends UsuarioDTO
 {
 
     public function __construct()
@@ -93,4 +93,3 @@ class MdPetUsuarioExternoDTO extends InfraDTO
     }
 }
 
-?>

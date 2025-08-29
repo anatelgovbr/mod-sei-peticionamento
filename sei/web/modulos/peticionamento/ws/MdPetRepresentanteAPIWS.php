@@ -11,6 +11,7 @@
 class MdPetRepresentanteAPIWS
 {
 
+	private $IdVinculoRepresentante;
     private $Nome;
     private $Cpf;
     private $Email;
@@ -19,6 +20,22 @@ class MdPetRepresentanteAPIWS
     private $TipoPoderesLegais;
     private $ProcessosAbrangencia;
     private $DataLimite;
+	
+	/**
+	 * @return mixed
+	 */
+	public function getIdVinculoRepresentante()
+	{
+		return $this->IdVinculoRepresentante;
+	}
+	
+	/**
+	 * @param mixed $Nome
+	 */
+	public function setIdVinculoRepresentante($IdVinculoRepresentante)
+	{
+		$this->IdVinculoRepresentante = $IdVinculoRepresentante;
+	}
 
     /**
      * @return mixed

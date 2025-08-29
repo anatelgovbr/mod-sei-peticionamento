@@ -1353,7 +1353,7 @@ class MdPetDocumentoRN extends InfraRN {
 	
 							$dto = new DocumentoDTO();
 							$dto->setDblIdDocumento($objProtocoloDTO->getDblIdProtocolo());
-							$strDocumentoHTML = $this->consultarHtmlFormulario($dto);
+							$strDocumentoHTML = (new DocumentoRN())->consultarHtmlFormulario($dto);
 	
 						}
 	

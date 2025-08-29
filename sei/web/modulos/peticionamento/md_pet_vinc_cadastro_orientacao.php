@@ -23,7 +23,7 @@ echo $retEditor->getStrInicializacao();
     <td>
         <div id="divEditores" style="overflow: auto; width:100%">
             <textarea type="text" id="txaConteudo" rows="3" name="txtOrientacoes" class="infraText"
-                      tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?=$orientacoes; ?></textarea>
+                      tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= isset($orientacoes) ? $orientacoes : '' ?></textarea>
             <script type="text/javascript">
                 <?=$retEditor->getStrEditores();?>
             </script>

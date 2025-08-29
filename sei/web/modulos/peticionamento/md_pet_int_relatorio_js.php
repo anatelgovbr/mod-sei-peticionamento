@@ -3,24 +3,10 @@
 function inicializar() {
 
     controlarVisualizacao();
-    //   hideOrShowTable(isHide, true);
-    //   funcaoTemporariaProgramacao();
     infraEfeitoTabelas();
     carregarComponenteTipoIntimacao();
     carregarComponenteUnidade();
-    carregarComponenteDestinatario()
-
-    // if( $('#divInfraAreaTabela').find('table').length == 0 ){
-    //     $('#divInfraAreaPaginacaoSuperior').hide();
-    //     $('#divInfraAreaTabela').addClass('mt-3');
-    //     $('#divInfraAreaTabela > label').addClass('infraLabelOpcional');
-    // }else{
-    //     if( $('#divInfraAreaPaginacaoSuperior').find('select').length == 0 ){
-    //         $('#divInfraAreaPaginacaoSuperior').hide();
-    //     }else{
-    //         $('#divInfraAreaPaginacaoSuperior').addClass('mt-4');
-    //     }
-    // }
+    carregarComponenteDestinatarioSelect();
 
     //animate scroll quando é grafico
     var url_string = window.location.href;
@@ -64,7 +50,6 @@ function controlarVisualizacao(){
     if(!chamadaPosterior && !isGrafico && !isPesquisa){
         document.getElementById('divGraficos').style.display = 'none';
         document.getElementById('divTabelaIntimacao').style.display = 'none';
-        //document.getElementById('espacamento').style.marginTop = '200px';
     }
 
     setBotoesInferior('');
@@ -283,48 +268,6 @@ function carregarComponenteUnidade(){
     objLupaUnidade = new infraLupaSelect('selDescricaoUnidade' , 'hdnUnidade',  '<?=$strLinkUnidSelecionar ?>');
 }
 
-function carregarComponenteDestinatario(){
-
-    objAutoCompletarDestinatario = new infraAjaxAutoCompletar('hdnIdDestinatario' , 'txtDestinatario',  '<?=$strLinkAjaxContatos ?>');
-    objAutoCompletarDestinatario.limparCampo = true;
-    objAutoCompletarDestinatario.tamanhoMinimo = 3;
-    objAutoCompletarDestinatario.prepararExecucao = function(){
-        return 'palavras_pesquisa='+document.getElementById('txtDestinatario').value;
-    };
-
-    objAutoCompletarDestinatario.processarResultado = function(id,nome,complemento){
-
-        if (id!=''){
-           var options = document.getElementById('selDestinatario').options;
-
-           if(options != null){
-               for(var i=0;i < options.length;i++){
-                   if (options[i].value == id){
-                       alert('Destinatário já consta na lista.');
-                       break;
-                   }
-               }
-           }
-
-           if (i==options.length){
-
-               for(i=0;i < options.length;i++){
-                   options[i].selected = false;
-               }
-
-               opt = infraSelectAdicionarOption(document.getElementById('selDestinatario'),nome,id);
-               objLupaDestinatarios.atualizar();
-               opt.selected = true;
-           }
-           document.getElementById('txtDestinatario').value = '';
-           document.getElementById('txtDestinatario').focus();
-       }
-    };
-
-    objLupaDestinatarios = new infraLupaSelect('selDestinatario','hdnDestinatario','<?=$strLinkDestinatariosSelecao?>');
-}
-
-
 function carregarComponenteTipoIntimacao(){
 
     objAutoCompletarTpIntimacao = new infraAjaxAutoCompletar('hdnIdTpIntimacao', 'txtTpIntimacao', '<?=$strLinkAjaxTpIntimacao?>');
@@ -370,5 +313,28 @@ function carregarComponenteTipoIntimacao(){
     objLupaTpIntimacao = new infraLupaSelect('selDescricaoTpIntimacao' , 'hdnTpIntimacao',  '<?=$strLinkTpIntSelecionar ?>');
 
 }
+
+function carregarComponenteDestinatarioSelect(){
+
+    $(document).ready(function(){
+
+        url = $('select[name="selTipoDest"]').val() == 'N' ? '<?=$urlDestinatarioTipoFisica?>' : '<?=$urlDestinatarioTipoJuridica?>';
+
+        $.post(url, {}, function(response){
+            $('.destinatarios').html(response);
+            $('.destinatarios').css('opacity', '1');
+        });
+        
+        $('select[name="selDestinatarioPF"], select[name="selDestinatarioPJ"]').find('option').remove();
+        $('input[name="hdnDestinatario"], input[name="hdnIdDestinatario"]').val('');
+
+    });
+
+}
+
+$('body').on('change', 'select[name="selTipoDest"]', function(){
+    $('.destinatarios').css('opacity', '.3');
+    carregarComponenteDestinatarioSelect();
+});
 
 </script>

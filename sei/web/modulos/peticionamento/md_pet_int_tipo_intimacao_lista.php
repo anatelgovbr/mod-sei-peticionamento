@@ -291,7 +291,7 @@ try {
                         $resposta = 'Resposta Facultativa';
                     }
 
-                    $tipoResposta = $arrObjMdPetIntRelIntimRespDTO[$x]->getStrNomeMdPetIntTipoResp() . ' ' . $prazo . ' - ' . $resposta;
+                    $tipoResposta = $arrObjMdPetIntRelIntimRespDTO[$x]->getStrNomeMdPetIntTipoResp() . ' ' . $prazo . ' - ' . $resposta . '; ';
                     $linha .= PaginaSEI::tratarHTML($tipoResposta);
 
                     $montaSelectTipoResposta[$arrObjMdPetIntRelIntimRespDTO[$x]->getNumIdMdPetIntTipoRespMdPetIntTipoResp()] = $tipoResposta;

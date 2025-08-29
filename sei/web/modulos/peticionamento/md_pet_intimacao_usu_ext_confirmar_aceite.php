@@ -22,61 +22,71 @@ switch ($_GET['acao']) {
 
         try {
 
-            $strTitulo = 'Consultar IntimaÁ„o EletrÙnica';
+            $strTitulo = 'Consultar Intima√ß√£o Eletr√¥nica';
 
-            $arrComandos[] = '<button type="submit" accesskey="I" name="sbmAceitarIntimacao" id="sbmAceitarIntimacao" value="Confirmar Consulta ‡ IntimaÁ„o" class="infraButton">Confirmar Consulta ‡ <span class="infraTeclaAtalho">I</span>ntimaÁ„o</button>';
+            $arrComandos[] = '<button type="submit" accesskey="I" name="sbmAceitarIntimacao" id="sbmAceitarIntimacao" value="Confirmar Consulta √† Intima√ß√£o" class="infraButton">Confirmar Consulta √† <span class="infraTeclaAtalho">I</span>ntima√ß√£o</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="infraFecharJanelaSelecao();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
-            $texto = '<div style="padding-top: 10px; padding-bottom: 10px;"><p>Para visualizar os documentos da IntimaÁ„o EletrÙnica referente ao ';
-            $texto .= 'Documento Principal SEI n∫ @numero_documento@, alÈm de poder efetivar sua resposta, se faz necess·rio confirmar a consulta ‡ intimaÁ„o.</p>';
-            $texto .= '<p>Lembramos que, considerar-se-· cumprida a intimaÁ„o com a presente consulta no sistema ou, n„o efetuada a consulta, em ';
-            $texto .= '@prazo_intimacao_tacita@ dias apÛs a data de sua expediÁ„o.</p>';
+            $texto = '<div style="padding-top: 10px; padding-bottom: 10px;"><p>Para visualizar os documentos da Intima√ß√£o Eletr√¥nica referente ao ';
+            $texto .= 'Documento Principal SEI n¬∫ @numero_documento@, al√©m de poder efetivar sua resposta, se faz necess√°rio confirmar a consulta √† intima√ß√£o.</p>';
+            $texto .= '<p>Lembramos que, considerar-se-√° cumprida a intima√ß√£o com a presente consulta no sistema ou, n√£o efetuada a consulta, em ';
+            $texto .= '@prazo_intimacao_tacita@ dias ap√≥s a data de sua expedi√ß√£o.</p>';
 
             $idDoc = (isset($_POST['hdnIdDocumento']) && !is_null($_POST['hdnIdDocumento'])) ? $_POST['hdnIdDocumento'] : $_GET['id_documento'];
             $idIntimacao = (isset($_POST['hdnIdIntimacao']) && !is_null($_POST['hdnIdIntimacao'])) ? $_POST['hdnIdIntimacao'] :  $_GET['id_intimacao'];
 
-            if (isset($idDoc) && !is_null($idDoc)) {
+            if (!empty($idDoc) && !empty($idIntimacao)) {
 
-                $idDocPrincipal = $idDoc;
-
-                //Get Documento Formatado
-                $objDocumentoDTO = new DocumentoDTO();
-                $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
-                $objDocumentoDTO->setDblIdDocumento($idDocPrincipal);
-                $objDocumentoRN = new DocumentoRN();
-                $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
-                $numDocFormat = isset($objDocumentoDTO) && !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
-
-                //Get Prazo T·cito
-                $objPrazoTacitoDTO = new MdPetIntPrazoTacitaDTO();
-                $objPrazoTacitoDTO->retNumNumPrazo();
-                $objPrazoTacitoRN = new MdPetIntPrazoTacitaRN();
-                $retLista = $objPrazoTacitoRN->listar($objPrazoTacitoDTO);
-                $objPrazoTacitoDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;
-                $numPrazo = !is_null($objPrazoTacitoDTO) ? $objPrazoTacitoDTO->getNumNumPrazo() : null;
+                $dadosIntimacao = $objMdPetIntDestRN->consultarDadosIntimacao($idIntimacao, true);
+                
+                // Pega tipo do Processo
+                $objProcedimento = new ProcedimentoDTO();
+                $objProcedimento->retNumIdTipoProcedimento();
+                $objProcedimento->setDblIdProcedimento($dadosIntimacao->getDblIdProcedimento());
+	            $objProcedimento = (new ProcedimentoRN())->consultarRN0201($objProcedimento);
+	
+	            // Pega o n√∫mero de dias para cumprimento t√°cito de acordo com o tipo de Procedimento(Processo)
+	            $objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $objProcedimento->getNumIdTipoProcedimento() );
+	            $numPrazo = !empty($objMdPetIntPrazoTacitaDTO) ? $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() : 0;
+	
+	            // Busca a data final para cumprimento t√°cito
+	            $dataFimPrazoTacito = (new MdPetIntimacaoRN())->_getDataPrazoTacitoIntimacao($dadosIntimacao->getDthDataCadastro(), $objProcedimento);
+	            $numDocFormat = $dadosIntimacao->getStrProtocoloFormatadoDocumento();
 
                 $possuiIntimacaoJuridica = false;
 
                 if ($idIntimacao) {
+                    
                     $dtIntimacao = null;
+                    
                     foreach ($idIntimacao as $id) {
-                        //Data ExpediÁ„o IntimaÁ„o
+                        
+                        //Data Expedi√ß√£o Intima√ß√£o
                         $objMdPetIntDestDTO = $objMdPetIntDestRN->consultarDadosIntimacao($id, true);
+                        
                         if(!is_null($objMdPetIntDestDTO)) {
-                            $mdPetIntAceiteRN = new MdPetIntAceiteRN();
+                            
                             $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
-                            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario());
-                            $objMdPetIntAceiteDTO->retTodos();
-                            $objMdPetIntAceiteDTO = $mdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+	                        $objMdPetIntAceiteDTO->retTodos();
+	                        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario());
+                            $objMdPetIntAceiteDTO->setNumIdMdPetIntimacao($id);
+	                        $objMdPetIntAceiteDTO->setOrdDthData(InfraDTO::$TIPO_ORDENACAO_ASC);
+	                        $objMdPetIntAceiteDTO->setNumMaxRegistrosRetorno(1);
+                            $objMdPetIntAceiteDTO = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
+                            
                             if (is_null($objMdPetIntAceiteDTO)) {
+                                
                                 $dtHrIntimacao = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getDthDataCadastro() : null;
+                                
                                 if (is_null($dtIntimacao)) {
                                     $dtIntimacao = !is_null($dtHrIntimacao) ? explode(' ', $dtHrIntimacao) : null;
                                     $dtIntimacao = count($dtIntimacao) > 0 ? $dtIntimacao[0] : null;
                                 }
                             }
+                            
                         }
-                        //Calcular Data Final do Prazo T·cito
+                        
+                        //Calcular Data Final do Prazo T√°cito
                         $dataFimPrazoTacito = '';
                         $objMdPetIntPrazoRN = new MdPetIntPrazoRN();
                         $dataFimPrazoTacito = $objMdPetIntPrazoRN->calcularDataPrazo($numPrazo, $dtIntimacao);
@@ -87,8 +97,8 @@ switch ($_GET['acao']) {
                     }                   
                 }
                 if ($possuiIntimacaoJuridica) {
-                    //se for pessoa Juridica ser· adicionado esse paragrafo a mais
-                    $texto .= '<p>Por se tratar de IntimaÁ„o EletrÙnica destinada a Pessoa JurÌdica, esta ser· considerada cumprida caso seja confirmada a consulta por qualquer Representante formalmente vinculado ‡ Pessoa JurÌdica (Respons·vel Legal e, caso existam, Procuradores com poderes de receber IntimaÁıes por meio de ProcuraÁıes EletrÙnicas geradas no prÛprio SEI).</p>';
+                    //se for pessoa Juridica ser√° adicionado esse paragrafo a mais
+                    $texto .= '<p>Por se tratar de Intima√ß√£o Eletr√¥nica destinada a Pessoa Jur√≠dica, esta ser√° considerada cumprida caso seja confirmada a consulta por qualquer Representante formalmente vinculado √† Pessoa Jur√≠dica (Respons√°vel Legal e, caso existam, Procuradores com poderes de receber Intima√ß√µes por meio de Procura√ß√µes Eletr√¥nicas geradas no pr√≥prio SEI).</p>';
                 }
 
             }
@@ -105,9 +115,9 @@ switch ($_GET['acao']) {
 
                     if ($todasIntimacoesAceitas['todasAceitas']) {
                         if($todasIntimacoesAceitas['qntDestinatario'] == 0){
-                            $objInfraException->adicionarValidacao('VocÍ n„o possui mais permiss„o para cumprir a IntimaÁ„o EletrÙnica.');
+                            $objInfraException->adicionarValidacao('Voc√™ n√£o possui mais permiss√£o para cumprir a Intima√ß√£o Eletr√¥nica.');
                         }else{
-                            $objInfraException->adicionarValidacao('Esta intimaÁ„o j· foi cumprida.');
+                            $objInfraException->adicionarValidacao('Esta intima√ß√£o j√° foi cumprida.');
                         }
                     }
 
@@ -129,7 +139,7 @@ switch ($_GET['acao']) {
                             }
                         }
 
-                        //chamando a RN que executa os processos de aceite manual da intimaÁ„o
+                        //chamando a RN que executa os processos de aceite manual da intima√ß√£o
                         $arrParametrosAceite = $_POST;
                         $arrParametrosAceite['id_documento'] = $_GET['id_documento'];
                         $arrParametrosAceite['id_acesso_externo'] = $_GET['id_acesso_externo'];
@@ -159,9 +169,9 @@ switch ($_GET['acao']) {
 
             }
 
-            $texto .= '<p>Como a presente IntimaÁ„o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem ';
-            $texto .= 'de prazo dispostas no art. 66 da Lei n∫ 9.784/1999, mesmo se n„o ocorrer a consulta acima indicada, a IntimaÁ„o ser· ';
-            $texto .= 'considerada cumprida por decurso do prazo t·cito ao final do dia @data_final_prazo_intimacao_tacita@.</p></div>';
+            $texto .= '<p>Como a presente Intima√ß√£o foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem ';
+            $texto .= 'de prazo dispostas no art. 66 da Lei n¬∫ 9.784/1999, mesmo se n√£o ocorrer a consulta acima indicada, a Intima√ß√£o ser√° ';
+            $texto .= 'considerada cumprida por decurso do prazo t√°cito ao final do dia @data_final_prazo_intimacao_tacita@.</p></div>';
 
             //Documento
             $texto = str_replace('@numero_documento@', $numDocFormat, $texto);
@@ -175,7 +185,7 @@ switch ($_GET['acao']) {
 
         break;
     default:
-        throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+        throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
 }
 
 PaginaSEIExterna::getInstance()->montarDocType();
@@ -228,7 +238,7 @@ SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_extern
         $(document).ready(function() {
             $('button#sbmAceitarIntimacao').off('click').one('click', function(e){
                 e.preventDefault(); e.stopPropagation();
-                $(this).prop('disabled', true).html('Aguarde, confirmando a consulta ‡ intimaÁ„o...');
+                $(this).prop('disabled', true).html('Aguarde, confirmando a consulta √† intima√ß√£o...');
                 $('form#frmMdPetIntimacaoConfirmarAceite')[0].submit();
             });
         });

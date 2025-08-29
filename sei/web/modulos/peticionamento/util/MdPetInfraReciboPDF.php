@@ -167,6 +167,38 @@ class MdPetInfraReciboPDF extends InfraPDF {
 		$this->Set_Font_Size($format['font-size']);
 	}
 
+	// Constructor
+	function MdPetInfraReciboPDF ($format, $unit='mm', $posX=1, $posY=1) {
+		if (is_array($format)) {
+			// Custom format
+			$Tformat = $format;
+		} else {
+			// Avery format
+			$Tformat = $this->_Avery_Labels[$format];
+		}
+
+		parent::InfraPDF('P', $Tformat['metric'], $Tformat['paper-size']);
+		$this->_Set_Format($Tformat);
+		$this->Set_Font_Name('Arial',$Tformat['style']);
+		$this->SetMargins(5,5); 
+		$this->SetAutoPageBreak(false); 
+
+		$this->_Metric_Doc = $unit;
+		// Start at the given label position
+		if ($posX > 1) $posX--; else $posX=0;
+		if ($posY > 1) $posY--; else $posY=0;
+		if ($posX >=  $this->_X_Number) $posX =  $this->_X_Number-1;
+		if ($posY >=  $this->_Y_Number) $posY =  $this->_Y_Number-1;
+
+		if($Tformat['orientacao'] == 'V'){
+			$this->_COUNTX = $posX;
+			$this->_COUNTY = $posY;
+		}elseif ($Tformat['orientacao'] == 'H'){
+			$this->_COUNTX = $posY;
+			$this->_COUNTY = $posX;
+		}
+	}
+
 	// Sets the character size
 	// This changes the line height too
 	function Set_Font_Size($pt) {

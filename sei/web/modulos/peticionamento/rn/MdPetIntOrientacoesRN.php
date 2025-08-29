@@ -28,7 +28,9 @@ class MdPetIntOrientacoesRN extends InfraRN {
 	 * @return mixed
 	 */
 	protected function cadastrarControlado(MdPetIntOrientacoesDTO $objMdPetIntOrientacoesDTO) {
+		
 		try {
+		
 			// Valida Permissao
 			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_tipo_processo_cadastrar_orientacoes', __METHOD__, $objMdPetIntOrientacoesDTO );
 
@@ -37,12 +39,12 @@ class MdPetIntOrientacoesRN extends InfraRN {
 			
 			$objInfraException->lancarValidacoes();
 	
-                        $objMdPetIntOrientacoesBD = new MdPetIntOrientacoesBD($this->getObjInfraIBanco());
+            $objMdPetIntOrientacoesBD = new MdPetIntOrientacoesBD($this->getObjInfraIBanco());
 			$objMdPetIntOrientacoesDTO = $objMdPetIntOrientacoesBD->cadastrar($objMdPetIntOrientacoesDTO);
 			
 		//	$rs = $this->getObjInfraIBanco ()->executarSql ( $sql );
 	
-			return $objMdPetTpProcessoOrientacoesDTO;
+			return $objMdPetIntOrientacoesDTO;
 		} catch ( Exception $e ) {
 			throw new InfraException ('Erro cadastrando Orientações do Tipo Destinatário Peticionamento.', $e );
 		}

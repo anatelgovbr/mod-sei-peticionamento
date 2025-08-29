@@ -26,7 +26,7 @@
     }
 
     function mostrarExcessao(){
-        alert('Para executar essa aÁ„o È necess·rio estar na Unidade parametrizada para abertura de processo de centralizaÁ„o da documentaÁ„o da Pessoa JurÌdica indicada no menu AdministraÁ„o > Peticionamento EletrÙnico > Par‚metros para VinculaÁ„o a Usu·rio Externo.')
+        alert('Para executar essa a√ß√£o √© necess√°rio estar na Unidade parametrizada para abertura de processo de centraliza√ß√£o da documenta√ß√£o da Pessoa Jur√≠dica indicada no menu Administra√ß√£o > Peticionamento Eletr√¥nico > Par√¢metros para Vincula√ß√£o a Usu√°rio Externo.')
     }
 
     $("select.infraSelect.multipleSelect").multipleSelect({
@@ -34,5 +34,20 @@
         minimumCountSelected: 1,
         selectAll: true
     }).parent('button').hide();
+
+
+    if ($("#slTipoViculo").val() == 'S') {
+        $("#divTipoPoder").show();
+    } else {
+        $("#divTipoPoder").hide();
+    }
+
+    $("#slTipoViculo").change(function() {
+        if ($(this).val() == 'S') {
+            $("#divTipoPoder").show();
+        } else {
+            $("#divTipoPoder").hide();
+        }
+    });
 
 </script>

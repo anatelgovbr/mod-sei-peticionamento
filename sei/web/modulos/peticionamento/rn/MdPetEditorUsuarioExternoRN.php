@@ -84,7 +84,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       }
       catch(Exception $e){
         $scayt="";
-        LogSEI::getInstance()->gravar("'Erro acessando servidor SCAYT para validar versão do plugin:\n".InfraException::inspecionar($e));
+        LogSEI::getInstance()->gravar("'Erro acessando servidor SCAYT para validar versÃ£o do plugin:\n".InfraException::inspecionar($e));
       }
     }
     if ($scayt!="") {
@@ -128,7 +128,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $strInicializacao .= "CKEDITOR.config.wsc_userDictionaryName = '" . $strUsuario . "';\n";
     $strInicializacao .= "CKEDITOR.config.scayt_autoStartup=true;\n";
     
-    //altura automatica ajustado em relaçao ao conteudo dentro do editor
+    //altura automatica ajustado em relaÃ§ao ao conteudo dentro do editor
     $strInicializacao .= "CKEDITOR.config.autoGrow_minHeight = 1;\n";
     $strInicializacao .= "CKEDITOR.config.autoGrow_bottomSpace = 5;\n";
 
@@ -194,7 +194,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $arrRetorno[] = $temp;
 
     $arrRetorno[] = array('NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'base64image');
-    if (!PaginaSEIExterna::getInstance()->isBolNavegadorFirefox() || PaginaSEIExterna::getInstance()->getNumVersaoFirefox()>=16) { // não disponibiliza zoom no firefox<16 devido a bug
+    if (!PaginaSEIExterna::getInstance()->isBolNavegadorFirefox() || PaginaSEIExterna::getInstance()->getNumVersaoFirefox()>=16) { // nÃ£o disponibiliza zoom no firefox<16 devido a bug
       $arrRetorno[] = array('Table', 'SpecialChar', 'SimpleLink', 'linksei', 'Extenso', 'Zoom');
     } else {
       $arrRetorno[] = array('Table', 'SpecialChar', 'SimpleLink', 'linksei', 'Extenso');
@@ -276,7 +276,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $strEditores = '';
       $strTextareas = '';
 
-      //busca os estilos permitidos por seção-modelo
+      //busca os estilos permitidos por seÃ§Ã£o-modelo
       $objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
       $objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
       $objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
@@ -358,7 +358,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         }
         catch(Exception $e){
           $scayt="";
-          LogSEI::getInstance()->gravar("'Erro acessando servidor SCAYT para validar versão do plugin:\n".InfraException::inspecionar($e));
+          LogSEI::getInstance()->gravar("'Erro acessando servidor SCAYT para validar versÃ£o do plugin:\n".InfraException::inspecionar($e));
         }
       }
       if ($scayt!="") {
@@ -592,7 +592,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
       if (!$parObjEditorDTO->isSetDblIdDocumentoBase() && !$parObjEditorDTO->isSetNumIdBaseConhecimentoBase()) {
 
-        //recupera seções do modelo
+        //recupera seÃ§Ãµes do modelo
         $objSecaoModeloDTO = new SecaoModeloDTO();
         $objSecaoModeloDTO->retNumIdSecaoModelo();
         $objSecaoModeloDTO->retStrNome();
@@ -611,11 +611,11 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         $arrObjSecaoModeloDTO = $objSecaoModeloRN->listar($objSecaoModeloDTO);
 
         if (count($arrObjSecaoModeloDTO)==0) {
-          throw new InfraException('Modelo do documento não contém seções.');
+          throw new InfraException('Modelo do documento nÃ£o contÃ©m seÃ§Ãµes.');
         }
 
 
-        //recupera estilos padrão das seções do modelo
+        //recupera estilos padrÃ£o das seÃ§Ãµes do modelo
         $objRelSecaoModCjEstilosItemDTO = new RelSecaoModCjEstilosItemDTO();
         $objRelSecaoModCjEstilosItemDTO->retNumIdSecaoModelo();
         $objRelSecaoModCjEstilosItemDTO->retStrNomeEstilo();
@@ -654,7 +654,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
           if ($objSecaoModeloDTO->getStrSinAssinatura()=='N') {
 
-            //cadastra primeiro registro de versão da seção
+            //cadastra primeiro registro de versÃ£o da seÃ§Ã£o
             $objVersaoSecaoDocumentoDTO = new VersaoSecaoDocumentoDTO();
             $objVersaoSecaoDocumentoDTO->setDblIdVersaoSecaoDocumento(null);
             $objVersaoSecaoDocumentoDTO->setNumIdSecaoDocumento($objSecaoDocumentoDTO->getNumIdSecaoDocumento());
@@ -670,11 +670,11 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
             $bolConteudoTextoPadrao = false;
             $bolConteudoTextoBase = false;
 
-            //conteúdo informado especificamente para esta seção
+            //conteÃºdo informado especificamente para esta seÃ§Ã£o
             if ($arrConteudoInicalSecoes!=null && isset($arrConteudoInicalSecoes[$objSecaoModeloDTO->getStrNome()])) {
               $strConteudo = $arrConteudoInicalSecoes[$objSecaoModeloDTO->getStrNome()];
 
-              //se deve copiar o conteúdo de um documento do eDoc então aplica na seção principal do documento
+              //se deve copiar o conteÃºdo de um documento do eDoc entÃ£o aplica na seÃ§Ã£o principal do documento
             } else if ($objSecaoModeloDTO->getStrSinPrincipal()=='S' && $parObjEditorDTO->isSetDblIdDocumentoEdocBase()) {
 
               $objDocumentoDTO = new DocumentoDTO();
@@ -684,7 +684,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
               $strConteudo = EDocINT::converterParaEditorInterno($objEDocRN->consultarHTMLPublicacaoDocumento($objDocumentoDTO));
               $bolConteudoEdoc = true;
 
-              //configurar conteudo da seção editável com o conteúdo da mesma seção no documento usado para texto base
+              //configurar conteudo da seÃ§Ã£o editÃ¡vel com o conteÃºdo da mesma seÃ§Ã£o no documento usado para texto base
             } else if ($objSecaoModeloDTO->getStrSinSomenteLeitura()=='N' && $parObjEditorDTO->isSetDblIdDocumentoTextoBase()) {
 
               $objVersaoSecaoDocumentoDTOTextoBase = new VersaoSecaoDocumentoDTO();
@@ -700,12 +700,12 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
                 $bolConteudoTextoBase = true;
               }
 
-              //conteudo informado para seção principal
+              //conteudo informado para seÃ§Ã£o principal
             } else if ($objSecaoModeloDTO->getStrSinPrincipal()=='S' && $parObjEditorDTO->isSetStrConteudoSecaoPrincipal()) {
               $strConteudo = $parObjEditorDTO->getStrConteudoSecaoPrincipal();
               $bolConteudoSecaoPrincipal = true;
 
-              //texto padrão deve ser aplicado na seção principal
+              //texto padrÃ£o deve ser aplicado na seÃ§Ã£o principal
             } else if ($objSecaoModeloDTO->getStrSinPrincipal()=='S' && $parObjEditorDTO->isSetNumIdTextoPadraoInterno()) {
 
               $objTextoPadraoInternoDTO = new TextoPadraoInternoDTO();
@@ -719,7 +719,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
               $strConteudo = $objTextoPadraoInternoDTO->getStrConteudo();
               $bolConteudoTextoPadrao = true;
 
-              //coloca conteúdo inicial definido no modelo
+              //coloca conteÃºdo inicial definido no modelo
             } else {
               $strConteudo = $objSecaoModeloDTO->getStrConteudo();
             }
@@ -749,7 +749,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
                 if ($bolConteudoEdoc || $bolConteudoTextoPadrao || $bolConteudoSecaoPrincipal) {
                   $objVersaoSecaoDocumentoDTO->setStrConteudo($strConteudo);
-                } else { //conteúdo inicial de seção (ex.: nome da base de conhecimento passada para a seção de título) ou conteúdo definido nas seções do modelo
+                } else { //conteÃºdo inicial de seÃ§Ã£o (ex.: nome da base de conhecimento passada para a seÃ§Ã£o de tÃ­tulo) ou conteÃºdo definido nas seÃ§Ãµes do modelo
 
                   if ($objSecaoModeloDTO->getStrSinHtml() == 'N') {
 
@@ -803,7 +803,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
         $arrObjSecaoDocumentoDTOBase = $objSecaoDocumentoRN->listar($objSecaoDocumentoDTO);
 
-        //bloquear registros de versão
+        //bloquear registros de versÃ£o
         $objVersaoSecaoDocumentoDTO = new VersaoSecaoDocumentoDTO();
         $objVersaoSecaoDocumentoDTO->retDblIdVersaoSecaoDocumento();
         $objVersaoSecaoDocumentoDTO->retNumIdSecaoDocumento();
@@ -842,7 +842,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
               $strEstiloPadrao = 'class="' . $arrObjRelSecaoModCjEstilosItemDTO[$objSecaoDocumentoDTOBase->getNumIdSecaoModelo()]->getStrNomeEstilo() . '"';
             }
 
-            //conteúdo informado especificamente para esta seção
+            //conteÃºdo informado especificamente para esta seÃ§Ã£o
             if ($arrConteudoInicalSecoes!=null && isset($arrConteudoInicalSecoes[$objSecaoDocumentoDTOBase->getStrNomeSecaoModelo()])) {
 
               $strConteudo = $arrConteudoInicalSecoes[$objSecaoDocumentoDTOBase->getStrNomeSecaoModelo()];
@@ -892,7 +892,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $this->atualizarConteudo($parObjEditorDTO);
 
     } catch (Exception $e) {
-      throw new InfraException('Erro gerando versão inicial documento.', $e);
+      throw new InfraException('Erro gerando versÃ£o inicial documento.', $e);
     }
   }
 
@@ -922,7 +922,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
         if ($objDocumentoDTO==null) {
-          $objInfraException->lancarValidacao('Documento não encontrado.');
+          $objInfraException->lancarValidacao('Documento nÃ£o encontrado.');
         } else {
 
           $numIdConjuntoEstilos = $objDocumentoDTO->getNumIdConjuntoEstilos();
@@ -936,16 +936,16 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           $arrObjProtocoloDTO = $objProtocoloRN->pesquisarRN0967($objPesquisaProtocoloDTO);
 
           if (count($arrObjProtocoloDTO) == 0){
-            $objInfraException->lancarValidacao('Protocolo não encontrado.');
+            $objInfraException->lancarValidacao('Protocolo nÃ£o encontrado.');
           }
 
           $objProtocoloDTO = $arrObjProtocoloDTO[0];
 
           if ($objProtocoloDTO->getNumCodigoAcesso() < 0) {
             if ($objProtocoloDTO->getStrStaNivelAcessoGlobal()==ProtocoloRN::$NA_SIGILOSO) {
-              $objInfraException->lancarValidacao('Usuário sem acesso para alteração do documento.');
+              $objInfraException->lancarValidacao('UsuÃ¡rio sem acesso para alteraÃ§Ã£o do documento.');
             }else{
-              $objInfraException->lancarValidacao('Unidade sem acesso para alteração do documento.');
+              $objInfraException->lancarValidacao('Unidade sem acesso para alteraÃ§Ã£o do documento.');
             }
           }
 
@@ -958,13 +958,13 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           $arrObjProcedimentoDTO = $objProcedimentoRN->listarCompleto($objProcedimentoDTO);
 
           if (count($arrObjProcedimentoDTO) == 0){
-            $objInfraException->lancarValidacao('Processo não encontrado.');
+            $objInfraException->lancarValidacao('Processo nÃ£o encontrado.');
           }
 
           $arrObjRelProtocoloProtocoloDTO = $arrObjProcedimentoDTO[0]->getArrObjRelProtocoloProtocoloDTO();
 
           if (count($arrObjRelProtocoloProtocoloDTO) == 0){
-            $objInfraException->lancarValidacao('Documento não encontrado.');
+            $objInfraException->lancarValidacao('Documento nÃ£o encontrado.');
           }
 
           $objDocumentoDTO = $arrObjRelProtocoloProtocoloDTO[0]->getObjProtocoloDTO2();
@@ -974,7 +974,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           }
 
           if ($objDocumentoDTO->getStrSinBloqueado() == 'S'){
-            $objInfraException->lancarValidacao('Documento foi assinado e não pode mais ser alterado.');
+            $objInfraException->lancarValidacao('Documento foi assinado e nÃ£o pode mais ser alterado.');
           }
 
           if (SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual() != $objDocumentoDTO->getNumIdUnidadeGeradoraProtocolo()){
@@ -1014,7 +1014,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         $objBaseConhecimentoRN = new BaseConhecimentoRN();
         $objBaseConhecimentoDTO = $objBaseConhecimentoRN->consultar($objBaseConhecimentoDTO);
         if ($objBaseConhecimentoDTO==null) {
-          $objInfraException->lancarValidacao('Base de conhecimento não encontrada.');
+          $objInfraException->lancarValidacao('Base de conhecimento nÃ£o encontrada.');
         } else {
           if ($objBaseConhecimentoDTO->getNumIdConjuntoEstilos()==null ||
               ($parObjEditorDTO->isSetStrSinForcarNovaVersao() && $parObjEditorDTO->getStrSinForcarNovaVersao()=='S')
@@ -1031,7 +1031,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $arrObjSecaoDocumentoDTO = $parObjEditorDTO->getArrObjSecaoDocumentoDTO();
 
       if (count($arrObjSecaoDocumentoDTO)==0) {
-        throw new InfraException('Documento sem seções.');
+        throw new InfraException('Documento sem seÃ§Ãµes.');
       }
 
       $objSecaoDocumentoDTO = new SecaoDocumentoDTO();
@@ -1054,7 +1054,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $numSecoesDocumentoBanco = count($arrObjSecaoDocumentoDTOBanco);
 
       if ($numSecoesDocumentoBanco!=$numSecoesDocumento) {
-        throw new InfraException('Número de seções do documento inconsistente.');
+        throw new InfraException('NÃºmero de seÃ§Ãµes do documento inconsistente.');
       }
 
       for ($i = 0; $i<$numSecoesDocumentoBanco; $i++) {
@@ -1071,7 +1071,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           }
         }
         if ($j==$numSecoesDocumento) {
-          throw new InfraException('Seção [' . $arrObjSecaoDocumentoDTOBanco[$i]->getNumIdSecaoModelo() . '] do documento não encontrada.');
+          throw new InfraException('SeÃ§Ã£o [' . $arrObjSecaoDocumentoDTOBanco[$i]->getNumIdSecaoModelo() . '] do documento nÃ£o encontrada.');
         }
       }
 
@@ -1084,7 +1084,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         }
       }
 
-      //bloquear registros de versão
+      //bloquear registros de versÃ£o
       $objVersaoSecaoDocumentoDTO = new VersaoSecaoDocumentoDTO();
       $objVersaoSecaoDocumentoDTO->retDblIdVersaoSecaoDocumento();
       $objVersaoSecaoDocumentoDTO->retNumIdSecaoDocumento();
@@ -1110,13 +1110,13 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       }
 
       if (count($arrObjVersaoSecaoDocumentoDTO)!=$numSecoesDocumento) {
-        throw new InfraException('Número de seções da última versão não corresponde ao número de seções do documento.');
+        throw new InfraException('NÃºmero de seÃ§Ãµes da Ãºltima versÃ£o nÃ£o corresponde ao nÃºmero de seÃ§Ãµes do documento.');
       }
 
       if ($parObjEditorDTO->isSetNumVersao() && $parObjEditorDTO->getNumVersao()!=$numVersao) {
         if (!$parObjEditorDTO->isSetStrSinIgnorarNovaVersao() || $parObjEditorDTO->getStrSinIgnorarNovaVersao()=='N') {
-          //IMPORTANTE: o texto da validacao é verificado na interface, se houver mudança deve ser refletida no ponto correspondente da interface
-          $objInfraException->lancarValidacao('Existe uma nova versão (nº ' . $numVersao . ') para este documento atualizada por ' . $objVersaoSecaoDocumentoDTOUltima->getStrSiglaUsuario() . ' (' . $objVersaoSecaoDocumentoDTOUltima->getStrNomeUsuario() . ') em ' . $objVersaoSecaoDocumentoDTOUltima->getDthAtualizacao() . '.');
+          //IMPORTANTE: o texto da validacao Ã© verificado na interface, se houver mudanÃ§a deve ser refletida no ponto correspondente da interface
+          $objInfraException->lancarValidacao('Existe uma nova versÃ£o (nÂº ' . $numVersao . ') para este documento atualizada por ' . $objVersaoSecaoDocumentoDTOUltima->getStrSiglaUsuario() . ' (' . $objVersaoSecaoDocumentoDTOUltima->getStrNomeUsuario() . ') em ' . $objVersaoSecaoDocumentoDTOUltima->getDthAtualizacao() . '.');
         }
       }
 
@@ -1189,7 +1189,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       return $numVersao;
 
     } catch (Exception $e) {
-      throw new InfraException('Erro adicionando versão do documento.', $e);
+      throw new InfraException('Erro adicionando versÃ£o do documento.', $e);
     }
   }
 
@@ -1217,7 +1217,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       //explode os atributos da classe (estilos)
       $arrEstilos = explode(';', $arrClassesCss[2][$i]);
       foreach ($arrEstilos as $value) {
-        //se não for vazio
+        //se nÃ£o for vazio
         if (strlen($value)>0) {
           $arrValor = explode(':', $value);
           //inclui no arrResult[nome_do_estilo][atributo]=valor_atributo;
@@ -1231,13 +1231,13 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
   private function comparaEstilo($arrEstilos, $strEstilo)
   {
-    // verificar se strestilo está definida em arrestilos
+    // verificar se strestilo estÃ¡ definida em arrestilos
     $strEstilo = str_replace(' 0px', ' 0', $strEstilo);
     $strEstilo = str_replace(' 0pt', ' 0', $strEstilo);
     $arrEstilos2 = array();
     $temp = explode(';', $strEstilo);
     foreach ($temp as $value) {
-      //se não for vazio
+      //se nÃ£o for vazio
       if (strlen($value)>0) {
         $arrValor = explode(':', $value);
         //inclui no arrEstilos2[atributo]=valor_atributo;
@@ -1254,7 +1254,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         if (!is_array($value[0])) {
           //se tiver mesma quantidade de atributos
           if (count($value)==$numEstilos2) {
-            //compara as diferenças, que devem ser 0
+            //compara as diferenÃ§as, que devem ser 0
             if (count(array_diff_assoc($value, $arrEstilos2))==0 &&
                 count(array_diff_assoc($arrEstilos2, $value))==0
             )
@@ -1265,7 +1265,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
             //se tiver mesma quantidade de atributos
             if (count($value2)==$numEstilos2) {
-              //compara as diferenças, que devem ser 0
+              //compara as diferenÃ§as, que devem ser 0
               if (count(array_diff_assoc($value2, $arrEstilos2))==0 &&
                   count(array_diff_assoc($arrEstilos2, $value2))==0
               )
@@ -1295,7 +1295,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       }
       $arrObjSecaoDocumentoDTO = $parObjEditorDTO->getArrObjSecaoDocumentoDTO();
       foreach ($arrObjSecaoDocumentoDTO as $objSecaoDocumentoDTO) {
-        //converter seção_documento
+        //converter seÃ§Ã£o_documento
         $strConteudo = $objSecaoDocumentoDTO->getStrConteudo();
         $objSecaoDocumentoDTO->setStrConteudo($this->converteTextoEstiloCss($arrEstilos, $strConteudo));
         ///////
@@ -1327,7 +1327,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $cntNaoEncontrados = 0;
     $cntEncontrados = 0;
     while (($posAtual = strpos($strConteudo, 'style="', $posAnterior))!==false) {
-      //copia conteudo até encontrar style
+      //copia conteudo atÃ© encontrar style
       $strConteudoNovo .= substr($strConteudo, $posAnterior, $posAtual - $posAnterior);
       $posFimEstilo = strpos($strConteudo, '"', $posAtual + 7);
       if ($posFimEstilo===false) {
@@ -1349,7 +1349,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       }
     }
     $strConteudoNovo .= substr($strConteudo, $posAnterior);
-    //InfraDebug::getInstance()->gravar("Conversão: encontrados ".strval($cntEncontrados)." não encontrados ".strval($cntNaoEncontrados));
+    //InfraDebug::getInstance()->gravar("ConversÃ£o: encontrados ".strval($cntEncontrados)." nÃ£o encontrados ".strval($cntNaoEncontrados));
     return $strConteudoNovo;
 
   }
@@ -1441,7 +1441,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       }
 
     } catch (Exception $e) {
-      throw new InfraException('Erro atualizando conteúdo.', $e);
+      throw new InfraException('Erro atualizando conteÃºdo.', $e);
     }
   }
 
@@ -1483,7 +1483,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $html = '<hr style="border:1px solid #c0c0c0;" />';
     $html .= 'Criado por ';
     $html .= '<a onclick="alert(\'' . PaginaSEIExterna::getInstance()->formatarParametrosJavascript(PaginaSEIExterna::tratarHTML($strNomeUsuarioGerador)) . '\')" alt="' . $strNomeUsuarioGerador . '" title="' . $strNomeUsuarioGerador . '" style="color:#0066cc;text-decoration:none;cursor:pointer;">' . $strSiglaUsuarioGerador . '</a>';
-    $html .= ', versão ' . $numVersao . ' por ';
+    $html .= ', versÃ£o ' . $numVersao . ' por ';
     $html .= '<a onclick="alert(\'' . PaginaSEIExterna::getInstance()->formatarParametrosJavascript(PaginaSEIExterna::tratarHTML($strNomeUsuarioVersao)) . '\')" alt="' . $strNomeUsuarioVersao . '" title="' . $strNomeUsuarioVersao . '" style="color:#0066cc;text-decoration:none;cursor:pointer;">' . $strSiglaUsuarioVersao . '</a>';
     $html .= ' em ' . $dthVersao . '.' . "\n";
 
@@ -1516,7 +1516,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
       if ($objDocumentoDTO==null) {
-        throw new InfraException('Documento não encontrado.');
+        throw new InfraException('Documento nÃ£o encontrado.');
       }
 
       if ($objDocumentoDTO->getNumIdConjuntoEstilos()!=null) {
@@ -1540,7 +1540,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $objBaseConhecimentoDTO = $objBaseConhecimentoRN->consultar($objBaseConhecimentoDTO);
 
       if ($objBaseConhecimentoDTO==null) {
-        throw new InfraException('Base de conhecimento não encontrada.');
+        throw new InfraException('Base de conhecimento nÃ£o encontrada.');
       }
 
       if ($objBaseConhecimentoDTO->getNumIdConjuntoEstilos()!=null) {
@@ -1647,7 +1647,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           continue;
         }
 
-        //só mostrar a tarja se consultando a última versão
+        //sÃ³ mostrar a tarja se consultando a Ãºltima versÃ£o
         if ($parObjEditorDTO->isSetNumVersao()) {
 
           $objVersaoSecaoDocumentoDTO = new VersaoSecaoDocumentoDTO();
@@ -1765,7 +1765,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
         if ($objDocumentoDTO==null) {
-          $objInfraException->lancarValidacao('Documento não encontrado.');
+          $objInfraException->lancarValidacao('Documento nÃ£o encontrado.');
         }
 
         $objParametrosEditorDTO->setObjDocumentoDTO($objDocumentoDTO);
@@ -1792,7 +1792,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
       $arrConteudoTags = array();
 
-      /* Unidade Responsável ************************************************************************************/
+      /* Unidade ResponsÃ¡vel ************************************************************************************/
       $objUnidadeDTO = new UnidadeDTO();
       $objUnidadeDTO->retNumIdContato();
       $objUnidadeDTO->retNumIdOrgao();
@@ -1808,7 +1808,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $objMdPetUnidadeRN = new MdPetUnidadeRN();
       $objUnidadeDTO = $objMdPetUnidadeRN->consultarRN0125($objUnidadeDTO);
       
-      //seiv3 - Obtendo informaçoes de endereco da unidade
+      //seiv3 - Obtendo informaÃ§oes de endereco da unidade
       $idContatoAssociado = $objUnidadeDTO->getNumIdContato();
       $contatoAssociadoDTO = new ContatoDTO();
       $contatoRN = new ContatoRN();
@@ -1821,13 +1821,13 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
       //seiv3
       if ( InfraString::isBolVazia( $objContatoAssociadoDTO->getStrEndereco()) ) {
-        throw new InfraException('Unidade ' . $objUnidadeDTO->getStrSigla() . ' não possui endereço cadastrado.');
+        throw new InfraException('Unidade ' . $objUnidadeDTO->getStrSigla() . ' nÃ£o possui endereÃ§o cadastrado.');
       }
       
 
       $objParametrosEditorDTO->setObjUnidadeDTO($objUnidadeDTO);
 
-      /* Usuário Gerador ****************************************************************************************/
+      /* UsuÃ¡rio Gerador ****************************************************************************************/
       $objUsuarioDTO = new UsuarioDTO();
       $objUsuarioDTO->setBolExclusaoLogica(false);
       $objUsuarioDTO->retStrNome();
@@ -1893,14 +1893,14 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       
       $arrConteudoTags[] = array('@complemento_endereco_unidade@', $strTag);
 
-      //usa data de geracao do protocolo, nas republicacoes, retificações, apostilamentos de atos, portarias... deve manter a data do original
-      //para os outros casos o uso da data de geracao do protocolo ou do dia atual não faz diferença já que são iguais
+      //usa data de geracao do protocolo, nas republicacoes, retificaÃ§Ãµes, apostilamentos de atos, portarias... deve manter a data do original
+      //para os outros casos o uso da data de geracao do protocolo ou do dia atual nÃ£o faz diferenÃ§a jÃ¡ que sÃ£o iguais
       $arrConteudoTags[] = array('@dia@', substr($dtaGeracao, 0, 2));
       $arrConteudoTags[] = array('@mes@', substr($dtaGeracao, 3, 2));
       $arrConteudoTags[] = array('@ano@', substr($dtaGeracao, 6, 4));
       $arrConteudoTags[] = array('@mes_extenso@', strtolower(InfraData::descreverMes(substr($dtaGeracao, 3, 2))));
 
-      $strHierarquiaUnidade = $objUnidadeRN->obterHierarquiaUnidade($objUnidadeDTO);
+      $strHierarquiaUnidade = (new UnidadeRN())->obterHierarquiaUnidade($objUnidadeDTO);
       $arrConteudoTags[] = array('@hierarquia_unidade@', $strHierarquiaUnidade);
 
       $arrHierarquiaUnidade = explode('/', $strHierarquiaUnidade);
@@ -1920,10 +1920,10 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       if ($parObjEditorDTO->getDblIdDocumento()!=null) {
 
         $arrConteudoTags[] = array('@processo@', $objDocumentoDTO->getStrProtocoloProcedimentoFormatado());
-        $arrConteudoTags[] = array('@codigo_barras_processo@', '<img alt="Código de Barras do Processo" src="data:image/png;base64,' . $objDocumentoDTO->getStrCodigoBarrasProcedimento() . '" />');
+        $arrConteudoTags[] = array('@codigo_barras_processo@', '<img alt="CÃ³digo de Barras do Processo" src="data:image/png;base64,' . $objDocumentoDTO->getStrCodigoBarrasProcedimento() . '" />');
 
         $arrConteudoTags[] = array('@documento@', $objDocumentoDTO->getStrProtocoloDocumentoFormatado());
-        $arrConteudoTags[] = array('@codigo_barras_documento@', '<img alt="Código de Barras do Documento" src="data:image/png;base64,' . $objDocumentoDTO->getStrCodigoBarrasDocumento() . '" />');
+        $arrConteudoTags[] = array('@codigo_barras_documento@', '<img alt="CÃ³digo de Barras do Documento" src="data:image/png;base64,' . $objDocumentoDTO->getStrCodigoBarrasDocumento() . '" />');
 
         if ($objDocumentoDTO->getStrNomeSerie()!='') {
           $arrConteudoTags[] = array('@serie@', $objDocumentoDTO->getStrNomeSerie());
@@ -1980,7 +1980,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           }
         }
 
-        /* Destinatários ******************************************************************************************/
+        /* DestinatÃ¡rios ******************************************************************************************/
         $arr = InfraArray::converterArrInfraDTO(InfraArray::filtrarArrInfraDTO($arrObjParticipanteDTO, 'StaParticipacao', ParticipanteRN::$TP_DESTINATARIO), 'IdContato');
         $arrObjContatoDTODestinatarios = null;
 
@@ -2274,7 +2274,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
 
     } catch (Exception $e) {
-      throw new InfraException('Erro obtendo parâmetros do editor.', $e, $objParametrosEditorDTO->__toString());
+      throw new InfraException('Erro obtendo parÃ¢metros do editor.', $e, $objParametrosEditorDTO->__toString());
     }
   }
 
@@ -2289,7 +2289,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     $ext = pathinfo(DIR_SEI_TEMP . '/' . $nomeArquivo);
 
     $ret = print_r($ext, true);
-    if (!in_array($ext['extension'], $arrImagemPermitida)) return 'Tipo de Arquivo não permitido.';
+    if (!in_array($ext['extension'], $arrImagemPermitida)) return 'Tipo de Arquivo nÃ£o permitido.';
 
     return 'data:image/' . $ext['extension'] . ';base64,' . base64_encode(file_get_contents(DIR_SEI_TEMP . '/' . $nomeArquivo));
   }
@@ -2309,7 +2309,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
         if ($objDocumentoDTO==null) {
-          throw new InfraException('Documento não encontrado.');
+          throw new InfraException('Documento nÃ£o encontrado.');
         }
       }
 
@@ -2353,7 +2353,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $this->adicionarVersao($objEditorDTO);
 
     } catch (Exception $e) {
-      throw new InfraException('Erro recuperando versão.', $e);
+      throw new InfraException('Erro recuperando versÃ£o.', $e);
     }
   }
 
@@ -2368,13 +2368,13 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       if ($str!=preg_replace("%<" . $tag . "[^>]*>(.*?)<\\/" . $tag . ">%si", "", $str) || $str!=preg_replace("%<" . $tag . "[^>]*\\/>%si", "", $str)) {
         switch ($tag) {
           case 'script':
-            $objInfraException->lancarValidacao('Documento possui código de script oculto no conteúdo.');
+            $objInfraException->lancarValidacao('Documento possui cÃ³digo de script oculto no conteÃºdo.');
             break;
 
           case 'img':
 
             if (count($arrImagemPermitida)==0) {
-              $objInfraException->lancarValidacao('Documento possui imagem no conteúdo.');
+              $objInfraException->lancarValidacao('Documento possui imagem no conteÃºdo.');
             }
 
             $arrImagensConteudo = array();
@@ -2386,10 +2386,10 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
               if ($posIni!==false && $posFim!==false) {
                 $posIni = $posIni + 1;
                 if (!in_array(InfraString::transformarCaixaBaixa(substr($strImagem, $posIni, ($posFim - $posIni))), $arrImagemPermitida)) {
-                  $objInfraException->lancarValidacao('Documento possui imagem no formato "' . substr($strImagem, $posIni, ($posFim - $posIni)) . '" não permitido no conteúdo.');
+                  $objInfraException->lancarValidacao('Documento possui imagem no formato "' . substr($strImagem, $posIni, ($posFim - $posIni)) . '" nÃ£o permitido no conteÃºdo.');
                 }
               } else {
-                $objInfraException->lancarValidacao('Documento possui imagem não permitida no conteúdo.');
+                $objInfraException->lancarValidacao('Documento possui imagem nÃ£o permitida no conteÃºdo.');
               }
             }
             break;
@@ -2397,25 +2397,25 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           case 'button':
           case 'input':
           case 'select':
-            $objInfraException->lancarValidacao('Documento possui componente HTML não permitido no conteúdo.');
+            $objInfraException->lancarValidacao('Documento possui componente HTML nÃ£o permitido no conteÃºdo.');
             break;
           case 'iframe':
-            $objInfraException->lancarValidacao('Documento possui formulário oculto no conteúdo.');
+            $objInfraException->lancarValidacao('Documento possui formulÃ¡rio oculto no conteÃºdo.');
             break;
 
           case 'frame':
-            $objInfraException->lancarValidacao('Documento possui formulário no conteúdo.');
+            $objInfraException->lancarValidacao('Documento possui formulÃ¡rio no conteÃºdo.');
             break;
           case 'embed':
           case 'object':
           case 'param':
-            $objInfraException->lancarValidacao('Documento possui um objeto não autorizado no conteúdo.');
+            $objInfraException->lancarValidacao('Documento possui um objeto nÃ£o autorizado no conteÃºdo.');
             break;
           case 'video':
-            $objInfraException->lancarValidacao('Documento possui vídeo no conteúdo.');
+            $objInfraException->lancarValidacao('Documento possui vÃ­deo no conteÃºdo.');
             break;
           case 'audio':
-            $objInfraException->lancarValidacao('Documento possui áudio no conteúdo.');
+            $objInfraException->lancarValidacao('Documento possui Ã¡udio no conteÃºdo.');
         }
       }
     }
@@ -2466,7 +2466,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
   private function processarLinkProtocolo($matches)
   {
     if(!isset($this->arrProtocolos[$matches[1]]) || $this->arrProtocolos[$matches[1]]!=$matches[2] ) {
-      //não foi encontrado protocolo correspondente, retorna somente o texto
+      //nÃ£o foi encontrado protocolo correspondente, retorna somente o texto
       return $matches[2];
     } else {
       return '<span contenteditable="false" style="text-indent:0;"><a class="ancoraSei" id="lnkSei'.$matches[1].'" style="text-indent:0;">'.$matches[2].'</a></span>';
@@ -2475,13 +2475,13 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
 
   private function limparTagsCriticas($str)
   {
-    //remove tags mas deixa conteúdo
+    //remove tags mas deixa conteÃºdo
     $arrRemoverTags = array('html', 'body');
     foreach ($arrRemoverTags as $tag) {
       $str = preg_replace("%<" . $tag . "[^>]*>%si", "", $str);
       $str = preg_replace("%</" . $tag . "[^>]*>%si", "", $str);
     }
-    //remove tags e todo o seu conteúdo
+    //remove tags e todo o seu conteÃºdo
     $arrRemoverTags = array('img', 'script', 'iframe', 'frame', 'embed', 'object', 'param', 'video', 'audio', 'button', 'input', 'select', 'link', 'head', 'title');
     foreach ($arrRemoverTags as $tag) {
       $str = preg_replace("%<" . $tag . "[^>]*>(.*?)<\\/" . $tag . ">%si", "", $str);
@@ -2518,7 +2518,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       return null;
 
     } catch (Exception $e) {
-      throw new InfraException('Erro obtendo número da última versão.', $e);
+      throw new InfraException('Erro obtendo nÃºmero da Ãºltima versÃ£o.', $e);
     }
   }
 

@@ -39,10 +39,10 @@ class MdPetIntAceiteDTO extends InfraDTO {
 
         $this->configurarFK('IdMdPetIntRelDestinatario','md_pet_int_rel_dest','id_md_pet_int_rel_dest');
         $this->configurarFK('IdDocumentoCertidao','documento','id_documento', InfraDTO::$TIPO_FK_OPCIONAL);
-        $this->configurarFK('IdContato','usuario u','u.id_contato');
+        $this->configurarFK('IdContato','usuario u','u.id_contato', InfraDTO::$TIPO_FK_OPCIONAL);
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,'IdUsuarioExterno','u.id_usuario','usuario u');
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,'IdContato','id_contato','md_pet_int_rel_dest', InfraDTO::$TIPO_FK_OPCIONAL);
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,'IdContato','id_contato','md_pet_int_rel_dest');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM,'IdMdPetIntimacao','id_md_pet_intimacao','md_pet_int_rel_dest');
     }
 }

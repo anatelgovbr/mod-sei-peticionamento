@@ -12,8 +12,8 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdPetIntRelDestinatarioDTO extends InfraDTO {
 
-	private $AceiteTIPOFK = null;
-	private $ProcedimentoDocTIPOFK = null;
+	private $AceiteTIPOFK;
+	private $ProcedimentoDocTIPOFK;
 
 	public function __construct(){
 		$this->AceiteTIPOFK = InfraDTO::$TIPO_FK_OPCIONAL;
@@ -42,6 +42,8 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdUnidade', 'id_unidade');
 
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaSituacaoIntimacao', 'sta_situacao_intimacao');
+		
+		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTA, 'DataPrazoTacito', 'dta_prazo_tacito');
 
 		//Atts Gerais
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_DTH,'DataFinal');
@@ -49,6 +51,7 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'SituacaoIntimacao');
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'DocumentoPrincipal');
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_NUM,'IdSituacaoIntimacao');
+		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'DocumentoCertidaoAceite');
 
 		//PK
 		$this->configurarPK('IdMdPetIntRelDestinatario',InfraDTO::$TIPO_PK_NATIVA);
@@ -167,8 +170,8 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
             'usuario usu');
 		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'NomeEmailCnpjCpf');
 		//$this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'NomeCpfEmail');
-		}
 
+	}
 	
 	public function getStrNomeEmailCnpjCpf(){
 		if($this->getStrSinPessoaJuridica() == "S"){
@@ -179,17 +182,14 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		}
 	}
 
-
 	public function getStrTipoDestinatario(){
-			if($this->getStrSinPessoaJuridica() == "S"){
-				return "Pessoa Jurídica"; 
-			}else{
-				return "Pessoa Física"; 
+		if($this->getStrSinPessoaJuridica() == "S"){
+			return "Pessoa Jurídica";
+		}else{
+			return "Pessoa Física";
 
-			}
 		}
-
-
+	}
         
 	public function getAceiteTIPOFK() {
 		return $this->AceiteTIPOFK;
@@ -206,5 +206,52 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 	public function setProcedimentoDocTIPOFK($ProcedimentoDocTIPOFK) {
 		$this->ProcedimentoDocTIPOFK = $ProcedimentoDocTIPOFK;
 	}
+	
+	public function getIdDocumentoCertidaoAceite(){
+		
+		if(!empty($this->getNumIdMdPetAceite()) && is_numeric($this->getNumIdMdPetAceite())){
+			
+			$objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+			$objMdPetIntAceiteDTO->setNumIdMdPetIntAceite($this->getNumIdMdPetAceite());
+			$objMdPetIntAceiteDTO->retDblIdDocumentoCertidao();
+			$objMdPetIntAceiteDTO = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
+			
+			if(!empty($objMdPetIntAceiteDTO)){
+				
+				return $objMdPetIntAceiteDTO->getDblIdDocumentoCertidao();
+				
+			}
+			
+		}
+		
+	}
+	
+	public function getStrDocumentoCertidaoAceite(){
+		
+		if(!empty($this->getNumIdMdPetAceite()) && is_numeric($this->getNumIdMdPetAceite())){
+			
+			$objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+			$objMdPetIntAceiteDTO->setNumIdMdPetIntAceite($this->getNumIdMdPetAceite());
+			$objMdPetIntAceiteDTO->retDblIdDocumentoCertidao();
+			$objMdPetIntAceiteDTO = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
+			
+			if(!empty($objMdPetIntAceiteDTO)){
+			
+				$objProtocoloDTO = new ProtocoloDTO();
+				$objProtocoloDTO->setDblIdProtocolo($objMdPetIntAceiteDTO->getDblIdDocumentoCertidao());
+				$objProtocoloDTO->retStrProtocoloFormatado();
+				$objProtocoloDTO = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
+				
+				if(!empty($objProtocoloDTO)){
+					return $objProtocoloDTO->getStrProtocoloFormatado();
+				}
+			
+			}
+			
+		}
+		
+	}
+	
 }
+
 ?>

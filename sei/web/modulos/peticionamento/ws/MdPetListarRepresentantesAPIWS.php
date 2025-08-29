@@ -10,7 +10,8 @@
 
 class MdPetListarRepresentantesAPIWS
 {
-
+	
+	private $IdVinculoRepresentante;
     private $TipoVinculo;
     private $NomeRepresentado;
     private $NomeRepresentante;
@@ -24,8 +25,24 @@ class MdPetListarRepresentantesAPIWS
     private $DataLimite;
     private $RazaoSocialRepresentado;
     private $CnpjRepresentado;
-
-    /**
+	
+	/**
+	 * @return mixed
+	 */
+	public function getIdVinculoRepresentante()
+	{
+		return $this->IdVinculoRepresentante;
+	}
+	
+	/**
+	 * @param mixed $Nome
+	 */
+	public function setIdVinculoRepresentante($IdVinculoRepresentante)
+	{
+		$this->IdVinculoRepresentante = $IdVinculoRepresentante;
+	}
+	
+	/**
      * @return mixed
      */
     public function getTipoVinculo()

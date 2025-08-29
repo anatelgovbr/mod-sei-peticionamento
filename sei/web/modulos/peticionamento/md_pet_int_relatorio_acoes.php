@@ -19,8 +19,12 @@ $strLinkTpIntSelecionar     = SessaoSEI::getInstance()->assinarLink('controlador
 $strLinkAjaxUnidade         = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=unidade_auto_completar_todas');
 $strLinkUnidSelecionar      = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=unidade_selecionar_todas&tipo_selecao=2&id_object=objLupaUnidade');
 $strLinkGraficoIndividual   = SessaoSEI::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax.php?acao_ajax=md_pet_int_relatorio_grafico');
-$strLinkDestinatariosSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaDestinatarios');
+$strLinkDestinatariosSelecao    = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaDestinatarios');
+
 $strLinkAjaxContatos = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=contato_auto_completar_contexto_RI1225');
+
+$urlDestinatarioTipoFisica = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_relatorio_fisica');
+$urlDestinatarioTipoJuridica = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_relatorio_juridica');
 
 $strUrlGrafico1     = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&grafico=1'));
 $strUrlGrafico2     = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . '&grafico=2'));
@@ -59,18 +63,18 @@ if(count($arrObjDTOs) > 0){
 
 switch ($_GET['acao']) {
     case 'md_pet_int_relatorio_listar':
-        $strTitulo = 'IntimaÁıes EletrÙnicas';
+        $strTitulo = 'Intima√ß√µes Eletr√¥nicas';
         break;
 
     default:
-        throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+        throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
 }
 
-//Botıes de aÁ„o do topo
+//Bot√µes de a√ß√£o do topo
 $arrComandos[] = '<button type="button" accesskey="P" id="btnPesquisar" onclick="pesquisar()" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
-$arrComandos[] = '<button type="button" accesskey="G" id="btnGerarGrafico" onclick="gerarGrafico()" class="infraButton"><span class="infraTeclaAtalho">G</span>erar Gr·fico </button>';
+$arrComandos[] = '<button type="button" accesskey="G" id="btnGerarGrafico" onclick="gerarGrafico()" class="infraButton"><span class="infraTeclaAtalho">G</span>erar Gr√°fico </button>';
 $arrComandos[] = '<button type="button" accesskey="X" id="btnExportarExcel" onclick="exportarExcel()" class="infraButton">E<span class="infraTeclaAtalho">x</span>portar Excel </button>';
-$arrComandos[] = '<button type="button" accesskey="L" id="btnLimparCriterios" onclick="limparCriterios()" class="infraButton"><span class="infraTeclaAtalho">L</span>impar CritÈrios </button>';
+$arrComandos[] = '<button type="button" accesskey="L" id="btnLimparCriterios" onclick="limparCriterios()" class="infraButton"><span class="infraTeclaAtalho">L</span>impar Crit√©rios </button>';
 
 if ($tipoPesquisar) {
     require_once 'md_pet_int_relatorio_lista.php';
@@ -101,7 +105,7 @@ PaginaSEI::getInstance()->abrirAreaDados('auto');
         <?php PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
-                <!-- Filtro padr„o -->
+                <!-- Filtro padr√£o -->
                 <?php require_once 'md_pet_int_relatorio_filtro.php'; ?>
             </div>
         </div>

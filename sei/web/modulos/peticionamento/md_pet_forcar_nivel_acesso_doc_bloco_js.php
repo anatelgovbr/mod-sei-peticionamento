@@ -17,7 +17,7 @@
     }
 
     function limparForcarNivelAcessoDoc(){
-        if(confirm('Deseja realmente limpar todos os campos da seção Forçar Nível de Acesso em Documentos Externos Específicos?')) {
+        if(confirm('Deseja realmente limpar todos os campos da seÃ§Ã£o ForÃ§ar NÃ­vel de Acesso em Documentos Externos EspecÃ­ficos?')) {
             $('#fldForcarNivelAcessoDocumentosExternos').children(':input').each(function() { $(this).val(''); });
             $('#fldForcarNivelAcessoDocumentosExternos select>option:eq(0)').prop('selected', true);
             $('#fldForcarNivelAcessoDocumentosExternos select#idHipoteseLegal>option:eq(0)').prop('selected', true);
@@ -27,7 +27,7 @@
     }
 
     function carregarComponenteTipoDocumento(){
-        objAutoCompletarTipoDocumento = new infraAjaxAutoCompletar('hdnIdTipoDocumento', 'txtTipoDocumento', '<?= $strLinkAjaxTiposDocumentos ?>');
+        objAutoCompletarTipoDocumento = new infraAjaxAutoCompletar('hdnIdTipoDocumento', 'txtTipoDocumento', '<?= isset($strLinkAjaxTiposDocumentos) ? $strLinkAjaxTiposDocumentos : '' ?>');
         objAutoCompletarTipoDocumento.limparCampo = true;
         objAutoCompletarTipoDocumento.tamanhoMinimo = 2;
 
@@ -61,7 +61,7 @@
             }
         }
 
-        objLupaTipoDocumento = new infraLupaSelect('selTipoDocumento', 'hdnTipoDocumento', '<?= $strLinkTipoDocumentoSelecao ?>');
+        objLupaTipoDocumento = new infraLupaSelect('selTipoDocumento', 'hdnTipoDocumento', '<?= isset($strLinkTipoDocumentoSelecao) ? $strLinkTipoDocumentoSelecao : '' ?>');
     }
 
     // Extendendo onSubmitForm()
@@ -74,7 +74,7 @@
         var hipoteseLegal = document.getElementById('idHipoteseLegal').value;
 
         if( nivelAcesso == 'R' && hipoteseLegal == '' ){
-            alert('Selecione a Hipotese Legal para o Nível de Acesso Restrito.');
+            alert('Selecione a Hipotese Legal para o NÃ­vel de Acesso Restrito.');
             document.getElementById('idHipoteseLegal').focus();
             return false;
         }

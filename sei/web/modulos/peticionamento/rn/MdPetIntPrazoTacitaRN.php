@@ -60,6 +60,26 @@ class MdPetIntPrazoTacitaRN extends InfraRN
             throw new InfraException('Erro cadastrando .', $e);
         }
     }
+	
+	protected function cadastrarCustomizadoControlado(MdPetIntPrazoTacitaDTO $objMdPetIntPrazoTacitaDTO)
+	{
+		try {
+			//Valida Permissao
+//			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_int_prazo_tacita_cadastrar', __METHOD__, $objMdPetIntPrazoTacitaDTO );
+			//Regras de Negocio
+			$objInfraException = new InfraException();
+			
+			$objMdPetIntPrazoTacitaBD = new MdPetIntPrazoTacitaBD($this->getObjInfraIBanco());
+			$ret = $objMdPetIntPrazoTacitaBD->cadastrar($objMdPetIntPrazoTacitaDTO);
+			
+			//Auditoria
+			
+			return $ret;
+			
+		} catch (Exception $e) {
+			throw new InfraException('Erro cadastrando .', $e);
+		}
+	}
 
     protected function alterarControlado(MdPetIntPrazoTacitaDTO $objMdPetIntPrazoTacitaDTO)
     {
@@ -92,8 +112,8 @@ class MdPetIntPrazoTacitaRN extends InfraRN
     {
         try {
 
-            //Valida Permissao
-            SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_int_prazo_tacita_excluir', __METHOD__, $arrObjMdPetIntPrazoTacitaDTO );
+            // Valida Permissao
+            // SessaoSEI::getInstance()->validarAuditarPermissao ('md_pet_int_prazo_tacita_excluir', __METHOD__, $arrObjMdPetIntPrazoTacitaDTO );
             $objMdPetIntPrazoTacitaBD = new MdPetIntPrazoTacitaBD($this->getObjInfraIBanco());
             for ($i = 0; $i < count($arrObjMdPetIntPrazoTacitaDTO); $i++) {
                 $objMdPetIntPrazoTacitaBD->excluir($arrObjMdPetIntPrazoTacitaDTO[$i]);
@@ -167,6 +187,25 @@ class MdPetIntPrazoTacitaRN extends InfraRN
         } catch (Exception $e) {
             throw new InfraException('Erro contando .', $e);
         }
+    }
+
+    public function getTipoPrazoTacitoGeralEspecifico($idTipoProcedimento){
+
+		    // Buscar qual Prazo Tacita: Geral ou Especifico
+		    $objMdPetIntPrazoTacitaRelTipoProcDTO = new MdPetIntPrazoTacitaRelTipoProcDTO();
+		    $objMdPetIntPrazoTacitaRelTipoProcDTO->setNumIdTipoProcedimento($idTipoProcedimento);
+		    $objMdPetIntPrazoTacitaRelTipoProcDTO->retNumIdTipoProcedimento();
+
+		    $numQtdTpProc = ( new MdPetIntPrazoTacitaRelTipoProcRN() )->contar($objMdPetIntPrazoTacitaRelTipoProcDTO);
+
+		    $strTpPrazo = $numQtdTpProc == 0 ? 'G' : 'E';
+
+		    $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
+		    $objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
+		    $objMdPetIntPrazoTacitaDTO->setStrStaTipoPrazo($strTpPrazo);
+		    $objMdPetIntPrazoTacitaDTO->retTodos();
+
+	      return  $this->consultar($objMdPetIntPrazoTacitaDTO);
     }
 }
 

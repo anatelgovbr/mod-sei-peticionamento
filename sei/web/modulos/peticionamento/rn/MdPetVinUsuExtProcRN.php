@@ -179,12 +179,15 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             // Recupera o idProcedimento(Processo) referente ao cnpj informado (idContato)
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
+            
 	        $objMdPetVinculoDTO->setDblIdProtocolo(null, InfraDTO::$OPER_DIFERENTE);
-            if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF") {
+         
+	        if ($dados['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['hdnOutorgante'] == "PF") {
                 $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);
             }else{
 	            $objMdPetVinculoDTO->setNumIdContato($dados['idContato']);
             }
+	        
             $objMdPetVinculoDTO->retTodos();
 	        $mdPetVinculacao = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
 
@@ -217,7 +220,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objProtocoloDTO->retNumIdUnidadeGeradora();
                 $objProtocoloRN = new ProtocoloRN();
                 $objUnidadeGeradora = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
-
 
                 if (!empty($objUnidadeGeradora) && ($objUnidadeDTO->getNumIdUnidade() != $objUnidadeGeradora->getNumIdUnidadeGeradora())) {
 
@@ -616,22 +618,45 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     private function _adicionarVinculoPF($dados, $idProcedimento)
     {
-
-
-        $objMdPetVinculoRN = new MdPetVinculoRN();
-        $objMdPetVinculoDTO = new MdPetVinculoDTO();
-        $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);
-        $objMdPetVinculoDTO->setStrSinValidado("N");
-        $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-        $objMdPetVinculoDTO->setDblIdProtocolo($idProcedimento);
-        $objMdPetVinculoDTO->setStrTpVinculo('F');
-        $objMdPetVinculoDTO->setStrSinWebService("N");
-
-        $objMdPetVinculoDTO = $objMdPetVinculoRN->cadastrar($objMdPetVinculoDTO);
+	
+	    // VERIFICA SE JÁ EXISTE UM VÍNCULO DE AUTORREPRESENTAÇÃO
+	    $objMdPetVinculoDTO = new MdPetVinculoDTO();
+	    $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);
+	    $objMdPetVinculoDTO->setDblIdProtocolo(null, InfraDTO::$OPER_IGUAL);
+	    $objMdPetVinculoDTO->setOrdNumIdMdPetVinculo(InfraDTO::$TIPO_ORDENACAO_ASC);
+	    $objMdPetVinculoDTO->setNumMaxRegistrosRetorno(1);
+	    $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+	    $objMdPetVinculoDTO->retNumIdContato();
+	    $objMdPetVinculoDTO->retDblIdProtocolo();
+	    $objMdPetVinculoDTO->retStrSinValidado();
+	    $objMdPetVinculoDTO = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
+	    
+	    // CASO EXISTA, ATUALIZA COM ID_PROCEDIMENTO
+	    if(!empty($objMdPetVinculoDTO) && is_null($objMdPetVinculoDTO->getDblIdProtocolo())){
+		
+		    $objMdPetVinculoDTO->setNumIdMdPetVinculo($objMdPetVinculoDTO->getNumIdMdPetVinculo());
+		    $objMdPetVinculoDTO->setNumIdContato($objMdPetVinculoDTO->getNumIdContato());
+		    $objMdPetVinculoDTO->setStrSinValidado($objMdPetVinculoDTO->getStrSinValidado());
+		    $objMdPetVinculoDTO->setDblIdProtocolo($idProcedimento);
+		
+		    (new MdPetVinculoRN())->alterar($objMdPetVinculoDTO);
+		
+	    }else{
+		
+		    $objMdPetVinculoDTO = new MdPetVinculoDTO();
+		    $objMdPetVinculoDTO->setNumIdContato($dados['idContatoExterno']);
+		    $objMdPetVinculoDTO->setStrSinValidado("N");
+		    $objMdPetVinculoDTO->setDblIdProtocolo($idProcedimento);
+		    $objMdPetVinculoDTO->setStrTpVinculo('F');
+		    $objMdPetVinculoDTO->setStrSinWebService("N");
+		    $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+		    $objMdPetVinculoDTO->setDthDataUltimaConsultaRFB(InfraData::getStrDataHoraAtual());
+		    $objMdPetVinculoDTO = (new MdPetVinculoRN())->cadastrar($objMdPetVinculoDTO);
+	    	
+	    }
 
         return $objMdPetVinculoDTO->getNumIdMdPetVinculo();
-
-
+	    
     }
 
     protected function getConfiguracaoVinculoConectado()
@@ -1110,16 +1135,19 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         // consultar dados Outorgado
         $contatoDTO = new ContatoDTO();
-        $contatoDTO->setDblCpf($dados['CpfOutorgante']);
+        $contatoDTO->setNumIdContato($idContatoVinculo);
         $contatoDTO->retStrNome();
         $contatoDTO->retNumIdContato();
         $contatoDTO->retDblCpf();
+        $contatoDTO->retDblCnpj();
         //$contatoDTO->setNumIdContato($idOutorgado);
         $contatoDTO->setNumMaxRegistrosRetorno(1);
 
         $contatoRN = new ContatoRN();
         $Outorgante = $contatoRN->consultarRN0324($contatoDTO);
+
         if ($dados['tpProc'] == "E") {
+
             $htmlModeloRevogacao = str_replace('@razaoSocial', $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc(), $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@cnpj', InfraUtil::formatarCnpj($objMdPetVincRepresentantDTO->getStrCNPJ()), $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@nomeOutorgante', $Outorgante->getStrNome(), $htmlModeloRevogacao);
@@ -1135,6 +1163,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
 
         } else if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J") {
+
             $htmlModeloRevogacao = str_replace('@motivo', $dados['txtJustificativa'], $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@Outorgante', $nomeOutorgante, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@cnpj', InfraUtil::formatarCnpj($cnpjOutorgante), $htmlModeloRevogacao);
@@ -1142,13 +1171,19 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModeloRevogacao = str_replace('@respLegal', $nomeResponsavelLegal, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', $tipoProcuracao, $htmlModeloRevogacao);
+
         } else if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F") {
+
             $htmlModeloRevogacao = str_replace('@motivo', $dados['txtJustificativa'], $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@Outorgante', $nomeOutorgante, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@outorgado', $nomeOutorgado, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', $tipoProcuracao, $htmlModeloRevogacao);
+
         }
+        
         //==========================================================================
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
@@ -1160,18 +1195,22 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J") {
 
-            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "Procuração Eletrônica", $htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', $tipoProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcuracao', $numProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
+        
         } else if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F") {
 
-            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "Procuração Eletrônica", $htmlModeloRevogacao);
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', $tipoProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcuracao', $numProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
+        
         } else if ($dados['tpProc'] == "E") {
-            $htmlModeloRevogacao = str_replace('@tipoProcuracao', "Procuração Especial", $htmlModeloRevogacao);
+        
+            $htmlModeloRevogacao = str_replace('@tipoProcuracao', $tipoProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcuracao', $numProcuracao, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
+
         }
 
         //Incluindo documento
@@ -1998,6 +2037,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVinculoDTO->setNumIdProtocolo($idProcedimento);
         $objMdPetVinculoDTO->setStrSinWebService('N');
         $objMdPetVinculoDTO->setStrTpVinculo('J');
+	    $objMdPetVinculoDTO->setDthDataUltimaConsultaRFB(InfraData::getStrDataHoraAtual());
 
         $objMdPetVinculoDTO = $objMdPetVinculoRN->cadastrar($objMdPetVinculoDTO);
 
@@ -2107,6 +2147,13 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $numeroSEI              = isset($dados['hdnNumeroSei']) ? $dados['hdnNumeroSei'] : null;
         $tipoVinculo            = isset($dados['hdnStrTipoVinculo']) ? $dados['hdnStrTipoVinculo'] : null;
         $idVinculoRepresent     = isset($dados['hdnIdVinculoRepresent']) ? $dados['hdnIdVinculoRepresent'] : null;
+	
+	    $justificativa = 'Suspensão ocorrida conforme formalizado no documento SEI nº ' . $numeroSEI;
+	    $justificativaAgendamento = 'Suspensão ocorrida automaticamente em razão da consulta à Receita Federal retornar situação cadastral da entidade como não "Ativa".';
+	
+	    if($params['agendamento']){
+		    $justificativa = $justificativaAgendamento;
+	    }
 
         $objInfraParametro      = new InfraParametro($this->getObjInfraIBanco());
 
@@ -2310,6 +2357,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $htmlModelo = str_replace('@numProcessoVinc', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModelo);
         $htmlModelo = str_replace('@numDocVinc', $numDocVinc, $htmlModelo);
         $htmlModelo = str_replace('@numeroSEI', $numeroSEI, $htmlModelo);
+        $htmlModelo = str_replace('@justificativa', $justificativa, $htmlModelo);
         $htmlModelo = str_replace('@sigla_orgao@', $siglaOrgao, $htmlModelo);
         $htmlModelo = str_replace('@descricao_orgao@', $descricaoOrgao, $htmlModelo);
         $htmlModelo = str_replace('@itemListaProcuradores', $itemListaProcuradores, $htmlModelo);
@@ -2451,6 +2499,17 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         return $saidaDocExternoAPI;
 
+    }
+
+    public function incluirDocumentoDocExterno($idProcedimento, $idSerieFormulario){
+      $objDocumentoAPI = new DocumentoAPI();
+      $objDocumentoAPI->setIdProcedimento($idProcedimento);
+      $objDocumentoAPI->setTipo(ProtocoloRN::$TP_DOCUMENTO_GERADO);
+      $objDocumentoAPI->setSubTipo(DocumentoRN::$TD_EDITOR_INTERNO /*DocumentoRN::$TD_FORMULARIO_AUTOMATICO*/);
+      $objDocumentoAPI->setIdSerie($idSerieFormulario);
+
+      $objSeiRN = new SeiRN();
+      return $objSeiRN->incluirDocumento($objDocumentoAPI);
     }
 
     public function gerarDocumentoRestabelecimentoControlado($params)

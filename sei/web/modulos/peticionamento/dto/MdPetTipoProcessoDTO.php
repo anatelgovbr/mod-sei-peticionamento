@@ -68,7 +68,15 @@ class MdPetTipoProcessoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinDocExterno',
 				'sin_doc_externo');
-		
+
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
+      'SinDocFormulario',
+      'sin_doc_formulario');
+
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM,
+      'IdTipoFormulario',
+      'id_tipo_formulario');
+
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR,
 				'SinAtivo',
 				'sin_ativo');
@@ -81,6 +89,7 @@ class MdPetTipoProcessoDTO extends InfraDTO  {
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeHipoteseLegal', 'hl.nome', 'hipotese_legal hl');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'BaseLegalHipoteseLegal', 'hl.base_legal', 'hipotese_legal hl');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeSerie', 's.nome', 'serie s');
+    $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeFormulario', 'f.nome', 'tipo_formulario f');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUnidade', 'md.id_unidade', 'md_pet_rel_tp_processo_unid md');
                 $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdOrgaoUnidade', 'u.id_orgao', 'unidade u');
                 $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'SiglaUnidade', 'u.sigla', 'unidade u');
@@ -91,6 +100,7 @@ class MdPetTipoProcessoDTO extends InfraDTO  {
 		
 		$this->configurarFK('IdProcedimento', 'tipo_procedimento tipo', 'tipo.id_tipo_procedimento');
 		$this->configurarFK('IdSerie', 'serie s', 's.id_serie', InfraDTO::$TIPO_FK_OPCIONAL);
+		$this->configurarFK('IdTipoFormulario', 'tipo_formulario f', 'f.id_tipo_formulario', InfraDTO::$TIPO_FK_OPCIONAL);
 		$this->configurarFK('IdHipoteseLegal', 'hipotese_legal hl', 'hl.id_hipotese_legal', InfraDTO::$TIPO_FK_OPCIONAL);
 		$this->configurarFK('IdTipoProcessoPeticionamento', 'md_pet_rel_tp_processo_unid md', 'md.id_md_pet_tipo_processo');
                 $this->configurarFK('IdUnidade', 'unidade u', 'u.id_unidade');

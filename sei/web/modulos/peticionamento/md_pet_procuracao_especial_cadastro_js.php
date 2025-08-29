@@ -475,54 +475,62 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             }
 
             //Verificando Pendencia de Usuário Externo
+            //$.ajax({
+            //    dataType: 'xml',
+            //    method: 'POST',
+            //    url: '<?php //echo $strLinkAjaxValidarUsuarioExternoPendente?>//',
+            //    data: {
+            //        'idContato': document.getElementById('hdnIdUsuario').value,
+            //        'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
+            //    },
+            //    beforeSend: function(){
+            //      console.log({
+            //          'idContato': document.getElementById('hdnIdUsuario').value,
+            //          'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
+            //      });
+            //    },
+            //    success: function (data) {
+            //        if ($(data).find('existe').text() == 0) {
+            //            alert('Usuário Externo não existe ou possui pendência de liberação do cadastro. Favor contactar administração do sistema para regularização da situação cadastral do Usuário.');
+            //        } else {
+
+                        //Abre Modal de assinatura ou conflito
+
+            //         }
+            //
+            //     }
+            //
+            // });
+
             $.ajax({
                 dataType: 'xml',
                 method: 'POST',
-                url: '<?php echo $strLinkAjaxValidarUsuarioExternoPendente?>',
-                data: {
-                    'idContato': document.getElementById('hdnIdUsuario').value,
-                    'hdnIdContExterno': document.getElementById('hdnIdUsuario').value
-                },
+                url: '<?= $strLinkAjaxValidarExistenciaProc ?>',
+                data: dados,
                 success: function (data) {
-                    if ($(data).find('existe').text() == 0) {
-                        alert("Usuário Externo com pendência de liberação de cadastro.");
-                    } else {
-                        //Abre Modal
-                        $.ajax({
-                            dataType: 'xml',
-                            method: 'POST',
-                            url: '<?php echo $strLinkAjaxValidarExistenciaProc?>',
-                            data: dados,
-                            success: function (data) {
-                                $.each($(data).find('item'), function (i, j) {
-                                    var valor = $(this)[i].innerHTML;
-                                    if ($(j).attr("id") == 0) {
+                    $.each($(data).find('item'), function (i, j) {
+                        var valor = $(this)[i].innerHTML;
+                        if ($(j).attr("id") == 0) {
 
-                                        //Modal para Assinatura
-                                        parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
-                                            770,
-                                            520,
-                                            '', //options
-                                            false);
+                            //Modal para Assinatura
+                            parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_vinc_pe'))?>',
+                                770,
+                                520,
+                                '', //options
+                                false);
 
-                                    } else {
+                        } else {
 
-                                        //Modal para Existencia de Procuração
-                                        parent.infraAbrirJanelaModal($(j).attr("id"),
-                                            1200,
-                                            300,
-                                            '', //options
-                                            false);
+                            //Modal para Existencia de Procuração
+                            parent.infraAbrirJanelaModal($(j).attr("id"),
+                                1200,
+                                300,
+                                '', //options
+                                false);
 
-                                    }
+                        }
 
-                                });
-
-                            }
-
-                        });
-
-                    }
+                    });
 
                 }
 
@@ -557,7 +565,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             $.ajax({
                 dataType: 'xml',
                 method: 'POST',
-                url: '<?php echo $strLinkAjaxValidarExistenciaProc?>',
+                url: '<?= $strLinkAjaxValidarExistenciaProc ?>',
                 data: dados,
                 success: function (data) {
                     $.each($(data).find('item'), function (i, j) {
@@ -967,6 +975,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
     }
 
     function consultarUsuarioExternoValidoSimples() {
+        
         infraSelectLimpar('selUsuarioSimples');
 
         var valido = validaCpf(document.getElementById('txtNumeroCpfProcuradorSimples').value);

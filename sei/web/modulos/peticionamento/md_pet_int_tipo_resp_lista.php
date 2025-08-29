@@ -431,7 +431,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                        value="<? echo(PaginaSEI::tratarHTML($_POST['txtTipoResposta']) != '' ? PaginaSEI::tratarHTML($_POST['txtTipoResposta']) : '') ?>"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 <input type="hidden" id="hdnTipoResposta" name="hdnTipoResposta"
-                       value="<?= $numIdContatoAssociadoPesquisa ?>"/>
+                       value="<?= isset($numIdContatoAssociadoPesquisa) ? $numIdContatoAssociadoPesquisa : '' ?>"/>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
                 <label id="lblPrazoExterno" for="selPrazoExterno" class="infraLabelOpcional">Prazo Externo:</label>

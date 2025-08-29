@@ -185,9 +185,9 @@ class MdPetIntRespostaRN extends InfraRN {
 
             $js = "infraAbrirJanelaModal('" . $strLink . "', 700, 250);";
 
-            $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta_negada.svg?'.Icone::VERSAO.'" style="width: 24px">';
-            $ToolTipTitle = 'Responder Intimação Eletrônica';
-            $ToolTipText .= 'Documento Principal: ';
+            $imgResposta    = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta_negada.svg?'.Icone::VERSAO.'" style="width: 24px">';
+            $ToolTipTitle   = 'Responder Intimação Eletrônica';
+            $ToolTipText    = 'Documento Principal: ';
 
             //obter informacoes do doc principal da intimação
             $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();

@@ -3,6 +3,7 @@
  * ANATEL
  *
  * 22/04/2016 - criado por Ramon Veloso - ramon.onix@gmail.com
+
  * 26/08/2024 - Atualização por gabrielg.colab - SPASSU 
  *
  */
@@ -248,6 +249,7 @@ class PeticionamentoWS extends MdPetUtilWS
                                     $temPoder = count($neededObject);
                                     if ($temPoder) {
                                         $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
+                                        $objMdPetRepresentante->setIdVinculoRepresentante($item->getNumIdMdPetVinculoRepresent());
                                         $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                                         $objMdPetRepresentante->setNome($arrContatoDTO->getStrNome());
                                         $objMdPetRepresentante->setEmail($item->getStrEmail());
@@ -263,6 +265,7 @@ class PeticionamentoWS extends MdPetUtilWS
                             }
                         } else {
                             $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
+	                        $objMdPetRepresentante->setIdVinculoRepresentante($item->getNumIdMdPetVinculoRepresent());
                             $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                             $objMdPetRepresentante->setNome($arrContatoDTO->getStrNome());
                             $objMdPetRepresentante->setEmail($item->getStrEmail());
@@ -382,6 +385,7 @@ class PeticionamentoWS extends MdPetUtilWS
                                     $temPoder = count($neededObject);
                                     if ($temPoder) {
                                         $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
+                                        $objMdPetRepresentante->setIdVinculoRepresentante($item->getNumIdMdPetVinculoRepresent());
                                         $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                                         $objMdPetRepresentante->setNome($arrContatoDTO->getStrNome());
                                         $objMdPetRepresentante->setEmail($item->getStrEmail());
@@ -397,6 +401,7 @@ class PeticionamentoWS extends MdPetUtilWS
                             }
                         } else {
                             $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
+	                        $objMdPetRepresentante->setIdVinculoRepresentante($item->getNumIdMdPetVinculoRepresent());
                             $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
                             $objMdPetRepresentante->setNome($arrContatoDTO->getStrNome());
                             $objMdPetRepresentante->setEmail($item->getStrEmail());
@@ -450,59 +455,74 @@ class PeticionamentoWS extends MdPetUtilWS
             $UsuarioExternoRN = new MdPetWsUsuarioExternoRN();
             $Cpf = preg_replace('/[^0-9]/', '', $Cpf);
             $UsuarioExternoDTO = $UsuarioExternoRN->consultarExterno($Cpf, $Email);
+
             $ret = array();
-            foreach ($UsuarioExternoDTO as $usuarioExterno) {
-                $contatoDTO = new ContatoDTO();
-                $contatoDTO->retTodos(true);
-                $contatoDTO->setNumIdContato($usuarioExterno->getNumIdContato());
-                $contatoRN = new ContatoRN();
-                $contatoDTO = $contatoRN->consultarRN0324($contatoDTO);
 
-                if (strlen(trim($Cpf)) > 0 && (InfraUtil::formatarCpf($contatoDTO->getDblCpf()) !== InfraUtil::formatarCpf($Cpf))) {
-                    $InfraException->lancarValidacao('CPF informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
+            if(!empty($UsuarioExternoDTO) && count($UsuarioExternoDTO) > 0){
+
+                foreach ($UsuarioExternoDTO as $usuarioExterno) {
+
+                    $contatoDTO = new ContatoDTO();
+                    $contatoDTO->retTodos(true);
+                    $contatoDTO->setNumIdContato($usuarioExterno->getNumIdContato());
+                    $contatoRN = new ContatoRN();
+                    $contatoDTO = $contatoRN->consultarRN0324($contatoDTO);
+
+                    if(!empty($contatoDTO)){
+
+                        if (strlen(trim($Cpf)) > 0 && (InfraUtil::formatarCpf($contatoDTO->getDblCpf()) !== InfraUtil::formatarCpf($Cpf))) {
+                            $InfraException->lancarValidacao('CPF informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
+                        }
+
+                        if (!empty($Email) && $Email != $usuarioExterno->getStrSigla()) {
+                            $InfraException->lancarValidacao('E-mail informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
+                        }
+
+                        // Usuário Externo Liberado = L, Pendente = P
+                        switch ($usuarioExterno->getStrStaTipo()) {
+                            case UsuarioRN::$TU_EXTERNO_PENDENTE :
+                                $usuarioExterno->setStrStaTipo('P');
+                                break;
+
+                            case UsuarioRN::$TU_EXTERNO :
+                                $usuarioExterno->setStrStaTipo('L');
+                                break;
+
+                            default :
+                                $InfraException->lancarValidacao('Erro ao consultar o cadastro do Usuário Externo no SEI.');
+                                break;
+                        }
+
+                        $objMdPetUsuarioExternoAPIWS = new MdPetUsuarioExternoAPIWS();
+                        $objMdPetUsuarioExternoAPIWS->setIdUsuario($usuarioExterno->getNumIdUsuario());
+                        $objMdPetUsuarioExternoAPIWS->setEmail($usuarioExterno->getStrSigla());
+                        $objMdPetUsuarioExternoAPIWS->setNome($usuarioExterno->getStrNome());
+                        $objMdPetUsuarioExternoAPIWS->setCpf(InfraUtil::formatarCpf($contatoDTO->getDblCpf()));
+                        $objMdPetUsuarioExternoAPIWS->setSituacaoAtivo($usuarioExterno->getStrSinAtivo());
+                        $objMdPetUsuarioExternoAPIWS->setLiberacaoCadastro($usuarioExterno->getStrStaTipo());
+                        $objMdPetUsuarioExternoAPIWS->setRg($usuarioExterno->getDblRgContato());
+                        $objMdPetUsuarioExternoAPIWS->setOrgaoExpedidor($usuarioExterno->getStrOrgaoExpedidorContato());
+                        $objMdPetUsuarioExternoAPIWS->setTelefone($usuarioExterno->getStrTelefoneComercial());
+                        $objMdPetUsuarioExternoAPIWS->setEndereco($usuarioExterno->getStrEnderecoContato());
+                        $objMdPetUsuarioExternoAPIWS->setBairro($contatoDTO->getStrBairro());
+                        $objMdPetUsuarioExternoAPIWS->setSiglaUf($contatoDTO->getStrSiglaUf());
+                        $objMdPetUsuarioExternoAPIWS->setNomeCidade($contatoDTO->getStrNomeCidade());
+                        $objMdPetUsuarioExternoAPIWS->setCep($contatoDTO->getStrCep());
+                        $objMdPetUsuarioExternoAPIWS->setDataCadastro($usuarioExterno->getDthDataCadastroContato());
+
+                        $ret[] = $objMdPetUsuarioExternoAPIWS;
+
+                    }
+
                 }
 
-                if (!empty($Email) && $Email != $usuarioExterno->getStrSigla()) {
-                    $InfraException->lancarValidacao('E-mail informado não corresponde ao registrado no cadastro do Usuário Externo no SEI.');
-                }
+            }else{
 
-                // Usuário Externo Liberado = L, Pendente = P
-                switch ($usuarioExterno->getStrStaTipo()) {
-                    case UsuarioRN::$TU_EXTERNO_PENDENTE :
-                        $usuarioExterno->setStrStaTipo('P');
-                        break;
-
-                    case UsuarioRN::$TU_EXTERNO :
-                        $usuarioExterno->setStrStaTipo('L');
-                        break;
-
-                    default :
-                        $InfraException->lancarValidacao('Erro ao consultar o cadastro do Usuário Externo no SEI.');
-                        break;
-                }
-
-                $objMdPetUsuarioExternoAPIWS = new MdPetUsuarioExternoAPIWS();
-                $objMdPetUsuarioExternoAPIWS->setIdUsuario($usuarioExterno->getNumIdUsuario());
-                $objMdPetUsuarioExternoAPIWS->setEmail($usuarioExterno->getStrSigla());
-                $objMdPetUsuarioExternoAPIWS->setNome($usuarioExterno->getStrNome());
-                $objMdPetUsuarioExternoAPIWS->setCpf(InfraUtil::formatarCpf($contatoDTO->getDblCpf()));
-                $objMdPetUsuarioExternoAPIWS->setSituacaoAtivo($usuarioExterno->getStrSinAtivo());
-                $objMdPetUsuarioExternoAPIWS->setLiberacaoCadastro($usuarioExterno->getStrStaTipo());
-                $objMdPetUsuarioExternoAPIWS->setRg($usuarioExterno->getDblRgContato());
-                $objMdPetUsuarioExternoAPIWS->setOrgaoExpedidor($usuarioExterno->getStrOrgaoExpedidorContato());
-                $objMdPetUsuarioExternoAPIWS->setTelefone($usuarioExterno->getStrTelefoneComercial());
-                $objMdPetUsuarioExternoAPIWS->setEndereco($usuarioExterno->getStrEnderecoContato());
-                $objMdPetUsuarioExternoAPIWS->setBairro($contatoDTO->getStrBairro());
-                $objMdPetUsuarioExternoAPIWS->setSiglaUf($contatoDTO->getStrSiglaUf());
-                $objMdPetUsuarioExternoAPIWS->setNomeCidade($contatoDTO->getStrNomeCidade());
-                $objMdPetUsuarioExternoAPIWS->setCep($contatoDTO->getStrCep());
-                $objMdPetUsuarioExternoAPIWS->setDataCadastro($usuarioExterno->getDthDataCadastroContato());
-
-                $ret[] = $objMdPetUsuarioExternoAPIWS;
+                $InfraException->lancarValidacao('CPF informado não registrado no cadastro de Usuário Externo do SEI.');
 
             }
 
-            return $ret;
+           return $ret;
 
         } catch (Exception $e) {
             throw new InfraException('Erro ao Consultar Usuário Externo.', $e);
@@ -571,7 +591,7 @@ class PeticionamentoWS extends MdPetUtilWS
 
                     if ($arrRepresentadoAtivo) {
 
-                        $cnpjCpf = is_null($item->getStrCNPJ()) ? InfraUtil::formatarCpf($item->getStrCPF()) : InfraUtil::formatarCnpj($item->getStrCNPJ());
+                        $cnpjCpf = empty($item->getStrCNPJ()) ? InfraUtil::formatarCpf($item->getStrCPF()) : InfraUtil::formatarCnpj($item->getStrCNPJ());
 
                         $mdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
                         $objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
@@ -623,6 +643,8 @@ class PeticionamentoWS extends MdPetUtilWS
                         }
 
                         $objMdPetRepresentante = new MdPetRepresentanteAPIWS();
+	
+	                    $objMdPetRepresentante->setIdVinculoRepresentante($item->getNumIdMdPetVinculoRepresent());
 
                         if(!empty($item->getNumIdContato())){
 
@@ -635,7 +657,7 @@ class PeticionamentoWS extends MdPetUtilWS
                             $arrContatoVincDTO = (new ContatoRN())->consultarRN0324($contatoVincDTO);
 
                             if($arrContatoVincDTO){
-                                $objMdPetRepresentante->setNome($arrContatoVincDTO->getStrNome());
+	                            $objMdPetRepresentante->setNome($arrContatoVincDTO->getStrNome());
                                 $objMdPetRepresentante->setCpf(InfraUtil::formatarCpf($arrContatoVincDTO->getDblCpf()));
                                 $objMdPetRepresentante->setEmail($arrContatoVincDTO->getStrEmail());
                             }
@@ -653,6 +675,7 @@ class PeticionamentoWS extends MdPetUtilWS
                         }
 
                         $objMdPetRepresentado = new MdPetRepresentadoAPIWS();
+	                    $objMdPetRepresentado->setIdVinculoRepresentante($item->getNumIdMdPetVinculoRepresent());
                         $objMdPetRepresentado->setCnpjCpf($cnpjCpf);
                         $objMdPetRepresentado->setRazaoSocial($item->getStrRazaoSocialNomeVinc());
                         $objMdPetRepresentado->setDataLimite($dataLimite);
@@ -776,7 +799,7 @@ class PeticionamentoWS extends MdPetUtilWS
         try {
 
             $pagina = $pagina ? $pagina : 1;
-            $qtdePorPagina = 1000;
+            $qtdePorPagina = 10;
             $this->validarPagina($pagina);
 
             InfraDebug::getInstance()->setBolLigado(false);
@@ -838,6 +861,7 @@ class PeticionamentoWS extends MdPetUtilWS
 
                         $objMdPetRepresentante = new MdPetListarRepresentantesAPIWS();
 
+                        $objMdPetRepresentante->setIdVinculoRepresentante($item->getNumIdMdPetVinculoRepresent());
                         $objMdPetRepresentante->setTipoVinculo($item->getStrTpVinc());
 
                         if($item->getStrTpVinc() == 'J'){
@@ -872,190 +896,6 @@ class PeticionamentoWS extends MdPetUtilWS
             throw new InfraException('Erro Listando Representações.', $e);
         }
     }
-
-//    public function listarRepresentantesPessoaJuridicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
-//    {
-//        try {
-//
-//            $pagina = $pagina ? $pagina : 1;
-//            $qtdePorPagina = 1000;
-//            $this->validarPagina($pagina);
-//
-//            InfraDebug::getInstance()->setBolLigado(false);
-//            InfraDebug::getInstance()->setBolDebugInfra(false);
-//            InfraDebug::getInstance()->limpar();
-//            SessaoSEI::getInstance(false);
-//
-//            $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-//            $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-//            $mdPetVincRepresentantDTO->setStrCNPJ(null, InfraDTO::$OPER_DIFERENTE);
-//
-//            if (!empty($staSituacao)) {
-//                $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
-//            }
-//
-//            $mdPetVincRepresentantDTO->retNumIdContatoVinc();
-//            $mdPetVincRepresentantDTO->retNumIdContato();
-//            $mdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
-//            $mdPetVincRepresentantDTO->retStrStaEstado();
-//            $mdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
-//            $mdPetVincRepresentantDTO->retStrCNPJ();
-//            $mdPetVincRepresentantDTO->retStrCPF();
-//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
-//            $mdPetVincRepresentantDTO->retDthDataLimite();
-//            $mdPetVincRepresentantDTO->retStrStaAbrangencia();
-//            $mdPetVincRepresentantDTO->retStrStaEstado();
-//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
-//            $mdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
-//            $mdPetVincRepresentantDTO->retStrEmail();
-//
-//            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
-//            $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
-//
-//            // caso a pagina seja -1 não realiza a paginação
-//            if ($pagina !== '-1') {
-//                $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
-//                $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
-//            }
-//
-//            $arrRepres = $mdPetVincRepresentantRN->listar($mdPetVincRepresentantDTO);
-//            $this->validarPaginaVazia($arrRepres, $pagina);
-//
-//            $ret = array();
-//            if ($arrRepres) {
-//                foreach ($arrRepres as $item) {
-//                    $contatoRN = new ContatoRN();
-//                    $contatoDTO = new ContatoDTO();
-//                    $contatoDTO->setNumIdContato($item->getNumIdContato());
-//                    $contatoDTO->retStrNome();
-//                    $contatoDTO->retDblCpf();
-//                    $contatoDTO->retStrEmail();
-//                    $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
-//
-//                    if ($arrContatoDTO) {
-//                        $dataLimite = (empty($item->getDthDataLimite()) ? '' : $item->getDthDataLimite());
-//
-//                        $arrPoderLegal = $this->recuperarPoderLegal($item->getNumIdMdPetVinculoRepresent());
-//                        $arrProtocolo = $this->recuperarProtocoloFormatado($item->getNumIdMdPetVinculoRepresent());
-//
-//                        $objMdPetRepresentante = new MdPetListarRepresentantesAPIWS();
-//                        $objMdPetRepresentante->setCnpjRepresentado(InfraUtil::formatarCnpj($item->getStrCNPJ()));
-//                        $objMdPetRepresentante->setRazaoSocialRepresentado($item->getStrRazaoSocialNomeVinc());
-//                        $objMdPetRepresentante->setCpfRepresentante(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
-//                        $objMdPetRepresentante->setNomeRepresentante($arrContatoDTO->getStrNome());
-//                        $objMdPetRepresentante->setEmailRepresentante($arrContatoDTO->getStrEmail());
-//                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
-//                        $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
-//                        $objMdPetRepresentante->setDataLimite($dataLimite);
-//                        $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
-//                        $objMdPetRepresentante->setTipoPoderesLegais($arrPoderLegal);
-//                        $ret[] = $objMdPetRepresentante;
-//                    }
-//                }
-//            }
-//
-//            $objMdPetRetornoListarUsuarioExternoAPIWS = new MdPetRetornoPaginadoAPIWS();
-//            $objMdPetRetornoListarUsuarioExternoAPIWS->setPagina($pagina);
-//            $objMdPetRetornoListarUsuarioExternoAPIWS->setTotalPaginas($this->calcularTotalPaginas($totalRegistros, $qtdePorPagina));
-//            $objMdPetRetornoListarUsuarioExternoAPIWS->setListaItens($ret);
-//            $retorno = array($objMdPetRetornoListarUsuarioExternoAPIWS);
-//
-//            return $retorno;
-//        } catch (Exception $e) {
-//            throw new InfraException('Erro Listando Representações de Pessoa Jurídica.', $e);
-//        }
-//    }
-//
-//    public function listarRepresentantesPessoaFisicaMonitorado($siglaSistema, $identificacaoServico, $staSituacao, $pagina)
-//    {
-//        try {
-//
-//            $pagina = $pagina ? $pagina : 1;
-//            $qtdePorPagina = 1000;
-//            $this->validarPagina($pagina);
-//
-//            InfraDebug::getInstance()->setBolLigado(false);
-//            InfraDebug::getInstance()->setBolDebugInfra(false);
-//            InfraDebug::getInstance()->limpar();
-//            SessaoSEI::getInstance(false);
-//
-//            $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-//            $mdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-//            $mdPetVincRepresentantDTO->setStrCPF(null, InfraDTO::$OPER_DIFERENTE);
-//
-//            if (!empty($staSituacao)) {
-//                $mdPetVincRepresentantDTO->setStrStaEstado($staSituacao);
-//            }
-//
-//            $mdPetVincRepresentantDTO->retNumIdContatoVinc();
-//            $mdPetVincRepresentantDTO->retNumIdContato();
-//            $mdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
-//            $mdPetVincRepresentantDTO->retStrStaEstado();
-//            $mdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
-//            $mdPetVincRepresentantDTO->retStrCPF();
-//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
-//            $mdPetVincRepresentantDTO->retDthDataLimite();
-//            $mdPetVincRepresentantDTO->retStrStaAbrangencia();
-//            $mdPetVincRepresentantDTO->retStrStaEstado();
-//            $mdPetVincRepresentantDTO->retStrTipoRepresentante();
-//            $mdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
-//            $mdPetVincRepresentantDTO->retStrEmail();
-//
-//            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD(BancoSEI::getInstance());
-//            $totalRegistros = $objMdPetVincRepresentantBD->contar($mdPetVincRepresentantDTO);
-//
-//            // caso a pagina seja -1 não realiza a paginação
-//            if ($pagina !== '-1') {
-//                $mdPetVincRepresentantDTO->setNumMaxRegistrosRetorno($qtdePorPagina);
-//                $mdPetVincRepresentantDTO->setNumPaginaAtual($pagina - 1 );
-//            }
-//
-//            $arrRepres = $mdPetVincRepresentantRN->listar($mdPetVincRepresentantDTO);
-//            $this->validarPaginaVazia($arrRepres, $pagina);
-//
-//            $ret = array();
-//            if ($arrRepres) {
-//                foreach ($arrRepres as $item) {
-//                    $contatoRN = new ContatoRN();
-//                    $contatoDTO = new ContatoDTO();
-//                    $contatoDTO->setNumIdContato($item->getNumIdContato());
-//                    $contatoDTO->retStrNome();
-//                    $contatoDTO->retDblCpf();
-//                    $contatoDTO->retStrEmail();
-//                    $arrContatoDTO = $contatoRN->consultarRN0324($contatoDTO);
-//
-//                    if ($arrContatoDTO) {
-//                        $dataLimite = (empty($item->getDthDataLimite()) ? '' : $item->getDthDataLimite());
-//
-//                        $arrPoderLegal = $this->recuperarPoderLegal($item->getNumIdMdPetVinculoRepresent());
-//                        $arrProtocolo = $this->recuperarProtocoloFormatado($item->getNumIdMdPetVinculoRepresent());
-//                        $objMdPetRepresentante = new MdPetListarRepresentantesAPIWS();
-//                        $objMdPetRepresentante->setCpfRepresentado(InfraUtil::formatarCpf($item->getStrCPF()));
-//                        $objMdPetRepresentante->setNomeRepresentado($item->getStrRazaoSocialNomeVinc());
-//                        $objMdPetRepresentante->setCpfRepresentante(InfraUtil::formatarCpf($arrContatoDTO->getDblCpf()));
-//                        $objMdPetRepresentante->setNomeRepresentante($arrContatoDTO->getStrNome());
-//                        $objMdPetRepresentante->setEmailRepresentante($arrContatoDTO->getStrEmail());
-//                        $objMdPetRepresentante->setStaSituacao($item->getStrStaEstado());
-//                        $objMdPetRepresentante->setStaTipoRepresentacao($item->getStrTipoRepresentante());
-//                        $objMdPetRepresentante->setDataLimite($dataLimite);
-//                        $objMdPetRepresentante->setProcessosAbrangencia($arrProtocolo);
-//                        $objMdPetRepresentante->setTipoPoderesLegais($arrPoderLegal);
-//                        $ret[] = $objMdPetRepresentante;
-//                    }
-//                }
-//            }
-//
-//            $objMdPetRetornoListarUsuarioExternoAPIWS = new MdPetRetornoPaginadoAPIWS();
-//            $objMdPetRetornoListarUsuarioExternoAPIWS->setPagina($pagina);
-//            $objMdPetRetornoListarUsuarioExternoAPIWS->setTotalPaginas($this->calcularTotalPaginas($totalRegistros, $qtdePorPagina));
-//            $objMdPetRetornoListarUsuarioExternoAPIWS->setListaItens($ret);
-//            $retorno = array($objMdPetRetornoListarUsuarioExternoAPIWS);
-//
-//            return $retorno;
-//        } catch (Exception $e) {
-//            throw new InfraException('Erro Listando Representações de Pessoa Física.', $e);
-//        }
-//    }
 
     private function calcularTotalPaginas($totalRegistros, $qtdePorPagina)
     {

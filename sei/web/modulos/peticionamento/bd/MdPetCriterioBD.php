@@ -16,4 +16,3 @@ class MdPetCriterioBD extends InfraBD {
   }
 
 }
-?>

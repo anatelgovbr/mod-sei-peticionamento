@@ -16,4 +16,3 @@ class MdPetHipoteseLegalBD extends InfraBD {
   }
 
 }
-?>

@@ -70,7 +70,7 @@ class MdPetVinculoRN extends InfraRN {
     try {
 
       //Valida Permissao
-      SessaoSEI::getInstance()->validarPermissao('md_pet_vinculacao_alterar');
+//      SessaoSEI::getInstance()->validarPermissao('md_pet_vinculacao_alterar');
 
       //Regras de Negocio
       $objInfraException = new InfraException();

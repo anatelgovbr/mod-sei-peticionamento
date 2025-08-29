@@ -11,7 +11,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetCriterioRN extends InfraRN
 {
 
-    //Tipos de Nível de Acesso
+    //Tipos de NÃ­vel de Acesso
     public static $TIPO_NA_PADRAO = 'P';
     public static $TIPO_NA_USUARIO_PODE_INDICAR = 'I';
 
@@ -128,7 +128,7 @@ class MdPetCriterioRN extends InfraRN
             
             $objInfraException = new InfraException();
 
-            // Adiciona valor padrão para o campo SinIntercorrenteSigiloso caso o mesmo nao esteja presente no objeto
+            // Adiciona valor padrÃ£o para o campo SinIntercorrenteSigiloso caso o mesmo nao esteja presente no objeto
             if(!$objMdPetCriterioDTO->isSetStrSinIntercorrenteSigiloso()){
                 $objMdPetCriterioDTO->setStrSinIntercorrenteSigiloso('S');
             }
@@ -231,7 +231,7 @@ class MdPetCriterioRN extends InfraRN
             }
 
         } catch(Exception $e) {
-            throw new InfraException ('Erro desativando Critério Intercorrente Peticionamento.', $e );
+            throw new InfraException ('Erro desativando CritÃ©rio Intercorrente Peticionamento.', $e );
         }
     }
 
@@ -248,7 +248,7 @@ class MdPetCriterioRN extends InfraRN
     {
 
         try {
-            // TODO Ajustar para não deletar e cadastrar, apenas alterar
+            // TODO Ajustar para nÃ£o deletar e cadastrar, apenas alterar
             //SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_excluir', __METHOD__, $arrMdPetCriterioDTO);
             $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
             for($i = 0; $i < count($arrMdPetCriterioDTO); $i ++) {
@@ -285,26 +285,26 @@ class MdPetCriterioRN extends InfraRN
         $criterioIntercorrentePeticionamentoCount = (is_array($arrObjCriterioIntercorrentePeticionamentoValidarDTO) ? count($arrObjCriterioIntercorrentePeticionamentoValidarDTO) : 0);
         if ($criterioIntercorrentePeticionamentoCount > 0 &&
             $objMdPetCriterioDTO->getStrSinCriterioPadrao() == $arrObjCriterioIntercorrentePeticionamentoValidarDTO->getStrSinCriterioPadrao()){
-            $objInfraException->adicionarValidacao('Tipo de Processo já possui Critério Intercorrente associado.');
+            $objInfraException->adicionarValidacao('Tipo de Processo jÃ¡ possui CritÃ©rio Intercorrente associado.');
         }
 
         $valorParametroHipoteseLegal = $this->_retornaValorParametroHipoteseLegal();
         //Tipo de Processo
         if (InfraString::isBolVazia($objMdPetCriterioDTO->getNumIdTipoProcedimento())) {
-            $objInfraException->adicionarValidacao('Tipo de Processo Associado não informado.');
+            $objInfraException->adicionarValidacao('Tipo de Processo Associado nÃ£o informado.');
         }
 
         if (($objMdPetCriterioDTO->getStrStaNivelAcesso() == 'S' && InfraString::isBolVazia($objMdPetCriterioDTO->getStrStaNivelAcesso()))) {
-            $objInfraException->adicionarValidacao('Nível de Acesso não informado.');
+            $objInfraException->adicionarValidacao('NÃ­vel de Acesso nÃ£o informado.');
             //se informar nivel de acesso E o nivel for restrito ou sigiloso, PRECISA informar hipotese legal padrao
         } else if ($objMdPetCriterioDTO->getStrStaNivelAcesso() == 'S' && $objMdPetCriterioDTO->getStrStaNivelAcesso() == ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0') {
 
             if(! in_array($objMdPetCriterioDTO->getStrStaNivelAcesso(), array('I', 'P'))){
-                $objInfraException->adicionarValidacao('Nível de Acesso divergente.');
+                $objInfraException->adicionarValidacao('NÃ­vel de Acesso divergente.');
             }
 
             if (InfraString::isBolVazia($objMdPetCriterioDTO->getNumIdHipoteseLegal())) {
-                $objInfraException->adicionarValidacao('Hipótese legal não informada.');
+                $objInfraException->adicionarValidacao('HipÃ³tese legal nÃ£o informada.');
             }
         }
 
@@ -323,8 +323,8 @@ class MdPetCriterioRN extends InfraRN
     private function _validarTipoProcedimentoComAssunto(MdPetCriterioDTO $objMdPetCriterioDTO, InfraException $objInfraException){
 
         //VALIDA NOVA REGRA ADICIONADA
-        // somente aceita tipo de processo que na parametrização do SEI tenha
-        //indicação de pelo menos uma sugestao de assunto
+        // somente aceita tipo de processo que na parametrizaÃ§Ã£o do SEI tenha
+        //indicaÃ§Ã£o de pelo menos uma sugestao de assunto
 
         $relTipoProcedimentoDTO = new RelTipoProcedimentoAssuntoDTO();
         $relTipoProcedimentoDTO->retTodos();
@@ -334,7 +334,7 @@ class MdPetCriterioRN extends InfraRN
         $arrLista = $relTipoProcedimentoRN->listarRN0192( $relTipoProcedimentoDTO );
 
         if( !is_array( $arrLista ) || count( $arrLista ) == 0 ){
-            $msg = "Por favor informe um tipo de processo que na parametrização do SEI tenha indicação de pelo menos uma sugestão de assunto.";
+            $msg = "Por favor informe um tipo de processo que na parametrizaÃ§Ã£o do SEI tenha indicaÃ§Ã£o de pelo menos uma sugestÃ£o de assunto.";
             $objInfraException->adicionarValidacao ($msg);
         }
     }
@@ -397,7 +397,7 @@ class MdPetCriterioRN extends InfraRN
 
         if($this->contar($objMdPetCriterioPadraoDTO) == 0) {
             $objInfraException = new InfraException();
-            $objInfraException->lancarValidacao('Nenhum critério para Intercorrente foi encontrado para o Tipo de Processo informado.');
+            $objInfraException->lancarValidacao('Nenhum critÃ©rio para Intercorrente foi encontrado para o Tipo de Processo informado.');
         }else{
             $objMdPetCriterioPadraoDTO->setNumMaxRegistrosRetorno(1);
             return $this->consultar($objMdPetCriterioPadraoDTO);
@@ -407,38 +407,31 @@ class MdPetCriterioRN extends InfraRN
     protected function retornarCriterioPorTipoProcessoConectado($arrParametro)
     {
         try {
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_consultar', __METHOD__, $objMdPetCriterioDTO);
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_consultar', __METHOD__);
 
-            $isNovoRelacionado = false;
-            $idTpProcedimento = $arrParametro['id_tipo_procedimento'];
-            $isIntercorrente = $arrParametro['isRespostaIntercorrente'];
+            $isNovoRelacionado  = false;
+            $idTpProcedimento   = $arrParametro['id_tipo_procedimento'];
+            $isIntercorrente    = $arrParametro['isRespostaIntercorrente'];
             $staEstadoProtocolo = $arrParametro['sta_estado_protocolo'];
 
             $idsEstadosProcessosImpedidos = array(ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO, ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO);
 
-            //Se o protocolo do processo está com estado BLOQUEADO ou SOBRESTADO é novo relacionado
+            //Se o protocolo do processo estÃ¡ com estado BLOQUEADO ou SOBRESTADO Ã© novo relacionado
             if (in_array($staEstadoProtocolo, $idsEstadosProcessosImpedidos)) {
-                $isNovoRelacionado = true;
+            	
+                return $this->_validarRetornarExistenciaCriterioPadrao();
+            
             } else {
 
-                //Se o protocolo está com outro estado será utilizado o Critério para Intercorrente Configurado(quando não for RESPOSTA)
+                //Se o protocolo estÃ¡ com outro estado serÃ¡ utilizado o CritÃ©rio para Intercorrente Configurado(quando nÃ£o for RESPOSTA)
                 if ($isIntercorrente) {
                     $objCriterioConfiguradoDTO = $this->_getCriterioTipoDeProcessoValidado($idTpProcedimento);
+	                //Se NÃƒO existe critÃ©rio intercorrente configurado para o tipo de processo
+	                //ou se for resposta da intimaÃ§Ã£o deve realizar o processo em novo relacionado
+	                return (!is_null($objCriterioConfiguradoDTO)) ? $objCriterioConfiguradoDTO : $this->_validarRetornarExistenciaCriterioPadrao();
                 }
-
-                //Se NÃO existe critério intercorrente configurado para o tipo de processo
-                //ou se for resposta da intimação deve realizar o processo em novo relacionado
-                if (is_null($objCriterioConfiguradoDTO)) {
-                    $isNovoRelacionado = true;
-                }
+                
             }
-
-            if ($isNovoRelacionado) {
-                $objCriterioPadraoDTO = $this->_validarRetornarExistenciaCriterioPadrao();
-                return $objCriterioPadraoDTO;
-            }
-
-            return $objCriterioConfiguradoDTO;
 
         } catch (Exception $e) {
             throw new InfraException('Erro consultando', $e);
@@ -452,7 +445,7 @@ class MdPetCriterioRN extends InfraRN
 
         SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_consultar', __METHOD__, $objMdPetCriterioDTO);
 
-        // Verifica se o processo possui critério intercorrente cadastrado
+        // Verifica se o processo possui critÃ©rio intercorrente cadastrado
         $objMdPetCriterioDTO->retTodos();
         $objMdPetCriterioDTO->setNumIdTipoProcedimento($idTpProcedimento);
         $objMdPetCriterioDTO->setStrSinCriterioPadrao($padrao);

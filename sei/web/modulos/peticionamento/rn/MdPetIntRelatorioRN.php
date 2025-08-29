@@ -58,6 +58,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $objMdPetIntRelDestDTO->retNumIdContato();
         $objMdPetIntRelDestDTO->retStrNomeContato();
         $objMdPetIntRelDestDTO->retDthDataAceite();
+        $objMdPetIntRelDestDTO->retNumIdMdPetAceite();
         $objMdPetIntRelDestDTO->retNumIdUnidade();
         $objMdPetIntRelDestDTO->retStrSiglaUnidadeIntimacao();
         $objMdPetIntRelDestDTO->retStrDescricaoUnidadeIntimacao();
@@ -82,7 +83,12 @@ class MdPetIntRelatorioRN extends InfraRN {
     }
 
     public function _addFiltroListagem($objDTO){
-        
+    	
+    	// Número SEI do Documento Principal
+	    if(!empty($_POST['txtProtocoloPesquisa'])){
+		    $objDTO->setStrProtocoloFormatadoDocumento($_POST['txtProtocoloPesquisa']);
+	    }
+	    
         //Tipo de Intimação
         $arrTipoIntimacao = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnTpIntimacao']);
 
@@ -157,6 +163,10 @@ class MdPetIntRelatorioRN extends InfraRN {
 
         $objMdPetIntRelDestDTO->setStrSinPrincipalDoc('S');
         $objMdPetIntRelDestDTO = $this->_addFiltroListagem($objMdPetIntRelDestDTO);
+        
+	    $objMdPetIntRelDestDTO->retDblCnpjContato();
+	    $objMdPetIntRelDestDTO->retDblCpfContato();
+	    $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
 
         $arrObjDTO = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
 
@@ -175,6 +185,13 @@ class MdPetIntRelatorioRN extends InfraRN {
             $dataForm = !is_null($objDTO->getDthDataCadastro()) ? explode(' ', $objDTO->getDthDataCadastro()) : null;
             $dataForm = count($dataForm) > 0 ? $dataForm[0] : '';
             $objDTO->setDthDataCadastro($dataForm);
+	
+	        //Doc Principal
+	        $docFormat = $this->_getDocPrincipalFormatado($objDTO);
+	        $objDTO->setStrDocumentoPrincipal($docFormat);
+	        
+	        // Doc Aceite
+	        $objDTO->setStrDocumentoCertidaoAceite($objDTO->getStrDocumentoCertidaoAceite());
 
             //Data Cumprimento da Intimação
             $dataForm = !is_null($objDTO->getDthDataAceite()) ? explode(' ', $objDTO->getDthDataAceite()) : null;
@@ -214,10 +231,18 @@ class MdPetIntRelatorioRN extends InfraRN {
         if ($objDTO->getStrNumero()){
             $docFormat .= ' ' . $objDTO->getStrNumero() ;
         }
-        $docFormat    .= ' ('.$objDTO->getStrProtocoloFormatadoDocumento().')';
-
-        return $docFormat;
+	    $strLinkDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento='.$objDTO->getDblIdProtocolo());
+	    $docFormat    .= ' (<a href="'.$strLinkDocumento.'" class="ancoraPadraoAzul" target="_blank">'.$objDTO->getStrProtocoloFormatadoDocumento().'</a>)';
+		
+        return $objDTO->getStrProtocoloFormatadoDocumento();
     }
+	
+	private function _getDocCertidaoAceiteFormatado($objDTO){
+		//Documento Certidao Aceite Intimacao
+		$strLinkDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento='.$objDTO->getIdDocumentoCertidaoAceite());
+		$documentoCertidaoLincado = '<a href="'.$strLinkDocumento.'" class="ancoraPadraoAzul" target="_blank">'.$objDTO->getStrDocumentoCertidaoAceite().'</a>';
+		return $objDTO->getStrDocumentoCertidaoAceite();
+	}
 
     public function getQtdDadosPorSituacaoConectado(){
         $objDTO     = $this->retornaSelectsGrafico();

@@ -1,6 +1,6 @@
 <?
 /*
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 15/09/2008 - criado por marcio_db
 *
@@ -32,7 +32,7 @@ try {
   $idContato = isset($_GET['idContato']) ? $_GET['idContato'] : $_POST['hdnIdContato'];
   $numeroSEI = isset($_GET['numeroSEI']) ? $_GET['numeroSEI'] : $_POST['hdnNumeroSei'];
 
-  // VARI¡VEIS ADICIONADAS PARA PERMITIR A SUSPENS√O OU REATIVA«√O DE PROCURADORES
+  // VARI√ÅVEIS ADICIONADAS PARA PERMITIR A SUSPENS√ÉO OU REATIVA√á√ÉO DE PROCURADORES
   $idContatoProc = isset($_GET['idContatoProc']) ? $_GET['idContatoProc'] : $_POST['hdnIdContatoProc'];
   $idVinculoRepresent = isset($_GET['idVinculoRepresent']) ? $_GET['idVinculoRepresent'] : $_POST['hdnIdVinculoRepresent'];
   $strTipoVinculo = isset($_GET['strTipoVinculo']) ? $_GET['strTipoVinculo'] : $_POST['hdnStrTipoVinculo'];
@@ -167,7 +167,7 @@ try {
 	           $cep = $arrObjContatoDTO[0]->getStrCep();
 	           $logradouro = $arrObjContatoDTO[0]->getStrEndereco();
 	           $bairro = $arrObjContatoDTO[0]->getStrBairro();
-	           $_POST['hdnInformacaoPj'] = $razaoSocial.'±'.$nomeContato.'±±±'.$numero.'±'.$complemento.'±'.$cep.'±'.$logradouro.'±'.$bairro;
+	           $_POST['hdnInformacaoPj'] = $razaoSocial.'¬±'.$nomeContato.'¬±¬±¬±'.$numero.'¬±'.$complemento.'¬±'.$cep.'¬±'.$logradouro.'¬±'.$bairro;
             }
           }
 
@@ -257,16 +257,21 @@ try {
           
           $params['dados'] = $dados = $_POST;
 
-          // Manda para a funÁ„o encarregada dos procuradores:
+          // Manda para a fun√ß√£o encarregada dos procuradores:
           if(in_array($_POST['hdnStrTipoVinculo'], ['E', 'S', 'L']) && $_POST['hdnCascata'] == 'N'){
             $objMdPetVinculoRepresentRN->realizarProcessoSuspensaoRestabelecimentoProcurador($params);
           }
 
-          // Manda para a funÁ„o antiga, encarregada do respons·vel legal apenas se o checkbox 
-          // "TambÈm suspender os atuais Procuradores ativos" estiver marcado, suspendendo ou 
-          // restabelecendo tambÈm os procuradores:
+          // Manda para a fun√ß√£o antiga, encarregada do respons√°vel legal apenas se o checkbox 
+          // "Tamb√©m suspender os atuais Procuradores ativos" estiver marcado, suspendendo ou 
+          // restabelecendo tamb√©m os procuradores:
           if(in_array($_POST['hdnStrTipoVinculo'], ['L']) && $_POST['hdnCascata'] == 'S'){
             $objMdPetVinculoRepresentRN->realizarProcessoSuspensaoRestabelecimentoVinculo($params);
+          }
+
+          // Suspende Autorepresentacao e seus procuradores
+          if($_POST['hdnStrTipoVinculo'] == 'U'){
+            $objMdPetVinculoRepresentRN->suspensaoProcuracaoPFeAutorepresentacao($params['dados']);
           }
 
           $urlAssinada = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_adm_vinc_listar&acao_origem='.$_GET['acao']);
@@ -285,7 +290,7 @@ try {
       break;
 
     default:
-      throw new InfraException("AÁ„o '".$_GET['acao']."' n„o reconhecida.");
+      throw new InfraException("A√ß√£o '".$_GET['acao']."' n√£o reconhecida.");
   }
 
   $arrComandos = array();
@@ -369,7 +374,7 @@ function inicializar(){
   <?}*/?>
 
   <?/*if ($bolDocumentoNaoEncontrado){?>
-    alert('Documento n„o encontrado.');
+    alert('Documento n√£o encontrado.');
     return;
   <?}*/?>
 
@@ -413,7 +418,7 @@ function inicializar(){
     objAutoCompletarUsuario.prepararExecucao = function(){
 
       if (!infraSelectSelecionado(document.getElementById('selOrgao'))){
-        alert('Selecione um ”rg„o.');
+        alert('Selecione um √ìrg√£o.');
         document.getElementById('selOrgao').focus();
         return false;
       }
@@ -465,7 +470,7 @@ function inicializar(){
 function OnSubmitForm() {
 
   if (!infraSelectSelecionado(document.getElementById('selOrgao'))){
-    alert('Selecione um ”rg„o.');
+    alert('Selecione um √ìrg√£o.');
     document.getElementById('selOrgao').focus();
     return false;
   }
@@ -477,7 +482,7 @@ function OnSubmitForm() {
   }
 
   if (!infraSelectSelecionado(document.getElementById('selCargoFuncao'))){
-    alert('Selecione um Cargo/FunÁ„o.');
+    alert('Selecione um Cargo/Fun√ß√£o.');
     document.getElementById('selCargoFuncao').focus();
     return false;
   }
@@ -498,7 +503,7 @@ function trocarOrgaoUsuario(){
 <? if($bolPermiteAssinaturaLogin) { ?>
 function assinarSenha(){
   if (infraTrim(document.getElementById('pwdSenha').value)==''){
-    alert('Senha n„o informada.');
+    alert('Senha n√£o informada.');
     document.getElementById('pwdSenha').focus();
   }else{
     document.getElementById('hdnFormaAutenticacao').value = '<?=AssinaturaRN::$TA_SENHA?>';
@@ -559,7 +564,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div id="divOrgao" class="infraAreaDados">
                 <div class="form-group">
-                    <label id="lblOrgao" for="selOrgao" accesskey="r" class="infraLabelObrigatorio">”<span class="infraTeclaAtalho">r</span>g„o do Assinante:</label>
+                    <label id="lblOrgao" for="selOrgao" accesskey="r" class="infraLabelObrigatorio">√ì<span class="infraTeclaAtalho">r</span>g√£o do Assinante:</label>
                     <select id="selOrgao" name="selOrgao" onchange="trocarOrgaoUsuario();" class="infraSelect form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
                     <?=$strItensSelOrgaos?>
                     </select>
@@ -582,7 +587,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div id="divCargoFuncao" class="infraAreaDados">
                 <div class="form-group">
-                    <label id="lblCargoFuncao" for="selCargoFuncao" accesskey="F" class="infraLabelObrigatorio">Cargo / <span class="infraTeclaAtalho">F</span>unÁ„o:</label>
+                    <label id="lblCargoFuncao" for="selCargoFuncao" accesskey="F" class="infraLabelObrigatorio">Cargo / <span class="infraTeclaAtalho">F</span>un√ß√£o:</label>
                     <select id="selCargoFuncao" name="selCargoFuncao" class="infraSelect form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
                     <?=$strItensSelCargoFuncao?>
                     </select>
@@ -604,7 +609,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
             <? }
                 if($bolPermiteAssinaturaCertificado) { ?>
                 <label id="lblCertificadoDigital" onclick="tratarCertificadoDigital();" accesskey="" for="optCertificadoDigital" class="infraLabelRadio infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=((!$bolPermiteAssinaturaLogin)?(!$bolAutenticacao?'Assinar com ':'Autenticar com '):'')?>Certificado Digital</label>&nbsp;
-                <div id="divAjudaAssinaturaDigital"><a id="ancAjudaAssinaturaDigital" href="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao=assinatura_digital_ajuda&acao_origem='.$_GET['acao'])?>" target="janAjudaAssinaturaDigital" title="InstruÁıes para ConfiguraÁ„o da Assinatura Digital" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><img src="<?=PaginaSEI::getInstance()->getDiretorioImagensLocal()?>/sei_informacao.png" class="infraImg" /></a></div>
+                <div id="divAjudaAssinaturaDigital"><a id="ancAjudaAssinaturaDigital" href="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao=assinatura_digital_ajuda&acao_origem='.$_GET['acao'])?>" target="janAjudaAssinaturaDigital" title="Instru√ß√µes para Configura√ß√£o da Assinatura Digital" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><img src="<?=PaginaSEI::getInstance()->getDiretorioImagensLocal()?>/sei_informacao.png" class="infraImg" /></a></div>
             <? } ?>
             </div>
         </div>

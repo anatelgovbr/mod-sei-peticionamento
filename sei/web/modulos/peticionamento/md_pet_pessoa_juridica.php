@@ -34,9 +34,9 @@ try {
 
     $arrComandos = [];
 	$arrComandos[] = '<input type="button" id="btnToggleLote" value="Selecionar em Lote" class="infraButton btnToggleLote" style="cursor: pointer" />';
-    $arrComandos[] = '<button type="submit" accesskey="P" id="sbmPesquisar" value="Pesquisar" class="infraButton submitSearchForm"><span class="infraTeclaAtalho">P</span>esquisar</button>';
-
-    if ($_GET['acao'] == 'md_pet_pessoa_juridica'){
+	$arrComandos[] = '<button type="submit" accesskey="P" id="sbmPesquisar" value="Pesquisar" class="infraButton submitSearchForm"><span class="infraTeclaAtalho">P</span>esquisar</button>';
+	
+	if ($_GET['acao'] == 'md_pet_pessoa_juridica'){
         $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
         $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="btnFecharSelecao" s  onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
     }
@@ -459,11 +459,7 @@ PaginaSEI::getInstance()->abrirAreaDados();
 
             let i = 0;
             let toTransport = $('#foundCnpjs').val().split('\n');
-            let contextChanges = window.top.document.getElementById('ifrVisualizacao').contentWindow.document;
-
-            if(contextChanges == null){
-                contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
-            }
+            let contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
 
             while (i < toTransport.length) {
 

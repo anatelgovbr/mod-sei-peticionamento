@@ -17,4 +17,3 @@ class MdPetIntProtDisponivelBD extends InfraBD {
     }
 
 }
-?>

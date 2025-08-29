@@ -91,32 +91,13 @@ class MdPetIntegracaoRN extends InfraRN
             $xml .= '</dados-pj>';
             return $xml;
         }
-
-        $mdPetIntegracaoRN = new MdPetIntegracaoRN();
-        $mdPetIntegracaoDTO = new MdPetIntegracaoDTO();
-        $mdPetIntegracaoDTO->retNumIdMdPetIntegracao();
-        $mdPetIntegracaoDTO->retStrEnderecoWsdl();
-        $mdPetIntegracaoDTO->retStrOperacaoWsdl();
-	    $mdPetIntegracaoDTO->retStrCodReceitaSuspAuto();
-        $mdPetIntegracaoDTO->setNumIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
-        $mdPetIntegracaoDTO->setStrSinAtivo('S');
-
-        $objMdPetIntegracao = $mdPetIntegracaoRN->consultar($mdPetIntegracaoDTO);
+	
+	    $objMdPetIntegracao = $this->consultarIntegracaoPorIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
 
         $strUrlWebservice = $objMdPetIntegracao->getStrEnderecoWsdl();
         $strMetodoWebservice = $objMdPetIntegracao->getStrOperacaoWsdl();
-
-        $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice, 'wsdl');
-
-        $objUsuarioRN = new UsuarioRN();
-        $objUsuarioDTO = new UsuarioDTO();
-        $objUsuarioDTO->retDblCpfContato();
-        $objUsuarioDTO->retNumIdContato();
-        $objUsuarioDTO->setNumIdUsuario($dados['idUsuarioLogado']);
-
-        $arrObjUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-        $cpfUsuarioLogado = str_pad($arrObjUsuarioDTO->getDblCpfContato(), '11', '0', STR_PAD_LEFT);
-
+        
+        $cpfUsuarioLogado = $this->retornaCpfUsuarioLogado($dados['idUsuarioLogado']);
 
         //Recuperando meses - alterado
         $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
@@ -187,8 +168,9 @@ class MdPetIntegracaoRN extends InfraRN
             ];
 
         }
-
-        $consulta = $objMdPetSoapClienteRN->consultarWsdl($strMetodoWebservice, $parametro);
+        
+	    $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
+	    $consulta = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
 
 	    if (!empty($objMdPetIntegracao->getStrCodReceitaSuspAuto()) && in_array(intval($consulta['PessoaJuridica']['situacaoCadastral']['codigo']), explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto()))) {
             $xml .= "<success>false</success>\n";
@@ -333,6 +315,112 @@ class MdPetIntegracaoRN extends InfraRN
 
     }
 
+    protected function consultarCNPJReceitaWsResponsavelLegalConectado($cnpj)
+    {
+      
+        $objMdPetIntegracao = $this->consultarIntegracaoPorIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
+
+        if($objMdPetIntegracao){
+            $strUrlWebservice = $objMdPetIntegracao->getStrEnderecoWsdl();
+            $strMetodoWebservice = $objMdPetIntegracao->getStrOperacaoWsdl();
+
+            //Recuperando meses - alterado
+            $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
+            $objMdPetIntegParametroDTO->retStrValorPadrao();
+            $objMdPetIntegParametroDTO->retStrTpParametro();
+            $objMdPetIntegParametroDTO->retStrNome();
+            $objMdPetIntegParametroDTO->retStrNomeCampo();
+            $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao());
+            $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
+            $arrObjMdPetIntegParametroRN = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
+
+            if ($arrObjMdPetIntegParametroRN) {
+                $mes = 0;
+                $chaveMes = '';
+                foreach ($arrObjMdPetIntegParametroRN as $itemParam) {
+                    if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'mesesExpiraCache') {
+                        $mes = (int)$itemParam->getStrValorPadrao();
+                        $chaveMes = $itemParam->getStrNome();
+                    }
+                }
+
+                $parametro = [
+                  $strMetodoWebservice => [
+                    'cnpj' => str_pad($cnpj, '14', '0', STR_PAD_LEFT),
+                    'cpfUsuario' => 99999999999,
+                    $chaveMes => $mes,
+                    'origem' => 'SEI'
+                  ]
+                ];
+
+                $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
+                $retorno = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
+	            $codigoRetornado = isset($retorno['PessoaJuridica']['situacaoCadastral']['codigo']) ? $retorno['PessoaJuridica']['situacaoCadastral']['codigo'] : null;
+	
+	            $arrCodReceita = explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto());
+
+                if ($codigoRetornado && in_array($codigoRetornado,$arrCodReceita)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function consultarCPFReceitaWsResponsavelLegalConectado($cpf)
+    {
+
+        $objMdPetIntegracao = $this->consultarIntegracaoPorIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CPF_RECEITA_FEDERAL);
+
+        if($objMdPetIntegracao){
+            $strUrlWebservice = $objMdPetIntegracao->getStrEnderecoWsdl();
+            $strMetodoWebservice = $objMdPetIntegracao->getStrOperacaoWsdl();
+
+            //Recuperando meses - alterado
+            $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
+            $objMdPetIntegParametroDTO->retStrValorPadrao();
+            $objMdPetIntegParametroDTO->retStrTpParametro();
+            $objMdPetIntegParametroDTO->retStrNome();
+            $objMdPetIntegParametroDTO->retStrNomeCampo();
+            $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao());
+            $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
+            $arrObjMdPetIntegParametroRN = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
+
+            if ($arrObjMdPetIntegParametroRN) {
+                $mes = 0;
+                $chaveMes = '';
+                foreach ($arrObjMdPetIntegParametroRN as $itemParam) {
+                    if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'mesesExpiraCache') {
+                        $mes = (int)$itemParam->getStrValorPadrao();
+                        $chaveMes = $itemParam->getStrNome();
+                    }
+                }
+
+                $parametro = [
+                  $strMetodoWebservice => [
+                    'cpf' => str_pad($cpf, '11', '0', STR_PAD_LEFT),
+                    'cpfUsuario' => 99999999999,
+                    $chaveMes => $mes,
+                    'origem' => 'SEI'
+                  ]
+                ];
+
+                $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
+                $retorno = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
+
+                $codigoRetornado = $retorno['PessoaFisica']['situacaoCadastral']['codigo'];
+
+                $arrCodReceita = explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto());
+
+                if ($codigoRetornado && in_array($codigoRetornado,$arrCodReceita)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     protected function inicializarObjInfraIBanco()
     {
@@ -857,35 +945,6 @@ class MdPetIntegracaoRN extends InfraRN
 
             $arrParametrosE = $_POST['selParametrosE'];
 
-//         if (count($arrParametrosE)){
-//
-//               $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
-//               $objMdPetIntegParametroDTO->setNumIdMdPetIntegParametro(null);
-//               $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
-//               $objMdPetIntegParametroDTO->setStrNome($_POST['selCachePrazoExpiracao']);
-//               $objMdPetIntegParametroDTO->setStrTpParametro('E');
-//               $objMdPetIntegParametroDTO->setStrValorPadrao($prazo);
-//               $objMdPetIntegParametroDTO->unSetStrNomeCampo();
-//
-//               $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
-//               $objMdPetIntegParametroDTO = $objMdPetIntegParametroRN->cadastrar($objMdPetIntegParametroDTO);
-//
-//         }
-
-
-//        if ($_POST['selCachePrazoExpiracao']!=''){
-//            $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
-//            $objMdPetIntegParametroDTO->setNumIdMdPetIntegParametro(null);
-//            $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
-//            $objMdPetIntegParametroDTO->setStrNome($_POST['selCachePrazoExpiracao']);
-//            $objMdPetIntegParametroDTO->setStrTpParametro('P');
-//            $objMdPetIntegParametroDTO->setStrValorPadrao($prazo);
-//            $objMdPetIntegParametroDTO->setStrNomeCampo('PrazoExpiracao');
-//
-//            $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
-//            $objMdPetIntegParametroDTO = $objMdPetIntegParametroRN->cadastrar($objMdPetIntegParametroDTO);
-//        }
-
             foreach ($arrParametros['paramentrosEntrada'] as $chaveEntrada => $valorEntrada) {
                 $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
                 $objMdPetIntegParametroDTO->setNumIdMdPetIntegParametro(null);
@@ -983,5 +1042,32 @@ class MdPetIntegracaoRN extends InfraRN
 
         return $xml;
 
+    }
+    
+    private function retornaCpfUsuarioLogado($idUsuarioLogado){
+	    
+    	$objUsuarioDTO = new UsuarioDTO();
+	    $objUsuarioDTO->retDblCpfContato();
+	    $objUsuarioDTO->retNumIdContato();
+	    $objUsuarioDTO->setNumIdUsuario($idUsuarioLogado);
+	    $arrObjUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+	    
+	    return str_pad($arrObjUsuarioDTO->getDblCpfContato(), '11', '0', STR_PAD_LEFT);
+	    
+    }
+
+    private function consultarIntegracaoPorIdMdPetIntegFuncionalid($IdMdPetIntegFuncionalid)
+    {
+        $mdPetIntegracaoRN = new MdPetIntegracaoRN();
+        $mdPetIntegracaoDTO = new MdPetIntegracaoDTO();
+        $mdPetIntegracaoDTO->retNumIdMdPetIntegracao();
+        $mdPetIntegracaoDTO->retStrEnderecoWsdl();
+        $mdPetIntegracaoDTO->retStrOperacaoWsdl();
+        $mdPetIntegracaoDTO->retDblNuVersao();
+        $mdPetIntegracaoDTO->retStrCodReceitaSuspAuto();
+        $mdPetIntegracaoDTO->setNumIdMdPetIntegFuncionalid($IdMdPetIntegFuncionalid);
+        $mdPetIntegracaoDTO->setStrSinAtivo('S');
+
+        return $mdPetIntegracaoRN->consultar($mdPetIntegracaoDTO);
     }
 }

@@ -3,28 +3,38 @@
     }
 
     function salvar() {
+
+        //verificar se √© uma autorepresentacao e possui procurador ativo
+        if (
+            document.getElementById('hdnStrTipoVinculo').value == 'U' &&
+            document.getElementById('hdnPossuiProcurador').value == 'false'
+        ) {
+            alert('N√£o √© poss√≠vel suspender um Autorepresentado sem procurador. Realize a opera√ß√£o na administra√ß√£o de Usu√°rios Externos.');
+            return false;
+        }
+
         if (document.getElementById('txtCnpj').value.trim().length == 0) {
-            alert('CNPJ n„o informado.');
+            alert('CNPJ n√£o informado.');
             return false;
         }
         if (document.getElementById('txtRazaoSocial').value.trim().length == 0) {
-            alert('Raz„o Social n„o informado.');
+            alert('Raz√£o Social n√£o informado.');
             return false;
         }
         if (document.getElementById('txtCpf').value.trim().length == 0) {
-            alert('CPF do Respons·vel Legal Cadastrado n„o informado.');
+            alert('CPF do Respons√°vel Legal Cadastrado n√£o informado.');
             return false;
         }
         if (document.getElementById('txtNome').value.trim().length == 0) {
-            alert('Nome do Respons·vel Legal Cadastrado n„o informado.');
+            alert('Nome do Respons√°vel Legal Cadastrado n√£o informado.');
             return false;
         }
         if (document.getElementById('txtNumeroSei').value.trim().length == 0) {
-            alert('N˙mero SEI da Justificativa n„o Informado.');
+            alert('N√∫mero SEI da Justificativa n√£o Informado.');
             return false;
         }
         if (document.getElementById('txtTipo').value.trim().length == 0) {
-            alert('N˙mero SEI da Justificativa n„o v·lido.');
+            alert('N√∫mero SEI da Justificativa n√£o v√°lido.');
             return false;
         }
         
@@ -38,7 +48,7 @@
         var numeroSEI = $.trim(document.getElementById('txtNumeroSei').value);
 
         if (numeroSEI == '') {
-            alert('Preencha o N˙mero SEI.');
+            alert('Preencha o N√∫mero SEI.');
             return false;
         } else {
             console.log('consultar');

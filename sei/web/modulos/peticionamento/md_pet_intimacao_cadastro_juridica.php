@@ -11,7 +11,10 @@ $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
 $objDocumentoDTO->retStrNomeSerie();
 $objDocumentoDTO->retStrNumero();
 $objDocumentoDTO->retNumIdSerie();
+$objDocumentoDTO->retNumIdTipoProcedimentoProcedimento();
+
 $objDocumentoDTO->setDblIdDocumento($idDocumento);
+
 $objDocumentoRN = new DocumentoRN();
 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
@@ -19,12 +22,9 @@ $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO-
 //  Buscar Intimações cadastradas.
 $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasJuridico($idDocumento);
 
-$objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
-$objMdPetIntPrazoTacitaDTO->setBolExclusaoLogica(false);
-$objMdPetIntPrazoTacitaDTO->retTodos();
+// Buscar o Prazo Tacita
+$objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $objDocumentoDTO->getNumIdTipoProcedimentoProcedimento() );
 
-$objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
-$objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
 $numNumPrazo = null;
 if ( !is_null( $objMdPetIntPrazoTacitaDTO ) ) {
     $numNumPrazo = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();

@@ -10,11 +10,28 @@
 
 class MdPetRepresentadoAPIWS
 {
-
-    private $CnpjCpf;
+	
+	private $IdVinculoRepresentante;
+	private $CnpjCpf;
     private $RazaoSocial;
     private $DataLimite;
     private $Representante;
+	
+	/**
+	 * @return mixed
+	 */
+	public function getIdVinculoRepresentante()
+	{
+		return $this->IdVinculoRepresentante;
+	}
+	
+	/**
+	 * @param mixed $Nome
+	 */
+	public function setIdVinculoRepresentante($IdVinculoRepresentante)
+	{
+		$this->IdVinculoRepresentante = $IdVinculoRepresentante;
+	}
 
     /**
      * @return mixed

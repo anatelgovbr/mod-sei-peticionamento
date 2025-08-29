@@ -1,6 +1,6 @@
 <?
 /**
-* ANATEL
+* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
 *
 * 08/12/2016 - criado por Marcelo Bezerra
 * 26/08/2024 - Atualização por gabrielg.colab - SPASSU

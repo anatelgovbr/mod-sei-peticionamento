@@ -17,4 +17,3 @@ class MdPetIntProtocoloBD extends InfraBD {
     }
 
 }
-?>

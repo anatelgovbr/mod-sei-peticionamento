@@ -15,7 +15,8 @@ class MdPetTipoProcessoRN extends InfraRN {
 	
 	public static $DOC_GERADO = 'G';
 	public static $DOC_EXTERNO = 'E';
-	
+	public static $DOC_FORMULARIO = 'F';
+
 	public static $UNIDADE_UNICA = 'U';
 	public static $UNIDADES_MULTIPLAS = 'M';
 	
@@ -341,11 +342,14 @@ class MdPetTipoProcessoRN extends InfraRN {
 
 		}
 
-		if (($objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'N' && $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'N')) {
+		if (($objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'N' && $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'N' && $objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'N' )) {
 			$objInfraException->adicionarValidacao('Documento Principal não informado.');
 		}
 		
-		if (($objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' || $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S')) {
+		if (
+		    ($objMdPetTipoProcessoDTO->getStrSinDocGerado() == 'S' || $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S') &&
+        $objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'N'
+    ) {
 			if (InfraString::isBolVazia ($objMdPetTipoProcessoDTO->getNumIdSerie())) {
 				$objInfraException->adicionarValidacao('Tipo de Documento principal não informada.');
 			}
@@ -507,6 +511,7 @@ class MdPetTipoProcessoRN extends InfraRN {
 		$arrIdUnidade = array_column($unidade_cidade, 'IdUnidade');
 
 		$arrIdsUnidade = $arrIdUnidade;
+		$unidades = [];
 
 		$arrUnidadesFiltradasNovo = array_unique($arrIdCidadeContato);
 
@@ -581,8 +586,8 @@ class MdPetTipoProcessoRN extends InfraRN {
 		}else{
 
 			$status = true;
-			foreach($unidades as $value) {
-				if($unidades[0] != $value) {
+			foreach($arrIdsUnidade as $value) {
+				if($arrIdsUnidade[0] != $value) {
 					$status = false;
 					break;
 				}
@@ -591,8 +596,8 @@ class MdPetTipoProcessoRN extends InfraRN {
 			//se todos os elementos são iguais, adiciona no array
 			if($status == true){
 
-				foreach ($unidades as $key => $value) {
-					array_push($arrIdsUnidade,$value);
+				foreach ($arrIdsUnidade as $key => $value) {
+					array_push($unidades, $value);
 				}
 
 			}else{

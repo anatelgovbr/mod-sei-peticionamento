@@ -81,8 +81,7 @@ class MdPetTpCtxContatoRN extends InfraRN {
 			
 			// Valida Permissao			
 		    $objTamanhoArquivoBD = new MdPetRelTpCtxContatoBD($this->getObjInfraIBanco());
-			$ret = $objTamanhoArquivoBD->consultar($objTamanhoArquivoDTO);			
-			return $ret;
+			return $objTamanhoArquivoBD->consultar($objDTO);
 			
 		} catch ( Exception $e ) {
 			throw new InfraException('Erro consultando Tipo de Interessado.', $e);

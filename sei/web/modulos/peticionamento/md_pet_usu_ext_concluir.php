@@ -25,7 +25,7 @@ try {
   //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
 
-  //preenche a combo Função
+  //preenche a combo FunÃ§Ã£o
   $objMdPetCargoRN = new MdPetCargoRN();
   $arrObjCargoDTO = $objMdPetCargoRN->listarDistintos();
   $strLinkAjaxVerificarSenha = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_assinatura');
@@ -44,7 +44,7 @@ try {
   	case 'peticionamento_usuario_externo_concluir':
 
 		$objMdPetProcessoRN = new MdPetProcessoRN();
-  		$strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
+  		$strTitulo = 'Concluir Peticionamento - Assinatura EletrÃ´nica';
 
   		if( isset( $_POST['pwdsenhaSEI'] ) ){
 
@@ -82,8 +82,12 @@ try {
 			$arrDadosProcessoComRecibo = $objMdPetProcessoRN->gerarProcedimento( $_POST );
 			$idRecibo = $arrDadosProcessoComRecibo[0]->getNumIdReciboPeticionamento();
 
+			//realizar classificacao da metas ODS - IA
+			if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno()){
+                PeticionamentoIntegracao::classificarMetaOds($arrDadosProcessoComRecibo[1]->getDblIdProcedimento());
+            }
 
-			// Temporários apagando
+			// TemporÃ¡rios apagando
 			$arquivos_enviados = array();
 			if( isset( $_POST['hdnDocPrincipal'] ) ){
 				$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocPrincipal']));
@@ -136,7 +140,7 @@ try {
   		break;
 
     default:
-      throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+      throw new InfraException("AÃ§Ã£o '".$_GET['acao']."' nÃ£o reconhecida.");
   }
 
 }catch(Exception $e){
@@ -190,13 +194,13 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
     <div class="row">
         <div class="col-12">
-            <p class="text-justify">A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
+            <p class="text-justify">A confirmaÃ§Ã£o de sua senha importa na aceitaÃ§Ã£o dos termos e condiÃ§Ãµes que regem o processo eletrÃ´nico, alÃ©m do disposto no credenciamento prÃ©vio, e na assinatura dos documentos nato-digitais e declaraÃ§Ã£o de que sÃ£o autÃªnticos os digitalizados, sendo responsÃ¡vel civil, penal e administrativamente pelo uso indevido. Ainda, sÃ£o de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservaÃ§Ã£o dos originais em papel de documentos digitalizados atÃ© que decaia o direito de revisÃ£o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferÃªncia; a realizaÃ§Ã£o por meio eletrÃ´nico de todos os atos e comunicaÃ§Ãµes processuais com o prÃ³prio UsuÃ¡rio Externo ou, por seu intermÃ©dio, com a entidade porventura representada; a observÃ¢ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados atÃ© as 23h59min59s do Ãºltimo dia do prazo, considerado sempre o horÃ¡rio oficial de BrasÃ­lia, independente do fuso horÃ¡rio em que se encontre; a consulta periÃ³dica ao SEI, a fim de verificar o recebimento de intimaÃ§Ãµes eletrÃ´nicas.</p>
         </div>
     </div>
     <div class="row">
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div class="form-group">
-                <label class="infraLabelObrigatorio">Usuário Externo:</label>
+                <label class="infraLabelObrigatorio">UsuÃ¡rio Externo:</label>
                 <input type="text" name="loginUsuarioExterno"
                     value="<?= PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()) ?>"
                     readonly="readonly" id="loginUsuarioExterno" class="infraText form-control" autocomplete="off" disabled />
@@ -206,9 +210,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <div class="row">
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div class="form-group">
-                <label class="infraLabelObrigatorio">Cargo/Função:</label>
+                <label class="infraLabelObrigatorio">Cargo/FunÃ§Ã£o:</label>
                 <select id="selCargo" name="selCargo" class="infraSelect form-control">
-                    <option value="">Selecione Cargo/Função</option>
+                    <option value="">Selecione Cargo/FunÃ§Ã£o</option>
                     <? foreach ($arrObjCargoDTO as $expressao => $cargo): ?>
                     <option value="<?= $cargo ?>" <?= $_POST['selCargo'] == $cargo ? 'selected="selected"' : '' ?>><?= $expressao ?></option>
                     <? endforeach ?>
@@ -263,7 +267,7 @@ function isValido(){
 	var senha = document.getElementById("pwdsenhaSEI").value;
 
 	if( cargo == ""){
-		alert('Favor informe o Cargo/Função.');
+		alert('Favor informe o Cargo/FunÃ§Ã£o.');
 		document.getElementById("selCargo").focus();
 		return false;
 	} else if( senha == ""){
@@ -374,13 +378,13 @@ function assinar(){
 			var hdnListaInteressadosIndicados = hdnSelInteressadosIndicados.value;
 
 			//caractere de quebra de linha
-			var arrHash = hdnListaInteressadosIndicados.split('¥');
+			var arrHash = hdnListaInteressadosIndicados.split('Â¥');
 		    var quantidadeRegistro = arrHash.length;
 
 			if( quantidadeRegistro == 0){
 
 				//caractere de quebra de coluna
-				var arrLocal = hdnListaInteressadosIndicados.split('±');
+				var arrLocal = hdnListaInteressadosIndicados.split('Â±');
 				var idContato = arrLocal[0];
 
 				if( selInteressadosSelecionadosTxt != ''){
@@ -393,7 +397,7 @@ function assinar(){
 
 				for(var i = 0; i < quantidadeRegistro ; i++ ){
 
-					var arrLocal = arrHash[i].split('±');
+					var arrLocal = arrHash[i].split('Â±');
 					var idContato = arrLocal[0];
 
 					if( selInteressadosSelecionadosTxt != ''){

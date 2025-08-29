@@ -45,13 +45,13 @@ foreach($arrDadosPlanilha as $linha => $dadosLinha){
 
 
 $dtHrAtual   = InfraData::getStrDataHoraAtual();
-$nomeArquivo = 'SEI - Intimações Eletrônicas - '.$dtHrAtual;
+$nomeArquivo = 'SEI - IntimaÃ§Ãµes EletrÃ´nicas - '.$dtHrAtual;
 
 $bordaCompleta = $primeiraPosition.':'.$ultimaPosition;
-$objPHPExcel->getActiveSheet()->getStyle('A1:I1')->getBorders()->getOutline()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-$objPHPExcel->getActiveSheet()->getStyle('A1:I1')->getFont()->setBold(true);
+$objPHPExcel->getActiveSheet()->getStyle('A1:K1')->getBorders()->getOutline()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+$objPHPExcel->getActiveSheet()->getStyle('A1:K1')->getFont()->setBold(true);
 $objPHPExcel->getActiveSheet()
-    ->getStyle('A1:I1')
+    ->getStyle('A1:K1')
     ->getFill()
     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
     ->getStartColor()
@@ -60,9 +60,9 @@ $objPHPExcel->getActiveSheet()
 $objPHPExcel->getActiveSheet()->getStyle($bordaCompleta)->getBorders()->getOutline()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 
 if(empty($arrObjDTO)){
-    $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A2:I2');
+    $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A2:K2');
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2', 'Nenhum registro encontrado.');
-    $objPHPExcel->getActiveSheet()->getStyle('A2:I2')->getBorders()->getOutline()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    $objPHPExcel->getActiveSheet()->getStyle('A2:K2')->getBorders()->getOutline()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 }
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');

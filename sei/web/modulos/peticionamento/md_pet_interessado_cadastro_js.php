@@ -179,11 +179,11 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
     function validarFormulario() {
 
-        //valida campo especificação
+        //valida campo especificaÃ§Ã£o
         var textoEspecificacao = document.getElementById("txtEspecificacao").value;
 
         if (textoEspecificacao == '') {
-            alert('Informe a especificação.');
+            alert('Informe a especificaÃ§Ã£o.');
             document.getElementById("txtEspecificacao").focus();
             return false;
         }
@@ -409,7 +409,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
             var mes = parseInt(data[1]) - 1;
             var horas = valorArray[1].split(':');
 
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : 00;
+            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
             var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
             return dataCompleta;
         }
@@ -434,10 +434,10 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         }
 
         if (interessado1 == '') {
-            alert('Informe se o Interessado é Pessoa Física ou Pessoa Jurídica.');
+            alert('Informe se o Interessado Ã© Pessoa FÃ­sica ou Pessoa JurÃ­dica.');
             return;
         } else if (interessado1 == 'pf' && interessado2 == '') {
-            alert('Informe se o Interessado Pessoa Física a ser cadastrado possui ou não Vinculação à Pessoa Jurídica.');
+            alert('Informe se o Interessado Pessoa FÃ­sica a ser cadastrado possui ou nÃ£o VinculaÃ§Ã£o Ã  Pessoa JurÃ­dica.');
             return;
         }
 
@@ -460,7 +460,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
             return;
 
         } else if (interessado1 == 'pj' && razaoSocial == '') {
-            alert('Informe a Razão Social.');
+            alert('Informe a RazÃ£o Social.');
             document.getElementById('txtRazaoSocial').focus();
             return;
         }
@@ -470,7 +470,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         var idContextoAjax = document.getElementById('hdnIdContextoContato');
 
         if (interessado1 == 'pf' && interessado2 == '1' && (pjVinculada == '' || idContextoAjax == null || idContextoAjax.value == '')) {
-            alert('Informe a Razão Social da Pessoa Jurídica vinculada.');
+            alert('Informe a RazÃ£o Social da Pessoa JurÃ­dica vinculada.');
             document.getElementById('txtPjVinculada').focus();
             return;
         }
@@ -490,17 +490,17 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
             return;
         }
 
-        //validar se o CPF ou o CNPJ preenchidos são válidos
+        //validar se o CPF ou o CNPJ preenchidos sÃ£o vÃ¡lidos
         if (document.getElementById('txtCNPJ').value != "" && !infraValidarCnpj(infraTrim(document.getElementById('txtCNPJ').value))) {
 
-            alert('CNPJ inválido.');
+            alert('CNPJ invÃ¡lido.');
             document.getElementById('txtCNPJ').focus();
             return;
         }
 
         if (document.getElementById('txtCPF').value != "" && !infraValidarCpf(infraTrim(document.getElementById('txtCPF').value))) {
 
-            alert('CPF inválido.');
+            alert('CPF invÃ¡lido.');
             document.getElementById('txtCPF').focus();
             return;
         }
@@ -518,7 +518,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         var orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
 
         if (interessado1 == 'pf' && orgaoExpedidor == '') {
-            alert('Informe o Órgão Expedidor do RG.');
+            alert('Informe o Ã“rgÃ£o Expedidor do RG.');
             document.getElementById('orgaoExpedidor').focus();
             return;
         }
@@ -562,7 +562,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         //email
         if (document.getElementById('email').value != "" && !infraValidarEmail(infraTrim(document.getElementById('email').value))) {
 
-            alert('E-mail inválido.');
+            alert('E-mail invÃ¡lido.');
             document.getElementById('email').focus();
             return false;
 
@@ -572,7 +572,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         var endereco = document.getElementById('endereco').value;
 
         if (endereco == '') {
-            alert('Informe o Endereço.');
+            alert('Informe o EndereÃ§o.');
             document.getElementById('endereco').focus();
             return;
         }

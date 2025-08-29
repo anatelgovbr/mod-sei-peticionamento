@@ -2,22 +2,22 @@
     <table style="font: bold 12pt Calibri; text-align: justify; word-wrap: normal; text-indent: 0;width: 90%; margin: 0 auto; border: none;">
         <tbody>
         <tr style="font: bold 12pt Calibri; height: 1.5em; padding-top: 6px;">
-            <td colspan=2>Dados da VinculaÁ„o de Respons·vel Legal a Pessoa JurÌdica:</td>
+            <td style="font: bold 12pt Calibri;" colspan=2>Dados da Vincula√ß√£o de Respons√°vel Legal √† Pessoa Jur√≠dica:</td>
         </tr>
         <tr>
-            <td style="font: bold 12pt Calibri; padding-left: 15px; width: 400px">Data e Hor·rio:</td>
+            <td style="font: bold 12pt Calibri; padding-left: 15px; width: 400px">Data e Hor√°rio:</td>
             <td style="font: normal 12pt Calibri;">@dataVinc</td>
         </tr>
         <tr>
-            <td style="font: bold 12pt Calibri; padding-left: 15px;">N˙mero do Processo:</td>
+            <td style="font: bold 12pt Calibri; padding-left: 15px;">N√∫mero do Processo:</td>
             <td style="font: normal 12pt Calibri;">@numProcessoVinc</td>
         </tr>
         <tr><td style="clear: both; line-height: 0.5;">&nbsp;</td></tr>
         <tr style="font: bold 12pt Calibri; height: 1.5em; padding-top: 6px;">
-            <td colspan=2>Pessoa JurÌdica:</td>
+            <td style="font: bold 12pt Calibri;" colspan=2>Pessoa Jur√≠dica:</td>
         </tr>
         <tr>
-            <td style="font: bold 12pt Calibri; padding-left: 15px;">Raz„o Social:</td>
+            <td style="font: bold 12pt Calibri; padding-left: 15px;">Raz√£o Social:</td>
             <td style="font: normal 12pt Calibri">@RazaoSocial</td>
         </tr>
         <tr>
@@ -26,7 +26,7 @@
         </tr>
         <tr><td style="clear: both; line-height: 0.5;">&nbsp;</td></tr>
         <tr style="font: bold 12pt Calibri; height: 1.5em; padding-top: 6px;">
-            <td colspan=2>Respons·vel Legal:</td>
+            <td style="font: bold 12pt Calibri;" colspan=2>Respons√°vel Legal:</td>
         </tr>
         <tr>
             <td style="font: bold 12pt Calibri; padding-left: 15px;">Nome:</td>
@@ -34,12 +34,12 @@
         </tr>
         <tr><td style="clear: both; line-height: 0.5;">&nbsp;</td></tr>
         <tr style="font: bold 12pt Calibri; height: 1.5em; padding-top: 6px;">
-            <td>Documento de Justificativa:</td>
-            <td style="font: normal 12pt Calibri;">@numeroSEI</td>
+            <td style="font: bold 12pt Calibri;">Documento de Justificativa:</td>
+            <td style="font: normal 12pt Calibri;">@justificativa</td>
         </tr>
         </tbody>
     </table>
 </div>
-<p style="font: normal 12pt Calibri; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Pelo presente instrumento de Suspens„o de VinculaÁ„o a Pessoa JurÌdica, a AdministraÁ„o do SEI-@sigla_orgao@ suspendeu a vinculaÁ„o do Respons·vel Legal acima identificado pela Pessoa JurÌdica indicada, de acordo com o Documento de Justificativa acima enumerado.</p>
+<p style="font: normal 12pt Calibri; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Pelo presente instrumento de Suspens√£o de Vincula√ß√£o √† Pessoa Jur√≠dica, a Administra√ß√£o do SEI-@sigla_orgao@ suspendeu a vincula√ß√£o do Respons√°vel Legal acima identificado pela Pessoa Jur√≠dica indicada, de acordo com a Justificativa acima.</p>
 @paragrafoCascata
-<p style="font: normal 12pt Calibri; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">A existÍncia deste instrumento de Suspens„o de VinculaÁ„o a Pessoa JurÌdica, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>
+<p style="font: normal 12pt Calibri; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">A exist√™ncia deste instrumento de Suspens√£o de Vincula√ß√£o √† Pessoa Jur√≠dica, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>

@@ -29,6 +29,7 @@ class MdPetVinculoDTO extends InfraDTO
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinValidado', 'sin_validado');
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinWebService', 'sin_web_service');
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'TpVinculo', 'tp_vinculo');
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'DataUltimaConsultaRFB', 'dth_ultima_consulta_rfb');
 
         //Procedimento
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'ProtocoloFormatado', 'protocolo_formatado', 'protocolo prot');
@@ -68,6 +69,7 @@ class MdPetVinculoDTO extends InfraDTO
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CNPJPesquisa', 'contvinc.cnpj', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdCidadeContatoVinc', 'contvinc.id_cidade', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUfContatoVinc', 'contvinc.id_uf', 'contato contvinc');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DTH, 'DataCadastro', 'contvinc.dth_cadastro', 'contato contvinc');
 
         // Cidade e Uf do Vínculo
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeCidadeContatoVinc', 'cidvinc.nome', 'cidade cidvinc');

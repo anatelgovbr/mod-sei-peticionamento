@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetVincRepresentantDTO extends InfraDTO
 {
 	
-	private $ProtocoloTIPOFK = null;
+	private $ProtocoloTIPOFK;
 	
 	public function __construct(){
 		$this->ProtocoloTIPOFK = InfraDTO::$TIPO_FK_OPCIONAL;
@@ -32,7 +32,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdPetVinculo', 'id_md_pet_vinculo');
 		
-		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'NomeTipoVinculação');
+		$this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'NomeTipoVinculacao');
 		
 		$this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdContato', 'id_contato');
 		
@@ -56,7 +56,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetRelProtocolo', 'relproc.id_protocolo', 'md_pet_rel_vincrep_protoc relproc');
 		
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdContatoProcurador', 'c.id_contato', 'contato c');
-		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeProcurador', 'c.nome', 'contato c');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeProcurador', 'c.nome', 'contato c'); // Outorgado
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CpfProcurador', 'c.cpf', 'contato c');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'Email', 'c.email', 'contato c');
 		
@@ -65,10 +65,9 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		//Juridico
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'IdxContato', 'contvinc.idx_contato','contato contvinc');
 		
-		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'RazaoSocialNomeVinc', 'contvinc.nome', 'contato contvinc');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'RazaoSocialNomeVinc', 'contvinc.nome', 'contato contvinc'); // Outorgante
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdContatoVinc', 'contvinc.id_contato', 'contato contvinc');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CNPJ', 'contvinc.cnpj', 'contato contvinc');
-		
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CPF', 'contvinc.cpf', 'contato contvinc');
 		
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'IdProcedimentoVinculo', 'vinc.id_procedimento', 'md_pet_vinculo vinc');
@@ -76,6 +75,8 @@ class MdPetVincRepresentantDTO extends InfraDTO
 
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'IdDocumento', 'vinc_doc.id_documento', 'md_pet_vinculo_documento vinc_doc');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'TipoDocumento', 'vinc_doc.tipo_documento', 'md_pet_vinculo_documento vinc_doc');
+
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetTipoPoder', 'relpoder.id_md_pet_tipo_poder', 'md_pet_rel_vincrep_tipo_poder relpoder');
 		
 		
 		// Constraint's
@@ -100,7 +101,7 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		
 	}
 	
-	public function getStrNomeOutorgado($nome = null){
+	public function getStrNomeOutorgado(){
 		
 		$objContatoDTO = new ContatoDTO();
 		$objContatoDTO->retStrNome();
@@ -109,6 +110,19 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		$arrObjContatoRN =  $objContatoRN->consultarRN0324($objContatoDTO);
 		
 		return $arrObjContatoRN->getStrNome();
+		
+	}
+	
+	public function getStrNomeOutorgante(){
+		
+		$objContatoDTO = new ContatoDTO();
+		$objContatoDTO->retStrNome();
+		$objContatoDTO->setNumIdContato($this->getNumIdContatoOutorg());
+		$objContatoRN = new ContatoRN();
+		$arrObjContatoRN =  $objContatoRN->consultarRN0324($objContatoDTO);
+		
+		return $arrObjContatoRN->getStrNome();
+		
 	}
 
 	// Traz a natureza do vinculo:
@@ -138,6 +152,16 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		}
 		
 		return [];
+		
+	}
+	
+	public function getArrIdTipoPoderes(){
+		
+		$objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
+		$objMdPetRelVincRepTpPoderDTO->retNumIdTipoPoderLegal();
+		$objMdPetRelVincRepTpPoderDTO->setNumIdVinculoRepresent($this->getNumIdMdPetVinculoRepresent());
+		$objMdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
+		return InfraArray::converterArrInfraDTO($objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO),'IdTipoPoderLegal');
 		
 	}
 	
@@ -201,64 +225,49 @@ class MdPetVincRepresentantDTO extends InfraDTO
 		return $retorno;
 	}
 	
-	public function getStrStaAbrangenciaTipo($sta_abrangencia=null)
+	public function getStrStaAbrangenciaTipo()
 	{
 		
-		$retorno = '';
-		$sta_abrangencia =  $this->getStrStaAbrangencia();
+		$retorno = 'Qualquer Processo em Nome do Outorgante';
 		
-		switch ($sta_abrangencia){
-			case MdPetVincRepresentantRN::$PR_ESPECIFICO :
+		if($this->getStrStaAbrangencia() == MdPetVincRepresentantRN::$PR_ESPECIFICO){
 			$retorno = 'Processos Específicos';
-			break;
-			case MdPetVincRepresentantRN::$PR_QUALQUER :
-			$retorno = 'Qualquer Processo em Nome do Outorgante';
-			break;
-			case null :
-			$retorno = 'Qualquer Processo em Nome do Outorgante';
-			break;
 		}
 		
 		return $retorno;
 	}
 	
-	public function getDthDataLimiteValidade($data=null)
+	public function getDthDataLimiteValidade()
 	{
-		
-		$data = $this->getDthDataLimite();
-		$dataFormatada = explode(" ",$data);
-		return ($data == null) ? "Indeterminado" : "Determinado (Data Limite: ".$dataFormatada[0].")";
-		
-	}
-	
-	public function getStrNomeTipoVinculacao($tipo_representante=null)
-	{
-		$retorno = '';
-		$tipo_representante = is_null($tipo_representante) ? $this->getStrTipoRepresentante() : $tipo_representante;
-		
-		switch ($tipo_representante){
-			case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL : $retorno = 'Procuração Eletrônica Especial';break;
-			case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES : $retorno = 'Procuração Eletrônica';break;
-			case MdPetVincRepresentantRN::$PE_PROCURADOR : $retorno = 'Procuração Eletrônica';break;
+		if(!empty($this->getDthDataLimite())){
+			return ($this->getDthDataLimite() == null) ? "Indeterminado" : "Determinado (Data Limite: ".explode(' ', $this->getDthDataLimite())[0].")";
 		}
 		
-		return $retorno;
 	}
 	
-	public function getStrStaEstadoTipo($estado = null){
+	public function getStrNomeTipoVinculacao()
+	{
+		
+		return ($this->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL) ? 'Procuração Eletrônica Especial' : 'Procuração Eletrônica';
+		
+	}
+	
+	public function getStrStaEstadoTipo(){
+		
 		$estado = '';
 
 		switch ($this->getStrStaEstado()){
-            case MdPetVincRepresentantRN::$RP_SUSPENSO : $estado = 'Suspensa'; break;
-            case MdPetVincRepresentantRN::$RP_REVOGADA : $estado = 'Revogada'; break;
-            case MdPetVincRepresentantRN::$RP_RENUNCIADA : $estado = 'Renunciada'; break;
-            case MdPetVincRepresentantRN::$RP_VENCIDA : $estado = 'Vencida'; break;
+            case MdPetVincRepresentantRN::$RP_SUSPENSO :    $estado = 'Suspensa'; break;
+            case MdPetVincRepresentantRN::$RP_REVOGADA :    $estado = 'Revogada'; break;
+            case MdPetVincRepresentantRN::$RP_RENUNCIADA :  $estado = 'Renunciada'; break;
+            case MdPetVincRepresentantRN::$RP_VENCIDA :     $estado = 'Vencida'; break;
             case MdPetVincRepresentantRN::$RP_SUBSTITUIDA : $estado = 'Substituída'; break;
-            case MdPetVincRepresentantRN::$RP_INATIVO : $estado = 'Inativa'; break;
-			case MdPetVincRepresentantRN::$RP_ATIVO : $estado = 'Ativa'; break;
+            case MdPetVincRepresentantRN::$RP_INATIVO :     $estado = 'Inativa'; break;
+			case MdPetVincRepresentantRN::$RP_ATIVO :       $estado = 'Ativa'; break;
         }
 		
 		return $estado;
+		
 	}
 	
 	public function getArrSerieSituacao($idSituacao = null,$tipoProcuracao = null)

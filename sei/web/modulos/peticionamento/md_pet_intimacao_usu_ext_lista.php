@@ -73,7 +73,8 @@ try {
     );
 
     $numRegistros = (is_array($arrObjDTO) ? count($arrObjDTO) : 0);
-
+    $strResultado = '';
+    
     if ($numRegistros > 0) {
 
         $objMdPetIntAceiteRN = new MdPetIntAceiteRN();

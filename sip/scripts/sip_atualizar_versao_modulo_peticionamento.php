@@ -5,12 +5,12 @@ class MdPetAtualizadorSipRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.2.0';
+    private $versaoAtualDesteModulo = '4.3.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0');
-
-    public function __construct()
+	private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0');
+	
+	public function __construct()
     {
         parent::__construct();
     }
@@ -66,6 +66,15 @@ class MdPetAtualizadorSipRN extends InfraRN
         die;
     }
 
+	protected function normalizaVersao($versao)
+    {
+		$ultimoPonto = strrpos($versao, '.');
+		if ($ultimoPonto !== false) {
+			$versao = substr($versao, 0, $ultimoPonto) . substr($versao, $ultimoPonto + 1);
+		}
+		return $versao;
+	}
+
     protected function atualizarVersaoConectado()
     {
         
@@ -75,6 +84,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             //checando BDs suportados
             if (!(BancoSip::getInstance() instanceof InfraMySql) &&
                 !(BancoSip::getInstance() instanceof InfraSqlServer) &&
+	            !(BancoSip::getInstance() instanceof InfraPostgreSql) &&
                 !(BancoSip::getInstance() instanceof InfraOracle)) {
                 $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSip::getInstance()), true);
             }
@@ -82,7 +92,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             //testando versao do framework
 	        $numVersaoInfraRequerida = '2.29.0';
 	        if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
-                $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
+		        $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
 
             //checando permissoes na base de dados
@@ -151,8 +161,10 @@ class MdPetAtualizadorSipRN extends InfraRN
                     $this->instalarv404();
                 case '4.0.4':
                     $this->instalarv410();
-                case '4.1.0':
-                    $this->instalarv420();
+	            case '4.1.0':
+		            $this->instalarv420();
+	            case '4.2.0':
+		            $this->instalarv430();
                     break;
 
                 default:
@@ -705,7 +717,7 @@ class MdPetAtualizadorSipRN extends InfraRN
 
         $objSistemaRN = new SistemaRN();
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
-		
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -928,7 +940,7 @@ class MdPetAtualizadorSipRN extends InfraRN
 
         $objSistemaRN = new SistemaRN();
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
-		
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -937,7 +949,7 @@ class MdPetAtualizadorSipRN extends InfraRN
         $nmVersao = '2.0.0';
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
-		
+
         $arrAuditoria = array();
 
         //criar novo grupo de auditoria
@@ -1247,7 +1259,11 @@ class MdPetAtualizadorSipRN extends InfraRN
         $objSistemaRN = new SistemaRN();
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
 
-        $this->atualizarNumeroVersao($nmVersao);
+
+        $this->logar('ATUALIZANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
+        BancoSip::getInstance()->executarSql('UPDATE infra_parametro SET valor = \'2.0.0\' WHERE nome = \'' . $this->nomeParametroModulo . '\' ');
+
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $this->versaoAtualDesteModulo . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 
     protected function instalarv201()
@@ -1663,7 +1679,7 @@ class MdPetAtualizadorSipRN extends InfraRN
 
         $objSistemaRN = new SistemaRN();
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
-		
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -1762,7 +1778,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             $objItemRecursoDTOMenu->getNumIdRecurso(),
             'Tipos de Poderes Legais',
             120);
-			
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -1849,7 +1865,7 @@ class MdPetAtualizadorSipRN extends InfraRN
 
         $objSistemaRN = new SistemaRN();
         $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
-		
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 
@@ -1978,18 +1994,27 @@ class MdPetAtualizadorSipRN extends InfraRN
         $this->logar('AJUSTANDO VINCULO DO RECURSO md_pet_vinc_documento_consultar');
         $this->removerRecursoPerfil($numIdSistemaSei, 'md_pet_vinc_documento_consultar', $numIdPerfilSeiAdministrador);
         $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_vinc_documento_consultar');
-
+        
         $this->atualizarNumeroVersao($nmVersao);
     }
-
-    protected function instalarv420()
-    {
-        $nmVersao = '4.2.0';
-
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
-
-        $this->atualizarNumeroVersao($nmVersao);
-    }
+	
+	protected function instalarv420()
+	{
+		$nmVersao = '4.2.0';
+		
+		$this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+		
+		$this->atualizarNumeroVersao($nmVersao);
+	}
+	
+	protected function instalarv430()
+	{
+		$nmVersao = '4.3.0';
+		
+		$this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+		
+		$this->atualizarNumeroVersao($nmVersao);
+	}
 
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)
     {

@@ -17,4 +17,3 @@ class MdPetIntimacaoBD extends InfraBD {
     }
 
 }
-?>

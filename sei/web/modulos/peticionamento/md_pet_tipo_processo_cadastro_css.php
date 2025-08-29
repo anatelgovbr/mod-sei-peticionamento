@@ -63,6 +63,7 @@
 .divAcessoDocumentosPreDefinido{margin-top: 10px;}
 .divDocumentoPrincipalGerado{margin-top: 10px;}
 .divDocumentoPrincipalExterno{margin-top: 10px;}
+.divDocumentoPrincipalFormulario{margin-top: 10px;}
 .divSelecionarDocumentoPrincipal{margin-top: 10px; margin-left:-7px}
 .divNivelAcesso{margin-left: -4px;}
 #txtSerie{width: 100%}
@@ -77,4 +78,3 @@
 .btnExcluirDocumento{display: block; position: relative; left:  -30px; top: 26px;}
 
 .infraFieldset { padding: 15px; }
-

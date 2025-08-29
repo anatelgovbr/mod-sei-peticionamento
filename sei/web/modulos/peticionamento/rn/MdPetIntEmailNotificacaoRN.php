@@ -59,6 +59,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objDocumentoDTO->retStrNomeSerie();
         $objDocumentoDTO->retStrNumero();
         $objDocumentoDTO->retNumIdSerie();
+	      $objDocumentoDTO->retNumIdTipoProcedimentoProcedimento();
         $objDocumentoDTO->setDblIdDocumento($dadosIntimacao['POST']['hdnIdDocumento']);
         $objDocumentoRN = new DocumentoRN();
         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
@@ -90,11 +91,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         $arrDadosEmail['objMdPetIntTipoIntimacaoDTO'] = $objMdPetIntTipoIntimacaoDTO;
 
-        $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
-        $objMdPetIntPrazoTacitaDTO->retTodos();
-        $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
-        $objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
-
+				// Buscar Prazo Tacita
+	      $objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $objDocumentoDTO->getNumIdTipoProcedimentoProcedimento() );
 
         //PrazoTacita
         $arrDadosEmail['prazoTacita'] = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
@@ -143,6 +141,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objDocumentoDTO->retStrNomeSerie();
         $objDocumentoDTO->retStrNumero();
         $objDocumentoDTO->retNumIdSerie();
+	      $objDocumentoDTO->retNumIdTipoProcedimentoProcedimento();
         $objDocumentoDTO->setDblIdDocumento($dadosIntimacao['POST']['hdnIdDocumento']);
         $objDocumentoRN = new DocumentoRN();
         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
@@ -174,11 +173,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         $arrDadosEmail['objMdPetIntTipoIntimacaoDTO'] = $objMdPetIntTipoIntimacaoDTO;
 
-        $objMdPetIntPrazoTacitaDTO = new MdPetIntPrazoTacitaDTO();
-        $objMdPetIntPrazoTacitaDTO->retTodos();
-        $objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
-        $objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->consultar($objMdPetIntPrazoTacitaDTO);
-
+        // Buscar Prazo Tacita
+	      $objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $objDocumentoDTO->getNumIdTipoProcedimentoProcedimento() );
 
         //PrazoTacita
         $arrDadosEmail['prazoTacita'] = $objMdPetIntPrazoTacitaDTO->getNumNumPrazo();
@@ -660,12 +656,12 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $idVinculo = isset($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
         $numeroSEI = isset($dados['hdnNumeroSei']) ? $dados['hdnNumeroSei'] : null;
         $numeroSEIVinculacao = isset($dados['numeroSeiVinculacao']) ? $dados['numeroSeiVinculacao'] : null;
-        //Usuário do Módulo de Peticionamento
-//        $objUsuarioPetRN  = new MdPetIntUsuarioRN();
-//        $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
+        
+        // Usuário do Módulo de Peticionamento
+		// $idUsuarioPet = (new MdPetIntUsuarioRN())->getObjUsuarioPeticionamento(true);
 
-        $arrDadosEmail = array();
-        $arrDadosEmail['tipo_operacao'] = $dados['hdnOperacao'];
+        $arrDadosEmail = [];
+        $arrDadosEmail['tipo_operacao'] = $params['agendamento'] ? 'S' : $dados['hdnOperacao'];
 
         ////////// CAMPOS EM COMUM
 
@@ -719,7 +715,11 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $objProtocoloDTO->setDblIdProtocolo($numeroSEIVinculacao);
             $objProtocoloDTO->retStrProtocoloFormatado();
             $objProtocoloDTO = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
-            $arrDadosEmail['dadosUsuario']['documento_suspensao_responsavel_pj'] = $objProtocoloDTO->getStrProtocoloFormatado();
+	
+	        $arrDadosEmail['dadosUsuario']['documento_suspensao'] = !empty($objProtocoloDTO->getStrProtocoloFormatado()) ? $objProtocoloDTO->getStrProtocoloFormatado() : $numeroSEI;
+            
+            $arrDadosEmail['dadosUsuario']['documento_suspensao_responsavel_pj'] = !empty($objProtocoloDTO->getStrProtocoloFormatado()) ? $objProtocoloDTO->getStrProtocoloFormatado() : $numeroSEI;
+            $arrDadosEmail['dadosUsuario']['documento_suspensao_procuracao'] = !empty($objProtocoloDTO->getStrProtocoloFormatado()) ? $objProtocoloDTO->getStrProtocoloFormatado() : $numeroSEI;
 
             //Orgao
             $usuarioDTO = new UsuarioDTO();
@@ -753,6 +753,91 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         }
 
         $this->emailVincSuspensaoRestabelecimento($arrDadosEmail);
+
+    }
+
+    public function enviarEmailSuspensaoAutorepresentacaoConectado($paramsAuto)
+    {
+        $params = $paramsAuto['paramsParaEmail'];
+        $usuarioDTO = $paramsAuto['objUsuarioAutorepresentacao'];
+        $autoRepresentacao = $paramsAuto['autoRepresentacao'];
+        $agendamento = $paramsAuto['agendamento'];
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $emailSistemaModulo = 'MD_PET_VINC_SUSPENSAO_AUTOREPRESENTACAO';
+
+        if (!empty(SessaoSEI::getInstance()->getNumIdUnidadeAtual())) {
+            $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
+        } else {
+            $idUnidade = SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual();
+        }
+
+        $objUnidadeDTO = new UnidadeDTO();
+        $objUnidadeDTO->retStrSitioInternetOrgaoContato();
+        $objUnidadeDTO->setNumIdUnidade($idUnidade);
+
+        $UnidadeRN = new UnidadeRN();
+        $objUnidadeDTO = $UnidadeRN->consultarRN0125($objUnidadeDTO);
+
+        // ORGANIZA LISTA DE PROCURADORES
+        $itemListaProcuradores = '';
+        if(is_array($params['arrListaProcuradores']) && count($params['arrListaProcuradores']) > 0){
+            $itemListaProcuradores = "Comunicamos que: 
+            - As Procurações Eletrônicas, abaixo listadas, concedidas para representação da Pessoa Física restam igualmente suspensas:
+            ";
+            for ($i=0; $i < count($params['arrListaProcuradores']); $i++) {
+                $itemListaProcuradores .= "
+      -- ".$params['arrListaProcuradores'][$i];
+            }
+        }
+
+        //Enviar Email
+        $objEmailSistemaDTO = new EmailSistemaDTO();
+        $objEmailSistemaDTO->retStrDe();
+        $objEmailSistemaDTO->retStrPara();
+        $objEmailSistemaDTO->retStrAssunto();
+        $objEmailSistemaDTO->retStrConteudo();
+        $objEmailSistemaDTO->setStrIdEmailSistemaModulo($emailSistemaModulo);
+
+        $objEmailSistemaRN = new EmailSistemaRN();
+        $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
+
+        if (is_null($objEmailSistemaDTO)) {
+            throw new InfraException('Tipo de email '.$emailSistemaModulo.' não encontrado');
+        }
+
+        //Monta Email
+        $strDe = $objEmailSistemaDTO->getStrDe();
+        $strDe = str_replace('@sigla_sistema@', ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema'), $strDe);
+        $strDe = str_replace('@email_sistema@', $objInfraParametro->getValor('SEI_EMAIL_SISTEMA'), $strDe);
+
+        $strPara = $objEmailSistemaDTO->getStrPara();
+        $strPara = str_replace('@email_usuario_externo@', $usuarioDTO->getStrEmailContato(), $strPara);//email usuario
+
+        $strAssunto = $objEmailSistemaDTO->getStrAssunto();
+        $strConteudo = $objEmailSistemaDTO->getStrConteudo();
+
+        $complementoDocumentoSuspensao = 'conforme instrumento de Suspensão de Procuração Eletrônica SEI nº '. $params['dados']['hdnNumeroSei'];
+        if($agendamento){
+            $complementoDocumentoSuspensao = 'conforme situação cadastral na Receita Federal Brasileira';
+        }
+
+        $strConteudo = str_replace('@nome_usuario_externo@', $autoRepresentacao->getStrNomeProcurador(), $strConteudo);
+        $strConteudo = str_replace('@sigla_orgao@', $usuarioDTO->getStrSiglaOrgao(), $strConteudo);
+        $strConteudo = str_replace('@descricao_orgao@', $usuarioDTO->getStrDescricaoOrgao(), $strConteudo);
+        $strConteudo = str_replace('@sitio_internet_orgao@', $objUnidadeDTO->getStrSitioInternetOrgaoContato(), $strConteudo);
+        $strConteudo = str_replace('@razao_social@', $autoRepresentacao->getStrRazaoSocialNomeVinc(), $strConteudo);
+        $strConteudo = str_replace('@cpf@', InfraUtil::formatarCpf($autoRepresentacao->getStrCPF()), $strConteudo);
+        $strConteudo = str_replace('@outorgante_nome@', $autoRepresentacao->getStrNomeProcurador(), $strConteudo);
+        $strConteudo = str_replace('@complemento_documento_suspensao_procuracao@', $complementoDocumentoSuspensao, $strConteudo);
+        $strConteudo = str_replace('@item_lista_procuradores@', $itemListaProcuradores, $strConteudo);
+
+        $objEmailDTO = new EmailDTO();
+        $objEmailDTO->setStrDe($strDe);
+        $objEmailDTO->setStrPara($strPara);
+        $objEmailDTO->setStrAssunto($strAssunto);
+        $objEmailDTO->setStrMensagem($strConteudo);
+        EmailRN::processar(array($objEmailDTO));
 
     }
 
@@ -863,6 +948,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         $objProcedimentoDTO = $params['procedimento'];
         $dados = $params['dados'];
+	    $params['agendamento'] = !empty($params['agendamento']) ? $params['agendamento'] : false;
 
         $numeroSEIVinculacao = isset($dados['numeroSeiVinculacao']) ? $dados['numeroSeiVinculacao'] : null;
         $idVinculoRepresent = isset($dados['hdnIdVinculoRepresent']) ? $dados['hdnIdVinculoRepresent'] : null;
@@ -901,11 +987,11 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $arrDadosEmail['dadosUsuario']['procuracao_doc_num']     = $dados['procuracao_doc_num'];
 
             $arrDadosEmail['dadosUsuario']['processo']               = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
-            $arrDadosEmail['dadosUsuario']['outorgado_nome']         = mb_strtoupper($objMdPetVincRepresentantDTO->getStrNomeProcurador());
+            $arrDadosEmail['dadosUsuario']['outorgado_nome']         = $objMdPetVincRepresentantDTO->getStrNomeProcurador();
             $arrDadosEmail['dadosUsuario']['outorgado_email']        = $objMdPetVincRepresentantDTO->getStrEmail();
             $arrDadosEmail['dadosUsuario']['outorgante_tipo_pessoa'] = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? 'Jurídica' : 'Física';
 
-            $arrDadosEmail['dadosUsuario']['outorgante_nome']        = mb_strtoupper($objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc());
+            $arrDadosEmail['dadosUsuario']['outorgante_nome']        = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
             if($objMdPetVincRepresentantDTO->getStrTpVinc() == 'J'){
                 $arrDadosEmail['dadosUsuario']['outorgante_nome']    .= ' ('.InfraUtil::formatarCnpj($objMdPetVincRepresentantDTO->getStrCNPJ()).')';
             }
@@ -914,9 +1000,15 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $objProtocoloDTO->setDblIdProtocolo($numeroSEIVinculacao);
             $objProtocoloDTO->retStrProtocoloFormatado();
             $objProtocoloDTO = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
+	
+	        $arrDadosEmail['tipo_operacao'] = $dados['hdnOperacao'];
+            
+            if($params['agendamento']){
+	            $arrDadosEmail['tipo_operacao'] = $dados['hdnOperacao'] = 'S';
+            }
 
             if($dados['hdnOperacao'] == 'S'){
-                $arrDadosEmail['dadosUsuario']['documento_suspensao_procuracao'] = $objProtocoloDTO->getStrProtocoloFormatado();
+                $arrDadosEmail['dadosUsuario']['documento_suspensao_procuracao'] = $params['agendamento'] ? $params['documento_suspensao_procuracao'] : $objProtocoloDTO->getStrProtocoloFormatado();
             }else{
                 $paragrafoSimples   = '- Ficam restabelecidos os Poderes de Representação e de peticionar em nome do Outorgante;';
                 $paragrafoEspecial  = '- Ficam restabelecidos os Poderes de Representação, o seu direito de peticionar e emitir Procurações Eletrônicas Simples em nome do Outorgante;';
@@ -924,9 +1016,6 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                 $arrDadosEmail['dadosUsuario']['paragrafo_comunicado'] = $dados['hdnStrTipoVinculo'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES ? $paragrafoSimples : $paragrafoEspecial;
                 $arrDadosEmail['dadosUsuario']['documento_restabelecimento_procuracao'] = $objProtocoloDTO->getStrProtocoloFormatado();
             }
-
-            $arrDadosEmail['tipo_operacao'] = $dados['hdnOperacao'];
-            $arrDadosEmail['tipo_vinculo']  = $dados['hdnStrTipoVinculo'];
 
             // Orgao
             $usuarioDTO = new UsuarioDTO();
@@ -1406,6 +1495,10 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         $emailSistemaModulo = $arrDadosEmail['tipo_operacao'] == 'S' ? 'MD_PET_VINC_SUSPENSAO' : 'MD_PET_VINC_RESTABELECIMENTO';
 
+        if ($arrDadosEmail['autoRepresentacao'] == true){
+            $emailSistemaModulo = 'MD_PET_VINC_SUSPENSAO_AUTOREPRESENTACAO';
+        }
+
         //Enviar Email
         $objEmailSistemaDTO = new EmailSistemaDTO();
         $objEmailSistemaDTO->retStrDe();
@@ -1441,7 +1534,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $strConteudo = str_replace('@razao_social@', $arrDadosEmail['dadosUsuario']['razao_social'], $strConteudo);
         $strConteudo = str_replace('@cnpj@', InfraUtil::formatarCnpj($arrDadosEmail['dadosUsuario']['cnpj']), $strConteudo);
         if($arrDadosEmail['tipo_operacao'] == 'S'){
-            $strConteudo = str_replace('@documento_suspensao_responsavel_pj@', $arrDadosEmail['dadosUsuario']['documento_suspensao_responsavel_pj'], $strConteudo);
+            $strConteudo = str_replace('@documento_suspensao_responsavel_pj@', $arrDadosEmail['dadosUsuario']['documento_suspensao'], $strConteudo);
+            $strConteudo = str_replace('@documento_suspensao_procuracao@', $arrDadosEmail['dadosUsuario']['documento_suspensao'], $strConteudo);
         }else{
             $strConteudo = str_replace('@documento_restabelecimento_responsavel_pj@', $arrDadosEmail['dadosUsuario']['documento_restabelecimento_responsavel_pj'], $strConteudo);
         }
@@ -1497,19 +1591,13 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $strConteudo = str_replace('@procuracao_doc_num@', $arrDadosEmail['dadosUsuario']['procuracao_doc_num'], $strConteudo);
 
         if($arrDadosEmail['tipo_operacao'] == 'S'){
-            $strConteudo = str_replace('@documento_suspensao_procuracao@', $arrDadosEmail['dadosUsuario']['documento_suspensao_procuracao'], $strConteudo);
+	        $strConteudo = str_replace('@documento_suspensao_procuracao@', $arrDadosEmail['dadosUsuario']['documento_suspensao_procuracao'], $strConteudo);
         }else{
             $strConteudo = str_replace('@paragrafo_comunicado@', $arrDadosEmail['dadosUsuario']['paragrafo_comunicado'], $strConteudo);
             $strConteudo = str_replace('@documento_restabelecimento_procuracao@', $arrDadosEmail['dadosUsuario']['documento_restabelecimento_procuracao'], $strConteudo);
         }
-        
-        $objEmailDTO = new EmailDTO();
-        $objEmailDTO->setStrDe($strDe);
-        $objEmailDTO->setStrPara($strPara);
-//        $objEmailDTO->setStrCCO((new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_EMAIL_ADMINISTRADOR'));
-        $objEmailDTO->setStrAssunto($strAssunto);
-        $objEmailDTO->setStrMensagem($strConteudo);
-        EmailRN::processar(array($objEmailDTO));
+	
+	    InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
 
     }
 

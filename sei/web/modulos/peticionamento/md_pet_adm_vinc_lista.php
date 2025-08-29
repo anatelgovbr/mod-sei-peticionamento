@@ -11,27 +11,28 @@ try {
 
     session_start();
     SessaoSEI::getInstance()->validarLink();
-    //SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
     $arvoreVincListar = false;
 
     $isAdm = false;
 
     switch ($_GET['acao']) {
 
+        // Administracao
         case 'md_pet_adm_vinc_listar':
-            $strTitulo = 'Administrar Vinculações e Procurações Eletrônicas';
+            $strTitulo = 'Administrar VinculaÃ§Ãµes e ProcuraÃ§Ãµes EletrÃ´nicas';
             $strColuna10 = 'CPF/CNPJ Outorgante';
             $strColuna11 = 'CNPJ';
-            $strColuna20 = 'Nome/Razão Social Outorgante';
+            $strColuna20 = 'Nome/RazÃ£o Social Outorgante';
             $strColuna21 = 'RazaoSocialNomeVinc';
-            $isAdm = true;
+	        $isAdm = SessaoSEI::getInstance()->verificarPermissao('md_pet_adm_vinc_listar');
             break;
-
+        
+        // Relatorios
         case 'md_pet_adm_vinc_consultar':
-            $strTitulo = 'Vinculações e Procurações Eletrônicas';
+            $strTitulo = 'VinculaÃ§Ãµes e ProcuraÃ§Ãµes EletrÃ´nicas';
             $strColuna10 = 'CPF/CNPJ Outorgante';
             $strColuna11 = 'CNPJ';
-            $strColuna20 = 'Nome/Razão Social Outorgante';
+            $strColuna20 = 'Nome/RazÃ£o Social Outorgante';
             $strColuna21 = 'RazaoSocialNomeVinc';
             if (isset($_POST['hdnIdProcedimento'])) {
                 $idProcedimento = $_POST['hdnIdProcedimento'];
@@ -50,11 +51,11 @@ try {
     $strColuna31 = 'CpfProcurador';
     $strColuna40 = 'Nome Outorgado';
     $strColuna41 = 'NomeProcurador';
-    $strColuna50 = 'Tipo de Vínculo';
+    $strColuna50 = 'Tipo de VÃ­nculo';
     $strColuna51 = 'TipoRepresentante';
-    $strColuna60 = 'Situação';
+    $strColuna60 = 'SituaÃ§Ã£o';
     $strColuna61 = 'StaEstado';
-    $strColuna70 = 'Natureza do Vínculo';
+    $strColuna70 = 'Natureza do VÃ­nculo';
     $strColuna71 = 'TpVinc';
     $strColuna80 = 'Tipo de Poder';
 
@@ -129,29 +130,7 @@ try {
         $objMdPetVincRepresentantDTO->setStrTpVinc($selNaturezaVinculo);
     }
 
-    if(is_countable($selTipoPoder)){
-
-        // Retorna os Vínculos que teem o(s) Tipo(s) de Poder(es) selecionados:
-        $objMdPetRelVincRepTpPoderRN    = new MdPetRelVincRepTpPoderRN();
-        $objMdPetRelVincRepTpPoderDTO   = new MdPetRelVincRepTpPoderDTO();
-        $objMdPetRelVincRepTpPoderDTO->setNumIdTipoPoderLegal($selTipoPoder, InfraDTO::$OPER_IN);
-        $objMdPetRelVincRepTpPoderDTO->retNumIdVinculoRepresent();
-        $arrMdPetRelVincRepTpPoder = InfraArray::converterArrInfraDTO($objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO), 'IdVinculoRepresent');
-
-        if(is_countable($arrMdPetRelVincRepTpPoder) && count($arrMdPetRelVincRepTpPoder) > 0){
-
-            $tipoVinculo = empty($strSlTipoViculo) || is_null($strSlTipoViculo) ? ['L','E'] : [$strSlTipoViculo];
-
-            $objMdPetVincRepresentantDTO->adicionarCriterio(
-                array('IdMdPetVinculoRepresent', 'TipoRepresentante')
-                , array(InfraDTO::$OPER_IN, InfraDTO::$OPER_IN)
-                , array($arrMdPetRelVincRepTpPoder, $tipoVinculo), InfraDTO::$OPER_LOGICO_OR);
-
-        }
-
-    }
-
-    //Validação para verificar se a unidade atual é compatival com a unidade de configuração do vinculo
+    //ValidaÃ§Ã£o para verificar se a unidade atual Ã© compatival com a unidade de configuraÃ§Ã£o do vinculo
     $idUnidadeAtual = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
 
     $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
@@ -181,13 +160,13 @@ try {
     $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
     $objMdPetVincRepresentantDTO->retStrNomeProcurador();
     $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
+    
 
-    // chamada através do botão do Processo ou do Documento
+    // chamada atravÃ©s do botÃ£o do Processo ou do Documento
     if ($arvoreVincListar) {
 
         //Recuperar Ids que contem vinculos
-        $objMdPetVinculoRN = new MdPetVinculoRN();
-        $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->consultarProcedimentoVinculo(array($idProcedimento, 'retornoDTO' => true));
+        $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->consultarProcedimentoVinculo(array($idProcedimento, 'retornoDTO' => true));
 
         // PJ - Representantes
         if ($arrObjMdPetVinculoDTO) {
@@ -207,15 +186,11 @@ try {
     } else {
 
         $idUnidadeAtual = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
-        $objMdPetVinculoRN = new MdPetVinculoRN();
-        if ($_GET['acao'] == 'md_pet_adm_vinc_listar') {
-//            $arrIdsProcedimento = $objMdPetVinculoRN->consultarIdProcedimentoByUnidade($idUnidadeAtual);
-//            if(count($arrIdsProcedimento)>0) {
-//                $objMdPetVincRepresentantDTO->setDblIdProcedimentoVinculo($arrIdsProcedimento, InfraDTO::$OPER_IN);
-//            }else{
-//                $objMdPetVincRepresentantDTO->setDblIdProcedimentoVinculo(0);
-//            }
-        }
+
+    }
+
+    if(!empty($strSlTipoViculo) && $strSlTipoViculo == 'S' && is_countable($selTipoPoder)){
+        $objMdPetVincRepresentantDTO->setNumIdMdPetTipoPoder($selTipoPoder, InfraDTO::$OPER_IN);
     }
 
     PaginaSEI::getInstance()->prepararOrdenacao($objMdPetVincRepresentantDTO, 'CpfProcurador', InfraDTO::$TIPO_ORDENACAO_ASC);
@@ -232,7 +207,7 @@ try {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
 
-// Recuperando os documentos da procuração
+// Recuperando os documentos da procuraÃ§Ã£o
 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
     $arrIdMdPetVinculoRepresent[] = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
 }
@@ -258,17 +233,17 @@ if ($arrIdMdPetVinculoRepresent) {
     }
 }
 $arrSelectTipoVinculo = array(
-    MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsável Legal',
+    MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'ResponsÃ¡vel Legal',
     MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
     MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES => 'Procurador Simples',
-    MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO => 'Autorrepresentação',
+    MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO => 'AutorrepresentaÃ§Ã£o',
 );
 $numRegistros = count($arrObjMdPetVincRepresentantDTO);
 
 if ($numRegistros > 0) {
 
     $strResultado = '';
-    $strSumarioTabela = $strCaptionTabela = 'Vinculações e Procurações Eletrônicas';
+    $strSumarioTabela = $strCaptionTabela = 'VinculaÃ§Ãµes e ProcuraÃ§Ãµes EletrÃ´nicas';
     $strResultado .= '<table class="infraTable" width="100%" summary="' . $strSumarioTabela . '">';
     $strResultado .= '<caption class="infraCaption">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
     $strResultado .= '<thead>';
@@ -281,7 +256,7 @@ if ($numRegistros > 0) {
     $strResultado .= '<th class="infraTh"><div style="width:130px">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna50, $strColuna51, $arrObjMdPetVincRepresentantDTO) . '</div></th>';
     $strResultado .= '<th class="infraTh"><div>'.$strColuna80.'</div></th>';
     $strResultado .= '<th class="infraTh"><div style="width:90px; text-align: center">' . PaginaSEI::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, $strColuna60, $strColuna61, $arrObjMdPetVincRepresentantDTO) . '</siv></th>';
-    $strResultado .= '<th class="infraTh"><div style="width:90px; text-align: center">Ações</div></th>';
+    $strResultado .= '<th class="infraTh"><div style="min-width:90px; text-align: center">AÃ§Ãµes</div></th>';
     $strResultado .= '</tr>';
     $strResultado .= '</thead><tbody>';
     //Populando obj para tabela
@@ -291,7 +266,7 @@ if ($numRegistros > 0) {
         $arrSerieSituacao = $arrObjMdPetVincRepresentantDTO[$i]->getArrSerieSituacao();
         $strLabelSituacao = $arrSerieSituacao['strSituacao'];
 
-        //Buscar documento da procuração
+        //Buscar documento da procuraÃ§Ã£o
         $idVinculacao = $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculo();
 
         $idVinculoRepresent = $arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent();
@@ -319,9 +294,10 @@ if ($numRegistros > 0) {
         $strResultado .= '<td><div class="text-sm" style="width:180px; word-wrap: break-word; font-size: .8rem">'.$arrObjMdPetVincRepresentantDTO[$i]->getStrTipoPoderesLista().'</div></td>';
         $strResultado .= '<td><div style="text-align: center; width:90px">' . $strLabelSituacao . '</div></td>';
 
-        $title = 'Consultar' . (($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) ? 'Vinculação' : 'Procuração');
+        $title = 'Consultar' . (($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) ? 'VinculaÃ§Ã£o' : 'ProcuraÃ§Ã£o');
 
         if ($arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante() != MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO) {
+            
             $idDocumento = $arrDocumento[$arrObjMdPetVincRepresentantDTO[$i]->getNumIdMdPetVinculoRepresent()]->getDblIdDocumento();
             $acaoConsulta = '';
             $strLinkConsultaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento=' . $idDocumento . '&arvore=1');
@@ -354,10 +330,26 @@ if ($numRegistros > 0) {
                 }
 
             }
+
             $strResultado .= '<td align="center"><div style="width:90px; text-align: center">' . $acaoConsulta . $acaoResponsavel . '</div></td>';
+
         } else {
-            $strResultado .= '<td align="center"></td>';
+	
+	        //  TIPO DE VINCULO EH AUTO REPRESENTACAO
+	        if ( $isAdm ) {
+		
+		        $msgAtivo           = 'Este registro de AutorrepresentaÃ§Ã£o estÃ¡ vinculado diretamente ao cadastro do UsuÃ¡rio Externo.\n\nDeve realizar a gestÃ£o de cadastro de UsuÃ¡rio Externo pelo menu AdministraÃ§Ã£o > UsuÃ¡rios Externos.';
+		        $msgInativo         = 'ATENÃ‡ÃƒO: Este registro de AutorrepresentaÃ§Ã£o estÃ¡ suspenso em razÃ£o de agendamento com consulta Ã  base da Receita Federal para verificaÃ§Ã£o de situaÃ§Ã£o de seu cadastro na Receita.\n\nEste registro estÃ¡ vinculado diretamente ao cadastro do UsuÃ¡rio Externo.\n\nRealizar a gestÃ£o de cadastro de UsuÃ¡rio Externo pelo meno AdministraÃ§Ã£o > UsuÃ¡rios Externos.';
+		        $strMsgAjuda        = $strLabelSituacao == 'Ativa' ? $msgAtivo : $msgInativo;
+		
+		        $strResultado      .= '<td align="center"><img align="top" alt="Ãcone de Ajuda" src="'. PaginaSEI::getInstance()->getDiretorioSvgGlobal() .'/ajuda.svg"name="ajuda"'. PaginaSEI::montarTitleTooltip($strMsgAjuda, 'Ajuda') .' class="infraImg"/></td>';
+		
+	        } else {
+		        $strResultado .= '<td align="center"></td>';
+	        }
+	
         }
+
         $strResultado .= '</tr>';
 
     }
@@ -404,7 +396,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-sm-12">
                 <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= $idProcedimento ?>">
-                <p class="mb-4 mt-2" style="font-size: .875rem">A tabela abaixo exibe as vinculações ativas aos Interessados do presente processo como Responsável Legal, Procurador Especial e Procurador Simples.</p>
+                <p class="mb-4 mt-2" style="font-size: .875rem">A tabela abaixo exibe as vinculaÃ§Ãµes ativas aos Interessados do presente processo como ResponsÃ¡vel Legal, Procurador Especial e Procurador Simples.</p>
             </div>
         </div>
 
@@ -419,14 +411,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <p class="mb-4 mt-2" style="font-size: .875rem">
                 <? if ($isAdm): ?>
-                    A Vinculação a Pessoa Jurídica como Responsável Legal pode ser Suspensa, a partir de indício de falsidade ou
-                    de prática de ato ilícito, devendo indicar o Número SEI de documento com registro do indício e da diligência
-                    para sua investigação, afetando o vínculo do Usuário Externo com a Pessoa Jurídica e Procurações Eletrônicas
-                    por ele geradas em sua representação. Em situações que o Usuário Externo não consiga realizar diretamente,
-                    também é possível Alterar o Responsável Legal.
+                    A VinculaÃ§Ã£o a Pessoa JurÃ­dica como ResponsÃ¡vel Legal pode ser Suspensa, a partir de indÃ­cio de falsidade ou
+                    de prÃ¡tica de ato ilÃ­cito, devendo indicar o NÃºmero SEI de documento com registro do indÃ­cio e da diligÃªncia
+                    para sua investigaÃ§Ã£o, afetando o vÃ­nculo do UsuÃ¡rio Externo com a Pessoa JurÃ­dica e ProcuraÃ§Ãµes EletrÃ´nicas
+                    por ele geradas em sua representaÃ§Ã£o. Em situaÃ§Ãµes que o UsuÃ¡rio Externo nÃ£o consiga realizar diretamente,
+                    tambÃ©m Ã© possÃ­vel Alterar o ResponsÃ¡vel Legal.
                 <? else: ?>
-                    Este relatório permite visualizar as Vinculações a Pessoas Jurídicas como Responsável Legal, Procurador
-                    Especial e Procurador Simples concedidas no âmbito do SEI.
+                    Este relatÃ³rio permite visualizar as VinculaÃ§Ãµes a Pessoas JurÃ­dicas como ResponsÃ¡vel Legal, Procurador
+                    Especial e Procurador Simples concedidas no Ã¢mbito do SEI.
                 <? endif ?>
                 </p>
             </div>
@@ -438,8 +430,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblNaturezaVinculo" for="selNaturezaVinculo" class="infraLabelOpcional"><?= $strColuna70 ?>:</label>
                     <select id="selNaturezaVinculo" name="selNaturezaVinculo" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <option value=""></option>
-                        <option value="F" <?= $selNaturezaVinculo == 'F' ? 'selected="selected"' : '' ?> >Pessoa Física</option>
-                        <option value="J" <?= $selNaturezaVinculo == 'J' ? 'selected="selected"' : '' ?> >Pessoa Jurídica</option>
+                        <option value="F" <?= $selNaturezaVinculo == 'F' ? 'selected="selected"' : '' ?> >Pessoa FÃ­sica</option>
+                        <option value="J" <?= $selNaturezaVinculo == 'J' ? 'selected="selected"' : '' ?> >Pessoa JurÃ­dica</option>
                     </select>
                 </div>
             </div>
@@ -502,7 +494,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </select>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="divTipoPoder">
                 <div class="form-group">
                     <label id="lblTipoPoder" for="selTipoPoder" class="infraLabelOpcional"><?= $strColuna80 ?>:</label>
                     <select id="selTipoPoder" name="selTipoPoder[]" class="infraSelect multipleSelect form-control" multiple="multiple" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">

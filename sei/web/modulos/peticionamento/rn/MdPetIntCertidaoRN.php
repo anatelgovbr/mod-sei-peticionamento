@@ -374,8 +374,10 @@ class MdPetIntCertidaoRN extends InfraRN
             $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
             $objMdPetIntAceiteDTO->retNumIdUsuario();
             $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario());
-            $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
-            $arrMdPetIntAceiteRN = $objMdPetIntAceiteRN->consultar($objMdPetIntAceiteDTO);
+	        $objMdPetIntAceiteDTO->setNumIdMdPetIntimacao($idIntimacao);
+	        $objMdPetIntAceiteDTO->setOrdDthData(InfraDTO::$TIPO_ORDENACAO_ASC);
+	        $objMdPetIntAceiteDTO->setNumMaxRegistrosRetorno(1);
+            $arrMdPetIntAceiteRN = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
 
             $objUsuarioRN = new UsuarioRN();
             $objUsuarioDTO = new UsuarioDTO();

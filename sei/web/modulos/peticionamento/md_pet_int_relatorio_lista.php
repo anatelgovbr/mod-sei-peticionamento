@@ -12,20 +12,21 @@ $arrObjResultDTO = $objMdPetIntRelatorioRN->listarDados($objConsultaDTO);
 PaginaSEI::getInstance()->processarPaginacao($objConsultaDTO);
 
 $numRegistros = count($arrObjResultDTO);
-//ConfiguraÁ„o da PaginaÁ„o
+//Configura√ß√£o da Pagina√ß√£o
 
 //Tabela de resultado.
+$strResultado = '';
 if ($numRegistros > 0) {
 
-    $strResultado .= '<table id="tabelaIntimacaoEletronica" class="infraTable table" summary="IntimaÁıes EletrÙnicas">';
+    $strResultado .= '<table id="tabelaIntimacaoEletronica" class="infraTable table" summary="Intima√ß√µes Eletr√¥nicas">';
     $strResultado .= '<caption class="infraCaption">';
-    $strResultado .= PaginaSEI::getInstance()->gerarCaptionTabela('IntimaÁıes EletrÙnicas', $numRegistros);
+    $strResultado .= PaginaSEI::getInstance()->gerarCaptionTabela('Intima√ß√µes Eletr√¥nicas', $numRegistros);
     $strResultado .= '</caption>';
 
     $strResultado .= '<tr>';
-
-    //Processo
-    $strResultado .= '<th class="infraTh" width="140px" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Processo', 'ProtocoloFormatadoProcedimento', $arrObjResultDTO). '</th>';
+	
+	//Processo
+    $strResultado .= '<th class="infraTh" width="160px" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Processo', 'ProtocoloFormatadoProcedimento', $arrObjResultDTO). '</th>';
 
     //Documento Principal
     $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Documento Principal', 'DocumentoPrincipal', $arrObjResultDTO). '</th>';
@@ -34,27 +35,30 @@ if ($numRegistros > 0) {
     $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Anexos', 'Anexos', $arrObjResultDTO). '</th>';
 
     //Destinatario
-    $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo de Destinat·rio', 'SinPessoaJuridica', $arrObjResultDTO). '</th>';
+    $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo de Destinat√°rio', 'SinPessoaJuridica', $arrObjResultDTO). '</th>';
 
     //Tipo Destinatario
-    $strResultado .= '<th class="infraTh" width="300px;">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Destinat·rio', 'NomeContato', $arrObjResultDTO). '</th>';
+    $strResultado .= '<th class="infraTh" width="500px;">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Destinat√°rio', 'NomeContato', $arrObjResultDTO). '</th>';
 
-    //Tipo de IntimaÁ„o
-    $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo de IntimaÁ„o', 'NomeTipoIntimacao', $arrObjResultDTO). '</th>';
+    //Tipo de Intima√ß√£o
+    $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Tipo de Intima√ß√£o', 'NomeTipoIntimacao', $arrObjResultDTO). '</th>';
 
-    //Unidade da IntimaÁ„o
+    //Unidade da Intima√ß√£o
     $strResultado .= '<th class="infraTh" > '.PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Unidade Geradora', 'SiglaUnidadeIntimacao', $arrObjResultDTO).' </th>';
 
     //Data de Expedicao
-    $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Data da GeraÁ„o', 'DataCadastro', $arrObjResultDTO). '</th>';
+    $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Data da Gera√ß√£o', 'DataCadastro', $arrObjResultDTO). '</th>';
 
-    //SituaÁ„o
-    $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'SituaÁ„o da IntimaÁ„o', 'SituacaoIntimacao', $arrObjResultDTO).' </th>';
+    //Situa√ß√£o
+    $strResultado .= '<th class="infraTh" width="400px">' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Situa√ß√£o da Intima√ß√£o', 'SituacaoIntimacao', $arrObjResultDTO).' </th>';
+	
+	//N√∫mero SEI da Certid√£o de Cumprimento
+	$strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'N√∫mero SEI Certid√£o de Cumprimento', 'IdMdPetAceite', $arrObjResultDTO). '</th>';
 
     //Data do Aceite
     $strResultado .= '<th class="infraTh" >' .PaginaSEI::getInstance()->getThOrdenacao($objConsultaDTO, 'Data de Cumprimento', 'DataAceite', $arrObjResultDTO). '</th>';
 
-    $strResultado .= '<th class="infraTh" >AÁıes</th>';
+    $strResultado .= '<th class="infraTh" >A√ß√µes</th>';
     $strResultado .= '</tr>';
 
 
@@ -85,7 +89,7 @@ if ($numRegistros > 0) {
 
         //Linha Documento Principal
         $strResultado .= '<td>';
-        $strResultado .= PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrDocumentoPrincipal());
+        $strResultado .= $arrObjResultDTO[$i]->getStrDocumentoPrincipal();
         $strResultado .= '</td>';
 
         //Linha Anexos
@@ -93,15 +97,16 @@ if ($numRegistros > 0) {
         $strResultado .= PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrAnexos());;
         $strResultado .= '</td>';
 
-        //Tipo de Destinat·rio
+        //Tipo de Destinat√°rio
         $strResultado .= '<td align="left">';
         $strResultado .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrTipoDestinatario());
-        $strResultado .= '</td>';
+	    $strResultado .= '</td>';
 
-        //Destinat·rio
+        //Destinat√°rio
         $strResultado .= '<td align="left">';
         $strResultado .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrNomeContato());
-        $strResultado .= '</td>';
+	    $strResultado .=  $arrObjResultDTO[$i]->getStrSinPessoaJuridica() == 'S' ? ' (' . infraUtil::formatarCnpj($arrObjResultDTO[$i]->getDblCnpjContato()).')' : ' (' . infraUtil::formatarCpf($arrObjResultDTO[$i]->getDblCpfContato()) . ')';
+	    $strResultado .= '</td>';
 
         //Tipo de Intimacao
         $strResultado .= '<td>';
@@ -127,6 +132,11 @@ if ($numRegistros > 0) {
         $strResultado .= '<td>';
         $strResultado .= PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrSituacaoIntimacao());
         $strResultado .= '</td>';
+	
+	    //N√∫mero SEI  Certid√£o de Cumprimento
+	    $strResultado .= '<td align="center">';
+	    $strResultado .= '<a onclick="infraLimparFormatarTrAcessada(this.parentNode.parentNode);" href="'.SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento='.$arrObjResultDTO[$i]->getIdDocumentoCertidaoAceite()) .'" target="_blank" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'" class="ancoraPadraoAzul" title="">'.PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrDocumentoCertidaoAceite()).'</a>';
+	    $strResultado .= '</td>';
 
         //Data de Cumprimento
         $strResultado .= '<td align="center">';
@@ -135,7 +145,7 @@ if ($numRegistros > 0) {
 
         $linkModal     =  SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_int_relatorio_ht_listar&md_pet_int_rel='.$strId);
         $strResultado .= '<td align="center">';
-        $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="abrirModalHistorico(\'' . $linkModal . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="HistÛrico da IntimaÁ„o" alt="HistÛrico da IntimaÁ„o" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="abrirModalHistorico(\'' . $linkModal . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/consultar.svg" title="Hist√≥rico da Intima√ß√£o" alt="Hist√≥rico da Intima√ß√£o" class="infraImg" /></a>&nbsp;';
         $strResultado .= '</td>';
         $strResultado .= '</tr>';
 

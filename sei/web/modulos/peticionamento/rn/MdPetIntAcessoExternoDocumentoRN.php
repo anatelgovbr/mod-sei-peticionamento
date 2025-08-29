@@ -127,7 +127,7 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
     			//FIM - Preencher atributos do andamento
     			//==========================================
 
-    			$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
+    			$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoAPI);
     			
     			//teste de inserir lancamento via SeiRN (visando resolver problema que ocorre em processo sigiloso)
     			$objEntradaLancarAndamentoAPI = new EntradaLancarAndamentoAPI();

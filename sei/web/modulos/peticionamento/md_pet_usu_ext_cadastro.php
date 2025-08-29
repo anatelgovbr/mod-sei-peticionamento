@@ -355,6 +355,14 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     </fieldset>
 
     <!-- =========================== -->
+    <!--  INICIO FIELDSET OBJETIVOS DE DESENVOLVIMENTO SUSTENTÁVEL DA ONU -->
+    <!-- =========================== -->
+    <? require_once('md_pet_obj_desenv_sust_onu.php'); ?>
+    <!-- =========================== -->
+    <!--  FIM FIELDSET OBJETIVOS DE DESENVOLVIMENTO SUSTENTÁVEL DA ONU -->
+    <!-- =========================== -->
+
+    <!-- =========================== -->
     <!--  INICIO FIELDSET DOCUMENTOS -->
     <!-- =========================== -->
     <? require_once('md_pet_usu_ext_cadastro_bloco_documentos.php'); ?>

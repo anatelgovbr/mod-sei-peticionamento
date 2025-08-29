@@ -45,35 +45,35 @@ class MdPetAcessoExternoRN extends InfraRN {
 	private function validarNumIdAtividade($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getNumIdAtividade())) {
-			$objInfraException->adicionarValidacao('Atividade não informado.');
+			$objInfraException->adicionarValidacao('Atividade nÃ£o informado.');
 		}
 	}
 
 	private function validarNumIdParticipante($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getNumIdParticipante())) {
-			$objInfraException->adicionarValidacao('Interessado não informado.');
+			$objInfraException->adicionarValidacao('Interessado nÃ£o informado.');
 		}
 	}
 
 	private function validarNumIdUsuarioExterno($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getNumIdUsuarioExterno())) {
-			$objInfraException->adicionarValidacao('Usuário Externo não informado.');
+			$objInfraException->adicionarValidacao('UsuÃ¡rio Externo nÃ£o informado.');
 		}
 	}
 
 	private function validarDblIdProtocoloAtividade($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getDblIdProtocoloAtividade())) {
-			$objInfraException->adicionarValidacao('Processo não informado.');
+			$objInfraException->adicionarValidacao('Processo nÃ£o informado.');
 		}
 	}
 
 	private function validarNumIdContatoParticipante($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getNumIdContatoParticipante())) {
-			$objInfraException->adicionarValidacao('Contato não informado.');
+			$objInfraException->adicionarValidacao('Contato nÃ£o informado.');
 		}
 	}
 
@@ -81,14 +81,14 @@ class MdPetAcessoExternoRN extends InfraRN {
 	private function validarDblIdDocumento($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getDblIdDocumento())) {
-			$objInfraException->adicionarValidacao('Documento não informado.');
+			$objInfraException->adicionarValidacao('Documento nÃ£o informado.');
 		}
 	}
 
 	private function validarNumDias($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getNumDias())) {
-			$objInfraException->adicionarValidacao('Validade do acesso não informada..');
+			$objInfraException->adicionarValidacao('Validade do acesso nÃ£o informada..');
 		} else {
 			if ($objAcessoExternoDTO->getNumDias() <= 0) {
 				$objInfraException->adicionarValidacao('Validade do acesso deve ser de pelo menos um dia.');
@@ -99,10 +99,10 @@ class MdPetAcessoExternoRN extends InfraRN {
 	private function validarDtaValidade($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getDtaValidade())) {
-			$objInfraException->adicionarValidacao('Data de Validade não informada.');
+			$objInfraException->adicionarValidacao('Data de Validade nÃ£o informada.');
 		} else {
 			if (!InfraData::validarData($objAcessoExternoDTO->getDtaValidade())) {
-				$objInfraException->adicionarValidacao('Data de Validade inválida.');
+				$objInfraException->adicionarValidacao('Data de Validade invÃ¡lida.');
 			}
 		}
 	}
@@ -121,7 +121,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 	private function validarStrHashInterno($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getStrHashInterno())) {
-			$objInfraException->adicionarValidacao('HASH Interno não informado.');
+			$objInfraException->adicionarValidacao('HASH Interno nÃ£o informado.');
 		} else {
 			$objAcessoExternoDTO->setStrHashInterno(trim($objAcessoExternoDTO->getStrHashInterno()));
 
@@ -134,10 +134,10 @@ class MdPetAcessoExternoRN extends InfraRN {
 	private function validarStrStaTipo($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getStrStaTipo())) {
-			$objInfraException->adicionarValidacao('Tipo não informado.');
+			$objInfraException->adicionarValidacao('Tipo nÃ£o informado.');
 		} else {
 			if (!in_array($objAcessoExternoDTO->getStrStaTipo(), InfraArray::converterArrInfraDTO($this->listarValoresTipoAcessoExterno(), 'StaTipo'))) {
-				$objInfraException->adicionarValidacao('Tipo inválido.');
+				$objInfraException->adicionarValidacao('Tipo invÃ¡lido.');
 			}
 		}
 	}
@@ -145,14 +145,14 @@ class MdPetAcessoExternoRN extends InfraRN {
 	private function validarStrSenha($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getStrSenha())) {
-			$objInfraException->adicionarValidacao('Senha não informada.');
+			$objInfraException->adicionarValidacao('Senha nÃ£o informada.');
 		}
 	}
 
 	private function validarStrMotivo($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getStrMotivo())) {
-			$objInfraException->adicionarValidacao('Motivo não informado.');
+			$objInfraException->adicionarValidacao('Motivo nÃ£o informado.');
 		}
 	}
 
@@ -160,10 +160,10 @@ class MdPetAcessoExternoRN extends InfraRN {
 	{
 
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getStrSinProcesso())) {
-			$objInfraException->adicionarValidacao('Sinalizador de acesso ao processo não informado.');
+			$objInfraException->adicionarValidacao('Sinalizador de acesso ao processo nÃ£o informado.');
 		} else {
 			if (!InfraUtil::isBolSinalizadorValido($objAcessoExternoDTO->getStrSinProcesso())) {
-				$objInfraException->adicionarValidacao('Sinalizador de acesso ao processo inválido.');
+				$objInfraException->adicionarValidacao('Sinalizador de acesso ao processo invÃ¡lido.');
 			}
 		}
 	}
@@ -195,7 +195,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 							if (InfraString::isBolVazia($objAcessoExternoDTO->getNumIdContatoParticipante())) {
 								if (InfraString::isBolVazia($objAcessoExternoDTO->getStrNomeContato())) {
-									$objInfraException->adicionarValidacao('Destinatário não informado.');
+									$objInfraException->adicionarValidacao('DestinatÃ¡rio nÃ£o informado.');
 								} else {
 									$objContatoDTO = new ContatoDTO();
 									$objContatoDTO->setStrNome($objAcessoExternoDTO->getStrNomeContato());
@@ -384,14 +384,14 @@ class MdPetAcessoExternoRN extends InfraRN {
 						$objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 
 						if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
-							$objInfraException->lancarValidacao('Usuário externo "' . $objUsuarioDTO->getStrSigla() . '" ainda não foi liberado.');
+							$objInfraException->lancarValidacao('UsuÃ¡rio externo "' . $objUsuarioDTO->getStrSigla() . '" ainda nÃ£o foi liberado.');
 						}
 
 						if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
-							$objInfraException->lancarValidacao('Usuário "' . $objUsuarioDTO->getStrSigla() . '" não é um usuário externo.');
+							$objInfraException->lancarValidacao('UsuÃ¡rio "' . $objUsuarioDTO->getStrSigla() . '" nÃ£o Ã© um usuÃ¡rio externo.');
 						}
 
-						//verifica se o contato já é participante do processo
+						//verifica se o contato jÃ¡ Ã© participante do processo
 						$objParticipanteDTO = new ParticipanteDTO();
 
 						$objParticipanteDTO->retNumIdParticipante();
@@ -428,7 +428,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 							$dto = $objAcessoExternoRN->consultar($dto);
 
 							if ($dto != null) {
-								$objInfraException->lancarValidacao('Usuário externo ' . $dto->getStrSiglaContato() . ' já recebeu liberação para assinatura externa no documento ' . $objDocumentoDTO->getStrProtocoloDocumentoFormatado() . ' em ' . substr($dto->getDthAberturaAtividade(), 0, 16) . '.');
+								$objInfraException->lancarValidacao('UsuÃ¡rio externo ' . $dto->getStrSiglaContato() . ' jÃ¡ recebeu liberaÃ§Ã£o para assinatura externa no documento ' . $objDocumentoDTO->getStrProtocoloDocumentoFormatado() . ' em ' . substr($dto->getDthAberturaAtividade(), 0, 16) . '.');
 							}
 						}
 
@@ -464,7 +464,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 
                         $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
                         $objAtributoAndamentoDTO->setStrNome('INTERESSADO');
-                        $objAtributoAndamentoDTO->setStrValor($objParticipanteDTO->getStrSiglaContato() . '¥' . $objParticipanteDTO->getStrNomeContato());
+                        $objAtributoAndamentoDTO->setStrValor($objParticipanteDTO->getStrSiglaContato() . 'Â¥' . $objParticipanteDTO->getStrNomeContato());
                         $objAtributoAndamentoDTO->setStrIdOrigem($objAcessoExternoDTO->getNumIdParticipante());
                         $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -509,7 +509,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 						$arrObjAtributoAndamentoDTO = array();
 						$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
 						$objAtributoAndamentoDTO->setStrNome('INTERESSADO');
-						$objAtributoAndamentoDTO->setStrValor($objParticipanteDTO->getStrSiglaContato() . '¥' . $objParticipanteDTO->getStrNomeContato());
+						$objAtributoAndamentoDTO->setStrValor($objParticipanteDTO->getStrSiglaContato() . 'Â¥' . $objParticipanteDTO->getStrNomeContato());
 						$objAtributoAndamentoDTO->setStrIdOrigem($objAcessoExternoDTO->getNumIdParticipante());
 						$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 
@@ -720,12 +720,12 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 			$objTipoDTO = new TipoDTO();
 			$objTipoDTO->setStrStaTipo(self::$TA_USUARIO_EXTERNO);
-			$objTipoDTO->setStrDescricao('Usuário Externo');
+			$objTipoDTO->setStrDescricao('UsuÃ¡rio Externo');
 			$arrObjTipoDTO[] = $objTipoDTO;
 
 			$objTipoDTO = new TipoDTO();
 			$objTipoDTO->setStrStaTipo(self::$TA_DESTINATARIO_ISOLADO);
-			$objTipoDTO->setStrDescricao('Destinatário Isolado');
+			$objTipoDTO->setStrDescricao('DestinatÃ¡rio Isolado');
 			$arrObjTipoDTO[] = $objTipoDTO;
 
 			$objTipoDTO = new TipoDTO();
@@ -863,73 +863,43 @@ class MdPetAcessoExternoRN extends InfraRN {
 	}
 
 	public function atualizarIdAcessoExternoModulo($idAcessoExt, $tipo){
+		
+		$objDTO = null;
+		
 		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
 		$objMdPetAcessoExternoDTO->setNumIdAcessoExterno($idAcessoExt);
-		$objDTO         = null;
+		
 		$existeCadastro = $this->contar($objMdPetAcessoExternoDTO) > 0;
-
+		
+		$objMdPetAcessoExternoDTO->setStrSinVinculo('N');
+		$objMdPetAcessoExternoDTO->setStrSinIntimacao('N');
+		$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('N');
+		$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('N');
+		
 		switch ($tipo){
-			case static::$MD_PET_PROCESSO_NOVO:
-				$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('S');
-
-				if(!$existeCadastro)
-				{
-					$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('N');
-					$objMdPetAcessoExternoDTO->setStrSinIntimacao('N');
-					$objMdPetAcessoExternoDTO->setStrSinVinculo('N');
-				}
-
-				break;
-
-			case static::$MD_PET_PROCESSO_INTERCORRENTE:
-				$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('S');
-
-				if(!$existeCadastro)
-				{
-					$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('N');
-					$objMdPetAcessoExternoDTO->setStrSinIntimacao('N');
-					$objMdPetAcessoExternoDTO->setStrSinVinculo('N');
-				}
-
-				break;
-
-			case static::$MD_PET_INTIMACAO:
-				$objMdPetAcessoExternoDTO->setStrSinIntimacao('S');
-
-				if(!$existeCadastro)
-				{
-					$objMdPetAcessoExternoDTO->setStrSinVinculo('N');
-					$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('N');
-					$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('N');
-
-				}
-
-				break;
-
+			case static::$MD_PET_PROCESSO_NOVO: $objMdPetAcessoExternoDTO->setStrSinProcessoNovo('S'); break;
+			case static::$MD_PET_PROCESSO_INTERCORRENTE: $objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('S'); break;
+			case static::$MD_PET_INTIMACAO: $objMdPetAcessoExternoDTO->setStrSinIntimacao('S'); break;
 			case static::$MD_PET_VINCULO:
-			case static::$MD_PET_VINC_PROCURACAO :
-			case static::$MD_PET_PROCURACAO_REVOGACAO :
-			case static::$MD_PET_PROCURACAO_RENUCIA :
-				$objMdPetAcessoExternoDTO->setStrSinVinculo('S');
-
-				if(!$existeCadastro){
-					$objMdPetAcessoExternoDTO->setStrSinProcessoNovo('N');
-					$objMdPetAcessoExternoDTO->setStrSinProcessoIntercorrente('N');
-					$objMdPetAcessoExternoDTO->setStrSinIntimacao('N');
-
-                }
-                break;
-        }
-
-		$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
-
-		if($existeCadastro){
-		  $objDTO = $this->alterar($objMdPetAcessoExternoDTO);
-		}else{
-		  $objDTO = $this->cadastrar($objMdPetAcessoExternoDTO);
+			case static::$MD_PET_VINC_PROCURACAO:
+			case static::$MD_PET_PROCURACAO_REVOGACAO:
+			case static::$MD_PET_PROCURACAO_RENUCIA: $objMdPetAcessoExternoDTO->setStrSinVinculo('S'); break;
 		}
-
-		return $objDTO;
+		
+		$objMdPetAcessoExternoDTO->setStrSinAtivo('S');
+		
+		if($existeCadastro){
+			$this->alterar($objMdPetAcessoExternoDTO);
+		}else{
+			$this->cadastrar($objMdPetAcessoExternoDTO);
+		}
+		
+		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
+		$objMdPetAcessoExternoDTO->setNumIdAcessoExterno($idAcessoExt);
+		$objMdPetAcessoExternoDTO->retTodos();
+		
+		return $this->consultar($objMdPetAcessoExternoDTO);
+		
 	}
 
 
@@ -1271,7 +1241,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 	}
 
 	/*
-	 * Função construída com o intuíto de evitar várias consultas.
+	 * FunÃ§Ã£o construÃ­da com o intuÃ­to de evitar vÃ¡rias consultas.
 	 */
 	private function _geTipoAcessoExternoPorContatos($arrObjs, $arrIdsContato)
 	{
@@ -1341,34 +1311,34 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$strMotivo = '';
 		switch ($tipoPeticionamento){
 			case static::$MD_PET_INTIMACAO:
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos em razão de Intimação Eletrônica gerada.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em razÃ£o de IntimaÃ§Ã£o EletrÃ´nica gerada.';
 				break;
 
 			case static::$MD_PET_PROCESSO_NOVO:
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos em razão de Peticionamento Eletrônico realizado.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em razÃ£o de Peticionamento EletrÃ´nico realizado.';
 				break;
 
 			case static::$MD_PET_PROCESSO_INTERCORRENTE:
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos em razão de Peticionamento Eletrônico realizado.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em razÃ£o de Peticionamento EletrÃ´nico realizado.';
 				break;
 
 			case static::$MD_PET_CORRECAO_CANCELAMENTO:
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a cancelamento de acesso integral para correta manutenção dos acessos externos necessários.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos devido a cancelamento de acesso integral para correta manutenÃ§Ã£o dos acessos externos necessÃ¡rios.';
 				break;
 			case static::$MD_PET_VINCULO:
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos em razão de Vinculação realizada.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em razÃ£o de VinculaÃ§Ã£o realizada.';
 				break;
 
 			case static::$MD_PET_VINC_PROCURACAO :
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos em razão da Procuração Eletrônica concedida a partir da Vinculação realizada.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos em razÃ£o da ProcuraÃ§Ã£o EletrÃ´nica concedida a partir da VinculaÃ§Ã£o realizada.';
 				break;
 
 			case static::$MD_PET_PROCURACAO_REVOGACAO :
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a revogação realizada à Procuração Eletrônica concedida.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos devido a revogaÃ§Ã£o realizada Ã  ProcuraÃ§Ã£o EletrÃ´nica concedida.';
 				break;
 
 			case static::$MD_PET_PROCURACAO_RENUCIA :
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a renúncia realizada à Procuração Eletrônica concebida.';
+				$strMotivo = 'Criado automaticamente por meio do mÃ³dulo Peticionamento e IntimaÃ§Ã£o EletrÃ´nicos devido a renÃºncia realizada Ã  ProcuraÃ§Ã£o EletrÃ´nica concebida.';
 				break;
 
 		}
@@ -1396,7 +1366,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$idVinculo       = array_key_exists(0, $arrParams) ? $arrParams[0] : null;
 		$idProcedimento  = array_key_exists(1, $arrParams) ? $arrParams[1] : null;
 		
-		//Variável que auxilia onde precisar adicionar acesso externo para o contato que foi desativado.
+		//VariÃ¡vel que auxilia onde precisar adicionar acesso externo para o contato que foi desativado.
 		$idContatoDesativado = array_key_exists(2, $arrParams) ? $arrParams[2] : null;
 
 		if(!is_null($idVinculo) && !is_null($idProcedimento)) {
@@ -1421,71 +1391,70 @@ class MdPetAcessoExternoRN extends InfraRN {
 	{
 
 		$idAcessoExternoMain = null;
+		
+		$idContato = !empty($idContato) ? $idContato : $this->_retornaIdContatoUsuarioExterno();
 
-		if (is_null($idContato)) {
-			$idContato = $this->_retornaIdContatoUsuarioExterno();
-		}
+		if (!empty($idContato)) {
+			
+			$arrParams          = [$idProcedimento, $idContato];
+			$tpAcessoAnterior   = $this->_getUltimaConcessaoAcessoExternoModulo($idProcedimento, $idContato);
+			$tpAcessoSolicitado = !empty($tpAcessoSolicitado) ? $tpAcessoSolicitado : static::$ACESSO_PARCIAL;
 
-		if (!is_null($idContato))
-		{
-			$arrParams = array($idProcedimento, $idContato);
-			$tpAcessoAnterior = $this->_getUltimaConcessaoAcessoExternoModulo($idProcedimento, $idContato);
-
-			$tpAcessoSolicitado = is_null($tpAcessoSolicitado) ? static::$ACESSO_PARCIAL : $tpAcessoSolicitado;
-
-			//Se não existe acesso externo anterior criado, gerar um novo
-			if ($tpAcessoAnterior == MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO)
-			{
+			//Se nÃ£o existe acesso externo anterior criado, gerar um novo
+			if ($tpAcessoAnterior == MdPetIntAcessoExternoDocumentoRN::$NAO_POSSUI_ACESSO) {
+				
 				$arrDTO = $this->_cadastrarAcessoExterno($idProcedimento, $idContato, $tipoPeticionamento, $tpAcessoSolicitado, $nomeDoc, $arrIdsDocIntercorrente);
 
-				$objAcessoExtDTO = count($arrDTO) > 0 ? current($arrDTO) : null;
-				$idAcessoExt = $objAcessoExtDTO->getNumIdAcessoExterno();
-
-				$idAcessoExternoMain =  $idAcessoExt;
+				$objAcessoExtDTO = !empty($arrDTO) ? current($arrDTO) : null;
+				$idAcessoExternoMain = $idAcessoExt = !empty($objAcessoExtDTO) ? $objAcessoExtDTO->getNumIdAcessoExterno() : false;
+				
 			}
 
 			//Se existir acesso Integral
-			if ($tpAcessoAnterior == static::$ACESSO_INTEGRAL)
-			{
+			if ($tpAcessoAnterior == static::$ACESSO_INTEGRAL) {
+				
 				//Se o solicitado for integral
-				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL)
-				{
+				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL) {
+					
 					$arrObjs = $this->_retornaArrAcessoExtPorProcedimentoPorContato(array($idContato), $idProcedimento);
-                    $objDTO = count($arrObjs) > 0 ? current($arrObjs) : false;
-                    $idAcessoExt = $objDTO ? $objDTO->getNumIdAcessoExterno() : false;
-
-                    $idAcessoExternoMain = $idAcessoExt;
+					
+                    $objDTO = !empty($arrObjs) ? current($arrObjs) : null;
+					$idAcessoExternoMain = $idAcessoExt = !empty($objDTO) ? $objDTO->getNumIdAcessoExterno() : false;
+					
 				}
+				
 			}
 
 			//Se existir acesso Parcial
-			if ($tpAcessoAnterior == static::$ACESSO_PARCIAL)
-			{
+			if ($tpAcessoAnterior == static::$ACESSO_PARCIAL) {
 
 			   //Se o solicitado for Integral
-				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL)
-				{
+				if ($tpAcessoSolicitado == static::$ACESSO_INTEGRAL) {
+					
 					$idAcessoExt = $this->_realizarProcessosCancelamentoCriacaoAcExterno($arrParams, $nomeDoc, $tpAcessoSolicitado, $tipoPeticionamento);
-					$idAcessoExternoMain =  $idAcessoExt;
+					$idAcessoExternoMain = $idAcessoExt;
+					
 				}
-
-
+				
 				//Se o solicitado for Parcial
-				if ($tpAcessoSolicitado == static::$ACESSO_PARCIAL)
-				{
-                    $idAcessoExt = $this->_realizarProcessosAdequacaoProcessoExternoParcial($idProcedimento, $idContato, $tipoPeticionamento, $arrIdsDocIntercorrente);
+				if ($tpAcessoSolicitado == static::$ACESSO_PARCIAL) {
+					
+					$idAcessoExt = $this->_realizarProcessosAdequacaoProcessoExternoParcial($idProcedimento, $idContato, $tipoPeticionamento, $arrIdsDocIntercorrente);
                     $idAcessoExternoMain = $idAcessoExt;
 
 				}
+				
 			}
-		}
-
-		if(!is_null($idAcessoExternoMain)){
-			$this->atualizarIdAcessoExternoModulo($idAcessoExternoMain, $tipoPeticionamento);
-			return $idAcessoExternoMain;
+			
+			if(!empty($idAcessoExternoMain)){
+				$this->atualizarIdAcessoExternoModulo($idAcessoExternoMain, $tipoPeticionamento);
+				return $idAcessoExternoMain;
+			}
+			
 		}
 
 		return null;
+		
 	}
 
 
@@ -1498,15 +1467,15 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$idContato    		 = $arrParams[1];
 		$idProcesso   		 = $arrParams[0];
 		$objAcessoExternoRN  = new AcessoExternoRN();
-		$motivoCancelamento  = 'Em razão de novo Acesso Externo Integral concedido no âmbito da Intimação Eletrônica afeta ao Documento Principal '.$nomeDocCompleto.'.';
+		$motivoCancelamento  = 'Em razÃ£o de novo Acesso Externo Integral concedido no Ã¢mbito da IntimaÃ§Ã£o EletrÃ´nica afeta ao Documento Principal '.$nomeDocCompleto.'.';
 
 		$arrObjAcessosExtDTO = $this->_retornaArrAcessoExtPorProcedimentoPorContato(array($idContato), $idProcesso, true);
 		$objDTO = count($arrObjAcessosExtDTO) > 0 ? current($arrObjAcessosExtDTO) : null;
 
 		if (!is_null($objDTO))
 		{
-			//Simula login para settar a unidade do acesso externo (validação de acesso de unidade logada = unidade do acesso externo cancelado no CORE)
-			//Set usuário do módulo como responsável pelo cancelamento
+			//Simula login para settar a unidade do acesso externo (validaÃ§Ã£o de acesso de unidade logada = unidade do acesso externo cancelado no CORE)
+			//Set usuÃ¡rio do mÃ³dulo como responsÃ¡vel pelo cancelamento
 			$idUnidadeAcessoExt = $objDTO->getNumIdUnidadeAcessoExterno();
 
 			SessaoSEI::getInstance()->setBolHabilitada(false);
@@ -1569,7 +1538,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$idProcedimento = $arrParams[0];
 			$idContato = $arrParams[1];
 
-			//Cadastrar Novo Acesso Externo para Intimação
+			//Cadastrar Novo Acesso Externo para IntimaÃ§Ã£o
 			$arrObjAcessoExt = $this->_cadastrarAcessoExterno($arrParams[0], $arrParams[1], $tipoPeticionamento, $tpAcessoSolicitado, $nomeDoc);
 
 			$idNovoAcessoExt = count($arrObjAcessoExt) > 0 ? $arrObjAcessoExt[0]->getNumIdAcessoExterno() : false;
@@ -1687,10 +1656,8 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 		$objProtAcExRN   = new RelAcessoExtProtocoloRN();
 
-		foreach ($arrDocAcessoExt as $doc)
-		{
-			if($idAcessoExt)
-			{
+		foreach ($arrDocAcessoExt as $doc) {
+			if($idAcessoExt) {
 				$objProtAcExDTO = new RelAcessoExtProtocoloDTO();
 				$objProtAcExDTO->setNumIdAcessoExterno($idAcessoExt);
 				$objProtAcExDTO->setDblIdProtocolo($doc);
@@ -1735,7 +1702,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$arrTiposAcEx     = $this->getTipoAcessoExternoPorAcessoExterno($idsAcessoExterno);
 			$possuiIntegral   = array_search(MdPetAcessoExternoRN::$ACESSO_INTEGRAL, $arrTiposAcEx);
 
-			//Se for integral, retorna o Id do Integral, se não busca se os parciais ativos e válidos possuem acesso
+			//Se for integral, retorna o Id do Integral, se nÃ£o busca se os parciais ativos e vÃ¡lidos possuem acesso
 			if($possuiIntegral){
 				$idAcessoExterno = $possuiIntegral;
 			}
@@ -1769,7 +1736,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objContatoDTO        = $objMdPetUsuarioRN->retornaObjContatoPorIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
 		$idAcessoExterno      = null;
 
-		//Get Id Acesso Externo Associado ao Módulo
+		//Get Id Acesso Externo Associado ao MÃ³dulo
 		$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
 		$objMdPetAcessoExternoDTO->setNumIdContatoAcessoExterno($objContatoDTO->getNumIdContato() );
 		$objMdPetAcessoExternoDTO->setDblIdProtocoloAcessoExterno($idProcedimentoRecibo);
@@ -1780,7 +1747,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objMdPetAcessoExternoDTO = $objMdPetAcessoExtRN->consultar($objMdPetAcessoExternoDTO);
 
 
-		//Se o acesso externo do módulo está ativo, settar do módulo, se não, buscar se o mesmo possui algum acesso externo ativo
+		//Se o acesso externo do mÃ³dulo estÃ¡ ativo, settar do mÃ³dulo, se nÃ£o, buscar se o mesmo possui algum acesso externo ativo
 		if(!is_null($objMdPetAcessoExternoDTO)){
 			$idAcessoExterno =  $objMdPetAcessoExternoDTO->getNumIdAcessoExterno();
 		}
@@ -1832,7 +1799,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$arrIdIntDest            = array();
 
 		$objMdPetIntRelDestRN    = new MdPetIntRelDestinatarioRN();
-		//Get todas Intimações deste destinatário
+		//Get todas IntimaÃ§Ãµes deste destinatÃ¡rio
 		$objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
 		$objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
 		$objMdPetIntRelDestDTO->setDblIdProcedimento($arrParams['idProcedimento']);
@@ -1918,13 +1885,13 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 
 	private function _buscarDocumentosAcessoExterno($idAcessoExt, $arrParams){
-		//Buscar documentos envolvidos nas Intimações desse processo
+		//Buscar documentos envolvidos nas IntimaÃ§Ãµes desse processo
 		$arrDocInt  = $this->_buscarDocumentosIntimacoesProcesso($idAcessoExt, $arrParams);
 
 		//Buscar os documentos envolvidos nos peticionamentos
 		$arrDocPet  = $this->_buscarDocumentosPeticionamentos($arrParams);
 
-		// Buscar os documentos envolvidos nas respostas por esse usuário neste processo
+		// Buscar os documentos envolvidos nas respostas por esse usuÃ¡rio neste processo
 		$arrDocResp = $this->_buscarDocumentosResposta($arrParams);
 
         // Buscar os documento envolvidos durante o vinculo
@@ -1943,7 +1910,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 		//Buscar dados relacionados a esse acesso externo
 		$arrParams  = $this->_getDadosAcessoExterno($idAcessoExt);
 
-		//Settar obj main do módulo no acesso externo
+		//Settar obj main do mÃ³dulo no acesso externo
 		$this->_atualizarTabelaModuloCancelamento($idAcessoExt);
 
 		//Busca todos os ids de acesso externo envolvidos com esse acesso externo
@@ -1957,10 +1924,10 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$objAcessoExtDTO = count($arrObjAcessoExt) > 0 ? current($arrObjAcessoExt) : null;
 		$idNovoAcessExt  = $objAcessoExtDTO->getNumIdAcessoExterno();
 
-		//Atualizar o novo id parcial na tabela do módulo de acesso externo
+		//Atualizar o novo id parcial na tabela do mÃ³dulo de acesso externo
 		$this->_cadastrarAcessoExternoModuloPorArray($arrRetorno, $idNovoAcessExt);
 
-		//Readequar as intimações com o novo id de acesso externo
+		//Readequar as intimaÃ§Ãµes com o novo id de acesso externo
 		$this->_updateIntimacaoAcessoExternoGerado($idNovoAcessExt, $arrParams['idProcedimento'], $arrParams['idContato']);
 	}
 
@@ -2035,7 +2002,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 	private function _buscarDocumentosIntimacoesProcesso($idAcessoExt, $arrParams)
 	{
-		//Busca ids de todas as intimações
+		//Busca ids de todas as intimaÃ§Ãµes
 		$arrRetorno            = array();
 		$idsProtocolo          = array();
 		$idsCertidao           = array();

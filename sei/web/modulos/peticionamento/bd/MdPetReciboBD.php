@@ -16,4 +16,3 @@ class MdPetReciboBD extends InfraBD {
   }
 
 }
-?>

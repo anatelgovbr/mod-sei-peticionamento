@@ -31,9 +31,11 @@ $strLinkAjaxConfirmaRestricaoSalvar = SessaoSEI::getInstance()->assinarLink('con
 //Tipo Documento Principal
 $strLinkTipoDocPrincExternoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=E&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
 $strLinkTipoDocPrincGeradoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=G&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
+$strLinkTipoDocPrincFormularioSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_formulario_selecionar&filtro=1&tipoDoc=F&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
 $strLinkAjaxTipoDocPrinc = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_serie_auto_completar');
+$strLinkTipoDocPrincFormularioAutoCompletar = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_formulario_auto_completar');
 
-//Preparar Preenchimento Alteração
+//Preparar Preenchimento AlteraÃ§Ã£o
 $idMdPetTipoProcesso = '';
 $nomeTipoProcesso = '';
 $idTipoProcesso = '';

@@ -16,4 +16,3 @@ class MdPetTpProcessoOrientacoesBD extends InfraBD {
   }
 
 }
-?>

@@ -39,7 +39,7 @@ try {
 
   $arrComandos = array();
   $arrComandos[] = '<input type="button" id="btnToggleLote" value="Selecionar em Lote" class="infraButton btnToggleLote" style="cursor: pointer" />';
-  $arrComandos[] = '<input type="submit" id="btnPesquisar" value="Pesquisar" class="infraButton submitSearchForm" />';
+  $arrComandos[] = '<input type="submit" id="btnPesquisar" value="Pesquisar" class="infraButton submitSearchForm"/>';
   
   if ($_GET['acao'] == 'md_pet_pessoa_fisica'){
     $arrComandos[] = '<button type="button" accesskey="T" id="btnTransportarSelecao" value="Transportar" onclick="infraTransportarSelecao();" class="infraButton"><span class="infraTeclaAtalho">T</span>ransportar</button>';
@@ -501,11 +501,7 @@ function inicializar(){
 
                 let i = 0;
                 let toTransport = $('#foundCpfs').val().split('\n');
-                let contextChanges = window.top.document.getElementById('ifrVisualizacao').contentWindow.document;
-                
-                if(contextChanges == null){
-                    contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
-                }
+                let contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
                 
                 while (i < toTransport.length) {
                     

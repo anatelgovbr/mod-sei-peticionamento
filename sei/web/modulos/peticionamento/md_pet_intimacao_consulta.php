@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/03/2017 - criado por pedro.cast
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 try {
@@ -21,11 +21,12 @@ try {
 
     $arrComandos = array();
     PaginaSEI::getInstance()->setBolArvore($_GET['arvore']);
-    $strParametros .= '&arvore='.$_GET['arvore'];
+    $strParametros = '&arvore='.$_GET['arvore'];
 
     switch($_GET['acao']){
         case 'md_pet_intimacao_consulta':
-            $strTitulo = 'Consultar IntimaÁ„o EletrÙnica';
+            
+            $strTitulo = 'Consultar Intima√ß√£o Eletr√¥nica';
 
             $idDocumento = isset($_GET['id_documento']) ? $_GET['id_documento'] : $_POST['hdnIdDocumento'];
             $objDocumentoDTO = new DocumentoDTO();
@@ -39,45 +40,36 @@ try {
             $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
             $strProtocoloDocumentoFormatado = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
-
-            
-
-
-            //Juridica
+	
+	        //Juridica
 
             $dtoContato = new ContatoDTO();
             $dtoContato->setNumIdContato($_GET['id_contato']);
             $dtoContato->retDblCnpj();
             $dtoContato->retDblCpf();
             $dtoContato->retStrNome();
+            $dtoContato->retStrStaNatureza();
             $rnContato = new ContatoRN();
             $arr = $rnContato->listarRN0325($dtoContato);
             
-            if($arr[0]->getDblCpf() == null){
+            if($arr[0]->getStrStaNatureza() == 'J'){
                 $pessoa = "J";
-
-                //Cria Intimacao
-            $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-            
-            $dadosIntimacao = $objMdPetIntimacaoRN->dadosIntimacaoByIDJuridico($_GET['id_intimacao'], $_GET['id_contato']);
-
-            $strTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', $dadosIntimacao['tipo_intimacao']);
-
+                $dadosIntimacao = (new MdPetIntimacaoRN())->dadosIntimacaoByIDJuridico($_GET['id_intimacao'], $_GET['id_contato']);
             }else{
-                
                 $pessoa = "F";
-
-                $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-            
-            $dadosIntimacao = $objMdPetIntimacaoRN->dadosIntimacaoByID($_GET['id_intimacao'], $_GET['id_contato']);
-
-            $strTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', $dadosIntimacao['tipo_intimacao']);
+                $dadosIntimacao = (new MdPetIntimacaoRN())->dadosIntimacaoByID($_GET['id_intimacao'], $_GET['id_contato']);
             }
+	
+	        $strTipoIntimacao   = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', $dadosIntimacao['tipo_intimacao']);
+	
+	        // Pega o n√∫mero de dias para cumprimento t√°cito de acordo com o tipo de Procedimento(Processo)
+	        $objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $dadosIntimacao['id_tipo_processo'] );
+	        $numDiasPrazoTacito = !empty($objMdPetIntPrazoTacitaDTO) ? $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() : 0;
 
             break;
 
         default:
-            throw new InfraException("AÁ„o '".$_GET['acao']."' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '".$_GET['acao']."' n√£o reconhecida.");
     }
 
     $arrComandos[] = '<button type="button" accesskey="C" id="btnFechar" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal();" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
@@ -121,20 +113,20 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
 
     <div class="row mb-3">
         <div class="col-10">
-            <label class="infraLabelObrigatorio">Destinat·rio:</label> <label class="infraLabelOpcional"><?= PaginaSEI::tratarHTML($dadosIntimacao['nome'])?></label><br>
+            <label class="infraLabelObrigatorio">Destinat√°rio:</label> <label class="infraLabelOpcional"><?= PaginaSEI::tratarHTML($dadosIntimacao['nome'])?></label><br>
             <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">E-mail:</label><label class="infraLabelOpcional"> <?= $dadosIntimacao['email']?></label><br><?php } ?>
 
-            <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">CPF:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCpf($dadosIntimacao['cpf'])?></label><br> <?php } ?>
-            <?php if($pessoa == "J"){ ?><label class="infraLabelObrigatorio">CNPJ:</label> <label class="infraLabelOpcional"><?= InfraUtil::formatarCnpj($dadosIntimacao['cpf'])?></label><br> <?php } ?>
+            <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">CPF:</label> <label class="infraLabelOpcional"><?= !empty($dadosIntimacao['cpf']) ? InfraUtil::formatarCpf($dadosIntimacao['cpf']) : 'Contato n√£o possui CPF' ?></label><br> <?php } ?>
+            <?php if($pessoa == "J"){ ?><label class="infraLabelObrigatorio">CNPJ:</label> <label class="infraLabelOpcional"><?= !empty($dadosIntimacao['cpf']) ? InfraUtil::formatarCpf($dadosIntimacao['cpf']) : 'Contato n√£o possui CPF' ?></label><br> <?php } ?>
 
-            <label class="infraLabelObrigatorio">Data de ExpediÁ„o:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['data_geracao']?></label><br>
-            <label class="infraLabelObrigatorio">SituaÁ„o da IntimaÁ„o:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['situacao']?></label><br>
+            <label class="infraLabelObrigatorio">Data de Expedi√ß√£o:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['data_geracao']?></label><br>
+            <label class="infraLabelObrigatorio">Situa√ß√£o da Intima√ß√£o:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['situacao']?></label><br>
         </div>
     </div>
 
     <div class="row mb-3">
         <div class="col-sm-12 col-md-6 col-lg-6">
-            <label class="infraLabelObrigatorio">Tipo de IntimaÁ„o:</label>
+            <label class="infraLabelObrigatorio">Tipo de Intima√ß√£o:</label>
             <select disabled="disabled" class="infraSelect form-control">
                 <?= $strTipoIntimacao ?>
             </select>
@@ -151,23 +143,23 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
 <?php PaginaSEI::getInstance()->abrirAreaDados(); ?>
 
     <fieldset id="fldDestinatarios" class="infraFieldset p-3 mb-3">
-        <legend class="infraLegend" class="infraLabelObrigatorio" > Documentos da IntimaÁ„o 
+        <legend class="infraLegend" class="infraLabelObrigatorio" > Documentos da Intima√ß√£o 
             <img style="margin-top:1px; margin-bottom: -3px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-· cumprida a IntimaÁ„o EletrÙnica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da IntimaÁ„o. \n\n Caso a consulta n„o seja efetuada em atÈ ' . $numNumPrazo . ' dias corridos da data de geraÁ„o da IntimaÁ„o EletrÙnica, automaticamente ocorrer· seu Cumprimento por Decurso do Prazo T·cito. \n\n O Documento Principal e possÌveis Anexos ter„o o acesso ao seu teor protegidos atÈ o cumprimento da IntimaÁ„o.', 'Ajuda') ?> />
+                id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-√° cumprida a Intima√ß√£o Eletr√¥nica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intima√ß√£o. \n\n Caso a consulta n√£o seja efetuada em at√© ' . $numDiasPrazoTacito . ' dias corridos da data de gera√ß√£o da Intima√ß√£o Eletr√¥nica, automaticamente ocorrer√° seu Cumprimento por Decurso do Prazo T√°cito. \n\n O Documento Principal e poss√≠veis Anexos ter√£o o acesso ao seu teor protegidos at√© o cumprimento da Intima√ß√£o.', 'Ajuda') ?> />
         </legend>
         <div class="row mb-3">
             <div class="col-sm-12 col-md-8 col-lg-7">
-                <label class="infraLabelOpcional">Documento Principal da IntimaÁ„o: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' .$strProtocoloDocumentoFormatado . ')'; ?></label>
+                <label class="infraLabelOpcional">Documento Principal da Intima√ß√£o: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' .$strProtocoloDocumentoFormatado . ')'; ?></label>
                 <div id="divOptAno" class="infraDivCheckbox">
                     <input type="checkbox" <?= ($dadosIntimacao['documento_principal']) ? 'checked="checked"' : ''; ?> id="optPossuiAnexo" disabled="disabled" class="infraCheckbox" />
-                    <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelOpcional">IntimaÁ„o possui Anexos </label>
+                    <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelOpcional">Intima√ß√£o possui Anexos </label>
                 </div>
             </div>
         </div>
         
         <div class="row">
             <div class="col-sm-12 col-md-8 col-lg-8">
-                <label id="lblAnexosIntimacao" <?= ($dadosIntimacao['documento_principal']) ? '' : 'style="display:none;"'; ?> for="lblAnexosIntimacao" accesskey="" class="infraLabelObrigatorio">Protocolos dos Anexos da IntimaÁ„o:</label>
+                <label id="lblAnexosIntimacao" <?= ($dadosIntimacao['documento_principal']) ? '' : 'style="display:none;"'; ?> for="lblAnexosIntimacao" accesskey="" class="infraLabelObrigatorio">Protocolos dos Anexos da Intima√ß√£o:</label>
                 <select id="selAnexosIntimacao" <?= ($dadosIntimacao['documento_principal']) ? '' : 'style="display:none;"'; ?> name="selAnexosIntimacao" disabled="disabled" size="5" class="infraSelect form-control" ><?= $dadosIntimacao['arr_protocolos_anexos'] ?></select>
             </div>
         </div>
@@ -181,14 +173,14 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
                     <input id="lblIntegral" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'I' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
                     <label class="infraLabelOpcional">Integral </label>
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" class="infraImg" name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip('AtenÁ„o! Toda IntimaÁ„o EletrÙnica ocorre por meio da funcionalidade de DisponibilizaÁ„o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo ser„o disponibilizados ao Destinat·rio, independentemente de seus NÌveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que n„o ocorra nulidade da IntimaÁ„o, o Acesso Externo Integral somente poder· ser cancelado depois de cumprida a IntimaÁ„o e concluÌdo o Prazo Externo correspondente (se indicado para possÌvel Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela IntimaÁ„o EletrÙnica seja cancelado, ele ser· automaticamente substituÌdo por um Acesso Externo Parcial abrangendo o Documento Principal e possÌveis Anexos da IntimaÁ„o, alÈm de Documentos peticionados pelo prÛprio Usu·rio Externo.','Ajuda') ?> />
+                        <?= PaginaSEI::montarTitleTooltip('Aten√ß√£o! Toda Intima√ß√£o Eletr√¥nica ocorre por meio da funcionalidade de Disponibiliza√ß√£o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo ser√£o disponibilizados ao Destinat√°rio, independentemente de seus N√≠veis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que n√£o ocorra nulidade da Intima√ß√£o, o Acesso Externo Integral somente poder√° ser cancelado depois de cumprida a Intima√ß√£o e conclu√≠do o Prazo Externo correspondente (se indicado para poss√≠vel Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intima√ß√£o Eletr√¥nica seja cancelado, ele ser√° automaticamente substitu√≠do por um Acesso Externo Parcial abrangendo o Documento Principal e poss√≠veis Anexos da Intima√ß√£o, al√©m de Documentos peticionados pelo pr√≥prio Usu√°rio Externo.','Ajuda') ?> />
                 </div>
 
                 <div id="divOptAno" class="infraDivRadio">
                     <input id="lblParcial" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'P' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
                     <label class="infraLabelOpcional">Parcial </label>
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" class="infraImg" name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip('AtenÁ„o! Toda IntimaÁ„o EletrÙnica ocorre por meio da funcionalidade de DisponibilizaÁ„o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE ser„o disponibilizados ao Destinat·rio o Documento Principal, os Protocolos dos Anexos da IntimaÁ„o (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos ser„o automaticamente incluÌdos no Acesso Parcial. \n\n Para que n„o ocorra nulidade da IntimaÁ„o, o Acesso Externo Parcial n„o poder· ser alterado nem cancelado. Todos os Protocolos incluÌdos no Acesso Externo Parcial poder„o ser visualizados pelo Destinat·rio, independentemente de seus NÌveis de Acesso, n„o abrangendo Protocolos futuros que forem adicionados ao processo.','Ajuda') ?> />
+                        <?= PaginaSEI::montarTitleTooltip('Aten√ß√£o! Toda Intima√ß√£o Eletr√¥nica ocorre por meio da funcionalidade de Disponibiliza√ß√£o de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Parcial, SOMENTE ser√£o disponibilizados ao Destinat√°rio o Documento Principal, os Protocolos dos Anexos da Intima√ß√£o (se indicados) e os Protocolos adicionados no Acesso Parcial (se indicados). O Documento Principal e Protocolos dos Anexos ser√£o automaticamente inclu√≠dos no Acesso Parcial. \n\n Para que n√£o ocorra nulidade da Intima√ß√£o, o Acesso Externo Parcial n√£o poder√° ser alterado nem cancelado. Todos os Protocolos inclu√≠dos no Acesso Externo Parcial poder√£o ser visualizados pelo Destinat√°rio, independentemente de seus N√≠veis de Acesso, n√£o abrangendo Protocolos futuros que forem adicionados ao processo.','Ajuda') ?> />
                 </div>
             </div>
         </div>

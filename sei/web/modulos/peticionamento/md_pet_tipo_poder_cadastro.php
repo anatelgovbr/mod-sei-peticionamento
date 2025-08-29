@@ -142,7 +142,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
             break;
 
     }
@@ -219,15 +219,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <form id="frmTextoPadraoInternoCadastro" method="post" onsubmit="return OnSubmitForm();"
           action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
         <?
-        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-
-        if ($tipo == 'E') {
-            PaginaSEI::getInstance()->abrirAreaDados('17em');
-        } else if ($tipo == 'H') {
-            PaginaSEI::getInstance()->abrirAreaDados('14em;overflow:hidden');
-        } else {
-            PaginaSEI::getInstance()->abrirAreaDados('17em');
-        }
+            PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+	        PaginaSEI::getInstance()->abrirAreaDados('17em');
         ?>
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-5">
@@ -235,7 +228,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <img align="top"
                          style="width:20px;"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Indicar Poderes específicos para serem utilizados na emissão de Procuração Eletrônica simples pelos Usuários Externos. \n \n Por exemplo: Participar em Reuniões, Peticionar Processo Novo ou Intercorrente, Operar Sistemas.', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Indicar Poderes especÃ­ficos para serem utilizados na emissÃ£o de ProcuraÃ§Ã£o EletrÃ´nica simples pelos UsuÃ¡rios Externos. \n \n Por exemplo: Participar em ReuniÃµes, Peticionar Processo Novo ou Intercorrente, Operar Sistemas.', 'Ajuda') ?>
                          class="infraImgModulo"/>
                 </label>
                 <input type="text" id="txtNome" name="txtNome" onkeypress="return infraMascaraTexto(this,event,100);"
@@ -245,11 +238,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
 
 
-        <?php
-        PaginaSEI::getInstance()->fecharAreaDados();
-        ?>
-        <input type="hidden" id="hdnIdTpPoder" name="hdnIdTpPoder"
-               value="<?php echo $idPoder ?>"/>
+        <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
+        <input type="hidden" id="hdnIdTpPoder" name="hdnIdTpPoder" value="<?= $idPoder ?>"/>
     </form>
 
 <?

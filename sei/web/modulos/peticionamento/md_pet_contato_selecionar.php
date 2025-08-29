@@ -1,6 +1,6 @@
 <?
 /**
-* ANATEL - Módulo Peticionamento Eletronico
+* ANATEL - MÃ³dulo Peticionamento Eletronico
 *
 * 21/07/2016 - criado por marcelo.bezerra@cast.com.br
 *
@@ -23,9 +23,9 @@ try {
   SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
   PaginaSEIExterna::getInstance()->salvarCamposPost(array('txtPalavrasPesquisaContatos','selGrupoContato','txtNascimentoInicio','txtNascimentoFim', 'selTipoContextoContato'));
    
-  //trazer os tipos de contatos parametrizados na administraçao do modulo para com isso aplicar:
+  //trazer os tipos de contatos parametrizados na administraÃ§ao do modulo para com isso aplicar:
   //- na combo trazer apenas os tipos parametrizados
-  //- na lista de registros trazer apenas aqueles que pertençam a algum dos tipos parametrizados do modulo  
+  //- na lista de registros trazer apenas aqueles que pertenÃ§am a algum dos tipos parametrizados do modulo  
   $idTipoProc = $_GET['id_tipo_processo_peticionamento'];
   $objMdPetRelTpCtxContatoDTO = new MdPetRelTpCtxContatoDTO();
   $objMdPetTpCtxContatoRN = new MdPetTpCtxContatoRN();
@@ -37,7 +37,7 @@ try {
 	  PaginaSEIExterna::getInstance()->salvarCampo('chkMaisOpcoesContatos',(isset($_POST['chkMaisOpcoesContatos']) ? PaginaSEIExterna::getInstance()->getCheckbox($_POST['chkMaisOpcoesContatos']) : 'N'));
   }
 	
-	//link de acesso que preenche os critérios
+	//link de acesso que preenche os critÃ©rios
   if (isset($_GET['palavras_pesquisa'])){
     PaginaSEIExterna::getInstance()->salvarCampo('txtPalavrasPesquisaContatos',$_GET['palavras_pesquisa']);
   }
@@ -66,7 +66,7 @@ try {
        break;
 
     default:
-      throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+      throw new InfraException("AÃ§Ã£o '".$_GET['acao']."' nÃ£o reconhecida.");
   }
 
   //alteracoes seiv3
@@ -151,7 +151,7 @@ try {
 
     $objContatoDTO->setStrMaisOpcoes(PaginaSEIExterna::getInstance()->recuperarCampo('chkMaisOpcoesContatos'));
       
-    //Somente adiciona ANTES da consulta se é para utilizar como filtro
+    //Somente adiciona ANTES da consulta se Ã© para utilizar como filtro
     if ($objContatoDTO->getStrMaisOpcoes()=='S'){
   
         $strDataInicio = PaginaSEIExterna::getInstance()->recuperarCampo('txtNascimentoInicio');
@@ -218,7 +218,7 @@ try {
     }
     $strResultado .= '<th class="infraTh" width="50%">'.$strCaptionTabela.'</th>'."\n";
         
-    $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
+    $strResultado .= '<th class="infraTh" width="15%">AÃ§Ãµes</th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
     
@@ -246,7 +246,7 @@ try {
 
       $strResultado .= '<td align="center">';
 
-      //Alteração
+      //AlteraÃ§Ã£o
 
       if (SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()==$dto->getNumIdUsuarioCadastro()){
       	$strResultado .= "<a href='javascript:;' onclick=\"abrirCadastroInteressadoAlterar('".$dto->getNumIdContato()."', '".$dto->getStrStaNatureza()."')\"><img title='Alterar Interessado' alt='Alterar Interessado' src='/infra_css/imagens/alterar.gif' class='infraImg' /></a>";
@@ -284,7 +284,7 @@ try {
     }
     
     if ( $objContatoDTO->getNumTotalRegistros() > $objContatoDTO->getNumRegistrosPaginaAtual()){
-      $strCaptionTabela .= ' ('.$objContatoDTO->getNumTotalRegistros().' '.(($objContatoDTO->getNumTotalRegistros()==1)?'registro':'registros').' página '.($objContatoDTO->getNumPaginaAtual()+1).' de '.ceil($objContatoDTO->getNumTotalRegistros()/$numRegistrosPorPagina).')';
+      $strCaptionTabela .= ' ('.$objContatoDTO->getNumTotalRegistros().' '.(($objContatoDTO->getNumTotalRegistros()==1)?'registro':'registros').' pÃ¡gina '.($objContatoDTO->getNumPaginaAtual()+1).' de '.ceil($objContatoDTO->getNumTotalRegistros()/$numRegistrosPorPagina).')';
     }else{
       $strCaptionTabela .= ' ('.$n.' '.(($n==1)?'registro':'registros').')';
     }
@@ -297,7 +297,7 @@ try {
   
   $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" name="btnFechar" onclick="$(window.top.document).find(\'div[id^=divInfraSparklingModalClose]\').click();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
   
-  $strItensSelGrupoContato = GrupoContatoINT::ConjuntoPorUnidadeRI0515('null','&nbsp;',$numIdGrupoContato);
+  $strItensSelGrupoContato = GrupoContatoINT::ConjuntoPorUnidadeRI0515('null','&nbsp;', '');
   
   // buscanco primeira unidade para simular login para conseguir fazer a "montarSelectNomeRI0518"
   SessaoSEIExterna::getInstance();

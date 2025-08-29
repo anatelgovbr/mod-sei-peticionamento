@@ -17,4 +17,3 @@ class MdPetIntRelDestinatarioBD extends InfraBD {
     }
 
 }
-?>

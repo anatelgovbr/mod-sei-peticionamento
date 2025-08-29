@@ -17,4 +17,3 @@ class MdPetIntDestRespostaBD extends InfraBD {
   }
 
 }
-?>

@@ -107,6 +107,7 @@
 
             <xsd:complexType name="Representante">
                 <xsd:all>
+                    <xsd:element name="IdVinculoRepresentante" type="xsd:string"/>
                     <xsd:element name="Nome" type="xsd:string"/>
                     <xsd:element name="Cpf" type="xsd:string"/>
                     <xsd:element name="Email" type="xsd:string"/>
@@ -136,6 +137,7 @@
 
             <xsd:complexType name="RepresentacaoPessoa">
                 <xsd:all>
+                    <xsd:element name="IdVinculoRepresentante" type="xsd:string"/>
                     <xsd:element name="Cpf" type="xsd:string"/>
                     <xsd:element name="Nome" type="xsd:string"/>
                     <xsd:element name="Email" type="xsd:string"/>
@@ -231,6 +233,7 @@
 
             <xsd:complexType name="ListarRepresentantesItens">
                 <xsd:all>
+                    <xsd:element name="IdVinculoRepresentante" type="xsd:string"/>
                     <xsd:element name="TipoVinculo" type="xsd:string"/>
                     <xsd:element name="CpfRepresentado" type="xsd:string" minOccurs="0"/>
                     <xsd:element name="NomeRepresentado" type="xsd:string" minOccurs="0"/>

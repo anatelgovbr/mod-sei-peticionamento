@@ -236,11 +236,15 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $objContatoDTO->setNumIdContato($contato->getNumIdContato());
             $objContatoDTO->retTodos(true);
             $objContato = (new ContatoRN())->consultarRN0324($objContatoDTO);
-            $objParticipanteContato = new ContatoAPI();
-            $objParticipanteContato->setIdContato($objContato->getNumIdContato());
-            $objParticipanteContato->setSigla($objContato->getStrSigla());
-            $objParticipanteContato->setNome($objContato->getStrNome());
-            array_push($arrInteressados, $objParticipanteContato);
+
+	        if(!empty($objContato)){
+	        	$objParticipanteContato = new ContatoAPI();
+		        $objParticipanteContato->setIdContato($objContato->getNumIdContato());
+		        $objParticipanteContato->setSigla($objContato->getStrSigla());
+		        $objParticipanteContato->setNome($objContato->getStrNome());
+		        array_push($arrInteressados, $objParticipanteContato);
+	        }
+         
         }
 
         $objProcedimentoAPI->setInteressados($arrInteressados);

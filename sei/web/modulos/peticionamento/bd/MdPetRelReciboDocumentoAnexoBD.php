@@ -16,4 +16,3 @@ class MdPetRelReciboDocumentoAnexoBD extends InfraBD {
   }
 
 }
-?>

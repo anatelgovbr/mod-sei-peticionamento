@@ -868,6 +868,14 @@ class MdPetProcessoRN extends InfraRN {
 
 			//Incluir documento interno
 			$objDocumentoAPI = new DocumentoAPI();
+
+      		$conteudo='';
+      		$arrObjCampoAPI = [];
+				if (current($objMdPetTipoProcessoDTO)->getStrSinDocFormulario() == 'S'){
+          			$arrObjCampoAPI = $this->montarCamposFormulario($arrParametros['docPrincipalConteudoHTML']);
+      			} else {
+          			$conteudo = base64_encode( $arrParametros['docPrincipalConteudoHTML'] );
+      			}
 			
 			//Se o ID do processo é conhecido utilizar setIdProcedimento no lugar de
 			$objDocumentoAPI->setIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
@@ -875,9 +883,10 @@ class MdPetProcessoRN extends InfraRN {
 			$objDocumentoAPI->setIdHipoteseLegal( $hipoteseLegalDocPrincipal );
 			$objDocumentoAPI->setNivelAcesso( $nivelAcessoDocPrincipal );
 			$objDocumentoAPI->setIdSerie( $objMdPetTipoProcessoDTO[0]->getNumIdSerie() );
-			$objDocumentoAPI->setConteudo(base64_encode( $arrParametros['docPrincipalConteudoHTML'] ));
+			$objDocumentoAPI->setConteudo($conteudo);
 			$objDocumentoAPI->setSinAssinado('S');
 			$objDocumentoAPI->setSinBloqueado('S');
+			$objDocumentoAPI->setCampos($arrObjCampoAPI);
 
 			$objSaidaIncluirDocumentoAPI = $objSeiRN->incluirDocumento($objDocumentoAPI);
 
@@ -888,6 +897,77 @@ class MdPetProcessoRN extends InfraRN {
 			return $documentoDTOPrincipal;
 		
 	}
+
+    private function montarCamposFormulario($arrPrincipalFormulario){
+
+        $objAtributoRN = new AtributoRN();
+        $arrObjCampoAPI = [];
+        $numTamPrefixo = 11;
+
+		foreach ($arrPrincipalFormulario as $campo => $key) {
+		
+			if(in_array(substr($campo,0, $numTamPrefixo), ['txtAtributo', 'selAtributo', 'txaAtributo', 'hdnAtributo', 'rdoAtributo', 'chkAtributo'])){
+			
+				$id = substr($campo, $numTamPrefixo);
+				
+				$objAtributoDTO = new AtributoDTO();
+				$objAtributoDTO->setBolExclusaoLogica(false);
+				$objAtributoDTO->retNumIdAtributo();
+				$objAtributoDTO->retStrNome();
+				$objAtributoDTO->retStrRotulo();
+				$objAtributoDTO->retNumOrdem();
+				$objAtributoDTO->retStrStaTipo();
+				$objAtributoDTO->setNumIdAtributo($id);
+				$objAtributoDTO->setOrdNumOrdem(InfraDTO::$TIPO_ORDENACAO_ASC);
+				$objAtributoDTO->setOrdStrRotulo(InfraDTO::$TIPO_ORDENACAO_ASC);
+				$objAtributoDTO = $objAtributoRN->consultarRN0115($objAtributoDTO);
+				
+				$objCampoAPI = new CampoAPI();
+				$objCampoAPI->setNome($objAtributoDTO->getStrNome());
+				$objCampoAPI->setValor($key);
+				$arrObjCampoAPI[] = $objCampoAPI;
+			
+			}
+			
+		}
+
+	    return $arrObjCampoAPI;
+		
+    }
+
+    public function validarCamposFormulario($arrPrincipalFormulario)
+    {
+        $objAtributoRN = new AtributoRN();
+        $numTamPrefixo = 11;
+
+	      foreach ($arrPrincipalFormulario as $campo => $key) {
+		      if(in_array(substr($campo,0, $numTamPrefixo), ['txtAtributo', 'selAtributo', 'txaAtributo', 'hdnAtributo', 'rdoAtributo', 'chkAtributo'])){
+
+                $id = substr($campo,$numTamPrefixo);
+
+                $objAtributoDTO = new AtributoDTO();
+                $objAtributoDTO->setBolExclusaoLogica(false);
+                $objAtributoDTO->retNumIdAtributo();
+                $objAtributoDTO->retStrNome();
+                $objAtributoDTO->retStrRotulo();
+                $objAtributoDTO->retNumOrdem();
+                $objAtributoDTO->retStrStaTipo();
+                $objAtributoDTO->setNumIdAtributo($id);
+                $objAtributoDTO->setOrdNumOrdem(InfraDTO::$TIPO_ORDENACAO_ASC);
+                $objAtributoDTO->setOrdStrRotulo(InfraDTO::$TIPO_ORDENACAO_ASC);
+                $objAtributoDTO = $objAtributoRN->consultarRN0115($objAtributoDTO);
+
+                $objRelProtocoloAtributoDTO = new RelProtocoloAtributoDTO;
+                $objRelProtocoloAtributoDTO->setNumIdAtributo($objAtributoDTO->getNumIdAtributo());
+                $objRelProtocoloAtributoDTO->setStrValor($key);
+
+                $arrObjRelProtocoloAtributoDTO[] = $objRelProtocoloAtributoDTO;
+
+            }
+        }
+
+	      return (new RelProtocoloAtributoRN)->validarValores($arrObjRelProtocoloAtributoDTO);
+    }
 
 	public function assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTO, $objProcedimentoDTO ){
 			

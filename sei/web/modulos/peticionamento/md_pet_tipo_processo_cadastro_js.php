@@ -105,14 +105,14 @@
                                         html += '<td align="center">';
                                         html += '<a><img class="infraImg" title="Remover Unidade" alt="Remover Unidade" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/remover.gif" onclick="removerUnidade(\'' + idLinhaTabela + '\');" id="imgExcluirProcessoSobrestado"></a></td></tr>';
 
-                                        //Adiciona Conteúdo da Tabela no HTML
+                                        //Adiciona ConteÃºdo da Tabela no HTML
                                         document.getElementById('corpoTabela').innerHTML = '';
                                         document.getElementById('corpoTabela').innerHTML = html;
 
                                         // Mostra a tabela
                                         document.getElementById('divTableMultiplasUnidades').style.display = "inherit";
 
-                                        //Zera os campos, após adicionar
+                                        //Zera os campos, apÃ³s adicionar
                                         document.getElementById('txtUnidadeMultipla').value = '';
                                         document.getElementById('hdnIdUnidadeMultipla').value = '';
                                         document.getElementById('txtOrgaoUnidadeMultipla').value = '';
@@ -127,7 +127,7 @@
                             });
                         }
                     } else {
-                        alert('Esta Unidade não pode utilizar o Tipo de Processo indicado, em razão de restrição de uso do Tipo de Processo configurado pela Administração do SEI. \n\nCaso seja pertinente, antes deve ampliar as restrições de uso do Tipo de Processo para adicionar esta Unidade, no menu Administração > Tipos de Processos > Listar.');
+                        alert('Esta Unidade nÃ£o pode utilizar o Tipo de Processo indicado, em razÃ£o de restriÃ§Ã£o de uso do Tipo de Processo configurado pela AdministraÃ§Ã£o do SEI. \n\nCaso seja pertinente, antes deve ampliar as restriÃ§Ãµes de uso do Tipo de Processo para adicionar esta Unidade, no menu AdministraÃ§Ã£o > Tipos de Processos > Listar.');
                         return false;
                     }
                 },
@@ -140,7 +140,7 @@
 
     function verificarOrgaoSelecionado() {
         if (document.getElementById('hdnIdOrgaoUnidadeMultipla').value == '') {
-            alert('Nenhum Órgão selecionado.');
+            alert('Nenhum Ã“rgÃ£o selecionado.');
             return false;
         } else {
             objLupaUnidadeMultipla.selecionar(700, 500);
@@ -164,7 +164,7 @@
             var linha = document.getElementById('corpoTabela').rows[i];
             if (linha.cells[0].innerText.toLowerCase().trim() == orgao.toLowerCase().trim()
                 && linha.cells[3].innerText.toLowerCase().trim() == cidade.toLowerCase().trim()) {
-                alert('Não é permitido adicionar mais de uma Unidade para abertura do mesmo Órgão e para a mesma Cidade.');
+                alert('NÃ£o Ã© permitido adicionar mais de uma Unidade para abertura do mesmo Ã“rgÃ£o e para a mesma Cidade.');
                 return true;
             }
         }
@@ -173,7 +173,7 @@
 
 
     function changeUnidade() {
-        //Limpando tabela de unidades Múltiplas e campos vinculados as unidades multiplas
+        //Limpando tabela de unidades MÃºltiplas e campos vinculados as unidades multiplas
         document.getElementById("corpoTabela").innerHTML = '';
         document.getElementById('txtUnidadeMultipla').value = '';
         document.getElementById('hdnIdUnidadeMultipla').value = '';
@@ -181,7 +181,7 @@
         document.getElementById('hdnIdOrgaoUnidadeMultipla').value = '';
         document.getElementById('divTableMultiplasUnidades').style.display = "none";
 
-        //Limpando campos vinculados a unidade Única
+        //Limpando campos vinculados a unidade Ãšnica
         document.getElementById("txtUnidade").value = '';
         document.getElementById("hdnIdUnidade").value = '';
 
@@ -194,7 +194,7 @@
     }
 
     function changeUnidadeTipoProcesso() {
-        //Limpando tabela de unidades Múltiplas e campos vinculados as unidades multiplas
+        //Limpando tabela de unidades MÃºltiplas e campos vinculados as unidades multiplas
         document.getElementById("corpoTabela").innerHTML = '';
         document.getElementById('txtUnidadeMultipla').value = '';
         document.getElementById('hdnIdUnidadeMultipla').value = '';
@@ -202,7 +202,7 @@
         document.getElementById('hdnIdOrgaoUnidadeMultipla').value = '';
         document.getElementById('divTableMultiplasUnidades').style.display = "none";
 
-        //Limpando campos vinculados a unidade Única
+        //Limpando campos vinculados a unidade Ãšnica
         document.getElementById("txtUnidade").value = '';
         document.getElementById("hdnIdUnidade").value = '';
 
@@ -279,6 +279,8 @@
     function changeDocPrincipal() {
 
         var gerado = document.getElementsByName('rdDocPrincipal[]')[0].checked;
+        var externo = document.getElementsByName('rdDocPrincipal[]')[1].checked;
+        var formulario = document.getElementsByName('rdDocPrincipal[]')[2].checked;
         var tipo = '';
 
         document.getElementById('divDocPrincipal').style.display = "inherit";
@@ -293,10 +295,16 @@
             tipo = 'G';
             document.getElementById('txtTipoDocPrinc').value = '';
             document.getElementsByName("rdDocPrincipal[]")[0].focus();
-        } else {
+        }
+        if (externo) {
             tipo = 'E';
             document.getElementById('txtTipoDocPrinc').value = '';
             document.getElementsByName("rdDocPrincipal[]")[1].focus();
+        }
+        if (formulario) {
+            tipo = 'F';
+            document.getElementById('txtTipoDocPrinc').value = '';
+            document.getElementsByName("rdDocPrincipal[]")[2].focus();
         }
 
         carregarComponenteAutoCompleteTpDocPrinc(tipo);
@@ -308,6 +316,9 @@
     function changeDocPrincipalEdicao() {
 
         var gerado = document.getElementsByName('rdDocPrincipal[]')[0].checked;
+        var externo = document.getElementsByName('rdDocPrincipal[]')[1].checked;
+        var formulario = document.getElementsByName('rdDocPrincipal[]')[2].checked;
+
         var tipo = '';
 
         document.getElementById('divDocPrincipal').style.display = "inherit";
@@ -315,9 +326,14 @@
         if (gerado) {
             tipo = 'G';
             document.getElementsByName("rdDocPrincipal[]")[0].focus();
-        } else {
+        }
+        if (externo) {
             tipo = 'E';
             document.getElementsByName("rdDocPrincipal[]")[1].focus();
+        }
+        if (formulario) {
+            tipo = 'F';
+            document.getElementsByName("rdDocPrincipal[]")[2].focus();
         }
 
         carregarComponenteAutoCompleteTpDocPrinc(tipo);
@@ -331,12 +347,12 @@
         verificarQtdRegistrosUndMultipla();
 
         if ('<?= $_GET['acao'] ?>' != 'md_pet_tipo_processo_consultar') {
-            carregarComponenteTipoDocumento(); //Doc Complementares - Seleção Múltipla
-            carregarComponenteTipoProcesso(); // Seleção Única
-            carregarComponenteUnidade();  // Seleção Única
-            carregarComponenteUnidadeMultipla(); // Seleção única (Múltipla Tabela)
-            carregarComponenteOrgaoMultiplo(); // Seleção única (Múltipla Tabela)
-            carregarComponenteTipoDocumentoEssencial(); // Seleção Múltipla
+            carregarComponenteTipoDocumento(); //Doc Complementares - SeleÃ§Ã£o MÃºltipla
+            carregarComponenteTipoProcesso(); // SeleÃ§Ã£o Ãšnica
+            carregarComponenteUnidade();  // SeleÃ§Ã£o Ãšnica
+            carregarComponenteUnidadeMultipla(); // SeleÃ§Ã£o Ãºnica (MÃºltipla Tabela)
+            carregarComponenteOrgaoMultiplo(); // SeleÃ§Ã£o Ãºnica (MÃºltipla Tabela)
+            carregarComponenteTipoDocumentoEssencial(); // SeleÃ§Ã£o MÃºltipla
             carregarDependenciaNivelAcesso();
         }
 
@@ -377,7 +393,7 @@
     }
 
     function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
+        //Ajax para carregar os niveis de acesso apÃ³s a escolha do tipo de processo
         objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?= $strLinkAjaxNivelAcesso ?>');
         objAjaxIdNivelAcesso.prepararExecucao = function () {
             document.getElementById('selNivelAcesso').innerHTML = '';
@@ -400,7 +416,7 @@
         objAutoCompletarUnidadeMultipla.tamanhoMinimo = 3;
         objAutoCompletarUnidadeMultipla.prepararExecucao = function () {
             if (document.getElementById('hdnIdOrgaoUnidadeMultipla').value == '') {
-                alert('Nenhum Órgão selecionado.');
+                alert('Nenhum Ã“rgÃ£o selecionado.');
                 document.getElementById('txtUnidadeMultipla').value = '';
                 return false;
             }
@@ -481,12 +497,23 @@
     function carregarComponenteLupaTpDocPrinc(acaoComponente) {
 
         var gerado = document.getElementsByName('rdDocPrincipal[]')[0].checked;
-        var tipo = gerado ? 'G' : 'E';
-        var link = '<?= $strLinkTipoDocPrincExternoSelecao ?>';
+        var externo = document.getElementsByName('rdDocPrincipal[]')[1].checked;
+        var formulario = document.getElementsByName('rdDocPrincipal[]')[2].checked;
+        var link = '';
 
         if (gerado) {
             link = '<?= $strLinkTipoDocPrincGeradoSelecao ?>';
         }
+
+        if (externo) {
+            link = '<?= $strLinkTipoDocPrincExternoSelecao ?>';
+        }
+
+        if (formulario) {
+            link = '<?= $strLinkTipoDocPrincFormularioSelecao ?>';
+        }
+
+
 
         objLupaTipoDocPrinc = new infraLupaText('txtTipoDocPrinc', 'hdnIdTipoDocPrinc', link);
 
@@ -516,8 +543,10 @@
 
 
     function carregarComponenteAutoCompleteTpDocPrinc(tipo) {
+        var strLinkAjaxTipoDocPrinc = '<?= $strLinkAjaxTipoDocPrinc ?>';
+        var formulario = document.getElementsByName('rdDocPrincipal[]')[2].checked;
 
-        objAutoCompletarTipoDocPrinc = new infraAjaxAutoCompletar('hdnIdTipoDocPrinc', 'txtTipoDocPrinc', '<?= $strLinkAjaxTipoDocPrinc ?>');
+        objAutoCompletarTipoDocPrinc = new infraAjaxAutoCompletar('hdnIdTipoDocPrinc', 'txtTipoDocPrinc', strLinkAjaxTipoDocPrinc);
         objAutoCompletarTipoDocPrinc.limparCampo = true;
         objAutoCompletarTipoDocPrinc.tamanhoMinimo = 3;
         objAutoCompletarTipoDocPrinc.prepararExecucao = function () {
@@ -583,7 +612,7 @@
                 if (options != null) {
                     for (var i = 0; i < options.length; i++) {
                         if (options[i].value == id) {
-                            alert('Tipo de Documento já consta na lista.');
+                            alert('Tipo de Documento jÃ¡ consta na lista.');
                             break;
                         }
                     }
@@ -631,7 +660,7 @@
                 if (options != null) {
                     for (var i = 0; i < options.length; i++) {
                         if (options[i].value == id) {
-                            alert('Tipo de Documento já consta na lista.');
+                            alert('Tipo de Documento jÃ¡ consta na lista.');
                             break;
                         }
                     }
@@ -671,7 +700,7 @@
         }
 
         if (infraTrim(document.getElementById('txtOrientacoes').value) == '') {
-            alert('Informe as Orientações.');
+            alert('Informe as OrientaÃ§Ãµes.');
             document.getElementById('txtOrientacoes').focus();
             return false;
         }
@@ -691,7 +720,7 @@
         if (multUnic) {
             var objUndSelecionadas = document.getElementsByClassName('linhas');
             if (objUndSelecionadas.length == 0) {
-                alert('É necessário informar ao menos uma Unidade para Abertura de Processo.');
+                alert('Ã‰ necessÃ¡rio informar ao menos uma Unidade para Abertura de Processo.');
                 document.getElementById('txtUnidadeMultipla').focus();
                 return false;
             }
@@ -704,7 +733,7 @@
         }
 
 
-        //Validar Rádio Indicação de Interessado
+        //Validar RÃ¡dio IndicaÃ§Ã£o de Interessado
         var elemsIndInt = document.getElementsByName("indicacaoInteressado[]");
 
         validoIndInt = false;
@@ -715,12 +744,12 @@
         }
 
         if (!validoIndInt) {
-            alert('Informe a Indicação de Interessado.');
+            alert('Informe a IndicaÃ§Ã£o de Interessado.');
             document.getElementById('rdUsuExterno').focus();
             return false;
         }
 
-//Validar Rádio Indicação de Interessado
+//Validar RÃ¡dio IndicaÃ§Ã£o de Interessado
         var indicacaoIndireta = document.getElementById('rdIndicacaoIndireta').checked;
 
         if (indicacaoIndireta) {
@@ -734,13 +763,13 @@
             }
 
             if (!validoIndInd) {
-                alert('Informe a Indicação de Interessado.');
+                alert('Informe a IndicaÃ§Ã£o de Interessado.');
                 document.getElementsByName('indicacaoIndireta[]')[0].focus();
                 return false;
             }
         }
 
-//Validar Nível Acesso
+//Validar NÃ­vel Acesso
         var elemsNA = document.getElementsByName("rdNivelAcesso[]");
 
         validoNA = false;
@@ -751,14 +780,14 @@
         }
 
         if (((infraTrim(document.getElementById('selNivelAcesso').value) == '') && document.getElementById('rdPadrao').checked) || (!validoNA)) {
-            alert('Informe o Nível de Acesso.');
+            alert('Informe o NÃ­vel de Acesso.');
             document.getElementById('rdUsuExterno').focus();
             return false;
         } else if (document.getElementById('selNivelAcesso').value == <?= ProtocoloRN::$NA_RESTRITO ?> && valorHipoteseLegal != '0') {
 
             //validar hipotese legal
             if (document.getElementById('selHipoteseLegal').value == '') {
-                alert('Informe a Hipótese legal padrão.');
+                alert('Informe a HipÃ³tese legal padrÃ£o.');
                 document.getElementById('selHipoteseLegal').focus();
                 return false;
             }
@@ -815,7 +844,7 @@
             data: paramsAjax,
             success: function (result) {
                 if ($(result).find('valor').text() == 'R') {
-                    alert('Existem conflitos de parametrização na seção Unidade para Abertura do Processo. \n\n Resolva os conflitos antes de salvar.');
+                    alert('Existem conflitos de parametrizaÃ§Ã£o na seÃ§Ã£o Unidade para Abertura do Processo. \n\n Resolva os conflitos antes de salvar.');
                     restricao = true;
                 }
             },
@@ -830,7 +859,7 @@
         //Verifica a Qtd de Unidades
         var tbUnidades = document.getElementById('tableTipoUnidade');
         if (tbUnidades.rows.length < 3 && multiplasUnidades) {
-            alert(" Como foi selecionada a opção Múltiplas Unidades para Abertura do Processo, é necessário adicionar mais de uma Unidade na lista");
+            alert(" Como foi selecionada a opÃ§Ã£o MÃºltiplas Unidades para Abertura do Processo, Ã© necessÃ¡rio adicionar mais de uma Unidade na lista");
             restricao = true;
         }
         if (restricao) {

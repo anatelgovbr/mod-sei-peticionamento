@@ -726,7 +726,7 @@ class MdPetContatoINT extends ContatoINT
 
 	}
 
-    public function getDadosContatosJuridicoRecuperar($idContato, $idDocumento, $xml = true)
+    public static function getDadosContatosJuridicoRecuperar($idContato, $idDocumento, $xml = true)
     {
 
         $arrSituacao = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();

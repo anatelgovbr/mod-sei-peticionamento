@@ -218,7 +218,7 @@ SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_extern
                 <h4 class="mt-2"><?= $strTitulo ?></h4>
 	            <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior([]); ?>
                 <div class="textoIntimacaoEletronica">
-                    <h4><?= $texto; ?></h4>
+                    <p><?= $texto; ?></p>
 	                <?php
 	                if ($idIntimacao) {
 		                foreach ($idIntimacao as $id) {

@@ -234,7 +234,13 @@ class MdPetIntegracaoRN extends InfraRN
 
         $objMdPetIntegParametroDTO->retTodos();
         $objMdPetIntegParametroDTO->setStrTpParametro('P');
-        $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($arrObjMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
+
+        if($arrObjMdPetIntegracaoDTO){
+            $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($arrObjMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
+        } else {
+            $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao()));
+        }
+        
         $arrObjMdPetIntegParametroDTO = $mdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
 
         if ($arrObjMdPetIntegParametroDTO) {

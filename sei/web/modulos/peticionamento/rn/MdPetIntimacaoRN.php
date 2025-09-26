@@ -292,7 +292,7 @@ class MdPetIntimacaoRN extends InfraRN
         $tiposResposta = MdPetIntTipoIntimacaoINT::montaSelectTipoRespostaIntimacao($objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(), false);
         $strSelect = '';
         foreach ($tiposResposta as $id => $tipoResposta) {
-            $tipoResposta = explode('Â±', $tipoResposta);
+            $tipoResposta = explode('±', $tipoResposta);
             $checked = '';
             foreach ($objMdPetIntRelTipoRespDTO as $objTipoResposta) {
                 if ($tipoResposta[0] == $objTipoResposta->getNumIdMdPetIntTipoResp()) {
@@ -422,7 +422,7 @@ class MdPetIntimacaoRN extends InfraRN
         $tiposResposta = MdPetIntTipoIntimacaoINT::montaSelectTipoRespostaIntimacao($objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(), false);
         $strSelect = '';
         foreach ($tiposResposta as $id => $tipoResposta) {
-            $tipoResposta = explode('Â±', $tipoResposta);
+            $tipoResposta = explode('±', $tipoResposta);
             $checked = '';
             foreach ($objMdPetIntRelTipoRespDTO as $objTipoResposta) {
                 if ($tipoResposta[0] == $objTipoResposta->getNumIdMdPetIntTipoResp()) {
@@ -2899,7 +2899,7 @@ class MdPetIntimacaoRN extends InfraRN
             $arrObjAtributoAndamentoDTO = array();
             $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
             $objAtributoAndamentoDTO->setStrNome('UNIDADE');
-            $objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla() . 'Â¥' . $unidadeDTO->getStrDescricao());
+            $objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla() . '¥' . $unidadeDTO->getStrDescricao());
             $objAtributoAndamentoDTO->setStrIdOrigem($unidadeDTO->getNumIdUnidade());
             $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 

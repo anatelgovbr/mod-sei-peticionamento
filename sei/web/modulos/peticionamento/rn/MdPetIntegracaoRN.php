@@ -71,6 +71,7 @@ class MdPetIntegracaoRN extends InfraRN
 
     protected function consultarReceitaWsResponsavelLegalConectado($dados)
     {
+        
         $xml = '<dados-pj>';
         $headers = apache_request_headers();
         $captcha = $headers['captcha'];
@@ -223,26 +224,22 @@ class MdPetIntegracaoRN extends InfraRN
         } else {
             $xml .= '<slTipoInteressado>' . $slTipoInteressado . '</slTipoInteressado>';
         }
-
-
-        $mdPetIntegParametroRN = new MdPetIntegParametroRN();
+        
         $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
-        $objMdPetIntegracaoDTO = new MdPetIntegracaoDTO();
-        $objMdPetIntegracaoDTO->retTodos();
-        $objMdPetIntegracaoDTO->setStrNome('ConsultaDadosReceitaCNPJ');
-        $arrObjMdPetIntegracaoDTO = $this->consultar($objMdPetIntegracaoDTO);
-
         $objMdPetIntegParametroDTO->retTodos();
         $objMdPetIntegParametroDTO->setStrTpParametro('P');
-        $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($arrObjMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
-        $arrObjMdPetIntegParametroDTO = $mdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
+        $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao());
+        $arrObjMdPetIntegParametroDTO = (new MdPetIntegParametroRN())->listar($objMdPetIntegParametroDTO);
 
         if ($arrObjMdPetIntegParametroDTO) {
+
             $txtLogradouro = '';
+            
             foreach ($arrObjMdPetIntegParametroDTO as $itemParametro) {
 
                 $chave = explode(" - ", $itemParametro->getStrNomeCampo());
                 $valor = '';
+
                 switch (count($chave)) {
                     case 1:
                         $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])]));
@@ -256,6 +253,7 @@ class MdPetIntegracaoRN extends InfraRN
                     default:
                         $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])][$chave[1]]));
                 }
+
                 if ($itemParametro->getStrNome() == 'cnpjEmpresa') {
                     $xml .= '<txtNomeFantasia>' . $valor . '</txtNomeFantasia>';
                 }
@@ -289,11 +287,13 @@ class MdPetIntegracaoRN extends InfraRN
                 }
 
             }
+
             $xml .= '<slUf>' . $dadosCidade['idUF'] . '</slUf>';
             $xml .= '<selCidade>' . htmlspecialchars($dadosCidade['idCidade']) . '</selCidade>';
             $xml .= '<nomeCidade>' . htmlspecialchars($dadosCidade['nomeCidade']) . '</nomeCidade>';
             $xml .= '<txtLogradouro>' . $txtLogradouro . '</txtLogradouro>';
-//    $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
+            // $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
+
         } else {
 
             $xml .= '<txtNomeFantasia>' . htmlspecialchars($consulta['PessoaJuridica']['nomeFantasia']) . '</txtNomeFantasia>';
@@ -304,11 +304,13 @@ class MdPetIntegracaoRN extends InfraRN
             $xml .= '<selCidade>' . htmlspecialchars($dadosCidade['idCidade']) . '</selCidade>';
             $xml .= '<txtNumeroCEP>' . MdPetDataUtils::formatCep($consulta['PessoaJuridica']['endereco']['cep']) . '</txtNumeroCEP>';
             $xml .= '<txtLogradouro>' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['logradouro']) . ', ' . $consulta['PessoaJuridica']['endereco']['numero'] . ' ' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['complemento']) . '</txtLogradouro>';
-//    $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
+            // $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
             $xml .= '<txtComplementoEndereco>' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['complemento']) . '</txtComplementoEndereco>';
             $xml .= '<txtBairro>' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['bairro']) . '</txtBairro>';
             $xml .= '<nomeCidade>' . htmlspecialchars($dadosCidade['nomeCidade']) . '</nomeCidade>';
+
         }
+
         $xml .= '</dados-pj>';
 
         return $xml;
@@ -501,7 +503,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Número do Logradouro não informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinNuLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Número do Logradouro inválid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Número do Logradouro inválido.');
             }
         }
     }
@@ -512,7 +514,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro não informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinCompLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro de cache inválid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro de cache inválido.');
             }
         }
     }

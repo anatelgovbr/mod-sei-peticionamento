@@ -692,7 +692,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         $objMdPetVinculoDTO->retTodos(true);
         $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
-        $objMdPetVinculoDTO->retDblCNPJ();
+        $objMdPetVinculoDTO->retStrCNPJ();
         $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
         $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
         $objMdPetVinculoDTO->retStrEmailContatoRepresentante();
@@ -709,7 +709,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $arrDadosEmail['dadosUsuario']['email'] = $arrObjMdPetVinculoDTO[0]->getStrEmailContatoRepresentante();
             $arrDadosEmail['dadosUsuario']['processo'] = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
             $arrDadosEmail['dadosUsuario']['razao_social'] = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
+            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getStrCnpj();
 
             $objProtocoloDTO = new ProtocoloDTO();
             $objProtocoloDTO->setDblIdProtocolo($numeroSEIVinculacao);
@@ -883,7 +883,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         $objMdPetVinculoDTO->retTodos(true);
         $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
-        $objMdPetVinculoDTO->retDblCNPJ();
+        $objMdPetVinculoDTO->retStrCnpj();
         $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
         $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
         $objMdPetVinculoDTO->retStrEmailContatoRepresentante();
@@ -899,7 +899,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $arrDadosEmail['dadosUsuario']['email'] = $arrObjMdPetVinculoDTO[0]->getStrEmailContatoRepresentante();
             $arrDadosEmail['dadosUsuario']['processo'] = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
             $arrDadosEmail['dadosUsuario']['razao_social'] = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getDblCNPJ();
+            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getStrCnpj();
 
             $protocoloRN = new ProtocoloRN();
             $objProtocoloDTO = new ProtocoloDTO();

@@ -267,7 +267,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <div class="form-group">
                             <div class="input-group mb-3" id="divIcones">
                                 <?php if ($_GET['acao'] != 'md_pet_intercorrente_criterio_consultar') { ?>
-                                    <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect form-control" multiple="multiple"
+                                    <select name="selTipoProcesso" id="selTipoProcesso" size="8" class="infraSelect form-select" multiple="multiple"
                                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                         <?= $strTipoProcesso.$optionsIdsMdPetCriteriosCadastrados; ?>
                                     </select>
@@ -308,13 +308,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
                             definido</label>
                     </div>
-                    <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: flex;"' : 'style="display: none;"' ?>>
+                    <div class="row" id="divNivelAcesso" style="padding: 10px;<?php echo $sinNAPadrao != '' ? 'display: flex;' : 'display: none;' ?>" >
                         <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
                             <div class="form-group">
                                 <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
                                     class="infraLabelObrigatorio">Nível de Acesso: </label><br/>
                                 <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()"
-                                        class="infraSelect form-control"
+                                        class="infraSelect form-select"
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                     <?= $strItensSelNivelAcesso ?>
                                 </select>
@@ -324,7 +324,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <div class="form-group">
                                 <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
                                     class="infraLabelObrigatorio">Hipótese Legal:</label><br/>
-                                <select id="selHipoteseLegal" name="selHipoteseLegal" class="infraSelect form-control"
+                                <select id="selHipoteseLegal" name="selHipoteseLegal" class="infraSelect form-select"
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                     <?= $strItensSelHipoteseLegal ?>
                                 </select>

@@ -1072,7 +1072,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 
 
 
-	private function _preencherArrDocDisponibilizados($tipoPeticionamento, $idProcedimento = null, $arrIdsDoc = null, $isCadastroAcessoEx, $idAcessoEx=  null)
+	private function _preencherArrDocDisponibilizados($tipoPeticionamento, $isCadastroAcessoEx, $idProcedimento = null, $arrIdsDoc = null, $idAcessoEx=  null)
 	{
    	  $arrRetorno = array();
 
@@ -1111,7 +1111,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			$motivoAcessoEx       = $this->_getMotivoAcessoExterno($tipoPeticionamento, $nomeDoc);
 			$dadosContato    	  = $this->_getDadosContato($idContato);
 			$idParticipante  	  = $this->_getIdParticipantePorContato($idContato, $idProcesso, true);
-			$arrDocAcessoExt 	  = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, $idProcesso, $arrIdsDoc, true);
+			$arrDocAcessoExt      = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, true, $idProcesso, $arrIdsDoc, null);
 			$idTpConcessao  	  = $tpAcessoSolicitado == static::$ACESSO_INTEGRAL ? 'S' : 'N';
 
 
@@ -1133,7 +1133,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			return $retorno;
 	}
 
-	private function _incluirAcessoExternoVinculo($idProcesso, $idContato, $tipoPeticionamento, $tpAcessoSolicitado, $nomeDoc = null, $arrIdsDoc = null, $idDocumento)
+	private function _incluirAcessoExternoVinculo($idProcesso, $idContato, $tipoPeticionamento, $tpAcessoSolicitado, $idDocumento, $nomeDoc = null, $arrIdsDoc = null)
 	{
 		$motivoAcessoEx  = $this->_getMotivoAcessoExterno($tipoPeticionamento, $nomeDoc);
 		$dadosContato    = $this->_getDadosContato($idContato);
@@ -1652,19 +1652,20 @@ class MdPetAcessoExternoRN extends InfraRN {
 		$arrObjs     	 = $this->_retornaArrAcessoExtPorProcedimentoPorContato(array($idContato), $idProcedimento);
 		$objDTO      	 = count($arrObjs) > 0 ? current($arrObjs) : false;
 		$idAcessoExt 	 = $objDTO ? $objDTO->getNumIdAcessoExterno() : false;
-		$arrDocAcessoExt = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, $idProcedimento, $arrIdsDocIntercorrente, false, $idAcessoExt);
-
+		$arrDocAcessoExt = $this->_preencherArrDocDisponibilizados($tipoPeticionamento, false, $idProcedimento, $arrIdsDocIntercorrente, $idAcessoExt);
+		
 		$objProtAcExRN   = new RelAcessoExtProtocoloRN();
+		if (is_array($arrDocAcessoExt) && !empty($arrDocAcessoExt)) {
+			foreach ($arrDocAcessoExt as $doc) {
+				if($idAcessoExt) {
+					$objProtAcExDTO = new RelAcessoExtProtocoloDTO();
+					$objProtAcExDTO->setNumIdAcessoExterno($idAcessoExt);
+					$objProtAcExDTO->setDblIdProtocolo($doc);
+					$existe = 	$objProtAcExRN->contar( $objProtAcExDTO ) > 0;
 
-		foreach ($arrDocAcessoExt as $doc) {
-			if($idAcessoExt) {
-				$objProtAcExDTO = new RelAcessoExtProtocoloDTO();
-				$objProtAcExDTO->setNumIdAcessoExterno($idAcessoExt);
-				$objProtAcExDTO->setDblIdProtocolo($doc);
-				$existe = 	$objProtAcExRN->contar( $objProtAcExDTO ) > 0;
-
-				if(!$existe) {
-					$objProtAcExRN->cadastrar($objProtAcExDTO);
+					if(!$existe) {
+						$objProtAcExRN->cadastrar($objProtAcExDTO);
+					}
 				}
 			}
 		}

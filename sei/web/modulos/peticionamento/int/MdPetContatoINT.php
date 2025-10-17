@@ -283,7 +283,7 @@ class MdPetContatoINT extends ContatoINT
 
                     //Concatenando cada uma das empresas
                     foreach ($arrContextoContatoJuridicoDTO as $nome) {
-                        $contato .= "\n* ".infraUtil::formatarCnpj($nome->getDblCnpj()) . " - " . PaginaSEI::tratarHTML($nome->getStrNome());
+                        $contato .= "\n* ".infraUtil::formatarCnpj($nome->getStrCnpj()) . " - " . PaginaSEI::tratarHTML($nome->getStrNome());
                     }
 
                     $total = count($arrContextoContatoJuridicoDTO);
@@ -449,7 +449,7 @@ class MdPetContatoINT extends ContatoINT
                     //Concatenando cada uma das empresas
                     foreach ($arrContextoContatoJuridicoDTO as $nome) {
                         $contato .= "\n * ";
-                        $contato .= infraUtil::formatarCnpj($nome->getDblCnpj()) . " - " . PaginaSEI::tratarHTML($nome->getStrNome());
+                        $contato .= infraUtil::formatarCnpj($nome->getStrCnpj()) . " - " . PaginaSEI::tratarHTML($nome->getStrNome());
                     }
 
                     $total = count($arrContextoContatoJuridicoDTO);
@@ -583,7 +583,7 @@ class MdPetContatoINT extends ContatoINT
             //Concatenando cada uma das empresas
             foreach ($arrContextoContatoJuridicoDTO as $nome) {
                 $contato .= "\n* ";
-                $contato .= infraUtil::formatarCnpj($nome->getDblCnpj()) . " - " . PaginaSEI::tratarHTML($nome->getStrNome());
+                $contato .= infraUtil::formatarCnpj($nome->getStrCnpj()) . " - " . PaginaSEI::tratarHTML($nome->getStrNome());
             }
 
             $total = count($arrContextoContatoJuridicoDTO);
@@ -622,7 +622,7 @@ class MdPetContatoINT extends ContatoINT
             $xml = '<Documento>';
             $xml .= '<Id>' . $arrContextoContatoDTO->getNumIdContato() . '</Id>';
             $xml .= '<Nome>' . PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome()) . '</Nome>';
-            $xml .= '<Cnpj>' . InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getDblCnpj()) . '</Cnpj>';
+            $xml .= '<Cnpj>' . InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getStrCnpj()) . '</Cnpj>';
             $xml .= '<Data>' . substr($arrContextoContatoDTO->getDthCadastro(), 0, 10) . '</Data>';
             $xml .= '<Situacao>' . $situacao . '</Situacao>';
             $xml .= '<Intimacao>' . $possuiIntimacao . '</Intimacao>';
@@ -635,7 +635,7 @@ class MdPetContatoINT extends ContatoINT
         } else {
             $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
             $xml['Nome'] = PaginaSEI::tratarHTML($arr[0]->getStrRazaoSocialNomeVinc());
-            $xml['Cnpj'] = InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getDblCnpj());
+            $xml['Cnpj'] = InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getStrCnpj());
             $xml['Data'] = substr($arrContextoContatoDTO->getDthCadastro(), 0, 10);
             $xml['Situacao'] = $situacao;
             $xml['Intimacao'] = $possuiIntimacao;
@@ -682,7 +682,7 @@ class MdPetContatoINT extends ContatoINT
 			// Se for um dos destinatários retorna na validação
 			if(!empty($objMdPetIntRelDestinatarioDTO)){
 
-				$contato 			= "\n* " . infraUtil::formatarCnpj($arrContextoContatoDTO->getDblCnpj()) . " - " . PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome());
+				$contato 			= "\n* " . infraUtil::formatarCnpj($arrContextoContatoDTO->getStrCnpj()) . " - " . PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome());
 				$possuiIntimacao 	= $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntimacao();
 				$situacao 			= !is_null($objMdPetIntRelDestinatarioDTO->getStrStaSituacaoIntimacao()) && $objMdPetIntRelDestinatarioDTO->getStrStaSituacaoIntimacao() != 0 ? $arrSituacao[$objMdPetIntRelDestinatarioDTO->getStrStaSituacaoIntimacao()] : MdPetIntimacaoRN::$STR_SITUACAO_NAO_CADASTRADA;
 				$dataIntimacao 		= $objMdPetIntRelDestinatarioDTO->getDthDataCadastro() ? substr($objMdPetIntRelDestinatarioDTO->getDthDataCadastro(), 0, 10) : '';
@@ -698,7 +698,7 @@ class MdPetContatoINT extends ContatoINT
 			$xml = '<Documento>';
 			$xml .= '<Id>' . $arrContextoContatoDTO->getNumIdContato() . '</Id>';
 			$xml .= '<Nome>' . PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome()) . '</Nome>';
-			$xml .= '<Cnpj>' . InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getDblCnpj()) . '</Cnpj>';
+			$xml .= '<Cnpj>' . InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getStrCnpj()) . '</Cnpj>';
 			$xml .= '<Data>' . substr($arrContextoContatoDTO->getDthCadastro(), 0, 10) . '</Data>';
 			$xml .= '<Situacao>' . $situacao . '</Situacao>';
 			$xml .= '<Intimacao>' . $possuiIntimacao . '</Intimacao>';
@@ -713,7 +713,7 @@ class MdPetContatoINT extends ContatoINT
 
 			$xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
 			$xml['Nome'] = PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome());
-			$xml['Cnpj'] = InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getDblCnpj());
+			$xml['Cnpj'] = InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getStrCnpj());
 			$xml['Data'] = substr($arrContextoContatoDTO->getDthCadastro(), 0, 10);
 			$xml['Situacao'] = $situacao;
 			$xml['Intimacao'] = $possuiIntimacao;
@@ -726,7 +726,7 @@ class MdPetContatoINT extends ContatoINT
 
 	}
 
-    public static function getDadosContatosJuridicoRecuperar($idContato, $idDocumento, $xml = true)
+    public function getDadosContatosJuridicoRecuperar($idContato, $idDocumento, $xml = true)
     {
 
         $arrSituacao = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
@@ -778,7 +778,7 @@ class MdPetContatoINT extends ContatoINT
         if (!$xml) {
             $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
             $xml['Nome'] = PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome());
-            $xml['Cnpj'] = $arrContextoContatoDTO->getDblCnpj();
+            $xml['Cnpj'] = $arrContextoContatoDTO->getStrCnpj();
             $xml['Data'] = substr($arrContextoContatoDTO->getDthCadastro(), 0, 10);
             $xml['Situacao'] = $situacao;
             $xml['Intimacao'] = $possuiIntimacao;

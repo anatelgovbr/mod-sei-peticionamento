@@ -128,7 +128,7 @@
                         //@todo trocar url para a correta do intercorrente ou nova do resposta  
                         parent.infraAbrirJanelaModal('<?= $strResponderIntimacaoModel ?>',
                             770,
-                            500,
+                            550,
                             '', //options
                             false); //modal
                     }else{                

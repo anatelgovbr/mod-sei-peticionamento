@@ -19,7 +19,6 @@
 
     .infraImgModulo{width: 20px;}
     .row div{ padding-top: 0px}
-    .row div .mb-3{ margin-bottom: 0px !important}
     .infraLabelRadio {top: 5px !important;}
     #txtTipoProcessoPF {width: 70%;}
     #txtUnidadePF {width: 70%;}

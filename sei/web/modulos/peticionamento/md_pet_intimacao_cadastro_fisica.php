@@ -164,7 +164,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                 <th class="infraTh" width="10%">Ações</th>
                             </tr>
                             <? if ($_REQUEST['is_alterar']) { ?>
-                                <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= $arrIntimacoes ?>"/>
+                                <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= implode(',', array_column($arrIntimacoes, 'Id')) ?>"/>
                                 <? foreach ($arrIntimacoes as $key => $intimacao) {
                                     $countInt++;
                                     ?>
@@ -207,7 +207,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                 <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de
                     Intimação:</label>
                 <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)"
-                        class="campoPadrao infraSelect form-control"
+                        class="campoPadrao infraSelect form-select"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strTipoIntimacao ?>
                 </select>
@@ -224,7 +224,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset id="fldDocumentosIntimacao" class="infraFieldset sizeFieldset form-control" style="width: 100%;">
                 <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img

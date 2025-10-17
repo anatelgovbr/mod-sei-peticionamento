@@ -46,6 +46,22 @@ try {
 		$objMdPetProcessoRN = new MdPetProcessoRN();
   		$strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
 
+		// Manipulacao para assinatura com Gov.br:
+		$bolAssinaturaSso = (new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_GOV_BR_EXTERNO_ASSINATURA', false, '0');
+		$isNivelAlto = SessaoSEIExterna::getInstance()->getBolLoginSso() && !InfraString::isBolVazia(SessaoSEIExterna::getInstance()->getStrStaNivelConfiabilidadeSso()) && in_array(SessaoSEI::getInstance()->getStrStaNivelConfiabilidadeSso(), [InfraSip::$SSO_NIVEL_CONFIABILIDADE_OURO, InfraSip::$SSO_NIVEL_CONFIABILIDADE_PRATA]);
+
+		if($bolAssinaturaSso){
+			$agrupador = sha1(time());
+			$objInfraSip = new InfraSip(SessaoSEIExterna::getInstance());
+			$strUrlAssinaturaSso = $objInfraSip->obterUrlAssinaturaSso() . "?token=" . $agrupador . "&id_sistema=" . SessaoSEIExterna::getInstance()->getNumIdSistema() . "&id_login_sso=" . SessaoSEIExterna::getInstance()->getStrIdLoginSso();
+			$strLinkVerificacaoAssinatura = SessaoSEIExterna::getInstance()->assinarLink( 'controlador_ajax_externo.php?acao_ajax=assinatura_verificar_confirmacao&agrupador=' . $agrupador );
+		}
+
+		if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
+			(new InfraException())->lancarValidacao("Você ainda não possui uma senha registrada no sistema.\nPara assinatura com senha acesse a opção Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+		}
+		// Final da manipulacao para assinatura com Gov.br.
+
   		if( isset( $_POST['pwdsenhaSEI'] ) ){
 
   			//documento montado no editor rico do SEI
@@ -207,11 +223,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div class="form-group">
                 <label class="infraLabelObrigatorio">Cargo/Função:</label>
-                <select id="selCargo" name="selCargo" class="infraSelect form-control">
+                <select id="selCargo" name="selCargo" class="infraSelect form-select">
                     <option value="">Selecione Cargo/Função</option>
                     <? foreach ($arrObjCargoDTO as $expressao => $cargo): ?>
                     <option value="<?= $cargo ?>" <?= $_POST['selCargo'] == $cargo ? 'selected="selected"' : '' ?>><?= $expressao ?></option>
@@ -220,14 +236,25 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-6">
-            <div class="form-group">
-                <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label>
-                <input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText form-control" autocomplete="off"/>
-            </div>
-        </div>
-    </div>
+    <div class="row my-3">
+
+		<div class="col-6 col-sm-5 col-md-3 col-lg-3 col-xl-3">
+			<div class="form-group">
+				<label class="infraLabelObrigatorio"><span class="infraTeclaAtalho">S</span>enha:</label>
+				<input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText form-control" autocomplete="off"/>
+			</div>
+		</div>
+
+		<?php if($bolAssinaturaSso && 1==2): ?>
+			<div class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+				<label id="lblOu" class="infraLabelOpcional" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>">ou</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="#" id="ancAssinaturaSso" class="d-inline-block mt-3" onclick="assinarSso();" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>">
+					<img id="imgAssinarGovBr" src="imagens/assinatura-gov-br.png" title="Assinar com gov.br" style="width:150px" />
+				</a>&nbsp;
+			</div>
+		<?php endif; ?>
+				
+	</div>
 
     <!--  Campos Hidden para preencher com valores da janela pai -->
     <input type="hidden" id="txtEspecificacaoDocPrincipal" name="txtEspecificacaoDocPrincipal" />

@@ -243,11 +243,9 @@ try {
         $staTpClienteWs = "";
     }
 
-    // Aqui são listados tanto parâmetros da integração de CNPJ quanto da CPF:
-
     $arrParametrosEntradas = array(
         'cnpjEmpresa' => 'CNPJ da Pessoa Jurídica',
-        'cpfPessoa' => 'CPF Usuário',
+        'cpfPessoa' => 'CPF Usuário Requisitante',
         'identificacaoOrigem' => 'Identificação Origem',
         'periodoCache' => 'Período de Expiração do Cache',
     );
@@ -310,10 +308,10 @@ try {
         $strResultadoParamEntrada .= "<td align='left'  style='padding: 8px;' >";
 
         if ($chave == 'periodoCache') {
-            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-control' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-select' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
             $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
         } else {
-            $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS form-control' name='nomeFuncionalDadosEntrada[$chave]' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select>";
+            $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosEntrada[$chave]' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'required' : '' )."></select>";
         }
 
         $strResultadoParamEntrada .= '</td>';
@@ -336,7 +334,6 @@ try {
     $strCssTr = '';
     $i = 0;
     $tag = '';
-    $mostrar = '';
 
     foreach ($arrParametrosSaida as $chave => $itemParametroSaida) {
 
@@ -355,7 +352,7 @@ try {
         $strResultadoParamSaida .= "<input type='hidden' name='hdnArrayDadosSaida[" . $chave . "]' value='" . $itemParametroSaida . "' />";
         $strResultadoParamSaida .= '<span style="font-weight:'.(in_array($chave, $arrParametrosSaidaObrig) ? 'bold' : 'normal' ).'">'.PaginaSEI::tratarHTML($itemParametroSaida).'</span>';
         $strResultadoParamSaida .= "</td>";
-        $strResultadoParamSaida .= "<td align='left' style='padding: 8px;' ><select id='nomeFuncionalDadosSaida_$chave' class='infraSelect selParametrosS  form-control' name='nomeFuncionalDadosSaida[$chave]' ".(in_array($chave, $arrParametrosSaidaObrig) ? 'data-obrigatorio="true"' : '' )."></select></td>";
+        $strResultadoParamSaida .= "<td align='left' style='padding: 8px;' ><select id='nomeFuncionalDadosSaida_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosSaida[$chave]' ".(in_array($chave, $arrParametrosSaidaObrig) ? 'required' : '' )."></select></td>";
 
         $strResultadoParamSaida .= '</tr>' . "\n";
         $i++;
@@ -388,18 +385,18 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         PaginaSEI::getInstance()->abrirAreaDados('auto');
         ?>
 
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selMdPetIntegFuncionalid" id="lblMdPetIntegFuncionalid">Funcionalidade:</label>
-                    <select id="selMdPetIntegFuncionalid" name="selMdPetIntegFuncionalid" class="infraSelect form-control"
+                    <select id="selMdPetIntegFuncionalid" name="selMdPetIntegFuncionalid" class="infraSelect form-select"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <?= $strItensSelMdPetIntegFuncionalid ?>
                     </select>
                 </div>
             </div>
         </div>
-        <div class="row initHidden" id="blcUsarIntegracaoWs" style="display: none">
+        <div class="row initHidden mb-3" id="blcUsarIntegracaoWs" style="display: none">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="txtNome" id="lblNome">Nome:</label>
@@ -442,7 +439,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </fieldset>
             </div>
         </div>
-        <div class="row initHidden" id="blcTextoSemWs" style="display: none;">
+        <div class="row initHidden mb-3" id="blcTextoSemWs" style="display: none;">
             <div class="col-12 col-xl-10">
                 <p style="font-size: 12px; padding-top: 10px">
                     <span STYLE="color: red; font-weight: bold">ATENÇAO</span>: É extremamente recomendado que se
@@ -463,7 +460,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </p>
             </div>
         </div>
-        <div class="row initHidden" id="blcTipoClienteWs"  style="display: none;">
+        <div class="row initHidden mb-3" id="blcTipoClienteWs"  style="display: none;">
            <div class="col-12">
                <div class="row">
                    <div class="col-6 col-xl-5">
@@ -476,7 +473,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                    <div class="col-6 col-xl-5">
                        <div class="form-group">
                            <label id="lblNuVersao" for="txtNuVersao" class="infraLabelObrigatorio">Versão SOAP:</label>
-                           <select id="selNuVersao" name="selNuVersao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                           <select id="selNuVersao" name="selNuVersao" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                <option value=""></option>
                                <option value="1.1" <?php echo ($numNuVersao == "1,1") ? 'selected' : ''; ?> >1.1</option>
                                <option value="1.2" <?php echo ($numNuVersao == "1,2") ? 'selected' : ''; ?> >1.2</option>
@@ -486,7 +483,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                </div>
            </div>
         </div>
-        <div class="row initHidden" id="blcEnderecoWs"  style="display: none;">
+        <div class="row initHidden mb-3" id="blcEnderecoWs"  style="display: none;">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
                     <label id="lblEnderecoWsdl" for="txtEnderecoWsdl" class="infraLabelObrigatorio">Endereço do Webservice:</label>
@@ -502,17 +499,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
         </div>
-        <div class="row initHidden" id="blcOperacaoWs" style="display: none;">
+        <div class="row initHidden mb-3" id="blcOperacaoWs" style="display: none;">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
                     <label id="lblOperacaoWsdl" for="selOperacaoWsdl" class="infraLabelObrigatorio">Operação:</label>
-                    <select id="selOperacaoWsdl" name="selOperacaoWsdl" onchange="operacaoSelecionar()" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
+                    <select id="selOperacaoWsdl" name="selOperacaoWsdl" onchange="operacaoSelecionar()" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
                     <select id="selParametrosE" name="selParametrosE[]" multiple style="left:400px;display:none"></select>
                     <select id="selParametrosS" name="selParametrosS[]" multiple style="left:500px;display:none"></select>
                 </div>
             </div>
         </div>
-        <div class="row initHidden" id="blcParamsSuspensaoAutomatica" style="display: none;">
+        <div class="row initHidden mb-3" id="blcParamsSuspensaoAutomatica" style="display: none;">
             <div class="col-12 col-xl-10">
                 <div class="form-group">
                     <label id="lbltxtCodRFBSuspensaoAutomatica" for="txtCodRFBSuspensaoAutomatica" class="infraLabelObrigatorio">Códigos de Situação Cadastral que identifica Pessoas Físicas Inativas na Receita:
@@ -525,7 +522,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
         </div>
-        <div class="row initHidden" id="blcCacheWs"  style="display: none;">
+        <div class="row initHidden mb-3" id="blcCacheWs"  style="display: none;">
             <div class="col-12 col-xl-10">
                 <div class="form-group" id="expiracacaoCache">
                     <input type="checkbox" id="chkSinCache" name="chkSinCache" onchange="cacheMarcaDesmarca(this);"
@@ -570,24 +567,24 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
         </div>
-        <div class="row initHidden" id="blcEntradaWs"  style="display: none;">
+        <div class="row initHidden mb-3" id="blcEntradaWs"  style="display: none;">
             <div class="col-12 col-xl-10">
                 <? PaginaSEI::getInstance()->montarAreaTabela($strResultadoParamEntrada, 1); ?>
             </div>
         </div>
-        <div class="row initHidden" id="blcSaidaWs"  style="display: none;">
+        <div class="row initHidden mb-3" id="blcSaidaWs"  style="display: none;">
             <div class="col-12 col-xl-10">
                 <? PaginaSEI::getInstance()->montarAreaTabela($strResultadoParamSaida, 1); ?>
             </div>
         </div>
-        <div class="container initHidden"  style="display: none;">
+        <div class="container initHidden mb-3"  style="display: none;">
             <fieldset style="display:none" id="fldParametrosCache" class="infraFieldset">
                 <legend class="infraLegend">&nbsp;Parâmetros do Cache&nbsp;</legend>
                 <div class="container">
                     <div class="bloco" style="display:none;">
                         <div class="form-group">
                             <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento" class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Operação que retorna a Data de Armazenamento do cache da informações da Receita Federal e que foi utilizado na validação do período de expiração definido nos campo abaixo.', 'Ajuda') ?>alt="Ajuda" class="infraImgModulo" /></label>
-                            <select id="selCacheDataArmazenamento" style="width:300px;" name="selCacheDataArmazenamento" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
+                            <select id="selCacheDataArmazenamento" style="width:300px;" name="selCacheDataArmazenamento" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
                         </div>
                     </div>
 

@@ -47,7 +47,7 @@ switch ($_GET['acao']) {
 	//Recuperar dados para Pessoa Juridica.
 	$objMdPetVinculoDTO = new MdPetVinculoDTO();
 	$objMdPetVinculoDTO->retNumIdMdPetVinculo();
-	$objMdPetVinculoDTO->retDblCNPJ();
+	$objMdPetVinculoDTO->retStrCNPJ();
 	$objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
 	$objMdPetVinculoDTO->retStrCpfContatoRepresentante();
 	$objMdPetVinculoDTO->retStrNomeContatoRepresentante();

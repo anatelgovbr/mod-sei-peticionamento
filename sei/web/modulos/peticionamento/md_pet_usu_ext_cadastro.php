@@ -52,7 +52,7 @@ try {
 $hashAnexo = $idAnexo = $selectOrgaoDisabled = '';
 $selectOrgaoHidden = $selectUfHidden = $selectCidadeHidden = false;
 
-$idOrgao            = isset($_GET['id_orgao']) ? $_GET['id_orgao'] : isset($_GET['id_orgao_acesso_externo']) ? $_GET['id_orgao_acesso_externo'] : null;
+$idOrgao            = isset($_GET['id_orgao']) ? $_GET['id_orgao'] : (isset($_GET['id_orgao_acesso_externo']) ? $_GET['id_orgao_acesso_externo'] : null);
 $idUF               = isset($_GET['id_uf']) ? $_GET['id_uf'] : null;
 $idCidade           = isset($_GET['id_cidade']) ? $_GET['id_cidade'] : null;
 $idTipoProcedimento = isset($_GET['id_tipo_procedimento']) ? $_GET['id_tipo_procedimento'] : null;
@@ -171,7 +171,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                 </div>
             </div>
             
-            <div class="row">
+            <div class="row mt-2">
                 <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2" style="<?= $selectUfHidden ? 'display:none' : '' ?>" id="ufHidden">
                     <div class="form-group">
                         <label id="lblPublico" class="infraLabelObrigatorio">
@@ -179,7 +179,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
 
-                        <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
+                        <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
                             <? if(count($selectUf[0]) == 1): ?>
                                 <option value="<?= $selectUf[0][0] ?>" selected="selected"><?= $selectUf[1][0] ?></option>
                             <? elseif(count($selectUf[0]) > 1): ?>
@@ -222,7 +222,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
         <? endif ?>
 
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <? if ($objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'S') { ?>
 
@@ -256,7 +256,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mt-2">
                         <div class="col-sm-12 col-md-12 col-lg-4 col-lx-4" id="divSel1" style="display: none;">
                             <div class="form-group">
                                 <label id="descTipoPessoa" class="infraLabelObrigatorio"> </label><br/>

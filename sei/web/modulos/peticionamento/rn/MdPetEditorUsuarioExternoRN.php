@@ -97,7 +97,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
     } else {
       $removePlugins[] = 'base64image';
     }
-    $strInicializacao = '<script type="text/javascript" charset="utf-8" src="editor/ck/ckeditor.js?t=' . self::$VERSAO_CK . '"></script>';
+    $strInicializacao = '<script type="text/javascript" charset="utf-8" src="editor/ck4/ckeditor.js?t=' . self::$VERSAO_CK . '"></script>';
     $strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_editor_imagem_upload');
     $strLinkAjax = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=upload_buscar');
 
@@ -377,7 +377,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
       $strRegexSistema = preg_replace("@http[s]?://@",'',$strRegexSistema);
 
       $strInicializacao = "<!-- INICIALIZAR 2 -->";
-      $strInicializacao .= '<script type="text/javascript" charset="utf-8" src="editor/ck/ckeditor.js?t=' . self::$VERSAO_CK . '"></script>';
+      $strInicializacao .= '<script type="text/javascript" charset="utf-8" src="editor/ck4/ckeditor.js?t=' . self::$VERSAO_CK . '"></script>';
       $strInicializacao .= '<script type="text/javascript">';
       $strInicializacao .= "CKEDITOR.config.skin='moonocolor';\n";
       $strInicializacao .= "CKEDITOR.config.url_sei_re='".$strRegexSistema."';\n";
@@ -1961,7 +1961,7 @@ class MdPetEditorUsuarioExternoRN extends InfraRN
           $objContatoDTO->setBolExclusaoLogica(false);
           $objContatoDTO->retNumIdContato();
           $objContatoDTO->retStrNome();
-          $objContatoDTO->retDblCnpj();
+          $objContatoDTO->retStrCnpj();
 
           //alteracoes seiv3
           $objContatoDTO->retStrMatricula();

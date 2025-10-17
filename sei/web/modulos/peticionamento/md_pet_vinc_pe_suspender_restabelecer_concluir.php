@@ -127,7 +127,7 @@ try {
           $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
           $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
           $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
-          $objMdPetVinculoDTO->retDblCNPJ();
+          $objMdPetVinculoDTO->retStrCNPJ();
 
 //          $objMdPetVinculoDTO->retNumIdMdPetVinculo();
 //          $objMdPetVinculoDTO->retNumIdUfContatoPJ();
@@ -139,7 +139,7 @@ try {
 
           if (!empty($arrObjMdPetVinculoDTO)){
 
-            $_POST['txtNumeroCnpj'] = InfraUtil::formatarCpfCnpj($arrObjMdPetVinculoDTO[0]->getDblCNPJ());
+            $_POST['txtNumeroCnpj'] = InfraUtil::formatarCpfCnpj($arrObjMdPetVinculoDTO[0]->getStrCNPJ());
             $_POST['txtNomeResponsavelAntigo'] = $arrObjMdPetVinculoDTO[0]->getStrNomeContatoRepresentante();
             $_POST['txtCpfResponsavelAntigo'] = $arrObjMdPetVinculoDTO[0]->getStrCpfContatoRepresentante();
             $razaoSocial = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();

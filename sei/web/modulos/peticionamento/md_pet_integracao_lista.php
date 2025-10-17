@@ -423,7 +423,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <label id="lblMdPetIntegFuncionalid" for="selMdPetIntegFuncionalid" accesskey=""
                        class="infraLabelOpcional">Funcionalidade:</label>
                 <select id="selMdPetIntegFuncionalid" name="selMdPetIntegFuncionalid" onchange="this.form.submit();"
-                        class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strItensSelMdPetIntegFuncionalid ?>
                 </select>
             </div>

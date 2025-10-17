@@ -19,23 +19,14 @@ try {
     SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
     $arrComandos = array();
+    $staTipoEditor= EditorRN::obterTipoEditorSimples();
 
     switch ($_GET['acao']) {
         case 'md_pet_orientacoes_tipo_destinatario':
-            $strTitulo = "Orientações Tipo de Destinatário";
+            $strTitulo = "OrientaÃ§Ãµes Tipo de DestinatÃ¡rio";
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
-
-            $objEditorRN = new EditorRN();
-            $objEditorDTO = new EditorDTO();
-
-            $objEditorDTO->setStrNomeCampo('txaConteudo');
-
-            $objEditorDTO->setStrSinSomenteLeitura('N');
-
-            $retEditor = $objEditorRN->montarSimples($objEditorDTO);
-
-
+            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';            
+            
             $objMdPetIntOrientacoesDTO2 = new MdPetIntOrientacoesDTO();
             $objMdPetIntOrientacoesDTO2->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
             $objMdPetIntOrientacoesDTO2->retTodos();
@@ -47,6 +38,23 @@ try {
             $txtConteudo = '';
             if ($alterar) {
                 $txtConteudo = $objLista[0]->getStrOrientacoesTipoDestinatario();
+            }
+
+            $objEditorRN = new EditorRN();
+            $objEditorDTO = new EditorDTO();
+
+            if($staTipoEditor==EditorRN::$VE_CK5){
+                $objEditorDTO=new EditorDTO();
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO->setStrToolbar([]);
+                $objEditorDTO->setStrConteudoInicial($txtConteudo);
+                EditorCk5RN::montarSimples($objEditorDTO);
+            } else {
+                $objEditorDTO=new EditorDTO();
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO = (new EditorRN())->montarSimples($objEditorDTO);
             }
 
             $objMdPetIntOrientacoesDTO = new MdPetIntOrientacoesDTO();
@@ -76,7 +84,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
             break;
 
     }
@@ -97,7 +105,14 @@ PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
-echo $retEditor->getStrInicializacao();
+
+if($staTipoEditor==EditorRN::$VE_CK5){
+    echo $objEditorDTO->getStrCss();
+    echo $objEditorDTO->getStrJs();
+} else {
+    echo $objEditorDTO->getStrInicializacao();
+}
+
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo);
 ?>
@@ -109,18 +124,29 @@ PaginaSEI::getInstance()->abrirBody($strTitulo);
         ?>
         <div class="row">
             <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                <label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">Conteúdo:
+                <label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">ConteÃºdo:
                     <img align="top" style="height:20px; width:20px;" id="imgAjuda"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                          name="ajuda"
-                         onmouseover="return infraTooltipMostrar('As orientações descritas abaixo serão exibidas na tela Gerar Intimação Eletrônica para os Usuários internos.', 'Ajuda');"
+                         onmouseover="return infraTooltipMostrar('As orientaÃ§Ãµes descritas abaixo serÃ£o exibidas na tela Gerar IntimaÃ§Ã£o EletrÃ´nica para os UsuÃ¡rios internos.', 'Ajuda');"
                          onmouseout="return infraTooltipOcultar();" alt="Ajuda" class="infraImg">
                 </label><br/>
-                <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea"
-                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= PaginaSEI::tratarHTML($txtConteudo) ?></textarea>
-                <script type="text/javascript">
-                    <?=$retEditor->getStrEditores();?>
-                </script>
+                <?php
+                    if($staTipoEditor==EditorRN::$VE_CK5){
+                        ?>
+                            <div id="divEditores" class="infra-editor" style="visibility: visible;">
+                                <?= $objEditorDTO->getStrHtml(); ?>
+                            </div>
+                            <?php
+                    } else {
+                        ?>
+                            <div id="divEditores" class="mb-0">
+                                <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
+                                <script type="text/javascript"> <?= $objEditorDTO->getStrEditores(); ?> </script>
+                            </div>
+                        <?php
+                    }
+                ?>
             </div>
         </div>
     </form>

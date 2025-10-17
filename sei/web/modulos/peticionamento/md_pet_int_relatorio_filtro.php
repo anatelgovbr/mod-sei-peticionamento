@@ -27,7 +27,7 @@
         <div class="form-group">
             <div class="input-group mb-3">
                 <select size="6" id="selDescricaoTpIntimacao" name="selDescricaoTpIntimacao" multiple="multiple"
-                        class="infraSelect form-control mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                        class="infraSelect form-select mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                     <?= $strItensSelTpIntimacao ?>
                 </select>
                 <div id="divOpcoesTpIntimacao">
@@ -62,7 +62,7 @@
         <div class="form-group">
             <div class="input-group mb-3">
                 <select id="selDescricaoUnidade" name="selDescricaoUnidade" size="6" multiple="multiple"
-                        class="infraSelect form-control mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                        class="infraSelect form-select mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                     <?= $strItensSelTpUnidade ?>
                 </select>
 
@@ -132,7 +132,7 @@
         <div class="form-group">
             <label id="lblTpDest" name="lblTpDest" class=""> Tipo de Destinatário: </label>
             <select id="selTipoDest" name="selTipoDest"
-                    class="infraSelect form-control"
+                    class="infraSelect form-select"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                 <?php if ($_POST['selTipoDest'] == "") { ?>
                     <option value="N" selected="selected"> Pessoa Física</option>
@@ -169,7 +169,7 @@
             <label id="lblSituacao" name="lblSituacao" for="selSituacao" class="">
                 Situação da Intimação:
             </label>
-            <select size="6" id="selSituacao" name="selSituacao" class="infraSelect form-control" multiple="" rows="7"
+            <select size="6" id="selSituacao" name="selSituacao" class="infraSelect form-select" multiple="" rows="7"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                 <?php echo $strSelSituacao; ?>
             </select>

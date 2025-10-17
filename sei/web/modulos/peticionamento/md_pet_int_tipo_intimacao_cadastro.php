@@ -252,7 +252,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                          name="ajuda" <?= PaginaSEI::montarTitleTooltip('É possível indicar mais de um Tipo de Resposta com Resposta Facultativa pelo Usuário Externo. \n \n Somente é possível indicar um Tipo de Resposta que Exige Resposta pelo Usuário Externo.', 'Ajuda') ?>
                          class="infraImgModulo"/></label>
                 <div class="input-group mb-3">
-                    <select id="selTipoResposta" name="selTipoResposta" class="infraSelect form-control"
+                    <select id="selTipoResposta" name="selTipoResposta" class="infraSelect form-select"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <option id=""></option> <?= $strItenSelPrazoExterno ?> </select>
                     <button type="button" accesskey="A" name="sbmGravarTipoResposta" id="sbmGravarTipoResposta"

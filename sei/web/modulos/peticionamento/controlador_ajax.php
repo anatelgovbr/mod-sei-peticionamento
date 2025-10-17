@@ -202,7 +202,7 @@ try{
 					
 					 $objContatoDTO = new ContatoDTO();
 					 $objContatoDTO->retStrNome();
-					 $objContatoDTO->retDblCnpj();
+					 $objContatoDTO->retStrCnpj();
 					 $objContatoDTO->retNumIdContato();
 					 $objContatoDTO->setNumIdContato($arrRepres, infraDTO::$OPER_IN);
 					 $arrObjContatoDTO = (new ContatoRN())->listarRN0325($objContatoDTO);

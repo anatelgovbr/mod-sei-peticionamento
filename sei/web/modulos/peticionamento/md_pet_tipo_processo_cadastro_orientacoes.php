@@ -17,6 +17,7 @@ try {
     SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
     $arrComandos = array();
+    $staTipoEditor= EditorRN::obterTipoEditorSimples();
 
     switch($_GET['acao']){
 
@@ -25,12 +26,7 @@ try {
             $strTitulo      = 'Configurações Gerais';
             $arrComandos[]  = '<button type="submit" accesskey="S" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[]  = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'])).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
-
-            $objEditorDTO=new EditorDTO();
-            $objEditorDTO->setStrNomeCampo('txaConteudo');
-            $objEditorDTO->setStrSinSomenteLeitura('N');
-            $retEditor = (new EditorRN())->montarSimples($objEditorDTO);
-
+            
             $objMdPetTpProcessoOrientacoesDTO2 = new MdPetTpProcessoOrientacoesDTO();
             $objMdPetTpProcessoOrientacoesDTO2->setNumIdTipoProcessoOrientacoesPet(MdPetTpProcessoOrientacoesRN::$ID_FIXO_TP_PROCESSO_ORIENTACOES);
             $objMdPetTpProcessoOrientacoesDTO2->retTodos();
@@ -39,6 +35,19 @@ try {
             $alterar        = count($objLista) > 0;
             $txtConteudo    = $alterar ? $objLista[0]->getStrOrientacoesGerais() : '';
             $mostraMenuExt  = $alterar ? $objLista[0]->getStrSinAtivoMenuExt() : '';
+            
+            if($staTipoEditor==EditorRN::$VE_CK5){
+                $objEditorDTO=new EditorDTO();
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO->setStrConteudoInicial($txtConteudo);
+                EditorCk5RN::montarSimples($objEditorDTO);
+            } else {
+                $objEditorDTO=new EditorDTO();
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO = (new EditorRN())->montarSimples($objEditorDTO);
+            }
 
             $objMdPetTpProcessoOrientacoesDTO = new MdPetTpProcessoOrientacoesDTO();
             $objMdPetTpProcessoOrientacoesDTO->setStrOrientacoesGerais($_POST['txaConteudo']);
@@ -107,7 +116,14 @@ PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
-echo $retEditor->getStrInicializacao();
+
+if($staTipoEditor==EditorRN::$VE_CK5){
+    echo $objEditorDTO->getStrCss();
+    echo $objEditorDTO->getStrJs();
+} else {
+    echo $objEditorDTO->getStrInicializacao();
+}
+
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
@@ -125,10 +141,23 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                     <div class="col-12">
                         <div class="form-group">
                             <label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">Orientações Gerais:</label>
-                            <div id="divEditores" class="mb-0">
-                                <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
-                                <script type="text/javascript"> <?= $retEditor->getStrEditores(); ?> </script>
-                            </div>
+                            
+                            <?php
+                            if($staTipoEditor==EditorRN::$VE_CK5){
+                                ?>
+                                    <div id="divEditores" class="infra-editor" style="visibility: visible;">
+                                        <?= $objEditorDTO->getStrHtml(); ?>
+                                    </div>
+                                    <?php
+                            } else {
+                                ?>
+                                    <div id="divEditores" class="mb-0">
+                                        <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
+                                        <script type="text/javascript"> <?= $objEditorDTO->getStrEditores(); ?> </script>
+                                    </div>
+                                <?php
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>

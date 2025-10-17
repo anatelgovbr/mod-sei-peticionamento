@@ -34,7 +34,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                     Tipo de Documento:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                 </label><br/>
-                <select id="selTipoDocumento" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                <select id="selTipoDocumento" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                     <?= $strSelectTipoDocumento ?>
                 </select>
             </div>
@@ -52,7 +52,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-2">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso: <img
@@ -62,7 +62,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                             class="infraImgModulo"/></label>
 
                 <?php if (!isset($arrHipoteseNivel['nivelAcesso'])): ?>
-                    <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect form-control"
+                    <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect form-select"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                         <?= $strSelectNivelAcesso ?>
                     </select>
@@ -100,7 +100,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         <?php endif; ?>
     </div>
 
-    <div class="row">
+    <div class="row mt-2">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
 
             <div class="form-group">

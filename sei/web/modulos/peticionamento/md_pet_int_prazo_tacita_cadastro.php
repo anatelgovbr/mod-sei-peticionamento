@@ -368,7 +368,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="col-12">
             <fieldset id="fldPrazoCustomizadoTipoProcessoEspecifico" class="infraFieldset p-3">
                 <legend class="infraLegend px-2"> Prazo customizado por Tipo de Processo Específico </legend>
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2">
                         <div class="form-group">
                             <label id="lbTxtNumPrazoCustomizado" for="txtNumPrazoCustomizado" accesskey="" class="infraLabelObrigatorio">Prazo customizado:</label>

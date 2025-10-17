@@ -18,31 +18,31 @@ switch ($_GET['acao']) {
 
     case 'md_pet_intimacao_usu_ext_negar_resposta_peticionar':
         try {
-            $strTitulo = 'Responder IntimaÁ„o EletrÙnica n„o Permitida';
+            $strTitulo = 'Responder Intima√ß√£o Eletr√¥nica n√£o Permitida';
 
             $arrComandos[] = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="fechar();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
             $objContatoDTO = new ContatoDTO();
             $objContatoDTO->retStrNome();
             $objContatoDTO->retDblCpf();
-            $objContatoDTO->retDblCnpj();
+            $objContatoDTO->retStrCnpj();
             $objContatoDTO->setNumIdContato($idContato);
             $objContatoRN = new ContatoRN();
             $objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
 
-            $texto  = '<p>VocÍ n„o possui mais permiss„o para Responder a IntimaÁ„o EletrÙnica, conforme abaixo:</p>';
-            $texto .= '<p>Destinat·rios n„o permitidos:</p>';
+            $texto  = '<p>Voc√™ n√£o possui mais permiss√£o para Responder a Intima√ß√£o Eletr√¥nica, conforme abaixo:</p>';
+            $texto .= '<p>Destinat√°rios n√£o permitidos:</p>';
             $texto .= '<ul>';
 
             if (!is_null(InfraUtil::formatarCpfCnpj($objContatoDTO->retDblCpf()))) {
                 $texto .= '<li>'.$objContatoDTO->getStrNome() . ' (' . InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCpf()) . ')</li>';
             } else {
-                $texto .= '<li>'.$objContatoDTO->getStrNome() . ' (' . InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCnpj()) . ')</li>';
+                $texto .= '<li>'.$objContatoDTO->getStrNome() . ' (' . InfraUtil::formatarCpfCnpj($objContatoDTO->getStrCnpj()) . ')</li>';
             }
             
             $texto .= '</ul>';
 
-            $texto .= '<p>verifique seus Poderes de RepresentaÁ„o.</p>';
+            $texto .= '<p>verifique seus Poderes de Representa√ß√£o.</p>';
             
             $url = "controlador_externo.php?acao=usuario_externo_controle_acessos&acao_origem=usuario_externo_logar&acao_origem=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=0";
 	    $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
@@ -53,7 +53,7 @@ switch ($_GET['acao']) {
 
         break;
     default:
-        throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+        throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
 }
 
 PaginaSEIExterna::getInstance()->montarDocType();

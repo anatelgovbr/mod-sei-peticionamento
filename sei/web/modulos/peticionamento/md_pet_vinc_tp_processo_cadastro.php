@@ -354,13 +354,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                          class="infraImgFielset"/>
                 </legend>
                 <!--  Tipo de Processo  -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <div class="form-group">
                             <label id="lblTipoProcesso" for="txtTipoProcessoPF" class="infraLabelObrigatorio">Tipo de
                                 Processo
                                 Associado:</label>
-                            <div class="input-group mb-3">
+                            <div class="input-group">
                                 <input type="text" onchange="removerProcessoAssociadoPF(0);" id="txtTipoProcessoPF"
                                        name="txtTipoProcessoPF"
                                        class="infraText form-control" value="<?php echo $nomeTipoProcessoPF; ?>"
@@ -386,7 +386,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--  Fim do Tipo de Processo -->
 
                 <!--Especificação do Processo -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <div class="form-group">
                             <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
@@ -406,7 +406,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--Especificação do Processo - FIM -->
 
                 <!--  Unidade -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <div class="form-group">
                             <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
@@ -435,7 +435,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--Fim da Unidade -->
 
                 <!--   Exibir menu Procuração Eletrônica -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-7 col-lg-6 col-xl-6">
                         <div class="form-group">
                             <label id="lblMenuAcessoExternoPF" for="" class="infraLabelObrigatorio">Exibir menu Procuração
@@ -478,7 +478,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                          class="infraImgFielset"/>
                 </legend>
                 <!--  Tipo de Processo  -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <div class="form-group">
                             <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipo de Processo
@@ -507,7 +507,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
                 <!--  Fim do Tipo de Processo -->
                 <!--Especificação do Processo -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <div class="form-group">
                             <label id="lblEspecProc" for="txtEspecProc" class="infraLabelObrigatorio">Especificação do
@@ -526,7 +526,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
                 <!--Especificação do Processo - FIM -->
                 <!--  Unidade -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <div class="form-group">
                             <label id="lblUnidade" for="txtUnidade" class="infraLabelObrigatorio">Unidade para Abertura do
@@ -555,7 +555,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--Fim da Unidade -->
 
                 <!--   Exibir menu Procuração Eletrônica -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
                         <div class="form-group">
                             <label id="lblMenuAcessoExterno" for="" class="infraLabelObrigatorio">Exibir menu Responsável
@@ -588,7 +588,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </div>
                 </div>
                 <!--  Fim Exibir menu Procuração Eletrônica -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <fieldset class="infraFieldset form-control" style="height: auto">
                             <legend class="infraLegend">Nível de Acesso dos Documentos Peticionados
@@ -597,7 +597,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                      id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Indique o comportamento a ser adotado pelo SEI referente ao Nível de Acesso dos Atos Constitutivos ao Peticionar a Vinculação do Usuário Externo como Responsável Legal a Pessoa Jurídica. \n \n Utilize a opção "Usuário Externo indica diretamente" para permitir ao Usuário Externo selecionar o Nível de Acesso de cada documento adicionado. \n \n Utilize a opção "Padrão pré definido" para que os Atos Constitutivos sejam peticionados com o Nível de Acesso indicado aqui.', 'Ajuda') ?>
                                      class="infraImgFielset"/>
                             </legend>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                                     <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
                                                                        class="infraRadio"
@@ -618,7 +618,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         definido</label>
                                 </div>
                             </div>
-                            <div class="row"
+                            <div class="row mb-2"
                                  id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?> >
                                 <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
 
@@ -655,7 +655,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 //$divDocs = $alterar || $gerado || $externo ? 'style="display: inherit;"' : 'style="display: none;"'
                 $divDocs = 'style="display: inherit; margin-top: -3px"';
                 ?>
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <fieldset <?php echo $divDocs; ?> id="fldDocObrigatorio" class="fieldsetClear">
                             <div class="form-group">
@@ -706,7 +706,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <!--  Fim do Documento Obrigatorio -->
 
                 <!--  Documento Não Obrigatorio  -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <fieldset <?php echo $divDocs; ?> id="fldDocComplementar" class="fieldsetClear">
                             <div class="form-group">

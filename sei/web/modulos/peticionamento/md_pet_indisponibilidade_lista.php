@@ -368,7 +368,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     dos
                     Prazos:</label><br/>
                 <select onchange="pesquisar()" id="selSinProrrogacao" name="selSinProrrogacao"
-                        class="infraSelect form-control">
+                        class="infraSelect form-select">
                     <?= $strItensSelSinProrrogacaoAutomatica ?>
                 </select>
             </div>

@@ -65,7 +65,7 @@ class MdPetVinculoDTO extends InfraDTO
 
         // Contato do Vínculo
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'RazaoSocialNomeVinc', 'contvinc.nome', 'contato contvinc');
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CNPJ', 'contvinc.cnpj', 'contato contvinc');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CNPJ', 'contvinc.cnpj', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CNPJPesquisa', 'contvinc.cnpj', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdCidadeContatoVinc', 'contvinc.id_cidade', 'contato contvinc');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUfContatoVinc', 'contvinc.id_uf', 'contato contvinc');

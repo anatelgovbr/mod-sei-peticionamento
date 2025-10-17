@@ -261,7 +261,7 @@ if ($numRegistros > 0) {
         $idContato = "";
         $idContato = $arrObjMdPetVincRepresentantDTO[$i]->getNumIdContato();
 
-        $arrSerieSituacao = MdPetVincRepresentantDTO::getArrSerieSituacao(
+        $arrSerieSituacao = (new MdPetVincRepresentantDTO())->getArrSerieSituacao(
             MdPetVincRepresentantRN::$RP_ATIVO,
             $arrObjMdPetVincRepresentantDTO[$i]->getStrTipoRepresentante()
         );
@@ -309,13 +309,14 @@ if ($numRegistros > 0) {
             $contatoDTO = new ContatoDTO();
             $contatoDTO->setNumIdContato($arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoOutorg());
             $contatoDTO->retDblCpf();
-            $contatoDTO->retDblCnpj();
+            $contatoDTO->retStrCnpj();
             $valor = (new ContatoRN())->consultarRN0324($contatoDTO);
             
-            if ($valor->getDblCnpj() == null) {
+            if ($valor->getStrCnpj() == null) {
                 $strResultado .= '<td align="center">' . InfraUtil::formatarCpf($valor->getDblCpf()) . '</td>';
             } else {
-                $strResultado .= '<td align="center">' . InfraUtil::formatarCnpj($valor->getDblCnpj()) . '</td>';
+                $strResultado .= '<td align="center">' . InfraUtil::formatarCnpj($valor->getStrCnpj()) . '</td>';
+
             }
 
         } else {

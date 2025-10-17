@@ -243,7 +243,7 @@ function inicializar(){
                         </div>
                     </div>
                     <div class="cpf-validation-result" style="display: none">
-                        <div class="mt-3" style="position: absolute; margin-left -999999999px; height: 0px; width: 0px; overflow: hidden; opacity: 0;">
+                        <div class="mt-3" style="position: absolute; margin-left: -999999999px; height: 0px; width: 0px; overflow: hidden; opacity: 0;">
                             <div class="row">
                                 <div class="col-12">
                                     <label for="">Lista de CPFs Localizados:</label>
@@ -295,7 +295,7 @@ function inicializar(){
     
     
         <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
-        <div class="row">
+        <div class="row mt-2">
             <div class="col-12">
                 <div class="table-responsive ">
                     <!-- Destinatarios em massa: Melhorando a usabilidade para usuario saber que os Usuarios Externos ticados ja foram selecionados ou ja receberam o documento em outra intimacao: -->
@@ -406,15 +406,16 @@ function inicializar(){
             $('body').on('click', '.btnToggleLote', function(){
                 $('.pesquisa-usuarios-lote').fadeToggle(200);
                 
-                let mode = $('#divInfraBarraLocalizacao').html() == 'Selecionar Usuários Externos' ? 'normal' : 'lote';
-                
+                let mode = $('#divInfraBarraLocalizacao h1').html() == 'Selecionar Usuários Externos' ? 'normal' : 'lote';
+                console.log(mode);
+
                 if(mode == 'normal'){
-                    $('#divInfraBarraLocalizacao').html('Selecionar Usuários Externos em Lote');
+                    $('#divInfraBarraLocalizacao h1').html('Selecionar Usuários Externos em Lote');
                     $('.btnToggleLote').val('Fechar seleção em Lote');
                     $('.fecharLote').css('display', 'none');
                     $('#cpfList').focus();
                 }else{
-                    $('#divInfraBarraLocalizacao').html('Selecionar Usuários Externos');
+                    $('#divInfraBarraLocalizacao h1').html('Selecionar Usuários Externos');
                     $('.btnToggleLote').val('Selecionar em Lote');
                     $('form.fecharLote, div.fecharLote').fadeIn(100);
                     $('input.fecharLote, button.fecharLote').css('display', 'inline-block');

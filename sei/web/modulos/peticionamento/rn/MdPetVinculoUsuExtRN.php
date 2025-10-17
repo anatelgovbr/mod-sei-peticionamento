@@ -211,7 +211,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $objContatoDTO = new ContatoDTO();
         $objContatoDTO->setStrNome($nomeContato); // Array Razao Social
-        $objContatoDTO->setDblCnpj($cnpj);
+        $objContatoDTO->setStrCnpj($cnpj);
         $objContatoDTO->setStrSigla($post['txtNumeroCnpj']);
         $objContatoDTO->setStrStaNatureza(ContatoRN::$TN_PESSOA_JURIDICA); // Identifica que o contato é CNPJ
         if (strlen($endereco) > 130) {
@@ -391,7 +391,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         //ESPECIFICAÇÃO
         $contatoDTO = new ContatoDTO();
         $contatoDTO->retStrNome();
-        $contatoDTO->retDblCnpj();
+        $contatoDTO->retStrCnpj();
         $contatoDTO->retStrSigla();
         $contatoDTO->setNumIdContato($dados['idContato']);
         $contatoRN = new ContatoRN();
@@ -403,7 +403,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $especificacao = $arrObjMdPetVincTpProcesso->getStrEspecificacao();
         $nomeModificado = str_replace("@razao_social@",$objContatoRN->getStrNome(),$especificacao);
-        $nome_cnpj = str_replace("@cnpj@",InfraUtil::formatarCnpj($objContatoRN->getDblCnpj()),$nomeModificado);
+        $nome_cnpj = str_replace("@cnpj@",InfraUtil::formatarCnpj($objContatoRN->getStrCnpj()),$nomeModificado);
 
         //trata campo especificacao limite de 100 caracteres
         //Se o conteúdo for superior a 100 caracteres, deve ser considerado somente o conteúdo até a última palavra inteira antes do 100º caracter.

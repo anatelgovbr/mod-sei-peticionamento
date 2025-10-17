@@ -303,7 +303,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
                 // consultar dados Pj
                 $contatoDTO = new ContatoDTO();
-                $contatoDTO->retDblCnpj();
+                $contatoDTO->retStrCnpj();
                 $contatoDTO->retStrNome();
                 $contatoDTO->setNumIdContato($idContatoVinc);
 
@@ -1002,7 +1002,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $contatoDTO->setNumIdContato($objMdPetVincRepresentantOutorganteRN->getNumIdContatoOutorg());
                 $contatoDTO->retStrNome();
                 $contatoDTO->retNumIdContato();
-                $contatoDTO->retDblCnpj();
+                $contatoDTO->retStrCnpj();
                 $contatoRN = new ContatoRN();
                 $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
                 $nomeResponsavelLegal = $objContatoRN->getStrNome();
@@ -1020,18 +1020,18 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $contatoDTO->setNumIdContato($objMdPetVinculoRN->getNumIdContato());
                 $contatoDTO->retStrNome();
                 $contatoDTO->retNumIdContato();
-                $contatoDTO->retDblCnpj();
+                $contatoDTO->retStrCnpj();
                 $contatoRN = new ContatoRN();
                 $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
                 $nomeOutorgante = $objContatoRN->getStrNome();
-                $cnpjOutorgante = $objContatoRN->getDblCnpj();
+                $cnpjOutorgante = $objContatoRN->getStrCnpj();
 
                 //Recuperando Outorgado
                 $contatoDTO = new ContatoDTO();
                 $contatoDTO->setNumIdContato($objMdPetVincRepresentantOutorganteRN->getNumIdContato());
                 $contatoDTO->retStrNome();
                 $contatoDTO->retNumIdContato();
-                $contatoDTO->retDblCnpj();
+                $contatoDTO->retStrCnpj();
                 $contatoRN = new ContatoRN();
                 $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
                 $nomeOutorgado = $objContatoRN->getStrNome();
@@ -1080,7 +1080,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $contatoDTO->setNumIdContato($objMdPetVinculoRN->getNumIdContato());
                 $contatoDTO->retStrNome();
                 $contatoDTO->retNumIdContato();
-                $contatoDTO->retDblCnpj();
+                $contatoDTO->retStrCnpj();
                 $contatoRN = new ContatoRN();
                 $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
                 $nomeOutorgante = $objContatoRN->getStrNome();
@@ -1090,7 +1090,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $contatoDTO->setNumIdContato($objMdPetVincRepresentantOutorganteRN->getNumIdContato());
                 $contatoDTO->retStrNome();
                 $contatoDTO->retNumIdContato();
-                $contatoDTO->retDblCnpj();
+                $contatoDTO->retStrCnpj();
                 $contatoRN = new ContatoRN();
                 $objContatoRN = $contatoRN->consultarRN0324($contatoDTO);
                 $nomeOutorgado = $objContatoRN->getStrNome();
@@ -1135,19 +1135,16 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         // consultar dados Outorgado
         $contatoDTO = new ContatoDTO();
-        $contatoDTO->setNumIdContato($idContatoVinculo);
+        $contatoDTO->setDblCpf($dados['CpfOutorgante']);
         $contatoDTO->retStrNome();
         $contatoDTO->retNumIdContato();
         $contatoDTO->retDblCpf();
-        $contatoDTO->retDblCnpj();
         //$contatoDTO->setNumIdContato($idOutorgado);
         $contatoDTO->setNumMaxRegistrosRetorno(1);
 
         $contatoRN = new ContatoRN();
         $Outorgante = $contatoRN->consultarRN0324($contatoDTO);
-
         if ($dados['tpProc'] == "E") {
-
             $htmlModeloRevogacao = str_replace('@razaoSocial', $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc(), $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@cnpj', InfraUtil::formatarCnpj($objMdPetVincRepresentantDTO->getStrCNPJ()), $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@nomeOutorgante', $Outorgante->getStrNome(), $htmlModeloRevogacao);
@@ -1163,7 +1160,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
 
         } else if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "J") {
-
             $htmlModeloRevogacao = str_replace('@motivo', $dados['txtJustificativa'], $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@Outorgante', $nomeOutorgante, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@cnpj', InfraUtil::formatarCnpj($cnpjOutorgante), $htmlModeloRevogacao);
@@ -1172,18 +1168,14 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@tipoProcuracao', $tipoProcuracao, $htmlModeloRevogacao);
-
         } else if ($dados['tpProc'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $dados['tpVinc'] == "F") {
-
             $htmlModeloRevogacao = str_replace('@motivo', $dados['txtJustificativa'], $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@Outorgante', $nomeOutorgante, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@outorgado', $nomeOutorgado, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@numProcesso', $numProcesso, $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRevogacao);
             $htmlModeloRevogacao = str_replace('@tipoProcuracao', $tipoProcuracao, $htmlModeloRevogacao);
-
         }
-        
         //==========================================================================
         //incluindo doc recibo no processo via SEIRN
         //===========================================================
@@ -1514,7 +1506,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         // consultar dados Pj
 
         $contatoDTO = new ContatoDTO();
-        $contatoDTO->retDblCnpj();
+        $contatoDTO->retStrCnpj();
         $contatoDTO->retStrNome();
         $contatoDTO->setNumIdContato($idContatoVinc);
 
@@ -1594,12 +1586,12 @@ class MdPetVinUsuExtProcRN extends InfraRN
         if ($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PJ") {
             //Outorgante Pessoa Jurídica
             $htmlModeloProcuracao = str_replace('@RazaoSocial', $contatoPjPf->getStrNome(), $htmlModeloProcuracao);
-            $htmlModeloProcuracao = str_replace('@Cnpj', InfraUtil::formatarCnpj($contatoPj->getDblCnpj()), $htmlModeloProcuracao);
+            $htmlModeloProcuracao = str_replace('@Cnpj', InfraUtil::formatarCnpj($contatoPj->getStrCnpj()), $htmlModeloProcuracao);
 
         } else if ($params['dados']['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES && $params['dados']['hdnOutorgante'] == "PF") {
             //Outorgante Pessoa Física
             $htmlModeloProcuracao = str_replace('@pessoaFisica', $contatoPjPf->getStrNome(), $htmlModeloProcuracao);
-            //$htmlModeloProcuracao = str_replace('@nomeOutorgado',InfraUtil::formatarCnpj($contatoPj->getDblCnpj()),$htmlModeloProcuracao);
+            //$htmlModeloProcuracao = str_replace('@nomeOutorgado',InfraUtil::formatarCnpj($contatoPj->getStrCnpj()),$htmlModeloProcuracao);
 
         }
         $htmlModeloProcuracao = str_replace('@nomeRespLegal', $Replegal->getStrNome(), $htmlModeloProcuracao);
@@ -1821,7 +1813,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         // consultar dados Pj
 
         $contatoDTO = new ContatoDTO();
-        $contatoDTO->retDblCnpj();
+        $contatoDTO->retStrCnpj();
         $contatoDTO->retStrNome();
         $contatoDTO->setNumIdContato($idContatoVinc);
 
@@ -1866,7 +1858,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $orgao = $orgaoRN->consultarRN1352($orgaoDTO);
 
         $htmlModeloProcuracao = str_replace('@RazaoSocial', $contatoPj->getStrNome(), $htmlModeloProcuracao);
-        $htmlModeloProcuracao = str_replace('@Cnpj', InfraUtil::formatarCnpj($contatoPj->getDblCnpj()), $htmlModeloProcuracao);
+        $htmlModeloProcuracao = str_replace('@Cnpj', InfraUtil::formatarCnpj($contatoPj->getStrCnpj()), $htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@nomeRespLegal', $Replegal->getStrNome(), $htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@nomeOutorgado', $Outorgante->getStrNome(), $htmlModeloProcuracao);
         $htmlModeloProcuracao = str_replace('@sigla_orgao@', $orgao->getStrSigla(), $htmlModeloProcuracao);
@@ -2161,7 +2153,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVinculoDTO = new MdPetVinculoDTO();
         $objMdPetVinculoDTO->retTodos(true);
         $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
-        $objMdPetVinculoDTO->retDblCNPJ();
+        $objMdPetVinculoDTO->retStrCNPJ();
         $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
         $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
         $objMdPetVinculoDTO->retDthDataVinculo();
@@ -2175,7 +2167,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         if (!empty($objMdPetVinculoDTO)) {
 
             $razaoSocial                = $objMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
-            $cnpj                       = $objMdPetVinculoDTO->getDblCNPJ();
+            $cnpj                       = $objMdPetVinculoDTO->getStrCNPJ();
             $idContatoRepresentante     = $objMdPetVinculoDTO->getNumIdContatoRepresentante();
             $RepLegalNome               = $objMdPetVinculoDTO->getStrNomeContatoRepresentante();
             $RepLegalCpf                = $objMdPetVinculoDTO->getStrCpfContatoRepresentante();
@@ -2528,7 +2520,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVinculoDTO = new MdPetVinculoDTO();
         $objMdPetVinculoDTO->retTodos(true);
         $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
-        $objMdPetVinculoDTO->retDblCNPJ();
+        $objMdPetVinculoDTO->retStrCnpj();
         $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
         $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
         $objMdPetVinculoDTO->retDthDataVinculo();
@@ -2541,7 +2533,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         if (!empty($objMdPetVinculoDTO)) {
 
             $razaoSocial            = $objMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
-            $cnpj                   = $objMdPetVinculoDTO->getDblCNPJ();
+            $cnpj                   = $objMdPetVinculoDTO->getStrCnpj();
             $idContatoRepresentante = $objMdPetVinculoDTO->getNumIdContatoRepresentante();
             $RepLegalNome           = $objMdPetVinculoDTO->getStrNomeContatoRepresentante();
             $RepLegalCpf            = $objMdPetVinculoDTO->getStrCpfContatoRepresentante();
@@ -2962,8 +2954,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $htmlModeloRecibo = str_replace('@tipoProcesso', $reciboDTOBasico->getStrStaTipoPeticionamentoFormatado(), $htmlModeloRecibo); //tipo de processo
         $htmlModeloRecibo = str_replace('@numProcesso', $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado(), $htmlModeloRecibo); //numero do processo
         $htmlModeloRecibo = str_replace('@cpfResponsavel', InfraUtil::formatarCpf($dadosRepresentante->getDblCpf()), $htmlModeloRecibo); // Nome do CPF
-        if($dadosPj->isSetDblCnpj()) {
-            $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($dadosPj->getDblCnpj()), $htmlModeloRecibo); // Cnpj do vinculo
+        if($dadosPj->isSetStrCnpj()) {
+            $htmlModeloRecibo = str_replace('@cnpj', InfraUtil::formatarCnpj($dadosPj->getStrCnpj()), $htmlModeloRecibo); // Cnpj do vinculo
         }
         $htmlModeloRecibo = str_replace('@nomeRazaoSocial', $dadosPj->getStrNome(), $htmlModeloRecibo); // Razao Social
         $htmlModeloRecibo = str_replace('@descricao_orgao@', $orgao->getStrDescricao(), $htmlModeloRecibo); // Descricao do Orgão

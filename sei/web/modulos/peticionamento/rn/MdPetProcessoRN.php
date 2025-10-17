@@ -40,12 +40,17 @@ class MdPetProcessoRN extends InfraRN {
 		$objUsuarioDTO->retNumIdUsuario();
 		$objUsuarioDTO->retStrSigla();
 		$objUsuarioDTO->retStrSenha();
+		$objUsuarioDTO->retStrSinGovBr();
 		$objUsuarioDTO->setStrSigla( SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno() );
 
 		$objUsuarioRN = new UsuarioRN();
 		$objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 		$senhaBanco=$objUsuarioDTO->getStrSenha();
 		$bcrypt = new InfraBcrypt();
+
+		if ($objUsuarioDTO->getStrSinGovBr() == 'S' && InfraString::isBolVazia($objUsuarioDTO->getStrSenha())) {
+			$objInfraException->lancarValidacao("Você ainda não possui uma senha registrada no sistema.\nPara assinatura com senha acesse a opção Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+		}
 
 		$stringSenha = base64_decode($arrParametros['pwdsenhaSEI']);
 

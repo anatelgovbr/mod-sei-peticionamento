@@ -40,7 +40,7 @@ try {
             $objMdPetVinculoRN = new MdPetVinculoRN();
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
             $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-            $objMdPetVinculoDTO->retDblCNPJ();
+            $objMdPetVinculoDTO->retStrCNPJ();
             $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
             $objMdPetVinculoDTO->retNumIdContatoRepresentante();
             $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
@@ -70,8 +70,8 @@ try {
                     $cpf = str_pad($cpf, '11', '0', STR_PAD_LEFT);
                     $strUrlWebservice = $arrFuncionalidadeCadastrada->getStrEnderecoWsdl();
                     $strMetodoWebservice = $arrFuncionalidadeCadastrada->getStrOperacaoWsdl();
-                    $cnpj = InfraUtil::retirarFormatacao($objMdPetVinculoDTO->getDblCNPJ());
-                    $cnpj = str_pad(InfraUtil::retirarFormatacao($objMdPetVinculoDTO->getDblCNPJ()), 14, '0', STR_PAD_LEFT);
+                    $cnpj = InfraUtil::retirarFormatacao($objMdPetVinculoDTO->getStrCNPJ());
+                    $cnpj = str_pad(InfraUtil::retirarFormatacao($objMdPetVinculoDTO->getStrCNPJ()), 14, '0', STR_PAD_LEFT);
 
                     //Recuperando meses - alterado
                     $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
@@ -214,7 +214,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
                 <input type="text" id="txtCnpj" name="txtCnpj"
                        class="infraText form-control"
                        disabled="disabled"
-                       value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objMdPetVinculoDTO->getDblCNPJ())) ?>"
+                       value="<?= PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objMdPetVinculoDTO->getStrCNPJ())) ?>"
                        onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>

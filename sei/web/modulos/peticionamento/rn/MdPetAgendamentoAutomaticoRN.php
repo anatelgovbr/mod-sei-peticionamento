@@ -1069,7 +1069,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	  if($natureza == 'F'){
 		  $objContatoDTO->setDblCpf($cpfCnpj);
 	  }else{
-		  $objContatoDTO->setDblCnpj($cpfCnpj);
+		  $objContatoDTO->setStrCnpj($cpfCnpj);
 	  }
 	  $objContatoDTO->retNumIdContato();
 	  $arrObjContato = (new ContatoRN())->listarRN0325($objContatoDTO);
@@ -1177,7 +1177,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	
 	  $objMdPetVinculoDTO = new MdPetVinculoDTO();
 	  $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-	  $objMdPetVinculoDTO->retDblCNPJ();
+	  $objMdPetVinculoDTO->retStrCnpj();
 	  $objMdPetVinculoDTO->setStrTpVinculo('J');
 	  $objMdPetVinculoDTO->setOrdDthDataUltimaConsultaRFB(InfraDTO::$TIPO_ORDENACAO_ASC);
 	  $objMdPetVinculoDTO->setNumMaxRegistrosRetorno($qtConsulta);

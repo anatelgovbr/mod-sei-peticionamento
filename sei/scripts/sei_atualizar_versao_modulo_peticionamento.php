@@ -5,10 +5,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.3.0';
+    private $versaoAtualDesteModulo = '4.4.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -92,7 +92,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '2.29.0';
+            $numVersaoInfraRequerida = '2.37.1';
 	        if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
@@ -167,6 +167,8 @@ class MdPetAtualizadorSeiRN extends InfraRN
                     $this->instalarv420();
 	            case '4.2.0':
 		            $this->instalarv430();
+	            case '4.3.0':
+		            $this->instalarv440();
                     break;
 
                 default:
@@ -2782,6 +2784,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 
         $objInfraMetaBD->adicionarChavePrimaria('md_pet_fila_consulta_rf', 'pk_md_pet_fila_consulta_rf', array('id_md_pet_fila_consulta_rf'));
 
+	    BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_fila_consulta_rf', 1);
+
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_rel_cont_sit_rf ( 
               id_contato ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
               cpf_cnpj ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
@@ -2864,10 +2868,36 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 		$objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 		$objInfraMetaBD->setBolValidarIdentificador(true);
 		
-		$this->logar('>>>> INCLUINDO SEQUENCE PARA PROCESSAMENTO DA FILA DE CONSLTA À RECEITA FEDERAL');
-		if (count($objInfraMetaBD->obterTabelas('seq_md_pet_fila_consulta_rf')) == 0) {
-			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_fila_consulta_rf', 1);
-		}
+		$this->logar('>>>> REMOVENDO TABELA E SEQUENCE MD_PET_FILA_CONSULTA_RF');
+        if (BancoSEI::getInstance() instanceof InfraOracle) {
+
+            $sql = 'SELECT lower(sequence_name) as nome FROM all_sequences 
+                    WHERE lower(sequence_owner) = \'' . strtolower(BancoSEI::getInstance()->getUsuario()) . '\' 
+                    AND lower(sequence_name) = \'' . strtolower('seq_md_pet_fila_consulta_rf') . '\'';
+
+            $ret = BancoSEI::getInstance()->consultarSql($sql);
+
+            if(!empty($ret)){
+                BancoSEI::getInstance()->executarSql('drop sequence seq_md_pet_fila_consulta_rf');
+            }
+
+        } else if (BancoSEI::getInstance() instanceof InfraPostgreSql) {
+
+            $sql = "SELECT sequence_name FROM information_schema.sequences WHERE sequence_name = 'seq_md_pet_fila_consulta_rf'";
+            $ret = BancoSEI::getInstance()->consultarSql($sql);
+
+            if(!empty($ret)){
+                BancoSEI::getInstance()->executarSql('drop sequence seq_md_pet_fila_consulta_rf');
+            }
+        } else {
+
+            if (count($objInfraMetaBD->obterTabelas('seq_md_pet_fila_consulta_rf')) == 0) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_fila_consulta_rf', 1);
+    		}
+
+            BancoSEI::getInstance()->executarSql('DROP TABLE seq_md_pet_fila_consulta_rf');
+        }
+        BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_fila_consulta_rf');
 		
 		$this->logar('>>>> MIGRANDO PARÂMETROS DO UTILIDADES PARA O PETICIONAMENTO');
 		
@@ -2964,9 +2994,9 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 		
 		BancoSEI::getInstance()->executarSql($insertVinculoSuspensao);
 		
-		$this->logar('>>>> FORÇANDO CAMPO "endereco_wsdl" DA TABELA "md_pet_adm_integracao" para ACEITAR VALORES NULOS NO ORACLE E POSTGRESQL ');
+		$this->logar('>>>> FORÇANDO CAMPO "endereco_wsdl" DA TABELA "md_pet_adm_integracao" para ACEITAR VALORES NULOS NO ORACLE');
 		
-		if (BancoSEI::getInstance() instanceof InfraOracle || BancoSEI::getInstance() instanceof InfraPostgreSql) {
+		if (BancoSEI::getInstance() instanceof InfraOracle) {
 			
 			BancoSEI::getInstance()->executarSql('ALTER TABLE md_pet_adm_integracao rename COLUMN endereco_wsdl TO endereco_wsdl_old');
 			$objInfraMetaBD->adicionarColuna('md_pet_adm_integracao', 'endereco_wsdl', $objInfraMetaBD->tipoTextoVariavel(250), 'NULL');
@@ -3006,71 +3036,72 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 		$objInfraMetaBD->adicionarColuna('md_pet_tipo_processo','id_tipo_formulario',$objInfraMetaBD->tipoNumero(1),'null');
 		
 		$this->logar('>>>> AJUSTANDO MECÂNICA DE CONTROLE DE CONSULTA DE CPF E CNPJ NA RECEITA FEDERAL REALIZADA PELOS AGENDAMENTOS');
-		
+
 		$this->logar('>>>> ADICIONANDO COLUNA dth_ultima_consulta_rfb PARA CONTROLE DA FILA DE CONSULTA NA RFB NA TABELA md_pet_vinculo');
 		$objInfraMetaBD->adicionarColuna('md_pet_vinculo', 'dth_ultima_consulta_rfb', $objInfraMetaBD->tipoDataHora(), 'NULL');
-		
+
 		if (count($objInfraMetaBD->obterTabelas('md_pet_fila_consulta_rf')) == 1) {
 			$this->logar('>>>> DELETANDO A TABELA md_pet_fila_consulta_rf');
 			BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_fila_consulta_rf');
 		}
-		
+
 		$this->logar('>>>> REMOVENDO VINCULOS DE AUTORREPRESENTACAO');
 		BancoSEI::getInstance()->executarSql("DELETE FROM md_pet_vinculo_represent WHERE tipo_representante = 'U'");
-		
+
 		$this->logar('>>>> REMOVENDO VINCULOS DE AUTORREPRESENTACAO DA TABELA md_pet_vinculo CUJOS REGISTROS ESTAO SEM id_procedimento');
 		BancoSEI::getInstance()->executarSql('DELETE FROM md_pet_vinculo WHERE id_procedimento IS NULL');
-		
+
 		$this->logar('>>>> ATUALIZANDO TIPOS DE DOCUMETO GERADOS PELA SUSPENSÃO E RESTABELECIMENT DE PROCURAÇÕES PARA UTILIZAR UM UNICO MODELO');
 		$arrParamTiposDocumento = [
 			'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_SUSPENSAO',
 			'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RESTABELECIMENTO'
 		];
 		$this->_usarModeloPadraoDocumento($arrParamTiposDocumento, 'Modulo_Peticionamento_Documento_Padrao');
-		
+
 		$this->logar('>>>> ATUALIZANDO dth_ultima_consulta_rfb COM dth_cadastro DO CONTATO');
 		$objMdPetVinculoDTO = new MdPetVinculoDTO();
 		$objMdPetVinculoDTO->retNumIdMdPetVinculo();
 		$objMdPetVinculoDTO->retNumIdContato();
 		$objMdPetVinculoDTO->retDthDataUltimaConsultaRFB();
 		$arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
-		
+
 		if(!empty($arrObjMdPetVinculoDTO)){
-			
+
 			foreach($arrObjMdPetVinculoDTO as $objMdPetVinculoDTO){
-				
-				$dataAtualizada = InfraData::getStrDataHoraAtual();
-				
-				$objContatoDTO = new ContatoDTO();
-				$objContatoDTO->setNumIdContato($objMdPetVinculoDTO->getNumIdContato());
-				$objContatoDTO->retDthCadastro();
-				$objContatoDTO = (new ContatoRN())->consultarRN0324($objContatoDTO);
-				
-				if(!empty($objContatoDTO) && !is_null($objContatoDTO->getDthCadastro())){
-					$dataAtualizada = $objContatoDTO->getDthCadastro();
+
+				$dataAtualizada = InfraInfraData::getStrDataHoraAtual();
+
+				$objConatoDTO = new ContatoDTO();
+				$objConatoDTO->setNumIdContato($objMdPetVinculoDTO->getNumIdContato());
+				$objConatoDTO->retDthDataCadastro();
+				$objConatoDTO = (new ContatoRN())->consultarRN0324($objMdPetVinculoDTO);
+
+				if(!empty($objConatoDTO) && !is_null($objConatoDTO->getDthDataCadastro())){
+					$dataAtualizada = $objConatoDTO->getDthDataCadastro();
 				}
-				
+
 				$objMdPetVinculoDTO->setDthDataUltimaConsultaRFB($dataAtualizada);
 				(new MdPetVinculoRN())->alterar($objMdPetVinculoDTO);
-				
+
 			}
+
 		}
-		
+
 		$this->logar('>>>> CRIANDO TIPO DE DOCUMENTO Suspensão de Vinculação à Pessoa Jurídica Automática');
-		
+
 		$grupoSerieDTO = new GrupoSerieDTO();
 		$grupoSerieDTO->retTodos();
 		$grupoSerieDTO->setStrNome('Internos do Sistema');
 		$grupoSerieDTO = (new GrupoSerieRN())->consultarRN0777($grupoSerieDTO);
-		
+
 		$modeloDTO = new ModeloDTO();
 		$modeloDTO->retTodos();
 		$modeloDTO->setStrNome('Modulo_Peticionamento_Automatico_Padrao');
 		$modeloDTO = (new ModeloRN())->consultar($modeloDTO);
-		
+
 		$serieDTO = new SerieDTO();
 		$serieDTO->retTodos();
-		
+
 		$serieDTO->setNumIdSerie(null);
 		$serieDTO->setNumIdGrupoSerie($grupoSerieDTO->getNumIdGrupoSerie());
 		$serieDTO->setStrStaNumeracao(SerieRN::$TN_SEM_NUMERACAO);
@@ -3090,58 +3121,24 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 		$serieDTO->setNumIdTipoFormulario(null);
 		$serieDTO->setStrSinUsuarioExterno('N');
 		$serieDTO->setArrObjSerieRestricaoDTO(array());
-		
+
 		$serieDTO = (new SerieRN())->cadastrarRN0642($serieDTO);
-		
+
 		$this->logar('>>>> CRIANDO PARAMETRO NO INFRA_PARAMETRO (' . MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_RESTABELECIMENTO . ')');
 		BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro ( nome, valor )  VALUES (\'' . MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO_AUTOMATICA . '\' , \'' . $serieDTO->getNumIdSerie() . '\' ) ');
-		
-        $this->logar('>>>> DESATIVANDO AGENDAMENTOS DE CONSULTA DE CPF E CNPJ NA RECEITA FEDERAL');
 
-        $InfraAgendamentoTarefaDTO = new InfraAgendamentoTarefaDTO();
-		$InfraAgendamentoTarefaDTO->setStrComando(['MdPetAgendamentoAutomaticoRN::ConsultarSituacaoReceitaCpf', 'MdPetAgendamentoAutomaticoRN::ConsultarSituacaoReceitaCnpj'], InfraDTO::$OPER_IN);
-		$InfraAgendamentoTarefaDTO->retTodos();
-		$infraAgendamentoTarefaBD = new InfraAgendamentoTarefaBD(BancoSEI::getInstance());
-		$arrObjInfraAgendamentoTarefaDTO = $infraAgendamentoTarefaBD->listar($InfraAgendamentoTarefaDTO);
-
-		foreach ($arrObjInfraAgendamentoTarefaDTO as $objInfraAgendamentoTarefaDTO) {
-			$objInfraAgendamentoTarefaDTO->setStrSinAtivo('N');
-			$infraAgendamentoTarefaBD->alterar($objInfraAgendamentoTarefaDTO);
-		}
-
-        $this->logar('>>>> INCLUINDO SEQUENCE PARA NÍVEL DE ACESSO DO DOCUMENTO BANCO POSTGRES');
-		if (BancoSEI::getInstance() instanceof InfraPostgreSql) {
-			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_adm_nivel_aces_doc', 1);
-		}
-
-        $this->logar('>>>> ADICIONANDO COLUNA dta_prazo_tacito NA TABELA md_pet_int_rel_dest');
-		$objInfraMetaBD->adicionarColuna('md_pet_int_rel_dest', 'dta_prazo_tacito', $objInfraMetaBD->tipoDataHora(), 'NULL');
-
-        $this->logar('>>>> ALTERANDO COLUNAS ABAIXO PARA ACEITAR VALORES NULOS NO POSTGRESQL');
-        if (BancoSEI::getInstance() instanceof InfraPostgreSql) {
-			
-            // nome_campo da tabela md_pet_adm_integ_param
-			BancoSEI::getInstance()->executarSql('ALTER TABLE md_pet_adm_integ_param rename COLUMN nome_campo TO nome_campo_old');
-			$objInfraMetaBD->adicionarColuna('md_pet_adm_integ_param', 'nome_campo', $objInfraMetaBD->tipoTextoVariavel(250), 'NULL');
-			BancoSEI::getInstance()->executarSql('UPDATE md_pet_adm_integ_param SET nome_campo = nome_campo_old');
-			$objInfraMetaBD->excluirColuna('md_pet_adm_integ_param','nome_campo_old');
-			
-            // sin_na_usuario_externo na tabela md_pet_adm_vinc_tp_proced
-			BancoSEI::getInstance()->executarSql('ALTER TABLE md_pet_adm_vinc_tp_proced rename COLUMN sin_na_usuario_externo TO sin_na_usuario_externo_old');
-			$objInfraMetaBD->adicionarColuna('md_pet_adm_vinc_tp_proced', 'sin_na_usuario_externo', $objInfraMetaBD->tipoTextoVariavel(250), 'NULL');
-			BancoSEI::getInstance()->executarSql('UPDATE md_pet_adm_vinc_tp_proced SET sin_na_usuario_externo = sin_na_usuario_externo_old');
-			$objInfraMetaBD->excluirColuna('md_pet_adm_vinc_tp_proced','sin_na_usuario_externo_old');
-			
-            // sin_na_padrao na tabela md_pet_adm_vinc_tp_proced
-			BancoSEI::getInstance()->executarSql('ALTER TABLE md_pet_adm_vinc_tp_proced rename COLUMN sin_na_padrao TO sin_na_padrao_old');
-			$objInfraMetaBD->adicionarColuna('md_pet_adm_vinc_tp_proced', 'sin_na_padrao', $objInfraMetaBD->tipoTextoVariavel(250), 'NULL');
-			BancoSEI::getInstance()->executarSql('UPDATE md_pet_adm_vinc_tp_proced SET sin_na_padrao = sin_na_padrao_old');
-			$objInfraMetaBD->excluirColuna('md_pet_adm_vinc_tp_proced','sin_na_padrao_old');
-		}
-		
 		$this->atualizarNumeroVersao($nmVersao);
 		
 	}
+
+    protected function instalarv440()
+    {
+        $nmVersao = '4.4.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
 
     private function existeIdEmailSistemaPecitionamento()
     {
@@ -4738,51 +4735,51 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 	    }
 
 	}
-	
+
 	private function _usarModeloPadraoDocumento($arrParamTiposDocumento, $strNomeModeloPadrao){
-		
+
 		if(!empty($arrParamTiposDocumento)){
-			
+
 			$objInfraParamDTO = new InfraParametroDTO();
 			$objInfraParamDTO->retStrValor();
 			$objInfraParamDTO->setStrNome($arrParamTiposDocumento, InfraDTO::$OPER_IN);
 			$arrObjInfraParamDTO = (new InfraParametroRN())->listar($objInfraParamDTO);
-			
+
 			if(is_array($arrObjInfraParamDTO) && count($arrObjInfraParamDTO) > 0){
-				
+
 				$objSerieDTO = new SerieDTO();
 				$objSerieDTO->retNumIdSerie();
 				$objSerieDTO->retNumIdModelo();
 				$objSerieDTO->setNumIdSerie(InfraArray::converterArrInfraDTO($arrObjInfraParamDTO,'Valor'), InfraDTO::$OPER_IN);
 				$arrObjSerieDTO = (new SerieRN())->listarRN0646($objSerieDTO);
-				
+
 				if(is_array($arrObjSerieDTO) && count($arrObjSerieDTO) > 0){
-					
+
 					$objModeloDTO = new ModeloDTO();
 					$objModeloDTO->retTodos();
 					$objModeloDTO->setStrSinAtivo('S');
 					$objModeloDTO->setStrNome($strNomeModeloPadrao);
 					$arrObjModelo = (new ModeloRN())->consultar($objModeloDTO);
-					
+
 					if(!empty($arrObjModelo)){
-						
+
 						foreach($arrObjSerieDTO as $objSerieDTO){
-							
+
 							$newObjSerieDTO = new SerieDTO();
 							$newObjSerieDTO->setNumIdSerie($objSerieDTO->getNumIdSerie());
 							$newObjSerieDTO->setNumIdModelo($arrObjModelo->getNumIdModelo());
 							(new SerieRN())->alterarRN0643($newObjSerieDTO);
-							
+
 						}
-						
+
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		}
-  
+
 	}
 
     private function _gerarNovoTipoDocumentoInterno(array $novoDocumento)

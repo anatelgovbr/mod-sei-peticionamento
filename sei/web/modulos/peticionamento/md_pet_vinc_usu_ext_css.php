@@ -9,6 +9,10 @@
   width: 100%;
 }
 
+#registroPessoaJuridica p {
+  font-size: 14px;
+}
+
 .clear {
   clear: both;
 }

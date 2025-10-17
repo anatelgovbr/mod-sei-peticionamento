@@ -528,6 +528,7 @@
     </wsdl:portType>
 
     <wsdl:binding name="SeiPeticionamentoBinding" type="tns:SeiPeticionamentoPortType">
+    
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
 
         <wsdl:operation name="consultarUsuarioExterno">

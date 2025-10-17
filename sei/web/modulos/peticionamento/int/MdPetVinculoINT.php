@@ -134,8 +134,8 @@ class MdPetVinculoINT extends InfraINT {
 
       $contatoRN = new ContatoRN();
       $contatoDTO = new ContatoDTO();
-      $contatoDTO->setDblCnpj($cnpj);
-      $contatoDTO->retDblCnpj();
+      $contatoDTO->setStrCnpj($cnpj);
+      $contatoDTO->retStrCnpj();
       $contatoDTO->retNumIdContato();
       $arrIdContato = InfraArray::converterArrInfraDTO($contatoRN->listarRN0325($contatoDTO), 'IdContato');
       $xml = "<dados-pj>";

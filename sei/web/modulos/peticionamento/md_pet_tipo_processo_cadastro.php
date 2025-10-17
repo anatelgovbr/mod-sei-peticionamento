@@ -786,7 +786,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                                                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo terá opção de escolha do Órgão, da UF ou da Cidade onde quer que o Processo Novo seja aberto. \n \n As três opções de escolha que o Usuário Externo verá depende das Unidades aqui adicionadas, quando possuirem diferentes Órgãos, UFs ou Cidades.', 'Ajuda') ?>
                                                                                                         class="infraImg"/></label>
                                 <div id="divCpUnidadeMultipla" <?php echo $divUnidadeMultipla; ?>>
-                                    <div id="divOrgaoUnidadeMultipla" class="infraAreaDados" style="">
+                                    <div id="divOrgaoUnidadeMultipla" class="infraAreaDados">
                                         <div class="row">
                                             <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
                                                 <div class="form-group">
@@ -1099,7 +1099,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                     /></label>
                                                 <br/>
                                                 <select id="selNivelAcesso" name="selNivelAcesso"
-                                                        class="infraSelect form-control"
+                                                        class="infraSelect form-select"
                                                         onchange="changeSelectNivelAcesso()">
                                                     <?= $strItensSelNivelAcesso ?>
                                                 </select>

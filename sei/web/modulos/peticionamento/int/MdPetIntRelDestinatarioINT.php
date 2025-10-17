@@ -48,7 +48,7 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
             $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($idAceite,InfraDTO::$OPER_IN);
             $objMdPetIntRelDestinatarioDTO->retNumIdContato();
             $objMdPetIntRelDestinatarioDTO->retStrSinPessoaJuridica();
-            $objMdPetIntRelDestinatarioDTO->retDblCnpjContato();
+            $objMdPetIntRelDestinatarioDTO->retStrCnpjContato();
             $objMdPetIntRelDestinatarioDTO->retDblCpfContato();
             $objMdPetIntRelDestinatarioDTO->retStrEmailContato();
             $objMdPetIntRelDestinatarioDTO->retStrNomeContato();

@@ -40,7 +40,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                     Tipo de Documento:
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumento, "Ajuda") ?> alt="Ajuda" class="infraImgModulo"/>
                 </label><br/>
-                <select id="selTipoDocumento" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"></select>
+                <select id="selTipoDocumento" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"></select>
             </div>
         </div>
         <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
@@ -54,7 +54,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3" id="divBlcNivelAcesso">
+        <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3 mt-3" id="divBlcNivelAcesso">
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="selNivelAcesso">
                     Nível de Acesso:
@@ -64,14 +64,14 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             </div>
         </div>
         <?php if ($exibirHipoteseLegal): ?>
-            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9" id="divBlcHipoteseLegal" style="display: none;">
+            <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9 mt-3" id="divBlcHipoteseLegal" style="display: none;">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selHipoteseLegal">
                         Hipótese Legal:
                         <img id=imgHipoteseLegal name=imgHipoteseLegal src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" onmouseover="" onmouseout="" alt="Ajuda" class="infraImgModulo"/>
                     </label>
                     <div id="divHipoteseLegal">
-                        <select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                        <select id="selHipoteseLegal" class="infraSelect form-select" onchange="salvarValorHipoteseLegal(this)"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                             <?= $selHipoteseLegal; ?>
                         </select>
                     </div>
@@ -79,7 +79,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             </div>
         <?php endif; ?>
     </div>
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
 
             <div class="form-group">
@@ -119,7 +119,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div class="table-responsive">
                 <table width="100%" class="infraTable mb-4" id="tbDocumento" style="width:100%">

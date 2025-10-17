@@ -8,36 +8,30 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12">
             <p>
-                <label>Os dados aqui dispostos dizem respeito ao vínculo mais recente estabelecido no
-                    SEI-<?= $siglaOrgao ?>
-                    entre o Responsável Legal e a Pessoa Jurídica. É permitido atualizar os Atos Constitutivos por meio
-                    da
-                    seção
-                    mais abaixo.</label>
+                Os dados aqui dispostos dizem respeito ao vínculo mais recente estabelecido no SEI-<?= $siglaOrgao ?> 
+                entre o Responsável Legal e a Pessoa Jurídica. É permitido atualizar os Atos Constitutivos por meio da seção mais abaixo.
             </p>
             <p>
-                <label class="infraLabelObrigatorio">Atenção: </label>
-                <label>Somente por meio da tela anterior, acessando o botão "Novo Responsável Legal" por Usuário Externo
-                    que já conste como Responsável Legal junto à Receita Federal que é possível a alteração do
-                    Responsável Legal da Pessoa Jurídica.</label>
+                <label class="infraLabelObrigatorio" for="txt">Atenção:</label>
+                Somente por meio da tela anterior, acessando o botão "Novo Responsável Legal" por Usuário Externo que já conste como Responsável Legal junto à Receita Federal que é possível a alteração do Responsável Legal da Pessoa Jurídica.
             </p>
         </div>
     </div>
 
     <div class="row">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">
                 CNPJ:
             </label>
             <input type="text" class="infraText" id="txtNumeroCnpj" name="txtNumeroCnpj" maxlength="18" readonly="readonly"
-                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getDblCNPJ()) : null; ?>"
+                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getStrCNPJ()) : null; ?>"
                    onkeypress="return infraMascaraCnpj(this,event);"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
         <div class="col-sm-12 col-md-7 col-lg-6">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="txtRazaoSocial" id="lblRazaoSocial">
                 Razão Social:
             </label>
@@ -51,7 +45,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="txtNumeroCpfResponsavelAlt">
                 CPF do Responsável Legal:
             </label>
@@ -62,7 +56,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
             </div>
         </div>
         <div class="col-sm-12 col-md-7 col-lg-6">
-            <div class="form-gruop">
+            <div class="form-gruop mb-3">
             <label class="infraLabelObrigatorio" for="txtNomeResponsavelLegalAlt">
                 Nome do Responsável Legal:
             </label>

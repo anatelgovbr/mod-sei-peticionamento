@@ -1,12 +1,12 @@
 <fieldset id="informacaoPJ" class="infraFieldset form-control sizeFieldset" style="display: none;" >
-    <legend class="infraLegend">&nbsp; Informações da Pessoa Jurídica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; InformaÃ§Ãµes da Pessoa JurÃ­dica &nbsp;</legend>
     <div class="row">
         <div class="col-sm-12 col-md-4 col-lg-4">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="slTipoInteressado" id="lblTipoInteressado">
                     Tipo:
                 </label>
-                <select class="infraSelect form-control" id="slTipoInteressado" name="slTipoInteressado"
+                <select class="infraSelect form-select" id="slTipoInteressado" name="slTipoInteressado"
                     <?php echo !is_null($readOnly) ? 'disabled="disabled"' : null?>
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                     <?php echo $strItensSelTipoInteressado;?>
@@ -14,9 +14,9 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-8 col-lg-8">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="txtRazaoSocial" id="lblRazaoSocial">
-                    Razão Social:
+                    RazÃ£o Social:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj form-control" id="txtRazaoSocial" name="txtRazaoSocial" maxlength="250" onkeypress="return infraMascaraTexto(this,event,250);"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
@@ -25,7 +25,7 @@
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-8 col-lg-8">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <input type="hidden" class="infraText blocInformacaoPj" id="txtNomeResponsavelLegal" name="txtNomeResponsavelLegal" maxlength="250"
                     value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? $arrDadosPessoaJuridicaVinculo->getStrNomeContatoRepresentante() : null; ?>"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
@@ -33,7 +33,7 @@
                     value = '<?php echo (!$stWebService) ? InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCpf()) : ''; ?>'
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 <label class="infraLabelObrigatorio" for="txtLogradouro">
-                    Endereço:
+                    EndereÃ§o:
                 </label>
                 <input onkeypress="return infraMascaraTexto(this,event,130);" type="text" class="infraText blocInformacaoPj form-control" id="txtLogradouro" name="txtLogradouro" maxlength="130"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
@@ -53,29 +53,29 @@
     </div>
     <div class="row">
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="slUf">
                     UF:
                 </label>
-                <select class="infraSelect blocInformacaoPj form-control" id="slUf" name="slUf"
+                <select class="infraSelect blocInformacaoPj form-select" id="slUf" name="slUf"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                     <?php echo $slUf; ?>
                 </select>
             </div>
         </div>
         <div class="col-sm-6 col-md-6 col-lg-6">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="txtCidade">
                     Cidade:
                 </label>
-                <select class="infraSelect blocInformacaoPj form-control" name="selCidade" id="selCidade"
+                <select class="infraSelect blocInformacaoPj form-select" name="selCidade" id="selCidade"
                         tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
                 <?= $strItensSelCidade ?>
                 </select>
             </div>
         </div>
         <div class="col-sm-12 col-md-3 col-lg-4">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="txtNumeroCEP">
                     CEP:
                 </label>

@@ -1,23 +1,23 @@
 <fieldset id="fieldsetPessoaJuridicaConsulta" class="infraFieldset form-control sizeFieldset" style="width: auto;">
-    <legend class="infraLegend">&nbsp; Registro da Pessoa JurÌdica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; Registro da Pessoa Jur√≠dica &nbsp;</legend>
     <form name=frmCNPJ id=frmCNPJ action='' method=POST><input type="hidden" name="hdnNumeroCnpj" id="hdnNumeroCnpj"></input></form>
     <div class="infraAreaDados">
         <?php $idDiv = $stWebService ? 'blcPj' : 'blcPjSemWs' ?>
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                 <div id="<?php echo $idDiv ?>">
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">CNPJ:
-                            <img style="margin-bottom: -4px;width:20px; height:20px !important" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Insira no campo abaixo o CNPJ da Pessoa JurÌdica ‡ qual deseja se vincular.', 'Ajuda') ?> alt="Ajuda" class="infraImg" />
+                            <img style="margin-bottom: -4px;width:20px; height:20px !important" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Insira no campo abaixo o CNPJ da Pessoa Jur√≠dica √† qual deseja se vincular.', 'Ajuda') ?> alt="Ajuda" class="infraImg" />
                         </label>
-                        <input type="text" class="infraText form-control" id="txtNumeroCnpj" onchange="esconderCamposPJ();" name="txtNumeroCnpj" maxlength="18" value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getDblCNPJ()) : $hdnNumeroCnpj; ?>" onkeypress="return infraMascaraCnpj(this,event);" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" autofocus />
+                        <input type="text" class="infraText form-control" id="txtNumeroCnpj" onchange="esconderCamposPJ();" name="txtNumeroCnpj" maxlength="18" value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getStrCNPJ()) : $hdnNumeroCnpj; ?>" onkeypress="return infraMascaraCnpj(this,event);" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" autofocus />
                     </div>
                 </div>
             </div>
             <?php if ($stWebService) { ?>
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                    <div id="blcPjRazaoSocial" class="form-group">
-                        <label class="infraLabelObrigatorio" for="txtRazaoSocialWsdl" id="lblNumeroCnpj">Raz„o
+                    <div id="blcPjRazaoSocial" class="form-group mb-3">
+                        <label class="infraLabelObrigatorio" for="txtRazaoSocialWsdl" id="lblNumeroCnpj">Raz√£o
                             Social:</label>
                         <input type="text" class="infraText form-control blocInformacaoPj" id="txtRazaoSocialWsdl" name="txtRazaoSocialWsdl" readonly />
                     </div>
@@ -26,11 +26,10 @@
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <div class="card" id="cardCaptcha">
-                    <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>" alt="<?= _('N„o foi possÌvel carregar a imagem de confirmaÁ„o'); ?>">
+                    <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>&r=n&c=a" alt="<?= _('N√£o foi poss√≠vel carregar a imagem de confirma√ß√£o'); ?>">
                     <div class="card-body">
-                        <div class="form-group">
-                            <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">CÛdigo de
-                                ConfirmaÁ„o:</label>
+                        <div class="form-group mb-3">
+                            <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">C√≥digo de Confirma√ß√£o:</label>
                             <div class="input-group mb-3" style="margin: 0 !important;">
                                 <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText form-control" value="" maxlength="4" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>" />
                                 <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar" onclick="consultarDadosReceita()" class="infraButton" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"><span class="infraTeclaAtalho">V</span>alidar
@@ -44,11 +43,10 @@
             <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8">
                 <div class="bloco" id="blc">
                     <div class="card" id="cardCaptcha">
-                        <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>" alt="<?= _('N„o foi possÌvel carregar a imagem de confirmaÁ„o'); ?>">
+                        <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>>&r=n&c=a" alt="<?= _('N√£o foi poss√≠vel carregar a imagem de confirma√ß√£o'); ?>">
                         <div class="card-body">
-                            <div class="form-group">
-                                <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">CÛdigo de
-                                    ConfirmaÁ„o:</label>
+                            <div class="form-group mb-3">
+                                <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">C√≥digo de Confirma√ß√£o:</label>
                                 <div class="input-group mb-3">
                                     <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText form-control" value="" maxlength="4" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>" />
 
@@ -65,30 +63,30 @@
     </div>
 
     <div class="bloco">
-        <label class="infraLabelObrigatorio" for="txtComplementoTipoDocumento">AtenÁ„o:</label>
+        <label class="infraLabelObrigatorio" for="txtComplementoTipoDocumento">Aten√ß√£o:</label>
         <label>
             <ol class="Numerada" style="margin-top: 0%;">
-                <li class="Numerada">Somente quem È de fato Respons·vel Legal pela Pessoa JurÌdica junto ‡ Receita
-                    Federal do Brasil (RFB) pode exercer a presente vinculaÁ„o.
+                <li class="Numerada">Somente quem √© de fato Respons√°vel Legal pela Pessoa Jur√≠dica junto √† Receita
+                    Federal do Brasil (RFB) pode exercer a presente vincula√ß√£o.
                 </li>
-                <li class="Numerada">Ao efetivar a vinculaÁ„o como Respons·vel Legal, no ‚mbito
-                    do(a) <?= $descricaoOrgao ?>, vocÍ ter· poderes para:
+                <li class="Numerada">Ao efetivar a vincula√ß√£o como Respons√°vel Legal, no √¢mbito
+                    do(a) <?= $descricaoOrgao ?>, voc√™ ter√° poderes para:
                     <ol class="Numerada">
-                        <li class="Numerada">Gerenciar o cadastro da Pessoa JurÌdica;</li>
-                        <li class="Numerada">Receber IntimaÁıes EletrÙnicas e realizar Peticionamento EletrÙnico em nome
-                            da Pessoa JurÌdica, com todos os poderes previstos no sistema;
+                        <li class="Numerada">Gerenciar o cadastro da Pessoa Jur√≠dica;</li>
+                        <li class="Numerada">Receber Intima√ß√µes Eletr√¥nicas e realizar Peticionamento Eletr√¥nico em nome
+                            da Pessoa Jur√≠dica, com todos os poderes previstos no sistema;
                         </li>
-                        <li class="Numerada">Conceder ProcuraÁıes EletrÙnicas Especiais a outros Usu·rios Externos, bem
-                            como revog·-las quando lhe convier;
+                        <li class="Numerada">Conceder Procura√ß√µes Eletr√¥nicas Especiais a outros Usu√°rios Externos, bem
+                            como revog√°-las quando lhe convier;
                         </li>
-                        <li class="Numerada">Conceder ProcuraÁıes EletrÙnicas Simples a outros Usu·rios Externos, em
-                            ‚mbito geral ou para processos especÌficos, conforme poderes estabelecidos, para
-                            representaÁ„o da Pessoa JurÌdica Outorgante, bem como revog·-las quando lhe convier.
+                        <li class="Numerada">Conceder Procura√ß√µes Eletr√¥nicas Simples a outros Usu√°rios Externos, em
+                            √¢mbito geral ou para processos espec√≠ficos, conforme poderes estabelecidos, para
+                            representa√ß√£o da Pessoa Jur√≠dica Outorgante, bem como revog√°-las quando lhe convier.
                         </li>
                     </ol>
                 </li>
-                <li class="Numerada">… sua responsabilidade zelar pela veracidade e validade dos dados sobre a Pessoa
-                    JurÌdica ‡ qual se vincula no ‚mbito do SEI-<?= $siglaOrgao ?>.
+                <li class="Numerada">√â sua responsabilidade zelar pela veracidade e validade dos dados sobre a Pessoa
+                    Jur√≠dica √† qual se vincula no √¢mbito do SEI-<?= $siglaOrgao ?>.
                 </li>
             </ol>
         </label>

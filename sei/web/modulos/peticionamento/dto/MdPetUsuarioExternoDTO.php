@@ -20,12 +20,12 @@ class MdPetUsuarioExternoDTO extends UsuarioDTO
         parent::__construct();
     }
 
-    public function getStrNomeTabela()
+    public function getStrNomeTabela(): string
     {
         return 'usuario';
     }
 
-    public function montar()
+    public function montar(): void
     {
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdUsuario', 'id_usuario');
@@ -54,7 +54,7 @@ class MdPetUsuarioExternoDTO extends UsuarioDTO
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdPaisContato', 'a.id_pais', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CepContato', 'a.cep', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CpfContato', 'a.cpf', 'contato a');
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CnpjContato', 'a.cnpj', 'contato a');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CnpjContato', 'a.cnpj', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'RgContato', 'a.rg', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdTipoContato', 'a.id_tipo_contato', 'contato a');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'OrgaoExpedidorContato', 'a.orgao_expedidor', 'contato a');
@@ -88,8 +88,8 @@ class MdPetUsuarioExternoDTO extends UsuarioDTO
 
     }
 
-    public function getDblDocContato(){
-        return !empty($this->getDblCpfContato()) || is_null($this->getDblCpfContato()) || $this->getDblCpfContato() != '' ? $this->getDblCpfContato() : $this->getDblCnpjContato();
+    public function getStrDocContato(){
+        return !empty($this->getDblCpfContato()) || is_null($this->getDblCpfContato()) || $this->getDblCpfContato() != '' ? $this->getDblCpfContato() : $this->getStrCnpjContato();
     }
 }
 

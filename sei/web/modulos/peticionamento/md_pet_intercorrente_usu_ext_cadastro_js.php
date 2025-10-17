@@ -91,7 +91,7 @@
 
             parent.infraAbrirJanelaModal(urlValida.value,
                 770,
-                500,
+                530,
                 '', //options
                 false); //modal*/
         }
@@ -357,7 +357,7 @@
         divNivelAcesso.innerHTML = '';
         selNivelAcesso.name = 'selNivelAcesso';
         selNivelAcesso.id = 'selNivelAcesso';
-        selNivelAcesso.className = 'infraSelect form-control';
+        selNivelAcesso.className = 'infraSelect form-select';
         selNivelAcesso.tabIndex = txtComplementoTipoDocumento.tabIndex + 1;
 
         selNivelAcesso.addEventListener('change', function () {

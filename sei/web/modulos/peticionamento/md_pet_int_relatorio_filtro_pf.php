@@ -9,7 +9,7 @@
     <div class="col-md-12 col-lg-10 col-xl-10>
         <div class="form-group">
             <div class="input-group mb-3">
-                <select id="selDestinatarioPF" name="selDestinatarioPF" size="6" multiple="multiple" class="infraSelect form-control mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                <select id="selDestinatarioPF" name="selDestinatarioPF" size="6" multiple="multiple" class="infraSelect form-select mr-1" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                 </select>
 
                 <div id="divOpcoesDestinatario">

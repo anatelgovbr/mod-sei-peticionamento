@@ -33,8 +33,24 @@ try {
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
 
-  $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
-  $strLinkAjaxVerificarSenha = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_assinatura');
+    $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
+    $strLinkAjaxVerificarSenha = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_assinatura');
+
+    // Manipulacao para assinatura com Gov.br:
+    $bolAssinaturaSso = (new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_GOV_BR_EXTERNO_ASSINATURA', false, '0');
+    $isNivelAlto = SessaoSEIExterna::getInstance()->getBolLoginSso() && !InfraString::isBolVazia(SessaoSEIExterna::getInstance()->getStrStaNivelConfiabilidadeSso()) && in_array(SessaoSEI::getInstance()->getStrStaNivelConfiabilidadeSso(), [InfraSip::$SSO_NIVEL_CONFIABILIDADE_OURO, InfraSip::$SSO_NIVEL_CONFIABILIDADE_PRATA]);
+
+    if($bolAssinaturaSso){
+        $agrupador = sha1(time());
+        $objInfraSip = new InfraSip(SessaoSEIExterna::getInstance());
+        $strUrlAssinaturaSso = $objInfraSip->obterUrlAssinaturaSso() . "?token=" . $agrupador . "&id_sistema=" . SessaoSEIExterna::getInstance()->getNumIdSistema() . "&id_login_sso=" . SessaoSEIExterna::getInstance()->getStrIdLoginSso();
+        $strLinkVerificacaoAssinatura = SessaoSEIExterna::getInstance()->assinarLink( 'controlador_ajax_externo.php?acao_ajax=assinatura_verificar_confirmacao&agrupador=' . $agrupador );
+    }
+
+    if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
+        (new InfraException())->lancarValidacao("Você ainda não possui uma senha registrada no sistema.\nPara assinatura com senha acesse a opção Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+    }
+    // Final da manipulacao para assinatura com Gov.br.
 
   switch($_GET['acao']){
 
@@ -147,6 +163,9 @@ PaginaSEIExterna::getInstance()->montarMeta();
 PaginaSEIExterna::getInstance()->montarTitle(':: '.PaginaSEIExterna::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
+?>
+.ConfirmSSOLogin, #lblAguardeAssinaturaSso { display: none; }
+<?php
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
@@ -184,67 +203,100 @@ else if( $_GET['acao'] == "md_pet_responder_intimacao_usu_ext_assinar" ) {
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 ?>
-    <div class="row">
-        <div class="col-12">
-            <p class="text-justify">A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <div class="form-group">
-                <label class="infraLabelObrigatorio">Usuário Externo:</label>
-                <input type="text" name="loginUsuarioExterno"
-                    value="<?= PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()) ?>"
-                    readonly="readonly" id="loginUsuarioExterno" class="infraText form-control" autocomplete="off" disabled />
+
+    <div class="ConfirmSSOLogin">
+        <div class="row">
+            <div class="col-12">
+                <div id="divAssinaturaSso" class="infraAreaDados">
+                    <label id="lblCodigo" class="infraLabelOpcional mb-5">
+                        <span class="my-5">Antes de continuar acesse o aplicativo do <b>gov.br</b> no seu dispositivo móvel. Um código será enviado para o seu dispositivo, caso não receba, clique no botão "Reenviar código" na tela do gov.br.</span>
+                    </label>
+                    <br><br>
+                    <a id="ancAssinaturaSsoContinuar" href="<?=$strUrlAssinaturaSso?>" target="_blank" onclick="abrirAssinarSso()" class="infraAnchorButton">Continuar</a>
+                    <label id="lblAguardeAssinaturaSso" class="infraLabelObrigatorio">Aguardando assinatura...</label>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <div class="form-group">
-                <label class="infraLabelObrigatorio">Cargo/Função:</label>
-                <select id="selCargo" name="selCargo" class="infraSelect form-control">
-                    <option value="">Selecione Cargo/Função</option>
-                    <? foreach ($arrObjCargoDTO as $expressao => $cargo): ?>
-                    <option value="<?= $cargo ?>" <?= $_POST['selCargo'] == $cargo ? 'selected="selected"' : '' ?>><?= $expressao ?></option>
-                    <? endforeach ?>
-                </select>
+
+    <div class="allFieldsForm">
+        <div class="row">
+            <div class="col-12">
+                <p class="text-justify">A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-6">
-            <div class="form-group">
-                <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label>
-                <input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText form-control" autocomplete="off"/>
+        <div class="row">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+                <div class="form-group">
+                    <label class="infraLabelObrigatorio">Usuário Externo:</label>
+                    <input type="text" name="loginUsuarioExterno"
+                        value="<?= PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()) ?>"
+                        readonly="readonly" id="loginUsuarioExterno" class="infraText form-control" autocomplete="off" disabled />
+                </div>
             </div>
         </div>
+        <div class="row mt-3">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+                <div class="form-group">
+                    <label class="infraLabelObrigatorio">Cargo/Função:</label>
+                    <select id="selCargo" name="selCargo" class="infraSelect form-select">
+                        <option value="">Selecione Cargo/Função</option>
+                        <? foreach ($arrObjCargoDTO as $expressao => $cargo): ?>
+                        <option value="<?= $cargo ?>" <?= $_POST['selCargo'] == $cargo ? 'selected="selected"' : '' ?>><?= $expressao ?></option>
+                        <? endforeach ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+
+            <div class="col-6 col-sm-5 col-md-3 col-lg-3 col-xl-3">
+                <div class="form-group">
+                    <label class="infraLabelObrigatorio"><span class="infraTeclaAtalho">S</span>enha:</label>
+                    <input type="password" name="pwdsenhaSEI" id="pwdsenhaSEI" class="infraText form-control" autocomplete="off"/>
+                </div>
+            </div>
+
+            <?php if($bolAssinaturaSso && 1==2): ?>
+                <div class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                    <label id="lblOu" class="infraLabelOpcional" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>">ou</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#" id="ancAssinaturaSso" class="d-inline-block mt-3" onclick="assinarSso();" tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>">
+                        <img id="imgAssinarGovBr" src="imagens/assinatura-gov-br.png" title="Assinar com gov.br" style="width:150px" />
+                    </a>&nbsp;
+                </div>
+            <?php endif; ?>
+                    
+        </div>
+        <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $_REQUEST['id_tipo_procedimento'] ?>" />
+        <input type="hidden" id="id_procedimento" name="id_procedimento" value="<?= $_REQUEST['id_procedimento'] ?>" />
+
+        <?php
+        //campos hidden especificos de uso do resposta a intimacao
+        if( $_GET['acao'] == "md_pet_responder_intimacao_usu_ext_assinar" || $_GET['acao']  == "md_pet_responder_intimacao_usu_ext_concluir") { ?>
+
+        <input type="hidden" id="id_intimacao" name="id_intimacao" value="" />
+        <input type="hidden" id="id_aceite" name="id_aceite" value="" />
+        <input type="hidden" id="id_tipo_resposta" name="id_tipo_resposta" value="" />
+        <input type="hidden" id="id_int_rel_dest" name="id_int_rel_dest" value="" />
+        <input type="hidden" id="id_contato" name="id_contato" value="" />
+        <?php } ?>
+
+        <input type="hidden" id="hdnSubmit" name="hdnSubmit" value=""/>
+
+        <!-- Listas de documentos principais (se for externo), essencial e complementar -->
+        <input type="hidden" id="hdnDocPrincipal" name="hdnDocPrincipal" />
+        <input type="hidden" id="hdnDocEssencial" name="hdnDocEssencial" />
+        <input type="hidden" id="hdnDocComplementar" name="hdnDocComplementar" />
+
+        <!-- Unidade selecionada via combo de UF -->
+        <input type="hidden" id="hdnIdUnidadeMultiplaSelecionada" name="hdnIdUnidadeMultiplaSelecionada" />
+
+        <!-- Hidden fields to SSO -->
+        <input type="hidden" id="hdnFlag" name="hdnFlag" value="0" />
+        <input type="hidden" id="hdnAssinaturaSso" name="hdnAssinaturaSso" value="0" />
+
+        <input type="submit" name="btSubMit" value="Salvar" style="display:none;"  />
     </div>
-    <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $_REQUEST['id_tipo_procedimento'] ?>" />
-    <input type="hidden" id="id_procedimento" name="id_procedimento" value="<?= $_REQUEST['id_procedimento'] ?>" />
-
-    <?php
-    //campos hidden especificos de uso do resposta a intimacao
-    if( $_GET['acao'] == "md_pet_responder_intimacao_usu_ext_assinar" || $_GET['acao']  == "md_pet_responder_intimacao_usu_ext_concluir") { ?>
-
-    <input type="hidden" id="id_intimacao" name="id_intimacao" value="" />
-    <input type="hidden" id="id_aceite" name="id_aceite" value="" />
-    <input type="hidden" id="id_tipo_resposta" name="id_tipo_resposta" value="" />
-    <input type="hidden" id="id_int_rel_dest" name="id_int_rel_dest" value="" />
-    <input type="hidden" id="id_contato" name="id_contato" value="" />
-	<?php } ?>
-
-    <input type="hidden" id="hdnSubmit" name="hdnSubmit" value=""/>
-
-    <!-- Listas de documentos principais (se for externo), essencial e complementar -->
-    <input type="hidden" id="hdnDocPrincipal" name="hdnDocPrincipal" />
-    <input type="hidden" id="hdnDocEssencial" name="hdnDocEssencial" />
-    <input type="hidden" id="hdnDocComplementar" name="hdnDocComplementar" />
-
-    <!-- Unidade selecionada via combo de UF -->
-    <input type="hidden" id="hdnIdUnidadeMultiplaSelecionada" name="hdnIdUnidadeMultiplaSelecionada" />
-
-    <input type="submit" name="btSubMit" value="Salvar" style="display:none;"  />
 
 </form>
 
@@ -253,7 +305,11 @@ PaginaSEIExterna::getInstance()->fecharAreaDados();
 PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 ?>
+
 <script type="text/javascript">
+
+    
+var timer = null;
 
 function isValido(){
 
@@ -443,4 +499,57 @@ function processando() {
 	}
 
 }
+
+    // Adicionado para permitir assinatura com o SSO
+    function assinarSso(){
+
+        document.getElementById('hdnAssinaturaSso').value = '1';
+        document.getElementById('hdnFlag').value = '1';
+
+        infraExibirAviso();
+        setTimeout(function(){
+            $('.ConfirmSSOLogin').show();
+            $('.allFieldsForm, .infraBarraComandos').hide();
+            infraOcultarAviso();
+        }, 1000);
+
+    }
+
+    function abrirAssinarSso(){
+
+        if (timer != null){
+            timer = 1;
+        }else {
+            timer = 1;
+            document.getElementById('ancAssinaturaSsoContinuar').style.display = 'none';
+            document.getElementById('lblAguardeAssinaturaSso').style.display = 'block';
+            document.getElementById('frmConcluir').submit();
+            // intervaloVerificacao = setInterval(function () {objAjaxVerificacaoCertificado.executar();}, 3000);
+        }
+
+    }
+
+    objAjaxVerificacaoCertificado = new infraAjaxComplementar( null, '<?= $strLinkVerificacaoAssinatura ?>' );
+    objAjaxVerificacaoCertificado.prepararExecucao = function(){
+        return null;
+    };
+
+    objAjaxVerificacaoCertificado.processarResultado = function(arr){
+        
+        if (arr!=null){
+
+            if (arr['assinaturaConfirmada'] === 'S' || timer > 300){
+        
+                clearInterval(intervaloVerificacao);
+                parent.location.reload();
+                infraFecharJanelaModal();
+        
+            }
+        
+            timer += 3;
+        
+        }
+
+    };
+
 </script>

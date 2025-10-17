@@ -489,7 +489,7 @@ class MdPetIntAceiteRN extends InfraRN
             $objEntradaLancarAndamentoAPI->setAtributos($arrObjAtributoAndamentoAPI);
 
             // SIGILOSO - conceder credencial
-            $objProcedimentoDTO = MdPetIntAceiteRN::_retornaObjProcedimento($idProcedimento);
+            $objProcedimentoDTO = self::_retornaObjProcedimento($idProcedimento);
             if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO) {
                 if (isset($jobManual)) {
                     $objMdPetIntUsuarioRN = new MdPetIntUsuarioRN();
@@ -600,7 +600,7 @@ class MdPetIntAceiteRN extends InfraRN
                     //doc principal
                     $dados = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
                     $idProcedimento = $dados[2];
-                    $objProcedimentoDTO = $this->_retornaObjProcedimento($idProcedimento);
+                    $objProcedimentoDTO = self::_retornaObjProcedimento($idProcedimento);
 
                     $arrStaEstado = array(
                         ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO,
@@ -804,7 +804,7 @@ class MdPetIntAceiteRN extends InfraRN
 		//doc principal
 		$dados               = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
 		$idProcedimento      = $dados[2];
-		$objProcedimentoDTO  = $this->_retornaObjProcedimento($idProcedimento);
+		$objProcedimentoDTO  = self::_retornaObjProcedimento($idProcedimento);
 		
 		$arrStaEstado = array(
 			ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO,
@@ -1001,7 +1001,7 @@ class MdPetIntAceiteRN extends InfraRN
         PaginaSEI::getInstance()->getObjInfraLog()->gravar('Certidão não gerada e andamento não criado no âmbito do Processo "número do processo", tendo em vista que todas as Unidades de tramitação estão desativadas.');
     }
 
-    public function _retornaObjProcedimento($idProcedimento)
+    public static function _retornaObjProcedimento($idProcedimento)
     {
         $objProcedimentoRN = new ProcedimentoRN();
 
@@ -1115,7 +1115,7 @@ class MdPetIntAceiteRN extends InfraRN
             $objMdPetIntDestDTO->retNumIdMdPetIntRelDestinatario();
             $objMdPetIntDestDTO->retStrSinPessoaJuridica();
             $objMdPetIntDestDTO->retNumIdContato();
-            $objMdPetIntDestDTO->retDblCnpjContato();
+            $objMdPetIntDestDTO->retStrCnpjContato();
             $objMdPetIntDestDTO->retDblIdDocumento();
             $objMdPetIntDestDTO->retStrNomeContato();
             $objMdPetIntDestDTO->retDblIdProtocolo();

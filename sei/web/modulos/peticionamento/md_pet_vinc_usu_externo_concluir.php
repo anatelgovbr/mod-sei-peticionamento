@@ -25,7 +25,7 @@ try {
   //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
 
-  //preenche a combo FunÁ„o
+  //preenche a combo Fun√ß√£o
   $objMdPetCargoRN            = new MdPetCargoRN();
   $arrObjCargoDTO             = $objMdPetCargoRN->listarDistintos();
   $objMdPetVinculoUsuExtRN    = new MdPetVinculoUsuExtRN();
@@ -40,8 +40,12 @@ try {
     case 'md_pet_usuario_ext_vinc_pj_concluir_cad':
 
       $objMdPetProcessoRN = new MdPetProcessoRN();
-      $strTitulo = 'Concluir Peticionamento - Assinatura EletrÙnica';
-      $strSubTitulo = 'Cadastro de Respons·vel Legal';
+      $strTitulo = 'Concluir Peticionamento - Assinatura Eletr√¥nica';
+      $strSubTitulo = 'Cadastro de Respons√°vel Legal';
+
+        if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
+            (new InfraException())->lancarValidacao("Voc√™ ainda n√£o possui uma senha registrada no sistema.\nPara assinatura com senha acesse a op√ß√£o Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+        }
 
       if (isset($_POST['pwdsenhaSEI'])) {
 
@@ -93,7 +97,7 @@ try {
 
 	          if($objUsuarioLogado->getNumIdContato() == $arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante()){
 
-	              echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">O Usu·rio logado ('.$objUsuarioLogado->getStrNome().') j· possui vÌnculo de Respons·vel Legal com este CNPJ.</p>';
+	              echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">O Usu√°rio logado ('.$objUsuarioLogado->getStrNome().') j√° possui v√≠nculo de Respons√°vel Legal com este CNPJ.</p>';
 		          echo "<script>";
 		          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
 		          echo "</script>";
@@ -105,7 +109,7 @@ try {
 		          $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
 		          if(!is_numeric($idRecibo)){
-			          echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de VinculaÁ„o de Novo Respons·vel Legal.</p>';
+			          echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Vincula√ß√£o de Novo Respons√°vel Legal.</p>';
 			          echo "<script>";
 			          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
 			          echo "</script>";
@@ -128,7 +132,7 @@ try {
               $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
               $idRecibo = $reciboGerado->getNumIdReciboPeticionamento();
 
-              // Tempor·rios apagando
+              // Tempor√°rios apagando
               $arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbDocumento']);
 
               foreach ($arquivos_enviados as $arquivo_enviado) {
@@ -153,9 +157,13 @@ try {
 
       case 'md_pet_usuario_ext_vinc_pj_concluir_alt':
 
-          $objMdPetProcessoRN = new MdPetProcessoRN();
-          $strTitulo = 'Concluir Peticionamento - Assinatura EletrÙnica';
-	      $strSubTitulo = 'SubstituiÁ„o/AtualizaÁ„o de Representente Legal';
+            $objMdPetProcessoRN = new MdPetProcessoRN();
+            $strTitulo = 'Concluir Peticionamento - Assinatura Eletr√¥nica';
+	        $strSubTitulo = 'Substitui√ß√£o/Atualiza√ß√£o de Representente Legal';
+
+            if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
+                (new InfraException())->lancarValidacao("Voc√™ ainda n√£o possui uma senha registrada no sistema.\nPara assinatura com senha acesse a op√ß√£o Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+            }
 
           if (isset($_POST['pwdsenhaSEI'])) {
 
@@ -207,7 +215,7 @@ try {
 		          if(in_array($objUsuarioLogado->getNumIdContato(), $arrIdContatoVinculoAtivo)){
 
 			          // Impede que o Representante Legal se vincule novamente
-		              echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">O Usu·rio logado ('.$objUsuarioLogado->getStrNome().') j· possui vÌnculo de Respons·vel Legal com este CNPJ.</p>';
+		              echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">O Usu√°rio logado ('.$objUsuarioLogado->getStrNome().') j√° possui v√≠nculo de Respons√°vel Legal com este CNPJ.</p>';
 			          echo "<script>";
 			          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
 			          echo "</script>";
@@ -215,11 +223,11 @@ try {
 
 		          }else{
 
-		              // Realiza a substituiÁ„o do Respons·vel Legal
+		              // Realiza a substitui√ß√£o do Respons√°vel Legal
 			          $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
 			          if(!is_numeric($idRecibo)){
-				          echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de AlteraÁ„o de Respons·vel Legal.</p>';
+				          echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Altera√ß√£o de Respons√°vel Legal.</p>';
 				          echo "<script>";
 				          echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
 				          echo "</script>";
@@ -242,20 +250,20 @@ try {
 
                   $ultimoVinculo = end($arrObjMdPetVinculoDTO);
 
-                  // Se o ˙ltimo vinculado foi ele e foi suspenso nao deixa se vincular
+                  // Se o √∫ltimo vinculado foi ele e foi suspenso nao deixa se vincular
                   if($ultimoVinculo->getNumIdContato() == $objUsuarioLogado->getNumIdContato() && $ultimoVinculo->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO){
-                      echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">N„o È possÌvel realizar o processo de AlteraÁ„o de Respons·vel Legal para este Usu·rio Externo. Procure a administraÁ„o do SEI do Ûrg„o para maiores informaÁıes.</p>';
+                      echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">N√£o √© poss√≠vel realizar o processo de Altera√ß√£o de Respons√°vel Legal para este Usu√°rio Externo. Procure a administra√ß√£o do SEI do √≥rg√£o para maiores informa√ß√µes.</p>';
                       echo "<script>";
                       echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
                       echo "</script>";
                       die();
                   }
 
-                  // Realiza a substituiÁ„o do Respons·vel Legal
+                  // Realiza a substitui√ß√£o do Respons√°vel Legal
                   $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
                   if(!is_numeric($idRecibo)){
-                      echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de AlteraÁ„o de Respons·vel Legal.</p>';
+                      echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Altera√ß√£o de Respons√°vel Legal.</p>';
                       echo "<script>";
                       echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
                       echo "</script>";
@@ -281,8 +289,12 @@ try {
 	  case 'md_pet_usuario_ext_vinc_pj_concluir_atos':
 
 		  $objMdPetProcessoRN = new MdPetProcessoRN();
-		  $strTitulo = 'Concluir Peticionamento - Assinatura EletrÙnica';
-		  $strSubTitulo = 'AtualizaÁ„o de Atos Constitutivos de Representente Legal';
+		  $strTitulo = 'Concluir Peticionamento - Assinatura Eletr√¥nica';
+		  $strSubTitulo = 'Atualiza√ß√£o de Atos Constitutivos de Representente Legal';
+
+            if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
+                (new InfraException())->lancarValidacao("Voc√™ ainda n√£o possui uma senha registrada no sistema.\nPara assinatura com senha acesse a op√ß√£o Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+            }
 
 		  if (isset($_POST['pwdsenhaSEI'])) {
 
@@ -298,7 +310,7 @@ try {
 			  $idRecibo = $objMdPetVinculoRepresentRN->realizarProcessosAlteracaoResponsavelLegal($dados);
 
 			  if(!is_numeric($idRecibo)){
-				  echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de AlteraÁ„o de Respons·vel Legal.</p>';
+				  echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Erro ao realizar o processo de Altera√ß√£o de Respons√°vel Legal.</p>';
 				  echo "<script>";
 				  echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";
 				  echo "</script>";
@@ -320,7 +332,7 @@ try {
 		  break;
 
 	  default:
-      throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+      throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
   }
 
 } catch (Exception $e) {
@@ -380,14 +392,14 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
 
     <div class="row">
         <div class="col-12">
-            <p class="text-justify"><span style="display: none"><?= $strSubTitulo ?></span>A confirmaÁ„o de sua senha importa na aceitaÁ„o dos termos e condiÁıes que regem o processo eletrÙnico, alÈm do disposto no credenciamento prÈvio, e na assinatura dos documentos nato-digitais e declaraÁ„o de que s„o autÍnticos os digitalizados, sendo respons·vel civil, penal e administrativamente pelo uso indevido. Ainda, s„o de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservaÁ„o dos originais em papel de documentos digitalizados atÈ que decaia o direito de revis„o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferÍncia; a realizaÁ„o por meio eletrÙnico de todos os atos e comunicaÁıes processuais com o prÛprio Usu·rio Externo ou, por seu intermÈdio, com a entidade porventura representada; a observ‚ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados atÈ as 23h59min59s do ˙ltimo dia do prazo, considerado sempre o hor·rio oficial de BrasÌlia, independente do fuso hor·rio em que se encontre; a consulta periÛdica ao SEI, a fim de verificar o recebimento de intimaÁıes eletrÙnicas.</p>
+            <p class="text-justify"><span style="display: none"><?= $strSubTitulo ?></span>A confirma√ß√£o de sua senha importa na aceita√ß√£o dos termos e condi√ß√µes que regem o processo eletr√¥nico, al√©m do disposto no credenciamento pr√©vio, e na assinatura dos documentos nato-digitais e declara√ß√£o de que s√£o aut√™nticos os digitalizados, sendo respons√°vel civil, penal e administrativamente pelo uso indevido. Ainda, s√£o de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conserva√ß√£o dos originais em papel de documentos digitalizados at√© que decaia o direito de revis√£o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de confer√™ncia; a realiza√ß√£o por meio eletr√¥nico de todos os atos e comunica√ß√µes processuais com o pr√≥prio Usu√°rio Externo ou, por seu interm√©dio, com a entidade porventura representada; a observ√¢ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados at√© as 23h59min59s do √∫ltimo dia do prazo, considerado sempre o hor√°rio oficial de Bras√≠lia, independente do fuso hor√°rio em que se encontre; a consulta peri√≥dica ao SEI, a fim de verificar o recebimento de intima√ß√µes eletr√¥nicas.</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div class="form-group">
-                <label class="infraLabelObrigatorio">Usu·rio Externo:</label>
+                <label class="infraLabelObrigatorio">Usu√°rio Externo:</label>
                 <input type="text" name="loginUsuarioExterno"
                 value="<?= PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()) ?>"
                 readonly="readonly" id="loginUsuarioExterno" class="infraText form-control" autocomplete="off" disabled/>
@@ -395,12 +407,12 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div class="form-group">
-                <label class="infraLabelObrigatorio">Cargo/FunÁ„o:</label>
-                <select id="selCargo" name="selCargo" class="infraSelect form-control">
-                    <option value="">Selecione Cargo/FunÁ„o</option>
+                <label class="infraLabelObrigatorio">Cargo/Fun√ß√£o:</label>
+                <select id="selCargo" name="selCargo" class="infraSelect form-select">
+                    <option value="">Selecione Cargo/Fun√ß√£o</option>
                     <? foreach ($arrObjCargoDTO as $expressao => $cargo): ?>
                     <option value="<?= $cargo ?>" <?= $_POST['selCargo'] == $cargo ? 'selected="selected"' : '' ?>><?= $expressao ?></option>
                     <? endforeach ?>
@@ -409,7 +421,7 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3 mb-3">
         <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-6">
             <div class="form-gruop">
                 <label class="infraLabelObrigatorio">Senha de Acesso ao SEI:</label>
@@ -484,7 +496,7 @@ function isValido() {
         var senha = document.getElementById("pwdsenhaSEI").value;
 
         if (cargo == "") {
-            alert('Por favor informe o Cargo/FunÁ„o.');
+            alert('Por favor informe o Cargo/Fun√ß√£o.');
             document.getElementById("selCargo").focus();
             return false;
         } else if (senha == "") {

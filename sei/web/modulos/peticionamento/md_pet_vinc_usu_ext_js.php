@@ -1058,7 +1058,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
             var captchaValidado = document.getElementById('hdnValorCaptcha').value;
             if (document.getElementById('txtCaptcha').value != captchaValidado) {
-                alert('Código de confirmação inválido.');
+                alert('Código de confirmação inválido2.');
                 document.getElementById('txtCaptcha').focus();
                 return false;
             }

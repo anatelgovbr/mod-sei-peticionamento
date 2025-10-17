@@ -29,7 +29,8 @@ class MdPetParametroRN extends InfraRN {
 
     protected function consultarConectado(InfraParametroDTO $objInfraParametroDTO){
         $arrObjInfraParametro = $this->infraParametro->listarValores(array($objInfraParametroDTO->getStrNome()), false);
-        list($nome, $valor) = each($arrObjInfraParametro);
+        $nome = key($arrObjInfraParametro);
+        $valor = current($arrObjInfraParametro);
         $objInfraParametroDTO = new InfraParametroDTO();
         $objInfraParametroDTO->setStrNome($nome);
         $objInfraParametroDTO->setStrValor($valor);

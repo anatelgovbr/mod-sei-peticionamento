@@ -1,13 +1,13 @@
 <?php $readOnly =  'readonly="readonly"'; ?>
 <fieldset id="informacaoPJAlterar" class="infraFieldset sizeFieldset" style="width: auto;">
-    <legend class="infraLegend">&nbsp; InformaÁıes da Pessoa JurÌdica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; Informa√ß√µes da Pessoa Jur√≠dica &nbsp;</legend>
     <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-6">
-            <div class="form-group">
+        <div class="col-sm-12 col-md-4 col-lg-4">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="slTipoInteressado" id="lblTipoInteressado">
                     Tipo:
                 </label>
-                <select class="infraSelect" id="slTipoInteressado" name="slTipoInteressado"
+                <select class="infraSelect form-select" id="slTipoInteressado" name="slTipoInteressado"
                     <?php echo !is_null($readOnly) ? 'disabled="disabled"' : null?>
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                     <?php echo $strItensSelTipoInteressado;?>
@@ -17,9 +17,9 @@
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="txtRazaoSocial" id="lblRazaoSocial">
-                    Raz„o Social:
+                    Raz√£o Social:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtRazaoSocial" name="txtRazaoSocial" maxlength="250" onkeypress="return infraMascaraTexto(this,event,250);"
                     <?php echo $readOnly ?>
@@ -28,9 +28,9 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-7 col-xl-3 ">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="txtNomeResponsavelLegal" id="lblResponsavelLegal">
-                    Nome do Respons·vel Legal:
+                    Nome do Respons√°vel Legal:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtNomeResponsavelLegal" name="txtNomeResponsavelLegal" maxlength="250"
                     readonly
@@ -39,9 +39,9 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-5 col-xl-3">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="txtNumeroCpfResponsavel" id="lblCpfResponsavelLegal">
-                CPF do Respons·vel Legal:
+                CPF do Respons√°vel Legal:
             </label>
             <input type="text" class="infraText blocInformacaoPj" id="txtNumeroCpfResponsavel" name="txtNumeroCpfResponsavel"
                    readonly
@@ -52,9 +52,9 @@
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="txtLogradouro">
-                EndereÁo:
+                Endere√ßo:
             </label>
             <input onkeypress="return infraMascaraTexto(this,event,130)"  type="text" class="infraText blocInformacaoPj" id="txtLogradouro" name="txtLogradouro" maxlength="130"
                 <?php echo $readOnly?>
@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="txtBairro">
                 Bairro:
             </label>
@@ -75,11 +75,11 @@
         </div>
         
         <div class="col-sm-12 col-md-2 col-lg-2 col-xl-1">
-            <div class="form-gruop">
+            <div class="form-gruop mb-3">
             <label class="infraLabelObrigatorio" for="slUf">
                 UF:
             </label>
-            <select class="infraSelect blocInformacaoPj" id="slUf" name="slUf"
+            <select class="infraSelect blocInformacaoPj form-select" id="slUf" name="slUf"
                 <?php echo !is_null($readOnly) ? 'disabled="disabled"' : null?>
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                 <?php echo $slUf;?>
@@ -93,11 +93,11 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-7 col-lg-7 col-xl-5">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="selCidade">
                 Cidade:
             </label>
-            <select class="infraSelect blocInformacaoPj" name="selCidade" id="selCidade"
+            <select class="infraSelect blocInformacaoPj form-select" name="selCidade" id="selCidade"
                 <?php echo !is_null($readOnly) ? 'disabled="disabled"' : null?>
                     tabindex="<?=PaginaSEIExterna::getInstance()->getProxTabDados()?>"/>
             <?= $strItensSelCidade ?>
@@ -105,7 +105,7 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
-            <div class="form-group">
+            <div class="form-group mb-3">
             <label class="infraLabelObrigatorio" for="txtNumeroCEP">
                 CEP:
             </label>

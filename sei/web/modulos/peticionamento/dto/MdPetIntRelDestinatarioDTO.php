@@ -106,7 +106,7 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 		//Contato
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeContato', 'c.nome','contato c');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'EmailContato', 'c.email','contato c');
-        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CnpjContato', 'c.cnpj','contato c');
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'CnpjContato', 'c.cnpj','contato c');
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_DBL, 'CpfContato', 'c.cpf','contato c');
 
 		// Intimação x Protocolo
@@ -175,7 +175,7 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 	
 	public function getStrNomeEmailCnpjCpf(){
 		if($this->getStrSinPessoaJuridica() == "S"){
-			return $this->getStrNomeContato().' - '.infraUtil::formatarCnpj($this->getDblCnpjContato()); 
+			return $this->getStrNomeContato().' - '.infraUtil::formatarCnpj($this->getStrCnpjContato()); 
 		}else{
 			return $this->getStrNomeContato().' - '.$this->getStrEmailContato().' - '.infraUtil::formatarCpf($this->getDblCpfContato()) ; 
 

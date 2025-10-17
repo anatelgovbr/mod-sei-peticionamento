@@ -177,8 +177,8 @@ if ($numRegistros > 0) {
         $strResultado .= PaginaSEI::tratarHTML($arrObjIntimacao[$i]->getStrNomeContato());
         
         if($arrObjIntimacao[$i]->getStrSinPessoaJuridica() == 'S'){
-            if(!empty($arrObjIntimacao[$i]->getDblCnpjContato())){
-	            $strResultado .= ' (' . infraUtil::formatarCnpj($arrObjIntimacao[$i]->getDblCnpjContato()).')';
+            if(!empty($arrObjIntimacao[$i]->getStrCnpjContato())){
+	            $strResultado .= ' (' . infraUtil::formatarCnpj($arrObjIntimacao[$i]->getStrCnpjContato()).')';
             }
         }else{
 	        if(!empty($arrObjIntimacao[$i]->getDblCpfContato())){
@@ -232,6 +232,9 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(':: ' . PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo . ' ::');
 PaginaSEI::getInstance()->montarStyle();
+PaginaSEI::getInstance()->abrirStyle();
+require_once('md_pet_intimacao_eletronica_lista_css.php');
+PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript(); ?>
 
@@ -316,7 +319,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <? PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos); ?>
         
         <div class="row">
-            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="form-group">
                     <label id="lblTermoPesquisa" for="txtTermoPesquisa" class="infraLabelOpcional">Destinatário:</label>
                     <input type="text" id="txtTermoPesquisa" name="txtTermoPesquisa" class="infraText form-control"
@@ -326,7 +329,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
 
-            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="form-group">
                     <label id="lblNaturezaVinculo" for="selNaturezaVinculo" class="infraLabelOpcional">Tipo de Destinatário:</label>
                     <select id="selNaturezaVinculo" name="selNaturezaVinculo" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -337,7 +340,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
 
-            <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3 mb-3">
                 <div class="form-group">
                     <label id="lblTipoIntimacao" for="selTipoIntimacao" class="infraLabelOpcional">Tipo de Intimação:</label>
                     <select id="selTipoIntimacao" name="selTipoIntimacao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -347,7 +350,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
             </div>
 
-            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="form-group">
                     <label id="lblSituacaoIntimacao" for="selSituacaoIntimacao" class="infraLabelOpcional">Situação da Intimação:</label>
                     <select id="selSituacaoIntimacao" name="selSituacaoIntimacao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -360,9 +363,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
                 <div class="form-group">
                     <label id="lblPeriodo" class="infraLabelOpcional">Período de Geração:</label>
-                    <div class="input-group input-group-sm mb-6">
+                    <div class="input-group input-group-sm mb-6 mb-3 d-flex">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">De</span>
+                            <span class="input-group-text-modificado">De</span>
                         </div>
                         <input class="infraText form-control" type="text" name="txtDataInicio" id="txtDataInicio"
                                onkeypress="return infraMascaraData(this, event);" maxlength="10"
@@ -376,8 +379,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                              alt="Selecionar Data Inicial" class="infraImg"
                              onclick="infraCalendario('txtDataInicio',this,false,'<?= InfraData::getStrDataAtual() ?>');"/>
 
-                        <div class="input-group-prepend ml-1">
-                            <span class="input-group-text">Até</span>
+                        <div class="input-group-prepend ml-2">
+                            <span class="input-group-text-modificado">Até</span>
                         </div>
 
                         <input class="infraText form-control" type="text" id="txtDataFim" name="txtDataFim"

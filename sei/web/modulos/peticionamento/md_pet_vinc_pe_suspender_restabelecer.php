@@ -40,7 +40,7 @@ try {
             //Recuperar dados da Pessoa Juridica
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
             $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-            $objMdPetVinculoDTO->retDblCNPJ();
+            $objMdPetVinculoDTO->retStrCNPJ();
             $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
             $objMdPetVinculoDTO->retNumIdContatoRepresentante();
             $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
@@ -244,7 +244,7 @@ $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fe
                 </p>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <div class="form-group">
                     <label id="lblCnpj" class="infraLabelObrigatorio">CPF/CNPJ Outorgante:</label><br/>

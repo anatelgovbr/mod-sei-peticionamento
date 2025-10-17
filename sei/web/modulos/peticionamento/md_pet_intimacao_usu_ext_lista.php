@@ -60,7 +60,7 @@ try {
     PaginaSEIExterna::getInstance()->prepararPaginacao($objDTO, 100);
 
     $objDTO->retStrNomeContato();
-    $objDTO->retDblCnpjContato();
+    $objDTO->retStrCnpjContato();
     $objDTO->retDblCpfContato();
     $objDTO->retStrSinPessoaJuridica();
 
@@ -148,7 +148,7 @@ try {
             //Destinatário
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrNomeContato()) . " (";
-            $strResultado .= $objRet->getStrSinPessoaJuridica() == 'S' ? PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objRet->getDblCnpjContato())) : InfraUtil::formatarCpf(PaginaSEI::tratarHTML($objRet->getDblCpfContato()));
+            $strResultado .= $objRet->getStrSinPessoaJuridica() == 'S' ? PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objRet->getStrCnpjContato())) : InfraUtil::formatarCpf(PaginaSEI::tratarHTML($objRet->getDblCpfContato()));
             $strResultado .= ') </td>';
 
             //Destinatário

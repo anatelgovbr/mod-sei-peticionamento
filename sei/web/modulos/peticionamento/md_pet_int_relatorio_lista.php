@@ -105,7 +105,7 @@ if ($numRegistros > 0) {
         //Destinatário
         $strResultado .= '<td align="left">';
         $strResultado .=  PaginaSEI::tratarHTML($arrObjResultDTO[$i]->getStrNomeContato());
-	    $strResultado .=  $arrObjResultDTO[$i]->getStrSinPessoaJuridica() == 'S' ? ' (' . infraUtil::formatarCnpj($arrObjResultDTO[$i]->getDblCnpjContato()).')' : ' (' . infraUtil::formatarCpf($arrObjResultDTO[$i]->getDblCpfContato()) . ')';
+	    $strResultado .=  $arrObjResultDTO[$i]->getStrSinPessoaJuridica() == 'S' ? ' (' . infraUtil::formatarCnpj($arrObjResultDTO[$i]->getStrCnpjContato()).')' : ' (' . infraUtil::formatarCpf($arrObjResultDTO[$i]->getDblCpfContato()) . ')';
 	    $strResultado .= '</td>';
 
         //Tipo de Intimacao

@@ -403,7 +403,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
                 <label id="lblTipodeResposta" for="lblTipodeResposta" accesskey=""
                        class="infraLabelOpcional">Tipo de Resposta:</label>
-                <select id="selTipoResposta" name="selTipoResposta" onchange="this.form.submit()" class="infraSelect form-control"
+                <select id="selTipoResposta" name="selTipoResposta" onchange="this.form.submit()" class="infraSelect form-select"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strTipoResposta ?>
                 </select>

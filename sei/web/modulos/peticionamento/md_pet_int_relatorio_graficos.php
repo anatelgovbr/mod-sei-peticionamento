@@ -1,9 +1,9 @@
 <fieldset class="infraFieldset p-3">
-    <legend class="infraLegend">¡rea de Gr·ficos</legend>
+    <legend class="infraLegend">√Årea de Gr√°ficos</legend>
     <div class="row mb-4" id="dv_grafico_scroll">
         <div class="col-md-6 col-lg-6 col-xl-6">
-            <label id="lblGrafico" name="lblGrafico" class="infraLabelObrigatorio">Tipo de Gr·fico:</label>
-            <select onchange="gerarGrafico()" class="form-control" id="selGrafico" name="selGrafico">
+            <label id="lblGrafico" name="lblGrafico" class="infraLabelObrigatorio">Tipo de Gr√°fico:</label>
+            <select onchange="gerarGrafico()" class="form-select" id="selGrafico" name="selGrafico">
                 <?php echo $strSelGraficoGeral ?>
             </select>
         </div>
@@ -12,7 +12,7 @@
                 <div class="form-check pt-4">
                     <input class="form-check-input" type="checkbox" name="ocultarTiposIntVazios" value="1" id="ocultarTiposIntVazios" checked="checked">
                     <label class="form-check-label" for="ocultarTiposIntVazios">
-                        Ocultar Tipos de IntimaÁ„o sem registro
+                        Ocultar Tipos de Intima√ß√£o sem registro
                     </label>
                 </div>
             </div>

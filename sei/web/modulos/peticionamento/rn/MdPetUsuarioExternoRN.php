@@ -752,6 +752,20 @@ class MdPetUsuarioExternoRN extends InfraRN {
     }
   }
 
+  public static function usuarioSsoSemSenha(){
+
+        $objUsuarioDTO = new UsuarioDTO();
+        $objUsuarioDTO->retNumIdUsuario();
+        $objUsuarioDTO->retStrSigla();
+        $objUsuarioDTO->retStrSenha();
+        $objUsuarioDTO->retStrSinGovBr();
+        $objUsuarioDTO->setStrSigla( SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno() );
+        $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+
+        return $objUsuarioDTO->getStrSinGovBr() == 'S' && InfraString::isBolVazia($objUsuarioDTO->getStrSenha());
+
+  }
+
 
 }
 ?>

@@ -45,7 +45,7 @@ try {
 
             $dtoContato = new ContatoDTO();
             $dtoContato->setNumIdContato($_GET['id_contato']);
-            $dtoContato->retDblCnpj();
+            $dtoContato->retStrCnpj();
             $dtoContato->retDblCpf();
             $dtoContato->retStrNome();
             $dtoContato->retStrStaNatureza();

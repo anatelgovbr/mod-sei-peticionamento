@@ -164,7 +164,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $objMdPetIntRelDestDTO->setStrSinPrincipalDoc('S');
         $objMdPetIntRelDestDTO = $this->_addFiltroListagem($objMdPetIntRelDestDTO);
         
-	    $objMdPetIntRelDestDTO->retDblCnpjContato();
+	    $objMdPetIntRelDestDTO->retStrCnpjContato();
 	    $objMdPetIntRelDestDTO->retDblCpfContato();
 	    $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
 

@@ -435,7 +435,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
                 <label id="lblPrazoExterno" for="selPrazoExterno" class="infraLabelOpcional">Prazo Externo:</label>
-                <select id="selPrazoExterno" name="selPrazoExterno" onchange="this.form.submit()" class="infraSelect form-control"
+                <select id="selPrazoExterno" name="selPrazoExterno" onchange="this.form.submit()" class="infraSelect form-select"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strItenSelPrazoExterno ?>
                 </select>
@@ -445,7 +445,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     do
                     Usuário Externo:</label>
                 <select id="selRespostaUsuarioEx" name="selRespostaUsuarioEx" onchange="this.form.submit()"
-                        class="infraSelect form-control"
+                        class="infraSelect form-select"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strRespostaUsuarioEx ?>
                 </select>

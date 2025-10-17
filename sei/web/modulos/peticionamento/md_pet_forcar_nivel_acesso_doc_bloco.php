@@ -43,7 +43,7 @@ if(!empty($objMdPetForcarNivelAcessoDocDTO2)){
                 <div class="col-3">
                     <div class="form-group">
                         <label id="" for="" accesskey="" class="infraLabelObrigatorio">Nível de Acesso:</label>
-                        <select name="staNivelAcesso" id="staNivelAcesso" class="infraSelect form-control" onchange="changeStaNivelAcesso()" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                        <select name="staNivelAcesso" id="staNivelAcesso" class="infraSelect form-select" onchange="changeStaNivelAcesso()" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
                             <option value="">Selecione</option>
                             <option value="P" <?= (!empty($objMdPetForcarNivelAcessoDocDTO2) && $objMdPetForcarNivelAcessoDocDTO2->getStrNivelAcesso() == 'P') ? 'selected="selected"' : '' ?>>Público</option>
                             <option value="R" <?= (!empty($objMdPetForcarNivelAcessoDocDTO2) && $objMdPetForcarNivelAcessoDocDTO2->getStrNivelAcesso() == 'R') ? 'selected="selected"' : '' ?>>Restrito</option>
@@ -54,14 +54,14 @@ if(!empty($objMdPetForcarNivelAcessoDocDTO2)){
                     <div class="col-9" id="forcarHipoteseLegal" style="display: <?= (!empty($objMdPetForcarNivelAcessoDocDTO2) && $objMdPetForcarNivelAcessoDocDTO2->getStrNivelAcesso() == 'R') ? 'block' : 'none' ?>">
                         <div class="form-group">
                             <label id="lbIdHipoteseLegal" for="idHipoteseLegal" accesskey="" class="infraLabelObrigatorio">Hipótese Legal:</label>
-                            <select name="idHipoteseLegal" id="idHipoteseLegal" class="infraSelect form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                            <select name="idHipoteseLegal" id="idHipoteseLegal" class="infraSelect form-select" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
                                 <?= $selHipoteseLegal; ?>
                             </select>
                         </div>
                     </div>
                 <?php endif; ?>
             </div>
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col-12">
                     <div class="form-group">
                         <div class="row">

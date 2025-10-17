@@ -368,7 +368,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         $objMdPetRelDestDTO->retStrStaSituacaoIntimacao();
         $objMdPetRelDestDTO->retStrSinPessoaJuridica();
 	    $objMdPetRelDestDTO->retDthDataAceite();
-	    $objMdPetRelDestDTO->retDblCnpjContato();
+	    $objMdPetRelDestDTO->retStrCnpjContato();
 	    $objMdPetRelDestDTO->retDblCpfContato();
 	
 	    if(isset($_POST['txtTermoPesquisa']) && !empty($_POST['txtTermoPesquisa'])){
@@ -1014,7 +1014,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
         $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
         $objMdPetIntRelDestDTO->retNumIdContato();
-        $objMdPetIntRelDestDTO->retDblCnpjContato();
+        $objMdPetIntRelDestDTO->retStrCnpjContato();
         $objMdPetIntRelDestDTO->retDblCpfContato();
         $objMdPetIntRelDestDTO->retStrNomeContato();
         $objMdPetIntRelDestDTO->retDblIdDocumento();
@@ -1086,7 +1086,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
                             'idIntimacao'         => $intimacao->getNumIdMdPetIntimacao(),
                             'idDestinatario'      => $destinatario->getNumIdContato(),
                             'nomeDestinatario'    => $destinatario->getStrNomeContato(),
-                            'cpfCnpjDestinatario' => ($destinatario->getStrSinPessoaJuridica() == 'S' ? $destinatario->getDblCnpjContato() : $destinatario->getDblCpfContato()),
+                            'cpfCnpjDestinatario' => ($destinatario->getStrSinPessoaJuridica() == 'S' ? $destinatario->getStrCnpjContato() : $destinatario->getDblCpfContato()),
                             'juridica'            => $destinatario->getStrSinPessoaJuridica(),
                             'aceite'              => (!empty($aceite) ? $aceite->getNumIdMdPetIntAceite() : null),
                             'temPoderes'          => ($destinatario->getNumIdContato() == $objContatoLogado->getNumIdContato() ? true : (in_array($objContatoLogado->getNumIdContato(), $procuradores) ? true : false))

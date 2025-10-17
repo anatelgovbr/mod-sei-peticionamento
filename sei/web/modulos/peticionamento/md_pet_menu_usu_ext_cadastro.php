@@ -25,6 +25,7 @@ try {
     SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
     $arrComandos = array();
+    $staTipoEditor= EditorRN::obterTipoEditorSimples();
 
     $disabled = '';
 
@@ -39,15 +40,24 @@ try {
             $objEditorRN=new EditorRN();
             $objEditorDTO=new EditorDTO();
 
-            $objEditorDTO->setStrNomeCampo('txaConteudo');
-            $objEditorDTO->setStrSinSomenteLeitura('N');
-            $objEditorDTO->setNumTamanhoEditor(400);
-            $retEditor = $objEditorRN->montarSimples($objEditorDTO);
-
+            
             $txtConteudo = $_POST['txaConteudo'];
             $txtUrl = $_POST['txtUrl'];
             $txtNome = $_POST['txtNome'];
             $tipo = $_POST['tipo'];
+
+            if($staTipoEditor==EditorRN::$VE_CK5){
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO->setNumTamanhoEditor(400);
+                $objEditorDTO->setStrConteudoInicial($txtConteudo);
+                EditorCk5RN::montarSimples($objEditorDTO);
+            } else {
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO->setNumTamanhoEditor(400);
+                $objEditorDTO = $objEditorRN->montarSimples($objEditorDTO);
+            }
 
             $objMdPetMenuUsuarioExternoDTO = new MdPetMenuUsuarioExternoDTO();
             $objMdPetMenuUsuarioExternoDTO->setStrConteudoHtml('');
@@ -94,16 +104,8 @@ try {
             $strTitulo = 'Consultar Menu';
             $disabled = " disabled='disabled' ";
 
-            //TODO: Marcelo ou Herley, a construÁ„o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi construÌdo para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot„o "Fechar", enquanto que Novo e Alterar tem o bot„o "Cancelar".
+            //TODO: Marcelo ou Herley, a constru√ß√£o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi constru√≠do para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot√£o "Fechar", enquanto que Novo e Alterar tem o bot√£o "Cancelar".
             $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
-
-            $objEditorRN=new EditorRN();
-            $objEditorDTO=new EditorDTO();
-
-            $objEditorDTO->setStrNomeCampo('txaConteudo');
-            $objEditorDTO->setStrSinSomenteLeitura('N');
-            $objEditorDTO->setNumTamanhoEditor(400);
-            $retEditor = $objEditorRN->montarSimples($objEditorDTO);
 
             $objMdPetMenuUsuarioExternoDTO2 = new MdPetMenuUsuarioExternoDTO();
             $objMdPetMenuUsuarioExternoDTO2->retTodos();
@@ -162,6 +164,22 @@ try {
                 } catch(Exception $e){
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
+            }
+            
+            $objEditorRN=new EditorRN();
+            $objEditorDTO=new EditorDTO();
+
+            if($staTipoEditor==EditorRN::$VE_CK5){
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('S');
+                $objEditorDTO->setNumTamanhoEditor(400);
+                $objEditorDTO->setStrConteudoInicial($txtConteudo);
+                EditorCk5RN::montarSimples($objEditorDTO);
+            } else {
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('S');
+                $objEditorDTO->setNumTamanhoEditor(400);
+                $objEditorDTO = $objEditorRN->montarSimples($objEditorDTO);
             }
 
             break;
@@ -174,16 +192,8 @@ try {
 
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 
-            //TODO: Marcelo ou Herley, a construÁ„o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi construÌdo para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot„o "Fechar", enquanto que Novo e Alterar tem o bot„o "Cancelar".
+            //TODO: Marcelo ou Herley, a constru√ß√£o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi constru√≠do para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot√£o "Fechar", enquanto que Novo e Alterar tem o bot√£o "Cancelar".
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
-
-            $objEditorRN=new EditorRN();
-            $objEditorDTO=new EditorDTO();
-
-            $objEditorDTO->setStrNomeCampo('txaConteudo');
-            $objEditorDTO->setStrSinSomenteLeitura('N');
-            $objEditorDTO->setNumTamanhoEditor(400);
-            $retEditor = $objEditorRN->montarSimples($objEditorDTO);
 
             $objMdPetMenuUsuarioExternoDTO2 = new MdPetMenuUsuarioExternoDTO();
             $objMdPetMenuUsuarioExternoDTO2->retTodos();
@@ -244,10 +254,26 @@ try {
                 }
             }
 
+            $objEditorRN=new EditorRN();
+            $objEditorDTO=new EditorDTO();
+
+            if($staTipoEditor==EditorRN::$VE_CK5){
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO->setNumTamanhoEditor(400);
+                $objEditorDTO->setStrConteudoInicial($txtConteudo);
+                EditorCk5RN::montarSimples($objEditorDTO);
+            } else {
+                $objEditorDTO->setStrNomeCampo('txaConteudo');
+                $objEditorDTO->setStrSinSomenteLeitura('N');
+                $objEditorDTO->setNumTamanhoEditor(400);
+                $objEditorDTO = $objEditorRN->montarSimples($objEditorDTO);
+            }
+
             break;
 
         default:
-            throw new InfraException("AÁ„o '".$_GET['acao']."' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '".$_GET['acao']."' n√£o reconhecida.");
             break;
 
     }
@@ -266,7 +292,12 @@ PaginaSEI::getInstance()->abrirStyle();
 require_once 'md_pet_menu_usu_ext_cadastro_css.php';
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
-echo $retEditor->getStrInicializacao();
+if($staTipoEditor==EditorRN::$VE_CK5){
+    echo $objEditorDTO->getStrCss();
+    echo $objEditorDTO->getStrJs();
+} else {
+    echo $objEditorDTO->getStrInicializacao();
+}
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 ?>
@@ -286,7 +317,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                     </label>
                     <img id="imgAjudatTipoExterno"
                          src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
-                         onmouseover="return infraTooltipMostrar('O menu ser· listado para o Usu·rio Externo depois que ele fizer login no Acesso Externo do SEI.', 'Ajuda');"
+                         onmouseover="return infraTooltipMostrar('O menu ser√° listado para o Usu√°rio Externo depois que ele fizer login no Acesso Externo do SEI.', 'Ajuda');"
                          onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     <div class="input-group mb-3">
                         <input type="text" id="txtNome" name="txtNome" class="infraText form-control"
@@ -302,14 +333,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                         <div id="divOptTipoExterno" class="infraDivRadio divOptTipoExterno">
                             <input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?>  class="infraRadio">
                             <label for="tipoExterno" class="infraLabelRadio"> Link Externo
-                                <img id="imgAjudatTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir· o link externo sempre em nova janela do navegador do Usu·rio Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                                <img id="imgAjudatTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir√° o link externo sempre em nova janela do navegador do Usu√°rio Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                             </label>
                         </div>
 
                         <div id="divOptTipoHTML" class="infraDivRadio divOptTipoExterno">
                             <input type="radio" id="tipoHTML" name="tipo" <?= $disabled ?> value="H" onclick="rdTipo()" <?php if( $tipo == 'H' ){ echo " checked='checked' "; } ?>  class="infraRadio">
-                            <label for="tipoHTML" class="infraLabelRadio"> Conte˙do HTML
-                                <img id="imgAjudatTipoHTML" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir· tela no prÛprio SEI para o Usu·rio Externo logado com o texto HTML parametrizado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                            <label for="tipoHTML" class="infraLabelRadio"> Conte√∫do HTML
+                                <img id="imgAjudatTipoHTML" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir√° tela no pr√≥prio SEI para o Usu√°rio Externo logado com o texto HTML parametrizado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                             </label>
                         </div>
                     </fieldset>
@@ -328,13 +359,23 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                     <div id="divTbConteudo" class="infraDivRadio divTbConteudo">
                         <table id="tbConteudo">
                             <td style="width: 95%">
-                                <div id="divEditores" style="">
-                                    <label id="lblConteudo" for="txaConteudo" class="infraLabelObrigatorio">Conte˙do HTML:</label>
-                                    <textarea id="txaConteudo" name="txaConteudo" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
-                                    <script type="text/javascript">
-                                        <?=$retEditor->getStrEditores();?>
-                                    </script>
-                                </div>
+                                <label id="lblConteudo" for="txaConteudo" class="infraLabelObrigatorio">Conte√∫do HTML:</label>
+                                <?php
+                                if($staTipoEditor==EditorRN::$VE_CK5){
+                                    ?>
+                                        <div id="divEditores" class="infra-editor" style="visibility: visible;">
+                                            <?= $objEditorDTO->getStrHtml(); ?>
+                                        </div>
+                                        <?php
+                                } else {
+                                    ?>
+                                        <div id="divEditores" class="mb-0">
+                                            <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
+                                            <script type="text/javascript"> <?= $objEditorDTO->getStrEditores(); ?> </script>
+                                        </div>
+                                    <?php
+                                }
+                                ?>
                             </td>
                         </table>
                     </div>

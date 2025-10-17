@@ -76,7 +76,7 @@ $objMdPetVinculoDTO->retNumIdMdPetVinculo();
 $objMdPetVinculoDTO->retStrNomeTipoProcedimento();
 $objMdPetVinculoDTO->retDblIdProtocolo();
 $objMdPetVinculoDTO->retStrProtocoloFormatado();
-$objMdPetVinculoDTO->retDblCNPJ();
+$objMdPetVinculoDTO->retStrCNPJ();
 $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
 $objMdPetVinculoDTO->retStrTipoRepresentante();
 $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
@@ -182,7 +182,7 @@ if ($numRegistros > 0) {
     $iconeAlterar = "";
     $strResultado .= '<tr class="infraTrClara">';
     $strResultado .= '<td class="text-center"><a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');" alt="' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '" title="' . PaginaSEIExterna::tratarHTML($registro->getStrNomeTipoProcedimento()) . '" class="ancoraPadraoAzul">' . PaginaSEIExterna::tratarHTML($registro->getStrProtocoloFormatado()) . '</a></td>';
-    $strResultado .= '<td class="text-center">' . InfraUtil::formatarCnpj($registro->getDblCNPJ()) . '</td>';
+    $strResultado .= '<td class="text-center">' . InfraUtil::formatarCnpj($registro->getStrCNPJ()) . '</td>';
     $strResultado .= '<td class="text-center">' . PaginaSEI::tratarHTML($registro->getStrRazaoSocialNomeVinc()) . '</td>';
     $strResultado .= '<td class="text-center">' . $registro->getStrNomeContatoRepresentante() . '</td>';
 

@@ -169,8 +169,7 @@ switch ($_GET['acao']) {
 
             }
 
-            $texto .= '<p>Como a presente Intimação foi expedida em @data_expedicao_intimacao@ e em conformidade com as regras de contagem ';
-            $texto .= 'de prazo dispostas no art. 66 da Lei nº 9.784/1999, mesmo se não ocorrer a consulta acima indicada, a Intimação será ';
+            $texto .= '<p>Como a presente Intimação foi expedida em @data_expedicao_intimacao@ e conforme as regras legais de contagem de prazo processual, mesmo se não ocorrer a consulta acima indicada, a Intimação será ';
             $texto .= 'considerada cumprida por decurso do prazo tácito ao final do dia @data_final_prazo_intimacao_tacita@.</p></div>';
 
             //Documento
@@ -218,7 +217,7 @@ SessaoSEIExterna::getInstance()->configurarAcessoExterno($_GET['id_acesso_extern
                 <h4 class="mt-2"><?= $strTitulo ?></h4>
 	            <?php PaginaSEIExterna::getInstance()->montarBarraComandosSuperior([]); ?>
                 <div class="textoIntimacaoEletronica">
-                    <p><?= $texto; ?></p>
+                    <?= $texto; ?>
 	                <?php
 	                if ($idIntimacao) {
 		                foreach ($idIntimacao as $id) {

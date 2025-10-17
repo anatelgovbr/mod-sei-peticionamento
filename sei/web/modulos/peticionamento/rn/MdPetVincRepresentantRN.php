@@ -610,7 +610,7 @@ class MdPetVincRepresentantRN extends InfraRN
                     $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
 
                     if (is_array($objRelProtocoloProtocoloDTO) && count($objRelProtocoloProtocoloDTO) == 1) {
-                        $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
+                        $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array(current($objRelProtocoloProtocoloDTO)->getDblIdProtocolo1()));
                     }
 
                // 2) Última aberta
@@ -856,7 +856,7 @@ class MdPetVincRepresentantRN extends InfraRN
                     }
                 }
 
-                $objDocumento = $this->_encaminhamentoParaCriarDocumento(null, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento, $params);
+                $objDocumento = $this->_encaminhamentoParaCriarDocumento($params, null, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
 
                 //BUSCAR PROCEDIMENTO DA PROCURACAO
                 $objProcedimento = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($idVinculo);
@@ -909,7 +909,7 @@ class MdPetVincRepresentantRN extends InfraRN
             }
         }
 
-        public function suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
+        public function suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $agendamento, $params)
         {
             
                 $arrObjMdPetVincRepresentantProcuradores = [];
@@ -963,7 +963,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 if($idVinculo){
 
                     // CRIA DOCUMENTO DE SUSPENSO
-                    $objDocumento = $this->_encaminhamentoParaCriarDocumento($autoRepresentacao, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento, $params);
+                    $objDocumento = $this->_encaminhamentoParaCriarDocumento($params, $autoRepresentacao, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
                     $arrRerepentVincSuspensos['documentoSuspensao'] = $objDocumento->getDocumentoFormatado();
 
                     //BUSCAR PROCEDIMENTO DA PROCURACAO
@@ -1168,7 +1168,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetVincRepresentantRN->alterar($representanteDTO);
         }
 
-        private function _encaminhamentoParaCriarDocumento($autoRepresentacao = null, $arrObjMdPetVincRepresentantProcuradores = null, $objResponsavelLegal = null, $agendamento = false, $params)
+        private function _encaminhamentoParaCriarDocumento($params, $autoRepresentacao = null, $arrObjMdPetVincRepresentantProcuradores = null, $objResponsavelLegal = null, $agendamento = false)
         {
             //Agendamento sempre suspende e nao passa parametros
             $operacao = $agendamento ? MdPetVincRepresentantRN::$RP_SUSPENSO : $params['hdnOperacao'];
@@ -1520,7 +1520,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
 
                 if (is_array($objRelProtocoloProtocoloDTO) && count($objRelProtocoloProtocoloDTO) == 1) {
-                    $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
+                    $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array(current($objRelProtocoloProtocoloDTO)->getDblIdProtocolo1()));
                 }
 
                 // 2) ltima aberta
@@ -2094,7 +2094,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
 
                 if (is_array($objRelProtocoloProtocoloDTO) && count($objRelProtocoloProtocoloDTO) == 1) {
-                    $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
+                    $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array(current($objRelProtocoloProtocoloDTO)->getDblIdProtocolo1()));
                 }
 
                 // 2) ÚLTIMA ABERTA

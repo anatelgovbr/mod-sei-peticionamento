@@ -3137,11 +3137,6 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
-        $this->logar('>>>> INSERINDO COLUNA "dta_prazo_tacito" NA TABELA "md_pet_int_rel_dest" ');
-
-        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
-        $objInfraMetaBD->adicionarColuna('md_pet_int_rel_dest', 'dta_prazo_tacito', '' . $objInfraMetaBD->tipoDataHora(), 'NULL');
-
         $this->atualizarNumeroVersao($nmVersao);
     }
 

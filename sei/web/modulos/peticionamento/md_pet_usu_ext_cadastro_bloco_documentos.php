@@ -582,7 +582,7 @@
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                         </label><br/>
-                        <select class="form-group infraSelect" disabled tabindex="-1">
+                        <select class="form-control infraSelect" disabled tabindex="-1">
                             <option value=""><?= $strHipoteseLegalPadrao ?></option>
                         </select>
                         <input type="hidden" name="hipoteseLegal2" id="hipoteseLegal2" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>
@@ -768,37 +768,33 @@
             </div>
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
 
-                <div id="divhipoteseLegal3" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
+                <div class="form-group" id="divhipoteseLegal3" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
                 <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
-                    <div class="form-group">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
-                            Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
-                        </label><br/>
+                    <label id="lblPublico" class="infraLabelObrigatorio">
+                        Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
+                    </label><br/>
 
-                        <select class="form-control infraSelect" id="hipoteseLegal3" name="hipoteseLegal3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                            <option value=""></option>
-                            <?
-                                if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
-                                    foreach ($arrHipoteseLegal as $itemObj) {
-                                        echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'">'.$itemObj->getStrNome().' ('.$itemObj->getStrBaseLegal().')</option>';
-                                    }
-                                }
-                            ?>
-                        </select>
-                    </div>
+                    <select class="form-control infraSelect" id="hipoteseLegal3" name="hipoteseLegal3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <option value=""></option>
+		                <?
+			                if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
+				                foreach ($arrHipoteseLegal as $itemObj) {
+					                echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'">'.$itemObj->getStrNome().' ('.$itemObj->getStrBaseLegal().')</option>';
+				                }
+			                }
+		                ?>
+                    </select>
 
                 <? elseif ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"): ?>
 
-                    <div class="form-group">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
-                            Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
-                        </label><br/>
-                        <select class="form-control infraSelect" disabled tabindex="-1">
-                            <option value=""><?= $strHipoteseLegalPadrao ?></option>
-                        </select>
-                        <input type="hidden" name="hipoteseLegal3" id="hipoteseLegal3" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>
-                    </div>
+                    <label id="lblPublico" class="infraLabelObrigatorio">
+                        Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
+                    </label><br/>
+                    <select class="form-control infraSelect" disabled tabindex="-1">
+                        <option value=""><?= $strHipoteseLegalPadrao ?></option>
+                    </select>
+                    <input type="hidden" name="hipoteseLegal3" id="hipoteseLegal3" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>
 
                 <? endif ?>
                 </div>

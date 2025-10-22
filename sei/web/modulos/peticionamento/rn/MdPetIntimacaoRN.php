@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
  * 14/03/2017 - criado por pedro.cast
  *
@@ -1094,7 +1094,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntRelDestExternoRN->cadastrar($objMdPetIntRelDestExternoDTO);
             //Fim novo
 
-            //verifica se existe procurador simples para a pessoa fÃ­sica em questão
+            //verifica se existe procurador simples para a pessoa fí­sica em questão
             $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
             $dtoMdPetVincReptDTO->setNumIdContatoVinc($objMdPetIntRelDestinatarioDTO->getNumIdContato());
             $dtoMdPetVincReptDTO->retNumIdContatoVinc();
@@ -2763,7 +2763,7 @@ class MdPetIntimacaoRN extends InfraRN
         $arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
 
         if ($strStaNivelAcessoGlobal != ProtocoloRN::$NA_SIGILOSO) {
-            //filtra andamentos com indicação de usuário atribuÃ­do
+            //filtra andamentos com indicação de usuário atribuí­do
             $arrObjAtividadeDTO = InfraArray::distinctArrInfraDTO($arrObjAtividadeDTO, 'SiglaUnidade');
         }
 

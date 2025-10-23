@@ -514,8 +514,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         //se nao for o "Principal", resetar a seleçao da combo "Tipo"
         if (numero != '1') {
             document.getElementById('tipoDocumento' + complemento).options[0].selected = 'selected';
-            document.querySelector('select[name="hipoteseLegal' + numero + '"]').removeAttribute("disabled");
-            document.querySelector('select[name="nivelAcesso' + numero + '"]').removeAttribute("disabled");
+			const el = document.querySelector('select[name="hipoteseLegal${numero}"]');
+			if (el) el.removeAttribute("disabled");   			            
+			const e2 = document.querySelector('select[name="nivelAcesso${numero}"]');
+			if (e2) el.removeAttribute("disabled");
         }
 
         cbTipoConferencia.options[0].selected = 'selected';

@@ -308,7 +308,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
                             definido</label>
                     </div>
-                    <div class="row" id="divNivelAcesso" style="padding: 10px;<?php echo $sinNAPadrao != '' ? 'display: flex;' : 'display: none;' ?>" >
+                    <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: flex;"' : 'style="display: none;"' ?>>
                         <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
                             <div class="form-group">
                                 <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"

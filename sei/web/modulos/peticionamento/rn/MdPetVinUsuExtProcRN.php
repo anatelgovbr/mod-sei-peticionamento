@@ -1135,10 +1135,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         // consultar dados Outorgado
         $contatoDTO = new ContatoDTO();
-        $contatoDTO->setDblCpf($dados['CpfOutorgante']);
+        $contatoDTO->setNumIdContato($idContatoVinculo);
         $contatoDTO->retStrNome();
         $contatoDTO->retNumIdContato();
         $contatoDTO->retDblCpf();
+        $contatoDTO->retDblCnpj();
         //$contatoDTO->setNumIdContato($idOutorgado);
         $contatoDTO->setNumMaxRegistrosRetorno(1);
 

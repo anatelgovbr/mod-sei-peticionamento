@@ -91,7 +91,7 @@
 
             parent.infraAbrirJanelaModal(urlValida.value,
                 770,
-                530,
+                500,
                 '', //options
                 false); //modal*/
         }

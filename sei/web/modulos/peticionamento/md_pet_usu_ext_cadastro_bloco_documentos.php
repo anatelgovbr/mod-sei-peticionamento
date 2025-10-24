@@ -582,7 +582,7 @@
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                         </label><br/>
-                        <select class="form-group infraSelect" disabled tabindex="-1">
+                        <select class="form-select infraSelect" disabled tabindex="-1">
                             <option value=""><?= $strHipoteseLegalPadrao ?></option>
                         </select>
                         <input type="hidden" name="hipoteseLegal2" id="hipoteseLegal2" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>

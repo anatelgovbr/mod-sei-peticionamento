@@ -1,18 +1,18 @@
-# M√≥dulo Peticionamento e Intima√ß√£o Eletr√¥nicos
+# MÛdulo Peticionamento e IntimaÁ„o EletrÙnicos
 
 ## Requisitos
-- Requisito M√≠nimo √© o SEI 4.1.5 instalado/atualizado - N√£o √© compat√≠vel com vers√µes anteriores e em vers√µes mais recentes √© necess√°rio conferir antes se possui compatibilidade.
-   - Verificar valor da constante de vers√£o no arquivo /sei/web/SEI.php ou, ap√≥s logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
-- Antes de executar os scripts de instala√ß√£o/atualiza√ß√£o, o usu√°rio de acesso aos bancos de dados do SEI e do SIP, constante nos arquivos ConfiguracaoSEI.php e ConfiguracaoSip.php, dever√° ter permiss√£o de acesso total ao banco de dados, permitindo, por exemplo, cria√ß√£o e exclus√£o de tabelas.
-- Os c√≥digos-fonte do M√≥dulo podem ser baixados a partir do link a seguir, devendo sempre utilizar a vers√£o mais recente: [https://github.com/anatelgovbr/mod-sei-peticionamento/releases](https://github.com/anatelgovbr/mod-sei-peticionamento/releases "Clique e acesse")
-- Se j√° tiver instalado vers√£o principal com a execu√ß√£o dos scripts de banco do m√≥dulo no SEI e no SIP, **em vers√µes intermedi√°rias basta sobrescrever os c√≥digos** e n√£o precisa executar os scripts de banco novamente.
-   - Atualiza√ß√µes de vers√µes intermedi√°rias s√£o melhorias apenas de c√≥digo e s√£o identificadas com o incremento somente do terceiro d√≠gito da vers√£o (p. ex. v4.1.1, v4.1.2) e n√£o envolve execu√ß√£o de scripts de banco.
+- Requisito MÌnimo È o SEI 5.0.3 instalado/atualizado - N„o È compatÌvel com versıes anteriores e em versıes mais recentes È necess·rio conferir antes se possui compatibilidade.
+   - Verificar valor da constante de vers„o no arquivo /sei/web/SEI.php ou, apÛs logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
+- Antes de executar os scripts de instalaÁ„o/atualizaÁ„o, o usu·rio de acesso aos bancos de dados do SEI e do SIP, constante nos arquivos ConfiguracaoSEI.php e ConfiguracaoSip.php, dever· ter permiss„o de acesso total ao banco de dados, permitindo, por exemplo, criaÁ„o e exclus„o de tabelas.
+- Os cÛdigos-fonte do MÛdulo podem ser baixados a partir do link a seguir, devendo sempre utilizar a vers„o mais recente: [https://github.com/anatelgovbr/mod-sei-peticionamento/releases](https://github.com/anatelgovbr/mod-sei-peticionamento/releases "Clique e acesse")
+- Se j· tiver instalado vers„o principal com a execuÁ„o dos scripts de banco do mÛdulo no SEI e no SIP, **em versıes intermedi·rias basta sobrescrever os cÛdigos** e n„o precisa executar os scripts de banco novamente.
+   - AtualizaÁıes de versıes intermedi·rias s„o melhorias apenas de cÛdigo e s„o identificadas com o incremento somente do terceiro dÌgito da vers„o (p. ex. v4.1.1, v4.1.2) e n„o envolve execuÁ„o de scripts de banco.
 
-## Procedimentos para Instala√ß√£o
+## Procedimentos para InstalaÁ„o
 1. Fazer backup dos bancos de dados do SEI e do SIP.
-2. Carregar no servidor os arquivos do m√≥dulo nas pastas correspondentes nos servidores do SEI e do SIP.
-   - **Caso se trate de atualiza√ß√£o de vers√£o anterior do M√≥dulo**, antes de copiar os c√≥digos-fontes para a pasta "/sei/web/modulos/peticionamento", √© necess√°rio excluir os arquivos anteriores pr√© existentes na mencionada pasta, para n√£o manter arquivos de c√≥digos que foram renomeados ou descontinuados.
-3. Editar o arquivo "/sei/config/ConfiguracaoSEI.php", tomando o cuidado de usar editor que n√£o altere o charset do arquivo, para adicionar a refer√™ncia √† classe de integra√ß√£o do m√≥dulo e seu caminho relativo dentro da pasta "/sei/web/modulos" na array 'Modulos' da chave 'SEI':
+2. Carregar no servidor os arquivos do mÛdulo nas pastas correspondentes nos servidores do SEI e do SIP.
+   - **Caso se trate de atualizaÁ„o de vers„o anterior do MÛdulo**, antes de copiar os cÛdigos-fontes para a pasta "/sei/web/modulos/peticionamento", È necess·rio excluir os arquivos anteriores prÈ existentes na mencionada pasta, para n„o manter arquivos de cÛdigos que foram renomeados ou descontinuados.
+3. Editar o arquivo "/sei/config/ConfiguracaoSEI.php", tomando o cuidado de usar editor que n„o altere o charset do arquivo, para adicionar a referÍncia ‡ classe de integraÁ„o do mÛdulo e seu caminho relativo dentro da pasta "/sei/web/modulos" na array 'Modulos' da chave 'SEI':
 
 		'SEI' => array(
 			...
@@ -21,37 +21,37 @@
 				),
 			),
 
-4. Antes de seguir para os pr√≥ximos passos, √© importante conferir se o M√≥dulo foi corretamente declarado no arquivo "/sei/config/ConfiguracaoSEI.php". Acesse o menu **Infra > M√≥dulos** e confira se consta a linha correspondente ao M√≥dulo, pois, realizando os passos anteriores da forma correta, independente da execu√ß√£o do script de banco, o M√≥dulo j√° deve ser reconhecido na tela aberta pelo menu indicado.
-5. Rodar o script de banco "/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SIP, verificando se n√£o houve erro em sua execu√ß√£o, em que ao final do log dever√° ser informado "FIM". Exemplo de comando de execu√ß√£o:
+4. Antes de seguir para os prÛximos passos, È importante conferir se o MÛdulo foi corretamente declarado no arquivo "/sei/config/ConfiguracaoSEI.php". Acesse o menu **Infra > MÛdulos** e confira se consta a linha correspondente ao MÛdulo, pois, realizando os passos anteriores da forma correta, independente da execuÁ„o do script de banco, o MÛdulo j· deve ser reconhecido na tela aberta pelo menu indicado.
+5. Rodar o script de banco "/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SIP, verificando se n„o houve erro em sua execuÁ„o, em que ao final do log dever· ser informado "FIM". Exemplo de comando de execuÁ„o:
 
 		/usr/bin/php -c /etc/php.ini /opt/sip/scripts/sip_atualizar_versao_modulo_peticionamento.php 2>&1 > atualizacao_peticionamento_sip.log
 
-6. Rodar o script de banco "/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SEI, verificando se n√£o houve erro em sua execu√ß√£o, em que ao final do log dever√° ser informado "FIM". Exemplo de comando de execu√ß√£o:
+6. Rodar o script de banco "/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php" em linha de comando no servidor do SEI, verificando se n„o houve erro em sua execuÁ„o, em que ao final do log dever· ser informado "FIM". Exemplo de comando de execuÁ„o:
 
 		/usr/bin/php -c /etc/php.ini /opt/sei/scripts/sei_atualizar_versao_modulo_peticionamento.php 2>&1 > atualizacao_peticionamento_sei.log
 
-7. **IMPORTANTE**: Na execu√ß√£o dos dois scripts de banco acima, ao final deve constar o termo "FIM", o "TEMPO TOTAL DE EXECU√á√ÉO" e a informa√ß√£o de que a instala√ß√£o/atualiza√ß√£o foi realizada com sucesso na base de dados correspondente (SEM ERROS). Do contr√°rio, o script n√£o foi executado at√© o final e algum dado n√£o foi inserido/atualizado no respectivo banco de dados, devendo recuperar o backup do banco e repetir o procedimento.
-   - Constando ao final da execu√ß√£o do script as informa√ß√µes indicadas, pode logar no SEI e SIP e verificar no menu **Infra > Par√¢metros** dos dois sistemas se consta o par√¢metro "VERSAO_MODULO_PETICIONAMENTO" com o valor da √∫ltima vers√£o do m√≥dulo.
-8. Em caso de erro durante a execu√ß√£o do script, verificar (lendo as mensagens de erro e no menu Infra > Log do SEI e do SIP) se a causa √© algum problema na infraestrutura local ou ajustes indevidos na estrutura de banco do core do sistema. Neste caso, ap√≥s a corre√ß√£o, deve recuperar o backup do banco pertinente e repetir o procedimento, especialmente a execu√ß√£o dos scripts de banco indicados acima.
-9. Ap√≥s a execu√ß√£o com sucesso, com um usu√°rio com permiss√£o de Administrador no SEI, seguir os passos dispostos no t√≥pico "Orienta√ß√µes Negociais" mais abaixo.
+7. **IMPORTANTE**: Na execuÁ„o dos dois scripts de banco acima, ao final deve constar o termo "FIM", o "TEMPO TOTAL DE EXECU«√O" e a informaÁ„o de que a instalaÁ„o/atualizaÁ„o foi realizada com sucesso na base de dados correspondente (SEM ERROS). Do contr·rio, o script n„o foi executado atÈ o final e algum dado n„o foi inserido/atualizado no respectivo banco de dados, devendo recuperar o backup do banco e repetir o procedimento.
+   - Constando ao final da execuÁ„o do script as informaÁıes indicadas, pode logar no SEI e SIP e verificar no menu **Infra > Par‚metros** dos dois sistemas se consta o par‚metro "VERSAO_MODULO_PETICIONAMENTO" com o valor da ˙ltima vers„o do mÛdulo.
+8. Em caso de erro durante a execuÁ„o do script, verificar (lendo as mensagens de erro e no menu Infra > Log do SEI e do SIP) se a causa È algum problema na infraestrutura local ou ajustes indevidos na estrutura de banco do core do sistema. Neste caso, apÛs a correÁ„o, deve recuperar o backup do banco pertinente e repetir o procedimento, especialmente a execuÁ„o dos scripts de banco indicados acima.
+9. ApÛs a execuÁ„o com sucesso, com um usu·rio com permiss„o de Administrador no SEI, seguir os passos dispostos no tÛpico "OrientaÁıes Negociais" mais abaixo.
 
-## Orienta√ß√µes Negociais
-1. Imediatamente ap√≥s a instala√ß√£o com sucesso, com usu√°rio com permiss√£o de "Administrador" do SEI, acessar os menus de administra√ß√£o do M√≥dulo pelo seguinte caminho: Administra√ß√£o > Peticionamento Eletr√¥nico. Somente com tudo parametrizado adequadamente ser√° poss√≠vel o uso do m√≥dulo pelos Usu√°rios Externos por meio da tela de Acesso Externo do SEI:
+## OrientaÁıes Negociais
+1. Imediatamente apÛs a instalaÁ„o com sucesso, com usu·rio com permiss„o de "Administrador" do SEI, acessar os menus de administraÁ„o do MÛdulo pelo seguinte caminho: AdministraÁ„o > Peticionamento EletrÙnico. Somente com tudo parametrizado adequadamente ser· possÌvel o uso do mÛdulo pelos Usu·rios Externos por meio da tela de Acesso Externo do SEI:
 
 		http://[Servidor_PHP]/sei/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0
 
-2. O script de banco do SIP j√° cria todos os Recursos e Menus e os associam automaticamente ao Perfil "B√°sico" ou ao Perfil "Administrador".
-	- Independente da cria√ß√£o de outros Perfis, os recursos indicados para o Perfil "B√°sico" ou "Administrador" devem manter correspond√™ncia com os Perfis dos Usu√°rios internos que utilizar√£o o M√≥dulo e dos Usu√°rios Administradores do M√≥dulo.
-	- O SIP n√£o controla Perfil pr√≥prio para os Usu√°rios Externos, cabendo diretamente ao c√≥digo do M√≥dulo o controle devido junto aos Recursos e Menus criados pelo M√≥dulo para os Usu√°rios Externos.
-	- T√£o quanto ocorre com as atualiza√ß√µes do SEI, vers√µes futuras deste M√≥dulo continuar√£o a atualizar e criar Recursos e associ√°-los apenas aos Perfis "B√°sico" e "Administrador".
-	- Todos os recursos do M√≥dulo iniciam pelo sufix **"md_pet_"**.
-3. Acesse o [Manual do Webservice do M√≥dulo Peticionamento](https://github.com/anatelgovbr/mod-sei-peticionamento/blob/master/sei/web/modulos/peticionamento/ws/manual_ws_peticionamento.md).
-4. Acesse o [Manual de Administra√ß√£o](https://docs.google.com/document/d/e/2PACX-1vRmsyc-Z35FHvrRuAeEYX6HsHJZKf0lEWwara8qJLrpJgL1bc6pOMSdP2wxgE6VCyHrgkotO3HqVnE4/pub).
-5. Acesse o [Manual do Usu√°rio Interno](https://docs.google.com/document/d/e/2PACX-1vSFScFD8PYCPDiqi6Sg5AZrzQekFtUp4j0iFyiDONkrtvMxM7S29LnWxZ1KbfpIxy6QFBQAw0QW-3zo/pub).
-6. Acesse o [Manual do Usu√°rio Externo](https://docs.google.com/document/d/1tBRrH1E4s25Q2ZBe6sW0qp75HsnIvKWfqmeoVU8MQLo/pub).
-	- N√£o foi poss√≠vel fazer um Manual do Usu√°rio Externo gen√©rico para qualquer √≥rg√£o, em raz√£o das especificidades de cada √≥rg√£o quanto aos procedimentos de credenciamento dos Usu√°rios Externos e at√© mesmo de parametriza√ß√£o do M√≥dulo. De qualquer forma, o Manual do Usu√°rio Externo do SEI elaborado pela Anatel pode ser quase que completamente aproveitado.
+2. O script de banco do SIP j· cria todos os Recursos e Menus e os associam automaticamente ao Perfil "B·sico" ou ao Perfil "Administrador".
+	- Independente da criaÁ„o de outros Perfis, os recursos indicados para o Perfil "B·sico" ou "Administrador" devem manter correspondÍncia com os Perfis dos Usu·rios internos que utilizar„o o MÛdulo e dos Usu·rios Administradores do MÛdulo.
+	- O SIP n„o controla Perfil prÛprio para os Usu·rios Externos, cabendo diretamente ao cÛdigo do MÛdulo o controle devido junto aos Recursos e Menus criados pelo MÛdulo para os Usu·rios Externos.
+	- T„o quanto ocorre com as atualizaÁıes do SEI, versıes futuras deste MÛdulo continuar„o a atualizar e criar Recursos e associ·-los apenas aos Perfis "B·sico" e "Administrador".
+	- Todos os recursos do MÛdulo iniciam pelo sufix **"md_pet_"**.
+3. Acesse o [Manual do Webservice do MÛdulo Peticionamento](https://github.com/anatelgovbr/mod-sei-peticionamento/blob/master/sei/web/modulos/peticionamento/ws/manual_ws_peticionamento.md).
+4. Acesse o [Manual de AdministraÁ„o] http://bit.ly/SEI_Mod_Pet_Admin.
+5. Acesse o [Manual do Usu·rio Interno] http://bit.ly/SEI_Mod_Pet_Interno.
+6. Acesse o [Manual do Usu·rio Externo] http://bit.ly/SEI_Usuario_Externo.
+	- N„o foi possÌvel fazer um Manual do Usu·rio Externo genÈrico para qualquer Ûrg„o, em raz„o das especificidades de cada Ûrg„o quanto aos procedimentos de credenciamento dos Usu·rios Externos e atÈ mesmo de parametrizaÁ„o do MÛdulo. De qualquer forma, o Manual do Usu·rio Externo do SEI elaborado pela Anatel pode ser quase que completamente aproveitado.
 
-## Erros ou Sugest√µes
-1. [Abrir Issue](https://github.com/anatelgovbr/mod-sei-peticionamento/issues) no reposit√≥rio do GitHub do m√≥dulo se ocorrer erro na execu√ß√£o dos scripts de banco do m√≥dulo no SEI ou no SIP acima.
-2. [Abrir Issue](https://github.com/anatelgovbr/mod-sei-peticionamento/issues) no reposit√≥rio do GitHub do m√≥dulo se ocorrer erro na opera√ß√£o do m√≥dulo.
+## Erros ou Sugestıes
+1. [Abrir Issue](https://github.com/anatelgovbr/mod-sei-peticionamento/issues) no repositÛrio do GitHub do mÛdulo se ocorrer erro na execuÁ„o dos scripts de banco do mÛdulo no SEI ou no SIP acima.
+2. [Abrir Issue](https://github.com/anatelgovbr/mod-sei-peticionamento/issues) no repositÛrio do GitHub do mÛdulo se ocorrer erro na operaÁ„o do mÛdulo.
 3. Na abertura da Issue utilizar o modelo **"1 - Reportar Erro"**.

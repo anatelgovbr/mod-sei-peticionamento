@@ -66,7 +66,7 @@ class MdPetIntimacaoRN extends InfraRN
     private function validarNumIdMdPetIntTipoIntimacao(MdPetIntimacaoDTO $objMdPetIntimacaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao())) {
-            $objInfraException->adicionarValidacao('Tipo de Intimacao não informado.');
+            $objInfraException->adicionarValidacao('Tipo de Intimação não informado.');
         }
     }
 
@@ -2057,8 +2057,8 @@ class MdPetIntimacaoRN extends InfraRN
                 $objMdPetIntDestRespostaDTO->retTodos();
                 $objMdPetIntDestRespostaDTO->setNumIdMdPetIntRelDestinatario($objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntRelDestinatario());
 
-                //ajustando esta consulta para limitar retorno a 1 registro, e para trazer a resposta mais atual deste destinatario
-                //se nao aplicar isso, a tela de consultar detalhes da intimaçao (Processo -> Ver intimaçoes -> lupinha)
+                //ajustando esta consulta para limitar retorno a 1 registro, e para trazer a resposta mais atual deste destinatário
+                //se nao aplicar isso, a tela de consultar detalhes da intimação (Processo -> Ver intimações -> lupinha)
                 //dá erro por causa de chamada a metodo "consultar" retornando mais de uma linha
 
                 $objMdPetIntDestRespostaDTO->setNumMaxRegistrosRetorno(1);
@@ -2229,7 +2229,7 @@ class MdPetIntimacaoRN extends InfraRN
 
         } catch (Exception $e) {
             LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
+            throw new InfraException('Erro reiterando intimações pendentes que exigem resposta.', $e);
         }
 
     }
@@ -2421,7 +2421,7 @@ class MdPetIntimacaoRN extends InfraRN
         $objAtributoAndamentoAPI = new AtributoAndamentoAPI();
         $objAtributoAndamentoAPI->setNome($nome);
         $objAtributoAndamentoAPI->setValor($valor);
-        $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do prÃ©dio, pode ser null
+        $objAtributoAndamentoAPI->setIdOrigem($idOrigem); //ID do prédio, pode ser null
 
         return $objAtributoAndamentoAPI;
     }
@@ -2629,7 +2629,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
             $idContato = $objContato->getNumIdContato();
 
-            // @todo precisa ser refatorado o codigo para ser mais perfomatico, pode ocorrer despecho de memoria por trazer todas as intimaçoes do usuario
+            // @todo precisa ser refatorado o codigo para ser mais perfomatico, pode ocorrer despecho de memoria por trazer todas as intimações do usuario
             $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
             $objMdPetIntRelDestDTO->setNumIdContatoParticipante($idContato);
             $objMdPetIntRelDestDTO->retNumIdMdPetIntimacao();
@@ -2719,8 +2719,8 @@ class MdPetIntimacaoRN extends InfraRN
         $objAtividadeDTO->setDthConclusao(null);
 
         //sigiloso sem credencial - não preparado
-        //                        -     considera o último usuário da unidade informada
-        //                        -     considera o último usuário da última independente da unidade informada
+        //                        -     considera o Último usuário da unidade informada
+        //                        -     considera o Último usuário da Última independente da unidade informada
         if ($strStaNivelAcessoGlobal == ProtocoloRN::$NA_SIGILOSO) {
             //último usuário da unidade informada
             $objAcessoDTO = new AcessoDTO();
@@ -3437,7 +3437,7 @@ class MdPetIntimacaoRN extends InfraRN
 
                     if(!empty($arrOficiosPrinc)){
 
-                        $msgValidacao = (new PeticionamentoIntegracao())->getNome() . ": Em razÃ£o do processo ser sigiloso e estar vinculado Ã  sua credencial de acesso nÃ£o Ã© possÃ­vel conclui-lo, enquanto existirem IntimaÃ§Ãµes EletrÃ´nicas ainda em curso.\nIsso inclui cumprimento ainda pendente e prazo limite para possÃ­vel resposta de intimaÃ§Ã£o disponibilizada sobre os documentos principais abaixo: \n\n";
+                        $msgValidacao = (new PeticionamentoIntegracao())->getNome() . ": Em razão do processo ser sigiloso e estar vinculado à sua credencial de acesso não é possível conclui-lo, enquanto existirem Intimações Eletrônicas ainda em curso.\nIsso inclui cumprimento ainda pendente e prazo limite para possí­vel resposta de Intimação disponibilizada sobre os documentos principais abaixo: \n\n";
                         $msgValidacao .= $arrOficiosPrinc;
 
                         $objInfraException = new InfraException();

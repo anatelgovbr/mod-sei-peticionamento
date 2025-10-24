@@ -53,7 +53,7 @@ class MdPetIntProtDisponivelRN extends InfraRN {
             return $ret;
 
         }catch(Exception $e){
-            throw new InfraException('Erro cadastrando Documento Disponivel.',$e);
+            throw new InfraException('Erro cadastrando Documento Disponível.',$e);
         }
     }
 
@@ -81,7 +81,7 @@ class MdPetIntProtDisponivelRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro alterando Documento Disponivel.',$e);
+            throw new InfraException('Erro alterando Documento Disponível.',$e);
         }
     }
 
@@ -104,7 +104,7 @@ class MdPetIntProtDisponivelRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro excluindo Documento Disponivel.',$e);
+            throw new InfraException('Erro excluindo Documento Disponível.',$e);
         }
     }
 
@@ -126,7 +126,7 @@ class MdPetIntProtDisponivelRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro consultando Documento Disponivel.',$e);
+            throw new InfraException('Erro consultando Documento Disponível.',$e);
         }
     }
 

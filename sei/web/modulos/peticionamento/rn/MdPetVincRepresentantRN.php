@@ -909,7 +909,7 @@ class MdPetVincRepresentantRN extends InfraRN
             }
         }
 
-        public function suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $agendamento, $params)
+        public function suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
         {
             
                 $arrObjMdPetVincRepresentantProcuradores = [];
@@ -1080,7 +1080,7 @@ class MdPetVincRepresentantRN extends InfraRN
 			if($idVinculo){
 				
 				// CRIA DOCUMENTO DE SUSPENSO
-				$objDocumento = $this->_encaminhamentoParaCriarDocumento($autoRepresentacao, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento, $params);
+				$objDocumento = $this->_encaminhamentoParaCriarDocumento($params, $autoRepresentacao, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
 				
 				if($objDocumento){
 					

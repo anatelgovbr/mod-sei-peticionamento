@@ -55,12 +55,12 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     $('div#tipoLogradouro, div#numeroLogradouro, div#tipoLogradouro, div#expiracacaoCache, #blcUsarIntegracaoWs, #blcTipoClienteWs, #blcParamsSuspensaoAutomatica').css('display', 'block');
                     document.getElementById('lbltxtCodRFBSuspensaoAutomatica').innerText = 'Códigos de Situação Cadastral que identifica Pessoas Jurídicas Inativas na Receita:';
 
-                    $('[id^="paramSaidaTable_"]').css('display', 'table-row');
-                    $('#paramEntradaTable_cnpjEmpresa').css('display', 'table-row');
+                    $('[id^="paramSaidaTable_"]').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
+                    $('#paramEntradaTable_cnpjEmpresa').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
                     $('#paramSaidaTable_cpfPessoa, #paramSaidaTable_tpLogradouro, #paramSaidaTable_numero, #paramSaidaTable_complemento').css('display', 'none');
 
                     if($('#chkSinCache:checked').length){
-                        $('#paramEntradaTable_periodoCache').css('display', 'table-row');
+                        $('#paramEntradaTable_periodoCache').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
                     }
                     if($('#chkSinTipo:checked').length){
                         $('#paramSaidaTable_tpLogradouro').css('display', 'table-row');
@@ -89,8 +89,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     $('div#expiracacaoCache, #blcUsarIntegracaoWs, #blcTipoClienteWs, #blcEnderecoWs').css('display', 'block');
 
                     $('[id^="paramSaidaTable_"], [id^="paramEntradaTable_"]').css('display', 'none');
-                    $('#paramEntradaTable_cpfPessoa, #paramEntradaTable_identificacaoOrigem').css('display', 'table-row');
-                    $('#paramSaidaTable_codSituacaoCadastral, #paramSaidaTable_descSituacaoCadastral').css('display', 'table-row');
+                    $('#paramEntradaTable_cpfPessoa, #paramEntradaTable_identificacaoOrigem').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
+                    $('#paramSaidaTable_codSituacaoCadastral, #paramSaidaTable_descSituacaoCadastral').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
 
                     $(':radio:not(:checked)').attr('disabled', true);
 
@@ -191,11 +191,11 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     return false;
                 }
 
-                if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').value) == '') {
-                    alert('Indique o dado de entrada no webservice para Identificação Origem.');
-                    document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').focus();
-                    return false;
-                }
+                // if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').value) == '') {
+                //     alert('Indique o dado de entrada no webservice para Identificação Origem.');
+                //     document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').focus();
+                //     return false;
+                // }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosSaida_codSituacaoCadastral').value) == '') {
                     alert('Indique o dado de saida do webservice para Código da Situação Cadastral.');
@@ -481,7 +481,6 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
 
     function operacaoSelecionar() {
-        console.log('Passou aqui ');
         let checkbox = document.getElementById('chkSinCache');
         if (!preencheCache) {
             checkbox.checked = false;

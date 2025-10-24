@@ -501,7 +501,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Número do Logradouro não informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinNuLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Número do Logradouro inválid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Número do Logradouro inválido.');
             }
         }
     }
@@ -512,7 +512,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro não informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinCompLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro de cache inválid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Complemento do Logradouro de cache inválido.');
             }
         }
     }

@@ -234,14 +234,14 @@ try {
                         SessaoSEIExterna::getInstance()->removerAtributo('janelaSelecaoPorNome');
                     }
 
-                    echo "$(window.top.document).find('div[id^=divInfraSparklingModalClose]').click();";
+                    echo "window.top.document.querySelectorAll('div[id^=\"divInfraSparklingModalClose\"].sparkling-modal-close').forEach(el => el.click());";
                     echo "</script>";
                     die;
 
                 } else {
                     echo "<script>";
                     echo "atualizarNomeRazaoSocial('" . $cpfCnpjEditado . "', '" . PaginaSEIExterna::tratarHTML($nome) . "');";
-                    echo "$(window.top.document).find('div[id^=divInfraSparklingModalClose]').click();";
+                    echo "window.top.document.querySelectorAll('div[id^=\"divInfraSparklingModalClose\"].sparkling-modal-close').forEach(el => el.click());";
                     echo "</script>";
                     die;
                 }

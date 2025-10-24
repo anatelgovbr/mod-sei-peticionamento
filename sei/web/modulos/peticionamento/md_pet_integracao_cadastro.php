@@ -243,6 +243,8 @@ try {
         $staTpClienteWs = "";
     }
 
+    // Aqui são listados tanto parâmetros da integração de CNPJ quanto da CPF:
+
     $arrParametrosEntradas = array(
         'cnpjEmpresa' => 'CNPJ da Pessoa Jurídica',
         'cpfPessoa' => 'CPF Usuário Requisitante',
@@ -308,10 +310,10 @@ try {
         $strResultadoParamEntrada .= "<td align='left'  style='padding: 8px;' >";
 
         if ($chave == 'periodoCache') {
-            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-select' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-select' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
             $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
         } else {
-            $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosEntrada[$chave]' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'required' : '' )."></select>";
+            $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosEntrada[$chave]' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select>";
         }
 
         $strResultadoParamEntrada .= '</td>';
@@ -334,6 +336,7 @@ try {
     $strCssTr = '';
     $i = 0;
     $tag = '';
+    $mostrar = '';
 
     foreach ($arrParametrosSaida as $chave => $itemParametroSaida) {
 
@@ -352,7 +355,7 @@ try {
         $strResultadoParamSaida .= "<input type='hidden' name='hdnArrayDadosSaida[" . $chave . "]' value='" . $itemParametroSaida . "' />";
         $strResultadoParamSaida .= '<span style="font-weight:'.(in_array($chave, $arrParametrosSaidaObrig) ? 'bold' : 'normal' ).'">'.PaginaSEI::tratarHTML($itemParametroSaida).'</span>';
         $strResultadoParamSaida .= "</td>";
-        $strResultadoParamSaida .= "<td align='left' style='padding: 8px;' ><select id='nomeFuncionalDadosSaida_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosSaida[$chave]' ".(in_array($chave, $arrParametrosSaidaObrig) ? 'required' : '' )."></select></td>";
+        $strResultadoParamSaida .= "<td align='left' style='padding: 8px;' ><select id='nomeFuncionalDadosSaida_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosSaida[$chave]' ".(in_array($chave, $arrParametrosSaidaObrig) ? 'data-obrigatorio="true"' : '' )."></select></td>";
 
         $strResultadoParamSaida .= '</tr>' . "\n";
         $i++;

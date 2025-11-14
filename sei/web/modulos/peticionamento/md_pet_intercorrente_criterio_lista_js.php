@@ -10,7 +10,7 @@
     }
 
     function acaoDesativar(id, desc) {
-        if (confirm("Confirma desativaÁ„o do CritÈrio Intercorrente para Peticionamento \"" + desc + "\"?")) {
+        if (confirm("Confirma desativa√ß√£o do Crit√©rio Intercorrente para Peticionamento \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmLista').action = '<?=$strLinkDesativar?>';
             document.getElementById('frmLista').submit();
@@ -19,10 +19,10 @@
 
     function acaoDesativacaoMultipla() {
         if (document.getElementById('hdnInfraItensSelecionados').value == '') {
-            alert('Nenhum CritÈrio Intercorrente selecionado.');
+            alert('Nenhum Crit√©rio Intercorrente selecionado.');
             return;
         }
-        if (confirm("Confirma a desativaÁ„o dos CritÈrios Intercorrentes selecionados?")) {
+        if (confirm("Confirma a desativa√ß√£o dos Crit√©rios Intercorrentes selecionados?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmLista').action = '<?=$strLinkDesativar?>';
             document.getElementById('frmLista').submit();
@@ -30,7 +30,7 @@
     }
 
     function acaoReativar(id, desc) {
-        if (confirm("Confirma reativaÁ„o do CritÈrio Intercorrente para Peticionamento \"" + desc + "\"?")) {
+        if (confirm("Confirma reativa√ß√£o do Crit√©rio Intercorrente para Peticionamento \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmLista').action = '<?=$strLinkReativar?>';
             document.getElementById('frmLista').submit();
@@ -42,7 +42,7 @@
             alert('Nenhum Tipo de Processo selecionado.');
             return;
         }
-        if (confirm("Confirma a reativaÁ„o dos CritÈrios Intercorrentes selecionadas?")) {
+        if (confirm("Confirma a reativa√ß√£o dos Crit√©rios Intercorrentes selecionadas?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmLista').action = '<?=$strLinkReativar?>';
             document.getElementById('frmLista').submit();
@@ -50,7 +50,7 @@
     }
 
     function acaoExcluir(id, desc) {
-        if (confirm("Confirma exclus„o do CritÈrio Intercorrente para Peticionamento \"" + desc + "\"?")) {
+        if (confirm("Confirma exclus√£o do Crit√©rio Intercorrente para Peticionamento \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmLista').action = '<?=$strLinkExcluir?>';
             document.getElementById('frmLista').submit();
@@ -59,10 +59,10 @@
 
     function acaoExclusaoMultipla() {
         if (document.getElementById('hdnInfraItensSelecionados').value == '') {
-            alert('Nenhuma CritÈrio Intercorrente selecionado.');
+            alert('Nenhuma Crit√©rio Intercorrente selecionado.');
             return;
         }
-        if (confirm("Confirma a exclus„o dos CritÈrios Intercorrentes selecionados?")) {
+        if (confirm("Confirma a exclus√£o dos Crit√©rios Intercorrentes selecionados?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmLista').action = '<?=$strLinkExcluir?>';
             document.getElementById('frmLista').submit();

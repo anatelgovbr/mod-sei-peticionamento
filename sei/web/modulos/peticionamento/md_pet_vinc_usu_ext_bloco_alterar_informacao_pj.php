@@ -1,6 +1,6 @@
 <?php $readOnly =  'readonly="readonly"'; ?>
 <fieldset id="informacaoPJAlterar" class="infraFieldset sizeFieldset" style="width: auto;">
-    <legend class="infraLegend">&nbsp; InformaÁıes da Pessoa JurÌdica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; Informa√ß√µes da Pessoa Jur√≠dica &nbsp;</legend>
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-6">
             <div class="form-group">
@@ -19,7 +19,7 @@
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="txtRazaoSocial" id="lblRazaoSocial">
-                    Raz„o Social:
+                    Raz√£o Social:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtRazaoSocial" name="txtRazaoSocial" maxlength="250" onkeypress="return infraMascaraTexto(this,event,250);"
                     <?php echo $readOnly ?>
@@ -30,7 +30,7 @@
         <div class="col-sm-12 col-md-6 col-lg-7 col-xl-3 ">
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="txtNomeResponsavelLegal" id="lblResponsavelLegal">
-                    Nome do Respons·vel Legal:
+                    Nome do Respons√°vel Legal:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtNomeResponsavelLegal" name="txtNomeResponsavelLegal" maxlength="250"
                     readonly
@@ -41,7 +41,7 @@
         <div class="col-sm-12 col-md-6 col-lg-5 col-xl-3">
             <div class="form-group">
             <label class="infraLabelObrigatorio" for="txtNumeroCpfResponsavel" id="lblCpfResponsavelLegal">
-                CPF do Respons·vel Legal:
+                CPF do Respons√°vel Legal:
             </label>
             <input type="text" class="infraText blocInformacaoPj" id="txtNumeroCpfResponsavel" name="txtNumeroCpfResponsavel"
                    readonly
@@ -54,7 +54,7 @@
         <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
             <div class="form-group">
             <label class="infraLabelObrigatorio" for="txtLogradouro">
-                EndereÁo:
+                Endere√ßo:
             </label>
             <input onkeypress="return infraMascaraTexto(this,event,130)"  type="text" class="infraText blocInformacaoPj" id="txtLogradouro" name="txtLogradouro" maxlength="130"
                 <?php echo $readOnly?>

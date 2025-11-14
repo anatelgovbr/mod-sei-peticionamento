@@ -94,7 +94,7 @@ try {
             $strTitulo = 'Consultar Menu';
             $disabled = " disabled='disabled' ";
 
-            //TODO: Marcelo ou Herley, a construÁ„o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi construÌdo para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot„o "Fechar", enquanto que Novo e Alterar tem o bot„o "Cancelar".
+            //TODO: Marcelo ou Herley, a constru√ß√£o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi constru√≠do para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot√£o "Fechar", enquanto que Novo e Alterar tem o bot√£o "Cancelar".
             $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
             $objEditorRN=new EditorRN();
@@ -174,7 +174,7 @@ try {
 
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 
-            //TODO: Marcelo ou Herley, a construÁ„o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi construÌdo para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot„o "Fechar", enquanto que Novo e Alterar tem o bot„o "Cancelar".
+            //TODO: Marcelo ou Herley, a constru√ß√£o dos Cases Alterar e Consultar desta funcionalidade ficou muito diferente da forma que foi constru√≠do para Tipos de Processos para Peticionamento e para Indisponibilidades do SEI. Tem que padronizar, para ficar igual as outras duas funcionalidades. Ainda, Consultar tem o bot√£o "Fechar", enquanto que Novo e Alterar tem o bot√£o "Cancelar".
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\''.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao='.PaginaSEI::getInstance()->getAcaoRetorno().'&acao_origem='.$_GET['acao'].PaginaSEI::getInstance()->montarAncora($_GET['id_menu_peticionamento_usuario_externo']))).'\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             $objEditorRN=new EditorRN();
@@ -247,7 +247,7 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '".$_GET['acao']."' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '".$_GET['acao']."' n√£o reconhecida.");
             break;
 
     }
@@ -286,7 +286,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                     </label>
                     <img id="imgAjudatTipoExterno"
                          src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
-                         onmouseover="return infraTooltipMostrar('O menu ser· listado para o Usu·rio Externo depois que ele fizer login no Acesso Externo do SEI.', 'Ajuda');"
+                         onmouseover="return infraTooltipMostrar('O menu ser√° listado para o Usu√°rio Externo depois que ele fizer login no Acesso Externo do SEI.', 'Ajuda');"
                          onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     <div class="input-group mb-3">
                         <input type="text" id="txtNome" name="txtNome" class="infraText form-control"
@@ -302,14 +302,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                         <div id="divOptTipoExterno" class="infraDivRadio divOptTipoExterno">
                             <input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?>  class="infraRadio">
                             <label for="tipoExterno" class="infraLabelRadio"> Link Externo
-                                <img id="imgAjudatTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir· o link externo sempre em nova janela do navegador do Usu·rio Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                                <img id="imgAjudatTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir√° o link externo sempre em nova janela do navegador do Usu√°rio Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                             </label>
                         </div>
 
                         <div id="divOptTipoHTML" class="infraDivRadio divOptTipoExterno">
                             <input type="radio" id="tipoHTML" name="tipo" <?= $disabled ?> value="H" onclick="rdTipo()" <?php if( $tipo == 'H' ){ echo " checked='checked' "; } ?>  class="infraRadio">
-                            <label for="tipoHTML" class="infraLabelRadio"> Conte˙do HTML
-                                <img id="imgAjudatTipoHTML" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir· tela no prÛprio SEI para o Usu·rio Externo logado com o texto HTML parametrizado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                            <label for="tipoHTML" class="infraLabelRadio"> Conte√∫do HTML
+                                <img id="imgAjudatTipoHTML" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrir√° tela no pr√≥prio SEI para o Usu√°rio Externo logado com o texto HTML parametrizado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                             </label>
                         </div>
                     </fieldset>
@@ -329,7 +329,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                         <table id="tbConteudo">
                             <td style="width: 95%">
                                 <div id="divEditores" style="">
-                                    <label id="lblConteudo" for="txaConteudo" class="infraLabelObrigatorio">Conte˙do HTML:</label>
+                                    <label id="lblConteudo" for="txaConteudo" class="infraLabelObrigatorio">Conte√∫do HTML:</label>
                                     <textarea id="txaConteudo" name="txaConteudo" class="infraTextarea" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($txtConteudo)?></textarea>
                                     <script type="text/javascript">
                                         <?=$retEditor->getStrEditores();?>

@@ -25,14 +25,14 @@ try {
   //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
 
-  //preenche a combo FunÁ„o
+  //preenche a combo Fun√ß√£o
   $objMdPetCargoRN = new MdPetCargoRN();
   $arrObjCargoDTO = $objMdPetCargoRN->listarDistintos();
   $strLinkAjaxVerificarSenha = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_validar_assinatura');
   //=====================================================
   //FIM - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
-  $strTitulo = 'Concluir Peticionamento - Assinatura EletrÙnica';
+  $strTitulo = 'Concluir Peticionamento - Assinatura Eletr√¥nica';
 
   switch ($_GET['acao']) {
 
@@ -46,11 +46,11 @@ try {
 
               if($_POST['hdnTpDocumento'] == 'revogar'){
                   $arrCampos = [
-                      'txtJustificativa' => "'Motivo da RevogaÁ„o (constar· no teor do documento de RevogaÁ„o que ser· gerado)'"
+                      'txtJustificativa' => "'Motivo da Revoga√ß√£o (constar√° no teor do documento de Revoga√ß√£o que ser√° gerado)'"
                   ];
               } else {
                   $arrCampos = [
-                      'txtJustificativa' => "'Motivo da Ren˙ncia (constar· no teor do documento de Ren˙ncia que ser· gerado)'"
+                      'txtJustificativa' => "'Motivo da Ren√∫ncia (constar√° no teor do documento de Ren√∫ncia que ser√° gerado)'"
                   ];
               }
 
@@ -93,7 +93,7 @@ try {
       break;
 
     default:
-      throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+      throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
   }
 
 } catch (Exception $e) {
@@ -147,13 +147,13 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
 
     <div class="row">
         <div class="col-12">
-            <p class="text-justify">A confirmaÁ„o de sua senha importa na aceitaÁ„o dos termos e condiÁıes que regem o processo eletrÙnico, alÈm do disposto no credenciamento prÈvio, e na assinatura dos documentos nato-digitais e declaraÁ„o de que s„o autÍnticos os digitalizados, sendo respons·vel civil, penal e administrativamente pelo uso indevido. Ainda, s„o de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservaÁ„o dos originais em papel de documentos digitalizados atÈ que decaia o direito de revis„o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferÍncia; a realizaÁ„o por meio eletrÙnico de todos os atos e comunicaÁıes processuais com o prÛprio Usu·rio Externo ou, por seu intermÈdio, com a entidade porventura representada; a observ‚ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados atÈ as 23h59min59s do ˙ltimo dia do prazo, considerado sempre o hor·rio oficial de BrasÌlia, independente do fuso hor·rio em que se encontre; a consulta periÛdica ao SEI, a fim de verificar o recebimento de intimaÁıes eletrÙnicas.</p>
+            <p class="text-justify">A confirma√ß√£o de sua senha importa na aceita√ß√£o dos termos e condi√ß√µes que regem o processo eletr√¥nico, al√©m do disposto no credenciamento pr√©vio, e na assinatura dos documentos nato-digitais e declara√ß√£o de que s√£o aut√™nticos os digitalizados, sendo respons√°vel civil, penal e administrativamente pelo uso indevido. Ainda, s√£o de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conserva√ß√£o dos originais em papel de documentos digitalizados at√© que decaia o direito de revis√£o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de confer√™ncia; a realiza√ß√£o por meio eletr√¥nico de todos os atos e comunica√ß√µes processuais com o pr√≥prio Usu√°rio Externo ou, por seu interm√©dio, com a entidade porventura representada; a observ√¢ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados at√© as 23h59min59s do √∫ltimo dia do prazo, considerado sempre o hor√°rio oficial de Bras√≠lia, independente do fuso hor√°rio em que se encontre; a consulta peri√≥dica ao SEI, a fim de verificar o recebimento de intima√ß√µes eletr√¥nicas.</p>
         </div>
     </div>
     <div class="row">
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div class="form-group">
-                <label class="infraLabelObrigatorio">Usu·rio Externo:</label>
+                <label class="infraLabelObrigatorio">Usu√°rio Externo:</label>
                 <input type="text" name="loginUsuarioExterno"
                     value="<?= PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()) ?>"
                     readonly="readonly" id="loginUsuarioExterno" class="infraText form-control" autocomplete="off" disabled />
@@ -163,9 +163,9 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFec
     <div class="row">
         <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <div class="form-group">
-                <label class="infraLabelObrigatorio">Cargo/FunÁ„o:</label>
+                <label class="infraLabelObrigatorio">Cargo/Fun√ß√£o:</label>
                 <select id="selCargo" name="selCargo" class="infraSelect form-control">
-                    <option value="">Selecione Cargo/FunÁ„o</option>
+                    <option value="">Selecione Cargo/Fun√ß√£o</option>
                     <? foreach ($arrObjCargoDTO as $expressao => $cargo): ?>
                     <option value="<?= $cargo ?>" <?= $_POST['selCargo'] == $cargo ? 'selected="selected"' : '' ?>><?= $expressao ?></option>
                     <? endforeach ?>
@@ -210,7 +210,7 @@ PaginaSEIExterna::getInstance()->fecharHtml();
         var senha = document.getElementById("pwdsenhaSEI").value;
 
         if (cargo == "") {
-            alert('Favor informe o Cargo/FunÁ„o.');
+            alert('Favor informe o Cargo/Fun√ß√£o.');
             document.getElementById("selCargo").focus();
             return false;
         } else if (senha == "") {

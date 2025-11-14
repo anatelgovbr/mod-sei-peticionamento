@@ -27,7 +27,7 @@ class MdPetForcarNivelAcessoDocRN extends InfraRN {
 			return false;		
 				
 		} catch (Exception $e) {
-			throw new InfraException ('Erro cadastrando os Tipos de Documento para forçar Nível de Acesso.', $e );
+			throw new InfraException ('Erro cadastrando os Tipos de Documento para forÃ§ar NÃ­vel de Acesso.', $e );
 		}
 	}
 	
@@ -35,7 +35,7 @@ class MdPetForcarNivelAcessoDocRN extends InfraRN {
 		try {
 		    return (new MdPetForcarNivelAcessoDocBD($this->getObjInfraIBanco()))->listar($objMdPetForcarNivelAcessoDocDTO);
 		}catch(Exception $e) {
-			throw new InfraException('Erro listando os Tipos de Documento para forçar Nível de Acesso.',$e);
+			throw new InfraException('Erro listando os Tipos de Documento para forÃ§ar NÃ­vel de Acesso.',$e);
 		}
 	}
 
@@ -44,7 +44,7 @@ class MdPetForcarNivelAcessoDocRN extends InfraRN {
         try {
             return (new MdPetForcarNivelAcessoDocBD($this->getObjInfraIBanco()))->consultar($objMdPetForcarNivelAcessoDocDTO);
         }catch(Exception $e){
-            throw new InfraException('Erro listando os Tipos de Documento para forçar Nível de Acesso.',$e);
+            throw new InfraException('Erro listando os Tipos de Documento para forÃ§ar NÃ­vel de Acesso.',$e);
         }
     }
 
@@ -52,7 +52,7 @@ class MdPetForcarNivelAcessoDocRN extends InfraRN {
         try {
             return (new MdPetForcarNivelAcessoDocBD($this->getObjInfraIBanco()))->alterar($objMdPetForcarNivelAcessoDocDTO);
         }catch (Exception $e) {
-            throw new InfraException('Erro alterando os Tipos de Documento para forçar Nível de Acesso.', $e);
+            throw new InfraException('Erro alterando os Tipos de Documento para forÃ§ar NÃ­vel de Acesso.', $e);
         }
     }
 
@@ -60,7 +60,7 @@ class MdPetForcarNivelAcessoDocRN extends InfraRN {
 		try {
             (new MdPetForcarNivelAcessoDocBD($this->getObjInfraIBanco()))->excluir($objMdPetForcarNivelAcessoDocDTO);
 		}catch(Exception $e) {
-			throw new InfraException('Erro excluindo os Tipos de Documento para forçar Nível de Acesso.',$e);
+			throw new InfraException('Erro excluindo os Tipos de Documento para forÃ§ar NÃ­vel de Acesso.',$e);
 		}
 	}
 
@@ -74,7 +74,7 @@ class MdPetForcarNivelAcessoDocRN extends InfraRN {
             return (new MdPetForcarNivelAcessoDocBD($this->getObjInfraIBanco()))->listar($objHipoteseLegalDTO);
 
         } catch(Exception $e) {
-            throw new InfraException('Erro listando as Hipóteses Legais.',$e);
+            throw new InfraException('Erro listando as HipÃ³teses Legais.',$e);
         }
     }
 

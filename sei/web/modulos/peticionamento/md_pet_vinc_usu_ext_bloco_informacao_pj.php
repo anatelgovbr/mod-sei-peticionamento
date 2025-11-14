@@ -1,5 +1,5 @@
 <fieldset id="informacaoPJ" class="infraFieldset form-control sizeFieldset" style="display: none;" >
-    <legend class="infraLegend">&nbsp; Informações da Pessoa Jurídica &nbsp;</legend>
+    <legend class="infraLegend">&nbsp; InformaÃ§Ãµes da Pessoa JurÃ­dica &nbsp;</legend>
     <div class="row">
         <div class="col-sm-12 col-md-4 col-lg-4">
             <div class="form-group">
@@ -16,7 +16,7 @@
         <div class="col-sm-12 col-md-8 col-lg-8">
             <div class="form-group">
                 <label class="infraLabelObrigatorio" for="txtRazaoSocial" id="lblRazaoSocial">
-                    Razão Social:
+                    RazÃ£o Social:
                 </label>
                 <input type="text" class="infraText blocInformacaoPj form-control" id="txtRazaoSocial" name="txtRazaoSocial" maxlength="250" onkeypress="return infraMascaraTexto(this,event,250);"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
@@ -33,7 +33,7 @@
                     value = '<?php echo (!$stWebService) ? InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCpf()) : ''; ?>'
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 <label class="infraLabelObrigatorio" for="txtLogradouro">
-                    Endereço:
+                    EndereÃ§o:
                 </label>
                 <input onkeypress="return infraMascaraTexto(this,event,130);" type="text" class="infraText blocInformacaoPj form-control" id="txtLogradouro" name="txtLogradouro" maxlength="130"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>

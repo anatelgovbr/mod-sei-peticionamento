@@ -1,12 +1,12 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+* TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
 *
 * 08/02/2012 - criado por bcu
 *
-* Vers„o do Gerador de CÛdigo: 1.32.1
+* Vers√£o do Gerador de C√≥digo: 1.32.1
 *
-* Vers„o no CVS: $Id: md_pet_arquivo_extensao_lista.php 8743 2014-04-23 17:40:44Z mga $
+* Vers√£o no CVS: $Id: md_pet_arquivo_extensao_lista.php 8743 2014-04-23 17:40:44Z mga $
 */
 
 try {
@@ -38,7 +38,7 @@ try {
         }
         $objArquivoExtensaoRN = new ArquivoExtensaoRN();
         $objArquivoExtensaoRN->excluir($arrObjArquivoExtensaoDTO);
-        PaginaSEI::getInstance()->adicionarMensagem('OperaÁ„o realizada com sucesso.');
+        PaginaSEI::getInstance()->adicionarMensagem('Opera√ß√£o realizada com sucesso.');
       }catch(Exception $e){
         PaginaSEI::getInstance()->processarExcecao($e);
       } 
@@ -57,7 +57,7 @@ try {
         }
         $objArquivoExtensaoRN = new ArquivoExtensaoRN();
         $objArquivoExtensaoRN->desativar($arrObjArquivoExtensaoDTO);
-        PaginaSEI::getInstance()->adicionarMensagem('OperaÁ„o realizada com sucesso.');
+        PaginaSEI::getInstance()->adicionarMensagem('Opera√ß√£o realizada com sucesso.');
       }catch(Exception $e){
         PaginaSEI::getInstance()->processarExcecao($e);
       } 
@@ -65,7 +65,7 @@ try {
       die;
 
     case 'arquivo_extensao_reativar':
-      $strTitulo = 'Reativar Extensıes de Arquivos';
+      $strTitulo = 'Reativar Extens√µes de Arquivos';
       if ($_GET['acao_confirmada']=='sim'){
         try{
           $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
@@ -77,7 +77,7 @@ try {
           }
           $objArquivoExtensaoRN = new ArquivoExtensaoRN();
           $objArquivoExtensaoRN->reativar($arrObjArquivoExtensaoDTO);
-          PaginaSEI::getInstance()->adicionarMensagem('OperaÁ„o realizada com sucesso.');
+          PaginaSEI::getInstance()->adicionarMensagem('Opera√ß√£o realizada com sucesso.');
         }catch(Exception $e){
           PaginaSEI::getInstance()->processarExcecao($e);
         } 
@@ -88,7 +88,7 @@ try {
 
 
     case 'md_pet_arquivo_extensao_selecionar':
-      $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Extens„o de Arquivo','Selecionar Extensıes de Arquivos');
+      $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Extens√£o de Arquivo','Selecionar Extens√µes de Arquivos');
 
       //Se cadastrou alguem
       if ($_GET['acao_origem']=='arquivo_extensao_cadastrar'){
@@ -99,11 +99,11 @@ try {
       break;
 
     case 'arquivo_extensao_listar':
-      $strTitulo = 'Extensıes de Arquivos Permitidas';
+      $strTitulo = 'Extens√µes de Arquivos Permitidas';
       break;
 
     default:
-      throw new InfraException("AÁ„o '".$_GET['acao']."' n„o reconhecida.");
+      throw new InfraException("A√ß√£o '".$_GET['acao']."' n√£o reconhecida.");
   }
 
   $arrComandos = array();
@@ -187,11 +187,11 @@ try {
     $strResultado = '';
 
     if ($_GET['acao']!='arquivo_extensao_reativar'){
-      $strSumarioTabela = 'Tabela de Extensıes de Arquivos.';
-      $strCaptionTabela = 'Extensıes de Arquivos';
+      $strSumarioTabela = 'Tabela de Extens√µes de Arquivos.';
+      $strCaptionTabela = 'Extens√µes de Arquivos';
     }else{
-      $strSumarioTabela = 'Tabela de Extensıes de Arquivos Inativas.';
-      $strCaptionTabela = 'Extensıes de Arquivos Inativas';
+      $strSumarioTabela = 'Tabela de Extens√µes de Arquivos Inativas.';
+      $strCaptionTabela = 'Extens√µes de Arquivos Inativas';
     }
 
     $strResultado .= '<div class="row">';
@@ -203,9 +203,9 @@ try {
     if ($bolCheck) {
       $strResultado .= '<th scope="col" class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
     }
-    $strResultado .= '<th scope="col" class="infraTh" width="10%">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'Extens„o','Extensao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
-    $strResultado .= '<th scope="col" class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'DescriÁ„o','Descricao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
-    $strResultado .= '<th scope="col" class="infraTh" width="20%">AÁıes</th>'."\n";
+    $strResultado .= '<th scope="col" class="infraTh" width="10%">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'Extens√£o','Extensao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
+    $strResultado .= '<th scope="col" class="infraTh">'.PaginaSEI::getInstance()->getThOrdenacao($objArquivoExtensaoDTO,'Descri√ß√£o','Descricao',$arrObjArquivoExtensaoDTO).'</th>'."\n";
+    $strResultado .= '<th scope="col" class="infraTh" width="20%">A√ß√µes</th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strResultado .= '</thead>'."\n";
     $strResultado .= '<tbody>'."\n";
@@ -225,11 +225,11 @@ try {
       $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i,$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao());
 
       if ($bolAcaoConsultar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg?'.Icone::VERSAO.'" title="Consultar Extens„o de Arquivo" alt="Consultar Extens„o de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/consultar.svg?'.Icone::VERSAO.'" title="Consultar Extens√£o de Arquivo" alt="Consultar Extens√£o de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoAlterar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg?'.Icone::VERSAO.'" title="Alterar Extens„o de Arquivo" alt="Alterar Extens„o de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=arquivo_extensao_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_arquivo_extensao='.$arrObjArquivoExtensaoDTO[$i]->getNumIdArquivoExtensao())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/alterar.svg?'.Icone::VERSAO.'" title="Alterar Extens√£o de Arquivo" alt="Alterar Extens√£o de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
@@ -238,16 +238,16 @@ try {
       }
 
       if ($bolAcaoDesativar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg?'.Icone::VERSAO.'" title="Desativar Extens„o de Arquivo" alt="Desativar Extens„o de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/desativar.svg?'.Icone::VERSAO.'" title="Desativar Extens√£o de Arquivo" alt="Desativar Extens√£o de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoReativar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg?'.Icone::VERSAO.'" title="Reativar Extens„o de Arquivo" alt="Reativar Extens„o de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/reativar.svg?'.Icone::VERSAO.'" title="Reativar Extens√£o de Arquivo" alt="Reativar Extens√£o de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
 
       if ($bolAcaoExcluir){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg?'.Icone::VERSAO.'" title="Excluir Extens„o de Arquivo" alt="Excluir Extens„o de Arquivo" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/excluir.svg?'.Icone::VERSAO.'" title="Excluir Extens√£o de Arquivo" alt="Excluir Extens√£o de Arquivo" class="infraImg" /></a>&nbsp;';
       }
 
       $strResultado .= '</td></tr>'."\n";

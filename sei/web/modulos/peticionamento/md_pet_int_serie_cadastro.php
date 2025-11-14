@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 07/12/2016 - criado por Marcelo Bezerra - CAST
  *
- * Versão do Gerador de Código: 1.39.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.39.0
  *
  */
 
@@ -51,7 +51,7 @@ try {
                 $strItensSelSeriesEss .= "<option value='" . $arrSeriesEss[$x]->getNumIdSerie() . "'>" . $arrSeriesEss[$x]->getStrNomeSerie() . "</option>";
             }
 
-            $strTitulo = 'Tipos de Documentos para Intimação Eletrônica';
+            $strTitulo = 'Tipos de Documentos para IntimaÃ§Ã£o EletrÃ´nica';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarMdPetIntSerie" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -105,7 +105,7 @@ try {
                 $objMdPetIntSerieRN = new MdPetIntSerieRN();
                 $objMdPetIntSerieDTO = $objMdPetIntSerieRN->consultar($objMdPetIntSerieDTO);
                 if ($objMdPetIntSerieDTO == null) {
-                    throw new InfraException("Registro não encontrado.");
+                    throw new InfraException("Registro nÃ£o encontrado.");
                 }
             } else {
                 $objMdPetIntSerieDTO->setNumIdSerie($_POST['hdnIdSerie']);
@@ -145,12 +145,12 @@ try {
             $objMdPetIntSerieRN = new MdPetIntSerieRN();
             $objMdPetIntSerieDTO = $objMdPetIntSerieRN->consultar($objMdPetIntSerieDTO);
             if ($objMdPetIntSerieDTO === null) {
-                throw new InfraException("Registro não encontrado.");
+                throw new InfraException("Registro nÃ£o encontrado.");
             }
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 } catch (Exception $e) {
@@ -184,7 +184,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblSerie" for="selSerie" class="infraLabelObrigatorio">Tipos dos Documentos:
                         <img align="top"
                              src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione Tipos de Documentos parametrizados na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n Por exemplo, Ofício é um documento tradicionalmente de comunicação externa e serve para ser o documento principal de uma Intimação Eletrônica. \n \n Nos Documentos Gerados dos Tipos aqui indicados, após assinados, aparecerá o botão Gerar Intimação Eletrônica.', 'Ajuda') ?>
+                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione Tipos de Documentos parametrizados na AdministraÃ§Ã£o com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n Por exemplo, OfÃ­cio Ã© um documento tradicionalmente de comunicaÃ§Ã£o externa e serve para ser o documento principal de uma IntimaÃ§Ã£o EletrÃ´nica. \n \n Nos Documentos Gerados dos Tipos aqui indicados, apÃ³s assinados, aparecerÃ¡ o botÃ£o Gerar IntimaÃ§Ã£o EletrÃ´nica.', 'Ajuda') ?>
                              class="infraImgModulo"/>
                     </label>
                     <input type="text" id="txtSerie" name="txtSerie" class="infraText form-control"

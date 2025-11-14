@@ -30,7 +30,7 @@ class MdPetExtensoesArquivoRN extends InfraRN {
 	protected function excluirControlado($objMdPetExtensoesArquivoDTO){
 		try {
 	
-			//Valida Permissao TO DO revisar a tela para não deixar o log duplicado
+			//Valida Permissao TO DO revisar a tela para nÃ£o deixar o log duplicado
 //			SessaoSEI::getInstance ()->validarAuditarPermissao ('md_pet_extensoes_arquivo_cadastrar', __METHOD__, $objMdPetExtensoesArquivoDTO );
 			
 			$objMdPetExtensoesArquivoBD = new MdPetExtensoesArquivoBD($this->getObjInfraIBanco());
@@ -41,7 +41,7 @@ class MdPetExtensoesArquivoRN extends InfraRN {
 			//Auditoria
 	
 		}catch(Exception $e){
-			throw new InfraException('Erro excluindo Extensão.',$e);
+			throw new InfraException('Erro excluindo ExtensÃ£o.',$e);
 		}
 	}
 	
@@ -134,7 +134,7 @@ class MdPetExtensoesArquivoRN extends InfraRN {
 		
 		// VERIFICA SE O CAMPO FOI PREENCHIDO
 		if (InfraString::isBolVazia (trim($campo))) {
-			$msg1 = $nomeCampo. ' não informado.';
+			$msg1 = $nomeCampo. ' nÃ£o informado.';
 			$objInfraException->adicionarValidacao($msg1);
 			$valido = false;
 		}

@@ -44,11 +44,11 @@ if ($_POST) {
     $arrComplementar = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnComplementar']);
 
     if (!$arrPrincipal) {
-        $objInfraException->adicionarValidacao('Informe pelo menos uma extens„o para documento principal.', PaginaSEI::$TIPO_MSG_ERRO);
+        $objInfraException->adicionarValidacao('Informe pelo menos uma extens√£o para documento principal.', PaginaSEI::$TIPO_MSG_ERRO);
     }
 
     if (!$arrComplementar) {
-        $objInfraException->adicionarValidacao('Informe pelo menos uma extens„o para documento complementar.', PaginaSEI::$TIPO_MSG_ERRO);
+        $objInfraException->adicionarValidacao('Informe pelo menos uma extens√£o para documento complementar.', PaginaSEI::$TIPO_MSG_ERRO);
     }
 
     $objInfraException->lancarValidacoes();
@@ -115,7 +115,7 @@ $strSelExtensoesPrin = MdPetExtensoesArquivoINT::montarSelectExtensoes(null, nul
 $strSelExtensoesComp = MdPetExtensoesArquivoINT::montarSelectExtensoes(null, null, null, 'N');
 
 
-$strTitulo = "Peticionamento - Extensıes de Arquivos Permitidas";
+$strTitulo = "Peticionamento - Extens√µes de Arquivos Permitidas";
 
 $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarGrupoUnidade" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSei::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
@@ -147,7 +147,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         Principal (Processo Novo):
                         <img id="imgAjudaTxtPrincipal"
                              src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
-                             onmouseover="return infraTooltipMostrar('Define as Extensıes de Arquivos Permitidas no Peticionamento de Processo Novo somente do Documento Principal, que geralmente È de tamanho menor que os demais documentos, pois tende a ser Nato Digital. \n \n ATEN«√O: permitir apenas extensıes que comportem texto, evitando, por exemplo. zip, mp4 ou mp3 para Documento Principal', 'Ajuda');"
+                             onmouseover="return infraTooltipMostrar('Define as Extens√µes de Arquivos Permitidas no Peticionamento de Processo Novo somente do Documento Principal, que geralmente √© de tamanho menor que os demais documentos, pois tende a ser Nato Digital. \n \n ATEN√á√ÉO: permitir apenas extens√µes que comportem texto, evitando, por exemplo. zip, mp4 ou mp3 para Documento Principal', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     </label>
                     <input type="text" id="txtPrincipal" name="txtPrincipal" class="infraText form-control"
@@ -167,13 +167,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <img id="imgLupaPrincipal" onclick="objLupaPrincipal.selecionar(700,500);"
                                  onkeypress="objLupaPrincipal.selecionar(700,500);"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                                 alt="Selecionar Extensıes" title="Selecionar Extensıes" class="infraImg"
+                                 alt="Selecionar Extens√µes" title="Selecionar Extens√µes" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();"
                                  onkeypress="objLupaPrincipal.remover();"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                                 alt="Remover Extensıes Selecionadas"
-                                 title="Remover Extensıes Selecionadas" class="infraImg"
+                                 alt="Remover Extens√µes Selecionadas"
+                                 title="Remover Extens√µes Selecionadas" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
                     </div>
@@ -185,7 +185,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblComplementar" for="txtComplementar" class="infraLabelObrigatorio">Demais Documentos:
                         <img id="imgAjudaTxtComplementar"
                              src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
-                             onmouseover="return infraTooltipMostrar('Define as Extensıes de Arquivos Permitidas no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a IntimaÁ„o e no Peticionamento de Respons·vel Legal de Pessoa JurÌdica', 'Ajuda');"
+                             onmouseover="return infraTooltipMostrar('Define as Extens√µes de Arquivos Permitidas no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intima√ß√£o e no Peticionamento de Respons√°vel Legal de Pessoa Jur√≠dica', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                     </label>
                     <input type="text" id="txtComplementar" name="txtComplementar" class="infraText form-control"
@@ -205,12 +205,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <img id="imgLupaComplementar" onclick="objLupaComplementar.selecionar(700,500);"
                                  onkeypress="objLupaComplementar.selecionar(700,500);"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                                 alt="Selecionar Extensıes" title="Selecionar Extensıes" class="infraImg"
+                                 alt="Selecionar Extens√µes" title="Selecionar Extens√µes" class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             <img id="imgExcluirComplementar" onclick="objLupaComplementar.remover();"
                                  onkeypress="objLupaComplementar.remover();"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                                 alt="Remover Extensıes Selecionadas" title="Remover Extensıes Selecionadas"
+                                 alt="Remover Extens√µes Selecionadas" title="Remover Extens√µes Selecionadas"
                                  class="infraImg"
                                  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>

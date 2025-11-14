@@ -23,7 +23,7 @@ try {
   //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
 
-    //Orientações Tipo de Destinatário
+    //OrientaÃ§Ãµes Tipo de DestinatÃ¡rio
     $objMdPetIntOrientacoesDTO2 = new MdPetIntOrientacoesDTO();
     $objMdPetIntOrientacoesDTO2->setNumIdIntOrientTpDest(MdPetIntOrientacoesRN::$ID_FIXO_INT_ORIENTACOES);
     $objMdPetIntOrientacoesDTO2->retTodos();

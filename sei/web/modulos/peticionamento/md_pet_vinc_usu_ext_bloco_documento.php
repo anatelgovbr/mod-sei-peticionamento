@@ -8,16 +8,16 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
 ?>
 <fieldset id="fieldDocumentos"
           class="infraFieldset form-control sizeFieldset" <?php echo !$stAlterar ? 'style="display: none; width: auto;"' : 'style="width: auto;"' ?>>
-    <legend class="infraLegend">&nbsp; <?php echo $stAlterar ? 'AtualizaÁ„o de ' : null ?>Atos Constitutivos&nbsp;
+    <legend class="infraLegend">&nbsp; <?php echo $stAlterar ? 'Atualiza√ß√£o de ' : null ?>Atos Constitutivos&nbsp;
     </legend>
     <form method="post" id="frmDocumentoAto" enctype="multipart/form-data" action="<?= $strLinkUploadArquivo ?>">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <label class="d-block my-3">
                     Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade
-                    entre os dados informados e os documentos. Os NÌveis de Acesso que forem indicados abaixo estar„o
-                    condicionados ‡ an·lise por servidor p˙blico, que poder· alter·-los a qualquer momento sem
-                    necessidade de prÈvio aviso.
+                    entre os dados informados e os documentos. Os N√≠veis de Acesso que forem indicados abaixo estar√£o
+                    condicionados √† an√°lise por servidor p√∫blico, que poder√° alter√°-los a qualquer momento sem
+                    necessidade de pr√©vio aviso.
                 </label>
             </div>
         </div>
@@ -25,7 +25,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
             <div class="col-12">
                 <div id="divArquivo" class="form-group infraAreaDados mb-4">
                     <label class="infraLabelObrigatorio" for="fileArquivo">
-                        Documento (tamanho m·ximo: <?php echo is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):
+                        Documento (tamanho m√°ximo: <?php echo is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):
                     </label><br>
                     <input type="file" name="fileArquivo" id="fileArquivo" <?php echo $disabledConsultar ?> tabindex="<?php echo PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 </div>
@@ -60,7 +60,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selNivelAcesso">
-                        NÌvel de Acesso:
+                        N√≠vel de Acesso:
                         <img src="<?php echo PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?> alt="Ajuda" class="infraImg"/>
                     </label>
                     <div id="divNivelAcesso"></div>
@@ -122,7 +122,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
             <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
                 <div class="form-group">
                     <div id="divTipoConferencia" style="display: none;">
-                        <label class="infraLabelObrigatorio" for="selTipoConferencia">ConferÍncia com o documento digitalizado:</label><br/>
+                        <label class="infraLabelObrigatorio" for="selTipoConferencia">Confer√™ncia com o documento digitalizado:</label><br/>
                         <div class="input-group">
                             <select id="selTipoConferencia" name="selTipoConferencia" class="infraSelect form-control mr-1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                                 <?= $strSelectTipoConferencia ?>
@@ -164,9 +164,9 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
                             <th class="infraTh" align="center" width="15%">Data</th> <!--10-->
                             <th class="infraTh" align="center" width="10%">Tamanho</th> <!--11-->
                             <th class="infraTh" align="center" width="25%">Documento</th> <!--12-->
-                            <th class="infraTh" align="center" width="10%">NÌvel de Acesso</th> <!--13-->
+                            <th class="infraTh" align="center" width="10%">N√≠vel de Acesso</th> <!--13-->
                             <th class="infraTh" align="center" width="10%">Formato</th> <!--14-->
-                            <th class="infraTh" align="center" width="5%">AÁıes</th> <!--15-->
+                            <th class="infraTh" align="center" width="5%">A√ß√µes</th> <!--15-->
                         </tr>
                         <?php
 

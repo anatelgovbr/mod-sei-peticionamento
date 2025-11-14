@@ -28,19 +28,19 @@ class MdPetAssinaturaRN extends AssinaturaRN {
 	
 	private function validarDblIdDocumentoRN1311(AssinaturaDTO $objAssinaturaDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAssinaturaDTO->getDblIdDocumento())){
-			$objInfraException->adicionarValidacao('Documento não informado.');
+			$objInfraException->adicionarValidacao('Documento nÃ£o informado.');
 		}
 	}
 
 	private function validarNumIdUsuarioRN1312(AssinaturaDTO $objAssinaturaDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAssinaturaDTO->getNumIdUsuario())){
-			$objInfraException->adicionarValidacao('Usuário não informado.');
+			$objInfraException->adicionarValidacao('UsuÃ¡rio nÃ£o informado.');
 		}
 	}
 
 	private function validarNumIdUnidadeRN1313(AssinaturaDTO $objAssinaturaDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAssinaturaDTO->getNumIdUnidade())){
-			$objInfraException->adicionarValidacao('Unidade não informada.');
+			$objInfraException->adicionarValidacao('Unidade nÃ£o informada.');
 		}
 	}
 
@@ -52,7 +52,7 @@ class MdPetAssinaturaRN extends AssinaturaRN {
 
 	private function validarStrNomeRN1314(AssinaturaDTO $objAssinaturaDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAssinaturaDTO->getStrNome())){
-			$objInfraException->adicionarValidacao('Nome não informado.');
+			$objInfraException->adicionarValidacao('Nome nÃ£o informado.');
 		}else{
 			$objAssinaturaDTO->setStrNome(trim($objAssinaturaDTO->getStrNome()));
 
@@ -64,7 +64,7 @@ class MdPetAssinaturaRN extends AssinaturaRN {
 
 	private function validarStrTratamentoRN1315(AssinaturaDTO $objAssinaturaDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAssinaturaDTO->getStrTratamento())){
-			$objInfraException->adicionarValidacao('Tratamento não informado.');
+			$objInfraException->adicionarValidacao('Tratamento nÃ£o informado.');
 		}else{
 			$objAssinaturaDTO->setStrTratamento(trim($objAssinaturaDTO->getStrTratamento()));
 
@@ -82,10 +82,10 @@ class MdPetAssinaturaRN extends AssinaturaRN {
 
 	private function validarStrStaFormaAutenticacao(AssinaturaDTO $objAssinaturaDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAssinaturaDTO->getStrStaFormaAutenticacao())){
-			$objInfraException->adicionarValidacao('Forma de Autenticação não informada.');
+			$objInfraException->adicionarValidacao('Forma de AutenticaÃ§Ã£o nÃ£o informada.');
 		}else{
 			if ($objAssinaturaDTO->getStrStaFormaAutenticacao()!=self::$TA_CERTIFICADO_DIGITAL && $objAssinaturaDTO->getStrStaFormaAutenticacao()!=self::$TA_SENHA){
-				$objInfraException->adicionarValidacao('Forma de Autenticação inválida.');
+				$objInfraException->adicionarValidacao('Forma de AutenticaÃ§Ã£o invÃ¡lida.');
 			}
 		}
 	}
@@ -98,10 +98,10 @@ class MdPetAssinaturaRN extends AssinaturaRN {
 
 	private function validarStrSinAtivo(AssinaturaDTO $objAssinaturaDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAssinaturaDTO->getStrSinAtivo())){
-			$objInfraException->adicionarValidacao('Sinalizador de Exclusão Lógica não informado.');
+			$objInfraException->adicionarValidacao('Sinalizador de ExclusÃ£o LÃ³gica nÃ£o informado.');
 		}else{
 			if (!InfraUtil::isBolSinalizadorValido($objAssinaturaDTO->getStrSinAtivo())){
-				$objInfraException->adicionarValidacao('Sinalizador de Exclusão Lógica inválido.');
+				$objInfraException->adicionarValidacao('Sinalizador de ExclusÃ£o LÃ³gica invÃ¡lido.');
 			}
 		}
 	}
@@ -143,7 +143,7 @@ class MdPetAssinaturaRN extends AssinaturaRN {
 				foreach ($arrObjAssinaturaDTO as $objAssinaturaDTO) {
 
 					if (!isset($arrObjTarjaAssinaturaDTO[$objAssinaturaDTO->getNumIdTarjaAssinatura()])) {
-						throw new InfraException('Tarja associada com a assinatura "' . $objAssinaturaDTO->getNumIdAssinatura() . '" não encontrada.');
+						throw new InfraException('Tarja associada com a assinatura "' . $objAssinaturaDTO->getNumIdAssinatura() . '" nÃ£o encontrada.');
 					}
 
 					$objTarjaAutenticacaoDTOAplicavel = $arrObjTarjaAssinaturaDTO[$objAssinaturaDTO->getNumIdTarjaAssinatura()];
@@ -158,7 +158,7 @@ class MdPetAssinaturaRN extends AssinaturaRN {
 					$strTarja = preg_replace("/@crc_assinatura@/s", $objDocumentoDTO->getStrCrcAssinatura(), $strTarja);
 					$strTarja = preg_replace("/@numero_serie_certificado_digital@/s", $objAssinaturaDTO->getStrNumeroSerieCertificado(), $strTarja);
 					
-					$strTarja = preg_replace("/@tipo_conferencia@/s", "do próprio documento nato-digital", $strTarja);
+					$strTarja = preg_replace("/@tipo_conferencia@/s", "do prÃ³prio documento nato-digital", $strTarja);
 					
 					$strRet .= $strTarja;
 				}

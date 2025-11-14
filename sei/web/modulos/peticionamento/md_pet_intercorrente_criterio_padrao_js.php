@@ -47,7 +47,7 @@
     }
 
     function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
+        //Ajax para carregar os niveis de acesso apÃ³s a escolha do tipo de processo
         objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?=$strLinkAjaxNivelAcesso?>');
         objAjaxIdNivelAcesso.prepararExecucao = function () {
             document.getElementById('selNivelAcesso').innerHTML = '';
@@ -160,7 +160,7 @@
             return false;
         }
 
-        //Validar Nível Acesso
+        //Validar NÃ­vel Acesso
         var elemsNA = document.getElementsByName("rdNivelAcesso[]");
 
         var validoNA = false, valorNA = 0;
@@ -173,19 +173,19 @@
         }
 
         if (validoNA === false) {
-            alert('Informe o Nível de Acesso.');
+            alert('Informe o NÃ­vel de Acesso.');
             return false;
         }
 
         if (infraTrim(document.getElementById('selNivelAcesso').value) == '' && valorNA != 1) {
-            alert('Informe o Nível de Acesso.');
+            alert('Informe o NÃ­vel de Acesso.');
             document.getElementById('selNivelAcesso').focus();
             return false;
         } else if (document.getElementById('selNivelAcesso').value == 'I' && valorHipoteseLegal != '0') {
 
             //validar hipotese legal
             if (document.getElementById('selHipoteseLegal').value == '') {
-                alert('Informe a Hipótese legal padrão.');
+                alert('Informe a HipÃ³tese legal padrÃ£o.');
                 document.getElementById('selHipoteseLegal').focus();
                 return false;
             }
@@ -201,7 +201,7 @@
         }
 
         if (validoSA === false) {
-            alert('Indique a opção para exibição ou não do menu Peticionamento Intercorrente.');
+            alert('Indique a opÃ§Ã£o para exibiÃ§Ã£o ou nÃ£o do menu Peticionamento Intercorrente.');
             return false;
         }
 
@@ -223,7 +223,7 @@
         }
 
         if( nivelAcesso == '' && optionsTipoDocumento.length > 0 ){
-            alert('Selecione um Nível de Acesso.');
+            alert('Selecione um NÃ­vel de Acesso.');
             document.getElementById('staNivelAcesso').focus();
             return false;
         }

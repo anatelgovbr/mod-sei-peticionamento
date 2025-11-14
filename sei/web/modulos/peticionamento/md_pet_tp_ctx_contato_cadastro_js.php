@@ -24,7 +24,7 @@
 
                 for (var i = 0; i < options.length; i++) {
                     if (options[i].value == id) {
-                        self.setTimeout('alert(\'Tipo de Interessado já consta na lista.\')', 100);
+                        self.setTimeout('alert(\'Tipo de Interessado jÃ¡ consta na lista.\')', 100);
                         break;
                     }
                 }
@@ -62,7 +62,7 @@
 
                 for (var i = 0; i < options.length; i++) {
                     if (options[i].value == id) {
-                        self.setTimeout('alert(\'Tipo de Interessado já consta na lista.\')', 100);
+                        self.setTimeout('alert(\'Tipo de Interessado jÃ¡ consta na lista.\')', 100);
                         break;
                     }
                 }
@@ -99,7 +99,7 @@
             alert('Informe pelo menos um Tipo de Contato Permitido para Cadastro de Interessado.');
             return false;
         } else if (infraTrim(document.getElementById('hdnPrincipal2').value) == '') {
-            alert('Informe pelo menos um Tipo de Contato Permitido para Seleção de Interessado.');
+            alert('Informe pelo menos um Tipo de Contato Permitido para SeleÃ§Ã£o de Interessado.');
             return false;
         }
 

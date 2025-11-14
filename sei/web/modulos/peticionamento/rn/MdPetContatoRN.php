@@ -11,7 +11,7 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 class MdPetContatoRN extends InfraRN {
 	
 	public static $STR_CONTATO_SISTEMA      = 'Sistemas';
-	public static $STR_NOME_CONTATO_MODULO  = 'Usu·rio Autom·tico do Sistema: MÛdulo de Peticionamento e IntimaÁ„o EletrÙnicos';
+	public static $STR_NOME_CONTATO_MODULO  = 'Usu√°rio Autom√°tico do Sistema: M√≥dulo de Peticionamento e Intima√ß√£o Eletr√¥nicos';
 	
 	public static $STR_SIGLA_CONTATO_MODULO = 'Usuario_Peticionamento';
 	public static $STR_INFRA_PARAMETRO_SIGLA_CONTATO = 'MODULO_PETICIONAMENTO_ID_USUARIO_SISTEMA';
@@ -98,27 +98,27 @@ class MdPetContatoRN extends InfraRN {
 			if ($objContatoDTO->isSetDtaNascimentoInicio() || $objContatoDTO->isSetDtaNascimentoFim()){
 				
 				if (!$objContatoDTO->isSetDtaNascimentoInicio() || InfraString::isBolVazia($objContatoDTO->getDtaNascimentoInicio())){
-					$objInfraException->lancarValidacao('Data inicial do perÌodo de nascimento n„o informada.');
+					$objInfraException->lancarValidacao('Data inicial do per√≠odo de nascimento n√£o informada.');
 				}
 				
 				if (!$objContatoDTO->isSetDtaNascimentoFim() || InfraString::isBolVazia($objContatoDTO->getDtaNascimentoFim())){
-					$objInfraException->lancarValidacao('Data final do perÌodo de nascimento n„o informada.');
+					$objInfraException->lancarValidacao('Data final do per√≠odo de nascimento n√£o informada.');
 				}
 				
 				$strAnoAtual = Date("Y");
 				$strDataInicio = $objContatoDTO->getDtaNascimentoInicio().'/'.$strAnoAtual;
 				
 				if (!InfraData::validarData($strDataInicio)){
-					$objInfraException->lancarValidacao('Data inicial do perÌodo de nascimento inv·lida.');
+					$objInfraException->lancarValidacao('Data inicial do per√≠odo de nascimento inv√°lida.');
 				}
 				
 				$strDataFim = $objContatoDTO->getDtaNascimentoFim().'/'.$strAnoAtual;
 				if (!InfraData::validarData($strDataFim)){
-					$objInfraException->lancarValidacao('Data final do perÌodo de nascimento inv·lida.');
+					$objInfraException->lancarValidacao('Data final do per√≠odo de nascimento inv√°lida.');
 				}
 				
 				if (InfraData::compararDatas($strDataInicio,$strDataFim)<0){
-					$objInfraException->lancarValidacao('PerÌodo de datas de nascimento inv·lido.');
+					$objInfraException->lancarValidacao('Per√≠odo de datas de nascimento inv√°lido.');
 				}
 				
 				$objContatoDTO->setDtaNascimento(null,InfraDTO::$OPER_DIFERENTE);
@@ -134,7 +134,7 @@ class MdPetContatoRN extends InfraRN {
 				foreach($arr as $dto){
 					$strAno = substr($dto->getDtaNascimento(),6,4);
 					if (!in_array($strAno,$arrCriterios)){
-						//Adiciona critÈrio com o nome igual ao do ano
+						//Adiciona crit√©rio com o nome igual ao do ano
 						
 						$strDataIni = $objContatoDTO->getDtaNascimentoInicio().'/'.$strAno;
 						$strDataFim = $objContatoDTO->getDtaNascimentoFim().'/'.$strAno;
@@ -143,14 +143,14 @@ class MdPetContatoRN extends InfraRN {
 							if (substr($strDataIni,0,5)=='29/02'){
 								$strDataIni = '01/03/'.$strAno;
 							}else{
-								throw new InfraException('Data inicial inv·lida.');
+								throw new InfraException('Data inicial inv√°lida.');
 							}
 						}
 						if (!InfraData::validarData($strDataFim)){
 							if (substr($strDataFim,0,5)=='29/02'){
 								$strDataFim = '28/02/'.$strAno;
 							}else{
-								throw new InfraException('Data final inv·lida.');
+								throw new InfraException('Data final inv√°lida.');
 							}
 						}
 						
@@ -352,7 +352,7 @@ class MdPetContatoRN extends InfraRN {
 	}
 
 	/**
-	 * Essa funÁ„o È para filtrar pelos tipos de contatos 'pais' que possuem o tipo especifico.
+	 * Essa fun√ß√£o √© para filtrar pelos tipos de contatos 'pais' que possuem o tipo especifico.
 	 */
 	private function _formatarArrControleIdContTipo($arrControle, $arrObjDTOContato)
 	{
@@ -365,8 +365,8 @@ class MdPetContatoRN extends InfraRN {
 		return $retorno;
 	}
 
-	/** CondiÁıes mapeadas dessa forma pois mapeamento atual do core impede que seja implementado de outras formas
-     *  Sql adaptado para forma menos custoza disponÌvel com o modelo atual
+	/** Condi√ß√µes mapeadas dessa forma pois mapeamento atual do core impede que seja implementado de outras formas
+     *  Sql adaptado para forma menos custoza dispon√≠vel com o modelo atual
 	 */
 	protected function getContatoInclusoModPetConectado($cnpj){
 
@@ -398,7 +398,7 @@ class MdPetContatoRN extends InfraRN {
 
 		if($countContatosInicio > 0)
 		{
-			//Get ids usu·rios que cadastraram esses Usuarios
+			//Get ids usu√°rios que cadastraram esses Usuarios
 			$arrContatoDTO = $objContatoRN->listarRN0325($objContatoDTO);
 
 			$arrControle   = $this->_formatarArrControle($arrContatoDTO);
@@ -474,7 +474,7 @@ class MdPetContatoRN extends InfraRN {
 
 		if (!InfraUtil::validarCnpj($cnpj)) {
 			$xml .= "<success>false</success>\n";
-			$xml .= "<msg>CNPJ informado È inv·lido.</msg>\n";
+			$xml .= "<msg>CNPJ informado √© inv√°lido.</msg>\n";
 			$xml .= '</dados-pj>';
 			return $xml;
 		}
@@ -547,7 +547,7 @@ class MdPetContatoRN extends InfraRN {
 
 		if($numRegistros>0){
 			$objInfraException = new InfraException();
-			$objInfraException->lancarValidacao("N„o È permitido ".$acao." este contato, pois ele esta sendo usado no mÛdulo de Peticionamento e IntimaÁ„o EletrÙnicos.");
+			$objInfraException->lancarValidacao("N√£o √© permitido ".$acao." este contato, pois ele esta sendo usado no m√≥dulo de Peticionamento e Intima√ß√£o Eletr√¥nicos.");
 		}
 		return true;
 	}

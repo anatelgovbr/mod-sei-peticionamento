@@ -46,7 +46,7 @@
                 if (options != null) {
                     for (var i = 0; i < options.length; i++) {
                         if (options[i].value == id) {
-                            alert('Tipo de Documento já consta na lista.');
+                            alert('Tipo de Documento jÃ¡ consta na lista.');
                             break;
                         }
                     }

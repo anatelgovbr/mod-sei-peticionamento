@@ -22,7 +22,7 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_pet_orientacoes_tipo_destinatario':
-            $strTitulo = "Orientações Tipo de Destinatário";
+            $strTitulo = "OrientaÃ§Ãµes Tipo de DestinatÃ¡rio";
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarOrientacoesPetIndisp" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -76,7 +76,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
             break;
 
     }
@@ -109,11 +109,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo);
         ?>
         <div class="row">
             <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                <label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">Conteúdo:
+                <label id="lblConteudo" for="txaConteudo" accesskey="" class="infraLabelObrigatorio">ConteÃºdo:
                     <img align="top" style="height:20px; width:20px;" id="imgAjuda"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                          name="ajuda"
-                         onmouseover="return infraTooltipMostrar('As orientações descritas abaixo serão exibidas na tela Gerar Intimação Eletrônica para os Usuários internos.', 'Ajuda');"
+                         onmouseover="return infraTooltipMostrar('As orientaÃ§Ãµes descritas abaixo serÃ£o exibidas na tela Gerar IntimaÃ§Ã£o EletrÃ´nica para os UsuÃ¡rios internos.', 'Ajuda');"
                          onmouseout="return infraTooltipOcultar();" alt="Ajuda" class="infraImg">
                 </label><br/>
                 <textarea id="txaConteudo" name="txaConteudo" rows="10" class="infraTextarea"

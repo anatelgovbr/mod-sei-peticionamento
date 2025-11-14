@@ -23,7 +23,7 @@ try {
     $strLinkTipoProcessoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=tipo_procedimento_selecionar&tipo_selecao=1&id_object=objLupaTipoProcesso');
     $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_intercorrente_tipo_processo_auto_completar');
 
-    //Preparar Preenchimento AlteraÁ„o
+    //Preparar Preenchimento Altera√ß√£o
     $idMdPetTipoProcesso = '';
     $nomeTipoProcesso = '';
     $idTipoProcesso = '';
@@ -59,12 +59,12 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_pet_intercorrente_criterio_padrao':
-            $strTitulo = 'Intercorrente Padr„o';
+            $strTitulo = 'Intercorrente Padr√£o';
 
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarTpProcessoPeticionamento" id="sbmCadastrarTpProcessoPeticionamento" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
-            // cadastrando o critÈrio intercorrente
+            // cadastrando o crit√©rio intercorrente
             if (isset($_POST['sbmCadastrarTpProcessoPeticionamento'])) {
                 $objMdPetCriterioDTO = new MdPetCriterioDTO();
                 $objMdPetCriterioDTO->setNumIdTipoProcedimento($_POST['hdnIdTipoProcesso']);
@@ -115,7 +115,7 @@ try {
                     $nivelAcessoTemplate = '<option value="%s" %s>%s</option>';
                     $arrNivelAcesso = array(
                         '' => '',
-                        'P' => 'P˙blico',
+                        'P' => 'P√∫blico',
                         'I' => 'Restrito'
                     );
                     $strTipoProcesso = sprintf($nivelAcessoTemplate, $idTipoProcesso, 'selected="selected"', $nomeTipoProcesso);
@@ -129,7 +129,7 @@ try {
             }
             break;
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecidas.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecidas.");
     }
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
@@ -182,7 +182,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 title="Remover Tipo de Processo"
                                 class="infraImginfraImgModulo"/>
                             <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                onmouseover="return infraTooltipMostrar('Apenas apÛs a parametrizaÁ„o do Intercorrente Padr„o È que os Usu·rios Externos passar„o a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usu·rio Externo ocorrer· quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrizaÁ„o de CritÈrio para Intercorrente; 2) Processo Sobrestado; 3) Processo Bloqueado; ou 4) Quando for processo Sigiloso e tiver marcada a opÁ„o &ldquo;N„o permitir Peticionamento Intercorrente Direto no Processo Indicado&rdquo;  nesta tela de AdministraÁ„o. \n \n - Somente no cen·rio do item 1 acima a forma de indicaÁ„o de NÌvel de Acesso dos Documentos pelo Usu·rio Externo ser· a parametrizada para Intercorrente Padr„o. \n - Em todos os cen·rios indicados acima somente ocorrer· a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padr„o quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrer· o peticionamento n„o tiver permiss„o de uso do Tipo de Processo do processo indicado.', 'Ajuda');"
+                                onmouseover="return infraTooltipMostrar('Apenas ap√≥s a parametriza√ß√£o do Intercorrente Padr√£o √© que os Usu√°rios Externos passar√£o a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usu√°rio Externo ocorrer√° quando o processo indicado corresponder a: 1) Tipo de Processo sem parametriza√ß√£o de Crit√©rio para Intercorrente; 2) Processo Sobrestado; 3) Processo Bloqueado; ou 4) Quando for processo Sigiloso e tiver marcada a op√ß√£o &ldquo;N√£o permitir Peticionamento Intercorrente Direto no Processo Indicado&rdquo;  nesta tela de Administra√ß√£o. \n \n - Somente no cen√°rio do item 1 acima a forma de indica√ß√£o de N√≠vel de Acesso dos Documentos pelo Usu√°rio Externo ser√° a parametrizada para Intercorrente Padr√£o. \n - Em todos os cen√°rios indicados acima somente ocorrer√° a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padr√£o quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrer√° o peticionamento n√£o tiver permiss√£o de uso do Tipo de Processo do processo indicado.', 'Ajuda');"
                                 onmouseout="return infraTooltipOcultar();"
                                 alt="Ajuda" class="infraImgModulo"/>
                         </div>
@@ -198,22 +198,22 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="row mb-3">
                 <div class="col-12">
                     <fieldset class="infraFieldset form-control">
-                        <legend class="infraLegend">NÌvel de Acesso dos Documentos</legend>
+                        <legend class="infraLegend">N√≠vel de Acesso dos Documentos</legend>
                             <div class="form-group mb-0">
                                 <div class="infraDivRadio mt-2">
                                     <input <?= $sinNAUsuExt ?> type="radio" name="rdNivelAcesso[]" id="rdUsuExternoIndicarEntrePermitidos" onclick="changeNivelAcesso();" value="1" class="infraRadio">
-                                    <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usu·rio Externo indicar diretamente</label>
+                                    <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno" class="infraLabelRadio">Usu√°rio Externo indicar diretamente</label>
                                 </div>
                                 <div class="infraDivRadio">
                                     <input <?= $sinNAPadrao ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"onclick="changeNivelAcesso();" value="2" class="infraRadio">
-                                    <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padr„o prÈ-definido</label>
+                                    <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padr√£o pr√©-definido</label>
                                 </div>
                             </div>
 
                         <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: flex;"' : 'style="display: none;"' ?>>
                             <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
                                 <div class="form-group mb-0">
-                                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">NÌvel de Acesso: </label><br/>
+                                    <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso" class="infraLabelObrigatorio">N√≠vel de Acesso: </label><br/>
                                     <select id="selNivelAcesso" name="selNivelAcesso" onchange="changeSelectNivelAcesso()" class="infraSelect form-control">
                                         <?= $strItensSelNivelAcesso ?>
                                     </select>
@@ -221,7 +221,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9" id="divHipoteseLegal" <?php echo $hipoteseLegal ?>>
                                 <div class="form-group">
-                                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal" class="infraLabelObrigatorio">HipÛtese Legal:</label>
+                                    <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal" class="infraLabelObrigatorio">Hip√≥tese Legal:</label>
                                     <select id="selHipoteseLegal" name="selHipoteseLegal" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                         <?= $strItensSelHipoteseLegal ?>
                                     </select>
@@ -238,7 +238,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <img id="imgAjuda2"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
                                  name="ajuda"
-                                 onmouseover="return infraTooltipMostrar('OpÁ„o para tornar visÌvel ou n„o o menu de Peticionamento > Intercorrente para os Usu·rios Externos no Acesso Externo do SEI.', 'Ajuda');"
+                                 onmouseover="return infraTooltipMostrar('Op√ß√£o para tornar vis√≠vel ou n√£o o menu de Peticionamento > Intercorrente para os Usu√°rios Externos no Acesso Externo do SEI.', 'Ajuda');"
                                  onmouseout="return infraTooltipOcultar();"
                                  class="infraImg"/>
                         </legend>
@@ -249,7 +249,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             </div>
                             <div class="infraDivRadio">
                                 <input <?php echo $sinAtivoNao; ?> type="radio" name="rdSinAtivo[]" id="rdSinAtivoNao" value="N" class="infraRadio">
-                                <label name="rdSinAtivoNao" id="lblSinAtivoNao" for="rdSinAtivoNao" class="infraLabelRadio">N„o Exibir no Acesso Externo</label>
+                                <label name="rdSinAtivoNao" id="lblSinAtivoNao" for="rdSinAtivoNao" class="infraLabelRadio">N√£o Exibir no Acesso Externo</label>
                             </div>
                         </div>
                     </fieldset>
@@ -259,22 +259,22 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="row mb-3">
                 <div class="col-12">
                     <fieldset class="infraFieldset form-control">
-                        <legend class="infraLegend">Peticionamento Intercorrente em Processos com NÌvel de Acesso Sigiloso</legend>
+                        <legend class="infraLegend">Peticionamento Intercorrente em Processos com N√≠vel de Acesso Sigiloso</legend>
                         <div class="form-group">
                             <div class="infraDivRadio">
                                 <input <?php echo $sinIntercorrenteSigilosoSim; ?> type="radio" name="rdSinPeticionarProcessoSigiloso[]" id="rdSinIntercorrenteSigilosoSim" value="S" class="infraRadio">
                                 <label for="rdSinIntercorrenteSigilosoSim" id="lblSinIntercorrenteSigilosoSim" class="infraLabelRadio">Permitir Peticionamento Intercorrente Direto no Processo Indicado</label>
                                 <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     onmouseover="return infraTooltipMostrar('Selecione esta opÁ„o para permitir que o Usu·rio Externo realize o Peticionamento Intercorrente diretamente no Processo Indicado, mesmo que este tenha o NÌvel de Acesso Sigiloso (padr„o).', 'Ajuda');"
+                                     onmouseover="return infraTooltipMostrar('Selecione esta op√ß√£o para permitir que o Usu√°rio Externo realize o Peticionamento Intercorrente diretamente no Processo Indicado, mesmo que este tenha o N√≠vel de Acesso Sigiloso (padr√£o).', 'Ajuda');"
                                      onmouseout="return infraTooltipOcultar();"
                                      alt="Ajuda" class="infraImgModulo ml-1"/>
                             </div>
 
                             <div class="infraDivRadio">
                                 <input <?php echo $sinIntercorrenteSigilosoNao; ?> type="radio" name="rdSinPeticionarProcessoSigiloso[]" id="rdSinIntercorrenteSigilosoNao" value="N" class="infraRadio">
-                                <label name="rdSinIntercorrenteSigilosoNao" id="lblSinIntercorrenteSigilosoNao" for="rdSinIntercorrenteSigilosoNao" class="infraLabelRadio">N„o permitir Peticionamento Intercorrente Direto no Processo Indicado</label>
+                                <label name="rdSinIntercorrenteSigilosoNao" id="lblSinIntercorrenteSigilosoNao" for="rdSinIntercorrenteSigilosoNao" class="infraLabelRadio">N√£o permitir Peticionamento Intercorrente Direto no Processo Indicado</label>
                                 <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     onmouseover="return infraTooltipMostrar('Selecione esta opÁ„o para n„o permitir que o Usu·rio Externo realize o Peticionamento Intercorrente diretamente no Processo Indicado quando este tenha o NÌvel de Acesso Sigiloso, forÁando a abertura de Processo Novo Relacionado ao ao Processo Indicado.', 'Ajuda');"
+                                     onmouseover="return infraTooltipMostrar('Selecione esta op√ß√£o para n√£o permitir que o Usu√°rio Externo realize o Peticionamento Intercorrente diretamente no Processo Indicado quando este tenha o N√≠vel de Acesso Sigiloso, for√ßando a abertura de Processo Novo Relacionado ao ao Processo Indicado.', 'Ajuda');"
                                      onmouseout="return infraTooltipOcultar();"
                                      alt="Ajuda" class="infraImgModulo ml-1"/>
                             </div>

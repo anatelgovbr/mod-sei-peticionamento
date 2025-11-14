@@ -29,7 +29,7 @@ try {
             array_push($arrContatosPrincipais, $arrPrincipal);
         }
 
-        // São permitidos Contatos de sistema para Seleção
+        // SÃ£o permitidos Contatos de sistema para SeleÃ§Ã£o
         if (isset($_POST['hdnPrincipal2']) && $_POST['hdnPrincipal2'] != "") {
             $arrPrincipal2 = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal2']);
             $arrPrincipal2['cadastro'] = 'N';
@@ -144,7 +144,7 @@ require_once('md_pet_tp_ctx_contato_cadastro_inicializacao.php');
                   <label id="lblPrincipal" for="txtPrincipal" class="infraLabelObrigatorio">Cadastro de Interessado:
                       <img align="top"
                            src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                           onmouseover="return infraTooltipMostrar('Nos casos em que o Usuário Externo tiver que cadastrar Contato, o campo de Tipo apresentado para ele será restringido aos Tipos de Contatos indicados aqui.', 'Ajuda');"
+                           onmouseover="return infraTooltipMostrar('Nos casos em que o UsuÃ¡rio Externo tiver que cadastrar Contato, o campo de Tipo apresentado para ele serÃ¡ restringido aos Tipos de Contatos indicados aqui.', 'Ajuda');"
                            onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                   </label>
 
@@ -179,10 +179,10 @@ require_once('md_pet_tp_ctx_contato_cadastro_inicializacao.php');
           <div class="row">
               <div id="divLblPrincipal2" class="col-sm-6 col-md-7 col-lg-6 col-xl-4">
                   <!--  //////////////////////////////////// CAMPO 2 //////////////////////////////////// -->
-                  <label id="lblPrincipal2" for="txtPrincipal2" class="infraLabelObrigatorio">Seleção de Interessado:
+                  <label id="lblPrincipal2" for="txtPrincipal2" class="infraLabelObrigatorio">SeleÃ§Ã£o de Interessado:
                       <img align="top"
                            src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                           onmouseover="return infraTooltipMostrar('Nos casos em que o Usuário Externo tiver que selecionar Contato, os Contatos disponíveis para ele selecionar estarão restringidos aos Tipos de Contatos indicados aqui.', 'Ajuda');"
+                           onmouseover="return infraTooltipMostrar('Nos casos em que o UsuÃ¡rio Externo tiver que selecionar Contato, os Contatos disponÃ­veis para ele selecionar estarÃ£o restringidos aos Tipos de Contatos indicados aqui.', 'Ajuda');"
                            onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                   </label>
 

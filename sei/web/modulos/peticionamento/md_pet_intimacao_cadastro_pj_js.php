@@ -43,7 +43,7 @@
                     infraOcultarAviso();
 
                     if ($(r).find('Quantidade').text() >= 1 && $(r).find('Cadastro').text() > 0) {
-                        alert("A Pessoa JurÌdica selecionada j· foi intimada a partir deste documento principal. \n\nPara verificar a lista de destinat·rios que j· receberam o documento principal, consulte \"Ver intimaÁıes do processo\".");
+                        alert("A Pessoa Jur√≠dica selecionada j√° foi intimada a partir deste documento principal. \n\nPara verificar a lista de destinat√°rios que j√° receberam o documento principal, consulte \"Ver intima√ß√µes do processo\".");
                         document.getElementById('hdnIdDadosUsuario2').value = '';
                         document.getElementById('txtUsuario2').value = '';
                         return;
@@ -96,7 +96,7 @@
         for(var i=0;i < itens.length;i++){
             for(var j=0;j < arrInteressadosNegados.length; j++){
                 if (itens[i].value == arrInteressadosNegados[j].id_contato) {
-                    alert('Interessado \"' + itens[i].text + '\" n„o pode ser removido porque foi adicionado pela unidade ' + arrInteressadosNegados[j].sigla_unidade + '.');
+                    alert('Interessado \"' + itens[i].text + '\" n√£o pode ser removido porque foi adicionado pela unidade ' + arrInteressadosNegados[j].sigla_unidade + '.');
                     return false;
                 }
             }

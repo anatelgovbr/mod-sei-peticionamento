@@ -6,7 +6,7 @@
 
     function onSubmitForm() {
         if (infraTrim(CKEDITOR.instances['txaConteudo'].getData()) == '') {
-            alert('Informe o Conteúdo.');
+            alert('Informe o ConteÃºdo.');
             document.getElementById('txaConteudo').focus();
             return false;
         }

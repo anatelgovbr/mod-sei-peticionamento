@@ -22,7 +22,7 @@ try {
   //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
   
-    //Orientações
+    //OrientaÃ§Ãµes
     $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
     $objMdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
 

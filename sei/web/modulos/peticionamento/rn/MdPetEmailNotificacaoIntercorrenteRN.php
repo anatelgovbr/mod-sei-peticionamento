@@ -54,7 +54,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
         $objEmailUnidadeDTO->setDistinct(true);
         $objEmailUnidadeDTO->retNumIdUnidade();
         $objEmailUnidadeDTO->retStrEmail();
-        // Se Direto no Processo Indicado, n„o sÛ unidade geradoras, mas todas abertas
+        // Se Direto no Processo Indicado, n√£o s√≥ unidade geradoras, mas todas abertas
         if ($arrParametros['diretoProcessoIndicado']){
 			$objMdPetIntercorrenteProcessoRN = new MdPetIntercorrenteProcessoRN(); 
 			$arrObjAtividadeDTO = $objMdPetIntercorrenteProcessoRN->retornaUnidadesProcessoAberto( $arrParametros['id_procedimento'] );
@@ -65,7 +65,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 				array(InfraDTO::$OPER_IN),
 				array( $arrUnidade )
 			);
-		//pegar a lista de email da unidade, a unidade pode n„o ter, email unidade
+		//pegar a lista de email da unidade, a unidade pode n√£o ter, email unidade
 		}else{
 			$objEmailUnidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
 		}
@@ -124,7 +124,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 
         $documentoDTO = $documentoRN->consultarRN0005( $documentoDTO );
 
-        //enviando email de sistema apÛs cadastramento do processo de peticionamento pelo usu·rio externo
+        //enviando email de sistema ap√≥s cadastramento do processo de peticionamento pelo usu√°rio externo
         //================================================================================================
         //EMAIL PARA O USUARIO PETICIONANTE
         //================================================================================================
@@ -224,7 +224,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 
 	            $enviaemail = false;
 	            
-	            // Se Direto no Processo Indicado, n„o sÛ unidade geradoras, mas todas abertas
+	            // Se Direto no Processo Indicado, n√£o s√≥ unidade geradoras, mas todas abertas
 	            if ($arrParametros['diretoProcessoIndicado']){
 	                $objUnidadeProcIndicRN = new UnidadeRN();
 	                $objUnidadeProcIndicDTO = new UnidadeDTO();

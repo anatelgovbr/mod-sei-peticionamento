@@ -22,7 +22,7 @@ class MdPetAnexoRN extends InfraRN {
 		try{
 			return ConfiguracaoSEI::getInstance()->getValor('SEI','RepositorioArquivos').'/'.substr($objAnexoDTO->getDthInclusao(),6,4).'/'.substr($objAnexoDTO->getDthInclusao(),3,2) .'/' .substr($objAnexoDTO->getDthInclusao(),0,2);
 		}catch(Exception $e){
-			throw new InfraException('Erro obtendo diretÛrio do anexo.',$e);
+			throw new InfraException('Erro obtendo diret√≥rio do anexo.',$e);
 		}
 	}
 
@@ -30,7 +30,7 @@ class MdPetAnexoRN extends InfraRN {
 		try{
 			return $this->obterDiretorio($objAnexoDTO).'/'.$objAnexoDTO->getNumIdAnexo();
 		}catch(Exception $e){
-			throw new InfraException('Erro obtendo localizaÁ„o do anexo.',$e);
+			throw new InfraException('Erro obtendo localiza√ß√£o do anexo.',$e);
 		}
 	}
 
@@ -38,7 +38,7 @@ class MdPetAnexoRN extends InfraRN {
 		try{
 			return BancoSEI::getInstance()->getValorSequencia('seq_upload').'_'.InfraUtil::formatarNomeArquivo(md5($strSufixo . '_' . uniqid(mt_rand())) . $strSufixo);
 		}catch(Exception $e){
-			throw new InfraException('Erro gerando nome de arquivo tempor·rio.',$e);
+			throw new InfraException('Erro gerando nome de arquivo tempor√°rio.',$e);
 		}
 	}
 
@@ -69,7 +69,7 @@ class MdPetAnexoRN extends InfraRN {
 			$strNomeUploadCompleto = DIR_SEI_TEMP.'/'.$strNomeUpload;
 
 			if (!file_exists($strNomeUploadCompleto)){
-				$objInfraException->lancarValidacao('Anexo '.$objAnexoDTO->getStrNome().' n„o encontrado.');
+				$objInfraException->lancarValidacao('Anexo '.$objAnexoDTO->getStrNome().' n√£o encontrado.');
 			}
 
 			if (filesize($strNomeUploadCompleto)==0){
@@ -81,7 +81,7 @@ class MdPetAnexoRN extends InfraRN {
 			finfo_close($finfo);
 
 			if (strpos($strMime,'text/x-php')!==false || strpos($strMime,'text/x-shellscript')!==false){
-				$objInfraException->adicionarValidacao('Conte˙do do anexo n„o permitido por restriÁ„o de seguranÁa.');
+				$objInfraException->adicionarValidacao('Conte√∫do do anexo n√£o permitido por restri√ß√£o de seguran√ßa.');
 			}
 
 			$objInfraException->lancarValidacoes();
@@ -95,7 +95,7 @@ class MdPetAnexoRN extends InfraRN {
 			 
 			if (is_dir($strDiretorio) === false){
 				if (mkdir($strDiretorio,0755,true) === false){
-					throw new InfraException('Erro criando diretÛrio "' .$strDiretorio.'".');
+					throw new InfraException('Erro criando diret√≥rio "' .$strDiretorio.'".');
 				}
 			}
 
@@ -251,7 +251,7 @@ class MdPetAnexoRN extends InfraRN {
 	private function validarStrNomeRN0228(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
 		
 		if (InfraString::isBolVazia($objAnexoDTO->getStrNome())){
-			$objInfraException->adicionarValidacao('Nome do anexo n„o informado.');
+			$objInfraException->adicionarValidacao('Nome do anexo n√£o informado.');
 		}else{
 
 			$objAnexoDTO->setStrNome(trim($objAnexoDTO->getStrNome()));
@@ -272,7 +272,7 @@ class MdPetAnexoRN extends InfraRN {
 
 				if (count($arrStrNome) < 2){
 
-					$objInfraException->adicionarValidacao('Nome do arquivo n„o possui extens„o.');
+					$objInfraException->adicionarValidacao('Nome do arquivo n√£o possui extens√£o.');
 
 				}else {
 
@@ -283,9 +283,9 @@ class MdPetAnexoRN extends InfraRN {
 
 					$objArquivoExtensaoRN = new ArquivoExtensaoRN();
 					if ($objArquivoExtensaoRN->contar($objArquivoExtensaoDTO) == 0) {
-						$objInfraException->adicionarValidacao('Tipo do arquivo ".' . $strExtensao . '" n„o autorizado.');
+						$objInfraException->adicionarValidacao('Tipo do arquivo ".' . $strExtensao . '" n√£o autorizado.');
 					}else if (in_array($strExtensao, array('php', 'php3', 'php4', 'phtml', 'sh', 'cgi'))) {
-						$objInfraException->adicionarValidacao('Extens„o do arquivo n„o permitida por restriÁ„o de seguranÁa.');
+						$objInfraException->adicionarValidacao('Extens√£o do arquivo n√£o permitida por restri√ß√£o de seguran√ßa.');
 					}
 				}
 			}
@@ -295,25 +295,25 @@ class MdPetAnexoRN extends InfraRN {
 
 	private function validarProtocoloBaseConhecimento(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
 		if (!$objAnexoDTO->isSetDblIdProtocolo() && !$objAnexoDTO->isSetNumIdBaseConhecimento()){
-			$objInfraException->adicionarValidacao('Protocolo ou Base de Conhecimento do anexo n„o informado.');
+			$objInfraException->adicionarValidacao('Protocolo ou Base de Conhecimento do anexo n√£o informado.');
 		}
 	}
 
 	private function validarNumIdUnidadeRN0834(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAnexoDTO->getNumIdUnidade())){
-			$objInfraException->adicionarValidacao('Unidade do anexo n„o informada.');
+			$objInfraException->adicionarValidacao('Unidade do anexo n√£o informada.');
 		}
 	}
 
 	private function validarNumIdUsuarioRN0866(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAnexoDTO->getNumIdUsuario())){
-			$objInfraException->adicionarValidacao('Usu·rio do anexo n„o informado.');
+			$objInfraException->adicionarValidacao('Usu√°rio do anexo n√£o informado.');
 		}
 	}
 
 	private function validarNumTamanhoRN0867(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAnexoDTO->getNumTamanho())){
-			$objInfraException->adicionarValidacao('Tamanho do anexo n„o informado.');
+			$objInfraException->adicionarValidacao('Tamanho do anexo n√£o informado.');
 		}
 
 		$objInfraParametro = new InfraParametro(BancoSEI::getInstance());
@@ -321,26 +321,26 @@ class MdPetAnexoRN extends InfraRN {
 		$numTamDocExterno = $objInfraParametro->getValor('SEI_TAM_MB_DOC_EXTERNO');
 
 		if($objAnexoDTO->getNumTamanho() > ($numTamDocExterno*1024*1024)){
-			$objInfraException->adicionarValidacao('Documentos externos n„o podem ultrapassar '.$numTamDocExterno.'Mb, o tamanho do anexo È '.round($objAnexoDTO->getNumTamanho()/(1024*1024),1).'Mb.');
+			$objInfraException->adicionarValidacao('Documentos externos n√£o podem ultrapassar '.$numTamDocExterno.'Mb, o tamanho do anexo √© '.round($objAnexoDTO->getNumTamanho()/(1024*1024),1).'Mb.');
 		}
 	}
 
 	private function validarDthInclusaoRN0868(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAnexoDTO->getDthInclusao())){
-			$objInfraException->adicionarValidacao('Data de inclus„o do anexo n„o informada.');
+			$objInfraException->adicionarValidacao('Data de inclus√£o do anexo n√£o informada.');
 		}else{
 			if (!InfraData::validarDataHora($objAnexoDTO->getDthInclusao())){
-				$objInfraException->adicionarValidacao('Data de inclus„o do anexo inv·lida.');
+				$objInfraException->adicionarValidacao('Data de inclus√£o do anexo inv√°lida.');
 			}
 		}
 	}
 
 	private function validarStrSinAtivoRN0886(AnexoDTO $objAnexoDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAnexoDTO->getStrSinAtivo())){
-			$objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica n„o informado.');
+			$objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica n√£o informado.');
 		}else{
 			if (!InfraUtil::isBolSinalizadorValido($objAnexoDTO->getStrSinAtivo())){
-				$objInfraException->adicionarValidacao('Sinalizador de Exclus„o LÛgica inv·lido.');
+				$objInfraException->adicionarValidacao('Sinalizador de Exclus√£o L√≥gica inv√°lido.');
 			}
 		}
 	}

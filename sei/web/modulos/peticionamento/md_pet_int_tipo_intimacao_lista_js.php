@@ -13,7 +13,7 @@
     <? if ($bolAcaoDesativar) { ?>
     function acaoDesativar(id, desc) {
         desc = $("<pre>").html(desc).text();
-        if (confirm("Confirma desativaÁ„o do Tipo de IntimaÁ„o EletrÙnica  \"" + desc + "\"?")) {
+        if (confirm("Confirma desativa√ß√£o do Tipo de Intima√ß√£o Eletr√¥nica  \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkDesativar ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();
@@ -25,7 +25,7 @@
             alert('Nenhuma  selecionada.');
             return;
         }
-        if (confirm("Confirma desativaÁ„o ds  selecionads?")) {
+        if (confirm("Confirma desativa√ß√£o ds  selecionads?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkDesativar ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();
@@ -36,7 +36,7 @@
     <? if ($bolAcaoReativar){ ?>
     function acaoReativar(id, desc) {
         desc = $("<pre>").html(desc).text();
-        if (confirm("Confirma reativaÁ„o do Tipo de IntimaÁ„o EletrÙnica  \"" + desc + "\"?")) {
+        if (confirm("Confirma reativa√ß√£o do Tipo de Intima√ß√£o Eletr√¥nica  \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkReativar ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();
@@ -48,7 +48,7 @@
             alert('Nenhuma  selecionada.');
             return;
         }
-        if (confirm("Confirma reativaÁ„o ds  selecionads?")) {
+        if (confirm("Confirma reativa√ß√£o ds  selecionads?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkReativar ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();
@@ -59,7 +59,7 @@
     <? if ($bolAcaoExcluir){ ?>
     function acaoExcluir(id, desc) {
         desc = $("<pre>").html(desc).text();
-        if (confirm("Confirma exclus„o do Tipo de IntimaÁ„o EletrÙnica \"" + desc + "\"?")) {
+        if (confirm("Confirma exclus√£o do Tipo de Intima√ß√£o Eletr√¥nica \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkExcluir ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();
@@ -71,7 +71,7 @@
             alert('Nenhuma  selecionada.');
             return;
         }
-        if (confirm("Confirma exclus„o ds  selecionads?")) {
+        if (confirm("Confirma exclus√£o ds  selecionads?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkExcluir ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();

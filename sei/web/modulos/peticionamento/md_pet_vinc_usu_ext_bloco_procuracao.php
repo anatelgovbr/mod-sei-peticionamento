@@ -8,34 +8,34 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
 </style>
 
 <fieldset  id="fieldUsuarioProcuracao" class="infraFieldset sizeFieldset" style="display: none; width: auto;">
-    <legend class="infraLegend"> ProcuraÁıes EletrÙnicas Especiais</legend>
+    <legend class="infraLegend"> Procura√ß√µes Eletr√¥nicas Especiais</legend>
     <div class="clear"></div>
     <div class="bloco" style="margin-top: 2%;">
-        <label class="infraLabel">A ProcuraÁ„o EletrÙnica Especial concede, no ‚mbito do(a) <?=$descricaoOrgao?>, ao Usu·rio Externo poderes para:</label>
+        <label class="infraLabel">A Procura√ß√£o Eletr√¥nica Especial concede, no √¢mbito do(a) <?=$descricaoOrgao?>, ao Usu√°rio Externo poderes para:</label>
         <label>
             <ol style="margin-top: 0%;">
-                <li>Gerenciar o cadastro da Pessoa JurÌdica Outorgante (exceto alterar o Respons·vel Legal ou outros Procuradores Especiais).</li>
-                <li>Receber IntimaÁıes EletrÙnicas e realizar Peticionamento EletrÙnico em nome da Pessoa JurÌdica Outorgante, com todos os poderes previstos no sistema.</li>
-                <li>Conceder ProcuraÁıes EletrÙnicas a outros Usu·rios Externos, em ‚mbito geral ou para processos especÌficos, conforme poderes estabelecidos, para representaÁ„o da Pessoa JurÌdica Outorgante.</li>
+                <li>Gerenciar o cadastro da Pessoa Jur√≠dica Outorgante (exceto alterar o Respons√°vel Legal ou outros Procuradores Especiais).</li>
+                <li>Receber Intima√ß√µes Eletr√¥nicas e realizar Peticionamento Eletr√¥nico em nome da Pessoa Jur√≠dica Outorgante, com todos os poderes previstos no sistema.</li>
+                <li>Conceder Procura√ß√µes Eletr√¥nicas a outros Usu√°rios Externos, em √¢mbito geral ou para processos espec√≠ficos, conforme poderes estabelecidos, para representa√ß√£o da Pessoa Jur√≠dica Outorgante.</li>
             </ol>
         </label>
-        <label class="infraLabel">Ao conceder a ProcuraÁ„o EletrÙnica Especial, vocÍ se declara ciente de que:</label>
+        <label class="infraLabel">Ao conceder a Procura√ß√£o Eletr√¥nica Especial, voc√™ se declara ciente de que:</label>
         <label>
             <ol style="margin-top: 0%;">
-                <li style="list-style-type: square">Poder·, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, revogar a ProcuraÁ„o EletrÙnica Especial;</li>
-                <li style="list-style-type: square">O Outorgado poder·, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, renunciar a ProcuraÁ„o EletrÙnica Especial;</li>
-                <li style="list-style-type: square">A validade desta ProcuraÁ„o est· circunscrita ao(‡) <?=$siglaOrgao?> e por tempo indeterminado, salvo se revogada ou renunciada, de modo que ela n„o pode ser usada para convalidar quaisquer atos praticados pelo Outorgado em representaÁ„o da Pessoa JurÌdica no ‚mbito de outros Ûrg„os ou entidades</li>
+                <li style="list-style-type: square">Poder√°, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, revogar a Procura√ß√£o Eletr√¥nica Especial;</li>
+                <li style="list-style-type: square">O Outorgado poder√°, a qualquer tempo, por meio do SEI-<?=$siglaOrgao?>, renunciar a Procura√ß√£o Eletr√¥nica Especial;</li>
+                <li style="list-style-type: square">A validade desta Procura√ß√£o est√° circunscrita ao(√†) <?=$siglaOrgao?> e por tempo indeterminado, salvo se revogada ou renunciada, de modo que ela n√£o pode ser usada para convalidar quaisquer atos praticados pelo Outorgado em representa√ß√£o da Pessoa Jur√≠dica no √¢mbito de outros √≥rg√£os ou entidades</li>
             </ol>
         </label>
-        <label class="infraLabel">Caso concorde com os termos apresentados, indique abaixo o Usu·rio Externo para o qual deseja conceder ProcuraÁ„o EletrÙnica Especial.</label>
-        <label class="infraLabelObrigatorio"><br><br>AtenÁ„o: </label><label class="infraLabel">Para poder receber uma ProcuraÁ„o EletrÙnica o Usu·rio Externo j· deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.</label>
+        <label class="infraLabel">Caso concorde com os termos apresentados, indique abaixo o Usu√°rio Externo para o qual deseja conceder Procura√ß√£o Eletr√¥nica Especial.</label>
+        <label class="infraLabelObrigatorio"><br><br>Aten√ß√£o: </label><label class="infraLabel">Para poder receber uma Procura√ß√£o Eletr√¥nica o Usu√°rio Externo j√° deve possuir cadastro no SEI-<?=$siglaOrgao?> liberado.</label>
     </div>
 
     <div class="clear"></div>
     <div class="container" style="margin-top: 2%">
         <div class="bloco" id="blcProcCPFUsuario">
-            <label for="txtNumeroCpfProcuracao" class="infraLabelObrigatorio">CPF do Usu·rio Externo: 
-               <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa È realizada somente sobre Usu·rios Externos liberados. \n \n A pesquisa È efetuada pelo CPF do Usu·rio Externo.') ?> class="infraImg"/>
+            <label for="txtNumeroCpfProcuracao" class="infraLabelObrigatorio">CPF do Usu√°rio Externo: 
+               <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda" id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa √© realizada somente sobre Usu√°rios Externos liberados. \n \n A pesquisa √© efetuada pelo CPF do Usu√°rio Externo.') ?> class="infraImg"/>
             </label>  
             <input type="text" class="infraText" 
                 id="txtNumeroCpfProcurador" name="txtNumeroCpfProcurador" maxlength="14" size=21 
@@ -48,7 +48,7 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
             </button>
         </div>
         <div class="bloco" id="blcProcNomeUsuario">
-            <label for="txtEmail" class="infraLabelObrigatorio">Nome do Usu·rio Externo: </label>
+            <label for="txtEmail" class="infraLabelObrigatorio">Nome do Usu√°rio Externo: </label>
             <input <?php echo $disabledConsultar?> name="txtNomeProcurador" id="txtNomeProcurador" type="text" class="infraText campoPadrao infraAutoCompletar" disabled="disabled" onkeypress="return infraMascaraTexto(this,event,50); " size=60 tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
         </div>
         <div class="bloco" id="blcProcBtnAdicionar">
@@ -63,13 +63,13 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
 
     <div class="clear"></div>
     <div class="bloco" style="width: 100%;">
-        <table width="99%" class="infraTable" summary="ProcuraÁıes" id="tbUsuarioProcuracao" style="display: none" >
+        <table width="99%" class="infraTable" summary="Procura√ß√µes" id="tbUsuarioProcuracao" style="display: none" >
             <caption class="infraCaption">&nbsp;</caption>
             <tr>
                 <th class="infraTh" width="0" style="display: none;">ID Usuario Externo</th>
                 <th class="infraTh" width="0">CPF</th>
-                <th class="infraTh" width="0">Nome do Usu·rio</th>
-                <th class="infraTh" width="5%">AÁıes</th>
+                <th class="infraTh" width="0">Nome do Usu√°rio</th>
+                <th class="infraTh" width="5%">A√ß√µes</th>
             </tr>
             <?php if(!is_null($arrRepresentante)){?>
                 <?php foreach ($arrRepresentante as $representante){?>
@@ -106,7 +106,7 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
         var noUsuario = document.getElementById('txtNomeProcurador').value.trim();
 
         if (noUsuario.length == 0) {
-            alert('Nome do Usu·rio È de Preenchimento Obrig·torio.')
+            alert('Nome do Usu√°rio √© de Preenchimento Obrig√°torio.')
             return false;
         }
 

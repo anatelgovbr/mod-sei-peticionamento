@@ -28,7 +28,7 @@
 
    public function getStrLogoSistema()
    {
-     return '<img src="../../imagens/sei_logo_' . $this->getStrEsquemaCores() . '.jpg" title="Sistema Eletrônico de Informações - Versão ' . SEI_VERSAO . '"/><span class="infraTituloLogoSistema">' . ConfiguracaoSEI::getInstance()->getValor('PaginaSEI', 'NomeSistemaComplemento') . '</span>';
+     return '<img src="../../imagens/sei_logo_' . $this->getStrEsquemaCores() . '.jpg" title="Sistema EletrÃ´nico de InformaÃ§Ãµes - VersÃ£o ' . SEI_VERSAO . '"/><span class="infraTituloLogoSistema">' . ConfiguracaoSEI::getInstance()->getValor('PaginaSEI', 'NomeSistemaComplemento') . '</span>';
    }
 
  }

@@ -28,7 +28,7 @@ try {
     switch ($_GET['acao']) {
         case 'md_pet_hipotese_legal_nl_acesso_cadastrar':
 
-            $strTitulo = 'Peticionamento - Hip髏eses Legais Permitidas';
+            $strTitulo = 'Peticionamento - Hip贸teses Legais Permitidas';
 
             $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarHipoteseLegalRI" id="sbmCadastrarHipoteseLegalRI" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Cancelar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
@@ -100,7 +100,7 @@ try {
             break;
 
         default:
-            throw new InfraException("A玢o '" . $_GET['acao'] . "' n鉶 reconhecida.");
+            throw new InfraException("A莽茫o '" . $_GET['acao'] . "' n茫o reconhecida.");
     }
 
 
@@ -132,10 +132,10 @@ PaginaSEI::getInstance()->abrirAreaDados('40em');
     <div class="infraAreaDados" id="divInfraAreaDados">
         <div class="row">
             <div class="col-sm-6 col-md-7 col-lg-6 col-xl-4">
-                <label id="lblHipoteseLgl" for="txtHipoteseLgl" accesskey="n" class="infraLabelObrigatorio">Hip髏eses
+                <label id="lblHipoteseLgl" for="txtHipoteseLgl" accesskey="n" class="infraLabelObrigatorio">Hip贸teses
                     Legais: <img align="top"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                 onmouseover="return infraTooltipMostrar('Nos casos em que o Usu醨io Externo indicar N韛el de Acesso Restrito para Documentos que adicionar, as Hip髏eses Legais dispon韛eis para ele selecionar estar鉶 restringidas 鄐 Hip髏eses Legais indicadas aqui.', 'Ajuda');"
+                                 onmouseover="return infraTooltipMostrar('Nos casos em que o Usu谩rio Externo indicar N铆vel de Acesso Restrito para Documentos que adicionar, as Hip贸teses Legais dispon铆veis para ele selecionar estar茫o restringidas 脿s Hip贸teses Legais indicadas aqui.', 'Ajuda');"
                                  onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                 </label>
                 <input type="text" id="txtHipoteseLgl" name="txtHipoteseLgl" class="infraText form-control"
@@ -153,12 +153,12 @@ PaginaSEI::getInstance()->abrirAreaDados('40em');
                     <div id="divIconesHipoteseLgl">
                         <img id="imgLupaHipoteseLgl" onclick="objLupaHipLegal.selecionar(700,500);"
                              onkeypress="objLupaHipLegal.selecionar(700,500);" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                             alt="Selecionar Hip髏eses Legais" title="Selecionar Hip髏eses Legais" class="infraImg"
+                             alt="Selecionar Hip贸teses Legais" title="Selecionar Hip贸teses Legais" class="infraImg"
                              tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
                         <img id="imgExcluirHipoteseLgl" onclick="objLupaHipLegal.remover();"
                              onkeypress="objLupaHipLegal.remover();" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
-                             alt="Remover Hip髏eses Legais Selecionadas" title="Remover Hip髏eses Legais Selecionados"
+                             alt="Remover Hip贸teses Legais Selecionadas" title="Remover Hip贸teses Legais Selecionados"
                              class="infraImg" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
 

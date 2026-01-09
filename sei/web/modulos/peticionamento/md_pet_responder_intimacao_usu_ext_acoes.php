@@ -112,33 +112,33 @@ switch ($_GET['acao']) {
 
             if(count($objMdPetIntRelDestinatarioDTO) == 1){
 
-            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-			$objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($objUsuarioDTO->getNumIdContato());
-			//$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($_GET['id_intimacao'],InfraDTO::$OPER_IN);
-            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
-            $objMdPetIntRelDestinatarioDTO->retNumIdContato();
-            $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($_GET['id_aceite'],InfraDTO::$OPER_IN);
+                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                $objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($objUsuarioDTO->getNumIdContato());
+                //$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($_GET['id_intimacao'],InfraDTO::$OPER_IN);
+                $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+                $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($_GET['id_aceite'],InfraDTO::$OPER_IN);
 
-            $objMdPetIntRelDestinatarioDTO->setDblIdProtocolo($idDocumento);
-			$objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
-            $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
-            $contador = 1;
-            $idMdPetIntRelDestHidden = $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntRelDestinatario();
-            $idContatoHidden = $objMdPetIntRelDestinatarioDTO->getNumIdContato();
+                $objMdPetIntRelDestinatarioDTO->setDblIdProtocolo($idDocumento);
+                $objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
+                $contador = 1;
+                $idMdPetIntRelDestHidden = $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntRelDestinatario();
+                $idContatoHidden = $objMdPetIntRelDestinatarioDTO->getNumIdContato();
+
             }else{
 
-            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-			$objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($objUsuarioDTO->getNumIdContato());
-			//$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($idMdPetIntimacao);
-            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
-            $objMdPetIntRelDestinatarioDTO->setDblIdProtocolo($idDocumento);
-            $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($_GET['id_aceite'],InfraDTO::$OPER_IN);
+                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                $objMdPetIntRelDestinatarioDTO->setNumIdContatoParticipante($objUsuarioDTO->getNumIdContato());
+                //$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($idMdPetIntimacao);
+                $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+                $objMdPetIntRelDestinatarioDTO->setDblIdProtocolo($idDocumento);
+                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($_GET['id_aceite'],InfraDTO::$OPER_IN);
 
-            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
-			$objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
-			$objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-            $contador = 2;
-            
+                $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntimacao();
+                $objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
+                $contador = 2;
             
             }
             
@@ -148,15 +148,17 @@ switch ($_GET['acao']) {
 
                 //Selecionando um dos contatos - Razão Social
                 if(!empty($_POST['selRazaoSocial'])){
-                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($_POST['selRazaoSocial']);
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($idMdPetIntimacao);
-                $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($_GET['id_aceite'],InfraDTO::$OPER_IN);
 
-                $objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
-                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
-                $idMdPetIntRelDestHidden = $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntRelDestinatario();
+                    $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($_POST['selRazaoSocial']);
+                    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($idMdPetIntimacao);
+                    $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+                    $objMdPetIntRelDestinatarioDTO->setNumIdMdPetAceite($_GET['id_aceite'],InfraDTO::$OPER_IN);
+
+                    $objMdPetIntRelDestinatarioRN  = new MdPetIntRelDestinatarioRN();
+                    $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
+                    $idMdPetIntRelDestHidden = $objMdPetIntRelDestinatarioDTO->getNumIdMdPetIntRelDestinatario();
+                    
                 }
                 
                 $arrParametros                              = array();

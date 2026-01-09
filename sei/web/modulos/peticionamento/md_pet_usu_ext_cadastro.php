@@ -52,7 +52,7 @@ try {
 $hashAnexo = $idAnexo = $selectOrgaoDisabled = '';
 $selectOrgaoHidden = $selectUfHidden = $selectCidadeHidden = false;
 
-$idOrgao            = isset($_GET['id_orgao']) ? $_GET['id_orgao'] : isset($_GET['id_orgao_acesso_externo']) ? $_GET['id_orgao_acesso_externo'] : null;
+$idOrgao            = isset($_GET['id_orgao']) ? $_GET['id_orgao'] : (isset($_GET['id_orgao_acesso_externo']) ? $_GET['id_orgao_acesso_externo'] : null);
 $idUF               = isset($_GET['id_uf']) ? $_GET['id_uf'] : null;
 $idCidade           = isset($_GET['id_cidade']) ? $_GET['id_cidade'] : null;
 $idTipoProcedimento = isset($_GET['id_tipo_procedimento']) ? $_GET['id_tipo_procedimento'] : null;

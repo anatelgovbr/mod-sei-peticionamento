@@ -33,14 +33,14 @@ class MdPetIntDestRespostaRN extends InfraRN
     private function validarNumIdMdPetIntDestResposta(MdPetIntDestRespostaDTO $objMdPetIntDestRespostaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntDestRespostaDTO->getNumIdMdPetIntDestResposta())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' não informado.');
         }
     }
 
     private function validarNumIdMdPetIntRelDestinatario(MdPetIntDestRespostaDTO $objMdPetIntDestRespostaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntDestRespostaDTO->getNumIdMdPetIntRelDestinatario())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' não informado.');
         }
     }
 
@@ -67,7 +67,7 @@ class MdPetIntDestRespostaRN extends InfraRN
     private function validarNumIdMdPetIntRelTipoResp(MdPetIntDestRespostaDTO $objMdPetIntDestRespostaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntDestRespostaDTO->getNumIdMdPetIntRelTipoResp())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' não informado.');
         }
     }
 
@@ -369,7 +369,7 @@ class MdPetIntDestRespostaRN extends InfraRN
         $objMdPetIntimacaoRN = new MdPetIntimacaoRN;
 
         // SIGILOSO - concedercredencial
-        $objProcedimentoDTO = MdPetIntAceiteRN::_retornaObjProcedimento($idProcedimento);
+        $objProcedimentoDTO = (new MdPetIntAceiteRN())->_retornaObjProcedimento($idProcedimento);
         if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
             || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
             if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
@@ -423,7 +423,7 @@ class MdPetIntDestRespostaRN extends InfraRN
             if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
                 $objMdPetProcedimentoRN = new MdPetProcedimentoRN();
                 $objCassarCredencial = $objMdPetProcedimentoRN->cassarCredencial( $objConcederCredencial );
-                $objMdPetProcedimentoRN->excluirAndamentoCredencial( $objConcederCredencial );
+                // $objMdPetProcedimentoRN->excluirAndamentoCredencial( $objConcederCredencial ); // Removido por estar causando erro
             }
         }
         // SIGILOSO - retirando credencial provisória - FIM

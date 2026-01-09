@@ -502,7 +502,7 @@ class MdPetIntimacaoRN extends InfraRN
         $dadosIntimacao['id_contato'] = $id_contato;
         $dadosIntimacao['nome'] = $objContatoDTO->getStrNome();
         $dadosIntimacao['email'] = $objContatoDTO->getStrSigla();
-        $dadosIntimacao['cpf'] = $objContatoDTO->getDblCnpj();
+        $dadosIntimacao['cnpj'] = $objContatoDTO->getDblCnpj();
         $dadosIntimacao['data_geracao'] = $dtIntimacao;
         $dadosIntimacao['situacao'] = $strSituacao;
         $dadosIntimacao['tipo_intimacao'] = $objMdPetIntimacaoDTO->getNumIdMdPetIntTipoIntimacao();
@@ -574,21 +574,31 @@ class MdPetIntimacaoRN extends InfraRN
         $idDocumento = $this->retornaIdDocumentoPrincipalIntimacaoConectado($dados);
 
         if ($idDocumento) {
+
             $objDocumentoDTO = new DocumentoDTO();
-            $objDocumentoRN = new DocumentoRN();
             $objDocumentoDTO->setDblIdDocumento($idDocumento);
             $objDocumentoDTO->retStrProtocoloDocumentoFormatado();
+            $objDocumentoDTO->retStrProtocoloProcedimentoFormatado();
             $objDocumentoDTO->retStrNomeSerie();
             $objDocumentoDTO->retDblIdProcedimento();
             $objDocumentoDTO->retStrNumero();
-            $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+            $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
 
             if ($objDocumentoDTO) {
-                return array($objDocumentoDTO->getStrProtocoloDocumentoFormatado(), $objDocumentoDTO->getStrNomeSerie(), $objDocumentoDTO->getDblIdProcedimento(), $idDocumento, $objDocumentoDTO->getStrNumero());
+                return [
+                    $objDocumentoDTO->getStrProtocoloDocumentoFormatado(), 
+                    $objDocumentoDTO->getStrNomeSerie(), 
+                    $objDocumentoDTO->getDblIdProcedimento(), 
+                    $idDocumento, 
+                    $objDocumentoDTO->getStrNumero(),
+                    $objDocumentoDTO->getStrProtocoloProcedimentoFormatado()
+                ];
             }
+
         }
 
         return null;
+
     }
 
     public function retornaArrDocumentosAnexosIntimacaoConectado($idIntimacao){
@@ -2335,7 +2345,70 @@ class MdPetIntimacaoRN extends InfraRN
         return $arrContatos;
     }
 	
-	protected function retornarDadosIntimacaoPrazoExpiradoControlado()
+    public function preencherDadaPrazoTacito(){
+
+        $objMdPetIntDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+		$objMdPetIntDestinatarioDTO->retDthDataCadastro();
+		$objMdPetIntDestinatarioDTO->retNumIdMdPetIntimacao();
+		$objMdPetIntDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+		$objMdPetIntDestinatarioDTO->retNumIdContato();
+		$objMdPetIntDestinatarioDTO->retStrSinPessoaJuridica();
+		$objMdPetIntDestinatarioDTO->retStrNomeContato();
+		$objMdPetIntDestinatarioDTO->retNumIdOrgao();
+		$objMdPetIntDestinatarioDTO->retNumIdTipoProcedimento();
+		$objMdPetIntDestinatarioDTO->retDtaDataPrazoTacito();
+		$objMdPetIntDestinatarioDTO->setDtaDataPrazoTacito(NULL, InfraDTO::$OPER_IGUAL); // Pega apenas as que tem Data Prazo Tacito NULL
+		$objMdPetIntDestinatarioDTO->setStrStaSituacaoIntimacao(self::$INTIMACAO_PENDENTE);
+		$objMdPetIntDestinatarioDTO->setDthDataAceite(NULL, InfraDTO::$OPER_IGUAL);
+		$objMdPetIntDestinatarioDTO->setDistinct(true);
+		$arrObjMdPetIntDestinatarioDTO = (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntDestinatarioDTO);
+
+        if(!empty($arrObjMdPetIntDestinatarioDTO)){
+
+			foreach($arrObjMdPetIntDestinatarioDTO as $intimacao){
+				
+				$dataIntimacao = explode(" ", $intimacao->getDthDataCadastro())[0];
+
+				$objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $intimacao->getNumIdTipoProcedimento() );
+				$diasExp = !empty($objMdPetIntPrazoTacitaDTO) ? $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() : 0;
+				
+				$dtaFinalCumprimento = (new MdPetIntPrazoRN())->calcularDataPrazo( $diasExp, $dataIntimacao, $intimacao->getNumIdOrgao() );
+				
+				$objMdPetIntDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+				$objMdPetIntDestinatarioDTO->setNumIdMdPetIntRelDestinatario($intimacao->getNumIdMdPetIntRelDestinatario());
+				$objMdPetIntDestinatarioDTO->setDtaDataPrazoTacito($dtaFinalCumprimento);
+				(new MdPetIntRelDestinatarioRN())->alterar($objMdPetIntDestinatarioDTO);
+
+				$intimacao->setDtaDataPrazoTacito($dtaFinalCumprimento);
+				
+			}
+
+		}
+
+    }
+
+    public function recalculaCumprimentoIntimacaoPorFeriado(){  
+
+        $objFeriadoDTO = new FeriadoDTO();
+		$objFeriadoDTO->retDtaFeriado();
+		$objFeriadoDTO->retStrDescricao();
+		$objFeriadoDTO->setDtaFeriado(InfraData::getStrDataAtual());
+		$objFeriadoDTO->setNumMaxRegistrosRetorno(1);
+
+		$objFeriadoDTO->adicionarCriterio(['IdOrgao', 'IdOrgao'],
+										  [InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL],
+										  [SessaoSEI::getInstance(false)->getNumIdOrgaoSistema(), NULL], // NULL = Todos os Orgaos
+										  InfraDTO::$OPER_LOGICO_OR);
+
+		$objFeriado = (new FeriadoRN())->consultar($objFeriadoDTO);
+
+		if(!empty($objFeriado)){
+			(new MdPetIntimacaoRN())->_recalculaDataPrazoTacitoIntimacoes($objFeriadoDTO->getDtaFeriado());
+		}
+
+    }
+
+	protected function retornarDadosIntimacaoPrazoExpiradoConectado()
 	{
 		
 		$intimacoesPendentes = [];
@@ -2351,7 +2424,14 @@ class MdPetIntimacaoRN extends InfraRN
 		$objMdPetIntDestinatarioDTO->retNumIdOrgao();
 		$objMdPetIntDestinatarioDTO->retNumIdTipoProcedimento();
 		$objMdPetIntDestinatarioDTO->retDtaDataPrazoTacito();
+
 		$objMdPetIntDestinatarioDTO->setDtaDataPrazoTacito(InfraData::getStrDataAtual(), InfraDTO::$OPER_MENOR_IGUAL);
+
+        // $objMdPetIntDestinatarioDTO->adicionarCriterio(array('DataPrazoTacito', 'DataPrazoTacito'),
+        //                                 array(InfraDTO::$OPER_MENOR_IGUAL, InfraDTO::$OPER_IGUAL),
+        //                                 array(InfraData::getStrDataAtual(), NULL),
+        //                                 InfraDTO::$OPER_LOGICO_OR);
+
 		$objMdPetIntDestinatarioDTO->setStrStaSituacaoIntimacao(self::$INTIMACAO_PENDENTE);
 		$objMdPetIntDestinatarioDTO->setDthDataAceite(NULL, InfraDTO::$OPER_IGUAL);
 		
@@ -2361,7 +2441,7 @@ class MdPetIntimacaoRN extends InfraRN
 		$objMdPetIntDestinatarioDTO->setDistinct(true);
 		$arrObjMdPetIntDestinatarioDTO = (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntDestinatarioDTO);
 		
-		// Evita cumprimento duplicado se houver aceite
+		// Evita cumprimento duplicado se já houver aceite
 		if(!empty($arrObjMdPetIntDestinatarioDTO) && $checkAceiteDuplicado){
 			foreach($arrObjMdPetIntDestinatarioDTO as $intimacao){
 				if(is_null((new MdPetIntAceiteRN())->retornaDataCumprimentoIntimacao($intimacao->getNumIdMdPetIntRelDestinatario()))){

@@ -799,7 +799,7 @@ class PeticionamentoWS extends MdPetUtilWS
         try {
 
             $pagina = $pagina ? $pagina : 1;
-            $qtdePorPagina = 10;
+            $qtdePorPagina = 1000;
             $this->validarPagina($pagina);
 
             InfraDebug::getInstance()->setBolLigado(false);

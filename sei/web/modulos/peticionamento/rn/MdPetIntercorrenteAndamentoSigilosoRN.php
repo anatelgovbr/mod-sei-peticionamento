@@ -24,7 +24,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
         return BancoSEI::getInstance();
     }
 
-    protected function consultarProcedimentoConectado(EntradaConsultarProcedimentoAPI $objEntradaConsultarProcedimentoAPI){
+    public function consultarProcedimentoConectado(EntradaConsultarProcedimentoAPI $objEntradaConsultarProcedimentoAPI){
 
         try{
             $objProcedimentoDTO = new ProcedimentoDTO();
@@ -78,9 +78,9 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     protected function consultarHistoricoRN1025Conectado(ProcedimentoHistoricoDTO $parObjProcedimentoHistoricoDTO)
     {
         try {
-
             //Valida Permissao
-  //trecho comentado porque a funcao é acessada por usuario externo          //SessaoSEI::getInstance()->validarAuditarPermissao('procedimento_consultar_historico', __METHOD__, $parObjProcedimentoHistoricoDTO);
+            //trecho comentado porque a funcao é acessada por usuario externo          
+            //SessaoSEI::getInstance()->validarAuditarPermissao('procedimento_consultar_historico', __METHOD__, $parObjProcedimentoHistoricoDTO);
 
             //Regras de Negocio
             if (!$parObjProcedimentoHistoricoDTO->isSetStrSinGerarLinksHistorico()) {
@@ -90,7 +90,6 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
             if (!$parObjProcedimentoHistoricoDTO->isSetStrSinRetornarAtributos()) {
                 $parObjProcedimentoHistoricoDTO->setStrSinRetornarAtributos('N');
             }
-
 
             $objPesquisaProtocoloDTO = new PesquisaProtocoloDTO();
             $objPesquisaProtocoloDTO->setStrStaTipo(ProtocoloRN::$TPP_PROCEDIMENTOS);
@@ -924,7 +923,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     	//CASO 4 - Nao há nenhuma unidade ativa dentre aquelas em que o processo tramitou, deve dar erro / msg de validação
     	//====================================================================================
     	if( $idUnidadeSigiloso == null ){
-    		
+    		(new InfraException())->lancarValidacao('O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
     	}
     	
     	return $idUnidadeSigiloso;
@@ -936,7 +935,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
  * @param $idProcedimento
  * @return  string $idUnidade
  */
-protected function retornaUltimaUnidadeProcessoSigilosoAbertoConectado($idProcedimento){
+public function retornaUltimaUnidadeProcessoSigilosoAbertoConectado($idProcedimento){
 
 	$objSEIRN = new SeiRN();
 	$objProcedimentoDTO = new ProcedimentoDTO();

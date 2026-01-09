@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <div class="card" id="cardCaptcha">
-                    <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>" alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>">
+                    <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>&r=n&c=a" alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>">
                     <div class="card-body">
                         <div class="form-group">
                             <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de
@@ -44,7 +44,7 @@
             <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8">
                 <div class="bloco" id="blc">
                     <div class="card" id="cardCaptcha">
-                        <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>" alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>">
+                        <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>&r=n&c=a" alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>">
                         <div class="card-body">
                             <div class="form-group">
                                 <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de

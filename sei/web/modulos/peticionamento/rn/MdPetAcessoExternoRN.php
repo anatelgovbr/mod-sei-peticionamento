@@ -1482,7 +1482,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 			SessaoSEI::getInstance()->simularLogin(null, null, $idUsuarioModulo, $idUnidadeAcessoExt);
 
 			// SIGILOSO - conceder credencial
-			$objProcedimentoDTO = MdPetIntAceiteRN::_retornaObjProcedimento($idProcesso);
+			$objProcedimentoDTO = (new MdPetIntAceiteRN())->_retornaObjProcedimento($idProcesso);
 			if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
 				|| $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
 				//if (is_numeric($idUsuarioModulo)){
@@ -1504,7 +1504,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 				//if (is_numeric($idUsuarioModulo)){
 					$objMdPetProcedimentoRN = new MdPetProcedimentoRN();
 					$objCassarCredencial = $objMdPetProcedimentoRN->cassarCredencial( $objConcederCredencial );
-					$objMdPetProcedimentoRN->excluirAndamentoCredencial( $objConcederCredencial );
+					// $objMdPetProcedimentoRN->excluirAndamentoCredencial( $objConcederCredencial );
 				//}
 			}
 			// SIGILOSO - cassarcredencial - FIM

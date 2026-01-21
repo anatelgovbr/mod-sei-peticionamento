@@ -234,14 +234,14 @@
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
                     <div class="form-group mb-3">
-                        <div class="input-group">
-                            <label class="infraLabelObrigatorio pr-2">
+                        <div class="input-group d-flex align-items-center">
+                            <label class="infraLabelObrigatorio pr-2 mb-0">
                                 Documento Principal:
                             </label><br/>
-                            <label class="infraLabel" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <label class="alert alert-primary p-2 rounded mb-0" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgLocal() ?>/documento_formulario2.svg" name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?> alt="Formulário" style="vertical-align: middle"/>
                                 <?= $strTipoDocumentoPrincipal ?>
-                                (clique aqui para editar conteúdo)
+                                <b>(clique aqui para editar conteúdo)</b>
                             </label>
                         </div>
                     </div>
@@ -334,14 +334,14 @@
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
                     <div class="form-group mb-3">
-                        <div class="input-group">
-                            <label class="infraLabelObrigatorio pr-2">
+                        <div class="input-group d-flex align-items-center">
+                            <label class="infraLabelObrigatorio pr-2 mb-0">
                                 Documento Principal:
                             </label><br/>
-                            <label class="infraLabel" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <label class="lert alert-primary p-2 rounded mb-0" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgLocal() ?>/documento_formulario1.svg?18" name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?> alt="Formulário" style="vertical-align: middle"/>
 							    <?= $strTipoDocumentoPrincipal ?>
-                                (clique aqui para preencher o formulário)
+                                <b>(clique aqui para preencher o formulário)</b>
                             </label>
                         </div>
                     </div>

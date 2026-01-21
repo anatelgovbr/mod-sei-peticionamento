@@ -326,8 +326,39 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
             //verificar se algum arquivo foi selecionado para o upload
             if (fileArquivo.value == '') {
+                
+                const tiposObrig = $('#tipoDocumentoEssencial option').slice(1).map(function() {
+                    var optionId = $(this).val().trim();
+                    return {
+                        id: optionId,
+                        texto: $(this).text().trim()
+                    };
+                }).get();
+
+
+                let tipsValues = [];
+                const maxVisiveis = 5;
+                const numFaltantes = tiposObrig.length;
+                const numRestantes = numFaltantes - maxVisiveis;
+
+                if (numFaltantes > 0) {
+                    
+                    for (let j = 0; j < Math.min(maxVisiveis, numFaltantes); j++) {
+                        tipsValues.push('- ' + tiposObrig[j].texto);
+                    }
+
+                    if (numFaltantes > maxVisiveis) {
+                        tipsValues.push('- ... (+ ' + numRestantes + ' tipo(s) de documento)');
+                    }
+
+                }
+
                 //alert('Informe o arquivo para upload.');
-                alert('Deve adicionar pelo menos um Documento Essencial para cada Tipo.');
+                alert(
+                    'Na seção Documento Essencial, você deve adicionar pelo menos um documento para cada item listado no campo Tipo de Documento:\n\n' 
+                    + tipsValues.join('\n')
+                );
+
                 isValido = false;
                 fileArquivo.focus();
                 return;
@@ -999,6 +1030,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
                 var local = 9;
                 var tiposIncluidos = Array();
+                var tiposIdsIncluidos = Array();
 
                 //so vai adicionar no array dos incluidos quando tem registros na grid
                 if (strHashEssencial != "") {
@@ -1008,9 +1040,16 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         //caractere de quebra de coluna/campo
                         var arrLocal = arrHashEssencial[i].split('±');
                         var tipo = arrLocal[local];
+                        var tipoId = $.trim(arrLocal[local]);
 
                         if (tiposIncluidos.indexOf(tipo) <= -1) {
                             tiposIncluidos.push(arrLocal[local]);
+                        }
+
+                        if (tipoId !== '' && !isNaN(tipoId)) { 
+                            if (tiposIdsIncluidos.indexOf(tipoId) === -1) {
+                                tiposIdsIncluidos.push(tipoId);
+                            }
                         }
 
                     }
@@ -1031,10 +1070,62 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 }
 
                 if (!validarTipoEssenc) {
-                    alert('Deve adicionar pelo menos um Documento Essencial para cada Tipo.');
+                    
+                    const tiposObrigatorios = $('#tipoDocumentoEssencial option').slice(1).map(function() {
+                        var optionId = $(this).val().trim();
+                        return {
+                            id: optionId,
+                            texto: $(this).text().trim()
+                        };
+                    }).get();
+
+                    console.log('Tipos obrigatórios (ID: texto):', tiposObrigatorios);
+                    console.log('IDs incluídos dos upados:', tiposIdsIncluidos);
+
+                    const tiposFaltantes = tiposObrigatorios.filter(function(item) {
+                        var itemIdStr = item.id;
+                        var found = $.inArray(itemIdStr, tiposIdsIncluidos) !== -1;
+                        
+                        if (!found && !isNaN(itemIdStr) && tiposIdsIncluidos.some(function(upId) { return parseInt(upId) === parseInt(itemIdStr); })) {
+                            found = true;
+                        }
+                        
+                        return !found;
+                    });
+
+                    console.log('Tipos faltantes (ID: texto):', tiposFaltantes);
+
+                    let tipsValues = [];
+                    const maxVisiveis = 5;
+                    const numFaltantes = tiposFaltantes.length;
+                    const numRestantes = numFaltantes - maxVisiveis;
+
+                    if (numFaltantes > 0) {
+                        
+                        for (let j = 0; j < Math.min(maxVisiveis, numFaltantes); j++) {
+                            tipsValues.push('- ' + tiposFaltantes[j].texto);
+                        }
+
+                        if (numFaltantes > maxVisiveis) {
+                            tipsValues.push('- ... (+ ' + numRestantes + ' tipo(s) de documento)');
+                        }
+
+                    }
+
+                    // Alerta só com faltantes
+                    if (tipsValues.length > 0) {
+                        alert(
+                            'Na seção Documento Essencial, você deve adicionar pelo menos um documento para cada item listado no campo Tipo de Documento. Ainda falta incluir os seguintes tipos de documento:\n\n' 
+                            + tipsValues.join('\n')
+                        );
+                    } else {
+                        alert('Na seção Documento Essencial, você deve adicionar documentos para cada item listado no campo Tipo de Documento!');
+                    }
+                    
                     document.getElementById('fileArquivoEssencial').focus();
                     return false;
                 }
+                
             }
 
             return true;

@@ -260,13 +260,71 @@ PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 ?>
 <script type="text/javascript">
+  function validacoesArquivosUpload() {
+
+    var arquivoErro = "";
+    
+    var tbDocumentoComplementar = window.parent.document.getElementById('tbDocumentoComplementar');
+    var tbDocumentoEssencial = window.parent.document.getElementById('tbDocumentoEssencial');
+    var tbDocumento = window.parent.document.getElementById('tbDocumentoPrincipal');
+
+    // validar se essas tabelas existem
+    if (tbDocumentoComplementar) {
+        for (var i = 1; i < tbDocumentoComplementar.rows.length; i++) {
+            var nomeArquivo = tbDocumentoComplementar.rows[i].cells[0].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    if (tbDocumentoEssencial && arquivoErro == "") {
+        for (var i = 1; i < tbDocumentoEssencial.rows.length; i++) {
+            var nomeArquivo = tbDocumentoEssencial.rows[i].cells[0].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    if (tbDocumento && arquivoErro == "") {
+        for (var i = 1; i < tbDocumento.rows.length; i++) {
+            var nomeArquivo = tbDocumento.rows[i].cells[0].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    return arquivoErro;
+}
 
 function isValido(){
 
 	var cargo = document.getElementById("selCargo").value;
 	var senha = document.getElementById("pwdsenhaSEI").value;
+  var arquivoErro = validacoesArquivosUpload();
 
-	if( cargo == ""){
+	if (arquivoErro != "") {
+    alert(arquivoErro);
+    parent.infraFecharJanelaModal();
+    return false;
+	} else if( cargo == ""){
 		alert('Favor informe o Cargo/Função.');
 		document.getElementById("selCargo").focus();
 		return false;

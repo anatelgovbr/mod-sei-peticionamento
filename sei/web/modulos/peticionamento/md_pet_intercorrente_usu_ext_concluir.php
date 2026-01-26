@@ -255,12 +255,40 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 ?>
 <script type="text/javascript">
 
+function validacoesArquivosUpload() {
+
+    var arquivoErro = "";
+    
+    var tbDocumento = window.parent.document.getElementById('tbDocumento');
+
+    if (tbDocumento) {
+        for (var i = 1; i < tbDocumento.rows.length; i++) {
+            var nomeArquivo = tbDocumento.rows[i].cells[9].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    return arquivoErro;
+}
 function isValido(){
 
 	var cargo = document.getElementById("selCargo").value;
 	var senha = document.getElementById("pwdsenhaSEI").value;
 
-	if( cargo == ""){
+	var arquivoErro = validacoesArquivosUpload();
+  
+  if (arquivoErro != "") {
+      alert(arquivoErro);
+      parent.infraFecharJanelaModal();
+      return false;
+  } else if( cargo == ""){
 		alert('Favor informe o Cargo/Função.');
 		document.getElementById("selCargo").focus();
 		return false;

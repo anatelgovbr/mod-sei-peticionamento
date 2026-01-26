@@ -477,13 +477,37 @@ PaginaSEIExterna::getInstance()->fecharHtml();
         }
         return false;
     }
+    function validacoesArquivosUpload() {
+
+        var arquivoErro = "";
+        
+        var tbDocumento = window.parent.document.getElementById('tbDocumento');
+        for (var i = 1; i < tbDocumento.rows.length; i++) {
+            var nomeArquivo = tbDocumento.rows[i].cells[9].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+
+        return arquivoErro;
+    }
 
 function isValido() {
 
         var cargo = document.getElementById("selCargo").value;
         var senha = document.getElementById("pwdsenhaSEI").value;
+        var arquivoErro = validacoesArquivosUpload();
 
-        if (cargo == "") {
+        if (arquivoErro != "") {
+            alert(arquivoErro);
+            parent.infraFecharJanelaModal();
+            return false;
+        } else if (cargo == "") {
             alert('Por favor informe o Cargo/Função.');
             document.getElementById("selCargo").focus();
             return false;

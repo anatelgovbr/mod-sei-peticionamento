@@ -222,7 +222,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     <div class="allFieldsForm">
         <div class="row">
             <div class="col-12">
-                <p class="text-justify">A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
+                <p class="text-justify">A confirmação de sua senha importa na aceitação dos termos e condições que regem o processo eletrõnico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, são de sua exclusiva responsabilidade: a conformidade entre os dados informados e os documentos; a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência; a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada; a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do Último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre; a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</p>
             </div>
         </div>
         <div class="row">
@@ -307,16 +307,41 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 ?>
 
 <script type="text/javascript">
-
-    
 var timer = null;
+function validacoesArquivosUpload() {
 
+    var arquivoErro = "";
+    
+    var tbDocumento = window.parent.document.getElementById('tbDocumento');
+
+    if (tbDocumento) {
+        for (var i = 1; i < tbDocumento.rows.length; i++) {
+            var nomeArquivo = tbDocumento.rows[i].cells[9].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    return arquivoErro;
+}
 function isValido(){
 
 	var cargo = document.getElementById("selCargo").value;
 	var senha = document.getElementById("pwdsenhaSEI").value;
 
-	if( cargo == ""){
+	var arquivoErro = validacoesArquivosUpload();
+  
+  if (arquivoErro != "") {
+      alert(arquivoErro);
+      parent.infraFecharJanelaModal();
+      return false;
+  } else if( cargo == ""){
 		alert('Favor informe o Cargo/Função.');
 		document.getElementById("selCargo").focus();
 		return false;

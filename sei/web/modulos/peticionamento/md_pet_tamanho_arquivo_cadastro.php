@@ -22,7 +22,7 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_pet_tamanho_arquivo_cadastrar':
-            $strTitulo = 'Peticionamento - Tamanho Máximo de Arquivos';
+            $strTitulo = 'Peticionamento - Tamanho MÃ¡ximo de Arquivos';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarTamanhoArquivo" id="sbmCadastrarTamanhoArquivo" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
 
             $objMdPetTamanhoArquivoRN = new MdPetTamanhoArquivoRN();
@@ -58,7 +58,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 
@@ -102,7 +102,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         class="infraLabelObrigatorio">Documento
                                         Principal (Processo Novo): <img align="top"
                                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo somente do Documento Principal, que geralmente é de tamanho menor que os demais documentos, pois tende a ser Nato Digital.', 'Ajuda') ?>
+                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho mÃ¡ximo de Arquivos em Mb no Peticionamento de Processo Novo somente do Documento Principal, que geralmente Ã© de tamanho menor que os demais documentos, pois tende a ser Nato Digital.', 'Ajuda') ?>
                                                                         class="infraImgModulo"/></label>
                                     <input type="text" id="txtValorDocPrincipal" name="txtValorDocPrincipal"
                                         class="infraText form-control"
@@ -116,7 +116,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <label id="lblValorDocComplementar" for="txtValorDocComplementar"
                                         class="infraLabelObrigatorio">Demais Documentos: <img align="top"
                                                                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho máximo de Arquivos em Mb no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a Intimação e no Peticionamento de Responsável Legal de Pessoa Jurídica.', 'Ajuda') ?>
+                                                                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Limita o tamanho mÃ¡ximo de Arquivos em Mb no Peticionamento de Processo Novo especificamente sobre os Documentos Essenciais e Complementares, no Peticionamento Intercorrente, no Peticionamento de Resposta a IntimaÃ§Ã£o e no Peticionamento de ResponsÃ¡vel Legal de Pessoa JurÃ­dica.', 'Ajuda') ?>
                                                                                                 class="infraImgModulo"/></label>
                                     <input type="text" id="txtValorDocComplementar" name="txtValorDocComplementar"
                                         class="infraText form-control"

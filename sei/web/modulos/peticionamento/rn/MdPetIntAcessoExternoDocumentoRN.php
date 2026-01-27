@@ -148,16 +148,12 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
     			        $arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
     			    }
     			}
-    			
 
 				// SIGILOSO - conceder credencial
-				$objProcedimentoDTO = MdPetIntAceiteRN::_retornaObjProcedimento($idProtocolo);
-				if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
-					|| $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
-					if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
-						$objMdPetProcedimentoRN = new MdPetProcedimentoRN();
-						$objConcederCredencial = $objMdPetProcedimentoRN->concederCredencial( array($objProcedimentoDTO, $idUnidade) );
-					}
+				$objProcedimentoDTO = (new MdPetProcedimentoRN())->isProcessoSigiloso($idProtocolo);
+				if(!empty($objProcedimentoDTO) && is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
+					$objMdPetProcedimentoRN = new MdPetProcedimentoRN();
+					$objConcederCredencial = $objMdPetProcedimentoRN->concederCredencial( [$objProcedimentoDTO, $idUnidade] );
 				}
 				// SIGILOSO - conceder credencial - FIM
 
@@ -216,14 +212,10 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
     			}
 
 				// SIGILOSO - cassarcredencial 
-				$objProcedimentoDTO = MdPetIntAceiteRN::_retornaObjProcedimento($idProtocolo);
-				if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
-					|| $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
-					if (is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
-						$objMdPetProcedimentoRN = new MdPetProcedimentoRN();
-						$objCassarCredencial = $objMdPetProcedimentoRN->cassarCredencial( $objConcederCredencial );
-						$objMdPetProcedimentoRN->excluirAndamentoCredencial( $objConcederCredencial );
-					}
+				if(!empty($objProcedimentoDTO) && is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())){
+					$objMdPetProcedimentoRN = new MdPetProcedimentoRN();
+					$objMdPetProcedimentoRN->cassarCredencial( $objConcederCredencial );
+					// $objMdPetProcedimentoRN->excluirAndamentoCredencial( $objConcederCredencial ); // Removido por estar causando erro
 				}
 				// SIGILOSO - cassarcredencial - FIM
 
@@ -544,13 +536,22 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
         foreach ($arrObjMdPetIntDestDTO as $objMdPetIntDestDTO) {
 
             $tpConcessao = $this->getTipoConcessaoAcesso($objMdPetIntDestDTO->getNumIdAcessoExterno());
+
             if ($tpConcessao == static::$ACESSO_PARCIAL) {
+
                 $objRelProtAcessoExtRN = new RelAcessoExtProtocoloRN();
                 $objRelProtAcessoExtDTO = new RelAcessoExtProtocoloDTO();
                 $objRelProtAcessoExtDTO->setNumIdAcessoExterno($objMdPetIntDestDTO->getNumIdAcessoExterno());
                 $objRelProtAcessoExtDTO->setDblIdProtocolo($objDocumento->getDblIdDocumento());
-                $objRelProtAcessoExtRN->cadastrar($objRelProtAcessoExtDTO);
+				$objRelProtAcessoExtDTO->retTodos();
+				$arrObjRelProtAcessoExtDTO = $objRelProtAcessoExtRN->consultar($objRelProtAcessoExtDTO);
+
+				if(!$arrObjRelProtAcessoExtDTO) {
+					$objRelProtAcessoExtRN->cadastrar($objRelProtAcessoExtDTO);
+				}
+				
             }
+
         }
 	}
 	
@@ -658,13 +659,4 @@ class MdPetIntAcessoExternoDocumentoRN extends InfraRN {
 		return $arrIds;
 	}
 
-
-
-
-
-
-	
-	
-
 }
-?>

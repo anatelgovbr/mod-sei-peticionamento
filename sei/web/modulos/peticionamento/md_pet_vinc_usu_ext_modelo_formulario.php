@@ -2,31 +2,31 @@
     <p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt; line-height: 1.6">@vinculacao_substituicao@</p>
 </div>
 <div>
-    <p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt; line-height: 1.6">O Usu·rio Externo declarou ser o Respons·vel Legal pela Pessoa JurÌdica e ter ciÍncia de que o ato de inserir ou fazer inserir declaraÁ„o falsa ou diversa da que devia ser escrita È crime, conforme disposto no art. 299 do CÛdigo Penal Brasileiro. Com isso, concordou que ter· poderes para:</p>
+    <p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt; line-height: 1.6">O Usu√°rio Externo declarou ser o Respons√°vel Legal pela Pessoa Jur√≠dica e ter ci√™ncia de que o ato de inserir ou fazer inserir declara√ß√£o falsa ou diversa da que devia ser escrita √© crime, conforme disposto no art. 299 do C√≥digo Penal Brasileiro. Com isso, concordou que ter√° poderes para:</p>
     <label>
         <ol>
-            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Gerenciar o cadastro da Pessoa JurÌdica;</p></li>
-            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Receber IntimaÁıes EletrÙnicas e realizar Peticionamento EletrÙnico em nome da Pessoa JurÌdica, com todos os poderes previstos no sistema;</p></li>
-            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Conceder ProcuraÁıes EletrÙnicas Especiais a outros Usu·rios Externos, bem como revog·-las quando lhe convier;</p></li>
-            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Conceder ProcuraÁıes EletrÙnicas Simples a outros Usu·rios Externos, em ‚mbito geral ou para processos especÌficos, conforme poderes estabelecidos, para representaÁ„o da Pessoa JurÌdica Outorgante, bem como revog·-las quando lhe convier.</p></li>
+            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Gerenciar o cadastro da Pessoa Jur√≠dica;</p></li>
+            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Receber Intima√ß√µes Eletr√¥nicas e realizar Peticionamento Eletr√¥nico em nome da Pessoa Jur√≠dica, com todos os poderes previstos no sistema;</p></li>
+            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Conceder Procura√ß√µes Eletr√¥nicas Especiais a outros Usu√°rios Externos, bem como revog√°-las quando lhe convier;</p></li>
+            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Conceder Procura√ß√µes Eletr√¥nicas Simples a outros Usu√°rios Externos, em √¢mbito geral ou para processos espec√≠ficos, conforme poderes estabelecidos, para representa√ß√£o da Pessoa Jur√≠dica Outorgante, bem como revog√°-las quando lhe convier.</p></li>
         </ol>
     </label>
 </div>
-<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;@p_estilo_substituido">Usu·rio Externo SubstituÌdo como Respons·vel Legal:</p>
+<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;@p_estilo_substituido">Usu√°rio Externo Substitu√≠do como Respons√°vel Legal:</p>
 <table width="100%" style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;border-collapse: collapse;@table_estilo_substituido">
     <tr>
         <td style="font-weight: bold;font-weight: normal; background: #ffffff;width: 20%; text-align: left; padding: 8px; padding-left: 35px;">Nome:</td>
         <td style="font-weight: normal; background: #ffffff;text-align: left; padding: 8px;">@nomeSubstituido</td>
     </tr>
 </table>
-<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;margin-top: 1.5%">Usu·rio Externo indicado como Respons·vel Legal:</p>
+<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;margin-top: 1.5%">Usu√°rio Externo indicado como Respons√°vel Legal:</p>
 <table width="100%" style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;border-collapse: collapse;">
     <tr>
         <td style="font-weight: bold;font-weight: normal; background: #ffffff;width: 20%; text-align: left; padding: 8px; padding-left: 35px;">Nome:</td>
         <td style="font-weight: normal; background: #ffffff;text-align: left; padding: 8px;">@nome</td>
     </tr>
 </table>
-<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;margin-top: 1.5%">Pessoa JurÌdica:</p>
+<p style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;margin-top: 1.5%">Pessoa Jur√≠dica:</p>
 <table width="100%" style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;border-collapse: collapse;">
     <tbody>
     <tr>
@@ -34,7 +34,7 @@
         <td style="font-weight: normal; background: #ffffff;text-align: left; padding: 8px;">@cnpjVinculo</td>
     </tr>
     <tr >
-        <td style="font-weight: bold;font-weight: normal; background: #ffffff;text-align: left; padding: 8px;padding-left: 35px;">Raz„o Social:</td>
+        <td style="font-weight: bold;font-weight: normal; background: #ffffff;text-align: left; padding: 8px;padding-left: 35px;">Raz√£o Social:</td>
         <td style="font-weight: normal; background: #ffffff;text-align: left; padding: 8px;">@razaoSocial</td>
     </tr>
     <tr>
@@ -47,5 +47,5 @@
     </tr>
     </tbody>
 </table>
-<p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Os atos constitutivos anexados ao presente documento de VinculaÁ„o pelo o Usu·rio Externo para comprovaÁ„o dos poderes a ele concedidos para atuar em nome da Pessoa JurÌdica constam no correspondente Recibo EletrÙnico de Protocolo gerado.</p>
+<p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">Os atos constitutivos anexados ao presente documento de Vincula√ß√£o pelo o Usu√°rio Externo para comprova√ß√£o dos poderes a ele concedidos para atuar em nome da Pessoa Jur√≠dica constam no correspondente Recibo Eletr√¥nico de Protocolo gerado.</p>
 @motivo

@@ -46,6 +46,20 @@ class MdPetRelReciboDocumentoAnexoRN extends InfraRN {
 			throw new InfraException ('Erro listando Recibo Anexo Peticionamento.', $e);
 		}
 	}
+
+	protected function excluirControlado(MdPetRelReciboDocumentoAnexoDTO $objDTO) {
+		
+		try {
+			
+			$objInfraException = new InfraException();
+			$objBD = new MdPetRelReciboDocumentoAnexoBD($this->getObjInfraIBanco());
+			$ret = $objBD->excluir($objDTO);	
+			return $ret;
+			
+		} catch ( Exception $e ) {
+			throw new InfraException ('Erro excluindo Recibo Anexo Peticionamento.', $e );
+		}
+	}
 	
 	/**
 	 * Short description of method consultarConectado

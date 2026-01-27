@@ -44,6 +44,7 @@ try {
   $bolAssinaturaOK = false;
   $bolPermiteAssinaturaLogin=false;
   $bolPermiteAssinaturaCertificado=false;
+  $bolPermiteAssinaturaSso=false;
   $bolAutenticacao = false;
 
   switch($_GET['acao']){
@@ -57,14 +58,27 @@ try {
 
       switch ($tipoAssinatura){
         case 1:
-          $bolPermiteAssinaturaCertificado=true;
           $bolPermiteAssinaturaLogin=true;
+          $bolPermiteAssinaturaCertificado=true;
           break;
         case 2:
           $bolPermiteAssinaturaLogin=true;
           break;
         case 3:
           $bolPermiteAssinaturaCertificado=true;
+          break;
+        case 4:
+          $bolPermiteAssinaturaLogin=true;
+          $bolPermiteAssinaturaCertificado=true;
+          $bolPermiteAssinaturaSso = true;
+          break;
+        case 5:
+          $bolPermiteAssinaturaCertificado=true;
+          $bolPermiteAssinaturaSso = true;
+          break;
+        case 6:
+          $bolPermiteAssinaturaSso=true;
+          break;
       }
 
       $objAssinaturaDTO = new AssinaturaDTO();
@@ -201,14 +215,27 @@ try {
 
       switch ($tipoAssinatura){
         case 1:
-          $bolPermiteAssinaturaCertificado=true;
           $bolPermiteAssinaturaLogin=true;
+          $bolPermiteAssinaturaCertificado=true;
           break;
         case 2:
           $bolPermiteAssinaturaLogin=true;
           break;
         case 3:
           $bolPermiteAssinaturaCertificado=true;
+          break;
+        case 4:
+          $bolPermiteAssinaturaLogin=true;
+          $bolPermiteAssinaturaCertificado=true;
+          $bolPermiteAssinaturaSso = true;
+          break;
+        case 5:
+          $bolPermiteAssinaturaCertificado=true;
+          $bolPermiteAssinaturaSso = true;
+          break;
+        case 6:
+          $bolPermiteAssinaturaSso=true;
+          break;
       }
 
       $objAssinaturaDTO = new AssinaturaDTO();
@@ -283,7 +310,7 @@ try {
           die();
 //          $bolAssinaturaOK = true;
         }catch(Exception $e){
-//          PaginaSEI::getInstance()->processarExcecao($e, true);
+          PaginaSEI::getInstance()->processarExcecao($e, true);
         }
 
       }
@@ -303,6 +330,14 @@ try {
       $arrComandos[] = '<button type="button" accesskey="A" onclick="assinarSenha();" id="btnAssinar" name="btnAssinar" value="Assinar" class="infraButton">&nbsp;<span class="infraTeclaAtalho">A</span>ssinar&nbsp;</button>';
 //    }
 //  }
+
+  if ($numRegistros) {
+    if ($bolPermiteAssinaturaCertificado && ($objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_CERTIFICADO_DIGITAL || $objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_SSO)) {
+      $arrComandos[] = '<button type="button" accesskey="A" onclick="assinarCertificadoDigital();" id="btnAssinar" name="btnAssinar" value="Assinar" class="infraButton" style="visibility:hidden">&nbsp;<span class="infraTeclaAtalho">A</span>ssinar&nbsp;</button>';
+    } else if ($bolPermiteAssinaturaLogin) {
+      $arrComandos[] = '<button type="button" accesskey="A" onclick="assinarSenha();" id="btnAssinar" name="btnAssinar" value="Assinar" class="infraButton">&nbsp;<span class="infraTeclaAtalho">A</span>ssinar&nbsp;</button>';
+    }
+  }
 
   if (!isset($_POST['hdnIdUsuario'])){
     $strIdUsuario = SessaoSEI::getInstance()->getNumIdUsuario();
@@ -526,13 +561,24 @@ function tratarSenha(ev){
 }
 <? } ?>
 <? if($bolPermiteAssinaturaCertificado) { ?>
-function tratarCertificadoDigital(){
-  document.getElementById('hdnFormaAutenticacao').value = '<?=AssinaturaRN::$TA_CERTIFICADO_DIGITAL?>';
-  if (OnSubmitForm()){
-    infraExibirAviso(false);
-    document.getElementById('frmAssinaturas').submit();
+  function assinarCertificadoDigital(){
+    document.getElementById('hdnFormaAutenticacao').value = '<?=AssinaturaRN::$TA_CERTIFICADO_DIGITAL?>';
+    if (OnSubmitForm()) {
+      infraExibirAviso();
+      document.getElementById('frmAssinaturas').submit();
+    }
   }
-}
+
+
+<? } ?>
+<? if($bolPermiteAssinaturaSso) { ?>
+  function assinarSso(){
+    document.getElementById('hdnFormaAutenticacao').value = '<?=AssinaturaRN::$TA_SSO?>';
+    if (OnSubmitForm()) {
+      infraExibirAviso();
+      document.getElementById('frmAssinaturas').submit();
+    }
+  }
 <? } ?>
 
 function finalizar(){
@@ -546,6 +592,18 @@ function finalizar(){
   <?}?>
 }
 
+<?if ($bolAssinaturaOK && ($objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_CERTIFICADO_DIGITAL || $objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_SSO)){ ?>
+
+function verificarConfirmacaoAssinatura(){
+  if (timer != null){
+    timer = 1;
+  }else {
+    timer = 1;
+    intervaloVerificacao = setInterval(function () {objAjaxVerificacaoCertificado.executar();}, 3000);
+  }
+}
+
+<?}?>
 //</script>
 <?
 PaginaSEI::getInstance()->fecharJavaScript();
@@ -561,7 +619,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     //PaginaSEI::getInstance()->montarAreaValidacao();
     ?>
     <div class="row">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
             <div id="divOrgao" class="infraAreaDados">
                 <div class="form-group">
                     <label id="lblOrgao" for="selOrgao" accesskey="r" class="infraLabelObrigatorio">Ó<span class="infraTeclaAtalho">r</span>gão do Assinante:</label>
@@ -573,7 +631,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
         </div>
     </div>
     <div class="row">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
             <div id="divUsuario" class="infraAreaDados">
                 <div class="form-group">
                     <label id="lblUsuario" for="txtUsuario" accesskey="e" class="infraLabelObrigatorio">Assinant<span class="infraTeclaAtalho">e</span>:</label>
@@ -584,11 +642,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
         </div>
     </div>
     <div class="row">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
             <div id="divCargoFuncao" class="infraAreaDados">
                 <div class="form-group">
                     <label id="lblCargoFuncao" for="selCargoFuncao" accesskey="F" class="infraLabelObrigatorio">Cargo / <span class="infraTeclaAtalho">F</span>unção:</label>
-                    <select id="selCargoFuncao" name="selCargoFuncao" class="infraSelect form-control" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
+                    <select id="selCargoFuncao" name="selCargoFuncao" class="infraSelect form-select" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
                     <?=$strItensSelCargoFuncao?>
                     </select>
                 </div>
@@ -596,22 +654,57 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
         </div>
     </div>
     <div class="row">
-        <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-6">
-            <div id="divAutenticacao" class="infraAreaDados">
-            <? if($bolPermiteAssinaturaLogin) { ?>
-                <div class="form-group">
-                    <label id="lblSenha" for="pwdSenha" accesskey="S" class="infraLabelRadio infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><span class="infraTeclaAtalho">S</span>enha</label>&nbsp;&nbsp;
-                    <input type="password" id="pwdSenha" name="pwdSenha" autocomplete="off" class="infraText form-control" onkeypress="return tratarSenha(event);" value="" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />&nbsp;&nbsp;&nbsp;&nbsp;
-                </div>
-            <? }
-                if($bolPermiteAssinaturaLogin && $bolPermiteAssinaturaCertificado) { ?>
-                    <label id="lblOu" class="infraLabelOpcional" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">ou</label>&nbsp;&nbsp;&nbsp;
-            <? }
-                if($bolPermiteAssinaturaCertificado) { ?>
-                <label id="lblCertificadoDigital" onclick="tratarCertificadoDigital();" accesskey="" for="optCertificadoDigital" class="infraLabelRadio infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=((!$bolPermiteAssinaturaLogin)?(!$bolAutenticacao?'Assinar com ':'Autenticar com '):'')?>Certificado Digital</label>&nbsp;
-                <div id="divAjudaAssinaturaDigital"><a id="ancAjudaAssinaturaDigital" href="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao=assinatura_digital_ajuda&acao_origem='.$_GET['acao'])?>" target="janAjudaAssinaturaDigital" title="Instruções para Configuração da Assinatura Digital" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><img src="<?=PaginaSEI::getInstance()->getDiretorioImagensLocal()?>/sei_informacao.png" class="infraImg" /></a></div>
-            <? } ?>
+        <div class="col-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+            <div id="divAutenticacao" class="infraAreaDados" style="height:5em;">
+
+              <? if($bolPermiteAssinaturaLogin) { ?>
+                <label id="lblSenha" for="pwdSenha" accesskey="S" class="infraLabelObrigatorio" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><span class="infraTeclaAtalho">S</span>enha:</label><br>
+                <?=InfraINT::montarInputPassword('pwdSenha', '', 'onkeypress="return tratarSenha(event);" tabindex="'.PaginaSEI::getInstance()->getProxTabDados().'"')?>&nbsp;&nbsp;&nbsp;
+              <? }else {?>
+                <br>
+              <? }?>
+
+              <?if($bolPermiteAssinaturaLogin && $bolPermiteAssinaturaCertificado) { ?>
+                <!--<label id="lblOu" class="infraLabelOpcional" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">ou</label>&nbsp;&nbsp;-->
+              <? }
+
+              if($bolPermiteAssinaturaCertificado) { ?>
+              <!--<a href="#" id="ancCertificadoDigital" onclick="assinarCertificadoDigital();" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" class="infraAnchorButton"><?=(!$bolPermiteAssinaturaLogin ? 'Assinar com ' : '')?>Certificado Digital</a>-->
+              <? }
+
+              if(($bolPermiteAssinaturaLogin || $bolPermiteAssinaturaCertificado) && $bolPermiteAssinaturaSso) { ?>
+                <!--&nbsp;<label id="lblOuAssinaturaSso" class="infraLabelOpcional" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">ou</label>&nbsp;&nbsp;&nbsp;-->
+              <? }   ?>
+
+              <?if($bolPermiteAssinaturaSso) { ?>
+              <!--<a href="#" id="ancAssinaturaSso" onclick="assinarSso();" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><img id="imgAssinarGovBr" src="imagens/assinatura-gov-br.png" title="Assinar com gov.br" style="width:150px" class="infraImg" /></a>&nbsp;-->
+              <? }   ?>
+
             </div>
+          </div>
+
+        <?if($bolAssinaturaOK && $objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_CERTIFICADO_DIGITAL){?>
+            <div id="divCodigo" class="infraAreaDados">
+              <label id="lblCodigo" class="infraLabelOpcional">Para prosseguir disponibilize os dados de assinatura e execute o programa <span style="font-weight:bold">Assinador de Documentos com Certificado Digital do SEI</span>.</label>
+              <br>
+              <br>
+              <button type="button" id="btnCopiarCodigo" name="btnCopiarCodigo" value="Copiar" class="infraButton clipboard">Disponibilizar dados para o assinador</button>
+              &nbsp;&nbsp;
+              <a id="ancAjuda" href="<?=SessaoSEI::getInstance()->assinarLink('controlador.php?acao=assinatura_digital_ajuda&acao_origem='.$_GET['acao'])?>" target="_blank" class="infraAnchorButton">Ajuda</a>
+            </div>
+          <?}?>
+
+          <?if($bolAssinaturaOK && $objAssinaturaDTO->getStrStaFormaAutenticacao() == AssinaturaRN::$TA_SSO){?>
+            <div id="divAssinaturaSso" class="infraAreaDados">
+              <label id="lblCodigo" class="infraLabelOpcional">
+                <span>Antes de continuar acesse o aplicativo do gov.br no seu dispositivo móvel. Um código será enviado para o seu dispositivo, caso não receba, clique no botão "Reenviar código" na tela do gov.br.</span>
+                <br>
+              </label>
+              <br>
+              <a id="ancAssinaturaSsoContinuar" href="<?=$strUrlAssinaturaSso?>" target="_blank" onclick="abrirAssinarSso()" class="infraAnchorButton">Continuar</a>
+              <label id="lblAguardeAssinaturaSso" class="infraLabelObrigatorio">Aguardando assinatura...</label>
+            </div>
+          <?}?>
         </div>
     </div>
     <?=$strDivCertificacao?>
@@ -637,7 +730,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     <?
       //echo var_dump($_GET);
       //PaginaSEI::getInstance()->fecharAreaDados();
-      //PaginaSEI::getInstance()->montarAreaDebug();
+      PaginaSEI::getInstance()->montarAreaDebug();
       //PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
 

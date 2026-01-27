@@ -4,7 +4,7 @@
 *
 * 01/08/2016 - criado por marcelo.bezerra@cast.com.br - CAST
 *
-* Controle de ações principais do cadastro de peticionamento
+* Controle de aÃ§Ãµes principais do cadastro de peticionamento
 *
 */
   
@@ -15,6 +15,6 @@
   		break;
   		
     default:
-      throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+      throw new InfraException("AÃ§Ã£o '".$_GET['acao']."' nÃ£o reconhecida.");
   }
 ?>

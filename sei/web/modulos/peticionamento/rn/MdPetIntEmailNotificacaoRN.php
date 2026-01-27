@@ -232,6 +232,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                     $idMdPetIntRelDestinatario = $destinatario->getNumIdMdPetIntRelDestinatario();
                     $idContato = $destinatario->getNumIdContato();
 
+
+
                     $dtIntimacaoAceite = !is_null($destinatario->getDthDataAceite()) ? explode(' ', $destinatario->getDthDataAceite()) : null;
                     $arrDadosEmail['data_cumprimento_intimacao'] = is_array($dtIntimacaoAceite) ? $dtIntimacaoAceite[0] : null;
 
@@ -309,7 +311,15 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                             $objUsuarioRN = new UsuarioRN();
                             $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
 
-                            if (is_object($objUsuarioDTO)) {
+                            // Double check no destinatario
+                            $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                            $objMdPetIntRelDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+                            $objMdPetIntRelDestinatarioDTO->setNumIdContato($idContato);
+                            $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($idIntimacao);
+                            $arrObjMdPetIntRelDestinatarios = (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntRelDestinatarioDTO);
+
+                            if (is_object($objUsuarioDTO) && !empty($arrObjMdPetIntRelDestinatarios) && count($arrObjMdPetIntRelDestinatarios) > 0) {
+
                                 if ($objUsuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
 //                                $objInfraException->lancarValidacao('Usuário externo "' . $objUsuarioDTO->getStrSigla() . '" ainda não foi liberado.');
                                 }
@@ -317,6 +327,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                                 if ($objUsuarioDTO->getStrStaTipo() != UsuarioRN::$TU_EXTERNO) {
 //                                $objInfraException->lancarValidacao('Usuário "' . $objUsuarioDTO->getStrSigla() . '" não é um usuário externo.');
                                 }
+
                                 //contato - fim
                                 $enviaEmail = true;
                                 $conta = "^[a-zA-Z0-9\._-]+@";
@@ -709,7 +720,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $arrDadosEmail['dadosUsuario']['email'] = $arrObjMdPetVinculoDTO[0]->getStrEmailContatoRepresentante();
             $arrDadosEmail['dadosUsuario']['processo'] = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
             $arrDadosEmail['dadosUsuario']['razao_social'] = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getStrCnpj();
+            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getStrCNPJ();
 
             $objProtocoloDTO = new ProtocoloDTO();
             $objProtocoloDTO->setDblIdProtocolo($numeroSEIVinculacao);

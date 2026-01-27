@@ -57,7 +57,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
                     $('[id^="paramSaidaTable_"]').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
                     $('#paramEntradaTable_cnpjEmpresa').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
-                    $('#paramSaidaTable_cpfPessoa, #paramSaidaTable_tpLogradouro, #paramSaidaTable_numero, #paramSaidaTable_complemento').css('display', 'none');
+                    $('#paramEntradaTable_cpfPessoa').css('display', 'none').find('select[data-obrigatorio="true"]').attr('required', false);
+                    $('#paramSaidaTable_cpfPessoa, #paramSaidaTable_tpLogradouro, #paramSaidaTable_numero, #paramSaidaTable_complemento, #paramSaidaTable_cpfUsuario').css('display', 'none');
 
                     if($('#chkSinCache:checked').length){
                         $('#paramEntradaTable_periodoCache').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
@@ -90,6 +91,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
                     $('[id^="paramSaidaTable_"], [id^="paramEntradaTable_"]').css('display', 'none');
                     $('#paramEntradaTable_cpfPessoa, #paramEntradaTable_identificacaoOrigem').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
+                    $('#paramEntradaTable_cpfUsuario').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', false);
                     $('#paramSaidaTable_codSituacaoCadastral, #paramSaidaTable_descSituacaoCadastral').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
 
                     $(':radio:not(:checked)').attr('disabled', true);
@@ -185,17 +187,23 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     return false;
                 }
 
-                if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_cpfPessoa').value) == '') {
-                    alert('Indique o dado de entrada no webservice para CPF da Pessoa Física.');
-                    document.getElementById('nomeFuncionalDadosEntrada_cpfPessoa').focus();
+                // if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_cpfPessoa').value) == '') {
+                //     alert('Indique o dado de entrada no webservice para CPF da Pessoa Física.');
+                //     document.getElementById('nomeFuncionalDadosEntrada_cpfPessoa').focus();
+                //     return false;
+                // }
+
+                if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_cpfUsuario').value) == '') {
+                    alert('Indique o dado de entrada no webservice para CPF do Usuário requisitante.');
+                    document.getElementById('nomeFuncionalDadosEntrada_cpfUsuario').focus();
                     return false;
                 }
 
-                // if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').value) == '') {
-                //     alert('Indique o dado de entrada no webservice para Identificação Origem.');
-                //     document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').focus();
-                //     return false;
-                // }
+                if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').value) == '') {
+                    alert('Indique o dado de entrada no webservice para Identificação Origem.');
+                    document.getElementById('nomeFuncionalDadosEntrada_identificacaoOrigem').focus();
+                    return false;
+                }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosSaida_codSituacaoCadastral').value) == '') {
                     alert('Indique o dado de saida do webservice para Código da Situação Cadastral.');
@@ -388,6 +396,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                         arraySelect.push('selParametrosE');
                         arraySelect.push('nomeFuncionalDadosEntrada_cnpjEmpresa');
                         arraySelect.push('nomeFuncionalDadosEntrada_cpfPessoa');
+                        arraySelect.push('nomeFuncionalDadosEntrada_cpfUsuario');
                         arraySelect.push('nomeFuncionalDadosEntrada_identificacaoOrigem');
                     } else {
                         arraySelect.push('nomeFuncionalDadosSaida_cnpjEmpresa');
@@ -518,6 +527,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 selectedValor = '<?php echo $strItensSelCnpjEmpresa; ?>';
             } else if(select == 'nomeFuncionalDadosEntrada_cpfPessoa' && tipo_parametro == 'e') {
                 selectedValor = '<?php echo $strItensSelCpfPessoa; ?>';
+            } else if(select == 'nomeFuncionalDadosEntrada_cpfUsuario' && tipo_parametro == 'e') {
+                selectedValor = '<?php echo $strItensSelCpfUsuario; ?>';
             } else {
                 var arrayNome = select.split('_');
                 $.each(dados, function (chave, item) {

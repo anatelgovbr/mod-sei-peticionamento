@@ -32,7 +32,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.4.1';
+        return '4.4.2';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -4129,26 +4129,27 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         public static function classificarMetaOds($idProtocolo)
         {
+            
             $arrMetasSelecionadas = SessaoSEIExterna::getInstance()->getAtributo('METAS_SELECIONADAS');
             $idUsuario = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
             $staTipoUsuario = 'E';
 
             if(!empty($arrMetasSelecionadas)){
 
-              foreach ($arrMetasSelecionadas as $metaSelecionada) {
-                //recupera a meta para cadastrar na classificação da meta
-                $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
-                $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmMetaOds($metaSelecionada);
-                $objMdIaAdmMetaOdsDTO->retStrIdentificacaoMeta();
-                $objMdIaAdmMetaOdsDTO = (new MdIaAdmMetaOdsRN())->consultar($objMdIaAdmMetaOdsDTO);
+                foreach ($arrMetasSelecionadas as $metaSelecionada) {
+                    //recupera a meta para cadastrar na classificação da meta
+                    $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
+                    $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmMetaOds($metaSelecionada);
+                    $objMdIaAdmMetaOdsDTO->retStrIdentificacaoMeta();
+                    $objMdIaAdmMetaOdsDTO = (new MdIaAdmMetaOdsRN())->consultar($objMdIaAdmMetaOdsDTO);
 
-                MdIaAdmObjetivoOdsINT::classificarOdsWS($idProtocolo, $objMdIaAdmMetaOdsDTO->getStrIdentificacaoMeta(), $idUsuario, $staTipoUsuario );
-              }
+                    MdIaAdmObjetivoOdsINT::classificarOdsWS($idProtocolo, $objMdIaAdmMetaOdsDTO->getStrIdentificacaoMeta(), $idUsuario, $staTipoUsuario );
+                }
 
-              // apos realizar a classificacao deve limpar os dados da sessao
-              if( SessaoSEIExterna::getInstance()->isSetAtributo('arrMetasSelecionadas') ){
-                SessaoSEIExterna::getInstance()->removerAtributo('arrMetasSelecionadas');
-              }
+                // apos realizar a classificacao deve limpar os dados da sessao
+                if( SessaoSEIExterna::getInstance()->isSetAtributo('arrMetasSelecionadas') ){
+                    SessaoSEIExterna::getInstance()->removerAtributo('arrMetasSelecionadas');
+                }
 
             }
 

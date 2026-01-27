@@ -272,6 +272,58 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         $objOrgaoDTO->setStrSinAtivo('S');
         $objOrgaoDTO = $orgaoRN->consultarRN1352($objOrgaoDTO);
 
+        // INICIO DA INJECAO DA ODS ONU NO RECIBO
+        if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno()){
+
+            $arrIdMetasSelecionadas = $arrParametros['metas_ods_onu'];
+
+            if(!empty($arrIdMetasSelecionadas)){
+
+                $html .= '<p style="font-weight: bold;">Objetos de Desenvolvimento Sustentável da ONU</p>';
+                $html .= '<p>O Usuário Externo acima identificado, no momento deste peticionamento indicou corroboração dos documentos protocolados com os ODS e Metas abaixo:</p>';
+
+                $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
+                $objMdIaAdmMetaOdsDTO->retNumIdMdIaAdmObjetivoOds();
+                $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmMetaOds($arrIdMetasSelecionadas, InfraDTO::$OPER_IN);
+                $objMdIaAdmMetaOdsDTO->setDistinct(true);
+                $objMdIaAdmMetaOdsDTO->setOrdNumIdMdIaAdmObjetivoOds(InfraDTO::$TIPO_ORDENACAO_ASC);
+                $arrObjMdIaAdmMetaOdsDTO = (new MdIaAdmMetaOdsRN())->listar($objMdIaAdmMetaOdsDTO);
+
+                foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO) {
+                    
+                    // Busca a ODS
+                    $objMdIaAdmObjetivoOdsDTO = new MdIaAdmObjetivoOdsDTO();
+                    $objMdIaAdmObjetivoOdsDTO->retNumIdMdIaAdmObjetivoOds();
+                    $objMdIaAdmObjetivoOdsDTO->retStrDescricaoOds();
+                    $objMdIaAdmObjetivoOdsDTO->retStrNomeOds();
+                    $objMdIaAdmObjetivoOdsDTO->setNumIdMdIaAdmObjetivoOds($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmObjetivoOds());
+                    $objMdIaAdmObjetivoOdsDTO = (new MdIaAdmObjetivoOdsRN())->consultar($objMdIaAdmObjetivoOdsDTO);
+
+                    $html .= '<p>ODS ' . $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds() . '. ' . $objMdIaAdmObjetivoOdsDTO->getStrNomeOds() .'</p>';
+
+                    // Busca as Metas da ODS
+                    $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
+                    $objMdIaAdmMetaOdsDTO->retNumIdMdIaAdmObjetivoOds();
+                    $objMdIaAdmMetaOdsDTO->retStrIdentificacaoMeta();
+                    $objMdIaAdmMetaOdsDTO->retStrDescricaoMeta();
+                    $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmObjetivoOds($objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds());
+                    $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmMetaOds($arrIdMetasSelecionadas, InfraDTO::$OPER_IN);
+                    $objMdIaAdmMetaOdsDTO->setOrdStrIdentificacaoMeta(InfraDTO::$TIPO_ORDENACAO_ASC);
+                    $arrObjMdIaAdmMetaOdsDTO = (new MdIaAdmMetaOdsRN())->listar($objMdIaAdmMetaOdsDTO);
+
+                    foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO) {
+
+                        $html .= '<p>&nbsp;&nbsp;&nbsp;&nbsp;Meta ' . $objMdIaAdmMetaOdsDTO->getStrIdentificacaoMeta() .': '. $objMdIaAdmMetaOdsDTO->getStrDescricaoMeta() .'</p>';
+                        
+                    }
+
+                }
+
+            }
+
+        }
+        //FIM ODS ONU
+
         $html .= '<p>O Usuário Externo acima identificado foi previamente avisado que o peticionamento importa na aceitação dos termos e condições que regem o processo eletrônico, além do disposto no credenciamento prévio, e na assinatura dos documentos nato-digitais e declaração de que são autênticos os digitalizados, sendo responsável civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os níveis de acesso indicados para os documentos estariam condicionados à análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio aviso, e de que são de sua exclusiva responsabilidade:</p><ul><li>a conformidade entre os dados informados e os documentos;</li><li>a conservação dos originais em papel de documentos digitalizados até que decaia o direito de revisão dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferência;</li><li>a realização por meio eletrônico de todos os atos e comunicações processuais com o próprio Usuário Externo ou, por seu intermédio, com a entidade porventura representada;</li><li>a observância de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados até as 23h59min59s do último dia do prazo, considerado sempre o horário oficial de Brasília, independente do fuso horário em que se encontre;</li><li>a consulta periódica ao SEI, a fim de verificar o recebimento de intimações eletrônicas.</li></ul><p>A existência deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) ' . $objOrgaoDTO->getStrDescricao() . '.</p>';
 
         return $html;

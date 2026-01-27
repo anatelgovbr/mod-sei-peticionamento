@@ -30,7 +30,7 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -81,10 +81,10 @@ try {
             $strResultado .= '<th class="infraTh" width="1%">' . PaginaPeticionamentoExterna::getInstance()->getThCheck() . '</th>' . "\n";
         }
 
-        $strResultado .= '<th class="infraTh" width="30%">' . PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'InÌcio', 'DataInicio', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="30%">' . PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'In√≠cio', 'DataInicio', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">' . PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Fim', 'DataFim', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh">' . PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'ProrrogaÁ„o Autom·tica dos Prazos', 'SinProrrogacao', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="15%">AÁıes</th>' . "\n";
+        $strResultado .= '<th class="infraTh">' . PaginaPeticionamentoExterna::getInstance()->getThOrdenacao($objMdPetIndisponibilidadeDTO, 'Prorroga√ß√£o Autom√°tica dos Prazos', 'SinProrrogacao', $arrObjMdPetIndisponibilidadeDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="15%">A√ß√µes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
 
@@ -109,7 +109,7 @@ try {
             $dataInicio = isset($arrObjMdPetIndisponibilidadeDTO[$i]) && $arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataInicio() != '' ? str_replace(' ', ' - ', substr($arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataInicio(), 0, -3)) : '';
             $dataFim = isset($arrObjMdPetIndisponibilidadeDTO[$i]) && $arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataFim() != '' ? str_replace(' ', ' - ', substr($arrObjMdPetIndisponibilidadeDTO[$i]->getDthDataFim(), 0, -3)) : '';
 
-            $sinProrrogacao = $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao() === 'S' ? 'Sim' : 'N„o';
+            $sinProrrogacao = $arrObjMdPetIndisponibilidadeDTO[$i]->getStrSinProrrogacao() === 'S' ? 'Sim' : 'N√£o';
 
             $strResultado .= '<td>' . $dataInicio . '</td>';
             $strResultado .= '<td>' . $dataFim . '</td>';
@@ -180,7 +180,7 @@ PaginaPeticionamentoExterna::getInstance()->abrirJavaScript();
     if(tamanhoCampo < 16 || tamanhoCampo === 18){
     campo.focus();
     campo.value = "";
-    alert('Data/Hora Inv·lida');
+    alert('Data/Hora Inv√°lida');
     return false;
     }
 
@@ -204,7 +204,7 @@ PaginaPeticionamentoExterna::getInstance()->abrirJavaScript();
     }
 
     if (erro) {
-    alert("Data/Hora Inv·lida");
+    alert("Data/Hora Inv√°lida");
     campo.focus();
     campo.value = "";
     return false;
@@ -215,7 +215,7 @@ PaginaPeticionamentoExterna::getInstance()->abrirJavaScript();
     var minutos    = arrayHoras[1];
     var segundos   = arrayHoras[2];
     if(horas > 23 || minutos > 59 || segundos > 59){
-    alert('Data/Hora Inv·lida');
+    alert('Data/Hora Inv√°lida');
     campo.focus();
     campo.value = "";
     return false
@@ -297,19 +297,19 @@ $urlForm = 'modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?ac
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <label id="lblDescricao" class="infraLabelOpcional">
-                    <br/>Conforme normativo prÛprio, algumas indisponibilidades justificam a prorrogaÁ„o autom·tica dos
-                    prazos externos de IntimaÁıes EletrÙnicas que venceriam durante o perÌodo da indisponibilidade,
-                    prorrogando-os para o primeiro dia ˙til seguinte ao fim da respectiva indisponibilidade. Na coluna
-                    "ProrrogaÁ„o Autom·tica dos Prazos", as indisponibilidades marcadas com "Sim" justificaram a
+                    <br/>Conforme normativo pr√≥prio, algumas indisponibilidades justificam a prorroga√ß√£o autom√°tica dos
+                    prazos externos de Intima√ß√µes Eletr√¥nicas que venceriam durante o per√≠odo da indisponibilidade,
+                    prorrogando-os para o primeiro dia √∫til seguinte ao fim da respectiva indisponibilidade. Na coluna
+                    "Prorroga√ß√£o Autom√°tica dos Prazos", as indisponibilidades marcadas com "Sim" justificaram a
                     referida
-                    prorrogaÁ„o.<br/><br/><br/>
+                    prorroga√ß√£o.<br/><br/><br/>
                 </label>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2">
                 <div class="form-group">
-                    <label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">InÌcio:</label>
+                    <label id="lblDtInicio" for="txtDtInicio" class="infraLabelOpcional">In√≠cio:</label>
                     <div class="input-group mb-3">
                         <input type="text" name="txtDtInicio" id="txtDtInicio" onchange="validDate('I');"
                             value="<?= PaginaSEIExterna::tratarHTML($strDtInicio) ?>"
@@ -342,7 +342,7 @@ $urlForm = 'modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?ac
             </div>
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <div class="form-group">
-                    <label id="lblSinProrrogacao" for="selSinProrrogacao" class="infraLabelOpcional">ProrrogaÁ„o Autom·tica
+                    <label id="lblSinProrrogacao" for="selSinProrrogacao" class="infraLabelOpcional">Prorroga√ß√£o Autom√°tica
                         dos
                         Prazos:</label>
                     <select onchange="pesquisar()" id="selSinProrrogacao" name="selSinProrrogacao"

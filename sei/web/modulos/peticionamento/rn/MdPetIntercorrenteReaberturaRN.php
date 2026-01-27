@@ -71,7 +71,7 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
 		$unidadeRN = new UnidadeRN();
 		$objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
-		if($objUnidadeDTO->getStrSinAtivo() == 'N'){
+		if($objUnidadeDTO->getStrSinAtivo() == 'N' || $objUnidadeDTO->getStrSinEnvioProcesso() == 'N'){
 			$idUnidadeReabrirProcesso = null;
 
 			$objMdPetAtividadeRN = new MdPetAtividadeRN();
@@ -82,11 +82,12 @@ class MdPetIntercorrenteReaberturaRN extends InfraRN {
 				$unidadeDTO = new UnidadeDTO();
 				$unidadeDTO->retNumIdUnidade();
 				$unidadeDTO->retStrSinAtivo();
+				$unidadeDTO->retStrSinEnvioProcesso();
 				$unidadeDTO->setBolExclusaoLogica(false);
 				$unidadeDTO->setNumIdUnidade($itemObjMdPetAtividadeDTO->getNumIdUnidade());
 				$unidadeRN = new UnidadeRN();
 				$objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
-				if (count($objUnidadeDTO)==1 && $objUnidadeDTO->getStrSinAtivo() == 'S') {
+				if (count($objUnidadeDTO)==1 && $objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
 					$idUnidadeReabrirProcesso = $objUnidadeDTO->getNumIdUnidade();
 				}
 			}

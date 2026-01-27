@@ -17,7 +17,7 @@
             document.getElementById('hdnIdUf').value = '';
             document.getElementById('hdnIdCidade').value = '';
 
-            //Travando as combos caso o orgão esteja na opção TOdos
+            //Travando as combos caso o orgÃ£o esteja na opÃ§Ã£o TOdos
             document.getElementById("selUF").disabled = true;
             document.getElementById("selCidade").disabled = true;
         }
@@ -45,7 +45,7 @@
         }
 
 
-        //Setando orgão
+        //Setando orgÃ£o
         if (document.getElementById("selOrgao").value != "") {
 
             $.ajax({
@@ -73,7 +73,7 @@
 
                         $.each($(data).find('item'), function (i, j) {
 
-                            //Caso tenha somente uma uf vinculado com o orgão.
+                            //Caso tenha somente uma uf vinculado com o orgÃ£o.
                             var count = $(data).find("item").length;
 
                             if (count < 2) {
@@ -88,7 +88,7 @@
                                     document.getElementById('hdnIdUf').value = '';
                                     document.getElementById('hdnIdCidade').value = '';
 
-                                    //Travando as combos caso o orgão esteja na opção TOdos
+                                    //Travando as combos caso o orgÃ£o esteja na opÃ§Ã£o TOdos
                                     document.getElementById("selUF").disabled = true;
                                     document.getElementById("selCidade").disabled = true;
 
@@ -317,7 +317,7 @@
 
     function mudarTpProcesso() {
 
-//Somente se o usuário escolher opção todos
+//Somente se o usuÃ¡rio escolher opÃ§Ã£o todos
         if (document.getElementById('hdnIdOrgao').value == '' && document.getElementById('hdnIdUf').value == '' && document.getElementById('hdnIdCidade').value == '') {
             var filtros = {};
         }
@@ -339,19 +339,19 @@
             };
         }
 
-        //Somente se o usuário escolher a UF quando entrar na tela
+        //Somente se o usuÃ¡rio escolher a UF quando entrar na tela
         if (document.getElementById('hdnIdUf').value != '' && document.getElementById('hdnIdOrgao').value == '' && document.getElementById('hdnIdCidade').value == '') {
             var filtros = {uf: document.getElementById('hdnIdUf').value};
             //Uf com unica cidade
         }
 
-        //Somente se o usuário escolher a Cidade quando entrar na tela
+        //Somente se o usuÃ¡rio escolher a Cidade quando entrar na tela
         if (document.getElementById('hdnIdUf').value == '' && document.getElementById('hdnIdOrgao').value == '' && document.getElementById('hdnIdCidade').value != '') {
             var filtros = {cidade: document.getElementById('hdnIdCidade').value};
 
         }
 
-        //Somente se o usuário escolher a Uf e Cidade quando entrar na tela
+        //Somente se o usuÃ¡rio escolher a Uf e Cidade quando entrar na tela
         if (document.getElementById('hdnIdUf').value != '' && document.getElementById('hdnIdOrgao').value == '' && document.getElementById('hdnIdCidade').value != '') {
             var filtros = {
                 cidade: document.getElementById('hdnIdCidade').value,
@@ -378,7 +378,7 @@
 
                         url = $(j).attr("id");
 
-                        //Url dinâmica
+                        //Url dinÃ¢mica
 
                         if (document.getElementById('hdnIdUf').value != '' && document.getElementById('hdnIdOrgao').value == '' && document.getElementById('hdnIdCidade').value == '') {
                             //  var troca = url.split("&")[2];

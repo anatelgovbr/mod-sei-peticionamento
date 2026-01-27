@@ -24,11 +24,11 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-10 infraAreaDados" id="divArquivo">
+        <div class="col-12 infraAreaDados" id="divArquivo" style="height: 120px">
             <div class="form-group mb-4">
                 <label class="infraLabelObrigatorio" for="fileArquivo">
                     Documento (tamanho máximo: <?= is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):<br/>
-                    <input type="file" name="fileArquivo" class="form-control-file" id="fileArquivo" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
+                    <input type="file" name="fileArquivo" class="form-control-file drop-zone-style" id="fileArquivo" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
                 </label>
             </div>
         </div>

@@ -339,50 +339,59 @@ try {
                 $arrobjMdPetRelTpProcessoUnidDTO = null;
             }
 
-            $arrTipoProcessoOrgaoCidade = array();
+            $arrTipoProcessoOrgaoCidade = [];
             $tipoProcessoRestricaoErro = false;
-            foreach ($arrobjMdPetRelTpProcessoUnidDTO as $objDTO) {
-                $siglaUnidade = '';
-                $tdUnidade = null;
-                $siglaUnidade = $objDTO->getStrsiglaUnidade() != null ? $objDTO->getStrsiglaUnidade() : '';
-                $tpUnidadeMult = $objDTO->getStrStaTipoUnidade() == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS ? true : false;
 
-                if ($tpUnidadeMult) {
-                    $strUnidades = 'Múltiplas';
-                    $tdUnidade = '<td valign="middle">' . $strUnidades . '</td>';
-                } else {
-                    $strUnidades = $siglaUnidade;
-                    $tdUnidade = '<td valign="middle"><a alt="' . $objDTO->getStrdescricaoUnidade() . '" title="' . $objDTO->getStrdescricaoUnidade() . '" class="ancoraSigla">' . $strUnidades . '</a></td>';
+            if(!empty($arrobjMdPetRelTpProcessoUnidDTO)){
+
+                foreach ($arrobjMdPetRelTpProcessoUnidDTO as $objDTO) {
+
+                    $siglaUnidade = '';
+                    $tdUnidade = null;
+                    $siglaUnidade = $objDTO->getStrsiglaUnidade() != null ? $objDTO->getStrsiglaUnidade() : '';
+                    $tpUnidadeMult = $objDTO->getStrStaTipoUnidade() == MdPetTipoProcessoRN::$UNIDADES_MULTIPLAS ? true : false;
+
+                    if ($tpUnidadeMult) {
+                        $strUnidades = 'Múltiplas';
+                        $tdUnidade = '<td valign="middle">' . $strUnidades . '</td>';
+                    } else {
+                        $strUnidades = $siglaUnidade;
+                        $tdUnidade = '<td valign="middle"><a alt="' . $objDTO->getStrdescricaoUnidade() . '" title="' . $objDTO->getStrdescricaoUnidade() . '" class="ancoraSigla">' . $strUnidades . '</a></td>';
+                    }
+
+                    //Criação do array de unidade para filtro
+                    if (!in_array($siglaUnidade, $arrUnidades)) {
+                        $arrUnidades[$objDTO->getNumIdUnidade()] = $siglaUnidade;
+                    }
+
+                    //Criação do array de orgao para filtro
+                    if (!in_array($objDTO->getStrSiglaOrgao(), $arrOrgao)) {
+                        $arrOrgao[$objDTO->getNumIdOrgaoUnidade()] = $objDTO->getStrSiglaOrgao();
+                    }
+
+                    //Criação do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
+                    if (!key_exists($objDTO->getNumIdOrgaoUnidade(), $arrTipoProcessoOrgaoCidade)) {
+                        $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()] = array();
+                    }
+                    if (!key_exists($objDTO->getNumIdCidadeContato(), $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()])) {
+                        $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] = 1;
+                    } else {
+                        $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] = $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] + 1;
+                    }
+
+                    //Verifica se tem alguma unidade ou órgão diferente dos restritos
+                    if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)) {
+                        $tipoProcessoRestricaoErro = true;
+                    }
+                    if (($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($objDTO->getNumIdUnidade(), $idUnidadeRestricao)) {
+                        $tipoProcessoRestricaoErro = true;
+                    }
+
                 }
 
-                //Criação do array de unidade para filtro
-                if (!in_array($siglaUnidade, $arrUnidades)) {
-                    $arrUnidades[$objDTO->getNumIdUnidade()] = $siglaUnidade;
-                }
-
-                //Criação do array de orgao para filtro
-                if (!in_array($objDTO->getStrSiglaOrgao(), $arrOrgao)) {
-                    $arrOrgao[$objDTO->getNumIdOrgaoUnidade()] = $objDTO->getStrSiglaOrgao();
-                }
-
-                //Criação do array para confirmar se existe para tipo de processo unidades com o mesmo orgao e cidade
-                if (!key_exists($objDTO->getNumIdOrgaoUnidade(), $arrTipoProcessoOrgaoCidade)) {
-                    $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()] = array();
-                }
-                if (!key_exists($objDTO->getNumIdCidadeContato(), $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()])) {
-                    $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] = 1;
-                } else {
-                    $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] = $arrTipoProcessoOrgaoCidade[$objDTO->getNumIdOrgaoUnidade()][$objDTO->getNumIdCidadeContato()] + 1;
-                }
-
-                //Verifica se tem alguma unidade ou órgão diferente dos restritos
-                if (($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)) {
-                    $tipoProcessoRestricaoErro = true;
-                }
-                if (($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($objDTO->getNumIdUnidade(), $idUnidadeRestricao)) {
-                    $tipoProcessoRestricaoErro = true;
-                }
             }
+
+            
             //verificando se existe algum tipo de processo com divergencia de orgao e cidade iguais
             if ($arrTipoProcessoOrgaoCidade) {
                 $tipoProcessoDivergencia = false;
@@ -437,8 +446,8 @@ try {
             if (count($arrOrgao) > 1) {
                 $tdOrgao = '<td valign="middle">Múltiplos</td>';
                 $filtroOrgaoMultiplo = true;
-            } else {
-                $tdOrgao = '<td valign="middle"><a alt="' . $objDTO->getStrDescricaoOrgao() . '" title="' . $objDTO->getStrDescricaoOrgao() . '" class="ancoraSigla">' . $objDTO->getStrSiglaOrgao() . '</a></td>';
+            } else if(count($arrOrgao) == 1 && !empty($arrobjMdPetRelTpProcessoUnidDTO)){
+                $tdOrgao = '<td valign="middle"><a alt="' . $arrobjMdPetRelTpProcessoUnidDTO[0]->getStrDescricaoOrgao() . '" title="' . $arrobjMdPetRelTpProcessoUnidDTO[0]->getStrDescricaoOrgao() . '" class="ancoraSigla">' . $arrobjMdPetRelTpProcessoUnidDTO[0]->getStrSiglaOrgao() . '</a></td>';
             }
 
             $strResultado .= $tdOrgao;

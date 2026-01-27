@@ -7,7 +7,6 @@ $strLinkConsultaDadosUsuarioExterno = SessaoSEIExterna::getInstance()->assinarLi
 $strLinkConsultaUsuarioExternoValido = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_consulta_usuext_valido');
 $strLinkRedirecionamentoPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext');
 $strLinkUploadArquivo = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_upload_anexo');
-$strCaptcha = hash('SHA512', InfraCaptcha::gerar($strCodigoParaGeracaoCaptcha));
 $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_usu_ext_autocompletar');
 $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_negado');
 ?>
@@ -53,10 +52,17 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         <?php if ($stWebService) : ?>
             //  document.getElementById("txtNumeroCpfProcurador").addEventListener("keyup", controlarEnterValidarUsuario, false);
         <?php endif; ?>
+        
+        if ("<?= $captchaValidado ?>" == '3') {
+            if ("<?= $semWS ?>" == '1') {
+                carregarTelaNovoCnpj();
+            } else {
+                consultarDadosReceita();
+            }
+            
+            $(".Numerada")[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
-        $('#btnValidarSemWS').on('click', function() {
-            carregarTelaNovoCnpj();
-        });
         document.addEventListener("keypress", function(e) {
             if (e.key === 'Enter') {
                 var btn = document.querySelector("#cardCaptcha button");
@@ -78,16 +84,10 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     function carregarTelaNovoCnpj() {
         //Verificar se o cnpj já esta sendo utilizado num vinculo
         var qtdNuCPNJ = document.getElementById('txtNumeroCnpj').value.trim().length;
-        var qtdTxtCaptcha = document.getElementById('txtCaptcha').value.trim().length;
         var valido = true;
 
         if (qtdNuCPNJ == 0) {
             alert('Antes, informe o CNPJ!');
-            return false;
-        }
-
-        if (qtdTxtCaptcha == 0) {
-            alert('Informe o código de confirmação.');
             return false;
         }
 
@@ -96,8 +96,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             method: 'POST',
             url: '<?php echo $strLinkConsultaVinculo ?>',
             data: {
-                'txtNumeroCnpj': $("#txtNumeroCnpj").val(),
-                'txtCaptcha': $("#txtCaptcha").val()
+                'txtNumeroCnpj': $("#txtNumeroCnpj").val()
             },
             error: function(dados) {
                 console.log(dados);
@@ -405,15 +404,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         consultarVinculoExistenteCnpj();
 
         var qtdNuCPNJ = document.getElementById('txtNumeroCnpj').value.trim().length;
-        var qtdTxtCaptcha = document.getElementById('txtCaptcha').value.trim().length;
 
         if (qtdNuCPNJ == 0) {
             alert('Antes, informe o CNPJ!');
-            return false;
-        }
-
-        if (qtdTxtCaptcha == 0) {
-            alert('Informe o código de confirmação.');
             return false;
         }
 
@@ -425,11 +418,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             url: '<?php echo $strLinkConsultaReceita ?>',
             beforeSend: function(request) {
                 infraExibirAviso(false, 'Processando...');
-                request.setRequestHeader("captcha", '<?php echo $strCaptcha ?>');
             },
             data: {
-                'txtNumeroCnpj': $("#txtNumeroCnpj").val(),
-                'txtCaptcha': $("#txtCaptcha").val()
+                'txtNumeroCnpj': $("#txtNumeroCnpj").val()
             },
             error: function(dados) {
                 console.log(dados);
@@ -531,7 +522,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                     $("#fieldUsuarioProcuracao").show();
                     $("#fieldUsuarioProcuracao_BR").show();
                 }
-                $("#hdnValorCaptcha").val($("#txtCaptcha").val());
             }
 
         });
@@ -1047,21 +1037,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             alert('CNPJ informado é inválido.');
             document.getElementById('txtNumeroCnpj').focus();
             return false;
-        }
-
-        if (stWebservice != 'false' && !isAlteracao) {
-            if (document.getElementById('txtCaptcha').value.trim().length == 0) {
-                alert('Informe o código de confirmação.');
-                document.getElementById('txtCaptcha').focus();
-                return false;
-            }
-
-            var captchaValidado = document.getElementById('hdnValorCaptcha').value;
-            if (document.getElementById('txtCaptcha').value != captchaValidado) {
-                alert('Código de confirmação inválido.');
-                document.getElementById('txtCaptcha').focus();
-                return false;
-            }
         }
 
         var isCnpjValidado = document.getElementById('hdnIsCnpjValidado').value == '1';

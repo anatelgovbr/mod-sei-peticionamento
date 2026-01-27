@@ -2,7 +2,7 @@
     <table align="center" style="font: bold 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; width: 90%;" border=0>
         <tbody>
         <tr>
-            <td style="padding-left: 15px; width: 220px">Pessoa Jurídica Outorgante:</td>
+            <td style="padding-left: 15px; width: 220px">Pessoa JurÃ­dica Outorgante:</td>
             <td style="font-weight: normal;"> @RazaoSocial </td>
         </tr>
         <tr>
@@ -27,7 +27,7 @@
             <td style="font-weight: normal;"> @validade </td>
         </tr>
         <tr>
-            <td style="padding-left: 15px;">Abrangência:</td>
+            <td style="padding-left: 15px;">AbrangÃªncia:</td>
             <td style="font-weight: normal;">@abrangencia</td>
         </tr>
         <tr>
@@ -38,14 +38,14 @@
     </table>
 </div>
 <div>
-    <p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">No âmbito do(a) @sigla_orgao@, a presente Procuração Eletrônica Simples concede ao Outorgado os Poderes expressamente estabelecidos e em conformidade com a Validade e Abrangência definidos acima.</p>
+    <p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">No Ã¢mbito do(a) @sigla_orgao@, a presente ProcuraÃ§Ã£o EletrÃ´nica Simples concede ao Outorgado os Poderes expressamente estabelecidos e em conformidade com a Validade e AbrangÃªncia definidos acima.</p>
     <p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">O Outorgante declarou ciente de que:</p>
     <label>
         <ul>
-            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 0">Poderá, a qualquer tempo, por meio do SEI-@sigla_orgao@, revogar a Procuração Eletrônica Simples;</p></li>
-            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 0">O Outorgado poderá, a qualquer tempo, por meio do SEI-@sigla_orgao@, renunciar a Procuração Eletrônica Simples;</p></li>
-            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 0">A validade desta Procuração está circunscrita ao(à) @sigla_orgao@ e em conformidade com os Poderes, Validade e Abrangência definidos, salvo se revogada ou renunciada, de modo  que  ela  não  pode ser  usada  para  convalidar quaisquer atos praticados pelo Outorgado em representação do Outorgante no âmbito de outros órgãos ou entidades.</p></li>
+            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 0">PoderÃ¡, a qualquer tempo, por meio do SEI-@sigla_orgao@, revogar a ProcuraÃ§Ã£o EletrÃ´nica Simples;</p></li>
+            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 0">O Outorgado poderÃ¡, a qualquer tempo, por meio do SEI-@sigla_orgao@, renunciar a ProcuraÃ§Ã£o EletrÃ´nica Simples;</p></li>
+            <li><p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 0">A validade desta ProcuraÃ§Ã£o estÃ¡ circunscrita ao(Ã ) @sigla_orgao@ e em conformidade com os Poderes, Validade e AbrangÃªncia definidos, salvo se revogada ou renunciada, de modo  que  ela  nÃ£o  pode ser  usada  para  convalidar quaisquer atos praticados pelo Outorgado em representaÃ§Ã£o do Outorgante no Ã¢mbito de outros Ã³rgÃ£os ou entidades.</p></li>
         </ul>
     </label>
 </div>
-<p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0;">A existência e validade desta Procuração Eletrônica Simples pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>
+<p style="font: normal 12pt Calibri, Sans-Serif; text-align: justify; word-wrap: normal; text-indent: 0;">A existÃªncia e validade desta ProcuraÃ§Ã£o EletrÃ´nica Simples pode ser conferida no Portal na Internet do(a) @descricao_orgao@.</p>

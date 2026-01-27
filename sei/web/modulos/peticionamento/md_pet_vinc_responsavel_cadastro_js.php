@@ -12,7 +12,7 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
         var cpfAtual = infraRetirarFormatacao(document.getElementById('txtCpf').value.trim());
 
         if(parseFloat(infraRetirarFormatacao(nuCpf)) == parseFloat(cpfAtual)){
-            alert('O Cpf informado pertence ao atual Respons·vel Legal dessa PJ.');
+            alert('O Cpf informado pertence ao atual Respons√°vel Legal dessa PJ.');
             return false;
         }
 
@@ -75,25 +75,25 @@ $strLinkUsuarioAjax = SessaoSEI::getInstance()->assinarLink('controlador_ajax.ph
         var cpf = document.getElementById('txtCpfNovo').value.trim();
 
         if (cpf.length == 0) {
-            alert('CPF do Usu·rio Externo n„o informado.');
+            alert('CPF do Usu√°rio Externo n√£o informado.');
             return false;
         }
 
         var nome = document.getElementById('txtNomeNovo').value.trim();
         if (nome.length == 0) {
-            alert('Usu·rio Externo n„o encontrado.');
+            alert('Usu√°rio Externo n√£o encontrado.');
             return false;
         }
 
         var validarNumeroSeiPreenchido  = document.getElementById('txtNumeroSei').value.trim();
         if(validarNumeroSeiPreenchido.length == 0){
-           alert('N˙mero SEI n„o Informado.');
+           alert('N√∫mero SEI n√£o Informado.');
            return false;
         }
 
         var validarNumeroSeiCorreto  = document.getElementById('hdnValidarNumSEI').value.trim();
         if(validarNumeroSeiCorreto != 'true'){
-            alert('N˙mero SEI inv·lido.');
+            alert('N√∫mero SEI inv√°lido.');
             return false;
         }
 

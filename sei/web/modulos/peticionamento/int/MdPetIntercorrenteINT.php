@@ -72,13 +72,13 @@
             $unidadeRN = new UnidadeRN();
             $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
-            if($objUnidadeDTO->getStrSinAtivo() == 'N'){
+            if($objUnidadeDTO->getStrSinAtivo() == 'N' || $objUnidadeDTO->getStrSinEnvioProcesso() == 'N'){
                 $idUnidadeReabrirProcesso = null;
                 $objAtividadeRN  = new MdPetIntercorrenteAtividadeRN();
                 $arrObjUnidadeDTO = $objAtividadeRN->listarUnidadesTramitacao($objProcedimentoDTO);
 
                 foreach ($arrObjUnidadeDTO as $itemObjUnidadeDTO) {
-                    if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S') {
+                    if ($itemObjUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                         $idUnidadeReabrirProcesso = $itemObjUnidadeDTO->getNumIdUnidade();
                     }
                 }

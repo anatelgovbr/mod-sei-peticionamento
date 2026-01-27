@@ -117,7 +117,7 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
             <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">E-mail:</label><label class="infraLabelOpcional"> <?= $dadosIntimacao['email']?></label><br><?php } ?>
 
             <?php if($pessoa == "F"){ ?><label class="infraLabelObrigatorio">CPF:</label> <label class="infraLabelOpcional"><?= !empty($dadosIntimacao['cpf']) ? InfraUtil::formatarCpf($dadosIntimacao['cpf']) : 'Contato não possui CPF' ?></label><br> <?php } ?>
-            <?php if($pessoa == "J"){ ?><label class="infraLabelObrigatorio">CNPJ:</label> <label class="infraLabelOpcional"><?= !empty($dadosIntimacao['cpf']) ? InfraUtil::formatarCpf($dadosIntimacao['cpf']) : 'Contato não possui CPF' ?></label><br> <?php } ?>
+            <?php if($pessoa == "J"){ ?><label class="infraLabelObrigatorio">CNPJ:</label> <label class="infraLabelOpcional"><?= !empty($dadosIntimacao['cnpj']) ? InfraUtil::formatarCnpj($dadosIntimacao['cnpj']) : 'Contato não possui CPF' ?></label><br> <?php } ?>
 
             <label class="infraLabelObrigatorio">Data de Expedição:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['data_geracao']?></label><br>
             <label class="infraLabelObrigatorio">Situação da Intimação:</label> <label class="infraLabelOpcional"><?= $dadosIntimacao['situacao']?></label><br>

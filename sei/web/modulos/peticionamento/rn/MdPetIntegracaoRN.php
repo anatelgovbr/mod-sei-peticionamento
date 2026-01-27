@@ -17,9 +17,10 @@ class MdPetIntegracaoRN extends InfraRN
         parent::__construct();
     }
 
-    private function _getIdUf($consulta)
+    private function _getIdUf($consulta, $arrSaidaWS)
     {
-        $siglaUf = $consulta['PessoaJuridica']['endereco']['uf'] ? $consulta['PessoaJuridica']['endereco']['uf'] : null;
+        $integra = new MdPetIntegracaoINT();
+        $siglaUf = $integra::acessarDadoPorChave($consulta, $arrSaidaWS['codIbgeMunicipio']) ? $integra::acessarDadoPorChave($consulta, $arrSaidaWS['codIbgeMunicipio']) : null;
         $idUf = '';
 
         if (!is_null($siglaUf)) {
@@ -35,13 +36,14 @@ class MdPetIntegracaoRN extends InfraRN
         return $idUf;
     }
 
-    private function _getDadosCidade($consulta)
+    private function _getDadosCidade($consulta, $arrSaidaWS)
     {
+        $integra = new MdPetIntegracaoINT();
         $idCidade = '';
         $nomeCidade = '';
         $idUF = '';
         $siglaUF = '';
-        $codigoIbge = $consulta['PessoaJuridica']['endereco']['codigoMunicipio'] ? $consulta['PessoaJuridica']['endereco']['codigoMunicipio'] : null;
+        $codigoIbge = $integra::acessarDadoPorChave($consulta, $arrSaidaWS['codIbgeMunicipio']) ? $integra::acessarDadoPorChave($consulta, $arrSaidaWS['codIbgeMunicipio']) : null;
         $arrRetorno = array();
 
         if (!is_null($codigoIbge)) {
@@ -71,12 +73,12 @@ class MdPetIntegracaoRN extends InfraRN
 
     protected function consultarReceitaWsResponsavelLegalConectado($dados)
     {
+        
         $xml = '<dados-pj>';
         $headers = apache_request_headers();
-        $captcha = $headers['Captcha'];
-        $dadosCaptcha = hash('SHA512', $dados['txtCaptcha']);
         $cnpj = InfraUtil::retirarFormatacao($dados['txtNumeroCnpj']);
         $dados['idUsuarioLogado'] = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+        $integra = new MdPetIntegracaoINT();
 
         if (!InfraUtil::validarCnpj($cnpj)) {
             $xml .= "<success>false</success>\n";
@@ -84,106 +86,102 @@ class MdPetIntegracaoRN extends InfraRN
             $xml .= '</dados-pj>';
             return $xml;
         }
-
-        if ($captcha != $dadosCaptcha) {
-            $xml .= "<success>false</success>";
-            $xml .= "<msg>Código de confirmação inválido.</msg>";
-            $xml .= '</dados-pj>';
-            return $xml;
-        }
 	
-	    $objMdPetIntegracao = $this->consultarIntegracaoPorIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
+	    $objMdPetIntegracao     = $this->consultarIntegracaoPorIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
+        $strUrlWebservice       = $objMdPetIntegracao->getStrEnderecoWsdl();
+        $strMetodoWebservice    = $objMdPetIntegracao->getStrOperacaoWsdl();
+        $cpfUsuarioLogado       = $this->retornaCpfUsuarioLogado($dados['idUsuarioLogado']);
+        $arrParamsWebservice    = ['cnpj' => $cnpj];
+        $arrSaidaWS             = [];
 
-        $strUrlWebservice = $objMdPetIntegracao->getStrEnderecoWsdl();
-        $strMetodoWebservice = $objMdPetIntegracao->getStrOperacaoWsdl();
-        
-        $cpfUsuarioLogado = $this->retornaCpfUsuarioLogado($dados['idUsuarioLogado']);
-
-        //Recuperando meses - alterado
         $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
         $objMdPetIntegParametroDTO->retStrValorPadrao();
         $objMdPetIntegParametroDTO->retStrTpParametro();
         $objMdPetIntegParametroDTO->retStrNome();
         $objMdPetIntegParametroDTO->retStrNomeCampo();
         $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao());
-        $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
-        $arrObjMdPetIntegParametroRN = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
+        $arrObjMdPetIntegParametroRN = (new MdPetIntegParametroRN())->listar($objMdPetIntegParametroDTO);
 
         if (count($arrObjMdPetIntegParametroRN)) {
+
             $mes = 0;
             $chaveMes = '';
+
             foreach ($arrObjMdPetIntegParametroRN as $itemParam) {
-                if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'mesesExpiraCache') {
-                    $mes = (int)$itemParam->getStrValorPadrao();
-                    $chaveMes = $itemParam->getStrNome();
-                }
 
-                if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'identificacaoOrigem' && $itemParam->getStrNomeCampo() == 'origem') {
-                    //Verificação da Origem
-                    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-                    $idUsuario = $objInfraParametro->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
+                // Mapeando os de entrada
+                if ($itemParam->getStrTpParametro() == 'E'){
 
-                    if ($idUsuario != '' && !is_null($idUsuario)) {
-                        $objUsuarioRN = new UsuarioRN();
-                        $objUsuarioDTO = new UsuarioDTO();
+                    if ($itemParam->getStrNome() == 'mesesExpiraCache') {
 
-                        $objUsuarioDTO->setNumIdUsuario($idUsuario);
-                        $objUsuarioDTO->retStrSigla();
+                        $mes = (int)$itemParam->getStrValorPadrao();
+                        $chaveMes = $itemParam->getStrNome();
 
-                        $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+                        $arrParamsWebservice[$chaveMes] = $mes;
 
-                        if ($objUsuarioDTO) {
-                            $siglaContato = $objUsuarioDTO->getStrSigla();
+                    }
+
+                    if ($itemParam->getStrNome() == 'identificacaoOrigem' && $itemParam->getStrNomeCampo() == 'origem') {
+                        
+                        //Verificação da Origem
+                        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+                        $idUsuario = $objInfraParametro->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
+
+                        if ($idUsuario != '' && !is_null($idUsuario)) {
+                            $objUsuarioRN = new UsuarioRN();
+                            $objUsuarioDTO = new UsuarioDTO();
+
+                            $objUsuarioDTO->setNumIdUsuario($idUsuario);
+                            $objUsuarioDTO->retStrSigla();
+
+                            $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+
+                            if ($objUsuarioDTO) {
+                                $arrParamsWebservice['origem'] = $objUsuarioDTO->getStrSigla();
+                            }
+                        }
+
+                    }
+
+                    if ($itemParam->getStrNome() == 'cpfUsuario' && $itemParam->getStrNomeCampo() == 'cpfUsuario') {
+                        if (!empty($cpfUsuarioLogado)) {
+                            $arrParamsWebservice['cpfUsuario'] = $cpfUsuarioLogado;
                         }
                     }
+
                 }
+
+                // Mapeando os de saida todos de uma vez
+                if ($itemParam->getStrTpParametro() == 'P'){
+
+                    $arrSaidaWS[$itemParam->getStrNome()] = $itemParam->getStrNomeCampo();
+
+                }
+                
+            
             }
-
-            if ($siglaContato) {
-                $parametro = [
-                    $strMetodoWebservice => [
-                        'cnpj' => $cnpj,
-                        'cpfUsuario' => $cpfUsuarioLogado,
-                        $chaveMes => $mes,
-                        'origem' => $siglaContato
-                    ]
-                ];
-            } else {
-                $parametro = [
-                    $strMetodoWebservice => [
-                        'cnpj' => $cnpj,
-                        'cpfUsuario' => $cpfUsuarioLogado,
-                        $chaveMes => $mes
-                    ]
-                ];
-            }
-
-        } else {
-
-            $parametro = [
-                $strMetodoWebservice => [
-                    'cnpj' => $cnpj,
-                    'cpfUsuario' => $cpfUsuarioLogado
-                ]
-            ];
 
         }
-        
-	    $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
-	    $consulta = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
 
-	    if (!empty($objMdPetIntegracao->getStrCodReceitaSuspAuto()) && in_array(intval($consulta['PessoaJuridica']['situacaoCadastral']['codigo']), explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto()))) {
+        /*
+        * Realiza a consulta no WS
+        */
+        $parametro              = [ $strMetodoWebservice => $arrParamsWebservice ];
+	    $objMdPetSoapClienteRN  = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
+	    $consulta               = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
+
+	    if (!empty($objMdPetIntegracao->getStrCodReceitaSuspAuto()) && in_array(intval($integra::acessarDadoPorChave($consulta, $arrSaidaWS['codSituacaoCadastral'])), explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto()))) {
             $xml .= "<success>false</success>\n";
             $xml .= "<msg>O cadastro do CNPJ indicado está suspenso na Receita Federal. Dessa forma, não pode ser efetivada a vinculação do Responsável Legal à Pessoa Jurídica.</msg>\n";
             $xml .= '</dados-pj>';
             return $xml;
         }
 
-        $cpfResponsavelLegalReceita = $consulta['PessoaJuridica']['responsavel']['cpf'];
+        $cpfResponsavelLegalReceita = $integra::acessarDadoPorChave($consulta, $arrSaidaWS['cpfRespLegal']);
 
         if (empty($cpfResponsavelLegalReceita)) {
             $xml .= "<success>false</success>\n";
-            $xml .= '<msg>' . $consulta['faultstring'] . '</msg>';
+            $xml .= '<msg>Erro na consulta: ' . $consulta['faultstring'] . '</msg>';
             $xml .= '</dados-pj>';
             return $xml;
         }
@@ -216,46 +214,36 @@ class MdPetIntegracaoRN extends InfraRN
             $slTipoInteressado = $arrContatoDTO->getNumIdTipoContato();
         }
 
-        $dadosCidade = $this->_getDadosCidade($consulta);
+        $dadosCidade = $this->_getDadosCidade($consulta, $arrSaidaWS);
 
         if ($slTipoInteressado == '') {
             $xml .= '<slTipoInteressado>0</slTipoInteressado>';
         } else {
             $xml .= '<slTipoInteressado>' . $slTipoInteressado . '</slTipoInteressado>';
         }
-
-
-        $mdPetIntegParametroRN = new MdPetIntegParametroRN();
+        
         $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
-        $objMdPetIntegracaoDTO = new MdPetIntegracaoDTO();
-        $objMdPetIntegracaoDTO->retTodos();
-        $objMdPetIntegracaoDTO->setStrNome('ConsultaDadosReceitaCNPJ');
-        $arrObjMdPetIntegracaoDTO = $this->consultar($objMdPetIntegracaoDTO);
-
         $objMdPetIntegParametroDTO->retTodos();
         $objMdPetIntegParametroDTO->setStrTpParametro('P');
-        $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($arrObjMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
-        $arrObjMdPetIntegParametroDTO = $mdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
+        $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao());
+        $arrObjMdPetIntegParametroDTO = (new MdPetIntegParametroRN())->listar($objMdPetIntegParametroDTO);
 
         if ($arrObjMdPetIntegParametroDTO) {
+
             $txtLogradouro = '';
+            
             foreach ($arrObjMdPetIntegParametroDTO as $itemParametro) {
 
                 $chave = explode(" - ", $itemParametro->getStrNomeCampo());
                 $valor = '';
+
                 switch (count($chave)) {
-                    case 1:
-                        $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])]));
-                        break;
-                    case 3:
-                        $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])][$chave[1]][$chave[2]]));
-                        break;
-                    case 4:
-                        $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])][$chave[1]][$chave[2]][$chave[3]]));
-                        break;
-                    default:
-                        $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])][$chave[1]]));
+                    case 1: $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])])); break;
+                    case 3: $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])][$chave[1]][$chave[2]])); break;
+                    case 4: $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])][$chave[1]][$chave[2]][$chave[3]])); break;
+                    default: $valor = htmlspecialchars(trim($consulta[ucfirst($chave[0])][$chave[1]]));
                 }
+
                 if ($itemParametro->getStrNome() == 'cnpjEmpresa') {
                     $xml .= '<txtNomeFantasia>' . $valor . '</txtNomeFantasia>';
                 }
@@ -289,26 +277,31 @@ class MdPetIntegracaoRN extends InfraRN
                 }
 
             }
+
             $xml .= '<slUf>' . $dadosCidade['idUF'] . '</slUf>';
             $xml .= '<selCidade>' . htmlspecialchars($dadosCidade['idCidade']) . '</selCidade>';
             $xml .= '<nomeCidade>' . htmlspecialchars($dadosCidade['nomeCidade']) . '</nomeCidade>';
             $xml .= '<txtLogradouro>' . $txtLogradouro . '</txtLogradouro>';
-//    $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
+            // $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
+
         } else {
 
-            $xml .= '<txtNomeFantasia>' . htmlspecialchars($consulta['PessoaJuridica']['nomeFantasia']) . '</txtNomeFantasia>';
+            // Retorno do WS da ANATEL
+            $xml .= '<txtNomeFantasia>' . htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['razaoSocial'])) . '</txtNomeFantasia>';
             $xml .= '<txtNumeroCpfResponsavel>' . InfraUtil::formatarCpf($cpfResponsavelLegalReceita) . '</txtNumeroCpfResponsavel>';
-            $xml .= '<txtRazaoSocial>' . htmlspecialchars($consulta['PessoaJuridica']['nomeEmpresarial']) . '</txtRazaoSocial>';
-            $xml .= '<txtNomeResponsavelLegal>' . htmlspecialchars($consulta['PessoaJuridica']['responsavel']['nome']) . '</txtNomeResponsavelLegal>';
+            $xml .= '<txtRazaoSocial>' . htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['razaoSocial'])) . '</txtRazaoSocial>';
+            $xml .= '<txtNomeResponsavelLegal>' . htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['nomeRespLegal'])) . '</txtNomeResponsavelLegal>';
             $xml .= '<slUf>' . $dadosCidade['idUF'] . '</slUf>';
             $xml .= '<selCidade>' . htmlspecialchars($dadosCidade['idCidade']) . '</selCidade>';
-            $xml .= '<txtNumeroCEP>' . MdPetDataUtils::formatCep($consulta['PessoaJuridica']['endereco']['cep']) . '</txtNumeroCEP>';
-            $xml .= '<txtLogradouro>' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['logradouro']) . ', ' . $consulta['PessoaJuridica']['endereco']['numero'] . ' ' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['complemento']) . '</txtLogradouro>';
-//    $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
-            $xml .= '<txtComplementoEndereco>' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['complemento']) . '</txtComplementoEndereco>';
-            $xml .= '<txtBairro>' . htmlspecialchars($consulta['PessoaJuridica']['endereco']['bairro']) . '</txtBairro>';
+            $xml .= '<txtNumeroCEP>' . MdPetDataUtils::formatCep($integra::acessarDadoPorChave($consulta, $arrSaidaWS['cep'])) . '</txtNumeroCEP>';
+            $xml .= '<txtLogradouro>' . htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['logradouro'])) . ', ' . $integra::acessarDadoPorChave($consulta, $arrSaidaWS['numero']) . ' ' . htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['complemento'])) . '</txtLogradouro>';
+            // $xml .= '<txtNumeroEndereco>'. $consulta['PessoaJuridica']['endereco']['numero'].'</txtNumeroEndereco>';
+            $xml .= '<txtComplementoEndereco>' . htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['complemento'])) . '</txtComplementoEndereco>';
+            $xml .= '<txtBairro>' . htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['bairro'])) . '</txtBairro>';
             $xml .= '<nomeCidade>' . htmlspecialchars($dadosCidade['nomeCidade']) . '</nomeCidade>';
+
         }
+
         $xml .= '</dados-pj>';
 
         return $xml;
@@ -317,12 +310,22 @@ class MdPetIntegracaoRN extends InfraRN
 
     protected function consultarCNPJReceitaWsResponsavelLegalConectado($cnpj)
     {
-      
+
         $objMdPetIntegracao = $this->consultarIntegracaoPorIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
+        $cnpj = str_pad(InfraUtil::retirarFormatacao($cnpj), '14', '0', STR_PAD_LEFT);
 
         if($objMdPetIntegracao){
-            $strUrlWebservice = $objMdPetIntegracao->getStrEnderecoWsdl();
-            $strMetodoWebservice = $objMdPetIntegracao->getStrOperacaoWsdl();
+
+            $strUrlWebservice       = $objMdPetIntegracao->getStrEnderecoWsdl();
+            $strMetodoWebservice    = $objMdPetIntegracao->getStrOperacaoWsdl();
+            $cpfUsuarioLogado       = $this->retornaCpfUsuarioLogado(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+
+            if(empty($cpfUsuarioLogado)){
+                $cpfUsuarioLogado = '45921393053';
+            }
+
+            // Inicializa o array que será passado para o WS
+            $arrParamsWebservice    = ['cnpj' => $cnpj];
 
             //Recuperando meses - alterado
             $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
@@ -335,23 +338,53 @@ class MdPetIntegracaoRN extends InfraRN
             $arrObjMdPetIntegParametroRN = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
 
             if ($arrObjMdPetIntegParametroRN) {
+
                 $mes = 0;
                 $chaveMes = '';
+
+                // Verifica os demais parametros mapeados para incluir no array e passar para o WS
                 foreach ($arrObjMdPetIntegParametroRN as $itemParam) {
+
+                    // Verificação do Cache
                     if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'mesesExpiraCache') {
+
                         $mes = (int)$itemParam->getStrValorPadrao();
                         $chaveMes = $itemParam->getStrNome();
+                        $arrParamsWebservice[$chaveMes] = $mes;
+
                     }
+                    
+                    // Verificação da Origem
+                    if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'identificacaoOrigem' && $itemParam->getStrNomeCampo() == 'origem') {
+                        
+                        $idUsuario = (new InfraParametro(BancoSEI::getInstance()))->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
+
+                        if ($idUsuario != '' && !is_null($idUsuario)) {
+                            
+                            $objUsuarioDTO = new UsuarioDTO();
+                            $objUsuarioDTO->setNumIdUsuario($idUsuario);
+                            $objUsuarioDTO->retStrSigla();
+                            $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+
+                            if ($objUsuarioDTO) {
+                                $arrParamsWebservice['origem'] = $objUsuarioDTO->getStrSigla();
+                            }
+
+                        }
+
+                    }
+
+                    // Verificação da cpfUsuario que está requisitando a consulta no WS
+                    if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'cpfPessoa' && $itemParam->getStrNomeCampo() == 'cpfUsuario') {
+                        if (!empty($cpfUsuarioLogado)) {
+                            $arrParamsWebservice['cpfUsuario'] = $cpfUsuarioLogado;
+                        }
+                    }
+
                 }
 
-                $parametro = [
-                  $strMetodoWebservice => [
-                    'cnpj' => str_pad($cnpj, '14', '0', STR_PAD_LEFT),
-                    'cpfUsuario' => 99999999999,
-                    $chaveMes => $mes,
-                    'origem' => 'SEI'
-                  ]
-                ];
+                // Monta a consulta para o WS
+                $parametro = [ $strMetodoWebservice => $arrParamsWebservice ];
 
                 $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
                 $retorno = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
@@ -372,10 +405,20 @@ class MdPetIntegracaoRN extends InfraRN
     {
 
         $objMdPetIntegracao = $this->consultarIntegracaoPorIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CPF_RECEITA_FEDERAL);
+        $cpf = str_pad(InfraUtil::retirarFormatacao($cpf), '11', '0', STR_PAD_LEFT);
 
         if($objMdPetIntegracao){
-            $strUrlWebservice = $objMdPetIntegracao->getStrEnderecoWsdl();
-            $strMetodoWebservice = $objMdPetIntegracao->getStrOperacaoWsdl();
+
+            $strUrlWebservice       = $objMdPetIntegracao->getStrEnderecoWsdl();
+            $strMetodoWebservice    = $objMdPetIntegracao->getStrOperacaoWsdl();
+            $cpfUsuarioLogado       = $this->retornaCpfUsuarioLogado(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+
+            if(empty($cpfUsuarioLogado)){
+                $cpfUsuarioLogado = '45921393053';
+            }
+
+            // Inicializa o array que será passado para o WS
+            $arrParamsWebservice    = ['cpf' => $cpf];
 
             //Recuperando meses - alterado
             $objMdPetIntegParametroDTO = new MdPetIntegParametroDTO();
@@ -384,39 +427,71 @@ class MdPetIntegracaoRN extends InfraRN
             $objMdPetIntegParametroDTO->retStrNome();
             $objMdPetIntegParametroDTO->retStrNomeCampo();
             $objMdPetIntegParametroDTO->setNumIdMdPetIntegracao($objMdPetIntegracao->getNumIdMdPetIntegracao());
-            $objMdPetIntegParametroRN = new MdPetIntegParametroRN();
-            $arrObjMdPetIntegParametroRN = $objMdPetIntegParametroRN->listar($objMdPetIntegParametroDTO);
+            $arrObjMdPetIntegParametroRN = (new MdPetIntegParametroRN())->listar($objMdPetIntegParametroDTO);
 
             if ($arrObjMdPetIntegParametroRN) {
+
                 $mes = 0;
                 $chaveMes = '';
+
                 foreach ($arrObjMdPetIntegParametroRN as $itemParam) {
+
                     if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'mesesExpiraCache') {
+
                         $mes = (int)$itemParam->getStrValorPadrao();
                         $chaveMes = $itemParam->getStrNome();
+                        $arrParamsWebservice[$chaveMes] = $mes;
+
                     }
+                    
+                    // Verificação da Origem
+                    if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'identificacaoOrigem' && $itemParam->getStrNomeCampo() == 'origem') {
+                        
+                        $idUsuario = (new InfraParametro(BancoSEI::getInstance()))->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
+
+                        if ($idUsuario != '' && !is_null($idUsuario)) {
+                            
+                            $objUsuarioDTO = new UsuarioDTO();
+                            $objUsuarioDTO->setNumIdUsuario($idUsuario);
+                            $objUsuarioDTO->retStrSigla();
+                            $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+
+                            if ($objUsuarioDTO) {
+                                $arrParamsWebservice['origem'] = $objUsuarioDTO->getStrSigla();
+                            }
+
+                        }
+
+                    }
+
+                    // Verificação da cpfUsuario que está requisitando a consulta no WS
+                    if ($itemParam->getStrTpParametro() == 'E' && $itemParam->getStrNome() == 'cpfUsuario' && $itemParam->getStrNomeCampo() == 'cpfUsuario') {
+                        if (!empty($cpfUsuarioLogado)) {
+                            $arrParamsWebservice['cpfUsuario'] = $cpfUsuarioLogado;
+                        }
+                    }
+
                 }
 
-                $parametro = [
-                  $strMetodoWebservice => [
-                    'cpf' => str_pad($cpf, '11', '0', STR_PAD_LEFT),
-                    'cpfUsuario' => 99999999999,
-                    $chaveMes => $mes,
-                    'origem' => 'SEI'
-                  ]
-                ];
+                $parametro = [ $strMetodoWebservice => $arrParamsWebservice ];
 
                 $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
                 $retorno = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
 
-                $codigoRetornado = $retorno['PessoaFisica']['situacaoCadastral']['codigo'];
+                if(array_key_exists('PessoaFisica', $retorno)){
 
-                $arrCodReceita = explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto());
+                    $codigoRetornado = $retorno['PessoaFisica']['situacaoCadastral']['codigo'];
 
-                if ($codigoRetornado && in_array($codigoRetornado,$arrCodReceita)) {
-                    return true;
+                    $arrCodReceita = explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto());
+
+                    if ($codigoRetornado && in_array($codigoRetornado,$arrCodReceita)) {
+                        return true;
+                    }
+
                 }
+
             }
+
         }
 
         return false;
@@ -1045,14 +1120,21 @@ class MdPetIntegracaoRN extends InfraRN
     }
     
     private function retornaCpfUsuarioLogado($idUsuarioLogado){
-	    
-    	$objUsuarioDTO = new UsuarioDTO();
-	    $objUsuarioDTO->retDblCpfContato();
-	    $objUsuarioDTO->retNumIdContato();
-	    $objUsuarioDTO->setNumIdUsuario($idUsuarioLogado);
-	    $arrObjUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
-	    
-	    return str_pad($arrObjUsuarioDTO->getDblCpfContato(), '11', '0', STR_PAD_LEFT);
+
+        if(!empty($idUsuarioLogado)){
+            $objUsuarioDTO = new UsuarioDTO();
+            $objUsuarioDTO->retDblCpfContato();
+            $objUsuarioDTO->retNumIdContato();
+            $objUsuarioDTO->setNumIdUsuario($idUsuarioLogado);
+            $arrObjUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+            
+            return str_pad($arrObjUsuarioDTO->getDblCpfContato(), '11', '0', STR_PAD_LEFT);
+
+        }else{
+
+            return null;
+
+        }
 	    
     }
 

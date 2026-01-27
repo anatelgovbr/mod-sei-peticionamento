@@ -239,9 +239,24 @@ try {
                     die;
 
                 } else {
+                    
                     echo "<script>";
-                    echo "atualizarNomeRazaoSocial('" . $cpfCnpjEditado . "', '" . PaginaSEIExterna::tratarHTML($nome) . "');";
-                    echo "window.top.document.querySelectorAll('div[id^=\"divInfraSparklingModalClose\"].sparkling-modal-close').forEach(el => el.click());";
+                        echo "var table = window.top.document.getElementById('tbInteressadosIndicados');";
+                        echo "var linhas = table.rows;";
+
+                        echo "for (var i = 0; row = table.rows[i]; i++) {";
+                            echo "row = table.rows[i];";
+                            echo "if (i > 0) {";
+                                echo "cpflinha = row.cells[2].innerHTML;";
+                                echo "nomeRazaoSocialLinha = row.cells[3].innerHTML;";
+                                echo "cpfEditado = '<div>" . $cpfCnpjEditado . "</div>';";
+                                echo "if (cpflinha == cpfEditado) {";
+                                    echo "row.cells[3].innerHTML = '<div>" . PaginaSEIExterna::tratarHTML($nome) . "</div>';";
+                                echo "}";
+                            echo "}";
+                        echo "}";
+
+                        echo "window.top.document.querySelectorAll('div[id^=\"divInfraSparklingModalClose\"].sparkling-modal-close').forEach(el => el.click());";
                     echo "</script>";
                     die;
                 }

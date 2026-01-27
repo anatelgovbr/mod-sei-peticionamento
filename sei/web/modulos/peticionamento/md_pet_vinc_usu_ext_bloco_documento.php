@@ -24,9 +24,9 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
             <div class="col-12">
                 <div id="divArquivo" class="form-group infraAreaDados mb-3">
                     <label class="infraLabelObrigatorio" for="fileArquivo">
-                        Documento (tamanho máximo: <?php echo is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):
-                    </label><br>
-                    <input type="file" name="fileArquivo" id="fileArquivo" <?php echo $disabledConsultar ?> tabindex="<?php echo PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
+                        Documento (tamanho máximo: <?php echo is_int($tamanhoMaximo) ? $tamanhoMaximo . 'Mb' : $tamanhoMaximo; ?>):<br>
+                        <input type="file" name="fileArquivo" class="form-control-file drop-zone-style" id="fileArquivo" <?php echo $disabledConsultar ?> tabindex="<?php echo PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
+                    </label>
                 </div>
             </div>
         </div>

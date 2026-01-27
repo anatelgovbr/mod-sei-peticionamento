@@ -10,14 +10,14 @@ try {
     session_start();
     switch ($_GET['acao']) {
         case 'md_pet_vinc_usu_ext_pe_cadastrar':
-            $strTitulo = 'Nova ProcuraÁ„o EletrÙnica';
+            $strTitulo = 'Nova Procura√ß√£o Eletr√¥nica';
             $arrComandos[] = '<button type="button" onclick="peticionar()"  name="sbmPeticionar" id="sbmPeticionar" value="Peticionar" accesskey="P"  class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
             $arrComandosInferior[] = '<button type="button" onclick="peticionar()"  name="sbmPeticionar" id="sbmPeticionarInferior" value="Peticionar" accesskey="P"  class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
             $arrComandosInferior[] = '<button type="button" accesskey="C" id="btnCancelarInferior" value="Cancelar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
             break;
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
 
@@ -40,7 +40,7 @@ $contatoExterno = $usuarioRN->consultarRN0489($usuarioDTO);
 $idContatoExterno = $contatoExterno->getNumIdContato();
 $cpfContato = $contatoExterno->getDblCpfContato();
 
-//consultar org„o externo
+//consultar org√£o externo
 $siglaOrgao = SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioExterno();
 
 if (isset($_POST['hdnIdUsuario']) && $_POST['hdnIdUsuario'] != '') {
@@ -78,7 +78,7 @@ foreach ($arrObjMdPetTipoPoderLegalDTO as $itemObjMdPetTipoPoderLegalDTO) {
 }
 $arrObjMdPetTipoPoderLegalDTO = $arrObjMdPetTipoPoderLegalDTONovo;
 //Verificando a Existencia de Vinculo como Responsavel Legal
-//Respons·vel Legal
+//Respons√°vel Legal
 $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 
@@ -91,7 +91,7 @@ $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetV
 if (!empty($arrObjMdPetVincRepresentantDTO)) {
     $existenciaVinculo = false;
 }
-//Verificando se o Usu·rio È Procurador EspÈcial em alguma PRocuraÁ„o
+//Verificando se o Usu√°rio √© Procurador Esp√©cial em alguma PRocura√ß√£o
 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
 $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
@@ -99,14 +99,14 @@ $objMdPetVincRepresentantDTO->setNumIdContato($idContatoExterno);
 $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
 $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL);
 $objMdPetVincRepresentantDTO->retNumIdContato();
-//Existencia Vinculo PRocuraÁ„o Especial
+//Existencia Vinculo PRocura√ß√£o Especial
 $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 $existeEspecialVinculo = true;
 if (!empty($objMdPetVincRepresentantDTO)) {
     $existeEspecialVinculo = false;
 }
 
-//Verificar as parametrizaÁıes de VinculaÁ„o de pessoa FÌsica
+//Verificar as parametriza√ß√µes de Vincula√ß√£o de pessoa F√≠sica
 $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
 $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
 $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT);
@@ -126,7 +126,7 @@ $data = new DateTime();
 $data->add(new DateInterval('P1D'));
 $dataAtual = $data->format('d/m/Y');
 
-//Verificar as parametrizaÁıes de VinculaÁ„o de pessoa FÌsica
+//Verificar as parametriza√ß√µes de Vincula√ß√£o de pessoa F√≠sica
 $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
 $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
 $objMdPetVincTpProcessoDTO->setNumIdMdPetVincTpProcesso(MdPetVincTpProcessoRN::$ID_FIXO_MD_PET_VINCULO_USU_EXT_PF);
@@ -172,26 +172,26 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
                 <div class="form-group">
                     <label class="infraLabelObrigatorio" for="selTipoProcuracao">
-                        Tipo de ProcuraÁ„o:
+                        Tipo de Procura√ß√£o:
                     </label>
                     <img align="top" name="ajuda"
                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                        <?= PaginaSEI::montarTitleTooltip('Para emitir ProcuraÁ„o EletrÙnica Especial com todos os poderes previstos no Sistema, antes È necess·rio que vocÍ seja Respons·vel Legal de alguma Pessoa JurÌdica. \n \n Se for o caso e o tipo "ProcuraÁ„o EletrÙnica Especial" n„o est· listado, acesse o menu "Respons·vel Legal de Pessoa JurÌdica" e, em seguida, o bot„o "Novo Respons·vel Legal" para realizar o cadastro.', 'Ajuda') ?>
+                        <?= PaginaSEI::montarTitleTooltip('Para emitir Procura√ß√£o Eletr√¥nica Especial com todos os poderes previstos no Sistema, antes √© necess√°rio que voc√™ seja Respons√°vel Legal de alguma Pessoa Jur√≠dica. \n \n Se for o caso e o tipo "Procura√ß√£o Eletr√¥nica Especial" n√£o est√° listado, acesse o menu "Respons√°vel Legal de Pessoa Jur√≠dica" e, em seguida, o bot√£o "Novo Respons√°vel Legal" para realizar o cadastro.', 'Ajuda') ?>
                         class="infraImgModulo"/>
                     <br/>
-                    <select name="selTipoProcuracao" id="selTipoProcuracao" class="infraSelect form-control"
+                    <select name="selTipoProcuracao" id="selTipoProcuracao" class="infraSelect form-select"
                             onchange="pegaInfo(this);" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
                         <option value="" selected="selected">
                             Selecione
                         </option>
-                        <!-- Caso n„o exista vinculo do usu·rio externo como responsavel legal, n„o mostrar opÁ„o ProcuraÁ„o Especial  -->
+                        <!-- Caso n√£o exista vinculo do usu√°rio externo como responsavel legal, n√£o mostrar op√ß√£o Procura√ß√£o Especial  -->
                         <?php if ($existenciaVinculo == false) { ?>
                             <option value="<?php echo MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ?>">
-                                ProcuraÁ„o Eletronica Especial
+                                Procura√ß√£o Eletronica Especial
                             </option>
                         <?php } ?>
                         <option value="<?php echo MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES ?>">
-                            ProcuraÁ„o Eletronica Simples
+                            Procura√ß√£o Eletronica Simples
                         </option>
                     </select>
                 </div>
@@ -204,7 +204,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             Outorgante:
                             <img name="ajuda"
                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                <?= PaginaSEI::montarTitleTooltip('A opÁ„o "Pessoa JurÌdica" estar· habilitada somente se vocÍ for o Respons·vel Legal com situaÁ„o Ativa ou quando possuir ProcuraÁ„o EletrÙnica Especial vigente de alguma Pessoa JurÌdica.', 'Ajuda') ?>
+                                <?= PaginaSEI::montarTitleTooltip('A op√ß√£o "Pessoa Jur√≠dica" estar√° habilitada somente se voc√™ for o Respons√°vel Legal com situa√ß√£o Ativa ou quando possuir Procura√ß√£o Eletr√¥nica Especial vigente de alguma Pessoa Jur√≠dica.', 'Ajuda') ?>
                                 class="infraImgModulo"/>
                         </label>
                         <br>
@@ -215,40 +215,40 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                     for="rbOutorgante1"
                                     id="lvbFisica"
                                     class="infraLabelRadi mt-2">
-                                Pessoa FÌsica
+                                Pessoa F√≠sica
                             </label>
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 name="ajuda" style="<?php echo $bloqueioRadioPF ? "display:none" : ""; ?>"
-                                <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opÁ„o Pessoa FÌsica, a ProcuraÁ„o EletrÙnica Simples ter· como objetivo definir alguÈm para representar vocÍ, enquanto Pessoa FÌsica. \n \n Ou seja, ser· uma ProcuraÁ„o de Usu·rio Externo para Usu·rio Externo.', 'Ajuda') ?>
+                                <?= PaginaSEI::montarTitleTooltip('Ao selecionar a op√ß√£o Pessoa F√≠sica, a Procura√ß√£o Eletr√¥nica Simples ter√° como objetivo definir algu√©m para representar voc√™, enquanto Pessoa F√≠sica. \n \n Ou seja, ser√° uma Procura√ß√£o de Usu√°rio Externo para Usu√°rio Externo.', 'Ajuda') ?>
                                 class="infraImgModulo mx-2 mt-n2"/>
                         </div>
 
                         <div class="form-check form-check-inline radioJuridica">
                             <input type="radio" onchange="showPessoaOutorgante();" name="Outorgante" id="rbOutorgante2" class="infraRadio" value="PJ">
                             <label for="rbOutorgante2" id="lvbJuridica" class="infraLabelRadio mt-2">
-                                Pessoa JurÌdica
+                                Pessoa Jur√≠dica
                             </label>
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 name="ajuda"
-                                <?= PaginaSEI::montarTitleTooltip('Ao selecionar a opÁ„o Pessoa JurÌdica, a ProcuraÁ„o EletrÙnica ter· como objetivo definir alguÈm para representar a Pessoa JurÌdica que vocÍ j· representa como Respons·vel Legal ou como Procurador Especial.', 'Ajuda') ?>
+                                <?= PaginaSEI::montarTitleTooltip('Ao selecionar a op√ß√£o Pessoa Jur√≠dica, a Procura√ß√£o Eletr√¥nica ter√° como objetivo definir algu√©m para representar a Pessoa Jur√≠dica que voc√™ j√° representa como Respons√°vel Legal ou como Procurador Especial.', 'Ajuda') ?>
                                 class="infraImgModulo ml-2 mt-n2" id="ajudaPJ"/>
                         </div>
                     </div>
                 </div>
                 <!-- Procuracao Simples -->
 
-                <!-- ProcuraÁ„o Especial -->
+                <!-- Procura√ß√£o Especial -->
                 <div id="procuracaoEspecial">
                     <div class="form-group">
                         <label class="infraLabelObrigatorio" for="selPessoaJuridica">
-                            Pessoa JurÌdica Outorgante:
+                            Pessoa Jur√≠dica Outorgante:
                         </label>
                         <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                             name="ajuda"
-                            <?= PaginaSEI::montarTitleTooltip('Neste campo s„o listadas as Pessoas JurÌdicas que vocÍ È o Respons·vel Legal com situaÁ„o Ativa, pois somente o Respons·vel Legal de Pessoa JurÌdica pode emitir ProcuraÁ„o EletrÙnica Especial. \n \n Se vocÍ È o Responsavel Legal e a Pessoa JurÌdica n„o foi listada, ent„o confira se a vinculaÁ„o est· cadastrada no menu "Respons·vel Legal de Pessoa JurÌdica": \n \n 1.1. Se a Pessoa JurÌdica n„o for listada no citado menu, clique no bot„o "Novo Respons·vel Legal" e realize o cadastro. \n 1.2. Se a Pessoa JurÌdica foi listada no citado menu, mas n„o est· com situaÁ„o Ativa, regularize a situaÁ„o juntamente ao ”rg„o.') ?>
+                            <?= PaginaSEI::montarTitleTooltip('Neste campo s√£o listadas as Pessoas Jur√≠dicas que voc√™ √© o Respons√°vel Legal com situa√ß√£o Ativa, pois somente o Respons√°vel Legal de Pessoa Jur√≠dica pode emitir Procura√ß√£o Eletr√¥nica Especial. \n \n Se voc√™ √© o Responsavel Legal e a Pessoa Jur√≠dica n√£o foi listada, ent√£o confira se a vincula√ß√£o est√° cadastrada no menu "Respons√°vel Legal de Pessoa Jur√≠dica": \n \n 1.1. Se a Pessoa Jur√≠dica n√£o for listada no citado menu, clique no bot√£o "Novo Respons√°vel Legal" e realize o cadastro. \n 1.2. Se a Pessoa Jur√≠dica foi listada no citado menu, mas n√£o est√° com situa√ß√£o Ativa, regularize a situa√ß√£o juntamente ao √ìrg√£o.') ?>
                             class="infraImgModulo"/>
                         <br/>
-                        <select class="infraSelect form-control"
+                        <select class="infraSelect form-selec"
                                 name="selPessoaJuridica"
                                 id="selPessoaJuridica"
                                 tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
@@ -256,18 +256,18 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         </select>
                     </div>
                 </div>
-                <!-- ProcuraÁ„o Especial -->
+                <!-- Procura√ß√£o Especial -->
             </div>
             <div class="col-sm-12 col-md-9 col-lg-10 col-xl-8">
                 <div id="PessoaJuridicaOutorgante" style="display: none">
                     <div class="form-group">
                         <label class="infraLabelObrigatorio" for="selPessoaJuridica" id="lvbPJProSimples">
-                            Pessoa JurÌdica Outorgante:
+                            Pessoa Jur√≠dica Outorgante:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                 align="top"
                                 name="ajuda"
                                 id="imgPj"
-                                <?= PaginaSEI::montarTitleTooltip('Neste campo s„o listadas as Pessoas JurÌdicas que vocÍ È o Respons·vel Legal com situaÁ„o Ativa ou que possua ProcuraÁ„o EletrÙnica Especial vigente. \n \n Se vocÍ È o Responsavel Legal e a Pessoa JurÌdica n„o foi listada, ent„o confira se a vinculaÁ„o est· cadastrada no menu "Respons·vel Legal de Pessoa JurÌdica": \n \n 1.1. Se a Pessoa JurÌdica n„o for listada no citado menu, clique no bot„o "Novo Respons·vel Legal" e realize o cadastro. \n 1.2. Se a Pessoa JurÌdica foi listada no citado menu, mas n„o est· com situaÁ„o Ativa, regularize a situaÁ„o juntamente ao ”rg„o.', 'Ajuda') ?>
+                                <?= PaginaSEI::montarTitleTooltip('Neste campo s√£o listadas as Pessoas Jur√≠dicas que voc√™ √© o Respons√°vel Legal com situa√ß√£o Ativa ou que possua Procura√ß√£o Eletr√¥nica Especial vigente. \n \n Se voc√™ √© o Responsavel Legal e a Pessoa Jur√≠dica n√£o foi listada, ent√£o confira se a vincula√ß√£o est√° cadastrada no menu "Respons√°vel Legal de Pessoa Jur√≠dica": \n \n 1.1. Se a Pessoa Jur√≠dica n√£o for listada no citado menu, clique no bot√£o "Novo Respons√°vel Legal" e realize o cadastro. \n 1.2. Se a Pessoa Jur√≠dica foi listada no citado menu, mas n√£o est√° com situa√ß√£o Ativa, regularize a situa√ß√£o juntamente ao √ìrg√£o.', 'Ajuda') ?>
                                 class="infraImgModulo"/>
                         </label>
                         <br/>
@@ -292,11 +292,11 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
                     <label for="txtCpf"
                            class="infraLabelObrigatorio">
-                        CPF do Usu·rio Externo:
+                        CPF do Usu√°rio Externo:
                     </label>
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                          name="ajuda"
-                        <?= PaginaSEI::montarTitleTooltip('A pesquisa È realizada somente sobre Usu·rios Externos liberados.  \n \n A consulta somente pode ser efetuada pelo CPF do Usu·rio Externo.') ?>
+                        <?= PaginaSEI::montarTitleTooltip('A pesquisa √© realizada somente sobre Usu√°rios Externos liberados.  \n \n A consulta somente pode ser efetuada pelo CPF do Usu√°rio Externo.') ?>
                          class="infraImgModulo"/><br/>
                     <div class="input-group">
                         <input name="txtNumeroCpfProcurador"
@@ -321,13 +321,13 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                    <label for="txtNomeProcurador" class="infraLabelObrigatorio">Nome do Usu·rio Externo: <img
+                    <label for="txtNomeProcurador" class="infraLabelObrigatorio">Nome do Usu√°rio Externo: <img
                                 align="top"
                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Caso seja listado mais de um cadastro de Usu·rio Externo utilizando o mesmo CPF, escolha neste campo o nome do cadastro correto.') ?>
+                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('Caso seja listado mais de um cadastro de Usu√°rio Externo utilizando o mesmo CPF, escolha neste campo o nome do cadastro correto.') ?>
                                 class="infraImgModulo"/></label>
                     <br/>
-                    <!-- Combo Usu·rio Externo -->
+                    <!-- Combo Usu√°rio Externo -->
                     <div class="input-group">
                         <select name="selUsuario" onchange="alterarHidden(this);"
                                 id="selUsuario"
@@ -345,14 +345,14 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             </div>
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <table width="99%" class="infraTable" summary="ProcuraÁıes" id="tbUsuarioProcuracao"
+                    <table width="99%" class="infraTable" summary="Procura√ß√µes" id="tbUsuarioProcuracao"
                            style="display:none;">
                         <caption class="infraCaption">&nbsp;</caption>
                         <tr>
                             <th class="infraTh" width="0" style="display:none;">ID</th>
                             <th class="infraTh" width="140px">CPF</th>
-                            <th class="infraTh" width="0">Usu·rio Externo</th>
-                            <th class="infraTh" width="60px">AÁıes</th>
+                            <th class="infraTh" width="0">Usu√°rio Externo</th>
+                            <th class="infraTh" width="60px">A√ß√µes</th>
                         </tr>
                     </table>
                 </div>
@@ -360,16 +360,16 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
         </div>
         <div id="procuracaoSimplesFieldSet" class="rowFieldSet">
             <fieldset id="fldResposta"class="infraFieldset form-control fieldset-comum">
-                <legend class="infraLegend"> Dados da ProcuraÁ„o</legend>
+                <legend class="infraLegend"> Dados da Procura√ß√£o</legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 mb-4">
                         <div class="form-gruop">
                             <label for="txtCpf" class="infraLabelObrigatorio">
-                                CPF do Usu·rio Externo:
+                                CPF do Usu√°rio Externo:
                                 <img align="top"
                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
-                                    <?= PaginaSEI::montarTitleTooltip('A pesquisa È realizada somente sobre Usu·rios Externos liberados.  \n \n A consulta somente pode ser efetuada pelo CPF do Usu·rio Externo.', 'Ajuda') ?>
+                                    <?= PaginaSEI::montarTitleTooltip('A pesquisa √© realizada somente sobre Usu√°rios Externos liberados.  \n \n A consulta somente pode ser efetuada pelo CPF do Usu√°rio Externo.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                             </label>
                             <br/>
@@ -392,13 +392,13 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                     <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
                         <div class="form-group">
                             <label for="txtNomeProcurador" class="infraLabelObrigatorio">
-                                Nome do Usu·rio Externo:
+                                Nome do Usu√°rio Externo:
                                 <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('Caso seja listado mais de um cadastro de Usu·rio Externo utilizando o mesmo CPF, escolha neste campo o nome do cadastro correto.', 'Ajuda') ?>
+                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('Caso seja listado mais de um cadastro de Usu√°rio Externo utilizando o mesmo CPF, escolha neste campo o nome do cadastro correto.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                             </label>
                             <br/>
-                            <!-- Combo Usu·rio Externo -->
+                            <!-- Combo Usu√°rio Externo -->
                             <select name="selUsuarioSimples" onchange="alterarHidden(this);"
                                     id="selUsuarioSimples"
                                     class="infraSelect form-control"
@@ -415,7 +415,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             <label for="lblTipoPoder" class="infraLabelObrigatorio">Poderes:
                                 <img align="top"
                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escolha os Poderes sobre os quais o Procurador representar· o Outorgante. \n \n Somente se for concedido o poder para "Receber, Cumprir e Responder IntimaÁ„o EletrÙnica" (destacado abaixo) o Procurador receber· IntimaÁıes EletrÙnicas destinadas ao Outorgante e participar· de todo o fluxo subsequente a respeito da intimaÁ„o recebida.', 'Ajuda') ?>
+                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escolha os Poderes sobre os quais o Procurador representar√° o Outorgante. \n \n Somente se for concedido o poder para "Receber, Cumprir e Responder Intima√ß√£o Eletr√¥nica" (destacado abaixo) o Procurador receber√° Intima√ß√µes Eletr√¥nicas destinadas ao Outorgante e participar√° de todo o fluxo subsequente a respeito da intima√ß√£o recebida.', 'Ajuda') ?>
                                     class="infraImgModulo"/></label>
 
                             <!-- Alterar para multiplo -->
@@ -450,14 +450,14 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda" class="infraImgModulo mr-2"
-                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opÁ„o, o Procurador representar· o Outorgante por prazo indeterminado. \n \n Contudo, a qualquer momento o Outorgante poder· Revogar a ProcuraÁ„o ou o prÛprio Outorgado poder· Renunciar a ProcuraÁ„o.', 'Ajuda') ?>/>
+                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta op√ß√£o, o Procurador representar√° o Outorgante por prazo indeterminado. \n \n Contudo, a qualquer momento o Outorgante poder√° Revogar a Procura√ß√£o ou o pr√≥prio Outorgado poder√° Renunciar a Procura√ß√£o.', 'Ajuda') ?>/>
 
                                 <input type="radio" onchange="showData();" class="infraRadio" name="Validade" id="rbValidade2" value="2"">
 
                                 <label for="rbValidade2" id="lblUsuExterno" class="infraLabelRadio">Determinado </label> <img
                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                         name="ajuda" class="infraImgModulo"
-                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opÁ„o, o Procurador representar· o Outorgante atÈ a Data Limite indicada no campo ao lado. \n \n Contudo, a qualquer momento o Outorgante poder· Revogar a ProcuraÁ„o ou o prÛprio Outorgado poder· Renunciar a ProcuraÁ„o.', 'Ajuda') ?>/>
+                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta op√ß√£o, o Procurador representar√° o Outorgante at√© a Data Limite indicada no campo ao lado. \n \n Contudo, a qualquer momento o Outorgante poder√° Revogar a Procura√ß√£o ou o pr√≥prio Outorgado poder√° Renunciar a Procura√ß√£o.', 'Ajuda') ?>/>
                             </div>
                         </div>
                     </div>
@@ -482,9 +482,9 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 <div class="row pt-0">
                     <div class="col-sm-12 col-md-8 col-lg-6 col-xl-5">
                         <div class="form-group">
-                            <!-- AbrangÍncia  -->
+                            <!-- Abrang√™ncia  -->
                             <label for="lblAbrangencia" class="infraLabelObrigatorio">
-                                AbrangÍncia:
+                                Abrang√™ncia:
                             </label>
                             <div style="margin-top: -6px;">
                                 <!-- Radio Qualquer  -->
@@ -499,7 +499,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                 </label>
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
-                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opÁ„o, o Procurador representar· o Outorgante em qualquer Processo.', 'Ajuda') ?>
+                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta op√ß√£o, o Procurador representar√° o Outorgante em qualquer Processo.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                                 <br>
                                 <!-- Especifico  -->
@@ -510,11 +510,11 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                     value="E">
 
                                 <label for="rbAbrangencia" id="lvbIndeterminado" class="infraLabelRadio">
-                                    Processos EspecÌficos
+                                    Processos Espec√≠ficos
                                 </label>
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
-                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opÁ„o, o Procurador representar· o Outorgante somente em processos especÌficos, que devem ser adionados na lista abaixo. \n \n ApÛs marcar esta opÁ„o, torna-se necess·rio informar o n˙mero v·lido de cada processo sobre os quais o Procurador poder· atuar.', 'Ajuda') ?>
+                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta op√ß√£o, o Procurador representar√° o Outorgante somente em processos espec√≠ficos, que devem ser adionados na lista abaixo. \n \n Ap√≥s marcar esta op√ß√£o, torna-se necess√°rio informar o n√∫mero v√°lido de cada processo sobre os quais o Procurador poder√° atuar.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                             </div>
                         </div>
@@ -526,7 +526,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             <div class="form-group">
                                 <!-- INICIO NUMERO DO PROCESSO -->
                                 <label id="lblNumeroSei" for="txtNumeroProcesso" accesskey="n"
-                                    class="infraLabelObrigatorio"><span class="infraTeclaAtalho">N</span>˙mero do
+                                    class="infraLabelObrigatorio"><span class="infraTeclaAtalho">N</span>√∫mero do
                                     Processo:</label><br>
                                 <div class="input-group">
                                     <input type="text" id="txtNumeroProcesso" name="txtNumeroProcesso"
@@ -566,7 +566,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                     <th class="infraTh" style="display:none;">ID</th>
                                     <th class="infraTh"><div style="width: 180px">Processo</div></th>
                                     <th class="infraTh"><div style="width: 180px">Tipo de Processo</div></th>
-                                    <th class="infraTh"><div>AÁıes</div></th>
+                                    <th class="infraTh"><div>A√ß√µes</div></th>
                                 </tr>
                             </table>
                         </div>
@@ -579,7 +579,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
             </fieldset>
 
-            <!-- Hidden dos Campos de ProcuraÁ„o Simples -->
+            <!-- Hidden dos Campos de Procura√ß√£o Simples -->
             <input type="hidden" name="hdnIdProcedimento" id="hdnIdProcedimento"/>
             <input type="hidden" name="hdnTbProcessos" id="hdnTbProcessos"/>
             <input type="hidden" name="hdnTbNumeroProc" id="hdnTbNumeroProc"/>
@@ -591,7 +591,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <input type="hidden" name="hdnTpPoderes" id="hdnTpPoderes"/>
             <input type="hidden" name="hdnBloqueioRadio" id="hdnBloqueioRadio" value="<?php echo $bloqueioRadio; ?>"/>
             <input type="hidden" name="hdnDtAtual" id="hdnDtAtual" value="<?php echo $dataAtual; ?>"/>
-            <!-- Hidden dos Campos de ProcuraÁ„o Simples - FIM -->
+            <!-- Hidden dos Campos de Procura√ß√£o Simples - FIM -->
 
 
             <input type="hidden" name="hdnCPF" id="hdnCPF"/>

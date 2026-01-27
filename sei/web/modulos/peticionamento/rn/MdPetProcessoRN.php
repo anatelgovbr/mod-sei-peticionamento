@@ -61,11 +61,38 @@ class MdPetProcessoRN extends InfraRN {
 
 	}
 
-    protected function gerarProcedimentoControlado( $arrParametros )
+    protected function gerarProcedimentoConectado( $arrParametros )
     {
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
 
         $retorno = $this->gerarProcedimentoInterno($arrParametros);
+
+		$arrParametrosDocumentos = [
+			$retorno['parametrosEmail'][1],
+			$retorno['parametrosEmail'][0],
+			$retorno['parametrosEmail'][2],
+			$retorno['parametrosEmail'][4],
+			$retorno['idsContatos']
+		];
+
+		$this->incluirDocumentosNoProcedimento( $arrParametrosDocumentos );
+
+		$reciboGerado = (new MdPetReciboRN())->montarRecibo( $retorno['parametrosEmail'] );
+
+		// Andamento Processo NOVO
+		$objMdPetReciboDTO = new MdPetReciboDTO();
+		$objMdPetReciboDTO->retStrNumeroProcessoFormatadoDoc();
+		$objMdPetReciboDTO->retNumIdProtocolo();
+		$objMdPetReciboDTO->setDblIdDocumento($reciboGerado->getDblIdDocumento());
+		$objMdPetRecibo = (new MdPetReciboRN())->consultar($objMdPetReciboDTO);
+
+		$arrParametrosResp['idDocumento']= $reciboGerado->getDblIdDocumento();
+		$arrParametrosResp['idProcedimento']= $objMdPetRecibo->getNumIdProtocolo();
+		$arrParametrosResp['nomeTipoResposta']= MdPetIntDestRespostaRN::$TIPO_PROCESSO_NOVO;
+		$arrParametrosResp['nomeDocumentoPrincipal']=$objMdPetRecibo->getStrNumeroProcessoFormatadoDoc();
+
+		$objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
+		$objMdPetIntDestRespostaRN->lancarAndamentoRecibo($arrParametrosResp);
 
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
         FeedSEIProtocolos::getInstance()->indexarFeeds();
@@ -73,12 +100,147 @@ class MdPetProcessoRN extends InfraRN {
         try {
             $emailMdPetEmailNotificacaoRN = new MdPetEmailNotificacaoRN();
             $emailMdPetEmailNotificacaoRN->notificaoPeticionamentoExterno( $retorno['parametrosEmail'] );
-        } catch( Exception $exEmail ){}
-
+        } catch( Exception $exEmail ) {	}
+		
         return $retorno['paramentrosRecibo'];
     }
 
-	protected function gerarProcedimentoInterno( $arrParametros ){
+	protected function incluirDocumentosNoProcedimentoControlado( $arrParametrosDocumentos ){
+
+		$unidadeDTO = $arrParametrosDocumentos[0];
+		$arrParametros = $arrParametrosDocumentos[1];
+		$objProcedimentoDTO = $arrParametrosDocumentos[2];
+		$objMdPetReciboDTO = $arrParametrosDocumentos[3];
+		$idsContatos = $arrParametrosDocumentos[4];
+
+		// AQUI É O PONTO DOS DOCUMENTOS
+		//obter todos os documentos deste processo
+		try {
+			$this->montarArrDocumentos( $arrParametros, $unidadeDTO, $objProcedimentoDTO, $objMdPetReciboDTO );
+			
+			$atividadeRN = new AtividadeRN();
+
+			$documentoRN = new DocumentoRN();
+			$documentoListaDTO = new DocumentoDTO();
+			$documentoListaDTO->retDblIdDocumento();
+			$documentoListaDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+			$arrDocsProcesso = $documentoRN->listarRN0008(  $documentoListaDTO );
+			
+			//removendo as tarefas do tipo "Disponibilizado acesso externo para @INTERESSADO@"
+			foreach( $arrDocsProcesso as $DocumentoProcessoDTO ){
+
+				//seiv3
+				//Remetentes
+				$idsParticipantes = array();
+
+				$objParticipante  = new ParticipanteDTO();
+				$objParticipante->setDblIdProtocolo($DocumentoProcessoDTO->getDblIdDocumento());
+				$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
+				$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
+				$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
+				$objParticipante->setNumSequencia(0);
+				$idsParticipantes[] = $objParticipante;
+
+				// Documento - Interessados
+				$i=0;
+				//foreach($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc){
+				foreach($idsContatos as $interessado){
+					$objParticipante  = new ParticipanteDTO();
+					$objParticipante->setDblIdProtocolo($DocumentoProcessoDTO->getDblIdDocumento());
+					$objParticipante->setNumIdContato($interessado);
+					$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
+					$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+					$objParticipante->setNumSequencia($i);
+					$idsParticipantes[] = $objParticipante;
+					$i++;
+				}
+
+				$objMdPetParticipanteRN = new MdPetParticipanteRN();
+				$arrInteressado = array();
+				$arrInteressado[0] = $DocumentoProcessoDTO->getDblIdDocumento();
+				$arrInteressado[1] = $idsParticipantes;
+
+				$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );
+				// Documento - Interessados - FIM
+
+				$objAtividadeDTOLiberacao = new AtividadeDTO();
+				$objAtividadeDTOLiberacao->retTodos();
+				$objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+				$objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
+
+				$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
+				$atividadeRN->excluirRN0034( $arrDTOAtividades );
+
+			}
+		} catch(Exception $e){
+			// remove dependecias do recibo
+			$objMdPetRelReciboDocumentoAnexoDTO	= new MdPetRelReciboDocumentoAnexoDTO();
+			$objMdPetRelReciboDocumentoAnexoRN	= new MdPetRelReciboDocumentoAnexoRN();
+			
+			$objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento( $objMdPetReciboDTO->getNumIdReciboPeticionamento() );
+			$objMdPetRelReciboDocumentoAnexoDTO->retNumIdReciboDocumentoAnexoPeticionamento();
+			$arrMdPetRelReciboDocumentoAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->listar( $objMdPetRelReciboDocumentoAnexoDTO );
+
+			foreach ( $arrMdPetRelReciboDocumentoAnexoDTO as $objMdPetRelReciboDocumentoAnexoDTO ) {
+				$objMdPetRelReciboDocumentoAnexoRN->excluir( $objMdPetRelReciboDocumentoAnexoDTO );
+			}
+
+			// Remove recibo gerado no peticionamento
+			( new MdPetReciboRN() )->excluir( $objMdPetReciboDTO );
+
+			// Altera o tipo do documento e seu status de bloqueado para que o CORE consiga remover sem problemas
+			$objDocumentoDTO = new DocumentoDTO();
+			$objDocumentoDTO->retDblIdDocumento();
+			$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+			$objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
+			$arrDocumentos = $objDocumentoBD->listar($objDocumentoDTO);
+
+			foreach( $arrDocumentos as $objDocumentoDTO ){
+				$objDocumentoDTO->setStrStaDocumento( DocumentoRN::$TD_EDITOR_INTERNO );
+				$objDocumentoDTO->setStrSinBloqueado( 'N' );
+				$objDocumentoBD->alterar($objDocumentoDTO);
+
+				//$objDocumentoDTO->setDblIdDocumento( $objMdPetReciboDTO->getDblIdDocumento() );
+				( new DocumentoRN() )->excluirRN0006( $objDocumentoDTO );
+			}
+
+			// Pega os participantes do processo para que possamos remover seus acessos externos ao processo tanto no CORE quanto no peticionamento
+			$objParticipanteRN = new ParticipanteRN();
+			$objParticipanteDTO = new ParticipanteDTO();
+			$objParticipanteDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+			$objParticipanteDTO->retNumIdParticipante();
+			$arrParticipantes = $objParticipanteRN->listarRN0189( $objParticipanteDTO );
+
+			foreach( $arrParticipantes as $ObjParticipanteDTO )
+			{
+				$objAcessoExternoRN = new AcessoExternoRN();
+				$objAcessoExternoDTO = new AcessoExternoDTO();
+				$objAcessoExternoDTO->setBolExclusaoLogica(false);
+				$objAcessoExternoDTO->retNumIdAcessoExterno();
+				$objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA, InfraDTO::$OPER_DIFERENTE);
+				$objAcessoExternoDTO->setNumIdParticipante($ObjParticipanteDTO->getNumIdParticipante());
+
+				$arrAcessosExternos = $objAcessoExternoRN->listar( $objAcessoExternoDTO );
+				foreach( $arrAcessosExternos as $objAcessoExterno ){
+					$objAcessoExterno->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA);
+					$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
+					$objAcessoExternoBD->alterar($objAcessoExterno);
+
+					$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
+					$objMdPetAcessoExternoDTO->setNumIdAcessoExterno( $objAcessoExterno->getNumIdAcessoExterno() );
+					$objMdPetAcessoExternoBD = new MdPetAcessoExternoBD($this->getObjInfraIBanco());
+					$objMdPetAcessoExternoBD->excluir($objMdPetAcessoExternoDTO);
+				}
+			}
+			
+			// Por fim, remove o procedimento, sem deixar rastros
+			( new ProcedimentoRN() )->excluirRN0280( $objProcedimentoDTO );
+
+			throw new InfraException('Erro incluindo documentos no processo peticionamento do SEI.',$e);
+		}
+	}
+
+	protected function gerarProcedimentoInternoControlado( $arrParametros ){
 		try {
 			
 			$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
@@ -277,9 +439,7 @@ class MdPetProcessoRN extends InfraRN {
 			$objProcedimentoDTO->setDblIdProcedimento( $objSaidaGerarProcedimentoAPI->getIdProcedimento() );
 			$objProcedimentoDTO->setStrProtocoloProcedimentoFormatado( $objSaidaConsultarProcedimentoAPI->getProcedimentoFormatado()  );
 			$objProcedimentoDTO->setNumIdTipoProcedimento( $objSaidaConsultarProcedimentoAPI->getTipoProcedimento()->getIdTipoProcedimento()  );
-			
-			$this->montarArrDocumentos( $arrParametros, $unidadeDTO, $objProcedimentoDTO, $reciboDTOBasico );
-			
+						
 			$arrParams = array();
 			$arrParams[0] = $arrParametros;
 			$arrParams[1] = $unidadeDTO;
@@ -288,87 +448,17 @@ class MdPetProcessoRN extends InfraRN {
 			// variavel flag para retorno do IdDocumento
 			$arrParams[5] = true;
 
-			$reciboGerado = $objMdPetReciboRN->montarRecibo( $arrParams );
+			//realizar classificacao da metas ODS - IA
+			if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno()){
+
+				// Inclui as informações da classificação no recibo antes da efetiva classificacao por conta da sessao
+				$arrParams['metas_ods_onu'] = SessaoSEIExterna::getInstance()->getAtributo('METAS_SELECIONADAS');
+
+			}
 
 			$arrProcessoReciboRetorno = array();
 			$arrProcessoReciboRetorno[0] = $reciboDTOBasico;
 			$arrProcessoReciboRetorno[1] = $objProcedimentoDTO;
-
-			//enviando email de sistema EU 5155  / 5156 - try catch por causa que em localhost o envio de email gera erro
-
-			
-			//obter todos os documentos deste processo
-			$documentoRN = new DocumentoRN();
-			$documentoListaDTO = new DocumentoDTO();
-			$documentoListaDTO->retDblIdDocumento();
-			$documentoListaDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
-			$arrDocsProcesso = $documentoRN->listarRN0008(  $documentoListaDTO );
-			$atividadeRN = new AtividadeRN();
-			$atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
-			
-			//removendo as tarefas do tipo "Disponibilizado acesso externo para @INTERESSADO@"
-			foreach( $arrDocsProcesso as $DocumentoProcessoDTO ){
-
-				//seiv3
-				//Remetentes
-				$idsParticipantes = array();
-
-				$objParticipante  = new ParticipanteDTO();
-				$objParticipante->setDblIdProtocolo($DocumentoProcessoDTO->getDblIdDocumento());
-				$objParticipante->setNumIdContato($this->getContatoDTOUsuarioLogado()->getNumIdContato());
-				$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
-				$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_REMETENTE);
-				$objParticipante->setNumSequencia(0);
-				$idsParticipantes[] = $objParticipante;
-
-				// Documento - Interessados
-				$i=0;
-				//foreach($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc){
-				foreach($idsContatos as $interessado){
-					$objParticipante  = new ParticipanteDTO();
-					$objParticipante->setDblIdProtocolo($DocumentoProcessoDTO->getDblIdDocumento());
-					$objParticipante->setNumIdContato($interessado);
-					$objParticipante->setNumIdUnidade($unidadeDTO->getNumIdUnidade());
-					$objParticipante->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
-					$objParticipante->setNumSequencia($i);
-					$idsParticipantes[] = $objParticipante;
-					$i++;
-				}
-
-				$objMdPetParticipanteRN = new MdPetParticipanteRN();
-				$arrInteressado = array();
-				$arrInteressado[0] = $DocumentoProcessoDTO->getDblIdDocumento();
-				$arrInteressado[1] = $idsParticipantes;
-
-				$objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento( $arrInteressado );
-				// Documento - Interessados - FIM
-
-				$objAtividadeDTOLiberacao = new AtividadeDTO();
-				$objAtividadeDTOLiberacao->retTodos();
-				$objAtividadeDTOLiberacao->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
-				$objAtividadeDTOLiberacao->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
-
-				$arrDTOAtividades = $atividadeRN->listarRN0036( $objAtividadeDTOLiberacao );
-				$atividadeRN->excluirRN0034( $arrDTOAtividades );
-
-			}
-			// Andamento Processo NOVO
-			$objMdPetReciboDTO = new MdPetReciboDTO();
-			$objMdPetReciboDTO->retStrNumeroProcessoFormatadoDoc();
-			$objMdPetReciboDTO->retNumIdProtocolo();
-			$objMdPetReciboDTO->setDblIdDocumento($reciboGerado->getDblIdDocumento());
-
-			$objMdPetReciboRN = new MdPetReciboRN();
-
-			$objMdPetRecibo = $objMdPetReciboRN->consultar($objMdPetReciboDTO);
-
-			$arrParametrosResp['idDocumento']= $reciboGerado->getDblIdDocumento();
-			$arrParametrosResp['idProcedimento']= $objMdPetRecibo->getNumIdProtocolo();
-			$arrParametrosResp['nomeTipoResposta']= MdPetIntDestRespostaRN::$TIPO_PROCESSO_NOVO;
-			$arrParametrosResp['nomeDocumentoPrincipal']=$objMdPetRecibo->getStrNumeroProcessoFormatadoDoc();
-
-			$objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
-			$objMdPetIntDestRespostaRN->lancarAndamentoRecibo($arrParametrosResp);
 
 			$this->_controlarAcessoExterno($objProcedimentoDTO->getDblIdProcedimento());
 
@@ -390,7 +480,6 @@ class MdPetProcessoRN extends InfraRN {
     		$objAtividadeRN = new AtividadeRN();
     		$objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);      
 
-
 			// obtendo a ultima atividade informada para o processo, para marcar 
 			// como nao visualizada, deixando assim o processo marcado como "vermelho" 
 			// (status de Nao Visualizado) na listagem da tela "Controle de processos"
@@ -398,16 +487,20 @@ class MdPetProcessoRN extends InfraRN {
 			$atividadeDTO->retTodos();
 			$atividadeDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
 			$atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
-			$ultimaAtividadeDTO = $atividadeRN->listarRN0036( $atividadeDTO );
+			$ultimaAtividadeDTO = (new AtividadeRN())->listarRN0036( $atividadeDTO );
 						
 			//alterar a ultima atividade criada para nao visualizado
 			if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
-			  $ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
-			  $atividadeBD->alterar( $ultimaAtividadeDTO[0] );
+			  
+			  	$ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
+			  
+				$atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
+			  	$atividadeBD->alterar( $ultimaAtividadeDTO[0] );
+
 			}
 
 
-			return array('paramentrosRecibo' => $arrProcessoReciboRetorno, 'parametrosEmail' => $arrParams);
+			return array('paramentrosRecibo' => $arrProcessoReciboRetorno, 'parametrosEmail' => $arrParams, 'idsContatos' => $idsContatos );
 		
 		} catch(Exception $e){
 			throw new InfraException('Erro cadastrando processo peticionamento do SEI.',$e);
@@ -428,7 +521,7 @@ class MdPetProcessoRN extends InfraRN {
 	 * Método responsavel por incluir documento externo (ANEXO) no processo, travar documento para ediçao e assinar o documento
 	 * customizando sua tarja de assinatura. As operaçoes já fazem uso da classe SeiRN e classes de API do SEI 3.0
 	 * */
-	private function gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO , $arrParametros, $docDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, $tipoDocRecibo ){
+	private function gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO , $arrParametros, $docDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, $tipoDocRecibo, $base64 ){
 
 
 		$objDocumentoAPI = new DocumentoAPI();
@@ -443,7 +536,7 @@ class MdPetProcessoRN extends InfraRN {
 		$objDocumentoAPI->setIdTipoConferencia( $docDTO->getNumIdTipoConferencia() );
 			
 		$objDocumentoAPI->setNomeArquivo( $itemAnexo->getStrNome() );
-		$objDocumentoAPI->setConteudo(base64_encode(file_get_contents(DIR_SEI_TEMP. '/'. $itemAnexo->getStrHash() )));
+		$objDocumentoAPI->setConteudo($base64);
 		
 		$objSeiRN = new SeiRN();		
 		$saidaDocExternoAPI = $objSeiRN->incluirDocumento( $objDocumentoAPI );
@@ -477,57 +570,10 @@ class MdPetProcessoRN extends InfraRN {
 		SessaoSEI::getInstance()->setNumIdUnidadeAtual( $objUnidadeDTO->getNumIdUnidade() );
 		SessaoSEI::getInstance()->setNumIdUsuario( SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() );
 
-		$arrDocumentoDTO = array();
+		$strSiglaUsuario = SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno();
 
-		//verificar se foi editado documento principal gerado pelo editor do SEI
-		if( isset( $arrParametros['docPrincipalConteudoHTML'] ) && $arrParametros['docPrincipalConteudoHTML'] != ""  ){
-						
-			$idTipoProc = $arrParametros['id_tipo_procedimento'];
-			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
-			$objMdPetTipoProcessoDTO->retTodos(true);
-			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
-			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
-						
-			//====================================
-			//gera no sistema as informações referentes ao documento principal
-			//====================================
-			//seiv3
-			$documentoDTOPrincipal = $this->montarDocumentoPrincipal( $objProcedimentoDTO, 
-					                          $objMdPetTipoProcessoDTO, $objUnidadeDTO, $arrParametros );
-
-			//====================================
-			//ASSINAR O DOCUMENTO PRINCIPAL
-			//====================================			
-			$this->assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTOPrincipal, $objProcedimentoDTO );
-			
-			//recibo do doc principal para consultar do usuario externo
-			$reciboDocAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
-			$objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
-			
-			$reciboDocAnexoDTO->setNumIdAnexo( null );
-			$reciboDocAnexoDTO->setNumIdReciboPeticionamento( $reciboDTOBasico->getNumIdReciboPeticionamento() );
-			$reciboDocAnexoDTO->setNumIdDocumento( $documentoDTOPrincipal->getDblIdDocumento() );
-			$reciboDocAnexoDTO->setStrClassificacaoDocumento( MdPetRelReciboDocumentoAnexoRN::$TP_PRINCIPAL );
-			$reciboDocAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->cadastrar( $reciboDocAnexoDTO );
-
-		} 
-
-		//verificar se o documento principal é do tipo externo (ANEXO)
-		else {
-			
-			$idTipoProc = $arrParametros['id_tipo_procedimento'];
-			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
-			$objMdPetTipoProcessoDTO->retTodos(true);
-			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
-			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
-			
-		}
-				
 		//tratando documentos essenciais e complementares
 		$anexoRN = new MdPetAnexoRN();
-		$strSiglaUsuario = SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno();
 		
 		$objMdPetTamanhoArquivoRN = new MdPetTamanhoArquivoRN();
 		$objMdPetTamanhoArquivoDTO = new MdPetTamanhoArquivoDTO();
@@ -538,20 +584,20 @@ class MdPetProcessoRN extends InfraRN {
 		$tamanhoPrincipal = $arrTamanhoDTO[0]->getNumValorDocPrincipal();
 		$tamanhoEssencialComplementar = $arrTamanhoDTO[0]->getNumValorDocComplementar();
 		
-		if( isset( $arrParametros['hdnDocPrincipal'] ) && $arrParametros['hdnDocPrincipal']  != "") {
-			
-			$arrAnexoDocPrincipal = $this->processarStringAnexos( $arrParametros['hdnDocPrincipal'] ,
-					$objUnidadeDTO->getNumIdUnidade() ,
-					$strSiglaUsuario,
-					true,
-					$objProcedimentoDTO->getDblIdProcedimento(), 
-					$tamanhoPrincipal, "principais" );
+		if( !empty( $arrParametros['hdnDocPrincipal'] )) {
 			
 			SessaoSEIExterna::getInstance()->setAtributo('arrIdAnexoPrincipal', null);
 			$arrIdAnexoPrincipal = array();
 			$arrAnexoPrincipalVinculacaoProcesso = array();
 			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocPrincipal']  );
 			$contador = 0;	
+
+			[$arrAnexoDocPrincipal, $bases64Principal] = $this->processarStringAnexos( $arrParametros['hdnDocPrincipal'] ,
+					$objUnidadeDTO->getNumIdUnidade() ,
+					$strSiglaUsuario,
+					true,
+					$objProcedimentoDTO->getDblIdProcedimento(), 
+					$tamanhoPrincipal, "principais" );
 			
 			foreach( $arrAnexoDocPrincipal as $itemAnexo ){
 				
@@ -622,7 +668,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
 				$objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EXTERNO);
 
-				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, MdPetRelReciboDocumentoAnexoRN::$TP_PRINCIPAL );
+				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, MdPetRelReciboDocumentoAnexoRN::$TP_PRINCIPAL, $bases64Principal[$itemAnexo->getStrHash()] );
 
 				//=============================
 				//criando registro em anexo
@@ -651,14 +697,7 @@ class MdPetProcessoRN extends InfraRN {
 				
 		}
 		
-		if( isset( $arrParametros['hdnDocEssencial'] ) && $arrParametros['hdnDocEssencial']  != "") {
-			
-			$arrAnexoDocEssencial = $this->processarStringAnexos( $arrParametros['hdnDocEssencial'] , 
-					                      $objUnidadeDTO->getNumIdUnidade() , 
-					                      $strSiglaUsuario, 
-					                      false, 
-					                      $objProcedimentoDTO->getDblIdProcedimento(), 
-										  $tamanhoEssencialComplementar, "essenciais");
+		if( !empty( $arrParametros['hdnDocEssencial'] )) {
 
 			SessaoSEIExterna::getInstance()->setAtributo('arrIdAnexoEssencial', null);
 			$arrIdAnexoEssencial = array();
@@ -667,6 +706,13 @@ class MdPetProcessoRN extends InfraRN {
 			
 			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocEssencial']  );
 			$contador = 0;
+
+			[$arrAnexoDocEssencial, $bases64Essencial] = $this->processarStringAnexos( $arrParametros['hdnDocEssencial'] , 
+					$objUnidadeDTO->getNumIdUnidade() , 
+					$strSiglaUsuario, 
+					false, 
+					$objProcedimentoDTO->getDblIdProcedimento(), 
+					$tamanhoEssencialComplementar, "essenciais");
 			
 			foreach( $arrAnexoDocEssencial as $itemAnexo ){
 				
@@ -726,7 +772,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');				
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
 				
-				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, MdPetRelReciboDocumentoAnexoRN::$TP_ESSENCIAL );
+				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexo, $reciboDTOBasico, MdPetRelReciboDocumentoAnexoRN::$TP_ESSENCIAL, $bases64Essencial[$itemAnexo->getStrHash()] );
 
 				//==================================
 				//CRIANDO ANEXOS
@@ -755,20 +801,20 @@ class MdPetProcessoRN extends InfraRN {
 			
 		}
 		
-		if( isset( $arrParametros['hdnDocComplementar'] ) && $arrParametros['hdnDocComplementar']  != "" ) {
-			
-			$arrAnexoDocComplementar = $this->processarStringAnexos( $arrParametros['hdnDocComplementar'] ,
-					$objUnidadeDTO->getNumIdUnidade() ,
-					$strSiglaUsuario,
-					false,
-					$objProcedimentoDTO->getDblIdProcedimento(), 
-					$tamanhoEssencialComplementar, "complementares" );
+		if( !empty( $arrParametros['hdnDocComplementar'] )) {
 			
 			SessaoSEIExterna::getInstance()->setAtributo('arrIdAnexoComplementar', null);
 			$arrIdAnexoComplementar = array();
 			
 			$arrLinhasAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica(  $arrParametros['hdnDocComplementar']  );
 			$contador = 0;
+
+			[$arrAnexoDocComplementar, $bases64Complementar] = $this->processarStringAnexos( $arrParametros['hdnDocComplementar'] ,
+					$objUnidadeDTO->getNumIdUnidade() ,
+					$strSiglaUsuario,
+					false,
+					$objProcedimentoDTO->getDblIdProcedimento(), 
+					$tamanhoEssencialComplementar, "complementares" );
 						
 			foreach( $arrAnexoDocComplementar as $itemAnexoComplementar ){
 				
@@ -827,7 +873,7 @@ class MdPetProcessoRN extends InfraRN {
 				$objDocumentoDTO->setStrProtocoloDocumentoTextoBase('');
 				$objDocumentoDTO->setNumIdSerie( $idSerieAnexo );
 
-				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexoComplementar, $reciboDTOBasico, MdPetRelReciboDocumentoAnexoRN::$TP_COMPLEMENTAR );
+				$objSaidaDocumentoAPI = $this->gerarAssinarDocumentoAnexoSeiRN( $objUnidadeDTO, $arrParametros, $objDocumentoDTO, $objProcedimentoDTO, $itemAnexoComplementar, $reciboDTOBasico, MdPetRelReciboDocumentoAnexoRN::$TP_COMPLEMENTAR, $bases64Complementar[$itemAnexoComplementar->getStrHash()] );
 
 				//========================
 				//CRIANDO ANEXOS
@@ -852,6 +898,54 @@ class MdPetProcessoRN extends InfraRN {
 			if( count( $arrIdAnexoComplementar ) > 0 ){
 				SessaoSEIExterna::getInstance()->setAtributo('arrIdAnexoComplementar', $arrIdAnexoComplementar);
 			}
+			
+		}
+
+		$arrDocumentoDTO = array();
+
+		//verificar se foi editado documento principal gerado pelo editor do SEI
+		if( isset( $arrParametros['docPrincipalConteudoHTML'] ) && $arrParametros['docPrincipalConteudoHTML'] != ""  ){
+						
+			$idTipoProc = $arrParametros['id_tipo_procedimento'];
+			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
+			$objMdPetTipoProcessoDTO->retTodos(true);
+			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
+			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
+			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
+						
+			//====================================
+			//gera no sistema as informações referentes ao documento principal
+			//====================================
+			//seiv3
+			$documentoDTOPrincipal = $this->montarDocumentoPrincipal( $objProcedimentoDTO, 
+					                          $objMdPetTipoProcessoDTO, $objUnidadeDTO, $arrParametros );
+
+			//====================================
+			//ASSINAR O DOCUMENTO PRINCIPAL
+			//====================================			
+			$this->assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTOPrincipal, $objProcedimentoDTO );
+			
+			//recibo do doc principal para consultar do usuario externo
+			$reciboDocAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
+			$objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+			
+			$reciboDocAnexoDTO->setNumIdAnexo( null );
+			$reciboDocAnexoDTO->setNumIdReciboPeticionamento( $reciboDTOBasico->getNumIdReciboPeticionamento() );
+			$reciboDocAnexoDTO->setNumIdDocumento( $documentoDTOPrincipal->getDblIdDocumento() );
+			$reciboDocAnexoDTO->setStrClassificacaoDocumento( MdPetRelReciboDocumentoAnexoRN::$TP_PRINCIPAL );
+			$reciboDocAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->cadastrar( $reciboDocAnexoDTO );
+
+		} 
+
+		//verificar se o documento principal é do tipo externo (ANEXO)
+		else {
+			
+			$idTipoProc = $arrParametros['id_tipo_procedimento'];
+			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
+			$objMdPetTipoProcessoDTO->retTodos(true);
+			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
+			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
+			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
 			
 		}
 						
@@ -1329,6 +1423,7 @@ class MdPetProcessoRN extends InfraRN {
 				
 		$arrAnexos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($strDelimitadaAnexos);
 		$arrObjAnexoDTO = array();
+		$bases64 = array();
 		
 		foreach($arrAnexos as $anexo){
 			
@@ -1369,9 +1464,12 @@ class MdPetProcessoRN extends InfraRN {
 			$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
 			$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 			$arrObjAnexoDTO[] = $objAnexoDTO;
+			
+			$base64 = base64_encode(file_get_contents(DIR_SEI_TEMP. '/'. $anexo[8] ));
+			$bases64[$anexo[8]] = $base64;
 		}
 		
-		return $arrObjAnexoDTO;
+		return [$arrObjAnexoDTO, $bases64];
 	}
 	
 	private function getContatoDTOUsuarioLogado(){

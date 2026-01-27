@@ -85,14 +85,14 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 	
 			if ($objProtocoloDTO==null){
-				throw new InfraException('Processo não encontrado.');
+				throw new InfraException('Processo nÃ£o encontrado.');
 			}
 	
 			$strStaNivelAcessoGlobal = $objProtocoloDTO->getStrStaNivelAcessoGlobal();
 	
-			//alterando nível de acesso
+			//alterando nÃ­vel de acesso
 			if ($numIdTarefa == TarefaRN::$TI_ALTERACAO_NIVEL_ACESSO_GLOBAL){
-				if ($objAtividadeDTO->getNumIdUsuario()!=null){ //se alterando para sigiloso IdUsuario estará preenchido
+				if ($objAtividadeDTO->getNumIdUsuario()!=null){ //se alterando para sigiloso IdUsuario estarÃ¡ preenchido
 					$objAtividadeDTO->setNumIdUsuarioAtribuicao($objAtividadeDTO->getNumIdUsuario());
 				}
 			}else{
@@ -110,8 +110,8 @@ class MdPetAtividadeRN extends AtividadeRN {
 						$objAtividadeDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 					}else{
 						 
-						//verifica se o usuário atual tem acesso ao processo na unidade atual
-						//se tiver acesso então preenche o IdUsuario automaticamente
+						//verifica se o usuÃ¡rio atual tem acesso ao processo na unidade atual
+						//se tiver acesso entÃ£o preenche o IdUsuario automaticamente
 						$objAcessoDTO = new AcessoDTO();
 						$objAcessoDTO->setDblIdProtocolo($objAtividadeDTO->getDblIdProtocolo());
 						$objAcessoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
@@ -131,7 +131,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 
 						if ($bolFlagReaberturaAutomaticaProtocolo || $numIdTarefa == TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE){
 
-							//atribui para a última pessoa que trabalhou com o processo na unidade
+							//atribui para a Ãºltima pessoa que trabalhou com o processo na unidade
 							$dto = new AtividadeDTO();
 							$dto->retNumIdUsuarioAtribuicao();
 							$dto->setDblIdProtocolo($objAtividadeDTO->getDblIdProtocolo());
@@ -192,21 +192,21 @@ class MdPetAtividadeRN extends AtividadeRN {
 					}
 				}
 	
-				//se todos os andamentos são iniciais
+				//se todos os andamentos sÃ£o iniciais
 				if ($n == count($arrObjAtividadeDTO)){
 					$objAtividadeDTO->setStrSinInicial('S');
 				}
 		   
 				foreach($arrObjAtividadeDTO as $dto){
 		    
-					//copia usuário que visualizou e o respectivo status de visualização
+					//copia usuÃ¡rio que visualizou e o respectivo status de visualizaÃ§Ã£o
 					if ($dto->getNumIdUsuarioVisualizacao()!=null){
 						$objAtividadeDTO->setNumIdUsuarioVisualizacao($dto->getNumIdUsuarioVisualizacao());
 						$objAtividadeDTO->setNumTipoVisualizacao($dto->getNumTipoVisualizacao());
 					}
 		    
-					//copia usuário de atribuição
-					if ($dto->getNumIdUsuarioAtribuicao()!=null && //último andamento tem atribuição
+					//copia usuÃ¡rio de atribuiÃ§Ã£o
+					if ($dto->getNumIdUsuarioAtribuicao()!=null && //Ãºltimo andamento tem atribuiÃ§Ã£o
 					$objAtividadeDTO->getNumIdUsuarioAtribuicao()==null && //nao foi atribuido antes
 					$numIdTarefa != TarefaRN::$TI_REMOCAO_ATRIBUICAO){  //removendo atribuicao manualmente
 						$objAtividadeDTO->setNumIdUsuarioAtribuicao($dto->getNumIdUsuarioAtribuicao());
@@ -217,13 +217,13 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 				$bolFlagConcluiu = true;
 	
-				//quando reabrindo não tinha andamentos abertos e pode não ter tramitado
-				//a verificação evita que na reabertura de um processo gerado que não tramitou ele
+				//quando reabrindo nÃ£o tinha andamentos abertos e pode nÃ£o ter tramitado
+				//a verificaÃ§Ã£o evita que na reabertura de um processo gerado que nÃ£o tramitou ele
 				//fique na coluna de recebidos
 			}else if ($numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE ||
 			$numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_USUARIO){
 				 
-				//verifica se o processo não tramitou fora da unidade
+				//verifica se o processo nÃ£o tramitou fora da unidade
 				$dto = new AtividadeDTO();
 				$dto->setNumIdUnidade( $idUnidadeDTO );
 				$dto->setDblIdProtocolo($objAtividadeDTO->getDblIdProtocolo());
@@ -234,7 +234,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 				}
 			}
 	
-			//Lança andamento inicial:
+			//LanÃ§a andamento inicial:
 			//- quando reabrindo automaticamente devido ao protocolo
 			//- quando o processo esta sendo remetido para outra unidade
 			//- quando esta sendo dada credencial de acesso ao processo para alguem em outra unidade
@@ -255,7 +255,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 			}else if ($objTarefaDTO->getStrSinLancarAndamentoFechado()=='S'
 					||
-					(!$bolFlagConcluiu && //não estava com o processo aberto na unidade
+					(!$bolFlagConcluiu && //nÃ£o estava com o processo aberto na unidade
 							 
 							($objTarefaDTO->getStrSinPermiteProcessoFechado()=='S'
 	
@@ -270,7 +270,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 									 
 									||
 									 
-									//unidade PROTOCOLO pode lançar andamentos em processos que não estão abertos com ela, exceto nos casos onde a unidade PROTOCOLO
+									//unidade PROTOCOLO pode lanÃ§ar andamentos em processos que nÃ£o estÃ£o abertos com ela, exceto nos casos onde a unidade PROTOCOLO
 									//esteja realmente gerando ou reabrindo um processo ou alguma unidade esteja remetendo o processo para o PROTOCOLO
 									($objUnidadeDTO->getStrSinProtocolo()=='S' &&
 											$numIdTarefa != TarefaRN::$TI_GERACAO_PROCEDIMENTO &&
@@ -288,7 +288,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 													$numIdTarefa == TarefaRN::$TI_ARQUIVO_ANEXADO ||
 													$numIdTarefa == TarefaRN::$TI_ENVIO_EMAIL))))){
 	
-				//lança andamento fechado
+				//lanÃ§a andamento fechado
 				$objAtividadeDTO->setNumIdUsuarioConclusao(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 				$objAtividadeDTO->setDthConclusao($strDataHoraAtual);
 	
@@ -301,11 +301,11 @@ class MdPetAtividadeRN extends AtividadeRN {
 				$numIdTarefa != TarefaRN::$TI_CANCELAMENTO_AGENDAMENTO &&
 				$numIdTarefa != TarefaRN::$TI_REMOCAO_SOBRESTANDO_PROCESSO){ //confirmacao de publicacao
 					
-					$objInfraException->lancarValidacao('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' não possui andamento aberto na unidade ID = '. $idUnidadeDTO .'.');
+					$objInfraException->lancarValidacao('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' nÃ£o possui andamento aberto na unidade ID = '. $idUnidadeDTO .'.');
 					
 				}
 				 
-				//lança andamento em aberto mas não altera outros dados como usuário de visualização e atribuição
+				//lanÃ§a andamento em aberto mas nÃ£o altera outros dados como usuÃ¡rio de visualizaÃ§Ã£o e atribuiÃ§Ã£o
 				$objAtividadeDTO->setNumIdUsuarioConclusao(null);
 				$objAtividadeDTO->setDthConclusao(null);
 			}
@@ -318,7 +318,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			
 			$ret = $objAtividadeBD->cadastrar($objAtividadeDTO);
 	
-			//lança ícone de atenção para o processo em todas as unidades que possuam andamento aberto e já tenham visualizado
+			//lanÃ§a Ã­cone de atenÃ§Ã£o para o processo em todas as unidades que possuam andamento aberto e jÃ¡ tenham visualizado
 			if ($numIdTarefa == TarefaRN::$TI_ASSINATURA_DOCUMENTO || $numIdTarefa == TarefaRN::$TI_RECEBIMENTO_DOCUMENTO){
 	
 				$dto = new AtividadeDTO();
@@ -371,7 +371,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 				 
 				$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
 				$objAtributoAndamentoDTO->setStrNome('USUARIO_EMULADOR');
-				$objAtributoAndamentoDTO->setStrValor(SessaoSEIExterna::getInstance()->getStrSiglaUsuarioEmulador().'¥'.SessaoSEIExterna::getInstance()->getStrNomeUsuarioEmulador().'±'.SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioEmulador().'¥'.SessaoSEIExterna::getInstance()->getStrDescricaoOrgaoUsuarioEmulador());
+				$objAtributoAndamentoDTO->setStrValor(SessaoSEIExterna::getInstance()->getStrSiglaUsuarioEmulador().'Â¥'.SessaoSEIExterna::getInstance()->getStrNomeUsuarioEmulador().'Â±'.SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioEmulador().'Â¥'.SessaoSEIExterna::getInstance()->getStrDescricaoOrgaoUsuarioEmulador());
 				$objAtributoAndamentoDTO->setStrIdOrigem(SessaoSEIExterna::getInstance()->getNumIdUsuarioEmulador().'/'.SessaoSEIExterna::getInstance()->getNumIdOrgaoUsuarioEmulador());
 				$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 	
@@ -398,7 +398,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 	private function validarDblIdProtocoloRN0704(AtividadeDTO $objAtividadeDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAtividadeDTO->getDblIdProtocolo())){
-			$objInfraException->adicionarValidacao('Protocolo não informado.');
+			$objInfraException->adicionarValidacao('Protocolo nÃ£o informado.');
 		}
 	}
 	
@@ -407,7 +407,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 		$idUnidade = $objAtividadeDTO->get('IdUnidade');
 		
 		if ( $idUnidade == null || $idUnidade == '' ){
-			$objInfraException->adicionarValidacao('Unidade não informada.');
+			$objInfraException->adicionarValidacao('Unidade nÃ£o informada.');
 		}
 	}
 	
@@ -425,13 +425,13 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 	private function validarNumIdTarefaRN0706(AtividadeDTO $objAtividadeDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAtividadeDTO->getNumIdTarefa())){
-			$objInfraException->adicionarValidacao('Tarefa não informada.');
+			$objInfraException->adicionarValidacao('Tarefa nÃ£o informada.');
 		}
 	}
 	
 	private function validarNumIdUsuarioOrigemRN0708(AtividadeDTO $objAtividadeDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAtividadeDTO->getNumIdUsuarioOrigem())){
-			$objInfraException->adicionarValidacao('Usuário origem não informado.');
+			$objInfraException->adicionarValidacao('UsuÃ¡rio origem nÃ£o informado.');
 		}
 	}
 	
@@ -449,7 +449,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 	private function validarNumIdUsuarioConclusaoRN1194(AtividadeDTO $objAtividadeDTO, InfraException $objInfraException){
 		if (InfraString::isBolVazia($objAtividadeDTO->getNumIdUsuarioConclusao())){
-			$objInfraException->adicionarValidacao('Usuário de conclusão não informado.');
+			$objInfraException->adicionarValidacao('UsuÃ¡rio de conclusÃ£o nÃ£o informado.');
 		}
 	}
 	
@@ -459,7 +459,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objAtividadeDTO->setDthConclusao(null);
 		}else{
 			if (!InfraData::validarDataHora($objAtividadeDTO->getDthConclusao())){
-				$objInfraException->adicionarValidacao('Data de conclusão inválida.');
+				$objInfraException->adicionarValidacao('Data de conclusÃ£o invÃ¡lida.');
 			}
 		}
 	}
@@ -467,10 +467,10 @@ class MdPetAtividadeRN extends AtividadeRN {
 	private function validarStrSinInicial(AtividadeDTO $objAtividadeDTO, InfraException $objInfraException){
 	
 		if (InfraString::isBolVazia($objAtividadeDTO->getStrSinInicial())){
-			$objInfraException->adicionarValidacao('Sinalizador de andamento inicial não informado.');
+			$objInfraException->adicionarValidacao('Sinalizador de andamento inicial nÃ£o informado.');
 		}else{
 			if (!InfraUtil::isBolSinalizadorValido($objAtividadeDTO->getStrSinInicial())){
-				$objInfraException->adicionarValidacao('Sinalizador de andamento inicial inválido.');
+				$objInfraException->adicionarValidacao('Sinalizador de andamento inicial invÃ¡lido.');
 			}
 		}
 	}
@@ -481,11 +481,11 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objAtividadeDTO->setDtaPrazo(null);
 		}else{
 			if (!InfraData::validarData($objAtividadeDTO->getDtaPrazo())){
-				$objInfraException->adicionarValidacao('Data de retorno programado da atividade inválida.');
+				$objInfraException->adicionarValidacao('Data de retorno programado da atividade invÃ¡lida.');
 			}
 	
 			if (InfraData::compararDatas(InfraData::getStrDataAtual(),$objAtividadeDTO->getDtaPrazo())<0){
-				$objInfraException->adicionarValidacao('Data de retorno programado da atividade não pode estar no passado.');
+				$objInfraException->adicionarValidacao('Data de retorno programado da atividade nÃ£o pode estar no passado.');
 			}
 		}
 	}
@@ -495,11 +495,11 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objEnviarProcessoDTO->setDtaPrazo(null);
 		}else{
 			if (!InfraData::validarData($objEnviarProcessoDTO->getDtaPrazo())){
-				$objInfraException->adicionarValidacao('Data de retorno programado inválida.');
+				$objInfraException->adicionarValidacao('Data de retorno programado invÃ¡lida.');
 			}
 	
 			if (InfraData::compararDatas(InfraData::getStrDataAtual(),$objEnviarProcessoDTO->getDtaPrazo())<0){
-				$objInfraException->adicionarValidacao('Data de retorno programado não pode estar no passado.');
+				$objInfraException->adicionarValidacao('Data de retorno programado nÃ£o pode estar no passado.');
 			}
 		}
 	}
@@ -512,7 +512,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objEnviarProcessoDTO->setNumDias(trim($objEnviarProcessoDTO->getNumDias()));
 	
 			if (!is_numeric($objEnviarProcessoDTO->getNumDias()) ||	$objEnviarProcessoDTO->getNumDias() < 1){
-				$objInfraException->adicionarValidacao('Número de dias para retorno programado inválido.');
+				$objInfraException->adicionarValidacao('NÃºmero de dias para retorno programado invÃ¡lido.');
 			}
 		}
 	}
@@ -642,13 +642,13 @@ class MdPetAtividadeRN extends AtividadeRN {
 		$objAtividadeDTO->setOrdDthAbertura(InfraDTO::$TIPO_ORDENACAO_DESC);
 	
 	
-		//paginação
+		//paginaÃ§Ã£o
 		$objAtividadeDTO->setNumMaxRegistrosRetorno($objPesquisaPendenciaDTO->getNumMaxRegistrosRetorno());
 		$objAtividadeDTO->setNumPaginaAtual($objPesquisaPendenciaDTO->getNumPaginaAtual());
 	
 		$arrAtividadeDTO = $this->listarRN0036($objAtividadeDTO);
 	
-		//paginação
+		//paginaÃ§Ã£o
 		$objPesquisaPendenciaDTO->setNumTotalRegistros($objAtividadeDTO->getNumTotalRegistros());
 		$objPesquisaPendenciaDTO->setNumRegistrosPaginaAtual($objAtividadeDTO->getNumRegistrosPaginaAtual());
 	
@@ -748,7 +748,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 				$objProcedimentoDTO = $arr[$objAtividadeDTO->getDblIdProtocolo()];
 	
-				//pode não existir se o procedimento foi excluído
+				//pode nÃ£o existir se o procedimento foi excluÃ­do
 				if ($objProcedimentoDTO != null) {
 	
 					$dblIdProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
@@ -838,7 +838,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 		return $arrProcedimentos;
 	}
 
-	// AtividadeRN.php -> listarUnidadesTramitacaoControlado - sem ordenação alfabética 
+	// AtividadeRN.php -> listarUnidadesTramitacaoControlado - sem ordenaÃ§Ã£o alfabÃ©tica 
 	protected function listarUnidadesTramitacaoControlado(ProcedimentoDTO $objProcedimentoDTO){
 		try{
 
@@ -885,7 +885,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			return $arrObjAtividadeDTO;
 
 		}catch(Exception $e){
-			throw new InfraException('Erro listando unidades de tramitação.',$e);
+			throw new InfraException('Erro listando unidades de tramitaÃ§Ã£o.',$e);
 		}
 	}
 
@@ -955,15 +955,15 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 	
 			if ($objProtocoloDTO==null){
-				throw new InfraException('Processo não encontrado.');
+				throw new InfraException('Processo nÃ£o encontrado.');
 			}
 	
 			$strStaNivelAcessoGlobal = $objProtocoloDTO->getStrStaNivelAcessoGlobal();
 	
-			//alterando nível de acesso
+			//alterando nÃ­vel de acesso
 			if ($numIdTarefa == TarefaRN::$TI_ALTERACAO_NIVEL_ACESSO_GLOBAL){
 				
-				if ($objAtividadeDTO->getNumIdUsuario()!=null){ //se alterando para sigiloso IdUsuario estará preenchido
+				if ($objAtividadeDTO->getNumIdUsuario()!=null){ //se alterando para sigiloso IdUsuario estarÃ¡ preenchido
 					$objAtividadeDTO->setNumIdUsuarioAtribuicao($objAtividadeDTO->getNumIdUsuario());
 				}
 				
@@ -982,8 +982,8 @@ class MdPetAtividadeRN extends AtividadeRN {
 						$objAtividadeDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 					}else{
 						 
-						//verifica se o usuário atual tem acesso ao processo na unidade atual
-						//se tiver acesso então preenche o IdUsuario automaticamente
+						//verifica se o usuÃ¡rio atual tem acesso ao processo na unidade atual
+						//se tiver acesso entÃ£o preenche o IdUsuario automaticamente
 						$objAcessoDTO = new AcessoDTO();
 						$objAcessoDTO->setDblIdProtocolo($objAtividadeDTO->getDblIdProtocolo());
 						$objAcessoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
@@ -1006,7 +1006,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 						if ($bolFlagReaberturaAutomaticaProtocolo || $numIdTarefa == TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE){
 	
-							//atribui para a última pessoa que trabalhou com o processo na unidade
+							//atribui para a Ãºltima pessoa que trabalhou com o processo na unidade
 							$dto = new AtividadeDTO();
 							$dto->retNumIdUsuarioAtribuicao();
 							$dto->setDblIdProtocolo($objAtividadeDTO->getDblIdProtocolo());
@@ -1067,21 +1067,21 @@ class MdPetAtividadeRN extends AtividadeRN {
 					}
 				}
 	
-				//se todos os andamentos são iniciais
+				//se todos os andamentos sÃ£o iniciais
 				if ($n == count($arrObjAtividadeDTO)){
 					$objAtividadeDTO->setStrSinInicial('S');
 				}
 		   
 				foreach($arrObjAtividadeDTO as $dto){
 		    
-					//copia usuário que visualizou e o respectivo status de visualização
+					//copia usuÃ¡rio que visualizou e o respectivo status de visualizaÃ§Ã£o
 					if ($dto->getNumIdUsuarioVisualizacao()!=null){
 						$objAtividadeDTO->setNumIdUsuarioVisualizacao($dto->getNumIdUsuarioVisualizacao());
 						$objAtividadeDTO->setNumTipoVisualizacao($dto->getNumTipoVisualizacao());
 					}
 		    
-					//copia usuário de atribuição
-					if ($dto->getNumIdUsuarioAtribuicao()!=null && //último andamento tem atribuição
+					//copia usuÃ¡rio de atribuiÃ§Ã£o
+					if ($dto->getNumIdUsuarioAtribuicao()!=null && //Ãºltimo andamento tem atribuiÃ§Ã£o
 					$objAtividadeDTO->getNumIdUsuarioAtribuicao()==null && //nao foi atribuido antes
 					$numIdTarefa != TarefaRN::$TI_REMOCAO_ATRIBUICAO){  //removendo atribuicao manualmente
 						$objAtividadeDTO->setNumIdUsuarioAtribuicao($dto->getNumIdUsuarioAtribuicao());
@@ -1092,12 +1092,12 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 				$bolFlagConcluiu = true;
 	
-				//quando reabrindo não tinha andamentos abertos e pode não ter tramitado
-				//a verificação evita que na reabertura de um processo gerado que não tramitou ele
+				//quando reabrindo nÃ£o tinha andamentos abertos e pode nÃ£o ter tramitado
+				//a verificaÃ§Ã£o evita que na reabertura de um processo gerado que nÃ£o tramitou ele
 				//fique na coluna de recebidos
 			}else if ($numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_UNIDADE || $numIdTarefa == TarefaRN::$TI_REABERTURA_PROCESSO_USUARIO){
 				 
-				//verifica se o processo não tramitou fora da unidade
+				//verifica se o processo nÃ£o tramitou fora da unidade
 				$dto = new AtividadeDTO();
 
 				$dto->setNumIdUnidade( $objAtividadeDTO->getNumIdUnidade() );
@@ -1109,7 +1109,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 				}
 			}
 	
-			//Lança andamento inicial:
+			//LanÃ§a andamento inicial:
 			//- quando reabrindo automaticamente devido ao protocolo
 			//- quando o processo esta sendo remetido para outra unidade
 			//- quando esta sendo dada credencial de acesso ao processo para alguem em outra unidade
@@ -1130,7 +1130,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 			}else if ($objTarefaDTO->getStrSinLancarAndamentoFechado()=='S'
 					||
-					(!$bolFlagConcluiu && //não estava com o processo aberto na unidade
+					(!$bolFlagConcluiu && //nÃ£o estava com o processo aberto na unidade
 							 
 							($objTarefaDTO->getStrSinPermiteProcessoFechado()=='S'
 	
@@ -1145,7 +1145,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 									 
 									||
 									 
-									//unidade PROTOCOLO pode lançar andamentos em processos que não estão abertos com ela, exceto nos casos onde a unidade PROTOCOLO
+									//unidade PROTOCOLO pode lanÃ§ar andamentos em processos que nÃ£o estÃ£o abertos com ela, exceto nos casos onde a unidade PROTOCOLO
 									//esteja realmente gerando ou reabrindo um processo ou alguma unidade esteja remetendo o processo para o PROTOCOLO
 									($objUnidadeDTO->getStrSinProtocolo()=='S' &&
 											$numIdTarefa != TarefaRN::$TI_GERACAO_PROCEDIMENTO &&
@@ -1163,7 +1163,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 													$numIdTarefa == TarefaRN::$TI_ARQUIVO_ANEXADO ||
 													$numIdTarefa == TarefaRN::$TI_ENVIO_EMAIL))))){
 	
-				//lança andamento fechado
+				//lanÃ§a andamento fechado
 				$objAtividadeDTO->setNumIdUsuarioConclusao(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 				$objAtividadeDTO->setDthConclusao($strDataHoraAtual);
 	
@@ -1175,11 +1175,11 @@ class MdPetAtividadeRN extends AtividadeRN {
 				$numIdTarefa != TarefaRN::$TI_REABERTURA_PROCESSO_USUARIO &&
 				$numIdTarefa != TarefaRN::$TI_CANCELAMENTO_AGENDAMENTO &&
 				$numIdTarefa != TarefaRN::$TI_REMOCAO_SOBRESTANDO_PROCESSO){ //confirmacao de publicacao
-					//throw new InfraException('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' não possui andamento aberto na unidade '.SessaoSEI::getInstance()->getStrSiglaUnidadeAtual().' ['.$numIdTarefa.'].');
-					$objInfraException->lancarValidacao('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' não possui andamento aberto na unidade teste [NOME UNIDADE].');
+					//throw new InfraException('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' nÃ£o possui andamento aberto na unidade '.SessaoSEI::getInstance()->getStrSiglaUnidadeAtual().' ['.$numIdTarefa.'].');
+					$objInfraException->lancarValidacao('Processo '.$objProtocoloDTO->getStrProtocoloFormatado().' nÃ£o possui andamento aberto na unidade teste [NOME UNIDADE].');
 				}
 				 
-				//lança andamento em aberto mas não altera outros dados como usuário de visualização e atribuição
+				//lanÃ§a andamento em aberto mas nÃ£o altera outros dados como usuÃ¡rio de visualizaÃ§Ã£o e atribuiÃ§Ã£o
 				$objAtividadeDTO->setNumIdUsuarioConclusao(null);
 				$objAtividadeDTO->setDthConclusao(null);
 			}
@@ -1187,7 +1187,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			$objAtividadeBD = new AtividadeBD($this->getObjInfraIBanco());
 			$ret = $objAtividadeBD->cadastrar($objAtividadeDTO);
 	
-			//lança ícone de atenção para o processo em todas as unidades que possuam andamento aberto e já tenham visualizado
+			//lanÃ§a Ã­cone de atenÃ§Ã£o para o processo em todas as unidades que possuam andamento aberto e jÃ¡ tenham visualizado
 			if ($numIdTarefa == TarefaRN::$TI_ASSINATURA_DOCUMENTO || $numIdTarefa == TarefaRN::$TI_RECEBIMENTO_DOCUMENTO){
 	
 				$dto = new AtividadeDTO();
@@ -1275,7 +1275,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			//Regras de Negocio
 			$objInfraException = new InfraException();
 			
-			//verifica se não houve mudança nas atividades abertas
+			//verifica se nÃ£o houve mudanÃ§a nas atividades abertas
 			$idUnidadeOrigem = '';
 			$arrObjAtividadeDTOOrigem = $parObjEnviarProcessoDTO->getArrAtividadesOrigem();
 			
@@ -1312,7 +1312,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			}
 	
 			if (!InfraString::isBolVazia($parObjEnviarProcessoDTO->getDtaPrazo()) && !InfraString::isBolVazia($parObjEnviarProcessoDTO->getNumDias())){
-				$objInfraException->adicionarValidacao('Não é possível informar simultaneamente uma data específica e um número de dias para o Retorno Programado.');
+				$objInfraException->adicionarValidacao('NÃ£o Ã© possÃ­vel informar simultaneamente uma data especÃ­fica e um nÃºmero de dias para o Retorno Programado.');
 			}
 	
 			$objInfraException->lancarValidacoes();
@@ -1384,7 +1384,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 			foreach($arrUnidadesAtividades as $numIdUnidadeAtividade){
 				
 				if (!in_array($numIdUnidadeAtividade,$arrUnidadesConsultadas)){
-					throw new InfraException('Unidade ['.$numIdUnidadeAtividade.'] não encontrada.');
+					throw new InfraException('Unidade ['.$numIdUnidadeAtividade.'] nÃ£o encontrada.');
 				}
 			}
 	
@@ -1429,7 +1429,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 					$objPublicacaoRN = new PublicacaoRN();
 					$arrDataPrazo = array();
 	
-					//pega todos os feriados cadastrados por órgão
+					//pega todos os feriados cadastrados por Ã³rgÃ£o
 					foreach($arrIdOrgaoEnvio as $numIdOrgaoEnvio) {
 	
 						$objFeriadoDTO = new FeriadoDTO();
@@ -1447,7 +1447,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 	
 							do{
 								$strPrazo = InfraData::calcularData(1, InfraData::$UNIDADE_DIAS, InfraData::$SENTIDO_ADIANTE, $strPrazo);
-							}while (InfraData::obterDescricaoDiaSemana($strPrazo) == 'sábado' ||	InfraData::obterDescricaoDiaSemana($strPrazo) == 'domingo' ||	in_array($strPrazo, $arrFeriados));
+							}while (InfraData::obterDescricaoDiaSemana($strPrazo) == 'sÃ¡bado' ||	InfraData::obterDescricaoDiaSemana($strPrazo) == 'domingo' ||	in_array($strPrazo, $arrFeriados));
 	
 							$numDias--;
 						}
@@ -1514,14 +1514,14 @@ class MdPetAtividadeRN extends AtividadeRN {
 				$objAtividadeDTO = $dto;
 		
 				if ($objProtocoloDTO->getStrStaNivelAcessoGlobal()==ProtocoloRN::$NA_SIGILOSO){
-					$objInfraException->lancarValidacao('Não é possível enviar um processo sigiloso ('.$objProtocoloDTO->getStrProtocoloFormatado().') para outra unidade.');
+					$objInfraException->lancarValidacao('NÃ£o Ã© possÃ­vel enviar um processo sigiloso ('.$objProtocoloDTO->getStrProtocoloFormatado().') para outra unidade.');
 				}
 	
 				$arrObjAtributoAndamentoDTO = array();
 				 
 				$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
 				$objAtributoAndamentoDTO->setStrNome('UNIDADE');
-				$objAtributoAndamentoDTO->setStrValor($objUnidadeDTOOrigem->getStrSigla().'¥'.$objUnidadeDTOOrigem->getStrDescricao());
+				$objAtributoAndamentoDTO->setStrValor($objUnidadeDTOOrigem->getStrSigla().'Â¥'.$objUnidadeDTOOrigem->getStrDescricao());
 				$objAtributoAndamentoDTO->setStrIdOrigem($objAtividadeDTO->getNumIdUnidadeOrigem());
 				$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
 				 
@@ -1538,7 +1538,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 					//se informou uma data de retorno programado
 					if ($objAtividadeDTO->getDtaPrazo() != null){
 	
-						//verifica se já não existe um retorno programado para a unidade
+						//verifica se jÃ¡ nÃ£o existe um retorno programado para a unidade
 						$objRetornoProgramadoDTO 	= new RetornoProgramadoDTO();
 						$objRetornoProgramadoDTO->retNumIdRetornoProgramado();
 						$objRetornoProgramadoDTO->setNumIdUnidadeOrigemAtividadeEnvio($objAtividadeDTO->getNumIdUnidadeOrigem());
@@ -1548,7 +1548,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 						$objRetornoProgramadoDTO = $objRetornoProgramadoRN->consultar($objRetornoProgramadoDTO);
 	
 						if ($objRetornoProgramadoDTO!=null){
-							$objInfraException->lancarValidacao('Já existe um Retorno Programado em aberto para a unidade '.$objUnidadeDTO->getStrSigla().'/'.$objUnidadeDTO->getStrSiglaOrgao().' no processo '.$objProtocoloDTO->getStrProtocoloFormatado().'.');
+							$objInfraException->lancarValidacao('JÃ¡ existe um Retorno Programado em aberto para a unidade '.$objUnidadeDTO->getStrSigla().'/'.$objUnidadeDTO->getStrSiglaOrgao().' no processo '.$objProtocoloDTO->getStrProtocoloFormatado().'.');
 						}
 	
 						// cadastrar como Retorno Programado
@@ -1627,7 +1627,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 						$arrObjEmailUnidadeDTO = $objEmailUnidadeRN->listar($objEmailUnidadeDTO);
 							
 						if (count($arrObjEmailUnidadeDTO)==0){
-							$objInfraException->lancarValidacao('Unidade '.$objUnidadeDTO->getStrSigla().'/'.$objUnidadeDTO->getStrSiglaOrgao().' não possui email cadastrado.');
+							$objInfraException->lancarValidacao('Unidade '.$objUnidadeDTO->getStrSigla().'/'.$objUnidadeDTO->getStrSiglaOrgao().' nÃ£o possui email cadastrado.');
 						}
 							
 						$strDe = $objEmailSistemaDTO->getStrDe();

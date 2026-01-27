@@ -28,10 +28,22 @@ PaginaSEIExterna::getInstance()->abrirHead();
 PaginaSEIExterna::getInstance()->montarMeta();
 PaginaSEIExterna::getInstance()->montarTitle(':: ' . PaginaSEIExterna::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo . ' ::');
 PaginaSEIExterna::getInstance()->montarStyle();
+CaptchaSEI::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
 require_once 'md_pet_vinc_usu_ext_css.php';
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
+CaptchaSEI::getInstance()->montarJavascript();
+
+PaginaSEIExterna::getInstance()->abrirJavaScript();
+?>
+
+function OnSubmitForm(){ 
+    <? CaptchaSEI::getInstance()->validarOnSubmit('formCaptcha'); ?>
+}
+
+<?php
+PaginaSEIExterna::getInstance()->fecharJavaScript();
 require_once 'md_pet_vinc_usu_ext_js.php';
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');

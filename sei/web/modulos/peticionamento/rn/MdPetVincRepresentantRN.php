@@ -587,7 +587,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
                 $objUnidadeDTO = $mdPetVinculoUsuExtRN->getUnidade();
 
-                if ($objUnidadeDTO->getStrSinAtivo() == 'S') {
+                if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                     $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                     if (count($arrUnidadeProcesso) == 0) {
                         $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
@@ -909,7 +909,7 @@ class MdPetVincRepresentantRN extends InfraRN
             }
         }
 
-        public function suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
+        public function suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
         {
             
                 $arrObjMdPetVincRepresentantProcuradores = [];
@@ -1497,7 +1497,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
             $objUnidadeDTO = $mdPetVinculoUsuExtRN->getUnidade();
 
-            if ($objUnidadeDTO->getStrSinAtivo() == 'S') {
+            if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                 $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                 if (count($arrUnidadeProcesso) == 0) {
                     $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
@@ -2071,7 +2071,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
             $objUnidadeDTO = $mdPetVinculoUsuExtRN->getUnidade();
 
-            if ($objUnidadeDTO->getStrSinAtivo() == 'S') {
+            if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                 $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                 if (count($arrUnidadeProcesso) == 0) {
                     $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));

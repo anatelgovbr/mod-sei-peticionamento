@@ -1,4 +1,8 @@
 <?php
+
+$captchaValidado = '1'; // 1 = Listagem, 2 = Captcha inválido 3 = Captcha validado
+$semWS = false;
+CaptchaSEI::getInstance()->configurarCaptcha("Cadastro de Responsável Legal de Pessoa Jurídica");
 switch ($_GET['acao']) {
 
   case 'md_pet_vinc_usu_ext_cadastrar':
@@ -26,6 +30,16 @@ switch ($_GET['acao']) {
 
 
     $strItensSelCidade = CidadeINT::montarSelectIdCidadeNome('null','&nbsp;', null , null);
+    
+    if (isset($_POST['hdnCapcha'])) {
+        $semWS = $_POST['hdnWS'] == '0' ? true : false;
+        $captchaValidado = '3'; // Captcha validado
+        $hdnNumeroCnpj = $_POST['txtNumeroCnpj'];
+        if(!CaptchaSEI::getInstance()->verificar()) {
+            PaginaSEIExterna::getInstance()->setStrMensagem('Desafio não foi resolvido.', PaginaSEI::$TIPO_MSG_ERRO);
+            $captchaValidado = '2'; // Captcha inválido
+        }
+    }
     break;
   
   case 'md_pet_vinc_usu_ext_consultar' :

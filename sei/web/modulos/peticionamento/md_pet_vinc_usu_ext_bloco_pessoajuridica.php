@@ -3,6 +3,9 @@
     <form name=frmCNPJ id=frmCNPJ action='' method=POST><input type="hidden" name="hdnNumeroCnpj" id="hdnNumeroCnpj"></input></form>
     <div class="infraAreaDados">
         <?php $idDiv = $stWebService ? 'blcPj' : 'blcPjSemWs' ?>
+        <form id="formCaptcha" name="formCaptcha" method="post"
+                action="<?=SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao='.$_GET['acao'].'&acao_origem='.$_GET['acao'].'&lang='.$locale); ?>"
+                onsubmit="return OnSubmitForm();">
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                 <div id="<?php echo $idDiv ?>">
@@ -24,42 +27,42 @@
                 </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                 <div class="card" id="cardCaptcha">
-                    <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>&r=n&c=a" alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>">
+                    <?= CaptchaSEI::getInstance()->montarHtml(PaginaSEIExterna::getInstance()->getProxTabDados()); ?>
                     <div class="card-body">
-                        <div class="form-group mb-3">
-                            <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de Confirmação:</label>
-                            <div class="input-group mb-3" style="margin: 0 !important;">
-                                <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText form-control" value="" maxlength="4" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>" />
-                                <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar" onclick="consultarDadosReceita()" class="infraButton" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"><span class="infraTeclaAtalho">V</span>alidar
-                                </button>
+                        <div class="form-group">
+                            <div class="input-group" style="margin: 0 !important;">
+                                <input type="hidden" name="hdnCapcha" id="hdnCapcha" value="1">
+                                <input type="hidden" name="hdnWS" id="hdnWS" value="1">
+                                <input type="submit" accesskey="V" name="btnValidar" id="btnValidar" value="Validar" class="infraButton" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" style="width: 100%;" Value="Validar">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         <?php } else { ?>
-            <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8">
-                <div class="bloco" id="blc">
-                    <div class="card" id="cardCaptcha">
-                        <img class="card-img-top" src="/infra_js/infra_gerar_captcha.php?codetorandom=<?= $strCodigoParaGeracaoCaptcha; ?>>&r=n&c=a" alt="<?= _('Não foi possível carregar a imagem de confirmação'); ?>">
-                        <div class="card-body">
-                            <div class="form-group mb-3">
-                                <label id="txtCaptchaLabel" for="txtCaptcha" class="infraLabelObrigatorio">Código de Confirmação:</label>
-                                <div class="input-group mb-3">
-                                    <input type="text" id="txtCaptcha" name="txtCaptcha" class="infraText form-control" value="" maxlength="4" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>" />
-
-                                    <button type="button" accesskey="V" name="btnValidarSemWS" id="btnValidarSemWS" value="Validar" onclick="" class="infraButton"><span class="infraTeclaAtalho">V</span>alidar
-                                    </button>
+        </div>
+        <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <div class="" id="blc">
+                        <div class="card" id="cardCaptcha">
+                            <?= CaptchaSEI::getInstance()->montarHtml(PaginaSEIExterna::getInstance()->getProxTabDados()); ?>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="hidden" name="hdnCapcha" id="hdnCapcha" value="1">
+                                        <input type="hidden" name="hdnWS" id="hdnWS" value="0">
+                                        <input type="submit" accesskey="V" name="btnValidarSemWS" id="btnValidarSemWS" value="Validar" onclick="" class="infraButton" style="width: 100%;" Value="Validar" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <?php } ?>
             </div>
-        <?php } ?>
-        </div>
+        </form>
     </div>
 
     <div class="bloco">

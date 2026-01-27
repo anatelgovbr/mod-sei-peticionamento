@@ -49,7 +49,7 @@
             for (i = 0; i < todasUfs.length; i++) {
                 var ufGrid = ((todasUfs[i].innerHTML).trim()).toUpperCase();
                 if (ufGrid == ufAdd) {
-                    alert('N„o È permitido adicionar mais de uma Unidade de abertura para a mesma UF.');
+                    alert('N√£o √© permitido adicionar mais de uma Unidade de abertura para a mesma UF.');
                     return true;
                 }
             }
@@ -163,12 +163,12 @@
 
     function inicializar() {
 
-        carregarComponenteTipoDocumento(); //Doc Complementares - SeleÁ„o M˙ltipla
-        carregarComponenteTipoProcesso(); // SeleÁ„o ⁄nica
+        carregarComponenteTipoDocumento(); //Doc Complementares - Sele√ß√£o M√∫ltipla
+        carregarComponenteTipoProcesso(); // Sele√ß√£o √önica
         carregarComponenteTipoProcessoPF();
-        carregarComponenteUnidade();  // SeleÁ„o ⁄nica
+        carregarComponenteUnidade();  // Sele√ß√£o √önica
         carregarComponenteUnidadePF();
-        carregarComponenteTipoDocumentoEssencial(); // SeleÁ„o M˙ltipla
+        carregarComponenteTipoDocumentoEssencial(); // Sele√ß√£o M√∫ltipla
         carregarDependenciaNivelAcesso();
         carregarHipoteseLegal();
         infraEfeitoTabelas();
@@ -184,7 +184,7 @@
     }
 
     function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso apÛs a escolha do tipo de processo
+        //Ajax para carregar os niveis de acesso ap√≥s a escolha do tipo de processo
         objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?=$strLinkAjaxNivelAcesso?>');
         objAjaxIdNivelAcesso.prepararExecucao = function () {
             document.getElementById('selNivelAcesso').innerHTML = '';
@@ -374,7 +374,7 @@
                 if (options != null) {
                     for (var i = 0; i < options.length; i++) {
                         if (options[i].value == id) {
-                            alert('Tipo de Documento j· consta na lista.');
+                            alert('Tipo de Documento j√° consta na lista.');
                             break;
                         }
                     }
@@ -421,7 +421,7 @@
                 if (options != null) {
                     for (var i = 0; i < options.length; i++) {
                         if (options[i].value == id) {
-                            alert('Tipo de Documento j· consta na lista.');
+                            alert('Tipo de Documento j√° consta na lista.');
                             break;
                         }
                     }
@@ -454,101 +454,101 @@
 
         var valorHipoteseLegal = document.getElementById('hdnParametroHipoteseLegal').value;
 
-        //Pessoa FÌsica
+        //Pessoa F√≠sica
         var exibirMenuAcessoExternoPF = document.getElementById('rdExibirMenuAcessoExternoPF').checked;
         var naoExibirMenuAcessoExternoPF = document.getElementById('rdNaoExibirMenuAcessoExternoPF').checked;
 
-        //Pessoa JurÌdica
+        //Pessoa Jur√≠dica
         var exibirMenuAcessoExterno = document.getElementById('rdExibirMenuAcessoExterno').checked;
         var naoExibirMenuAcessoExterno = document.getElementById('rdNaoExibirMenuAcessoExterno').checked;
 
         if (exibirMenuAcessoExternoPF == false && naoExibirMenuAcessoExternoPF == false) {
-            alert('Informe sobre o menu ProcuraÁ„o EletrÙnica da Pessoa FÌsica.');
+            alert('Informe sobre o menu Procura√ß√£o Eletr√¥nica da Pessoa F√≠sica.');
             document.getElementById('rdExibirMenuAcessoExternoPF').focus();
             return false;
         }
 
         if (exibirMenuAcessoExterno == false && naoExibirMenuAcessoExterno == false) {
-            alert('Informe sobre o menu ProcuraÁ„o EletrÙnica.');
+            alert('Informe sobre o menu Procura√ß√£o Eletr√¥nica.');
             document.getElementById('rdNaoExibirMenuAcessoExterno').focus();
             return false;
         }
 
-        //tratamento dos campos obrigatÛrios pessoa fÌsica
+        //tratamento dos campos obrigat√≥rios pessoa f√≠sica
         /* if(exibirMenuAcessoExternoPF == true){
              if (infraTrim(document.getElementById('txtTipoProcessoPF').value) == '') {
-                 alert('Informe o Tipo de Processo para abertura do processo para Pessoa FÌsica.');
+                 alert('Informe o Tipo de Processo para abertura do processo para Pessoa F√≠sica.');
                  document.getElementById('txtTipoProcessoPF').focus();
                  return false;
              }
              if(document.getElementById('txtEspecProcPF').value == ""){
-                 alert('Informe a EspecificaÁ„o do Processo.');
+                 alert('Informe a Especifica√ß√£o do Processo.');
                  document.getElementById('txtTipoProcessoPF').focus();
                  return false;
              }
              vlUnidadePF = infraTrim(document.getElementById('hdnIdUnidadePF').value);
              if (vlUnidadePF == '' || vlUnidadePF == null) {
-                 alert('Informe a Unidade para abertura do processo para Pessoa FÌsica.');
+                 alert('Informe a Unidade para abertura do processo para Pessoa F√≠sica.');
                  document.getElementById('txtUnidadePF').focus();
                  return false;
              }
          }*/
 
 
-        //tratamento dos campos obrigatÛrios pessoa jurÌdic
-        //ValidaÁ„o para verificaÁ„o no webservice
+        //tratamento dos campos obrigat√≥rios pessoa jur√≠dic
+        //Valida√ß√£o para verifica√ß√£o no webservice
 
 
-        //ValidaÁ„o Pessoa FÌsica
-        //var aviso = "N„o foi possÌvel habilitar a exibiÁ„o do menu Respons·vel Legal no Acesso Externo. \n Para exibir o menu Respons·vel Legal de Pessoa JurÌdica no Acesso Externo È necess·rio preencher os campos obrigatÛrios contidos em ConfiguraÁıes para VinculaÁ„o de Usu·rio Externo a Pessoa JurÌdica e ConfiguraÁıes para VinculaÁ„o de Usu·rio Externo a Pessoa FÌsica. Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de ProcuraÁ„o EletrÙnica. ";
+        //Valida√ß√£o Pessoa F√≠sica
+        //var aviso = "N√£o foi poss√≠vel habilitar a exibi√ß√£o do menu Respons√°vel Legal no Acesso Externo. \n Para exibir o menu Respons√°vel Legal de Pessoa Jur√≠dica no Acesso Externo √© necess√°rio preencher os campos obrigat√≥rios contidos em Configura√ß√µes para Vincula√ß√£o de Usu√°rio Externo a Pessoa Jur√≠dica e Configura√ß√µes para Vincula√ß√£o de Usu√°rio Externo a Pessoa F√≠sica. Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procura√ß√£o Eletr√¥nica. ";
 
         if (infraTrim(document.getElementById('txtTipoProcessoPF').value) == '') {
-            alert('Informe o Tipo de Processo para abertura do processo para Pessoa FÌsica.');
+            alert('Informe o Tipo de Processo para abertura do processo para Pessoa F√≠sica.');
             document.getElementById('txtTipoProcessoPF').focus();
             return false;
         }
         if (document.getElementById('txtEspecProcPF').value == "") {
-            alert('Informe a EspecificaÁ„o do processo para Pessoa FÌsica.');
+            alert('Informe a Especifica√ß√£o do processo para Pessoa F√≠sica.');
             document.getElementById('txtEspecProcPF').focus();
             return false;
         } else {
             if (document.getElementById('txtEspecProcPF').value.length > 100) {
-                alert('Tamanho do campo EspecificaÁ„o do Processo Pessoa FÌsica excedido (m·ximo 100 caracteres).');
+                alert('Tamanho do campo Especifica√ß√£o do Processo Pessoa F√≠sica excedido (m√°ximo 100 caracteres).');
                 document.getElementById('txtEspecProcPF').focus();
                 return false;
             }
         }
         vlUnidadePF = infraTrim(document.getElementById('hdnIdUnidadePF').value);
         if (vlUnidadePF == '' || vlUnidadePF == null) {
-            alert('Informe a Unidade para abertura do processo para Pessoa FÌsica.');
+            alert('Informe a Unidade para abertura do processo para Pessoa F√≠sica.');
             document.getElementById('txtUnidadePF').focus();
             return false;
         }
 
         if (infraTrim(document.getElementById('txtTipoProcesso').value) == '') {
-            alert('Informe o Tipo de Processo para abertura do processo para Pessoa JurÌdica.');
+            alert('Informe o Tipo de Processo para abertura do processo para Pessoa Jur√≠dica.');
             document.getElementById('txtTipoProcesso').focus();
             return false;
         }
         if (document.getElementById('txtEspecProcPJ').value == "") {
-            alert('Informe a EspecificaÁ„o do processo para Pessoa JurÌdica.');
+            alert('Informe a Especifica√ß√£o do processo para Pessoa Jur√≠dica.');
             document.getElementById('txtEspecProcPJ').focus();
             return false;
         } else {
             if (document.getElementById('txtEspecProcPJ').value.length > 100) {
-                alert('Tamanho do campo EspecificaÁ„o do Processo Pessoa JurÌdica excedido (m·ximo 100 caracteres).');
+                alert('Tamanho do campo Especifica√ß√£o do Processo Pessoa Jur√≠dica excedido (m√°ximo 100 caracteres).');
                 document.getElementById('txtEspecProcPJ').focus();
                 return false;
             }
         }
         vlUnidade = infraTrim(document.getElementById('hdnIdUnidade').value);
         if (vlUnidade == '' || vlUnidade == null) {
-            alert('Informe a Unidade para abertura do processo para Pessoa JurÌdica.');
+            alert('Informe a Unidade para abertura do processo para Pessoa Jur√≠dica.');
             document.getElementById('txtUnidade').focus();
             return false;
         }
 
-        //Validar NÌvel Acesso
+        //Validar N√≠vel Acesso
         var elemsNA = document.getElementsByName("rdNivelAcesso[]");
 
         validoNA = false;
@@ -559,7 +559,7 @@
         }
 
         if (((infraTrim(document.getElementById('selNivelAcesso').value) == '') && document.getElementById('rdPadrao').checked) || (!validoNA)) {
-            alert('Informe o NÌvel de Acesso para abertura do processo para Pessoa JurÌdica.');
+            alert('Informe o N√≠vel de Acesso para abertura do processo para Pessoa Jur√≠dica.');
             document.getElementById('rdUsuExternoIndicarEntrePermitidos').focus();
             return false;
         } else {
@@ -567,7 +567,7 @@
 
                 //validar hipotese legal
                 if (document.getElementById('selHipoteseLegal').value == '') {
-                    alert('Informe a HipÛtese legal padr„o para abertura do processo para Pessoa JurÌdica.');
+                    alert('Informe a Hip√≥tese legal padr√£o para abertura do processo para Pessoa Jur√≠dica.');
                     document.getElementById('selHipoteseLegal').focus();
                     return false;
                 }
@@ -577,7 +577,7 @@
 
         vlDocObrigatorio = document.getElementById('selDescricaoEssencial').options.length;
         if (vlDocObrigatorio == 0) {
-            alert('Informe os Tipos dos Documentos de Atos Constitutivos ObrigatÛrios para abertura do processo para Pessoa JurÌdica.');
+            alert('Informe os Tipos dos Documentos de Atos Constitutivos Obrigat√≥rios para abertura do processo para Pessoa Jur√≠dica.');
             document.getElementById('selDescricaoEssencial').focus();
             return false;
         }
@@ -591,7 +591,7 @@
                 success: function (result) {
 
                     if ($(result).find('valor').text() == 'N') {
-                        alert('N„o foi possÌvel habilitar a exibiÁ„o do menu Respons·vel Legal de Pessoa JurÌdica no Acesso Externo.\n\n Acesse AdministraÁ„o >> Peticionamento EletrÙnico >> IntegraÁıes >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal e preencha o Mapeamento da IntegraÁ„o com a Receita Federal para consultar os dados do CNPJ.');
+                        alert('N√£o foi poss√≠vel habilitar a exibi√ß√£o do menu Respons√°vel Legal de Pessoa Jur√≠dica no Acesso Externo.\n\n Acesse Administra√ß√£o >> Peticionamento Eletr√¥nico >> Integra√ß√µes >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal e preencha o Mapeamento da Integra√ß√£o com a Receita Federal para consultar os dados do CNPJ.');
                     }
                 },
                 error: function (e) {

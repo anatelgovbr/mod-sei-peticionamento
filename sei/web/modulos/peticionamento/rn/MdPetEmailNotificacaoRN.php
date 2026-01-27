@@ -48,7 +48,7 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 		$objOrgaoDTO->setStrSinAtivo('S');
 		$objOrgaoDTO = $orgaoRN->consultarRN1352( $objOrgaoDTO );
 
-		//pegar a lista de email da unidade, a unidade pode n„o ter, email unidade
+		//pegar a lista de email da unidade, a unidade pode n√£o ter, email unidade
 		$objEmailUnidadeDTO = new EmailUnidadeDTO();
 		$emailUnidadeRN = new EmailUnidadeRN();
 		$objEmailUnidadeDTO->retStrEmail();
@@ -103,7 +103,7 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 		$documentoDTO->setNumIdSerie( $idSerieParam );
 		$documentoDTO = $documentoRN->consultarRN0005( $documentoDTO );
 		
-		//enviando email de sistema apÛs cadastramento do processo de peticionamento pelo usu·rio externo
+		//enviando email de sistema ap√≥s cadastramento do processo de peticionamento pelo usu√°rio externo
 		//================================================================================================
 		//EMAIL PARA O USUARIO PETICIONANTE
 		//================================================================================================

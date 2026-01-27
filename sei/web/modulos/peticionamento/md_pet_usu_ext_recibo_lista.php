@@ -10,7 +10,7 @@ try {
 
     require_once dirname(__FILE__) . '/../../SEI.php';
 
-    //Classe utilitaria para formataÁao e calculo de Datas
+    //Classe utilitaria para formata√ßao e calculo de Datas
     require_once dirname(__FILE__) . '/util/MdPetDataUtils.php';
 
     session_start();
@@ -34,11 +34,11 @@ try {
 
         case 'md_pet_usu_ext_recibo_listar':
 
-            $strTitulo = 'Recibos EletrÙnicos de Protocolo';
+            $strTitulo = 'Recibos Eletr√¥nicos de Protocolo';
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
     $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
@@ -96,11 +96,11 @@ try {
         $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
         $strResultado .= '<tr>';
 
-        $strResultado .= '<th class="infraTh" width="15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Data e Hor·rio', 'DataHoraRecebimentoFinal', $arrObjMdPetReciboDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="20%" style="min-width:160px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'N˙mero do Processo', 'NumeroProcessoFormatado', $arrObjMdPetReciboDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="15%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Data e Hor√°rio', 'DataHoraRecebimentoFinal', $arrObjMdPetReciboDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="20%" style="min-width:160px">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'N√∫mero do Processo', 'NumeroProcessoFormatado', $arrObjMdPetReciboDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" style="width:100px ">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Recibo', 'NumeroProcessoFormatadoDoc', $arrObjMdPetReciboDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="58%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetReciboDTO, 'Tipo de Peticionamento', 'StaTipoPeticionamento', $arrObjMdPetReciboDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="15px">AÁıes</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="15px">A√ß√µes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
 
@@ -165,7 +165,7 @@ try {
             } else {
 
                 $linkAssinado = "javascript:;";
-                $msg = 'Recibo EletrÙnico bloqueado, pois est· vinculado a uma IntimaÁ„o ainda n„o Cumprida.';
+                $msg = 'Recibo Eletr√¥nico bloqueado, pois est√° vinculado a uma Intima√ß√£o ainda n√£o Cumprida.';
                 $strResultado .= '<a onclick="alert(\'' . $msg . '\')" href="' . $linkAssinado . '">' . $iconeConsulta . '</a>';
             }
 
@@ -230,7 +230,7 @@ $strTipo = $_POST['selTipo'];
                 <div class="row justify-content-md-left">
                     <div class="col-sm-12 col-md-4 col-lg-2 col-xl-2">
                         <div class="form-group">
-                            <label for="txtDataInicio" class="infraLabelOpcional">InÌcio: </label>
+                            <label for="txtDataInicio" class="infraLabelOpcional">In√≠cio: </label>
                             <div class="input-group mb-3">
                                 <input type="text" name="txtDataInicio" id="txtDataInicio" maxlength="16"
                                        value="<?= PaginaSEIExterna::tratarHTML($_POST['txtDataInicio']) ?>"
@@ -278,31 +278,31 @@ $strTipo = $_POST['selTipo'];
                                         value="<?= MdPetReciboRN::$TP_RECIBO_INTERCORRENTE ?>">Intercorrente
                                 </option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO) { ?> selected="selected" <? } ?>
-                                        value="<?= MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ?>">Resposta a IntimaÁ„o
+                                        value="<?= MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ?>">Resposta a Intima√ß√£o
                                 </option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL) { ?> selected="selected" <? } ?>
-                                        value="<?= MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL ?>">Respons·vel
+                                        value="<?= MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL ?>">Respons√°vel
                                     Legal - Inicial
                                 </option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO) { ?> selected="selected" <? } ?>
-                                        value="<?= MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO ?>">Respons·vel
-                                    Legal - AlteraÁ„o
+                                        value="<?= MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO ?>">Respons√°vel
+                                    Legal - Altera√ß√£o
                                 </option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS) { ?> selected="selected" <? } ?>
                                         value="<?= MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS ?>">
-                                    AtualizaÁ„o de Atos Constitutivos
+                                    Atualiza√ß√£o de Atos Constitutivos
                                 </option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO) { ?> selected="selected" <? } ?>
                                         value="<?= MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO ?>">
-                                    ProcuraÁ„o EletrÙnica - Emiss„o
+                                    Procura√ß√£o Eletr√¥nica - Emiss√£o
                                 </option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA) { ?> selected="selected" <? } ?>
                                         value="<?= MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA ?>">
-                                    ProcuraÁ„o EletrÙnica - Ren˙ncia
+                                    Procura√ß√£o Eletr√¥nica - Ren√∫ncia
                                 </option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO) { ?> selected="selected" <? } ?>
                                         value="<?= MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_REVOGACAO ?>">
-                                    ProcuraÁ„o EletrÙnica - RevogaÁ„o
+                                    Procura√ß√£o Eletr√¥nica - Revoga√ß√£o
                                 </option>
                             </select>
                         </div>

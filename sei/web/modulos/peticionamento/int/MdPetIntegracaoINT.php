@@ -182,4 +182,21 @@ class MdPetIntegracaoINT extends InfraINT {
         }
         return $saida;
     }
+
+    public static function acessarDadoPorChave($array, $chave) {
+
+        $keys = array_map('trim', explode('-', $chave));
+        $keys[0] = ucfirst($keys[0]);
+
+        foreach ($keys as $k) {
+            if (!isset($array[$k])) {
+                return null;
+            }
+            $array = $array[$k];
+        }
+
+        return $array;
+        
+    }
+
 }

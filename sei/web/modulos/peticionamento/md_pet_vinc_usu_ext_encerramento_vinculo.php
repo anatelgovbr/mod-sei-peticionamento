@@ -2,23 +2,23 @@
     <table style="font: bold 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0;width: 90%; margin: 0 auto; border: none;">
         <tbody>
         <tr style="height: 1.5em; padding-top: 6px;">
-            <td colspan="2">Dados da VinculaÁ„o Encerrada</td>
+            <td colspan="2">Dados da Vincula√ß√£o Encerrada</td>
         </tr>
         <tr><td style="clear: both; line-height: 0.5;">&nbsp;</td></tr>
         <tr>
-            <td style="padding-left: 15px; width: 400px">Data e Hor·rio da VinculaÁ„o:</td>
+            <td style="padding-left: 15px; width: 400px">Data e Hor√°rio da Vincula√ß√£o:</td>
             <td style="font-weight: normal;">@dtHorarioVinculacao</td>
         </tr>
         <tr>
-            <td style="padding-left: 15px;">N˙mero do Processo:</td>
+            <td style="padding-left: 15px;">N√∫mero do Processo:</td>
             <td style="font-weight: normal;">@numProcesso</td>
         </tr>
         <tr>
-            <td style="padding-left: 15px;">N˙mero do Documento da VinculaÁ„o SubstituÌda:</td>
+            <td style="padding-left: 15px;">N√∫mero do Documento da Vincula√ß√£o Substitu√≠da:</td>
             <td style="font-weight: normal;">@numDocumento</td>
         </tr>
         <tr>
-            <td style="padding-left: 15px;">Respons·vel Legal SubstituÌdo:</td>
+            <td style="padding-left: 15px;">Respons√°vel Legal Substitu√≠do:</td>
             <td style="font-weight: normal;">@responsavelLegal</td>
         </tr>
         </tbody>
@@ -28,11 +28,11 @@
     <table style="font: bold 12pt Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0;width: 90%; margin: 0 auto; border: none;">
         <tbody>
         <tr style="height: 1.5em; padding-top: 6px;">
-            <td colspan="2">Dados da Pessoa JurÌdica</td>
+            <td colspan="2">Dados da Pessoa Jur√≠dica</td>
         </tr>
         <tr><td style="clear: both; line-height: 0.5;">&nbsp;</td></tr>
         <tr>
-            <td style="padding-left: 15px; width: 400px">Raz„o Social:</td>
+            <td style="padding-left: 15px; width: 400px">Raz√£o Social:</td>
             <td style="font-weight: normal;">@razaoSocial</td>
         </tr>
         <tr>
@@ -54,7 +54,7 @@
     </table>
 </div>
 <p style="font: normal 12pt/1.2 Calibri, sans-serif; text-align: justify; word-wrap: normal; text-indent: 0; margin: 6pt;">
-    Pelo presente instrumento de Encerramento de VinculaÁ„o a Pessoa JurÌdica, o Usu·rio Externo indicado deixa de figurar como Respons·vel pelo cadastro da Pessoa JurÌdica acima citada no SEI-@sigla-orgao@, n„o podendo ser responsabilizado por quaisquer atos administrativos praticados em nome da mesma junto ao @sigla-orgao@ a contar da presente data.
-    O referido Usu·rio Externo firma o presente instrumento de Encerramento de VinculaÁ„o ‡ Pessoa JurÌdica como fruto de sua vontade e, por meio deste ato, se declara ciente de que qualquer ato por ele praticado em nome da referida Pessoa JurÌdica anteriormente a este Encerramento de VÌnculo preserva sua validade jurÌdica e pode resultar em responsabilizaÁ„o Administrativa, Civil ou Criminal, n„o servindo o presente Instrumento como excusa de tais responsabilidades.
-    A validade deste Encerramento de VinculaÁ„o ‡ Pessoa JurÌdica e os n˙meros do processo e dos documentos acima indicados pode ser conferidos no Portal na Internet do(a) @descricao_orgao@.
+    Pelo presente instrumento de Encerramento de Vincula√ß√£o a Pessoa Jur√≠dica, o Usu√°rio Externo indicado deixa de figurar como Respons√°vel pelo cadastro da Pessoa Jur√≠dica acima citada no SEI-@sigla-orgao@, n√£o podendo ser responsabilizado por quaisquer atos administrativos praticados em nome da mesma junto ao @sigla-orgao@ a contar da presente data.
+    O referido Usu√°rio Externo firma o presente instrumento de Encerramento de Vincula√ß√£o √† Pessoa Jur√≠dica como fruto de sua vontade e, por meio deste ato, se declara ciente de que qualquer ato por ele praticado em nome da referida Pessoa Jur√≠dica anteriormente a este Encerramento de V√≠nculo preserva sua validade jur√≠dica e pode resultar em responsabiliza√ß√£o Administrativa, Civil ou Criminal, n√£o servindo o presente Instrumento como excusa de tais responsabilidades.
+    A validade deste Encerramento de Vincula√ß√£o √† Pessoa Jur√≠dica e os n√∫meros do processo e dos documentos acima indicados pode ser conferidos no Portal na Internet do(a) @descricao_orgao@.
 </p>

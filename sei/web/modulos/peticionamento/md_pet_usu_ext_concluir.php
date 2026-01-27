@@ -95,15 +95,19 @@ try {
 			$objMdPetProcessoRN->validarSenha( $arrParam );
             $params['pwdsenhaSEI'] = '***********';
             $_POST['pwdsenhaSEI'] = '***********';
+			
+			// Cria o processo
 			$arrDadosProcessoComRecibo = $objMdPetProcessoRN->gerarProcedimento( $_POST );
+
+			// Pega o ID do recibo
 			$idRecibo = $arrDadosProcessoComRecibo[0]->getNumIdReciboPeticionamento();
 
-			//realizar classificacao da metas ODS - IA
+			// Realizar classificacao da metas ODS do processo
 			if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno()){
                 PeticionamentoIntegracao::classificarMetaOds($arrDadosProcessoComRecibo[1]->getDblIdProcedimento());
             }
 
-			// Temporários apagando
+			// Excluir arquivos temporarios
 			$arquivos_enviados = array();
 			if( isset( $_POST['hdnDocPrincipal'] ) ){
 				$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocPrincipal']));
@@ -119,12 +123,7 @@ try {
 				unlink(DIR_SEI_TEMP.'/'.$arquivo_enviado[8]);
 			}
 
-			//executar javascript para fechar janela filha e redirecionar janela pai para a tela de detalhes do recibo que foi gerado
-			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-
-			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
-
-			//removendo atributos da sessao
+			// Remove atributos da sessao
 			if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
 				SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
 			}
@@ -145,12 +144,17 @@ try {
 				SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
 			}
 
+			// Fecha a janela de assinatura e redireciona para a tela de detalhes do Peticionamento
+			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
 			echo "<script>";
   			echo "window.parent.location = '" . $urlAssinada . "';";
   			echo " window.parent.focus();";
   			echo " window.close();";
   			echo "</script>";
   			die;
+			
   		}
 
   		break;
@@ -287,13 +291,71 @@ PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 ?>
 <script type="text/javascript">
+  function validacoesArquivosUpload() {
+
+    var arquivoErro = "";
+    
+    var tbDocumentoComplementar = window.parent.document.getElementById('tbDocumentoComplementar');
+    var tbDocumentoEssencial = window.parent.document.getElementById('tbDocumentoEssencial');
+    var tbDocumento = window.parent.document.getElementById('tbDocumentoPrincipal');
+
+    // validar se essas tabelas existem
+    if (tbDocumentoComplementar) {
+        for (var i = 1; i < tbDocumentoComplementar.rows.length; i++) {
+            var nomeArquivo = tbDocumentoComplementar.rows[i].cells[0].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    if (tbDocumentoEssencial && arquivoErro == "") {
+        for (var i = 1; i < tbDocumentoEssencial.rows.length; i++) {
+            var nomeArquivo = tbDocumentoEssencial.rows[i].cells[0].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    if (tbDocumento && arquivoErro == "") {
+        for (var i = 1; i < tbDocumento.rows.length; i++) {
+            var nomeArquivo = tbDocumento.rows[i].cells[0].innerText;
+            if (nomeArquivo.indexOf('#') !== -1 || nomeArquivo.indexOf('&') !== -1){
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui caracteres especiais.\n";
+                break;
+            } else if (nomeArquivo.length > 255) {
+                arquivoErro += "O nome do arquivo '" + nomeArquivo + "' possui tamanho superior a 255 caracteres.\n";
+                break;
+            }
+
+        }
+    }
+
+    return arquivoErro;
+}
 
 function isValido(){
 
 	var cargo = document.getElementById("selCargo").value;
 	var senha = document.getElementById("pwdsenhaSEI").value;
+  var arquivoErro = validacoesArquivosUpload();
 
-	if( cargo == ""){
+	if (arquivoErro != "") {
+    alert(arquivoErro);
+    parent.infraFecharJanelaModal();
+    return false;
+	} else if( cargo == ""){
 		alert('Favor informe o Cargo/Função.');
 		document.getElementById("selCargo").focus();
 		return false;

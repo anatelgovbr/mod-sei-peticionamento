@@ -1,12 +1,12 @@
 <?
 /**
-* TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+* TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
 *
 * 08/02/2012 - criado por bcu
 *
-* Versão do Gerador de Código: 1.32.1
+* VersÃ£o do Gerador de CÃ³digo: 1.32.1
 *
-* Versão no CVS: $Id$
+* VersÃ£o no CVS: $Id$
 */
 
 require_once dirname(__FILE__).'/../../../SEI.php';
@@ -32,7 +32,7 @@ class MdPetArquivoExtensaoRN extends ArquivoExtensaoRN {
   		return $ret;
   
   	}catch(Exception $e){
-  		throw new InfraException('Erro listando Extensões de Arquivos.',$e);
+  		throw new InfraException('Erro listando ExtensÃµes de Arquivos.',$e);
   	}
   }	
 	

@@ -56,7 +56,7 @@
         }
 
         if (erro) {
-            alert('Informe um CPF/CNPJ completo ou v·lido para realizar a pesquisa.');
+            alert('Informe um CPF/CNPJ completo ou v√°lido para realizar a pesquisa.');
             document.getElementById('txtCnpj').value = '';
         }
     }
@@ -77,7 +77,7 @@
         }
 
         if (erro) {
-            alert('Informe o CPF do outorgado completo ou v·lido para realizar a pesquisa.');
+            alert('Informe o CPF do outorgado completo ou v√°lido para realizar a pesquisa.');
             document.getElementById('txtCpf').value = '';
         }
     }
@@ -108,11 +108,11 @@
     }
 
     function maskCNPJ(cnpj) {
-        cnpj = cnpj.replace(/\D/g, ""); //Remove tudo o que n„o È dÌgito
-        cnpj = cnpj.replace(/^(\d{2})(\d)/, "$1.$2"); //Coloca ponto entre o segundo e o terceiro dÌgitos
-        cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3"); //Coloca ponto entre o quinto e o sexto dÌgitos
-        cnpj = cnpj.replace(/\.(\d{3})(\d)/, ".$1/$2"); //Coloca uma barra entre o oitavo e o nono dÌgitos
-        cnpj = cnpj.replace(/(\d{4})(\d)/, "$1-$2"); //Coloca um hÌfen depois do bloco de quatro dÌgitos
+        cnpj = cnpj.replace(/\D/g, ""); //Remove tudo o que n√£o √© d√≠gito
+        cnpj = cnpj.replace(/^(\d{2})(\d)/, "$1.$2"); //Coloca ponto entre o segundo e o terceiro d√≠gitos
+        cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3"); //Coloca ponto entre o quinto e o sexto d√≠gitos
+        cnpj = cnpj.replace(/\.(\d{3})(\d)/, ".$1/$2"); //Coloca uma barra entre o oitavo e o nono d√≠gitos
+        cnpj = cnpj.replace(/(\d{4})(\d)/, "$1-$2"); //Coloca um h√≠fen depois do bloco de quatro d√≠gitos
 
         return cnpj;
     }
@@ -120,7 +120,7 @@
     function validarCampoData() {
         if (document.getElementById('sllblValidade').value == "D") {
             if (document.getElementById('txtPeriodoInicio').value == "" || document.getElementById('txtPeriodoFim').value == "") {
-                alert("Preencha os campos de PerÌodo.");
+                alert("Preencha os campos de Per√≠odo.");
 
 //Voltando para vazio
 

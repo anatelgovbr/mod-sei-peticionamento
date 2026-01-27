@@ -112,6 +112,37 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     var hipotese = '<?= $nivelAcessoDoc['hipotese'] ?>';
     <? endif ?>
 
+    var div = $('#divArquivo');
+    var ifrPrinc = $('#ifrProgressofrmDocumentoPrincipal');
+    var btnPrinc = $('#btnUploadCancelarfrmDocumentoPrincipal');
+    
+    ifrPrinc[0].style.width  = '500px';
+    ifrPrinc[0].style.top    = '45px';
+    ifrPrinc[0].style.left   = '15px';
+    btnPrinc[0].style.top    = '38px';
+    btnPrinc[0].style.left   = ifrPrinc[0].offsetLeft + ifrPrinc[0].offsetWidth + 10 + "px";
+
+    
+    var ifrComple = $('#ifrProgressofrmDocumentosComplementares');
+    var btnComple = $('#btnUploadCancelarfrmDocumentosComplementares');
+    
+    ifrComple[0].style.width  = '500px';
+    ifrComple[0].style.top    = '45px';
+    ifrComple[0].style.left   = '15px';
+    btnComple[0].style.top    = '38px';
+    btnComple[0].style.left   = ifrComple[0].offsetLeft + ifrComple[0].offsetWidth + 10 + "px";
+
+    var ifrEssen = $('#ifrProgressofrmDocumentosEssenciais');
+    var btnEssen = $('#btnUploadCancelarfrmDocumentosEssenciais');
+    
+    ifrEssen[0].style.width  = '500px';
+    ifrEssen[0].style.top    = '45px';
+    ifrEssen[0].style.left   = '15px';
+    btnEssen[0].style.top    = '38px';
+    btnEssen[0].style.left   = ifrEssen[0].offsetLeft + ifrEssen[0].offsetWidth + 10 + "px";
+
+
+
     function validarQtdArquivosPrincipal() {
 
         try {
@@ -507,12 +538,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         //limpar o campo Complemento
         document.getElementById('complemento' + complemento).value = '';
 
-        //retornar a combo "Nivel de Acesso" para a primeira opçao selecionada
+        //retornar a combo "Nivel de Acesso" para a primeira opção selecionada
         if (cbNivelAcesso.getAttribute("type") != 'hidden') {
             cbNivelAcesso.options[0].selected = 'selected';
         }
 
-        //se nao for o "Principal", resetar a seleçao da combo "Tipo"
+        //se nao for o "Principal", resetar a seleção da combo "Tipo"
         if (numero != '1') {
             document.getElementById('tipoDocumento' + complemento).options[0].selected = 'selected';
             document.querySelector('select[name="hipoteseLegal' + numero + '"]').removeAttribute("disabled");
@@ -869,7 +900,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-        //aplicando validaçao de interessados informados no cenario de indicaçao por cpf ou cnpj
+        //aplicando validação de interessados informados no cenario de indicação por cpf ou cnpj
         var tbInteressadosIndicados = document.getElementById("tbInteressadosIndicados");
         var hdnListaInteressadosIndicados = document.getElementById("hdnListaInteressadosIndicados");
         var optTipoPessoaFisica = document.getElementById("optTipoPessoaFisica");
@@ -891,7 +922,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             hipoteseLegalPrincipal = document.getElementById('hipoteseLegal1');
         }
 
-        //validando seleçao de nivel de acesso principal e hipotese legal principal
+        //validando seleção de nivel de acesso principal e hipotese legal principal
         var tbDocumentoPrincipal = document.getElementById('tbDocumentoPrincipal');
 
         //se for documento principao do tipo externo, só validar complemento,
@@ -991,7 +1022,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 success: function (data, textStatus, jqXHR) {
                     conteudoDocumento = data;
                     if (data == '') {
-                        alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes é necessário acessar o Editor do SEI no link clique aqui para editar conteúdo em frente ao campo Documento Principal, preencher apenas os campos pertinentes com os dados da demanda e clicar no botão Salvar no canto superior esquerdo do Editor.");
+                        alert("O documento principal deste tipo de peticionamento possui modelo previamente definido e deve ser editado diretamente no sistema. Para continuar o peticionamento, antes é necessário acessar o Editor do SEI no link 'clique aqui para editar conteúdo' em frente ao campo Documento Principal, preencher apenas os campos pertinentes com os dados da demanda e clicar no botão 'Salvar' no canto superior esquerdo do Editor.");
                         return;
                     } else {
                         DocPrincipalValidado = true;

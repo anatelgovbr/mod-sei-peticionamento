@@ -315,8 +315,15 @@
 
         setTimeout(function (){
             var div = $('#divArquivo');
-            $('#btnUploadCancelarfrmPeticionamentoIntercorrente')[0].style.left = div[0].offsetLeft + div[0].offsetWidth - 60 + "px";
-        },3000);
+            var ifr = $('#ifrProgressofrmPeticionamentoIntercorrente');
+            var btn = $('#btnUploadCancelarfrmPeticionamentoIntercorrente');
+            
+            ifr[0].style.top    = '45px';
+            ifr[0].style.left   = '15px';
+            btn[0].style.top    = '38px';
+            btn[0].style.left   = ifr[0].offsetLeft + ifr[0].offsetWidth + 10 + "px";
+
+        }, 300);
 
     }
 

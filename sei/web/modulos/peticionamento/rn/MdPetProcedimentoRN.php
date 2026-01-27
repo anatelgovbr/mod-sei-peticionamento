@@ -171,66 +171,73 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
 	
 	public function cassarCredencialControlado($params) {
 		try {
+
 			$objProcedimentoDTO             = $params[0];
 			$idUnidadeProcesso              = $params[1];
 			$objConcederCredencial          = $params[2];
-			
-			if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
-				|| $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
+
+			if(!empty($objProcedimentoDTO)){
 				
-				$objAtividadeDTO = new AtividadeDTO();
-				$objAtividadeDTO->retTodos();
-				$objAtividadeDTO->setNumIdAtividade($objConcederCredencial->getNumIdAtividade());
+				$naGlobal = $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo();
+				$naLocal = $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo();
 				
-				$objAtividadeRN = new AtividadeRN();
-				$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
-				if (count($arrObjAtividadeDTO)){
-					$numIdUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
-					$numIdUsuarioAcesso  = $arrObjAtividadeDTO[0]->getNumIdUsuarioOrigem();
-					$numIdUnidadeAcesso  = $arrObjAtividadeDTO[0]->getNumIdUnidade();
-				}
-				
-				// Usuário antes de tratamento de SIGILOSO
-				if ( is_numeric(SessaoSEI::getInstance()->getNumIdUsuario()) && is_numeric(SessaoSEI::getInstance()->getNumIdUnidadeAtual()) ){
-					$numIdUsuarioAntesSigiloso = SessaoSEI::getInstance()->getNumIdUsuario();
-					$numIdUnidadeAtualAntesSigiloso = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
-				}
-				SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAcesso, $numIdUnidadeAcesso);
-				$arrObjAtividadeDTO = InfraArray::gerarArrInfraDTO('AtividadeDTO','IdAtividade',array($objConcederCredencial->getNumIdAtividade()));
-				
-				//guardando credencial sem recebido, exceto aquela a ser cassada
-				$objAtividadeDTO = new AtividadeDTO();
-				$objAtividadeDTO->retNumIdAtividade();
-				$objAtividadeDTO->setDblIdProtocolo($objConcederCredencial->getDblIdProtocolo());
-				$objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL);
-				$objAtividadeDTO->setNumIdAtividade($objConcederCredencial->getNumIdAtividade(), InfraDTO::$OPER_DIFERENTE);
-				$objAtividadeRN = new AtividadeRN();
-				$arrObjAtividadeConcessaoDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
-				
-				//cassando credencial usuário externo
-				$objAtividadeRN = new AtividadeRN();
-				$objAtividadeRN->cassarCredenciais($arrObjAtividadeDTO);
-				
-				//retornando credencial sem recebido
-				if (count($arrObjAtividadeConcessaoDTO)>0){
-					foreach ($arrObjAtividadeConcessaoDTO as $itemDTO) {
-						$itemDTO->setDthConclusao(null);
-						$objMdPetAtividadeRN = new MdPetAtividadeRN();
-						$objMdPetAtividadeRN->alterar($itemDTO);
+				if ( in_array(ProtocoloRN::$NA_SIGILOSO, [$naGlobal, $naLocal]) ){
+					
+					$objAtividadeDTO = new AtividadeDTO();
+					$objAtividadeDTO->retTodos();
+					$objAtividadeDTO->setNumIdAtividade($objConcederCredencial->getNumIdAtividade());
+					
+					$objAtividadeRN = new AtividadeRN();
+					$arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
+					if (count($arrObjAtividadeDTO)){
+						$numIdUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+						$numIdUsuarioAcesso  = $arrObjAtividadeDTO[0]->getNumIdUsuarioOrigem();
+						$numIdUnidadeAcesso  = $arrObjAtividadeDTO[0]->getNumIdUnidade();
 					}
+					
+					// Usuário antes de tratamento de SIGILOSO
+					if ( is_numeric(SessaoSEI::getInstance()->getNumIdUsuario()) && is_numeric(SessaoSEI::getInstance()->getNumIdUnidadeAtual()) ){
+						$numIdUsuarioAntesSigiloso = SessaoSEI::getInstance()->getNumIdUsuario();
+						$numIdUnidadeAtualAntesSigiloso = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
+					}
+					SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAcesso, $numIdUnidadeAcesso);
+					$arrObjAtividadeDTO = InfraArray::gerarArrInfraDTO('AtividadeDTO','IdAtividade',array($objConcederCredencial->getNumIdAtividade()));
+					
+					//guardando credencial sem recebido, exceto aquela a ser cassada
+					$objAtividadeDTO = new AtividadeDTO();
+					$objAtividadeDTO->retNumIdAtividade();
+					$objAtividadeDTO->setDblIdProtocolo($objConcederCredencial->getDblIdProtocolo());
+					$objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_CONCESSAO_CREDENCIAL);
+					$objAtividadeDTO->setNumIdAtividade($objConcederCredencial->getNumIdAtividade(), InfraDTO::$OPER_DIFERENTE);
+					$objAtividadeRN = new AtividadeRN();
+					$arrObjAtividadeConcessaoDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
+					
+					//cassando credencial usuário externo
+					$objAtividadeRN = new AtividadeRN();
+					$objAtividadeRN->cassarCredenciais($arrObjAtividadeDTO);
+					
+					//retornando credencial sem recebido
+					if (count($arrObjAtividadeConcessaoDTO)>0){
+						foreach ($arrObjAtividadeConcessaoDTO as $itemDTO) {
+							$itemDTO->setDthConclusao(null);
+							$objMdPetAtividadeRN = new MdPetAtividadeRN();
+							$objMdPetAtividadeRN->alterar($itemDTO);
+						}
+					}
+					
+					// Usuário antes de tratamento de SIGILOSO - RETORNANDO
+					if ($numIdUnidadeAtualAntesSigiloso!='' && $numIdUsuarioAntesSigiloso!=''){
+						SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAntesSigiloso, $numIdUnidadeAtualAntesSigiloso);
+					}
+					
+					$retorno = array();
+					$retorno[0] = $objProcedimentoDTO;
+					$retorno[1] = $idUnidadeProcesso;
+					$retorno[2] = $objConcederCredencial;
+					$retorno[3] = isset($idUnidade) ? $idUnidade : null;
+					
 				}
-				
-				// Usuário antes de tratamento de SIGILOSO - RETORNANDO
-				if ($numIdUnidadeAtualAntesSigiloso!='' && $numIdUsuarioAntesSigiloso!=''){
-					SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuarioAntesSigiloso, $numIdUnidadeAtualAntesSigiloso);
-				}
-				
-				$retorno = array();
-				$retorno[0] = $objProcedimentoDTO;
-				$retorno[1] = $idUnidadeProcesso;
-				$retorno[2] = $objConcederCredencial;
-				$retorno[3] = isset($idUnidade) ? $idUnidade : null;
-				
+
 			}
 			
 		}catch(Exception $e){
@@ -445,6 +452,25 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
 		}catch(Exception $e){
 			throw new InfraException('Erro excluirAndamentoCredencial.',$e);
 		}
+	}
+
+	public function isProcessoSigiloso($idProtocolo){
+
+		$isSigiloso = false;
+		$objProcedimentoDTO = (new MdPetIntAceiteRN())->_retornaObjProcedimento($idProtocolo);
+
+		if(!empty($objProcedimentoDTO)){
+
+			$naGlobal 	= $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo();
+			$naLocal 	= $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo();
+
+			if (in_array(ProtocoloRN::$NA_SIGILOSO, [$naGlobal, $naLocal])){
+				$isSigiloso = $objProcedimentoDTO;
+			}
+		}
+
+		return $isSigiloso;
+
 	}
 	
 }

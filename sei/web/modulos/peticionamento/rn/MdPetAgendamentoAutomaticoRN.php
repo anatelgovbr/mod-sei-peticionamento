@@ -23,63 +23,104 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
     }
 	
 	/* Método que realiza cumprimento automático de intimações por decurso de prazo */
-	protected function CumprirPorDecursoPrazoTacitoControlado()
+	protected function CumprirPorDecursoPrazoTacitoConectado()
 	{
 		
-		try {
+		ini_set('max_execution_time', '0');
+		ini_set('memory_limit', '1024M');
+		
+		InfraDebug::getInstance()->setBolLigado(true);
+		InfraDebug::getInstance()->setBolDebugInfra(false);
+		InfraDebug::getInstance()->setBolEcho(false);
+		InfraDebug::getInstance()->limpar();
+		
+		$idUsuarioPet = (new MdPetIntUsuarioRN())->getObjUsuarioPeticionamento(true);
+		SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
+		
+		$numSeg = InfraUtil::verificarTempoProcessamento();
+		InfraDebug::getInstance()->gravar('CUMPRINDO INTIMACOES POR DECURSO DE PRAZO EM ' . InfraData::getStrDataAtual());
+
+		// TODO: Remover em versao futura. Contigencia para evitar que intimação fique no limbo.
+		(new MdPetIntimacaoRN())->preencherDadaPrazoTacito();
+
+		// Contigencia caso tenha havido o cadastro de um Feriado na data do cumprimento.
+		(new MdPetIntimacaoRN())->recalculaCumprimentoIntimacaoPorFeriado();
+		
+		// Busca pela pelas intimações a cumprir na data de hoje.
+		$intimacoesPendentes = (new MdPetIntimacaoRN())->retornarDadosIntimacaoPrazoExpirado();
+		
+		InfraDebug::getInstance()->gravar('Qtd. Intimacoes Pendentes: ' . count($intimacoesPendentes));
+		
+		if (count($intimacoesPendentes) > 0) {
 			
-			ini_set('max_execution_time', '0');
-			ini_set('memory_limit', '1024M');
-			
-			InfraDebug::getInstance()->setBolLigado(true);
-			InfraDebug::getInstance()->setBolDebugInfra(false);
-			InfraDebug::getInstance()->setBolEcho(false);
-			InfraDebug::getInstance()->limpar();
-			
-			$objUsuarioPetRN = new MdPetIntUsuarioRN();
-			$idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
-			SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
-			
-			$numSeg = InfraUtil::verificarTempoProcessamento();
-			InfraDebug::getInstance()->gravar('CUMPRINDO INTIMACOES POR DECURSO DE PRAZO');
-			
-			$intimacoesPendentes = (new MdPetIntimacaoRN())->retornarDadosIntimacaoPrazoExpirado();
-			
-			InfraDebug::getInstance()->gravar('Qtd. Intimacoes Pendentes: ' . count($intimacoesPendentes));
-			
-			if (count($intimacoesPendentes) > 0) {
-				$arrIntimacoes = (new MdPetIntAceiteRN())->realizarEtapasAceiteAgendado($intimacoesPendentes);
-				
-				InfraDebug::getInstance()->gravar('Qtd. Intimacoes Cumpridas: ' . $arrIntimacoes['cumpridas']);
-				InfraDebug::getInstance()->gravar('Qtd. Intimacoes Nao Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
-				
-				if(isset($arrIntimacoes['procedimentos'])) {
-					foreach ($arrIntimacoes['procedimentos'] as $procedimentos) {
-						InfraDebug::getInstance()->gravar('Processo nº ' . $procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
+			$processamento = [];
+
+			// Step 1 - Cumprir Intimação para cada Destinatário:
+			foreach($intimacoesPendentes as $intimacao){
+
+				$arrIntimacoes = (new MdPetIntAceiteRN())->realizarEtapasAceiteAgendado([$intimacao]);
+
+				if(is_array($arrIntimacoes)){
+
+					$processamento['cumpridas'] 	+= $arrIntimacoes['cumpridas'];
+					$processamento['naoCumpridas'] 	+= $arrIntimacoes['naoCumpridas'];
+
+					if(!empty($arrIntimacoes['erros']) && count($arrIntimacoes['erros']) > 0){
+						$processamento['erros'][] = $arrIntimacoes['erros'];
 					}
+
 				}
-				if($arrIntimacoes['erros']){
-					foreach ($arrIntimacoes['erros'] as $procedimentos) {
-						InfraDebug::getInstance()->gravar($procedimentos[0] . ' - Motivo: ' . $procedimentos[1]);
-					}
-				}
+
 			}
-			
-			$numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-			InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
-			InfraDebug::getInstance()->gravar('FIM');
-			LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
-		} catch (Exception $e) {
-			InfraDebug::getInstance()->setBolLigado(true);
-			InfraDebug::getInstance()->setBolDebugInfra(true);
-			InfraDebug::getInstance()->setBolEcho(true);
-			InfraDebug::getInstance()->limpar();
-			
-			SessaoSEI::getInstance(false);
-			
-			LogSEI::getInstance()->gravar('Erro cumprindo intimacao por decurso de prazo.' . $e, InfraLog::$INFORMACAO);
-			throw new InfraException('Erro cumprindo intimacao por decurso de prazo.', $e);
+
+			// Step 2 - Logar o resultado:
+			InfraDebug::getInstance()->gravar('Qtd. Intimacoes Cumpridas: ' . $processamento['cumpridas']);
+			InfraDebug::getInstance()->gravar('Qtd. Intimacoes Nao Cumpridas: ' . $processamento['naoCumpridas']);
+
+			if(isset($processamento['erros']) && count($processamento['erros']) > 0) {
+					
+				$mensagem = ':: Este é um e-mail automático ::\n\n';
+				$mensagem .= 'Qtd. Intimacoes Cumpridas: ' . $processamento['cumpridas'].'\n';
+				$mensagem .= 'Qtd. Intimacoes Nao Cumpridas: ' . $processamento['naoCumpridas'].'\n';
+				$mensagem .= 'Processos em que o cumprimento falhou: \n';
+
+				foreach ($processamento['erros'] as $erro) {
+					InfraDebug::getInstance()->gravar($erro[0] . ' - Motivo: ' . $erro[1]);
+					$mensagem .= $erro[0] . ' - Motivo: ' . $erro[1].'\n';
+				}
+
+				// Step 3 - Encaminha e-mail em caso de erro:
+				$infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
+				$infraAgendamentoDTO->setStrComando('MdPetAgendamentoAutomaticoRN::CumprirPorDecursoPrazoTacito');
+				$infraAgendamentoDTO->retStrEmailErro();
+				$infraAgendamentoDTO->setNumMaxRegistrosRetorno(1);
+				$agendamento = (new InfraAgendamentoTarefaRN())->consultar($infraAgendamentoDTO);
+
+				if(!empty($agendamento)){
+
+					$emails = array_map('trim', explode(';', $agendamento->getStrEmailErro()));
+
+					foreach ($emails as $email) {
+						
+						$objEmailDTO = new EmailDTO();
+						$objEmailDTO->setStrDe((new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_EMAIL_SISTEMA'));
+						$objEmailDTO->setStrPara($email);
+						$objEmailDTO->setStrAssunto('Falha no Agendamento de Cumprimento Tácito de Intimação Eletrônica');
+						$objEmailDTO->setStrMensagem($mensagem);
+						EmailRN::processar(array($objEmailDTO));
+
+					}
+
+				}
+				
+			}
+
 		}
+
+		$numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
+		InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+		InfraDebug::getInstance()->gravar('FIM');
+		LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 		
 	}
 	
@@ -574,7 +615,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	  $numSeg       = InfraUtil::verificarTempoProcessamento();
 	  $qtConsulta   = intval($this->recuperarQuantidadeParametrizadaPessoaJuridica());
 	
-	  if(!empty($qtConsulta)){
+	  if(!empty($qtConsulta) && $qtConsulta > 0){
 		
 		  $filaConsultaCNPJ = $this->recuperarFilaConsultaCnpj($qtConsulta);
 		
@@ -822,7 +863,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		
 		    if(!empty($emitiuProcuracao) && count($emitiuProcuracao) > 0 && $objMdPetVincRepresentantRN->possuiProcessoVinculacao($cpf)){
 			
-			    if($objMdPetIntegracaoRN->consultarCPFReceitaWsResponsavelLegal($cpf) || 1==1) {
+			    if($objMdPetIntegracaoRN->consultarCPFReceitaWsResponsavelLegal($cpf)) {
 				
 			    	// Aqui ele lista todos os vinculos do CPF
 				    $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarVincRepresentAtivosPorCPF($cpf);
@@ -837,7 +878,6 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 					    if(!empty($outorgante)){
 						    $situacao = 'susp_outorgante';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgante;
-						    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."'");
 					    }
 					
 					    // 3.2. OUTORGADO - Suspende procurações recebidas de PF, PJ e Vinculações à Pessoa Jurídica (Doc e E-mail)
@@ -845,7 +885,6 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 					    if(!empty($outorgado)){
 						    $situacao = 'susp_outorgado';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgado;
-						    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."'");
 					    }
 					    
 					    // 3.3. AUTORREPRESENTADO - Suspende Autorrepresentação (Doc e E-mail)
@@ -853,17 +892,24 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 					    if(!empty($autorrepresentado)){
 						    $situacao = 'suspenso';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $autorrepresentado;
-						    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."'");
 					    }
 				    
 				    }else{
+
 					    $situacao = 'sem_vinculos';
+
 				    }
 				
-			    }
+			    }else{
+
+					$situacao = 'nao_localizado';
+					
+				}
 		    	
 		    }else{
+
 		    	$situacao = 'sem_processo';
+
 		    }
 		
 	    }else{
@@ -872,7 +918,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		    
 	    }
 	
-	    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."'");
+	    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."' and situacao = 'processando'");
 	
 	    $count ++;
 	    $this->atualizarDataUltimaConsultaRFB($cpf, MdPetVincRepresentantRN::$NT_FISICA);
@@ -1001,66 +1047,68 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
   protected function consultarAtualizarVinculoPJ($filaConsultaCNPJ, $count, $qtConsulta)
   {
 	
-	  $erros = [];
-	  $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
-	  $arrObjMdPetVincRepresentantSuspensos = [];
+	  	$erros = [];
+	  	$objMdPetIntegracaoRN = new MdPetIntegracaoRN();
+	  	$arrObjMdPetVincRepresentantSuspensos = [];
 	  
-	  foreach ($filaConsultaCNPJ as $cnpj) {
+	  	foreach ($filaConsultaCNPJ as $cnpj) {
 		
-		  if(!empty($cnpj) && InfraUtil::validarCnpj($cnpj)){
+		  	if(!empty($cnpj) && InfraUtil::validarCnpj($cnpj)){
 			
-			  $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+			  	$objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
-			  if ($qtConsulta > 0 && $count < $qtConsulta){
+			  	if ($qtConsulta > 0 && $count < $qtConsulta){
 
-                  // Adicionando os cnpjs na tabela de log
-                  BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
+					$situacao = 'processando';
 
-				  if($objMdPetIntegracaoRN->consultarCNPJReceitaWsResponsavelLegal($cnpj)) {
+                  	// Adicionando os cnpjs na tabela de log
+                  	BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
 
-					  $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarVincRepresentAtivosPorCNPJ($cnpj);
-                      $suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, true, []);
+				  	if($objMdPetIntegracaoRN->consultarCNPJReceitaWsResponsavelLegal($cnpj)) {
 
-                      if(is_array($suspenso)){
-                          $arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
-                          $situacao = 'suspenso';
-                      }else{
-                          $situacao = 'falha';
-                      }
+					  	$arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarVincRepresentAtivosPorCNPJ($cnpj);
+                      	$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, true, []);
 
-                      // Atualizando os cnpjs na tabela de log
-                      BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
-                      // BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
+                      	if(is_array($suspenso)){
+                          	$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
+                          	$situacao = 'suspenso';
+                      	}else{
+                          	$situacao = 'falha';
+                      	}
 
-				  }else{
+                      	// Atualizando os cnpjs na tabela de log
+                      	BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."' and situacao = 'processando'");
+                      	// BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
 
-                      $situacao = 'consultado';
+				  	}else{
 
-                      // Atualizando os cnpjs na tabela de log
-                      BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
+                      	$situacao = 'consultado';
 
-                  }
+                      	// Atualizando os cnpjs na tabela de log
+                      	BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."' and situacao = 'processando'");
 
-			  }
+                  	}
+
+			  	}
 			
-			  $count ++;
-			  $this->atualizarDataUltimaConsultaRFB($cnpj, MdPetVincRepresentantRN::$NT_JURIDICA);
+			  	$count ++;
+			  	$this->atualizarDataUltimaConsultaRFB($cnpj, MdPetVincRepresentantRN::$NT_JURIDICA);
 			
-		  }
+		  	}
       
-	  }
+	  	}
 	
-	  $erros = array_map(function($erro) {
-		  return is_array($erro) ? implode(', ', $erro) : $erro;
-	  }, $erros);
-     
-	  $retorno['count'] = $count;
-	  $retorno['erros'] = $erros;
-	  $retorno['arrObjMdPetVincRepresentantSuspensos'] = $arrObjMdPetVincRepresentantSuspensos;
-	  
-	  return $retorno;
+		$erros = array_map(function($erro) {
+			return is_array($erro) ? implode(', ', $erro) : $erro;
+		}, $erros);
+		
+		$retorno['count'] = $count;
+		$retorno['erros'] = $erros;
+		$retorno['arrObjMdPetVincRepresentantSuspensos'] = $arrObjMdPetVincRepresentantSuspensos;
+		
+		return $retorno;
     
-  }
+  	}
 
   protected function atualizarDataUltimaConsultaRFB($cpfCnpj, $natureza)
   {
@@ -1177,7 +1225,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	
 	  $objMdPetVinculoDTO = new MdPetVinculoDTO();
 	  $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-	  $objMdPetVinculoDTO->retStrCnpj();
+	  $objMdPetVinculoDTO->retStrCNPJ();
 	  $objMdPetVinculoDTO->setStrTpVinculo('J');
 	  $objMdPetVinculoDTO->setOrdDthDataUltimaConsultaRFB(InfraDTO::$TIPO_ORDENACAO_ASC);
 	  $objMdPetVinculoDTO->setNumMaxRegistrosRetorno($qtConsulta);

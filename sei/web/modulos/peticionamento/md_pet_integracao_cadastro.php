@@ -228,6 +228,10 @@ try {
                     $strItensSelCpfPessoa = $item->getStrNomeCampo();
                 }
 
+                if (trim($item->getStrNome()) == 'cpfUsuario' && $item->getStrTpParametro() == 'E') {
+                    $strItensSelCpfUsuario = $item->getStrNomeCampo();
+                }
+
                 if (trim($item->getStrNome()) == 'cnpjEmpresa' && $item->getStrTpParametro() == 'E') {
                     $strItensSelCnpjEmpresa = $item->getStrNomeCampo();
                 }
@@ -247,7 +251,8 @@ try {
 
     $arrParametrosEntradas = array(
         'cnpjEmpresa' => 'CNPJ da Pessoa Jurídica',
-        'cpfPessoa' => 'CPF Usuário Requisitante',
+        'cpfPessoa' => 'CPF da Pessoa Física',
+        'cpfUsuario' => 'CPF Usuário',
         'identificacaoOrigem' => 'Identificação Origem',
         'periodoCache' => 'Período de Expiração do Cache',
     );
@@ -261,6 +266,7 @@ try {
     $arrParametrosSaida = array(
         'cnpjEmpresa' => 'CNPJ da Pessoa Jurídica',
         'cpfPessoa' => 'CPF da Pessoa Física',
+        'cpfUsuario' => 'CPF Usuário',
         'razaoSocial' => 'Razão Social',
         'codSituacaoCadastral' => 'Código da Situação Cadastral',
         'descSituacaoCadastral' => 'Descrição da Situação Cadastral',
@@ -300,7 +306,6 @@ try {
 
         $idLinha = $i;
         $strCssTr = '<tr id="paramEntradaTable_' . $chave . '" class="infraTrClara">';
-
 
         $strResultadoParamEntrada .= $strCssTr;
         $strResultadoParamEntrada .= "<td id='campo_{$chave}'  style='padding: 8px;' >";

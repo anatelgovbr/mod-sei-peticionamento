@@ -32,7 +32,7 @@ class MdPetHipoteseLegalRN extends InfraRN {
 			return false;		
 				
 		} catch (Exception $e) {
-			throw new InfraException ('Erro cadastrando Hip髏eses Legais.', $e );
+			throw new InfraException ('Erro cadastrando Hip贸teses Legais.', $e );
 		}
 	}
 
@@ -44,7 +44,7 @@ class MdPetHipoteseLegalRN extends InfraRN {
 			return $ret;
 		
 		}catch(Exception $e) {
-			throw new InfraException('Erro contando as Hip髏eses Legais.',$e);
+			throw new InfraException('Erro contando as Hip贸teses Legais.',$e);
 		}
 	}
 	
@@ -56,7 +56,7 @@ class MdPetHipoteseLegalRN extends InfraRN {
 			return $ret;
 
 		}catch(Exception $e) {
-			throw new InfraException('Erro listando as Hip髏eses Legais.',$e);
+			throw new InfraException('Erro listando as Hip贸teses Legais.',$e);
 		}
 	}
 	
@@ -76,7 +76,7 @@ class MdPetHipoteseLegalRN extends InfraRN {
 			return $ret;
 			
 		} catch(Exception $e) {
-			throw new InfraException('Erro listando as Hip髏eses Legais.',$e);
+			throw new InfraException('Erro listando as Hip贸teses Legais.',$e);
 		}
 	}
 
@@ -89,7 +89,7 @@ class MdPetHipoteseLegalRN extends InfraRN {
 			}
 		
 		}catch(Exception $e) {
-			throw new InfraException('Erro excluindo as Hip髏eses Legais.',$e);
+			throw new InfraException('Erro excluindo as Hip贸teses Legais.',$e);
 		}
 	}
 

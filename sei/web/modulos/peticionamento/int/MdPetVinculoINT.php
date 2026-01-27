@@ -115,22 +115,12 @@ class MdPetVinculoINT extends InfraINT {
 
   public static function validarExistenciaVinculoCnpj($dados){
 
-
-      $dadosCaptcha = hash('SHA512',$dados['txtCaptcha']);
-      $strCaptcha   =  PaginaSEIExterna::getInstance()->recuperarCampo('captchaPeticionamentoRL');
+      CaptchaSEI::getInstance()->configurarCaptcha("Cadastro de Responsável Legal de Pessoa Jurídica");
+      
       $cnpj = InfraUtil::retirarFormatacao($dados['txtNumeroCnpj']);
       $idUsuarioLogado = isset($dados['idUsuarioLogado']) ? $dados['idUsuarioLogado'] : SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 
       $xml = "";
-
-      if($strCaptcha != $dadosCaptcha){
-          $xml = "<dados-pj>";
-          $xml .= "<success>false</success>\n";
-          $xml .= "<procuracao>false</procuracao>\n";
-          $xml .= "<msg>Código de confirmação inválido.</msg>\n";
-          $xml .= "</dados-pj>";
-          return $xml;
-      }
 
       $contatoRN = new ContatoRN();
       $contatoDTO = new ContatoDTO();

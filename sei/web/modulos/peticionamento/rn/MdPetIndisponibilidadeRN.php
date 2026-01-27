@@ -62,7 +62,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 		
 		$objMdPetProrrogacaoAutomaticaPrazosDTO = new MdPetProrrogacaoAutomaticaPrazosDTO();
 		$objMdPetProrrogacaoAutomaticaPrazosDTO->setStrSinProrrogacao(self::$NAO);
-		$objMdPetProrrogacaoAutomaticaPrazosDTO->setStrDescricao('N„o');
+		$objMdPetProrrogacaoAutomaticaPrazosDTO->setStrDescricao('N√£o');
 		$objArrMdPetProrrogacaoAutomaticaPrazosDTO[] = $objMdPetProrrogacaoAutomaticaPrazosDTO;
 		
 		return $objArrMdPetProrrogacaoAutomaticaPrazosDTO;
@@ -287,7 +287,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 
 	private function _validarTxtResumoIndisponibilidade($objInfraException, $objMdPetIndisponibilidadeDTO){
 		if (InfraString::isBolVazia ($objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade())) {
-			$objInfraException->adicionarValidacao('Resumo da Indisponibilidade n„o informada.');
+			$objInfraException->adicionarValidacao('Resumo da Indisponibilidade n√£o informada.');
 		}
 		if (trim ( $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade () ) != '')
 		{
@@ -300,8 +300,8 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 	
 	
 	private function _validarDuplicidade($objInfraException, $objMdPetIndisponibilidadeDTO){
-		// VALIDA DUPLICA«√O
-		// VALIDACAO A SER EXECUTADA NA INSER«AO DE NOVOS REGISTROS
+		// VALIDA DUPLICA√á√ÉO
+		// VALIDACAO A SER EXECUTADA NA INSER√áAO DE NOVOS REGISTROS
 		$objMdPetIndisponibilidadeDTO2 = new MdPetIndisponibilidadeDTO();
 		$objMdPetIndisponibilidadeDTO2->setDthDataInicio($objMdPetIndisponibilidadeDTO->getDthDataInicio());
 		$objMdPetIndisponibilidadeDTO2->setDthDataFim($objMdPetIndisponibilidadeDTO->getDthDataFim());
@@ -313,8 +313,8 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 			$ret = $objMdPetIndisponibilidadeBD->contar($objMdPetIndisponibilidadeDTO2);
 				
 			if ($ret > 0) {
-				$objInfraException->adicionarValidacao ('J· existe o perÌodo de indisponibilidade (InÌcio/Fim) cadastrado.');
-			} // VALIDACAO A SER EXECUTADA QUANDO … FEITO UPDATE DE REGISTROS
+				$objInfraException->adicionarValidacao ('J√° existe o per√≠odo de indisponibilidade (In√≠cio/Fim) cadastrado.');
+			} // VALIDACAO A SER EXECUTADA QUANDO √â FEITO UPDATE DE REGISTROS
 				
 		} else {
 				
@@ -326,7 +326,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 			$retDuplicidade = $objMdPetIndisponibilidadeBD->contar( $dtoValidacao );
 				
 			if ($retDuplicidade > 0) {
-				$objInfraException->adicionarValidacao('J· existe o perÌodo de indisponibilidade (InÌcio/Fim) cadastrado.');
+				$objInfraException->adicionarValidacao('J√° existe o per√≠odo de indisponibilidade (In√≠cio/Fim) cadastrado.');
 			}
 		}
 		
@@ -578,14 +578,14 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 				$arrStrNome = explode('.', $_FILES[$strCampoArquivo]["name"]);
 		
 				if (count($arrStrNome) < 2){
-					$ret = 'ERRO#Nome do arquivo n„o possui extens„o.';
+					$ret = 'ERRO#Nome do arquivo n√£o possui extens√£o.';
 				}else{
 					if (in_array(str_replace(' ','',InfraString::transformarCaixaBaixa($arrStrNome[count($arrStrNome)-1])), array('php', 'php3', 'php4', 'phtml', 'sh' ,'cgi'))){
-						$ret = 'ERRO#Extens„o de arquivo n„o permitida.';
+						$ret = 'ERRO#Extens√£o de arquivo n√£o permitida.';
 					}else{
 		
 						if (!isset($_FILES[$strCampoArquivo])){
-							$ret = 'ERRO#Campo de arquivo "'.$strCampoArquivo.'" n„o foi enviado.';
+							$ret = 'ERRO#Campo de arquivo "'.$strCampoArquivo.'" n√£o foi enviado.';
 						}else{
 		
 							if ($_FILES[$strCampoArquivo]["error"] != UPLOAD_ERR_OK){
@@ -605,11 +605,11 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 										break;
 		
 									case UPLOAD_ERR_NO_FILE:
-										$ret = 'ERRO#Arquivo n„o foi transferido.';
+										$ret = 'ERRO#Arquivo n√£o foi transferido.';
 										break;
 		
 									case UPLOAD_ERR_NO_TMP_DIR:
-										$ret = 'ERRO#DiretÛrio tempor·rio para transferÍncia n„o encontrado.';
+										$ret = 'ERRO#Diret√≥rio tempor√°rio para transfer√™ncia n√£o encontrado.';
 										break;
 		
 									case UPLOAD_ERR_CANT_WRITE:
@@ -617,7 +617,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 										break;
 		
 									case UPLOAD_ERR_EXTENSION:
-										$ret = 'ERRO#TransferÍncia interrompida.';
+										$ret = 'ERRO#Transfer√™ncia interrompida.';
 										break;
 		
 									default:
@@ -636,7 +636,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 								}
 		
 								if ($strMime != null && strpos($strMime, 'text/x-php') !== false || strpos($strMime, 'text/x-shellscript') !== false) {
-									$ret = 'ERRO#Tipo de arquivo n„o permitido.';
+									$ret = 'ERRO#Tipo de arquivo n√£o permitido.';
 								}else{
 		
 									if (PaginaSEI::getInstance()->getObjInfraSessao() !== null) {
@@ -655,19 +655,19 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 									}
 		
 									if (file_exists($strDirUpload . '/' . $strArquivo)) {
-										$ret = 'ERRO#Arquivo "' . $strArquivo . '" j· existe no diretÛrio de upload.';
+										$ret = 'ERRO#Arquivo "' . $strArquivo . '" j√° existe no diret√≥rio de upload.';
 									} else {
 										try {
 											//se der certo retorna o nome real do arquivo gerado
 											if (!move_uploaded_file($_FILES[$strCampoArquivo]["tmp_name"], $strDirUpload . '/' . $strArquivo)) {
-												$ret = 'ERRO#Erro movendo arquivo para o diretÛrio de upload.';
+												$ret = 'ERRO#Erro movendo arquivo para o diret√≥rio de upload.';
 											} else {
 												$ret = $strDirUpload . '/' . $strArquivo;
 											}
 
 										} catch (Exception $e) {
 											if (strpos(strtoupper($e->__toString()), 'PERMISSION DENIED') !== false) {
-												$ret = 'ERRO#Permiss„o negada tentando mover o arquivo para o diretÛrio de upload.';
+												$ret = 'ERRO#Permiss√£o negada tentando mover o arquivo para o diret√≥rio de upload.';
 											}
 											throw $e;
 										}
@@ -689,7 +689,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 					
 					if ( PaginaSEI::getInstance()->getObjInfraSessao()->getStrSiglaUsuario()!==null){
 						
-						$strTextoLog .= "Usu·rio: ". PaginaSEI::getInstance()->getObjInfraSessao()->getStrSiglaUsuario();
+						$strTextoLog .= "Usu√°rio: ". PaginaSEI::getInstance()->getObjInfraSessao()->getStrSiglaUsuario();
 		
 						if ( PaginaSEI::getInstance()->getObjInfraSessao()->getStrSiglaOrgaoUsuario()!==null){
 							$strTextoLog .= '/'. PaginaSEI::getInstance()->getObjInfraSessao()->getStrSiglaOrgaoUsuario();

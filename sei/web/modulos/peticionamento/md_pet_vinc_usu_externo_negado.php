@@ -33,7 +33,7 @@ try {
 
         case 'md_pet_vinc_usu_ext_negado':
 
-            $strTitulo = 'Impedimento de Substituição de Responsável Legal';
+            $strTitulo = 'Impedimento de SubstituiÃ§Ã£o de ResponsÃ¡vel Legal';
             $idUsuarioExternoLogado = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
             $srtCnpj = "";
             $strRazaoSocial = "";
@@ -64,17 +64,17 @@ try {
             if ($numRegistros > 0) {
 
                 $strResultado = '';
-                $strSumarioTabela = 'Procurações Eletrônicas';
-                $strCaptionTabela = 'Procurações Eletrônicas';
+                $strSumarioTabela = 'ProcuraÃ§Ãµes EletrÃ´nicas';
+                $strCaptionTabela = 'ProcuraÃ§Ãµes EletrÃ´nicas';
                 $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">';
                 $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
 
                 $strResultado .= '<tr>';
                 //$strResultado .= '<th class="infraTh" width="1%">' . PaginaSEIExterna::getInstance()->getThCheck() . '</th>' . "\n";
-                //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'N° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
+                //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'NÂ° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
                 $strResultado .= '<th class="infraTh" style="width:30%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Processo', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</th>';
-                $strResultado .= '<th class="infraTh" style="width:35%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Procuração', 'DblIdDocumento', $arrObjMdPetVincRepresentantDTO) . '</th>';
-                $strResultado .= '<th class="infraTh" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo Procuração', 'StrTipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</th>';
+                $strResultado .= '<th class="infraTh" style="width:35%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'ProcuraÃ§Ã£o', 'DblIdDocumento', $arrObjMdPetVincRepresentantDTO) . '</th>';
+                $strResultado .= '<th class="infraTh" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo ProcuraÃ§Ã£o', 'StrTipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</th>';
                 $strResultado .= '</tr>';
 
                 $arrSelectTipoVinculo = array();
@@ -82,28 +82,28 @@ try {
 
                 $qntProcuracao = 0;
                 foreach ($arrObjMdPetVincRepresentantDTO as $itemObjMdPetVinculoDTO) {
-                    //verifica se a procuração é do tipo simples, caso seja existe mais uma validação a ser feita
+                    //verifica se a procuraÃ§Ã£o Ã© do tipo simples, caso seja existe mais uma validaÃ§Ã£o a ser feita
                     if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                        // verifica se existe data limite, caso tenha existe mais uma validação a ser feita
+                        // verifica se existe data limite, caso tenha existe mais uma validaÃ§Ã£o a ser feita
                         if (!is_null($itemObjMdPetVinculoDTO->getDthDataLimite())) {
                             $dataAtual = date("Y-m-d");
                             $anoLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 6);
                             $mesLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 3, -5);
                             $diaLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 0, -8);
                             $dataLimite = $anoLimite . "-" . $mesLimite . "-" . $diaLimite;
-                            //se a data estiver vigente a procuração é informada ao usuário
+                            //se a data estiver vigente a procuraÃ§Ã£o Ã© informada ao usuÃ¡rio
                             if (strtotime($dataAtual) <= strtotime($dataLimite)) {
                                 $informaProcuracao = true;
-                            //se a data não estiver vigente a procuração
+                            //se a data nÃ£o estiver vigente a procuraÃ§Ã£o
                             } else {
                                 $informaProcuracao = false;
 
                             }
-                        // caso não tenha data limite a procuração é informada ao usuário
+                        // caso nÃ£o tenha data limite a procuraÃ§Ã£o Ã© informada ao usuÃ¡rio
                         } else {
                             $informaProcuracao = true;
                         }
-                    //se for especial é informada a procuração é informada ao usuário
+                    //se for especial Ã© informada a procuraÃ§Ã£o Ã© informada ao usuÃ¡rio
                     } else {
                         $informaProcuracao = true;
                     }
@@ -133,7 +133,7 @@ try {
 
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 } catch (Exception $e) {
@@ -186,8 +186,8 @@ PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
 ?>
 <p>
     <label>
-        Não foi possível finalizar a sua Vinculação como Responsável Legal em substituição ao Responsável Legal já existente, tendo em vista ainda possuir Procurações Eletrônicas vigentes em que o Outorgante é <span style="font-weight: bold"><?php echo $strRazaoSocial; ?></span> - <span style="font-weight: bold">(<?php echo $srtCnpj; ?>)</span>.<br /><br />
-        Para prosseguir, antes você deve renunciar as Procurações abaixo ou o Outorgante deve revogá-las no menu Procurações Eletrônicas.
+        NÃ£o foi possÃ­vel finalizar a sua VinculaÃ§Ã£o como ResponsÃ¡vel Legal em substituiÃ§Ã£o ao ResponsÃ¡vel Legal jÃ¡ existente, tendo em vista ainda possuir ProcuraÃ§Ãµes EletrÃ´nicas vigentes em que o Outorgante Ã© <span style="font-weight: bold"><?php echo $strRazaoSocial; ?></span> - <span style="font-weight: bold">(<?php echo $srtCnpj; ?>)</span>.<br /><br />
+        Para prosseguir, antes vocÃª deve renunciar as ProcuraÃ§Ãµes abaixo ou o Outorgante deve revogÃ¡-las no menu ProcuraÃ§Ãµes EletrÃ´nicas.
     </label>
 </p>
 

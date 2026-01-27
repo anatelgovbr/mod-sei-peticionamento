@@ -36,7 +36,7 @@
         <input type="hidden" id="hdnDocPrincipalInicial" name="hdnDocPrincipalInicial" value="<?= $_POST['hdnDocPrincipalInicial'] ?>"/>
 
         <label class="d-block mb-3">
-            Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre
+           Os documentos devem ser carregados abaixo, sendo de sua exclusiva responsabilidade a conformidade entre
             os dados informados e os documentos. Os Níveis de Acesso que forem indicados abaixo estarão condicionados à
             análise por servidor público, que poderá alterá-los a qualquer momento sem necessidade de prévio
             aviso.
@@ -79,13 +79,13 @@
         <? if ($externo == 'S'): ?>
 
             <div class="row">
-                <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+                <div class="col-12">
                     <div id="divArquivo" class="form-group infraAreaDados mb-4">
                         <div class="form-group">
                             <label class="infraLabelObrigatorio" for="fileArquivoPrincipal">
-                                Documento Principal (<?= $strTamanhoMaximoPrincipal?>):
-                                <input type="hidden" name="hdnTamArquivoPrincipal" id="hdnTamArquivoPrincipal" value="<?= $strTamanhoMaximoPrincipal ?>" tabindex="-1"><br/>
-                                <input type="file" name="fileArquivoPrincipal" class="form-control-file" id="fileArquivoPrincipal" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                Documento Principal (<?= $strTamanhoMaximoPrincipal?>):<br>
+                                <input type="hidden" name="hdnTamArquivoPrincipal" id="hdnTamArquivoPrincipal" value="<?= $strTamanhoMaximoPrincipal ?>" tabindex="-1">
+                                <input type="file" name="fileArquivoPrincipal" class="form-control-file drop-zone-style" id="fileArquivoPrincipal" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                             </label>
                         </div>
                     </div>
@@ -485,12 +485,12 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+            <div class="col-12">
                 <div id="divArquivo" class="form-group infraAreaDados mb-4">
                     <label class="infraLabelObrigatorio" for="fileArquivoEssencial">
-                        Documento Essencial (<?= $strTamanhoMaximoComplementar?>):
-                        <input type="hidden" name="hdnTamArquivoEssencial" id="hdnTamArquivoEssencial" value="<?= $strTamanhoMaximoComplementar ?>"><br/>
-                        <input type="file" name="fileArquivoEssencial" class="form-control-file" id="fileArquivoEssencial" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        Documento Essencial (<?= $strTamanhoMaximoComplementar?>):<br>
+                        <input type="hidden" name="hdnTamArquivoEssencial" id="hdnTamArquivoEssencial" value="<?= $strTamanhoMaximoComplementar ?>">
+                        <input type="file" name="fileArquivoEssencial" class="form-control-file drop-zone-style" id="fileArquivoEssencial" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </label>
                 </div>
             </div>
@@ -696,12 +696,12 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+            <div class="col-12">
                 <div id="divArquivo" class="form-group infraAreaDados mb-4">
-                    <label class="" for="fileArquivoComplementar">
-                        Documentos Complementares (<?= $strTamanhoMaximoComplementar ?>):
-                        <input type="hidden" name="hdnTamArquivoComplementarhdnTamArquivoComplementar" id="hdnTamArquivoComplementar" value="<?= $strTamanhoMaximoComplementar ?>" tabindex="-1"><br/>
-                        <input type="file" name="fileArquivoComplementar" class="form-control-file" id="fileArquivoComplementar"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    Documentos Complementares (<?= $strTamanhoMaximoComplementar ?>):
+                    <label for="fileArquivoComplementar">
+                        <input type="hidden" name="hdnTamArquivoComplementarhdnTamArquivoComplementar" id="hdnTamArquivoComplementar" value="<?= $strTamanhoMaximoComplementar ?>" tabindex="-1">
+                        <input type="file" name="fileArquivoComplementar" class="form-control-file drop-zone-style" id="fileArquivoComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </label>
                 </div>
             </div>
@@ -767,16 +767,14 @@
                 </div>
             </div>
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                <div class="form-group mt-3" id="divhipoteseLegal3" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
 
-                <div id="divhipoteseLegal3" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
-                <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
+                    <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
 
-                    <div class="form-group mt-3">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio" id="lblPublico">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                         </label><br/>
-
-                        <select class="infraSelect form-select" id="hipoteseLegal3" name="hipoteseLegal3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <select name="hipoteseLegal3" class="infraSelect form-select" id="hipoteseLegal3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <option value=""></option>
                             <?
                                 if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
@@ -786,21 +784,19 @@
                                 }
                             ?>
                         </select>
-                    </div>
 
-                <? elseif ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"): ?>
+                    <? } else if ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") { ?>
 
-                    <div class="form-group mt-3">
                         <label id="lblPublico" class="infraLabelObrigatorio">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                         </label><br/>
-                        <select class="infraSelect form-select" disabled tabindex="-1">
+                        <select class="form-select infraSelect" disabled tabindex="-1">
                             <option value=""><?= $strHipoteseLegalPadrao ?></option>
                         </select>
                         <input type="hidden" name="hipoteseLegal3" id="hipoteseLegal3" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>
-                    </div>
 
-                <? endif ?>
+                    <? } ?>
+
                 </div>
             </div>
         </div>

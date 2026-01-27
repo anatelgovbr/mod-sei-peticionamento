@@ -10,7 +10,7 @@ $strLinkUsuarioAjax = SessaoSEIExterna::getInstance()->assinarLink('controlador_
         var cpfAtual = infraRetirarFormatacao(document.getElementById('txtCpfCad').value.trim());
 
         if(parseFloat(nuCpf) == parseFloat(cpfAtual)){
-            alert('O Cpf informado pertence ao atual Respons·vel Legal dessa PJ.');
+            alert('O Cpf informado pertence ao atual Respons√°vel Legal dessa PJ.');
             return false;
         }
 
@@ -57,20 +57,20 @@ $strLinkUsuarioAjax = SessaoSEIExterna::getInstance()->assinarLink('controlador_
         var cpf = document.getElementById('txtCpfNovo').value.trim();
 
         if (cpf.length == 0) {
-            alert('Usu·rio n„o encontrado');
+            alert('Usu√°rio n√£o encontrado');
             return false;
         }
 
 
         var nome = document.getElementById('txtNomeNovo').value.trim();
         if (nome.length == 0) {
-            alert('Nome do Usu·rio Externo n„o Informado.');
+            alert('Nome do Usu√°rio Externo n√£o Informado.');
             return false;
         }
 
         var motivo  = document.getElementById('txtMotivo').value.trim();
         if(motivo.length == 0){
-            alert('Motivo n„o Informado.');
+            alert('Motivo n√£o Informado.');
             return false;
         }
 

@@ -47,9 +47,9 @@
 	- Tão quanto ocorre com as atualizações do SEI, versões futuras deste Módulo continuarão a atualizar e criar Recursos e associá-los apenas aos Perfis "Básico" e "Administrador".
 	- Todos os recursos do Módulo iniciam pelo sufix **"md_pet_"**.
 3. Acesse o [Manual do Webservice do Módulo Peticionamento](https://github.com/anatelgovbr/mod-sei-peticionamento/blob/master/sei/web/modulos/peticionamento/ws/manual_ws_peticionamento.md).
-4. Acesse o [Manual de Administração] http://bit.ly/SEI_Mod_Pet_Admin.
-5. Acesse o [Manual do Usuário Interno] http://bit.ly/SEI_Mod_Pet_Interno.
-6. Acesse o [Manual do Usuário Externo] http://bit.ly/SEI_Usuario_Externo.
+4. Acesse o [Manual de Administração](https://docs.google.com/document/d/e/2PACX-1vRmsyc-Z35FHvrRuAeEYX6HsHJZKf0lEWwara8qJLrpJgL1bc6pOMSdP2wxgE6VCyHrgkotO3HqVnE4/pub).
+5. Acesse o [Manual do Usuário Interno](https://docs.google.com/document/d/e/2PACX-1vSFScFD8PYCPDiqi6Sg5AZrzQekFtUp4j0iFyiDONkrtvMxM7S29LnWxZ1KbfpIxy6QFBQAw0QW-3zo/pub).
+6. Acesse o [Manual do Usuário Externo](https://docs.google.com/document/d/1tBRrH1E4s25Q2ZBe6sW0qp75HsnIvKWfqmeoVU8MQLo/pub).
 	- Não foi possível fazer um Manual do Usuário Externo genérico para qualquer órgão, em razão das especificidades de cada órgão quanto aos procedimentos de credenciamento dos Usuários Externos e até mesmo de parametrização do Módulo. De qualquer forma, o Manual do Usuário Externo do SEI elaborado pela Anatel pode ser quase que completamente aproveitado.
 
 ## Erros ou Sugestões

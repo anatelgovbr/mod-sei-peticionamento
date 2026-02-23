@@ -49,7 +49,7 @@ class MdPetProcessoRN extends InfraRN {
 		$bcrypt = new InfraBcrypt();
 
 		if ($objUsuarioDTO->getStrSinGovBr() == 'S' && InfraString::isBolVazia($objUsuarioDTO->getStrSenha())) {
-			$objInfraException->lancarValidacao("Você ainda não possui uma senha registrada no sistema.\nPara assinatura com senha acesse a opção Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+			$objInfraException->lancarValidacao(MdPetUsuarioExternoRN::$MSG_GERAR_SENHA, InfraPagina::$TIPO_MSG_AVISO);
 		}
 
 		$stringSenha = base64_decode($arrParametros['pwdsenhaSEI']);
@@ -68,31 +68,77 @@ class MdPetProcessoRN extends InfraRN {
         $retorno = $this->gerarProcedimentoInterno($arrParametros);
 
 		$arrParametrosDocumentos = [
-			$retorno['parametrosEmail'][1],
-			$retorno['parametrosEmail'][0],
-			$retorno['parametrosEmail'][2],
-			$retorno['parametrosEmail'][4],
+			$retorno['parametrosEmail'][1], // UnidadeDTO
+			$retorno['parametrosEmail'][0], // ArrParametros
+			$retorno['parametrosEmail'][2], // ObjProcedimentoDTO
+			$retorno['parametrosEmail'][4], // Recibo
 			$retorno['idsContatos']
 		];
 
 		$this->incluirDocumentosNoProcedimento( $arrParametrosDocumentos );
 
 		$reciboGerado = (new MdPetReciboRN())->montarRecibo( $retorno['parametrosEmail'] );
-
-		// Andamento Processo NOVO
+			
 		$objMdPetReciboDTO = new MdPetReciboDTO();
 		$objMdPetReciboDTO->retStrNumeroProcessoFormatadoDoc();
 		$objMdPetReciboDTO->retNumIdProtocolo();
 		$objMdPetReciboDTO->setDblIdDocumento($reciboGerado->getDblIdDocumento());
 		$objMdPetRecibo = (new MdPetReciboRN())->consultar($objMdPetReciboDTO);
 
-		$arrParametrosResp['idDocumento']= $reciboGerado->getDblIdDocumento();
-		$arrParametrosResp['idProcedimento']= $objMdPetRecibo->getNumIdProtocolo();
-		$arrParametrosResp['nomeTipoResposta']= MdPetIntDestRespostaRN::$TIPO_PROCESSO_NOVO;
-		$arrParametrosResp['nomeDocumentoPrincipal']=$objMdPetRecibo->getStrNumeroProcessoFormatadoDoc();
+		$arrParametrosResp['idDocumento'] = $reciboGerado->getDblIdDocumento();
+		$arrParametrosResp['idProcedimento'] = $objMdPetRecibo->getNumIdProtocolo();
+		$arrParametrosResp['nomeTipoResposta'] = MdPetIntDestRespostaRN::$TIPO_PROCESSO_NOVO;
+		$arrParametrosResp['nomeDocumentoPrincipal'] = $objMdPetRecibo->getStrNumeroProcessoFormatadoDoc();
+		(new MdPetIntDestRespostaRN())->lancarAndamentoRecibo($arrParametrosResp);
 
-		$objMdPetIntDestRespostaRN = new MdPetIntDestRespostaRN();
-		$objMdPetIntDestRespostaRN->lancarAndamentoRecibo($arrParametrosResp);
+		// INCLUI OS ACESSOS EXTERNOS
+
+		try {
+
+			$this->_controlarAcessoExterno($arrParametrosDocumentos[2]->getDblIdProcedimento());
+
+			// Andamento - Processo remetido pela unidade
+			$arrObjAtributoAndamentoDTO = array();
+			$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
+			$objAtributoAndamentoDTO->setStrNome('UNIDADE');
+			$objAtributoAndamentoDTO->setStrValor($arrParametrosDocumentos[0]->getStrSigla().'¥'.$arrParametrosDocumentos[0]->getStrDescricao());
+			$objAtributoAndamentoDTO->setStrIdOrigem($arrParametrosDocumentos[0]->getNumIdUnidade());
+			$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
+
+			$objAtividadeDTO = new AtividadeDTO();
+			$objAtividadeDTO->setDblIdProtocolo( $arrParametrosDocumentos[2]->getDblIdProcedimento() );
+			$objAtividadeDTO->setNumIdUnidade( $arrParametrosDocumentos[0]->getNumIdUnidade() );
+			$objAtividadeDTO->setNumIdUnidadeOrigem( $arrParametrosDocumentos[0]->getNumIdUnidade() );
+			$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
+			$objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
+
+			$objAtividadeRN = new AtividadeRN();
+			$objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);      
+
+			// obtendo a ultima atividade informada para o processo, para marcar 
+			// como nao visualizada, deixando assim o processo marcado como "vermelho" 
+			// (status de Nao Visualizado) na listagem da tela "Controle de processos"
+			$atividadeDTO = new AtividadeDTO();
+			$atividadeDTO->retTodos();
+			$atividadeDTO->setDblIdProtocolo( $arrParametrosDocumentos[2]->getDblIdProcedimento() );
+			$atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
+			$ultimaAtividadeDTO = (new AtividadeRN())->listarRN0036( $atividadeDTO );
+						
+			//alterar a ultima atividade criada para nao visualizado
+			if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
+				
+				$ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
+				$atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
+				$atividadeBD->alterar( $ultimaAtividadeDTO[0] );
+
+			}
+
+		} catch(Exception $e){
+
+			$this->realizarRoolbackProcedimento($arrParametrosDocumentos);
+			throw new InfraException('Erro incluindo documentos no Peticionamento de Processo Novo do SEI.', $e);
+
+		}
 
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
         FeedSEIProtocolos::getInstance()->indexarFeeds();
@@ -103,19 +149,21 @@ class MdPetProcessoRN extends InfraRN {
         } catch( Exception $exEmail ) {	}
 		
         return $retorno['paramentrosRecibo'];
+
     }
 
 	protected function incluirDocumentosNoProcedimentoControlado( $arrParametrosDocumentos ){
 
-		$unidadeDTO = $arrParametrosDocumentos[0];
-		$arrParametros = $arrParametrosDocumentos[1];
+		$unidadeDTO 		= $arrParametrosDocumentos[0];
+		$arrParametros 		= $arrParametrosDocumentos[1];
 		$objProcedimentoDTO = $arrParametrosDocumentos[2];
-		$objMdPetReciboDTO = $arrParametrosDocumentos[3];
-		$idsContatos = $arrParametrosDocumentos[4];
+		$objMdPetReciboDTO 	= $arrParametrosDocumentos[3];
+		$idsContatos 		= $arrParametrosDocumentos[4];
 
 		// AQUI É O PONTO DOS DOCUMENTOS
 		//obter todos os documentos deste processo
 		try {
+
 			$this->montarArrDocumentos( $arrParametros, $unidadeDTO, $objProcedimentoDTO, $objMdPetReciboDTO );
 			
 			$atividadeRN = new AtividadeRN();
@@ -172,72 +220,34 @@ class MdPetProcessoRN extends InfraRN {
 				$atividadeRN->excluirRN0034( $arrDTOAtividades );
 
 			}
+
 		} catch(Exception $e){
-			// remove dependecias do recibo
-			$objMdPetRelReciboDocumentoAnexoDTO	= new MdPetRelReciboDocumentoAnexoDTO();
-			$objMdPetRelReciboDocumentoAnexoRN	= new MdPetRelReciboDocumentoAnexoRN();
-			
-			$objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento( $objMdPetReciboDTO->getNumIdReciboPeticionamento() );
-			$objMdPetRelReciboDocumentoAnexoDTO->retNumIdReciboDocumentoAnexoPeticionamento();
-			$arrMdPetRelReciboDocumentoAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->listar( $objMdPetRelReciboDocumentoAnexoDTO );
 
-			foreach ( $arrMdPetRelReciboDocumentoAnexoDTO as $objMdPetRelReciboDocumentoAnexoDTO ) {
-				$objMdPetRelReciboDocumentoAnexoRN->excluir( $objMdPetRelReciboDocumentoAnexoDTO );
-			}
-
-			// Remove recibo gerado no peticionamento
-			( new MdPetReciboRN() )->excluir( $objMdPetReciboDTO );
-
-			// Altera o tipo do documento e seu status de bloqueado para que o CORE consiga remover sem problemas
-			$objDocumentoDTO = new DocumentoDTO();
-			$objDocumentoDTO->retDblIdDocumento();
-			$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
-			$objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
-			$arrDocumentos = $objDocumentoBD->listar($objDocumentoDTO);
-
-			foreach( $arrDocumentos as $objDocumentoDTO ){
-				$objDocumentoDTO->setStrStaDocumento( DocumentoRN::$TD_EDITOR_INTERNO );
-				$objDocumentoDTO->setStrSinBloqueado( 'N' );
-				$objDocumentoBD->alterar($objDocumentoDTO);
-
-				//$objDocumentoDTO->setDblIdDocumento( $objMdPetReciboDTO->getDblIdDocumento() );
-				( new DocumentoRN() )->excluirRN0006( $objDocumentoDTO );
-			}
-
-			// Pega os participantes do processo para que possamos remover seus acessos externos ao processo tanto no CORE quanto no peticionamento
-			$objParticipanteRN = new ParticipanteRN();
-			$objParticipanteDTO = new ParticipanteDTO();
-			$objParticipanteDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
-			$objParticipanteDTO->retNumIdParticipante();
-			$arrParticipantes = $objParticipanteRN->listarRN0189( $objParticipanteDTO );
-
-			foreach( $arrParticipantes as $ObjParticipanteDTO )
-			{
-				$objAcessoExternoRN = new AcessoExternoRN();
-				$objAcessoExternoDTO = new AcessoExternoDTO();
-				$objAcessoExternoDTO->setBolExclusaoLogica(false);
-				$objAcessoExternoDTO->retNumIdAcessoExterno();
-				$objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA, InfraDTO::$OPER_DIFERENTE);
-				$objAcessoExternoDTO->setNumIdParticipante($ObjParticipanteDTO->getNumIdParticipante());
-
-				$arrAcessosExternos = $objAcessoExternoRN->listar( $objAcessoExternoDTO );
-				foreach( $arrAcessosExternos as $objAcessoExterno ){
-					$objAcessoExterno->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA);
-					$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
-					$objAcessoExternoBD->alterar($objAcessoExterno);
-
-					$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
-					$objMdPetAcessoExternoDTO->setNumIdAcessoExterno( $objAcessoExterno->getNumIdAcessoExterno() );
-					$objMdPetAcessoExternoBD = new MdPetAcessoExternoBD($this->getObjInfraIBanco());
-					$objMdPetAcessoExternoBD->excluir($objMdPetAcessoExternoDTO);
-				}
-			}
-			
-			// Por fim, remove o procedimento, sem deixar rastros
-			( new ProcedimentoRN() )->excluirRN0280( $objProcedimentoDTO );
-
-			throw new InfraException('Erro incluindo documentos no processo peticionamento do SEI.',$e);
+			$this->realizarRoolbackProcedimento($arrParametrosDocumentos);
+			throw new InfraException('Erro incluindo documentos Peticionamento de Processo Novo do SEI.',$e);
+		
 		}
+
+	}
+
+	protected function incluirAcessoExternoControlado($arrParametrosDocumentos){
+		
+		// try {
+
+			$unidadeDTO 		= $arrParametrosDocumentos[0];
+			$objProcedimentoDTO = $arrParametrosDocumentos[2];
+			
+			die(var_dump($arrParametrosDocumentos[2]));
+
+			
+
+		// } catch(Exception $e){
+
+		// 	$this->realizarRoolbackProcedimento($arrParametrosDocumentos);
+		// 	throw new InfraException('Erro incluindo documentos no Peticionamento de Processo Novo do SEI.', $e);
+
+		// }
+
 	}
 
 	protected function gerarProcedimentoInternoControlado( $arrParametros ){
@@ -270,7 +280,7 @@ class MdPetProcessoRN extends InfraRN {
 			$idUnidadeTipoProcesso = null;
 			
 			//=====================================================
-			//TIPO DE PROCESSADO CONFIGURADO COM APENAS UMA UNIDADE
+			//TIPO DE PROCESSO CONFIGURADO COM APENAS UMA UNIDADE
 			//=====================================================
 			if( $arrMdPetRelTpProcessoUnidDTO != null && count( $arrMdPetRelTpProcessoUnidDTO ) == 1 ) {
 				$idUnidade = $arrMdPetRelTpProcessoUnidDTO[0]->getNumIdUnidade();
@@ -460,52 +470,87 @@ class MdPetProcessoRN extends InfraRN {
 			$arrProcessoReciboRetorno[0] = $reciboDTOBasico;
 			$arrProcessoReciboRetorno[1] = $objProcedimentoDTO;
 
-			$this->_controlarAcessoExterno($objProcedimentoDTO->getDblIdProcedimento());
-
-			// Andamento - Processo remetido pela unidade
-    		$arrObjAtributoAndamentoDTO = array();
-    		$objAtributoAndamentoDTO = new AtributoAndamentoDTO();
-    		$objAtributoAndamentoDTO->setStrNome('UNIDADE');
-    		$objAtributoAndamentoDTO->setStrValor($unidadeDTO->getStrSigla().'¥'.$unidadeDTO->getStrDescricao());
-    		$objAtributoAndamentoDTO->setStrIdOrigem($unidadeDTO->getNumIdUnidade());
-    		$arrObjAtributoAndamentoDTO[] = $objAtributoAndamentoDTO;
-
-    		$objAtividadeDTO = new AtividadeDTO();
-    		$objAtividadeDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
-    		$objAtividadeDTO->setNumIdUnidade( $unidadeDTO->getNumIdUnidade() );
-    		$objAtividadeDTO->setNumIdUnidadeOrigem( $unidadeDTO->getNumIdUnidade() );
-    		$objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
-    		$objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
-
-    		$objAtividadeRN = new AtividadeRN();
-    		$objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);      
-
-			// obtendo a ultima atividade informada para o processo, para marcar 
-			// como nao visualizada, deixando assim o processo marcado como "vermelho" 
-			// (status de Nao Visualizado) na listagem da tela "Controle de processos"
-			$atividadeDTO = new AtividadeDTO();
-			$atividadeDTO->retTodos();
-			$atividadeDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
-			$atividadeDTO->setOrd("IdAtividade", InfraDTO::$TIPO_ORDENACAO_DESC);
-			$ultimaAtividadeDTO = (new AtividadeRN())->listarRN0036( $atividadeDTO );
-						
-			//alterar a ultima atividade criada para nao visualizado
-			if( $ultimaAtividadeDTO != null && count( $ultimaAtividadeDTO ) > 0){
-			  
-			  	$ultimaAtividadeDTO[0]->setNumTipoVisualizacao( AtividadeRN::$TV_NAO_VISUALIZADO );
-			  
-				$atividadeBD = new AtividadeBD( $this->getObjInfraIBanco() );
-			  	$atividadeBD->alterar( $ultimaAtividadeDTO[0] );
-
-			}
-
-
 			return array('paramentrosRecibo' => $arrProcessoReciboRetorno, 'parametrosEmail' => $arrParams, 'idsContatos' => $idsContatos );
 		
 		} catch(Exception $e){
 			throw new InfraException('Erro cadastrando processo peticionamento do SEI.',$e);
 		}
 		
+	}
+
+	protected function realizarRoolbackProcedimento($arrParametrosDocumentos){
+
+		// Realiza o Rollback das inserções processadas nas etapas anteriores do Peticionamento do Processo Novo
+
+		$unidadeDTO 		= $arrParametrosDocumentos[0];
+		$arrParametros 		= $arrParametrosDocumentos[1];
+		$objProcedimentoDTO = $arrParametrosDocumentos[2];
+		$objMdPetReciboDTO 	= $arrParametrosDocumentos[3];
+		$idsContatos 		= $arrParametrosDocumentos[4];
+
+		// remove dependecias do recibo
+		$objMdPetRelReciboDocumentoAnexoDTO	= new MdPetRelReciboDocumentoAnexoDTO();
+		$objMdPetRelReciboDocumentoAnexoRN	= new MdPetRelReciboDocumentoAnexoRN();
+		
+		$objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento( $objMdPetReciboDTO->getNumIdReciboPeticionamento() );
+		$objMdPetRelReciboDocumentoAnexoDTO->retNumIdReciboDocumentoAnexoPeticionamento();
+		$arrMdPetRelReciboDocumentoAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->listar( $objMdPetRelReciboDocumentoAnexoDTO );
+
+		foreach ( $arrMdPetRelReciboDocumentoAnexoDTO as $objMdPetRelReciboDocumentoAnexoDTO ) {
+			$objMdPetRelReciboDocumentoAnexoRN->excluir( $objMdPetRelReciboDocumentoAnexoDTO );
+		}
+
+		// Remove recibo gerado no peticionamento
+		( new MdPetReciboRN() )->excluir( $objMdPetReciboDTO );
+
+		// Altera o tipo do documento e seu status de bloqueado para que o CORE consiga remover sem problemas
+		$objDocumentoDTO = new DocumentoDTO();
+		$objDocumentoDTO->retDblIdDocumento();
+		$objDocumentoDTO->setDblIdProcedimento( $objProcedimentoDTO->getDblIdProcedimento() );
+		$objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
+		$arrDocumentos = $objDocumentoBD->listar($objDocumentoDTO);
+
+		foreach( $arrDocumentos as $objDocumentoDTO ){
+			$objDocumentoDTO->setStrStaDocumento( DocumentoRN::$TD_EDITOR_INTERNO );
+			$objDocumentoDTO->setStrSinBloqueado( 'N' );
+			$objDocumentoBD->alterar($objDocumentoDTO);
+
+			//$objDocumentoDTO->setDblIdDocumento( $objMdPetReciboDTO->getDblIdDocumento() );
+			( new DocumentoRN() )->excluirRN0006( $objDocumentoDTO );
+		}
+
+		// Pega os participantes do processo para que possamos remover seus acessos externos ao processo tanto no CORE quanto no peticionamento
+		$objParticipanteRN = new ParticipanteRN();
+		$objParticipanteDTO = new ParticipanteDTO();
+		$objParticipanteDTO->setDblIdProtocolo( $objProcedimentoDTO->getDblIdProcedimento() );
+		$objParticipanteDTO->retNumIdParticipante();
+		$arrParticipantes = $objParticipanteRN->listarRN0189( $objParticipanteDTO );
+
+		foreach( $arrParticipantes as $ObjParticipanteDTO )
+		{
+			$objAcessoExternoRN = new AcessoExternoRN();
+			$objAcessoExternoDTO = new AcessoExternoDTO();
+			$objAcessoExternoDTO->setBolExclusaoLogica(false);
+			$objAcessoExternoDTO->retNumIdAcessoExterno();
+			$objAcessoExternoDTO->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA, InfraDTO::$OPER_DIFERENTE);
+			$objAcessoExternoDTO->setNumIdParticipante($ObjParticipanteDTO->getNumIdParticipante());
+
+			$arrAcessosExternos = $objAcessoExternoRN->listar( $objAcessoExternoDTO );
+			foreach( $arrAcessosExternos as $objAcessoExterno ){
+				$objAcessoExterno->setStrStaTipo(AcessoExternoRN::$TA_SISTEMA);
+				$objAcessoExternoBD = new AcessoExternoBD($this->getObjInfraIBanco());
+				$objAcessoExternoBD->alterar($objAcessoExterno);
+
+				$objMdPetAcessoExternoDTO = new MdPetAcessoExternoDTO();
+				$objMdPetAcessoExternoDTO->setNumIdAcessoExterno( $objAcessoExterno->getNumIdAcessoExterno() );
+				$objMdPetAcessoExternoBD = new MdPetAcessoExternoBD($this->getObjInfraIBanco());
+				$objMdPetAcessoExternoBD->excluir($objMdPetAcessoExternoDTO);
+			}
+		}
+		
+		// Por fim, remove o procedimento, sem deixar rastros
+		( new ProcedimentoRN() )->excluirRN0280( $objProcedimentoDTO );
+
 	}
 	
 	private function _controlarAcessoExterno($idProcedimento){

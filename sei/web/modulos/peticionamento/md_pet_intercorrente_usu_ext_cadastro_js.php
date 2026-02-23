@@ -129,7 +129,8 @@
         }
 
         var paramsAjax = {
-            txtNumeroProcesso: document.getElementById('txtNumeroProcesso').value
+            txtNumeroProcesso: document.getElementById('txtNumeroProcesso').value,
+            validaProcessoRepresentacao: true
         };
 
         $.ajax({

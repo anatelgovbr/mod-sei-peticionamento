@@ -445,6 +445,8 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     </form>
 </div>
 <?
+
+require_once 'js/BloqueioSsoSemSenha_js.php';
 require_once 'md_pet_usu_ext_inicio_js.php';
 PaginaSEIExterna::getInstance()->fecharAreaDados();
 PaginaSEIExterna::getInstance()->fecharBody();

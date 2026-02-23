@@ -21,6 +21,8 @@ class MdPetUsuarioExternoRN extends InfraRN {
   public static $TU_SISTEMA = '1';
   public static $TU_EXTERNO_PENDENTE = '2';
   public static $TU_EXTERNO = '3';
+  public static $MSG_GERAR_SENHA = 'Você ainda não possui uma senha registrada no sistema.\nPara assinatura com senha acesse a opção Gerar Senha no menu.';	
+
   
   public function __construct(){
     parent::__construct();

@@ -103,6 +103,7 @@ try {
     </form>
 <?php
     PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);
+    require_once 'js/BloqueioSsoSemSenha_js.php';
     PaginaSEIExterna::getInstance()->fecharAreaDados();
     PaginaSEIExterna::getInstance()->fecharBody();
     PaginaSEIExterna::getInstance()->fecharHtml();

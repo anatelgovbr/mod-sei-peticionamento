@@ -32,7 +32,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.4.2';
+        return '4.4.3';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -845,7 +845,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_processo_validar_numero':
-                $xml = MdPetIntercorrenteINT::gerarXMLvalidacaoNumeroProcesso($_POST['txtNumeroProcesso']);
+                $xml = MdPetIntercorrenteINT::gerarXMLvalidacaoNumeroProcesso($_POST['txtNumeroProcesso'], false, $_POST['validaProcessoRepresentacao'] ?? false);
                 echo $xml;
 
                 return true;
@@ -912,6 +912,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 return true;
 
             //INTIMACAO Fim
+
+            case 'md_pet_usu_ext_bloqueio_senha_sso':
+                require_once dirname(__FILE__) . '/md_pet_usu_ext_bloqueio_senha_sso.php';
+                return true;
 
             case 'md_pet_vinculacao_listar':
                 require_once dirname(__FILE__) . '/md_pet_vinculacao_lista.php';

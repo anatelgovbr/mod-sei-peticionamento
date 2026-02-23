@@ -303,6 +303,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
 <?php
 PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
 //PaginaSEI::getInstance()->montarAreaDebug();
+require_once 'js/BloqueioSsoSemSenha_js.php';
 PaginaSEI::getInstance()->fecharAreaDados();
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

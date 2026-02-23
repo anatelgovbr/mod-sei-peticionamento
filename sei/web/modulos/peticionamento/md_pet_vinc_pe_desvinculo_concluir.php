@@ -51,7 +51,7 @@ try {
         }
 
         if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
-            (new InfraException())->lancarValidacao("Você ainda não possui uma senha registrada no sistema.\nPara assinatura com senha acesse a opção Gerar Senha no menu.", InfraPagina::$TIPO_MSG_AVISO);
+            (new InfraException())->lancarValidacao(MdPetUsuarioExternoRN::$MSG_GERAR_SENHA, InfraPagina::$TIPO_MSG_AVISO);
         }
         // Final da manipulacao para assinatura com Gov.br.
 

@@ -30,7 +30,7 @@
          * @return string
          * @since  28/11/2016
          */
-        public static function gerarXMLvalidacaoNumeroProcesso($numeroProcesso, $stRespostaIntimacao = false)
+        public static function gerarXMLvalidacaoNumeroProcesso($numeroProcesso, $stRespostaIntimacao = false, $validaProcessoRepresentacao = false)
         {
 
             $xmlMensagemErro = '<Validacao><MensagemValidacao>%s</MensagemValidacao></Validacao>';
@@ -130,6 +130,22 @@
               $dadosProtocoloAnexador = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
               $processoIntercorrente = 'Diretamente no Processo Anexador nº ' . $dadosProtocoloAnexador->getStrProtocoloFormatadoProtocolo1();
 
+            }
+
+            // Valida se o processo é de representação e se a validação de processo de representação deve ser feita para peticionamento intercorrente
+            if($validaProcessoRepresentacao) {
+                $strMsgProcessoDeRepresentacao = 'O "Processo de Controle de Representação" é exclusivo para recepção dos documentos gerados automaticamente pelo SEI na operação das funcionalidades de Representação de Pessoas Físicas ou Pessoas Jurídicas por meio da emissão pelo próprio SEI de Procurações Eletrônicas.
+                
+Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo ou insira o número de um Processo já existente relacionado com sua demanda.';
+                
+                $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                $objMdPetVinculoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+                $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+                $arrObjMdPetVinculoDTO = ( new MdPetVinculoRN() )->listar($objMdPetVinculoDTO);
+                
+                if (is_array($arrObjMdPetVinculoDTO) && count($arrObjMdPetVinculoDTO) > 0) {
+                    return sprintf($xmlMensagemErro, $strMsgProcessoDeRepresentacao);
+                }
             }
 
             $urlValida = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_procedimento=' . $objProcedimentoDTO->getDblIdProcedimento() . '&id_tipo_procedimento=' . $objProcedimentoDTO->getNumIdTipoProcedimento() . '&acao=md_pet_intercorrente_usu_ext_assinar&tipo_selecao=2'));

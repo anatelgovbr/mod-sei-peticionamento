@@ -15,12 +15,12 @@ SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
 
 switch ($_GET['acao']) {
     case 'processo_eletronico_responder_motivo_renunciar':
-        $strTitulo = 'Renunciar Procuração Eletrônica';
-        $strMotivo = 'Motivo da Renúncia (constará no teor do documento de Renúncia que será gerado):';
+        $strTitulo = 'Renunciar ProcuraÃ§Ã£o EletrÃ´nica';
+        $strMotivo = 'Motivo da RenÃºncia (constarÃ¡ no teor do documento de RenÃºncia que serÃ¡ gerado):';
         break;
     case 'processo_eletronico_responder_motivo_revogar':
-        $strTitulo = 'Revogar Procuração Eletrônica';
-        $strMotivo = 'Motivo da Revogação (constará no teor do documento de Revogação que será gerado):';
+        $strTitulo = 'Revogar ProcuraÃ§Ã£o EletrÃ´nica';
+        $strMotivo = 'Motivo da RevogaÃ§Ã£o (constarÃ¡ no teor do documento de RevogaÃ§Ã£o que serÃ¡ gerado):';
         break;
 
 }
@@ -39,9 +39,9 @@ $tipoVinculo = $_GET['tpVinculo'];
 $tipoProcuracao = $_GET['tpProc'];
 
 if($tpDocumento == 'revogar'){
-    $termo = "Revogação";
+    $termo = "RevogaÃ§Ã£o";
 } else {
-    $termo = "Renúncia";
+    $termo = "RenÃºncia";
 }
 
 $mdPetVincRepresentantRN = new MdPetVincRepresentantRN();
@@ -60,9 +60,9 @@ $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN)->consultar($objMdPe
 
 $tpProcuracao = '';
 if ($objMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL) {
-    $tpProcuracao = 'Procuração Eletrônica Especial';
+    $tpProcuracao = 'ProcuraÃ§Ã£o EletrÃ´nica Especial';
 } else if ($objMdPetVincRepresentantDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-    $tpProcuracao = 'Procuração Eletrônica Simples';
+    $tpProcuracao = 'ProcuraÃ§Ã£o EletrÃ´nica Simples';
 }
 
 $situacao = "";
@@ -153,7 +153,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <fieldset class="infraFieldset form-control" style="height: auto">
-                <legend class="infraLegend">Informações sobre a Procuração</legend>
+                <legend class="infraLegend">InformaÃ§Ãµes sobre a ProcuraÃ§Ã£o</legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <label class="infraLabelObrigatorio">CPF / CNPJ
@@ -162,7 +162,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <label class="infraLabelObrigatorio">Nome / Razão Social do
+                        <label class="infraLabelObrigatorio">Nome / RazÃ£o Social do
                             Outorgante: </label><?php echo $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc(); ?>
                     </div>
                 </div>
@@ -180,7 +180,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <label class="infraLabelObrigatorio">Tipo de Procuração: </label> <?php echo $tpProcuracao; ?>
+                        <label class="infraLabelObrigatorio">Tipo de ProcuraÃ§Ã£o: </label> <?php echo $tpProcuracao; ?>
                     </div>
                 </div>
                 <div class="row">
@@ -190,12 +190,12 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <label class="infraLabelObrigatorio">Situação: </label><?php echo $situacao; ?>
+                        <label class="infraLabelObrigatorio">SituaÃ§Ã£o: </label><?php echo $situacao; ?>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <label class="infraLabelObrigatorio">Abrangência: </label><br />
+                        <label class="infraLabelObrigatorio">AbrangÃªncia: </label><br />
                         <?php
                             if(count($arrProtocolosAbrangencia) > 0){
                                 foreach ($arrProtocolosAbrangencia as $protocoloAbrangencia){
@@ -230,6 +230,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo);
     <input type="hidden" id="hdnTpVinculo" name="hdnTpVinculo" value="<?= $tipoVinculo ?>">
     <input type="hidden" id="hdnTpProcuracao" name="hdnTpProcuracao" value="<?= $tipoProcuracao ?>">
     <?
+    require_once 'js/BloqueioSsoSemSenha_js.php';
     PaginaSEIExterna::getInstance()->fecharAreaDados();
     ?>
 </form>

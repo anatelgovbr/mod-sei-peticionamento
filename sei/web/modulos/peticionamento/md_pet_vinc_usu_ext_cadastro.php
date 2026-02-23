@@ -95,6 +95,7 @@ if(!$stConsultar) {
 <input type="hidden" name="hdnIdUsuarioExternoLogado" id="hdnIdUsuarioExternoLogado" value="<?= $idUsuarioExterno ?>"/>
 
 <?php
+require_once 'js/BloqueioSsoSemSenha_js.php';
 PaginaSEIExterna::getInstance()->fecharAreaDados();
 PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos);
 //PaginaSEIExterna::getInstance()->montarAreaDebug();

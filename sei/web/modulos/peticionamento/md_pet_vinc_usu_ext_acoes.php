@@ -131,6 +131,7 @@ switch ($_GET['acao']) {
     $objMdPetVincDocumentoDTO->retStrNumeroDocumento();
     $objMdPetVincDocumentoDTO->retNumIdTipoConferencia();
     $objMdPetVincDocumentoDTO->retNumTamanhoArquivoAnexo();
+    $objMdPetVincDocumentoDTO->setNumIdMdPetVinculo($idMdPetVinculo);
     $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_ATOS);
 
     $arrArquivo = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);

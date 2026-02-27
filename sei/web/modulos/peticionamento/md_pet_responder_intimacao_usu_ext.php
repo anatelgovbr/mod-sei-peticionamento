@@ -51,7 +51,6 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     // FIM FIELDSET OBJETIVOS DE DESENVOLVIMENTO SUSTENTÁVEL DA ONU
 
     require_once 'md_pet_responder_intimacao_usu_ext_bloco_documento.php';
-
     require_once 'js/BloqueioSsoSemSenha_js.php';
     PaginaSEIExterna::getInstance()->fecharAreaDados();
     PaginaSEIExterna::getInstance()->montarBarraComandosInferior($arrComandos); ?>

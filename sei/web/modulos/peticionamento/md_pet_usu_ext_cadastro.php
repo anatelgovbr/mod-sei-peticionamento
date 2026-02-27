@@ -140,9 +140,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
         <!-- Validação para quando deve aparecer as 3 combos -->
         <? if ($arrUnidadeUFDTO != null && count($arrUnidadeUFDTO) > 1): ?>
             <!-- Orgão -->
-            <?php $displayMode = $selectOrgaoHidden ? 'float: inherit;' : 'float: inherit; padding-right:10px;'; ?>
+            <?php $displayMode = $selectOrgaoHidden ? 'float: inherit; display: none' : 'float: inherit; padding-right:10px;'; ?>
 
-            <div class="row" style="<?= $displayMode ?>">
+            <div class="row mt-3" style="<?= $displayMode ?>">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="form-group">
                         <label id="lblPublico" style="<?= $selectOrgaoHidden ? 'display:none' : '' ?>" class="infraLabelObrigatorio">
@@ -150,7 +150,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listados os Órgãos em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo o Órgão no qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label>
                         
-                        <select onchange="pesquisarUF(this)" style="<?= $selectOrgaoHidden ? 'display:none' : '' ?>" id="selOrgao" name="selOrgao" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                        <select onchange="pesquisarUF(this)" style="<?= $selectOrgaoHidden ? 'display:none' : '' ?>" id="selOrgao" name="selOrgao" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
 					        <?php
               
 						        if (($orgaoDuplo && empty($idOrgao)) || (!$orgaoDuplo && count($selectOrgao[0]) > 1)){
@@ -171,7 +171,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                 </div>
             </div>
             
-            <div class="row mt-2">
+            <div class="row mt-3">
                 <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2" style="<?= $selectUfHidden ? 'display:none' : '' ?>" id="ufHidden">
                     <div class="form-group">
                         <label id="lblPublico" class="infraLabelObrigatorio">
@@ -183,7 +183,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             <? if(count($selectUf[0]) == 1): ?>
                                 <option value="<?= $selectUf[0][0] ?>" selected="selected"><?= $selectUf[1][0] ?></option>
                             <? elseif(count($selectUf[0]) > 1): ?>
-                                <option value=""></option>
+                                <option value="">Selecione a UF</option>
 	                            <? for($i = 0; $i < count($selectUf[0]); $i++): ?>
 		                            <? $selectedUF = !empty($idUF) && $selectUf[0][$i] == $idUF ? 'selected="selected"' : '' ?>
                                     <option value="<?= $selectUf[0][$i] ?>" <?= $selectedUF ?>><?= $selectUf[1][$i] ?></option>
@@ -200,11 +200,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as Cidades em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a Cidade na qual deseja que este Processo seja aberto.", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
                         
-                        <select onchange="pesquisarFinal(this)" id="selUFAberturaProcesso" name="selUFAberturaProcesso" class="infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
+                        <select onchange="pesquisarFinal(this)" id="selUFAberturaProcesso" name="selUFAberturaProcesso" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
 	                        <? if(count($selectCidade[0]) == 1): ?>
                                 <option value="<?= $selectCidade[0][0] ?>" selected="selected"><?= $selectCidade[1][0] ?></option>
 	                        <? elseif(count($selectCidade[0]) > 1): ?>
-                                <option value=""></option>
+                                <option value="">Selecione a Cidade</option>
 		                        <? for($i = 0; $i < count($selectCidade[0]); $i++): ?>
                                     <? $selectedCidade = !empty($nomeCidade) && $selectCidade[1][$i] == $nomeCidade ? 'selected="selected"' : ''; ?>
                                     <option value="<?= $selectCidade[0][$i] ?>" <?= $selectedCidade ?>><?= $selectCidade[1][$i] ?></option>
@@ -329,7 +329,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
                                 <div style="margin-top: 5px;">
 
-                                    <select name="selInteressados" size="4" multiple="multiple" class="infraSelect form-control" id="selInteressados" style="float: left; width: 75%; margin-right: 5px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                                    <select name="selInteressados" size="4" multiple="multiple" class="infraSelect form-select" id="selInteressados" style="float: left; width: 75%; margin-right: 5px;" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                                         <?
                                             if (is_array($arrContatosInteressados) && count($arrContatosInteressados) > 0){
                                                 foreach ($arrContatosInteressados as $itemObj){

@@ -353,7 +353,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinada UF.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/>
                 </label>
-                <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-control">
+                <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-select">
                     <option value="">Todos</option>
                     <?php if ($orgaoUnico == "U") { ?>
                         <?php
@@ -377,7 +377,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         <?= PaginaSEI::montarTitleTooltip("Por meio deste campo é possível filtrar a lista de Tipos de Processos que podem ser abertos em determinada Cidade.", 'Ajuda') ?>
                          alt="Ajuda" class="infraImgModulo"/></label>
                 <select onchange="pesquisarFinal(this)" id="selCidade" name="selCidade"
-                        class="infraSelect form-control">
+                        class="infraSelect form-select">
                     <option value="">Todos</option>
                     <?php
 

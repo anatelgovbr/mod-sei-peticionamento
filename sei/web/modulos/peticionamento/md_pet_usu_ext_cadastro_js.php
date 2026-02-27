@@ -1318,17 +1318,21 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function inicializar() {
-		//Caso tenha somente um ORGAO dentro do processo
-        try {
+
+		try {
+
             if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled") {
                 var idOrgao = document.getElementById('hdnIdOrgaoUnico').value;
             } else {
                 var idOrgao = document.getElementById('hdnIdOrgaoTelaAnterior').value;
             }
-            if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled" && document.getElementById('hdnIdUfTelaAnterior').value == "" && document.getElementById('hdnIdUfTelaAnterior').value == "") {
-                infraSelectLimpar('selUFAberturaProcesso');
-                document.getElementById("ufHidden").style.display = "none";
+
+            console.log('idOrgao:' + idOrgao);
+
+            if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled" && document.getElementById('hdnIdUfTelaAnterior').value == "") {
+
                 $.ajax({
+
                     dataType: 'xml',
                     method: 'POST',
                     url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_uf');?>',
@@ -1340,91 +1344,122 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         console.log(dados);
                     },
                     success: function (data) {
+
+                        var count = $(data).find("item").length;
+
                         var selectMultiple = document.getElementById('selUF');
-                        try {
-                            //Quando tiver mais de uma UF
-                            var count = $(data).find("item").length;
-                            if (count > 1) {
-                                //Esconder Combo Cidade Caso Retorne mais de uma Cidade
-                                document.getElementById("ufHidden").style.display = "block";
-                                var opt = document.createElement('option');
-                                opt.value = "";
-                                opt.innerHTML = "";
-                                selectMultiple.empty().end().appendChild(opt);
-                                $.each($(data).find('item'), function (i, j) {
-                                    var opt = document.createElement('option');
-                                    opt.value = $(j).attr("id");
-                                    opt.innerHTML = $(j).attr("descricao");
-                                    selectMultiple.appendChild(opt);
-                                });
-                            }
+                        selectMultiple.innerHTML = '';
+
+                        if (count === 0) {
+
+                            console.log("Nenhuma UF disponível");
+
+                        }else if (count > 1) {
+                            
+                            document.getElementById("ufHidden").style.display = "block";
+
+                            // Adiciona opção vazia
+                            var optVazia = document.createElement('option');
+                            optVazia.value = "";
+                            optVazia.innerHTML = "Selecione a UF";
+                            selectMultiple.appendChild(optVazia);
+                            
                             $.each($(data).find('item'), function (i, j) {
-                                //Quando retornar somente uma UF
-                                var count = $(data).find("item").length;
-                                if (count < 2) {
-                                    //document.getElementById('hdnIdUf').value = $(j).attr("id");
-                                    document.getElementById("ufHidden").style.display = "none";
-                                    $.ajax({
-                                        dataType: 'xml',
-                                        method: 'POST',
-                                        url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_cidade');?>',
-                                        data: {
-                                            'idOrgao': idOrgao,
-                                            'idUf': $(j).attr("id"),
-                                            'idTpProc': document.getElementById('hdnTpProcesso').value
-                                        },
-                                        error: function (dados) {
-                                            console.log(dados);
-                                        },
-                                        success: function (data) {
-                                            var selectMultiple = document.getElementById('selUFAberturaProcesso');
-                                            try {
-                                                var count = $(data).find("item").length;
-                                                if (count > 0) {
-                                                    document.getElementById("cidadeHidden").style.display = "";
-                                                }
-                                                if (count > 0) {
-                                                    var opt = document.createElement('option');
-                                                    opt.value = "";
-                                                    opt.innerHTML = "";
-                                                    selectMultiple.appendChild(opt);
-                                                }
-                                                $.each($(data).find('item'), function (i, j) {
-                                                    var opt = document.createElement('option');
-                                                    opt.value = $(j).attr("id");
-                                                    opt.innerHTML = $(j).attr("descricao");
-                                                    selectMultiple.appendChild(opt);
-                                                });
-                                                var div = document.getElementById('selUFAberturaProcesso');
-                                                div.appendChild(selectMultiple);
-
-                                            } catch (err) {
-
-                                            }
-
-                                        }
-
-                                    });
-                                    // document.getElementById("selUF").disabled = true;
-                                }
-
-                                var count = $(data).find("item").length;
-                                if (count < 2) {
-                                    //document.getElementById("selUF").disabled = true;
-
-                                }
+                                var opt = document.createElement('option');
+                                opt.value = $(j).attr("id");
+                                opt.innerHTML = $(j).attr("descricao");
+                                selectMultiple.appendChild(opt);
                             });
 
-                            var div = document.getElementById('selUF');
-                            div.appendChild(selectMultiple);
+                        } else {
 
-                        } catch (err) {
+                            var item = $(data).find('item');
+
+                            // Há apenas uma UF. Cria e seleciona a única UF
+                            var opt = document.createElement('option');
+                            opt.value = $(item[0]).attr("id");
+                            opt.innerHTML = $(item[0]).attr("descricao");
+                            opt.selected = true;
+                            selectMultiple.appendChild(opt);
+
+                            var idUf = $(item[0]).attr("id");
+
+                            // Busca as cidades da UF automaticamente
+                            $.ajax({
+                                dataType: 'xml',
+                                method: 'POST',
+                                url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_cidade');?>',
+                                data: {
+                                    'idOrgao': idOrgao,
+                                    'idUf': idUf,
+                                    'idTpProc': document.getElementById('hdnTpProcesso').value
+                                },
+                                error: function (dados) {
+                                    console.log(dados);
+                                },
+                                success: function (data) {
+
+                                    var selectCidade = document.getElementById('selUFAberturaProcesso');
+                                    var countCidades = $(data).find("item").length;
+                                    selectCidade.innerHTML = '';
+
+                                    if (countCidades === 0) {
+
+                                        console.log("Nenhuma Cidade disponível");
+
+                                    } else if(countCidades == 1) {
+                                        
+                                        var item = $(data).find('item');
+                                        
+                                        // Adiciona opção vazia
+                                        var opt = document.createElement('option');
+                                        opt.value = $(item[0]).attr("id");
+                                        opt.innerHTML = $(item[0]).attr("descricao");
+                                        opt.selected = true;
+                                        selectCidade.appendChild(opt);
+
+                                        document.getElementById("cidadeHidden").style.display = "block";
+
+                                    } else if (countCidades > 0) {
+                                        
+                                        // Adiciona opção vazia
+                                        var optVazia = document.createElement('option');
+                                        optVazia.value = "";
+                                        optVazia.innerHTML = "Selecione a Cidade";
+                                        selectCidade.appendChild(optVazia);
+
+                                        // Popula as cidades retornadas
+                                        $.each($(data).find('item'), function (i, j) {
+                                            var opt = document.createElement('option');
+                                            opt.value = $(j).attr("id");
+                                            opt.innerHTML = $(j).attr("descricao");
+                                            selectCidade.appendChild(opt);
+                                        });
+                                        
+                                        document.getElementById("cidadeHidden").style.display = "block";
+
+                                    }
+                                }
+                            });
 
                         }
 
                     }
                 });
             }
+
+            if (document.getElementById('hdnIdOrgaoTelaAnterior').value != '') {
+                var val = document.getElementById('hdnIdOrgaoTelaAnterior').value;
+                var sel = document.getElementById('selOrgao');
+                var opts = sel.options;
+                for (var opt, j = 0; opt = opts[j]; j++) {
+                    if (opt.value == val) {
+                        sel.selectedIndex = j;
+                        break;
+                    }
+                }
+            }
+
             if (document.getElementById('hdnIdUfTelaAnterior').value != '') {
                 var val = document.getElementById('hdnIdUfTelaAnterior').value;
                 var sel = document.getElementById('selUF');
@@ -1436,17 +1471,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     }
                 }
             }
-           if (document.getElementById('hdnIdOrgaoTelaAnterior').value != '') {
-                var val = document.getElementById('hdnIdOrgaoTelaAnterior').value;
-                var sel = document.getElementById('selOrgao');
-                var opts = sel.options;
-                for (var opt, j = 0; opt = opts[j]; j++) {
-                    if (opt.value == val) {
-                        sel.selectedIndex = j;
-                        break;
-                    }
-                }
-            }
+
             if (document.getElementById('hdnIdCidadeTelaAnterior').value != '') {
                 var val = document.getElementById('hdnIdCidadeTelaAnterior').value;
                 var sel = document.getElementById('selUFAberturaProcesso');
@@ -1458,6 +1483,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     }
                 }
             }
+            
         } catch (err) {
 
         }
@@ -2334,14 +2360,23 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     //Novo
 
-    function pesquisarUF(idOrgao) {
-        document.getElementById("selUF").disabled = false;
+    function pesquisarUF(selectedOrgao) {
+
+        var idOrgao = selectedOrgao.value;
+
+        var selectUF = document.getElementById('selUF');
+        var selectCidade = document.getElementById('selUFAberturaProcesso');
+        selectUF.disabled = false;
+        
         document.getElementById("selUFAberturaProcesso").disabled = false;
-        document.getElementById('hdnIdOrgao').value = idOrgao.value;
+        document.getElementById('hdnIdOrgao').value = idOrgao;
+
         //Caso selecione vazio na combo orgão, sumir com a combo uf
-        if (document.getElementById("selOrgao").value == "") {
+        if (idOrgao == "") {
             document.getElementById("ufHidden").style.display = "none";
             document.getElementById("cidadeHidden").style.display = "none";
+            selectUF.innerHTML = "";
+            selectCidade.innerHTML = "";
             return false;
         }
 
@@ -2349,11 +2384,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         infraSelectLimpar('selUFAberturaProcesso');
 
         $.ajax({
+
             dataType: 'xml',
             method: 'POST',
             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_uf');?>',
             data: {
-                'idOrgao': idOrgao.value,
+                'idOrgao': idOrgao,
                 'idTpProc': document.getElementById('hdnTpProcesso').value
             },
             error: function (dados) {
@@ -2361,101 +2397,42 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             },
             success: function (data) {
 
-                var selectMultiple = document.getElementById('selUF');
+                var count = $(data).find("item").length;
+                var items = $(data).find("item");
+                selectUF.innerHTML = "";
 
-                try {
+                if(count == 0){
 
-                    var count = $(data).find("item").length;
-                    if (count < 2) {
-                        document.getElementById("ufHidden").style.display = "none";
-                    } else {
-                        document.getElementById("ufHidden").style.display = "";
-                    }
+                    document.getElementById("ufHidden").style.display = "none";
+                    alert("Nenhuma UF disponível");
 
+                }else if(count == 1) {
 
-                    if (count > 1) {
-                        var opt = document.createElement('option');
-                        opt.value = "";
-                        opt.innerHTML = "";
-                        selectMultiple.appendChild(opt);
-                    }
+                    var opt = document.createElement('option');
+                    opt.value = $(items[0]).attr("id");
+                    opt.innerHTML = $(items[0]).attr("descricao");
+                    opt.selected = 'selected';
+                    selectUF.appendChild(opt);
 
-                    $.each($(data).find('item'), function (i, j) {
-                        //Quando retornar somente uma UF
-                        var count = $(data).find("item").length;
-                        if (count < 2) {
-                            //document.getElementById('hdnIdUf').value = $(j).attr("id");
+                    pesquisarCidade(selectUF);
 
-                            $.ajax({
-                                dataType: 'xml',
-                                method: 'POST',
-                                url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_cidade');?>',
-                                data: {
-                                    'idOrgao': document.getElementById('hdnIdOrgao').value,
-                                    'idUf': $(j).attr("id"),
-                                    'idTpProc': document.getElementById('hdnTpProcesso').value
-                                },
-                                error: function (dados) {
-                                    console.log(dados);
-                                },
-                                success: function (data) {
+                }else{
 
+                    document.getElementById("ufHidden").style.display = "";
 
-                                    var selectMultiple = document.getElementById('selUFAberturaProcesso');
+                    // Adiciona opção vazia
+                    var optVazia = document.createElement('option');
+                    optVazia.value = "";
+                    optVazia.innerHTML = "Selecione a UF";
+                    selectUF.appendChild(optVazia);
 
-                                    try {
-
-                                        //Caso retorne somente uma cidade, travar a combo
-                                        var count = $(data).find("item").length;
-                                        if (count < 2) {
-                                            document.getElementById("cidadeHidden").style.display = "none";
-                                        } else {
-                                            document.getElementById("cidadeHidden").style.display = "";
-                                        }
-
-
-                                        if (count > 1) {
-                                            var opt = document.createElement('option');
-                                            opt.value = "";
-                                            opt.innerHTML = "";
-                                            selectMultiple.appendChild(opt);
-                                        } else {
-                                            document.getElementById("selUFAberturaProcesso").disabled = true;
-                                        }
-
-                                        $.each($(data).find('item'), function (i, j) {
-
-                                            var opt = document.createElement('option');
-                                            opt.value = $(j).attr("id");
-                                            opt.innerHTML = $(j).attr("descricao");
-                                            selectMultiple.appendChild(opt);
-                                        });
-
-
-                                        var div = document.getElementById('selUFAberturaProcesso');
-                                        div.appendChild(selectMultiple);
-
-                                    } catch (err) {
-
-                                    }
-
-                                }
-
-                            });
-
-
-                            document.getElementById("selUF").disabled = true;
-                        }
-
+                    // Se forem varias UF
+                     $.each($(data).find('item'), function (i, j) {
                         var opt = document.createElement('option');
                         opt.value = $(j).attr("id");
                         opt.innerHTML = $(j).attr("descricao");
-                        selectMultiple.appendChild(opt);
+                        selectUF.appendChild(opt);
                     });
-                    var div = document.getElementById('selUF');
-                    div.appendChild(selectMultiple);
-
-                } catch (err) {
 
                 }
 
@@ -2463,77 +2440,81 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         });
 
-
     }
 
     //Uf
-    function pesquisarCidade(idUf) {
-        document.getElementById("selUFAberturaProcesso").disabled = false;
-        document.getElementById('hdnIdUf').value = idUf.value;
+    function pesquisarCidade(selectedUf) {
+
+        var idUf = selectedUf.value;
+
+        var selectCidade = document.getElementById('selUFAberturaProcesso');
+        selectCidade.disabled = false;
+        selectCidade.innerHTML = '';
+
+        document.getElementById('hdnIdUf').value = idUf;
         document.getElementById('hdnIdCidade').value = '';
+
         //Caso o usuário não tenha selecionado o combo orgão na combo da tela anterior
         if (document.getElementById('hdnIdOrgao').value == '') {
             document.getElementById('hdnIdOrgao').value = document.getElementById('hdnIdOrgaoTelaAnterior').value;
         }
-        infraSelectLimpar('selUFAberturaProcesso');
+
+        var dados = {
+            'idOrgao': document.getElementById('hdnIdOrgao').value,
+            'idUf': idUf,
+            'idTpProc': document.getElementById('hdnTpProcesso').value
+        };
+
+        console.log(dados);
 
         $.ajax({
+
             dataType: 'xml',
             method: 'POST',
             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_cidade');?>',
-            data: {
-                'idOrgao': document.getElementById('hdnIdOrgao').value,
-                'idUf': idUf.value,
-                'idTpProc': document.getElementById('hdnTpProcesso').value
-            },
+            data: dados,
             error: function (dados) {
                 console.log(dados);
             },
             success: function (data) {
 
-                var selectMultiple = document.getElementById('selUFAberturaProcesso');
+                var countCidades = $(data).find("item").length;
+                var items = $(data).find('item');
 
-                try {
+                if (countCidades > 1) {
+                    
+                    // Adiciona opção vazia
+                    var optVazia = document.createElement('option');
+                    optVazia.value = "";
+                    optVazia.innerHTML = "Selecione a Cidade";
+                    selectCidade.appendChild(optVazia);
 
-                    //Caso retorne somente uma cidade, travar a combo e esconder
-                    var count = $(data).find("item").length;
-
-                    if (count < 2) {
-
-                        document.getElementById("cidadeHidden").style.display = "none";
-                    } else {
-                        document.getElementById("cidadeHidden").style.display = "";
-                    }
-
-                    if (count > 1) {
-                        var opt = document.createElement('option');
-                        opt.value = "";
-                        opt.innerHTML = "";
-                        selectMultiple.appendChild(opt);
-                    }
-
-                    if (count < 2) {
-                        document.getElementById("selUFAberturaProcesso").disabled = true;
-                    }
-
+                    // Popula as cidades retornadas
                     $.each($(data).find('item'), function (i, j) {
-
                         var opt = document.createElement('option');
                         opt.value = $(j).attr("id");
                         opt.innerHTML = $(j).attr("descricao");
-                        selectMultiple.appendChild(opt);
+                        selectCidade.appendChild(opt);
                     });
 
-                    var div = document.getElementById('selUFAberturaProcesso');
-                    div.appendChild(selectMultiple);
+                    document.getElementById("cidadeHidden").style.display = "";
 
+                }else if(countCidades == 1) {
 
-                } catch (err) {
+                    var opt = document.createElement('option');
+                    opt.value = $(items[0]).attr("id");
+                    opt.innerHTML = $(items[0]).attr("descricao");
+                    opt.selected = 'selected';
+                    selectCidade.appendChild(opt);
+
+                    document.getElementById("cidadeHidden").style.display = "none";
+
+                }else{
+
+                    document.getElementById("cidadeHidden").style.display = "none";
 
                 }
-
             }
-
         });
 
     }

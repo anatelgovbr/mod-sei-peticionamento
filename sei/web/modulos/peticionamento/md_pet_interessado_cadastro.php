@@ -416,7 +416,7 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
         } else {
             $parametrosUrl .= "&cnpj=true";
         }
-        $parametrosUrl .= "&cadastro=true&id_orgao_acesso_externo=0";
+        $parametrosUrl .= "&cadastro=true&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo'];
         ?>
 
         <form id="frmCadastro" name="frmCadastro"

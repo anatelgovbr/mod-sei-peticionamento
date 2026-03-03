@@ -306,7 +306,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
                 <? } else if ($objTipoProcDTO->getStrSinIIIndicacaoDiretaContato() == 'S') {
 
-                    $strLinkAjaxInteressado     = SessaoSEIExterna::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=md_pet_contato_auto_completar_contexto_pesquisa&id_orgao_acesso_externo=0');
+                    $strLinkAjaxInteressado     = SessaoSEIExterna::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=md_pet_contato_auto_completar_contexto_pesquisa&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
                     $strLinkInteressadosSelecao = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_processo_peticionamento=' . $objTipoProcDTO->getNumIdTipoProcessoPeticionamento() . '&acao=md_pet_contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
 
                 ?>

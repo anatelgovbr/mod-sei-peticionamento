@@ -788,7 +788,7 @@ class MdPetReciboRN extends InfraRN
             $idAcessoExLink = $objMdPetAcessoExternoRN->getIdAcessoExternoRecibo($objMdPetReciboDTO);
 
             if (!is_null($idAcessoExLink)) {
-                $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $idAcessoExLink . "&id_documento=" . $idDocumentoRecibo . "&id_orgao_acesso_externo=0";
+                $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $idAcessoExLink . "&id_documento=" . $idDocumentoRecibo . "&id_orgao_acesso_externo=".$_GET['id_orgao_acesso_externo'];
 
                 //se nao configurar acesso externo ANTES, a assinatura do link falha
                 SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExLink);

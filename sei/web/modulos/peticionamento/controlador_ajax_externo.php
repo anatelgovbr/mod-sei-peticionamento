@@ -220,7 +220,7 @@ try{
 
 							 $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
 							 $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
-							 $docLink .= "&id_orgao_acesso_externo=0";
+							 $docLink .= "&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo'];
 
 							 //se nao configurar acesso externo ANTES, a assinatura do link falha:
 							 SessaoSEIExterna::getInstance()->configurarAcessoExterno($id_acesso_ext_link);

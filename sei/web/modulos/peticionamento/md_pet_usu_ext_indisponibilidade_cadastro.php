@@ -112,7 +112,7 @@ $urlBaseLink = "";
 $qtdArrAcoesRemover = (isset($arrAcoesRemover) && is_array($arrAcoesRemover) ? count($arrAcoesRemover) : 0);
 if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
 
-    if ($_GET['acao_externa'] == 'md_pet_usu_ext_indisponibilidade_consultar') {
+    if ($_GET['acao_externa'] == 'md_pet_usu_ext_indisponibilidade_consultar' && isset($arrAcoesRemover) && is_array($arrAcoesRemover) ) {
         $arrDados = explode("±", $_POST['hdnAnexos'], 3);
         array_push($arrAcoesRemover, $arrDados[0]);
     }
@@ -217,7 +217,7 @@ PaginaPeticionamentoExterna::getInstance()->fecharBody();
 PaginaPeticionamentoExterna::getInstance()->fecharHtml();
 
 $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
-$strLink = $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo=0&id_indisponibilidade_peticionamento=' . $_GET['id_indisponibilidade_peticionamento'] . PaginaSEI::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']);
+$strLink = $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo='.$_GET['id_orgao_acesso_externo'].'&id_indisponibilidade_peticionamento=' . $_GET['id_indisponibilidade_peticionamento'] . PaginaSEI::getInstance()->montarAncora($_GET['id_indisponibilidade_peticionamento']);
 ?>
 <script type="text/javascript">
 

@@ -65,7 +65,7 @@ class MdPetEmailNotificacaoRN extends InfraRN {
 		$objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 		
 		//variaveis basicas em uso no email
-		$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+		$linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'];
 
 		$strNomeTipoProcedimento = $objProcedimentoDTO->getStrNomeTipoProcedimento();
 		$strProtocoloFormatado = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();

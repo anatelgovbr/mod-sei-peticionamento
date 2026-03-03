@@ -83,7 +83,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
         $objTipoProcDTO = $objTipoProcRN->consultar( $objTipoProcDTO );
 
         //variaveis basicas em uso no email
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $objUnidadeDTO->getNumIdOrgao();
 
         $strNomeTipoProcedimento = $objProcedimentoDTO->getStrNomeTipoProcedimento();
         $strProtocoloFormatado = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();

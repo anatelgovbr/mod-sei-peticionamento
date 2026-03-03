@@ -340,7 +340,7 @@ PaginaSEIExterna::getInstance()->abrirStyle();
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
-$linkCadastroInteressado = PaginaSEIExterna::getInstance()->formatarXHTML( SessaoSEIExterna::getInstance()->assinarLink("controlador_externo.php?acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=&cnpj=&id_orgao_acesso_externo=0"));
+$linkCadastroInteressado = PaginaSEIExterna::getInstance()->formatarXHTML( SessaoSEIExterna::getInstance()->assinarLink("controlador_externo.php?acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=&cnpj=&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo']));
 ?>
 
 function cadastrarNovoInteressado(){
@@ -392,8 +392,8 @@ function abrirCadastroInteressadoAlterar(id, tipo){
 	$('#hdnIdEdicao').val( id );
 
 	<?php 
-	$strLinkEdicaoPF = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=true&id_orgao_acesso_externo=0');
-	$strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=0');
+	$strLinkEdicaoPF = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=true&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
+	$strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
 	?>
 
 	if( tipo == '<?= ContatoRN::$TN_PESSOA_FISICA ?>' ){

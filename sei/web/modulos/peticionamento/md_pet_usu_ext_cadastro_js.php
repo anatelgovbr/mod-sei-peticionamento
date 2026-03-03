@@ -12,9 +12,9 @@
  *
  */
 
-$strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_anexo&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
+$strLinkAnexos = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_anexo&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
 
-$strLinkPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_principal&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0');
+$strLinkPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=peticionamento_usuario_externo_upload_principal&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
 
 //Ação para upload de documento principal
 $strLinkUploadDocPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_upload_doc_principal');
@@ -1189,8 +1189,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         $('#hdnIdEdicao').val(id);
 
         <?php
-        $strLinkEdicaoPF = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=true&id_orgao_acesso_externo=0');
-        $strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=0');
+        $strLinkEdicaoPF = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cpf=true&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
+        $strLinkEdicaoPJ = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?edicao=true&acao=md_pet_interessado_cadastro&tipo_selecao=2&cnpj=true&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
         ?>
 
         if (tipo == 'Pessoa Física') {
@@ -1658,7 +1658,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 var strHashPrincipal = document.getElementById('hdnDocPrincipal').value;
                 var arrHashPrincipal = strHashPrincipal.split('±');
 
-                <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0')); ?>
+                <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
                 var urlBase = "<?= $linkBase ?>";
 
                 document.getElementById('hdnNomeArquivoDownload').value = arrHashPrincipal[0];
@@ -1818,7 +1818,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var strHashEssencial = document.getElementById('hdnDocEssencial').value;
             var arrHashEssencial = strHashEssencial.split('±');
 
-            <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0')); ?>
+            <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
             var urlBase = "<?= $linkBase ?>";
 
             document.getElementById('hdnNomeArquivoDownload').value = arrHashEssencial[0];
@@ -1973,7 +1973,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var strHashComplementar = document.getElementById('hdnDocComplementar').value;
             var arrHashComplementar = strHashComplementar.split('±');
 
-            <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=0')); ?>
+            <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
             var urlBase = "<?= $linkBase ?>";
 
             document.getElementById('hdnNomeArquivoDownload').value = arrHashComplementar[0];

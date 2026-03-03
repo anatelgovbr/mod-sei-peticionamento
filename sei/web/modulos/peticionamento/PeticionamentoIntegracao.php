@@ -1656,12 +1656,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
         //o botao so aparece se houver usuario externo logado (usuario de acesso externo avulso nao visualiza o botao)
         if ($id_usuario_externo != null && $id_usuario_externo != "" && $idAcessoExterno) {
 
-            $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0';
+            $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo='.$_GET['id_orgao_acesso_externo'];
             $hash = md5($strParam . '#' . SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() . '@' . SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
 
             $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
 
-            $link = $urlBase . '/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0&infra_hash=' . $hash;
+            $link = $urlBase . '/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo='.$_GET['id_orgao_acesso_externo'].'&infra_hash=' . $hash;
             $id_procedimento = isset($_GET['id_procedimento']) ? $_GET['id_procedimento'] : $objProcedimentoAPI->getIdProcedimento();
 
             $array[] = "<script> function criarForm(){ 
@@ -2250,7 +2250,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                         $id_acesso_ext_link = $idAcessoExterno;
                                         $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
                                         $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
-                                        $docLink .= "&id_orgao_acesso_externo=0";
+                                        $docLink .= "&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo'];
                                         SessaoSEIExterna::getInstance()->configurarAcessoExterno($id_acesso_ext_link);
 
                                         //se nao configurar acesso externo  ANTES, a assinatura do link falha

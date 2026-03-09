@@ -59,7 +59,7 @@ try {
     PaginaPeticionamentoExterna::getInstance()->processarPaginacao($objMdPetIndisponibilidadeDTO);
     $numRegistros = count($arrObjMdPetIndisponibilidadeDTO);
 
-    $strLinkPesquisar = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo=0'));
+    $strLinkPesquisar = PaginaPeticionamentoExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_listar&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']));
     $arrComandos[] = '<button type="button" accesskey="P" id="btnPesquisar" value="Pesquisar" onclick="pesquisar();" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
     $arrComandos[] = '<button type="button" accesskey="I" id="btnImprimir" value="Fechar" onclick="infraImprimirTabela();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
 
@@ -118,7 +118,7 @@ try {
 
             if ($bolAcaoConsultar) {
                 $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
-                $strResultado .= '<a href="' . $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_cadastro.php?id_orgao_acesso_externo=0&acao_externa=md_pet_usu_ext_indisponibilidade_consultar&id_indisponibilidade_peticionamento=' . $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade() . '" tabindex="' . PaginaPeticionamentoExterna::getInstance()->getProxTabTabela() . '"><img src="/infra_css/svg/consultar.svg?'.Icone::VERSAO.'" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_cadastro.php?id_orgao_acesso_externo='.$_GET['id_orgao_acesso_externo'].'&acao_externa=md_pet_usu_ext_indisponibilidade_consultar&id_indisponibilidade_peticionamento=' . $arrObjMdPetIndisponibilidadeDTO[$i]->getNumIdIndisponibilidade() . '" tabindex="' . PaginaPeticionamentoExterna::getInstance()->getProxTabTabela() . '"><img src="/infra_css/svg/consultar.svg?'.Icone::VERSAO.'" title="Consultar Indisponibilidade" alt="Consultar Indisponibilidade" class="infraImg" /></a>&nbsp;';
             }
 
             $strResultado .= '</td></tr>' . "\n";
@@ -288,7 +288,7 @@ PaginaPeticionamentoExterna::getInstance()->fecharHead();
 
 <?php
 PaginaPeticionamentoExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
-$urlForm = 'modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_consultar&id_orgao_acesso_externo=0';
+$urlForm = 'modulos/peticionamento/md_pet_usu_ext_indisponibilidade_lista.php?acao_externa=md_pet_usu_ext_indisponibilidade_consultar&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'];
 ?>
     <form id="frmIndisponibilidadePeticionamentoLista" method="post" action="<?= $strLinkPesquisar ?>">
 

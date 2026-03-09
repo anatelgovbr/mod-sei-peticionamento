@@ -1,5 +1,5 @@
 <?php
-$strLinkAjaxContatos = SessaoSEIExterna::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=md_pet_contato_pj_vinculada&id_orgao_acesso_externo=0');
+$strLinkAjaxContatos = SessaoSEIExterna::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=md_pet_contato_pj_vinculada&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo']);
 $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=cidade_montar_select_id_cidade_nome');
 ?>
 <script type="text/javascript">

@@ -149,7 +149,7 @@
 
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
                     <div id="divhipoteseLegal1" class="form-group mt-3" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
 				        <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
@@ -249,8 +249,8 @@
             </div>
 
             <div class="row mb-3">
-                <div class="col-sm-12 col-md-3 col-lg-2 col-xl-2">
-                    <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    <div class="form-group mt-3">
 
                         <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
 
@@ -285,7 +285,7 @@
 
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
                     <div class="form-group mt-3" id="divhipoteseLegal1" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
 
                         <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
@@ -349,8 +349,8 @@
             </div>
 
             <div class="row mb-3">
-                <div class="col-sm-12 col-md-3 col-lg-2 col-xl-2">
-                    <div class="form-group">
+                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    <div class="form-group mt-3">
 					
 					    <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
 
@@ -385,7 +385,7 @@
 
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
                     <div class="form-group mt-3" id="divhipoteseLegal1" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
 					
 					    <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
@@ -558,7 +558,7 @@
                     <? endif ?>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+            <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
                 <div class="form-group mt-3" id="divhipoteseLegal2" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
 
                     <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
@@ -766,7 +766,7 @@
                     <? endif ?>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+            <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
                 <div class="form-group mt-3" id="divhipoteseLegal3" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
 
                     <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>

@@ -32,7 +32,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.4.3';
+        return '4.4.4';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -544,6 +544,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_vinc_responsavellegal_cpf_consultar' :
+                $cpfNormalizado = $this->normalizarCpfCampo(isset($_POST['nuCpf']) ? $_POST['nuCpf'] : null);
+                if ($cpfNormalizado === null) {
+                    return '<dados-pf><success>false</success><msg>CPF informado invalido.</msg></dados-pf>';
+                }
+                $_POST['nuCpf'] = $cpfNormalizado;
                 $xml = MdPetIntegracaoRN::consultarContatoCpf($_POST);
                 break;
 
@@ -561,7 +566,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'criar_link_assinado_doc_selecionado':
-                $url = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_acesso_externo_protocolos&tipo_selecao=2&tipo_protocolo=disponibilizado&id_object=objLupaProtocolosDisponibilizados&id_procedimento=' . $_POST['idProcedimento'] . '&ids_documento=' . implode(",",$_POST['arrIdsDocumentosSelecionados']));
+                $idProcedimento = $this->normalizarInteiroPositivo(isset($_POST['idProcedimento']) ? $_POST['idProcedimento'] : null);
+                $arrIdsDocumentosSelecionados = $this->normalizarListaInteirosPositivos(isset($_POST['arrIdsDocumentosSelecionados']) ? $_POST['arrIdsDocumentosSelecionados'] : null);
+
+                if ($idProcedimento === null || empty($arrIdsDocumentosSelecionados)) {
+                    return '<Documento><Erro>Payload invalido para assinatura de link.</Erro></Documento>';
+                }
+
+                $url = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_acesso_externo_protocolos&tipo_selecao=2&tipo_protocolo=disponibilizado&id_object=objLupaProtocolosDisponibilizados&id_procedimento=' . $idProcedimento . '&ids_documento=' . implode(",", $arrIdsDocumentosSelecionados));
                 $xml = '<Documento>';
                 $xml .= '<Url>' . $url . '</Url>';
                 $xml .= '</Documento>';
@@ -570,6 +582,65 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         return $xml;
     }
+
+
+    private function normalizarInteiroPositivo($valor)
+    {
+        if ($valor === null || $valor === '' || !ctype_digit((string) $valor)) {
+            return null;
+        }
+
+        $valor = (int) $valor;
+        return $valor > 0 ? $valor : null;
+    }
+
+    private function normalizarListaInteirosPositivos($valores)
+    {
+        if (!is_array($valores) || empty($valores)) {
+            return [];
+        }
+
+        $normalizados = [];
+
+        foreach ($valores as $valor) {
+            $inteiro = $this->normalizarInteiroPositivo($valor);
+            if ($inteiro === null) {
+                return [];
+            }
+            $normalizados[] = $inteiro;
+        }
+
+        return array_values(array_unique($normalizados));
+    }
+
+    private function normalizarCpfCampo($valor)
+    {
+        if ($valor === null) {
+            return null;
+        }
+
+        $cpf = InfraUtil::retirarFormatacao($valor);
+        if (!preg_match('/^\d{11}$/', $cpf) || !InfraUtil::validarCpf($cpf)) {
+            return null;
+        }
+
+        return $cpf;
+    }
+
+    private function normalizarCnpjCampo($valor)
+    {
+        if ($valor === null) {
+            return null;
+        }
+
+        $cnpj = InfraUtil::retirarFormatacao($valor);
+        if (!preg_match('/^\d{14}$/', $cnpj) || !InfraUtil::validarCnpj($cnpj)) {
+            return null;
+        }
+
+        return $cnpj;
+    }
+
 
     public function processarControladorPublicacoes($strAcao)
     {
@@ -596,13 +667,30 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $xml = MdPetIntercorrenteProcessoRN::removerArquivoTemp($_POST['hdnTbDocumento']);
                 break;
             case 'md_pet_vinc_usu_ext_consulta_receita' :
+                $cnpjNormalizado = $this->normalizarCnpjCampo(isset($_POST['txtNumeroCnpj']) ? $_POST['txtNumeroCnpj'] : null);
+                if ($cnpjNormalizado === null) {
+                    return '<dados-pj><success>false</success><msg>CNPJ informado invalido.</msg></dados-pj>';
+                }
+                $_POST['txtNumeroCnpj'] = $cnpjNormalizado;
                 $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
                 $xml = $objMdPetIntegracaoRN->consultarReceitaWsResponsavelLegal($_POST);
                 break;
             case 'md_pet_vinc_usu_ext_consulta_vinculo' :
+                $cnpjNormalizado = $this->normalizarCnpjCampo(isset($_POST['txtNumeroCnpj']) ? $_POST['txtNumeroCnpj'] : null);
+                if ($cnpjNormalizado === null) {
+                    return '<dados-pj><success>false</success><msg>CNPJ informado invalido.</msg></dados-pj>';
+                }
+                $_POST['txtNumeroCnpj'] = $cnpjNormalizado;
                 $xml = MdPetVinculoINT::validarExistenciaVinculoCnpj($_POST);
                 break;
 	        case 'md_pet_vinc_usu_ext_consulta_vinculo_mesmo_cpf' :
+		        $cpfNormalizado = $this->normalizarCpfCampo(isset($_POST['cpfUsuarioLogado']) ? $_POST['cpfUsuarioLogado'] : null);
+		        $cnpjNormalizado = $this->normalizarCnpjCampo(isset($_POST['cnpjNovaVinculacao']) ? $_POST['cnpjNovaVinculacao'] : null);
+		        if ($cpfNormalizado === null || $cnpjNormalizado === null) {
+		            return '<dados-pj><success>false</success><msg>CPF/CNPJ informado invalido.</msg></dados-pj>';
+		        }
+		        $_POST['cpfUsuarioLogado'] = $cpfNormalizado;
+		        $_POST['cnpjNovaVinculacao'] = $cnpjNormalizado;
 		        $xml = MdPetVinculoINT::validarExistenciaVinculoCnpjOutroUsuarioMesmoCPF($_POST);
 		        break;
             case 'md_pet_vinc_usu_ext_dados_usuario' :
@@ -637,6 +725,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $xml = $objMdPetContatoRN->consultarContato($_POST);
                 break;
             case 'md_pet_vinc_usu_ext_usuario_externo' :
+                $cpfNormalizado = $this->normalizarCpfCampo(isset($_POST['nuCpf']) ? $_POST['nuCpf'] : null);
+                if ($cpfNormalizado === null) {
+                    return '<dados-pf><success>false</success><msg>CPF informado invalido.</msg></dados-pf>';
+                }
+                $_POST['nuCpf'] = $cpfNormalizado;
                 $xml = MdPetIntegracaoRN::consultarContatoCpf($_POST);
                 break;
             case 'md_pet_vinc_validar_representante' :
@@ -1656,12 +1749,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
         //o botao so aparece se houver usuario externo logado (usuario de acesso externo avulso nao visualiza o botao)
         if ($id_usuario_externo != null && $id_usuario_externo != "" && $idAcessoExterno) {
 
-            $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0';
+            $strParam = 'acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo='.$_GET['id_orgao_acesso_externo'];
             $hash = md5($strParam . '#' . SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() . '@' . SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
 
             $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
 
-            $link = $urlBase . '/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo=0&infra_hash=' . $hash;
+            $link = $urlBase . '/controlador_externo.php?acao=md_pet_intercorrente_usu_ext_cadastrar&id_orgao_acesso_externo='.$_GET['id_orgao_acesso_externo'].'&infra_hash=' . $hash;
             $id_procedimento = isset($_GET['id_procedimento']) ? $_GET['id_procedimento'] : $objProcedimentoAPI->getIdProcedimento();
 
             $array[] = "<script> function criarForm(){ 
@@ -2250,7 +2343,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                                         $id_acesso_ext_link = $idAcessoExterno;
                                         $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
                                         $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
-                                        $docLink .= "&id_orgao_acesso_externo=0";
+                                        $docLink .= "&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo'];
                                         SessaoSEIExterna::getInstance()->configurarAcessoExterno($id_acesso_ext_link);
 
                                         //se nao configurar acesso externo  ANTES, a assinatura do link falha

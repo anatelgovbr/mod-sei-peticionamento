@@ -44,7 +44,7 @@ switch ($_GET['acao']) {
 
             $texto .= '<p>verifique seus Poderes de Representação.</p>';
             
-            $url = "controlador_externo.php?acao=usuario_externo_controle_acessos&acao_origem=usuario_externo_logar&acao_origem=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=0";
+            $url = "controlador_externo.php?acao=usuario_externo_controle_acessos&acao_origem=usuario_externo_logar&acao_origem=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo'];
 	    $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
             
         } catch (Exception $e) {

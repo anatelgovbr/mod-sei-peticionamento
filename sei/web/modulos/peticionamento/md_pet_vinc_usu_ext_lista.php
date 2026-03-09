@@ -424,7 +424,7 @@ $arrComandos[] = '<button type="submit" accesskey="p" id="btnPesquisar" onclick=
 if ($flagMostrarBotao) {
     $arrComandos[] = '<button type="button" accesskey="N" id="btnNova" value="Nova Procuração Eletrônica" onclick="location.href=\'' . SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_cadastrar&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">N</span>ova Procuração Eletrônica</button>';
 }
-$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=usuario_externo_controle_acessos&id_orgao_acesso_externo=0')) . '\';" class="infraButton" >Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=usuario_externo_controle_acessos&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])) . '\';" class="infraButton" >Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 PaginaSEIExterna::getInstance()->montarDocType();
 PaginaSEIExterna::getInstance()->abrirHtml();

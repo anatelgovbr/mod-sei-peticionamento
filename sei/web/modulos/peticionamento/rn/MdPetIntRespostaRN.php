@@ -33,7 +33,7 @@ class MdPetIntRespostaRN extends InfraRN {
         if(count($arr) > 0) {
 
             //necessário fazer calculo manual de hash por estar adicionando parametros nao padrao via GET e por conta do calculo manual de hash dispensou o uso da funçao assinarLink
-            $strParam = 'acao=md_pet_responder_intimacao_usu_ext&id_orgao_acesso_externo=0&id_intimacao=' . $idIntimacao . '&id_aceite=' . $idAceite . '&id_procedimento=' . $idProcedimento;
+            $strParam = 'acao=md_pet_responder_intimacao_usu_ext&id_orgao_acesso_externo='.$_GET['id_orgao_acesso_externo'].'&id_intimacao=' . $idIntimacao . '&id_aceite=' . $idAceite . '&id_procedimento=' . $idProcedimento;
 
             $hash = md5($strParam.'#'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'@'.SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
 
@@ -97,7 +97,7 @@ class MdPetIntRespostaRN extends InfraRN {
             }
 
             //necessário fazer calculo manual de hash por estar adicionando parametros nao padrao via GET e por conta do calculo manual de hash dispensou o uso da funçao assinarLink
-            $strParam = 'acao=md_pet_responder_intimacao_usu_ext&id_orgao_acesso_externo=0' . $linkIdIntimacao . $linkIdAceite . '&id_procedimento=' . $idProcedimento;
+            $strParam = 'acao=md_pet_responder_intimacao_usu_ext&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'] . $linkIdIntimacao . $linkIdAceite . '&id_procedimento=' . $idProcedimento;
 
             $hash = md5($strParam.'#'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'@'.SessaoSEIExterna::getInstance()->getAtributo('RAND_USUARIO_EXTERNO'));
 

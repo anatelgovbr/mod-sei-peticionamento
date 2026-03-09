@@ -795,6 +795,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $objOrgaoDTO->retStrSigla();
         $objOrgaoDTO->retNumIdOrgao();
         $objOrgaoDTO->setNumIdOrgao($arrIdsOrgao, InfraDTO::$OPER_IN);
+        $objOrgaoDTO->setOrd('Sigla', InfraDTO::$TIPO_ORDENACAO_ASC);
         $objOrgaoRN = new OrgaoRN();
         $arrObjOrgaoRN = $objOrgaoRN->listarRN1353($objOrgaoDTO);
 

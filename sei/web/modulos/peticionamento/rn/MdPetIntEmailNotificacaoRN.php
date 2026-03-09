@@ -70,6 +70,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objUnidadeDTO = new UnidadeDTO();
         $objUnidadeDTO->retStrSigla();
         $objUnidadeDTO->retStrDescricao();
+        $objUnidadeDTO->retNumIdOrgao();
         $objUnidadeDTO->retStrSiglaOrgao();
         $objUnidadeDTO->retStrDescricaoOrgao();
         $objUnidadeDTO->retStrSitioInternetOrgaoContato();
@@ -152,6 +153,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objUnidadeDTO = new UnidadeDTO();
         $objUnidadeDTO->retStrSigla();
         $objUnidadeDTO->retStrDescricao();
+        $objUnidadeDTO->retNumIdOrgao();
         $objUnidadeDTO->retStrSiglaOrgao();
         $objUnidadeDTO->retStrDescricaoOrgao();
         $objUnidadeDTO->retStrSitioInternetOrgaoContato();
@@ -220,7 +222,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
             $arrDadosEmail['email_sistema'] = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA');
 
-            $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
+            $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=' . $objDocumentoDTO->getNumIdOrgaoUnidadeResponsavel();;
             ////////// CAMPOS EM COMUM - fim
 
             if ($arrObjMdPetIntRelDestinatarioDTO) {
@@ -378,6 +380,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                                 $objDocumentoRN = new DocumentoRN();
                                 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
+                                $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=' . $objDocumentoDTO->getNumIdOrgaoUnidadeResponsavel();
+
                                 $arrDadosEmail['documento_principal_intimacao'] = $dados[0];
                                 $arrDadosEmail['tipo_documento_principal_intimacao'] = $dados[1];
                                 if (!empty($dados[4])) {
@@ -436,7 +440,6 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
             $arrDadosEmail['email_sistema'] = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA');
 
-            $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
             ////////// CAMPOS EM COMUM - fim
 
             if (count($arrObjMdPetIntRelDestinatarioDTO) > 0) {
@@ -628,6 +631,8 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                                         $objDocumentoRN = new DocumentoRN();
                                         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
+                                        $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=' . $objDocumentoDTO->getNumIdOrgaoUnidadeResponsavel();
+
                                         $arrDadosEmail['documento_principal_intimacao'] = $dados[0];
                                         $arrDadosEmail['tipo_documento_principal_intimacao'] = $dados[1];
                                         if (!empty($dados[4])) {
@@ -676,7 +681,6 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         ////////// CAMPOS EM COMUM
 
-        $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
         $arrDadosEmail['sitio_internet_orgao'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
         $arrDadosEmail['sigla_sistema'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
 
@@ -735,6 +739,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             //Orgao
             $usuarioDTO = new UsuarioDTO();
             $usuarioDTO->retStrSiglaOrgao();
+            $usuarioDTO->retNumIdOrgao();
             $usuarioDTO->retStrDescricaoOrgao();
             $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
 
@@ -742,6 +747,9 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
 
             if ($usuarioDTO) {
+
+                $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=' . $usuarioDTO->getNumIdOrgao();
+
                 if (!empty(SessaoSEI::getInstance()->getNumIdUnidadeAtual())) {
                     $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
                 } else {
@@ -867,7 +875,6 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         ////////// CAMPOS EM COMUM
         
-        $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
         $arrDadosEmail['sitio_internet_orgao'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
         $arrDadosEmail['sigla_sistema'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
 
@@ -922,6 +929,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             //Orgao
             $usuarioDTO = new UsuarioDTO();
             $usuarioDTO->retStrSiglaOrgao();
+            $usuarioDTO->retNumIdOrgao();
             $usuarioDTO->retStrDescricaoOrgao();
             $usuarioDTO->setNumIdContato($arrObjMdPetVinculoDTO[0]->getNumIdContatoRepresentante());
 
@@ -929,6 +937,9 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
 
             if ($usuarioDTO) {
+
+                $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=' . $usuarioDTO->getNumIdOrgao();
+
                 if (!empty(SessaoSEI::getInstance()->getNumIdUnidadeAtual())) {
                     $idUnidade = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
                 } else {
@@ -967,7 +978,6 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         // CAMPOS EM COMUM
         $arrDadosEmail = [];
-        $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0';
         $arrDadosEmail['sitio_internet_orgao'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
         $arrDadosEmail['email_sistema'] = (new InfraParametro(BancoSEI::getInstance()))->getValor('SEI_EMAIL_SISTEMA');
         $arrDadosEmail['sigla_sistema'] = ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'SiglaSistema');
@@ -1031,11 +1041,14 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             // Orgao
             $usuarioDTO = new UsuarioDTO();
             $usuarioDTO->retStrSiglaOrgao();
+            $usuarioDTO->retNumIdOrgao();
             $usuarioDTO->retStrDescricaoOrgao();
             $usuarioDTO->setNumIdContato($objMdPetVincRepresentantDTO->getNumIdContatoProcurador());
             $usuarioDTO = (new UsuarioRN())->consultarRN0489($usuarioDTO);
 
             if ($usuarioDTO) {
+
+                $arrDadosEmail['link_login_usuario_externo'] = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=' . $usuarioDTO->getNumIdOrgao();
 
                 $idUnidade = !empty(SessaoSEI::getInstance()->getNumIdUnidadeAtual()) ? SessaoSEI::getInstance()->getNumIdUnidadeAtual() : SessaoSEIExterna::getInstance()->getNumIdUnidadeAtual();
                 
@@ -1075,7 +1088,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         //variaveis basicas em uso no email
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $arrDadosEmail['objUnidadeDTO']->getNumIdOrgao();
 
         //Monta Email
         $strDe = $objEmailSistemaDTO->getStrDe();
@@ -1129,7 +1142,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         //variaveis basicas em uso no email
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $arrDadosEmail['objUnidadeDTO']->getNumIdOrgao();
 
         //Monta Email
         $strDe = $objEmailSistemaDTO->getStrDe();
@@ -1187,7 +1200,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         //variaveis basicas em uso no email
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $arrDadosEmail['objUnidadeDTO']->getNumIdOrgao();
 
         $strDe = $objEmailSistemaDTO->getStrDe();
         $strDe = str_replace('@sigla_sistema@', SessaoSEI::getInstance()->getStrSiglaSistema(), $strDe);
@@ -1251,7 +1264,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         //variaveis basicas em uso no email
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $arrDadosEmail['objUnidadeDTO']->getNumIdOrgao();
 
         $strDe = $objEmailSistemaDTO->getStrDe();
         $strDe = str_replace('@sigla_sistema@', SessaoSEI::getInstance()->getStrSiglaSistema(), $strDe);
@@ -1318,7 +1331,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         //variaveis basicas em uso no email
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $arrDadosEmail['objUnidadeDTO']->getNumIdOrgao();
 
         //Monta Email
         $strDe = $objEmailSistemaDTO->getStrDe();
@@ -1372,7 +1385,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         //variaveis basicas em uso no email
-        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=0';
+        $linkLoginUsuarioExterno = SessaoSEIExterna::getInstance()->getStrPaginaLogin() . '&id_orgao_acesso_externo=' . $arrDadosEmail['objUnidadeDTO']->getNumIdOrgao();;
 
         //Monta Email
         $strDe = $objEmailSistemaDTO->getStrDe();

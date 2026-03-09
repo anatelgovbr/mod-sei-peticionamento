@@ -741,6 +741,52 @@ class MdPetProcessoRN extends InfraRN {
 			}
 				
 		}
+
+		//verificar se foi editado documento principal gerado pelo editor do SEI
+		if( isset( $arrParametros['docPrincipalConteudoHTML'] ) && $arrParametros['docPrincipalConteudoHTML'] != ""  ){
+						
+			$idTipoProc = $arrParametros['id_tipo_procedimento'];
+			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
+			$objMdPetTipoProcessoDTO->retTodos(true);
+			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
+			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
+			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
+						
+			//====================================
+			//gera no sistema as informações referentes ao documento principal
+			//====================================
+			//seiv3
+			$documentoDTOPrincipal = $this->montarDocumentoPrincipal( $objProcedimentoDTO, 
+					                          $objMdPetTipoProcessoDTO, $objUnidadeDTO, $arrParametros );
+
+			//====================================
+			//ASSINAR O DOCUMENTO PRINCIPAL
+			//====================================			
+			$this->assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTOPrincipal, $objProcedimentoDTO );
+			
+			//recibo do doc principal para consultar do usuario externo
+			$reciboDocAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
+			$objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+			
+			$reciboDocAnexoDTO->setNumIdAnexo( null );
+			$reciboDocAnexoDTO->setNumIdReciboPeticionamento( $reciboDTOBasico->getNumIdReciboPeticionamento() );
+			$reciboDocAnexoDTO->setNumIdDocumento( $documentoDTOPrincipal->getDblIdDocumento() );
+			$reciboDocAnexoDTO->setStrClassificacaoDocumento( MdPetRelReciboDocumentoAnexoRN::$TP_PRINCIPAL );
+			$reciboDocAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->cadastrar( $reciboDocAnexoDTO );
+
+		} 
+
+		//verificar se o documento principal é do tipo externo (ANEXO)
+		else {
+			
+			$idTipoProc = $arrParametros['id_tipo_procedimento'];
+			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
+			$objMdPetTipoProcessoDTO->retTodos(true);
+			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
+			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
+			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
+			
+		}
 		
 		if( !empty( $arrParametros['hdnDocEssencial'] )) {
 
@@ -943,54 +989,6 @@ class MdPetProcessoRN extends InfraRN {
 			if( count( $arrIdAnexoComplementar ) > 0 ){
 				SessaoSEIExterna::getInstance()->setAtributo('arrIdAnexoComplementar', $arrIdAnexoComplementar);
 			}
-			
-		}
-
-		$arrDocumentoDTO = array();
-
-		//verificar se foi editado documento principal gerado pelo editor do SEI
-		if( isset( $arrParametros['docPrincipalConteudoHTML'] ) && $arrParametros['docPrincipalConteudoHTML'] != ""  ){
-						
-			$idTipoProc = $arrParametros['id_tipo_procedimento'];
-			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
-			$objMdPetTipoProcessoDTO->retTodos(true);
-			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
-			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
-						
-			//====================================
-			//gera no sistema as informações referentes ao documento principal
-			//====================================
-			//seiv3
-			$documentoDTOPrincipal = $this->montarDocumentoPrincipal( $objProcedimentoDTO, 
-					                          $objMdPetTipoProcessoDTO, $objUnidadeDTO, $arrParametros );
-
-			//====================================
-			//ASSINAR O DOCUMENTO PRINCIPAL
-			//====================================			
-			$this->assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTOPrincipal, $objProcedimentoDTO );
-			
-			//recibo do doc principal para consultar do usuario externo
-			$reciboDocAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
-			$objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
-			
-			$reciboDocAnexoDTO->setNumIdAnexo( null );
-			$reciboDocAnexoDTO->setNumIdReciboPeticionamento( $reciboDTOBasico->getNumIdReciboPeticionamento() );
-			$reciboDocAnexoDTO->setNumIdDocumento( $documentoDTOPrincipal->getDblIdDocumento() );
-			$reciboDocAnexoDTO->setStrClassificacaoDocumento( MdPetRelReciboDocumentoAnexoRN::$TP_PRINCIPAL );
-			$reciboDocAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->cadastrar( $reciboDocAnexoDTO );
-
-		} 
-
-		//verificar se o documento principal é do tipo externo (ANEXO)
-		else {
-			
-			$idTipoProc = $arrParametros['id_tipo_procedimento'];
-			$objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
-			$objMdPetTipoProcessoDTO->retTodos(true);
-			$objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento( $idTipoProc );
-			$objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-			$objMdPetTipoProcessoDTO = $objMdPetTipoProcessoRN->listar( $objMdPetTipoProcessoDTO );
 			
 		}
 						

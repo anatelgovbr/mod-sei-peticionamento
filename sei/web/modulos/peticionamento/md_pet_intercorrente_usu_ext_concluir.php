@@ -80,7 +80,7 @@ try {
   			$objReciboDTO = $resultado['recibo'];
   			$documentoDTO = $resultado['documento'];
 
-  			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar&id_orgao_acesso_externo=0";
+  			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo'];
 
   			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);
 
@@ -113,7 +113,7 @@ try {
         	$objReciboDTO = $resultado['recibo'];
 	        $documentoDTO = $resultado['documento'];
 
-			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() . "&id_documento=" . $documentoDTO->getDblIdDocumento() . "&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_listar&acao_retorno=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=0";
+			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $objReciboDTO->getNumIdReciboPeticionamento() . "&id_documento=" . $documentoDTO->getDblIdDocumento() . "&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_listar&acao_retorno=md_pet_usu_ext_recibo_listar&id_orgao_acesso_externo=" . $_GET['id_orgao_acesso_externo'];
 
 
 	        $urlAssinada = SessaoSEIExterna::getInstance()->assinarLink($url);

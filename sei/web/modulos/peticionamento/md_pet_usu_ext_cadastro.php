@@ -394,6 +394,7 @@ PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 
 //inclusao de conteudos JavaScript adicionais
+require_once 'js/md_pet_global_js.php';
 require_once('md_pet_usu_ext_cadastro_js.php');
 ?>
 

@@ -44,6 +44,7 @@ function OnSubmitForm(){
 
 <?php
 PaginaSEIExterna::getInstance()->fecharJavaScript();
+require_once 'js/md_pet_global_js.php';
 require_once 'md_pet_vinc_usu_ext_js.php';
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
@@ -111,27 +112,6 @@ $('body').on('blur', '#txtNumeroCnpj', function(){
 $('body').on('submit', '#frmCNPJ', function(){
     consultarVinculoExistenteCnpj();
 });
-
-function resizeIFramePorConteudo(){
-	var id = 'ifrConteudoHTML';
-	var ifrm = document.getElementById(id);
-	ifrm.style.visibility = 'hidden';
-	ifrm.style.height = "10px"; 
-
-	var doc = ifrm.contentDocument? ifrm.contentDocument : ifrm.contentWindow.document;
-	doc = doc || document;
-	var body = doc.body, html = doc.documentElement;
-
-	var width = Math.max( body.scrollWidth, body.offsetWidth, 
-	                      html.clientWidth, html.scrollWidth, html.offsetWidth );
-	ifrm.style.width='100%';
-
-	var height = Math.max( body.scrollHeight, body.offsetHeight, 
-	                       html.clientHeight, html.scrollHeight, html.offsetHeight );
-	ifrm.style.height=height+'px';
-
-	ifrm.style.visibility = 'visible';
-}
 
 document.getElementById('ifrConteudoHTML').onload = function() {
 	resizeIFramePorConteudo();

@@ -606,6 +606,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
             <? PaginaSEIExterna::getInstance()->fecharAreaDados(); ?>
     </form>
 <?
+require_once 'js/md_pet_global_js.php';
 require_once 'js/BloqueioSsoSemSenha_js.php';
 require_once 'md_pet_procuracao_especial_cadastro_js.php';
 //PaginaSEIExterna::getInstance()->montarAreaDebug();

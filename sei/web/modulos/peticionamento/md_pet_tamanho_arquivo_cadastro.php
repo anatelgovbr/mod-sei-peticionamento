@@ -141,5 +141,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 <?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
+require_once 'js/md_pet_global_js.php';
 require_once 'md_pet_tamanho_arquivo_cadastro_js.php';
 ?>

@@ -10,7 +10,7 @@
     }
 
     function acaoDesativar(id,desc){
-      if (confirm("Confirma desativaÁ„o do Menu \""+desc+"\"?")){
+      if (confirm("Confirma desativa√ß√£o do Menu \""+desc+"\"?")){
         document.getElementById('hdnInfraItemId').value=id;
         document.getElementById('frmLista').action='<?=$strLinkDesativar?>';
         document.getElementById('frmLista').submit();
@@ -22,7 +22,7 @@
         alert('Nenhum menu selecionado.');
         return;
       }
-      if (confirm("Confirma a desativaÁ„o dos Menus selecionados?")){
+      if (confirm("Confirma a desativa√ß√£o dos Menus selecionados?")){
         document.getElementById('hdnInfraItemId').value='';
         document.getElementById('frmLista').action='<?=$strLinkDesativar?>';
         document.getElementById('frmLista').submit();
@@ -30,7 +30,7 @@
     }
 
     function acaoReativar(id,desc){
-      if (confirm("Confirma reativaÁ„o do Menu \""+desc+"\"?")){
+      if (confirm("Confirma reativa√ß√£o do Menu \""+desc+"\"?")){
         document.getElementById('hdnInfraItemId').value=id;
         document.getElementById('frmLista').action='<?=$strLinkReativar?>';
         document.getElementById('frmLista').submit();
@@ -42,7 +42,7 @@
         alert('Nenhum Menu selecionado.');
         return;
       }
-      if (confirm("Confirma a reativaÁ„o dos Menus selecionados?")){
+      if (confirm("Confirma a reativa√ß√£o dos Menus selecionados?")){
         document.getElementById('hdnInfraItemId').value='';
         document.getElementById('frmLista').action='<?=$strLinkReativar?>';
         document.getElementById('frmLista').submit();
@@ -50,7 +50,7 @@
     }
 
     function acaoExcluir(id,desc){
-      if (confirm("Confirma exclus„o do Menu \""+desc+"\"?")){
+      if (confirm("Confirma exclus√£o do Menu \""+desc+"\"?")){
         document.getElementById('hdnInfraItemId').value=id;
         document.getElementById('frmLista').action='<?=$strLinkExcluir?>';
         document.getElementById('frmLista').submit();
@@ -62,7 +62,7 @@
         alert('Nenhum menu selecionado.');
         return;
       }
-      if (confirm("Confirma a exclus„o dos Menus selecionadas?")){
+      if (confirm("Confirma a exclus√£o dos Menus selecionadas?")){
         document.getElementById('hdnInfraItemId').value='';
         document.getElementById('frmLista').action='<?=$strLinkExcluir?>';
         document.getElementById('frmLista').submit();

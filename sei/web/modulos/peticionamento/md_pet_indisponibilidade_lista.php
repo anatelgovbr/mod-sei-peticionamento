@@ -388,6 +388,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
     </form>
 <?
+require_once 'js/md_pet_global_js.php';
 require_once('md_pet_indisponibilizade_lista_js.php');
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

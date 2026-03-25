@@ -907,13 +907,25 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     }
 
     /*
-     * Método principal responsável por coordenar todo o processamento , regras e cadastros do
-     * peticionamento intercorrente e resposta a intimação
-     * chamando várias classes e métodos auxiliares para realizar operaçoes especificas
-     * */
-    protected function cadastrarControlado($params)
+     * Metodo principal responsavel por coordenar o processamento do
+     * peticionamento intercorrente em etapas controladas menores.
+     */
+    public function cadastrar($params)
     {
+        $dadosCadastro = $this->prepararCadastroIntercorrente($params);
 
+        try {
+            $dadosCadastro = $this->incluirDocumentosCadastroIntercorrente($dadosCadastro);
+            return $this->finalizarCadastroIntercorrente($dadosCadastro);
+        } catch (Exception $e) {
+            $this->tratarFalhaCadastroIntercorrente($dadosCadastro, $e);
+        }
+
+        return false;
+    }
+
+    protected function prepararCadastroIntercorrenteControlado($params)
+    {
         // Bloco de validações
         $this->validarCadastro($params);
 
@@ -983,6 +995,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $params['diretoProcessoIndicado'] = false;
 
         $arrUnidadeProcesso = null;
+        $qtdArrUnidadeProcesso = 0;
+        $gerouNovoProcedimento = false;
 
         if (!$params['isRespostaIntimacao'] == true && (($params['isRespostaIntercorrente'] == true && $objCriterioIntercorrenteDTO->getStrSinAtivo() == "N") || $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S'
                 || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado))
@@ -996,6 +1010,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $params['id_procedimento'] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
             //Se possui critérios intercorrentes setta os documentos no processo existente
             $this->setProcedimentoDTO($objSaidaGerarProcedimentoAPI->getIdProcedimento());
+            $gerouNovoProcedimento = true;
 
             //SE o criterio existe, e NAO é o criterio padrao, tenta incluir documento no proprio processo (caso o mesmo esteja aberto) ou reabrir o processo (caso o mesmo esteja fechado)
         } else if ($params['isRespostaIntimacao'] == true || ($objCriterioIntercorrenteDTO != null && $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'N')) {
@@ -1239,6 +1254,24 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
         $idUnidadeRespostaIntimacao = $params['isRespostaIntimacao'] ? $idUnidadeProcesso : null;
 
+        return array(
+            'params' => $params,
+            'arrDadosRecibo' => $arrDadosRecibo,
+            'arrobjParticipanteProcPrinc' => $arrobjParticipanteProcPrinc,
+            'idProcedimentoProcesso' => $idProcedimentoProcesso,
+            'idUnidadeProcesso' => $idUnidadeProcesso,
+            'idUsuarioAtribuicao' => $idUsuarioAtribuicao,
+            'idUnidadeRespostaIntimacao' => $idUnidadeRespostaIntimacao,
+            'gerouNovoProcedimento' => $gerouNovoProcedimento,
+            'arrObjReciboDocPet' => array()
+        );
+    }
+
+    protected function incluirDocumentosCadastroIntercorrenteControlado($dadosCadastro)
+    {
+        $params = $dadosCadastro['params'];
+        $idUnidadeRespostaIntimacao = $dadosCadastro['idUnidadeRespostaIntimacao'];
+
         // Forca o Nivel de Acesso parametrizado na Administracao para Intercorrente e Resposta da Intimacao
         $versaoPeticionamento = intval(preg_replace("/\D/", "", (new InfraParametro(BancoSEI::getInstance()))->getValor('VERSAO_MODULO_PETICIONAMENTO', false)));
         if($versaoPeticionamento >= 410){
@@ -1265,6 +1298,23 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $arrDocApi = MdPetIntercorrenteINT::montarArrDocumentoAPI($params['id_procedimento'], $params['hdnTbDocumento']);
 
         $arrObjReciboDocPet = $this->incluirDocumentosApi($this->getProcedimentoDTO(), $arrDocApi, $idUnidadeRespostaIntimacao);
+
+        $dadosCadastro['params'] = $params;
+        $dadosCadastro['arrObjReciboDocPet'] = $arrObjReciboDocPet;
+
+        return $dadosCadastro;
+    }
+
+    protected function finalizarCadastroIntercorrenteControlado($dadosCadastro)
+    {
+        $params = $dadosCadastro['params'];
+        $arrDadosRecibo = $dadosCadastro['arrDadosRecibo'];
+        $arrObjReciboDocPet = $dadosCadastro['arrObjReciboDocPet'];
+        $idProcedimentoProcesso = $dadosCadastro['idProcedimentoProcesso'];
+        $idUnidadeProcesso = $dadosCadastro['idUnidadeProcesso'];
+        $idUsuarioAtribuicao = $dadosCadastro['idUsuarioAtribuicao'];
+        $arrobjParticipanteProcPrinc = $dadosCadastro['arrobjParticipanteProcPrinc'];
+        $atividadeRN = new AtividadeRN();
 
         if (isset($params['isRespostaIntimacao'])) {
             $arrDadosRecibo['isRespostaIntimacao'] = true;
@@ -1457,6 +1507,66 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         return false;
     }
 
+    private function tratarFalhaCadastroIntercorrente($dadosCadastro, Exception $e)
+    {
+        try {
+            $this->realizarRollbackCadastroIntercorrente($dadosCadastro);
+        } catch (Exception $eRollback) {
+            throw new InfraException('Erro no cadastro do peticionamento intercorrente e falha ao reverter as etapas anteriores.', $eRollback);
+        }
+
+        throw $e;
+    }
+
+    private function realizarRollbackCadastroIntercorrente($dadosCadastro)
+    {
+        $objReciboDTO = $this->getReciboDTO();
+        if ($objReciboDTO != null && is_numeric($objReciboDTO->getNumIdReciboPeticionamento())) {
+            $objRelReciboDocDTO = new MdPetRelReciboDocumentoAnexoDTO();
+            $objRelReciboDocDTO->retNumIdReciboDocumentoAnexoPeticionamento();
+            $objRelReciboDocDTO->setNumIdReciboPeticionamento($objReciboDTO->getNumIdReciboPeticionamento());
+            $objRelReciboDocRN = new MdPetRelReciboDocumentoAnexoRN();
+            foreach ($objRelReciboDocRN->listar($objRelReciboDocDTO) as $objRelReciboDocItemDTO) {
+                $objRelReciboDocRN->excluir($objRelReciboDocItemDTO);
+            }
+            (new MdPetReciboRN())->excluir($objReciboDTO);
+        }
+
+        $arrDocumentos = $this->getDocumentos();
+        $objDocumentoReciboDTO = $this->getDocumentoRecibo();
+        if ($objDocumentoReciboDTO != null) {
+            $arrDocumentos[] = $objDocumentoReciboDTO;
+        }
+
+        foreach (array_reverse($arrDocumentos) as $documentoDTO) {
+            if ($documentoDTO instanceof SaidaIncluirDocumentoAPI) {
+                $idDocumento = $documentoDTO->getIdDocumento();
+            } else {
+                $idDocumento = $documentoDTO->getDblIdDocumento();
+            }
+            if (!is_numeric($idDocumento)) {
+                continue;
+            }
+            $objDocumentoDTO = new DocumentoDTO();
+            $objDocumentoDTO->retDblIdDocumento();
+            $objDocumentoDTO->retStrStaDocumento();
+            $objDocumentoDTO->retStrSinBloqueado();
+            $objDocumentoDTO->setDblIdDocumento($idDocumento);
+            try {
+                $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
+            } catch (Exception $eDocumento) {
+                continue;
+            }
+            $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EDITOR_INTERNO);
+            $objDocumentoDTO->setStrSinBloqueado('N');
+            (new DocumentoBD($this->getObjInfraIBanco()))->alterar($objDocumentoDTO);
+            (new DocumentoRN())->excluirRN0006($objDocumentoDTO);
+        }
+
+        if (!empty($dadosCadastro['gerouNovoProcedimento'])) {
+            (new ProcedimentoRN())->excluirRN0280($this->getProcedimentoDTO());
+        }
+    }
     private function _controlarAcessoExterno($arrDados, $arrObjDocumentos, $objReciboDTO)
     {
         $idProcedimento = array_key_exists('idProcedimento', $arrDados) ? $arrDados['idProcedimento'] : null;

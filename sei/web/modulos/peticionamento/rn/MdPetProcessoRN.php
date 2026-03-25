@@ -251,6 +251,7 @@ class MdPetProcessoRN extends InfraRN {
 	}
 
 	protected function gerarProcedimentoInternoControlado( $arrParametros ){
+		
 		try {
 			
 			$contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
@@ -287,10 +288,11 @@ class MdPetProcessoRN extends InfraRN {
 			}
 			
 			//========================================================================================================================
-			//TIPO DE PROCESSO CONFIGURADO COM MULTIPLAS UNIDADES -> pegar a unidade a partir da UF selecionada pelo usuario na combo
+			//TIPO DE PROCESSO CONFIGURADO COM MULTIPLAS UNIDADES -> pegar a unidade a partir da Cidade da UF selecionada pelo usuario na combo
 			//========================================================================================================================
-			else if( $arrMdPetRelTpProcessoUnidDTO != null && count( $arrMdPetRelTpProcessoUnidDTO ) > 1 ){		
-				$idUnidade = $arrParametros['hdnIdUnidadeMultiplaSelecionada'];
+			else if( $arrMdPetRelTpProcessoUnidDTO != null && count( $arrMdPetRelTpProcessoUnidDTO ) > 1 ){	
+
+				$idUnidade = $arrParametros['hdnIdUnidadeMultiplaSelecionada']; // IdCidade selecionada
 			}
 						
 			//obter unidade configurada no "Tipo de Processo para peticionamento"

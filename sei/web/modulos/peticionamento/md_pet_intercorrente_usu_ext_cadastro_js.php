@@ -483,14 +483,6 @@
         }
     }
 
-    function verificarTabelaVazia(qtdLinha) {
-        var tbDocumento = document.getElementById('tbDocumento');
-        var ultimoRegistro = tbDocumento.rows.length == qtdLinha;
-        if (ultimoRegistro) {
-            tbDocumento.style.display = 'none';
-        }
-    }
-
     function iniciarTabelaDinamicaDocumento() {
         objTabelaDinamicaDocumento = new infraTabelaDinamica('tbDocumento', 'hdnTbDocumento', false, true);
         objTabelaDinamicaDocumento.gerarEfeitoTabela = true;
@@ -626,23 +618,6 @@
         return true;
     }
 
-    function dataHoraLocal() {
-        return new Date().toLocaleDateString('pt-BR', {
-            hour12: false,
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-        });
-    }
-
-    function isInternetExplorer() {
-        var ua = window.navigator.userAgent;
-        var msie = ua.indexOf('MSIE ') > 0; // IE 10-
-        var trident = ua.indexOf('Trident/') > 0; //IE 11;
-
-        return msie || trident;
-    }
-
     function criarRegistroTabelaDocumento(arr) {
         var nomeArquivo = arr['nome'];
         var nomeArquivoHash = arr['nome_upload'];
@@ -709,15 +684,6 @@
         objTabelaDinamicaDocumento.adicionar(dados);
     }
 
-    function corrigirPosicaoAcaoExcluir() {
-        var trs = document.getElementById('tbDocumento').getElementsByTagName('tr');
-        for (var i = 1; i < trs.length; i++) {
-            var tds = trs[i].getElementsByTagName('td');
-            var td = tds[tds.length - 1];
-            td.setAttribute('valign', 'center');
-        }
-    }
-
     function limparCampoDocumento() {
         document.getElementById('fileArquivo').value = '';
         document.getElementById('selTipoDocumento').value = 'null';
@@ -739,11 +705,6 @@
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
         document.getElementById('divTipoConferenciaBotao').style.display = 'block';
-    }
-
-    function limparTabelaDocumento() {
-        objTabelaDinamicaDocumento.limpar();
-        verificarTabelaVazia(1);
     }
 
     function validarRemoverProcesso() {
@@ -772,12 +733,6 @@
            location.href=location.href;
         }
         return false;
-    }
-
-    function gerarIdDocumento() {
-        var hdnIdDocumento = document.getElementById('hdnIdDocumento');
-        hdnIdDocumento.value = parseInt(hdnIdDocumento.value) + 1;
-        return hdnIdDocumento.value;
     }
 
     function adicionarDocumento() {
@@ -879,19 +834,6 @@
         if(infraGetCodigoTecla(e)==13) {
             document.getElementById('btnValidar').onclick();
         }
-    }
-
-
-    function returnElementFocus() {
-        var focused = document.activeElement;
-        if (!focused || focused == document.body) {
-            focused = null;
-        }
-        else if (document.querySelector){
-            focused = document.querySelector(":focus")
-        }
-
-        return focused;
     }
 
     <?php if(!empty($nivelAcessoDoc)): ?>

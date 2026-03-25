@@ -198,7 +198,6 @@ require_once 'md_pet_intercorrente_criterio_cadastro_css.php';
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-//javascript
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
@@ -352,5 +351,6 @@ PaginaSEI::getInstance()->fecharAreaDados();
 <?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
+require_once 'js/md_pet_global_js.php';
 require_once 'md_pet_intercorrente_criterio_cadastro_js.php';
 ?>

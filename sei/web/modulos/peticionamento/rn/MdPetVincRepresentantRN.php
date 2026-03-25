@@ -859,7 +859,25 @@ class MdPetVincRepresentantRN extends InfraRN
                 $objDocumento = $this->_encaminhamentoParaCriarDocumento($params, null, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
 
                 //BUSCAR PROCEDIMENTO DA PROCURACAO
-                $objProcedimento = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($idVinculo);
+        
+                $idProcedimento = null;
+                
+                $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                $objMdPetVinculoDTO->retDblIdProtocolo();
+                $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
+                $objMdPetVinculoBD = (new MdPetVinculoBD(BancoSEI::getInstance()))->consultar($objMdPetVinculoDTO);
+                if ($objMdPetVinculoBD) {
+                    $idProcedimento = $objMdPetVinculoBD->getDblIdProtocolo();
+                }
+
+                if (!is_null($idProcedimento)) {
+
+                    $objProcedimentoDTO = new ProcedimentoDTO();
+                    $objProcedimentoDTO->retTodos(true);
+                    $objProcedimentoDTO->setDblIdProcedimento($idProcedimento);
+                    $objProcedimento = (new ProcedimentoBD(BancoSEI::getInstance()))->consultar($objProcedimentoDTO);
+
+                }
 
                 //SE A OPERAO FOR EXECUTADA MANUALMENTE VIA SISTEMA DEVE ASSINAR E TRAVAR DOCUMENTO
                 $this->_assinarTravarDocumentoGerado($objProcedimento, $params, $objDocumento);

@@ -214,6 +214,7 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
 
 <?
 PaginaSEIExterna::getInstance()->fecharJavaScript();
+require_once 'js/md_pet_global_js.php';
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 $strTipo = $_POST['selTipo'];
@@ -268,7 +269,7 @@ $strTipo = $_POST['selTipo'];
                     <div class="col-sm-12 col-md-4 col-lg-5 col-xl-5">
                         <div class="form-group">
                             <label for="selTipo" class="infraLabelOpcional">Tipo de Peticionamento:</label>
-                            <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect form-control">
+                            <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect form-select">
                                 <option <? if ($_POST['selTipo'] == ""){ ?> selected="selected" <? } ?>"
                                 value="">Todos</option>
                                 <option <? if ($_POST['selTipo'] == MdPetReciboRN::$TP_RECIBO_NOVO) { ?> selected="selected" <? } ?>

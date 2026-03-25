@@ -5,10 +5,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.4.0';
+    private $versaoAtualDesteModulo = '4.5.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0', '4.5.0');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -92,7 +92,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '2.37.1';
+            $numVersaoInfraRequerida = '2.45.1';
 	        if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
@@ -169,6 +169,9 @@ class MdPetAtualizadorSeiRN extends InfraRN
 		            $this->instalarv430();
                 case '4.3.0':
                     $this->instalarv440();
+                    break;
+                case '4.4.0':
+                    $this->instalarv450();
                     break;
 
                 default:
@@ -2784,6 +2787,8 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 
         $objInfraMetaBD->adicionarChavePrimaria('md_pet_fila_consulta_rf', 'pk_md_pet_fila_consulta_rf', array('id_md_pet_fila_consulta_rf'));
 
+	    BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_fila_consulta_rf', 1);
+
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_rel_cont_sit_rf ( 
               id_contato ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
               cpf_cnpj ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
@@ -2866,10 +2871,36 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
 		$objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 		$objInfraMetaBD->setBolValidarIdentificador(true);
 		
-		$this->logar('>>>> INCLUINDO SEQUENCE PARA PROCESSAMENTO DA FILA DE CONSLTA À RECEITA FEDERAL');
-		if (count($objInfraMetaBD->obterTabelas('seq_md_pet_fila_consulta_rf')) == 0) {
-			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_fila_consulta_rf', 1);
-		}
+		$this->logar('>>>> REMOVENDO TABELA E SEQUENCE MD_PET_FILA_CONSULTA_RF');
+        if (BancoSEI::getInstance() instanceof InfraOracle) {
+
+            $sql = 'SELECT lower(sequence_name) as nome FROM all_sequences 
+                    WHERE lower(sequence_owner) = \'' . strtolower(BancoSEI::getInstance()->getUsuario()) . '\' 
+                    AND lower(sequence_name) = \'' . strtolower('seq_md_pet_fila_consulta_rf') . '\'';
+
+            $ret = BancoSEI::getInstance()->consultarSql($sql);
+
+            if(!empty($ret)){
+                BancoSEI::getInstance()->executarSql('drop sequence seq_md_pet_fila_consulta_rf');
+            }
+
+        } else if (BancoSEI::getInstance() instanceof InfraPostgreSql) {
+
+            $sql = "SELECT sequence_name FROM information_schema.sequences WHERE sequence_name = 'seq_md_pet_fila_consulta_rf'";
+            $ret = BancoSEI::getInstance()->consultarSql($sql);
+
+            if(!empty($ret)){
+                BancoSEI::getInstance()->executarSql('drop sequence seq_md_pet_fila_consulta_rf');
+            }
+        } else {
+
+            if (count($objInfraMetaBD->obterTabelas('seq_md_pet_fila_consulta_rf')) == 0) {
+    			BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_fila_consulta_rf', 1);
+    		}
+
+            BancoSEI::getInstance()->executarSql('DROP TABLE seq_md_pet_fila_consulta_rf');
+        }
+        BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_fila_consulta_rf');
 		
 		$this->logar('>>>> MIGRANDO PARÂMETROS DO UTILIDADES PARA O PETICIONAMENTO');
 		
@@ -3150,6 +3181,20 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
         $nmVersao = '4.4.0';
 
         $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv450()
+    {
+        $nmVersao = '4.5.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $strDescricao = 'Agendamento responsável por enviar para Anatel dados de versão dos módulos mantidos pela Anatel.';
+        $strComando = 'MdPetAgendamentoAutomaticoRN::EnviarDadosSistemaModulo';
+        $strPeriodicidadeComplemento = '1/0';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_DIA_SEMANA);
 
         $this->atualizarNumeroVersao($nmVersao);
     }
@@ -5074,6 +5119,40 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
         
 		$this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $parStrNumeroVersao .' DO '. $this->nomeDesteModulo .' REALIZADA COM SUCESSO NA BASE DO SEI');
 	}
+
+    private function _cadastrarNovoAgendamento($strDescricao = null, $strComando = null, $strPeriodicidadeComplemento = 0, $strPeriodicidade = null)
+    {
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        SessaoInfra::setObjInfraSessao(SessaoSEI::getInstance());
+        $strEmailErro = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
+
+        $msgLogar = 'Inserção de Novo Agendamento: ' . $strDescricao;
+        $this->logar($msgLogar);
+
+        if (is_null($strPeriodicidade)) {
+            $strPeriodicidade = InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_HORA;
+        }
+
+        if (!is_null($strDescricao) && !is_null($strComando)) {
+
+            $strComando = trim($strComando);
+
+            $infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
+            $infraAgendamentoDTO->setStrDescricao($strDescricao);
+            $infraAgendamentoDTO->setStrComando($strComando);
+            $infraAgendamentoDTO->setStrSinAtivo('S');
+            $infraAgendamentoDTO->setStrStaPeriodicidadeExecucao($strPeriodicidade);
+            $infraAgendamentoDTO->setStrPeriodicidadeComplemento($strPeriodicidadeComplemento);
+            $infraAgendamentoDTO->setStrParametro(null);
+            $infraAgendamentoDTO->setDthUltimaExecucao(null);
+            $infraAgendamentoDTO->setDthUltimaConclusao(null);
+            $infraAgendamentoDTO->setStrSinSucesso('S');
+            $infraAgendamentoDTO->setStrEmailErro($strEmailErro);
+
+            $infraAgendamentoRN = new InfraAgendamentoTarefaRN();
+            $infraAgendamentoRN->cadastrar($infraAgendamentoDTO);
+        }
+    }
 
 }
 

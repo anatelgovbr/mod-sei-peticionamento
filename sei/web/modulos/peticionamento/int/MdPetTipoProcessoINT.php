@@ -51,102 +51,83 @@ class MdPetTipoProcessoINT extends InfraINT
     public static function montarSelectOrgaoTpProcessoCidadePetNovo($id)
     {
 
+        $idUF = $id['idUf'];
+        $idOrgao = $id['idOrgao'];
+        $idTipoProcedimento = $id['idTpProc'];
+        $verificaRestricaoOrgao = true;
 
+        $arrRestricaoOrgao = (new MdPetTipoProcessoRN())->restricaoOrgao();
+        
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
-        $objMdPetTipoProcessoDTO->retTodos();
+        $objMdPetTipoProcessoDTO->retStrNomeProcesso();
+        $objMdPetTipoProcessoDTO->retStrOrientacoes();
+        $objMdPetTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
         if (array_key_exists("idTpProc", $id)) {
-            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($id['idTpProc']);
+            $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($idTipoProcedimento);
+        }else{
+	        if (count($arrRestricaoOrgao) > 0 && $verificaRestricaoOrgao) {
+		        $objMdPetTipoProcessoDTO->setNumIdProcedimento($arrRestricaoOrgao, infraDTO::$OPER_NOT_IN);
+	        }
         }
-        $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-        $arrObjMdPetTipoProcessoRN = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
-        $arrTipoPet = InfraArray::converterArrInfraDTO($arrObjMdPetTipoProcessoRN, 'IdTipoProcessoPeticionamento');
+        $arrObjMdPetTipoProcessoRN = (new MdPetTipoProcessoRN())->listar($objMdPetTipoProcessoDTO);
+        $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($arrObjMdPetTipoProcessoRN, 'IdTipoProcessoPeticionamento');
 
-        $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
         $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-        $objMdPetRelTpProcessoUnidDTO->retTodos();
+        $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrIdTipoProcessoPeticionamento, InfraDTO::$OPER_IN);
         $objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
+        $objMdPetRelTpProcessoUnidDTO->retNumIdTipoProcessoPeticionamento();
         $objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
-        $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($arrTipoPet, InfraDTO::$OPER_IN);
-        $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-        $arrIdsUnidade = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
+        $arrobjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
+        
+        // Todas as Unidades configuradas para o Tipo de Processo:
+        $arrIdsUnidades = InfraArray::converterArrInfraDTO($arrobjMdPetRelTpProcessoUnidDTO, 'IdUnidade');
 
         $objUnidadeDTO = new UnidadeDTO();
+        $objUnidadeDTO->retNumIdCidadeContato();
         $objUnidadeDTO->retNumIdContato();
-        if ($id['idOrgao'] != "") {
-            $objUnidadeDTO->setNumIdOrgao($id['idOrgao']);
-        }
-        $objUnidadeDTO->setNumIdUnidade($arrIdsUnidade, InfraDTO::$OPER_IN);
-        $objUnidadeRN = new UnidadeRN();
-        $arrIdsContato = $objUnidadeRN->listarRN0127($objUnidadeDTO);
-        $arrIdsContato = InfraArray::converterArrInfraDTO($arrIdsContato, 'IdContato');
-
-
-        $objContatoDTO = new ContatoDTO();
-        $objContatoDTO->setNumIdContato($arrIdsContato, InfraDTO::$OPER_IN);
-        $objContatoDTO->setNumIdUf($id['idUf']);
-        $objContatoDTO->retStrNomeCidade();
-        $objContatoDTO->retNumIdCidade();
-        $objContatoDTO->retNumIdContato();
-        $objContatoRN = new ContatoRN();
-        $arrIdsContato = $objContatoRN->listarRN0325($objContatoDTO);
-        $arrIdContato = InfraArray::converterArrInfraDTO($arrIdsContato, 'IdContato');
-
-        $objUnidadeDTO = new UnidadeDTO();
-        $objUnidadeDTO->setNumIdContato($arrIdContato, InfraDTO::$OPER_IN);
-        if ($id['idOrgao'] != "") {
-            $objUnidadeDTO->setNumIdOrgao($id['idOrgao']);
-        }
         $objUnidadeDTO->retNumIdUnidade();
-        $objUnidadeRN = new UnidadeRN();
-        $arrIdsContato = $objUnidadeRN->listarRN0127($objUnidadeDTO);
-        $arrIdUnidade = InfraArray::converterArrInfraDTO($arrIdsContato, 'IdUnidade');
-
-
-        $arrUni = array();
-        $arrCid = array();
-        $arrUnidadePrincipal = array();
-        //PEticionamento processo novo
-        //Recuperando Unidade
-        foreach ($arrIdUnidade as $idUnidade) {
-
-            $objUnidadeDTO = new UnidadeDTO();
-            $objUnidadeDTO->setNumIdUnidade($idUnidade);
-            $objUnidadeDTO->retNumIdContato();
-            $objUnidadeRN = new UnidadeRN();
-            $arrIdUnidade = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
-            $arrUnidadePrincipal[] = $arrIdUnidade->getNumIdContato();
+        if (!empty($idOrgao)) {
+            $objUnidadeDTO->setNumIdOrgao($idOrgao);
         }
+        $objUnidadeDTO->setNumIdUnidade($arrIdsUnidades, InfraDTO::$OPER_IN);
+        $arrObjUnidadeDTO = (new UnidadeRN())->listarRN0127($objUnidadeDTO);
 
-        $objContatoDTO = new ContatoDTO();
-        $objContatoDTO->setNumIdContato($arrUnidadePrincipal, infraDTO::$OPER_IN);
-        $objContatoDTO->retStrNomeCidade();
-        $objContatoDTO->retNumIdContato();
-        $objContatoDTO->setOrdStrNomeCidade(InfraDTO::$TIPO_ORDENACAO_ASC);
-        $objContatoRN = new ContatoRN();
-        $arrIdsContato = $objContatoRN->listarRN0325($objContatoDTO);
+        // die(var_dump($arrIdsUnidades));
 
-        foreach ($arrIdsContato as $value) {
+        $xml = '<itens>';
 
-            $objUnidadeDTO = new UnidadeDTO();
-            $objUnidadeDTO->setNumIdContato($value->getNumIdContato());
-            $objUnidadeDTO->retNumIdUnidade();
-            $objUnidadeRN = new UnidadeRN();
-            $arrIdUnidade = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
+        // Agora, pegar a UF e Cidade do Contato, seja ele Contato ou Contato vinculado
+        foreach ($arrObjUnidadeDTO as $objUnidade) {
+            
+            $contatoAssociadoDTO = new ContatoDTO();
+            $contatoAssociadoDTO->retNumIdUf();
+            $contatoAssociadoDTO->retStrSiglaUf();
+            $contatoAssociadoDTO->retNumIdContato();
+            $contatoAssociadoDTO->retStrNomeCidade();
+            $contatoAssociadoDTO->retNumIdCidade();
 
-            $arrUni[] = $arrIdUnidade->getNumIdUnidade();
-            $arrCid[] = $value->getStrNomeCidade();
-        }
+            $contatoAssociadoDTO->retStrSinEnderecoAssociado();
+            $contatoAssociadoDTO->retNumIdContatoAssociado();
+            $contatoAssociadoDTO->retNumIdUfContatoAssociado();
+            $contatoAssociadoDTO->retStrSiglaUfContatoAssociado();
+            $contatoAssociadoDTO->retNumIdCidadeContatoAssociado();
+            $contatoAssociadoDTO->retStrNomeCidadeContatoAssociado();
 
+            $contatoAssociadoDTO->setNumIdContato($objUnidade->getNumIdContato());
+            $objContatoAssociado = (new ContatoRN())->consultarRN0324($contatoAssociadoDTO);
 
-        $xml = '';
-        $xml .= '<itens>';
-        if (count($arrCid) > 0 && count($arrUni) > 0) {
-            for ($i = 0; $i < count($arrUni); $i++) {
-                $xml .= '<item id="' . $arrUni[$i] . '"';
-                $xml .= ' descricao="' . $arrCid[$i] . '"';
-                $xml .= '></item>';
+            if($objContatoAssociado->getStrSinEnderecoAssociado() == 'S' && $objContatoAssociado->isSetNumIdContatoAssociado()){
+                if($objContatoAssociado->getNumIdUfContatoAssociado() == $idUF){
+                    $xml .= '<item id="'.$objContatoAssociado->getNumIdCidadeContatoAssociado().'" descricao="'.$objContatoAssociado->getStrNomeCidadeContatoAssociado().'" idUnidade="'.$objUnidade->getNumIdUnidade().'"></item>';
+                }
+            }else{
+                if($objContatoAssociado->getNumIdUf() == $idUF){
+                    $xml .= '<item id="'.$objContatoAssociado->getNumIdCidade().'" descricao="'.$objContatoAssociado->getStrNomeCidade().'" idUnidade="'.$objUnidade->getNumIdUnidade().'"></item>';
+                }
             }
+
         }
+
         $xml .= '</itens>';
 
         return $xml;
@@ -188,6 +169,7 @@ class MdPetTipoProcessoINT extends InfraINT
 
         $objUnidadeDTO = new UnidadeDTO();
         $objUnidadeDTO->retNumIdCidadeContato();
+        $objUnidadeDTO->retNumIdContato();
         $objUnidadeDTO->retNumIdUnidade();
         if (!empty($idOrgao)) {
             $objUnidadeDTO->setNumIdOrgao($idOrgao);
@@ -195,8 +177,35 @@ class MdPetTipoProcessoINT extends InfraINT
         $objUnidadeDTO->setNumIdUnidade($arrIdsUnidade, InfraDTO::$OPER_IN);
         $arrIdsCidadeArr = (new UnidadeRN())->listarRN0127($objUnidadeDTO);
         
-        $arrIdsCidade   = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdCidadeContato');
         $arrUnidades    = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdUnidade');
+
+        // Agora, pegar a UF e Cidade do Contato, seja ele Contato ou Contato vinculado
+        foreach ($arrIdsCidadeArr as $key => $value) {
+            
+            $contatoAssociadoDTO = new ContatoDTO();
+            $contatoAssociadoDTO->retStrSiglaUf();
+            $contatoAssociadoDTO->retNumIdContato();
+            $contatoAssociadoDTO->retStrNomeCidade();
+            $contatoAssociadoDTO->retNumIdCidade();
+            $contatoAssociadoDTO->retStrSinEnderecoAssociado();
+            $contatoAssociadoDTO->retNumIdContatoAssociado();
+            $contatoAssociadoDTO->retNumIdUfContatoAssociado();
+            $contatoAssociadoDTO->retStrSiglaUfContatoAssociado();
+            $contatoAssociadoDTO->retNumIdCidadeContatoAssociado();
+            $contatoAssociadoDTO->retStrNomeCidadeContatoAssociado();
+            $contatoAssociadoDTO->setNumIdContato($value->getNumIdContato());
+
+            $contatoAssociadoDTO = (new ContatoRN())->consultarRN0324($contatoAssociadoDTO);
+            
+            // Carrega os dados do Contato Associado ao Contato
+            if($contatoAssociadoDTO->getStrSinEnderecoAssociado() == 'S' && $contatoAssociadoDTO->isSetStrSiglaUfContatoAssociado()){
+                // Faz o replace do valor caso esteja marcado Usar endereço do Contato vinculado
+                $value->setNumIdCidadeContato($contatoAssociadoDTO->getNumIdCidadeContatoAssociado());
+            }
+
+        }
+
+        $arrIdsCidade   = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdCidadeContato');
         
         if(!empty($arrIdsCidade)){
 	        $objUnidadeDTO = new CidadeDTO();
@@ -240,16 +249,33 @@ class MdPetTipoProcessoINT extends InfraINT
 
                 $objContatoDTO = new ContatoDTO();
                 $objContatoDTO->setNumIdContato($arrIdUnidade->getNumIdContato());
+                $objContatoDTO->retNumIdUf();
+                $objContatoDTO->retStrNomeCidade();
+
+                $objContatoDTO->retStrSinEnderecoAssociado();
+                $objContatoDTO->retNumIdContatoAssociado();
+                $objContatoDTO->retNumIdUfContatoAssociado();
+                $objContatoDTO->retStrSiglaUfContatoAssociado();
+                $objContatoDTO->retNumIdCidadeContatoAssociado();
+                $objContatoDTO->retStrNomeCidadeContatoAssociado();
+                
                 if (!empty($idUF)) {
                     $objContatoDTO->setNumIdUf($idUF);
+                    $objContatoDTO->setNumIdUfContatoAssociado($idUF);
                 }
-                $objContatoDTO->retStrNomeCidade();
+                
                 $objContatoDTO->setOrdStrNomeCidade(InfraDTO::$TIPO_ORDENACAO_ASC);
+                $objContatoDTO->setOrdStrNomeCidadeContatoAssociado(InfraDTO::$TIPO_ORDENACAO_ASC);
+
                 $arrIdsContato = (new ContatoRN())->listarRN0325($objContatoDTO);
 
                 foreach ($arrIdsContato as $key => $value) {
+
+                    $usarEnderecoContatoAssociado = $value->getStrSinEnderecoAssociado() == 'S' && $value->isSetStrSiglaUfContatoAssociado();
+                    
                     $arrUni [] = $idUnidade;
-                    $arrCid [] = $value->getStrNomeCidade();
+                    $arrCid [] = $usarEnderecoContatoAssociado ? $value->getStrNomeCidadeContatoAssociado() : $value->getStrNomeCidade();
+                    
                 }
             }
 
@@ -314,12 +340,33 @@ class MdPetTipoProcessoINT extends InfraINT
 			        $objContatoDTO->retStrSiglaUf();
 			        $objContatoDTO->setOrdStrSiglaUf(InfraDTO::$TIPO_ORDENACAO_ASC);
 			        $objContatoDTO->retStrNomeCidade();
+
+                    $objContatoDTO->retStrSinEnderecoAssociado();
+                    $objContatoDTO->retNumIdContatoAssociado();
+                    $objContatoDTO->retNumIdUfContatoAssociado();
+                    $objContatoDTO->retStrSiglaUfContatoAssociado();
+                    $objContatoDTO->retNumIdCidadeContatoAssociado();
+                    $objContatoDTO->retStrNomeCidadeContatoAssociado();
+
 			        $arrObjContato = (new ContatoRN())->listarRN0325($objContatoDTO);
 			        $arrIdsContatoDistinct = infraArray::distinctArrInfraDTO($arrObjContato, 'IdUf');
 			
 			        foreach ($arrIdsContatoDistinct as $key => $value) {
-				        $ufId[] = $value->getNumIdUf();
-				        $uf[] = $value->getStrSiglaUf();
+
+                        // Carrega os dados do Contato Associado ao Contato
+                
+                        if($value->getStrSinEnderecoAssociado() == 'S' && $value->isSetStrSiglaUfContatoAssociado()){
+
+                            $ufId[] = $value->getNumIdUfContatoAssociado();
+				            $uf[]   = $value->getStrSiglaUfContatoAssociado();
+
+                        }else{
+
+                            $ufId[] = $value->getNumIdUf();
+				            $uf[]   = $value->getStrSiglaUf();
+
+                        }
+				        
 			        }
 			
 		        }
@@ -867,13 +914,30 @@ class MdPetTipoProcessoINT extends InfraINT
 
 
         $objContatoDTO = new ContatoDTO();
-        $objContatoDTO->setNumIdContato($arrIdsContato, InfraDTO::$OPER_IN);
         $objContatoDTO->retNumIdUf();
         $objContatoDTO->retStrSiglaUf();
         $objContatoDTO->retStrNomeCidade();
+
+        $objContatoDTO->retStrSinEnderecoAssociado();
+        $objContatoDTO->retNumIdContatoAssociado();
+        $objContatoDTO->retNumIdUfContatoAssociado();
+        $objContatoDTO->retStrSiglaUfContatoAssociado();
+        $objContatoDTO->retNumIdCidadeContatoAssociado();
+        $objContatoDTO->retStrNomeCidadeContatoAssociado();
+
+        $objContatoDTO->setNumIdContato($arrIdsContato, InfraDTO::$OPER_IN);
         $objContatoDTO->setOrdStrSiglaUf(InfraDTO::$TIPO_ORDENACAO_ASC);
-        $objContatoRN = new ContatoRN();
-        $arrIdsContato = $objContatoRN->listarRN0325($objContatoDTO);
+        $objContatoDTO->setOrdStrSiglaUfContatoAssociado(InfraDTO::$TIPO_ORDENACAO_ASC);
+
+        $arrIdsContato = (new ContatoRN())->listarRN0325($objContatoDTO);
+
+        foreach ($arrIdsContato as $key => $value) {
+            if($value->getStrSinEnderecoAssociado() == 'S' && $value->isSetStrSiglaUfContatoAssociado()){
+                $value->setNumIdUf($value->getNumIdUfContatoAssociado());
+                $value->setStrSiglaUf($value->getStrSiglaUfContatoAssociado());
+            }
+        }
+
         $arrIdsContatoDistinct = infraArray::distinctArrInfraDTO($arrIdsContato, 'IdUf');
 
         return $arrIdsContatoDistinct;
@@ -923,18 +987,33 @@ class MdPetTipoProcessoINT extends InfraINT
         $arrIdsContato = $objUnidadeRN->listarRN0127($objUnidadeDTO);
         $arrIdsContato = InfraArray::converterArrInfraDTO($arrIdsContato, 'IdContato');
 
-
         $objContatoDTO = new ContatoDTO();
         $objContatoDTO->setNumIdContato($arrIdsContato, InfraDTO::$OPER_IN);
         $objContatoDTO->setNumIdUf($id['idUf']);
         $objContatoDTO->retStrNomeCidade();
         $objContatoDTO->retNumIdCidade();
+
+        $objContatoDTO->retStrSinEnderecoAssociado();
+        $objContatoDTO->retNumIdContatoAssociado();
+        $objContatoDTO->retNumIdUfContatoAssociado();
+        $objContatoDTO->retStrSiglaUfContatoAssociado();
+        $objContatoDTO->retNumIdCidadeContatoAssociado();
+        $objContatoDTO->retStrNomeCidadeContatoAssociado();
+
         $objContatoDTO->setOrdStrNomeCidade(InfraDTO::$TIPO_ORDENACAO_ASC);
-        $objContatoRN = new ContatoRN();
-        $arrIdsContato = $objContatoRN->listarRN0325($objContatoDTO);
+        $objContatoDTO->setOrdStrNomeCidadeContatoAssociado(InfraDTO::$TIPO_ORDENACAO_ASC);
+
+        $arrIdsContato = (new ContatoRN())->listarRN0325($objContatoDTO);
+
+        foreach ($arrIdsContato as $contato) {
+            if($arrIdsContato->getStrSinEnderecoAssociado() == 'S' && $arrIdsContato->isSetStrSiglaUfContatoAssociado()){
+                $arrIdsContato->setNumIdCidade($arrIdsContato->getNumIdCidadeContatoAssociado());
+            }
+        }
+
+        
 
         $arrIdsContatoDistinct = infraArray::distinctArrInfraDTO($arrIdsContato, 'IdCidade');
-
 
         return $arrIdsContatoDistinct;
 

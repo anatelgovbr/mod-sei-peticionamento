@@ -146,7 +146,6 @@ require_once 'md_pet_intercorrente_criterio_padrao_css.php';
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
-//javascript
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
@@ -290,7 +289,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
         <? PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos); ?>
     </form>
-
+    <?php require_once 'js/md_pet_global_js.php'; ?>
     <?php require_once 'md_pet_intercorrente_criterio_padrao_js.php'; ?>
     <?php require_once 'md_pet_forcar_nivel_acesso_doc_bloco_js.php'; ?>
 

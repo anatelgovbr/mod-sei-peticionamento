@@ -690,5 +690,6 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 <?
 PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
+require_once 'js/md_pet_global_js.php';
 require_once 'md_pet_vinc_usu_ext_lista_js.php';
 ?>

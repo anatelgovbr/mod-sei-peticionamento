@@ -236,7 +236,9 @@ PaginaSEI::getInstance()->abrirStyle();
 require_once('md_pet_intimacao_eletronica_lista_css.php');
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
-PaginaSEI::getInstance()->abrirJavaScript(); ?>
+require_once 'js/md_pet_global_js.php';
+PaginaSEI::getInstance()->abrirJavaScript();
+?>
 
     function inicializar() {
         if ('<?= $_GET['acao'] ?>' == 'md_pet_intimacao_eletronica_listar') {
@@ -263,14 +265,6 @@ PaginaSEI::getInstance()->abrirJavaScript(); ?>
 
     function fechar(){
         window.history.back();
-    }
-
-    function removerMarcacoesLinha(nomeClass){
-        var objs = document.getElementsByClassName(nomeClass);
-
-        for (var i = 0; i < objs.length; i++) {
-            objs[i].className = nomeClass;
-        }
     }
 
     $('body').on('submit', '#frmIntimacoesLista', function(e){

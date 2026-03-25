@@ -540,13 +540,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         }
     }
 
-    function iniciarObjAjaxSelectHipoteseLegal() {
-        objAjaxSelectHipoteseLegal = new infraAjaxMontarSelect('selHipoteseLegal', '<?php echo $strUrlAjaxMontarHipoteseLegal ?>');
-        objAjaxSelectHipoteseLegal.processarResultado = function() {
-            return 'nivelAcesso=' + RESTRITO;
-        }
-    }
-
     function iniciarTabelaDinamicaDocumento() {
         objTabelaDinamicaDocumento = new infraTabelaDinamica('tbDocumento', 'hdnTbDocumento', false, true);
         objTabelaDinamicaDocumento.gerarEfeitoTabela = true;
@@ -681,15 +674,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         };
     }
 
-
-    function verificarTabelaVazia(qtdLinha) {
-        var tbDocumento = document.getElementById('tbDocumento');
-        var ultimoRegistro = tbDocumento.rows.length == qtdLinha;
-        if (ultimoRegistro) {
-            tbDocumento.style.display = 'none';
-        }
-    }
-
     function limparCampoDocumento() {
         document.getElementById('fileArquivo').value = '';
         document.getElementById('selTipoDocumento').value = 'null';
@@ -712,18 +696,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
         document.getElementById('divTipoConferenciaBotao').style.display = 'block';
-    }
-
-    function limparTabelaDocumento() {
-        objTabelaDinamicaDocumento.limpar();
-        verificarTabelaVazia(1);
-    }
-
-
-    function gerarIdDocumento() {
-        var hdnIdDocumento = document.getElementById('hdnIdDocumento');
-        hdnIdDocumento.value = parseInt(hdnIdDocumento.value) + 1;
-        return hdnIdDocumento.value;
     }
 
     function validarDocumento() {
@@ -855,22 +827,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         objTabelaDinamicaDocumento.adicionar(dados);
     }
 
-    function corrigirPosicaoAcaoExcluir() {
-        var trs = document.getElementById('tbDocumento').getElementsByTagName('tr');
-        for (var i = 1; i < trs.length; i++) {
-            var tds = trs[i].getElementsByTagName('td');
-            var td = tds[tds.length - 1];
-            td.setAttribute('valign', 'center');
-        }
-    }
-
-    function salvarValorHipoteseLegal(el) {
-        if (EXIBIR_HIPOTESE_LEGAL) {
-            var hdnHipoteseLegal = document.getElementById('hdnHipoteseLegal');
-            hdnHipoteseLegal.value = el.value;
-        }
-    }
-
     function controlarEnterValidarProcesso(e) {
         var focus = returnElementFocus();
         if (infraGetCodigoTecla(e) == 13) {
@@ -883,17 +839,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         if (infraGetCodigoTecla(e) == 13) {
             document.getElementById('btnValidarUsuario').onclick();
         }
-    }
-
-    function returnElementFocus() {
-        var focused = document.activeElement;
-        if (!focused || focused == document.body) {
-            focused = null;
-        } else if (document.querySelector) {
-            focused = document.querySelector(":focus")
-        }
-
-        return focused;
     }
 
     function verificarHipoteseLegal() {

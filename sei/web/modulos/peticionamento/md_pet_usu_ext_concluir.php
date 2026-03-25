@@ -6,6 +6,50 @@
 *
 */
 
+function removerAtributosPagina(){
+
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
+	}
+
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoEssencial') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoEssencial');
+	}
+
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoComplementar') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoComplementar');
+	}
+
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
+	}
+
+	if( SessaoSEIExterna::getInstance()->isSetAtributo('idDocPrincipalGerado') ){
+		SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
+	}
+
+}
+
+function excluirArquivosUploadTemp(){
+
+	$arquivos_enviados = array();
+
+	if( isset( $_POST['hdnDocPrincipal'] ) ){
+		$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocPrincipal']));
+	}
+	if( isset( $_POST['hdnDocEssencial'] ) ){
+		$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocEssencial']));
+	}
+	if( isset( $_POST['hdnDocComplementar'] ) ){
+		$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocComplementar']));
+	}
+
+	foreach ($arquivos_enviados as $arquivo_enviado) {
+		unlink(DIR_SEI_TEMP.'/'.$arquivo_enviado[8]);
+	}
+
+}
+
 try {
 
   require_once dirname(__FILE__).'/../../SEI.php';
@@ -95,65 +139,68 @@ try {
 			$objMdPetProcessoRN->validarSenha( $arrParam );
             $params['pwdsenhaSEI'] = '***********';
             $_POST['pwdsenhaSEI'] = '***********';
-			
-			// Cria o processo
-			$arrDadosProcessoComRecibo = $objMdPetProcessoRN->gerarProcedimento( $_POST );
 
-			// Pega o ID do recibo
-			$idRecibo = $arrDadosProcessoComRecibo[0]->getNumIdReciboPeticionamento();
+			// Antes de criar o processo verifica se os Documentos anexados ainda estão disponíveis na TEMP
 
-			// Realizar classificacao da metas ODS do processo
-			if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno()){
-                PeticionamentoIntegracao::classificarMetaOds($arrDadosProcessoComRecibo[1]->getDblIdProcedimento());
-            }
+			$criarProcesso = true;
 
-			// Excluir arquivos temporarios
-			$arquivos_enviados = array();
 			if( isset( $_POST['hdnDocPrincipal'] ) ){
-				$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocPrincipal']));
-			}
-			if( isset( $_POST['hdnDocEssencial'] ) ){
-				$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocEssencial']));
-			}
-			if( isset( $_POST['hdnDocComplementar'] ) ){
-				$arquivos_enviados = array_merge ($arquivos_enviados, PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocComplementar']));
+
+				$docPrincipal = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocPrincipal']);
+				if(!empty($docPrincipal) && count($docPrincipal) > 0){
+					if (!file_exists(DIR_SEI_TEMP . '/' . $docPrincipal[0][8])) {
+
+						$criarProcesso = false;
+
+						removerAtributosPagina();
+
+						echo "<script>
+								alert('O formulário ficou aberto por muito tempo sem envio. Os arquivos anexados foram removidos automaticamente por segurança. Por favor, refaça o upload dos documentos.');
+								window.top.document.getElementById('tbDocumentoPrincipal').querySelector('tbody').innerHTML = '';
+								window.top.document.getElementById('hdnDocPrincipal').value = '';
+								window.top.document.getElementById('tbDocumentoEssencial').querySelector('tbody').innerHTML = '';
+								window.top.document.getElementById('hdnDocEssencial').value = '';
+								window.top.document.getElementById('tbDocumentoComplementar').querySelector('tbody').innerHTML = '';
+								window.top.document.getElementById('hdnDocComplementar').value = '';
+								window.top.document.querySelectorAll('div[id^=\"divInfraSparklingModalClose\"].sparkling-modal-close').forEach(el => el.click());
+							</script>";
+
+						die;
+
+					}
+				}
+
 			}
 
-			foreach ($arquivos_enviados as $arquivo_enviado) {
-				unlink(DIR_SEI_TEMP.'/'.$arquivo_enviado[8]);
+			if($criarProcesso){
+				
+				// Cria o processo
+				$arrDadosProcessoComRecibo = $objMdPetProcessoRN->gerarProcedimento( $_POST );
+
+				// Pega o ID do recibo
+				$idRecibo = $arrDadosProcessoComRecibo[0]->getNumIdReciboPeticionamento();
+
+				// Realizar classificacao da metas ODS do processo
+				if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno()){
+					PeticionamentoIntegracao::classificarMetaOds($arrDadosProcessoComRecibo[1]->getDblIdProcedimento());
+				}
+
+				// Excluir arquivos temporarios
+				excluirArquivosUploadTemp();
+				removerAtributosPagina();
+
+				// Fecha a janela de assinatura e redireciona para a tela de detalhes do Peticionamento
+				$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
+				$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
+
+				echo "<script>";
+				echo "window.parent.location = '" . $urlAssinada . "';";
+				echo " window.parent.focus();";
+				echo " window.close();";
+				echo "</script>";
+				die;
+			
 			}
-
-			// Remove atributos da sessao
-			if( SessaoSEIExterna::getInstance()->isSetAtributo('docPrincipalConteudoHTML') ){
-				SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
-			}
-
-			if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoPrincipal') ){
-				SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoPrincipal');
-			}
-
-			if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoEssencial') ){
-				SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoEssencial');
-			}
-
-			if( SessaoSEIExterna::getInstance()->isSetAtributo('arrIdAnexoComplementar') ){
-				SessaoSEIExterna::getInstance()->removerAtributo('arrIdAnexoComplementar');
-			}
-
-			if( SessaoSEIExterna::getInstance()->isSetAtributo('idDocPrincipalGerado') ){
-				SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
-			}
-
-			// Fecha a janela de assinatura e redireciona para a tela de detalhes do Peticionamento
-			$url = "controlador_externo.php?id_md_pet_rel_recibo_protoc=" . $idRecibo ."&acao=md_pet_usu_ext_recibo_listar&acao_origem=md_pet_usu_ext_recibo_consultar";
-			$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink( $url );
-
-			echo "<script>";
-  			echo "window.parent.location = '" . $urlAssinada . "';";
-  			echo " window.parent.focus();";
-  			echo " window.close();";
-  			echo "</script>";
-  			die;
 			
   		}
 
@@ -438,7 +485,9 @@ function assinar(){
 		var selUFAberturaProcesso = window.parent.document.getElementById('selUFAberturaProcesso');
 
 		if( selUFAberturaProcesso != null ) {
-			document.getElementById('hdnIdUnidadeMultiplaSelecionada').value = selUFAberturaProcesso.value;
+
+			document.getElementById('hdnIdUnidadeMultiplaSelecionada').value = $(selUFAberturaProcesso).find(':selected').data('idunidade');
+
 		}
 
 		// loop through options in select list

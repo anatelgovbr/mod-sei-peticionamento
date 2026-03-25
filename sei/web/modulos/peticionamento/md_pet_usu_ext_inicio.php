@@ -281,6 +281,7 @@ try {
 $hashAnexo = "";
 $idAnexo = "";
 
+    // (new InfraException())->lancarValidacao(MdPetUsuarioExternoRN::$MSG_GERAR_SENHA, InfraPagina::$TIPO_MSG_AVISO);
 PaginaSEIExterna::getInstance()->montarDocType();
 PaginaSEIExterna::getInstance()->abrirHtml();
 PaginaSEIExterna::getInstance()->abrirHead();
@@ -446,6 +447,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 </div>
 <?
 
+require_once 'js/md_pet_global_js.php';
 require_once 'js/BloqueioSsoSemSenha_js.php';
 require_once 'md_pet_usu_ext_inicio_js.php';
 PaginaSEIExterna::getInstance()->fecharAreaDados();

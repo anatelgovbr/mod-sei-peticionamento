@@ -192,16 +192,45 @@ class MdPetVincTpProcessoINT extends InfraINT {
                 $contatoAssociadoDTO->retNumIdContato();
                 $contatoAssociadoDTO->retStrNomeCidade();
                 $contatoAssociadoDTO->retNumIdCidade();
+
+                $contatoAssociadoDTO->retStrSinEnderecoAssociado();
+                $contatoAssociadoDTO->retNumIdContatoAssociado();
+                $contatoAssociadoDTO->retNumIdUfContatoAssociado();
+                $contatoAssociadoDTO->retStrSiglaUfContatoAssociado();
+                $contatoAssociadoDTO->retNumIdCidadeContatoAssociado();
+                $contatoAssociadoDTO->retStrNomeCidadeContatoAssociado();
+                
                 $contatoAssociadoDTO->setNumIdContato($objUnidadeDTO->getNumIdContato());
                 $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324($contatoAssociadoDTO);
+
+
                 //so recuperar caso se trata de unidade que possua UF configurada]
-                if ($contatoAssociadoDTO != null && $contatoAssociadoDTO->isSetStrSiglaUf() && $contatoAssociadoDTO->getStrSiglaUf() != null) {
-                    $xml .= '<uf>' . $contatoAssociadoDTO->getStrSiglaUf() . '</uf>';
-                    $xml .= '<cidade>' . PaginaSEI::tratarHTML($contatoAssociadoDTO->getStrNomeCidade()) . '</cidade>';
-                    $xml .= '<idCidade>' . $contatoAssociadoDTO->getNumIdCidade() . '</idCidade>';
+                if ($contatoAssociadoDTO != null) {
+
+                    if($contatoAssociadoDTO->getStrSinEnderecoAssociado() == 'S' && $contatoAssociadoDTO->isSetStrSiglaUfContatoAssociado()){
+                        
+                        $xml .= '<uf>' . $contatoAssociadoDTO->getStrSiglaUfContatoAssociado() . '</uf>';
+                        $xml .= '<cidade>' . PaginaSEI::tratarHTML($contatoAssociadoDTO->getStrNomeCidadeContatoAssociado()) . '</cidade>';
+                        $xml .= '<idCidade>' . $contatoAssociadoDTO->getNumIdCidadeContatoAssociado() . '</idCidade>';
+
+                    }else{
+
+                        if($contatoAssociadoDTO->isSetStrSiglaUf() && $contatoAssociadoDTO->getStrSiglaUf() != null){
+                        
+                            $xml .= '<uf>' . $contatoAssociadoDTO->getStrSiglaUf() . '</uf>';
+                            $xml .= '<cidade>' . PaginaSEI::tratarHTML($contatoAssociadoDTO->getStrNomeCidade()) . '</cidade>';
+                            $xml .= '<idCidade>' . $contatoAssociadoDTO->getNumIdCidade() . '</idCidade>';
+                        
+                        }
+
+                    }
+
                 }
+
             }
+
         }
+
         $xml .= "</resposta>";
 
         return $xml;

@@ -22,7 +22,7 @@ switch ($_GET['acao']) {
         
         try {
 
-            $strTitulo          = 'Responder IntimaÁ„o EletrÙnica n„o Permitida';
+            $strTitulo          = 'Responder Intima√ß√£o Eletr√¥nica n√£o Permitida';
             $arrComandos[]      = '<button type="button" accesskey="C" name="sbmFechar" id="sbmFechar"  onclick="window.close();" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
             
             $arrUsuarioSituacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocolo, $idAcessoExterno);
@@ -30,10 +30,10 @@ switch ($_GET['acao']) {
 
             if(is_array($arrImpedimentos) && count($arrImpedimentos) > 0){
                 
-                $texto = 'VocÍ n„o possui mais permiss„o para responder a IntimaÁ„o EletrÙnica conforme abaixo:<br><br>Destinat·rios n„o permitidos:<br>';
+                $texto = 'Voc√™ n√£o possui mais permiss√£o para responder a Intima√ß√£o Eletr√¥nica conforme abaixo:<br><br>Destinat√°rios n√£o permitidos:<br>';
                 foreach($arrImpedimentos as $impedimento){
                     if(!in_array($impedimento['cpfCnpjDestinatario'], $impedidos)){
-                        $texto .= '&nbsp;&nbsp;&nbsp;&nbsp;- '. $impedimento['nomeDestinatario'] . ' (' . InfraUtil::formatarCpfCnpj($impedimento['cpfCnpjDestinatario']) . '), verifique seus Poderes de RepresentaÁ„o.<br>';
+                        $texto .= '&nbsp;&nbsp;&nbsp;&nbsp;- '. $impedimento['nomeDestinatario'] . ' (' . InfraUtil::formatarCpfCnpj($impedimento['cpfCnpjDestinatario']) . '), verifique seus Poderes de Representa√ß√£o.<br>';
                         $impedidos[] = $impedimento['cpfCnpjDestinatario'];
                     }
                 }
@@ -48,7 +48,7 @@ switch ($_GET['acao']) {
 
         break;
     default:
-        throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+        throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
 }
 
 PaginaSEIExterna::getInstance()->montarDocType();

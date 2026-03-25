@@ -153,12 +153,6 @@
         objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
     }
 
-    function removerProcessoAssociado(remover) {
-        if (remover === '1') {
-            objLupaTipoProcesso.remover();
-        }
-    }
-
     function validarCadastro() {
         objLupaTipoProcesso.atualizar();
 
@@ -233,22 +227,5 @@
 
     function OnSubmitForm() {
         return validarCadastro();
-    }
-
-    function getPercentTopStyle(element) {
-        var parent = element.parentNode,
-            computedStyle = getComputedStyle(element),
-            value;
-
-        parent.style.display = 'none';
-        value = computedStyle.getPropertyValue('top');
-        parent.style.removeProperty('display');
-
-        if (value != '') {
-            valor = value.replace('%', '');
-            return parseInt(valor);
-        }
-
-        return false;
     }
 </script>

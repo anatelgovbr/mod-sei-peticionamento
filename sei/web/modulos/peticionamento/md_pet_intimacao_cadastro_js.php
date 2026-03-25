@@ -807,15 +807,6 @@
 
     }
 
-    function removerMarcacoesLinha(nomeClass) {
-        var objs = document.getElementsByClassName(nomeClass);
-
-        for (var i = 0; i < objs.length; i++) {
-            objs[i].className = nomeClass;
-        }
-    }
-
-
     function showOrHideClass(classe, opcao) {
         var elements = document.getElementsByClassName(classe);
 

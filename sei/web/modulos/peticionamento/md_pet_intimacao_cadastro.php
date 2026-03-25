@@ -137,6 +137,7 @@ require_once 'md_pet_intimacao_cadastro_css.php';
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 
+require_once 'js/md_pet_global_js.php';
 require_once 'md_pet_intimacao_cadastro_js.php';
 
 PaginaSEI::getInstance()->fecharHead();

@@ -33,6 +33,7 @@ PaginaSEIExterna::getInstance()->abrirStyle();
 require_once 'md_pet_responder_intimacao_usu_ext_css.php';
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
+require_once 'js/md_pet_global_js.php';
 require_once 'md_pet_responder_intimacao_usu_ext_js.php';
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'); 

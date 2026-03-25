@@ -93,15 +93,6 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
     var objTabelaDinamicaUsuarioProcuracao = null;
     iniciarTabelaDinamicaUsuarioProcuracao();
 
-    function iniciarTabelaDinamicaUsuarioProcuracao() {
-        objTabelaDinamicaUsuarioProcuracao = new infraTabelaDinamica('tbUsuarioProcuracao', 'hdnTbUsuarioProcuracao', false, true);
-        objTabelaDinamicaUsuarioProcuracao.gerarEfeitoTabela = true;
-        objTabelaDinamicaUsuarioProcuracao.remover = function () {
-            verificaTabelaProcuracao(1);
-            return true;
-        };
-    }
-
     function criarRegistroTabelaProcuracao() {
         var noUsuario = document.getElementById('txtNomeProcurador').value.trim();
 
@@ -135,13 +126,5 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
             }
         })
 
-    }
-
-    function verificaTabelaProcuracao(qtdLinha) {
-        var tbUsuarioProcuracao = document.getElementById('tbUsuarioProcuracao');
-        var ultimoRegistro = tbDocumento.rows.length == qtdLinha;
-        if (ultimoRegistro) {
-            tbUsuarioProcuracao.style.display = 'none';
-        }
     }
 </script>

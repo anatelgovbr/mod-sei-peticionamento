@@ -28,19 +28,6 @@
     var objLupaUnidadePF = null;
     var objAutoCompletarUnidadePF = null;
 
-
-    function removerUnidade(idObj) {
-
-        document.getElementById(idObj).remove();
-        qtdLinhas = document.getElementsByClassName('linhas').length;
-        document.getElementById('qtdRegistros').innerHTML = qtdLinhas;
-
-        if (qtdLinhas == 0) {
-            document.getElementById('divTableMultiplasUnidades').style.display = "none";
-        }
-
-    }
-
     function registroDuplicado(uf) {
         var todasUfs = document.getElementsByClassName('ufsSelecionadas');
         var ufAdd = (uf.trim()).toUpperCase();
@@ -56,17 +43,6 @@
         }
 
         return false;
-    }
-
-
-    function removerProcessoAssociado(remover) {
-
-        document.getElementById('selNivelAcesso').innerHTML = '';
-        document.getElementById('divHipoteseLegal').style.display = "none";
-        console.log(remover);
-        if (remover === '1') {
-            objLupaTipoProcesso.remover();
-        }
     }
 
     function removerProcessoAssociadoPF(remover) {
@@ -183,16 +159,6 @@
         }
     }
 
-    function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?=$strLinkAjaxNivelAcesso?>');
-        objAjaxIdNivelAcesso.prepararExecucao = function () {
-            document.getElementById('selNivelAcesso').innerHTML = '';
-            return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idTipoProcesso=' + document.getElementById('hdnIdTipoProcesso').value;
-        }
-    }
-
-
     function carregarComponenteUnidade() {
         objLupaUnidade = new infraLupaText('txtUnidade', 'hdnIdUnidade', '<?=$strLinkUnidadeSelecao?>');
 
@@ -259,24 +225,6 @@
 
         acaoComponente == 'S' ? objLupaTipoDocPrinc.selecionar(700, 500) : objLupaTipoDocPrinc.remover();
     }
-
-    function carregarComponenteLupaTpDocComplementar(acaoComponente) {
-        acaoComponente == 'S' ? objLupaTipoDocumento.selecionar(700, 500) : objLupaTipoDocumento.remover();
-    }
-
-    function returnLinkModificado(link, tipo) {
-        var arrayLink = link.split('&filtro=1');
-
-        var linkFim = '';
-        if (arrayLink.length == 2) {
-            linkFim = arrayLink[0] + '&filtro=1&tipoDoc=' + tipo + arrayLink[1];
-        } else {
-            linkFim = link;
-        }
-
-        return linkFim;
-    }
-
 
     function carregarComponenteAutoCompleteTpDocPrinc(tipo) {
 
@@ -605,22 +553,6 @@
 
     function OnSubmitForm() {
         return validarCadastro();
-    }
-
-    function getPercentTopStyle(element) {
-        var parent = element.parentNode,
-            computedStyle = getComputedStyle(element),
-            value;
-        parent.style.display = 'none';
-        value = computedStyle.getPropertyValue('top');
-        parent.style.removeProperty('display');
-
-        if (value != '') {
-            valor = value.replace('%', '');
-            return parseInt(valor);
-        }
-
-        return false;
     }
 
 </script>

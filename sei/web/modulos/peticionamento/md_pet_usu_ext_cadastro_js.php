@@ -1327,8 +1327,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 var idOrgao = document.getElementById('hdnIdOrgaoTelaAnterior').value;
             }
 
-            console.log('idOrgao:' + idOrgao);
-
             if (document.getElementById('hdnIdOrgaoDisabled').value == "disabled" && document.getElementById('hdnIdUfTelaAnterior').value == "") {
 
                 $.ajax({
@@ -1394,6 +1392,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                     'idUf': idUf,
                                     'idTpProc': document.getElementById('hdnTpProcesso').value
                                 },
+                                beforeSend: function (){
+                                    infraExibirAviso(false, 'Processando...');
+                                },
                                 error: function (dados) {
                                     console.log(dados);
                                 },
@@ -1415,6 +1416,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                         var opt = document.createElement('option');
                                         opt.value = $(item[0]).attr("id");
                                         opt.innerHTML = $(item[0]).attr("descricao");
+                                        opt.setAttribute('data-idunidade', $(item[0]).attr("idUnidade"));
                                         opt.selected = true;
                                         selectCidade.appendChild(opt);
 
@@ -1433,12 +1435,16 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                             var opt = document.createElement('option');
                                             opt.value = $(j).attr("id");
                                             opt.innerHTML = $(j).attr("descricao");
+                                            opt.setAttribute('data-idunidade', $(j).attr("idUnidade"));
                                             selectCidade.appendChild(opt);
                                         });
                                         
                                         document.getElementById("cidadeHidden").style.display = "block";
 
                                     }
+                                },
+                                complete: function(){
+                                    infraOcultarAviso();
                                 }
                             });
 
@@ -2156,24 +2162,6 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         document.getElementById("camposDigitalizadoPrincipal").style.display = 'none';
     }
 
-    function returnDateTime(valor) {
-
-        valorArray = valor != '' ? valor.split(" ") : '';
-
-        if (Array.isArray(valorArray)) {
-            var data = valorArray[0]
-            data = data.split('/');
-            var mes = parseInt(data[1]) - 1;
-            var horas = valorArray[1].split(':');
-
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
-            var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
-            return dataCompleta;
-        }
-
-        return false;
-    }
-
     function OnSubmitForm() {
 
         return true;
@@ -2465,14 +2453,15 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             'idTpProc': document.getElementById('hdnTpProcesso').value
         };
 
-        console.log(dados);
-
         $.ajax({
 
             dataType: 'xml',
             method: 'POST',
             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_cidade');?>',
             data: dados,
+            beforeSend: function (){
+                infraExibirAviso(false, 'Processando...');
+            },
             error: function (dados) {
                 console.log(dados);
             },
@@ -2494,6 +2483,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         var opt = document.createElement('option');
                         opt.value = $(j).attr("id");
                         opt.innerHTML = $(j).attr("descricao");
+                        opt.setAttribute('data-idunidade', $(j).attr("idUnidade"));
                         selectCidade.appendChild(opt);
                     });
 
@@ -2504,6 +2494,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     var opt = document.createElement('option');
                     opt.value = $(items[0]).attr("id");
                     opt.innerHTML = $(items[0]).attr("descricao");
+                    opt.setAttribute('data-idunidade', $(items[0]).attr("idUnidade"));
                     opt.selected = 'selected';
                     selectCidade.appendChild(opt);
 
@@ -2514,6 +2505,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                     document.getElementById("cidadeHidden").style.display = "none";
 
                 }
+            },
+            complete: function(){
+                infraOcultarAviso();
             }
         });
 

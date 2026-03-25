@@ -434,64 +434,66 @@ class MdPetTipoProcessoRN extends InfraRN {
 	public function restricaoOrgao(){
 		
 		$objTipoProcessoDTO = new MdPetTipoProcessoDTO();
-  $objTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
-  $objTipoProcessoDTO->retStrNomeProcesso();
-  $objTipoProcessoDTO->retNumIdProcedimento();
-  $objTipoProcessoDTO->retStrOrientacoes();
-  $objTipoProcessoDTO->setStrSinAtivo('S');
-  $objTipoProcessoDTO->setOrdStrNomeProcesso(InfraDTO::$TIPO_ORDENACAO_ASC);
-   
-  $objTipoProcedimentoRN = new MdPetTipoProcessoRN();
-  $arrObjTipoProcedimentoFiltroDTO = $objTipoProcedimentoRN->listar($objTipoProcessoDTO);
-  $arrObjTipoProcedimentoRestricaoDTO = InfraArray::converterArrInfraDTO($arrObjTipoProcedimentoFiltroDTO, 'IdProcedimento');
+		$objTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
+		$objTipoProcessoDTO->retStrNomeProcesso();
+		$objTipoProcessoDTO->retNumIdProcedimento();
+		$objTipoProcessoDTO->retStrOrientacoes();
+		$objTipoProcessoDTO->setStrSinAtivo('S');
+		$objTipoProcessoDTO->setOrdStrNomeProcesso(InfraDTO::$TIPO_ORDENACAO_ASC);
+		
+		$objTipoProcedimentoRN = new MdPetTipoProcessoRN();
+		$arrObjTipoProcedimentoFiltroDTO = $objTipoProcedimentoRN->listar($objTipoProcessoDTO);
+		$arrObjTipoProcedimentoRestricaoDTO = InfraArray::converterArrInfraDTO($arrObjTipoProcedimentoFiltroDTO, 'IdProcedimento');
 
-  //Restrição
-  $arrRestricao = array();
+		//Restrição
+		$arrRestricao = array();
 
-  foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
-   
-    //Verifica se existe restrição para o tipo de processo
-    $objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
-    $objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
-    $objTipoProcedRestricaoDTO->retNumIdOrgao();
-    $objTipoProcedRestricaoDTO->retNumIdUnidade();
-    $objTipoProcedRestricaoDTO->setNumIdTipoProcedimento($tpProc->getNumIdProcedimento());
-    $arrObjTipoProcedRestricaoDTO = $objTipoProcedRestricaoRN->listar($objTipoProcedRestricaoDTO);
+		foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
+		
+			//Verifica se existe restrição para o tipo de processo
+			$objTipoProcedRestricaoRN = new TipoProcedRestricaoRN();
+			$objTipoProcedRestricaoDTO = new TipoProcedRestricaoDTO();
+			$objTipoProcedRestricaoDTO->retNumIdOrgao();
+			$objTipoProcedRestricaoDTO->retNumIdUnidade();
+			$objTipoProcedRestricaoDTO->setNumIdTipoProcedimento($tpProc->getNumIdProcedimento());
+			$arrObjTipoProcedRestricaoDTO = $objTipoProcedRestricaoRN->listar($objTipoProcedRestricaoDTO);
 
-    $idOrgaoRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdOrgao');
-    $idUnidadeRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdUnidade');
-    
-    $objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
-    $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
-    $objMdPetRelTpProcessoUnidDTO->retTodos();
-    $objMdPetRelTpProcessoUnidDTO->retStrsiglaUnidade();
-    $objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
-    $objMdPetRelTpProcessoUnidDTO->retStrdescricaoUnidade();
-    $objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
-    $objMdPetRelTpProcessoUnidDTO->retNumIdOrgaoUnidade();
-    $objMdPetRelTpProcessoUnidDTO->retStrDescricaoOrgao();
-    $objMdPetRelTpProcessoUnidDTO->retStrSiglaOrgao();
-    $objMdPetRelTpProcessoUnidDTO->retNumIdCidadeContato();
-    $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($tpProc->getNumIdTipoProcessoPeticionamento());
-    $arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
-    
+			$idOrgaoRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdOrgao');
+			$idUnidadeRestricao = InfraArray::converterArrInfraDTO($arrObjTipoProcedRestricaoDTO, 'IdUnidade');
+			
+			$objMdPetRelTpProcessoUnidRN = new MdPetRelTpProcessoUnidRN();
+			$objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
+			$objMdPetRelTpProcessoUnidDTO->retTodos();
+			$objMdPetRelTpProcessoUnidDTO->retStrsiglaUnidade();
+			$objMdPetRelTpProcessoUnidDTO->retStrStaTipoUnidade();
+			$objMdPetRelTpProcessoUnidDTO->retStrdescricaoUnidade();
+			$objMdPetRelTpProcessoUnidDTO->retNumIdUnidade();
+			$objMdPetRelTpProcessoUnidDTO->retNumIdOrgaoUnidade();
+			$objMdPetRelTpProcessoUnidDTO->retStrDescricaoOrgao();
+			$objMdPetRelTpProcessoUnidDTO->retStrSiglaOrgao();
+			$objMdPetRelTpProcessoUnidDTO->retNumIdCidadeContato();
+			$objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($tpProc->getNumIdTipoProcessoPeticionamento());
+			$arrobjMdPetRelTpProcessoUnidDTO = $objMdPetRelTpProcessoUnidRN->listar($objMdPetRelTpProcessoUnidDTO);
+			
 
-      foreach ($arrobjMdPetRelTpProcessoUnidDTO as $objDTO) {
-      
-        //Verifica se tem alguma unidade ou órgão diferente dos restritos
-        if(($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)){
-          $arrRestricao [] = $tpProc->getNumIdProcedimento();
-        }
-        if(($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($objDTO->getNumIdUnidade(), $idUnidadeRestricao)){
-          $arrRestricao [] = $tpProc->getNumIdProcedimento();
-        }
+			foreach ($arrobjMdPetRelTpProcessoUnidDTO as $objDTO) {
+			
+				//Verifica se tem alguma unidade ou órgão diferente dos restritos
+				if(($idOrgaoRestricao && $idOrgaoRestricao[0] != null) && !in_array($objDTO->getNumIdOrgaoUnidade(), $idOrgaoRestricao)){
+				$arrRestricao [] = $tpProc->getNumIdProcedimento();
+				}
+				if(($idUnidadeRestricao && $idUnidadeRestricao[0] != null) && !in_array($objDTO->getNumIdUnidade(), $idUnidadeRestricao)){
+				$arrRestricao [] = $tpProc->getNumIdProcedimento();
+				}
 
-      }
+			}
 
-  }
+		}
+
   	return $arrRestricao;
-  //Fim restrição
-	}
+  	//Fim restrição
+	
+  	}
 
 	public function validacaoCidadeDuplcada($arrobjMdPetRelTpProcessoUnidDTO){
 

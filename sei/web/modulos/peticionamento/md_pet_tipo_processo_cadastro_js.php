@@ -89,6 +89,12 @@
                                 dataType: 'XML',
                                 data: { 'idUnidadeMultipla': idUnidadeSelect },
                                 success: function (result) {
+
+                                    if($(result).find('uf').text() == '' || $(result).find('cidade').text() == ''){
+                                        alert('Na configuração de Múltiplas Unidades, o contato da Unidade precisa ter UF e Cidade cadastrados.');
+                                        return false;
+                                    }
+
                                     if (!registroDuplicado($(result).find('siglaOrgao').text(), $(result).find('cidade').text())) {
                                         qtdLinhas = document.getElementsByClassName('linhas').length;
                                         var html = '';
@@ -145,18 +151,6 @@
         } else {
             objLupaUnidadeMultipla.selecionar(700, 500);
         }
-    }
-
-    function removerUnidade(idObj) {
-
-        document.getElementById(idObj).remove();
-        qtdLinhas = document.getElementsByClassName('linhas').length;
-        document.getElementById('qtdRegistros').innerHTML = qtdLinhas;
-
-        if (qtdLinhas == 0) {
-            document.getElementById('divTableMultiplasUnidades').style.display = "none";
-        }
-
     }
 
     function registroDuplicado(orgao, cidade) {
@@ -230,16 +224,6 @@
             document.getElementById('divRdIndicacaoIndiretaHide').style.display = "inherit";
         }
 
-    }
-
-    function removerProcessoAssociado(remover) {
-
-        document.getElementById('selNivelAcesso').innerHTML = '';
-        document.getElementById('divHipoteseLegal').style.display = "none";
-        console.log(remover);
-        if (remover === '1') {
-            objLupaTipoProcesso.remover();
-        }
     }
 
     function changeNivelAcesso() {
@@ -392,15 +376,6 @@
         }
     }
 
-    function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?= $strLinkAjaxNivelAcesso ?>');
-        objAjaxIdNivelAcesso.prepararExecucao = function () {
-            document.getElementById('selNivelAcesso').innerHTML = '';
-            return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idTipoProcesso=' + document.getElementById('hdnIdTipoProcesso').value;
-        }
-    }
-
     function inicializarTela() {
     }
 
@@ -522,23 +497,6 @@
         }
 
         acaoComponente == 'S' ? objLupaTipoDocPrinc.selecionar(700, 500) : objLupaTipoDocPrinc.remover();
-    }
-
-    function carregarComponenteLupaTpDocComplementar(acaoComponente) {
-        acaoComponente == 'S' ? objLupaTipoDocumento.selecionar(700, 500) : objLupaTipoDocumento.remover();
-    }
-
-    function returnLinkModificado(link, tipo) {
-        var arrayLink = link.split('&filtro=1');
-
-        var linkFim = '';
-        if (arrayLink.length == 2) {
-            linkFim = arrayLink[0] + '&filtro=1&tipoDoc=' + tipo + arrayLink[1];
-        } else {
-            linkFim = link;
-        }
-
-        return linkFim;
     }
 
 
@@ -885,22 +843,6 @@
 
         document.getElementById("hdnUnidadesSelecionadas").value = JSON.stringify(arrayIdsBd);
         document.getElementById("hdnCorpoTabela").value = document.getElementById('corpoTabela').innerHTML;
-    }
-
-    function getPercentTopStyle(element) {
-        var parent = element.parentNode,
-            computedStyle = getComputedStyle(element),
-            value;
-        parent.style.display = 'none';
-        value = computedStyle.getPropertyValue('top');
-        parent.style.removeProperty('display');
-
-        if (value != '') {
-            valor = value.replace('%', '');
-            return parseInt(valor);
-        }
-
-        return false;
     }
 
     function removerIconeRestricao() {

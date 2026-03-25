@@ -18,10 +18,6 @@
         }
     }
 
-    function changeStaNivelAcesso() {
-        document.getElementById('forcarHipoteseLegal').style.display = document.getElementById('staNivelAcesso').value == 'R' ? 'block' : 'none';
-    }
-
     function changeSelectNivelAcesso() {
         document.getElementById('selHipoteseLegal').value = '';
 
@@ -44,32 +40,6 @@
         }
         infraEfeitoTabelas();
         changeStaNivelAcesso();
-    }
-
-    function carregarDependenciaNivelAcesso() {
-        //Ajax para carregar os niveis de acesso após a escolha do tipo de processo
-        objAjaxIdNivelAcesso = new infraAjaxMontarSelectDependente('txtTipoProcesso', 'selNivelAcesso', '<?=$strLinkAjaxNivelAcesso?>');
-        objAjaxIdNivelAcesso.prepararExecucao = function () {
-            document.getElementById('selNivelAcesso').innerHTML = '';
-            return infraAjaxMontarPostPadraoSelect('null', '', 'null') + '&idTipoProcesso=' + document.getElementById('hdnIdTipoProcesso').value;
-        }
-    }
-
-    function carregarComponenteLupaTpDocComplementar(acaoComponente) {
-        acaoComponente == 'S' ? objLupaTipoDocumento.selecionar(700, 500) : objLupaTipoDocumento.remover();
-    }
-
-    function returnLinkModificado(link, tipo) {
-        var arrayLink = link.split('&filtro=1');
-
-        var linkFim = '';
-        if (arrayLink.length == 2) {
-            linkFim = arrayLink[0] + '&filtro=1&tipoDoc=' + tipo + arrayLink[1];
-        } else {
-            linkFim = link;
-        }
-
-        return linkFim;
     }
 
     function carregarComponenteTipoProcesso() {
@@ -96,14 +66,6 @@
             }
         }
         objAutoCompletarTipoProcesso.selecionar('<?=$strIdTipoProcesso?>', '<?=PaginaSEI::getInstance()->formatarParametrosJavascript(PaginaSEI::tratarHTML($strNomeRemetente));?>');
-    }
-
-    function removerProcessoAssociado(remover) {
-        document.getElementById('selNivelAcesso').innerHTML = '';
-        document.getElementById('divHipoteseLegal').style.display = "none";
-        if (remover === '1') {
-            objLupaTipoProcesso.remover();
-        }
     }
 
     // AUTOCOMPLETAR TipoDocumento
@@ -160,7 +122,7 @@
             return false;
         }
 
-        //Validar Nível Acesso
+        //Validar NÃ­vel Acesso
         var elemsNA = document.getElementsByName("rdNivelAcesso[]");
 
         var validoNA = false, valorNA = 0;
@@ -173,19 +135,19 @@
         }
 
         if (validoNA === false) {
-            alert('Informe o Nível de Acesso.');
+            alert('Informe o NÃ­vel de Acesso.');
             return false;
         }
 
         if (infraTrim(document.getElementById('selNivelAcesso').value) == '' && valorNA != 1) {
-            alert('Informe o Nível de Acesso.');
+            alert('Informe o NÃ­vel de Acesso.');
             document.getElementById('selNivelAcesso').focus();
             return false;
         } else if (document.getElementById('selNivelAcesso').value == 'I' && valorHipoteseLegal != '0') {
 
             //validar hipotese legal
             if (document.getElementById('selHipoteseLegal').value == '') {
-                alert('Informe a Hipótese legal padrão.');
+                alert('Informe a HipÃ³tese legal padrÃ£o.');
                 document.getElementById('selHipoteseLegal').focus();
                 return false;
             }
@@ -201,7 +163,7 @@
         }
 
         if (validoSA === false) {
-            alert('Indique a opção para exibição ou não do menu Peticionamento Intercorrente.');
+            alert('Indique a opÃ§Ã£o para exibiÃ§Ã£o ou nÃ£o do menu Peticionamento Intercorrente.');
             return false;
         }
 
@@ -223,7 +185,7 @@
         }
 
         if( nivelAcesso == '' && optionsTipoDocumento.length > 0 ){
-            alert('Selecione um Nível de Acesso.');
+            alert('Selecione um NÃ­vel de Acesso.');
             document.getElementById('staNivelAcesso').focus();
             return false;
         }
@@ -233,22 +195,5 @@
 
     function OnSubmitForm() {
         return validarCadastro();
-    }
-
-    function getPercentTopStyle(element) {
-        var parent = element.parentNode,
-            computedStyle = getComputedStyle(element),
-            value;
-
-        parent.style.display = 'none';
-        value = computedStyle.getPropertyValue('top');
-        parent.style.removeProperty('display');
-
-        if (value != '') {
-            valor = value.replace('%', '');
-            return parseInt(valor);
-        }
-
-        return false;
     }
 </script>

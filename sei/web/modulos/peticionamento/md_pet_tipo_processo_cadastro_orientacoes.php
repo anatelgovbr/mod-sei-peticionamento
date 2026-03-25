@@ -197,6 +197,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
 
     </form>
 
+    <?php require_once 'js/md_pet_global_js.php'; ?>
     <?php require_once 'md_pet_tipo_processo_cadastro_orientacoes_js.php'; ?>
     <?php require_once 'md_pet_forcar_nivel_acesso_doc_bloco_js.php'; ?>
 

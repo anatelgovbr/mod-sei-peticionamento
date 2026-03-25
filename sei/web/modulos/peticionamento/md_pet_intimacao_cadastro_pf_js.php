@@ -17,9 +17,6 @@
     };
 
     infraAdicionarEvento(document.getElementById('txtUsuario2'), 'keyup', tratarEnterUsuarioLote);
-    function tratarEnterUsuarioLote(ev){
-        var key = infraGetCodigoTecla(ev);
-    }
 
     objAutoCompletarInteressadoRI1225.processarResultado = function(id, descricao, complemento){
 
@@ -45,7 +42,7 @@
                     console.log(r);
 
                     if ($(r).find('Quantidade').text() >= 1 && $(r).find('Cadastro').text() > 0) {
-                        alert("A Pessoa FÌsica selecionada j· foi intimada a partir deste documento principal por meio do destinat·rio: \n" + $(r).find('Vinculo').text() + "\n\nPara verificar a lista de destinat·rios que j· receberam o documento principal, consulte \"Ver intimaÁıes do processo\".");
+                        alert("A Pessoa F√≠sica selecionada j√° foi intimada a partir deste documento principal por meio do destinat√°rio: \n" + $(r).find('Vinculo').text() + "\n\nPara verificar a lista de destinat√°rios que j√° receberam o documento principal, consulte \"Ver intima√ß√µes do processo\".");
                         document.getElementById('hdnIdDadosUsuario2').value = '';
                         document.getElementById('txtUsuario2').value = '';
                         return;
@@ -91,7 +88,7 @@
         for(var i=0;i < itens.length;i++){
             for(var j=0;j < arrInteressadosNegados.length; j++){
                 if (itens[i].value == arrInteressadosNegados[j].id_contato) {
-                    alert('Interessado \"' + itens[i].text + '\" n„o pode ser removido porque foi adicionado pela unidade ' + arrInteressadosNegados[j].sigla_unidade + '.');
+                    alert('Interessado \"' + itens[i].text + '\" n√£o pode ser removido porque foi adicionado pela unidade ' + arrInteressadosNegados[j].sigla_unidade + '.');
                     return false;
                 }
             }

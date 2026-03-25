@@ -12,10 +12,6 @@
         changeStaNivelAcesso();
     }
 
-    function changeStaNivelAcesso() {
-        document.getElementById('forcarHipoteseLegal').style.display = document.getElementById('staNivelAcesso').value == 'R' ? 'block' : 'none';
-    }
-
     function limparForcarNivelAcessoDoc(){
         if(confirm('Deseja realmente limpar todos os campos da seção Forçar Nível de Acesso em Documentos Externos Específicos?')) {
             $('#fldForcarNivelAcessoDocumentosExternos').children(':input').each(function() { $(this).val(''); });

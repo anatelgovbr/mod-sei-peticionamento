@@ -54,14 +54,60 @@ try {
             //Carregando Unidades
             $objMdPetRelTpProcessoUnidDTO = new MdPetRelTpProcessoUnidDTO();
             $objMdPetRelTpProcessoUnidDTO->retNumIdOrgaoUnidade();
-            $objMdPetRelTpProcessoUnidDTO->retNumIdCidadeContato();
+            $objMdPetRelTpProcessoUnidDTO->retNumIdContato();
+            // $objMdPetRelTpProcessoUnidDTO->retNumIdCidadeContato();
             $objMdPetRelTpProcessoUnidDTO->setOrd('SiglaOrgao', InfraDTO::$TIPO_ORDENACAO_ASC);
             $objMdPetRelTpProcessoUnidDTO->setOrd('siglaUnidade', InfraDTO::$TIPO_ORDENACAO_ASC);
-            $objMdPetRelTpProcessoUnidDTO->setOrd('SiglaUf', InfraDTO::$TIPO_ORDENACAO_ASC);
-            $objMdPetRelTpProcessoUnidDTO->setOrd('NomeCidade', InfraDTO::$TIPO_ORDENACAO_ASC);
+            // $objMdPetRelTpProcessoUnidDTO->setOrd('SiglaUf', InfraDTO::$TIPO_ORDENACAO_ASC);
+            // $objMdPetRelTpProcessoUnidDTO->setOrd('NomeCidade', InfraDTO::$TIPO_ORDENACAO_ASC);
             $objMdPetRelTpProcessoUnidDTO->setNumIdTipoProcessoPeticionamento($_GET['id_tipo_processo_peticionamento']);
             $objMdPetRelTpProcessoUnidDTO->retTodos();
             $arrObjMdPetRelTpProcessoUnidDTO = (new MdPetRelTpProcessoUnidRN())->listar($objMdPetRelTpProcessoUnidDTO);
+
+            for ($i=0; $i < count($arrObjMdPetRelTpProcessoUnidDTO); $i++) {
+                
+                // Aqui vou buscar e injetar UF e Cidade do contato ou do contato vinculado:
+                // IdUf, SiglaUf, NomeCidade
+
+                $contatoAssociadoDTO = new ContatoDTO();
+                $contatoAssociadoDTO->retStrSiglaUf();
+                $contatoAssociadoDTO->retNumIdContato();
+                $contatoAssociadoDTO->retStrNomeCidade();
+                $contatoAssociadoDTO->retNumIdCidade();
+
+                $contatoAssociadoDTO->retStrSinEnderecoAssociado();
+                $contatoAssociadoDTO->retNumIdContatoAssociado();
+                $contatoAssociadoDTO->retNumIdUfContatoAssociado();
+                $contatoAssociadoDTO->retStrSiglaUfContatoAssociado();
+                $contatoAssociadoDTO->retNumIdCidadeContatoAssociado();
+                $contatoAssociadoDTO->retStrNomeCidadeContatoAssociado();
+
+                $contatoAssociadoDTO->setNumIdContato($arrObjMdPetRelTpProcessoUnidDTO[$i]->getNumIdContato());
+
+                $contatoAssociadoDTO = (new ContatoRN())->consultarRN0324($contatoAssociadoDTO);
+
+                // Carrega os dados do Contato Associado ao Contato
+                
+                if($contatoAssociadoDTO->getStrSinEnderecoAssociado() == 'S' && $contatoAssociadoDTO->isSetStrSiglaUfContatoAssociado()){
+
+                    $arrObjMdPetRelTpProcessoUnidDTO[$i]->setNumIdCidadeContato($contatoAssociadoDTO->getNumIdCidadeContatoAssociado());
+                    $arrObjMdPetRelTpProcessoUnidDTO[$i]->setStrSiglaUf($contatoAssociadoDTO->getStrSiglaUfContatoAssociado());
+                    $arrObjMdPetRelTpProcessoUnidDTO[$i]->setStrNomeCidade($contatoAssociadoDTO->getStrNomeCidadeContatoAssociado());
+
+                }else{
+
+                    $arrObjMdPetRelTpProcessoUnidDTO[$i]->setNumIdCidadeContato($contatoAssociadoDTO->getNumIdCidade());
+                    $arrObjMdPetRelTpProcessoUnidDTO[$i]->setStrSiglaUf($contatoAssociadoDTO->getStrSiglaUf());
+                    $arrObjMdPetRelTpProcessoUnidDTO[$i]->setStrNomeCidade($contatoAssociadoDTO->getStrNomeCidade());
+
+                }
+
+
+            }
+
+            // die(var_dump($arrObjMdPetRelTpProcessoUnidDTO));
+
+            // die(var_dump($arrObjMdPetRelTpProcessoUnidDTO));
 
             if (!empty($arrObjMdPetRelTpProcessoUnidDTO)) {
                 
@@ -120,6 +166,37 @@ try {
                         $objUnidadeDTO->retNumIdCidadeContato();
                         $objUnidadeDTO->retTodos();
                         $objUnidadeDTO = (new UnidadeRN())->consultarRN0125($objUnidadeDTO);
+
+                        // Buscando a UF e a Cidade do Contato/Contato Vinculado
+
+                        $contatoAssociadoDTO = new ContatoDTO();
+                        $contatoAssociadoDTO->retStrSiglaUf();
+                        $contatoAssociadoDTO->retNumIdContato();
+                        $contatoAssociadoDTO->retStrNomeCidade();
+                        $contatoAssociadoDTO->retNumIdCidade();
+
+                        $contatoAssociadoDTO->retStrSinEnderecoAssociado();
+                        $contatoAssociadoDTO->retNumIdContatoAssociado();
+                        $contatoAssociadoDTO->retNumIdUfContatoAssociado();
+                        $contatoAssociadoDTO->retStrSiglaUfContatoAssociado();
+                        $contatoAssociadoDTO->retNumIdCidadeContatoAssociado();
+                        $contatoAssociadoDTO->retStrNomeCidadeContatoAssociado();
+
+                        $contatoAssociadoDTO->setNumIdContato($objUnidadeDTO->getNumIdContato());
+
+                        $contatoAssociadoDTO = (new ContatoRN())->consultarRN0324($contatoAssociadoDTO);
+
+                        // Carrega os dados do Contato Associado ao Contato
+                        
+                        if($contatoAssociadoDTO->getStrSinEnderecoAssociado() == 'S' && $contatoAssociadoDTO->isSetStrSiglaUfContatoAssociado()){
+
+                            $objUnidadeDTO->setNumIdCidadeContato($contatoAssociadoDTO->getNumIdCidadeContatoAssociado());
+
+                        }else{
+
+                            $objUnidadeDTO->setNumIdCidadeContato($contatoAssociadoDTO->getNumIdCidade());
+
+                        }
                         
                         $arrObjUnidadesMultiplas[] = $objUnidadeDTO;
 
@@ -138,6 +215,8 @@ try {
                 }
                 
             }
+
+            // die(var_dump($arrObjUnidadesMultiplas));
 
             $idMdPetTipoProcesso    = $_GET['id_tipo_processo_peticionamento'];
             $nomeTipoProcesso       = $objMdPetTipoProcessoDTO->getStrNomeProcesso();
@@ -162,7 +241,6 @@ try {
 	        $hipoteseLegal          = $objMdPetTipoProcessoDTO->getStrStaNivelAcesso() === ProtocoloRN::$NA_RESTRITO && $valorParametroHipoteseLegal != '0' ? 'style="display:inherit; margin-top: 0px"' : 'style="display:none;  margin-top: 0px"';
 	
 	        $strItensSelNivelAcesso = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, $objMdPetTipoProcessoDTO->getStrStaNivelAcesso(), $idTipoProcesso);
-            
             
             if($objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'S'){
                 
@@ -848,7 +926,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <!-- Tabela Múltiplas Unidades -->
+
+                                    <!-- echo var_dump($arrObjUnidadesMultiplas); ?> -->
+                                     
                                     <div class="row">
                                         <div class="col-sm-12 col-md-12 col-lg-12">
                                             <div class="" id="divTableMultiplasUnidades" <?php echo $divUnidadeMultiplaTable; ?>>
@@ -901,9 +983,27 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 $contatoAssociadoDTO->retNumIdContato();
                                                                 $contatoAssociadoDTO->retStrNomeCidade();
                                                                 $contatoAssociadoDTO->retNumIdCidade();
+
+                                                                $contatoAssociadoDTO->retStrSinEnderecoAssociado();
+                                                                $contatoAssociadoDTO->retNumIdContatoAssociado();
+                                                                $contatoAssociadoDTO->retNumIdUfContatoAssociado();
+                                                                $contatoAssociadoDTO->retStrSiglaUfContatoAssociado();
+                                                                $contatoAssociadoDTO->retNumIdCidadeContatoAssociado();
+                                                                $contatoAssociadoDTO->retStrNomeCidadeContatoAssociado();
+
                                                                 $contatoAssociadoDTO->setNumIdContato($cadaObjUnidadeDTO->getNumIdContato());
 
                                                                 $contatoAssociadoDTO = $contatoAssociadoRN->consultarRN0324($contatoAssociadoDTO);
+
+                                                                // Carrega os dados do Contato Associado ao Contato
+                                                                
+                                                                if($contatoAssociadoDTO->getStrSinEnderecoAssociado() == 'S' && $contatoAssociadoDTO->isSetStrSiglaUfContatoAssociado()){
+
+                                                                    $cadaObjUnidadeDTO->setNumIdCidadeContato($contatoAssociadoDTO->getNumIdCidadeContatoAssociado());
+                                                                    $contatoAssociadoDTO->setStrSiglaUf($contatoAssociadoDTO->getStrSiglaUfContatoAssociado());
+                                                                    $contatoAssociadoDTO->setStrNomeCidade($contatoAssociadoDTO->getStrNomeCidadeContatoAssociado());
+
+                                                                }
 
                                                                 //verificando se existe algum tipo de processo com divergencia de orgao e cidade iguais
                                                                 if ($arrTipoProcessoOrgaoCidade) {
@@ -1334,5 +1434,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 <?
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
+require_once 'js/md_pet_global_js.php';
 require_once 'md_pet_tipo_processo_cadastro_js.php';
 ?>

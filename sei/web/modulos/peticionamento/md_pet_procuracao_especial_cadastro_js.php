@@ -178,16 +178,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
     var objTabelaDinamicaUsuarioProcuracao = null;
     iniciarTabelaDinamicaUsuarioProcuracao();
 
-
-    function iniciarTabelaDinamicaUsuarioProcuracao() {
-        objTabelaDinamicaUsuarioProcuracao = new infraTabelaDinamica('tbUsuarioProcuracao', 'hdnTbUsuarioProcuracao', false, true);
-        objTabelaDinamicaUsuarioProcuracao.gerarEfeitoTabela = true;
-        objTabelaDinamicaUsuarioProcuracao.remover = function () {
-            verificaTabelaProcuracao(2);
-            return true;
-        };
-    }
-
     function iniciarTabelaDinamicaProcessos() {
         objTabelaDinamicaUsuarioProcessos = new infraTabelaDinamica('tbProcessos', 'hdnTbProcessos', false, true);
         objTabelaDinamicaUsuarioProcessos.gerarEfeitoTabela = true;
@@ -279,14 +269,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             }
         });
 
-    }
-
-    function verificaTabelaProcuracao(qtdLinha) {
-        var tbUsuarioProcuracao = document.getElementById('tbUsuarioProcuracao');
-        var ultimoRegistro = tbUsuarioProcuracao.rows.length == qtdLinha;
-        if (ultimoRegistro) {
-            tbUsuarioProcuracao.style.display = 'none';
-        }
     }
 
     function verificaTabelaProcesso(qtdLinha) {
@@ -879,15 +861,6 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         }
     }
 
-    function maskCPF(cpf) {
-        cpf = cpf.replace(/\D/g, "");
-        cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
-        cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
-        cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-
-        return cpf;
-    }
-
     function alterarHidden(val) {
         document.getElementById('hdnIdUsuarioProcuracao').value = val.value;
         document.getElementById('hdnIdUsuario').value = val.value;
@@ -1069,16 +1042,5 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         if (infraGetCodigoTecla(e) == 13) {
             document.getElementById('btnValidarSimples').onclick();
         }
-    }
-
-    function returnElementFocus() {
-        var focused = document.activeElement;
-        if (!focused || focused == document.body) {
-            focused = null;
-        } else if (document.querySelector) {
-            focused = document.querySelector(":focus")
-        }
-
-        return focused;
     }
 </script>

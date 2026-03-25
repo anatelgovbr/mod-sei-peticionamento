@@ -248,34 +248,6 @@ $strLink = $urlBase . '/modulos/peticionamento/md_pet_usu_ext_indisponibilidade_
 
     }
 
-    function returnDateTime(valor) {
-
-        valorArray = valor != '' ? valor.split(" ") : '';
-
-        if (Array.isArray(valorArray)) {
-            var data = valorArray[0]
-            data = data.split('/');
-            var mes = parseInt(data[1]) - 1;
-            var horas = valorArray[1].split(':');
-
-            var segundos = typeof horas[2] != 'undefined' ? horas[2] : '00';
-            var dataCompleta = new Date(data[2], mes, data[0], horas[0], horas[1], segundos);
-            return dataCompleta;
-        }
-
-        return false;
-    }
-
-    function preencherHdnProrrogacao() {
-        var rdProrrogacao = document.getElementsByName('rdProrrogacao[]')[0].checked ? 'S' : '';
-
-        if (rdProrrogacao == '') {
-            rdProrrogacao = document.getElementsByName('rdProrrogacao[]') [1].checked ? 'N' : '';
-        }
-
-        document.getElementById('hdnSinProrrogacao').value = rdProrrogacao;
-    }
-
     function OnSubmitForm() {
         return true;
     }

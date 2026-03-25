@@ -66,6 +66,7 @@ try {
     //=====================================================
     //INICIO JAVASCRIPT
     //=====================================================
+    require_once 'js/md_pet_global_js.php';
     require_once('md_pet_intercorrente_usu_ext_cadastro_js.php');
     //=====================================================
     //FIM JAVASCRIPT

@@ -93,19 +93,19 @@ try {
             $documentoReciboDTO = $documentoRN->consultarRN0005( $documentoReciboDTO );
             
             if( $documentoReciboDTO != null ){
-                $strTitulo = 'Recibo EletrÙnico de Protocolo - SEI n∞ ' . $documentoReciboDTO->getStrProtocoloDocumentoFormatado();
+                $strTitulo = 'Recibo Eletr√¥nico de Protocolo - SEI n¬∞ ' . $documentoReciboDTO->getStrProtocoloDocumentoFormatado();
             } else {
-                $strTitulo = 'Recibo EletrÙnico de Protocolo';
+                $strTitulo = 'Recibo Eletr√¥nico de Protocolo';
             }
 
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
     $arrComandos   = array();
-    // Bot„o SALVAR EM PDF desativado temporariamente atÈ resolver a falta de tratamento HTML
+    // Bot√£o SALVAR EM PDF desativado temporariamente at√© resolver a falta de tratamento HTML
     $arrComandos[] = '<button type="button" accesskey="i" id="btnImprimir" value="Imprimir" onclick="imprimir();" class="infraButton"><span class="infraTeclaAtalho">I</span>mprimir</button>';
     
     $arrComandos[] = '<button type="button" accesskey="c" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_md_pet_rel_recibo_protoc=' . $_GET['id_md_pet_rel_recibo_protoc'] . '&acao=' . PaginaSEIExterna::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'])) . '\'" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
@@ -193,14 +193,14 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
     function imprimir() {
     document.getElementById('btnFechar').style.display = 'none';
     document.getElementById('btnImprimir').style.display = 'none';
-    // Bot„o SALVAR EM PDF desativado temporariamente atÈ resolver a falta de tratamento HTML
+    // Bot√£o SALVAR EM PDF desativado temporariamente at√© resolver a falta de tratamento HTML
     // document.getElementById('btnSalvarPDF').style.display = 'none';
     infraImprimirDiv('divInfraAreaTelaD');
 
     self.setTimeout(function () {
     document.getElementById('btnFechar').style.display = '';
     document.getElementById('btnImprimir').style.display = '';
-    // Bot„o SALVAR EM PDF desativado temporariamente atÈ resolver a falta de tratamento HTML
+    // Bot√£o SALVAR EM PDF desativado temporariamente at√© resolver a falta de tratamento HTML
     // document.getElementById('btnSalvarPDF').style.display = '';
     }, 1000);
     }
@@ -245,7 +245,7 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
     }
     s += tr.cells[j].innerHTML;
     }
-    s += '±';
+    s += '¬±';
     }
     }
     document.getElementById('hdnInfraAreaDados').value = s;
@@ -269,12 +269,12 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
             <table align="center" style="width: 95%" border="0">
 
                 <tr>
-                    <td style="font-weight: bold; width: 400px;">Usu·rio Externo (signat·rio):</td>
+                    <td style="font-weight: bold; width: 400px;">Usu√°rio Externo (signat√°rio):</td>
                     <td><?= $usuarioDTO->getStrNome() ?></td>
                 </tr>
 
                 <tr>
-                    <td style="font-weight: bold;">Data e Hor·rio:</td>
+                    <td style="font-weight: bold;">Data e Hor√°rio:</td>
                     <td><?= $objMdPetReciboDTO->getDthDataHoraRecebimentoFinal() ?></td>
                 </tr>
 
@@ -284,7 +284,7 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
                 </tr>
 
                 <tr>
-                    <td style="font-weight: bold;">N˙mero do Processo:</td>
+                    <td style="font-weight: bold;">N√∫mero do Processo:</td>
                     <td><?= $protocoloDTO->getStrProtocoloFormatado() ?></td>
                 </tr>
 
@@ -306,15 +306,15 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
                         <td><?= $protocoloRelFormatado ?></td>
                     </tr>
 				<?php 
-				//se for recibo do resposta acrescenta os campos: Tipo de Resposta, Tipo de IntimaÁ„o, Documento Principal da IntimaÁ„o
+				//se for recibo do resposta acrescenta os campos: Tipo de Resposta, Tipo de Intima√ß√£o, Documento Principal da Intima√ß√£o
 				if( $objMdPetReciboDTO->getStrStaTipoPeticionamento() == MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO ) { ?>
                     <tr>
-                       <td style="font-weight: bold;">Tipo de IntimaÁ„o:</td>
+                       <td style="font-weight: bold;">Tipo de Intima√ß√£o:</td>
                        <td> <?= $objMdPetReciboDTO->getStrNomeTipoIntimacao() ?> </td>
                     </tr>
                     
                     <tr>
-                       <td style="font-weight: bold;">Documento Principal da IntimaÁ„o:</td>
+                       <td style="font-weight: bold;">Documento Principal da Intima√ß√£o:</td>
                        <td>  <?= $objMdPetReciboDTO->getStrTextoDocumentoPrincipalIntimac() ?> </td>
                     </tr>
                     
@@ -337,7 +337,7 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
                 <?php endif; ?>
 
                 <tr>
-                    <td style="font-weight: bold;">Protocolos dos Documentos (N˙mero SEI):</td>
+                    <td style="font-weight: bold;">Protocolos dos Documentos (N√∫mero SEI):</td>
                     <td></td>
                 </tr>
 
@@ -356,15 +356,15 @@ PaginaSEIExterna::getInstance()->abrirJavaScript();
             <br/>
             <br/>
 
-            <p><label>O Usu·rio Externo acima identificado foi previamente avisado que o peticionamento importa na aceitaÁ„o dos termos e condiÁıes que regem o processo eletrÙnico, alÈm do disposto no credenciamento prÈvio, e na assinatura dos documentos nato-digitais e declaraÁ„o de que s„o autÍnticos os digitalizados, sendo respons·vel civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os nÌveis de acesso indicados para os documentos estariam condicionados ‡ an·lise por servidor p˙blico, que poder· alter·-los a qualquer momento sem necessidade de prÈvio aviso, e de que s„o de sua exclusiva responsabilidade:</label></p>
+            <p><label>O Usu√°rio Externo acima identificado foi previamente avisado que o peticionamento importa na aceita√ß√£o dos termos e condi√ß√µes que regem o processo eletr√¥nico, al√©m do disposto no credenciamento pr√©vio, e na assinatura dos documentos nato-digitais e declara√ß√£o de que s√£o aut√™nticos os digitalizados, sendo respons√°vel civil, penal e administrativamente pelo uso indevido. Ainda, foi avisado que os n√≠veis de acesso indicados para os documentos estariam condicionados √† an√°lise por servidor p√∫blico, que poder√° alter√°-los a qualquer momento sem necessidade de pr√©vio aviso, e de que s√£o de sua exclusiva responsabilidade:</label></p>
             <ul><label>
                     <li>a conformidade entre os dados informados e os documentos;</li>
-                    <li>a conservaÁ„o dos originais em papel de documentos digitalizados atÈ que decaia o direito de revis„o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de conferÍncia;</li>
-                    <li>a realizaÁ„o por meio eletrÙnico de todos os atos e comunicaÁıes processuais com o prÛprio Usu·rio Externo ou, por seu intermÈdio, com a entidade porventura representada;</li>
-                    <li>a observ‚ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados atÈ as 23h59min59s do ˙ltimo dia do prazo, considerado sempre o hor·rio oficial de BrasÌlia, independente do fuso hor·rio em que se encontre;</li>
-                    <li>a consulta periÛdica ao SEI, a fim de verificar o recebimento de intimaÁıes eletrÙnicas.</li>
+                    <li>a conserva√ß√£o dos originais em papel de documentos digitalizados at√© que decaia o direito de revis√£o dos atos praticados no processo, para que, caso solicitado, sejam apresentados para qualquer tipo de confer√™ncia;</li>
+                    <li>a realiza√ß√£o por meio eletr√¥nico de todos os atos e comunica√ß√µes processuais com o pr√≥prio Usu√°rio Externo ou, por seu interm√©dio, com a entidade porventura representada;</li>
+                    <li>a observ√¢ncia de que os atos processuais se consideram realizados no dia e hora do recebimento pelo SEI, considerando-se tempestivos os praticados at√© as 23h59min59s do √∫ltimo dia do prazo, considerado sempre o hor√°rio oficial de Bras√≠lia, independente do fuso hor√°rio em que se encontre;</li>
+                    <li>a consulta peri√≥dica ao SEI, a fim de verificar o recebimento de intima√ß√µes eletr√¥nicas.</li>
                 </label></ul>
-            <p><label>A existÍncia deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) <?= $OrgaoDTO->getStrDescricao() ?>.</label></p>
+            <p><label>A exist√™ncia deste Recibo, do processo e dos documentos acima indicados pode ser conferida no Portal na Internet do(a) <?= $OrgaoDTO->getStrDescricao() ?>.</label></p>
 
         </div>
 

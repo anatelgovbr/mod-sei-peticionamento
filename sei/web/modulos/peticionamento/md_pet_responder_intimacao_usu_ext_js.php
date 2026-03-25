@@ -24,13 +24,6 @@
         document.location = '<?= $strUrlFechar ?>';
     }
 
-    function iniciarObjAjaxSelectHipoteseLegal() {
-        objAjaxSelectHipoteseLegal = new infraAjaxMontarSelect('selHipoteseLegal', '<?= $strUrlAjaxMontarHipoteseLegal ?>');
-        objAjaxSelectHipoteseLegal.processarResultado = function () {
-            return 'nivelAcesso=' + RESTRITO;
-        }
-    }
-
     function iniciarTabelaDinamicaDocumento() {
         objTabelaDinamicaDocumento = new infraTabelaDinamica('tbDocumento', 'hdnTbDocumento', false, true);
         objTabelaDinamicaDocumento.gerarEfeitoTabela = true;
@@ -217,15 +210,6 @@
         };
     }
 
-
-    function verificarTabelaVazia(qtdLinha) {
-        var tbDocumento = document.getElementById('tbDocumento');
-        var ultimoRegistro = tbDocumento.rows.length == qtdLinha;
-        if (ultimoRegistro) {
-            tbDocumento.style.display = 'none';
-        }
-    }
-
     function limparCampoDocumento() {
         document.getElementById('fileArquivo').value = '';
         document.getElementById('selTipoDocumento').value = 'null';
@@ -246,18 +230,6 @@
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
         document.getElementById('divTipoConferenciaBotao').style.display = 'block';
-    }
-
-    function limparTabelaDocumento() {
-        objTabelaDinamicaDocumento.limpar();
-        verificarTabelaVazia(1);
-    }
-
-
-    function gerarIdDocumento() {
-        var hdnIdDocumento = document.getElementById('hdnIdDocumento');
-        hdnIdDocumento.value = parseInt(hdnIdDocumento.value) + 1;
-        return hdnIdDocumento.value;
     }
 
     function validarDocumento() {
@@ -386,22 +358,6 @@
         ];
 
         objTabelaDinamicaDocumento.adicionar(dados);
-    }
-
-    function corrigirPosicaoAcaoExcluir() {
-        var trs = document.getElementById('tbDocumento').getElementsByTagName('tr');
-        for (var i = 1; i < trs.length; i++) {
-            var tds = trs[i].getElementsByTagName('td');
-            var td = tds[tds.length - 1];
-            td.setAttribute('valign', 'center');
-        }
-    }
-
-    function salvarValorHipoteseLegal(el) {
-        if (EXIBIR_HIPOTESE_LEGAL) {
-            var hdnHipoteseLegal = document.getElementById('hdnHipoteseLegal');
-            hdnHipoteseLegal.value = el.value;
-        }
     }
 
     function mudarSelect(val) {

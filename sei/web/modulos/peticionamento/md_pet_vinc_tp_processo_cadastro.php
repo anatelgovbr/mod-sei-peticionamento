@@ -797,6 +797,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     ?>
 </form>
 <?
+require_once 'js/md_pet_global_js.php';
 require_once "md_pet_vinc_tp_processo_cadastro_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

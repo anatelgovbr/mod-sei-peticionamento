@@ -32,7 +32,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.3.9';
+        return '4.3.10';
     }
 
     public function getIaMenorVersaoRequerida()
@@ -619,12 +619,12 @@ class PeticionamentoIntegracao extends SeiIntegracao
             return null;
         }
 
-        $cpf = InfraUtil::retirarFormatacao($valor);
+        $cpf = str_pad(InfraUtil::retirarFormatacao($valor), 11, '0', STR_PAD_LEFT);
         if (!preg_match('/^\d{11}$/', $cpf) || !InfraUtil::validarCpf($cpf)) {
             return null;
         }
 
-        return $cpf;
+    return $cpf;
     }
 
     private function normalizarCnpjCampo($valor)
@@ -633,7 +633,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             return null;
         }
 
-        $cnpj = InfraUtil::retirarFormatacao($valor);
+        $cnpj = str_pad(InfraUtil::retirarFormatacao($valor), 14, '0', STR_PAD_LEFT);
         if (!preg_match('/^\d{14}$/', $cnpj) || !InfraUtil::validarCnpj($cnpj)) {
             return null;
         }

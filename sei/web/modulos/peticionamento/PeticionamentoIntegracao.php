@@ -619,7 +619,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             return null;
         }
 
-        $cpf = InfraUtil::retirarFormatacao($valor);
+        $cpf = str_pad(InfraUtil::retirarFormatacao($valor), 11, '0', STR_PAD_LEFT);
         if (!preg_match('/^\d{11}$/', $cpf) || !InfraUtil::validarCpf($cpf)) {
             return null;
         }
@@ -633,7 +633,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             return null;
         }
 
-        $cnpj = InfraUtil::retirarFormatacao($valor);
+        $cnpj = str_pad(InfraUtil::retirarFormatacao($valor), 14, '0', STR_PAD_LEFT);
         if (!preg_match('/^\d{14}$/', $cnpj) || !InfraUtil::validarCnpj($cnpj)) {
             return null;
         }

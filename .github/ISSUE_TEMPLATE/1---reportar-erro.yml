@@ -1,0 +1,116 @@
+name: 🐛 Relatório de Erro
+description: Reportar um problema ou comportamento inesperado no sistema
+title: "[ERRO]: "
+labels: ["bug-defeito"]
+assignees: 
+  - neijobson
+  - sabinocolab
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Obrigado por reportar este erro! 
+        Por favor, forneça o máximo de detalhes possível para que possamos reproduzir e corrigir o problema no SEI.
+
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descreva o erro
+      description: Faça aqui uma descrição clara e concisa do erro encontrado.
+      placeholder: "Ex: Ao tentar assinar o documento X, o sistema retorna uma mensagem de erro inesperada..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: passos-reproducao
+    attributes:
+      label: Passos para reproduzir o erro
+      description: Explique em detalhes os passos. Se o erro não puder ser reproduzido, não será possível corrigi-lo.
+      value: |
+        1. Vá para "..."
+        2. Clique em "...."
+        3. Role para baixo até "...."
+        4. Clique no botão "...."
+        5. Veja o erro que ocorre nesse ponto.
+    validations:
+      required: true
+
+  - type: textarea
+    id: comportamento-esperado
+    attributes:
+      label: Comportamento esperado
+      description: Descreva de forma clara e concisa o que você esperava que acontecesse.
+      placeholder: "Ex: O documento deveria ser assinado e o ícone de caneta deveria aparecer."
+    validations:
+      required: true
+
+  - type: textarea
+    id: prints
+    attributes:
+      label: Prints das Telas
+      description: Arraste e solte imagens aqui para ajudar a explicar o erro e os passos descritos acima.
+      placeholder: "Cole ou anexe as imagens aqui..."
+    validations:
+      required: false
+
+  - type: input
+    id: orgao
+    attributes:
+      label: Nome do Órgão
+      placeholder: "Ex: ANTT"
+    validations:
+      required: true
+
+  - type: input
+    id: versao-sei
+    attributes:
+      label: Versão do SEI
+      placeholder: "Ex: 4.0.12"
+    validations:
+      required: true
+
+  - type: input
+    id: versao-modulo
+    attributes:
+      label: Versão do Módulo
+      placeholder: "Ex: 4.0.12"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: banco-dados
+    attributes:
+      label: Tipo de Banco de Dados do SEI
+      options:
+        - MySQL
+        - SQLServer
+        - Oracle
+        - PostgreSQL
+    validations:
+      required: true
+
+  - type: input
+    id: perfil-usuario
+    attributes:
+      label: Perfil do Usuário
+      placeholder: "Ex: colaborador, externo, coordenador, administrador, etc."
+    validations:
+      required: true
+
+  - type: textarea
+    id: informacoes-adicionais
+    attributes:
+      label: Informações Adicionais
+      description: Adicione aqui qualquer outra informação que possa ser relevante sobre o erro.
+    validations:
+      required: false
+
+  - type: textarea
+    id: log-erros
+    attributes:
+      label: Log de Erros
+      description: Colar aqui o log de erro registrado (Menu Infra > Log).
+      render: shell
+    validations:
+      required: false

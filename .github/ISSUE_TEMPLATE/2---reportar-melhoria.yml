@@ -1,0 +1,82 @@
+name: 🔧 Melhoria de Funcionalidade
+description: Sugerir melhorias em funcionalidades já existentes no sistema
+title: "[MELHORIA]: "
+labels: ["melhoria"]
+assignees: 
+  - neijobson
+  - sabinocolab
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Obrigado por sugerir esta melhoria!
+        Por favor, forneça o máximo de detalhes possível para que possamos avaliar e implementar a melhoria no SEI.
+
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição da Melhoria
+      description: Descreva a melhoria que você sugere para uma funcionalidade existente.
+      placeholder: |
+        Descreva a melhoria aqui...
+
+        Exemplo:
+        - Qual funcionalidade você quer melhorar?
+        - Como ela funciona hoje?
+        - Como você sugere que ela funcione?
+        - Que benefícios isso traria?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmacao
+    attributes:
+      label: Confirmação
+      options:
+        - label: Verifiquei que não existe uma sugestão similar já aberta
+          required: true
+
+  - type: input
+    id: orgao
+    attributes:
+      label: Nome do Órgão
+      placeholder: "Ex: ANTT"
+    validations:
+      required: true
+
+  - type: input
+    id: versao-sei
+    attributes:
+      label: Versão do SEI
+      placeholder: "Ex: 4.0.12"
+    validations:
+      required: true
+
+  - type: input
+    id: versao-modulo
+    attributes:
+      label: Versão do Módulo
+      placeholder: "Ex: 4.0.12"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: banco-dados
+    attributes:
+      label: Tipo de Banco de Dados do SEI
+      options:
+        - MySQL
+        - SQLServer
+        - Oracle
+        - PostgreSQL
+    validations:
+      required: true
+
+  - type: input
+    id: perfil-usuario
+    attributes:
+      label: Perfil do Usuário
+      placeholder: "Ex: colaborador, externo, coordenador, administrador, etc."
+    validations:
+      required: true

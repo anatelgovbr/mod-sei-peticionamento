@@ -1,0 +1,82 @@
+name: ✨ Solicitação de Nova Funcionalidade
+description: Sugerir novas funcionalidades para o sistema
+title: "[FUNCIONALIDADE]: "
+labels: ["funcionalidade"]
+assignees: 
+  - neijobson
+  - sabinocolab
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Obrigado por sugerir esta funcionalidade!
+        Por favor, forneça o máximo de detalhes possível para que possamos avaliar e implementar a funcionalidade no SEI.
+
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição da Funcionalidade
+      description: Descreva a funcionalidade que você gostaria de ver implementada no sistema.
+      placeholder: |
+        Descreva a funcionalidade aqui...
+
+        Exemplo:
+        - Qual funcionalidade você gostaria de ter?
+        - Qual problema ela resolveria?
+        - Como ela funcionaria?
+        - Quem seria beneficiado?
+    validations:
+      required: true
+    
+  - type: checkboxes
+    id: confirmacao
+    attributes:
+      label: Confirmação
+      options:
+        - label: Verifiquei que não existe uma solicitação similar já aberta
+          required: true
+
+  - type: input
+    id: orgao
+    attributes:
+      label: Nome do Órgão
+      placeholder: "Ex: ANTT"
+    validations:
+      required: true
+
+  - type: input
+    id: versao-sei
+    attributes:
+      label: Versão do SEI
+      placeholder: "Ex: 4.0.12"
+    validations:
+      required: true
+
+  - type: input
+    id: versao-modulo
+    attributes:
+      label: Versão do Módulo
+      placeholder: "Ex: 4.0.12"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: banco-dados
+    attributes:
+      label: Tipo de Banco de Dados do SEI
+      options:
+        - MySQL
+        - SQLServer
+        - Oracle
+        - PostgreSQL
+    validations:
+      required: true
+
+  - type: input
+    id: perfil-usuario
+    attributes:
+      label: Perfil do Usuário
+      placeholder: "Ex: colaborador, externo, coordenador, administrador, etc."
+    validations:
+      required: true

@@ -927,7 +927,7 @@ class MdPetVincRepresentantRN extends InfraRN
             }
         }
 
-        public function suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
+        public function suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, $params, $agendamento = false)
         {
             
                 $arrObjMdPetVincRepresentantProcuradores = [];
@@ -1041,7 +1041,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 
         }
 	
-		public function suspenderVinculacoesConectado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
+		public function suspenderVinculacoesConectado($arrObjMdPetVincRepresentantDTO, $params, $agendamento = false)
 		{
 				
 			$arrObjMdPetVincRepresentantProcuradores = [];

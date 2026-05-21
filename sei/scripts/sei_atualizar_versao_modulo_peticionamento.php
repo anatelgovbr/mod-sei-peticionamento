@@ -5,10 +5,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.5.0';
+    private $versaoAtualDesteModulo = '4.6.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0', '4.5.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0', '4.5.0', '4.6.0');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -169,9 +169,10 @@ class MdPetAtualizadorSeiRN extends InfraRN
 		            $this->instalarv430();
                 case '4.3.0':
                     $this->instalarv440();
-                    break;
                 case '4.4.0':
                     $this->instalarv450();
+                case '4.5.0':
+                    $this->instalarv460();
                     break;
 
                 default:
@@ -3195,6 +3196,50 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
         $strComando = 'MdPetAgendamentoAutomaticoRN::EnviarDadosSistemaModulo';
         $strPeriodicidadeComplemento = '1/0';
         $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_DIA_SEMANA);
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv460()
+    {
+        $nmVersao = '4.6.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+        $objInfraMetaBD->setBolValidarIdentificador(true);
+
+        $this->logar('>>>> CRIANDO TABELA "md_pet_adm_pro_repres_whit" ');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_adm_pro_repres_whit ( 
+                id_md_pet_adm_pro_repres_whit ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_procedimento  ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_adm_pro_repres_whit', 'pk_md_pet_adm_pro_repres_whit', array('id_md_pet_adm_pro_repres_whit'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_pet_adm_pro_repres_whit_pro', 'md_pet_adm_pro_repres_whit', array('id_procedimento'), 'procedimento', array('id_procedimento'));
+
+        $this->logar('----- CRIANDO A SEQUENCE "seq_md_pet_adm_pro_repres_whit"');
+        if (BancoSEI::getInstance() instanceof InfraMySql) {
+            BancoSEI::getInstance()->executarSql('create table seq_md_pet_adm_pro_repres_whit (id bigint not null primary key AUTO_INCREMENT, campo char(1) null) AUTO_INCREMENT = 1');
+        } else if (BancoSEI::getInstance() instanceof InfraSqlServer) {
+            BancoSEI::getInstance()->executarSql('create table seq_md_pet_adm_pro_repres_whit (id bigint identity(1,1), campo char(1) null)');
+        } else if (BancoSEI::getInstance() instanceof InfraOracle) {
+            BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_adm_pro_repres_whit', 1);
+        }
+
+        if (count($objInfraMetaBD->obterTabelas('md_pet_rel_cont_sit_rf')) == 1) {
+            $this->logar('>>>> DELETANDO A TABELA md_pet_rel_cont_sit_rf');
+            BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_rel_cont_sit_rf');
+        }
+
+        if (BancoSEI::getInstance() instanceof InfraPostgreSql) {
+            $this->logar('>>>> ALTERANDO COLUNA id_procedimento DA TABELA md_pet_vinculo PARA ACEITAR VALORES NULOS NO POSTGRESQL');
+            BancoSEI::getInstance()->executarSql('ALTER TABLE md_pet_vinculo rename COLUMN id_procedimento TO id_procedimento_old');
+            $objInfraMetaBD->adicionarColuna('md_pet_vinculo', 'id_procedimento', $objInfraMetaBD->tipoNumeroGrande(), 'NULL');
+            BancoSEI::getInstance()->executarSql('UPDATE md_pet_vinculo SET id_procedimento = id_procedimento_old');
+            $objInfraMetaBD->excluirColuna('md_pet_vinculo', 'id_procedimento_old');
+        }
 
         $this->atualizarNumeroVersao($nmVersao);
     }

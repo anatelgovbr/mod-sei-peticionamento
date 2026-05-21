@@ -202,12 +202,12 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                         
                         <select onchange="pesquisarFinal(this)" id="selUFAberturaProcesso" name="selUFAberturaProcesso" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
 	                        <? if(count($selectCidade[0]) == 1): ?>
-                                <option value="<?= $selectCidade[0][0] ?>" selected="selected"><?= $selectCidade[1][0] ?></option>
+                                <option value="<?= $selectCidade[0][0] ?>" data-idunidade="<?= $selectCidade[0][0] ?>" selected="selected"><?= $selectCidade[1][0] ?></option>
 	                        <? elseif(count($selectCidade[0]) > 1): ?>
                                 <option value="">Selecione a Cidade</option>
 		                        <? for($i = 0; $i < count($selectCidade[0]); $i++): ?>
                                     <? $selectedCidade = !empty($nomeCidade) && $selectCidade[1][$i] == $nomeCidade ? 'selected="selected"' : ''; ?>
-                                    <option value="<?= $selectCidade[0][$i] ?>" <?= $selectedCidade ?>><?= $selectCidade[1][$i] ?></option>
+                                    <option value="<?= $selectCidade[0][$i] ?>" data-idunidade="<?= $selectCidade[0][$i] ?>" <?= $selectedCidade ?>><?= $selectCidade[1][$i] ?></option>
 		                        <? endfor; ?>
 	                        <? endif; ?>
                         </select>

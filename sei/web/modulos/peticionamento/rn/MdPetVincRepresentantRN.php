@@ -353,31 +353,98 @@ class MdPetVincRepresentantRN extends InfraRN
         }
     }
 
-    protected function realizarProcessosAlteracaoResponsavelLegalControlado($dados)
+    public function realizarProcessosAlteracaoResponsavelLegal($dados)
+    {
+
+        $dadosAlteracao = $this->prepararProcessosAlteracaoResponsavelLegal($dados);
+
+        try {
+            $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
+            $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculoAlteracaoResponsavelLegal($dadosAlteracao);
+
+            return $reciboGerado ? $reciboGerado->getNumIdReciboPeticionamento() : '';
+
+        } catch (Exception $e) {
+            $this->tratarFalhaProcessosAlteracaoResponsavelLegal($dadosAlteracao, $e);
+        }
+
+        return false;
+    }
+
+    protected function prepararProcessosAlteracaoResponsavelLegalControlado($dados)
     {
 
         $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
         $responsavelLegal = $objMdPetVinculoUsuExtRN->verificaMudancaResponsavelLegal($dados);
 
         $dados['isAlteradoRespLegal'] = false;
+        $dados['rollbackAlteracaoRespLegal'] = null;
 
         if ($responsavelLegal instanceof MdPetVincRepresentantDTO) {
 
             $idVinculo = isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo'];
             $numeroSEI = isset($_GET['numeroSEI']) ? $_GET['numeroSEI'] : $_POST['hdnNumeroSei'];
-            $this->_realizarProcessoEncerramentoVinculo(array($idVinculo, $numeroSEI));
+            $dados['rollbackAlteracaoRespLegal'] = $this->_realizarProcessoEncerramentoVinculo(array($idVinculo, $numeroSEI));
             $dados['isAlteradoRespLegal'] = true;
             $dados['NomeProcurador'] = $responsavelLegal->getStrNomeProcurador();
             $dados['CpfProcurador'] = $responsavelLegal->getStrCpfProcurador();
 
         }
 
-        $reciboGerado = $objMdPetVinculoUsuExtRN->gerarProcedimentoVinculo($dados);
-        $idRecibo = $reciboGerado ? $reciboGerado->getNumIdReciboPeticionamento() : '';
-
-        return $idRecibo;
-
+        return $dados;
     }
+
+    private function tratarFalhaProcessosAlteracaoResponsavelLegal($dados, Exception $e)
+    {
+        try {
+            $this->realizarRollbackProcessosAlteracaoResponsavelLegal($dados);
+        } catch (Exception $eRollback) {
+            throw new InfraException('Erro no processamento da alteracao do responsavel legal e falha ao reverter as etapas anteriores.', $eRollback);
+        }
+
+        throw $e;
+    }
+
+    private function realizarRollbackProcessosAlteracaoResponsavelLegal($dados)
+    {
+        $rollbackAlteracao = array_key_exists('rollbackAlteracaoRespLegal', $dados) ? $dados['rollbackAlteracaoRespLegal'] : null;
+
+        if (empty($rollbackAlteracao) || !is_array($rollbackAlteracao)) {
+            return;
+        }
+
+        $idRepresentante = array_key_exists('idRepresentante', $rollbackAlteracao) ? $rollbackAlteracao['idRepresentante'] : null;
+
+        if (is_numeric($idRepresentante)) {
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($idRepresentante);
+            $objMdPetVincRepresentantDTO->setStrStaEstado(array_key_exists('estadoAnterior', $rollbackAlteracao) && !InfraString::isBolVazia($rollbackAlteracao['estadoAnterior']) ? $rollbackAlteracao['estadoAnterior'] : self::$RP_ATIVO);
+            $objMdPetVincRepresentantDTO->setStrMotivo(array_key_exists('motivoAnterior', $rollbackAlteracao) ? $rollbackAlteracao['motivoAnterior'] : null);
+            $objMdPetVincRepresentantDTO->setDthDataEncerramento(array_key_exists('dataEncerramentoAnterior', $rollbackAlteracao) ? $rollbackAlteracao['dataEncerramentoAnterior'] : null);
+            $this->alterar($objMdPetVincRepresentantDTO);
+        }
+
+        $idDocumentoJustificativa = array_key_exists('idDocumentoJustificativa', $rollbackAlteracao) ? $rollbackAlteracao['idDocumentoJustificativa'] : null;
+        if (is_numeric($idRepresentante) && is_numeric($idDocumentoJustificativa)) {
+            $this->removerDocumentoJustificativaAlteracaoResponsavelLegal($idRepresentante, $idDocumentoJustificativa);
+        }
+    }
+
+    private function removerDocumentoJustificativaAlteracaoResponsavelLegal($idRepresentante, $idDocumentoJustificativa)
+    {
+        $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
+        $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
+        $objMdPetVincDocumentoDTO->retNumIdMdPetVincDocumento();
+        $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($idRepresentante);
+        $objMdPetVincDocumentoDTO->setDblIdDocumento($idDocumentoJustificativa);
+        $objMdPetVincDocumentoDTO->setStrTipoDocumento(MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO);
+
+        $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
+
+        if (!empty($arrObjMdPetVincDocumentoDTO)) {
+            $objMdPetVincDocumentoRN->excluir($arrObjMdPetVincDocumentoDTO);
+        }
+     }
 
     private function _realizarProcessoEncerramentoVinculo($params)
     {
@@ -395,6 +462,10 @@ class MdPetVincRepresentantRN extends InfraRN
         $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
         $idRepresentante = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
+        $idDocumentoJustificativa = null;
+        $estadoAnterior = $objMdPetVincRepresentantDTO->getStrStaEstado();
+        $motivoAnterior = $objMdPetVincRepresentantDTO->getStrMotivo();
+        $dataEncerramentoAnterior = $objMdPetVincRepresentantDTO->getDthDataEncerramento();
 
         if (is_numeric($numeroSEI)) {
             // Justificativa é um documento
@@ -406,17 +477,23 @@ class MdPetVincRepresentantRN extends InfraRN
             $objDocumentoDTO->setNumMaxRegistrosRetorno('1');
 
             $arrObjDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+            $idDocumentoJustificativa = $arrObjDocumentoDTO->getDblIdDocumento();
 
             $tpProtocolo = MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO;
-            $objMdPetVinculoUsuExtRN->_adicionarDadosArquivoVinculacao($arrObjDocumentoDTO->getDblIdDocumento(), $idRepresentante, MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO);
+            $objMdPetVinculoUsuExtRN->_adicionarDadosArquivoVinculacao($idDocumentoJustificativa, $idRepresentante, $tpProtocolo);
         }
 
         $objMdPetVincRepresentantDTO->setStrMotivo($_POST['txtMotivo']);
         $objMdPetVincRepresentantDTO->setStrStaEstado(self::$RP_SUBSTITUIDA); // Marcar como Procuração como Substituída
         $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentantDTO);
 
-        // retornando representante anterior
-        return $idRepresentante;
+        return array(
+            'idRepresentante' => $idRepresentante,
+            'estadoAnterior' => $estadoAnterior,
+            'motivoAnterior' => $motivoAnterior,
+            'dataEncerramentoAnterior' => $dataEncerramentoAnterior,
+            'idDocumentoJustificativa' => $idDocumentoJustificativa
+        );
     }
 
     public function realizarProcessoSuspensaoRestabelecimentoVinculoControlado($params)
@@ -784,15 +861,15 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetVincRepresentantDTO->retStrNomeProcurador();
             return $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
         }
-        
+
         public function possuiProcessoVinculacaoControlado($cpf){
-	
+
 	        $contatoDTO = new ContatoDTO();
 	        $contatoDTO->setDblCpf($cpf);
 	        $contatoDTO->retDblCpf();
 	        $contatoDTO->retNumIdContato();
 	        $arrIdContato = InfraArray::converterArrInfraDTO((new ContatoRN())->listarRN0325($contatoDTO), 'IdContato');
-	
+
 	        $objMdPetVinculoDTO = new MdPetVinculoDTO();
 	        $objMdPetVinculoDTO->retNumIdMdPetVinculo();
 	        $objMdPetVinculoDTO->retNumIdContato();
@@ -800,9 +877,9 @@ class MdPetVincRepresentantRN extends InfraRN
 	        $objMdPetVinculoDTO->setDblIdProtocolo(NULL, InfraDTO::$OPER_DIFERENTE);
 	        $objMdPetVinculoDTO->retDblIdProtocolo();
 	        $arrIdProtocolo = InfraArray::converterArrInfraDTO((new MdPetVinculoRN())->listar($objMdPetVinculoDTO), 'IdProtocolo');
-	
+
 	        return !empty($arrIdProtocolo);
-    	
+
         }
 
         public function listarVincRepresentAtivosPorCNPJControlado($cnpj)
@@ -859,9 +936,9 @@ class MdPetVincRepresentantRN extends InfraRN
                 $objDocumento = $this->_encaminhamentoParaCriarDocumento($params, null, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
 
                 //BUSCAR PROCEDIMENTO DA PROCURACAO
-        
+
                 $idProcedimento = null;
-                
+
                 $objMdPetVinculoDTO = new MdPetVinculoDTO();
                 $objMdPetVinculoDTO->retDblIdProtocolo();
                 $objMdPetVinculoDTO->setNumIdMdPetVinculo($idVinculo);
@@ -927,9 +1004,9 @@ class MdPetVincRepresentantRN extends InfraRN
             }
         }
 
-        public function suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, $params, $agendamento = false)
+        public function suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
         {
-            
+
                 $arrObjMdPetVincRepresentantProcuradores = [];
 	            $arrRerepentVincSuspensos = [];
 	            $objResponsavelLegal = null;
@@ -937,45 +1014,45 @@ class MdPetVincRepresentantRN extends InfraRN
 
                 //REALIZA A SUSPENSO DOS VINCULOS
                 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
-	                
+
                 	try {
-		            
+
 		                $arrRerepentVincSuspensos['tipoRepresentante']      = $objMdPetVincRepresentantDTO->getStrTipoRepresentante();
 		                $arrRerepentVincSuspensos['documentoObjVinc']       = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? $objMdPetVincRepresentantDTO->getStrCNPJ() : $objMdPetVincRepresentantDTO->getStrCPF();
 		                $arrRerepentVincSuspensos['razaoSocialNomeVinc']    = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
-	                    
+
 	                    switch ($objMdPetVincRepresentantDTO->getStrTipoRepresentante()) {
-	                        
+
 	                        case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES:
 	                        case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL:
-	                            
+
 	                            $this->_suspenderVinculo($objMdPetVincRepresentantDTO);
 	                            $arrObjMdPetVincRepresentantProcuradores[] = $objMdPetVincRepresentantDTO;
 	                            $idVinculo = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculo();
 	                            $arrRerepentVincSuspensos['procuracoes'][] = $objMdPetVincRepresentantDTO;
 	                            break;
-	
+
 	                        case MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL:
 	                            $this->_suspenderVinculo($objMdPetVincRepresentantDTO);
 	                            $objResponsavelLegal = $objMdPetVincRepresentantDTO;
 	                            $idVinculo = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculo();
 	                            $arrRerepentVincSuspensos['responsavel_legal'] = $objMdPetVincRepresentantDTO;
 	                            break;
-		
+
 		                    case MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO:
-			
+
 			                    $arrRerepentVincSuspensos['arrBuscarOurasRepresentacoesPorCPF'] = $this->_buscarRepresentacoesPorCPF($objMdPetVincRepresentantDTO->getStrCPF(), $agendamento, $params);
 			                    $this->_suspenderAutoRepresentacao($objMdPetVincRepresentantDTO);
 			                    $autoRepresentacao = $objMdPetVincRepresentantDTO;
 			                    $arrRerepentVincSuspensos['autorrepresentante'][] = $autoRepresentacao;
 			                    break;
-	                      
+
 	                    }
-	                    
+
 	                } catch (Exception $e) {
 		                PaginaSEI::getInstance()->processarExcecao($e, true);
 	                }
-                    
+
                 }
 
                 if($idVinculo){
@@ -1038,80 +1115,80 @@ class MdPetVincRepresentantRN extends InfraRN
                 }
 
                 return $arrRerepentVincSuspensos;
-                
+
         }
-	
-		public function suspenderVinculacoesConectado($arrObjMdPetVincRepresentantDTO, $params, $agendamento = false)
+
+		public function suspenderVinculacoesConectado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
 		{
-				
+
 			$arrObjMdPetVincRepresentantProcuradores = [];
 			$arrRerepentVincSuspensos = [];
 			$objResponsavelLegal = null;
 			$autoRepresentacao = null;
 			$enviarEmail = true;
-			
+
 			//REALIZA A SUSPENSO DOS VINCULOS
 			foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
-				
+
 				$arrRerepentVincSuspensos['tipoRepresentante']      = $objMdPetVincRepresentantDTO->getStrTipoRepresentante();
 				$arrRerepentVincSuspensos['documentoObjVinc']       = $objMdPetVincRepresentantDTO->getStrTpVinc() == 'J' ? $objMdPetVincRepresentantDTO->getStrCNPJ() : $objMdPetVincRepresentantDTO->getStrCPF();
 				$arrRerepentVincSuspensos['razaoSocialNomeVinc']    = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
-				
+
 				try {
-					
+
 					switch ($objMdPetVincRepresentantDTO->getStrTipoRepresentante()) {
-						
+
 						case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES:
 						case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL:
-							
+
 							$this->_suspenderVinculo($objMdPetVincRepresentantDTO);
 							$arrObjMdPetVincRepresentantProcuradores[] = $objMdPetVincRepresentantDTO;
 							$idVinculo = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculo();
 							$arrRerepentVincSuspensos['procuracoes'][] = $objMdPetVincRepresentantDTO;
 							break;
-						
+
 						case MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL:
 							$this->_suspenderVinculo($objMdPetVincRepresentantDTO);
 							$objResponsavelLegal = $objMdPetVincRepresentantDTO;
 							$idVinculo = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculo();
 							$arrRerepentVincSuspensos['responsavel_legal'] = $objMdPetVincRepresentantDTO;
 							break;
-						
+
 						case MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO:
-							
+
 							$arrRerepentVincSuspensos['arrBuscarOurasRepresentacoesPorCPF'] = $this->_buscarRepresentacoesPorCPF($objMdPetVincRepresentantDTO->getStrCPF(), $agendamento, $params);
 							$this->_suspenderAutoRepresentacao($objMdPetVincRepresentantDTO);
 							$autoRepresentacao = $objMdPetVincRepresentantDTO;
 							$arrRerepentVincSuspensos['autorrepresentante'][] = $autoRepresentacao;
 							break;
-						
+
 					}
-					
+
 				} catch (Exception $e) {
-					
+
 					$arrRerepentVincSuspensos['erros'][] = $arrRerepentVincSuspensos['documentoObjVinc'];
-					
+
 				}
-				
+
 			}
-			
+
 			if($idVinculo){
-				
+
 				// CRIA DOCUMENTO DE SUSPENSO
 				$objDocumento = $this->_encaminhamentoParaCriarDocumento($params, $autoRepresentacao, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
-				
+
 				if($objDocumento){
-					
+
 					$arrRerepentVincSuspensos['documentoSuspensao'] = $objDocumento->getDocumentoFormatado();
-					
+
 					//BUSCAR PROCEDIMENTO DA PROCURACAO
 					$objProcedimento = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($idVinculo);
-					
+
 					// SE A OPERAO FOR EXECUTADA MANUALMENTE VIA SISTEMA DEVE ASSINAR E TRAVAR DOCUMENTO
 					if (!$agendamento) {
 						$this->_assinarTravarDocumentoGerado($objProcedimento, $params, $objDocumento);
 					}
-					
+
 					//ENVIA E-MAIL DE SUSPENSAO
 					$objVinculo = $this->_recuperaVinculo($idVinculo);
 					$objUsuario = $this->_recuperaUsuario($objVinculo->getNumIdContatoRepresentante());
@@ -1124,12 +1201,12 @@ class MdPetVincRepresentantRN extends InfraRN
 					$paramsParaEmail['autoRepresentacao'] = false;
 					$paramsParaEmail['agendamento'] = $agendamento;
 					$paramsParaEmail['documento_suspensao_procuracao'] = $paramsParaEmail['dados']['hdnNumeroSei'];
-					
+
 					//E-MAIL  DIFERENTE PARA RESPONSAVEL LEGAL / PROCURADOR / AUTOREPRESENTACAO
 					if ($objResponsavelLegal && $enviarEmail) {
 						(new MdPetIntEmailNotificacaoRN())->enviarEmailVincSuspensao($paramsParaEmail);
 					}
-					
+
 					if($autoRepresentacao){
 						$paramsParaEmail['autoRepresentacao'] = true;
 						$objUsuarioAutorepresentacao = $this->_recuperaUsuario($autoRepresentacao->getNumIdContato());
@@ -1141,7 +1218,7 @@ class MdPetVincRepresentantRN extends InfraRN
 							(new MdPetIntEmailNotificacaoRN())->enviarEmailSuspensaoAutorepresentacao($paramsAuto);
 						}
 					}
-					
+
 					foreach($arrObjMdPetVincRepresentantProcuradores as $objMdPetVincRepresentantProcuradores){
 						$paramsParaEmail['dados']['hdnIdVinculoRepresent'] = $objMdPetVincRepresentantProcuradores->getNumIdMdPetVinculoRepresent();
 						$paramsParaEmail['dados']['procuracao_tipo']       = $objMdPetVincRepresentantProcuradores->getStrNomeTipoVinculacao();
@@ -1150,22 +1227,22 @@ class MdPetVincRepresentantRN extends InfraRN
 							(new MdPetIntEmailNotificacaoRN())->enviarEmailProcuracaoSuspRest($paramsParaEmail);
 						}
 					}
-					
+
 					//VINCULAR DOCUMENTO DE JUSTIFICATIVA AO VINCULO CASO NAO SEJA DE AGENDAMENTO
 					if (!$agendamento) {
 						$staDiligenciaTipoDocumento = MdPetVincDocumentoRN::$TP_PROTOCOLO_DILIGENCIA_SUSPENSAO;
 						$this->_vincularDocumentoVinculo($params['hdnNumeroSei'], $params['hdnIdVinculoRepresent'], $staDiligenciaTipoDocumento);
 					}
-					
+
 					//INSERIR ANDAMENTOS
 					$this->_inserirAndamento($objProcedimento);
-					
+
 				}
-				
+
 			}
-			
+
 			return $arrRerepentVincSuspensos;
-			
+
 		}
 
         private function _suspenderVinculo($objMdPetVincRepresentantDTO)
@@ -1214,7 +1291,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
         private function _prepararGerarDocumentoDetalhado($objMdPetVincRepresentantDTO, $agendamento, $operacao, $numeroSei)
         {
-	
+
         	$params['agendamento'] = $agendamento;
             $params['vinculoRepresent'] = $objMdPetVincRepresentantDTO;
             $params['operacao'] = $operacao;
@@ -1235,38 +1312,38 @@ class MdPetVincRepresentantRN extends InfraRN
             $params['numeroSei'] = $numeroSei;
             $params['procedimento'] = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($objMdPetVincRepresentantDTO->getNumIdMdPetVinculo());
 	        $params['idSerie'] = $this->_getTipoDocumentoGerado($operacao, $objMdPetVincRepresentantDTO->getStrTipoRepresentante());
-	        
+
 	        if(isset($params['objusuario']) && !empty($params['objusuario']) && !empty($params['objusuario']->getStrSiglaOrgao())){
 		        $params['corpoDocumentoHTML'] = $this->_montarHtmlDetalhado($params);
 		        return $agendamento ? $this->_gerarDocumentoAgendamento($params) : $this->_gerarDocumento($params);
 	        }else{
 	        	return null;
 	        }
-	        
+
         }
 
         private function _prepararGerarDocumentoSimplificado($arrObjMdPetVincRepresentantDTO, $agendamento, $numeroSei, $operacao)
         {
-         
+
         	$objMdPetVincRepresentantDTO = current($arrObjMdPetVincRepresentantDTO);
             $params['idVinculo'] = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculo();
             $params['vinculoRepresent'] = $objMdPetVincRepresentantDTO;
             $params['objVinculo'] = $this->_recuperaVinculo($params['idVinculo']);
 	        $params['objusuario'] = $this->_recuperaUsuario($params['objVinculo']->getNumIdContatoRepresentante());
-			
+
 	        if(empty($params['objusuario'])){
 	        	return false;
 	        }
-	        
+
 	        $params['ortoganteNome'] = $objMdPetVincRepresentantDTO->getStrRazaoSocialNomeVinc();
             $params['arrObjMdPetVincRepresentant'] = $arrObjMdPetVincRepresentantDTO;
             $params['numeroSei'] = $numeroSei;
             $params['corpoDocumentoHTML'] = $this->_montarHtmlSuspensaoSimplificado($params);
             $params['idSerie'] = $this->_getTipoDocumentoGerado($operacao, $objMdPetVincRepresentantDTO->getStrTipoRepresentante());
             $params['procedimento'] = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($objMdPetVincRepresentantDTO->getNumIdMdPetVinculo());
-	
+
 	        return $agendamento ? $this->_gerarDocumentoAgendamento($params) : $this->_gerarDocumento($params);
-	        
+
         }
 
         private function _prepararGerarDocumentoResponsavelLegal($objResponsavelLegal, $arrObjMdPetVincRepresentantDTO, $agendamento, $operacao, $numeroSei = null)
@@ -1294,28 +1371,28 @@ class MdPetVincRepresentantRN extends InfraRN
             $params['corpoDocumentoHTML'] = $this->_montarHtmlDetalhado($params);
 
             return $agendamento ? $this->_gerarDocumentoAgendamento($params) : $this->_gerarDocumento($params);
-	        
+
         }
-	
+
 		private function _getTipoDocumentoGerado($operacao, $tipoRepresentante, $agendamento = false)
 		{
-			
+
 			$objInfraParametro = new InfraParametro($this->getObjInfraIBanco());
-			
+
 			if(in_array($tipoRepresentante, [ self::$PE_PROCURADOR_ESPECIAL, self::$PE_PROCURADOR, self::$PE_PROCURADOR_SIMPLES ])){
-				
+
 				$idSerieTipoDocProc = ($operacao == MdPetVincRepresentantRN::$RP_SUSPENSO) ? MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAO_SUSPENSAO : MdPetIntSerieRN::$MD_PET_ID_SERIE_PROCURACAO_RESTABELECIMENTO;
 				return $objInfraParametro->getValor($idSerieTipoDocProc);
-				
+
 			}
-			
+
 			if($tipoRepresentante == self::$PE_RESPONSAVEL_LEGAL){
-				
+
 				$idSerieTipoDocVinc = ($operacao == MdPetVincRepresentantRN::$RP_SUSPENSO) ? ($agendamento ? MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO_AUTOMATICA : MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_SUSPENSAO) : MdPetIntSerieRN::$MD_PET_ID_SERIE_VINC_RESTABELECIMENTO;
 				return $objInfraParametro->getValor($idSerieTipoDocVinc);
-				
+
 			}
-			
+
 		}
 
         private function _assinarTravarDocumentoGerado($objProcedimentoDTO, $params, $objDocumento)
@@ -1357,9 +1434,9 @@ class MdPetVincRepresentantRN extends InfraRN
 
         private function _buscarRepresentacoesPorCPF($cpf, $agendamento, $params)
         {
-	
+
 	        $arrRetornoLogAgendamento = [];
-        	
+
 	        // BUSCANDO VINCULOS ONDE O CPF É O OUTORGADO
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->setStrStaEstado('A');
@@ -1371,44 +1448,44 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetVincRepresentantDTO->retStrTpVinc();
             $objMdPetVincRepresentantDTO->retStrCNPJ();
             $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
-            
+
             if((new MdPetVincRepresentantRN())->contar($objMdPetVincRepresentantDTO) > 0){
-	
+
 	            foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
-		
+
 		            // VERIFICA SE O OBJETO DO USUARIO ESTA ACESSIVEL
 		            $objVinculo = $this->_recuperaVinculo($objMdPetVincRepresentantDTO->getNumIdMdPetVinculo());
 		            $objUsuario = $this->_recuperaUsuario($objVinculo->getNumIdContatoRepresentante());
-		
+
 		            if(!empty($objUsuario) && $objUsuario->getStrSiglaOrgao()){
-			
+
 			            $this->_suspenderVinculo($objMdPetVincRepresentantDTO);
 			            $objDocumento = $this->_prepararGerarDocumentoDetalhado($objMdPetVincRepresentantDTO, $agendamento, MdPetVincRepresentantRN::$RP_SUSPENSO, $params['hdnNumeroSei']);
 			            $objProcedimento = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($objMdPetVincRepresentantDTO->getNumIdMdPetVinculo());
-			
+
 			            //INFORMACOES RETORNADAS PARA CRIACAO DE LOG QUANDO A EXECUCAO VIER DE UM AGENDAMENTO
 			            $vinc['documentoSuspensao'] = $objDocumento->getDocumentoFormatado();
 			            $vinc['objMdPetVincRepresentant'] = $objMdPetVincRepresentantDTO;
 			            $arrRetornoLogAgendamento[] = $vinc;
-			
+
 			            if (!$agendamento) {
 				            $this->_assinarTravarDocumentoGerado($objProcedimento, $params, $objDocumento);
 			            }
-			
+
 		            }else{
-			
+
 			            //INFORMACOES RETORNADAS PARA CRIACAO DE LOG QUANDO A EXECUCAO VIER DE UM AGENDAMENTO
 			            $vinc['erros'][] = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculo();
 			            $arrRetornoLogAgendamento[] = $vinc;
-			
+
 		            }
-		
+
 	            }
-            	
+
             }
 
             return $arrRetornoLogAgendamento;
-            
+
         }
 
         private function _buscarRepresentacaoPorId($idMdPetVinculoRepresent)
@@ -1477,7 +1554,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
         private function _gerarDocumento($params)
         {
-	
+
 	        $objSeiRN = new SeiRN();
             $objDocumentoAPI = new DocumentoAPI();
             $objDocumentoAPI->setIdProcedimento($params['objVinculo']->getDblIdProtocolo());
@@ -1614,7 +1691,7 @@ class MdPetVincRepresentantRN extends InfraRN
         private function _retornarNSei($numeroSei)
         {
             $nSei = '';
-            
+
             if($numeroSei){
                 $nSei = '';
                 $nSei .= '<tr class="trEspaco">';
@@ -1658,15 +1735,15 @@ class MdPetVincRepresentantRN extends InfraRN
         {
             $procuracaoTipo = $params['tipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL ? 'Especial' : 'Simples';
 	        $outorganteTipoPessoa = $params['outorganteTipoPessoa'] == 'F' ? 'Pessoa Física' : 'Pessoa Jurídica';
-	        
+
 	        $justificativa = 'Suspensão ocorrida conforme formalizado no documento SEI nº ' . $params['numeroSei'];
 	        $justificativaAgendamento = 'Suspensão ocorrida automaticamente em razão da consulta à Receita Federal retornar situação cadastral do procurador como não "Ativa".';
 	        if($params['agendamento']){
 		        $justificativa = $justificativaAgendamento;
 	        }
-         
+
 	        $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_suspensao_procurador.php';
-            
+
             $htmlModelo = file_get_contents($url);
 
             $htmlModelo = str_replace('@procuracaoDados', $this->_retornaProcuradorDados($params), $htmlModelo);
@@ -1704,23 +1781,23 @@ class MdPetVincRepresentantRN extends InfraRN
 	        $htmlModelo = str_replace('@outorganteTipoPessoa', $outorganteTipoPessoa, $htmlModelo);
 
             return $htmlModelo;
-            
+
         }
 
         private function _montarHtmlSuspensaoResponsavelLegal($params)
         {
-	
+
 	        $justificativa = 'Suspensão ocorrida conforme formalizado no documento SEI nº ' . $params['numeroSei'];
 	        $justificativaAgendamento = 'Suspensão ocorrida automaticamente em razão da consulta à Receita Federal retornar situação cadastral da entidade como não "Ativa".';
-	        
+
 	        if($params['agendamento']){
 		        $justificativa = $justificativaAgendamento;
 	        }
-	
+
 	        $url = dirname(__FILE__) . '/../md_pet_vinc_modelo_suspensao.php';
-	        
+
             $htmlModelo = file_get_contents($url);
-            
+
 //            die(var_dump([
 //            	'getStrCNPJ' => InfraUtil::formatarCnpj($params['vinculoRepresent']->getStrCNPJ()),
 //            	'getDthDataVinculo' => $params['objVinculo']->getDthDataVinculo(),
@@ -1740,9 +1817,9 @@ class MdPetVincRepresentantRN extends InfraRN
             $htmlModelo = str_replace('@paragrafoCascata', $this->_getParagrafoCascataSuspensaoRestabelecimento($params['arrObjMdPetVincRepresentant'], 'suspensas'), $htmlModelo);
             $htmlModelo = str_replace('@sigla_orgao@', $params['objusuario']->getStrSiglaOrgao(), $htmlModelo);
             $htmlModelo = str_replace('@descricao_orgao@', $params['objusuario']->getStrDescricaoOrgao(), $htmlModelo);
-            
+
             return $htmlModelo;
-            
+
         }
 
         private function _montarHtmlRestabelcimentoResponsavelLegal($params)
@@ -1795,7 +1872,7 @@ class MdPetVincRepresentantRN extends InfraRN
             // INJETA OS MEMAIS DADOS NO TEMPLATE
             $htmlModelo = str_replace('@sigla_orgao@', $params['objusuario']->getStrSiglaOrgao(), $htmlModelo);
             $htmlModelo = str_replace('@descricao_orgao@', $params['objusuario']->getStrDescricaoOrgao(), $htmlModelo);
-	
+
 	        $htmlModelo = str_replace('@data_suspensao@', date('d/m/Y H:i:s'), $htmlModelo);
 	        $htmlModelo = str_replace('@protocolo_formatado@', $params['objVinculo']->getStrProtocoloFormatado(), $htmlModelo);
 
@@ -1814,14 +1891,14 @@ class MdPetVincRepresentantRN extends InfraRN
                 $procuracaoDados .= '<td class="tdTabulacao" style="font: bold 12pt Calibri, sans-serif">Validade:</td>';
                 $procuracaoDados .= '<td style="font-weight: normal">' . (!empty($params['dtLimiteValidade']) ? $params['dtLimiteValidade'] : 'Indeterminada') . '</td>';
                 $procuracaoDados .= '</tr>';
-                
+
                 if($incluiPoderes){
 	                $procuracaoDados .= '<tr>';
 	                $procuracaoDados .= '<td class="tdTabulacao" style="font: bold 12pt Calibri, sans-serif">Poderes:</td>';
 	                $procuracaoDados .= '<td style="font-weight: normal">' . $params['poderes'] . '</td>';
 	                $procuracaoDados .= '</tr>';
                 }
-                
+
                 $procuracaoDados .= '<tr>';
                 $procuracaoDados .= '<td class="tdTabulacao" style="font: bold 12pt Calibri, sans-serif">Abrangência:</td>';
 
@@ -1891,7 +1968,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
         private function _recuperaUsuario($idContato)
         {
-         
+
         	$usuarioDTO = new UsuarioDTO();
             $usuarioDTO->retStrSiglaOrgao();
             $usuarioDTO->retStrDescricaoOrgao();
@@ -1901,7 +1978,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $usuarioDTO->setStrSinAtivo('S');
 
             return (new UsuarioRN())->consultarRN0489($usuarioDTO);
-            
+
         }
 
         private function _suspenderAutoRepresentacao($objMdPetVincRepresentantDTO)

@@ -610,24 +610,26 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		}
 	}
 
-  protected function ConsultarSituacaoReceitaCnpjConectado()
-  {
+	protected function ConsultarSituacaoReceitaCnpjConectado()
+	{
+
+  		$numSeg       = InfraUtil::verificarTempoProcessamento();
+	  	$qtConsulta   = intval($this->recuperarQuantidadeParametrizadaPessoaJuridica());
 	
-	  $numSeg       = InfraUtil::verificarTempoProcessamento();
-	  $qtConsulta   = intval($this->recuperarQuantidadeParametrizadaPessoaJuridica());
-	
-	  if(!empty($qtConsulta) && $qtConsulta > 0){
+	  	if(!empty($qtConsulta) && $qtConsulta > 0){
 		
-		  $filaConsultaCNPJ = $this->recuperarFilaConsultaCnpj($qtConsulta);
+		  	// $filaConsultaCNPJ = $this->recuperarFilaConsultaCnpj($qtConsulta);
+
+			$filaConsultaCNPJ = ['75552133000170', '76535764000143', '40432544000147', '76535764000143'];
 		
-		  $retorno = $this->consultarAtualizarVinculoPJ($filaConsultaCNPJ, 0, $qtConsulta);
+		  	$retorno = $this->consultarAtualizarVinculoPJ($filaConsultaCNPJ, 0, $qtConsulta);
 		
-		  $titulo = 'ALTERANDO RESPONSÁVEIS LEGAIS E PROCURACÕES ELETRÔNICAS DE PESSOAS JURÍDICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL';
-		  $this->logarSuspensaoVinculacoesEProcuracoes($retorno, $numSeg, $titulo, MdPetVincRepresentantRN::$NT_JURIDICA, $qtConsulta);
+		  	$titulo = 'ALTERANDO RESPONSÁVEIS LEGAIS E PROCURACÕES ELETRÔNICAS DE PESSOAS JURÍDICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL';
+		 	$this->logarSuspensaoVinculacoesEProcuracoes($retorno, $numSeg, $titulo, MdPetVincRepresentantRN::$NT_JURIDICA, $qtConsulta);
 		
-	  }
+	  	}
 	  
-  }
+  	}
 
   protected function ConsultarSituacaoReceitaCpfConectado()
   {
@@ -683,6 +685,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 			  switch ($tipoRepresentante) {
 				
 				  case MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL:
+
 					  $arrMsg[] = $razaoSocialNomeVinc.' (' . $documentoObjVinc . ')';
 					  $arrMsg[] = ' ';
 					  
@@ -875,21 +878,21 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 					    $vinculos = $this->extrairVinculos($arrObjMdPetVincRepresentantDTO, $cpf);
 				    
 					    // 3.1. OUTORGANTE - Suspende procurações emitidas pela PF (Doc e E-mail)
-					    $outorgante = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgante'], [], true);
+					    $outorgante = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgante'], true, []);
 					    if(!empty($outorgante)){
-						    $situacao = 'susp_outorgante';
+						    $situacao = 'susp_outorgant';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgante;
 					    }
 					
 					    // 3.2. OUTORGADO - Suspende procurações recebidas de PF, PJ e Vinculações à Pessoa Jurídica (Doc e E-mail)
-					    $outorgado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgado'], [], true);
+					    $outorgado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgado'], true, []);
 					    if(!empty($outorgado)){
 						    $situacao = 'susp_outorgado';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgado;
 					    }
 					    
 					    // 3.3. AUTORREPRESENTADO - Suspende Autorrepresentação (Doc e E-mail)
-					    $autorrepresentado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['autorrepresentado'], [], true);
+					    $autorrepresentado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['autorrepresentado'], true, []);
 					    if(!empty($autorrepresentado)){
 						    $situacao = 'suspenso';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $autorrepresentado;
@@ -919,7 +922,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		    
 	    }
 	
-	    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."' and situacao = 'processando'");
+	    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."'");
 	
 	    $count ++;
 	    $this->atualizarDataUltimaConsultaRFB($cpf, MdPetVincRepresentantRN::$NT_FISICA);
@@ -1054,48 +1057,114 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	  
 	  	foreach ($filaConsultaCNPJ as $cnpj) {
 		
-		  	if(!empty($cnpj) && InfraUtil::validarCnpj($cnpj)){
+			if(!empty($cnpj) && InfraUtil::validarCnpj($cnpj)){
 			
-			  	$objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+				$objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 
-			  	if ($qtConsulta > 0 && $count < $qtConsulta){
+				if ($qtConsulta > 0 && $count < $qtConsulta){
 
 					$situacao = 'processando';
 
-                  	// Adicionando os cnpjs na tabela de log
-                  	BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
+					// Adicionando o cnpj na tabela de log
+					BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
 
-				  	if($objMdPetIntegracaoRN->consultarCNPJReceitaWsResponsavelLegal($cnpj)) {
+					try {
+						
+						$resultadoConsultaReceitaWS = $objMdPetIntegracaoRN->consultarCNPJReceitaWsResponsavelLegal($cnpj);
 
-					  	$arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarVincRepresentAtivosPorCNPJ($cnpj);
-                      	$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, [], true);
+						if(is_array($resultadoConsultaReceitaWS)) {
 
-                      	if(is_array($suspenso)){
-                          	$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
-                          	$situacao = 'suspenso';
-                      	}else{
-                          	$situacao = 'falha';
-                      	}
+							$retorno 			= $resultadoConsultaReceitaWS['RetornoConsultaReceitaWS'];
+							$codigosSuspender 	= $resultadoConsultaReceitaWS['IntegracaoCodigosParaSuspensao'];
+							$codigoRetornado 	= isset($retorno['PessoaJuridica']['situacaoCadastral']['codigo']) ? $retorno['PessoaJuridica']['situacaoCadastral']['codigo'] : null;
 
-                      	// Atualizando os cnpjs na tabela de log
-                      	BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."' and situacao = 'processando'");
-                      	// BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
+							if(!empty($codigoRetornado) && in_array($codigoRetornado, $codigosSuspender)){
 
-				  	}else{
+								$arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarVincRepresentAtivosPorCNPJ($cnpj);
 
-                      	$situacao = 'consultado';
+								if(!empty($arrObjMdPetVincRepresentantDTO)){
 
-                      	// Atualizando os cnpjs na tabela de log
-                      	BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."' and situacao = 'processando'");
+									try {
+									
+										$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, true, []);
 
-                  	}
+										if(is_array($suspenso)){
+									
+											$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
+											$situacao = 'suspenso';
+									
+										}else{
 
-			  	}
+											$situacao = 'falha_suspensao';
+
+										}
+									
+									} catch (\Throwable $th) {
+
+										$situacao = 'erro_suspensao';
+
+									}
+
+								}else{
+
+									$situacao = 'no_vinc_ativo';
+
+								}
+
+								// Atualizando o cnpj na tabela de log
+								BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
+
+							}else{
+
+								// Resgatando vinculo do Responsavel Legal cadastrado
+								$objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+								$objMdPetVincRepresentantDTO->retTodos(true);
+								$objMdPetVincRepresentantDTO->setStrCNPJ($cnpj);
+								$objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+								$objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+								$objMdPetVincRepresentantDTO->setOrd('IdMdPetVinculoRepresent', InfraDTO::$TIPO_ORDENACAO_DESC);
+								$objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
+								$objResponsavelLegal = (new MdPetVincRepresentantRN())->consultar($objMdPetVincRepresentantDTO);
+
+								if(!empty($objResponsavelLegal) && $objResponsavelLegal->getStrCpfProcurador != $retorno['PessoaJuridica']['responsavel']['cpf']){
+
+									$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($objResponsavelLegal, true, []);
+									
+									if(is_array($suspenso)){
+										$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
+										$situacao = 'resp_diver_susp';
+									}else{
+										$situacao = 'falha';
+									}
+
+								}
+
+							}
+
+						}else{
+
+							$situacao = 'consultado';
+
+							// Atualizando o cnpj na tabela de log
+							BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
+
+						}
+
+					} catch (\Throwable $th) {
+						
+						$situacao = 'erro_ws';
+
+						// Atualizando o cnpj na tabela de log
+						BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
+
+					}
+
+				}
 			
-			  	$count ++;
-			  	$this->atualizarDataUltimaConsultaRFB($cnpj, MdPetVincRepresentantRN::$NT_JURIDICA);
-			
-		  	}
+			}
+
+			$count ++;
+			$this->atualizarDataUltimaConsultaRFB($cnpj, MdPetVincRepresentantRN::$NT_JURIDICA);
       
 	  	}
 	
@@ -1228,7 +1297,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	  $objMdPetVinculoDTO->retNumIdMdPetVinculo();
 	  $objMdPetVinculoDTO->retStrCNPJ();
 	  $objMdPetVinculoDTO->setStrTpVinculo('J');
-	  $objMdPetVinculoDTO->setOrdDthDataUltimaConsultaRFB(InfraDTO::$TIPO_ORDENACAO_ASC);
+	  $objMdPetVinculoDTO->setOrdDthDataUltimaConsultaRFB(InfraDTO::$TIPO_ORDENACAO_DESC);
 	  $objMdPetVinculoDTO->setNumMaxRegistrosRetorno($qtConsulta);
 	  $arrObjMdPetVinculoRN = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
 	
@@ -1240,65 +1309,6 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	
 	  return $filaConsultaCNPJ;
   
-  }
-	
-	
-  // Todo: Remover funcao apos testes em SU e validacao em PD
-  protected function atualizarFilaConsultaReceitaFederalCPF()
-  {
-      $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-      $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-      $objMdPetVincRepresentantDTO->setStrTpVinc('F');
-      $objMdPetVincRepresentantDTO->setStrStaEstado('A');
-      $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO);
-      $objMdPetVincRepresentantDTO->setOrdDthDataCadastro(InfraDTO::$TIPO_ORDENACAO_ASC);
-      $objMdPetVincRepresentantDTO->retStrCPF();
-	  $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(20);
-      $arrCpf = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO), 'CPF');
-
-      foreach ($arrCpf as $cpf){
-        $objMdPetFilaConsultaRfRN = new MdPetFilaConsultaRfRN();
-        $MdPetFilaConsultaRfDTO = new MdPetFilaConsultaRfDTO();
-        $MdPetFilaConsultaRfDTO->setStrStaNatureza('F');
-        $MdPetFilaConsultaRfDTO->setDblCpfCnpj($cpf);
-        $objMdPetFilaConsultaRfRN->cadastrar($MdPetFilaConsultaRfDTO);
-      }
-
-      return $arrCpf;
-  }
-	
-	// Todo: Remover funcao apos testes em SU e validacao em PD
-	protected function atualizarFilaConsultaReceitaFederalCNPJ()
-  {
-  	
-    $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-    $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-    $objMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
-    $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-    $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-    $objMdPetVincRepresentantDTO->setOrdDthDataCadastro(InfraDTO::$TIPO_ORDENACAO_ASC);
-    $objMdPetVincRepresentantDTO->retStrCNPJ();
-    // Todo: Remover o retorno maximo de registros
-    $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(10);
-    $arrCNPJ = InfraArray::converterArrInfraDTO($objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO), 'CNPJ');
-
-    foreach ($arrCNPJ as $cnpj){
-      $objMdPetFilaConsultaRfRN = new MdPetFilaConsultaRfRN();
-      $MdPetFilaConsultaRfDTO = new MdPetFilaConsultaRfDTO();
-      $MdPetFilaConsultaRfDTO->setStrStaNatureza(MdPetVincRepresentantRN::$NT_JURIDICA);
-      $MdPetFilaConsultaRfDTO->setDblCpfCnpj($cnpj);
-      $objMdPetFilaConsultaRfRN->cadastrar($MdPetFilaConsultaRfDTO);
-    }
-	
-//	  $MdPetFilaConsultaRfDTO = new MdPetFilaConsultaRfDTO();
-//	  $MdPetFilaConsultaRfDTO->setStrStaNatureza(MdPetVincRepresentantRN::$NT_JURIDICA);
-//	  $MdPetFilaConsultaRfDTO->retDblCpfCnpj();
-//	  $retorno = (new MdPetFilaConsultaRfRN())->listar($MdPetFilaConsultaRfDTO);
-//
-//	  die(var_dump($retorno));
-
-    return $arrCNPJ;
-    
   }
 
   protected function EnviarDadosSistemaModuloConectado(): void

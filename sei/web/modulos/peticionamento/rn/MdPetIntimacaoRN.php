@@ -2674,23 +2674,19 @@ class MdPetIntimacaoRN extends InfraRN
 
         $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
         $objMdPetIntRelDestDTO->setNumIdContatoParticipante($idContato);
-
         $objMdPetIntRelDestDTO->retNumIdMdPetIntimacao();
-        $count = $objMdPetIntRelDestRN->contar($objMdPetIntRelDestDTO);
 
         if (count($arrProtocoloDoProcesso) > 0) {
-            $arrContatosIntimacao = array();
-            $objMdPetIntRelDestDTO->retDblIdProtocolo();
+            $objMdPetIntRelDestDTO->setDblIdProtocolo($arrProtocoloDoProcesso, InfraDTO::$OPER_IN);
             $arrObjIntDest = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
-            foreach ($arrObjIntDest as $objIntDest) {
-                if (!in_array($objIntDest->getNumIdMdPetIntimacao(), $arrContatosIntimacao)) {
-                    if (in_array($objIntDest->getDblIdProtocolo(), $arrProtocoloDoProcesso)) {
-                        $arrContatosIntimacao[] = $objIntDest->getNumIdMdPetIntimacao();
-                    }
-                }
+
+            if (is_array($arrObjIntDest) && count($arrObjIntDest) > 0) {
+                return array_unique(InfraArray::converterArrInfraDTO($arrObjIntDest, 'IdMdPetIntimacao'));
             }
-            return $arrContatosIntimacao;
+
+            return array();
         } else {
+            $count = $objMdPetIntRelDestRN->contar($objMdPetIntRelDestDTO);
             if ($count > 0) {
                 $arrIntimacoesContato = array_unique(InfraArray::converterArrInfraDTO($objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO), 'IdMdPetIntimacao'));
                 return $arrIntimacoesContato;

@@ -49,7 +49,6 @@
 
         document.getElementById('selNivelAcesso').innerHTML = '';
         document.getElementById('divHipoteseLegal').style.display = "none";
-        console.log(remover);
         if (remover === '1') {
             objLupaTipoProcessoPF.remover();
         }
@@ -551,8 +550,85 @@
         return true;
     }
 
+    function removerPermissaoPetIntercorrente(idObj) {
+
+        document.getElementById(idObj).remove();
+        qtdLinhas = document.getElementsByClassName('linhas').length;
+        document.getElementById('qtdRegistros').innerHTML = qtdLinhas;
+    }
+
     function OnSubmitForm() {
+        preencherWhiteIntercorrente();
         return validarCadastro();
+    }
+
+    function preencherWhiteIntercorrente() {
+        var arrayIdsBd = new Array();
+        var objUndSelecionadas = document.getElementsByClassName('linhasRepresent');
+
+        for (var i = 0; i < objUndSelecionadas.length; i++) {
+            arrayIdsBd.push(objUndSelecionadas[i].id);
+        }
+
+        // grava separado por vírgula para facilitar o tratamento no backend
+        document.getElementById("hdnIdProcessoRepresentacao").value = arrayIdsBd.join(",");
+    }
+
+    function addProcessoWhitelist() {
+        var txtProcessoRepresentacao = document.getElementById('txtProcessoRepresentacao').value;
+
+        if (txtProcessoRepresentacao == '') {
+            alert('Informe o número do processo para adicionar na whitelist de processos de representação.');
+            document.getElementById('txtProcessoRepresentacao').focus();
+            return false;
+        }
+
+        var paramsAjax = {
+            protocolo: txtProcessoRepresentacao
+        };
+
+        var objUndSelecionadas = document.getElementsByClassName('linhas_processo');
+        for (var i = 0; i < objUndSelecionadas.length; i++) {
+            var numeroProcessoGrid = objUndSelecionadas[i].innerText.trim();
+            if (numeroProcessoGrid === txtProcessoRepresentacao.trim()) {
+                alert('Número do processo já consta na lista de processos de representação.');
+                document.getElementById('txtProcessoRepresentacao').focus();
+                return false;
+            }
+        }
+
+
+        $.ajax({
+            url: '<?=$strLinkAjaxValidaNumeroProcessoRepresent?>',
+            type: 'POST',
+            dataType: 'XML',
+            data: paramsAjax,
+            success: function (result) {
+                if ($(result).find('success').text() == 'false') {
+                    alert($(result).find('msg').text());
+                    document.getElementById('txtProcessoRepresentacao').focus();
+                    return false;
+                }
+
+                var idProcesso = $(result).find('idProcesso').text();
+                var tipoProcedimento = $(result).find('tipoProcedimento').text();
+
+
+                var tabela = document.getElementById('tabelaProcessoRepresentacao');
+                var html = '';
+                html += '<tr class="infraTrClara linhas linhasRepresent" id="' + idProcesso + '">';
+                html += '<td align="center" class="linhas_processo">' + txtProcessoRepresentacao + '</td>';
+                html += '<td align="center">' + tipoProcedimento + '</td>';
+                html += '<td align="center"><a><img title="Remover Permissão para Peticionamento Intercorrente nesse Processo de Representação" alt="Remover Permissão para Peticionamento Intercorrente nesse Processo de Representação" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg" onclick="removerPermissaoPetIntercorrente(\'' + idProcesso + '\');" id="imgExcluirProcessoSobrestado"></a></td>';
+                html += '</tr>';
+                $(tabela).append(html);
+
+                $('#qtdRegistros').text($('.linhas').length);
+            },
+            error: function (e) {
+                console.error('Erro ao processar o XML do SEI: ' + e.responseText);
+            }
+        });
     }
 
 </script>

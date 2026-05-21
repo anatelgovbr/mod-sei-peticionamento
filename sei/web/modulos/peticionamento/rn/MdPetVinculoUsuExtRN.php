@@ -430,16 +430,14 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         return $objSaidaGerarProcedimentoAPI;
     }
-    private function _gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, &$dados,$arrObjMdPetVincTpProcesso)
+    private function _prepararProcessoNovoVinculacao($idTipoProcesso, $objUnidadeDTO, &$dados, $arrObjMdPetVincTpProcesso)
     {
 
         $arrDados = array();
         $objSeiRN = new SeiRN();
-        $objMdPetReciboRN = new MdPetReciboRN();
-        $usuarioRN = new UsuarioRN();
 
         //Gera um processo
-        $objSaidaGerarProcedimentoAPI = $this->_gerarProcedimento($idTipoProcesso, $objUnidadeDTO,$arrObjMdPetVincTpProcesso,$dados);
+        $objSaidaGerarProcedimentoAPI = $this->_gerarProcedimento($idTipoProcesso, $objUnidadeDTO, $arrObjMdPetVincTpProcesso, $dados);
 
         //Processo - Interessado somente a PJ
         $objParticipante = new ParticipanteDTO();
@@ -477,15 +475,18 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $reciboDTOBasico = $this->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' => MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_INICIAL));
 
-        //Documento Principal
-        $objArquivoPrincipal = $this->_gerarFormularioVinculacao($dados, $objProcedimentoDTO, $reciboDTOBasico, $objUnidadeDTO, $idRepresentante, $idVinculo);
-
         $arrDados['objProcedimentoDTO'] = $objProcedimentoDTO;
         $arrDados['reciboDTOBasico'] = $reciboDTOBasico;
         $arrDados['idVinculo'] = $idVinculo;
         $arrDados['idRepresentante'] = $idRepresentante;
-        $arrDados['objFormularioVinc'] = $objArquivoPrincipal;
 
+        return $arrDados;
+    }
+
+    private function _gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, &$dados, $arrObjMdPetVincTpProcesso)
+    {
+        $arrDados = $this->_prepararProcessoNovoVinculacao($idTipoProcesso, $objUnidadeDTO, $dados, $arrObjMdPetVincTpProcesso);
+        $arrDados['objFormularioVinc'] = $this->_gerarFormularioVinculacao($dados, $arrDados['objProcedimentoDTO'], $arrDados['reciboDTOBasico'], $objUnidadeDTO, $arrDados['idRepresentante'], $arrDados['idVinculo']);
 
         return $arrDados;
     }
@@ -612,7 +613,397 @@ class MdPetVinculoUsuExtRN extends InfraRN
      * @param $dados
      * @throws InfraException
      */
-    public function gerarProcedimentoVinculoControlado($dados)
+    public function gerarProcedimentoVinculoAlteracaoResponsavelLegal($dados)
+    {
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+        $dadosCadastro = $this->prepararGeracaoProcedimentoAlteracaoResponsavelLegal($dados);
+        $bolConcluido = false;
+
+        try {
+            $dadosCadastro = $this->incluirDocumentosGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
+            $dadosCadastro = $this->finalizarGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
+            $this->realizarPosProcessamentoGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
+
+            $dadosGeracao = $dadosCadastro['dados'];
+            if (array_key_exists('hdnIdContatoNovo', $dadosGeracao) && $dadosGeracao['hdnIdContatoNovo'] == '' && $dadosCadastro['acessoExterno'] == true) {
+                $arrParams = array();
+                $arrParams[0] = $dadosGeracao;
+                $arrParams[1] = $dadosCadastro['objUnidadeDTO'];
+                $arrParams[2] = $dadosCadastro['objProcedimentoDTO'];
+                $arrParams[3] = array();
+                $arrParams[4] = $dadosCadastro['reciboDTOBasico'];
+                $arrParams[5] = $dadosCadastro['reciboDTOBasico'];
+
+                $this->enviarEmail($arrParams);
+            }
+
+            $bolConcluido = true;
+
+            return $dadosCadastro['reciboDTOBasico'];
+        } catch (Exception $e) {
+            $this->tratarFalhaGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro, $e);
+        } finally {
+            FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+
+            if ($bolConcluido) {
+                FeedSEIProtocolos::getInstance()->indexarFeeds();
+            }
+        }
+
+        return false;
+    }
+
+    protected function prepararGeracaoProcedimentoAlteracaoResponsavelLegalControlado($dados)
+    {
+        $arrObjMdPetVincTpProcesso = $this->getConfiguracaoVinculo();
+        $objUnidadeDTO = $this->_getUnidade($arrObjMdPetVincTpProcesso);
+        $idVinculo = array_key_exists('hdnIdVinculo', $dados) && !empty($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
+
+        if (is_null($idVinculo)) {
+            throw new InfraException('Vinculo nao informado para a alteracao do responsavel legal.');
+        }
+
+        $acessoExterno = isset($dados['chkDeclaracao']) ? true : false;
+        if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())) {
+            SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $objUnidadeDTO->getNumIdUnidade());
+        }
+
+        if (array_key_exists('hdnIdContatoNovo', $dados) && $dados['hdnIdContatoNovo'] == 1) {
+            $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
+            $dados['hdnIdContatoNovo'] = $objMdPetAcessoExternoRN->_retornaIdContatoUsuarioExterno();
+        }
+
+        $isAlteradoRespLegal = array_key_exists('isAlteradoRespLegal', $dados) && $dados['isAlteradoRespLegal'];
+        $tipoPeticionamento = $isAlteradoRespLegal ? MdPetReciboRN::$TP_RECIBO_RESPONSAVEL_LEGAL_ALTERACAO : MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS;
+        $idProcedimento = $this->_getIdProcessoPorVinculo($idVinculo);
+
+        if (is_null($idProcedimento)) {
+            throw new InfraException('Processo do vinculo nao encontrado.');
+        }
+
+        $reciboDTOBasico = null;
+        if ($acessoExterno == true) {
+            $reciboDTOBasico = $this->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' => $tipoPeticionamento));
+        }
+
+        $rollbackProcuradores = array();
+        if ($isAlteradoRespLegal) {
+            $rollbackProcuradores = $this->obterRollbackProcuradoresAlteracaoResponsavelLegal($idVinculo);
+            $idRepresentant = $this->_adicionarProcuracaoEspecialRepresentante($idVinculo, $dados, true, true);
+        } else {
+            $idRepresentant = $this->_getIdRepresentanteAtivoPorVinculo($idVinculo);
+        }
+
+        if ($idRepresentant == null) {
+            throw new InfraException('Erro buscar Representante da Vinculacao');
+        }
+
+        $objProcedimentoDTO = $this->_getObjProcedimentoPorVinculo($idVinculo);
+        if (is_null($objProcedimentoDTO)) {
+            throw new InfraException('Processo do vinculo nao localizado para gerar a alteracao do responsavel legal.');
+        }
+
+        return array(
+            'dados' => $dados,
+            'objUnidadeDTO' => $objUnidadeDTO,
+            'objProcedimentoDTO' => $objProcedimentoDTO,
+            'idProcedimento' => $idProcedimento,
+            'idVinculo' => $idVinculo,
+            'idRepresentante' => $idRepresentant,
+            'reciboDTOBasico' => $reciboDTOBasico,
+            'isAlteradoRespLegal' => $isAlteradoRespLegal,
+            'acessoExterno' => $acessoExterno,
+            'objArquivoPrincipal' => null,
+            'arrSeries' => array(),
+            'arrIdDocumentosAtos' => array(),
+            'rollbackProcuradores' => $rollbackProcuradores
+        );
+    }
+
+    protected function incluirDocumentosGeracaoProcedimentoAlteracaoResponsavelLegalControlado($dadosCadastro)
+    {
+        $dados = $dadosCadastro['dados'];
+        $objUnidadeDTO = $dadosCadastro['objUnidadeDTO'];
+        $objProcedimentoDTO = $dadosCadastro['objProcedimentoDTO'];
+        $reciboDTOBasico = $dadosCadastro['reciboDTOBasico'];
+        $idRepresentant = $dadosCadastro['idRepresentante'];
+        $idVinculo = $dadosCadastro['idVinculo'];
+        $isAlteradoRespLegal = $dadosCadastro['isAlteradoRespLegal'];
+
+        $objArquivoPrincipal = null;
+        if ($isAlteradoRespLegal) {
+            $objArquivoPrincipal = $this->_gerarFormularioVinculacao($dados, $objProcedimentoDTO, $reciboDTOBasico, $objUnidadeDTO, $idRepresentant, $idVinculo);
+
+            $documentoRN = new DocumentoRN();
+            $objDocumentoDTO = new DocumentoDTO();
+            $objDocumentoDTO->retStrNomeSerie();
+            $objDocumentoDTO->setStrProtocoloDocumentoFormatado($objArquivoPrincipal->getDocumentoFormatado());
+            $objDocumentoDTO = $documentoRN->consultarRN0005($objDocumentoDTO);
+            $dados['nomeTipoDocumento'] = $objDocumentoDTO->getStrNomeSerie() . ' - Alteracao';
+        }
+
+        $arrIdDocumentosAtos = array();
+        $arrSeries = $this->_adicionarArquivosAtosContitutivos($dados, $objUnidadeDTO->getNumIdUnidade(), $objProcedimentoDTO, $reciboDTOBasico, $idRepresentant, $arrIdDocumentosAtos);
+
+        $this->_atualizarConteudoFormulario($idVinculo, $dados, $arrSeries, $objArquivoPrincipal, true);
+
+        if (!is_null($objArquivoPrincipal)) {
+            $parObjDocumentoDTO = new DocumentoDTO();
+            $parObjDocumentoDTO->retTodos();
+            $parObjDocumentoDTO->setDblIdDocumento($objArquivoPrincipal->getIdDocumento());
+            $parObjDocumentoDTO = (new DocumentoRN())->consultarRN0005($parObjDocumentoDTO);
+
+            (new mdPetProcessoRN())->assinarETravarDocumentoProcesso($objUnidadeDTO, $dados, $parObjDocumentoDTO, $objProcedimentoDTO);
+        }
+
+        if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) && $dadosCadastro['acessoExterno'] == true && $reciboDTOBasico != null) {
+            $reciboDTOBasico = $this->gerarReciboVinculacao(array($dados, $objProcedimentoDTO, $reciboDTOBasico, $objArquivoPrincipal, $idVinculo, $idRepresentant, self::$TIPO_PETICIONAMENTO_RECIBO_VINC_PJ, null, $objUnidadeDTO));
+        }
+
+        $dadosCadastro['dados'] = $dados;
+        $dadosCadastro['objArquivoPrincipal'] = $objArquivoPrincipal;
+        $dadosCadastro['arrSeries'] = $arrSeries;
+        $dadosCadastro['arrIdDocumentosAtos'] = $arrIdDocumentosAtos;
+        $dadosCadastro['reciboDTOBasico'] = $reciboDTOBasico;
+
+        return $dadosCadastro;
+    }
+
+    protected function finalizarGeracaoProcedimentoAlteracaoResponsavelLegalControlado($dadosCadastro)
+    {
+        $dados = $dadosCadastro['dados'];
+        $idVinculo = $dadosCadastro['idVinculo'];
+
+        if ($dadosCadastro['isAlteradoRespLegal']) {
+            $this->_atualizarProcuradoresVinculo($idVinculo, $dados);
+            $this->setDataEncerramentoVinculo(array($idVinculo));
+        }
+
+        return $dadosCadastro;
+    }
+
+    private function realizarPosProcessamentoGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro)
+    {
+        $dados = $dadosCadastro['dados'];
+        $objUnidadeDTO = $dadosCadastro['objUnidadeDTO'];
+        $objProcedimentoDTO = $dadosCadastro['objProcedimentoDTO'];
+        $reciboDTOBasico = $dadosCadastro['reciboDTOBasico'];
+        $idProcedimento = $dadosCadastro['idProcedimento'];
+        $idVinculo = $dadosCadastro['idVinculo'];
+
+        $tipoPeticionamento = !is_null($reciboDTOBasico) ? $reciboDTOBasico->getStrStaTipoPeticionamento() : null;
+        $idDocumentoRecibo = !is_null($reciboDTOBasico) ? $reciboDTOBasico->getDblIdDocumento() : null;
+        $strTipoPeticionamento = (new MdPetRegrasGeraisRN())->getTipoPeticionamento($tipoPeticionamento, true);
+
+        $this->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
+
+        if (!is_null($idProcedimento)) {
+            if (!empty($dados['hdnIdContato'])) {
+                $this->_gerarAcessoExterno(true, $idVinculo, $idProcedimento, $dados['hdnIdContato']);
+            } else {
+                $this->_gerarAcessoExterno(true, $idVinculo, $idProcedimento);
+            }
+        }
+
+        $this->_remeterProcesso($objProcedimentoDTO, $objUnidadeDTO);
+    }
+
+    private function tratarFalhaGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro, Exception $e)
+    {
+        try {
+            $this->realizarRollbackGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
+        } catch (Exception $eRollback) {
+            throw new InfraException('Erro no processamento da alteracao do responsavel legal e falha ao reverter as etapas anteriores.', $eRollback);
+        }
+
+        throw $e;
+    }
+
+    private function realizarRollbackGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro)
+    {
+        if (empty($dadosCadastro) || !is_array($dadosCadastro)) {
+            return;
+        }
+
+        $reciboDTOBasico = array_key_exists('reciboDTOBasico', $dadosCadastro) ? $dadosCadastro['reciboDTOBasico'] : null;
+        $arrIdDocumentos = array();
+
+        if (array_key_exists('arrIdDocumentosAtos', $dadosCadastro) && is_array($dadosCadastro['arrIdDocumentosAtos'])) {
+            $arrIdDocumentos = array_merge($arrIdDocumentos, $dadosCadastro['arrIdDocumentosAtos']);
+        }
+
+        $objArquivoPrincipal = array_key_exists('objArquivoPrincipal', $dadosCadastro) ? $dadosCadastro['objArquivoPrincipal'] : null;
+        if (!is_null($objArquivoPrincipal) && is_numeric($objArquivoPrincipal->getIdDocumento())) {
+            $arrIdDocumentos[] = $objArquivoPrincipal->getIdDocumento();
+        }
+
+        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getDblIdDocumento())) {
+            $arrIdDocumentos[] = $reciboDTOBasico->getDblIdDocumento();
+        }
+
+        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getNumIdReciboPeticionamento())) {
+            $objMdPetRelReciboDocumentoAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
+            $objMdPetRelReciboDocumentoAnexoDTO->retNumIdReciboDocumentoAnexoPeticionamento();
+            $objMdPetRelReciboDocumentoAnexoDTO->retNumIdDocumento();
+            $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($reciboDTOBasico->getNumIdReciboPeticionamento());
+            $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+            $arrObjMdPetRelReciboDocumentoAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->listar($objMdPetRelReciboDocumentoAnexoDTO);
+
+            if (is_array($arrObjMdPetRelReciboDocumentoAnexoDTO)) {
+                foreach ($arrObjMdPetRelReciboDocumentoAnexoDTO as $objMdPetRelReciboDocumentoAnexoItemDTO) {
+                    $arrIdDocumentos[] = $objMdPetRelReciboDocumentoAnexoItemDTO->getNumIdDocumento();
+                    $objMdPetRelReciboDocumentoAnexoRN->excluir($objMdPetRelReciboDocumentoAnexoItemDTO);
+                }
+            }
+        }
+
+        $arrIdDocumentos = array_values(array_unique(array_filter($arrIdDocumentos, 'is_numeric')));
+
+        if (!empty($arrIdDocumentos)) {
+            $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
+            $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
+            $objMdPetVincDocumentoDTO->retNumIdMdPetVincDocumento();
+            $objMdPetVincDocumentoDTO->setDblIdDocumento($arrIdDocumentos, InfraDTO::$OPER_IN);
+            $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
+
+            if (!empty($arrObjMdPetVincDocumentoDTO)) {
+                $objMdPetVincDocumentoRN->excluir($arrObjMdPetVincDocumentoDTO);
+            }
+
+            foreach (array_reverse($arrIdDocumentos) as $idDocumento) {
+                $this->excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento);
+            }
+        }
+
+        if (!empty($dadosCadastro['rollbackProcuradores'])) {
+            $this->reverterProcuradoresAlteracaoResponsavelLegal($dadosCadastro['rollbackProcuradores']);
+        }
+
+        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getNumIdReciboPeticionamento())) {
+            (new MdPetReciboRN())->excluir($reciboDTOBasico);
+        }
+
+        if (!empty($dadosCadastro['isAlteradoRespLegal']) && is_numeric($dadosCadastro['idRepresentante'])) {
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($dadosCadastro['idRepresentante']);
+            (new MdPetVincRepresentantRN())->excluir(array($objMdPetVincRepresentantDTO));
+        }
+    }
+
+    private function excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento)
+    {
+        $objDocumentoDTO = new DocumentoDTO();
+        $objDocumentoDTO->retDblIdDocumento();
+        $objDocumentoDTO->retStrStaDocumento();
+        $objDocumentoDTO->retStrSinBloqueado();
+        $objDocumentoDTO->setDblIdDocumento($idDocumento);
+
+        try {
+            $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
+        } catch (Exception $eDocumento) {
+            return;
+        }
+
+        $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EDITOR_INTERNO);
+        $objDocumentoDTO->setStrSinBloqueado('N');
+        (new DocumentoBD($this->getObjInfraIBanco()))->alterar($objDocumentoDTO);
+        (new DocumentoRN())->excluirRN0006($objDocumentoDTO);
+    }
+
+    private function obterRollbackProcuradoresAlteracaoResponsavelLegal($idVinculo)
+    {
+        $arrRollbackProcuradores = array();
+
+        $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+        $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+        $objMdPetVincRepresentantDTO->retNumIdContatoOutorg();
+        $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
+        $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL);
+
+        $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
+        if (is_array($arrObjMdPetVincRepresentantDTO)) {
+            foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
+                $arrRollbackProcuradores[] = array(
+                    'idRepresentante' => $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent(),
+                    'idContatoOutorg' => $objMdPetVincRepresentantDTO->getNumIdContatoOutorg()
+                );
+            }
+        }
+
+        return $arrRollbackProcuradores;
+    }
+
+    private function reverterProcuradoresAlteracaoResponsavelLegal($arrRollbackProcuradores)
+    {
+        if (empty($arrRollbackProcuradores) || !is_array($arrRollbackProcuradores)) {
+            return;
+        }
+
+        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+        foreach ($arrRollbackProcuradores as $rollbackProcurador) {
+            if (!is_array($rollbackProcurador) || !array_key_exists('idRepresentante', $rollbackProcurador) || !is_numeric($rollbackProcurador['idRepresentante'])) {
+                continue;
+            }
+
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($rollbackProcurador['idRepresentante']);
+            $objMdPetVincRepresentantDTO->setNumIdContatoOutorg(array_key_exists('idContatoOutorg', $rollbackProcurador) ? $rollbackProcurador['idContatoOutorg'] : null);
+            $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentantDTO);
+        }
+    }
+
+    /**
+     * @param $dados
+     * @throws InfraException
+     */
+    public function gerarProcedimentoVinculo($dados)
+    {
+        $idVinculo = array_key_exists('hdnIdVinculo', $dados) && !empty($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
+
+        if (!is_null($idVinculo)) {
+            return $this->gerarProcedimentoVinculoLegado($dados);
+        }
+
+        FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+
+        $dadosCadastro = $this->prepararGeracaoProcedimentoVinculo($dados);
+        $bolConcluido = false;
+
+        try {
+            $dadosCadastro = $this->incluirDocumentosGeracaoProcedimentoVinculo($dadosCadastro);
+            $dadosCadastro = $this->finalizarGeracaoProcedimentoVinculo($dadosCadastro);
+
+            $dadosGeracao = $dadosCadastro['dados'];
+            if (array_key_exists('hdnIdContatoNovo', $dadosGeracao) && $dadosGeracao['hdnIdContatoNovo'] == '' && $dadosCadastro['acessoExterno'] == true) {
+                $arrParams = array();
+                $arrParams[0] = $dadosGeracao;
+                $arrParams[1] = $dadosCadastro['objUnidadeDTO'];
+                $arrParams[2] = $dadosCadastro['objProcedimentoDTO'];
+                $arrParams[3] = array();
+                $arrParams[4] = $dadosCadastro['reciboDTOBasico'];
+                $arrParams[5] = $dadosCadastro['reciboDTOBasico'];
+
+                $this->enviarEmail($arrParams);
+            }
+
+            $bolConcluido = true;
+
+            return $dadosCadastro['reciboDTOBasico'];
+        } catch (Exception $e) {
+            $this->tratarFalhaGeracaoProcedimentoVinculo($dadosCadastro, $e);
+        } finally {
+            FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+
+            if ($bolConcluido) {
+                FeedSEIProtocolos::getInstance()->indexarFeeds();
+            }
+        }
+
+        return false;
+    }
+
+    protected function gerarProcedimentoVinculoLegadoControlado($dados)
     {
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
 
@@ -634,7 +1025,246 @@ class MdPetVinculoUsuExtRN extends InfraRN
         }
 
         return $retorno['reciboDTOBasico'];
+    }
+    protected function prepararGeracaoProcedimentoVinculoControlado($dados)
+    {
+        $arrObjMdPetVincTpProcesso = $this->getConfiguracaoVinculo();
+        $objTipoProcedimentoDTO = $this->_getTipoProcesso($arrObjMdPetVincTpProcesso);
+        $idTipoProcesso = $objTipoProcedimentoDTO->getNumIdTipoProcedimento();
+        $objUnidadeDTO = $this->_getUnidade($arrObjMdPetVincTpProcesso);
+        $acessoExterno = isset($dados['chkDeclaracao']) ? true : false;
 
+        if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno())) {
+            SessaoSEI::getInstance()->simularLogin(null, null, SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(), $objUnidadeDTO->getNumIdUnidade());
+        }
+
+        if ($dados['hdnIdContatoNovo'] == 1) {
+            $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
+            $dados['hdnIdContatoNovo'] = $objMdPetAcessoExternoRN->_retornaIdContatoUsuarioExterno();
+        }
+
+        $arrDados = $this->_prepararProcessoNovoVinculacao($idTipoProcesso, $objUnidadeDTO, $dados, $arrObjMdPetVincTpProcesso);
+        $objProcedimentoDTO = $arrDados['objProcedimentoDTO'];
+        $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
+
+        return array(
+            'dados' => $dados,
+            'objUnidadeDTO' => $objUnidadeDTO,
+            'objProcedimentoDTO' => $objProcedimentoDTO,
+            'idProcedimento' => $idProcedimento,
+            'idVinculo' => $arrDados['idVinculo'],
+            'idRepresentante' => $arrDados['idRepresentante'],
+            'reciboDTOBasico' => $arrDados['reciboDTOBasico'],
+            'acessoExterno' => $acessoExterno,
+            'objArquivoPrincipal' => null,
+            'arrSeries' => array(),
+            'arrDadosProcuracao' => null,
+            'arrIdDocumentosAtos' => array(),
+            'arrIdDocumentosProcuracao' => array()
+        );
+    }
+
+    protected function incluirDocumentosGeracaoProcedimentoVinculoControlado($dadosCadastro)
+    {
+        $dados = $dadosCadastro['dados'];
+        $objUnidadeDTO = $dadosCadastro['objUnidadeDTO'];
+        $objProcedimentoDTO = $dadosCadastro['objProcedimentoDTO'];
+        $reciboDTOBasico = $dadosCadastro['reciboDTOBasico'];
+        $idRepresentante = $dadosCadastro['idRepresentante'];
+        $idVinculo = $dadosCadastro['idVinculo'];
+
+        $objArquivoPrincipal = $this->_gerarFormularioVinculacao($dados, $objProcedimentoDTO, $reciboDTOBasico, $objUnidadeDTO, $idRepresentante, $idVinculo);
+
+        $arrIdDocumentosAtos = array();
+        $arrSeries = $this->_adicionarArquivosAtosContitutivos($dados, $objUnidadeDTO->getNumIdUnidade(), $objProcedimentoDTO, $reciboDTOBasico, $idRepresentante, $arrIdDocumentosAtos);
+        $arrDadosProcuracao = $this->_vincularProcuradores($objProcedimentoDTO, $idVinculo, $dados, $objUnidadeDTO);
+        $arrIdDocumentosProcuracao = $this->_extrairIdsDocumentosProcuracaoGeracaoVinculo($arrDadosProcuracao);
+
+        $documentoRN = new DocumentoRN();
+        $objDocumentoDTO = new DocumentoDTO();
+        $objDocumentoDTO->retStrNomeSerie();
+        $objDocumentoDTO->setStrProtocoloDocumentoFormatado($objArquivoPrincipal->getDocumentoFormatado());
+        $objDocumentoDTO = $documentoRN->consultarRN0005($objDocumentoDTO);
+        $dados['nomeTipoDocumento'] = $objDocumentoDTO->getStrNomeSerie();
+
+        $this->_atualizarConteudoFormulario($idVinculo, $dados, $arrSeries, $objArquivoPrincipal, false);
+
+        if (!is_null($objArquivoPrincipal)) {
+            $parObjDocumentoDTO = new DocumentoDTO();
+            $parObjDocumentoDTO->retTodos();
+            $parObjDocumentoDTO->setDblIdDocumento($objArquivoPrincipal->getIdDocumento());
+            $parObjDocumentoDTO = (new DocumentoRN())->consultarRN0005($parObjDocumentoDTO);
+
+            (new mdPetProcessoRN())->assinarETravarDocumentoProcesso($objUnidadeDTO, $dados, $parObjDocumentoDTO, $objProcedimentoDTO);
+        }
+
+        if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) && $dadosCadastro['acessoExterno'] == true) {
+            $reciboDTOBasico = $this->gerarReciboVinculacao(array($dados, $objProcedimentoDTO, $reciboDTOBasico, $objArquivoPrincipal, $idVinculo, $idRepresentante, 'Vinculação de Responsável Legal a Pessoa Jurídica', $arrDadosProcuracao, $objUnidadeDTO));
+        }
+
+        $dadosCadastro['dados'] = $dados;
+        $dadosCadastro['objArquivoPrincipal'] = $objArquivoPrincipal;
+        $dadosCadastro['arrSeries'] = $arrSeries;
+        $dadosCadastro['arrDadosProcuracao'] = $arrDadosProcuracao;
+        $dadosCadastro['arrIdDocumentosAtos'] = $arrIdDocumentosAtos;
+        $dadosCadastro['arrIdDocumentosProcuracao'] = $arrIdDocumentosProcuracao;
+        $dadosCadastro['reciboDTOBasico'] = $reciboDTOBasico;
+
+        return $dadosCadastro;
+    }
+
+    protected function finalizarGeracaoProcedimentoVinculoControlado($dadosCadastro)
+    {
+        $objUnidadeDTO = $dadosCadastro['objUnidadeDTO'];
+        $objProcedimentoDTO = $dadosCadastro['objProcedimentoDTO'];
+        $reciboDTOBasico = $dadosCadastro['reciboDTOBasico'];
+        $idProcedimento = $dadosCadastro['idProcedimento'];
+        $idVinculo = $dadosCadastro['idVinculo'];
+        $dados = $dadosCadastro['dados'];
+
+        $tipoPeticionamento = !is_null($reciboDTOBasico) ? $reciboDTOBasico->getStrStaTipoPeticionamento() : null;
+        $idDocumentoRecibo = !is_null($reciboDTOBasico) && property_exists($reciboDTOBasico, 'IdDocumento') ? $reciboDTOBasico->getDblIdDocumento() : null;
+        $strTipoPeticionamento = (new MdPetRegrasGeraisRN())->getTipoPeticionamento($tipoPeticionamento, true);
+
+        $this->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
+
+        if (!is_null($idProcedimento)) {
+            if (!empty($dados['hdnIdContato'])) {
+                $this->_gerarAcessoExterno(false, $idVinculo, $idProcedimento, $dados['hdnIdContato']);
+            } else {
+                $this->_gerarAcessoExterno(false, $idVinculo, $idProcedimento);
+            }
+        }
+
+        $this->_remeterProcesso($objProcedimentoDTO, $objUnidadeDTO);
+
+        return $dadosCadastro;
+    }
+
+    private function tratarFalhaGeracaoProcedimentoVinculo($dadosCadastro, Exception $e)
+    {
+        try {
+            $this->realizarRollbackGeracaoProcedimentoVinculo($dadosCadastro);
+        } catch (Exception $eRollback) {
+            throw new InfraException('Erro no cadastro da vinculacao e falha ao reverter as etapas anteriores.', $eRollback);
+        }
+
+        throw $e;
+    }
+
+    private function realizarRollbackGeracaoProcedimentoVinculo($dadosCadastro)
+    {
+        if (empty($dadosCadastro) || !is_array($dadosCadastro)) {
+            return;
+        }
+
+        $reciboDTOBasico = array_key_exists('reciboDTOBasico', $dadosCadastro) ? $dadosCadastro['reciboDTOBasico'] : null;
+        $arrIdDocumentos = array();
+        $arrIdRepresentantes = array();
+
+        if (array_key_exists('idRepresentante', $dadosCadastro) && is_numeric($dadosCadastro['idRepresentante'])) {
+            $arrIdRepresentantes[] = $dadosCadastro['idRepresentante'];
+        }
+
+        if (array_key_exists('arrIdDocumentosAtos', $dadosCadastro) && is_array($dadosCadastro['arrIdDocumentosAtos'])) {
+            $arrIdDocumentos = array_merge($arrIdDocumentos, $dadosCadastro['arrIdDocumentosAtos']);
+        }
+
+        if (array_key_exists('arrIdDocumentosProcuracao', $dadosCadastro) && is_array($dadosCadastro['arrIdDocumentosProcuracao'])) {
+            $arrIdDocumentos = array_merge($arrIdDocumentos, $dadosCadastro['arrIdDocumentosProcuracao']);
+        }
+
+        $objArquivoPrincipal = array_key_exists('objArquivoPrincipal', $dadosCadastro) ? $dadosCadastro['objArquivoPrincipal'] : null;
+        if (!is_null($objArquivoPrincipal) && is_numeric($objArquivoPrincipal->getIdDocumento())) {
+            $arrIdDocumentos[] = $objArquivoPrincipal->getIdDocumento();
+        }
+
+        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getDblIdDocumento())) {
+            $arrIdDocumentos[] = $reciboDTOBasico->getDblIdDocumento();
+        }
+
+        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getNumIdReciboPeticionamento())) {
+            $objMdPetRelReciboDocumentoAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
+            $objMdPetRelReciboDocumentoAnexoDTO->retNumIdReciboDocumentoAnexoPeticionamento();
+            $objMdPetRelReciboDocumentoAnexoDTO->retNumIdDocumento();
+            $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($reciboDTOBasico->getNumIdReciboPeticionamento());
+            $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+            $arrObjMdPetRelReciboDocumentoAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->listar($objMdPetRelReciboDocumentoAnexoDTO);
+
+            if (is_array($arrObjMdPetRelReciboDocumentoAnexoDTO)) {
+                foreach ($arrObjMdPetRelReciboDocumentoAnexoDTO as $objMdPetRelReciboDocumentoAnexoItemDTO) {
+                    $arrIdDocumentos[] = $objMdPetRelReciboDocumentoAnexoItemDTO->getNumIdDocumento();
+                    $objMdPetRelReciboDocumentoAnexoRN->excluir($objMdPetRelReciboDocumentoAnexoItemDTO);
+                }
+            }
+        }
+
+        $arrIdDocumentos = array_values(array_unique(array_filter($arrIdDocumentos, 'is_numeric')));
+
+        if (!empty($arrIdDocumentos)) {
+            $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
+            $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
+            $objMdPetVincDocumentoDTO->retNumIdMdPetVincDocumento();
+            $objMdPetVincDocumentoDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincDocumentoDTO->setDblIdDocumento($arrIdDocumentos, InfraDTO::$OPER_IN);
+            $arrObjMdPetVincDocumentoDTO = $objMdPetVincDocumentoRN->listar($objMdPetVincDocumentoDTO);
+
+            if (!empty($arrObjMdPetVincDocumentoDTO)) {
+                foreach ($arrObjMdPetVincDocumentoDTO as $objMdPetVincDocumentoDTO) {
+                    if ($objMdPetVincDocumentoDTO->isSetNumIdMdPetVinculoRepresent() && is_numeric($objMdPetVincDocumentoDTO->getNumIdMdPetVinculoRepresent())) {
+                        $arrIdRepresentantes[] = $objMdPetVincDocumentoDTO->getNumIdMdPetVinculoRepresent();
+                    }
+                }
+                $objMdPetVincDocumentoRN->excluir($arrObjMdPetVincDocumentoDTO);
+            }
+
+            foreach (array_reverse($arrIdDocumentos) as $idDocumento) {
+                $this->excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento);
+            }
+        }
+
+        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getNumIdReciboPeticionamento())) {
+            (new MdPetReciboRN())->excluir($reciboDTOBasico);
+        }
+
+        $arrIdRepresentantes = array_values(array_unique(array_filter($arrIdRepresentantes, 'is_numeric')));
+        if (!empty($arrIdRepresentantes)) {
+            $arrObjMdPetVincRepresentantDTO = array();
+            foreach ($arrIdRepresentantes as $idRepresentante) {
+                $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($idRepresentante);
+                $arrObjMdPetVincRepresentantDTO[] = $objMdPetVincRepresentantDTO;
+            }
+            (new MdPetVincRepresentantRN())->excluir($arrObjMdPetVincRepresentantDTO);
+        }
+
+        if (array_key_exists('idVinculo', $dadosCadastro) && is_numeric($dadosCadastro['idVinculo'])) {
+            $objMdPetVinculoDTO = new MdPetVinculoDTO();
+            $objMdPetVinculoDTO->setNumIdMdPetVinculo($dadosCadastro['idVinculo']);
+            (new MdPetVinculoRN())->excluir(array($objMdPetVinculoDTO));
+        }
+
+        $objProcedimentoDTO = array_key_exists('objProcedimentoDTO', $dadosCadastro) ? $dadosCadastro['objProcedimentoDTO'] : null;
+        if ($objProcedimentoDTO instanceof ProcedimentoDTO && is_numeric($objProcedimentoDTO->getDblIdProcedimento())) {
+            (new ProcedimentoRN())->excluirRN0280($objProcedimentoDTO);
+        }
+    }
+
+    private function _extrairIdsDocumentosProcuracaoGeracaoVinculo($arrDadosProcuracao)
+    {
+        $arrIdDocumentos = array();
+
+        if (!is_array($arrDadosProcuracao)) {
+            return $arrIdDocumentos;
+        }
+
+        foreach ($arrDadosProcuracao as $dadosProcuracao) {
+            if (is_array($dadosProcuracao) && array_key_exists('id_protocolo_procur', $dadosProcuracao) && is_numeric($dadosProcuracao['id_protocolo_procur'])) {
+                $arrIdDocumentos[] = $dadosProcuracao['id_protocolo_procur'];
+            }
+        }
+
+        return array_values(array_unique($arrIdDocumentos));
     }
 
 
@@ -672,11 +1302,11 @@ class MdPetVinculoUsuExtRN extends InfraRN
             }
 
             if (is_null($idVinculo)) {
-            	
+
                 $arrDados = $this->_gerarProcessoNovo($idTipoProcesso, $objUnidadeDTO, $dados,$arrObjMdPetVincTpProcesso);
                 $idRepresentant = $arrDados['idRepresentante'];
                 $existePeticionamento = true;
-                
+
             } else {
 
                 $mdPetVinculoRepresentant = new MdPetVincRepresentantRN();
@@ -695,11 +1325,11 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $existePeticionamento = $this->_verificaExistePeticionamento($isAlteracao, $isAlteradoRespLegal, $addDocumento);
                 $idProcedimento = $this->_getIdProcessoPorVinculo($idVinculo);
                 $reciboDTOBasico = null;
-                
+
                 if ($acessoExterno == true) {
                     $reciboDTOBasico = $this->salvarDadosReciboPeticionamento(array('idProcedimento' => $idProcedimento, 'staTipoPeticionamento' => $tipoPeticionamento));
                 }
-                
+
                 $idRepresentant = null;
 
                 if ($isAlteradoRespLegal) {
@@ -708,10 +1338,10 @@ class MdPetVinculoUsuExtRN extends InfraRN
                     $arrDados = $this->_realizarVinculosProcessoAlteracao($idVinculo, $dados, $objUnidadeDTO, $reciboDTOBasico, $idProcedimento, $idRepresentant);
 
                 } else {
-                	
+
                     $arrDados['idVinculo'] = $idVinculo;
                     $idRepresentant = $this->_getIdRepresentanteAtivoPorVinculo($idVinculo);
-                
+
                 }
 
                 if ($idRepresentant == null) {
@@ -721,7 +1351,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 $objProcedimentoDTO = $this->_getObjProcedimentoPorVinculo($idVinculo);
                 $arrDados['objProcedimentoDTO'] = $objProcedimentoDTO;
                 $arrDados['reciboDTOBasico'] = $reciboDTOBasico;
-                
+
             }
 
             $objArquivoPrincipal = array_key_exists('objFormularioVinc', $arrDados) ? $arrDados['objFormularioVinc'] : null;
@@ -772,7 +1402,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $tipoPeticionamento     = !is_null($reciboDTOBasico) ? $reciboDTOBasico->getStrStaTipoPeticionamento() : null;
 	        $idDocumentoRecibo      = !is_null($reciboDTOBasico) && property_exists($reciboDTOBasico, 'IdDocumento') ? $reciboDTOBasico->getDblIdDocumento() : null;
             $strTipoPeticionamento  = (new MdPetRegrasGeraisRN())->getTipoPeticionamento($tipoPeticionamento, true);
-            
+
             $this->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
 
             if ($isAlteradoRespLegal) {
@@ -1205,7 +1835,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $nomeSubstituido = $isAlteracao ? $dados['NomeProcurador'] : '';
         $cpfSubstituido = $isAlteracao ? InfraUtil::formatarCpf(InfraUtil::retirarFormatacao($dados['CpfProcurador'])) : '';
         $numeroSEI = $dados['hdnNumeroSei'];
-       
+
         if($isWebService) {
             $razaoSocial = $dadosPj[0];
             $endereco = $dadosPj[4];
@@ -1424,7 +2054,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         }
     }
 
-    private function _adicionarArquivosAtosContitutivos($dados, $idUnidade, $objProcedimentoDTO, $reciboDTOBasico, $idRepresentant)
+    private function _adicionarArquivosAtosContitutivos($dados, $idUnidade, $objProcedimentoDTO, $reciboDTOBasico, $idRepresentant, &$arrIdDocumentosAtos = array())
     {
 
         $arrSeries = array();
@@ -1555,17 +2185,20 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
             //adiciona o doc no recibo pesquisavel
             //recibo do doc principal para consultar do usuario externo
-            $objMdPetRelReciboDocumentoAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
-            $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+            if ($reciboDTOBasico != null) {
+                $objMdPetRelReciboDocumentoAnexoDTO = new MdPetRelReciboDocumentoAnexoDTO();
+                $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
 
-            $objMdPetRelReciboDocumentoAnexoDTO->setNumIdAnexo(null);
-            $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($reciboDTOBasico->getNumIdReciboPeticionamento());
-            $objMdPetRelReciboDocumentoAnexoDTO->setNumIdDocumento($idDocumentoAnexo);
-            $objMdPetRelReciboDocumentoAnexoDTO->setStrClassificacaoDocumento(MdPetRelReciboDocumentoAnexoRN::$TP_VINCULACAO);
-            $objMdPetRelReciboDocumentoAnexoRN->cadastrar($objMdPetRelReciboDocumentoAnexoDTO);
+                $objMdPetRelReciboDocumentoAnexoDTO->setNumIdAnexo(null);
+                $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($reciboDTOBasico->getNumIdReciboPeticionamento());
+                $objMdPetRelReciboDocumentoAnexoDTO->setNumIdDocumento($idDocumentoAnexo);
+                $objMdPetRelReciboDocumentoAnexoDTO->setStrClassificacaoDocumento(MdPetRelReciboDocumentoAnexoRN::$TP_VINCULACAO);
+                $objMdPetRelReciboDocumentoAnexoRN->cadastrar($objMdPetRelReciboDocumentoAnexoDTO);
+            }
 
             $arrAnexoEssencialVinculacaoProcesso[] = $itemAnexo;
             $arrIdAnexoEssencial[] = $idDocumentoAnexo;
+            $arrIdDocumentosAtos[] = $idDocumentoAnexo;
             //$arrIdAnexoEssencial[] = $itemAnexo->getNumIdAnexo();
             $contador++;
 
@@ -1972,7 +2605,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
     static public function getUnidade($tipoPessoa = null)
     {
-        
+
         $mdPetVincTpProcessoRN = new MdPetVincTpProcessoRN();
         $objMdPetVincTpProcessoDTO = new MdPetVincTpProcessoDTO();
         $objMdPetVincTpProcessoDTO->retTodos();

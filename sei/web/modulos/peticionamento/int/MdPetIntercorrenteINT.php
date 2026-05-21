@@ -138,13 +138,24 @@
                 
 Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo ou insira o número de um Processo já existente relacionado com sua demanda.';
                 
+                $objMdPetProRepresWhitRN = new MdPetProRepresWhitRN();
                 $objMdPetVinculoDTO = new MdPetVinculoDTO();
                 $objMdPetVinculoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
                 $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+                $objMdPetVinculoDTO->retDblIdProtocolo();
+                $objMdPetVinculoDTO->setNumMaxRegistrosRetorno(1);
                 $arrObjMdPetVinculoDTO = ( new MdPetVinculoRN() )->listar($objMdPetVinculoDTO);
                 
                 if (is_array($arrObjMdPetVinculoDTO) && count($arrObjMdPetVinculoDTO) > 0) {
-                    return sprintf($xmlMensagemErro, $strMsgProcessoDeRepresentacao);
+                    $objMdPetVinculoDTO = $arrObjMdPetVinculoDTO[0];
+
+                    $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
+                    $objMdPetProRepresWhitDTO->retDblIdProtocolo();
+                    $objMdPetProRepresWhitDTO->setDblIdProtocolo($objMdPetVinculoDTO->getDblIdProtocolo());
+
+                    if(empty($objMdPetProRepresWhitRN->consultar($objMdPetProRepresWhitDTO))) {
+                        return sprintf($xmlMensagemErro, $strMsgProcessoDeRepresentacao);
+                    }
                 }
             }
 

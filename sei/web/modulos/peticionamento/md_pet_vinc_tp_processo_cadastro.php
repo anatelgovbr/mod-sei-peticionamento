@@ -47,6 +47,8 @@ try {
     $strLinkTipoDocPrincGeradoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_serie_selecionar&filtro=1&tipoDoc=G&tipo_selecao=1&id_object=objLupaTipoDocPrinc');
     $strLinkAjaxTipoDocPrinc = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_serie_auto_completar');
 
+    $strLinkAjaxValidaNumeroProcessoRepresent = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_validar_numero_processo_vinculacao');
+
     //Verificar webservice 
     $strLinkAjaxWebServiceSalvar = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=confirmar_webservice_consultarCnpj');
     //Verificar Tipos de PRocessos para Peticionamento
@@ -127,7 +129,7 @@ try {
         $idTipoProcesso = $_POST['hdnIdTipoProcesso'];
         $idTipoProcessoPF = $_POST['hdnIdTipoProcessoPF'];
         $staNivelAcesso = $_POST['selNivelAcesso'];
-        $orientacoes = $_POST['txtOrientacoes'];
+        $orientacoes = $_POST['txaConteudo'];
         $idUnidade = '';
         $nomeUnidade = '';
         $sinNAUsuExt = '';
@@ -220,6 +222,7 @@ try {
 
                         $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
                         $arrIdTipoDocumentoEssencial = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
+                        $arrIdProcessoRepresentacao = $_POST['hdnIdProcessoRepresentacao'];
 
                         $nomeTipoProcesso = $_POST['txtTipoProcesso'];
                         $idTipoProcesso = $objMdPetVincTpProcessoDTO->getNumIdTipoProcedimento();
@@ -302,7 +305,26 @@ try {
                         $objMdPetVincRelSerieDTO->setStrSinObrigatorio('N');
                         array_push($arrObjMdPetVincRelSerieDTO, $objMdPetVincRelSerieDTO);
                     }
+
                     $objMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->cadastrar($arrObjMdPetVincRelSerieDTO);
+
+                    // cadastrando whitelist de processos de representação
+                    $objMdPetProRepresWhitRN = new MdPetProRepresWhitRN();
+                    
+                    //removendo para repopular com os selecionados
+                    $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
+                    $objMdPetProRepresWhitDTO->retNumIdMdPetProRepresWhit();
+                    $objMdPetProRepresWhitRN->excluir($objMdPetProRepresWhitRN->listar($objMdPetProRepresWhitDTO));
+
+                    if (!empty($arrIdProcessoRepresentacao)) {
+                        $arrIdProcessoRepresentacao = explode(',', $arrIdProcessoRepresentacao);
+                        foreach ($arrIdProcessoRepresentacao as $numIdProcessoRepresentacao) {
+                        $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
+                            $objMdPetProRepresWhitDTO->setDblIdProtocolo($numIdProcessoRepresentacao);
+                            $objMdPetProRepresWhitRN->cadastrar($objMdPetProRepresWhitDTO);
+                        }
+                    }
+
                     PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
                     //header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento() . PaginaSEI::getInstance()->montarAncora($objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento())));
 
@@ -314,6 +336,14 @@ try {
             break;
 
     }
+
+    // Lista todos os processos de representação para o select
+    $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
+    $objMdPetProRepresWhitDTO->retStrProtocoloFormatado();
+    $objMdPetProRepresWhitDTO->retStrNomeTipoProcedimento();
+    $objMdPetProRepresWhitDTO->retDblIdProtocolo();
+    $objMdPetProRepresWhitDTO->setDistinct(true);
+    $arrObjMdPetProRepresWhit = ( new MdPetProRepresWhitRN() )->listar($objMdPetProRepresWhitDTO);
 
 
 } catch (Exception $e) {
@@ -589,44 +619,36 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 </div>
                 <!--  Fim Exibir menu Procuração Eletrônica -->
                 <div class="row mb-3">
-                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <fieldset class="infraFieldset form-control" style="height: auto">
-                            <legend class="infraLegend">Nível de Acesso dos Documentos Peticionados
-                                <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
-                                     name="ajuda"
-                                     id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Indique o comportamento a ser adotado pelo SEI referente ao Nível de Acesso dos Atos Constitutivos ao Peticionar a Vinculação do Usuário Externo como Responsável Legal a Pessoa Jurídica. \n \n Utilize a opção "Usuário Externo indica diretamente" para permitir ao Usuário Externo selecionar o Nível de Acesso de cada documento adicionado. \n \n Utilize a opção "Padrão pré definido" para que os Atos Constitutivos sejam peticionados com o Nível de Acesso indicado aqui.', 'Ajuda') ?>
-                                     class="infraImgFielset"/>
-                            </legend>
-                            <div class="row mb-3">
-                                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                                    <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
-                                                                       class="infraRadio"
-                                                                       id="rdUsuExternoIndicarEntrePermitidos"
-                                                                       onclick="changeNivelAcesso();" value="1"
-                                                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
+                        <label id="lblMenuAcessoExterno" for="" class="infraLabelObrigatorio">Nível de Acesso dos Documentos Peticionados</label>
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
+                                 id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Indique o comportamento a ser adotado pelo SEI referente ao Nível de Acesso dos Atos Constitutivos ao Peticionar a Vinculação do Usuário Externo como Responsável Legal a Pessoa Jurídica. \n \n Utilize a opção "Usuário Externo indica diretamente" para permitir ao Usuário Externo selecionar o Nível de Acesso de cada documento adicionado. \n \n Utilize a opção "Padrão pré definido" para que os Atos Constitutivos sejam peticionados com o Nível de Acesso indicado aqui.', 'Ajuda') ?>
+                                 class="infraImgModulo"/>
+                            <br/>
+                                <input <?php echo $sinNAUsuExt; ?> type="radio" name="rdNivelAcesso[]"
+                                                                    class="infraRadio"
+                                                                    id="rdUsuExternoIndicarEntrePermitidos"
+                                                                    onclick="changeNivelAcesso();" value="1"
+                                                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
 
-                                    <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno"
-                                           class="infraLabelRadio">Usuário
-                                        Externo indica diretamente</label>
-                                    <br/>
-                                    <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
-                                                                       onclick="changeNivelAcesso();" value="2"
-                                                                       class="infraRadio"
-                                                                       tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                    <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão
-                                        pré
-                                        definido</label>
-                                </div>
-                            </div>
-                            <div class="row mb-2"
-                                 id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?> >
-                                <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
-
+                                <label for="rdUsuExternoIndicarEntrePermitidos" id="lblUsuExterno"
+                                        class="infraLabelRadio">Usuário
+                                    Externo indica diretamente</label>
+                                <br/>
+                                <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
+                                                                    onclick="changeNivelAcesso();" value="2"
+                                                                    class="infraRadio"
+                                                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão
+                                    pré
+                                    definido</label>
+                            <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: inherit;"' : 'style="display: none;"' ?> >
+                                <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
                                     <div class="form-group">
                                         <label name="lblNivelAcesso" id="lblNivelAcesso" for="selNivelAcesso"
                                                class="infraLabelObrigatorio">Nível
                                             de Acesso:</label>
-                                        <select id="selNivelAcesso" name="selNivelAcesso" class="infraSelect form-control"
+                                        <select id="selNivelAcesso" name="selNivelAcesso" class="infraSelect form-select"
                                                 onchange="changeSelectNivelAcesso()"
                                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                             <?= $strItensSelNivelAcesso ?>
@@ -640,14 +662,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                         <label name="lblHipoteseLegal" id="lblHipoteseLegal" for="selHipoteseLegal"
                                                class="infraLabelObrigatorio">Hipótese Legal:</label>
                                         <select id="selHipoteseLegal" name="selHipoteseLegal"
-                                                class="infraSelect form-control"
+                                                class="infraSelect form-select"
                                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                             <?= $strItensSelHipoteseLegal ?>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                        </fieldset>
                     </div>
                 </div>
                 <!--  Documento Obrigatório -->
@@ -788,6 +809,106 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </div>
                 </div>
                 <!--  Fim das Orientações  -->
+            </fieldset>
+        </div>
+    </div>
+    
+    <div class="row mt-3">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset form-control" style="height: auto">
+                <legend class="infraLegend">Configurações para Possibilitar o Peticionamento Intercorrente em Processos de Representação
+                    <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
+                         id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('Defina os processos de representação que poderão receber Peticionamento Intercorrente.', 'Ajuda') ?>
+                         class="infraImgFielset"/>
+                </legend>
+                <!--  Documento Obrigatório -->
+                <?
+                //$divDocs = $alterar || $gerado || $externo ? 'style="display: inherit;"' : 'style="display: none;"'
+                $divDocs = 'style="display: inherit; margin-top: -3px"';
+                ?>
+                <div class="row mb-3">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <fieldset <?php echo $divDocs; ?> id="fldDocObrigatorio" class="fieldsetClear">
+                            <div class="form-group">
+                                <div style="clear:both;">&nbsp;</div>
+                                <div>
+                                    <label id="lblDescricaoEssencial" for="selProcessoRepresentacao"
+                                           >Protocolo do Processo de Representação:</label>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                            <input type="text" id="txtProcessoRepresentacao" name="txtProcessoRepresentacao" class="infraText w-50"
+                                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+
+                                                <button type="button" accesskey="A" name="sbmAdicionarUnidade"
+                                                        onclick="addProcessoWhitelist();"
+                                                        id="sbmAdicionarUnidade" value="Adicionar" class="infraButton"
+                                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><span
+                                                            class="infraTeclaAtalho">A</span>dicionar
+                                                </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="tabelaScroll" id="divTableMultiplasUnidades">
+                                            <table width="100%" summary="Tabela de Processos de Representação" class="infraTable"
+                                                id="tableTipoUnidade">
+                                                <caption class="infraCaption">Lista de Processos de Representação (<span
+                                                            id="qtdRegistros"><?php echo isset($arrObjMdPetProRepresWhit) && count($arrObjMdPetProRepresWhit) > 0 ? count($arrObjMdPetProRepresWhit) : '0'; ?></span> registros):
+                                                </caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th width="40%" class="infraTh">Processo</th>
+                                                        <th width="40%" class="infraTh">Tipo do Processo</th>
+                                                        <th width="20%" class="infraTh">Ações</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabelaProcessoRepresentacao">
+                                                <?php
+                                                if (!empty($arrObjMdPetProRepresWhit)) {
+
+                                                    foreach ($arrObjMdPetProRepresWhit as $objMdPetProRepresWhit) {
+                                                        $tipoProcessoRestricaoErro = false;
+                                                        $idMdPetProRepresWhit = $objMdPetProRepresWhit->getDblIdProtocolo();
+                                                       
+                                                        ?>
+                                                        <tr class="infraTrClara linhas linhasRepresent" id="<?php echo $idMdPetProRepresWhit; ?>">
+                                                            <td align="center" class="linhas_processo">
+                                                                <?php echo $objMdPetProRepresWhit->getStrProtocoloFormatado(); ?>
+                                                            </td>
+                                                            <td align="center">
+                                                                <?php echo $objMdPetProRepresWhit->getStrNomeTipoProcedimento(); ?>
+                                                            </td>
+                                                            <td align="center">
+                                                                <a>
+                                                                    <img title="Remover Permissão para Peticionamento Intercorrente nesse Processo de Representação"
+                                                                        alt="Remover Permissão para Peticionamento Intercorrente nesse Processo de Representação"
+                                                                        src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
+                                                                        onclick="removerPermissaoPetIntercorrente('<?php echo $idMdPetProRepresWhit; ?>');"
+                                                                        id="imgExcluirProcessoSobrestado">
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                                ?>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <input type="hidden" id="hdnIdProcessoRepresentacao" name="hdnIdProcessoRepresentacao" value="<?= $_POST['hdnIdProcessoRepresentacao'] ?>"/>
+                        </fieldset>
+                        
+                    </div>
+                </div>
+                <!--  Fim do Documento Obrigatorio -->
             </fieldset>
         </div>
     </div>

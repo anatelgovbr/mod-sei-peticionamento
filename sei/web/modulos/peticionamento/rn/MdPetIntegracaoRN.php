@@ -53,6 +53,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objCidadeDTO->retStrNome();
             $objCidadeDTO->retNumIdUf();
             $objCidadeDTO->retStrSiglaUf();
+            $objCidadeDTO->retNumIdPais();
 
             $objCidadeDTO->setNumMaxRegistrosRetorno(1);
             $objCidadeRN = new CidadeRN();
@@ -61,14 +62,76 @@ class MdPetIntegracaoRN extends InfraRN
             $nomeCidade = !is_null($objCidadeDTO) ? $objCidadeDTO->getStrNome() : '';
             $idUF = !is_null($objCidadeDTO) ? $objCidadeDTO->getNumIdUf() : '';
             $siglaUF = !is_null($objCidadeDTO) ? $objCidadeDTO->getStrSiglaUf() : '';
+            $idPais = !is_null($objCidadeDTO) ? $objCidadeDTO->getNumIdPais() : '';
         }
 
         $arrRetorno['idCidade'] = $idCidade;
         $arrRetorno['nomeCidade'] = $nomeCidade;
         $arrRetorno['idUF'] = $idUF;
+        $arrRetorno['idPais'] = $idPais;
         $arrRetorno['siglaUF'] = $siglaUF;
 
         return $arrRetorno;
+    }
+
+    protected function atualizaContatoCNPJMedianteConsultaReceitaWSConectado($consulta, $arrSaidaWS){
+
+        $idUsuarioPet = (new MdPetIntUsuarioRN())->getObjUsuarioPeticionamento(true);
+        SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
+
+        $dadosCidade = $this->_getDadosCidade($consulta, $arrSaidaWS);
+        $integra = new MdPetIntegracaoINT();
+
+        $dadosPJ = [
+            'cnpj'              => htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['cnpjEmpresa'])),
+            'nome'              => htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['razaoSocial'])),
+            'endereco'          => htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['logradouro'])) . ', ' . $integra::acessarDadoPorChave($consulta, $arrSaidaWS['numero']),
+            'bairro'            => htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['bairro'])),
+            'cep'               => MdPetDataUtils::formatCep($integra::acessarDadoPorChave($consulta, $arrSaidaWS['cep'])),
+            'complemento'       => htmlspecialchars($integra::acessarDadoPorChave($consulta, $arrSaidaWS['complemento'])),
+            'id_cidade'         => htmlspecialchars($dadosCidade['idCidade']),
+            'id_uf'             => $dadosCidade['idUF'],
+            'id_pais'           => $dadosCidade['idPais'],
+            'sta_natureza'      => 'J',
+            'responsavel_cpf'   => $integra::acessarDadoPorChave($consulta, $arrSaidaWS['cpfRespLegal'])
+        ];
+
+        $objContatoDTO = new ContatoDTO();
+        $objContatoDTO->setStrCnpj($dadosPJ['cnpj']);
+        $objContatoDTO->setStrStaNatureza(ContatoRN::$TN_PESSOA_JURIDICA);
+        $objContatoDTO->retNumIdContato();
+        $arrObjContatosCnpjDTO = (new ContatoBD(BancoSEI::getInstance()))->listar($objContatoDTO);
+
+        if(!empty($arrObjContatosCnpjDTO)){
+
+            $arrIdContatos = array_unique(InfraArray::converterArrInfraDTO($arrObjContatosCnpjDTO, 'IdContato'));
+
+            $objMdPetVinculoDTO = new MdPetVinculoDTO();
+            $objMdPetVinculoDTO->retNumIdContato();
+            $objMdPetVinculoDTO->setNumIdContato($arrIdContatos, infraDTO::$OPER_IN);
+            $objMdPetVinculoDTO = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
+
+            if(!empty($objMdPetVinculoDTO)){
+
+                $objContatoDTO = new ContatoDTO();
+                $objContatoDTO->setNumIdContato($objMdPetVinculoDTO->getNumIdContato());
+                $objContatoDTO->setStrObservacao('Cadastro atualizado mediante consulta na Receita Federal em ' . InfraData::getStrDataHoraAtual());
+                $objContatoDTO->setStrNome($dadosPJ['nome']);
+                $objContatoDTO->setStrEndereco($dadosPJ['endereco']);
+                $objContatoDTO->setStrBairro($dadosPJ['bairro']);
+                $objContatoDTO->setStrCep($dadosPJ['cep']);
+                $objContatoDTO->setStrComplemento($dadosPJ['complemento']);
+                $objContatoDTO->setNumIdCidade($dadosPJ['id_cidade']);
+                $objContatoDTO->setNumIdUf($dadosPJ['id_uf']);
+                $objContatoDTO->setNumIdPais($dadosPJ['id_pais']);
+                
+                (new ContatoBD(BancoSEI::getInstance()))->alterar($objContatoDTO);
+                // (new ContatoRN())->alterarRN0323($objContatoDTO);
+
+            }
+
+        }
+
     }
 
     protected function consultarReceitaWsResponsavelLegalConectado($dados)
@@ -169,6 +232,10 @@ class MdPetIntegracaoRN extends InfraRN
         $parametro              = [ $strMetodoWebservice => $arrParamsWebservice ];
 	    $objMdPetSoapClienteRN  = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
 	    $consulta               = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
+
+        if(array_key_exists('PessoaJuridica', $consulta)){
+            $this->atualizaContatoCNPJMedianteConsultaReceitaWSConectado($consulta, $arrSaidaWS);
+        }
 
 	    if (!empty($objMdPetIntegracao->getStrCodReceitaSuspAuto()) && in_array(intval($integra::acessarDadoPorChave($consulta, $arrSaidaWS['codSituacaoCadastral'])), explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto()))) {
             $xml .= "<success>false</success>\n";
@@ -341,6 +408,7 @@ class MdPetIntegracaoRN extends InfraRN
 
                 $mes = 0;
                 $chaveMes = '';
+                $arrSaidaWS = [];
 
                 // Verifica os demais parametros mapeados para incluir no array e passar para o WS
                 foreach ($arrObjMdPetIntegParametroRN as $itemParam) {
@@ -381,6 +449,11 @@ class MdPetIntegracaoRN extends InfraRN
                         }
                     }
 
+                    // Mapeando os de saida todos de uma vez
+                    if ($itemParam->getStrTpParametro() == 'P'){
+                        $arrSaidaWS[$itemParam->getStrNome()] = $itemParam->getStrNomeCampo();
+                    }
+
                 }
 
                 // Monta a consulta para o WS
@@ -388,13 +461,20 @@ class MdPetIntegracaoRN extends InfraRN
 
                 $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
                 $retorno = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
-	            $codigoRetornado = isset($retorno['PessoaJuridica']['situacaoCadastral']['codigo']) ? $retorno['PessoaJuridica']['situacaoCadastral']['codigo'] : null;
-	
-	            $arrCodReceita = explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto());
 
-                if ($codigoRetornado && in_array($codigoRetornado,$arrCodReceita)) {
-                    return true;
+                if(isset($retorno['PessoaJuridica'])){
+                    
+                    $this->atualizaContatoCNPJMedianteConsultaReceitaWSConectado($retorno, $arrSaidaWS);
+
+                    $arrCodReceita = explode(',', $objMdPetIntegracao->getStrCodReceitaSuspAuto());
+
+                    return [
+                        'IntegracaoCodigosParaSuspensao' => $arrCodReceita,
+                        'RetornoConsultaReceitaWS' => $retorno
+                    ];
+
                 }
+	            
             }
         }
 

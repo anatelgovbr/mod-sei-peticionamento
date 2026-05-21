@@ -1,7 +1,7 @@
 <?php
 
-    //INICIALIZAÇÃO DE VARIÁVEIS DA PÁGINA
-    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao número do processo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluídos diretamente no processo indicado ou em processo novo relacionado.";
+    //INICIALIZAÇÃO DE VARIÁVEIS DA PÁGINA
+    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao nÃºmero do processo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluí­dos diretamente no processo indicado ou em processo novo relacionado.";
 
     $arrComandos   = array();
     $arrComandos[] = '<button tabindex="-1" type="button" accesskey="p" name="Peticionar" id="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';

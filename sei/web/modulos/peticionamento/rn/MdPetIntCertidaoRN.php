@@ -612,6 +612,10 @@ class MdPetIntCertidaoRN extends InfraRN
         $idContato = array_key_exists(3, $arrParams) ? $arrParams[3] : false;
         $isValido = true;
 
+        if (empty($idProtocolo)) {
+            return $isValido;
+        }
+
         if ($idAcessoExterno) {
             $idContato = $this->_getIdContatoPorAcessoExterno($idAcessoExterno);
         }

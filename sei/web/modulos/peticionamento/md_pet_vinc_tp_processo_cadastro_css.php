@@ -61,5 +61,9 @@
         padding: 15px;
     }
 
-
+    .tabelaScroll {
+        max-height: 550px; 
+        overflow-y: auto; 
+        border: 1px solid transparent;
+    }
 </style>

@@ -36,6 +36,7 @@ function mdPetGetParametrosInfraestruturaPermitidos() {
         'acao',                     // Ação genérica do SEI (algumas rotas usam)
         'id_contato',               // Contexto de cadastro (quando presente em GET legado)
 		'infra_hash',				// Hash do link
+		'id_procedimento',
     );
 }
 
@@ -103,7 +104,7 @@ try{
 
     function mdPetValidarContratoAjax($acao, $contratos){
         if (!isset($contratos[$acao])) {
-            mdPetNegarAcessoAjaxExterno("Acao '{$acao}' nao reconhecida pelo controlador AJAX do Peticionamento.");
+            mdPetNegarAcessoAjaxExterno("Ação '{$acao}' não reconhecida pelo controlador AJAX do Peticionamento.");
         }
 
         $contrato = $contratos[$acao];
@@ -112,19 +113,19 @@ try{
         $extrasGet = array_diff(array_keys($_GET), $contrato['get']);
 
         if (!empty($extrasGet)) {
-            mdPetNegarAcessoAjaxExterno('Parametro(s) GET fora do contrato: '.implode(', ', $extrasGet).'.');
+            mdPetNegarAcessoAjaxExterno('Parâmetro(s) GET fora do contrato: '.implode(', ', $extrasGet).'.');
         }
 
         // Validação de parâmetros POST
 		$postPermitido = array_merge($contrato['post_required'], $contrato['post_optional']);
         $extrasPost = array_diff(array_keys($_POST), $postPermitido);
         if (!empty($extrasPost)) {
-            mdPetNegarAcessoAjaxExterno('Parametro(s) POST fora do contrato: '.implode(', ', $extrasPost).'.');
+            mdPetNegarAcessoAjaxExterno('Parâmetro(s) POST fora do contrato: '.implode(', ', $extrasPost).'.');
         }
 
         foreach ($contrato['post_required'] as $chaveObrigatoria) {
             if (!array_key_exists($chaveObrigatoria, $_POST)) {
-                mdPetNegarAcessoAjaxExterno("Parametro POST obrigatorio nao informado: {$chaveObrigatoria}.");
+                mdPetNegarAcessoAjaxExterno("Parâmetro POST obrigatório não informado: {$chaveObrigatoria}.");
             }
         }
     }
@@ -135,7 +136,9 @@ try{
         'md_pet_contato_auto_completar_contexto_pesquisa',
         'md_pet_cargo_montar_select_genero',
         'md_pet_cargo_dados',
-        'get_acoes_intimacao_lista'
+        'get_acoes_intimacao_lista',
+        'get_acoes_protocolo_lista',
+		'get_acoes_protocolo_unico'
     );
 
 	// Exceções públicas: no momento não há ações públicas neste endpoint.
@@ -176,6 +179,16 @@ try{
         'get_acoes_intimacao_lista' => array(
 			'get' => array('acao_ajax_externo', 'acao_origem', 'id_orgao_acesso_externo', 'infra_hash'),
             'post_required' => array('dataAttributes'), 
+            'post_optional' => array()
+        ),
+        'get_acoes_protocolo_lista' => array(
+			'get' => array('acao_ajax_externo', 'acao_origem', 'id_orgao_acesso_externo', 'infra_hash', 'id_acesso_externo', 'id_procedimento', 'id_procedimento_anexado'),
+            'post_required' => array(), 
+            'post_optional' => array()
+        ),
+        'get_acoes_protocolo_unico' => array(
+			'get' => array('acao_ajax_externo', 'acao_origem', 'id_orgao_acesso_externo', 'infra_hash', 'id_acesso_externo', 'id_procedimento', 'id_procedimento_anexado', 'data'),
+            'post_required' => array(), 
             'post_optional' => array()
         )
     );
@@ -328,7 +341,7 @@ try{
 			$dataAttributes = $_POST['dataAttributes'];
 
 			if (!is_array($dataAttributes)) {
-				throw new InfraException('Payload invalido para dataAttributes.');
+				throw new InfraException('Payload inválido para dataAttributes.');
 			}
 
 			// Valida os indices dentro de $dataAttributes:
@@ -409,7 +422,7 @@ try{
 							$acessoExtDTO->setStrSinAtivo('S');
 
 							// Verificar se traz somente o do acesso atual ou do relacionado desta intimação (linha 1215)
-							// @todo adicionar verificaçao de data de validade do acesso externo
+							// @todo adicionar verificação de data de validade do acesso externo
 
 							$arrAcessosExternos = (new AcessoExternoRN())->listar($acessoExtDTO);
 
@@ -452,8 +465,86 @@ try{
 
 			break;
 
+		case 'get_acoes_protocolo_lista':
+
+			try {
+
+				$input = json_decode(file_get_contents('php://input'), true);
+
+				if (!$input) {
+					echo json_encode(['erro' => 'input vazio']);
+					exit;
+				}
+
+				$itens = $input['itens'] ?? [];
+
+				$resultado = [];
+
+				$obj = new PeticionamentoIntegracao();
+
+				foreach ($itens as $item) {
+
+					$id = (int) ($item['id'] ?? 0);
+
+					if ($id <= 0) continue;
+
+					$html = $obj->montarBotoesReaisPorId(
+						$id,
+						$item['acesso'] ?? null,
+						$item['procedimento'] ?? null,
+						$item['isproc'] ?? false
+					);
+
+					$resultado[$id] = base64_encode($html);
+				}
+
+				header('Content-Type: application/json; charset=utf-8');
+				echo json_encode($resultado);
+				exit;
+
+			} catch (Throwable $e) {
+
+				InfraLog::getInstance()->gravar('Erro ao carregar ações do protocolo: ' . $e->getMessage(), InfraLog::$ERRO);
+				echo '{"erro":"Erro ao carregar as ações do protocolo."}';
+				exit;
+			}
+
+			break;
+
+			case 'get_acoes_protocolo_unico':
+
+				try {
+					$input = json_decode(file_get_contents('php://input'), true);
+					if (!$input || !isset($input['id'])) {
+						echo json_encode(['erro' => 'ID não informado']);
+						exit;
+					}
+					
+					$id = (int) $input['id'];
+					$idAcesso = $input['id_acesso'] ?? $_GET['id_acesso_externo'] ?? null;
+					$idProcedimento = $input['id_procedimento'] ?? $_GET['id_procedimento'] ?? null;
+					$isProcedimento = isset($input['is_procedimento']) ? (bool)$input['is_procedimento'] : false;
+					
+					require_once dirname(__FILE__) . '/PeticionamentoIntegracao.php';
+					$obj = new PeticionamentoIntegracao();
+					$html = $obj->montarBotoesReaisPorId($id, $idAcesso, $idProcedimento, $isProcedimento);
+					
+					header('Content-Type: application/json');
+					echo json_encode(['html' => $html]);
+					exit;
+				} catch (Throwable $e) {
+					header('Content-Type: application/json');
+					InfraLog::getInstance()->gravar('Erro ao carregar ações do protocolo: ' . $e->getMessage(), InfraLog::$ERRO);
+					echo '{"erro":"Erro ao carregar as ações do protocolo."}';
+					exit;
+				}
+
+			break;
+			
 		default:
-		throw new InfraException("Ação '".$acaoAjaxExterno."' não reconhecida pelo controlador AJAX externo.");
+
+			throw new InfraException("A ação '".$acaoAjaxExterno."' não reconhecida pelo controlador AJAX externo.");
+			break;
 	}
   
 }catch(Exception $e){

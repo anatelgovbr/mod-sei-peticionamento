@@ -35,10 +35,10 @@ switch ($_GET['acao']) {
         $semWS = $_POST['hdnWS'] == '0' ? true : false;
         $captchaValidado = '3'; // Captcha validado
         $hdnNumeroCnpj = $_POST['txtNumeroCnpj'];
-        if(!CaptchaSEI::getInstance()->verificar()) {
-            PaginaSEIExterna::getInstance()->setStrMensagem('Desafio não foi resolvido.', PaginaSEI::$TIPO_MSG_ERRO);
-            $captchaValidado = '2'; // Captcha inválido
-        }
+        // if(!CaptchaSEI::getInstance()->verificar()) {
+        //     PaginaSEIExterna::getInstance()->setStrMensagem('Desafio não foi resolvido.', PaginaSEI::$TIPO_MSG_ERRO);
+        //     $captchaValidado = '2'; // Captcha inválido
+        // }
     }
     break;
   

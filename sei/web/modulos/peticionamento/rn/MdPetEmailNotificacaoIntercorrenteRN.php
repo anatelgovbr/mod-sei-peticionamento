@@ -71,7 +71,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 		}
 		$arrEmailUnidade = $emailUnidadeRN->listar($objEmailUnidadeDTO);
 
-//        die(var_dump($arrEmailUnidade));
+    //    die(var_dump($arrEmailUnidade));
 
         //obtendo o tipo de procedimento
         $idTipoProc = $arrParametros['id_tipo_procedimento'];
@@ -91,6 +91,10 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 
         $strSiglaSistema = SessaoSEIExterna::getInstance()->getStrSiglaSistema();
         $strEmailSistema = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA');
+        $strEmailAdministrador = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
+
+        // Acumula falhas de envio para notificar o admin em um unico e-mail ao final
+        $arrFalhasEmail = array();
 
         $strSiglaOrgao = $objOrgaoDTO->getStrSigla();
         $strSiglaOrgaoMinusculas = InfraString::transformarCaixaBaixa($objOrgaoDTO->getStrSigla());
@@ -180,7 +184,14 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
             $strConteudo = str_replace('@descricao_orgao@',$objOrgaoDTO->getStrDescricao(),$strConteudo);
             $strConteudo = str_replace('@sitio_internet_orgao@',$objOrgaoDTO->getStrSitioInternetContato(),$strConteudo);
 
-             InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+            try {
+                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+            } catch (\Throwable $eMail) {
+                $arrFalhasEmail[] = array(
+                    'contexto' => 'E-mail ao peticionante (' . $strPara . ')',
+                    'erro'     => $eMail->getMessage()
+                );
+            }
 
         }
 
@@ -254,10 +265,81 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
 	            $strPara = str_replace('@processo@', $documentoDTO->getStrProtocoloDocumentoFormatado() , $strPara);
 	            $strPara = str_replace('@emails_unidade@', $mail->getStrEmail() , $strPara);
 	            if ($enviaemail){
-                	InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                    try {
+                        InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                    } catch (\Throwable $eMail) {
+                        $arrFalhasEmail[] = array(
+                            'contexto' => 'E-mail a unidade (' . $mail->getStrEmail() . ')',
+                            'erro'     => $eMail->getMessage()
+                        );
+                    }
 	            }
             }
         }
+
+        // Notifica o admin com um unico e-mail listando todas as falhas acumuladas
+        if (!empty($arrFalhasEmail)) {
+            $this->notificarAdminFalhasEmail(
+                $arrFalhasEmail,
+                $arrParametros['id_procedimento'],
+                $strEmailSistema,
+                $strEmailAdministrador
+            );
+        }
     }
+    /*
+     * Registra no InfraLog e envia um unico e-mail ao administrador listando
+     * todas as falhas de envio ocorridas no peticionamento intercorrente.
+     * Nunca lanca excecao: a falha de notificacao nao deve interromper o fluxo.
+     */
+    private function notificarAdminFalhasEmail($arrFalhas, $idProcedimento, $strEmailSistema, $strEmailAdministrador)
+    {
+        // Registra cada falha individualmente no InfraLog
+        foreach ($arrFalhas as $falha) {
+            LogSEI::getInstance()->gravar(
+                'Falha no envio de e-mail - Peticionamento intercorrente'
+                . ' (processo ' . $idProcedimento . ')'
+                . ' - ' . $falha['contexto']
+                . ': ' . $falha['erro'],
+                InfraLog::$INFORMACAO
+            );
+        }
+
+        if (!InfraString::isBolVazia($strEmailSistema) && !InfraString::isBolVazia($strEmailAdministrador)) {
+            try {
+                $strDetalhes = '';
+                foreach ($arrFalhas as $i => $falha) {
+                    $strDetalhes .= ($i + 1) . '. ' . $falha['contexto'] . "\n"
+                        . '   Erro: ' . $falha['erro'] . "\n\n";
+                }
+
+                MailSEI::getInstance()->limpar();
+                $objEmailDTO = new EmailDTO();
+                $objEmailDTO->setStrDe($strEmailSistema);
+                $objEmailDTO->setStrPara($strEmailAdministrador);
+                $objEmailDTO->setStrAssunto('SEI - Falha no envio de e-mail de peticionamento intercorrente');
+                $objEmailDTO->setStrMensagem(
+                    'Prezado(a) Administrador(a),' . "\n\n"
+                    . 'O sistema registrou ' . count($arrFalhas) . ' falha(s) no envio de e-mail'
+                    . ' de notificacao do peticionamento intercorrente (processo ' . $idProcedimento . ').' . "\n\n"
+                    . 'Detalhes das falhas:' . "\n\n"
+                    . $strDetalhes
+                    . 'O peticionamento foi concluido com sucesso. Apenas o envio de e-mail falhou.' . "\n\n"
+                    . 'Atenciosamente,' . "\n"
+                    . 'SEI - Sistema Eletronico de Informacoes'
+                );
+                MailSEI::getInstance()->adicionar($objEmailDTO);
+                MailSEI::getInstance()->enviar();
+            } catch (\Throwable $eAdmin) {
+                LogSEI::getInstance()->gravar(
+                    'Falha ao notificar administrador sobre erros de e-mail do peticionamento intercorrente'
+                    . ' (processo ' . $idProcedimento . ')'
+                    . ': ' . $eAdmin->getMessage(),
+                    InfraLog::$INFORMACAO
+                );
+            }
+        }
+    }
+
 }
 ?>

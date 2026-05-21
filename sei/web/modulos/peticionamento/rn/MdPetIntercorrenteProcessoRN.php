@@ -3,6 +3,7 @@
  * ANATEL
  *
  * 25/11/2016 - criado por marcelo.bezerra - CAST
+ * 18/05/2026 - editado por Gabriel Neves - ANATEL
  *
  */
 
@@ -304,7 +305,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 return true;
             } else {
 
-                //Se a Unidade estiver nula é porque pode ser Utilizada em qualquer uma do orgão logado em questão
+                //Se a Unidade estiver nula é porque pode ser Utilizada em qualquer uma do órgão logado em questão
                 $objTipoProcedRestricaoDTO2 = clone($objTipoProcedRestricaoDTO);
                 $objTipoProcedRestricaoDTO2->setNumMaxRegistrosRetorno(1);
                 $objTipoProcedRestricaoDTO2->setNumIdUnidade(null);
@@ -313,7 +314,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                     return true;
                 }
 
-                //Se a Unidade estiver nula e um orgão diferente do da Unidade Atual estiver cadastrado
+                //Se a Unidade estiver nula e um órgão diferente do da Unidade Atual estiver cadastrado
                 $objTipoProcedRestricaoDTO3 = clone($objTipoProcedRestricaoDTO);
                 $objTipoProcedRestricaoDTO3->setNumMaxRegistrosRetorno(1);
                 $objTipoProcedRestricaoDTO3->setNumIdUnidade(null);
@@ -392,7 +393,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $saidaConsultarProcedimentoAPI = $objSEIRN->consultarProcedimento($objEntradaConsultaProcApi);
         }
 
-        //informações da tarefa de conclusao de processo na unidade
+        //informações da tarefa de conclusão de processo na unidade
         $tarefaRN = new TarefaRN();
         $tarefaDTO = new TarefaDTO();
         $tarefaDTO->retNumIdTarefa();
@@ -909,19 +910,37 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     /*
      * Metodo principal responsavel por coordenar o processamento do
      * peticionamento intercorrente em etapas controladas menores.
+     *
+     * Etapas criticas (com rollback em caso de falha):
+     *   1. prepararCadastroIntercorrente    - validacao, resolucao de processo, criterio, reabertura
+     *   2. incluirDocumentosCadastroIntercorrente - inclusao dos documentos no processo
+     *   3. finalizarCadastroIntercorrente   - recibo, andamentos, resposta/intercorrente
+     *
+     * Etapa pos-cadastro (nao critica, sem rollback):
+     *   4. posCadastroIntercorrente         - envio de e-mails e limpeza de temporarios
      */
     public function cadastrar($params)
     {
         $dadosCadastro = $this->prepararCadastroIntercorrente($params);
 
         try {
+
             $dadosCadastro = $this->incluirDocumentosCadastroIntercorrente($dadosCadastro);
-            return $this->finalizarCadastroIntercorrente($dadosCadastro);
-        } catch (Exception $e) {
+            $resultado = $this->finalizarCadastroIntercorrente($dadosCadastro);
+
+        } catch (\Throwable $e) {
+            
             $this->tratarFalhaCadastroIntercorrente($dadosCadastro, $e);
+            return false;
+
         }
 
-        return false;
+        // Etapa pos-cadastro: notificacoes e limpeza de temporarios.
+        // Erros aqui nao desfazem o cadastro já concluido com sucesso.
+        $this->posCadastroIntercorrente($dadosCadastro);
+
+        return $resultado;
+
     }
 
     protected function prepararCadastroIntercorrenteControlado($params)
@@ -1358,7 +1377,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         //realizar classificacao da metas ODS - IA
         if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno()){
 
-            // Inclui as informações da classificação no recibo antes da efetiva classificacao por conta da sessao
+            // Inclui as informações da classificação no recibo antes da efetiva classificação por conta da sessão
             $params['metas_ods_onu'] = SessaoSEIExterna::getInstance()->getAtributo('METAS_SELECIONADAS');
 
         }
@@ -1485,20 +1504,10 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 $atividadeBD->alterar($ultimaAtividadeDTO[0]);
             }
 
-            $this->enviarEmail($params);
-
-            //se for resposta, atualizar status da intimação
-
-
-            // Temporários apagando
-            $arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($params['hdnTbDocumento']);
-            foreach ($arquivos_enviados as $arquivo_enviado) {
-                unlink(DIR_SEI_TEMP . '/' . $arquivo_enviado[7]);
-            }
-
             return array(
-                'recibo' => $objReciboDTO,
-                'documento' => $documentoReciboDTO
+                'recibo'    => $objReciboDTO,
+                'documento' => $documentoReciboDTO,
+                'params'    => $params
             );
             //Gerar Recibo e executar javascript para fechar janela filha e redirecionar janela pai para a tela de detalhes do recibo que foi gerado]
 
@@ -1507,15 +1516,48 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         return false;
     }
 
-    private function tratarFalhaCadastroIntercorrente($dadosCadastro, Exception $e)
+    private function tratarFalhaCadastroIntercorrente($dadosCadastro, \Throwable $e)
     {
         try {
             $this->realizarRollbackCadastroIntercorrente($dadosCadastro);
-        } catch (Exception $eRollback) {
+        } catch (\Throwable $eRollback) {
             throw new InfraException('Erro no cadastro do peticionamento intercorrente e falha ao reverter as etapas anteriores.', $eRollback);
         }
 
         throw $e;
+    }
+
+    /*
+     * Etapa pos-cadastro: responsabilidades nao-criticas que nao devem
+     * interromper o fluxo nem acionar rollback em caso de falha.
+     * - Envio de e-mails de notificacao (informativo, destinatario pode nao ter email valido)
+     * - Limpeza de arquivos temporarios de upload
+     */
+    protected function posCadastroIntercorrenteControlado($dadosCadastro)
+    {
+        $params = $dadosCadastro['params'];
+
+        // Envio de e-mail: informativo, nao deve interromper o fluxo principal
+        try {
+            $this->enviarEmail($params);
+        } catch (\Throwable $e) {
+            LogSEI::getInstance()->gravar(
+                'Falha no envio de e-mail de notificacao do peticionamento intercorrente'
+                . ' (processo ' . (isset($params['id_procedimento']) ? $params['id_procedimento'] : 'indefinido') . ')'
+                . ': ' . $e->getMessage(),
+                InfraLog::$INFORMACAO
+            );
+        }
+
+        // Limpeza de arquivos temporarios de upload
+        try {
+            $arquivos_enviados = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($params['hdnTbDocumento']);
+            foreach ($arquivos_enviados as $arquivo_enviado) {
+                @unlink(DIR_SEI_TEMP . '/' . $arquivo_enviado[7]);
+            }
+        } catch (\Throwable $e) {
+            // Falha na limpeza nao impede o retorno do cadastro
+        }
     }
 
     private function realizarRollbackCadastroIntercorrente($dadosCadastro)
@@ -1713,7 +1755,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
             $contatoDTO = $contatoRN->consultarRN0324($contatoDTO);
 
-            //so precisa intervir no acesso externo (para adicionar docs a mais nele, ou seja, ampliar o acesso ext) caso se trate de acesso ext parcial, para acesso integral nao é necessário intervir
+            //so precisa intervir no acesso externo (para adicionar docs a mais nele, ou seja, ampliar o acesso ext) caso se trate de acesso ext parcial, para acesso integral não é necessário intervir
 
 
             if (!is_null($sinTipoAcesso) && $sinTipoAcesso == MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL) {
@@ -1880,7 +1922,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     private function validarNumIdTipoProcedimento($numIdTipoProcedimento, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($numIdTipoProcedimento)) {
-            $objInfraException->adicionarValidacao('Senha não informada.');
+            $objInfraException->adicionarValidacao('Tipo de procedimento não informado.');
         }
     }
 

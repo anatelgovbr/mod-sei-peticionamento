@@ -14,11 +14,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
     //variavel de instancia, usada para identificar quais documentos tiveram seu acesso autorizado pelo modulo
     private $arrDocumentosLiberados = array();
     private $arrProcessosLiberados = array();
+    private $strModoAcionamentoLazyLoadBotoes = 'viewport'; // valores: viewport | manual
     static $arrProtocoloAcessoExterno = array();
     public static $INTIMACAO_NAO_CUMPRIDA = 0;
     public static $INTIMACAO_CUMPRIDA_PARCIAL = 1;
     public static $INTIMACAO_CUMPRIDA = 2;
     public static $INTIMACAO_NEGADA = 3;
+    public static $ICONS_VERSION = 19;
 
     public function __construct()
     {
@@ -32,7 +34,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.3.10';
+        return '4.3.11';
     }
 
     public function getIaMenorVersaoRequerida()
@@ -624,7 +626,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             return null;
         }
 
-    return $cpf;
+        return $cpf;
     }
 
     private function normalizarCnpjCampo($valor)
@@ -703,7 +705,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_vinc_usu_ext_dados_usuario_externo_procuracao' :
                 $xml = MdPetVincUsuarioExternoINT::consultarDadosUsuarioExternoProcuracao($_POST);
                 break;
-            //Verificaçã de Existencia de Procuração
+            //Verificação de Existencia de Procuração
             case 'md_pet_vinc_usu_ext_dados_usuario_externo_validar_procuracao' :
                 $xml = MdPetVincUsuarioExternoINT::validarExistenciaProcuracao($_POST);
                 break;
@@ -1135,7 +1137,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $icone = "";
             $id = "";
             $tipo = "";
-            //recibo mais atual é de resposta a intimaçao
+            //recibo mais atual é de resposta a intimação
             if (in_array(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO, $recibo)) {
 
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
@@ -1358,7 +1360,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $linhaDeBaixo = '';
             $img = '';
 
-            //Tipos de recibos para pegar a data do "Último Peticionamento de Atualização".
+            //Tipos de recibos para pegar a data do "último Peticionamento de Atualização".
             $arrTipoReciboVinculacao = array(
                 MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_EMISSAO,
                 MdPetReciboRN::$TP_RECIBO_ATUALIZACAO_ATOS_CONSTITUTIVOS,
@@ -1368,7 +1370,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 MdPetReciboRN::$TP_RECIBO_PROCURACAO_ELETRONICA_RENUNCIA
             );
 
-            //recibo mais atual é de resposta a intimaçao
+            //recibo mais atual é de resposta a intimação
             if (in_array(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO, $tipoPet)) {
 
                 $reciboIntercorrenteDTO = new MdPetReciboDTO();
@@ -2155,13 +2157,16 @@ class PeticionamentoIntegracao extends SeiIntegracao
     //pelo ponto de extensao dos documentos negados (ponto de ext novo, adicionado no SEI 3.0.7)
     private function montarBotaoAcessoExternoPeticionamento($arrObjProtocoloAPI2, $isProcedimento = false)
     {
+        
         $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
 
-        $idAcessoExterno = $_GET['id_acesso_externo'];
+        $idAcessoExterno    = $_GET['id_acesso_externo'];
         $idOrgAcessoExterno = $_GET['id_orgao_acesso_externo'];
-        $idProcedimento = $_GET['id_procedimento'];
-        $idProcAnex = $_GET['id_procedimento_anexado'];
-        $arrIcones = array();
+        $idProcedimento     = $_GET['id_procedimento'];
+        $idProcAnex         = $_GET['id_procedimento_anexado'];
+        $arrIcones          = array();
+        $useLazyToButtons   = true;
+        $lazyStartsAt       = 1;
 
         $id_usuario_externo = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 
@@ -2169,215 +2174,450 @@ class PeticionamentoIntegracao extends SeiIntegracao
         if ($id_usuario_externo != null && $id_usuario_externo != "" && $idAcessoExterno) {
             //lista os documentos do SEI
             $arrIdsProtocolo = $objMdPetAcessoExtDocRN->getArrDocumentosAPI(array($idAcessoExterno, $idProcAnex, $isProcedimento));
-            if ($arrIdsProtocolo) {
-                foreach ($arrIdsProtocolo as $idProtocolo) {
-                    $mdPetIntProtocoloRN = new MdPetIntProtocoloRN();
-                    $objMdPetIntProtocoloDTO = new MdPetIntProtocoloDTO();
-                    $objMdPetIntProtocoloDTO->setDblIdProtocolo($idProtocolo);
-                    $objMdPetIntProtocoloDTO->retNumIdMdPetIntimacao();
-                    $objMdPetIntProtocoloDTO = $mdPetIntProtocoloRN->listar($objMdPetIntProtocoloDTO);
-                    $conteudoHtml = '';
-                    if ($objMdPetIntProtocoloDTO) {
-                        $conteudoHtml .= $this->montarAcaoBotaoCumprir($idProtocolo, $idAcessoExterno, $idProcedimento, $isProcedimento);
-                        $conteudoHtml .= $this->montarAcaoBotaoCertidao($idProtocolo, $idAcessoExterno);
-                        $conteudoHtml .= $this->montarAcaoBotaoResposta($idProtocolo, $idAcessoExterno, $idProcedimento);
-                        $conteudoHtml .= $this->montarAcaoBotaoRecibo($idProtocolo, $idAcessoExterno, $idProcedimento);
-                    }
-                    $arrIcones[$idProtocolo][] = $conteudoHtml . '<br/>';
+            
+            if (!empty($arrIdsProtocolo)) {
+            
+                $objMdPetIntProtocoloDTO = new MdPetIntProtocoloDTO();
+                $objMdPetIntProtocoloDTO->setDblIdProtocolo($arrIdsProtocolo, InfraDTO::$OPER_IN);
+                $objMdPetIntProtocoloDTO->retNumIdMdPetIntimacao();
+                $objMdPetIntProtocoloDTO->retDblIdDocumento();
+                $objMdPetIntProtocoloDTO->retDblIdProcedimento();
+                $objMdPetIntProtocoloDTO->retStrSinPrincipal();
+                $objMdPetIntProtocoloDTO->retDblIdProtocolo();
+                $arrObjMdPetIntProtocoloDTO = (new MdPetIntProtocoloRN())->listar($objMdPetIntProtocoloDTO);
+                $arrIdsProtocoloRenderizados = array();
 
-                    if ($isProcedimento) {
-                        $this->arrProcessosLiberados[] = $idProtocolo;
-                    } else {
-                        $this->arrDocumentosLiberados[] = $idProtocolo;
-                    }
-                }
-            }
-        }
-        return $arrIcones;
-    }
+                foreach ($arrObjMdPetIntProtocoloDTO as $item) {
 
-    public function montarAcaoBotaoRecibo($idProtocolo, $idAcessoExterno, $idProcedimento)
-    {
-        $objMdPetIntRN = new MdPetIntimacaoRN();
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
-        $objMdPetIntReciboRN = new MdPetIntReciboRN();
-        $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
-        $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
-        $objMdPetIntProtocoloRN = new MdPetIntProtocoloRN();
+                    $idProcedimento = !empty($idProcedimento) ? $idProcedimento : $item->getDblIdProcedimento();
 
-        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idProtocolo);
-        $objMdPetIntDocumentoDTO->retDblIdDocumento();
-        $objMdPetIntDocumentoDTO->retStrSinPrincipal();
-        $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
-        $listaDocs = $objMdPetIntProtocoloRN->listar($objMdPetIntDocumentoDTO);
-        foreach ($listaDocs as $objRelIntDoc) {
-            $recibos = [];
-            $existeInt = false;
-            $idIntimacao = $objRelIntDoc ? $objRelIntDoc->getNumIdMdPetIntimacao() : null;
-            $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
-            $arrDados = null;
-            $arrDados = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
-            $qtdArrDados = (is_array($arrDados) ? count($arrDados) : 0);
-            if ($qtdArrDados > 0) {
-                foreach ($arrDados as $aceite) {
-                    $existeInt = $aceite['INT'];
-
-                    $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
-                    $objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($idIntimacao);
-                    $objMdPetIntRelDestDTO->retDthDataCadastro();
-                    $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
-                    $objMdPetIntRelDestDTO->setNumIdContatoParticipante($objContato->getNumIdContato());
-                    $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
-                    $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
-                    $objMdPetIntRelDestDTO->retNumIdContato();
-                    $objMdPetIntRelDestDTO->retDblCnpjContato();
-                    $objMdPetIntRelDestDTO->retStrNomeContato();
-
-                    $idAcessoExternoValido = $objMdPetAcessoExtDocRN->verificarAcessoExternoValido(array($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno));
-                    if (!is_null($idAcessoExternoValido)) {
-                        $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoExterno);
+                    $id = $item->getDblIdProtocolo();
+                    if (in_array($id, $arrIdsProtocoloRenderizados, true)) {
+                        continue;
                     }
 
-                    $objMdPetIntRelDestDTO = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
-                    if (!empty($objMdPetIntRelDestDTO)) {
-                        $arrDados = array($objRelIntDoc->getNumIdMdPetIntimacao());
-                        $retorno = $objMdPetIntRN->retornaDadosDocPrincipalIntimacao($arrDados);
+                    if(count($arrIdsProtocolo) >= $lazyStartsAt && $useLazyToButtons){
 
-                        if (!is_null($retorno)) {
-                            $docPrinc = $retorno[0];
-                            $docTipo = $retorno[1];
-                            $docNum = $retorno[4];
+                        // Se o numero de documentos do processo passar do setado em $lazyStartsAt ele carrega os placeholders
+
+                        $arrIdsProtocoloRenderizados[] = $id;
+
+                        $arrIcones[$id][] = $this->renderLazyPlaceholder(
+                            $id,
+                            $idAcessoExterno,
+                            $idProcedimento,
+                            $isProcedimento
+                        );
+
+                        if ($isProcedimento) {
+                            $this->arrProcessosLiberados[] = $item->getDblIdProtocolo();
+                        } else {
+                            $this->arrDocumentosLiberados[] = $item->getDblIdProtocolo();
                         }
 
-                        if ($existeInt) {
-                            foreach ($objMdPetIntRelDestDTO as $obj) {
-                                //Botão
-                                $idMdPetDest = $obj->getNumIdMdPetIntRelDestinatario();
-                                $sitIntimacao = $obj->getStrStaSituacaoIntimacao();
+                    }else{
 
-                                $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-                                $objDestinatarioDTO->retTodos();
-                                $objDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idMdPetDest);
-                                $objDestinatarioDTO->setNumIdMdPetIntimacao($idIntimacao);
-                                $objDestinatarioRN = new MdPetIntRelDestinatarioRN();
-                                $arrDestinatarioDTO = $objDestinatarioRN->listar($objDestinatarioDTO);
-                                $arrContatos = InfraArray::converterArrInfraDTO($arrDestinatarioDTO, 'IdContato');
+                        $conteudoHtml = [];
+                        $conteudoHtml[] = $this->montarAcaoBotaoCumprir($item, $idAcessoExterno, $idProcedimento, $isProcedimento);
+                        $conteudoHtml[] = $this->montarAcaoBotaoCertidao($item, $idAcessoExterno);
+                        $conteudoHtml[] = $this->montarAcaoBotaoResposta($item, $idAcessoExterno, $idProcedimento);
+                        $conteudoHtml[] = $this->montarAcaoBotaoRecibo($item, $idAcessoExterno, $idProcedimento);
+                        $arrIcones[$item->getDblIdProtocolo()][] = implode('', $conteudoHtml) . '<br/>';
 
-                                $objUsuarioDTO = new UsuarioDTO();
-                                $objUsuarioDTO->retNumIdContato();
-                                $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-                                $objUsuarioRN = new UsuarioRN();
-                                $arrIds = $objUsuarioRN->listarRN0490($objUsuarioDTO);
+                    }
 
-                                if ($sitIntimacao == MdPetIntimacaoRN::$INTIMACAO_RESPONDIDA) {
-                                    $objMdPetReciboDTO = new MdPetReciboDTO();
-                                    $objMdPetReciboDTO->retTodos();
+                }
 
-                                    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-                                    $strVersaoModuloPeticionamento = $objInfraParametro->getValor('VERSAO_MODULO_PETICIONAMENTO', false);
+            }
 
-                                    if ($obj->getStrSinPessoaJuridica() == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA) {
-                                        $mdPetVinculoRN = new MdPetVinculoRN();
-                                        $mdPetVinculoDTO = new MdPetVinculoDTO();
-                                        $mdPetVinculoDTO->setNumIdContato($obj->getNumIdContato());
-                                        $mdPetVinculoDTO->retNumIdContatoRepresentante();
-                                        $mdPetVinculoDTO->retNumIdUsuario();
-                                        $mdPetVinculoDTO->retStrStaEstado();
-                                        $mdPetVinculoDTO->retDthDataEncerramento();
-                                        $arrMdPetVinculoDTO = $mdPetVinculoRN->listar($mdPetVinculoDTO);
-                                        $arrRepresentantes = InfraArray::converterArrInfraDTO($arrMdPetVinculoDTO, 'IdUsuario');
-                                    } else {
-                                        $arrRepresentantes = array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-                                    }
+        }
 
-                                    $objMdPetReciboDTO->setNumIdUsuario($arrRepresentantes, InfraDTO::$OPER_IN);
-                                    $objMdPetReciboDTO->setStrStaTipoPeticionamento(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO);
+        return $arrIcones;
 
-                                    $objMdPetReciboRN = new MdPetReciboRN();
+    }
 
-                                    //Próprio Processo
-                                    $objMdPetReciboDTO->setNumIdProtocolo($idProcedimento);
-                                    $objMdPetReciboDTO->unSetDblIdProtocoloRelacionado();
+    private function renderLazyPlaceholder($id, $idAcesso, $idProcedimento, $isProcedimento)
+    {
+        static $scriptInjected = true;
+        $modoLazyLoad = $this->strModoAcionamentoLazyLoadBotoes === 'manual' ? 'manual' : 'viewport';
+        $html = '
+        <style>.md-pet-acao-lazy{display:inline-block;background-color:#444;height:20px;margin:0;border-radius:4px;min-width:20px;opacity:.1;animation:1.5s infinite fading}@keyframes fading{0%,100%{opacity:.1}50%{opacity:.25}}.md-pet-acao-trigger{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;background:transparent;cursor:pointer;font-size:14px;line-height:1;color:#666}</style>';
+        if ($modoLazyLoad === 'manual') {
+            $html .= '
+        <span class="md-pet-acao-lazy-wrapper">
+            <button type="button"
+                class="md-pet-acao-trigger"
+                style="cursor:pointer"
+                onclick="mdPetCarregarPlaceholder(\'md-pet-'.$id.'\'); return false;"
+                title="Carregar ações disponíveis para o documento"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+</svg></button>
+            <div id="md-pet-'.$id.'"
+                class="md-pet-acao-lazy"
+                data-id="'.$id.'"
+                data-acesso="'.$idAcesso.'"
+                data-procedimento="'.$idProcedimento.'"
+                data-isproc="'.($isProcedimento ? 1 : 0).'"
+                data-lazy-mode="'.$modoLazyLoad.'"
+                style="display:none;"></div>
+        </span>';
+        } else {
+            $html .= '
+        <div id="md-pet-'.$id.'"
+            class="md-pet-acao-lazy d-inline-block"
+            data-id="'.$id.'"
+            data-acesso="'.$idAcesso.'"
+            data-procedimento="'.$idProcedimento.'"
+            data-isproc="'.($isProcedimento ? 1 : 0).'"
+            data-lazy-mode="'.$modoLazyLoad.'"></div>';
+        }
+        $html .= $this->renderLazyScript($id, $idAcesso, $idProcedimento, $modoLazyLoad);
+        return $html;
+    }
+    private function renderLazyScript($id, $idAcesso, $idProcedimento, $modoLazyLoad = 'viewport')
+    {
+        $strUrlAcaoLinhas = SessaoSEIExterna::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax_externo.php?acao_ajax_externo=get_acoes_protocolo_lista&acao_origem=' . $_GET['acao'].'&id_acesso_externo='.$idAcesso.'&id_procedimento='.$idProcedimento);
+        $modoLazyLoad = $modoLazyLoad === 'manual' ? 'manual' : 'viewport';
+        
+        return '
+        <script>
+        (function(){
+            if (window.__mdPetLoader) return;
+            window.__mdPetLoader = true;
+            var mdPetUrl = "'.$strUrlAcaoLinhas.'";
+            function limparEspacosColunaAcoes(el) {
+                const td = el && el.closest ? el.closest("td.colunaAcoes") : null;
 
+                if (!td) return;
+
+                const walker = document.createTreeWalker(td, NodeFilter.SHOW_TEXT);
+                const nodes = [];
+                let currentNode = walker.nextNode();
+
+                while (currentNode) {
+                    nodes.push(currentNode);
+                    currentNode = walker.nextNode();
+                }
+
+                nodes.forEach(node => {
+                    const texto = (node.textContent || "").replace(/\u00a0/g, "").trim();
+
+                    if (texto === "" && node.parentNode) {
+                        node.parentNode.removeChild(node);
+                    }
+                });
+            }
+            function removerPlaceholderLazy(el) {
+                const wrapper = el && el.closest ? el.closest(".md-pet-acao-lazy-wrapper") : null;
+
+                if (wrapper) {
+                    wrapper.remove();
+                    return;
+                }
+
+                if (el) {
+                    el.remove();
+                }
+            }
+            function sinalizarErroLazy(el, trigger, mensagem) {
+                const id = el ? (el.dataset.id || el.id.replace("md-pet-", "")) : null;
+                const erro = mensagem || "Falha ao montar os botoes de acao.";
+
+                console.error("[md-pet-lazy] Falha ao montar botoes.", { id, erro });
+
+                if (trigger && el && el.dataset.lazyMode === "manual") {
+                    trigger.style.display = "inline-flex";
+                    trigger.style.color = "#b71c1c";
+                    trigger.title = erro;
+                    el.style.display = "none";
+                    el.classList.remove("md-pet-acao-lazy");
+                    return;
+                }
+
+                if (!el) return;
+
+                el.classList.remove("md-pet-acao-lazy");
+                el.style.display = "inline-flex";
+                el.style.alignItems = "center";
+                el.style.justifyContent = "center";
+                el.style.width = "20px";
+                el.style.height = "20px";
+                el.style.minWidth = "20px";
+                el.style.backgroundColor = "transparent";
+                el.style.opacity = "1";
+                el.style.border = "2px solid #b71c1c";
+                el.style.borderRadius = "50%";
+                el.style.align = "center";
+                el.style.color = "#b71c1c";
+                el.style.fontSize = "12px";
+                el.style.fontWeight = "900";
+                el.title = erro;
+                el.innerHTML = "!";
+            }
+            function renderBotao(el, html, trigger) {
+                if (html.trim() === "") {
+                    removerPlaceholderLazy(el);
+                    return;
+                }
+                el.innerHTML = html;
+                limparEspacosColunaAcoes(el);
+                el.classList.remove("md-pet-acao-lazy");
+            }
+            function carregarPlaceholder(el) {
+                if (!el || el.dataset.loaded) return Promise.resolve();
+                const wrapper = el.closest ? el.closest(".md-pet-acao-lazy-wrapper") : null;
+                const trigger = wrapper ? wrapper.querySelector(".md-pet-acao-trigger") : null;
+                if (trigger && el.dataset.lazyMode === "manual") {
+                    trigger.style.display = "none";
+                    el.style.display = "inline-block";
+                }
+                limparEspacosColunaAcoes(el);
+                el.dataset.loaded = "1";
+                const itens = [{
+                    id: el.dataset.id,
+                    acesso: el.dataset.acesso,
+                    procedimento: el.dataset.procedimento,
+                    isproc: el.dataset.isproc
+                }];
+                return fetch(mdPetUrl, {
+                    method: "POST",
+                    body: JSON.stringify({ itens })
+                })
+                .then(r => r.text())
+                .then(t => {
+                    const data = JSON.parse(t);
+                    const id = el.dataset.id || el.id.replace("md-pet-", "");
+                    if (data && data.erro) {
+                        sinalizarErroLazy(el, trigger, data.erro);
+                        return;
+                    }
+                    if (!Object.prototype.hasOwnProperty.call(data, id)) {
+                        sinalizarErroLazy(el, trigger, "A resposta do lazy load nao trouxe o item solicitado.");
+                        return;
+                    }
+                    renderBotao(el, atob(data[id] || ""), trigger);
+                })
+                .catch((error) => {
+                    sinalizarErroLazy(el, trigger, error && error.message ? error.message : "Erro inesperado ao carregar as acoes.");
+                });
+            }
+            function carregarTodosDesc() {
+                const els = Array.from(document.querySelectorAll(".md-pet-acao-lazy:not([data-loaded])"));
+                if (!els.length) return;
+                els.sort(function(a, b) {
+                    return parseInt(b.dataset.id, 10) - parseInt(a.dataset.id, 10);
+                });
+                els.reduce(function(cadeia, el) {
+                    return cadeia.then(function() { return carregarPlaceholder(el); });
+                }, Promise.resolve());
+            }
+            window.mdPetCarregarPlaceholder = function(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                carregarPlaceholder(el);
+            };
+            function carregar() {
+                if ("'.$modoLazyLoad.'" === "manual") return;
+                carregarTodosDesc();
+            }
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", carregar);
+            } else {
+                setTimeout(carregar, 0);
+            }
+        })();
+        </script>
+        ';
+    }
+    public function montarBotoesReais($item, $idAcessoExterno, $idProcedimento, $isProcedimento)
+    {
+        if (!empty($idAcessoExterno)) {
+            SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
+        }
+
+        $conteudoHtml = [];
+
+        $conteudoHtml[] = $this->montarAcaoBotaoCumprir($item, $idAcessoExterno, $idProcedimento, $isProcedimento);
+        $conteudoHtml[] = $this->montarAcaoBotaoCertidao($item, $idAcessoExterno);
+        $conteudoHtml[] = $this->montarAcaoBotaoResposta($item, $idAcessoExterno, $idProcedimento);
+        $conteudoHtml[] = $this->montarAcaoBotaoRecibo($item, $idAcessoExterno, $idProcedimento);
+
+        return implode('', $conteudoHtml);
+    }
+
+    public function montarBotoesReaisPorId($id, $idAcesso, $idProcedimento, $isProcedimento)
+    {
+
+        $objDTO = new MdPetIntProtocoloDTO();
+        $objDTO->setDblIdProtocolo($id);
+        $objDTO->retNumIdMdPetIntimacao();
+        $objDTO->retDblIdDocumento();
+        $objDTO->retStrSinPrincipal();
+        $objDTO->retDblIdProtocolo();
+        $objDTO->retDblIdProcedimento();
+        $arrItens = (new MdPetIntProtocoloRN())->listar($objDTO);
+
+        if (empty($arrItens)) {
+            return "";
+        }
+
+        $conteudoHtml = array();
+
+        foreach ($arrItens as $item) {
+            $idProcedimentoItem = !empty($idProcedimento) ? $idProcedimento : $item->getDblIdProcedimento();
+            $conteudoHtml[] = $this->montarBotoesReais($item, $idAcesso, $idProcedimentoItem, $isProcedimento);
+        }
+
+        return implode("", $conteudoHtml);
+    }
+
+    public function montarAcaoBotaoRecibo($item, $idAcessoExterno, $idProcedimento)
+    {
+
+        $idIntimacao = $item->getNumIdMdPetIntimacao();
+
+        $arrDados       = (new MdPetIntAceiteRN())->existeAceiteIntimacaoAcao(array($idIntimacao, true));
+
+        if (!empty($arrDados)) {
+
+            $recibos                = [];
+            $existeInt              = false;
+
+            $idUsuarioExterno       = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+
+            $objMdPetIntRN          = new MdPetIntimacaoRN();
+            $objMdPetIntRelDestRN   = new MdPetIntRelDestinatarioRN();
+            $objMdPetIntReciboRN    = new MdPetIntReciboRN();
+            $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
+
+            $objContato             = (new MdPetIntAceiteRN())->retornaObjContatoIdUsuario(array($idUsuarioExterno));
+
+            foreach ($arrDados as $aceite) {
+            
+                $existeInt = $aceite['INT'];
+
+                $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
+                $objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($idIntimacao);
+                $objMdPetIntRelDestDTO->retDthDataCadastro();
+                $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
+                $objMdPetIntRelDestDTO->setNumIdContatoParticipante($objContato->getNumIdContato());
+                $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
+                $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
+                $objMdPetIntRelDestDTO->retNumIdContato();
+                $objMdPetIntRelDestDTO->retDblCnpjContato();
+                $objMdPetIntRelDestDTO->retStrNomeContato();
+
+                $idAcessoExternoValido = $objMdPetAcessoExtDocRN->verificarAcessoExternoValido(array($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno));
+                if (!is_null($idAcessoExternoValido)) {
+                    $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoExterno);
+                }
+
+                $objMdPetIntRelDestDTO = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
+
+                if (!empty($objMdPetIntRelDestDTO)) {
+
+                    $arrDados   = array($item->getNumIdMdPetIntimacao());
+                    $retorno    = $objMdPetIntRN->retornaDadosDocPrincipalIntimacao($arrDados);
+
+                    if (!is_null($retorno)) {
+                        $docPrinc   = $retorno[0];
+                        $docTipo    = $retorno[1];
+                        $docNum     = $retorno[4];
+                    }
+
+                    if ($existeInt) {
+                        
+                        foreach ($objMdPetIntRelDestDTO as $obj) {
+
+                            //Botão
+                            $idMdPetDest    = $obj->getNumIdMdPetIntRelDestinatario();
+                            $sitIntimacao   = $obj->getStrStaSituacaoIntimacao();
+
+                            if ($sitIntimacao == MdPetIntimacaoRN::$INTIMACAO_RESPONDIDA) {
+
+                                $objMdPetReciboDTO = new MdPetReciboDTO();
+                                $objMdPetReciboDTO->retTodos();
+
+                                if ($obj->getStrSinPessoaJuridica() == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA) {
+
+                                    $mdPetVinculoDTO = new MdPetVinculoDTO();
+                                    $mdPetVinculoDTO->setNumIdContato($obj->getNumIdContato());
+                                    $mdPetVinculoDTO->retNumIdContatoRepresentante();
+                                    $mdPetVinculoDTO->retNumIdUsuario();
+                                    $mdPetVinculoDTO->retStrStaEstado();
+                                    $mdPetVinculoDTO->retDthDataEncerramento();
+                                    $arrMdPetVinculoDTO = (new MdPetVinculoRN())->listar($mdPetVinculoDTO);
+
+                                    $arrRepresentantes = InfraArray::converterArrInfraDTO($arrMdPetVinculoDTO, 'IdUsuario');
+
+                                } else {
+
+                                    $arrRepresentantes = array($idUsuarioExterno);
+
+                                }
+
+                                $objMdPetReciboDTO->setNumIdUsuario($arrRepresentantes, InfraDTO::$OPER_IN);
+                                $objMdPetReciboDTO->setStrStaTipoPeticionamento(MdPetReciboRN::$TP_RECIBO_RESPOSTA_INTIMACAO);
+
+                                $objMdPetReciboRN = new MdPetReciboRN();
+
+                                //Próprio Processo
+                                $objMdPetReciboDTO->setNumIdProtocolo($idProcedimento);
+                                $objMdPetReciboDTO->unSetDblIdProtocoloRelacionado();
+
+                                $arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
+                                $qtdArrObjMdPetReciboDTO = (is_array($arrObjMdPetReciboDTO) ? count($arrObjMdPetReciboDTO) : 0);
+
+                                if ($qtdArrObjMdPetReciboDTO == 0) {
+                                    //Relacionado
+                                    $objMdPetReciboDTO->unSetNumIdProtocolo();
+                                    $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcedimento);
                                     $arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
-                                    $qtdArrObjMdPetReciboDTO = (is_array($arrObjMdPetReciboDTO) ? count($arrObjMdPetReciboDTO) : 0);
-                                    if ($qtdArrObjMdPetReciboDTO == 0) {
-                                        //Relacionado
-                                        $objMdPetReciboDTO->unSetNumIdProtocolo();
-                                        $objMdPetReciboDTO->setDblIdProtocoloRelacionado($idProcedimento);
-                                        $arrObjMdPetReciboDTO = $objMdPetReciboRN->listar($objMdPetReciboDTO);
-                                    }
+                                }
 
-                                    $nuProtocolo = null;
-                                    foreach ($arrObjMdPetReciboDTO as $objMdPetReciboDTO) {
-                                        $usuarioDTO = new UsuarioDTO();
-                                        $usuarioRN = new UsuarioRN();
-                                        $usuarioDTO->retNumIdUsuario();
-                                        $usuarioDTO->retNumIdContato();
-                                        $usuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-                                        $usuarioDTO = $usuarioRN->consultarRN0489($usuarioDTO);
+                                foreach ($arrObjMdPetReciboDTO as $objMdPetReciboDTO) {
 
-                                        $emailDestinatario = SessaoSEIExterna::getInstance()->getStrSiglaUsuarioExterno();
-                                        $acessoExtRN = new AcessoExternoRN();
-                                        $acessoExtDTO = new AcessoExternoDTO();
-                                        $acessoExtDTO->retTodos();
-                                        $acessoExtDTO->setOrd("IdAcessoExterno", InfraDTO::$TIPO_ORDENACAO_DESC);
-                                        $acessoExtDTO->retDblIdProtocoloAtividade();
-                                        $acessoExtDTO->retNumIdContatoParticipante();
+                                    $id_acesso_ext_link = $idAcessoExterno;
+                                    $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
+                                    $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
+                                    $docLink .= "&id_orgao_acesso_externo=0";
+                                    SessaoSEIExterna::getInstance()->configurarAcessoExterno($id_acesso_ext_link);
 
-                                        //trazer acesso externo  mais recente, deste processo, para este usuario externo, que estejam dentro da data de validade
-                                        $acessoExtDTO->setDblIdProtocoloAtividade($objMdPetReciboDTO->getNumIdProtocolo());
-
-                                        $acessoExtDTO->setNumIdContatoParticipante($usuarioDTO->getNumIdContato());
-                                        $acessoExtDTO->setStrStaTipo(AcessoExternoRN::$TA_USUARIO_EXTERNO);
-                                        $acessoExtDTO->setStrSinAtivo('S');
-                                        $acessoExtDTO->setDtaValidade(InfraData::getStrDataHoraAtual(), InfraDTO::$OPER_MAIOR_IGUAL);
-                                        $arrAcessosExternos = $acessoExtRN->listar($acessoExtDTO);
-
-                                        $id_acesso_ext_link = $idAcessoExterno;
-                                        $docLink = "documento_consulta_externa.php?id_acesso_externo=" . $id_acesso_ext_link;
-                                        $docLink .= "&id_documento=" . $objMdPetReciboDTO->getDblIdDocumento();
-                                        $docLink .= "&id_orgao_acesso_externo=0";
-                                        SessaoSEIExterna::getInstance()->configurarAcessoExterno($id_acesso_ext_link);
-
-                                        //se nao configurar acesso externo  ANTES, a assinatura do link falha
-                                        $linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($docLink));
-                                        if ($obj->getStrSinPessoaJuridica() == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA) {
-                                            $arrIdReciboPeticionamento = array();
-                                            foreach ($arrMdPetVinculoDTO as $objMdPetVinculoDTO) {
-                                                $mostraIcone = true;
-                                                if (!is_null($objMdPetVinculoDTO->getDthDataEncerramento())) {
-                                                    $dtEncerramento = DateTime::createFromFormat('d/m/Y H:i:s', $objMdPetVinculoDTO->getDthDataEncerramento());
-                                                    $dtRecibo = DateTime::createFromFormat('d/m/Y H:i:s', $objMdPetReciboDTO->getDthDataHoraRecebimentoFinal());
-                                                    $interval = $dtRecibo->diff($dtEncerramento);
-                                                    if ($interval->format('%R') == '-') {
-                                                        $mostraIcone = false;
-                                                    }
-                                                }
-
-                                                if ($objMdPetVinculoDTO->getDthDataEncerramento() == NULL && $mostraIcone == true && !in_array($objMdPetReciboDTO->getNumIdReciboPeticionamento(), $arrIdReciboPeticionamento)) {
-                                                    if(!in_array($objMdPetReciboDTO->getDblIdDocumento(), $recibos)){
-                                                        $conteudoHtml .= $objMdPetIntReciboRN->addIconeRecibo(array($objMdPetReciboDTO->getDthDataHoraRecebimentoFinal(), $docPrinc, $docTipo, $docNum, $linkAssinado, $objMdPetReciboDTO->getDblIdDocumento(), $idMdPetDest, $id_acesso_ext_link));
-                                                        array_push($recibos, $objMdPetReciboDTO->getDblIdDocumento());
-                                                    }
-                                                    array_push($arrIdReciboPeticionamento, $objMdPetReciboDTO->getNumIdReciboPeticionamento());
+                                    //se nao configurar acesso externo  ANTES, a assinatura do link falha
+                                    $linkAssinado = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink($docLink));
+                                    if ($obj->getStrSinPessoaJuridica() == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA) {
+                                        $arrIdReciboPeticionamento = array();
+                                        foreach ($arrMdPetVinculoDTO as $objMdPetVinculoDTO) {
+                                            $mostraIcone = true;
+                                            if (!is_null($objMdPetVinculoDTO->getDthDataEncerramento())) {
+                                                $dtEncerramento = DateTime::createFromFormat('d/m/Y H:i:s', $objMdPetVinculoDTO->getDthDataEncerramento());
+                                                $dtRecibo = DateTime::createFromFormat('d/m/Y H:i:s', $objMdPetReciboDTO->getDthDataHoraRecebimentoFinal());
+                                                $interval = $dtRecibo->diff($dtEncerramento);
+                                                if ($interval->format('%R') == '-') {
+                                                    $mostraIcone = false;
                                                 }
                                             }
-                                        } else {
-                                            if(!in_array($objMdPetReciboDTO->getDblIdDocumento(), $recibos)){
-                                                $conteudoHtml .= $objMdPetIntReciboRN->addIconeRecibo(array($objMdPetReciboDTO->getDthDataHoraRecebimentoFinal(), $docPrinc, $docTipo, $docNum, $linkAssinado, $objMdPetReciboDTO->getDblIdDocumento(), $idMdPetDest));
-                                                array_push($recibos, $objMdPetReciboDTO->getDblIdDocumento());
+
+                                            if ($objMdPetVinculoDTO->getDthDataEncerramento() == NULL && $mostraIcone == true && !in_array($objMdPetReciboDTO->getNumIdReciboPeticionamento(), $arrIdReciboPeticionamento)) {
+                                                if(!in_array($objMdPetReciboDTO->getDblIdDocumento(), $recibos)){
+                                                    $conteudoHtml .= $objMdPetIntReciboRN->addIconeRecibo(array($objMdPetReciboDTO->getDthDataHoraRecebimentoFinal(), $docPrinc, $docTipo, $docNum, $linkAssinado, $objMdPetReciboDTO->getDblIdDocumento(), $idMdPetDest, $id_acesso_ext_link));
+                                                    array_push($recibos, $objMdPetReciboDTO->getDblIdDocumento());
+                                                }
+                                                array_push($arrIdReciboPeticionamento, $objMdPetReciboDTO->getNumIdReciboPeticionamento());
                                             }
                                         }
-
-                                        $nuProtocolo = $objMdPetReciboDTO->getNumIdProtocolo();
-
+                                    } else {
+                                        if(!in_array($objMdPetReciboDTO->getDblIdDocumento(), $recibos)){
+                                            $conteudoHtml .= $objMdPetIntReciboRN->addIconeRecibo(array($objMdPetReciboDTO->getDthDataHoraRecebimentoFinal(), $docPrinc, $docTipo, $docNum, $linkAssinado, $objMdPetReciboDTO->getDblIdDocumento(), $idMdPetDest));
+                                            array_push($recibos, $objMdPetReciboDTO->getDblIdDocumento());
+                                        }
                                     }
 
-                                    //necessario fazer  isso para nao quebrar a navegaçao (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario é enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
-                                    SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
                                 }
+
+                                //necessario fazer  isso para nao quebrar a navegação (se nao fizer isso e tem clicar em qualquer outro link do usuario externo, quebra a sessao e usuario é enviado de volta para a tela de login externo (trata-se de funcionamento incorporado ao Core do SEI)
+                                SessaoSEIExterna::getInstance()->configurarAcessoExterno($idAcessoExterno);
                             }
                         }
                     }
@@ -2388,179 +2628,166 @@ class PeticionamentoIntegracao extends SeiIntegracao
         return $conteudoHtml;
     }
 
-    public function montarAcaoBotaoCumprir($idProtocolo, $idAcessoExterno, $idProcedimento, $isProcedimento)
+    public function montarAcaoBotaoCumprir($item, $idAcessoExterno, $idProcedimento, $isProcedimento)
     {
-        $htmlImgIntCumpridaPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_principal.svg?'.Icone::VERSAO.'" style="width: 24px;">';
-        $htmlImgIntNaoCumpPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_principal.svg?'.Icone::VERSAO.'" style="width: 24px;">';
-        $htmlImgIntCumpridaAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
-        $htmlImgIntNaoCumprAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
-        $htmlImgIntAguardandoCumprGeralPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral.svg?'.Icone::VERSAO.'" style="width: 24px;">';
-        $htmlImgIntAguardandoCumprGeralAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
-        $htmlImgIntNaoCumprVinculoInativoPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
-        $htmlImgIntNaoCumprVinculoInativoAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo_anexo.svg?'.Icone::VERSAO.'" style="width: 24px;">';
+        $htmlImgIntCumpridaPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_principal.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
+        $htmlImgIntNaoCumpPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_principal.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
+        $htmlImgIntCumpridaAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_cumprida_doc_anexo.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
+        $htmlImgIntNaoCumprAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_doc_anexo.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
+        $htmlImgIntAguardandoCumprGeralPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
+        $htmlImgIntAguardandoCumprGeralAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_aguardando_cumprimento_geral_anexo.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
+        $htmlImgIntNaoCumprVinculoInativoPrinc = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
+        $htmlImgIntNaoCumprVinculoInativoAnex = '<img src="modulos/peticionamento/imagens/svg/intimacao_nao_cumprida_vinculo_inativo_anexo.svg?'.self::$ICONS_VERSION.'" style="width: 24px;">';
         
         $objContato = (new MdPetIntAceiteRN())->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
         
         $arrPessoaJuridica = $arrPessoaFisica = [];
         $vinculoRepresentanteInativo = false;
 
-        //Recupera os documentos da Intimação.
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idProtocolo);
-        $objMdPetIntDocumentoDTO->retDblIdDocumento();
-        $objMdPetIntDocumentoDTO->retStrSinPrincipal();
-        $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
-        $listaDocs = (new MdPetIntProtocoloRN())->listar($objMdPetIntDocumentoDTO);
+        if (!empty($item)) {
 
-        if (count($listaDocs) > 0) {
-
-            $idIntimacaoBotao   = InfraArray::converterArrInfraDTO($listaDocs, 'IdMdPetIntimacao');
             $idIntimacaoBtnlink = [];
 
-            foreach ($listaDocs as $objRelIntDoc) {
+            $img = '';
+            $js = '';
+            $strLink = '';
+            $existeInt = false;
+            $idIntimacao = $item ? $item->getNumIdMdPetIntimacao() : null;
+            $idDocumento = $item->getDblIdDocumento();
+            
+            $arrAceites = null;
+            $idAceite = null;
+            $dataAceite = null;
+            $idDestinatarioAceite = null;
 
-                $img = '';
-                $js = '';
-                $strLink = '';
-                $existeInt = false;
-                $isMain = false;
-                $aguardandoCumprirGeral = false;
-                $idIntimacao = $objRelIntDoc ? $objRelIntDoc->getNumIdMdPetIntimacao() : null;
-                $idDocumento = $objRelIntDoc->getDblIdDocumento();
+            $arrAceites = (new MdPetIntAceiteRN())->existeAceiteIntimacaoAcao(array($idIntimacao, true));
+
+            if ($arrAceites) {
                 
-                $arrAceites = null;
-                $idAceite = null;
-                $dataAceite = null;
-                $idDestinatarioAceite = null;
+                foreach ($arrAceites as $aceite) {
 
-                if ($objRelIntDoc) {
+                    $idAceite[]             = $aceite['ID_ACEITE'];
+                    $idDestinatarioAceite[] = $aceite['ID_DESTINATARIO'];
 
-                    $arrAceites = (new MdPetIntAceiteRN())->existeAceiteIntimacaoAcao(array($idIntimacao, true));
+                    if (is_array(explode(' ', $aceite['DATA_ACEITE']))) {
+                        $dataAceite = explode(' ', $aceite['DATA_ACEITE']);
+                        $dataAceite = $dataAceite[0];
+                    } else {
+                        $dataAceite = $aceite['DATA_ACEITE'];
+                    }
 
-                    if ($arrAceites) {
-                        foreach ($arrAceites as $aceite) {
-                            $idAceite[] = $aceite['ID_ACEITE'];
-                            $idDestinatarioAceite[] = $aceite['ID_DESTINATARIO'];
-                            if (is_array(explode(' ', $aceite['DATA_ACEITE']))) {
-                                $dataAceite = explode(' ', $aceite['DATA_ACEITE']);
-                                $dataAceite = $dataAceite[0];
-                            } else {
-                                $dataAceite = $aceite['DATA_ACEITE'];
-                            }
-                            $existeInt = true;
-                        }
+                    $existeInt = true;
+                }
+
+            }
+
+            $arrObjDestinatariosIntimacoes = (new MdPetIntRelDestinatarioRN())->retornarDestinatariosIntimacao($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno);
+            
+            $idIntimacaoBtnlink = array_merge($idIntimacaoBtnlink, array_diff(array_unique(InfraArray::converterArrInfraDTO($arrObjDestinatariosIntimacoes, 'IdMdPetIntimacao')), $idIntimacaoBtnlink));
+
+            $arrObjDestinatariosIntimacoesCopia = $arrObjDestinatariosIntimacoes;
+            $arrObjDestinatarios = array();
+            $arrObjDestinatariosUnicosIntimacao = array();
+            $arrObjDestinatariosUnicosIntimacaoComProcuracao = array();
+            $qtdDestinatariosIntimacao = 0;
+
+            foreach ($arrObjDestinatariosIntimacoesCopia as $chave => $itemObjMdPetIntRelDestDTOTratado) {
+
+                $arrProcuracoesAtivasDestinatario = (new MdPetVincRepresentantRN())->retornarProcuradoresComPoderCumprirResponder($itemObjMdPetIntRelDestDTOTratado->getNumIdContato(), $item->getDblIdProtocolo(), $objContato->getNumIdContato());
+                
+                if (!empty($arrProcuracoesAtivasDestinatario)) {
+                    $arrObjDestinatarios[$chave]['objeto']      = $itemObjMdPetIntRelDestDTOTratado;
+                    $arrObjDestinatarios[$chave]['procuracoes'] = $arrProcuracoesAtivasDestinatario;
+                    if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacaoComProcuracao)) {
+                        $arrObjDestinatariosUnicosIntimacaoComProcuracao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
                     }
                 }
 
-                $arrObjDestinatariosIntimacoes = (new MdPetIntRelDestinatarioRN())->retornarDestinatariosIntimacao($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno);
-                
-                $idIntimacaoBtnlink = array_merge($idIntimacaoBtnlink, array_diff(array_unique(InfraArray::converterArrInfraDTO($arrObjDestinatariosIntimacoes, 'IdMdPetIntimacao')), $idIntimacaoBtnlink));
-
-                $arrObjDestinatariosIntimacoesCopia = $arrObjDestinatariosIntimacoes;
-                $arrObjDestinatarios = array();
-                $arrObjDestinatariosUnicosIntimacao = array();
-                $arrObjDestinatariosUnicosIntimacaoComProcuracao = array();
-                $qtdDestinatariosIntimacao = 0;
-
-                foreach ($arrObjDestinatariosIntimacoesCopia as $chave => $itemObjMdPetIntRelDestDTOTratado) {
-
-                    $arrProcuracoesAtivasDestinatario = (new MdPetVincRepresentantRN())->retornarProcuradoresComPoderCumprirResponder($itemObjMdPetIntRelDestDTOTratado->getNumIdContato(), $idProtocolo, $objContato->getNumIdContato());
-                    
-                    if (!empty($arrProcuracoesAtivasDestinatario)) {
-                        $arrObjDestinatarios[$chave]['objeto']      = $itemObjMdPetIntRelDestDTOTratado;
-                        $arrObjDestinatarios[$chave]['procuracoes'] = $arrProcuracoesAtivasDestinatario;
-                        if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacaoComProcuracao)) {
-                            $arrObjDestinatariosUnicosIntimacaoComProcuracao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
-                        }
-                    }
-
-                    if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacao)) {
-                        $arrObjDestinatariosUnicosIntimacao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
-                        $qtdDestinatariosIntimacao++;
-                    }
-
+                if (!key_exists($itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario(), $arrObjDestinatariosUnicosIntimacao)) {
+                    $arrObjDestinatariosUnicosIntimacao[$itemObjMdPetIntRelDestDTOTratado->getNumIdMdPetIntRelDestinatario()] = $itemObjMdPetIntRelDestDTOTratado;
+                    $qtdDestinatariosIntimacao++;
                 }
 
-                $qtdAceites = is_array($arrAceites) ? count($arrAceites) : 0;
+            }
 
-                // Inicializa a situacao da intimacao
-                $situacao = $this::$INTIMACAO_NAO_CUMPRIDA;
+            $qtdAceites = is_array($arrAceites) ? count($arrAceites) : 0;
 
-                if ($qtdAceites == $qtdDestinatariosIntimacao) {
+            // Inicializa a situacao da intimacao
+            $situacao = $this::$INTIMACAO_NAO_CUMPRIDA;
 
-                    $situacao = $this::$INTIMACAO_CUMPRIDA;
+            if ($qtdAceites == $qtdDestinatariosIntimacao) {
 
-                } else if ($qtdAceites < $qtdDestinatariosIntimacao) {
+                $situacao = $this::$INTIMACAO_CUMPRIDA;
 
-                    $temProcuracao = null;
+            } else if ($qtdAceites < $qtdDestinatariosIntimacao) {
 
-                    if($arrObjDestinatarios) {
+                $temProcuracao = null;
 
-                        foreach ($arrObjDestinatarios as $chaveDestinatarios => $itemDestinatario) {
+                if($arrObjDestinatarios) {
 
-                            $objDestinatario    = $itemDestinatario['objeto'];
-                            $arrProcuracoes     = $itemDestinatario['procuracoes'];
-                            $temAceite          = false;
+                    foreach ($arrObjDestinatarios as $chaveDestinatarios => $itemDestinatario) {
 
-                            if ($arrAceites) {
-                                foreach ($arrAceites as $chaveAceite => $itemAceite) {
-                                    if ($objDestinatario->getNumIdMdPetIntRelDestinatario() == $itemAceite['ID_DESTINATARIO']) {
-                                        $temAceite = true;
-                                        break;
-                                    }
+                        $objDestinatario    = $itemDestinatario['objeto'];
+                        $arrProcuracoes     = $itemDestinatario['procuracoes'];
+                        $temAceite          = false;
+
+                        if ($arrAceites) {
+                            foreach ($arrAceites as $chaveAceite => $itemAceite) {
+                                if ($objDestinatario->getNumIdMdPetIntRelDestinatario() == $itemAceite['ID_DESTINATARIO']) {
+                                    $temAceite = true;
+                                    break;
                                 }
                             }
-
-                            if (!$temAceite) {
-                                $temProcuracao = count($arrProcuracoes) > 0 ? true : false;
-                            }
-
                         }
 
-                    } else {
+                        if (!$temAceite) {
+                            $temProcuracao = count($arrProcuracoes) > 0 ? true : false;
+                        }
 
-                        foreach ($arrObjDestinatariosUnicosIntimacao as $objDestinatario){
+                    }
 
-                            $procNegado = true;
+                } else {
 
-                            if($objContato->getNumIdContato() == $objDestinatario->getNumIdContato()){
+                    foreach ($arrObjDestinatariosUnicosIntimacao as $objDestinatario){
 
-                                $temProcuracao = true;
-                                $procNegado = false;
-                                break;
+                        $procNegado = true;
 
-                            } else {
+                        if($objContato->getNumIdContato() == $objDestinatario->getNumIdContato()){
 
-                                $objMdPetVinculoDTO = new MdPetVinculoDTO();
-                                $objMdPetVinculoDTO->retNumIdMdPetVinculo();
-                                $objMdPetVinculoDTO->retNumIdContato();
-                                $objMdPetVinculoDTO->setNumIdContato($objDestinatario->getNumIdContato());
-                                $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
+                            $temProcuracao = true;
+                            $procNegado = false;
+                            break;
 
-                                $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-                                $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
-                                $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
-                                $objMdPetVincRepresentantDTO->setNumIdContato($objContato->getNumIdContato());
-                                $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($arrObjMdPetVinculoDTO->getNumIdMdPetVinculo());
-                                $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-                                $objMdPetVincRepresentantDTO->setNumIdMdPetRelPoder(1);
-                                $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
+                        } else {
 
-                                if(!empty($objMdPetVincRepresentantDTO)) {
+                            $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                            $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+                            $objMdPetVinculoDTO->retNumIdContato();
+                            $objMdPetVinculoDTO->setNumIdContato($objDestinatario->getNumIdContato());
+                            $arrObjMdPetVinculoDTO = (new MdPetVinculoRN())->consultar($objMdPetVinculoDTO);
 
-                                    foreach ($objMdPetVincRepresentantDTO as $objProcNegado) {
+                            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+                            $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
+                            $objMdPetVincRepresentantDTO->setNumIdContato($objContato->getNumIdContato());
+                            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($arrObjMdPetVinculoDTO->getNumIdMdPetVinculo());
+                            $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                            $objMdPetVincRepresentantDTO->setNumIdMdPetRelPoder(1);
+                            $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
 
-                                        if ($objProcNegado->getStrStaAbrangencia() == 'E') {
+                            if(!empty($objMdPetVincRepresentantDTO)) {
 
-                                            $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
-                                            $objMdPetRelVincRepProtocDTO->retNumIdProtocolo();
-                                            $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($objProcNegado->getNumIdMdPetVinculoRepresent());
-                                            $arrMdPetRelVincRepProtocDTO = (new MdPetRelVincRepProtocRN())->consultar($objMdPetRelVincRepProtocDTO);
+                                foreach ($objMdPetVincRepresentantDTO as $objProcNegado) {
 
-                                            if ($arrMdPetRelVincRepProtocDTO->getNumIdProtocolo() == $idProtocolo) {
-                                                $procNegado = false;
-                                            }
+                                    if ($objProcNegado->getStrStaAbrangencia() == 'E') {
 
+                                        $objMdPetRelVincRepProtocDTO = new MdPetRelVincRepProtocDTO();
+                                        $objMdPetRelVincRepProtocDTO->retNumIdProtocolo();
+                                        $objMdPetRelVincRepProtocDTO->setNumIdVincRepresent($objProcNegado->getNumIdMdPetVinculoRepresent());
+                                        $arrMdPetRelVincRepProtocDTO = (new MdPetRelVincRepProtocRN())->consultar($objMdPetRelVincRepProtocDTO);
+
+                                        if ($arrMdPetRelVincRepProtocDTO->getNumIdProtocolo() == $idProtocolo) {
+                                            $procNegado = false;
                                         }
 
                                     }
@@ -2573,226 +2800,225 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     }
 
-                    if(is_null($temProcuracao)){
-                        $situacao = $this::$INTIMACAO_NEGADA;
-                    }else if($temProcuracao && $qtdAceites == 0){
-                        $situacao = $this::$INTIMACAO_NAO_CUMPRIDA;
-                    }else if($temProcuracao && ($qtdAceites > 0 && $qtdAceites < $qtdDestinatariosIntimacao)){
-                        $situacao = $this::$INTIMACAO_CUMPRIDA_PARCIAL;
-                    }else if($temProcuracao && ($qtdAceites == $qtdDestinatariosIntimacao)){
-                        $situacao = $this::$INTIMACAO_CUMPRIDA;
-                    }
-
                 }
 
-                if (!empty($arrObjDestinatariosIntimacoes)) {
+                if(is_null($temProcuracao)){
+                    $situacao = $this::$INTIMACAO_NEGADA;
+                }else if($temProcuracao && $qtdAceites == 0){
+                    $situacao = $this::$INTIMACAO_NAO_CUMPRIDA;
+                }else if($temProcuracao && ($qtdAceites > 0 && $qtdAceites < $qtdDestinatariosIntimacao)){
+                    $situacao = $this::$INTIMACAO_CUMPRIDA_PARCIAL;
+                }else if($temProcuracao && ($qtdAceites == $qtdDestinatariosIntimacao)){
+                    $situacao = $this::$INTIMACAO_CUMPRIDA;
+                }
 
-                    if (($existeInt && $situacao == $this::$INTIMACAO_CUMPRIDA) || $situacao == $this::$INTIMACAO_CUMPRIDA) {
+            }
 
-                        $isValido   = (new MdPetIntCertidaoRN())->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($idProtocolo, $idAcessoExterno));
-                        $strLink    = (new MdPetIntCertidaoRN())->retornaLinkAcessoDocumento($idProtocolo, $idAcessoExterno, $isProcedimento);
+            if (!empty($arrObjDestinatariosIntimacoes)) {
 
-                        $initMsg    = $isProcedimento ? 'Processo' : 'Documento';
-                        $alertMsg   = $initMsg . ' bloqueado, pois está vinculado a uma Intimação ainda não Cumprida.';
-                        $js         = $isValido ? 'window.open(\'' . $strLink . '\');' : 'alert(\'' . $alertMsg . '\')';
+                if (($existeInt && $situacao == $this::$INTIMACAO_CUMPRIDA) || $situacao == $this::$INTIMACAO_CUMPRIDA) {
 
-                        if ($objRelIntDoc->getStrSinPrincipal() == 'S') {
+                    $isValido   = (new MdPetIntCertidaoRN())->verificaDocumentoEAnexoIntimacaoNaoCumprida(array($item->getDblIdProtocolo(), $idAcessoExterno));
+                    $strLink    = (new MdPetIntCertidaoRN())->retornaLinkAcessoDocumento($item->getDblIdProtocolo(), $idAcessoExterno, $isProcedimento);
 
-                            $isMain = true;
-                            if ($situacao == $this::$INTIMACAO_CUMPRIDA) {
-                                $img = $htmlImgIntCumpridaPrinc;
-                            } else if ($situacao == $this::$INTIMACAO_NAO_CUMPRIDA) {
-                                $img = $htmlImgIntNaoCumpPrinc;
-                            }
+                    $initMsg    = $isProcedimento ? 'Processo' : 'Documento';
+                    $alertMsg   = $initMsg . ' bloqueado, pois está vinculado a uma Intimação ainda não Cumprida.';
+                    $js         = $isValido ? 'window.open(\'' . $strLink . '\');' : 'alert(\'' . $alertMsg . '\')';
 
-                        } else {
+                    if ($item->getStrSinPrincipal() == 'S') {
 
-                            if ($situacao == $this::$INTIMACAO_CUMPRIDA) {
-                                $img = $htmlImgIntCumpridaAnex;
-                            } else if ($situacao == $this::$INTIMACAO_NAO_CUMPRIDA) {
-                                $img = $htmlImgIntNaoCumprAnex;
-                            }
-
+                        if ($situacao == $this::$INTIMACAO_CUMPRIDA) {
+                            $img = $htmlImgIntCumpridaPrinc;
+                        } else if ($situacao == $this::$INTIMACAO_NAO_CUMPRIDA) {
+                            $img = $htmlImgIntNaoCumpPrinc;
                         }
 
                     } else {
 
-                        $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
-                        $linkIdIntimacao = '';
-
-                        foreach ($idIntimacaoBtnlink as $id) {
-                            $linkIdIntimacao .= '&id_intimacao[]=' . $id;
-                        }
-
-                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo . $linkIdIntimacao);
-                        $js = "infraAbrirJanelaModal('" . $strLink . "', 900, 400);";
-
-                        $informeTooltipACG = null;
-                        
-                        if ($objRelIntDoc->getStrSinPrincipal() == 'S') {
-
-                            if ($situacao == $this::$INTIMACAO_CUMPRIDA_PARCIAL) {
-                                $img = $htmlImgIntAguardandoCumprGeralPrinc;
-                                $informeTooltipACG = "Observe que esta Intimação possui destaque, pois envolve pelo menos um Destinatário que você representa em comum e outro Representante já cumpriu a Intimação. Ao consultar esta Intimação você estará cumprindo-a para os Destinatários ainda pendentes.";
-                            } else {
-                                $img = ($situacao == $this::$INTIMACAO_CUMPRIDA) ? $htmlImgIntCumpridaPrinc : $htmlImgIntNaoCumpPrinc;
-                            }
-
-                        } else {
-
-                            if ($situacao == $this::$INTIMACAO_CUMPRIDA_PARCIAL) {
-                                $img = $htmlImgIntAguardandoCumprGeralAnex;
-                                $informeTooltipACG = "Observe que esta Intimação possui destaque, pois envolve pelo menos um Destinatário que você representa em comum e outro Representante já cumpriu a Intimação. Ao consultar esta Intimação você estará cumprindo-a para os Destinatários ainda pendentes.";
-                            } else {
-                                $img = ($situacao == $this::$INTIMACAO_CUMPRIDA) ? $htmlImgIntCumpridaAnex : $htmlImgIntNaoCumprAnex;
-                            }
-
+                        if ($situacao == $this::$INTIMACAO_CUMPRIDA) {
+                            $img = $htmlImgIntCumpridaAnex;
+                        } else if ($situacao == $this::$INTIMACAO_NAO_CUMPRIDA) {
+                            $img = $htmlImgIntNaoCumprAnex;
                         }
 
                     }
 
-                    if ($procNegado) {
-                        $vinculoRepresentanteInativo = true;
-                        $img = ($objRelIntDoc->getStrSinPrincipal() == 'S') ? $htmlImgIntNaoCumprVinculoInativoPrinc : $htmlImgIntNaoCumprVinculoInativoAnex;
-                    }
-
-                    // Start Gabriel 20.06.2022
-
-                    $retorno = (new MdPetIntimacaoRN())->retornaDadosDocPrincipalIntimacao((array) $objRelIntDoc->getNumIdMdPetIntimacao());
-
-                    if (!is_null($retorno)) {
-                        $docPrinc   = $retorno[0];
-                        $docTipo    = $retorno[1];
-                        $docNum     = $retorno[4];
-                    }
-
-                    // Verifico a situação do usuario perante os destinatarios da intimacao:
-                    $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocolo, $idAcessoExterno);
+                } else {
 
                     $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
+                    $linkIdIntimacao = '';
+
+                    foreach ($idIntimacaoBtnlink as $id) {
+                        $linkIdIntimacao .= '&id_intimacao[]=' . $id;
+                    }
+
+                    $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $item->getDblIdProtocolo() . $linkIdIntimacao);
+                    $js = "infraAbrirJanelaModal('" . $strLink . "', 900, 470);";
+
                     $informeTooltipACG = null;
-
-                    // Verificando a situação e determinando botões e as ações dos links
-
-                    $vinculoRepresentanteInativo = true;
-                    $img = $objRelIntDoc->getStrSinPrincipal() == 'S' ? $htmlImgIntNaoCumprVinculoInativoPrinc : $htmlImgIntNaoCumprVinculoInativoAnex;
-
-                    if(in_array($situacao['btn_cumprir'], ['nao_cumprida'])){
-                        
-                        $vinculoRepresentanteInativo = false;
-                        $img = $objRelIntDoc->getStrSinPrincipal() == 'S' ? $htmlImgIntNaoCumpPrinc : $htmlImgIntNaoCumprAnex;
-                        $idsIntsCumprir = '&id_intimacao[]=' . implode('&id_intimacao[]=', array_unique($situacao['int_cumprir']));
-                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo . $idsIntsCumprir);
-                        $js = "infraAbrirJanelaModal('" . $strLink . "', 900, 400);";
                     
-                    }else if(in_array($situacao['btn_cumprir'], ['cumprida_parcial'])){
-                        
-                        $vinculoRepresentanteInativo = false;
-                        $img = $objRelIntDoc->getStrSinPrincipal() == 'S' ? $htmlImgIntAguardandoCumprGeralPrinc : $htmlImgIntAguardandoCumprGeralAnex;
-                        $idsIntsCumprir = '&id_intimacao[]=' . implode('&id_intimacao[]=', array_unique($situacao['int_cumprir']));
-                        $informeTooltipACG = 'Observe que esta Intimação possui destaque, pois envolve pelo menos um Destinatário que você representa em comum e outro Representante já cumpriu a Intimação. Ao consultar esta Intimação você estará cumprindo-a para os Destinatários ainda pendentes.';
-                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo . $idsIntsCumprir);
-                        $js = "infraAbrirJanelaModal('" . $strLink . "', 900, 400);";
+                    if ($item->getStrSinPrincipal() == 'S') {
 
-                    }else if(in_array($situacao['btn_cumprir'], ['cumprida_geral'])){
-                            
-                        $vinculoRepresentanteInativo = false;
-                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/documento_consulta_externa.php?id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $idProtocolo);
-                        $js = 'window.open(\'' . $strLink . '\')';
-                        $img = $objRelIntDoc->getStrSinPrincipal() == 'S' ? $htmlImgIntCumpridaPrinc : $htmlImgIntCumpridaAnex;
-                    
-                    }
-
-                    // End Gabriel 20.06.2022
-
-                    if (is_array($arrObjDestinatariosIntimacoesCopia)) {
-
-                        $objMdPetIntRelDestDTO2 = $arrObjDestinatariosIntimacoesCopia;
-                        $dtIntimacao = '';
-
-                        foreach ($objMdPetIntRelDestDTO2 as $obj) {
-
-                            if ($obj->getStrSinPessoaJuridica() == 'S') {
-                                if (!key_exists(InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato()), $arrPessoaJuridica)) {
-                                    $arrPessoaJuridica[InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato())] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato()) . ')';
-                                }
-                            } else {
-                                if (!key_exists(InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()), $arrPessoaFisica)) {
-                                	if(!empty($obj->getDblCpfContato())){
-		                                $arrPessoaFisica[InfraUtil::formatarCpfCnpj($obj->getDblCpfContato())] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()) . ')';
-	                                }else{
-		                                $arrPessoaFisica[InfraUtil::formatarCpfCnpj($obj->getDblCpfContato())] = $obj->getStrNomeContato() . ' (Usuário não possui CPF)';
-	                                }
-                                 
-                                }
-                            }
-
-                            $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
-                            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($obj->getNumIdMdPetIntRelDestinatario());
-	                        $objMdPetIntAceiteDTO->setOrdDthData(InfraDTO::$TIPO_ORDENACAO_ASC);
-	                        $objMdPetIntAceiteDTO->setNumMaxRegistrosRetorno(1);
-                            $objMdPetIntAceiteDTO->retTodos();
-                            $objMdPetIntAceiteDTO = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
-
-                            if (is_null($objMdPetIntAceiteDTO)) {
-                                //data para exibir na modal do cumprir
-                                if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
-                                    if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
-                                        $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
-                                        $dtIntimacao = $dtIntimacao[0];
-                                    } else {
-                                        $dtIntimacao = $obj->getDthDataCadastro();
-                                    }
-                                } else {
-                                    $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
-                                    $dtIntimacao = $dtIntimacao[0];
-                                }
-                            } else {
-                                $dtIntimacao = explode(' ', $objMdPetIntAceiteDTO->getDthDataConsultaDireta());
-                                $dtIntimacao = $dtIntimacao[0];
-                            }
-
+                        if ($situacao == $this::$INTIMACAO_CUMPRIDA_PARCIAL) {
+                            $img = $htmlImgIntAguardandoCumprGeralPrinc;
+                            $informeTooltipACG = "Observe que esta Intimação possui destaque, pois envolve pelo menos um Destinatário que você representa em comum e outro Representante já cumpriu a Intimação. Ao consultar esta Intimação você estará cumprindo-a para os Destinatários ainda pendentes.";
+                        } else {
+                            $img = ($situacao == $this::$INTIMACAO_CUMPRIDA) ? $htmlImgIntCumpridaPrinc : $htmlImgIntNaoCumpPrinc;
                         }
 
-                    }
-
-                    //Preparar Texto Exibição Tool Tip
-                    if ($existeInt && !$vinculoRepresentanteInativo) {
-
-                        $tooltip = (new MdPetIntimacaoRN())->getTextoTolTipIntimacaoEletronicaCumprida(array($dataAceite, $docPrinc, $docTipo, $docNum, $objRelIntDoc->getStrSinPrincipal(), $arrPessoaJuridica, $arrPessoaFisica, $informeTooltipACG));
-                    
-                    } elseif ($vinculoRepresentanteInativo) {
-
-                        $idContatoDestinatario = InfraArray::converterArrInfraDTO($arrObjDestinatariosIntimacoesCopia, 'IdContato');
-                        
-                        if (is_iterable($idContatoDestinatario)) {
-                            foreach ($idContatoDestinatario as $id) {
-                                $linkIdDestinatario .= '&id_contato[]=' . $id;
-                            }
-                        }
-
-                        $tooltip = (new MdPetIntimacaoRN())->getTextoTolTipIntimacaoEletronicaVinculoInativo($dtIntimacao, $docPrinc, $docTipo, $docNum, $objRelIntDoc->getStrSinPrincipal(), $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica);
-                        
-                        $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
-                        $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_cumprir&id_documento=' . $idDocumento . '&id_acesso_externo=' . $idAcessoExterno . $linkIdDestinatario . '&id_destinatario=' . $objContato->getNumIdContato());
-
-                        $js = "infraAbrirJanelaModal('" . $strLink . "', 700, 250);";
-                        
                     } else {
 
-                        $tooltip = (new MdPetIntimacaoRN())->getTextoTolTipIntimacaoEletronica(array($dtIntimacao, $docPrinc, $docTipo, $docNum, $objRelIntDoc->getStrSinPrincipal(), $arrPessoaJuridica, $arrPessoaFisica, $informeTooltipACG));
-                    
+                        if ($situacao == $this::$INTIMACAO_CUMPRIDA_PARCIAL) {
+                            $img = $htmlImgIntAguardandoCumprGeralAnex;
+                            $informeTooltipACG = "Observe que esta Intimação possui destaque, pois envolve pelo menos um Destinatário que você representa em comum e outro Representante já cumpriu a Intimação. Ao consultar esta Intimação você estará cumprindo-a para os Destinatários ainda pendentes.";
+                        } else {
+                            $img = ($situacao == $this::$INTIMACAO_CUMPRIDA) ? $htmlImgIntCumpridaAnex : $htmlImgIntNaoCumprAnex;
+                        }
+
                     }
 
-                    $arr = array();
-                    $arr[0] = $js;
-                    $arr[1] = $img;
-                    $arr[2] = count($tooltip) > 0 ? $tooltip[0] : '';
-                    $arr[3] = count($tooltip) > 0 ? $tooltip[1] : '';
+                }
 
-                    $conteudoHtml = (new MdPetIntimacaoRN())->retornaLinkCompletoIconeIntimacao($arr);
+                if ($procNegado) {
+                    $vinculoRepresentanteInativo = true;
+                    $img = ($item->getStrSinPrincipal() == 'S') ? $htmlImgIntNaoCumprVinculoInativoPrinc : $htmlImgIntNaoCumprVinculoInativoAnex;
+                }
+
+                // Start Gabriel 20.06.2022
+
+                $retorno = (new MdPetIntimacaoRN())->retornaDadosDocPrincipalIntimacao((array) $item->getNumIdMdPetIntimacao());
+
+                if (!is_null($retorno)) {
+                    $docPrinc   = $retorno[0];
+                    $docTipo    = $retorno[1];
+                    $docNum     = $retorno[4];
+                }
+
+                // Verifico a situação do usuario perante os destinatarios da intimacao:
+                $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($item->getDblIdProtocolo(), $idAcessoExterno);
+
+                $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
+                $informeTooltipACG = null;
+
+                // Verificando a situação e determinando botões e as ações dos links
+
+                $vinculoRepresentanteInativo = true;
+                $img = $item->getStrSinPrincipal() == 'S' ? $htmlImgIntNaoCumprVinculoInativoPrinc : $htmlImgIntNaoCumprVinculoInativoAnex;
+
+                if(in_array($situacao['btn_cumprir'], ['nao_cumprida'])){
+                    
+                    $vinculoRepresentanteInativo = false;
+                    $img = $item->getStrSinPrincipal() == 'S' ? $htmlImgIntNaoCumpPrinc : $htmlImgIntNaoCumprAnex;
+                    $idsIntsCumprir = '&id_intimacao[]=' . implode('&id_intimacao[]=', array_unique($situacao['int_cumprir']));
+                    $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $item->getDblIdProtocolo() . $idsIntsCumprir);
+                    $js = "infraAbrirJanelaModal('" . $strLink . "', 900, 470);";
+                
+                }else if(in_array($situacao['btn_cumprir'], ['cumprida_parcial'])){
+                    
+                    $vinculoRepresentanteInativo = false;
+                    $img = $item->getStrSinPrincipal() == 'S' ? $htmlImgIntAguardandoCumprGeralPrinc : $htmlImgIntAguardandoCumprGeralAnex;
+                    $idsIntsCumprir = '&id_intimacao[]=' . implode('&id_intimacao[]=', array_unique($situacao['int_cumprir']));
+                    $informeTooltipACG = 'Observe que esta Intimação possui destaque, pois envolve pelo menos um Destinatário que você representa em comum e outro Representante já cumpriu a Intimação. Ao consultar esta Intimação você estará cumprindo-a para os Destinatários ainda pendentes.';
+                    $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_confirmar_aceite&id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $item->getDblIdProtocolo() . $idsIntsCumprir);
+                    $js = "infraAbrirJanelaModal('" . $strLink . "', 900, 470);";
+
+                }else if(in_array($situacao['btn_cumprir'], ['cumprida_geral'])){
+                        
+                    $vinculoRepresentanteInativo = false;
+                    $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/documento_consulta_externa.php?id_acesso_externo=' . $idAcessoExterno . '&id_documento=' . $item->getDblIdProtocolo());
+                    $js = 'window.open(\'' . $strLink . '\')';
+                    $img = $item->getStrSinPrincipal() == 'S' ? $htmlImgIntCumpridaPrinc : $htmlImgIntCumpridaAnex;
+                
+                }
+
+                // End Gabriel 20.06.2022
+
+                if (is_array($arrObjDestinatariosIntimacoesCopia)) {
+
+                    $objMdPetIntRelDestDTO2 = $arrObjDestinatariosIntimacoesCopia;
+                    $dtIntimacao = '';
+
+                    foreach ($objMdPetIntRelDestDTO2 as $obj) {
+
+                        if ($obj->getStrSinPessoaJuridica() == 'S') {
+                            if (!key_exists(InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato()), $arrPessoaJuridica)) {
+                                $arrPessoaJuridica[InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato())] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato()) . ')';
+                            }
+                        } else {
+                            if (!key_exists(InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()), $arrPessoaFisica)) {
+                                if(!empty($obj->getDblCpfContato())){
+                                    $arrPessoaFisica[InfraUtil::formatarCpfCnpj($obj->getDblCpfContato())] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()) . ')';
+                                }else{
+                                    $arrPessoaFisica[InfraUtil::formatarCpfCnpj($obj->getDblCpfContato())] = $obj->getStrNomeContato() . ' (Usuário não possui CPF)';
+                                }
+                                
+                            }
+                        }
+
+                        $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+                        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($obj->getNumIdMdPetIntRelDestinatario());
+                        $objMdPetIntAceiteDTO->setOrdDthData(InfraDTO::$TIPO_ORDENACAO_ASC);
+                        $objMdPetIntAceiteDTO->setNumMaxRegistrosRetorno(1);
+                        $objMdPetIntAceiteDTO->retTodos();
+                        $objMdPetIntAceiteDTO = (new MdPetIntAceiteRN())->consultar($objMdPetIntAceiteDTO);
+
+                        if (is_null($objMdPetIntAceiteDTO)) {
+                            //data para exibir na modal do cumprir
+                            if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
+                                if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
+                                    $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                                    $dtIntimacao = $dtIntimacao[0];
+                                } else {
+                                    $dtIntimacao = $obj->getDthDataCadastro();
+                                }
+                            } else {
+                                $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                                $dtIntimacao = $dtIntimacao[0];
+                            }
+                        } else {
+                            $dtIntimacao = explode(' ', $objMdPetIntAceiteDTO->getDthDataConsultaDireta());
+                            $dtIntimacao = $dtIntimacao[0];
+                        }
+
+                    }
 
                 }
+
+                //Preparar Texto Exibição Tool Tip
+                if ($existeInt && !$vinculoRepresentanteInativo) {
+
+                    $tooltip = (new MdPetIntimacaoRN())->getTextoTolTipIntimacaoEletronicaCumprida(array($dataAceite, $docPrinc, $docTipo, $docNum, $item->getStrSinPrincipal(), $arrPessoaJuridica, $arrPessoaFisica, $informeTooltipACG));
+                
+                } elseif ($vinculoRepresentanteInativo) {
+
+                    $idContatoDestinatario = InfraArray::converterArrInfraDTO($arrObjDestinatariosIntimacoesCopia, 'IdContato');
+                    
+                    if (is_iterable($idContatoDestinatario)) {
+                        foreach ($idContatoDestinatario as $id) {
+                            $linkIdDestinatario .= '&id_contato[]=' . $id;
+                        }
+                    }
+
+                    $tooltip = (new MdPetIntimacaoRN())->getTextoTolTipIntimacaoEletronicaVinculoInativo($dtIntimacao, $docPrinc, $docTipo, $docNum, $item->getStrSinPrincipal(), $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica);
+                    
+                    $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
+                    $strLink = SessaoSEIExterna::getInstance()->assinarLink($urlBase . '/controlador_externo.php?acao=md_pet_intimacao_usu_ext_negar_cumprir&id_documento=' . $idDocumento . '&id_acesso_externo=' . $idAcessoExterno . $linkIdDestinatario . '&id_destinatario=' . $objContato->getNumIdContato());
+
+                    $js = "infraAbrirJanelaModal('" . $strLink . "', 700, 250);";
+                    
+                } else {
+
+                    $tooltip = (new MdPetIntimacaoRN())->getTextoTolTipIntimacaoEletronica(array($dtIntimacao, $docPrinc, $docTipo, $docNum, $item->getStrSinPrincipal(), $arrPessoaJuridica, $arrPessoaFisica, $informeTooltipACG));
+                
+                }
+
+                $arr = array();
+                $arr[0] = $js;
+                $arr[1] = $img;
+                $arr[2] = count($tooltip) > 0 ? $tooltip[0] : '';
+                $arr[3] = count($tooltip) > 0 ? $tooltip[1] : '';
+
+                $conteudoHtml = (new MdPetIntimacaoRN())->retornaLinkCompletoIconeIntimacao($arr);
 
             }
 
@@ -2802,327 +3028,285 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     }
 
-    public function montarAcaoBotaoCertidao($idProtocolo, $idAcessoExterno)
+    public function montarAcaoBotaoCertidao($item, $idAcessoExterno)
     {
 
-        $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
-        $objMdPetIntRN = new MdPetIntimacaoRN();
-        $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
-        $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
-        $objMdPetIntProtocoloRN = new MdPetIntProtocoloRN();
-        $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
-
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idProtocolo);
-        $objMdPetIntDocumentoDTO->retDblIdDocumento();
-        $objMdPetIntDocumentoDTO->retStrSinPrincipal();
-        $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
-        $listaDocs = $objMdPetIntProtocoloRN->listar($objMdPetIntDocumentoDTO);
-
-        $qtdListaDocs = (is_array($listaDocs) ? count($listaDocs) : 0);
-
         $arrExibidos = [];
+        $idUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+        $conteudoHtml = '';
 
-        if ($qtdListaDocs > 0) {
+        if (!empty($item)) {
 
-            foreach ($listaDocs as $objRelIntDoc) {
+            $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
+            $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
+            $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
+            $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
+            $objMdPetIntRN = new MdPetIntimacaoRN();
 
-                $existeInt      = false;
-                $arrDados       = null;
+            $existeInt      = false;
 
-                $idIntimacao    = $objRelIntDoc ? $objRelIntDoc->getNumIdMdPetIntimacao() : null;
+            $idIntimacao    = $item ? $item->getNumIdMdPetIntimacao() : null;
 
-                $objContato     = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
-                $arrDados       = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
+            $objContato     = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array($idUsuarioExterno));
+            $arrDados       = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
 
-                //Será exibida uma certidão para cada intimação cumprida por pessoa (Física ou Jurídica)
+            //Será exibida uma certidão para cada intimação cumprida por pessoa (Física ou Jurídica)
 
-                if ($arrDados) {
+            if ($arrDados) {
 
-                    foreach ($arrDados as $aceite) {
+                foreach ($arrDados as $aceite) {
 
-                        $existeInt = $aceite['INT'];
+                    $existeInt = $aceite['INT'];
 
-                        $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
-                        $objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($idIntimacao);
-                        $objMdPetIntRelDestDTO->retDthDataCadastro();
-                        $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
-                        $objMdPetIntRelDestDTO->setNumIdMdPetIntRelDestinatario($aceite['ID_DESTINATARIO']);
-                        // $objMdPetIntRelDestDTO->setNumIdContatoParticipante($objContato->getNumIdContato());
-                        $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
-                        $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
-                        $objMdPetIntRelDestDTO->retNumIdContato();
-                        $objMdPetIntRelDestDTO->retDblCnpjContato();
-                        $objMdPetIntRelDestDTO->retDblCpfContato();
-                        $objMdPetIntRelDestDTO->retStrNomeContato();
+                    $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
+                    $objMdPetIntRelDestDTO->setNumIdMdPetIntimacao($idIntimacao);
+                    $objMdPetIntRelDestDTO->retDthDataCadastro();
+                    $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
+                    $objMdPetIntRelDestDTO->setNumIdMdPetIntRelDestinatario($aceite['ID_DESTINATARIO']);
+                    // $objMdPetIntRelDestDTO->setNumIdContatoParticipante($objContato->getNumIdContato());
+                    $objMdPetIntRelDestDTO->retStrStaSituacaoIntimacao();
+                    $objMdPetIntRelDestDTO->retStrSinPessoaJuridica();
+                    $objMdPetIntRelDestDTO->retNumIdContato();
+                    $objMdPetIntRelDestDTO->retDblCnpjContato();
+                    $objMdPetIntRelDestDTO->retDblCpfContato();
+                    $objMdPetIntRelDestDTO->retStrNomeContato();
 
-                        $idAcessoExternoValido = $objMdPetAcessoExtDocRN->verificarAcessoExternoValido(array($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno));
+                    $idAcessoExternoValido = $objMdPetAcessoExtDocRN->verificarAcessoExternoValido(array($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno));
 
-                        if (!is_null($idAcessoExternoValido)) {
-                            $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoExterno);
-                        }
+                    if (!is_null($idAcessoExternoValido)) {
+                        $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoExterno);
+                    }
 
-                        $objMdPetIntRelDestDTO = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
+                    $objMdPetIntRelDestDTO = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
 
-                        if (is_array($objMdPetIntRelDestDTO) && count($objMdPetIntRelDestDTO) > 0) {
+                    if (is_array($objMdPetIntRelDestDTO) && count($objMdPetIntRelDestDTO) > 0) {
 
-                            $objMdPetIntRelDestDTO2 = $objMdPetIntRelDestDTO;
-                            $dtIntimacao = '';
-                            $qntDest = (is_array($objMdPetIntRelDestDTO2) ? count($objMdPetIntRelDestDTO2) : 0);
-                            $qntDestRevogado = 0;
+                        $objMdPetIntRelDestDTO2 = $objMdPetIntRelDestDTO;
 
-                            foreach ($objMdPetIntRelDestDTO2 as $obj) {
-                                $arrDestinatarios = array();
+                        foreach ($objMdPetIntRelDestDTO2 as $obj) {
+                            
+                            $arrDestinatarios = array();
+                            $retorno = $objMdPetIntRN->retornaDadosDocPrincipalIntimacao((array)$idIntimacao);
+                            if (!is_null($retorno)) {
+                                $docPrinc = $retorno[0];
+                            }
 
-                                $retorno = $objMdPetIntRN->retornaDadosDocPrincipalIntimacao((array)$idIntimacao);
-                                if (!is_null($retorno)) {
-                                    $docPrinc = $retorno[0];
-                                }
+                            $cpfCnpj = $obj->getStrSinPessoaJuridica() == 'S' ? $obj->getDblCnpjContato() : $obj->getDblCpfContato();
 
-                                $cpfCnpj = $obj->getStrSinPessoaJuridica() == 'S' ? $obj->getDblCnpjContato() : $obj->getDblCpfContato();
+                            $arrDestinatarios[] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($cpfCnpj) . ')';
 
-                                $arrDestinatarios[] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($cpfCnpj) . ')';
-
-                                if ($existeInt && !in_array($cpfCnpj, $arrExibidos)) {
-                                    //Botão
-                                    $conteudoHtml .= $objMdPetCertidaoRN->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcessoExterno, $aceite['ID_DOCUMENTO_CERTIDAO'], $arrDestinatarios, $aceite['DATA_ACEITE']));
-                                    $arrExibidos[] = $cpfCnpj;
-                                }
-
+                            if ($existeInt && !in_array($cpfCnpj, $arrExibidos)) {
+                                //Botão
+                                $conteudoHtml .= $objMdPetCertidaoRN->addIconeAcessoCertidao(array($docPrinc, $idIntimacao, $idAcessoExterno, $aceite['ID_DOCUMENTO_CERTIDAO'], $arrDestinatarios, $aceite['DATA_ACEITE']));
+                                $arrExibidos[] = $cpfCnpj;
                             }
 
                         }
 
-                    } // end foreach
-                }
+                    }
+
+                } // end foreach
             }
         }
         return $conteudoHtml;
     }
 
-    public function montarAcaoBotaoResposta($idProtocolo, $idAcessoExterno, $idProcedimento)
+    public function montarAcaoBotaoResposta($item, $idAcessoExterno, $idProcedimento)
     {
-
-        $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
-        $objMdPetIntRN = new MdPetIntimacaoRN();
-        $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
-        $objMdPetIntProtocoloRN = new MdPetIntProtocoloRN();
-        $objMdPetAcessoExtDocRN = new MdPetIntAcessoExternoDocumentoRN();
-        $objMdPetRespostaRN = new MdPetIntRespostaRN();
 
         $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
         $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
 
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idProtocolo);
-        $objMdPetIntDocumentoDTO->retDblIdDocumento();
-        $objMdPetIntDocumentoDTO->retStrSinPrincipal();
-        $objMdPetIntDocumentoDTO->retNumIdMdPetIntimacao();
-        $listaDocs = $objMdPetIntProtocoloRN->listar($objMdPetIntDocumentoDTO);
-
         $existeInt = false;
-        $qtdListaDocs = (is_array($listaDocs) ? count($listaDocs) : 0);
+        $conteudoHtml = '';
 
-        if ($qtdListaDocs > 0) {
+        if ($item) {
 
-            $idIntimacaoBotao = InfraArray::converterArrInfraDTO($listaDocs, 'IdMdPetIntimacao');
+            $objMdPetRespostaRN = new MdPetIntRespostaRN();
+            
             $idIntimacaoBtnlink = [];
-            $qntDoc = (is_array($listaDocs) ? count($listaDocs) : 0);
-            $documentos = 0;
             $idAceite = null;
-            $idDestinatario = null;
             $arrRevogado = [];
             $arrPessoaJuridica = array();
             $arrPessoaFisica = array();
 
-            foreach ($listaDocs as $objRelIntDoc) {
+            $idIntimacao = $item ? $item->getNumIdMdPetIntimacao() : null;
+            $arrDados = null;
 
-                $documentos++;
-                $idIntimacao = $objRelIntDoc ? $objRelIntDoc->getNumIdMdPetIntimacao() : null;
-                $arrDados = null;
-
-                if ($objRelIntDoc) {
-                    $arrDados = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
-                    if ($arrDados) {
-                        foreach ($arrDados as $aceite) {
-                            $existeInt = $aceite['INT'];
-                            $idAceite[] = $aceite['ID_ACEITE'];
-                            $idDestinatario = $aceite['ID_DESTINATARIO'];
-                        }
-                    }
+            $arrDados = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
+            if ($arrDados) {
+                foreach ($arrDados as $aceite) {
+                    $existeInt = $aceite['INT'];
+                    $idAceite[] = $aceite['ID_ACEITE'];
                 }
+            }
 
-                $objMdPetIntRelDestDTO = (new MdPetIntRelDestinatarioRN())->retornarDestinatariosIntimacao($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno);
-                $idIntimacaoBtnlink = array_merge($idIntimacaoBtnlink, array_diff(array_unique(InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntimacao')), $idIntimacaoBtnlink));
+            $objMdPetIntRelDestDTO = (new MdPetIntRelDestinatarioRN())->retornarDestinatariosIntimacao($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno);
+            $idIntimacaoBtnlink = array_merge($idIntimacaoBtnlink, array_diff(array_unique(InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntimacao')), $idIntimacaoBtnlink));
 
-                if (is_array($objMdPetIntRelDestDTO) && count($objMdPetIntRelDestDTO) > 0) {
+            if (is_array($objMdPetIntRelDestDTO) && count($objMdPetIntRelDestDTO) > 0) {
 
-                    $objMdPetIntRelDestDTO2 = $objMdPetIntRelDestDTO;
+                $objMdPetIntRelDestDTO2 = $objMdPetIntRelDestDTO;
 
-                    $dtIntimacao = '';
+                $dtIntimacao = '';
 
-                    $qntDest = is_array($objMdPetIntRelDestDTO2) ? count($objMdPetIntRelDestDTO2) : 0;
-                    $qntDestRevogado = 0;
+                $qntDest = is_array($objMdPetIntRelDestDTO2) ? count($objMdPetIntRelDestDTO2) : 0;
+                $qntDestRevogado = 0;
 
-                    foreach ($objMdPetIntRelDestDTO2 as $obj) {
+                foreach ($objMdPetIntRelDestDTO2 as $obj) {
 
-                        $existeAceite = false;
-                        $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-                        $objMdPetVincRepresentantDTO->setNumIdContato($objContato->getNumIdContato());
-                        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-                        $objMdPetVincRepresentantDTO->setNumIdContatoVinc($obj->getNumIdContato());
-                        $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
-                        $objMdPetVincRepresentantDTO->retNumIdContato();
-                        $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
-                        $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
-                        $objMdPetVincRepresentantDTO->retStrStaEstado();
-                        $objMdPetVincRepresentantDTO->retDthDataLimite();
-                        $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
+                    $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+                    $objMdPetVincRepresentantDTO->setNumIdContato($objContato->getNumIdContato());
+                    $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                    $objMdPetVincRepresentantDTO->setNumIdContatoVinc($obj->getNumIdContato());
+                    $objMdPetVincRepresentantDTO->retNumIdContatoVinc();
+                    $objMdPetVincRepresentantDTO->retNumIdContato();
+                    $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+                    $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
+                    $objMdPetVincRepresentantDTO->retStrStaEstado();
+                    $objMdPetVincRepresentantDTO->retDthDataLimite();
+                    $objMdPetVincRepresentantDTO->retStrStaAbrangencia();
 
-                        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
-                        $contarobjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO);
-                        $objMdPetVinculoDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
-                        $procuracaoSimplesValida = true;
+                    $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+                    $contarobjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->contar($objMdPetVincRepresentantDTO);
+                    $objMdPetVinculoDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
+                    $procuracaoSimplesValida = true;
 
-                        //Caso seja uma procuração simples é verificada se a mesma está valida
-                        foreach ($objMdPetVinculoDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
-                            if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                                $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                                $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($itemObjMdPetVinculoDTO->getNumIdMdPetVinculoRepresent(), $itemObjMdPetVinculoDTO->getStrStaEstado(), $itemObjMdPetVinculoDTO->getDthDataLimite(), $obj->getDblIdDocumento(), $itemObjMdPetVinculoDTO->getStrStaAbrangencia());
-
-                                if (!$verificacaoCriteriosProcuracaoSimples) {
-                                    $procuracaoSimplesValida = false;
-                                }
-                            }
-                        }
-
-                        //Verifica se a situação da vinculação/intimacao é diferente de ativa
-                        if ((!$procuracaoSimplesValida || $contarobjMdPetVincRepresentantDTO == 0) && $objContato->getNumIdContato() != $obj->getNumIdContato()) {
-                            $qntDestRevogado++;
-                        }
-
-                        if ($obj->getStrSinPessoaJuridica() == 'S') {
-                            if (!key_exists($obj->getDblCnpjContato(), $arrPessoaJuridica)) {
-                                $arrPessoaJuridica[$obj->getDblCnpjContato()] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato()) . ')';
-                            }
-                        } else {
-                            if (!key_exists($obj->getDblCpfContato(), $arrPessoaFisica)) {
-                                $arrPessoaFisica[$obj->getDblCpfContato()] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()) . ')';
-                            }
-                        }
-
-                        //data para exibir na modal do cumprir
-                        if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
-                            if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
-                                $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
-                                $dtIntimacao = $dtIntimacao[0];
-                            } else {
-                                $dtIntimacao = $obj->getDthDataCadastro();
-                            }
-                        }
-                    }
-
-                    //se a quantidade de intimações for igual a quantidade de vinculos diferente de ativo é exibido o ícone de vinculo inativo
-                    if ($qntDest == $qntDestRevogado) {
-                        $vinculoRepresentanteInativo = true;
-                        $img = $htmlImgIntNaoCumprVinculoInativoPrinc;
-                    }
-                }
-
-                $mdPetVinculoRN = new MdPetVinculoRN();
-                $objMdPetIntRelDestDTOTratado = $objMdPetIntRelDestDTO;
-
-                foreach ($objMdPetIntRelDestDTOTratado as $chave => $itemObjMdPetIntRelDestDTOTratado) {
-
-                    $objMdPetVinculoDTO = new MdPetVinculoDTO();
-                    $objMdPetVinculoDTO->setNumIdContato($itemObjMdPetIntRelDestDTOTratado->getNumIdContato());
-                    $objMdPetVinculoDTO->setNumIdContatoRepresentante($objContato->getNumIdContato());
-                    $objMdPetVinculoDTO->retStrStaEstado();
-                    $objMdPetVinculoDTO->retNumIdMdPetVinculoRepresent();
-                    $objMdPetVinculoDTO->retStrTipoRepresentante();
-                    $objMdPetVinculoDTO->retDthDataLimite();
-                    $objMdPetVinculoDTO->retStrStaAbrangencia();
-                    $objMdPetVinculoDTO->retStrStaEstado();
-                    $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
-
-                    $removerRevogado = true;
-
+                    //Caso seja uma procuração simples é verificada se a mesma está valida
                     foreach ($objMdPetVinculoDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
-                        if ($itemObjMdPetVinculoDTO->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO && $itemObjMdPetVinculoDTO->getStrTipoRepresentante() != MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                            $removerRevogado = false;
-                        }
                         if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
                             $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                            $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($itemObjMdPetVinculoDTO->getNumIdMdPetVinculoRepresent(), $itemObjMdPetVinculoDTO->getStrStaEstado(), $itemObjMdPetVinculoDTO->getDthDataLimite(), $itemObjMdPetIntRelDestDTOTratado->getDblIdDocumento(), $itemObjMdPetVinculoDTO->getStrStaAbrangencia());
-                            if ($verificacaoCriteriosProcuracaoSimples) {
-                                $removerRevogado = false;
+                            $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($itemObjMdPetVinculoDTO->getNumIdMdPetVinculoRepresent(), $itemObjMdPetVinculoDTO->getStrStaEstado(), $itemObjMdPetVinculoDTO->getDthDataLimite(), $obj->getDblIdDocumento(), $itemObjMdPetVinculoDTO->getStrStaAbrangencia());
+
+                            if (!$verificacaoCriteriosProcuracaoSimples) {
+                                $procuracaoSimplesValida = false;
                             }
                         }
                     }
 
-                    if ($removerRevogado) {
-                        unset($objMdPetIntRelDestDTOTratado[$chave]);
+                    //Verifica se a situação da vinculação/intimacao é diferente de ativa
+                    if ((!$procuracaoSimplesValida || $contarobjMdPetVincRepresentantDTO == 0) && $objContato->getNumIdContato() != $obj->getNumIdContato()) {
+                        $qntDestRevogado++;
                     }
 
+                    if ($obj->getStrSinPessoaJuridica() == 'S') {
+                        if (!key_exists($obj->getDblCnpjContato(), $arrPessoaJuridica)) {
+                            $arrPessoaJuridica[$obj->getDblCnpjContato()] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCnpjContato()) . ')';
+                        }
+                    } else {
+                        if (!key_exists($obj->getDblCpfContato(), $arrPessoaFisica)) {
+                            $arrPessoaFisica[$obj->getDblCpfContato()] = $obj->getStrNomeContato() . ' (' . InfraUtil::formatarCpfCnpj($obj->getDblCpfContato()) . ')';
+                        }
+                    }
+
+                    //data para exibir na modal do cumprir
+                    if (($dtIntimacao && strtotime($dtIntimacao) < strtotime($obj->getDthDataCadastro())) || !$dtIntimacao) {
+                        if (is_array(explode(' ', $obj->getDthDataCadastro()))) {
+                            $dtIntimacao = explode(' ', $obj->getDthDataCadastro());
+                            $dtIntimacao = $dtIntimacao[0];
+                        } else {
+                            $dtIntimacao = $obj->getDthDataCadastro();
+                        }
+                    }
                 }
 
-                $qntAceite = is_array($arrDados) ? count($arrDados) : 0;
+                //se a quantidade de intimações for igual a quantidade de vínculos diferente de ativo é exibido o ícone de vínculo inativo
+                // if ($qntDest == $qntDestRevogado) {
+                //     $vinculoRepresentanteInativo = true;
+                //     $img = $htmlImgIntNaoCumprVinculoInativoPrinc;
+                // }
+            }
 
-                if (!empty($objMdPetIntRelDestDTO)) {
+            $mdPetVinculoRN = new MdPetVinculoRN();
+            $objMdPetIntRelDestDTOTratado = $objMdPetIntRelDestDTO;
 
-                    $idMdPetDest = InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntRelDestinatario');
+            foreach ($objMdPetIntRelDestDTOTratado as $chave => $itemObjMdPetIntRelDestDTOTratado) {
 
-                    if ($existeInt) {
+                $objMdPetVinculoDTO = new MdPetVinculoDTO();
+                $objMdPetVinculoDTO->setNumIdContato($itemObjMdPetIntRelDestDTOTratado->getNumIdContato());
+                $objMdPetVinculoDTO->setNumIdContatoRepresentante($objContato->getNumIdContato());
+                $objMdPetVinculoDTO->retStrStaEstado();
+                $objMdPetVinculoDTO->retNumIdMdPetVinculoRepresent();
+                $objMdPetVinculoDTO->retStrTipoRepresentante();
+                $objMdPetVinculoDTO->retDthDataLimite();
+                $objMdPetVinculoDTO->retStrStaAbrangencia();
+                $objMdPetVinculoDTO->retStrStaEstado();
+                $objMdPetVinculoDTO = $mdPetVinculoRN->listar($objMdPetVinculoDTO);
 
-                        //Botão
-                        $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-                        $objDestinatarioDTO->retTodos();
-                        $objDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idMdPetDest, InfraDTO::$OPER_IN);
-                        $objDestinatarioDTO->setNumIdMdPetIntimacao($idIntimacao);
-                        $arrDestinatarioDTO = (new MdPetIntRelDestinatarioRN())->listar($objDestinatarioDTO);
+                $removerRevogado = true;
 
-                        $arrContatos = InfraArray::converterArrInfraDTO($arrDestinatarioDTO, 'IdContato');
+                foreach ($objMdPetVinculoDTO as $chaveVinculo => $itemObjMdPetVinculoDTO) {
+                    if ($itemObjMdPetVinculoDTO->getStrStaEstado() == MdPetVincRepresentantRN::$RP_ATIVO && $itemObjMdPetVinculoDTO->getStrTipoRepresentante() != MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
+                        $removerRevogado = false;
+                    }
+                    if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
+                        $rnMdPetIntimacaoRN = new MdPetIntimacaoRN();
+                        $verificacaoCriteriosProcuracaoSimples = $rnMdPetIntimacaoRN->_verificarCriteriosProcuracaoSimples($itemObjMdPetVinculoDTO->getNumIdMdPetVinculoRepresent(), $itemObjMdPetVinculoDTO->getStrStaEstado(), $itemObjMdPetVinculoDTO->getDthDataLimite(), $itemObjMdPetIntRelDestDTOTratado->getDblIdDocumento(), $itemObjMdPetVinculoDTO->getStrStaAbrangencia());
+                        if ($verificacaoCriteriosProcuracaoSimples) {
+                            $removerRevogado = false;
+                        }
+                    }
+                }
 
-                        $objUsuarioDTO = new UsuarioDTO();
-                        $objUsuarioDTO->retNumIdContato();
-                        $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-                        $arrIds = (new UsuarioRN())->listarRN0490($objUsuarioDTO);
+                if ($removerRevogado) {
+                    unset($objMdPetIntRelDestDTOTratado[$chave]);
+                }
 
-                        if ($arrContatos) {
+            }
 
-                            $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
-                            $dtoMdPetVincReptDTO->setNumIdContatoVinc($arrContatos, InfraDTO::$OPER_IN);
-                            $dtoMdPetVincReptDTO->retNumIdContatoVinc();
-                            $dtoMdPetVincReptDTO->retStrNomeProcurador();
-                            $dtoMdPetVincReptDTO->retStrRazaoSocialNomeVinc();
-                            $dtoMdPetVincReptDTO->retStrTipoRepresentante();
-                            $dtoMdPetVincReptDTO->retStrCNPJ();
-                            $dtoMdPetVincReptDTO->retStrEmail();
-                            $dtoMdPetVincReptDTO->setNumIdContatoProcurador($arrIds[0]->getNumIdContato());
-                            $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
-                            $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-                            $dtoMdPetVincReptDTO->retStrStaEstado();
-                            $arrMdPetVincRepRN = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincReptDTO);
+            if (!empty($objMdPetIntRelDestDTO)) {
 
-                            $qtdArrMdPetVincRepRN = is_array($arrMdPetVincRepRN) ? count($arrMdPetVincRepRN) : 0;
+                $idMdPetDest = InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntRelDestinatario');
 
-                            if ($qtdArrMdPetVincRepRN > 0) {
-                                foreach ($arrMdPetVincRepRN as $vinculo) {
-                                    if ($vinculo->getStrStaEstado() != MdPetVincRepresentantRN::$RP_ATIVO) {
-                                        $arrRevogado[] = $vinculo->getStrCNPJ();
-                                    }
+                if ($existeInt) {
+
+                    //Botão
+                    $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+                    $objDestinatarioDTO->retTodos();
+                    $objDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idMdPetDest, InfraDTO::$OPER_IN);
+                    $objDestinatarioDTO->setNumIdMdPetIntimacao($idIntimacao);
+                    $arrDestinatarioDTO = (new MdPetIntRelDestinatarioRN())->listar($objDestinatarioDTO);
+
+                    $arrContatos = InfraArray::converterArrInfraDTO($arrDestinatarioDTO, 'IdContato');
+
+                    $objUsuarioDTO = new UsuarioDTO();
+                    $objUsuarioDTO->retNumIdContato();
+                    $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
+                    $arrIds = (new UsuarioRN())->listarRN0490($objUsuarioDTO);
+
+                    if ($arrContatos) {
+
+                        $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
+                        $dtoMdPetVincReptDTO->setNumIdContatoVinc($arrContatos, InfraDTO::$OPER_IN);
+                        $dtoMdPetVincReptDTO->retNumIdContatoVinc();
+                        $dtoMdPetVincReptDTO->retStrNomeProcurador();
+                        $dtoMdPetVincReptDTO->retStrRazaoSocialNomeVinc();
+                        $dtoMdPetVincReptDTO->retStrTipoRepresentante();
+                        $dtoMdPetVincReptDTO->retStrCNPJ();
+                        $dtoMdPetVincReptDTO->retStrEmail();
+                        $dtoMdPetVincReptDTO->setNumIdContatoProcurador($arrIds[0]->getNumIdContato());
+                        $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
+                        $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+                        $dtoMdPetVincReptDTO->retStrStaEstado();
+                        $arrMdPetVincRepRN = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincReptDTO);
+
+                        $qtdArrMdPetVincRepRN = is_array($arrMdPetVincRepRN) ? count($arrMdPetVincRepRN) : 0;
+
+                        if ($qtdArrMdPetVincRepRN > 0) {
+                            foreach ($arrMdPetVincRepRN as $vinculo) {
+                                if ($vinculo->getStrStaEstado() != MdPetVincRepresentantRN::$RP_ATIVO) {
+                                    $arrRevogado[] = $vinculo->getStrCNPJ();
                                 }
-                            }else{
-                                $arrRevogado[] = time();
                             }
-                            
-                        } // EndIf $arrContatos
+                        }else{
+                            $arrRevogado[] = time();
+                        }
                         
-                    } // EndIf $existeInt
+                    } // EndIf $arrContatos
                     
-                } // !empty($objMdPetIntRelDestDTO)
+                } // EndIf $existeInt
                 
-            } // EndForeach
+            } // !empty($objMdPetIntRelDestDTO)
             
         } // EndIf
 
@@ -3132,7 +3316,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             // Gabriel em 20.06.2022
 
-            $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($idProtocolo, $idAcessoExterno);
+            $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($item->getDblIdProtocolo(), $idAcessoExterno);
 
             if(in_array($situacao['btn_responder'], ['cumprida_geral', 'cumprida_parcial'])){
 
@@ -3146,7 +3330,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 }
 
             }else if(in_array($situacao['btn_responder'], ['com_impedimento'])){
-                $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaNegada(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica, $idProtocolo));
+                $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaNegada(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica, $item->getDblIdProtocolo()));
             }
 
         }
@@ -3157,13 +3341,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarAcaoDocumentoAcessoExternoAutorizado($arrObjDocumentoAPI)
     {
-        return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
+        // return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
     }
 
     public function montarAcaoProcessoAnexadoAcessoExternoAutorizado($arrObjProcedimentAPI)
     {
 
-        return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentAPI, true);
+        // return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentAPI, true);
     }
 
     public function verificarAcessoProtocoloExterno($arrObjProcedimentoAPI, $arrObjDocumentoAPI)
@@ -3207,7 +3391,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             /*
              * saber exatamente quais docs estao envolvidos com a intimação
-             * (e com a resposta a intimaçao? por enquanto ignorar esses):
+             * (e com a resposta a intimação? por enquanto ignorar esses):
              * aqueles que nao estiverem, nao adicionar no array de retorno
              * para que o controle de acesso a eles siga para a logica
              * padrao aplicada pelo Core do SEI
@@ -3289,7 +3473,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                             if ($disp) {
                                 $permissao = SeiIntegracao::$TAM_PERMITIDO;
 
-                                //Se for disponibilizado e anexo, ignora os disponiblizados e  verifica se os anexos já aestão aceitos
+                                //Se for disponibilizado e anexo, ignora os disponibilizados e  verifica se os anexos já estão aceitos
                                 //Se for anexo, verifica os aceites
                             } else {
                                 //Verifica se todos os documentos  anexo possuem aceite
@@ -3355,6 +3539,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             // Gerar Intimação
             if ($objProcedimentoAPI->getCodigoAcesso() > 0 && $objProcedimentoAPI->getSinAberto() == 'S') {
+                
                 if ($objDocumentoAPI->getCodigoAcesso() > 0) {
 
                     $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
@@ -3412,11 +3597,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarAcaoDocumentoAcessoExternoNegado($arrObjDocumentoAPI)
     {
-
-        //só é necessário adicionar botao por este ponto SE o processo estiver numa situaçao em que nao foi adicionado nenhum
+        
+        //só é necessário adicionar botao por este ponto SE o processo estiver numa situação em que nao foi adicionado nenhum
         // botao pelo ponto de extensao do acesso externo autorizado (o que deixaria em alguns casos
         // a coluna "Ações" sem quaisquer icones
-        // Exemplo: Processo com apenas 1 documento assinado, com intimaçao gerada do tipo integral e sem anexos
+        // Exemplo: Processo com apenas 1 documento assinado, com intimação gerada do tipo integral e sem anexos
         $qtdArrDocumentosLiberados = (is_array($this->arrDocumentosLiberados) ? count($this->arrDocumentosLiberados) : 0);
         if ($qtdArrDocumentosLiberados == 0) {
             return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
@@ -3427,11 +3612,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarAcaoProcessoAnexadoAcessoExternoNegado($arrObjProcedimentoAPI)
     {
-
-        //só é necessário adicionar botao por este ponto SE o processo estiver numa situaçao em que nao foi adicionado nenhum
+        //só é necessário adicionar botao por este ponto SE o processo estiver numa situação em que nao foi adicionado nenhum
         // botao pelo ponto de extensao do acesso externo autorizado (o que deixaria em alguns casos
         // a coluna "Ações" sem quaisquer icones
-        // Exemplo: Processo com apenas 1 documento assinado, com intimaçao gerada do tipo integral e sem anexos
+        // Exemplo: Processo com apenas 1 documento assinado, com intimação gerada do tipo integral e sem anexos
         $qtdArrProcessosLiberados = (is_array($this->arrProcessosLiberados) ? count($this->arrProcessosLiberados) : 0);
         if ($qtdArrProcessosLiberados == 0) {
             return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentoAPI, true);
@@ -3455,7 +3639,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                     if (!$docTipoIntegral) {
                         $objInfraException = new InfraException();
-                        $objInfraException->adicionarValidacao($this->getNome() . ': Não é permitido cancelar a disponibilização para esse usuário, pois existem vinculos no módulo Peticionamento e Intimação Eletrônicos.');
+                        $objInfraException->adicionarValidacao($this->getNome() . ': Não é permitido cancelar a disponibilização para esse usuário, pois existem vínculos no módulo Peticionamento e Intimação Eletrônicos.');
                         $objInfraException->lancarValidacoes();
                         return null;
                     } else {
@@ -3749,7 +3933,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 	}
 
 	/*
-	 * TODO: Desativado à espera do novo evento no SeiIntegracao.php previsto para o SEI v4.1
+	 * TODO: Desativado espera do novo evento no SeiIntegracao.php previsto para o SEI v4.1
 	 */
 //	public function desativarUsuario($arrObjUsuarioAPI)
 //	{
@@ -3890,7 +4074,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 							$objDTO->retStrNome();
 							$objDTO = $objGrupoContatoRN->listarRN0477($objDTO);
 							
-							// Verifica se a unidade do usuario logado é a mesma unidade do grupo
+							// Verifica se a unidade do usuário logado é a mesma unidade do grupo
 							if ($objDTO && SessaoSEI::getInstance()->getNumIdUnidadeAtual() != $objDTO[0]->getNumIdUnidade()) {
 								$objUnidadeRN  = new UnidadeRN();
 								$objUnidadeDTO = new UnidadeDTO();

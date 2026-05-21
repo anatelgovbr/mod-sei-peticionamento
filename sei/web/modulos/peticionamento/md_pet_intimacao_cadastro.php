@@ -48,7 +48,6 @@ try {
     }
 
     //Inits
-    $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
     $arrComandos = array();
     $idDocumento = isset($_GET['id_documento']) ? $_GET['id_documento'] : $_POST['hdnIdDocumento'];
     $strLinkAjaxUsuarios = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar&id_documento=' . $idDocumento);
@@ -69,7 +68,6 @@ try {
             $strTitulo = 'Gerar Intimação Eletrônica';
 
             $arrComandos[] = '<button type="button" onclick="onSubmitForm();" accesskey="G" name="sbmCadastrarMdPetIntimacao" id="sbmCadastrarMdPetIntimacao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">G</span>erar Intimação</button>';
-
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             $objDocumentoDTO = new DocumentoDTO();
@@ -86,7 +84,9 @@ try {
 
             $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
 
-//            Buscar Intimações cadastradas.
+            // Buscar Intimações cadastradas.
+            $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+    
             $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradas($idDocumento);
             $isAlterar = (!empty($arrIntimacoes)) ? true : false;
 

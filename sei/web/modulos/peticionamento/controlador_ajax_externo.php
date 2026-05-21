@@ -36,6 +36,7 @@ function mdPetGetParametrosInfraestruturaPermitidos() {
         'acao',                     // Ação genérica do SEI (algumas rotas usam)
         'id_contato',               // Contexto de cadastro (quando presente em GET legado)
 		'infra_hash',				// Hash do link
+		'id_procedimento',
     );
 }
 
@@ -135,7 +136,9 @@ try{
         'md_pet_contato_auto_completar_contexto_pesquisa',
         'md_pet_cargo_montar_select_genero',
         'md_pet_cargo_dados',
-        'get_acoes_intimacao_lista'
+        'get_acoes_intimacao_lista',
+        'get_acoes_protocolo_lista',
+		'get_acoes_protocolo_unico'
     );
 
 	// Exceções públicas: no momento não há ações públicas neste endpoint.
@@ -176,6 +179,16 @@ try{
         'get_acoes_intimacao_lista' => array(
 			'get' => array('acao_ajax_externo', 'acao_origem', 'id_orgao_acesso_externo', 'infra_hash'),
             'post_required' => array('dataAttributes'), 
+            'post_optional' => array()
+        ),
+        'get_acoes_protocolo_lista' => array(
+			'get' => array('acao_ajax_externo', 'acao_origem', 'id_orgao_acesso_externo', 'infra_hash', 'id_acesso_externo', 'id_procedimento', 'id_procedimento_anexado'),
+            'post_required' => array(), 
+            'post_optional' => array()
+        ),
+        'get_acoes_protocolo_unico' => array(
+			'get' => array('acao_ajax_externo', 'acao_origem', 'id_orgao_acesso_externo', 'infra_hash', 'id_acesso_externo', 'id_procedimento', 'id_procedimento_anexado', 'data'),
+            'post_required' => array(), 
             'post_optional' => array()
         )
     );
@@ -452,8 +465,84 @@ try{
 
 			break;
 
+		case 'get_acoes_protocolo_lista':
+
+			try {
+
+				$input = json_decode(file_get_contents('php://input'), true);
+
+				if (!$input) {
+					echo json_encode(['erro' => 'input vazio']);
+					exit;
+				}
+
+				$itens = $input['itens'] ?? [];
+
+				$resultado = [];
+
+				$obj = new PeticionamentoIntegracao();
+
+				foreach ($itens as $item) {
+
+					$id = (int) ($item['id'] ?? 0);
+
+					if ($id <= 0) continue;
+
+					$html = $obj->montarBotoesReaisPorId(
+						$id,
+						$item['acesso'] ?? null,
+						$item['procedimento'] ?? null,
+						$item['isproc'] ?? false
+					);
+
+					$resultado[$id] = base64_encode($html);
+				}
+
+				header('Content-Type: application/json; charset=utf-8');
+				echo json_encode($resultado);
+				exit;
+
+			} catch (Throwable $e) {
+
+				echo json_encode(['erro' => $e->getMessage()]);
+				exit;
+			}
+
+			break;
+
+			case 'get_acoes_protocolo_unico':
+
+				try {
+					$input = json_decode(file_get_contents('php://input'), true);
+					if (!$input || !isset($input['id'])) {
+						echo json_encode(['erro' => 'ID não informado']);
+						exit;
+					}
+					
+					$id = (int) $input['id'];
+					$idAcesso = $input['id_acesso'] ?? $_GET['id_acesso_externo'] ?? null;
+					$idProcedimento = $input['id_procedimento'] ?? $_GET['id_procedimento'] ?? null;
+					$isProcedimento = isset($input['is_procedimento']) ? (bool)$input['is_procedimento'] : false;
+					
+					require_once dirname(__FILE__) . '/PeticionamentoIntegracao.php';
+					$obj = new PeticionamentoIntegracao();
+					$html = $obj->montarBotoesReaisPorId($id, $idAcesso, $idProcedimento, $isProcedimento);
+					
+					header('Content-Type: application/json');
+					echo json_encode(['html' => $html]);
+					exit;
+				} catch (Throwable $e) {
+					header('Content-Type: application/json');
+					echo json_encode(['erro' => $e->getMessage()]);
+					exit;
+				}
+
+			break;
+			
 		default:
-		throw new InfraException("Ação '".$acaoAjaxExterno."' não reconhecida pelo controlador AJAX externo.");
+
+			throw new InfraException("Ação '".$acaoAjaxExterno."' não reconhecida pelo controlador AJAX externo.");
+			break;
 	}
   
 }catch(Exception $e){

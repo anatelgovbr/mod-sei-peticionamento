@@ -177,46 +177,53 @@ class MdPetContatoINT extends ContatoINT
         $arrSituacao = MdPetIntRelDestinatarioINT::getArraySituacaoRelatorio();
         $possuiIntimacao = 0;
 
+        $objDocumentoDTO = new DocumentoDTO();
+        $objDocumentoDTO->setDblIdDocumento($idDocumento);
+        $objDocumentoDTO->retDblIdProcedimento();
+        $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
+        $idProcedimento = $objDocumentoDTO->getDblIdProcedimento();
+
         $objContextoContatoDTO = new ContatoDTO();
         $objContextoContatoDTO->retTodos();
         $objContextoContatoDTO->setNumIdContato($idContato);
+        $arrContextoContatoDTO = (new ContatoRN())->consultarRN0324($objContextoContatoDTO);
 
-        $objContatoRN = new ContatoRN();
-        $arrContextoContatoDTO = $objContatoRN->consultarRN0324($objContextoContatoDTO);
-
-        //BuscaDestinatrio
+        // Busca Intimacoes do Destinatrio
         $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
         $objDestinatarioDTO->retTodos();
         $objDestinatarioDTO->setNumIdContato($idContato);
-        
-        $objDestinatarioRN = new MdPetIntRelDestinatarioRN();
-        $arrDestinatarioDTO = $objDestinatarioRN->listar($objDestinatarioDTO);
+        $arrDestinatarioDTO = (new MdPetIntRelDestinatarioRN())->listar($objDestinatarioDTO);
 
         if (is_iterable($arrDestinatarioDTO) && !empty($arrContextoContatoDTO)) {
+            
             //Busca Intimacao Documento Principal
             foreach ($arrDestinatarioDTO as $destinatario) {
+
                 $objDocumentoIntimacaoDTO = new MdPetIntProtocoloDTO();
                 $objDocumentoIntimacaoDTO->retTodos();
                 $objDocumentoIntimacaoDTO->setNumIdMdPetIntimacao($destinatario->getNumIdMdPetIntimacao());
                 $objDocumentoIntimacaoDTO->setDblIdProtocolo($idDocumento);
                 $objDocumentoIntimacaoDTO->setStrSinPrincipal('S');
-
-                $objDocumentoRN = new MdPetIntProtocoloRN();
-                $arrDocumentoIntimacao = $objDocumentoRN->consultar($objDocumentoIntimacaoDTO);
+                $arrDocumentoIntimacao = (new MdPetIntProtocoloRN())->consultar($objDocumentoIntimacaoDTO);
 
                 if (!is_null($arrDocumentoIntimacao)) {
-                    $possuiIntimacao = $destinatario->getNumIdMdPetIntimacao();
-                    $situacao = !is_null($destinatario->getStrStaSituacaoIntimacao()) && $destinatario->getStrStaSituacaoIntimacao() != 0 ? $arrSituacao[$destinatario->getStrStaSituacaoIntimacao()] : MdPetIntimacaoRN::$STR_SITUACAO_NAO_CADASTRADA;
-                    $dataIntimacao = $destinatario->getDthDataCadastro() ? substr($destinatario->getDthDataCadastro(), 0, 10) : '';
+                    $possuiIntimacao    = $destinatario->getNumIdMdPetIntimacao();
+                    $situacao           = !is_null($destinatario->getStrStaSituacaoIntimacao()) && $destinatario->getStrStaSituacaoIntimacao() != 0 ? $arrSituacao[$destinatario->getStrStaSituacaoIntimacao()] : MdPetIntimacaoRN::$STR_SITUACAO_NAO_CADASTRADA;
+                    $dataIntimacao      = $destinatario->getDthDataCadastro() ? substr($destinatario->getDthDataCadastro(), 0, 10) : '';
                 }
+
             }
+
             $objIntimacaoRN = new MdPetIntimacaoRN();
             $idIntimacao = $possuiIntimacao ? $possuiIntimacao : '';
 
             $montaLink = str_replace('&', '&amp;', SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_consulta&arvore=1&id_documento=' . $idDocumento . '&id_intimacao=' . $possuiIntimacao . '&id_contato=' . $idContato));
+        
         } else {
+
             $situacao = 'Pendente';
             $possuiIntimacao = 0;
+
         }
 
         if ($xml) {
@@ -227,6 +234,7 @@ class MdPetContatoINT extends ContatoINT
             $total = null;
 
             $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
+            $dtoMdPetVincReptDTO->retNumIdMdPetVinculo();
             $dtoMdPetVincReptDTO->retNumIdContatoVinc();
             $dtoMdPetVincReptDTO->retStrNomeProcurador();
             $dtoMdPetVincReptDTO->setNumIdContatoProcurador($idContato);
@@ -234,30 +242,33 @@ class MdPetContatoINT extends ContatoINT
             $dtoMdPetVincReptDTO->retStrEmail();
             $dtoMdPetVincReptDTO->retNumIdMdPetVinculoRepresent();
             $dtoMdPetVincReptDTO->retStrTipoRepresentante();
+            $dtoMdPetVincReptDTO->retStrStaAbrangencia();
             //$dtoMdPetVincReptDTO->setDistinct(true);
             $dtoMdPetVincReptDTO->retNumIdContatoProcurador();
             $dtoMdPetVincReptDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+            $dtoMdPetVincReptDTO->retDthDataLimite();
             //$dtoMdPetVincReptDTO->adicionarCriterio(array('StaEstado', 'StaEstado'), array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL), array(MdPetVincRepresentantRN::$RP_ATIVO, MdPetVincRepresentantRN::$RP_REVOGADA), InfraDTO::$OPER_LOGICO_OR);
-
-            $rnMdPetVincRepRN = new MdPetVincRepresentantRN();
-            $arrObjMdPetVincRepresentantDTO = $rnMdPetVincRepRN->listar($dtoMdPetVincReptDTO);
+            $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincReptDTO);
 
             foreach ($arrObjMdPetVincRepresentantDTO as $key => $value) {
 
                 if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                    $mdPetRelVincRepTpPoderRN = new MdPetRelVincRepTpPoderRN();
-                    $objMdPetRelVincRepTpPoderDTO = new MdPetRelVincRepTpPoderDTO();
-                    $objMdPetRelVincRepTpPoderDTO->retTodos();
-                    $objMdPetRelVincRepTpPoderDTO->setNumIdVinculoRepresent($value->getNumIdMdPetVinculoRepresent());
-                    $arrObjMdPetVincRepresentant = $mdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO);
-                    if ($arrObjMdPetVincRepresentant) {
-                        foreach ($arrObjMdPetVincRepresentant as $objMdPetVincRepresentant) {
-                            if($objMdPetVincRepresentant->getNumIdTipoPoderLegal() == MdPetTipoPoderLegalRN::$PODER_LEGAL_CUMPRIMENTO) {
-                                $empresas [] = $value->getNumIdContatoVinc();
-                            }
-                        }
+
+                    // Se passar na verificação da procuração simples permite intimar
+                    $verificacaoCriteriosProcuracaoSimples = (new MdPetIntimacaoRN())->_verificarCriteriosProcuracaoSimples(
+                        $value->getNumIdMdPetVinculoRepresent(), 
+                        MdPetVincRepresentantRN::$RP_ATIVO, 
+                        $value->getDthDataLimite(), 
+                        $idDocumento, 
+                        $value->getStrStaAbrangencia(),
+                        $idProcedimento
+                    );
+
+                    if ($verificacaoCriteriosProcuracaoSimples) {
+                        $empresas [] = $value->getNumIdContatoVinc();
                     }
-                } else{
+
+                } else {
                     $empresas [] = $value->getNumIdContatoVinc();
                 }
             }

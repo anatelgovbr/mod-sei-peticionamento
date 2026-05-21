@@ -45,15 +45,11 @@ try {
     }
 
     $arrComandos[] = '<button type="button" accesskey="P" name="btnPesquisar" onclick="pesquisar()" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
-
     $arrComandos[] = '<button type="button" accesskey="C" id="btnFechar" value="Fechar" class="infraButton" onclick="fechar()">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
     $arrPost = $_POST;
 
     $selTipoDestinatario = isset($_POST['selTipoDestinatario']) ? $_POST['selTipoDestinatario'] : '';
-//        echo "<pre>";
-//        var_dump($selTipoDestinatario);
-////        die;
     $objDTO = $objMdPetRelDestRN->retornaSelectsDto(array(false, $arrPost));
 
     PaginaSEIExterna::getInstance()->prepararOrdenacao($objDTO, 'DataCadastro', InfraDTO::$TIPO_ORDENACAO_DESC);
@@ -77,9 +73,9 @@ try {
     
     if ($numRegistros > 0) {
 
-        $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
-        $objMdPetCertidaoRN = new MdPetIntCertidaoRN();
-        $objMdPetIntReciboRN = new MdPetIntReciboRN();
+        $objMdPetIntAceiteRN    = new MdPetIntAceiteRN();
+        $objMdPetCertidaoRN     = new MdPetIntCertidaoRN();
+        $objMdPetIntReciboRN    = new MdPetIntReciboRN();
 
         $strResultado .= '<table width="100%" class="infraTable" summary="Intimações Eletrônicas">';
         $strResultado .= '<caption class="infraCaption">';
@@ -129,44 +125,44 @@ try {
 
             $strResultado .= '<tr class="tr-acoes-dinamicas '.$strCssTr.'" data-idMdPetDest="'.$objRet->getNumIdMdPetIntRelDestinatario().'" data-idIntimacao="'.$idIntimacao.'" data-idProcesso="'.$idProcesso.'" data-tpProcesso="'.$tpProcesso.'" data-idAcExt="'.$idAcExt.'" data-descricao="'.$descricao.'" data-idSituacao="'.$objRet->getStrStaSituacaoIntimacao().'" data-docTipo="'.str_replace('(' . $objRet->getStrProtocoloFormatadoDocumento() . ')', '', $objRet->getStrDocumentoPrincipal()).'" data-docPrinc="'.$objRet->getStrProtocoloFormatadoDocumento().'" data-idUsuarioExterno="'.SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno().'">';
 
-            //Linha Número do Processo
+            //Coluna Número do Processo
             $strResultado .= '<td align="center" >';
             $strResultado .= $objMdPetRelDestRN->addConsultarProcesso($idProcesso, $tpProcesso, $idAcExt, $descricao, $objRet->getStrProtocoloFormatadoProcedimento());
             $strResultado .= '</td>';
 
-            //Linha Data de Expedição
+            //Coluna Data de Expedição
             $arrData = explode(' ', $objRet->getDthDataCadastro());
             $strResultado .= '<td align="center">';
             $strResultado .= $arrData[0];
             $strResultado .= '</td>';
 
-            //Documento Principal
+            //Coluna Documento Principal
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrDocumentoPrincipal());
             $strResultado .= '</td>';
 
-            //Destinatário
+            //Coluna Destinatário
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrNomeContato()) . " (";
             $strResultado .= $objRet->getStrSinPessoaJuridica() == 'S' ? PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($objRet->getDblCnpjContato())) : InfraUtil::formatarCpf(PaginaSEI::tratarHTML($objRet->getDblCpfContato()));
             $strResultado .= ') </td>';
 
-            //Destinatário
+            //Coluna Destinatário
             $strResultado .= '<td>';
             $strResultado .= $objRet->getStrSinPessoaJuridica() == 'S' ? "Pessoa Jurídica" : "Pessoa Física";
             $strResultado .= '</td>';
 
-
-            //Tipo de Intimação
+            //Coluna Tipo de Intimação
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrNomeTipoIntimacao());
             $strResultado .= '</td>';
 
-            //Situação
+            //Coluna Situação
             $strResultado .= '<td>';
             $strResultado .= PaginaSEI::tratarHTML($objRet->getStrSituacaoIntimacao());
             $strResultado .= '</td>';
 
+            //Coluna Ações
             $strResultado .= '<td align="center" class="td-acoes-dinamicas" style="vertical-align: middle"><h4 class="text-placeholder line"></h4></td>';
             $strResultado .= '</tr>';
 
@@ -286,9 +282,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto', 'style="margin-bottom: 2
         </div>
     </div>
 
-<?php
-PaginaSEIExterna::getInstance()->fecharAreaDados();
-?>
+    <?php PaginaSEIExterna::getInstance()->fecharAreaDados(); ?>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <?php

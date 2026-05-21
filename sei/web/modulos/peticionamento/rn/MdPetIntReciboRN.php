@@ -141,7 +141,7 @@ class MdPetIntReciboRN extends InfraRN {
             }
 
 
-            $imgRecibo = '<img src="modulos/peticionamento/imagens/svg/intimacao_recibo_peticionamento_resposta.svg?'.Icone::VERSAO.'" style="width: 24px">';
+            $imgRecibo = '<img src="modulos/peticionamento/imagens/svg/intimacao_recibo_peticionamento_resposta.svg?'.PeticionamentoIntegracao::$ICONS_VERSION.'" style="width: 24px">';
 
             $ToolTipTitle = 'Recibo da Resposta à Intimação';
 

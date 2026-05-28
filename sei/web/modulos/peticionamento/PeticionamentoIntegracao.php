@@ -34,7 +34,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.0';
+        return '4.6.1';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -914,7 +914,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                     $conteudo = SessaoSEIExterna::getInstance()->getAtributo('docPrincipalConteudoHTML');
                 }
 
-                echo $conteudo;
+                echo !empty($conteudo) ? 'validado' : '';
                 return true;
 
             case 'md_pet_contato_cpf_cnpj':
@@ -3351,13 +3351,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarAcaoDocumentoAcessoExternoAutorizado($arrObjDocumentoAPI)
     {
-        // return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
+        return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
     }
 
     public function montarAcaoProcessoAnexadoAcessoExternoAutorizado($arrObjProcedimentAPI)
     {
 
-        // return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentAPI, true);
+        return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentAPI, true);
     }
 
     public function verificarAcessoProtocoloExterno($arrObjProcedimentoAPI, $arrObjDocumentoAPI)

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  *
  * 22/08/2016 - criado por marcelo.bezerra - CAST
@@ -317,6 +317,8 @@ class MdPetContatoINT extends ContatoINT
 	        }
         
         } else {
+
+            $xml = [];
 	
 	        if(!empty($arrContextoContatoDTO)){
 		        $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
@@ -482,6 +484,8 @@ class MdPetContatoINT extends ContatoINT
 
         } else {
 
+            $xml = [];
+
             $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
             $xml['Nome'] = $arrContextoContatoDTO->getStrNome();
             $xml['Email'] = $arrContextoContatoDTO->getStrEmail();
@@ -633,6 +637,7 @@ class MdPetContatoINT extends ContatoINT
             $xml .= '<Quantidade>' . $total . '</Quantidade>';
             $xml .= '</Documento>';
         } else {
+            $xml = [];
             $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
             $xml['Nome'] = PaginaSEI::tratarHTML($arr[0]->getStrRazaoSocialNomeVinc());
             $xml['Cnpj'] = InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getStrCnpj());
@@ -711,6 +716,7 @@ class MdPetContatoINT extends ContatoINT
 
 		} else {
 
+            $xml = [];
 			$xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
 			$xml['Nome'] = PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome());
 			$xml['Cnpj'] = InfraUtil::formatarCpfCnpj($arrContextoContatoDTO->getStrCnpj());
@@ -776,6 +782,7 @@ class MdPetContatoINT extends ContatoINT
         }
 
         if (!$xml) {
+            $xml = [];
             $xml['Id'] = $arrContextoContatoDTO->getNumIdContato();
             $xml['Nome'] = PaginaSEI::tratarHTML($arrContextoContatoDTO->getStrNome());
             $xml['Cnpj'] = $arrContextoContatoDTO->getStrCnpj();

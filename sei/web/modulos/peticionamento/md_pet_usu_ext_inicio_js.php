@@ -1,5 +1,7 @@
 <script type="text/javascript">
+    
     function pesquisarUF(idOrgao) {
+
         document.getElementById("selUF").disabled = false;
         document.getElementById('hdnIdOrgao').value = idOrgao.value;
         document.getElementById('hdnIdUf').value = '';
@@ -21,6 +23,7 @@
             document.getElementById("selUF").disabled = true;
             document.getElementById("selCidade").disabled = true;
         }
+
         mudarTpProcesso();
         infraSelectLimpar('selUF');
         infraSelectLimpar('selCidade');
@@ -43,7 +46,6 @@
             optCidade.innerHTML = "Todos";
             selectMultipleCidade.appendChild(optCidade);
         }
-
 
         //Setando orgão
         if (document.getElementById("selOrgao").value != "") {
@@ -182,7 +184,6 @@
             });
         }
 
-
     }
 
 
@@ -311,17 +312,16 @@
     function pesquisarFinal(idCidade) {
         document.getElementById('hdnIdCidade').value = idCidade.value;
         mudarTpProcesso();
-
-
     }
 
     function mudarTpProcesso() {
 
-//Somente se o usuário escolher opção todos
+        infraExibirAviso(false, 'Aguarde...');
+
+        //Somente se o usuário escolher opção todos
         if (document.getElementById('hdnIdOrgao').value == '' && document.getElementById('hdnIdUf').value == '' && document.getElementById('hdnIdCidade').value == '') {
             var filtros = {};
         }
-
 
         if (document.getElementById('hdnIdOrgao').value != '' && document.getElementById('hdnIdUf').value == '') {
             var filtros = {orgao: document.getElementById('hdnIdOrgao').value};
@@ -331,6 +331,7 @@
                 uf: document.getElementById('hdnIdUf').value
             };
         }
+
         if (document.getElementById('hdnIdOrgao').value != '' && document.getElementById('hdnIdUf').value != '' && document.getElementById('hdnIdCidade').value != '') {
             var filtros = {
                 orgao: document.getElementById('hdnIdOrgao').value,
@@ -396,6 +397,9 @@
 
                 }
 
+            },
+            complete: function(){
+                infraOcultarAviso();
             }
 
         });

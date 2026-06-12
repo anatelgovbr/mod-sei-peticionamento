@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -254,7 +254,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     ?>
     <div class="row mb-3">
         <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset">
+            <fieldset class="infraFieldset">
                 <legend class="infraLegend">Período de Indisponibilidade</legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">

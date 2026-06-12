@@ -1,4 +1,4 @@
-<?
+<?php
 
 try {
     require_once dirname(__FILE__) . '/../../SEI.php';
@@ -225,7 +225,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                        class="infraText form-control"
                                        value="<?php echo PaginaSEI::tratarHTML($nomeTipoProcesso); ?>"
                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                                <input type="hidden" id="hdnIdTipoProcesso" name="hdnIdTipoProcesso"
+                                <input type="hidden" id="hdnIdTipoProcessos" name="hdnIdTipoProcesso"
                                        value="<?php echo $idTipoProcesso ?>"/>
                                 <input type="hidden" id="hdnIdMdPetTipoProcesso" name="hdnIdMdPetTipoProcesso"
                                        value="<?php echo $idMdPetTipoProcesso ?>"/>
@@ -234,7 +234,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
                                      alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
                                      tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                                <img id="imgExcluirTipoProcesso"
+                                <img id="imgExcluirTipoProcesso2"
                                      onclick="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
                                      onkeypress="removerProcessoAssociado(0);objLupaTipoProcesso.remover();"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg?<?= Icone::VERSAO ?>"
@@ -250,13 +250,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 ?>
                 <div class="row">
                     <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
-                        <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipos de
+                        <label id="lblTiposProcesso" for="txtTipoProcesso3" class="infraLabelObrigatorio">Tipos de
                             Processos:</label>
                         <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                              onmouseover="return infraTooltipMostrar('A indicação de mais de um Tipo de Processo apenas facilita aplicar o mesmo Critério para os Tipos indicados. Ou seja, em seguida, cada um terá registro próprio de Critério para Intercorrente.', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();"
                              alt="Ajuda" class="infraImgModulo"/>
-                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
+                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso3" name="txtTipoProcesso"
                                class="infraText InfraAutoCompletar form-control" value="<?= PaginaSEI::tratarHTML($nomeTipoProcesso) ?>"
                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
@@ -272,7 +272,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     </select>
                                 <?php } ?>
                                 <div class="divOpcoesUnidades">
-                                    <img id="imgLupaTipoProcesso" onclick="objLupaTipoProcesso.selecionar(700,500);"
+                                    <img id="imgLupaTipoProcessoMultiplo" onclick="objLupaTipoProcesso.selecionar(700,500);"
                                          src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/pesquisar.svg?<?= Icone::VERSAO ?>" alt="Selecionar Tipo de Processo" title="Selecionar Tipo de Processo"
                                          class="infraImg"/>
                                     <br>
@@ -304,7 +304,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <input <?php echo $sinNAPadrao; ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"
                                                         onclick="changeNivelAcesso();" value="2" class="infraRadio"
                                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
+                        <label name="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
                             definido</label>
                     </div>
                     <div class="row" id="divNivelAcesso" <?php echo $sinNAPadrao != '' ? 'style="display: flex;"' : 'style="display: none;"' ?>>

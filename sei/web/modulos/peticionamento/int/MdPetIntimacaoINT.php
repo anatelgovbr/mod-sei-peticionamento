@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -105,6 +105,10 @@ class MdPetIntimacaoINT extends InfraINT {
         $dtoMdPetIntRelDestinatarioDTO->setNumIdMdPetIntRelDestinatario($idRelDest);
         $dtoMdPetIntRelDestinatarioDTO->retNumIdContato();
         $arrObjMdPetIntRelDestinatarioDTO = $rnMdPetIntRelDestinatarioDTO->consultar($dtoMdPetIntRelDestinatarioDTO);
+
+        $verificacao = '';
+        $contatoVinculado = '';
+
         $xml = '';
         $xml .= '<resposta>';
 

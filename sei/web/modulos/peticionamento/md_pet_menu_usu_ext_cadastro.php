@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -315,7 +315,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                     <label id="lblTipoProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">
                         Nome do Menu:
                     </label>
-                    <img id="imgAjudatTipoExterno"
+                    <img id="imgAjudatTipoExternoMenu"
                          src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt=""
                          onmouseover="return infraTooltipMostrar('O menu será listado para o Usuário Externo depois que ele fizer login no Acesso Externo do SEI.', 'Ajuda');"
                          onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
@@ -333,7 +333,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
                         <div id="divOptTipoExterno" class="infraDivRadio divOptTipoExterno">
                             <input type="radio" id="tipoExterno" <?= $disabled ?> name="tipo" value="E" onclick="rdTipo()" <?php if( $tipo == 'E' ){ echo " checked='checked' "; } ?>  class="infraRadio">
                             <label for="tipoExterno" class="infraLabelRadio"> Link Externo
-                                <img id="imgAjudatTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrirá o link externo sempre em nova janela do navegador do Usuário Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
+                                <img id="imgAjudatMenuTipoExterno" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/ajuda.svg?<?= Icone::VERSAO ?>" alt="" onmouseover="return infraTooltipMostrar('O menu abrirá o link externo sempre em nova janela do navegador do Usuário Externo logado.', 'Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                             </label>
                         </div>
 

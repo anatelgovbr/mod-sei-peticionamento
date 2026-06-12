@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -2320,8 +2320,6 @@ class MdPetIntimacaoRN extends InfraRN
 
         $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
         $arrMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->listar($objMdPetIntDocumentoDTO);
-
-        // echo var_dump($arrMdPetIntDocumentoDTO);
 
         if (is_iterable($arrMdPetIntDocumentoDTO)) {
 

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -208,6 +208,7 @@ class MdPetTipoProcessoINT extends InfraINT
         $arrIdsCidade   = InfraArray::converterArrInfraDTO($arrIdsCidadeArr, 'IdCidadeContato');
         
         if(!empty($arrIdsCidade)){
+
 	        $objUnidadeDTO = new CidadeDTO();
 	        $objUnidadeDTO->setNumIdCidade($arrIdsCidade, InfraDTO::$OPER_IN);
 	        $objUnidadeDTO->retStrNome();
@@ -219,9 +220,8 @@ class MdPetTipoProcessoINT extends InfraINT
 	        $arrObjCidadeDTO = (new CidadeRN())->listarRN0410($objUnidadeDTO);
 	
 	        $arrCidade = InfraArray::converterArrInfraDTO($arrObjCidadeDTO, 'Nome');
-        }
 
-        
+        }
 	
 	    if (empty($idTipoProcedimento)) {
 
@@ -368,6 +368,9 @@ class MdPetTipoProcessoINT extends InfraINT
                         }
 				        
 			        }
+
+                    $ufId = array_unique($ufId);
+                    $uf = array_unique($uf);
 			
 		        }
 	        	

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * 19/02/2018 - criado por jaqueline.cast
  * 26/08/2024 - Atualização por gabrielg.colab - SPASSU

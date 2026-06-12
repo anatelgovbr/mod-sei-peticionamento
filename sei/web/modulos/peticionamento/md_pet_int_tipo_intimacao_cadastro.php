@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -216,7 +216,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                 <fieldset id="fldResposta" class="infraFieldset" style="height: auto">
                     <legend class="infraLegend"> Tipo de Intimação Aceita Tipo de Resposta</legend>
-                    <div id="divOptAno" class="infraDivRadio">
+                    <div class="infraDivRadio">
                 <span id="spnAno"><label id="lblAno" class="infraLabelRadio">
                     <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta"
                            id="optTipoRespostaFacultativa"
@@ -224,16 +224,16 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Facultativa</label>
                 </span>
                     </div>
-                    <div id="divOptAno" class="infraDivRadio">
-                <span id="spnExige"><label id="lblExige" class="infraLabelRadio">
+                    <div class="infraDivRadio">
+                <span id="spnExigeRespostaSim"><label id="lblExigeRespostaSim" class="infraLabelRadio">
                     <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta"
                            id="optTipoRespostaExige"
                            value="E" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'E' ? 'checked="checked"' : '') ?> class="infraRadio"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>Exige Resposta</label>
                 </span> <br>
                     </div>
-                    <div id="divOptAno" class="infraDivRadio">
-                <span id="spnExige"><label id="lblExige" class="infraLabelRadio">
+                    <div class="infraDivRadio">
+                <span id="spnExigeRespostaNao"><label id="lblExigeRespostaNao" class="infraLabelRadio">
                     <input type="radio" onclick="esconderTabelaTipoResposta()" name="rdoResposta"
                            id="optTipoSemResposta"
                            value="S" <?= ($objMdPetIntTipoIntimacaoDTO->getStrTipoRespostaAceita() === 'S' ? 'checked="checked"' : '') ?> class="infraRadio"
@@ -260,7 +260,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             class="infraButton"><span
                                 class="infraTeclaAtalho">A</span>dicionar
                     </button>
-                    <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>
+                    <input type="hidden" id="hdnIdTipoRespostaTipo" name="hdnIdTipoResposta" value=""/>
                 </div>
             </div>
         </div>
@@ -277,7 +277,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <th align="center" class="infraTh" width="15px">Ações</th>
                     </tr>
                 </table>
-                <input type="hidden" id="hdnIdTipoResposta" name="hdnIdTipoResposta" value=""/>
+                <input type="hidden" id="hdnIdTipoRespostaTipoLista" name="hdnIdTipoResposta" value=""/>
 
                 <input type="hidden" id="hdnTipoResposta" name="hdnTipoResposta" value="<?= $strTipoResposta; ?>"/>
 

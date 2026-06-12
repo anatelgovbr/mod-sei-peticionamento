@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * ANATEL
@@ -34,7 +34,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.2';
+        return '4.6.3';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -469,7 +469,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
                 $arrContatosDTO = $objMdPetIntimacaoRN->filtrarContatosPesquisaIntimacaoJuridica($_POST);
                 
-                $xml = ($arrContatosDTO > 0) ? MdPetContatoINT::getContatosNomeAutoCompleteJuridico($arrContatosDTO) : '';
+                $xml = (!empty($arrContatosDTO)) ? MdPetContatoINT::getContatosNomeAutoCompleteJuridico($arrContatosDTO) : '';
                 
                 break;
 
@@ -483,7 +483,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
                 $arrContatosDTO = $objMdPetIntimacaoRN->filtrarContatosPesquisaIntimacao($_POST);
 
-                $xml = ($arrContatosDTO > 0) ? MdPetContatoINT::getContatosNomeAutoCompletePF($arrContatosDTO) : '';
+                $xml = (!empty($arrContatosDTO)) ? MdPetContatoINT::getContatosNomeAutoCompletePF($arrContatosDTO) : '';
 
                 break;
 
@@ -940,7 +940,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 echo $json;
                 return true;
-                break;
 
             case 'md_pet_processo_validar_numero':
                 $xml = MdPetIntercorrenteINT::gerarXMLvalidacaoNumeroProcesso($_POST['txtNumeroProcesso'], false, $_POST['validaProcessoRepresentacao'] ?? false);
@@ -1511,11 +1510,11 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         $objContatoRN = new ContatoRN();
                         $arrObjContatoRN = $objContatoRN->consultarRN0324($objContatoDTO);
 
-                        $linhaDeCimaPJ = '"Controle de Representação de Pessoa Jurídica"';
-                        $linhaDeBaixoPJ .= '"' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getStrCnpj()) . ')<br/><br/> Último Peticionamento de Atualização: ' . $dataPJ . '"';
-                        $linhaDeCimaTxt = 'Controle de Representação de Pessoa Jurídica\n' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getStrCnpj()) . ')';
-                        $linhaDeBaixoTxt = 'Último Peticionamento de Atualização: ' . $dataPJ;
-                        $textoSeparado = $linhaDeCimaTxt . ' \n' . $linhaDeBaixoTxt;
+                        $linhaDeCimaPJ      = '"Controle de Representação de Pessoa Jurídica"';
+                        $linhaDeBaixoPJ     = '"' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getStrCnpj()) . ')<br/><br/> Último Peticionamento de Atualização: ' . $dataPJ . '"';
+                        $linhaDeCimaTxt     = 'Controle de Representação de Pessoa Jurídica\n' . PaginaSEI::tratarHTML($arrObjContatoRN->getStrNome()) . ' (' . infraUtil::formatarCnpj($arrObjContatoRN->getStrCnpj()) . ')';
+                        $linhaDeBaixoTxt    = 'Último Peticionamento de Atualização: ' . $dataPJ;
+                        $textoSeparado      = $linhaDeCimaTxt . ' \n' . $linhaDeBaixoTxt;
 
                     }
 
@@ -2722,6 +2721,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             // Inicializa a situacao da intimacao
             $situacao = $this::$INTIMACAO_NAO_CUMPRIDA;
+            $procNegado = true;
 
             if ($qtdAceites == $qtdDestinatariosIntimacao) {
 
@@ -2757,8 +2757,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 } else {
 
                     foreach ($arrObjDestinatariosUnicosIntimacao as $objDestinatario){
-
-                        $procNegado = true;
 
                         if($objContato->getNumIdContato() == $objDestinatario->getNumIdContato()){
 

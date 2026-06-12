@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
 *

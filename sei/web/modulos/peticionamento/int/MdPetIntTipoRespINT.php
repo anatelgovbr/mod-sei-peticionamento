@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -93,6 +93,9 @@ class MdPetIntTipoRespINT extends InfraINT
     public static function montaSelectRespostaUsuario8612($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado)
     {
         $montaSelect = "<option value=\"$strPrimeiroItemValor\">$strPrimeiroItemDescricao</option>";
+
+        $facultativo = '';
+        $exige = '';
 
         if ($strValorItemSelecionado === 'F') {
             $facultativo = " selected=\"selected\" ";
@@ -231,6 +234,8 @@ class MdPetIntTipoRespINT extends InfraINT
         $arrObjUnidadeDTO = $objUnidadeRN->listar($objMdPetIntTipoRespDTO);
 
         $tipoResposta = '';
+        $prazo = '';
+        $resposta = '';
 
         if(count($arrObjUnidadeDTO)){
             for($i = 0; $i < count($arrObjUnidadeDTO); $i++){
@@ -251,7 +256,8 @@ class MdPetIntTipoRespINT extends InfraINT
                 }
 
                 $id = 'ck_'.$arrObjUnidadeDTO[$i]->getNumIdMdPetIntTipoResp();
-                $nome = utf8_decode($arrObjUnidadeDTO[$i]->getStrNome() . ' ' . $prazo . ' - ' . $resposta);
+                $nome = $arrObjUnidadeDTO[$i]->getStrNome() . ' ' . $prazo . ' - ' . $resposta;
+                $nome = mb_convert_encoding($nome, 'ISO-8859-1', 'UTF-8');
                 $tipoResposta .= '<label class="infraLabelRadio" id="'.$id.'"><input type="checkbox" id="chkTipoResposta" value="'.$arrObjUnidadeDTO[$i]->getNumIdMdPetIntTipoResp().'" class="infraRadio" name="chkTipoResposta[]">'. $nome .'</label>';
             }
         }

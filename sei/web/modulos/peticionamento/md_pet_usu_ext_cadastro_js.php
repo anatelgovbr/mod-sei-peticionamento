@@ -87,6 +87,11 @@ $strSelExtensoesComp = MdPetExtensoesArquivoINT::recuperaExtensoes(null, null, n
 $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_validar_documento_principal');
 
 ?>
+
+<?php if (is_numeric($idOrgao) && is_numeric($idUF)): ?>
+<script> $(() => $('#selUF').trigger('change')); </script>
+<?php endif; ?>
+
 <script type="text/javascript">
 
     var objAjaxContato = null;
@@ -113,35 +118,42 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     <? endif ?>
 
     var div = $('#divArquivo');
-    var ifrPrinc = $('#ifrProgressofrmDocumentoPrincipal');
-    var btnPrinc = $('#btnUploadCancelarfrmDocumentoPrincipal');
-    
-    ifrPrinc[0].style.width  = '500px';
-    ifrPrinc[0].style.top    = '45px';
-    ifrPrinc[0].style.left   = '15px';
-    btnPrinc[0].style.top    = '38px';
-    btnPrinc[0].style.left   = ifrPrinc[0].offsetLeft + ifrPrinc[0].offsetWidth + 10 + "px";
 
-    
-    var ifrComple = $('#ifrProgressofrmDocumentosComplementares');
-    var btnComple = $('#btnUploadCancelarfrmDocumentosComplementares');
-    
-    ifrComple[0].style.width  = '500px';
-    ifrComple[0].style.top    = '45px';
-    ifrComple[0].style.left   = '15px';
-    btnComple[0].style.top    = '38px';
-    btnComple[0].style.left   = ifrComple[0].offsetLeft + ifrComple[0].offsetWidth + 10 + "px";
+    // 1. Função que faz o ajuste de forma segura
+    function ajustarPosicionamento(ifr, btn) {
+        // Garante que ambos os elementos existem na tela
+        if (ifr.length > 0 && btn.length > 0) {
+            ifr.css({
+                'width': '500px',
+                'top': '45px',
+                'left': '15px'
+            });
 
-    var ifrEssen = $('#ifrProgressofrmDocumentosEssenciais');
-    var btnEssen = $('#btnUploadCancelarfrmDocumentosEssenciais');
-    
-    ifrEssen[0].style.width  = '500px';
-    ifrEssen[0].style.top    = '45px';
-    ifrEssen[0].style.left   = '15px';
-    btnEssen[0].style.top    = '38px';
-    btnEssen[0].style.left   = ifrEssen[0].offsetLeft + ifrEssen[0].offsetWidth + 10 + "px";
+            // Calcula a nova posição do botão baseada no iframe correspondente
+            var novaEsquerda = ifr.position().left + ifr.outerWidth() + 10;
 
+            btn.css({
+                'top': '38px',
+                'left': novaEsquerda + 'px'
+            });
+        }
+    }
 
+    // 2. Executa a função para cada um dos seus blocos de componentes
+    ajustarPosicionamento(
+        $('#ifrProgressofrmDocumentoPrincipal'), 
+        $('#btnUploadCancelarfrmDocumentoPrincipal')
+    );
+
+    ajustarPosicionamento(
+        $('#ifrProgressofrmDocumentosComplementares'), 
+        $('#btnUploadCancelarfrmDocumentosComplementares')
+    );
+
+    ajustarPosicionamento(
+        $('#ifrProgressofrmDocumentosEssenciais'), 
+        $('#btnUploadCancelarfrmDocumentosEssenciais')
+    );
 
     function validarQtdArquivosPrincipal() {
 

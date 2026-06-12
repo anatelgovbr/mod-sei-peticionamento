@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -284,8 +284,14 @@ try {
     
     $arrParametrosSaidaObrig = [
         'cnpjEmpresa',
+        'razaoSocial',
         'codSituacaoCadastral',
         'descSituacaoCadastral',
+        'logradouro',
+        'numero',
+        'cep',
+        'bairro',
+        'codIbgeMunicipio',
         'cpfRespLegal',
         'nomeRespLegal',
     ];
@@ -293,7 +299,7 @@ try {
     $strSumarioTabelaEntrada = 'Tabela de configuração dos dados de entrada do web-service.';
     $strCaptionTabelaEntrada = 'Dados de entrada';
 
-    $strResultadoParamEntrada .= '<table width="100%" id="tableParametroEntrada" class="infraTable" summary="' . $strSumarioTabelaEntrada . '">' . "\n";
+    $strResultadoParamEntrada = '<table width="100%" id="tableParametroEntrada" class="infraTable" summary="' . $strSumarioTabelaEntrada . '">' . "\n";
     $strResultadoParamEntrada .= '<tr>';
     $strResultadoParamEntrada .= '<th class="infraTh" width="50%">&nbsp;Campo de Origem no SEI&nbsp;</th>' . "\n";
     $strResultadoParamEntrada .= '<th class="infraTh" width="50%">&nbsp;Dados de Entrada no Webservice&nbsp;</th>' . "\n";
@@ -427,7 +433,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                     id="rdStaUtilizarWsNao" value="N"
                                                                     onclick="habilitaWs()">
                             <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração
-                                <img id="imgAjuda3"
+                                <img id="imgAjudaIntegracaoNao"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                      name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.', 'Ajuda') ?>
                                     alt="Ajuda" class="infraImgModulo"/></label>
@@ -438,7 +444,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                     onclick="habilitaWs()">
                             <label name="rdStaUtilizarWsSim" id="lblStaUtilizarWsSim" for="rdStaUtilizarWsSim"
                                class="infraLabelRadio">Com Integração
-                            <img id="imgAjuda4"
+                            <img id="imgAjudaIntegracaoSim"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                  name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica será validado por integração configurada abaixo se é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Se não ocorrer a validação o Usuário Externo não poderá prosseguir com o Peticionamento inicial de Responsável Legal de Pessoa Jurídica.', 'Ajuda') ?>
                                 alt="Ajuda" class="infraImgModulo"/></label>
@@ -521,7 +527,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-12 col-xl-10">
                 <div class="form-group">
                     <label id="lbltxtCodRFBSuspensaoAutomatica" for="txtCodRFBSuspensaoAutomatica" class="infraLabelObrigatorio">Códigos de Situação Cadastral que identifica Pessoas Físicas Inativas na Receita:
-                        <img id="imgAjuda5" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                        <img id="imgAjudaCodigoSituacao" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                              name="ajuda" <?= PaginaSEI::montarTitleTooltip('Lista de códigos numéricos que representam as situações na Receita Federal que irão implicar na desativação do Usuário Externo ativo e liberado. Os códigos precisar ser separados por ponto e vírgula ( ; ). \n\n\n Por exemplo, para a situação "Cancelada por Encerramento de Espólio" o webservice retorna o código "1" e a situação "Cancelada por Óbito sem Espolio" o webservice retorna o código "3". A lista nesse campo deve ser "1;3".', 'Ajuda') ?>
                              alt="Ajuda" class="infraImgModulo"/>
                     </label>

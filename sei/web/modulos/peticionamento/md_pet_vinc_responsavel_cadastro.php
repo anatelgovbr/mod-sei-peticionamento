@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -210,7 +210,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
-                <label id="lblCnpj" class="infraLabelObrigatorio">CNPJ:</label>
+                <label for="txtCnpj" class="infraLabelObrigatorio">CNPJ:</label>
                 <input type="text" id="txtCnpj" name="txtCnpj"
                        class="infraText form-control"
                        disabled="disabled"
@@ -230,7 +230,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
-                <label id="lblCnpj" class="infraLabelObrigatorio">CPF do Responsável Legal:</label>
+                <label for="txtCpf" class="infraLabelObrigatorio">CPF do Responsável Legal:</label>
                 <input type="text" id="txtCpf" name="txtCpf"
                        class="infraText form-control"
                        disabled="disabled"
@@ -239,7 +239,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
-                <label id="txtRazaoSocial" class="infraLabelObrigatorio">Nome do Responsável Legal:</label>
+                <label for="txtNome" class="infraLabelObrigatorio">Nome do Responsável Legal:</label>
                 <input type="text" id="txtNome" name="txtNome"
                        disabled="disabled"
                        class="infraText form-control"
@@ -257,7 +257,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
                            onkeypress="return infraMascaraCPF(this,event);" maxlength="14"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     <button type="button" accesskey="V" style="margin-left: 5px"
-                            id="btnValidar" onclick="buscarCpf()" class="infraButton">
+                            id="btnValidarCPF" onclick="buscarCpf()" class="infraButton">
                         <span class="infraTeclaAtalho">V</span>alidar CPF
                     </button>
                 </div>
@@ -281,7 +281,7 @@ $strLinkEdicaHash = PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstan
                            onkeypress="return infraMascaraTexto(this,event,250);" maxlength="10"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     <button type="button" accesskey="V" style="margin-left: 5px"
-                            id="btnValidar" onclick="validarNumeroSEI();" class="infraButton">
+                            id="btnValidarNumSEI" onclick="validarNumeroSEI();" class="infraButton">
                         <span class="infraTeclaAtalho">V</span>alidar
                     </button>
                 </div>

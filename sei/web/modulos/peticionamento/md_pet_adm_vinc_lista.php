@@ -446,7 +446,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
             <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 mb-3">
                 <div class="form-group">
-                    <label id="lblRazaoSocial" for="txtRazaoSocial" class="infraLabelOpcional"><?= $strColuna20 ?>:</label>
+                    <label for="txtRazaoSocial" class="infraLabelOpcional"><?= $strColuna20 ?>:</label>
                     <input type="text" id="txtRazaoSocial" name="txtRazaoSocial" class="infraText form-control"
                         value="<?= PaginaSEI::tratarHTML($strRazaoSocial) ?>" maxlength="100"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>

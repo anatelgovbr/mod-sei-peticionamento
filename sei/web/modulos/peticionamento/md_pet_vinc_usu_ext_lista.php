@@ -645,7 +645,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             maxlength="100"
                             tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
 
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg" id="imgDt"
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/calendario.svg" id="imgDtInicio"
                             title="Selecionar Data"
                             alt="Selecionar Data" class="infraImg"
                             onclick="infraCalendario('txtPeriodoInicio',this,false,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>
@@ -668,7 +668,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             onkeypress="return infraMascaraData(this, event);"
                             maxlength="100"
                             tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
-                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg" id="imgDt"
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/calendario.svg" id="imgDtFim"
                             title="Selecionar Data"
                             alt="Selecionar Data" class="infraImg"
                             onclick="infraCalendario('txtPeriodoFim',this,false,'<?= InfraData::getStrDataAtual() . ' 00:00' ?>');"/>

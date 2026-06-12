@@ -79,15 +79,16 @@
             <label class="infraLabelObrigatorio" for="slUf">
                 UF:
             </label>
-            <select class="infraSelect blocInformacaoPj form-select" id="slUf" name="slUf"
+            <?php $slUfLabel = 'slUf'; ?>
+            <select class="infraSelect blocInformacaoPj form-select" id="<?php echo $slUfLabel; ?>" name="<?php echo $slUfLabel; ?>"
                 <?php echo !is_null($readOnly) ? 'disabled="disabled"' : null?>
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                 <?php echo $slUf;?>
             </select>
             <?php if(!is_null($readOnly)){?>
                 <input type="hidden"
-                       name="slUf"
-                       id="slUf"
+                       name="<?php echo $slUfLabel; ?>"
+                       id="<?php echo $slUfLabel; ?>"
                        value="<?php echo $arrContatoDTO->getStrSiglaUf()?>"/>
             <?php }?>
             </div>

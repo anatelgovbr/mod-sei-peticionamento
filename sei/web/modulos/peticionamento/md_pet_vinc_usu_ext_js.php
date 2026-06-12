@@ -948,13 +948,15 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
     function validarTodosCamposContato() {
         var campos = document.getElementsByClassName("blocInformacaoPj");
+        var camposVazios = [];
+
         for (var i = 0; i < campos.length; i++) {
             if (campos[i].value == '' && campos[i].id != 'txtComplementoEndereco') {
-                return false;
+                camposVazios.push(campos[i].id);
             }
         }
 
-        return true;
+        return camposVazios;
     }
 
     function controlarMascaraCep(obj) {
@@ -1048,8 +1050,29 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             }
         } else {
 
-            if (!validarTodosCamposContato()) {
-                alert('Dados Incompletos na Receita Federal!');
+            var camposContatoVazios = validarTodosCamposContato();
+            if (camposContatoVazios.length > 0) {
+                var nomesCamposContato = {
+                    'slTipoInteressado': 'Tipo de Interessado',
+                    'txtRazaoSocial': 'Razão Social',
+                    'txtLogradouro': 'Endereço',
+                    'txtBairro': 'Bairro',
+                    'slUf': 'UF',
+                    'selCidade': 'Cidade',
+                    'txtNumeroCEP': 'CEP',
+                    'txtNumeroEndereco': 'Número',
+                    'txtEmail': 'E-mail',
+                    'txtTelefoneComercial': 'Telefone'
+                };
+
+                var camposPreFormatado = '';
+                for (var i = 0; i < camposContatoVazios.length; i++) {
+                    var idCampo = camposContatoVazios[i];
+                    var nomeCampo = nomesCamposContato[idCampo] ? nomesCamposContato[idCampo] : idCampo;
+                    camposPreFormatado += ' - ' + nomeCampo + '\n';
+                }
+
+                alert('Dados da Pessoa Jurídica incompletos!\n\nCampos pendentes:\n' + camposPreFormatado);
                 return false;
             }
         }

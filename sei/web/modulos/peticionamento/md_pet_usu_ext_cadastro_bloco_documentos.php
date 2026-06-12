@@ -1,4 +1,4 @@
-<?
+<?php
 
     /**
      * ANATEL
@@ -94,7 +94,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                     <div class="form-group">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Tipo de Documento: <?= tooltipAjuda($strMsgTooltipTipoDocumentoPrincipal) ?>
                         </label><br/>
                         <select class="infraSelect form-select" id="tipoDocumentoPrincipal" disabled>
@@ -104,7 +104,7 @@
                 </div>
                 <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
                     <div class="form-group">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
                         </label><br/>
                         <input type="text" name="complementoPrincipal" class="form-control infraText" id="complementoPrincipal" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -118,7 +118,7 @@
 				
 				        <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
                             </label><br/>
                             <select class="infraSelect form-select" id="nivelAcesso1" name="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) ? 'disabled' : '' ?>>
@@ -137,7 +137,7 @@
 				
 				        <? elseif ($isNivelAcessoPadrao == 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                             </label><br/>
                             <select class="infraSelect form-select" disabled tabindex="-1">
@@ -153,7 +153,7 @@
                     <div id="divhipoteseLegal1" class="form-group mt-3" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
 				        <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                             </label><br/>
                             <select class="infraSelect form-select" id="hipoteseLegal1" name="hipoteseLegal1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"  <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1 ? 'disabled' : '' ?>>
@@ -171,7 +171,7 @@
 				
 				        <? elseif ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                             </label><br/>
                             <select class="infraSelect form-select" disabled tabindex="-1">
@@ -187,7 +187,7 @@
             <div class="row mt-3">
                 <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                     <div class="form-group">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Formato: <?= tooltipAjuda($strMsgTooltipFormato) ?>
                         </label><br/>
                         <div class="form-check form-check-inline mr-1">
@@ -254,7 +254,7 @@
 
                         <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
                             </label><br/>
                             <select name="nivelAcesso1" class="infraSelect form-select" id="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) ? 'disabled' : '' ?>>
@@ -273,7 +273,7 @@
 
                         <? elseif ($isNivelAcessoPadrao == 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                             </label><br/>
                             <select class="infraSelect form-select" disabled tabindex="-1">
@@ -290,7 +290,7 @@
 
                         <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                             </label><br/>
                             <select class="infraSelect form-select" id="hipoteseLegal1" name="hipoteseLegal1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"  <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1 ? 'disabled' : '' ?>>
@@ -308,7 +308,7 @@
 
                         <? elseif ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                             </label><br/>
                             <select class="infraSelect form-select" name="hipoteseLegal1" disabled tabindex="-1">
@@ -354,7 +354,7 @@
 					
 					    <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
                             </label><br/>
                             <select name="nivelAcesso1" class="infraSelect form-select" id="nivelAcesso1" onchange="selectNivelAcesso('nivelAcesso1', 'hipoteseLegal1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) ? 'disabled' : '' ?>>
@@ -373,7 +373,7 @@
 					
 					    <? elseif ($isNivelAcessoPadrao == 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                             </label><br/>
                             <select class="infraSelect form-select" disabled tabindex="-1">
@@ -390,7 +390,7 @@
 					
 					    <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                             </label><br/>
                             <select class="infraSelect form-select" id="hipoteseLegal1" name="hipoteseLegal1" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"  <?= !empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1 ? 'disabled' : '' ?>>
@@ -408,7 +408,7 @@
 					
 					    <? elseif ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1"): ?>
 
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                             </label><br/>
                             <select class="infraSelect form-select" name="hipoteseLegal1" disabled tabindex="-1">
@@ -500,7 +500,7 @@
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                 <div class="form-group">
 
-                    <label id="lblPublico" class="infraLabelObrigatorio">
+                    <label class="infraLabelObrigatorio">
                         Tipo de Documento: <?= tooltipAjuda($strMsgTooltipTipoDocumento) ?>
                     </label><br/>
 
@@ -529,7 +529,7 @@
             </div>
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
                 <div class="form-group">
-                    <label id="lblPublico" class="infraLabelObrigatorio">
+                    <label class="infraLabelObrigatorio">
                         Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
                     </label><br/>
                     <input type="text" name="complementoEssencial" class="form-control infraText" id="complementoEssencial" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -541,14 +541,14 @@
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                 <div class="form-group mt-3">
                     <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
                         </label><br/>
                         <select name="nivelAcesso2" class="infraSelect form-select" id="nivelAcesso2" onchange="selectNivelAcesso('nivelAcesso2', 'hipoteseLegal2')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <?= $strItensSelNivelAcesso ?>
                         </select>
                     <? else: ?>
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                         </label><br/>
                         <select class="infraSelect form-select" disabled tabindex="-1">
@@ -563,7 +563,7 @@
 
                     <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
 
-                        <label class="infraLabelObrigatorio" id="lblPublico">
+                        <label class="infraLabelObrigatorio" for="hipoteseLegal2">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                         </label><br/>
                         <select name="hipoteseLegal2" class="infraSelect form-select" id="hipoteseLegal2" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -579,7 +579,7 @@
 
                     <? } else if ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") { ?>
 
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                         </label><br/>
                         <select class="form-select infraSelect" disabled tabindex="-1">
@@ -596,7 +596,7 @@
         <div class="row mt-3">
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                 <div class="form-group">
-                    <label id="lblPublico" class="infraLabelObrigatorio">
+                    <label class="infraLabelObrigatorio">
                         Formato: <?= tooltipAjuda($strMsgTooltipFormato) ?>
                     </label><br/>
                     <div class="form-check form-check-inline mr-1">
@@ -710,7 +710,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                 <div class="form-group">
-                    <label id="lblPublico" class="infraLabelObrigatorio">
+                    <label class="infraLabelObrigatorio">
                         Tipo de Documento: <?= tooltipAjuda($strMsgTooltipTipoDocumento) ?>
                     </label><br/>
                     <select name="tipoDocumentoComplementar" class="infraSelect form-select" id="tipoDocumentoComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -735,7 +735,7 @@
 
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
                 <div class="form-group">
-                    <label id="lblPublico" class="infraLabelObrigatorio">
+                    <label class="infraLabelObrigatorio">
                         Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
                     </label><br/>
                     <input type="text" name="complementoComplementar" class="form-control infraText" id="complementoComplementar" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -748,7 +748,7 @@
                 <div class="form-group mt-3">
                     <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
                         <div>
-                            <label id="lblPublico" class="infraLabelObrigatorio">
+                            <label class="infraLabelObrigatorio">
                                 Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
                             </label><br/>
                             <select class="infraSelect form-select" id="nivelAcesso3" name="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -756,7 +756,7 @@
                             </select>
                         </div>
                     <? else: ?>
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
                         </label><br/>
                         <select class="infraSelect form-select" disabled tabindex="-1">
@@ -771,7 +771,7 @@
 
                     <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
 
-                        <label class="infraLabelObrigatorio" id="lblPublico">
+                        <label class="infraLabelObrigatorio">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
                         </label><br/>
                         <select name="hipoteseLegal3" class="infraSelect form-select" id="hipoteseLegal3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -787,7 +787,7 @@
 
                     <? } else if ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") { ?>
 
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
                         </label><br/>
                         <select class="form-select infraSelect" disabled tabindex="-1">
@@ -804,7 +804,7 @@
         <div class="row mt-3">
             <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
                 <div class="form-group">
-                    <label id="lblPublico" class="infraLabelObrigatorio">
+                    <label class="infraLabelObrigatorio">
                         Formato:
                         <?= tooltipAjuda($strMsgTooltipFormato) ?>
                     </label><br/>

@@ -23,7 +23,7 @@
     button{margin-left: 5px;}
     .infraImgModulo{width: 20px; height: 20px;}
     /* .row div{padding-top: 10px;} */
-    #btnAdicionarDocumento{margin-top: 38px;}
+    [id^="btnAdicionarDocumento"]{margin-top: 38px;}
     .infraLabelRadio{top: 10px}
     fieldset .infraCheckboxDiv, fieldset .infraRadioDiv {
         margin-left: 0em;

@@ -59,7 +59,6 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     <input type="hidden" name="hdnTbDocumento" value="" id="hdnTbDocumento"/>
     <input type="hidden" value="0" id="hdnIdDocumento"/>
     <input type="hidden" name="hdnIdProcedimento" id="hdnIdProcedimento" value="<?= $idProcedimento ?>"/>
-    <input type="hidden" name="hdnIdProcedimento" id="hdnIdProcedimento" value="<?= $idProcedimento ?>"/>
     <input type="hidden" name="hdnIdMdPetIntimacao" id="hdnIdMdPetIntimacao" value="<?= $idMdPetIntimacao ?>"/>
     <input type="hidden" name="hdnIdTipoProcedimento" id="hdnIdTipoProcedimento" value="<?= $idTipoProcedimento ?>"/>
     <input type="hidden" name="hdnIdMdPetIntAceite" id="hdnIdMdPetIntAceite" value="<?= $idMdPetIntAceite ?>"/>

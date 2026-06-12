@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -811,7 +811,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                         onchange="changeUnidade()" value="U"
                                                                         class="infraRadio"
                                                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <label id="lblUnidadeUnica" name="lblUnidadeUnica" for="rdUnidadeUnica"
+                                <label name="lblUnidadeUnica" for="rdUnidadeUnica"
                                     class="infraLabelRadio">Unidade Única <img align="top"
                                                                                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                                                                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha para a abertura do Processo Novo, sendo sempre aberto na Unidade pré definida aqui.', 'Ajuda') ?>
@@ -928,8 +928,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     </div>
                                     
                                     <!-- Tabela Múltiplas Unidades -->
-
-                                    <!-- echo var_dump($arrObjUnidadesMultiplas); ?> -->
                                      
                                     <div class="row">
                                         <div class="col-sm-12 col-md-12 col-lg-12">
@@ -1099,7 +1097,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     name="indicacaoInteressado[]" class="infraRadio"
                                     value="1" <?php echo $sinIndIntUsExt ?>
                                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <label for="rdUsuExterno" id="lblUsuExterno" class="infraLabelRadio">Próprio Usuário Externo
+                                <label for="rdUsuExterno" class="infraLabelRadio">Próprio Usuário Externo
                                     <img
                                             align="top" class="infraImg"
                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
@@ -1178,7 +1176,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                                 class="infraRadio"
                                                                 onclick="changeNivelAcesso();" value="2"
                                                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
+                                <label name="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
                                     definido <img align="top" class="infraImg"
                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha do Nível de Acesso para os Documentos, sendo sempre adicionados com o Nível de Acesso pré definido aqui.', 'Ajuda') ?>
@@ -1416,7 +1414,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <input type="hidden" id="hdnUnidadesSelecionadas" name="hdnUnidadesSelecionadas" value=""/>
     <input type="hidden" id="hdnTodasUnidades" name="hdnTodasUnidades"
            value='<?= json_encode($arrObjUnidadeDTOFormatado); ?>'/>
-    <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value=""/>
     <input type="hidden" id="hdnSerie" name="hdnSerie" value="<?= $_POST['hdnSerie'] ?>"/>
     <input type="hidden" id="hdnIdTipoDocumento" name="hdnIdTipoDocumento" value="<?= $_POST['hdnIdTipoDocumento'] ?>"/>
     <input type="hidden" id="hdnIdIndisponibilidadePeticionamento" name="hdnIdIndisponibilidadePeticionamento"

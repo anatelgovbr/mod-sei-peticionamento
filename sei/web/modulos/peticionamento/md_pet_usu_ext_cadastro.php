@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -145,7 +145,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
             <div class="row mt-3" style="<?= $displayMode ?>">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="form-group">
-                        <label id="lblPublico" style="<?= $selectOrgaoHidden ? 'display:none' : '' ?>" class="infraLabelObrigatorio">
+                        <label style="<?= $selectOrgaoHidden ? 'display:none' : '' ?>" class="infraLabelObrigatorio">
                             Órgão:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listados os Órgãos em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo o Órgão no qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label>
@@ -174,9 +174,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
             <div class="row mt-3">
                 <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2" style="<?= $selectUfHidden ? 'display:none' : '' ?>" id="ufHidden">
                     <div class="form-group">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             UF:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possí­vel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
 
                         <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >
@@ -195,7 +195,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
                 <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4" style="<?= $selectCidadeHidden ? 'display:none' : '' ?>" id="cidadeHidden">
                     <div class="form-group">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Cidade:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as Cidades em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a Cidade na qual deseja que este Processo seja aberto.", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
@@ -227,9 +227,9 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                 <? if ($objTipoProcDTO->getStrSinIIProprioUsuarioExterno() == 'S') { ?>
 
                     <!--  CASO 1 -->
-                    <div class="form-group infraDivRadio" id="divOptPublico">
-		                <span id="spnPublico0">
-			                <label id="lblPublico" class="infraLabelObrigatorio">
+                    <div class="form-group infraDivRadio">
+		                <span>
+			                <label class="infraLabelObrigatorio">
                                 Interessado:
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoProprioUsuarioExterno, 'Ajuda') ?> alt="Ajuda" class="infraImg"/>
                             </label>
@@ -241,7 +241,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 
                     <!--  CASO 2 -->
                     <div class="form-group" aria-checked="true">
-                        <label id="lblPublico" class="infraLabelObrigatorio">
+                        <label class="infraLabelObrigatorio">
                             Interessados:
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoInformandoCPFeCNPJ, 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
@@ -278,7 +278,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-lx-12" id="divSel0">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-lx-12">
                             <div class="form-group">
                                 <table id="tbInteressadosIndicados" class="infraTable" width="100%" style="margin-top: 0px" summary="Lista de Interessados">
                                     <tr>
@@ -312,11 +312,11 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                 ?>
                     <!--  CASO 3 -->
                     <div class="row">
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-lx-12" id="divSel0">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-lx-12">
                             <div class="form-group">
-                                <div id="divOptPublico" class="infraDivRadio">
-                                    <span id="spnPublico0">
-                                        <label id="lblPublico" class="infraLabelObrigatorio">
+                                <div class="infraDivRadio">
+                                    <span>
+                                        <label class="infraLabelObrigatorio">
                                             Interessado:
                                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoDigitadoNomeExistente, 'Ajuda') ?> alt="Ajuda" class="infraImg"/>
                                         </label><br/>

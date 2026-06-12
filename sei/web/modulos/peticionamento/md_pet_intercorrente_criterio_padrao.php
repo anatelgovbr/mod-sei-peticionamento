@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -180,7 +180,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 alt="Remover Tipo de Processo"
                                 title="Remover Tipo de Processo"
                                 class="infraImginfraImgModulo"/>
-                            <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                            <img id="imgAjudaPeticionamentoIntercorrenteTipoProcesso" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                 onmouseover="return infraTooltipMostrar('Apenas após a parametrização do Intercorrente Padrão é que os Usuários Externos passarão a visualizar o menu de Peticionamento Intercorrente. \n \n A abertura de Processo Novo Relacionado ao processo de fato indicado pelo Usuário Externo ocorrerá quando o processo indicado corresponder a: 1) Tipo de Processo sem parametrização de Critério para Intercorrente; 2) Processo Sobrestado; 3) Processo Bloqueado; ou 4) Quando for processo Sigiloso e tiver marcada a opção &ldquo;Não permitir Peticionamento Intercorrente Direto no Processo Indicado&rdquo;  nesta tela de Administração. \n \n - Somente no cenário do item 1 acima a forma de indicação de Nível de Acesso dos Documentos pelo Usuário Externo será a parametrizada para Intercorrente Padrão. \n - Em todos os cenários indicados acima somente ocorrerá a abertura de Processo Novo Relacionado utilizando o Tipo de Processo parametrizado para Intercorrente Padrão quando o Tipo de Processo do processo indicado estiver desativado ou quando a unidade na qual ocorrerá o peticionamento não tiver permissão de uso do Tipo de Processo do processo indicado.', 'Ajuda');"
                                 onmouseout="return infraTooltipOcultar();"
                                 alt="Ajuda" class="infraImgModulo"/>
@@ -205,7 +205,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 </div>
                                 <div class="infraDivRadio">
                                     <input <?= $sinNAPadrao ?> type="radio" name="rdNivelAcesso[]" id="rdPadrao"onclick="changeNivelAcesso();" value="2" class="infraRadio">
-                                    <label name="lblPadrao" id="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré-definido</label>
+                                    <label name="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré-definido</label>
                                 </div>
                             </div>
 
@@ -234,7 +234,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div class="col-12">
                     <fieldset class="infraFieldset form-control">
                         <legend class="infraLegend">Exibir menu Peticionamento Intercorrente
-                            <img id="imgAjuda2"
+                            <img id="imgAjudaPeticionamentoIntercorrente" 
                                  src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
                                  name="ajuda"
                                  onmouseover="return infraTooltipMostrar('Opção para tornar visível ou não o menu de Peticionamento > Intercorrente para os Usuários Externos no Acesso Externo do SEI.', 'Ajuda');"
@@ -263,7 +263,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <div class="infraDivRadio">
                                 <input <?php echo $sinIntercorrenteSigilosoSim; ?> type="radio" name="rdSinPeticionarProcessoSigiloso[]" id="rdSinIntercorrenteSigilosoSim" value="S" class="infraRadio">
                                 <label for="rdSinIntercorrenteSigilosoSim" id="lblSinIntercorrenteSigilosoSim" class="infraLabelRadio">Permitir Peticionamento Intercorrente Direto no Processo Indicado</label>
-                                <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                <img id="imgAjudaIntercorrenteSigilosoSim" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                      onmouseover="return infraTooltipMostrar('Selecione esta opção para permitir que o Usuário Externo realize o Peticionamento Intercorrente diretamente no Processo Indicado, mesmo que este tenha o Nível de Acesso Sigiloso (padrão).', 'Ajuda');"
                                      onmouseout="return infraTooltipOcultar();"
                                      alt="Ajuda" class="infraImgModulo ml-1"/>
@@ -272,7 +272,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <div class="infraDivRadio">
                                 <input <?php echo $sinIntercorrenteSigilosoNao; ?> type="radio" name="rdSinPeticionarProcessoSigiloso[]" id="rdSinIntercorrenteSigilosoNao" value="N" class="infraRadio">
                                 <label name="rdSinIntercorrenteSigilosoNao" id="lblSinIntercorrenteSigilosoNao" for="rdSinIntercorrenteSigilosoNao" class="infraLabelRadio">Não permitir Peticionamento Intercorrente Direto no Processo Indicado</label>
-                                <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
+                                <img id="imgAjudaIntercorrenteSigilosoNao" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                                      onmouseover="return infraTooltipMostrar('Selecione esta opção para não permitir que o Usuário Externo realize o Peticionamento Intercorrente diretamente no Processo Indicado quando este tenha o Nível de Acesso Sigiloso, forçando a abertura de Processo Novo Relacionado ao ao Processo Indicado.', 'Ajuda');"
                                      onmouseout="return infraTooltipOcultar();"
                                      alt="Ajuda" class="infraImgModulo ml-1"/>

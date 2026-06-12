@@ -17,7 +17,7 @@
         border: none !important;
     }
 
-    #lblPublico img[name=ajuda] {
+    [id^="lblPublico"] img[name=ajuda] {
         height: 20px;
         width: 20px;
         margin-bottom: -4px;

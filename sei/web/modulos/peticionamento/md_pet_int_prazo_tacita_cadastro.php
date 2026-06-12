@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -353,7 +353,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <label id="lblNumPrazo" for="txtNumPrazo" accesskey="" class="infraLabelObrigatorio">Prazo em Dias:</label>
                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                     id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O Prazo para Intimação Tácita é aquele que, a partir da data de expedição, caso o Destinatário não consulte os documentos diretamente no sistema, a intimação será considerada automaticamente cumprida por Decurso do Prazo Tácito.\n\n Em geral, recomenda-se utilizar 10 dias, tendo como parâmetro o art. 5º, § 3º, da Lei nº 11.419/2006.\n\n ATENÇÃO: Alteração nesse prazo afetará apenas novas intimações, geradas depois da alteração.', 'Ajuda') ?>
+                     id="imgAjudaPrazo" <?= PaginaSEI::montarTitleTooltip('O Prazo para Intimação Tácita é aquele que, a partir da data de expedição, caso o Destinatário não consulte os documentos diretamente no sistema, a intimação será considerada automaticamente cumprida por Decurso do Prazo Tácito.\n\n Em geral, recomenda-se utilizar 10 dias, tendo como parâmetro o art. 5º, § 3º, da Lei nº 11.419/2006.\n\n ATENÇÃO: Alteração nesse prazo afetará apenas novas intimações, geradas depois da alteração.', 'Ajuda') ?>
                      class="infraImgModulo"/>
                 <input type="text" id="txtNumPrazo" name="txtNumPrazo"
                        onkeypress="return infraMascaraNumero(this, event)"
@@ -373,7 +373,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <div class="form-group">
                             <label id="lbTxtNumPrazoCustomizado" for="txtNumPrazoCustomizado" accesskey="" class="infraLabelObrigatorio">Prazo customizado:</label>
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                                 id="imgAjuda" <?= PaginaSEI::montarTitleTooltip('O Prazo Customizado será utilizado nos Tipos de Processos específicos que forem listados abaixo. \n\nApenas para órgãos do Poder Executivo que trabalham com processo administrativo fiscal recomenda-se utilizar 15 dias neste campo, em conformidade com o art. 23, § 2º, inciso III, alínea "a", do Decreto nº 70.235/1972. \n\nCom isso, inclua apenas os Tipos de Processos específicos que sejam afetos a processo administrativo fiscal para que somente nestes processos a Intimação Eletrônica seja gerada com o Prazo Tácito Customizado. \n\nATENÇÃO: Alteração nesse prazo afetará apenas novas intimações, geradas depois da alteração.', 'Ajuda') ?>
+                                 id="imgAjudaPrazoCustomizado" <?= PaginaSEI::montarTitleTooltip('O Prazo Customizado será utilizado nos Tipos de Processos específicos que forem listados abaixo. \n\nApenas para órgãos do Poder Executivo que trabalham com processo administrativo fiscal recomenda-se utilizar 15 dias neste campo, em conformidade com o art. 23, § 2º, inciso III, alínea "a", do Decreto nº 70.235/1972. \n\nCom isso, inclua apenas os Tipos de Processos específicos que sejam afetos a processo administrativo fiscal para que somente nestes processos a Intimação Eletrônica seja gerada com o Prazo Tácito Customizado. \n\nATENÇÃO: Alteração nesse prazo afetará apenas novas intimações, geradas depois da alteração.', 'Ajuda') ?>
                                  class="infraImgModulo"/>
                             <input type="text" id="txtNumPrazoCustomizado" name="txtNumPrazoCustomizado"
                                    onkeypress="return infraMascaraNumero(this, event)"

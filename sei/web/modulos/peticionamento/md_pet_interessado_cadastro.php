@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -509,18 +509,18 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
                 </div>
 
                 <?php if ($_POST['hdnIdContextoContato'] == '') { ?>
-                    <div id="pjVinculada" style="display: none;" class="row">
+                    <div id="pjVinculadaPJ" style="display: none;" class="row">
                         <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
-                            <label id="lblPjVinculada" class="infraLabelObrigatorio">Razão Social da
+                            <label id="lblPjVinculadaPJ" class="infraLabelObrigatorio">Razão Social da
                                 Pessoa
                                 Jurídica vinculada:<br/> </label>
                             <input type="text" class="infraText form-control"
                                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                    onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                                   name="txtPjVinculada" id="txtPjVinculada"
+                                   name="txtPjVinculada" id="txtPjVinculadaPJ"
                                    autocomplete="off" style="display: none;"/>
 
-                            <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato"
+                            <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContatoPJ"
                                    value="<?php echo $_POST['hdnIdContextoContato']; ?>"/>
                         </div>
                     </div>

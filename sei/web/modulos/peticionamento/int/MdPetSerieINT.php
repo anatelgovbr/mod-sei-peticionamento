@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 *
 * 19/04/2016 - criado por jaqueline.mendes - CAST
@@ -12,6 +12,8 @@ class MdPetSerieINT extends SerieINT {
 
   public static function autoCompletarSeries( $strPalavrasPesquisa, $tipoDoc ){
       	
+    $aplicalidade = '';
+
   	$objSerieDTO = new SerieDTO();
   	$objSerieDTO->retNumIdSerie();
   	$objSerieDTO->retStrNome();

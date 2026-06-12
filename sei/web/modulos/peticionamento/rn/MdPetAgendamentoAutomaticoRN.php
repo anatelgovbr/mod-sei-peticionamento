@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -878,21 +878,21 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 					    $vinculos = $this->extrairVinculos($arrObjMdPetVincRepresentantDTO, $cpf);
 				    
 					    // 3.1. OUTORGANTE - Suspende procurações emitidas pela PF (Doc e E-mail)
-					    $outorgante = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgante'], true, []);
+					    $outorgante = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgante'], [], true);
 					    if(!empty($outorgante)){
 						    $situacao = 'susp_outorgant';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgante;
 					    }
 					
 					    // 3.2. OUTORGADO - Suspende procurações recebidas de PF, PJ e Vinculações à Pessoa Jurídica (Doc e E-mail)
-					    $outorgado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgado'], true, []);
+					    $outorgado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgado'], [], true);
 					    if(!empty($outorgado)){
 						    $situacao = 'susp_outorgado';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgado;
 					    }
 					    
 					    // 3.3. AUTORREPRESENTADO - Suspende Autorrepresentação (Doc e E-mail)
-					    $autorrepresentado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['autorrepresentado'], true, []);
+					    $autorrepresentado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['autorrepresentado'], [], true);
 					    if(!empty($autorrepresentado)){
 						    $situacao = 'suspenso';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $autorrepresentado;

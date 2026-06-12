@@ -26,39 +26,21 @@
             </div>
         </div>
     <?php } ?>
-    <?php if ($contador == 2) { ?>
-        <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
-                <div class="form-group">
-                    <label class="infraLabelObrigatorio" for="selTipoResposta">Tipo de Resposta: <img
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoResposta, 'Ajuda') ?>
-                                alt="Ajuda" class="infraImgModulo"/></label>
-                    <select class="infraSelect form-control" name="selTipoResposta" id="selTipoResposta"
-                            onchange="exibirFieldsetDocumentos(this)"
-                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" autofocus>
-                    </select>
-                </div>
+    <div class="row mb-2">
+        <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
+            <div class="form-group">
+                <label class="infraLabelObrigatorio" for="selTipoResposta">Tipo de Resposta: <img
+                            src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
+                            name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoResposta, 'Ajuda') ?>
+                            alt="Ajuda" class="infraImgModulo"/></label>
+                <select class="infraSelect form-select" name="selTipoResposta" id="selTipoResposta"
+                        onchange="exibirFieldsetDocumentos(this)"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" autofocus>
+                    <?php if ($contador != 2) { echo $strSelectTipoResposta; }  ?>
+                </select>
             </div>
         </div>
-    <?php } ?>
-    <?php if ($contador != 2) { ?>
-        <div class="row mb-2">
-            <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
-                <div class="form-group">
-                    <label class="infraLabelObrigatorio" for="selTipoResposta">Tipo de Resposta: <img
-                                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                                name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoResposta, 'Ajuda') ?>
-                                alt="Ajuda" class="infraImgModulo"/></label>
-                    <select class="infraSelect form-select" name="selTipoResposta" id="selTipoResposta"
-                            onchange="exibirFieldsetDocumentos(this)"
-                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" autofocus>
-                        <?= $strSelectTipoResposta ?>
-                    </select>
-                </div>
-            </div>
-        </div>
-    <?php } ?>
+    </div>
 </fieldset>
 <br/>
 <script>

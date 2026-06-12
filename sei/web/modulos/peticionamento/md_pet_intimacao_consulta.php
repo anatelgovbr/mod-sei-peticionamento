@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -142,7 +142,7 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
 
 <?php PaginaSEI::getInstance()->abrirAreaDados(); ?>
 
-    <fieldset id="fldDestinatarios" class="infraFieldset p-3 mb-3">
+    <fieldset class="fldDestinatarios infraFieldset p-3 mb-3">
         <legend class="infraLegend" class="infraLabelObrigatorio" > Documentos da Intimação 
             <img style="margin-top:1px; margin-bottom: -3px" src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
                 id="imgAjudaAnexos" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até ' . $numDiasPrazoTacito . ' dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.', 'Ajuda') ?> />
@@ -150,7 +150,7 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         <div class="row mb-3">
             <div class="col-sm-12 col-md-8 col-lg-7">
                 <label class="infraLabelOpcional">Documento Principal da Intimação: <?= DocumentoINT::formatarIdentificacao($objDocumentoDTO) . ' (' .$strProtocoloDocumentoFormatado . ')'; ?></label>
-                <div id="divOptAno" class="infraDivCheckbox">
+                <div class="infraDivCheckbox">
                     <input type="checkbox" <?= ($dadosIntimacao['documento_principal']) ? 'checked="checked"' : ''; ?> id="optPossuiAnexo" disabled="disabled" class="infraCheckbox" />
                     <label id="lblPossuiAnexo" for="optPossuiAnexo" accesskey="" class="infraLabelOpcional">Intimação possui Anexos </label>
                 </div>
@@ -165,18 +165,18 @@ PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         </div>
     </fieldset>
 
-    <fieldset id="fldDestinatarios" class="infraFieldset p-3 mb-3">
+    <fieldset class="fldDestinatarios infraFieldset p-3 mb-3">
         <legend class="infraLegend" class="infraLabelObrigatorio"> Tipo de Acesso Externo </legend>
         <div class="row mb-3">
             <div class="col-sm-12 col-md-8 col-lg-7">
-                <div id="divOptAno" class="infraDivRadio">
+                <div class="infraDivRadio">
                     <input id="lblIntegral" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'I' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
                     <label class="infraLabelOpcional">Integral </label>
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" class="infraImg" name="ajuda"
                         <?= PaginaSEI::montarTitleTooltip('Atenção! Toda Intimação Eletrônica ocorre por meio da funcionalidade de Disponibilização de Acesso Externo do SEI. \n\n Selecionando o Tipo de Acesso Externo Integral, TODOS os Protocolos constantes no processo serão disponibilizados ao Destinatário, independentemente de seus Níveis de Acesso, incluindo Protocolos futuros que forem adicionados ao processo. \n\n Para que não ocorra nulidade da Intimação, o Acesso Externo Integral somente poderá ser cancelado depois de cumprida a Intimação e concluído o Prazo Externo correspondente (se indicado para possível Resposta). Caso posteriormente o Acesso Externo Integral utilizado pela Intimação Eletrônica seja cancelado, ele será automaticamente substituído por um Acesso Externo Parcial abrangendo o Documento Principal e possíveis Anexos da Intimação, além de Documentos peticionados pelo próprio Usuário Externo.','Ajuda') ?> />
                 </div>
 
-                <div id="divOptAno" class="infraDivRadio">
+                <div class="infraDivRadio">
                     <input id="lblParcial" type="radio" <?= $dadosIntimacao['tipo_acesso'] == 'P' ? 'checked="checked"' : '' ?> class="infraRadio" disabled="disabled" />
                     <label class="infraLabelOpcional">Parcial </label>
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" class="infraImg" name="ajuda"

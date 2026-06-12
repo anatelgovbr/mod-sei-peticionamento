@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -247,7 +247,7 @@ $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fe
         <div class="row mb-3">
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <div class="form-group">
-                    <label id="lblCnpj" class="infraLabelObrigatorio">CPF/CNPJ Outorgante:</label><br/>
+                    <label for="txtCnpj" class="infraLabelObrigatorio">CPF/CNPJ Outorgante:</label><br/>
                     <input type="text" id="txtCnpj" name="txtCnpj"
                     class="infraText form-control"
                     disabled="disabled"
@@ -258,7 +258,7 @@ $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fe
             </div>
             <div class="col-sm-12 col-md-7 col-lg-6 col-xl-9">
                 <div class="form-group">
-                    <label id="lblRazaoSocial" class="infraLabelObrigatorio">Nome/Razão Social Outorgante:</label><br/>
+                    <label for="txtRazaoSocial" class="infraLabelObrigatorio">Nome/Razão Social Outorgante:</label><br/>
                     <input type="text" id="txtRazaoSocial" name="txtRazaoSocial"
                     class="infraText form-control"
                     disabled="disabled"
@@ -272,7 +272,7 @@ $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fe
         <div class="row">
             <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
                 <div class="form-group">
-                    <label id="lblCnpj" class="infraLabelObrigatorio">CPF Outorgado:</label><br/>
+                    <label for="txtCpf" class="infraLabelObrigatorio">CPF Outorgado:</label><br/>
                     <input type="text" id="txtCpf" name="txtCpf"
                     class="infraText form-control"
                     disabled="disabled"
@@ -283,7 +283,7 @@ $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fe
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 col-xl-6">
                 <div class="form-group">
-                    <label id="txtRazaoSocial" class="infraLabelObrigatorio">Nome Outorgado:</label><br/>
+                    <label for="txtNome" class="infraLabelObrigatorio">Nome Outorgado:</label><br/>
                     <input type="text" id="txtNome" name="txtNome"
                     disabled="disabled"
                     class="infraText form-control"
@@ -294,7 +294,7 @@ $arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" value="Fe
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 col-xl-3">
                 <div class="form-group">
-                    <label id="txtRazaoSocial" class="infraLabelObrigatorio">Tipo do Vínculo:</label>
+                    <label for="txtTipoVinculo" class="infraLabelObrigatorio">Tipo do Vínculo:</label>
                     <div class="input-group mb-3">
                         <input type="text" id="txtTipoVinculo" name="txtTipoVinculo" disabled="disabled" class="infraText form-control rounded" value="<?= $strTipoRepresentante ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         <div class="input-group-append">

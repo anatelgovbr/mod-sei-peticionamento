@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -1118,7 +1118,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
         }
 
-		public function suspenderVinculacoesConectado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
+		public function suspenderVinculacoesConectado($arrObjMdPetVincRepresentantDTO, $params, $agendamento = false)
 		{
 
 			$arrObjMdPetVincRepresentantProcuradores = [];

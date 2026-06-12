@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * ANATEL - Módulo Peticionamento Eletronico
 *

@@ -52,7 +52,7 @@
 <!-- DIV UNIDADE -->
 <div class="row">
     <div class="<?= $col_pesq ?>">
-        <label id="lblUnidade" name="lblUnidade" for="txtUnidade" class="inputSelect "> Unidades: </label>
+        <label name="lblUnidade" for="txtUnidade" class="inputSelect "> Unidades: </label>
         <input type="text" id="txtUnidade" name="txtUnidade" class="infraText form-control"
                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
     </div>

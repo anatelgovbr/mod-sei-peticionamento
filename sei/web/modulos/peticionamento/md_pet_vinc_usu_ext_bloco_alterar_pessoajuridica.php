@@ -21,7 +21,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
     <div class="row">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
             <div class="form-group mb-3">
-            <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">
+            <label class="infraLabelObrigatorio" for="txtNumeroCnpj">
                 CNPJ:
             </label>
             <input type="text" class="infraText" id="txtNumeroCnpj" name="txtNumeroCnpj" maxlength="18" readonly="readonly"

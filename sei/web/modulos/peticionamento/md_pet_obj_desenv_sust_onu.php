@@ -1,6 +1,6 @@
 <?php SessaoSEIExterna::getInstance()->removerAtributo('METAS_SELECIONADAS'); ?>
 
-<? if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno() ): ?>
+<?php if( PeticionamentoIntegracao::verificaSeModIAVersaoMinima() && PeticionamentoIntegracao::permitirClassificacaoODSUsuarioExterno() ): ?>
 
 <div class="row" id="filset-onu" style="padding-bottom: 15px;">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -29,4 +29,4 @@
 
 </script>
 
-<? endif; ?>
+<?php endif; ?>

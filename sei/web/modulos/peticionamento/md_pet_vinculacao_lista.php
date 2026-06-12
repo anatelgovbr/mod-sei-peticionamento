@@ -255,8 +255,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo,'onload="inicializar();"')
     </div>
     <div class="col-xl-4 col-lg-4 col-md-5 col-sm-6 col-xs-12">
       <div class="form-group">
-      <label id="lblCnpj"
-               for="txtCnpj"
+      <label for="txtCnpj"
                class="infraLabelOpcional">CNPJ:</label>
         <input type="text"
                id="txtCnpj"

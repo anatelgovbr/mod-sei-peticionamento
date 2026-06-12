@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * ANATEL
 *
@@ -34,7 +34,7 @@ try {
         }
         $objHipoteseLegalRN = new HipoteseLegalRN();
         $objHipoteseLegalRN->excluir($arrObjHipoteseLegalDTO);
-        PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+        PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
       }catch(Exception $e){
         PaginaSEI::getInstance()->processarExcecao($e);
       } 
@@ -53,7 +53,7 @@ try {
         }
         $objHipoteseLegalRN = new HipoteseLegalRN();
         $objHipoteseLegalRN->desativar($arrObjHipoteseLegalDTO);
-        PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+        PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
       }catch(Exception $e){
         PaginaSEI::getInstance()->processarExcecao($e);
       } 
@@ -61,7 +61,7 @@ try {
       die;
 
     case 'hipotese_legal_peticionamento_reativar':
-      $strTitulo = 'Reativar Hipóteses Legais';
+      $strTitulo = 'Reativar HipÃ³teses Legais';
       if ($_GET['acao_confirmada']=='sim'){
         try{
           $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
@@ -73,7 +73,7 @@ try {
           }
           $objHipoteseLegalRN = new HipoteseLegalRN();
           $objHipoteseLegalRN->reativar($arrObjHipoteseLegalDTO);
-          PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+          PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
         }catch(Exception $e){
           PaginaSEI::getInstance()->processarExcecao($e);
         } 
@@ -84,7 +84,7 @@ try {
 
 
     case 'md_pet_hipotese_legal_selecionar':
-      $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Hipótese Legal','Selecionar Hipóteses Legais');
+      $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar HipÃ³tese Legal','Selecionar HipÃ³teses Legais');
 
       //Se cadastrou alguem
       if ($_GET['acao_origem']=='hipotese_legal_peticionamento_cadastrar'){
@@ -95,7 +95,7 @@ try {
       break;
 
     default:
-      throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+      throw new InfraException("AÃ§Ã£o '".$_GET['acao']."' nÃ£o reconhecida.");
   }
 
   $arrComandos = array();
@@ -194,11 +194,11 @@ try {
     $strResultado = '';
 
     if ($_GET['acao']!='hipotese_legal_peticionamento_reativar'){
-      $strSumarioTabela = 'Tabela de Hipóteses Legais.';
-      $strCaptionTabela = 'Hipóteses Legais';
+      $strSumarioTabela = 'Tabela de HipÃ³teses Legais.';
+      $strCaptionTabela = 'HipÃ³teses Legais';
     }else{
-      $strSumarioTabela = 'Tabela de Hipóteses Legais Inativas.';
-      $strCaptionTabela = 'Hipóteses Legais Inativas';
+      $strSumarioTabela = 'Tabela de HipÃ³teses Legais Inativas.';
+      $strCaptionTabela = 'HipÃ³teses Legais Inativas';
     }
 
     $strResultado .= '<table width="99%" class="infraTable" summary="'.$strSumarioTabela.'">'."\n";
@@ -207,10 +207,10 @@ try {
     if ($bolCheck) {
       $strResultado .= '<th class="infraTh" width="1%">'.PaginaSEI::getInstance()->getThCheck().'</th>'."\n";
     }
-    $strResultado .= '<th class="infraTh" width="20%">Nível de Restrição de Acesso</th>'."\n";
+    $strResultado .= '<th class="infraTh" width="20%">NÃ­vel de RestriÃ§Ã£o de Acesso</th>'."\n";
     $strResultado .= '<th class="infraTh" width="20%">Nome</th>'."\n";
     $strResultado .= '<th class="infraTh">Base Legal</th>'."\n";
-    $strResultado .= '<th class="infraTh" width="15%">Ações</th>'."\n";
+    $strResultado .= '<th class="infraTh" width="15%">AÃ§Ãµes</th>'."\n";
     $strResultado .= '</tr>'."\n";
     $strCssTr='';
     for($i = 0;$i < $numRegistros; $i++){
@@ -231,11 +231,11 @@ try {
       $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i,$arrObjHipoteseLegalDTO[$i]->getNumIdHipoteseLegal());
 
       if ($bolAcaoConsultar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=hipotese_legal_peticionamento_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_hipotese_legal='.$arrObjHipoteseLegalDTO[$i]->getNumIdHipoteseLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar Hipótese Legal" alt="Consultar Hipótese Legal" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=hipotese_legal_peticionamento_consultar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_hipotese_legal='.$arrObjHipoteseLegalDTO[$i]->getNumIdHipoteseLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/consultar.gif" title="Consultar HipÃ³tese Legal" alt="Consultar HipÃ³tese Legal" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoAlterar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=hipotese_legal_peticionamento_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_hipotese_legal='.$arrObjHipoteseLegalDTO[$i]->getNumIdHipoteseLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/alterar.gif" title="Alterar Hipótese Legal" alt="Alterar Hipótese Legal" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=hipotese_legal_peticionamento_alterar&acao_origem='.$_GET['acao'].'&acao_retorno='.$_GET['acao'].'&id_hipotese_legal='.$arrObjHipoteseLegalDTO[$i]->getNumIdHipoteseLegal())).'" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/alterar.gif" title="Alterar HipÃ³tese Legal" alt="Alterar HipÃ³tese Legal" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir){
@@ -244,16 +244,16 @@ try {
       }
 
       if ($bolAcaoDesativar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/desativar.gif" title="Desativar Hipótese Legal" alt="Desativar Hipótese Legal" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoDesativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/desativar.gif" title="Desativar HipÃ³tese Legal" alt="Desativar HipÃ³tese Legal" class="infraImg" /></a>&nbsp;';
       }
 
       if ($bolAcaoReativar){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/reativar.gif" title="Reativar Hipótese Legal" alt="Reativar Hipótese Legal" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoReativar(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/reativar.gif" title="Reativar HipÃ³tese Legal" alt="Reativar HipÃ³tese Legal" class="infraImg" /></a>&nbsp;';
       }
 
 
       if ($bolAcaoExcluir){
-        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/excluir.gif" title="Excluir Hipótese Legal" alt="Excluir Hipótese Legal" class="infraImg" /></a>&nbsp;';
+        $strResultado .= '<a href="'.PaginaSEI::getInstance()->montarAncora($strId).'" onclick="acaoExcluir(\''.$strId.'\',\''.$strDescricao.'\');" tabindex="'.PaginaSEI::getInstance()->getProxTabTabela().'"><img src="'.PaginaSEI::getInstance()->getDiretorioImagensGlobal().'/excluir.gif" title="Excluir HipÃ³tese Legal" alt="Excluir HipÃ³tese Legal" class="infraImg" /></a>&nbsp;';
       }
 
       $strResultado .= '</td></tr>'."\n";
@@ -296,7 +296,7 @@ function inicializar(){
 
 <? if ($bolAcaoDesativar){ ?>
 function acaoDesativar(id,desc){
-  if (confirm("Confirma desativação da Hipótese Legal \""+desc+"\"?")){
+  if (confirm("Confirma desativaÃ§Ã£o da HipÃ³tese Legal \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmHipoteseLegalLista').action='<?=$strLinkDesativar?>';
     document.getElementById('frmHipoteseLegalLista').submit();
@@ -305,10 +305,10 @@ function acaoDesativar(id,desc){
 
 function acaoDesativacaoMultipla(){
   if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhuma Hipótese Legal selecionada.');
+    alert('Nenhuma HipÃ³tese Legal selecionada.');
     return;
   }
-  if (confirm("Confirma desativação das Hipóteses Legais selecionadas?")){
+  if (confirm("Confirma desativaÃ§Ã£o das HipÃ³teses Legais selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmHipoteseLegalLista').action='<?=$strLinkDesativar?>';
     document.getElementById('frmHipoteseLegalLista').submit();
@@ -318,7 +318,7 @@ function acaoDesativacaoMultipla(){
 
 <? if ($bolAcaoReativar){ ?>
 function acaoReativar(id,desc){
-  if (confirm("Confirma reativação da Hipótese Legal \""+desc+"\"?")){
+  if (confirm("Confirma reativaÃ§Ã£o da HipÃ³tese Legal \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmHipoteseLegalLista').action='<?=$strLinkReativar?>';
     document.getElementById('frmHipoteseLegalLista').submit();
@@ -327,10 +327,10 @@ function acaoReativar(id,desc){
 
 function acaoReativacaoMultipla(){
   if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhuma Hipótese Legal selecionada.');
+    alert('Nenhuma HipÃ³tese Legal selecionada.');
     return;
   }
-  if (confirm("Confirma reativação das Hipóteses Legais selecionadas?")){
+  if (confirm("Confirma reativaÃ§Ã£o das HipÃ³teses Legais selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmHipoteseLegalLista').action='<?=$strLinkReativar?>';
     document.getElementById('frmHipoteseLegalLista').submit();
@@ -340,7 +340,7 @@ function acaoReativacaoMultipla(){
 
 <? if ($bolAcaoExcluir){ ?>
 function acaoExcluir(id,desc){
-  if (confirm("Confirma exclusão da Hipótese Legal \""+desc+"\"?")){
+  if (confirm("Confirma exclusÃ£o da HipÃ³tese Legal \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmHipoteseLegalLista').action='<?=$strLinkExcluir?>';
     document.getElementById('frmHipoteseLegalLista').submit();
@@ -349,10 +349,10 @@ function acaoExcluir(id,desc){
 
 function acaoExclusaoMultipla(){
   if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhuma Hipótese Legal selecionada.');
+    alert('Nenhuma HipÃ³tese Legal selecionada.');
     return;
   }
-  if (confirm("Confirma exclusão das Hipóteses Legais selecionadas?")){
+  if (confirm("Confirma exclusÃ£o das HipÃ³teses Legais selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmHipoteseLegalLista').action='<?=$strLinkExcluir?>';
     document.getElementById('frmHipoteseLegalLista').submit();

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -388,7 +388,7 @@ class MdPetIntegracaoRN extends InfraRN
             $cpfUsuarioLogado       = $this->retornaCpfUsuarioLogado(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 
             if(empty($cpfUsuarioLogado)){
-                $cpfUsuarioLogado = '45921393053';
+                $cpfUsuarioLogado = '45921393053'; // CPF gerado por gerador de número válido
             }
 
             // Inicializa o array que será passado para o WS
@@ -462,6 +462,13 @@ class MdPetIntegracaoRN extends InfraRN
                 $objMdPetSoapClienteRN = new MdPetSoapClienteRN($strUrlWebservice , ['soap_version' => $objMdPetIntegracao->getDblNuVersao()]);
                 $retorno = $objMdPetSoapClienteRN->execOperacao($strMetodoWebservice, $parametro);
 
+                // Previne que caracteres especiais retornados do WS quebrem o XML de resposta para a tela de peticionamento
+                $retorno = preg_replace(
+                    '/&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9A-Fa-f]+;)/',
+                    '&amp;',
+                    $retorno
+                );
+
                 if(isset($retorno['PessoaJuridica'])){
                     
                     $this->atualizaContatoCNPJMedianteConsultaReceitaWSConectado($retorno, $arrSaidaWS);
@@ -494,7 +501,7 @@ class MdPetIntegracaoRN extends InfraRN
             $cpfUsuarioLogado       = $this->retornaCpfUsuarioLogado(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 
             if(empty($cpfUsuarioLogado)){
-                $cpfUsuarioLogado = '45921393053';
+                $cpfUsuarioLogado = $cpf;
             }
 
             // Inicializa o array que será passado para o WS
@@ -634,7 +641,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha controle de expiração de cache não informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinCache())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha controle de expiração de cache inválid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha controle de expiração de cache inválido.');
             }
         }
     }
@@ -645,7 +652,7 @@ class MdPetIntegracaoRN extends InfraRN
             $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Tipo do Logradouro não informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntegracaoDTO->getStrSinTpLogradouro())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Tipo do Logradouro inválid.');
+                $objInfraException->adicionarValidacao('Sinalizador de Marque caso seu Webservice tenha o Tipo do Logradouro inválido.');
             }
         }
     }

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -292,7 +292,7 @@ $title = '';
                             <input type="radio" name="rdoResposta" id="optTipoRespostaFacultativa" <? echo $checked ?>
                                    value="F"
                                    class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <label id="lblAno" for="optTipoRespostaFacultativa" class="infraLabelRadio">Resposta Facultativa</label>
+                            <label id="lblRespostaFacultativa" for="optTipoRespostaFacultativa" class="infraLabelRadio">Resposta Facultativa</label>
                         </div>
                     </div>
                     <div class="row">
@@ -301,7 +301,7 @@ $title = '';
 
                             <input type="radio" name="rdoResposta" id="optTipoRespostaExige" <? echo $checked ?> value="E"
                                    class="infraRadio" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            <label id="lblExige" for="optTipoRespostaExige" class="infraLabelRadio">
+                            <label id="lblExigeResposta" for="optTipoRespostaExige" class="infraLabelRadio">
                                 Exige Resposta (intimação destacará o Tipo de Resposta e Prazo Externo esperado e emitirá
                                 reiterações por e-mail) </label>
                         </div>

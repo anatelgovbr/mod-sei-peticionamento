@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -67,9 +67,9 @@ class MdPetReciboRN extends InfraRN
 
                 // Data Início
                 if ($objDTO->isSetDthInicial()) {
-                    if (strlen($objDTO->getDthInicial()) == '10') {
+                    if (strlen($objDTO->getDthInicial()) == 10) {
                         $objDTO->setDthInicial($objDTO->getDthInicial() . ' 00:00:00');
-                    } elseif (strlen($objDTO->getDthInicial()) == '16') {
+                    } elseif (strlen($objDTO->getDthInicial()) == 16) {
                         $objDTO->setDthInicial($objDTO->getDthInicial() . ':00');
                     }
                     if (!InfraData::validarDataHora($objDTO->getDthInicial())) {
@@ -79,9 +79,9 @@ class MdPetReciboRN extends InfraRN
 
                 // Data Final recebe Inicial se estiver em branco ?????
                 if ($objDTO->isSetDthFinal()) {
-                    if (strlen($objDTO->getDthFinal()) == '10') {
+                    if (strlen($objDTO->getDthFinal()) == 10) {
                         $objDTO->setDthFinal($objDTO->getDthFinal() . ' 23:59:59');
-                    } elseif (strlen($objDTO->getDthFinal()) == '16') {
+                    } elseif (strlen($objDTO->getDthFinal()) == 16) {
                         $objDTO->setDthFinal($objDTO->getDthFinal() . ':59');
                     }
                     if (!InfraData::validarDataHora($objDTO->getDthFinal())) {

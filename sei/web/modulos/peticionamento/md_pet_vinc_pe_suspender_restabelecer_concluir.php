@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
 *
@@ -728,7 +728,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'onload="inicializar();"');
     <input type="hidden" id="hdnCascata" name="hdnCascata" value="N" />
 
     <?
-      //echo var_dump($_GET);
       //PaginaSEI::getInstance()->fecharAreaDados();
       PaginaSEI::getInstance()->montarAreaDebug();
       //PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);

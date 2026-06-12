@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -135,7 +135,7 @@ if ($qtdArrAcoesRemover > 0 || $_POST['hdnAnexos'] != "") {
     ?>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6">
-            <fieldset id="fldPeriodoIndisponibilidade" class="infraFieldset sizeFieldset form-control">
+            <fieldset  class="infraFieldset sizeFieldset form-control">
                 <!--  Data Inicio  -->
                 <legend class="infraLegend">&nbsp;Período de Indisponibilidade&nbsp;</legend>
                 <label class="infraLabel">

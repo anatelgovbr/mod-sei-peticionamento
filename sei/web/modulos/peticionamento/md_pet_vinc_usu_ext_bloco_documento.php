@@ -58,17 +58,18 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
         <div class="row">
             <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
                 <div class="form-group mb-3">
-                    <label class="infraLabelObrigatorio" for="selNivelAcesso">
+                    <?php $selNivelAcessoLabel = 'selNivelAcesso'; ?>
+                    <label class="infraLabelObrigatorio" for="<?php echo $selNivelAcessoLabel; ?>">
                         Nível de Acesso:
                         <img src="<?php echo PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?> alt="Ajuda" class="infraImg"/>
                     </label>
                     <div id="divNivelAcesso"></div>
                     <?php if (!isset($arrHipoteseNivel['nivelAcesso'])) { ?>
-                        <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect form-select" <?php echo $disabledConsultar ?> tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
+                        <select name="<?php echo $selNivelAcessoLabel; ?>" id="<?php echo $selNivelAcessoLabel; ?>" class="infraSelect form-select" <?php echo $disabledConsultar ?> tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                             <?php echo $strSelectNivelAcesso ?>
                         </select>
                     <?php } else { ?>
-                        <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect form-select unclear" <?php echo $disabledConsultar ?> tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" disabled >
+                        <select name="<?php echo $selNivelAcessoLabel; ?>" id="<?php echo $selNivelAcessoLabel; ?>" class="infraSelect form-select unclear" <?php echo $disabledConsultar ?> tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" disabled >
                             <option value="<?= $arrHipoteseNivel['nivelAcesso']['id'] ?>"><?php echo $arrHipoteseNivel['nivelAcesso']['descricao'] ?></option>
                         </select>
                     <?php } ?>
@@ -135,7 +136,7 @@ $disabledConsultar = $stConsultar ? 'disabled="disabled"' : null;
                     </div>
 
                     <div id="divTipoConferenciaBotao">
-                        <button type="button" accesskey="A" class="infraButton mt-4" id="btnAdicionarDocumento" onclick="adicionarDocumento();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                        <button type="button" accesskey="A" class="infraButton mt-4" id="btnAdicionarDocumentoBotao" onclick="adicionarDocumento();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                             <span class="infraTeclaAtalho">A</span>dicionar
                         </button>
                     </div>

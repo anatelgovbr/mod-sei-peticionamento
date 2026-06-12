@@ -2,7 +2,6 @@
     function desvincularProcuracao(link, idTd) {
         $('#tr-' + idTd).css('backgroundColor', '#efff00');
         infraAbrirJanela(link, 'janelaDesvinculo', 700, 220, '', true);
-        return;
     }
 
     function infraMonitorarModal() {
@@ -17,7 +16,7 @@
     }
 
     function inicializar() {
-//Escondendo o Campo data
+        // Escondendo o campo data
         if (document.getElementById('hdnDtInicio').value != "" && document.getElementById('hdnDtFim').value != "") {
             document.getElementById('dtInicio').style.display = "";
             document.getElementById('dtFim').style.display = "";
@@ -70,7 +69,7 @@
         var erro = false;
         var valor = $.trim(objeto.value.replace(/\D/g, ""));
 
-        if (valor.length > 0 || valor.length == 11) {
+        if (valor.length == 11) {
             if (!infraValidarCpf(valor)) {
                 erro = true;
             }

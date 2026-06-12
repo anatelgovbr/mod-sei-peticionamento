@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  *
  * 26/02/2018 - criado por jose.vieira - CAST

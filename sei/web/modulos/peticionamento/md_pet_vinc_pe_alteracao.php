@@ -168,7 +168,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     ?>
     <p id="txtInformativo1">Os dados aqui dispostos dizem respeito ao Responsável Legal pela Pessoa Jurídica indicada, conforme constante no SEI.</p>
 
-    <label id="lblCnpj" for="txtCnpj" class="infraLabelObrigatorio">CNPJ:</label>
+    <label for="txtCnpj" class="infraLabelObrigatorio">CNPJ:</label>
     <input type="text" id="txtCnpj" name="txtCnpj" class="infraText"
            value="" maxlength="100"
            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>

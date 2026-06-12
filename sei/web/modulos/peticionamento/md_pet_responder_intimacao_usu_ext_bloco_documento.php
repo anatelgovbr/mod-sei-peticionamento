@@ -67,7 +67,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                         <?= $strSelectNivelAcesso ?>
                     </select>
                 <?php else: ?>
-                    <label class="infraLabelRadio" id="selNivelAcesso">
+                    <label class="infraLabelRadio" for="selNivelAcesso">
                         <?= $arrHipoteseNivel['nivelAcesso']['descricao'] ?>
                     </label>
                 <?php endif; ?>
@@ -89,7 +89,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                         <?=  $selHipoteseLegal ?>
                     </select>
                 <?php else: ?>
-                    <label class="infraLabelRadio" id="selHipoteseLegal">
+                    <label class="infraLabelRadio" id="selHipoteseLegalPre">
                         <?= $arrHipoteseNivel['hipoteseLegal']['descricao'] ?>
                     </label>
                 <?php endif; ?>
@@ -136,7 +136,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                 </div>
 
                 <div id="divTipoConferenciaBotao">
-                    <button type="button" accesskey="A" class="infraButton" id="btnAdicionarDocumento" onclick="adicionarDocumento();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                    <button type="button" accesskey="A" class="infraButton" id="btnAdicionarDocumentoBotao" onclick="adicionarDocumento();" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                         <span class="infraTeclaAtalho">A</span>dicionar
                     </button>
                 </div>

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  *
  * 19/04/2016 - criado por Lino - GT1 Tecnologia <felipe.silva@gt1tecnologia.com.br>

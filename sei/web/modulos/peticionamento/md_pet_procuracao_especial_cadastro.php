@@ -494,7 +494,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                     onchange="showTable1()" ;
                                     value="Q">
 
-                                <label for="rbAbrangencia1" id="lvbIndeterminado" class="infraLabelRadio">
+                                <label for="rbAbrangencia1" class="infraLabelRadio">
                                     Qualquer Processo em Nome do Outorgante
                                 </label>
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
@@ -509,7 +509,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                     onchange="showTable2()" ;
                                     value="E">
 
-                                <label for="rbAbrangencia" id="lvbIndeterminado" class="infraLabelRadio">
+                                <label for="rbAbrangencia" class="infraLabelRadio">
                                     Processos Específicos
                                 </label>
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"

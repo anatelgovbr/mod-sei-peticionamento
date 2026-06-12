@@ -54,7 +54,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
 <input type="hidden" id="intimacoes" value="<?php echo count($arrIntimacoes) ?>"/>
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-        <fieldset id="fldDestinatarios" class="infraFieldset sizeFieldset form-control">
+        <fieldset class="fldDestinatarios infraFieldset sizeFieldset form-control">
             <legend class="infraLegend" class="infraLabelObrigatorio"> Destinatários</legend>
 
             <!-- Destinatários em Massa START -->
@@ -103,7 +103,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
             <!-- Pessoa Jurídica -->
             <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-7 col-lg-7 col-xl-7">
-                    <label id="lblUsuario" for="txtUsuario" class="infraLabelObrigatorio">Pessoa Jurídica: </label>
+                    <label id="lblUsuarioPJ" for="txtUsuario" class="infraLabelObrigatorio">Pessoa Jurídica: </label>
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/ajuda.svg" name="ajuda"
                          id="imgAjudaUsuario" <?= PaginaSEI::montarTitleTooltip('A pesquisa é realizada somente sobre Pessoas Jurídicas que já tenham vinculado pelo menos o Responsável Legal no âmbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela Razão Social ou CNPJ da Pessoa Jurídica.', 'Ajuda') ?>
                          class="infraImgModulo"/><br>

@@ -10,7 +10,7 @@
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                 <div id="<?php echo $idDiv ?>">
                     <div class="form-group mb-3">
-                        <label class="infraLabelObrigatorio" for="txtNumeroCnpj" id="lblNumeroCnpj">CNPJ:
+                        <label class="infraLabelObrigatorio" for="txtNumeroCnpj">CNPJ:
                             <img style="margin-bottom: -4px;width:20px; height:20px !important" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Insira no campo abaixo o CNPJ da Pessoa Jurídica à qual deseja se vincular.', 'Ajuda') ?> alt="Ajuda" class="infraImg" />
                         </label>
                         <input type="text" class="infraText form-control" id="txtNumeroCnpj" onchange="esconderCamposPJ();" name="txtNumeroCnpj" maxlength="18" value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getStrCNPJ()) : $hdnNumeroCnpj; ?>" onkeypress="return infraMascaraCnpj(this,event);" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>" autofocus />
@@ -20,15 +20,16 @@
             <?php if ($stWebService) { ?>
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <div id="blcPjRazaoSocial" class="form-group mb-3">
-                        <label class="infraLabelObrigatorio" for="txtRazaoSocialWsdl" id="lblNumeroCnpj">Razão
+                        <label class="infraLabelObrigatorio" for="txtRazaoSocialWsdl">Razão
                             Social:</label>
                         <input type="text" class="infraText form-control blocInformacaoPj" id="txtRazaoSocialWsdl" name="txtRazaoSocialWsdl" readonly />
                     </div>
                 </div>
         </div>
+        <?php $cardCaptchaLabel = 'cardCaptcha'; ?>
         <div class="row">
             <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                <div class="card" id="cardCaptcha">
+                <div class="card" id="<?php echo $cardCaptchaLabel; ?>">
                     <?= CaptchaSEI::getInstance()->montarHtml(PaginaSEIExterna::getInstance()->getProxTabDados()); ?>
                     <div class="card-body">
                         <div class="form-group">
@@ -46,7 +47,7 @@
         <div class="row">
                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <div class="" id="blc">
-                        <div class="card" id="cardCaptcha">
+                        <div class="card" id="<?php echo $cardCaptchaLabel; ?>">
                             <?= CaptchaSEI::getInstance()->montarHtml(PaginaSEIExterna::getInstance()->getProxTabDados()); ?>
                             <div class="card-body">
                                 <div class="form-group">

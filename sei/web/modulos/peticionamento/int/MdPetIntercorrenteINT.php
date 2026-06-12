@@ -1,4 +1,4 @@
-<?
+<?php
     /**
      * ANATEL
      *
@@ -497,42 +497,6 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
             }
 
             return $retorno;
-        }
-        
-        /**
-         * Função responsável por montar os options do select "Hipótese Legal" para a tela de resposta a intimacao
-         * @return string
-         * @author Marcelo Bezerra
-         */
-        public static function montarSelectHipoteseLegalRespostaIntimacao($booOnlyOptions = false)
-        {
-        	$objMdPetHipoteseLegalDTO = new MdPetHipoteseLegalDTO();
-        	$objMdPetHipoteseLegalDTO->setStrNivelAcessoHl(ProtocoloRN::$NA_RESTRITO);
-        	$objMdPetHipoteseLegalDTO->setStrSinAtivo('S');
-        	$objMdPetHipoteseLegalDTO->retStrBaseLegal();
-        	$objMdPetHipoteseLegalDTO->retStrNome();
-        	$objMdPetHipoteseLegalDTO->retNumIdHipoteseLegalPeticionamento();
-        	$objMdPetHipoteseLegalDTO->setOrd("Nome", InfraDTO::$TIPO_ORDENACAO_ASC);
-        	
-        	$objHipoteseLegalPetRN = new MdPetHipoteseLegalRN();
-        	$arrObjMdPetHipoteseLegalDTO = $objHipoteseLegalPetRN->listar($objMdPetHipoteseLegalDTO);
-        	
-            $strOptions = '<option value=""></option>';
-        	if( is_array( $arrObjMdPetHipoteseLegalDTO ) && count( $arrObjMdPetHipoteseLegalDTO ) > 0){
-        		foreach ($arrObjMdPetHipoteseLegalDTO as $objMdPetHipoteseLegalDTO) {
-	        		$nomeBaseLegal = $objMdPetHipoteseLegalDTO->getStrNome() . ' (' . $objMdPetHipoteseLegalDTO->getStrBaseLegal() . ')';
-	        		$strOptions .= '<option value="' . $objMdPetHipoteseLegalDTO->getNumIdHipoteseLegalPeticionamento() . '">';
-	        		$strOptions .= $nomeBaseLegal;
-	        		$strOptions .= '</option>';
-	        	}
-        	}
-
-            if($booOnlyOptions){
-                return $strOptions;
-            }
-
-            return '<select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)"
-                        tabindex="'. PaginaSEIExterna::getInstance()->getProxTabDados() . '">'.$strOptions.'</select>';
         }
 
         public static function removerNullsArr($ids){

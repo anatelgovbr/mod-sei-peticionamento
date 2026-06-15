@@ -3341,13 +3341,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarAcaoDocumentoAcessoExternoAutorizado($arrObjDocumentoAPI)
     {
-        // return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
+        return $this->montarBotaoAcessoExternoPeticionamento($arrObjDocumentoAPI);
     }
 
     public function montarAcaoProcessoAnexadoAcessoExternoAutorizado($arrObjProcedimentAPI)
     {
 
-        // return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentAPI, true);
+        return $this->montarBotaoAcessoExternoPeticionamento($arrObjProcedimentAPI, true);
     }
 
     public function verificarAcessoProtocoloExterno($arrObjProcedimentoAPI, $arrObjDocumentoAPI)

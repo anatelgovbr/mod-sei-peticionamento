@@ -309,9 +309,7 @@ $arrNivelAcesso = array(
                 <label id="lblTipo" for="selTipo" class="infraLabelOpcional">Nível de Acesso dos Documentos:</label>
                 <select onchange="pesquisar()" id="selTipo" name="selTipo" class="infraSelect form-select" >
                     <option value="" <?if( $strTipo == "" ) { echo " selected='selected' "; } ?> > Todos </option>
-                    <?php foreach($arrNivelAcesso as $i=>$nivelAcesso):
-                        $selected = ($strTipo == $i) ? ' selected="selected" ' : '';
-                        ?>
+                    <?php foreach($arrNivelAcesso as $i=>$nivelAcesso): $selected = ($strTipo == $i) ? ' selected="selected" ' : ''; ?>
                         <option value="<?= $i;?>" <?=$selected?>><?=$nivelAcesso; ?></option>
                     <?php endforeach; ?>
                 </select>

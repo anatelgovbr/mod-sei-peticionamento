@@ -54,23 +54,17 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
     </div>
     <div class="row mt-2">
         <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="selNivelAcesso">Nível de Acesso: <img
                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                             name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipNivelAcesso, 'Ajuda') ?>
                             alt="Ajuda"
                             class="infraImgModulo"/></label>
 
-                <?php if (!isset($arrHipoteseNivel['nivelAcesso'])): ?>
                     <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect form-select"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                         <?= $strSelectNivelAcesso ?>
                     </select>
-                <?php else: ?>
-                    <label class="infraLabelRadio" for="selNivelAcesso">
-                        <?= $arrHipoteseNivel['nivelAcesso']['descricao'] ?>
-                    </label>
-                <?php endif; ?>
                 <input type="hidden" name="hdnNivelAcesso" id="hdnNivelAcesso"
                     value="<?= isset($arrHipoteseNivel['nivelAcesso']) ? $arrHipoteseNivel['nivelAcesso']['id'] : '' ?>" tabindex="0"/>
                 <div id="divNivelAcesso"></div>
@@ -78,23 +72,16 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
         </div>
         <?php if ($exibirHipoteseLegal): ?>
         <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9" id="divBlcHipoteseLegal" <?= !isset($arrHipoteseNivel['hipoteseLegal']) ? 'style="display: none;"' : '' ?>>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="infraLabelObrigatorio" for="selHipoteseLegal">Hipótese Legal: <img
                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                             name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipHipoteseLegal, 'Ajuda') ?>
                             alt="Ajuda"
                             class="infraImgModulo"/></label>
-                <?php if (!isset($arrHipoteseNivel['hipoteseLegal'])): ?>
-                    <select id="selHipoteseLegal" class="infraSelect form-control" onchange="salvarValorHipoteseLegal(this)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    <select id="selHipoteseLegal" class="infraSelect form-select" onchange="salvarValorHipoteseLegal(this)" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <?=  $selHipoteseLegal ?>
                     </select>
-                <?php else: ?>
-                    <label class="infraLabelRadio" id="selHipoteseLegalPre">
-                        <?= $arrHipoteseNivel['hipoteseLegal']['descricao'] ?>
-                    </label>
-                <?php endif; ?>
-                <input type="hidden" name="hdnHipoteseLegal" id="hdnHipoteseLegal"
-                        value="<?= isset($arrHipoteseNivel['hipoteseLegal']) ? $arrHipoteseNivel['hipoteseLegal']['id'] : '' ?>"/>
+                <input type="hidden" name="hdnHipoteseLegal" id="hdnHipoteseLegal" value="<?= isset($arrHipoteseNivel['hipoteseLegal']) ? $arrHipoteseNivel['hipoteseLegal']['id'] : '' ?>"/>
             </div>
         </div>
         <?php endif; ?>
@@ -120,7 +107,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
 
         </div>
         <div class="col-sm-12 col-md-7 col-lg-8 col-xl-9">
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <div id="divTipoConferencia" style="display: none;">
                     <label class="infraLabelObrigatorio" for="selTipoConferencia">Conferência com o documento digitalizado:</label><br/>
                     <div class="input-group">

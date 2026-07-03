@@ -201,11 +201,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
 
 </form>
-<?php
-
-PaginaSEI::getInstance()->fecharBody();
-PaginaSEI::getInstance()->fecharHtml();
-?>
+<?php PaginaSEI::getInstance()->fecharBody(); ?>
 
 <script type="text/javascript">
 
@@ -264,3 +260,5 @@ PaginaSEI::getInstance()->fecharHtml();
         });
     }
 </script>
+
+<?php PaginaSEI::getInstance()->fecharHtml(); ?>

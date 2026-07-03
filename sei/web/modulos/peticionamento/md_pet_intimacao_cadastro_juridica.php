@@ -80,7 +80,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                         <div class="form-group mb-0">
                             <label id="lbltxtUsuario2" for="txtUsuario2" class="infraLabelObrigatorio mb-0">Pessoa Jurídica:</label>
                             <?= printHelp('A pesquisa é realizada somente sobre Pessoas Jurídicas que já tenham vinculado pelo menos o Responsável Legal no âmbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela Razão Social ou CNPJ da Pessoa Jurídica.'); ?>
-                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" autofocus/>
+                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText infraAutoCompletar" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" autofocus="" autocomplete="off">
                             <select id="selDadosUsuario2" name="selDadosUsuario2" class="infraSelect" multiple="multiple" size="6" style="height: 110px; margin-top: -34px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
 								<?=$strItensSelParticipante?>
                             </select>
@@ -153,7 +153,6 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
             </div>
 
             <!-- Todo: Destinatários em Massa Remover -->
-<!--            <div class="tabUsuario clear height_2" style="--><?php //echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?><!--"></div>-->
             <div class="tabUsuario clear height_2" style="display:none"></div>
             <!-- Tabela de Destinatários -->
             <!-- Todo: Destinatários em Massa Remover -->
@@ -172,16 +171,15 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                     <th class="infraTh" width="20%">Situação da Intimação</th>
                                     <th class="infraTh" width="10%">Ações</th>
                                 </tr>
-                                <? if ($_REQUEST['is_alterar']) { ?>
-                                    <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= $arrIntimacoes ?>"/>
-                                    <? foreach ($arrIntimacoes as $key => $intimacao) {
+                                <?php if ($_REQUEST['is_alterar']): ?>
+                                    <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= implode(',', array_column($arrIntimacoes, 'Id')) ?>"/>
+                                    <?php $gerados = ""; ?>
+                                    <?php foreach ($arrIntimacoes as $key => $intimacao): ?>
 
-                                        $countInt++;
+                                        <?php $countInt++; ?>
+                                        <?php $gerados .= $intimacao['Id'] . "-"; ?>
 
-                                        $gerados .= $intimacao['Id'] . "-";
-                                        ?>
-
-                                        <tr id="changeColorJuridico<?php echo $key ?>" class="infraTrClara">
+                                        <tr id="changeColorJuridico<?= $key ?>" class="infraTrClara">
                                             <td class="d-none"><?= $intimacao['Id'] ?></td>
                                             <td class="text-center"><?= $intimacao['Nome'] ?></td>
                                             <td class="text-center"><?= InfraUtil::formatarCnpj($intimacao['Cnpj']) ?></td>
@@ -197,8 +195,8 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                             </td>
                                         </tr>
 
-                                    <? }
-                                } ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </table>
                             <br/>
                         </div>
@@ -208,6 +206,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                     </div>
                 </div>
             </div>
+
         </fieldset>
     </div>
 </div>
@@ -284,8 +283,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                          class="infraImgNormal"/>
                                 </div>
                             </div>
-                            <input type="hidden" id="hdnAnexosIntimacao" name="hdnAnexosIntimacao"
-                                   value="<?= $_POST['hdnAnexosIntimacao'] ?>"/>
+                            <input type="hidden" id="hdnAnexosIntimacao" name="hdnAnexosIntimacao" value="<?= $_POST['hdnAnexosIntimacao'] ?>"/>
                         </div>
                     </div>
                 </fieldset>
@@ -365,5 +363,4 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
 <style>
     .bloco { float: left; margin-top: 1%;  margin-right: 1%; }
 </style>
-
 <? require_once 'md_pet_intimacao_cadastro_pj_js.php'; ?>

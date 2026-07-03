@@ -206,7 +206,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 	                        <? elseif(count($selectCidade[0]) > 1): ?>
                                 <option value="">Selecione a Cidade</option>
 		                        <? for($i = 0; $i < count($selectCidade[0]); $i++): ?>
-                                    <? $selectedCidade = !empty($nomeCidade) && $selectCidade[1][$i] == $nomeCidade ? 'selected="selected"' : ''; ?>
+                                    <? $selectedCidade = !empty($nomeCidade) && $selectCidade[0][$i] == $idCidade ? 'selected="selected"' : ''; ?>
                                     <option value="<?= $selectCidade[0][$i] ?>" data-idunidade="<?= $selectCidade[0][$i] ?>" <?= $selectedCidade ?>><?= $selectCidade[1][$i] ?></option>
 		                        <? endfor; ?>
 	                        <? endif; ?>

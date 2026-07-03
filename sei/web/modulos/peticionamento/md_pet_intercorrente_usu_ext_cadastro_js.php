@@ -34,6 +34,88 @@
        <? } ?>
     }
 
+    function setaCamposNivelHipotese() {
+
+        var paramsAjax = {
+            idTipoProcedimento: document.getElementById('hdnIdTipoProcedimento').value,
+            idTipoDocumento: document.getElementById('selTipoDocumento').value
+        };
+                
+        var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
+        var nivelDocForcaNivelAcesso = '<?= $nivelAcessoDoc['nivel'] ?>';
+        var hipoteseDocForcaNivelAcesso = '<?= $nivelAcessoDoc['hipotese'] ?>';
+
+        var possuiConfiguracaoIntercorrentePadrao = (nivelDocForcaNivelAcesso != null || nivelDocForcaNivelAcesso !== '') && (hipoteseDocForcaNivelAcesso != null || hipoteseDocForcaNivelAcesso !== '');
+
+        var selNivelAcesso      = document.getElementById('selNivelAcesso');
+        var selHipoteseLegal    = document.getElementById('selHipoteseLegal');
+        var divHipoteseLegal    = document.getElementById('divBlcHipoteseLegal');
+        var selTipoDocumento    = document.getElementById('hdnIdTipoProcedimento');
+
+        $.ajax({
+            url: '<?=$strUrlAjaxCriterioIntercorrente?>',
+            type: 'POST',
+            async: false,
+            dataType: 'JSON',
+            data: paramsAjax,
+            success: function (r) {
+                console.log(r);
+                console.log('arrayDocs', arrDocForcaNivelAcesso);
+                console.log('nivelDocForcaNivelAcesso', nivelDocForcaNivelAcesso);
+                console.log('hipoteseDocForcaNivelAcesso', hipoteseDocForcaNivelAcesso);
+
+                var nivelTpProcesso = r.nivelAcesso?.id ?? null;
+                var hipoteseTpProcesso = r.nivelAcesso?.id == 1 ? r.hipoteseLegal?.id ?? null : null;
+
+                $('#selNivelAcesso').val('').prop('disabled', false);
+                $('#selHipoteseLegal').val('').prop('disabled', false);
+                divHipoteseLegal.style.display = 'none';
+
+                if (possuiConfiguracaoIntercorrentePadrao && arrDocForcaNivelAcesso.includes(paramsAjax.idTipoDocumento)) {
+
+                    // Forca o Nivel de Acesso da configuração padrão
+                    $('#selNivelAcesso').val(nivelDocForcaNivelAcesso).prop('disabled', true).prop('selected', 'selected');
+                    $('#hdnNivelAcesso').val(nivelDocForcaNivelAcesso);
+
+                    $('#selHipoteseLegal').val(hipoteseDocForcaNivelAcesso).prop('disabled', true).prop('selected', 'selected');
+                    $('#hdnHipoteseLegal').val(hipoteseDocForcaNivelAcesso);
+
+                    divHipoteseLegal.style.display = 'block';
+                
+                }else{
+
+                    // Mantém a configuração do Tipo de Processo
+                    if (nivelTpProcesso != null && nivelTpProcesso !== '') {
+                        $('#selNivelAcesso').val(nivelTpProcesso).prop('disabled', true).prop('selected', 'selected');
+                        $('#hdnNivelAcesso').val(nivelTpProcesso);
+                    }
+
+                    if (hipoteseTpProcesso != null && hipoteseTpProcesso !== '') {
+                        $('#selHipoteseLegal').val(hipoteseTpProcesso).prop('disabled', true).prop('selected', 'selected');
+                        $('#hdnHipoteseLegal').val(hipoteseTpProcesso);
+                    }
+
+                    if (nivelTpProcesso == '<?= ProtocoloRN::$NA_RESTRITO ?>') {
+                        divHipoteseLegal.style.display = 'block';
+                    }
+                    
+                }
+
+                if(paramsAjax.idTipoDocumento != '' && paramsAjax.idTipoDocumento != null){
+                    $('#txtComplementoTipoDocumento').val('').focus();
+                }else{
+                    $('#selTipoDocumento').focus();
+                }
+
+            },
+            error: function (e) {
+                console.error('Erro ao processar o AJAX do SEI: ' + e.responseText);
+            }
+
+        });
+
+    }
+
     /**
      * Inicia Grid Dinâmica do Processo
      */
@@ -326,38 +408,47 @@
 
         }, 300);
 
+        setaCamposNivelHipotese()
+
     }
 
     function verificarCriterioIntercorrente() {
-        var paramsAjax = {
-            idTipoProcedimento: document.getElementById('hdnIdTipoProcedimento').value
-        };
-
-        $.ajax({
-            url: '<?=$strUrlAjaxCriterioIntercorrente?>',
-            type: 'POST',
-            async: false,
-            dataType: 'JSON',
-            data: paramsAjax,
-            success: function (r) {
-                console.log(r);
-                if (r.nivelAcesso) {
-                    criarHiddenNivelAcesso(r.nivelAcesso);
-                    if (EXIBIR_HIPOTESE_LEGAL && r.nivelAcesso.id == RESTRITO && r.hipoteseLegal) {
-                        criarHiddenHipoteseLegal(r.hipoteseLegal);
-                    }
-                } else {
-                    criarSelectNivelAcesso();
-                 }
-            },
-            error: function (e) {
-                console.error('Erro ao processar o AJAX do SEI: ' + e.responseText);
-            }
-
-        });
+        setaCamposNivelHipotese();
     }
 
-    function criarSelectNivelAcesso() {
+    function AtualizarSelectNivelAcesso() {
+
+        var selNivelAcesso = $('#selNivelAcesso');
+        var selHipoteseLegal = $('#selHipoteseLegal');
+        var txtComplementoTipoDocumento = $('#txtComplementoTipoDocumento');
+
+        if(selNivelAcesso.val() == 1) {
+            $('#divBlcHipoteseLegal').show();
+            selHipoteseLegal.focus();
+        }else{
+            
+            $('#divBlcHipoteseLegal').hide();
+            selHipoteseLegal.val('');
+            txtComplementoTipoDocumento.focus();
+        }
+
+    }
+
+    function AtualizarSelectHipoteseLegal() {
+
+        var selHipoteseLegal = $('#selHipoteseLegal');
+        var hdnHipoteseLegal = $('#hdnHipoteseLegal');
+
+        if(selHipoteseLegal.val() != '' && selHipoteseLegal.val() != null) {
+            hdnHipoteseLegal.val(selHipoteseLegal.val());
+        }else{
+            hdnHipoteseLegal.val('');
+        }
+
+    }
+
+    function criarSelectNivelAcesso(nivelAcesso) {
+
         var selNivelAcesso = document.createElement("select");
         var divNivelAcesso = document.getElementById('divNivelAcesso');
         var txtComplementoTipoDocumento = document.getElementById('txtComplementoTipoDocumento');
@@ -376,10 +467,21 @@
         iniciarObjAjaxSelectNivelAcesso();
         objAjaxSelectNivelAcesso.executar();
 
+        console.log('nivelAcesso', nivelAcesso);
+
+        for (i = 0; i < selNivelAcesso.options.length; i++) {
+            if (selNivelAcesso.options[i].value == nivelAcesso.id) {
+                selNivelAcesso.selectedIndex = i;
+                selNivelAcesso.disabled = true;
+                break;
+            }
+        }
+
         tooltip(1,0,document.getElementById("imgNivelAcesso"));
         tooltip(1,1,document.getElementById("imgNivelAcesso"));
         tooltip(2,0,document.getElementById("imgHipoteseLegal"));
         tooltip(2,1,document.getElementById("imgHipoteseLegal"));
+
     }
 
     function criarHiddenNivelAcesso(nivelAcesso) {
@@ -685,26 +787,26 @@
     }
 
     function limparCampoDocumento() {
+
         document.getElementById('fileArquivo').value = '';
         document.getElementById('selTipoDocumento').value = 'null';
         document.getElementById('txtComplementoTipoDocumento').value = '';
-
-        if (document.getElementById('selNivelAcesso')) {
-            $('#selNivelAcesso').prop('disabled', false).val('');
-            $('input[name="hdnNivelAcesso"]').remove();
-        }
-
-        if (document.getElementById('selHipoteseLegal')) {
-            $('#selHipoteseLegal').prop('disabled', false).val('');
-            $('input[name="hdnHipoteseLegal"]').remove();
-            document.getElementById('divBlcHipoteseLegal').style.display = 'none';
-        }
 
         document.getElementById('rdoNatoDigital').checked = false;
         document.getElementById('rdoDigitalizado').checked = false;
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
         document.getElementById('divTipoConferenciaBotao').style.display = 'block';
+
+        document.getElementById('selNivelAcesso').value = 'null';
+        document.getElementById('selHipoteseLegal').value = 'null';
+
+        $('#selNivelAcesso').prop('disabled', false);
+        $('#selHipoteseLegal').prop('disabled', false);
+        document.getElementById('divBlcHipoteseLegal').style.display = 'none';
+
+        setaCamposNivelHipotese();
+
     }
 
     function validarRemoverProcesso() {
@@ -736,19 +838,22 @@
     }
 
     function adicionarDocumento() {
+
         if (validarDocumento()) {
             objUploadArquivo.executar();
+            
             document.getElementById('tbDocumento').style.display = '';
             var minHeightFieldSetDocumentos = document.getElementById("field_documentos").style.minHeight;
             minHeightFieldSetDocumentos = parseInt(minHeightFieldSetDocumentos.replace("px", ""));
             document.getElementById("field_documentos").style.minHeight = minHeightFieldSetDocumentos + 50 + "px";
 
-            document.getElementById("selNivelAcesso").attr('disabled', false).value = '';
+            document.getElementById("selNivelAcesso").removeAttribute("disabled").value = '';
             document.querySelector('input[name="hdnNivelAcesso"]').remove();
 
             document.getElementById("selHipoteseLegal").removeAttribute("disabled").value = '';
             document.querySelector('input[name="hdnHipoteseLegal"]').remove();
             document.getElementById('divBlcHipoteseLegal').style.display = 'none';
+            
         }
     }
 
@@ -789,6 +894,7 @@
             criarRegistroTabelaDocumento(arr);
             corrigirPosicaoAcaoExcluir();
             limparCampoDocumento();
+            setaCamposNivelHipotese();
         };
 
         objUploadArquivo.validar = function () {
@@ -845,40 +951,8 @@
         var hipotese = '<?= $nivelAcessoDoc['hipotese'] ?>';
 
         $('body').on('change', '#selTipoDocumento', function(){
-            var self = $(this);
-            var selectNivelAcesso = self.closest('form').find('select[id^="selNivelAcesso"]');
-            var selectHipoteseLegal = self.closest('form').find('select[id^="selHipoteseLegal"]');
-
-            if(arrDocForcaNivelAcesso.indexOf(self.val()) !== -1){
-
-                selectNivelAcesso.val(nivel).prop('disabled', true);
-                selectNivelAcesso.closest('div').append('<input type="hidden" value="'+nivel+'" id="hdn'+selectNivelAcesso.attr('id')+'" name="'+selectNivelAcesso.attr('id')+'" tabindex="-1"/>');
-
-                if(nivel == 1){
-                    selectHipoteseLegal.val(hipotese).prop('disabled', true);
-                    selectHipoteseLegal.closest('div').append('<input type="hidden" value="'+hipotese+'" id="hdn'+selectHipoteseLegal.attr('id')+'" name="'+selectHipoteseLegal.attr('id')+'" tabindex="-1"/>');
-                    self.closest('form').find('div[id^="divBlcHipoteseLegal"]').show();
-                }
-                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == '') {
-                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
-                }
-
-            }else{
-
-                selectNivelAcesso.val('').prop('disabled', false);
-                selectNivelAcesso.closest('div').find('input[id="'+selectNivelAcesso.attr('id')+'"]').remove();
-
-                selectHipoteseLegal.val('').prop('disabled', false);
-                selectHipoteseLegal.closest('div').find('input[id="'+selectHipoteseLegal.attr('id')+'"]').remove();
-
-                // self.closest('form').find('div[id^="divBlcHipoteseLegal"]').hide();
-                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == ''){
-                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
-                }else{
-                    selectNivelAcesso.focus();
-                }
-
-            }
+            
+            setaCamposNivelHipotese();
 
         });
 

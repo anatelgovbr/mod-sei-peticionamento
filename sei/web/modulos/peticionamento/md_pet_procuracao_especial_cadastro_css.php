@@ -81,4 +81,9 @@
         right: 5% !important;
         left: unset !important;
     }
+
+    /* overriding the default styles of the multiselect plugin */
+    .infraSelect.ms-parent ul {
+        height: 190px !important;
+    }
 </style>

@@ -39,6 +39,7 @@ class MdPetIntRelatorioRN extends InfraRN {
         $objMdPetIntRelDestDTO->retDblIdDocumento();
         $objMdPetIntRelDestDTO->retNumIdSerie();
         $objMdPetIntRelDestDTO->retStrProtocoloFormatadoProcedimento();
+        $objMdPetIntRelDestDTO->retStrProtocoloFormatadoProcedimentoPesquisa();
         $objMdPetIntRelDestDTO->retDthDataCadastro();
         $objMdPetIntRelDestDTO->retStrProtocoloFormatadoDocumento();
         $objMdPetIntRelDestDTO->retNumIdMdPetTipoIntimacao();
@@ -83,6 +84,12 @@ class MdPetIntRelatorioRN extends InfraRN {
     }
 
     public function _addFiltroListagem($objDTO){
+
+        // Número SEI do Processo   
+	    if(!empty($_POST['txtProcedimentoPesquisa'])){
+            $protocoloFormatado = InfraUtil::retirarFormatacao($_POST['txtProcedimentoPesquisa']);
+		    $objDTO->setStrProtocoloFormatadoProcedimentoPesquisa($protocoloFormatado);
+	    }
     	
     	// Número SEI do Documento Principal
 	    if(!empty($_POST['txtProtocoloPesquisa'])){
@@ -185,10 +192,6 @@ class MdPetIntRelatorioRN extends InfraRN {
             $dataForm = !is_null($objDTO->getDthDataCadastro()) ? explode(' ', $objDTO->getDthDataCadastro()) : null;
             $dataForm = count($dataForm) > 0 ? $dataForm[0] : '';
             $objDTO->setDthDataCadastro($dataForm);
-	
-	        //Doc Principal
-	        $docFormat = $this->_getDocPrincipalFormatado($objDTO);
-	        $objDTO->setStrDocumentoPrincipal($docFormat);
 	        
 	        // Doc Aceite
 	        $objDTO->setStrDocumentoCertidaoAceite($objDTO->getStrDocumentoCertidaoAceite());

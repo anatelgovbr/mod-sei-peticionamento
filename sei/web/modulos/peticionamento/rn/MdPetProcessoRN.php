@@ -1509,8 +1509,40 @@ class MdPetProcessoRN extends InfraRN {
 			$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
 			$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 			$arrObjAnexoDTO[] = $objAnexoDTO;
+
+			/* LOG DE DIAGNÓSTICO */
+			$caminhoArquivo = DIR_SEI_TEMP . '/' . $anexo[8];
+
+			if (!file_exists($caminhoArquivo)) {
+
+				InfraDebug::getInstance()->gravar(
+					'[PET-ANEXO] ' .
+					json_encode([
+                    	'evento'             => 'PROCESSAMENTO_DE_ANEXOS',
+						'hostname'           => gethostname(),
+						'server_ip'          => gethostbyname(gethostname()),
+						'machine_id'         => @file_get_contents('/etc/machine-id'),
+						'client_ip'          => $_SERVER['REMOTE_ADDR'] ?? null,
+						'session_id'         => session_id(),
+						'id_usuario_externo' => SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
+						'server_software'  	 => $_SERVER['SERVER_SOFTWARE'] ?? null,
+						'request_uri'     	 => $_SERVER['REQUEST_URI'] ?? null,
+						'http_host'       	 => $_SERVER['HTTP_HOST'] ?? null,
+						'arquivo'            => $caminhoArquivo,
+						'realpath'           => realpath($caminhoArquivo),
+						'cwd'                => getcwd(),
+						'dir_temp'           => DIR_SEI_TEMP,
+						'dir_temp_existe'    => is_dir(DIR_SEI_TEMP),
+						'timestamp'          => date('Y-m-d H:i:s')
+					])
+				);
+
+				throw new InfraException(
+					'Arquivo temporário não encontrado: ' . $anexo[8]
+				);
+			}
 			
-			$base64 = base64_encode(file_get_contents(DIR_SEI_TEMP. '/'. $anexo[8] ));
+			$base64 = base64_encode(file_get_contents($caminhoArquivo));
 			$bases64[$anexo[8]] = $base64;
 		}
 		

@@ -905,6 +905,7 @@ class MdPetIntercorrenteAndamentoSigilosoRN extends InfraRN
     			$unidadeDTO = new UnidadeDTO();
     			$unidadeDTO->retNumIdUnidade();
     			$unidadeDTO->retStrSinAtivo();
+                $unidadeDTO->retStrSinEnvioProcesso();
     			$unidadeDTO->setNumIdUnidade( $idUnidade );
     			
     			$unidadeDTO = $unidadeRN->consultarRN0125( $unidadeDTO );

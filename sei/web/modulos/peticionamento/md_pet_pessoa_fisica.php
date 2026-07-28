@@ -324,6 +324,29 @@ function inicializar(){
             });
 
             let timer;
+            const LIMITE_DESTINATARIOS = <?= MdPetIntimacaoRN::$LIMITE_DESTINATARIOS_LOTE ?>;
+
+            function obterIdsSelecionados(contextChanges) {
+                let idsSelecionados = {};
+                $('#selDadosUsuario2 option', contextChanges).each(function() {
+                    idsSelecionados[$.trim($(this).val())] = true;
+                });
+                return idsSelecionados;
+            }
+
+            function filtrarDestinatariosNovos(itens, contextChanges) {
+                let idsSelecionados = obterIdsSelecionados(contextChanges);
+                let idsNovos = {};
+
+                return itens.filter(function(item) {
+                    let idContato = $.trim(item.split('|')[0]);
+                    if (idContato === '' || idsSelecionados[idContato] || idsNovos[idContato]) {
+                        return false;
+                    }
+                    idsNovos[idContato] = true;
+                    return true;
+                });
+            }
 
             $('#cpfList').off('input paste keyup').on('input paste keyup', function() {
                 $('.cpf-validation-result textarea').val('');
@@ -436,7 +459,11 @@ function inicializar(){
                         data: { cpfList: cpfList },
                         beforeSend: function(){
 
-                            btnClicked.prop('disabled', true).html('Pesquisando em lote ('+ cpfList.length +')...');
+                            btnClicked
+                                .prop('disabled', true)
+                                .attr('aria-busy', 'true')
+                                .html('<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>'
+                                    + '<span role="status">Pesquisando em lote ('+ cpfList.length +')...</span>');
                             $('#foundCpfs, #notFoundCpfs').val('');
                             $('.cpf-validation-result, #transportBtn').hide();
 
@@ -444,12 +471,14 @@ function inicializar(){
                         success: function(response) {
 
                             var data = JSON.parse(response);
+                            var contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
+                            var foundCpfs = filtrarDestinatariosNovos(data.foundCpfs, contextChanges);
 
-                            if(data.foundCpfs.length > 0){
+                            if(foundCpfs.length > 0){
 
-                                $('#foundCpfs').val(data.foundCpfs.join('\n'));
-                                $('#transportBtn').html('Transportar Localizados ('+data.foundCpfs.length+')').fadeIn(100);
-                                $('#copyFounds').html('Copiar lista de localizados ('+data.foundCpfs.length+')').fadeIn(100);
+                                $('#foundCpfs').val(foundCpfs.join('\n'));
+                                $('#transportBtn').html('Transportar Localizados ('+foundCpfs.length+')').fadeIn(100);
+                                $('#copyFounds').html('Copiar lista de localizados ('+foundCpfs.length+')').fadeIn(100);
 
                             }else{
 
@@ -487,7 +516,10 @@ function inicializar(){
                             alert(xhr.responseText);
                         },
                         complete: function(){
-                            btnClicked.prop('disabled', false).html('Pesquisar em lote');
+                            btnClicked
+                                .prop('disabled', false)
+                                .removeAttr('aria-busy')
+                                .html('Pesquisar em lote');
                         }
                     });
                     
@@ -503,6 +535,18 @@ function inicializar(){
                 let i = 0;
                 let toTransport = $('#foundCpfs').val().split('\n');
                 let contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
+                let idsSelecionados = obterIdsSelecionados(contextChanges);
+
+                toTransport = filtrarDestinatariosNovos(toTransport, contextChanges);
+
+                let totalDestinatarios = Object.keys(idsSelecionados).length + toTransport.length;
+                if (totalDestinatarios > LIMITE_DESTINATARIOS) {
+                    alert('O limite \u00e9 de ' + LIMITE_DESTINATARIOS + ' destinat\u00e1rios por intima\u00e7\u00e3o.\n\n'
+                        + 'J\u00e1 selecionados: ' + Object.keys(idsSelecionados).length + '.\n'
+                        + 'Novos localizados: ' + toTransport.length + '.\n'
+                        + 'Total resultante: ' + totalDestinatarios + '.');
+                    return;
+                }
                 
                 while (i < toTransport.length) {
                     

@@ -400,7 +400,45 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
                 $documentoAPI->setIdTipoConferencia($itemTbDocumento[6]);
                 $documentoAPI->setNomeArquivo($itemTbDocumento[9]);
                 $documentoAPI->setTipo(ProtocoloRN::$TP_DOCUMENTO_RECEBIDO);
-                $documentoAPI->setConteudo(base64_encode(file_get_contents(DIR_SEI_TEMP . '/' . $itemTbDocumento[7])));
+
+                /* LOG DE DIAGNÓSTICO */
+                $caminhoArquivo = DIR_SEI_TEMP . '/' . $itemTbDocumento[7];
+
+                if (!file_exists($caminhoArquivo)) {
+
+                    LogSEI::getInstance()->gravar(
+                        '[PET-DOCUMENTO-API] ' .
+                        json_encode([
+                            'evento'             => 'DOCUMENTO_API_ARQUIVO_NAO_ENCONTRADO',
+                            'hostname'           => gethostname(),
+                            'server_ip'          => gethostbyname(gethostname()),
+                            'machine_id'         => @file_get_contents('/etc/machine-id'),
+                            'client_ip'          => $_SERVER['REMOTE_ADDR'] ?? null,
+                            'session_id'         => session_id(),
+                            'id_usuario_externo' => SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
+                            'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? null,
+                            'request_uri'     => $_SERVER['REQUEST_URI'] ?? null,
+                            'http_host'       => $_SERVER['HTTP_HOST'] ?? null,
+                            'id_procedimento'    => $idProcedimento,
+                            'id_serie'           => $itemTbDocumento[1],
+                            'nome_arquivo'       => $itemTbDocumento[9],
+                            'id_arquivo'         => $itemTbDocumento[7],
+                            'arquivo'            => $caminhoArquivo,
+                            'realpath'           => realpath($caminhoArquivo),
+                            'cwd'                => getcwd(),
+                            'dir_temp'           => DIR_SEI_TEMP,
+                            'dir_temp_existe'    => is_dir(DIR_SEI_TEMP),
+                            'timestamp'          => date('Y-m-d H:i:s')
+                        ])
+                    );
+
+                    throw new InfraException(
+                        'Arquivo temporário não encontrado: ' .
+                        $itemTbDocumento[7]
+                    );
+                }
+
+                $documentoAPI->setConteudo(base64_encode(file_get_contents($caminhoArquivo)));
                 $documentoAPI->setData(InfraData::getStrDataAtual());
                 $documentoAPI->setIdArquivo($itemTbDocumento[7]);
                 $documentoAPI->setSinAssinado('S');

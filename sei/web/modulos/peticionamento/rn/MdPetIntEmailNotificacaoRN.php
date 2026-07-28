@@ -75,7 +75,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objUnidadeDTO->retStrDescricaoOrgao();
         $objUnidadeDTO->retStrSitioInternetOrgaoContato();
         $objUnidadeDTO->setBolExclusaoLogica(false);
-        $objUnidadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+        $objUnidadeDTO->setNumIdUnidade($dadosIntimacao['id_unidade'] ?? SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 
         $objUnidadeRN = new UnidadeRN();
         $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
@@ -158,7 +158,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objUnidadeDTO->retStrDescricaoOrgao();
         $objUnidadeDTO->retStrSitioInternetOrgaoContato();
         $objUnidadeDTO->setBolExclusaoLogica(false);
-        $objUnidadeDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+        $objUnidadeDTO->setNumIdUnidade($dadosIntimacao['id_unidade'] ?? SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 
         $objUnidadeRN = new UnidadeRN();
         $objUnidadeDTO = $objUnidadeRN->consultarRN0125($objUnidadeDTO);
@@ -200,6 +200,193 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         }
 
         return true;
+    }
+
+    /**
+     * Envia as notificacoes de uma intimacao que ja foi confirmada no banco.
+     */
+    protected function enviarEmailIntimacaoPorIdConectado($idIntimacao)
+    {
+        if (!ctype_digit((string) $idIntimacao) || (int) $idIntimacao <= 0) {
+            throw new InfraException('Identificador de intimacao invalido.');
+        }
+
+        $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+        $objDestinatarioDTO->retNumIdMdPetIntRelDestinatario();
+        $objDestinatarioDTO->retNumIdContato();
+        $objDestinatarioDTO->retDthDataCadastro();
+        $objDestinatarioDTO->retStrSinPessoaJuridica();
+        $objDestinatarioDTO->retNumIdUnidade();
+        $objDestinatarioDTO->setNumIdMdPetIntimacao($idIntimacao);
+        $arrDestinatarios = (new MdPetIntRelDestinatarioRN())->listar($objDestinatarioDTO);
+
+        if (count($arrDestinatarios) === 0) {
+            throw new InfraException('Destinatario da intimacao nao encontrado.');
+        }
+
+        $objIntimacaoDTO = new MdPetIntimacaoDTO();
+        $objIntimacaoDTO->retNumIdMdPetIntTipoIntimacao();
+        $objIntimacaoDTO->setNumIdMdPetIntimacao($idIntimacao);
+        $objIntimacaoDTO = (new MdPetIntimacaoRN())->consultar($objIntimacaoDTO);
+
+        if (is_null($objIntimacaoDTO)) {
+            throw new InfraException('Intimacao nao encontrada.');
+        }
+
+        $objProtocoloDTO = new MdPetIntProtocoloDTO();
+        $objProtocoloDTO->retDblIdProtocolo();
+        $objProtocoloDTO->setNumIdMdPetIntimacao($idIntimacao);
+        $objProtocoloDTO->setStrSinPrincipal('S');
+        $objProtocoloDTO = (new MdPetIntProtocoloRN())->consultar($objProtocoloDTO);
+
+        if (is_null($objProtocoloDTO)) {
+            throw new InfraException('Documento principal da intimacao nao encontrado.');
+        }
+
+        $objDocumentoDTO = new DocumentoDTO();
+        $objDocumentoDTO->retStrProtocoloProcedimentoFormatado();
+        $objDocumentoDTO->setDblIdDocumento($objProtocoloDTO->getDblIdProtocolo());
+        $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
+
+        $objTipoRespostaDTO = new MdPetIntRelTipoRespDTO();
+        $objTipoRespostaDTO->retNumIdMdPetIntTipoResp();
+        $objTipoRespostaDTO->setNumIdMdPetIntimacao($idIntimacao);
+        $arrTipoRespostaDTO = (new MdPetIntRelTipoRespRN())->listar($objTipoRespostaDTO);
+
+        $dadosPost = [
+            'hdnIdDocumento' => $objProtocoloDTO->getDblIdProtocolo(),
+            'selTipoIntimacao' => $objIntimacaoDTO->getNumIdMdPetIntTipoIntimacao(),
+            'selTipoResposta' => InfraArray::converterArrInfraDTO($arrTipoRespostaDTO, 'IdMdPetIntTipoResp')
+        ];
+
+        foreach ($arrDestinatarios as $objDestinatarioDTO) {
+            try {
+                $this->enviarNotificacoesDestinatarioPosCommit(
+                    $idIntimacao,
+                    $objDestinatarioDTO,
+                    $dadosPost,
+                    $objDocumentoDTO->getStrProtocoloProcedimentoFormatado()
+                );
+            } catch (Throwable $e) {
+                $this->registrarFalhaNotificacao($idIntimacao, $e);
+            }
+        }
+
+        return true;
+    }
+
+    private function enviarNotificacoesDestinatarioPosCommit(
+        $idIntimacao,
+        MdPetIntRelDestinatarioDTO $objDestinatarioDTO,
+        array $dadosPost,
+        $processo
+    ) {
+        $objRelDestExternoDTO = new MdPetRelIntDestExternoDTO();
+        $objRelDestExternoDTO->retNumIdAcessoExterno();
+        $objRelDestExternoDTO->setNumIdMdPetIntRelDestinatario($objDestinatarioDTO->getNumIdMdPetIntRelDestinatario());
+        $arrRelDestExternoDTO = (new MdPetRelIntDestExternoRN())->listar($objRelDestExternoDTO);
+        $idsAcessoExterno = array_unique(InfraArray::converterArrInfraDTO($arrRelDestExternoDTO, 'IdAcessoExterno'));
+
+        if (count($idsAcessoExterno) === 0) {
+            throw new InfraException('Acessos externos da intimacao nao encontrados.');
+        }
+
+        $objAcessoExternoDTO = new AcessoExternoDTO();
+        $objAcessoExternoDTO->retNumIdContatoParticipante();
+        $objAcessoExternoDTO->setNumIdAcessoExterno($idsAcessoExterno, InfraDTO::$OPER_IN);
+        $arrAcessoExternoDTO = (new AcessoExternoRN())->listar($objAcessoExternoDTO);
+        $idsContatos = array_unique(InfraArray::converterArrInfraDTO($arrAcessoExternoDTO, 'IdContatoParticipante'));
+
+        foreach ($idsContatos as $idContato) {
+            $arrVinculosDTO = [];
+            if ((int) $idContato !== (int) $objDestinatarioDTO->getNumIdContato()) {
+                $objVinculoDTO = new MdPetVincRepresentantDTO();
+                $objVinculoDTO->retStrRazaoSocialNomeVinc();
+                $objVinculoDTO->retStrCNPJ();
+                $objVinculoDTO->retStrTipoRepresentante();
+                $objVinculoDTO->setNumIdContatoVinc($objDestinatarioDTO->getNumIdContato());
+                $objVinculoDTO->setNumIdContatoProcurador($idContato);
+                $arrVinculosDTO = (new MdPetVincRepresentantRN())->listar($objVinculoDTO);
+            }
+
+            if ($objDestinatarioDTO->getStrSinPessoaJuridica() === 'N'
+                && (int) $idContato !== (int) $objDestinatarioDTO->getNumIdContato()) {
+                $isProcuradorSimples = false;
+                foreach ($arrVinculosDTO as $objVinculoDTO) {
+                    if ($objVinculoDTO->getStrTipoRepresentante() === MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
+                        $isProcuradorSimples = true;
+                        break;
+                    }
+                }
+
+                if (!$isProcuradorSimples) {
+                    continue;
+                }
+            }
+
+            $objUsuarioDTO = new UsuarioDTO();
+            $objUsuarioDTO->retStrNome();
+            $objUsuarioDTO->retStrSigla();
+            $objUsuarioDTO->setNumIdContato($idContato);
+            $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+
+            if (is_null($objUsuarioDTO)) {
+                continue;
+            }
+
+            $dadosIntimacao = [
+                'POST' => $dadosPost,
+                'nome' => $objUsuarioDTO->getStrNome(),
+                'email' => $objUsuarioDTO->getStrSigla(),
+                'dataHora' => $objDestinatarioDTO->getDthDataCadastro(),
+                'id_intimacao' => $idIntimacao,
+                'id_unidade' => $objDestinatarioDTO->getNumIdUnidade(),
+                'processo' => $processo
+            ];
+
+            if ($objDestinatarioDTO->getStrSinPessoaJuridica() === 'S') {
+                foreach ($arrVinculosDTO as $objVinculoDTO) {
+                    $dadosIntimacao['razaoSocial'] = $objVinculoDTO->getStrRazaoSocialNomeVinc();
+                    $dadosIntimacao['cnpj'] = $objVinculoDTO->getStrCNPJ();
+                    $dadosIntimacao['tpVinc'] = $this->formatarTipoVinculoIntimacao($objVinculoDTO->getStrTipoRepresentante());
+                    $this->enviarNotificacaoPosCommit($dadosIntimacao, true);
+                }
+            } else {
+                $this->enviarNotificacaoPosCommit($dadosIntimacao, false);
+            }
+        }
+    }
+
+    private function enviarNotificacaoPosCommit(array $dadosIntimacao, $isPessoaJuridica)
+    {
+        try {
+            if ($isPessoaJuridica) {
+                $this->enviarEmailIntimacaoJuridico($dadosIntimacao);
+            } else {
+                $this->enviarEmailIntimacao($dadosIntimacao);
+            }
+        } catch (Throwable $e) {
+            $this->registrarFalhaNotificacao($dadosIntimacao['id_intimacao'], $e);
+        }
+    }
+
+    private function registrarFalhaNotificacao($idIntimacao, Throwable $e)
+    {
+        LogSEI::getInstance()->gravar(
+            'Falha no envio pos-commit da intimacao ' . (int) $idIntimacao . ' [' . get_class($e) . '].',
+            InfraLog::$INFORMACAO
+        );
+    }
+
+    private function formatarTipoVinculoIntimacao($tipoRepresentante)
+    {
+        $tipos = [
+            MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsavel Legal',
+            MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
+            MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES => 'Procurador Simples'
+        ];
+
+        return $tipos[$tipoRepresentante] ?? '';
     }
 
     protected function enviarEmailReiteracaoIntimacaoConectado($params)
@@ -910,7 +1097,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
 
         $objMdPetVinculoDTO->retTodos(true);
         $objMdPetVinculoDTO->retStrRazaoSocialNomeVinc();
-        $objMdPetVinculoDTO->retStrCnpj();
+        $objMdPetVinculoDTO->retStrCNPJ();
         $objMdPetVinculoDTO->retStrNomeContatoRepresentante();
         $objMdPetVinculoDTO->retStrCpfContatoRepresentante();
         $objMdPetVinculoDTO->retStrEmailContatoRepresentante();
@@ -926,7 +1113,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             $arrDadosEmail['dadosUsuario']['email'] = $arrObjMdPetVinculoDTO[0]->getStrEmailContatoRepresentante();
             $arrDadosEmail['dadosUsuario']['processo'] = $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
             $arrDadosEmail['dadosUsuario']['razao_social'] = $arrObjMdPetVinculoDTO[0]->getStrRazaoSocialNomeVinc();
-            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getStrCnpj();
+            $arrDadosEmail['dadosUsuario']['cnpj'] = $arrObjMdPetVinculoDTO[0]->getStrCNPJ();
 
             $protocoloRN = new ProtocoloRN();
             $objProtocoloDTO = new ProtocoloDTO();

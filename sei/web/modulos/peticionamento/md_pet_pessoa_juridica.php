@@ -197,12 +197,12 @@ PaginaSEI::getInstance()->abrirAreaDados();
                     <div class="mt-3">
                         <div class="row">
                             <div class="col-7">
-                                <label for="">Lista de CNPJs Não localizados:</label><br>
+                                <label for="">Lista de CNPJs Não elegíveis:</label><br>
                                 <textarea class="infraTextarea" id="notFoundCnpjs" rows="5" style="width: 100%" readonly></textarea>
                             </div>
                             <div class="col-5 pt-1">
-                                <!--  <button type="button" class="infraButton mt-3" id="downloadBtn">Exportar lista de CPFs não localizados</button>-->
-                                <button type="button" class="infraButton mt-3 clipboardBtn" id="copyNotFounds" data-clipboard-target="#notFoundCnpjs">Copiar lista de CPFs não localizados</button>
+                                <!--  <button type="button" class="infraButton mt-3" id="downloadBtn">Exportar lista de CNPJs não elegíveis</button>-->
+                                <button type="button" class="infraButton mt-3 clipboardBtn" id="copyNotFounds" data-clipboard-target="#notFoundCnpjs">Copiar lista de CNPJs não elegíveis</button>
                             </div>
                         </div>
                     </div>
@@ -276,6 +276,29 @@ PaginaSEI::getInstance()->abrirAreaDados();
         });
 
         let timer;
+        const LIMITE_DESTINATARIOS = <?= MdPetIntimacaoRN::$LIMITE_DESTINATARIOS_LOTE ?>;
+
+        function obterIdsSelecionados(contextChanges) {
+            let idsSelecionados = {};
+            $('#selDadosUsuario2 option', contextChanges).each(function() {
+                idsSelecionados[$.trim($(this).val())] = true;
+            });
+            return idsSelecionados;
+        }
+
+        function filtrarDestinatariosNovos(itens, contextChanges) {
+            let idsSelecionados = obterIdsSelecionados(contextChanges);
+            let idsNovos = {};
+
+            return itens.filter(function(item) {
+                let idContato = $.trim(item.split('|')[0]);
+                if (idContato === '' || idsSelecionados[idContato] || idsNovos[idContato]) {
+                    return false;
+                }
+                idsNovos[idContato] = true;
+                return true;
+            });
+        }
 
         $('#cnpjList').off('input paste keyup').on('input paste keyup', function() {
             $('.cnpj-validation-result textarea').val('');
@@ -286,9 +309,9 @@ PaginaSEI::getInstance()->abrirAreaDados();
         $('#downloadBtn').click(function() {
             var notFoundCnpjs = $('#notFoundCnpjs').val();
             if (notFoundCnpjs.trim() !== '') {
-                download('SEI-ANATEL-CNPJs-destinatarios-intimacao-nao-localizados.txt', notFoundCnpjs);
+                download('SEI-ANATEL-CNPJs-destinatarios-intimacao-nao-elegiveis.txt', notFoundCnpjs);
             } else {
-                alert('Não há CPFs não encontrados para baixar.');
+                alert('Não há CNPJs não elegíveis para baixar.');
             }
         });
 
@@ -359,18 +382,18 @@ PaginaSEI::getInstance()->abrirAreaDados();
             
             $('.pesquisa-destinatarios-lote').fadeToggle(200);
 
-            let mode = $('#divInfraBarraLocalizacao').html() == 'Selecionar Destinatarios' ? 'normal' : 'lote';
+            let mode = $('#divInfraBarraLocalizacao h1').html() == 'Selecionar Destinatarios' ? 'normal' : 'lote';
 
             if(mode == 'normal'){
                 
-                $('#divInfraBarraLocalizacao').html('Selecionar Destinatarios em Lote');
+                $('#divInfraBarraLocalizacao h1').html('Selecionar Destinatarios em Lote');
                 $('.btnToggleLote').val('Fechar seleção em Lote');
                 $('.fecharLote').css('display', 'none');
                 $('#cnpjList').focus();
                 
             }else{
                 
-                $('#divInfraBarraLocalizacao').html('Selecionar Destinatarios');
+                $('#divInfraBarraLocalizacao h1').html('Selecionar Destinatarios');
                 $('.btnToggleLote').val('Selecionar em Lote');
                 $('form.fecharLote, div.fecharLote').fadeIn(100);
                 $('input.fecharLote, button.fecharLote').css('display', 'inline-block');
@@ -389,23 +412,31 @@ PaginaSEI::getInstance()->abrirAreaDados();
                 $.ajax({
                     url: '<?= $strLinkDestinatariosMassa ?>',
                     method: 'POST',
+                    dataType: 'json',
                     data: { cnpjList: cnpjList },
                     beforeSend: function(){
 
-                        btnClicked.prop('disabled', true).html('Pesquisando em lote ('+ cnpjList.length +')...');
+                        btnClicked
+                            .prop('disabled', true)
+                            .attr('aria-busy', 'true')
+                            .html('<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>'
+                                + '<span role="status">Pesquisando em lote ('+ cnpjList.length +')...</span>');
                         $('#foundCnpjs, #notFoundCnpjs').val('');
                         $('.cnpj-validation-result, #transportBtn').hide();
 
                     },
-                    success: function(response) {
+                    success: function(data) {
+                        
+                        console.log(data);
+                        // var data = JSON.parse(response);
+                        var contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
+                        var foundCnpjs = filtrarDestinatariosNovos(data.foundCnpjs, contextChanges);
 
-                        var data = JSON.parse(response);
+                        if(foundCnpjs.length > 0){
 
-                        if(data.foundCnpjs.length > 0){
-
-                            $('#foundCnpjs').val(data.foundCnpjs.join('\n'));
-                            $('#transportBtn').html('Transportar Localizados ('+data.foundCnpjs.length+')').fadeIn(100);
-                            $('#copyFounds').html('Copiar lista de localizados ('+data.foundCnpjs.length+')').fadeIn(100);
+                            $('#foundCnpjs').val(foundCnpjs.join('\n'));
+                            $('#transportBtn').html('Transportar Elegíveis ('+foundCnpjs.length+')').fadeIn(100);
+                            $('#copyFounds').html('Copiar lista de elegíveis ('+foundCnpjs.length+')').fadeIn(100);
 
                         }else{
 
@@ -431,7 +462,7 @@ PaginaSEI::getInstance()->abrirAreaDados();
                         if(data.notFoundCnpjs.length > 0){
                             $('.cnpj-validation-result').show();
                             $('#notFoundCnpjs').val(data.notFoundCnpjs.join('\n'));
-                            $('#copyNotFounds').html('Copiar lista de não localizados ('+data.notFoundCnpjs.length+')').show();
+                            $('#copyNotFounds').html('Copiar lista de não elegíveis ('+data.notFoundCnpjs.length+')').show();
                         }else{
                             $('#copyNotFounds, #downloadBtn, #notFoundCnpjs, .cnpj-validation-result').hide();
                         }
@@ -441,10 +472,16 @@ PaginaSEI::getInstance()->abrirAreaDados();
                     },
                     error: function(xhr, status, error) {
                         console.error(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        console.log(xhr.responseText);
                         alert(xhr.responseText);
                     },
                     complete: function(){
-                        btnClicked.prop('disabled', false).html('Pesquisar em lote');
+                        btnClicked
+                            .prop('disabled', false)
+                            .removeAttr('aria-busy')
+                            .html('Pesquisar em lote');
                     }
                 });
                 
@@ -460,6 +497,18 @@ PaginaSEI::getInstance()->abrirAreaDados();
             let i = 0;
             let toTransport = $('#foundCnpjs').val().split('\n');
             let contextChanges = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document;
+            let idsSelecionados = obterIdsSelecionados(contextChanges);
+
+            toTransport = filtrarDestinatariosNovos(toTransport, contextChanges);
+
+            let totalDestinatarios = Object.keys(idsSelecionados).length + toTransport.length;
+            if (totalDestinatarios > LIMITE_DESTINATARIOS) {
+                alert('O limite \u00e9 de ' + LIMITE_DESTINATARIOS + ' destinat\u00e1rios por intima\u00e7\u00e3o.\n\n'
+                    + 'J\u00e1 selecionados: ' + Object.keys(idsSelecionados).length + '.\n'
+                    + 'Novos localizados: ' + toTransport.length + '.\n'
+                    + 'Total resultante: ' + totalDestinatarios + '.');
+                return;
+            }
 
             while (i < toTransport.length) {
 

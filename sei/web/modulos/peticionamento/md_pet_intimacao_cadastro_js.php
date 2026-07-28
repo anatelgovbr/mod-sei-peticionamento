@@ -1187,14 +1187,14 @@
             $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
             $strLinkIntegral = SessaoSEI::getInstance()->assinarLink($urlBase . '/controlador.php?acao=md_pet_intimacao_cadastro_confirmar&tipo=integral&id_documento='.$idDocumento);
             ?>
-            parent.infraAbrirJanelaModal('<? echo $strLinkIntegral; ?>', 900, 400);
+            parent.infraAbrirJanelaModal('<? echo $strLinkIntegral; ?>', 900, 400, true, 'atualizarArvoreAposFechar');
         } else {
             console.log('parcial')
             <?
             $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL');
             $strLinkParcial = SessaoSEI::getInstance()->assinarLink($urlBase . '/controlador.php?acao=md_pet_intimacao_cadastro_confirmar&tipo=parcial&id_documento='.$idDocumento);
             ?>
-            parent.infraAbrirJanelaModal('<? echo $strLinkParcial; ?>', 900, 400);
+            parent.infraAbrirJanelaModal('<? echo $strLinkParcial; ?>', 900, 400, true, 'atualizarArvoreAposFechar');
         }
 
 

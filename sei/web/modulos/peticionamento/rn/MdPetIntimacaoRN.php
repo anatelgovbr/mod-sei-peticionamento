@@ -12,6 +12,8 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 class MdPetIntimacaoRN extends InfraRN
 {
 
+    public static $LIMITE_DESTINATARIOS_LOTE = 300;
+
     //Id Tarefa Módulo
     public static $ID_TAREFA_MODULO_CADASTRO_INTIMACAO = 'MD_PET_INTIMACAO_EXPEDIDA';
 
@@ -82,7 +84,11 @@ class MdPetIntimacaoRN extends InfraRN
         try {
 
             //Valida Permissao
-            SessaoSEI::getInstance()->validarPermissao('md_pet_intimacao_cadastrar');
+            SessaoSEI::getInstance()->validarAuditarPermissao(
+                'md_pet_intimacao_cadastrar',
+                __METHOD__,
+                $objMdPetIntimacaoDTO
+            );
 
             //Regras de Negocio
             $objInfraException = new InfraException();
@@ -633,6 +639,11 @@ class MdPetIntimacaoRN extends InfraRN
 
     }
 
+    public function getTextoAlertaLimiteIntimacoesLote()
+    {
+        return '<div style="padding: 10px; border-left: 6px solid #f00; margin: 15px;"><p style="margin-bottom: 0px"><span style="font-weight: bold; color: #f00">Atenção:</span> <b>Intimação Eletrônica não deve ser utilizada como mala direta</b>. Ela deve ser utilizada para dar ciência oficial aos interessados sobre atos processuais, conforme art. 26 da Lei nº 9.784/1999. Apenas em processos administrativos que juridicamente demandam múltiplos interessados deve enviar intimações para vários destinatários.</p></div>';
+    }
+
     public function getTextoTolTipIntimacaoEletronica($arr)
     {
 
@@ -814,11 +825,9 @@ class MdPetIntimacaoRN extends InfraRN
                 $idUnidade = $this->_getIdUnidadeDocumentoPrincipal($arr, $idDocumento);
             }
 
-            if ($idUnidade != '' && !is_null($idUnidade)) {
-                $objUnidadeDTO = $this->retornaObjUnidadePorId($idUnidade, $retTodos);
+            if (!empty($idUnidade)) {
+                return $this->retornaObjUnidadePorId($idUnidade, $retTodos);
             }
-
-            return $objUnidadeDTO;
 
         }
 
@@ -959,12 +968,14 @@ class MdPetIntimacaoRN extends InfraRN
 
     private function _vincularAnexosIntimacao($dadosCadastro, $idIntimacao)
     {
-        if (isset($dadosCadastro['rdoPossuiAnexo']) == 'S') {
+        if (($dadosCadastro['rdoPossuiAnexo'] ?? 'N') === 'S') {
 
-            $arrHdnAnexo = $_POST['hdnIdsDocAnexo'] != '' ? json_decode($_POST['hdnIdsDocAnexo']) : null;
+            $arrHdnAnexo = $dadosCadastro['hdnIdsDocAnexo'] != '' ? json_decode($dadosCadastro['hdnIdsDocAnexo']) : null;
 
-            foreach ($arrHdnAnexo as $idAnexosIntimacao) {
-                $this->_vincularDocumentosIntimacao($idAnexosIntimacao, $idIntimacao);
+            if (is_iterable($arrHdnAnexo)) {
+                foreach ($arrHdnAnexo as $idAnexosIntimacao) {
+                    $this->_vincularDocumentosIntimacao($idAnexosIntimacao, $idIntimacao);
+                }
             }
         }
     }
@@ -972,7 +983,7 @@ class MdPetIntimacaoRN extends InfraRN
     private function _vincularDocumentosDisponiveis($dadosCadastro, $idIntimacao)
     {
         if ($dadosCadastro['optParcial'] == MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL) {
-            $arrHdnProtDispon = $_POST['hdnIdsDocDisponivel'] != '' ? json_decode($_POST['hdnIdsDocDisponivel']) : null;
+            $arrHdnProtDispon = $dadosCadastro['hdnIdsDocDisponivel'] != '' ? json_decode($dadosCadastro['hdnIdsDocDisponivel']) : null;
 
             if (is_iterable($arrHdnProtDispon)) {
                 foreach ($arrHdnProtDispon as $idAnexosDisponibilizados) {
@@ -1154,32 +1165,8 @@ class MdPetIntimacaoRN extends InfraRN
                         $objMdPetAcessoExtRN->atualizarIdAcessoExternoModulo($idAcessoExt, MdPetAcessoExternoRN::$MD_PET_INTIMACAO);
                     }
 
-                    if ($procuradorSimplesValido) {
-                        //Envia Email para procuradores
-                        $dadosIntimacao = array();
-                        $dadosIntimacao['POST'] = $dadosCadastro;
-                        $dadosIntimacao['nome'] = $value->getStrNomeProcurador();
-                        $dadosIntimacao['email'] = $value->getStrEmail();
-                        $dadosIntimacao['dataHora'] = $dataHoraGeracao;
-                        $dadosIntimacao['id_intimacao'] = $idIntimacao;
-                        $dadosIntimacao['processo'] = $objProcedimento->getStrProtocoloProcedimentoFormatado();
-
-                        $emailNotificacaoIntimacaoRN = new MdPetIntEmailNotificacaoRN();
-                        $emailNotificacaoIntimacaoRN->enviarEmailIntimacao($dadosIntimacao);
-                    }
                 }
             }
-            //Envia Email para intimado
-            $dadosIntimacao = array();
-            $dadosIntimacao['POST'] = $dadosCadastro;
-            $dadosIntimacao['nome'] = $dadosUsuarios[1];
-            $dadosIntimacao['email'] = $dadosUsuarios[2];
-            $dadosIntimacao['dataHora'] = $dataHoraGeracao;
-            $dadosIntimacao['id_intimacao'] = $idIntimacao;
-            $dadosIntimacao['processo'] = $objProcedimento->getStrProtocoloProcedimentoFormatado();
-
-            $emailNotificacaoIntimacaoRN = new MdPetIntEmailNotificacaoRN();
-            $emailNotificacaoIntimacaoRN->enviarEmailIntimacao($dadosIntimacao);
         }
 
         return $destinatarios;
@@ -1287,8 +1274,6 @@ class MdPetIntimacaoRN extends InfraRN
                         }
 
                         $objMdPetAcessoExtRN->atualizarIdAcessoExternoModulo($idAcessoExt, MdPetAcessoExternoRN::$MD_PET_INTIMACAO);
-
-                        $this->_enviaEmailJuridico($dadosCadastro, $value, $dataHoraGeracao, $objProcedimento->getStrProtocoloProcedimentoFormatado(), $idIntimacao);
                     }
                 }
             }
@@ -1383,39 +1368,6 @@ class MdPetIntimacaoRN extends InfraRN
 
         return $confirmaCriterios;
     }
-
-    //Envia e-mail
-    private function _enviaEmailJuridico($dadosCadastro, $value, $dataHoraGeracao, $procedimentoFormatado, $idIntimacao)
-    {
-
-        $dadosIntimacao = array();
-        $dadosIntimacao['POST'] = $dadosCadastro;
-        $dadosIntimacao['nome'] = $value->getStrNomeProcurador();
-        $dadosIntimacao['email'] = $value->getStrEmail();
-        $dadosIntimacao['dataHora'] = $dataHoraGeracao;
-        $dadosIntimacao['id_intimacao'] = $idIntimacao;
-        $dadosIntimacao['processo'] = $procedimentoFormatado;
-        $dadosIntimacao['razaoSocial'] = $value->getStrRazaoSocialNomeVinc();
-        $dadosIntimacao['cnpj'] = $value->getStrCNPJ();
-
-        //Tipo Vinculação
-        if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
-            $dadosIntimacao['tpVinc'] = "Responsavel Legal";
-        }
-        if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL) {
-            $dadosIntimacao['tpVinc'] = "Procurador Especial";
-        }
-        if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-            $dadosIntimacao['tpVinc'] = "Procurador Simples";
-        }
-//            if($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SUBSTALECIDO){
-//                $dadosIntimacao['tpVinc']         = "Procurador Substalecido";
-//            }
-        $emailNotificacaoIntimacaoRN = new MdPetIntEmailNotificacaoRN();
-        $emailNotificacaoIntimacaoRN->enviarEmailIntimacaoJuridico($dadosIntimacao);
-
-    }
-
 
     private function _lancarAndamentoIntimacao($dadosCadastro, $dataHoraGeracao, $objDocumentoDTO, $strDestinatarios)
     {
@@ -1976,60 +1928,65 @@ class MdPetIntimacaoRN extends InfraRN
         return $nome;
     }
 
-    public function verificaIntimacaoExistente(){
-
+    public function verificarDuplicidadeIntimacao(array $dadosCadastro)
+    {
         $ids = [];
-        $arrIdsDocAnexo = !empty($_POST['hdnIdsDocAnexo']) ? json_decode($_POST['hdnIdsDocAnexo']) : [];
+        $arrIdsDocAnexo = !empty($dadosCadastro['hdnIdsDocAnexo']) ? json_decode($dadosCadastro['hdnIdsDocAnexo'], true) : [];
+        $strDadosUsuario = !empty($dadosCadastro['hdnDadosUsuario2']) ? $dadosCadastro['hdnDadosUsuario2'] : $dadosCadastro['hdnDadosUsuario'];
+        $hdnUsuarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($strDadosUsuario);
 
-        $hdnUsuarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnDadosUsuario']);
-        foreach ($hdnUsuarios as $key => $value) {
-            $ids [] = $value[0];
+        foreach ($hdnUsuarios as $value) {
+            $ids[] = $value[0];
         }
 
-        return $msg = '<message>'.(new MdPetIntimacaoRN())->_verificarDocumentosDuplicados($_POST['hdnIdDocumento'], $arrIdsDocAnexo, $ids, $_POST['hdnIdProcedimento'], $_POST['tipoPessoa']).'</message>';
-
+        return $this->_verificarDocumentosDuplicados(
+            $dadosCadastro['hdnIdDocumento'],
+            is_array($arrIdsDocAnexo) ? $arrIdsDocAnexo : [],
+            $ids,
+            $dadosCadastro['hdnIdProcedimento'],
+            $dadosCadastro['tipoPessoa']
+        );
     }
 
-    public function cadastrarIntimacaoControlado($dadosCadastro)
+    public function verificaIntimacaoExistente(array $dadosCadastro)
+    {
+        return '<message>' . PaginaSEI::tratarHTML($this->verificarDuplicidadeIntimacao($dadosCadastro)) . '</message>';
+    }
+
+    public function cadastrarIntimacaoControlado(array $dadosCadastro)
     {
 
-        try {
-            $dataHoraGeracao = InfraData::getStrDataHoraAtual();
-            $objDocumentoRN = new DocumentoRN();
+        $dataHoraGeracao = InfraData::getStrDataHoraAtual();
+        $objDocumentoRN = new DocumentoRN();
 
-            $objProcedimentoDTO = new ProcedimentoDTO();
-            $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
-            $objProcedimentoDTO->retNumIdTipoProcedimento();
-            $objProcedimentoDTO->retNumIdOrgaoUnidadeGeradoraProtocolo();
-	        $objProcedimentoDTO->setDblIdProcedimento($dadosCadastro['hdnIdProcedimento']);
-            $objProcedimentoDTO = (new ProcedimentoRN())->consultarRN0201($objProcedimentoDTO);
+        $objProcedimentoDTO = new ProcedimentoDTO();
+        $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
+        $objProcedimentoDTO->retNumIdTipoProcedimento();
+        $objProcedimentoDTO->retNumIdOrgaoUnidadeGeradoraProtocolo();
+	    $objProcedimentoDTO->setDblIdProcedimento($dadosCadastro['hdnIdProcedimento']);
+        $objProcedimentoDTO = (new ProcedimentoRN())->consultarRN0201($objProcedimentoDTO);
 
-            $objMdPetIntimacaoDTO = $this->_cadastrarObjIntimacao($dadosCadastro);
-            $idIntimacao = $objMdPetIntimacaoDTO->getNumIdMdPetIntimacao();
+        $objMdPetIntimacaoDTO = $this->_cadastrarObjIntimacao($dadosCadastro);
+        $idIntimacao = $objMdPetIntimacaoDTO->getNumIdMdPetIntimacao();
 
-            $this->_vincularTipoResposta($dadosCadastro['selTipoResposta'], $idIntimacao);
-            $this->_vincularDocumentosIntimacao($dadosCadastro['hndIdDocumento'], $idIntimacao, true);
-            $this->_vincularAnexosIntimacao($dadosCadastro, $idIntimacao);
-            $this->_vincularDocumentosDisponiveis($dadosCadastro, $idIntimacao);
+        $this->_vincularTipoResposta($dadosCadastro['selTipoResposta'], $idIntimacao);
+        $this->_vincularDocumentosIntimacao($dadosCadastro['hndIdDocumento'], $idIntimacao, true);
+        $this->_vincularAnexosIntimacao($dadosCadastro, $idIntimacao);
+        $this->_vincularDocumentosDisponiveis($dadosCadastro, $idIntimacao);
 
-            if ($dadosCadastro['tipoPessoa'] == "J") {
-                $strDestinatarios = $this->_vincularDestinatariosIntimacaoJuridico($dadosCadastro, $idIntimacao, $dataHoraGeracao, $objProcedimentoDTO, $dadosCadastro['hndIdDocumento']);
-            } else {
-                $strDestinatarios = $this->_vincularDestinatariosIntimacao($dadosCadastro, $idIntimacao, $dataHoraGeracao, $objProcedimentoDTO, $dadosCadastro['hndIdDocumento']);
-            }
-
-            $objDocumentoDTO = $this->_retornaObjDocumento($dadosCadastro['hndIdDocumento']);
-
-            $objDocumentoRN->bloquearConteudo($objDocumentoDTO);
-
-            $this->_lancarAndamentoIntimacao($dadosCadastro, $dataHoraGeracao, $objDocumentoDTO, $strDestinatarios);
-
-            return $objMdPetIntimacaoDTO;
-
-        } catch (Exception $e) {
-            PaginaSEI::getInstance()->processarExcecao($e);
-            return false;
+        if ($dadosCadastro['tipoPessoa'] == "J") {
+            $strDestinatarios = $this->_vincularDestinatariosIntimacaoJuridico($dadosCadastro, $idIntimacao, $dataHoraGeracao, $objProcedimentoDTO, $dadosCadastro['hndIdDocumento']);
+        } else {
+            $strDestinatarios = $this->_vincularDestinatariosIntimacao($dadosCadastro, $idIntimacao, $dataHoraGeracao, $objProcedimentoDTO, $dadosCadastro['hndIdDocumento']);
         }
+
+        $objDocumentoDTO = $this->_retornaObjDocumento($dadosCadastro['hndIdDocumento']);
+
+        $objDocumentoRN->bloquearConteudo($objDocumentoDTO);
+
+        $this->_lancarAndamentoIntimacao($dadosCadastro, $dataHoraGeracao, $objDocumentoDTO, $strDestinatarios);
+
+        return $objMdPetIntimacaoDTO;
 
     }
 

@@ -39,6 +39,7 @@ function printHelp($msg){
 $idProcedimento             = array_key_exists('id_procedimento', $_REQUEST) ? $_REQUEST['id_procedimento'] : $_POST['hdnIdProcedimento'];
 $strLinkAjaxDestinatarios   = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_lote'); // Input Autocomplete
 $strLinkInteressados        = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
+$alertaLimite               = $objMdPetIntimacaoRN->getTextoAlertaLimiteIntimacoesLote();
 
 //Pessoa Física - Lupa do multiselect
 $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_fisica&tipo_selecao=2&id_object=objLupaInteressados&id_procedimento=' . $idProcedimento.'&id_documento=' . $idDocumento);
@@ -61,15 +62,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="text-right">
-                        <button type="button"
-                                onclick="infraAbrirJanelaModal('<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $idProcedimento) ?>' , 1200 , 600 );"
-                                class="infraButton"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
-                                accesskey="V">
-                            <span class="infraTeclaAtalho">V</span>er intimações do processo
-                        </button>
-                    </div>
+                    <?= $alertaLimite; ?>
                 </div>
             </div>
 
@@ -89,7 +82,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                         </select>
 
                         <div id="divOpcoesDadosUsuario2">
-                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(800,800);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Usuário Externo" alt="Selecionar Usuário Externo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(1200,800);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Usuário Externo" alt="Selecionar Usuário Externo" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                             <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Usuário Externo Selecionado" title="Remover Usuário Externo Selecionado" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                         </div>
 
@@ -216,8 +209,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6" id="divTipoResposta" name="divTipoResposta">
             <div class="form-group">
-                <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de
-                    Resposta:</label>
+                <label id="lblTipodeResposta" for="lblTipodeResposta" class="infraLabelObrigatorio">Tipo de Resposta:</label>
                 <div id="divSelectTipoResposta"></div>
                 <div style="display: none" id="divEspacoResposta" class="clear height_1"></div>
             </div>

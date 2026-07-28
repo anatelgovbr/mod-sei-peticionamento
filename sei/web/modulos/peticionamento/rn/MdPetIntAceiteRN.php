@@ -153,51 +153,17 @@ class MdPetIntAceiteRN extends InfraRN
         }
     }
 
-    // TODO Apagar caso não aparece nenhum estouro de tela.
-//    protected function existeAceiteIntimacaoConectado($arr) {
-//        $idIntimacao = count($arr) > 0 ? current($arr) : '';
-//        $bolRetDados = isset($arr[1]) ? $arr[1] : false;
-//
-//        //Get Id Contato
-//        $objUsuarioDTO = new UsuarioDTO();
-//        $objUsuarioRN = new UsuarioRN();
-//        $objUsuarioDTO->retNumIdContato();
-//        $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-//        $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
-//        $idContato = isset($objUsuarioDTO) && !is_null($objUsuarioDTO) ? $objUsuarioDTO->getNumIdContato() : null;
-//
-//        //Get Pet Rel Destinatario
-//        $objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
-//        $objMdPetIntDestDTO->setNumIdMdPetIntimacao($idIntimacao);
-//        $objMdPetIntDestDTO->setNumIdContatoParticipante($idContato);
-//        $objMdPetIntDestDTO->retNumIdMdPetIntRelDestinatario();
-//        $objMdPetIntDestDTO->retStrStaSituacaoIntimacao();
-//
-//        $objMdPetIntDestRN = new MdPetIntRelDestinatarioRN();
-//        $retLista = $objMdPetIntDestRN->listar($objMdPetIntDestDTO);
-//        $objMdPetIntDestDTO = !is_null($retLista) && count($retLista) > 0 ? current($retLista) : null;
-//        $idMdPetIntDest = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario() : null;
-//
-//        $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
-//        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($idMdPetIntDest);
-//        $count = $this->contarConectado($objMdPetIntAceiteDTO);
-//        if (!$bolRetDados) {
-//            return $count > 0;
-//        } else {
-//            $countRet = $count > 0;
-//            $idAceite = null;
-//            $dataAceite = null;
-//            if ($countRet) {
-//                $objMdPetIntAceiteDTO->retNumIdMdPetIntAceite();
-//                $objMdPetIntAceiteDTO->retDthData();
-//                $ret = $this->listarConectado($objMdPetIntAceiteDTO);
-//                $idAceite = $ret[0]->getNumIdMdPetIntAceite();
-//                $dataAceite = $ret[0]->getDthData();
-//            }
-//
-//            return array($countRet, $idAceite, $dataAceite);
-//        }
-//    }
+    protected function existeAceiteDestinatario($idMdPetIntRelDestinatario)
+    {
+
+        $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+        $objMdPetIntAceiteDTO->retDthData();
+        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($idMdPetIntRelDestinatario);
+        $count = $this->contar($objMdPetIntAceiteDTO);
+
+        return $count > 0;
+    
+    }
 
     protected function existeAceiteIntimacaoAcaoConectado($arr)
     {
@@ -1041,18 +1007,23 @@ class MdPetIntAceiteRN extends InfraRN
         $objUsuarioPetRN = new MdPetIntUsuarioRN();
         $objUsuarioPetDTO = $objUsuarioPetRN->getObjUsuarioPeticionamento();
 
-        $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
-        $objMdPetIntAceiteDTO->setStrIp(null);
-        $objMdPetIntAceiteDTO->setDthData(InfraData::getStrDataHoraAtual());
-        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objDTO->getNumIdMdPetIntRelDestinatario());
-        $objMdPetIntAceiteDTO->setStrTipoAceite(MdPetIntimacaoRN::$TP_AUTOMATICO_POR_DECURSO_DE_PRAZO);
-        $objMdPetIntAceiteDTO->setDblIdDocumentoCertidao($idDoc);
-        $objMdPetIntAceiteDTO->setNumIdUsuario($objUsuarioPetDTO->getNumIdUsuario());
-        $objMdPetIntAceiteDTO = $this->cadastrar($objMdPetIntAceiteDTO);
+        if($this->existeAceiteDestinatario($objDTO->getNumIdMdPetIntRelDestinatario())) {
 
-        $objMdPetIntRelDestRN->atualizarStatusIntimacao(array(MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_PRAZO, $objDTO->getNumIdMdPetIntRelDestinatario()));
+            $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+            $objMdPetIntAceiteDTO->setStrIp(null);
+            $objMdPetIntAceiteDTO->setDthData(InfraData::getStrDataHoraAtual());
+            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objDTO->getNumIdMdPetIntRelDestinatario());
+            $objMdPetIntAceiteDTO->setStrTipoAceite(MdPetIntimacaoRN::$TP_AUTOMATICO_POR_DECURSO_DE_PRAZO);
+            $objMdPetIntAceiteDTO->setDblIdDocumentoCertidao($idDoc);
+            $objMdPetIntAceiteDTO->setNumIdUsuario($objUsuarioPetDTO->getNumIdUsuario());
+            $objMdPetIntAceiteDTO = $this->cadastrar($objMdPetIntAceiteDTO);
 
-        return $objMdPetIntAceiteDTO;
+            $objMdPetIntRelDestRN->atualizarStatusIntimacao(array(MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_PRAZO, $objDTO->getNumIdMdPetIntRelDestinatario()));
+        
+            return $objMdPetIntAceiteDTO;
+        
+        }
+        
     }
 
     public function retornaArraySituacaoIntimacao()
@@ -1304,6 +1275,11 @@ class MdPetIntAceiteRN extends InfraRN
                 }
 
                 $idMdPetIntDest = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario() : null;
+
+                //Só será cumprida as intimações que tiverem destinatário devidamente cadastrado e que ainda não possuam aceite
+                if(empty($idMdPetIntDest) || $this->existeAceiteDestinatario($idMdPetIntDest)) {
+                    continue;
+                }
 
                 $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
 

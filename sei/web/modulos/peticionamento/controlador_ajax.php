@@ -19,7 +19,8 @@ function mdPetGetParametrosInfraestruturaPermitidos() {
         'acao_origem',
         'acao',
         'infra_hash',
-		'id_documento'
+		'id_documento',
+		'id_intimacao'
     );
 }
 
@@ -49,7 +50,7 @@ try{
 		InfraDebug::getInstance()->gravar(sprintf(
             '[HARDENING] Parâmetros GET não permitidos detectados: %s | Ação: %s | IP: %s',
             implode(', ', $arrGetNaoPermitidos),
-            $acaoAjaxExterno,
+		$acaoAjax,
             $_SERVER['REMOTE_ADDR'] ?? 'unknown'
         ));
 
@@ -134,6 +135,7 @@ try{
 		'hdnAcaoOrigem',
 		'tipoGrafico',
 		'idTipoIntimacao',
+		'txtProcedimentoPesquisa',
 	);
 	
     $contratosAcoes = array(
@@ -152,6 +154,11 @@ try{
 			'post_required' => array('cnpjList'), 
 			'post_optional' => array('id_documento')
 		),
+        'md_pet_notificar_intimacao' => array(
+			'get' => array('acao_ajax', 'id_intimacao', 'infra_sistema', 'infra_unidade_atual', 'infra_hash'),
+			'post_required' => array(),
+			'post_optional' => array()
+		),
         'contato_auto_completar' => array(
 			'get' => array('acao_ajax', 'origem', 'infra_sistema', 'infra_unidade_atual', 'infra_hash'), 
 			'post_required' => array('palavras_pesquisa', 'id_grupo_contato', 'tipo_contato'), 
@@ -166,6 +173,7 @@ try{
 		$arrPermissoesPorAcao = [
 			'md_pet_verifica_usuarios_intimacao' => ['md_pet_pessoa_fisica'],
 			'md_pet_verifica_destinatarios_intimacao' => ['md_pet_pessoa_juridica'],
+			'md_pet_notificar_intimacao' => ['md_pet_intimacao_cadastrar'],
 			'contato_auto_completar' => ['md_pet_int_relatorio_listar', 'md_pet_int_relatorio_fisica', 'md_pet_int_relatorio_juridica'],
 			'md_pet_int_relatorio_grafico' => ['md_pet_int_relatorio_listar', 'md_pet_int_relatorio_fisica', 'md_pet_int_relatorio_juridica']
 		];
@@ -227,7 +235,7 @@ try{
 			$arrContatosIntimados = [];
 			$idDocumento = '';
 			
-			$cpfList = $_POST['cpfList'];
+			$cpfList = PaginaSEI::POST('cpfList');
 
 			if (!is_array($cpfList)) {
 				mdPetErroJson('Payload invalido para cpfList.');
@@ -236,14 +244,13 @@ try{
 
 			$foundCpfs = $notFoundCpfs = $notAbleCpfs = [];
 			
-			if(isset($_POST['id_documento']) && $_POST['id_documento'] !== ''){
-				if (!ctype_digit((string) $_POST['id_documento']) || (int) $_POST['id_documento'] <= 0){
-					mdPetErroJson('Payload invalido para id_documento.');
-					break;
-				}
-				$idDocumento = (int) $_POST['id_documento'];
-				$arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradas($idDocumento), 'Id');
+			$idDocumentoAssinado = PaginaSEI::GET('id_documento');
+			if (!ctype_digit((string) $idDocumentoAssinado) || (int) $idDocumentoAssinado <= 0){
+				mdPetErroJson('Payload invalido para id_documento.');
+				break;
 			}
+			$idDocumento = (int) $idDocumentoAssinado;
+			$arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradas($idDocumento), 'Id');
 			
 			$cpfRegex = '/^(\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{11})$/';
 			
@@ -328,21 +335,20 @@ try{
 			$arrContatosIntimados = [];
 			$idDocumento = '';
 			
-			$cnpjList = $_POST['cnpjList'];
+			$cnpjList = PaginaSEI::POST('cnpjList');
 			if (!is_array($cnpjList)) {
 				mdPetErroJson('Payload invalido para cnpjList.');
 				break;
 			}
 			$foundCnpjs = $notFoundCnpjs = $notAbleCnpjs = [];
 			
-			if(isset($_POST['id_documento']) && $_POST['id_documento'] !== ''){
-				if (!ctype_digit((string) $_POST['id_documento']) || (int) $_POST['id_documento'] <= 0){
-					mdPetErroJson('Payload invalido para id_documento.');
-					break;
-				}
-				$idDocumento = (int) $_POST['id_documento'];
-				$arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradasJuridico($idDocumento), 'Id');
+			$idDocumentoAssinado = PaginaSEI::GET('id_documento');
+			if (!ctype_digit((string) $idDocumentoAssinado) || (int) $idDocumentoAssinado <= 0){
+				mdPetErroJson('Payload invalido para id_documento.');
+				break;
 			}
+			$idDocumento = (int) $idDocumentoAssinado;
+			$arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradasJuridico($idDocumento), 'Id');
 			
 			$cnpjRegex = '/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$|^\d{14}$/';
 			
@@ -450,19 +456,19 @@ try{
 						
 						for($i=0;$i<count($arrObjContatoDTO);$i++){
 							if (in_array($arrObjContatoDTO[$i]->getNumIdContato(), $arrContatosIntimados)) {
-								$notFoundCnpjs[] = utf8_encode(InfraUtil::formatarCpfCnpj($cnpj) . ' - Já intimado');
-								$notAbleCnpjs[] = utf8_encode(InfraUtil::formatarCpfCnpj($cnpj) . ' - ' . $arrObjContatoDTO[$i]->getStrNome());
+								$notFoundCnpjs[] = InfraUtil::formatarCpfCnpj($cnpj) . ' - Já intimado';
+								$notAbleCnpjs[] = InfraUtil::formatarCpfCnpj($cnpj) . ' - ' . $arrObjContatoDTO[$i]->getStrNome();
 							} else {
-								$foundCnpjs[] = utf8_encode($arrObjContatoDTO[$i]->getNumIdContato().'|'.$arrObjContatoDTO[$i]->getStrNome().'|'.InfraUtil::formatarCpfCnpj($cnpj));
+								$foundCnpjs[] = $arrObjContatoDTO[$i]->getNumIdContato().'|'.$arrObjContatoDTO[$i]->getStrNome().'|'.InfraUtil::formatarCpfCnpj($cnpj);
 							}
 						}
 						
 					}else{
-						$notFoundCnpjs[] = utf8_encode($cnpjOriginal . ' - Não localizado');
+						$notFoundCnpjs[] = $cnpjOriginal . ' - Não localizado';
 					}
 					
 				}else{
-					$notFoundCnpjs[] = utf8_encode(InfraUtil::formatarCpfCnpj($cnpj) . ' - CNPJ inválido');
+					$notFoundCnpjs[] = InfraUtil::formatarCpfCnpj($cnpj) . ' - CNPJ inválido';
 				}
 			
 			}
@@ -472,10 +478,61 @@ try{
 				'notFoundCnpjs'  => $notFoundCnpjs,
 				'notAbleCnpjs'   => $notAbleCnpjs
 			];
+
+			// Converte recursivamente todo o array para UTF-8
+			array_walk_recursive($response, function (&$item) {
+				if (is_string($item)) {
+					$item = mb_convert_encoding($item, 'UTF-8', 'ISO-8859-1');
+				}
+			});
 		
-			echo json_encode($response, JSON_UNESCAPED_UNICODE);
+			echo json_encode($response);
 	
 	 	break;
+
+		case 'md_pet_notificar_intimacao':
+
+			validarPermissaoAjaxPeticionamento($acaoAjax, $objSessaoSEI);
+
+			$idIntimacao = PaginaSEI::GET('id_intimacao');
+			if (!ctype_digit((string) $idIntimacao) || (int) $idIntimacao <= 0) {
+				mdPetNegarAcessoAjaxExterno('Identificador de intimacao invalido.');
+			}
+
+			$objUnidadeDTO = (new MdPetIntimacaoRN())->getUnidadeIntimacao([(int) $idIntimacao]);
+			if (is_null($objUnidadeDTO)
+				|| (int) $objUnidadeDTO->getNumIdUnidade() !== (int) $objSessaoSEI->getNumIdUnidadeAtual()) {
+				mdPetNegarAcessoAjaxExterno();
+			}
+
+			session_write_close();
+			ignore_user_abort(true);
+			$resposta = json_encode(['status' => 'aceito']);
+			http_response_code(202);
+			header('Content-Type: application/json; charset=utf-8');
+			header('Content-Length: ' . strlen($resposta));
+			header('Connection: close');
+			echo $resposta;
+
+			if (function_exists('fastcgi_finish_request')) {
+				fastcgi_finish_request();
+			} else {
+				while (ob_get_level() > 0) {
+					ob_end_flush();
+				}
+				flush();
+			}
+
+			try {
+				(new MdPetIntEmailNotificacaoRN())->enviarEmailIntimacaoPorId((int) $idIntimacao);
+			} catch (Exception $e) {
+				LogSEI::getInstance()->gravar(
+					'Falha no envio pos-commit da intimacao ' . (int) $idIntimacao . ' [' . get_class($e) . '].',
+					InfraLog::$INFORMACAO
+				);
+			}
+
+		break;
 	
 		case 'contato_auto_completar':
 

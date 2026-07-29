@@ -480,7 +480,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $idDocumentoJustificativa = $arrObjDocumentoDTO->getDblIdDocumento();
 
             $tpProtocolo = MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO;
-            $objMdPetVinculoUsuExtRN->_adicionarDadosArquivoVinculacao($idDocumentoJustificativa, $idRepresentante, $tpProtocolo);
+            $objMdPetVinculoUsuExtRN->_adicionarDadosArquivoVinculacao($idDocumentoJustificativa, $tpProtocolo, $idRepresentante);
         }
 
         $objMdPetVincRepresentantDTO->setStrMotivo($_POST['txtMotivo']);
@@ -641,7 +641,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
                 if (is_numeric($objSaidaIncluirDocumentoAPI->getIdDocumento())) {
                     $objMdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
-                    $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($objSaidaIncluirDocumentoAPI->getIdDocumento(), $idMdPetVinculoRepresentLegal, $staTipoDocumento);
+                    $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($objSaidaIncluirDocumentoAPI->getIdDocumento(), $staTipoDocumento, $idMdPetVinculoRepresentLegal);
                     $params['dados']['numeroSeiVinculacao'] = $objSaidaIncluirDocumentoAPI->getIdDocumento();
                 }
 
@@ -656,7 +656,7 @@ class MdPetVincRepresentantRN extends InfraRN
                     $arrObjDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
 
                     $objMdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
-                    $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($arrObjDocumentoDTO->getDblIdDocumento(), $idMdPetVinculoRepresentLegal, $staDiligenciaTipoDocumento);
+                    $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($arrObjDocumentoDTO->getDblIdDocumento(), $staDiligenciaTipoDocumento, $idMdPetVinculoRepresentLegal);
 
                 }
 
@@ -666,7 +666,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
                 if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                     $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                    if (count($arrUnidadeProcesso) == 0) {
+                    if (is_countable($arrUnidadeProcesso) && count($arrUnidadeProcesso) == 0) {
                         $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                         if (is_numeric($idUnidadeAberta)) {
                             $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $idUnidadeAberta));
@@ -691,7 +691,7 @@ class MdPetVincRepresentantRN extends InfraRN
                     }
 
                // 2) Última aberta
-                } else if (count($arrUnidadeProcesso) == 0) {
+                } else if (is_countable($arrUnidadeProcesso) && count($arrUnidadeProcesso) == 0) {
                     $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
                 }
 
@@ -1582,7 +1582,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
 
             $objMdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
-            $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($objDocumentoDTO->getDblIdDocumento(), $idMdPetVinculoRepresentLegal, $staDiligenciaTipoDocumento);
+            $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($objDocumentoDTO->getDblIdDocumento(), $staDiligenciaTipoDocumento, $idMdPetVinculoRepresentLegal);
 
         }
 
@@ -1594,7 +1594,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                 $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                if (count($arrUnidadeProcesso) == 0) {
+                if (is_countable($arrUnidadeProcesso) && count($arrUnidadeProcesso) == 0) {
                     $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                     if (is_numeric($idUnidadeAberta)) {
                         $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $idUnidadeAberta));
@@ -1619,7 +1619,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 }
 
                 // 2) ltima aberta
-            } else if (count($arrUnidadeProcesso) == 0) {
+            } else if (is_countable($arrUnidadeProcesso) && count($arrUnidadeProcesso) == 0) {
                 $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
             }
 
@@ -2143,7 +2143,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             if (is_numeric($objSaidaIncluirDocumentoAPI->getIdDocumento())) {
                 $objMdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
-                $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($objSaidaIncluirDocumentoAPI->getIdDocumento(), $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent(), $staTipoDocumento);
+                $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($objSaidaIncluirDocumentoAPI->getIdDocumento(), $staTipoDocumento, $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent());
                 $params['dados']['numeroSeiVinculacao'] = $objSaidaIncluirDocumentoAPI->getIdDocumento();
             }
 
@@ -2158,7 +2158,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $arrObjDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
 
                 $objMdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
-                $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($arrObjDocumentoDTO->getDblIdDocumento(), $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent(), $staDiligenciaTipoDocumento);
+                $objMdPetVinUsuExtProcRN->_adicionarDadosArquivoVinculacao($arrObjDocumentoDTO->getDblIdDocumento(), $staDiligenciaTipoDocumento, $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent());
 
             }
 
@@ -2168,7 +2168,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                 $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                if (count($arrUnidadeProcesso) == 0) {
+                if (is_countable($arrUnidadeProcesso) && count($arrUnidadeProcesso) == 0) {
                     $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                     if (is_numeric($idUnidadeAberta)) {
                         $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $idUnidadeAberta));
@@ -2193,7 +2193,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 }
 
                 // 2) ÚLTIMA ABERTA
-            } else if (count($arrUnidadeProcesso) == 0) {
+            } else if (is_countable($arrUnidadeProcesso) && count($arrUnidadeProcesso) == 0) {
                 $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
             }
 

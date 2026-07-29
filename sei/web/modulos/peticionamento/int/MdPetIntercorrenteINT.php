@@ -400,7 +400,8 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
                 $documentoAPI->setIdTipoConferencia($itemTbDocumento[6]);
                 $documentoAPI->setNomeArquivo($itemTbDocumento[9]);
                 $documentoAPI->setTipo(ProtocoloRN::$TP_DOCUMENTO_RECEBIDO);
-                $documentoAPI->setConteudo(base64_encode(file_get_contents(DIR_SEI_TEMP . '/' . $itemTbDocumento[7])));
+                $caminhoArquivo = DIR_SEI_TEMP . '/' . $itemTbDocumento[7];
+                $documentoAPI->setConteudo(base64_encode(file_get_contents($caminhoArquivo)));
                 $documentoAPI->setData(InfraData::getStrDataAtual());
                 $documentoAPI->setIdArquivo($itemTbDocumento[7]);
                 $documentoAPI->setSinAssinado('S');

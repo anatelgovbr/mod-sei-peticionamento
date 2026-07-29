@@ -653,7 +653,7 @@ class MdPetIntCertidaoRN extends InfraRN
             $qtdAceites = $objMdPetIntAcRN->contar($objMdPetIntAcDTO);
 
             //condição
-            $isValido = $qtdIntimacoes == $qtdAceites;
+            $isValido = $qtdAceites >= $qtdIntimacoes;
         }
 
         return $isValido;

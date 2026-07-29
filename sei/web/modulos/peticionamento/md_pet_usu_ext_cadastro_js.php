@@ -1448,6 +1448,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                                             opt.value = $(j).attr("id");
                                             opt.innerHTML = $(j).attr("descricao");
                                             opt.setAttribute('data-idunidade', $(j).attr("idUnidade"));
+                                            if(document.getElementById('hdnIdCidadeTelaAnterior').value != '' && $(j).attr("id") == document.getElementById('hdnIdCidadeTelaAnterior').value) {
+                                                opt.selected = true;
+                                            }
                                             selectCidade.appendChild(opt);
                                         });
                                         
@@ -2472,7 +2475,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             url: '<?php echo SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_consultar_tipo_processo_cidade');?>',
             data: dados,
             beforeSend: function (){
-                infraExibirAviso(false, 'Processando...');
+                infraExibirAviso(false, 'Aguarde...');
             },
             error: function (dados) {
                 console.log(dados);
@@ -2496,6 +2499,9 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                         opt.value = $(j).attr("id");
                         opt.innerHTML = $(j).attr("descricao");
                         opt.setAttribute('data-idunidade', $(j).attr("idUnidade"));
+                        if(document.getElementById('hdnIdCidadeTelaAnterior').value != '' && $(j).attr("id") == document.getElementById('hdnIdCidadeTelaAnterior').value) {
+                            opt.selected = true;
+                        }
                         selectCidade.appendChild(opt);
                     });
 

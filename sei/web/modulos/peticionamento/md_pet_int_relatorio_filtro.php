@@ -4,7 +4,14 @@
 ?>
 <!-- DIV TIPO DE INTIMAÇÃO  -->
 
-
+<div class="row">
+    <div class="<?= $col_pesq ?> mb-3">
+        <label id="lblProcedimentoPesquisa" name="lblProcedimentoPesquisa" for="txtProcedimentoPesquisa" class="">
+            Número do Processo:
+        </label>
+        <input type="text" id="txtProcedimentoPesquisa" name="txtProcedimentoPesquisa" class="infraText form-control" value="<?= $_POST['txtProcedimentoPesquisa'] ?>" tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"/>
+    </div>
+</div>
 <div class="row">
     <div class="<?= $col_pesq ?> mb-3">
         <label id="lblProtocoloPesquisa" name="lblProtocoloPesquisa" for="txtProtocoloPesquisa" class="">
@@ -88,7 +95,7 @@
 <!--  DIV PERÍODO DE GERAÇÃO  -->
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-10">
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label id="lblPeriodo" name="lblPeriodo" class="">Período de Expedição:</label>
             <div class="input-group input-group-sm mb-6">
                 <div class="input-group-prepend">
@@ -129,7 +136,7 @@
 <!--  Tipo Destinatario  -->
 <div class="row">
     <div class="col-md-6 col-lg-5 col-xl-5">
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label id="lblTpDest" name="lblTpDest" class=""> Tipo de Destinatário: </label>
             <select id="selTipoDest" name="selTipoDest"
                     class="infraSelect form-select"

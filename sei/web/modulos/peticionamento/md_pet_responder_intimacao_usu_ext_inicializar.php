@@ -38,5 +38,26 @@ $tamanhoMaximo = MdPetIntercorrenteINT::tamanhoMaximoArquivoPermitido();
 $extensoesPermitidas = MdPetExtensoesArquivoINT::recuperaExtensoes(null, null, null, "N");
 //Fim RN
 
-// Forçar o Nível de Acesso parametrizado
+// Criterios para Intercorrente > Intercorrente padrao - Forçar o Nível de Acesso parametrizado
 $nivelAcessoDoc = MdPetForcarNivelAcessoDocINT::getDadosForcarNivelAcessoDoc($tipoPeticionamento = 'I');
+
+$nivelAcessoTpProc = [];
+
+// Criterios para Intercorrente > Tipo de processo - Nível de Acesso parametrizado no Tipo de processo
+$objProtocoloDTO = new ProtocoloDTO();
+$objProtocoloDTO->setDblIdProtocolo($_GET['id_procedimento']);
+$objProtocoloDTO->retNumIdTipoProcedimentoProcedimento();
+$objProtocolo = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
+
+if($objProtocolo){
+    $objMdPetCriterioDTO = new MdPetCriterioDTO();
+    $objMdPetCriterioDTO->setNumIdTipoProcedimento($objProtocolo->getNumIdTipoProcedimentoProcedimento());
+    $objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
+    $objMdPetCriterioDTO->retTodos(true);
+    $objMdPetCriterioTipoProcesso = (new MdPetCriterioRN())->consultar($objMdPetCriterioDTO);
+}
+
+if($objMdPetCriterioTipoProcesso->getStrStaNivelAcesso() == 2){
+    $nivelAcessoTpProc['nivel'] = $objMdPetCriterioTipoProcesso->getStrStaTipoNivelAcesso() == 'I' ? 1 : 0;
+    $nivelAcessoTpProc['hipotese'] = $objMdPetCriterioTipoProcesso->getNumIdHipoteseLegal();
+}

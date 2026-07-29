@@ -1509,8 +1509,8 @@ class MdPetProcessoRN extends InfraRN {
 			$objAnexoDTO->setStrSiglaUnidade( $idUnidade );
 			$objAnexoDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
 			$arrObjAnexoDTO[] = $objAnexoDTO;
-			
-			$base64 = base64_encode(file_get_contents(DIR_SEI_TEMP. '/'. $anexo[8] ));
+			$caminhoArquivo = DIR_SEI_TEMP . '/' . $anexo[8];
+			$base64 = base64_encode(file_get_contents($caminhoArquivo));
 			$bases64[$anexo[8]] = $base64;
 		}
 		

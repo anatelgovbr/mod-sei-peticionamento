@@ -141,35 +141,139 @@ try {
             $_POST['pwdsenhaSEI'] = '***********';
 
 			// Antes de criar o processo verifica se os Documentos anexados ainda estão disponíveis na TEMP
+			// Caso não estejam, informa ao usuário que os arquivos foram perdidos e que ele deve anexá-los novamente.
 
 			$criarProcesso = true;
 
-			if( isset( $_POST['hdnDocPrincipal'] ) ){
+			if (
+				isset($_POST['hdnDocPrincipal']) ||
+				isset($_POST['hdnDocEssencial']) ||
+				isset($_POST['hdnDocComplementar'])
+			) {
 
-				$docPrincipal = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocPrincipal']);
-				if(!empty($docPrincipal) && count($docPrincipal) > 0){
-					if (!file_exists(DIR_SEI_TEMP . '/' . $docPrincipal[0][8])) {
+				$documentos = [
+					'Principal'     => PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocPrincipal']),
+					'Essencial'     => PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocEssencial']),
+					'Complementar'  => PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnDocComplementar']),
+				];
 
-						$criarProcesso = false;
+				$arquivosPerdidos = [];
 
-						removerAtributosPagina();
+				foreach ($documentos as $tipo => $lista) {
 
-						echo "<script>
-								alert('O formulário ficou aberto por muito tempo sem envio. Os arquivos anexados foram removidos automaticamente por segurança. Por favor, refaça o upload dos documentos.');
-								window.top.document.getElementById('tbDocumentoPrincipal').querySelector('tbody').innerHTML = '';
-								window.top.document.getElementById('hdnDocPrincipal').value = '';
-								window.top.document.getElementById('tbDocumentoEssencial').querySelector('tbody').innerHTML = '';
-								window.top.document.getElementById('hdnDocEssencial').value = '';
-								window.top.document.getElementById('tbDocumentoComplementar').querySelector('tbody').innerHTML = '';
-								window.top.document.getElementById('hdnDocComplementar').value = '';
-								window.top.document.querySelectorAll('div[id^=\"divInfraSparklingModalClose\"].sparkling-modal-close').forEach(el => el.click());
-							</script>";
+					if (empty($lista)) {
+						continue;
+					}
 
-						die;
+					foreach ($lista as $indice => $doc) {
 
+						// coluna "Nome Upload servidor"
+						$hash = $doc[8];
+
+						$caminho = DIR_SEI_TEMP.'/'.$hash;
+
+						clearstatcache(true, $caminho);
+
+						if (!is_file($caminho) || !is_readable($caminho)) {
+
+							$arquivosPerdidos[] = [
+								'tipo'      => $tipo,
+								'indice'    => $indice,
+								'nome'      => $doc[0],
+								'hash'      => $hash
+							];
+						}
 					}
 				}
 
+				if (!empty($arquivosPerdidos)) {
+
+					// removerAtributosPagina();
+
+					$json = json_encode($arquivosPerdidos);
+
+					echo "
+					<script>
+
+						function marcarArquivosPerdidos(arquivos){
+
+							arquivos.forEach(function(a){
+
+								var idTabela = {
+									Principal: 'tbDocumentoPrincipal',
+									Essencial: 'tbDocumentoEssencial',
+									Complementar: 'tbDocumentoComplementar'
+								}[a.tipo];
+
+								var tabela = window.top.document.getElementById(idTabela);
+
+								if (!tabela) {
+									return;
+								}
+
+								for (var i = 1; i < tabela.rows.length; i++) {
+
+									var tr = tabela.rows[i];
+									var cols = tr.cells;
+
+									if (cols.length <= 8) {
+										continue;
+									}
+
+									var hash = cols[8].textContent.trim();
+
+									// ===== RESET STYLES =====
+									tr.title = '';
+
+									var aviso = cols[0].querySelector('.pet-upload-novamente');
+									if (aviso) {
+										aviso.remove();
+									}
+
+									// ===== MARCA ARQUIVO PERDIDO =====
+									if (hash === a.hash) {
+
+										tr.title = 'Arquivo removido da área temporária. Faça o upload novamente.';
+
+										var span = window.top.document.createElement('span');
+										span.className = 'pet-upload-novamente';
+										span.textContent = ' Requer novo upload';
+										span.style.color = '#c00000';
+										span.style.fontWeight = 'normal';
+										span.style.fontSize = '12px';
+										span.style.marginLeft = '0px';
+
+										cols[0].appendChild(span);
+
+										break;
+									}
+								}
+
+							});
+
+						}
+
+						var arquivosPerdidos = {$json};
+
+						var mensagem = 'Alguns documentos anexados permaneceram por mais de 90 minutos no formulário e foram excluídos automaticamente pelo sistema.\\n\\n';
+						mensagem += 'Os seguintes documentos deverão ser removidos e anexados novamente:\\n\\n';
+
+						arquivosPerdidos.forEach(function(a){
+
+							mensagem += '- ' + a.tipo + ': ' + a.nome + '\\n';
+
+						});
+
+						alert(mensagem);
+
+						marcarArquivosPerdidos(arquivosPerdidos);
+
+						window.top.document.querySelectorAll('div[id^=\"divInfraSparklingModalClose\"].sparkling-modal-close').forEach(el => el.click());
+
+					</script>";
+
+					die();
+				}
 			}
 
 			if($criarProcesso){

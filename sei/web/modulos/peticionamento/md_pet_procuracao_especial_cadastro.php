@@ -410,7 +410,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 </div>
                 <div class="row pt-0">
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <!-- Combo Tipo de Poderes -->
                             <label for="lblTipoPoder" class="infraLabelObrigatorio">Poderes:
                                 <img align="top"
@@ -437,7 +437,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 </div>
                 <div class="row pt-0">
                     <div class="col-7 col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="lblValidade" class="infraLabelObrigatorio">
                                 Validade:
                             </label>
@@ -481,7 +481,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                 </div>
                 <div class="row pt-0">
                     <div class="col-sm-12 col-md-8 col-lg-6 col-xl-5">
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <!-- Abrangência  -->
                             <label for="lblAbrangencia" class="infraLabelObrigatorio">
                                 Abrangência:

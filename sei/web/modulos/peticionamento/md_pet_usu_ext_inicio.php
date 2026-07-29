@@ -41,63 +41,48 @@ try {
     $txtOrientacoes = '';
     $unidadesFiltradas = array();
     $id_conjunto_estilos = null;
+
     if ($alterar) {
         $txtOrientacoes = $objLista[0]->getStrOrientacoesGerais();
         $id_conjunto_estilos = $objLista[0]->getNumIdConjuntoEstilos();
     }
 
-
-    //Recuperando Orgao
+    // Recuperando Órgaos
     $selectOrgao = MdPetTipoProcessoINT::montarSelectOrgaoTpProcesso();
-    $classe = '';
 
-    $hidden = '';
-    $orgao = '';
+    $classe = $hidden = $orgao = $hiddenOrgao = $idOrgaoUnico = $hiddenUF = $idUfUnica = $hiddenCidade = '';
+    $qtdSelectUf = $qtdSelectCidade = 0;
 
+    if (count($selectOrgao[0]) == 1) {
 
-    if (count($selectOrgao[0]) > 1) {
-        $hidden = "";
-    } else {
-        $hiddenOrgao = "display:none;";
-        $orgaoUnico = "U";
-        $idOrgaoUnico = $selectOrgao[0][0];
-        $selectUf = MdPetTipoProcessoINT::montarSelectUf(null, $idOrgaoUnico);
-        $qtdSelectUf = isset($selectUf[0]) ? count($selectUf[0]) : 0;
-        if ($qtdSelectUf > 1) {
-            $hiddenUF = "";
-        } else {
-            $hiddenUF = "display:none;";
-            $idUfUnica = $selectUf[0][0];
-
-            $selectCidade = MdPetTipoProcessoINT::montarSelectCidade(null, $idOrgaoUnico, $idUfUnica);
-            $qtdSelectCidade = isset($selectCidade[0]) ? count($selectCidade[0]) : 0;
-            if ($qtdSelectCidade > 1) {
-                $hiddenCidade = "";
-            } else {
-                $hiddenCidade = "display:none;";
-            }
-
-        }
+        $hiddenOrgao    = 'display:none;';
+        $orgaoUnico     = 'U';
+        $idOrgaoUnico   = $selectOrgao[0][0];
 
     }
 
-    //Escondendo so Campos somente com 1 Elemento
-    if ($qtdSelectUf > 1) {
-        $hiddenCidade = "display:none;";
-    } else {
-        $hiddenCidade = "display:none;";
+    $idOrgao = isset($idOrgaoUnico) ? $idOrgaoUnico : null;
+
+    $selectUf       = MdPetTipoProcessoINT::montarSelectUf($idTipoProcedimento = null, $idOrgao);
+    $qtdSelectUf    = isset($selectUf[0]) ? count($selectUf[0]) : 0;
+
+    if ($qtdSelectUf == 1) {
+
+        $hiddenUF   = 'display:none;';
+        $idUfUnica  = $selectUf[0][0];
+
     }
 
-    if ($qtdSelectUf > 1) {
-        $hiddenUF = "";
-    } else {
-        $hiddenUF = "display:none;";
+    $idUf = isset($idUfUnica) ? $idUfUnica : null;
+
+    $selectCidade = MdPetTipoProcessoINT::montarSelectCidade($idTipoProcedimento = null, $idOrgao, $idUf);
+    $qtdSelectCidade = isset($selectCidade[0]) ? count($selectCidade[0]) : 0;
+
+    if ($qtdSelectCidade == 1) {
+        $hiddenCidade = 'display:none;';
     }
 
-    //$hiddenUF
-
-
-//Validação Cidade Unica
+    //Validação Cidade Unica
     $objTipoProcessoDTO = new MdPetTipoProcessoDTO();
     $objTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
     $objTipoProcessoDTO->retStrNomeProcesso();
@@ -169,9 +154,9 @@ try {
 
         }
     }
-//Fim validação cidade Unica
+    //Fim validação cidade Unica
 
-//Restrição
+    //Restrição
     $arrRestricao = array();
     foreach ($arrObjTipoProcedimentoFiltroDTO as $key => $tpProc) {
 

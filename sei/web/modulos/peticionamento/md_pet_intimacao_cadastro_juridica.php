@@ -39,7 +39,7 @@ function printHelp($msg){
 $idProcedimento             = array_key_exists('id_procedimento', $_REQUEST) ? $_REQUEST['id_procedimento'] : $_POST['hdnIdProcedimento'];
 $strLinkAjaxDestinatarios   = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pessoa_juridica&tipo_selecao=2&id_object=objLupaInteressados&id_documento=' . $idDocumento);
 $strLinkInteressados        = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
-
+$alertaLimite               = $objMdPetIntimacaoRN->getTextoAlertaLimiteIntimacoesLote();
 //Pessoa Jurídica - Lupa do multiselect
 $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_juridica_lote&id_documento=' . $idDocumento);
 // Destinatarios em Massa
@@ -61,15 +61,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="text-right">
-                        <button type="button"
-                                onclick="infraAbrirJanelaModal('<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $idProcedimento) ?>' , 1200 , 600 );"
-                                class="infraButton"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
-                                accesskey="V">
-                            <span class="infraTeclaAtalho">V</span>er intimações do processo
-                        </button>
-                    </div>
+                    <?= $alertaLimite; ?>
                 </div>
             </div>
 
@@ -80,14 +72,14 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                         <div class="form-group mb-0">
                             <label id="lbltxtUsuario2" for="txtUsuario2" class="infraLabelObrigatorio mb-0">Pessoa Jurídica:</label>
                             <?= printHelp('A pesquisa é realizada somente sobre Pessoas Jurídicas que já tenham vinculado pelo menos o Responsável Legal no âmbito do Acesso Externo do SEI. \n \n A consulta pode ser efetuada pela Razão Social ou CNPJ da Pessoa Jurídica.'); ?>
-                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" autofocus/>
+                            <input type="text" id="txtUsuario2" name="txtUsuario2" class="infraText infraAutoCompletar" style="margin-bottom: 0px !important;  margin-top: -14px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" autofocus="" autocomplete="off">
                             <select id="selDadosUsuario2" name="selDadosUsuario2" class="infraSelect" multiple="multiple" size="6" style="height: 110px; margin-top: -34px !important" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>">
 								<?=$strItensSelParticipante?>
                             </select>
                         </div>
 
                         <div id="divOpcoesDadosUsuario2">
-                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(800,800);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Pessoa Jurídica" alt="Selecionar Pessoa Jurídica" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
+                            <img id="imgSelecionarGrupo" onclick="objLupaInteressados.selecionar(1200,800);" src="<?=PaginaSEI::getInstance()->getIconePesquisar()?>" title="Selecionar Pessoa Jurídica" alt="Selecionar Pessoa Jurídica" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                             <img id="imgRemoverInteressados" onclick="objLupaInteressados.remover();" src="<?=PaginaSEI::getInstance()->getIconeRemover()?>" alt="Remover Pessoa Jurídica Selecionada" title="Remover Pessoa Jurídica Selecionada" class="infraImg" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>" />
                         </div>
 
@@ -153,7 +145,6 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
             </div>
 
             <!-- Todo: Destinatários em Massa Remover -->
-<!--            <div class="tabUsuario clear height_2" style="--><?php //echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?><!--"></div>-->
             <div class="tabUsuario clear height_2" style="display:none"></div>
             <!-- Tabela de Destinatários -->
             <!-- Todo: Destinatários em Massa Remover -->
@@ -172,16 +163,15 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                     <th class="infraTh" width="20%">Situação da Intimação</th>
                                     <th class="infraTh" width="10%">Ações</th>
                                 </tr>
-                                <? if ($_REQUEST['is_alterar']) { ?>
-                                    <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= $arrIntimacoes ?>"/>
-                                    <? foreach ($arrIntimacoes as $key => $intimacao) {
+                                <?php if ($_REQUEST['is_alterar']): ?>
+                                    <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= implode(',', array_column($arrIntimacoes, 'Id')) ?>"/>
+                                    <?php $gerados = ""; ?>
+                                    <?php foreach ($arrIntimacoes as $key => $intimacao): ?>
 
-                                        $countInt++;
+                                        <?php $countInt++; ?>
+                                        <?php $gerados .= $intimacao['Id'] . "-"; ?>
 
-                                        $gerados .= $intimacao['Id'] . "-";
-                                        ?>
-
-                                        <tr id="changeColorJuridico<?php echo $key ?>" class="infraTrClara">
+                                        <tr id="changeColorJuridico<?= $key ?>" class="infraTrClara">
                                             <td class="d-none"><?= $intimacao['Id'] ?></td>
                                             <td class="text-center"><?= $intimacao['Nome'] ?></td>
                                             <td class="text-center"><?= InfraUtil::formatarCnpj($intimacao['Cnpj']) ?></td>
@@ -197,8 +187,8 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                             </td>
                                         </tr>
 
-                                    <? }
-                                } ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </table>
                             <br/>
                         </div>
@@ -208,6 +198,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                     </div>
                 </div>
             </div>
+
         </fieldset>
     </div>
 </div>
@@ -216,7 +207,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
             <div class="form-group">
                 <label id="lblTipodeIntimacao" for="lblTipodeIntimacao" accesskey="" class="infraLabelObrigatorio">Tipo de Intimação:</label>
-                <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)" class="campoPadrao infraSelect form-control" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                <select id="selTipoIntimacao" name="selTipoIntimacao" onchange="mostraTipoResposta(this)" class="campoPadrao infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <?= $strTipoIntimacao ?>
                 </select>
                 <input type=hidden name=hdnTipoIntimacao id=hdnTipoIntimacao>
@@ -284,8 +275,7 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                                          class="infraImgNormal"/>
                                 </div>
                             </div>
-                            <input type="hidden" id="hdnAnexosIntimacao" name="hdnAnexosIntimacao"
-                                   value="<?= $_POST['hdnAnexosIntimacao'] ?>"/>
+                            <input type="hidden" id="hdnAnexosIntimacao" name="hdnAnexosIntimacao" value="<?= $_POST['hdnAnexosIntimacao'] ?>"/>
                         </div>
                     </div>
                 </fieldset>
@@ -365,5 +355,4 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
 <style>
     .bloco { float: left; margin-top: 1%;  margin-right: 1%; }
 </style>
-
 <? require_once 'md_pet_intimacao_cadastro_pj_js.php'; ?>

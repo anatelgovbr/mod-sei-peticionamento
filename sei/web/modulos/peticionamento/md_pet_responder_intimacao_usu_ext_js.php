@@ -18,6 +18,58 @@
         }
         iniciarObjUploadArquivo();
         iniciarTabelaDinamicaDocumento();
+
+    }
+
+    function setaCamposNivelHipotese() {
+
+        var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
+        var nivelDocForcaNivelAcesso = '<?= $nivelAcessoDoc['nivel'] ?>';
+        var hipoteseDocForcaNivelAcesso = '<?= $nivelAcessoDoc['hipotese'] ?>';
+
+        var nivelTpProcesso = '<?= $nivelAcessoTpProc['nivel'] ?>';
+        var hipoteseTpProcesso = '<?= $nivelAcessoTpProc['hipotese'] ?>';
+
+        var possuiConfiguracaoIntercorrentePadrao = (nivelDocForcaNivelAcesso != null || nivelDocForcaNivelAcesso !== '') && (hipoteseDocForcaNivelAcesso != null || hipoteseDocForcaNivelAcesso !== '');
+
+        var selNivelAcesso      = document.getElementById('selNivelAcesso');
+        var selHipoteseLegal    = document.getElementById('selHipoteseLegal');
+        var divHipoteseLegal    = document.getElementById('divBlcHipoteseLegal');
+        var selTipoDocumento    = document.getElementById('selTipoDocumento');
+
+        $('#selNivelAcesso').val('').prop('disabled', false);
+        $('#selHipoteseLegal').val('').prop('disabled', false);
+        divHipoteseLegal.style.display = 'none';
+
+        if (possuiConfiguracaoIntercorrentePadrao && arrDocForcaNivelAcesso.includes(selTipoDocumento.value)) {
+
+            // Forca o Nivel de Acesso da configuração padrão
+            $('#selNivelAcesso').val(nivelDocForcaNivelAcesso).prop('disabled', true);
+            $('#hdnNivelAcesso').val(nivelDocForcaNivelAcesso);
+
+            $('#selHipoteseLegal').val(hipoteseDocForcaNivelAcesso).prop('disabled', true);
+            $('#hdnHipoteseLegal').val(hipoteseDocForcaNivelAcesso);
+
+            divHipoteseLegal.style.display = 'block';
+        
+        }else{
+
+            // Mantém a configuração do Tipo de Processo
+            if (nivelTpProcesso != null && nivelTpProcesso !== '') {
+                $('#selNivelAcesso').val(nivelTpProcesso).prop('disabled', true);
+                $('#hdnNivelAcesso').val(nivelTpProcesso);
+            }
+
+            if (hipoteseTpProcesso != null && hipoteseTpProcesso !== '') {
+                $('#selHipoteseLegal').val(hipoteseTpProcesso).prop('disabled', true);
+                $('#hdnHipoteseLegal').val(hipoteseTpProcesso);
+            }
+
+            if (nivelTpProcesso == '<?= ProtocoloRN::$NA_RESTRITO ?>') {
+                divHipoteseLegal.style.display = 'block';
+            }
+        }
+
     }
 
     function fechar() {
@@ -211,25 +263,26 @@
     }
 
     function limparCampoDocumento() {
+
         document.getElementById('fileArquivo').value = '';
         document.getElementById('selTipoDocumento').value = 'null';
         document.getElementById('txtComplementoTipoDocumento').value = '';
-
-        document.getElementById('selNivelAcesso').value = '';
-        document.getElementById("selNivelAcesso").removeAttribute("disabled");
-        document.getElementById('hdnNivelAcesso').value = '';
-        if (EXIBIR_HIPOTESE_LEGAL) {
-            document.getElementById('selHipoteseLegal').value = '';
-            document.getElementById("selHipoteseLegal").removeAttribute("disabled");
-            document.getElementById('hdnHipoteseLegal').value = '';
-        }
-        document.getElementById('divBlcHipoteseLegal').style.display = 'none';
 
         document.getElementById('rdoNatoDigital').checked = false;
         document.getElementById('rdoDigitalizado').checked = false;
         document.getElementById('selTipoConferencia').value = 'null';
         document.getElementById('divTipoConferencia').style.display = 'none';
         document.getElementById('divTipoConferenciaBotao').style.display = 'block';
+
+        document.getElementById('selNivelAcesso').value = 'null';
+        document.getElementById('selHipoteseLegal').value = 'null';
+
+        $('#selNivelAcesso').prop('disabled', false);
+        $('#selHipoteseLegal').prop('disabled', false);
+        document.getElementById('divBlcHipoteseLegal').style.display = 'none';
+
+        setaCamposNivelHipotese();
+
     }
 
     function validarDocumento() {
@@ -451,6 +504,8 @@
             document.getElementById('selTipoDocumento').selectedIndex = 0;
         }
 
+        setaCamposNivelHipotese();
+
     }
 
     function validarResposta() {
@@ -485,41 +540,9 @@
 
     $(document).ready(function(){
 
-        var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
-        var nivel = '<?= $nivelAcessoDoc['nivel'] ?>';
-        var hipotese = '<?= $nivelAcessoDoc['hipotese'] ?>';
-
         $('body').on('change', '#selTipoDocumento', function(){
-            var self = $(this);
-            var selectNivelAcesso = self.closest('form').find('select[id^="selNivelAcesso"]');
-            var selectHipoteseLegal = self.closest('form').find('select[id^="selHipoteseLegal"]');
 
-            if(arrDocForcaNivelAcesso.indexOf(self.val()) !== -1){
-
-                selectNivelAcesso.val(nivel).prop('disabled', true);
-                $('input[name="hdnNivelAcesso"]').val(nivel);
-
-                if(nivel == 1){
-                    selectHipoteseLegal.val(hipotese).prop('disabled', true);
-                    $('input[name="hdnHipoteseLegal"]').val(hipotese);
-                    self.closest('form').find('div[id^="divBlcHipoteseLegal"]').show();
-                }
-                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == '') {
-                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
-                }
-
-            }else{
-
-                self.closest('form').find('select[id^="selHipoteseLegal"], select[id^="selNivelAcesso"]').prop('disabled', false);
-                $('input[name="hdnNivelAcesso"], input[name="hdnHipoteseLegal"]').val('');
-
-                if(self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').val() == ''){
-                    self.closest('form').find('input[id^="txtComplementoTipoDocumento"]').focus();
-                }else{
-                    selectNivelAcesso.focus();
-                }
-
-            }
+            setaCamposNivelHipotese();
 
         });
 

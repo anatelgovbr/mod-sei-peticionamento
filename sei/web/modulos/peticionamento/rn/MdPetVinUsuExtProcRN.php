@@ -511,7 +511,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     }
                     // 2) Última aberta
                 } else if (count($arrUnidadeProcesso) == 0) {
-                    $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
+                    $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objProcedimentoDTO->getDblIdProcedimento()));
                 }
 
                 $idUnidadeProcesso = null;
@@ -531,8 +531,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 }
 
                 if (!is_numeric($idUnidadeProcesso)) {
-                    $mdPetAndamentoSigilosoRN = new MdPetIntercorrenteAndamentoSigilosoRN();
-                    $idUnidadeProcesso = $mdPetAndamentoSigilosoRN->retornaIdUnidadeAberturaProcesso($this->getProcedimentoDTO()->getDblIdProcedimento());
+                    $idUnidadeProcesso = (new MdPetIntercorrenteAndamentoSigilosoRN())->retornaIdUnidadeAberturaProcesso($objProcedimentoDTO->getDblIdProcedimento());
                 }
 
                 $objAtividadeDTOExclusao = new AtividadeDTO();
@@ -1335,7 +1334,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $dadosRetornoDesvinculo['Documento'] = $saidaDocExternoAPI;
 
         $tpProtocolo = $tipoAto;
-        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idMdPetVinculoRepresent, $tpProtocolo);
+        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $tpProtocolo, $idMdPetVinculoRepresent);
         $objMdPetVincRepresentantDTO = $this->_encerramentoProcuracaoEspecial($idMdPetVinculoRepresent, $dados);
 
         $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
@@ -1394,7 +1393,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             }
             // 2) Última aberta
         } else if (count($arrUnidadeProcesso) == 0) {
-            $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
+            $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objProcedimentoDTO->getDblIdProcedimento()));
         }
 
         $idUnidadeProcesso = null;
@@ -1415,7 +1414,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         if (!is_numeric($idUnidadeProcesso)) {
             $mdPetAndamentoSigilosoRN = new MdPetIntercorrenteAndamentoSigilosoRN();
-            $idUnidadeProcesso = $mdPetAndamentoSigilosoRN->retornaIdUnidadeAberturaProcesso($this->getProcedimentoDTO()->getDblIdProcedimento());
+            $idUnidadeProcesso = $mdPetAndamentoSigilosoRN->retornaIdUnidadeAberturaProcesso($objProcedimentoDTO->getDblIdProcedimento());
         }
 
         $arrObjAtributoAndamentoDTO = array();
@@ -1767,7 +1766,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $idMdPetVinculoRepresent = $this->_adicionarProcuracaoEspecial($dados, $idVinculo, $saidaDocExternoAPI->getIdDocumento());
 
         $tpDocumento = MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL;
-        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idMdPetVinculoRepresent, $tpDocumento);
+        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $tpDocumento, $idMdPetVinculoRepresent);
 
         $dadosProcuracacao['idVinculo'] = $idVinculo;
         $dadosProcuracacao['IdMdPetVinculoRepresent'] = $idMdPetVinculoRepresent;
@@ -2015,7 +2014,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $idMdPetVinculoRepresent = $this->_adicionarProcuracaoEspecial($dados, $idVinculo, $saidaDocExternoAPI->getIdDocumento());
 
         $tpDocumento = MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL;
-        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idMdPetVinculoRepresent, $tpDocumento);
+        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $tpDocumento, $idMdPetVinculoRepresent);
 
         $dadosProcuracacao['idVinculo'] = $idVinculo;
         $dadosProcuracacao['IdMdPetVinculoRepresent'] = $idMdPetVinculoRepresent;
@@ -2120,7 +2119,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     }
 
-    public function _adicionarDadosArquivoVinculacao($idDocumento, $idMdPetVinculoRepresent = null, $tpProtocolo)
+    public function _adicionarDadosArquivoVinculacao($idDocumento, $tpProtocolo, $idMdPetVinculoRepresent = null)
     {
 
         $objMdPetUsuarioRN = new MdPetIntUsuarioRN();
@@ -3041,7 +3040,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $participanteRN->cadastrarRN0170($objParticipante);
 
         $tpProtocolo = MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO;
-        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idRepresentante, $tpProtocolo);
+        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $tpProtocolo, $idRepresentante);
 
         //necessario forçar update da coluna sta_documento da tabela documento
         //inclusao via SeiRN nao permitiu definir como documento de formulario automatico
@@ -3187,7 +3186,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $participanteRN->cadastrarRN0170($objParticipante);
 
         $tpProtocolo = MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO;
-        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $idRepresentante, $tpProtocolo);
+        $this->_adicionarDadosArquivoVinculacao($saidaDocExternoAPI->getIdDocumento(), $tpProtocolo, $idRepresentante);
 
         //necessario forçar update da coluna sta_documento da tabela documento
         //inclusao via SeiRN nao permitiu definir como documento de formulario automatico

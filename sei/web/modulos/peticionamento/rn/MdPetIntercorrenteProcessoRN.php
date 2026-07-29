@@ -1039,25 +1039,29 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
                 $objUnidadeDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($params['id_intimacao']));
 
-                //unidade esta ativa
-                $unidadeDTO = new UnidadeDTO();
-                $unidadeDTO->retTodos();
-                $unidadeDTO->setBolExclusaoLogica(false);
-                $unidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-                $unidadeRN = new UnidadeRN();
-                $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
+                if(!empty($objUnidadeDTO)){
+                    //unidade esta ativa
+                    $unidadeDTO = new UnidadeDTO();
+                    $unidadeDTO->retTodos();
+                    $unidadeDTO->setBolExclusaoLogica(false);
+                    $unidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
+                    $unidadeRN = new UnidadeRN();
+                    $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
-                if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
-                    $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                    $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
-                    if ($qtdArrUnidadeProcesso == 0) {
-                        $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                        if (is_numeric($idUnidadeAberta)) {
-                            $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $idUnidadeAberta));
-                            $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
+                    if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
+                        $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
+                        $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
+                        if ($qtdArrUnidadeProcesso == 0) {
+                            $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
+                            if (is_numeric($idUnidadeAberta)) {
+                                $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $idUnidadeAberta));
+                                $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
+                            }
                         }
                     }
                 }
+
+                
                 //se for necessario, executar reabertura do processo
             } else {
 
@@ -1521,6 +1525,11 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         try {
             $this->realizarRollbackCadastroIntercorrente($dadosCadastro);
         } catch (\Throwable $eRollback) {
+            LogSEI::getInstance()->gravar(
+                'Falha ao tentar reverter cadastro de peticionamento intercorrente apos erro original ['
+                . $e->getMessage() . ']: ' . $eRollback->getMessage(),
+                InfraLog::$ERRO
+            );
             throw new InfraException('Erro no cadastro do peticionamento intercorrente e falha ao reverter as etapas anteriores.', $eRollback);
         }
 
@@ -1581,34 +1590,40 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         }
 
         foreach (array_reverse($arrDocumentos) as $documentoDTO) {
+
+            $idDocumento = $documentoDTO->getDblIdDocumento();
+
             if ($documentoDTO instanceof SaidaIncluirDocumentoAPI) {
                 $idDocumento = $documentoDTO->getIdDocumento();
-            } else {
-                $idDocumento = $documentoDTO->getDblIdDocumento();
             }
+            
             if (!is_numeric($idDocumento)) {
                 continue;
             }
+
             $objDocumentoDTO = new DocumentoDTO();
             $objDocumentoDTO->retDblIdDocumento();
             $objDocumentoDTO->retStrStaDocumento();
             $objDocumentoDTO->retStrSinBloqueado();
             $objDocumentoDTO->setDblIdDocumento($idDocumento);
-            try {
-                $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
-            } catch (Exception $eDocumento) {
+            $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
+
+            if ($objDocumentoDTO == null) {
                 continue;
             }
+
             $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EDITOR_INTERNO);
             $objDocumentoDTO->setStrSinBloqueado('N');
             (new DocumentoBD($this->getObjInfraIBanco()))->alterar($objDocumentoDTO);
             (new DocumentoRN())->excluirRN0006($objDocumentoDTO);
+            
         }
 
         if (!empty($dadosCadastro['gerouNovoProcedimento'])) {
             (new ProcedimentoRN())->excluirRN0280($this->getProcedimentoDTO());
         }
     }
+
     private function _controlarAcessoExterno($arrDados, $arrObjDocumentos, $objReciboDTO)
     {
         $idProcedimento = array_key_exists('idProcedimento', $arrDados) ? $arrDados['idProcedimento'] : null;

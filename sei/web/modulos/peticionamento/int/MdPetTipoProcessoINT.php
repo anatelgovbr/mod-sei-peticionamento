@@ -289,15 +289,18 @@ class MdPetTipoProcessoINT extends InfraINT
     public static function montarSelectUf($idTipoProcedimento = null, $idOrgao = null)
     {
     	
-        $ufId = $uf = [];
+        $ufId = $uf = $ufIdFilter = [];
 
         //Restrição Orgão
         $arrRestricaoOrgao = (new MdPetTipoProcessoRN())->restricaoOrgao();
 
+        // Retornando os Tipos de processo
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
         $objMdPetTipoProcessoDTO->retStrNomeProcesso();
         $objMdPetTipoProcessoDTO->retStrOrientacoes();
         $objMdPetTipoProcessoDTO->retNumIdTipoProcessoPeticionamento();
+        // Se o Tipo de Procedimento for passado por parâmetro, traz somente as UFs vinculadas a ele (Tela 2 do peticionamento), 
+        // caso contrário, traz todas as UFs dos Tipos de Processos, exceto os que estão na restrição de orgão (Tela 1 do peticionamento):
         if (!empty($idTipoProcedimento)) {
             $objMdPetTipoProcessoDTO->setNumIdTipoProcessoPeticionamento($idTipoProcedimento);
         }else{
@@ -332,45 +335,46 @@ class MdPetTipoProcessoINT extends InfraINT
 		
 		        if(!empty($arrObjUnidadeDTO)){
 			
+                
 			        $arrIdsContato = InfraArray::converterArrInfraDTO($arrObjUnidadeDTO, 'IdContato');
 			
 			        $objContatoDTO = new ContatoDTO();
-			        $objContatoDTO->setNumIdContato($arrIdsContato, InfraDTO::$OPER_IN);
 			        $objContatoDTO->retNumIdUf();
 			        $objContatoDTO->retStrSiglaUf();
-			        $objContatoDTO->setOrdStrSiglaUf(InfraDTO::$TIPO_ORDENACAO_ASC);
 			        $objContatoDTO->retStrNomeCidade();
-
                     $objContatoDTO->retStrSinEnderecoAssociado();
                     $objContatoDTO->retNumIdContatoAssociado();
                     $objContatoDTO->retNumIdUfContatoAssociado();
                     $objContatoDTO->retStrSiglaUfContatoAssociado();
                     $objContatoDTO->retNumIdCidadeContatoAssociado();
                     $objContatoDTO->retStrNomeCidadeContatoAssociado();
-
+			        $objContatoDTO->setNumIdContato($arrIdsContato, InfraDTO::$OPER_IN);
+			        $objContatoDTO->setOrdStrSiglaUf(InfraDTO::$TIPO_ORDENACAO_ASC);
 			        $arrObjContato = (new ContatoRN())->listarRN0325($objContatoDTO);
-			        $arrIdsContatoDistinct = infraArray::distinctArrInfraDTO($arrObjContato, 'IdUf');
 			
-			        foreach ($arrIdsContatoDistinct as $key => $value) {
+			        foreach ($arrObjContato as $objContato) {
 
-                        // Carrega os dados do Contato Associado ao Contato
-                
-                        if($value->getStrSinEnderecoAssociado() == 'S' && $value->isSetStrSiglaUfContatoAssociado()){
+                        // Carrega os dados do Contato Associado ao Contato, caso exista, para pegar a UF do Contato Associado quando estiver marcado Usar endereço do Contato vinculado
+                        $contatoAssociado = ($objContato->getStrSinEnderecoAssociado() == 'S' && $objContato->isSetStrSiglaUfContatoAssociado()) ? true : false;
+                        $ufIdFilter[] = $contatoAssociado ? $objContato->getNumIdUfContatoAssociado() : $objContato->getNumIdUf();
 
-                            $ufId[] = $value->getNumIdUfContatoAssociado();
-				            $uf[]   = $value->getStrSiglaUfContatoAssociado();
-
-                        }else{
-
-                            $ufId[] = $value->getNumIdUf();
-				            $uf[]   = $value->getStrSiglaUf();
-
-                        }
-				        
 			        }
 
-                    $ufId = array_unique($ufId);
-                    $uf = array_unique($uf);
+                    $ufIdFilter = array_values(array_unique(array_filter($ufIdFilter, function ($value) {
+                        return is_numeric($value);
+                    })));
+                    
+                    $objUfDTO = new UfDTO();
+                    $objUfDTO->setNumIdUf($ufIdFilter, InfraDTO::$OPER_IN);
+                    $objUfDTO->retStrSigla();
+                    $objUfDTO->retNumIdUf();
+                    $objUfDTO->setOrdStrSigla(InfraDTO::$TIPO_ORDENACAO_ASC);
+                    $arrObjUfDTO = (new UfRN())->listarRN0401($objUfDTO);
+
+                    foreach ($arrObjUfDTO as $objUf) {
+                        $uf[]   = $objUf->getStrSigla();
+                        $ufId[] = $objUf->getNumIdUf();
+                    }
 			
 		        }
 	        	
@@ -949,8 +953,10 @@ class MdPetTipoProcessoINT extends InfraINT
 
 
     //Ajax Cidade
-    public static function montarSelectOrgaoTpProcessoOrgaoCidade($id)
+    public static function montarSelectOrgaoTpProcessoOrgaoCidade($post)
     {
+
+
 
         //Restrição Orgão
         $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
@@ -981,8 +987,8 @@ class MdPetTipoProcessoINT extends InfraINT
 
         $objUnidadeDTO = new UnidadeDTO();
         //Ajustar
-        if ($id['idOrgao'] != '') {
-            $objUnidadeDTO->setNumIdOrgao($id['idOrgao']);
+        if ($post['idOrgao'] != '') {
+            $objUnidadeDTO->setNumIdOrgao($post['idOrgao']);
         }
         $objUnidadeDTO->retNumIdContato();
         $objUnidadeDTO->setNumIdUnidade($arrIdsUnidade, InfraDTO::$OPER_IN);
@@ -992,7 +998,7 @@ class MdPetTipoProcessoINT extends InfraINT
 
         $objContatoDTO = new ContatoDTO();
         $objContatoDTO->setNumIdContato($arrIdsContato, InfraDTO::$OPER_IN);
-        $objContatoDTO->setNumIdUf($id['idUf']);
+        $objContatoDTO->setNumIdUf($post['idUf']);
         $objContatoDTO->retStrNomeCidade();
         $objContatoDTO->retNumIdCidade();
 
@@ -1009,13 +1015,11 @@ class MdPetTipoProcessoINT extends InfraINT
         $arrIdsContato = (new ContatoRN())->listarRN0325($objContatoDTO);
 
         foreach ($arrIdsContato as $contato) {
-            if($arrIdsContato->getStrSinEnderecoAssociado() == 'S' && $arrIdsContato->isSetStrSiglaUfContatoAssociado()){
-                $arrIdsContato->setNumIdCidade($arrIdsContato->getNumIdCidadeContatoAssociado());
+            if($contato->getStrSinEnderecoAssociado() == 'S' && $contato->isSetStrSiglaUfContatoAssociado()){
+                $contato->setNumIdCidade($contato->getNumIdCidadeContatoAssociado());
             }
         }
-
         
-
         $arrIdsContatoDistinct = infraArray::distinctArrInfraDTO($arrIdsContato, 'IdCidade');
 
         return $arrIdsContatoDistinct;

@@ -8,6 +8,7 @@
 
 //Options dos Selects
 $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('null', '', $_POST['selTipoConferencia']);
+$strSelectNivelAcesso = MdPetTipoProcessoINT::montarSelectNivelAcesso('null', '', 'null', null);
 //Fim Options
 
 ?>
@@ -60,7 +61,10 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                     Nível de Acesso:
                     <img id="imgNivelAcesso" name="imgNivelAcesso" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" onmouseover="" onmouseout="" alt="Ajuda" class="infraImgModulo"/>
                 </label>
-                <div id="divNivelAcesso"></div>
+                <select name="selNivelAcesso" id="selNivelAcesso" class="infraSelect form-select"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" onchange="AtualizarSelectNivelAcesso()">
+                    <?= $strSelectNivelAcesso ?>
+                </select>
             </div>
         </div>
         <?php if ($exibirHipoteseLegal): ?>
@@ -71,7 +75,7 @@ $strSelectTipoConferencia = MdPetIntercorrenteINT::montarSelectTipoConferencia('
                         <img id=imgHipoteseLegal name=imgHipoteseLegal src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" onmouseover="" onmouseout="" alt="Ajuda" class="infraImgModulo"/>
                     </label>
                     <div id="divHipoteseLegal">
-                        <select id="selHipoteseLegal" class="infraSelect form-select" onchange="salvarValorHipoteseLegal(this)"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                        <select id="selHipoteseLegal" class="infraSelect form-select" onchange="AtualizarSelectHipoteseLegal()"  tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
                             <?= $selHipoteseLegal; ?>
                         </select>
                     </div>

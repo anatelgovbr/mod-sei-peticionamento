@@ -13,7 +13,9 @@ PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
 
 $arrComandos = array();
 $texto = '';
-switch($_GET['acao']) {
+$acao = PaginaSEI::GET('acao');
+
+switch($acao) {
 	
     case 'md_pet_intimacao_cadastro_confirmar':
         try {
@@ -27,7 +29,7 @@ switch($_GET['acao']) {
                 $objDocumentoDTO->retDblIdDocumento();
                 $objDocumentoDTO->retDblIdProcedimento();
                 $objDocumentoDTO->retNumIdTipoProcedimentoProcedimento();
-                $objDocumentoDTO->setDblIdDocumento($_GET['id_documento']);
+                $objDocumentoDTO->setDblIdDocumento(PaginaSEI::GET('id_documento'));
 
                 $objDocumentoRN = new DocumentoRN();
                 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
@@ -37,8 +39,8 @@ switch($_GET['acao']) {
 
 	        $numNumPrazo = !empty($objMdPetIntPrazoTacitaDTO) ? $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() : 0;
 
-            $divParcial = ($_GET["tipo"] == 'parcial') ? 'block' : 'none';
-            $divIntegral = ($_GET["tipo"]== 'integral') ? 'block' : 'none';
+            $divParcial = (PaginaSEI::GET('tipo') == 'parcial') ? 'block' : 'none';
+            $divIntegral = (PaginaSEI::GET('tipo') == 'integral') ? 'block' : 'none';
 
             //Integral
             $texto  = "<div id=divIntegral style='display: " . $divIntegral . "; padding-top: 15px; padding-bottom: 15px; '>";
@@ -108,7 +110,7 @@ switch($_GET['acao']) {
         
     break;
     default:
-        throw new InfraException("Ação '".$_GET['acao']."' não reconhecida.");
+        throw new InfraException("Ação '".$acao."' não reconhecida.");
 }
 
 PaginaSEI::getInstance()->montarDocType();
@@ -131,38 +133,228 @@ PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 ?>
 
+    var urlArvore = null;
+    const LIMITE_DESTINATARIOS = <?= MdPetIntimacaoRN::$LIMITE_DESTINATARIOS_LOTE ?>;
+
+    function atualizarArvoreAposFechar() {
+        if (urlArvore) {
+            var ifrArvore = window.top.document.getElementById('ifrArvore');
+            if (ifrArvore) {
+                ifrArvore.src = urlArvore;
+            }
+        }
+    }
+
     $(document).ready(function() {
         $('button#sbmConfirmarIntimacao').off('click').one('click', function(e){
             e.preventDefault();
-            var sendForm = false;
             var btn = $("button#sbmConfirmarIntimacao");
+            var btnFechar = $("button#sbmFechar");
             var form = $('#frmMdPetIntimacaoCadastro', window.top.document.getElementById('ifrConteudoVisualizacao').contentDocument.getElementById('ifrVisualizacao').contentDocument);
-            $.ajax({
-                url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_intimacao_validar_duplicidade') ?>',
-                type: form.attr('method'),
-                data: form.serialize(),
-                dataType: 'xml',
-                beforeSend: function(){
-                    btn.prop('disabled', true).html('Aguarde, gerando intimação...');
-                },
-                success: function (r) {
-                    var msg = $(r).find('message').text();
-                    if(msg != ''){
-                        alert(msg);
-                        $('button#sbmFechar').click();
-                    }else{
-                        sendForm = true;
-                    }
-                },
-                complete: function (e) {
-                    if(sendForm){
-                        form.submit();
-                    }
-                },
-                error: function (e) {
-                    console.error('Erro ao processar requisição');
-                }
+            var campoDestinatarios = form.find('[name="hdnDadosUsuario2"]');
+            var valorDestinatarios = campoDestinatarios.val() || '';
+            var destinatarios = valorDestinatarios.split('\u00a5').filter(function(item) {
+                return $.trim(item) !== '';
             });
+            var contadores = {processados: 0, sucessos: 0, ignorados: 0, erros: 0};
+            var contadoresNotificacao = {aceitas: 0, falhas: 0, naoSolicitadas: 0};
+            var resultados = [];
+            var solicitacoesNotificacao = [];
+            var dataHoraInicio = null;
+
+            if (destinatarios.length === 0) {
+                alert('Nenhum destinatario foi informado.');
+                return;
+            }
+
+            if (destinatarios.length > LIMITE_DESTINATARIOS) {
+                alert('O limite \u00e9 de ' + LIMITE_DESTINATARIOS + ' destinat\u00e1rios por intima\u00e7\u00e3o. Foram selecionados ' + destinatarios.length + '. Para continuar, remova o excesso de destinat\u00e1rios e tente novamente.');
+                return;
+            }
+
+            dataHoraInicio = new Date();
+            btn.prop('disabled', true).html('Aguarde, gerando intimacoes...');
+            btnFechar.prop('disabled', true);
+            $('#divProgressoLote').show();
+            $('.textoIntimacaoEletronica').hide();
+            $('.progress-bar').attr('aria-valuenow', 0).css('width', '0%').html('0%');
+            $('#qtdTotal').text(destinatarios.length);
+
+            function obterDescricao(item) {
+                var partes = item.split('\u00b1');
+                return partes.length > 1 ? partes.slice(1).join('\u00b1') : item;
+            }
+
+            function montarDados(item) {
+                var dados = form.serializeArray().filter(function(campo) {
+                    return campo.name !== 'hdnDadosUsuario'
+                        && campo.name !== 'hdnDadosUsuario2'
+                        && campo.name !== 'hdnIdDadosUsuario'
+                        && campo.name !== 'hdnIdDadosUsuario2'
+                        && campo.name !== 'hdnIdUsuarios'
+                        && campo.name !== 'selDadosUsuario2';
+                });
+                dados.push({name: 'hdnDadosUsuario', value: item});
+                dados.push({name: 'hdnDadosUsuario2', value: item});
+                dados.push({name: 'modo_lote_unitario', value: '1'});
+                return $.param(dados);
+            }
+
+            function atualizarProgresso(descricao) {
+                let progressSize = (contadores.processados / destinatarios.length * 100).toFixed(0);
+                $('.progress-bar').attr('aria-valuenow', progressSize).css('width', progressSize + '%').html(progressSize + '%');
+                $('#qtdProcessados').text(contadores.processados);
+                $('#qtdSucessos').text(contadores.sucessos);
+                $('#qtdIgnorados').text(contadores.ignorados);
+                $('#qtdErros').text(contadores.erros);
+                $('#destinatarioAtual').text(descricao);
+            }
+
+            function formatarDataHora(data) {
+                return data.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+            }
+
+            function dispararNotificacao(url) {
+                if (!url) {
+                    return Promise.resolve({
+                        status: 'nao_solicitada',
+                        mensagem: 'n\u00e3o solicitada porque a URL de notifica\u00e7\u00e3o n\u00e3o foi informada.'
+                    });
+                }
+
+                return fetch(url, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    keepalive: true
+                }).then(function(response) {
+                    if (response.status === 202) {
+                        return {
+                            status: 'aceita',
+                            mensagem: 'solicita\u00e7\u00e3o aceita pelo servidor; entrega n\u00e3o confirmada.'
+                        };
+                    }
+
+                    return {
+                        status: 'falha',
+                        mensagem: 'falha ao solicitar (HTTP ' + response.status + ').'
+                    };
+                }).catch(function() {
+                    return {
+                        status: 'falha',
+                        mensagem: 'falha de comunica\u00e7\u00e3o ao solicitar.'
+                    };
+                });
+            }
+
+            function finalizar() {
+                $('#destinatarioAtual').html('Finalizando solicita\u00e7\u00f5es de notifica\u00e7\u00e3o...');
+
+                Promise.all(solicitacoesNotificacao).then(function() {
+                    var dataHoraConclusao = new Date();
+                    $(".infraBarraLocalizacao h1").html('Gerar Intimação Eletrônica - Concluído');
+                    $('.progress').hide();
+                    $('#destinatarioAtual').addClass('alert alert-success').html('Processamento concluido.').css('padding', '10px 15px');
+                    $('#resumoLote').html(
+                        '<strong>Resumo final:</strong> ' + contadores.sucessos + ' geradas, '
+                        + contadores.ignorados + ' ignoradas e ' + contadores.erros + ' com erro.'
+                    ).show();
+
+                    var conteudo = [
+                        'RELATORIO DE PROCESSAMENTO DE INTIMACOES',
+                        'In\u00edcio do processamento: ' + formatarDataHora(dataHoraInicio),
+                        'Conclus\u00e3o do processamento: ' + formatarDataHora(dataHoraConclusao),
+                        '',
+                        'RESUMO',
+                        'Total processado: ' + contadores.processados,
+                        'Sucessos: ' + contadores.sucessos,
+                        'Ignorados: ' + contadores.ignorados,
+                        'Erros: ' + contadores.erros,
+                        '',
+                        'NOTIFICA\u00c7\u00d5ES POR E-MAIL',
+                        'Solicita\u00e7\u00f5es aceitas: ' + contadoresNotificacao.aceitas,
+                        'Falhas ao solicitar: ' + contadoresNotificacao.falhas,
+                        'N\u00e3o solicitadas (intima\u00e7\u00f5es geradas sem URL): ' + contadoresNotificacao.naoSolicitadas,
+                        'Observa\u00e7\u00e3o: o aceite da solicita\u00e7\u00e3o pelo servidor n\u00e3o confirma a entrega do e-mail.',
+                        'Itens ignorados ou com erro de gera\u00e7\u00e3o n\u00e3o possuem notifica\u00e7\u00e3o.',
+                        '',
+                        'DETALHAMENTO',
+                        resultados.join('\r\n')
+                    ].join('\r\n');
+                    var arquivo = new Blob([conteudo], {type: 'text/plain;charset=utf-8'});
+                    $('#lnkBaixarRelatorio').attr('href', URL.createObjectURL(arquivo)).show();
+
+                    btn.hide();
+                    btnFechar.prop('disabled', false).html('<span class="infraTeclaAtalho">F</span>echar');
+                });
+            }
+
+            function processar(indice) {
+                if (indice >= destinatarios.length) {
+                    finalizar();
+                    return;
+                }
+
+                var item = destinatarios[indice];
+                var descricao = obterDescricao(item);
+                $('#destinatarioAtual').html('<strong>Processando ' + (indice + 1) + ' de ' + destinatarios.length + '</strong>: ' + descricao);
+                
+                $(".infraBarraLocalizacao h1").html('Gerar Intimação Eletrônica - Processando ' + (indice + 1) + ' de ' + destinatarios.length);
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: montarDados(item),
+                    dataType: 'json'
+                }).done(function(resposta) {
+                    if (resposta.status === 'sucesso') {
+                        var indiceResultado = resultados.length;
+                        contadores.sucessos++;
+                        resultados.push('');
+                        urlArvore = resposta.url_arvore || urlArvore;
+                        solicitacoesNotificacao.push(
+                            dispararNotificacao(resposta.url_notificacao).then(function(notificacao) {
+                                if (notificacao.status === 'aceita') {
+                                    contadoresNotificacao.aceitas++;
+                                } else if (notificacao.status === 'nao_solicitada') {
+                                    contadoresNotificacao.naoSolicitadas++;
+                                } else {
+                                    contadoresNotificacao.falhas++;
+                                }
+
+                                resultados[indiceResultado] = '[SUCESSO] ' + descricao
+                                    + ' - Intimacao gerada com sucesso. Notifica\u00e7\u00e3o por e-mail: '
+                                    + notificacao.mensagem;
+                            })
+                        );
+                    } else if (resposta.status === 'ignorado') {
+                        contadores.ignorados++;
+                        resultados.push('[IGNORADO] ' + descricao + ' - ' + (resposta.mensagem || 'Duplicidade identificada.'));
+                    } else {
+                        contadores.erros++;
+                        resultados.push('[ERRO] ' + descricao + ' - ' + (resposta.mensagem || 'Resposta invalida do servidor.'));
+                    }
+                }).fail(function(xhr) {
+                    var mensagem = xhr.responseJSON && xhr.responseJSON.mensagem
+                        ? xhr.responseJSON.mensagem
+                        : 'Falha de comunicacao com o servidor da aplicacao.';
+                    contadores.erros++;
+                    resultados.push('[ERRO] ' + descricao + ' - ' + mensagem);
+                }).always(function() {
+                    contadores.processados++;
+                    atualizarProgresso(descricao);
+                    processar(indice + 1);
+                });
+            }
+
+            processar(0);
         });
     });
 
@@ -173,9 +365,22 @@ PaginaSEI::getInstance()->abrirBody($strTitulo,'');
 ?>
     <div class="clear"></div>
     <div class="textoIntimacaoEletronica">
-        <h2>
-        <?php echo $texto; ?>
-        </h2>
+        <h2><?php echo $texto; ?></h2>
+    </div>
+    <div id="divProgressoLote" style="display:none; margin: 1rem 0;">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+        </div>
+        <p id="destinatarioAtual" style="margin: .5rem 0;"></p>
+        <p>
+            Total: <span id="qtdTotal">0</span> |
+            Processados: <span id="qtdProcessados">0</span> |
+            Sucessos: <span id="qtdSucessos">0</span> |
+            Ignorados: <span id="qtdIgnorados">0</span> |
+            Erros: <span id="qtdErros">0</span>
+        </p>
+        <p id="resumoLote" style="display:none;"></p>
+        <a id="lnkBaixarRelatorio" href="#" download="relatorio_processamento_intimacoes.txt" style="display:none;" class="btn btn-primary btn-sm">Baixar relat&oacute;rio TXT</a>
     </div>
     <div style="padding-right: 40%">
 <?php 

@@ -18,8 +18,12 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
     var objAjaxDadosCargo = null;
 
     function selecionarTipoInteressado() {
-        document.getElementById('hdnIdContextoContato').value = '';
-        document.getElementById('txtPjVinculada').value = '';
+        if (document.getElementById('hdnIdContextoContato') != null) {
+            document.getElementById('hdnIdContextoContato').value = '';
+        }
+        if (document.getElementById('txtPjVinculada') != null) {
+            document.getElementById('txtPjVinculada').value = '';
+        }
     }
 
     function selecionarPF() {
@@ -109,9 +113,14 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         document.getElementById('lblrdPF2').style.display = 'none';
         <?php } ?>
 
-        document.getElementById('pjVinculada').style.display = 'none';
-        document.getElementById('txtPjVinculada').style.display = 'none';
-        document.getElementById('txtPjVinculada').value = '';
+        if (document.getElementById('pjVinculada') != null) {
+            document.getElementById('pjVinculada').style.display = 'none';
+        }
+
+        if (document.getElementById('txtPjVinculada') != null) {
+            document.getElementById('txtPjVinculada').style.display = 'none';
+            document.getElementById('txtPjVinculada').value = '';
+        }
 
         <?php if( !isset($_GET['cnpj']) ) { ?>
         document.getElementById('nome').style.display = 'none';

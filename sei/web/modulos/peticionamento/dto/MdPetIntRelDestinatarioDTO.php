@@ -115,6 +115,7 @@ class MdPetIntRelDestinatarioDTO extends InfraDTO {
 
 		//Protocolo Processo
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'ProtocoloFormatadoProcedimento','pp.protocolo_formatado','protocolo pp');
+		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'ProtocoloFormatadoProcedimentoPesquisa','pp.protocolo_formatado_pesquisa','protocolo pp');
 		$this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'EspecificacaoProcedimento','pp.descricao','protocolo pp');
 
 		//Protocolo Documento

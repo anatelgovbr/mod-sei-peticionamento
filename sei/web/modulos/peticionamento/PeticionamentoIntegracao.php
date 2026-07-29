@@ -34,7 +34,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.3';
+        return '4.6.4';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -552,10 +552,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 }
                 $_POST['nuCpf'] = $cpfNormalizado;
                 $xml = MdPetIntegracaoRN::consultarContatoCpf($_POST);
-                break;
-
-            case 'confirma_restricao_tipo_processo' :
-                $xml = MdPetVincTpProcessoINT::confirmarRestricao($_POST['idTipoProcesso'], $_POST['idOrgaoUnidadeMultipla'], $_POST['idUnidadeMultipla']);
                 break;
 
             case 'md_pet_validar_num_sei':

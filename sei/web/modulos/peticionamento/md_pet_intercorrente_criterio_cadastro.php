@@ -250,13 +250,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 ?>
                 <div class="row">
                     <div class="col-sm-12 col-md-10 col-lg-10 col-xl-8">
-                        <label id="lblTiposProcesso" for="txtTipoProcesso3" class="infraLabelObrigatorio">Tipos de
+                        <label id="lblTiposProcesso" for="txtTipoProcesso" class="infraLabelObrigatorio">Tipos de
                             Processos:</label>
                         <img id="imgAjuda" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                              onmouseover="return infraTooltipMostrar('A indicação de mais de um Tipo de Processo apenas facilita aplicar o mesmo Critério para os Tipos indicados. Ou seja, em seguida, cada um terá registro próprio de Critério para Intercorrente.', 'Ajuda');"
                              onmouseout="return infraTooltipOcultar();"
                              alt="Ajuda" class="infraImgModulo"/>
-                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso3" name="txtTipoProcesso"
+                        <input type="text" onchange="removerProcessoAssociado(0);" id="txtTipoProcesso" name="txtTipoProcesso"
                                class="infraText InfraAutoCompletar form-control" value="<?= PaginaSEI::tratarHTML($nomeTipoProcesso) ?>"
                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>

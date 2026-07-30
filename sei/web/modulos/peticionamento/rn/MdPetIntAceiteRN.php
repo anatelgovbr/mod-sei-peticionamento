@@ -153,7 +153,7 @@ class MdPetIntAceiteRN extends InfraRN
         }
     }
 
-    protected function existeAceiteDestinatario($idMdPetIntRelDestinatario)
+    protected function existeAceiteDestinatarioConectado($idMdPetIntRelDestinatario)
     {
 
         $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
@@ -536,6 +536,7 @@ class MdPetIntAceiteRN extends InfraRN
         return $objMdPetIntAceiteDTO && $objMdPetIntAceiteDTO->isSetDthData() ? $objMdPetIntAceiteDTO->getDthData() : null;
     }
 
+    // Função para realizar as etapas de aceite pelo agendamento de cumprimento tacito, considerando as intimacoes pendentes
     protected function realizarEtapasAceiteAgendadoControlado($intimacoesPendentes)
     {
        
@@ -1007,22 +1008,18 @@ class MdPetIntAceiteRN extends InfraRN
         $objUsuarioPetRN = new MdPetIntUsuarioRN();
         $objUsuarioPetDTO = $objUsuarioPetRN->getObjUsuarioPeticionamento();
 
-        if($this->existeAceiteDestinatario($objDTO->getNumIdMdPetIntRelDestinatario())) {
+        $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
+        $objMdPetIntAceiteDTO->setStrIp(null);
+        $objMdPetIntAceiteDTO->setDthData(InfraData::getStrDataHoraAtual());
+        $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objDTO->getNumIdMdPetIntRelDestinatario());
+        $objMdPetIntAceiteDTO->setStrTipoAceite(MdPetIntimacaoRN::$TP_AUTOMATICO_POR_DECURSO_DE_PRAZO);
+        $objMdPetIntAceiteDTO->setDblIdDocumentoCertidao($idDoc);
+        $objMdPetIntAceiteDTO->setNumIdUsuario($objUsuarioPetDTO->getNumIdUsuario());
+        $objMdPetIntAceiteDTO = $this->cadastrar($objMdPetIntAceiteDTO);
 
-            $objMdPetIntAceiteDTO = new MdPetIntAceiteDTO();
-            $objMdPetIntAceiteDTO->setStrIp(null);
-            $objMdPetIntAceiteDTO->setDthData(InfraData::getStrDataHoraAtual());
-            $objMdPetIntAceiteDTO->setNumIdMdPetIntRelDestinatario($objDTO->getNumIdMdPetIntRelDestinatario());
-            $objMdPetIntAceiteDTO->setStrTipoAceite(MdPetIntimacaoRN::$TP_AUTOMATICO_POR_DECURSO_DE_PRAZO);
-            $objMdPetIntAceiteDTO->setDblIdDocumentoCertidao($idDoc);
-            $objMdPetIntAceiteDTO->setNumIdUsuario($objUsuarioPetDTO->getNumIdUsuario());
-            $objMdPetIntAceiteDTO = $this->cadastrar($objMdPetIntAceiteDTO);
-
-            $objMdPetIntRelDestRN->atualizarStatusIntimacao(array(MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_PRAZO, $objDTO->getNumIdMdPetIntRelDestinatario()));
-        
-            return $objMdPetIntAceiteDTO;
-        
-        }
+        $objMdPetIntRelDestRN->atualizarStatusIntimacao(array(MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_PRAZO, $objDTO->getNumIdMdPetIntRelDestinatario()));
+    
+        return $objMdPetIntAceiteDTO;
         
     }
 
@@ -1277,7 +1274,7 @@ class MdPetIntAceiteRN extends InfraRN
                 $idMdPetIntDest = !is_null($objMdPetIntDestDTO) ? $objMdPetIntDestDTO->getNumIdMdPetIntRelDestinatario() : null;
 
                 //Só será cumprida as intimações que tiverem destinatário devidamente cadastrado e que ainda não possuam aceite
-                if(empty($idMdPetIntDest) || $this->existeAceiteDestinatario($idMdPetIntDest)) {
+                if(empty($idMdPetIntDest) || (!empty($idMdPetIntDest) && $this->existeAceiteDestinatario($idMdPetIntDest))) {
                     continue;
                 }
 

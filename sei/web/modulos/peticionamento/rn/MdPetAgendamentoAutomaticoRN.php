@@ -41,13 +41,13 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		$numSeg = InfraUtil::verificarTempoProcessamento();
 		InfraDebug::getInstance()->gravar('CUMPRINDO INTIMACOES POR DECURSO DE PRAZO EM ' . InfraData::getStrDataAtual());
 
-		// TODO: Remover em versao futura. Contigencia para evitar que intimação fique no limbo.
+		// Contingencia para evitar que intimação fique no limbo:
 		(new MdPetIntimacaoRN())->preencherDadaPrazoTacito();
 
-		// Contigencia caso tenha havido o cadastro de um Feriado na data do cumprimento.
+		// Contingencia caso tenha havido o cadastro de um Feriado na data do cumprimento:
 		(new MdPetIntimacaoRN())->recalculaCumprimentoIntimacaoPorFeriado();
 		
-		// Busca pela pelas intimações a cumprir na data de hoje.
+		// Busca pela pelas intimações a cumprir na data de hoje:
 		$intimacoesPendentes = (new MdPetIntimacaoRN())->retornarDadosIntimacaoPrazoExpirado();
 		
 		InfraDebug::getInstance()->gravar('Qtd. Intimacoes Pendentes: ' . count($intimacoesPendentes));
@@ -58,6 +58,11 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
 			// Step 1 - Cumprir Intimação para cada Destinatário:
 			foreach($intimacoesPendentes as $intimacao){
+
+                if(empty($intimacao->getNumIdMdPetIntRelDestinatario()) || (!empty($intimacao->getNumIdMdPetIntRelDestinatario()) && (new MdPetIntAceiteRN())->existeAceiteDestinatario($intimacao->getNumIdMdPetIntRelDestinatario()))){
+                    $processamento['naoCumpridas'] 	+= 1;
+                    continue;
+                }
 
 				$arrIntimacoes = (new MdPetIntAceiteRN())->realizarEtapasAceiteAgendado([$intimacao]);
 
@@ -163,6 +168,11 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	            if ($registros > 0) {
 		            
 	            	for ($i = 0; $i < $registros; $i++) {
+
+                        if(empty($intimacoesPendentes[$i]->getNumIdMdPetIntRelDestinatario()) || (!empty($intimacoesPendentes[$i]->getNumIdMdPetIntRelDestinatario()) && (new MdPetIntAceiteRN())->existeAceiteDestinatario($intimacoesPendentes[$i]->getNumIdMdPetIntRelDestinatario()))){
+                            $arrRetornoIntimacoes['naoCumpridas'] += 1;
+                            continue;
+                        }
 			
 			            $arrIntimacoes = (new MdPetIntAceiteRN())->realizarEtapasAceiteAgendadoIndividual($intimacoesPendentes[$i]);
 			            

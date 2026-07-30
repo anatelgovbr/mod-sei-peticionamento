@@ -468,7 +468,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
                     // console.log($(this)[0].tagName);
                     var idCampo = $(this)[0].localName;
-                    var valor = $(this)[0].innerHTML;
+                    var valor = $(this)[0].text();
                     var campo = $("#" + idCampo);
                     var noCampo = $(this)[0].tagName;
 

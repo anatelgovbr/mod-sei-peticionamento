@@ -1,306 +1,306 @@
-# Manual do Webservice do MÛdulo Peticionamento
+# Manual do Webservice do M√≥dulo Peticionamento
 
- * EndereÁo do WSDL: http://[dominio_servidor]/sei/controlador_ws.php?servico=wspeticionamento 
+ * Endere√ßo do WSDL: http://[dominio_servidor]/sei/controlador_ws.php?servico=wspeticionamento 
  * Recomendado utilizar o software SOAP-UI para testes: http://sourceforge.net/projects/soapui/files/soapui/
- * Todas as operaÁıes abaixo somente funcionam se o ServiÁo correspondente do Sistema indicado possuir pelo menos a operaÁ„o "Listar Constatos" no menu AdministraÁ„o > Sistemas.
+ * Todas as opera√ß√µes abaixo somente funcionam se o Servi√ßo correspondente do Sistema indicado possuir pelo menos a opera√ß√£o "Listar Constatos" no menu Administra√ß√£o > Sistemas.
  
-| ObservaÁıes Gerais |
+| Observa√ß√µes Gerais |
 | ---- |
-| Os mÈtodos abaixo documentados somente funcionar„o se o ServiÁo correspondente do Sistema indicado possuir pelo menos a operaÁ„o "Listar Constatos" no menu AdministraÁ„o > Sistemas. |
+| Os m√©todos abaixo documentados somente funcionar√£o se o Servi√ßo correspondente do Sistema indicado possuir pelo menos a opera√ß√£o "Listar Constatos" no menu Administra√ß√£o > Sistemas. |
 
-# Sum·rio das OperaÁıes DisponÌ≠veis
-1. **[Consultar Usu·rio Externo](#1-consultar-usu·rio-externo)**: Verifica se uma determinada pessoa fÌ≠sica possui login ativo e liberado como Usu·rio Externo no SEI.
-2. **[Listar Poderes Legais](#2-listar-poderes-legais)**: Lista os tipos de poderes legais que podem ser utilizados na emiss„o de ProcuraÁıes EletrÌ¥nicas Simples geradas no SEI.
-3. **[Listar RepresentaÁ„o de Pessoa FÌ≠sica](#3-listar-representaÁ„o-de-pessoa-fÌ≠sica)**: Lista os representantes de determinada pessoa fÌ≠sica outorgante, se houver emitido representaÁ„o no SEI.
-4. **[Listar RepresentaÁ„o de Pessoa JurÌ≠dica](#4-listar-representaÁ„o-de-pessoa-jurÌ≠dica)**: Lista os representantes de determinada pessoa jurÌ≠dica outorgante, se houver emitido representaÁ„o no SEI.
-5. **[Listar Representados](#5-listar-representados)**: Lista todos os representados por determinada pessoa fÌ≠sica, se alguÈm houver emiss„o de representaÁ„o outorgando poderes para ela no SEI.
-6. **[Listar Representantes](#6-listar-representantes)**: Lista todos os representantes e representados que possuem alguma emiss„o de representaÁ„o outorgando poderes no SEI.
-7. **[Listar SituaÁıes de RepresentaÁ„o](#7-listar-situaÁıes-de-representaÁ„o)**: Lista os tipos de situaÁ„o que existem sobre as representaÁıes geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=SubstituÌ≠da, V=Vencida, I=Inativa).
-8. **[Listar Tipos de RepresentaÁ„o](#8-listar-tipos-de-representaÁ„o)**: Lista os tipos de representaÁ„o que existem sobre as representaÁıes geradas no SEI (L=Respons·vel Legal, E=Procurador Especial, S=Procurador Simples, U=AutorrepresentaÁ„o).
-9. **[Listar Usu·rios Externos](#9-listar-usu·rios-externos)**: Lista todos os Usu·rios Externos cadastrados no SEI.
+# Sum√°rio das Opera√ß√µes Dispon√≠¬≠veis
+1. **[Consultar Usu√°rio Externo](#1-consultar-usu√°rio-externo)**: Verifica se uma determinada pessoa f√≠¬≠sica possui login ativo e liberado como Usu√°rio Externo no SEI.
+2. **[Listar Poderes Legais](#2-listar-poderes-legais)**: Lista os tipos de poderes legais que podem ser utilizados na emiss√£o de Procura√ß√µes Eletr√≠¬¥nicas Simples geradas no SEI.
+3. **[Listar Representa√ß√£o de Pessoa F√≠¬≠sica](#3-listar-representa√ß√£o-de-pessoa-f√≠¬≠sica)**: Lista os representantes de determinada pessoa f√≠¬≠sica outorgante, se houver emitido representa√ß√£o no SEI.
+4. **[Listar Representa√ß√£o de Pessoa Jur√≠¬≠dica](#4-listar-representa√ß√£o-de-pessoa-jur√≠¬≠dica)**: Lista os representantes de determinada pessoa jur√≠¬≠dica outorgante, se houver emitido representa√ß√£o no SEI.
+5. **[Listar Representados](#5-listar-representados)**: Lista todos os representados por determinada pessoa f√≠¬≠sica, se algu√©m houver emiss√£o de representa√ß√£o outorgando poderes para ela no SEI.
+6. **[Listar Representantes](#6-listar-representantes)**: Lista todos os representantes e representados que possuem alguma emiss√£o de representa√ß√£o outorgando poderes no SEI.
+7. **[Listar Situa√ß√µes de Representa√ß√£o](#7-listar-situa√ß√µes-de-representa√ß√£o)**: Lista os tipos de situa√ß√£o que existem sobre as representa√ß√µes geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substitu√≠¬≠da, V=Vencida, I=Inativa).
+8. **[Listar Tipos de Representa√ß√£o](#8-listar-tipos-de-representa√ß√£o)**: Lista os tipos de representa√ß√£o que existem sobre as representa√ß√µes geradas no SEI (L=Respons√°vel Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresenta√ß√£o).
+9. **[Listar Usu√°rios Externos](#9-listar-usu√°rios-externos)**: Lista todos os Usu√°rios Externos cadastrados no SEI.
 
-## 1. Consultar Usu·rio Externo
-Verifica se uma determinada pessoa fÌ≠sica possui login ativo e liberado como Usu·rio Externo no SEI.
-### MÈtodo "consultarUsuarioExterno":
+## 1. Consultar Usu√°rio Externo
+Verifica se uma determinada pessoa f√≠¬≠sica possui login ativo e liberado como Usu√°rio Externo no SEI.
+### M√©todo "consultarUsuarioExterno":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
-| Email | **Opcional**. EndereÁo de e-mail indicado pelo Usu·rio Externo em seu cadastro no SEI para fins de autenticaÁ„o. Caso seja informado, tem que corresponder ao e-mail vinculado ao CPF indicado (se n„o corresponder retornar· erro indicando "*E-mail informado n„o corresponde ao registrado no cadastro do Usu·rio Externo no SEI*‚Äù). |
-| Cpf | CPF, sem formataÁ„o e incluindo zeros Ì† esquerda, para consulta se existe cadastro correspondente como Usu·rio Externo no SEI. |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
+| Email | **Opcional**. Endere√ßo de e-mail indicado pelo Usu√°rio Externo em seu cadastro no SEI para fins de autentica√ß√£o. Caso seja informado, tem que corresponder ao e-mail vinculado ao CPF indicado (se n√£o corresponder retornar√° erro indicando "*E-mail informado n√£o corresponde ao registrado no cadastro do Usu√°rio Externo no SEI*"). |
+| Cpf | CPF, sem formata√ß√£o e incluindo zeros √≠¬† esquerda, para consulta se existe cadastro correspondente como Usu√°rio Externo no SEI. |
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| UsuarioExterno | Uma lista de ocorrÍncias da Estrutura de Dados UsuarioExterno. |
+| UsuarioExterno | Uma lista de ocorr√™ncias da Estrutura de Dados UsuarioExterno. |
 
-| ObservaÁıes |
+| Observa√ß√µes |
 | ---- |
-| O usu·rio ser· listado sempre que indicar um CPF que conste na lista de Usu·rios Externos do SEI. O sistema cliente dever· verificar dois par‚metros da estrutura de dados de retorno para confirmar que o Usu·rio Externo de fato est· com cadastro regular, se a "SituacaoAtivo‚Äù est· "S‚Äù (ativo) e se "LiberacaoCadastro‚Äù est· "L‚Äù (liberado), pois se o cadastro estiver desativado (SituacaoAtivo=N) o usu·rio externo n„o conseguir· logar na tela de acesso externo mesmo que esteja liberado (LiberacaoCadastro=L). |
+| O usu√°rio ser√° listado sempre que indicar um CPF que conste na lista de Usu√°rios Externos do SEI. O sistema cliente dever√° verificar dois par√¢metros da estrutura de dados de retorno para confirmar que o Usu√°rio Externo de fato est√° com cadastro regular, se a "SituacaoAtivo" est√° "S" (ativo) e se "LiberacaoCadastro" est√° "L" (liberado), pois se o cadastro estiver desativado (SituacaoAtivo=N) o usu√°rio externo n√£o conseguir√° logar na tela de acesso externo mesmo que esteja liberado (LiberacaoCadastro=L). |
 
-### Regras de NegÛcio:
- * Se a SiglaSistema e/ou IdentificacaoServico n„o forem v·lidos, o webservice retorna as mensagens padr„o a respeito.
- * Se o CPF informado n„o tiver cadastro como Usu·rio Externo no SEI o webservice retorna a mensagem "*N„o existe cadastro de Usu·rio Externo no SEI com o CPF informado*‚Äù.
- * Se o CPF informado n„o for v·lido, ou seja, n„o passar na validaÁ„o de sua estrutura (dÌ≠gito verificador inv·lido), o webservice retorna a mensagem "*N˙mero de CPF inv·lido*‚Äù.
- * Se o E-mail informado n„o passar na validaÁ„o de formato (n„o pode ter espaÁos e tem que ter @), o webservice retorna a mensagem "*E-mail inv·lido*‚Äù.
- * Se o CPF informado for de Usu·rio Externo com cadastro localizado, mas, mesmo sendo opcional, o e-mail indicado em conjunto no chamado n„o corresponder ao cadastrado no SEI (quando quiser fazer dupla validaÁ„o), o webservice retorna a mensagem "*E-mail informado n„o corresponde ao registrado no cadastro do Usu·rio Externo no SEI*‚Äù.
- * Demais regras devem ser implementadas pelo sistema cliente da integraÁ„o, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo‚Äù e "LiberacaoCadastro‚Äù conforme estrutura de dados "UsuarioExterno‚Äù abaixo especificada.
+### Regras de Neg√≥cio:
+ * Se a SiglaSistema e/ou IdentificacaoServico n√£o forem v√°lidos, o webservice retorna as mensagens padr√£o a respeito.
+ * Se o CPF informado n√£o tiver cadastro como Usu√°rio Externo no SEI o webservice retorna a mensagem "*N√£o existe cadastro de Usu√°rio Externo no SEI com o CPF informado*".
+ * Se o CPF informado n√£o for v√°lido, ou seja, n√£o passar na valida√ß√£o de sua estrutura (d√≠gito verificador inv√°lido), o webservice retorna a mensagem "*N√∫mero de CPF inv√°lido*".
+ * Se o E-mail informado n√£o passar na valida√ß√£o de formato (n√£o pode ter espa√ßos e tem que ter @), o webservice retorna a mensagem "*E-mail inv√°lido*".
+ * Se o CPF informado for de Usu√°rio Externo com cadastro localizado, mas, mesmo sendo opcional, o e-mail indicado em conjunto no chamado n√£o corresponder ao cadastrado no SEI (quando quiser fazer dupla valida√ß√£o), o webservice retorna a mensagem "*E-mail informado n√£o corresponde ao registrado no cadastro do Usu√°rio Externo no SEI*".
+ * Demais regras devem ser implementadas pelo sistema cliente da integra√ß√£o, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo" e "LiberacaoCadastro" conforme estrutura de dados "UsuarioExterno" abaixo especificada.
 
 ### Estrutura de Dados "UsuarioExterno":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| IdUsuario | Id interno de identificaÁ„o do usu·rio no SEI. |
-| Email | EndereÁo de e-mail utilizado pelo Usu·rio Externo para acesso Ì† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu·rio Externo. |
-| Nome | Nome do Usu·rio Externo. |
-| Cpf | N˙mero do CPF do Usu·rio Externo (sem formataÁ„o). |
-| Rg | N˙mero do RG. |
-| OrgaoExpedidor | Ììrg„o Expedidor do RG. |
+| IdUsuario | Id interno de identifica√ß√£o do usu√°rio no SEI. |
+| Email | Endere√ßo de e-mail utilizado pelo Usu√°rio Externo para acesso √≠¬† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu√°rio Externo. |
+| Nome | Nome do Usu√°rio Externo. |
+| Cpf | N√∫mero do CPF do Usu√°rio Externo (sem formata√ß√£o). |
+| Rg | N√∫mero do RG. |
+| OrgaoExpedidor | √ìrg√£o Expedidor do RG. |
 | Telefone | Telefone. |
-| Endereco | EndereÁo. |
+| Endereco | Endere√ßo. |
 | Bairro | Bairro. |
-| SiglaUf | Sigla da Unidade da FederaÁ„o. |
+| SiglaUf | Sigla da Unidade da Federa√ß√£o. |
 | NomeCidade | Nome da Cidade. |
-| Cep | CEP do endereÁo. |
-| DataCadastro | Data na qual o Usu·rio Externo efetivou o cadastro no SEI. |
-| SituacaoAtivo | Estado do cadastro do Usu·rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro È independente de sua liberaÁ„o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu·rio n„o consegue mais ter acesso externo ao SEI). |
-| LiberacaoCadastro | Estado da aprovaÁ„o do cadastro do Usu·rio Externo (L=Liberado e P=Pendente). |
+| Cep | CEP do endere√ßo. |
+| DataCadastro | Data na qual o Usu√°rio Externo efetivou o cadastro no SEI. |
+| SituacaoAtivo | Estado do cadastro do Usu√°rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro √© independente de sua libera√ß√£o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu√°rio n√£o consegue mais ter acesso externo ao SEI). |
+| LiberacaoCadastro | Estado da aprova√ß√£o do cadastro do Usu√°rio Externo (L=Liberado e P=Pendente). |
 
 ## 2. Listar Poderes Legais
-Lista os tipos de poderes legais que podem ser utilizados na emiss„o de ProcuraÁıes EletrÌ¥nicas Simples geradas no SEI.
-### MÈtodo "listarPoderesLegais":
+Lista os tipos de poderes legais que podem ser utilizados na emiss√£o de Procura√ß√µes Eletr√≠¬¥nicas Simples geradas no SEI.
+### M√©todo "listarPoderesLegais":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| PoderesLegais | Uma lista de ocorrÍncias da estrutura [PoderesLegais](#estrutura-de-dados-podereslegais). |
+| PoderesLegais | Uma lista de ocorr√™ncias da estrutura [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
-## 3. Listar RepresentaÁ„o de Pessoa FÌ≠sica
-Lista os representantes de determinada pessoa fÌ≠sica outorgante, se houver emitido representaÁ„o no SEI.
-### MÈtodo "listarRepresentacaoPessoaFisica":
+## 3. Listar Representa√ß√£o de Pessoa F√≠¬≠sica
+Lista os representantes de determinada pessoa f√≠¬≠sica outorgante, se houver emitido representa√ß√£o no SEI.
+### M√©todo "listarRepresentacaoPessoaFisica":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
-| CpfOutorgante | CPF do Outorgante, sem formataÁ„o e incluindo zeros Ì† esquerda, para consulta se existe cadastro correspondente como Usu·rio Externo no SEI. |
-| StaSituacao | Estado da representaÁ„o (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=SubstituÌ≠do, I=Inativo) |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
+| CpfOutorgante | CPF do Outorgante, sem formata√ß√£o e incluindo zeros √≠¬† esquerda, para consulta se existe cadastro correspondente como Usu√°rio Externo no SEI. |
+| StaSituacao | Estado da representa√ß√£o (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=Substitu√≠¬≠do, I=Inativo) |
 
-### Regras de NegÛcio:
- * Se a SiglaSistema e/ou IdentificacaoServico n„o forem v·lidos, o webservice retorna as mensagens padr„o a respeito.
- * Se o CPF informado n„o tiver cadastro como Usu·rio Externo no SEI o webservice retorna a mensagem "*N„o existe cadastro de Usu·rio Externo no SEI com o CPF informado*‚Äù.
- * Se o CPF informado n„o for v·lido, ou seja, n„o passar na validaÁ„o de sua estrutura (dÌ≠gito verificador inv·lido), o webservice retorna a mensagem "*N˙mero de CPF inv·lido*‚Äù.
- * Demais regras devem ser implementadas pelo sistema cliente da integraÁ„o, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo‚Äù e "LiberacaoCadastro‚Äù conforme estrutura de dados "UsuarioExterno‚Äù abaixo especificada.
+### Regras de Neg√≥cio:
+ * Se a SiglaSistema e/ou IdentificacaoServico n√£o forem v√°lidos, o webservice retorna as mensagens padr√£o a respeito.
+ * Se o CPF informado n√£o tiver cadastro como Usu√°rio Externo no SEI o webservice retorna a mensagem "*N√£o existe cadastro de Usu√°rio Externo no SEI com o CPF informado*".
+ * Se o CPF informado n√£o for v√°lido, ou seja, n√£o passar na valida√ß√£o de sua estrutura (d√≠gito verificador inv√°lido), o webservice retorna a mensagem "*N√∫mero de CPF inv√°lido*".
+ * Demais regras devem ser implementadas pelo sistema cliente da integra√ß√£o, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo" e "LiberacaoCadastro" conforme estrutura de dados "UsuarioExterno" abaixo especificada.
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| RepresentacaoPessoaFisica | Uma lista de ocorrÍncias da Estrutura de Dados RepresentacaoPessoaFisica. |
+| RepresentacaoPessoaFisica | Uma lista de ocorr√™ncias da Estrutura de Dados RepresentacaoPessoaFisica. |
 
 ### Estrutura de Dados "RepresentacaoPessoaFisica":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do VÌ≠nculo. |
-| Cpf | N˙mero do CPF do Usu·rio Externo (sem formataÁ„o). |
-| Nome | Nome do Usu·rio Externo. |
-| Email | EndereÁo de e-mail utilizado pelo Usu·rio Externo para acesso Ì† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu·rio Externo.. |
-| StaSituacao | Estado do cadastro do Usu·rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro È independente de sua liberaÁ„o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu·rio n„o consegue mais ter acesso externo ao SEI). |
-| StaTipoRepresentacao | Estado da aprovaÁ„o do cadastro do Usu·rio Externo (L=Liberado e P=Pendente). |
-| DataLimite | Data limite da representaÁ„o. Retorna vazio caso seja representaÁ„o por tempo indeterminado. |
+| IdVinculoRepresentante | Id do V√≠¬≠nculo. |
+| Cpf | N√∫mero do CPF do Usu√°rio Externo (sem formata√ß√£o). |
+| Nome | Nome do Usu√°rio Externo. |
+| Email | Endere√ßo de e-mail utilizado pelo Usu√°rio Externo para acesso √≠¬† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu√°rio Externo.. |
+| StaSituacao | Estado do cadastro do Usu√°rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro √© independente de sua libera√ß√£o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu√°rio n√£o consegue mais ter acesso externo ao SEI). |
+| StaTipoRepresentacao | Estado da aprova√ß√£o do cadastro do Usu√°rio Externo (L=Liberado e P=Pendente). |
+| DataLimite | Data limite da representa√ß√£o. Retorna vazio caso seja representa√ß√£o por tempo indeterminado. |
 | ProcessosAbrangencia | Estrutura de Dados [ProcessosAbrangencia](#estrutura-de-dados-processosabrangencia). |
-| TipoPoderesLegais |  Uma lista de ocorrÍncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
+| TipoPoderesLegais |  Uma lista de ocorr√™ncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
-## 4. Listar RepresentaÁ„o de Pessoa JurÌ≠dica
-Lista os representantes de determinada pessoa jurÌ≠dica outorgante, se houver emitido representaÁ„o no SEI.
-### MÈtodo "listarRepresentacaoPessoaJuridica":
+## 4. Listar Representa√ß√£o de Pessoa Jur√≠¬≠dica
+Lista os representantes de determinada pessoa jur√≠¬≠dica outorgante, se houver emitido representa√ß√£o no SEI.
+### M√©todo "listarRepresentacaoPessoaJuridica":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
-| CnpjOutorgante | CNPJ do Outorgante, sem formataÁ„o e incluindo zeros Ì† esquerda, para consulta se existe cadastro correspondente como Usu·rio Externo no SEI. |
-| StaSituacao | Estado da representaÁ„o (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=SubstituÌ≠da, I=Inativo). |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
+| CnpjOutorgante | CNPJ do Outorgante, sem formata√ß√£o e incluindo zeros √≠¬† esquerda, para consulta se existe cadastro correspondente como Usu√°rio Externo no SEI. |
+| StaSituacao | Estado da representa√ß√£o (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substitu√≠¬≠da, I=Inativo). |
 
-### Regras de NegÛcio:
- * Se a SiglaSistema e/ou IdentificacaoServico n„o forem v·lidos, o webservice retorna as mensagens padr„o a respeito.
- * Se o CNPJ informado n„o for v·lido, ou seja, n„o passar na validaÁ„o de sua estrutura (dÌ≠gito verificador inv·lido), o webservice retorna a mensagem "*N˙mero de CNPJ inv·lido*"Äù.
- * Demais regras devem ser implementadas pelo sistema cliente da integraÁ„o, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo‚Äù e "LiberacaoCadastro‚Äù conforme estrutura de dados "UsuarioExterno‚Äù abaixo especificada.
+### Regras de Neg√≥cio:
+ * Se a SiglaSistema e/ou IdentificacaoServico n√£o forem v√°lidos, o webservice retorna as mensagens padr√£o a respeito.
+ * Se o CNPJ informado n√£o for v√°lido, ou seja, n√£o passar na valida√ß√£o de sua estrutura (d√≠gito verificador inv√°lido), o webservice retorna a mensagem "*N√∫mero de CNPJ inv√°lido*".
+ * Demais regras devem ser implementadas pelo sistema cliente da integra√ß√£o, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo" e "LiberacaoCadastro" conforme estrutura de dados "UsuarioExterno" abaixo especificada.
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| parametros | Uma lista de ocorrÍncias da Estrutura de Dados RepresentacaoPessoaJuridica. |
+| parametros | Uma lista de ocorr√™ncias da Estrutura de Dados RepresentacaoPessoaJuridica. |
 
 ### Estrutura de Dados "RepresentacaoPessoaJuridica":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do VÌ≠nculo. |
-| Cpf | N˙mero do CPF do Usu·rio Externo (sem formataÁ„o). |
-| Nome | Nome do Usu·rio Externo. |
-| Email | EndereÁo de e-mail utilizado pelo Usu·rio Externo para acesso Ì† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu·rio Externo. |
-| StaSituacao | Estado do cadastro do Usu·rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro È independente de sua liberaÁ„o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu·rio n„o consegue mais ter acesso externo ao SEI). |
-| StaTipoRepresentacao | Estado da aprovaÁ„o do cadastro do Usu·rio Externo (L=Liberado e P=Pendente). |
-| DataLimite | Data limite da representaÁ„o. Retorna vazio caso seja representaÁ„o por tempo indeterminado. |
+| IdVinculoRepresentante | Id do V√≠¬≠nculo. |
+| Cpf | N√∫mero do CPF do Usu√°rio Externo (sem formata√ß√£o). |
+| Nome | Nome do Usu√°rio Externo. |
+| Email | Endere√ßo de e-mail utilizado pelo Usu√°rio Externo para acesso √≠¬† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu√°rio Externo. |
+| StaSituacao | Estado do cadastro do Usu√°rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro √© independente de sua libera√ß√£o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu√°rio n√£o consegue mais ter acesso externo ao SEI). |
+| StaTipoRepresentacao | Estado da aprova√ß√£o do cadastro do Usu√°rio Externo (L=Liberado e P=Pendente). |
+| DataLimite | Data limite da representa√ß√£o. Retorna vazio caso seja representa√ß√£o por tempo indeterminado. |
 | ProcessosAbrangencia | Estrutura de Dados [ProcessosAbrangencia](#estrutura-de-dados-processosabrangencia). |
-| TipoPoderesLegais | Uma lista de ocorrÍncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
+| TipoPoderesLegais | Uma lista de ocorr√™ncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 5. Listar Representados
-Lista todos os representados por determinada pessoa fÌ≠sica, se alguÈm houver emiss„o de representaÁ„o outorgando poderes para ela no SEI.
-### MÈtodo "listarRepresentados":
+Lista todos os representados por determinada pessoa f√≠¬≠sica, se algu√©m houver emiss√£o de representa√ß√£o outorgando poderes para ela no SEI.
+### M√©todo "listarRepresentados":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
-| Cpf | CPF do Representante, sem formataÁ„o e incluindo zeros Ì† esquerda, para consulta se existe cadastro correspondente como Usu·rio Externo no SEI. |
-| StaSituacao | **Opcional**. SituaÁ„o da RepresentaÁ„o (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=SubstituÌ≠da, I=Inativo). |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
+| Cpf | CPF do Representante, sem formata√ß√£o e incluindo zeros √≠¬† esquerda, para consulta se existe cadastro correspondente como Usu√°rio Externo no SEI. |
+| StaSituacao | **Opcional**. Situa√ß√£o da Representa√ß√£o (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substitu√≠¬≠da, I=Inativo). |
 
-### Regras de NegÛcio:
- * Se a SiglaSistema e/ou IdentificacaoServico n„o forem v·lidos, o webservice retorna as mensagens padr„o a respeito.
- * Se o CPF informado n„o tiver cadastro como Usu·rio Externo no SEI o webservice retorna a mensagem "*N„o existe cadastro de Usu·rio Externo no SEI com o CPF informado*‚Äù.
- * Se o CPF informado n„o for v·lido, ou seja, n„o passar na validaÁ„o de sua estrutura (dÌ≠gito verificador inv·lido), o webservice retorna a mensagem "*N˙mero de CPF inv·lido*‚Äù.
+### Regras de Neg√≥cio:
+ * Se a SiglaSistema e/ou IdentificacaoServico n√£o forem v√°lidos, o webservice retorna as mensagens padr√£o a respeito.
+ * Se o CPF informado n√£o tiver cadastro como Usu√°rio Externo no SEI o webservice retorna a mensagem "*N√£o existe cadastro de Usu√°rio Externo no SEI com o CPF informado*".
+ * Se o CPF informado n√£o for v√°lido, ou seja, n√£o passar na valida√ß√£o de sua estrutura (d√≠gito verificador inv√°lido), o webservice retorna a mensagem "*N√∫mero de CPF inv√°lido*".
  
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| Representados | Uma lista de ocorrÍncias da estrutura Representados. |
+| Representados | Uma lista de ocorr√™ncias da estrutura Representados. |
 
 ### Estrutura de Dados "Representados":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do VÌ≠nculo. |
+| IdVinculoRepresentante | Id do V√≠¬≠nculo. |
 | CnpjCpf | CPF ou CNPJ do Representado. |
-| RazaoSocial | Raz„o Social do Representado. |
-| DataLimite | Data limite da representaÁ„o. Retorna vazio caso seja representaÁ„o por tempo indeterminado. |
-| Representante | Uma ocorrÍncia da estrutura Representante. |
+| RazaoSocial | Raz√£o Social do Representado. |
+| DataLimite | Data limite da representa√ß√£o. Retorna vazio caso seja representa√ß√£o por tempo indeterminado. |
+| Representante | Uma ocorr√™ncia da estrutura Representante. |
 
 ### Estrutura de Dados "Representante":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
 | Nome | Nome do Representante. |
 | Cpf | CPF do Representante. |
-| Email | EndereÁo de e-mail utilizado pelo Usu·rio Externo para acesso Ì† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu·rio Externo. |
-| StaSituacao | SituaÁ„o do Representante (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=SubstituÌ≠do, I=Inativo). |
-| StaTipoRepresentacao | Tipo da RepresentaÁ„o (L=Respons·vel Legal, E=Procurador Especial, C=Procurador, S=Procurador Simples, U=AutorrepresentaÁ„o) |
+| Email | Endere√ßo de e-mail utilizado pelo Usu√°rio Externo para acesso √≠¬† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu√°rio Externo. |
+| StaSituacao | Situa√ß√£o do Representante (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=Substitu√≠¬≠do, I=Inativo). |
+| StaTipoRepresentacao | Tipo da Representa√ß√£o (L=Respons√°vel Legal, E=Procurador Especial, C=Procurador, S=Procurador Simples, U=Autorrepresenta√ß√£o) |
 | ProcessosAbrangencia | Estrutura de Dados [ProcessosAbrangencia](#estrutura-de-dados-processosabrangencia). |
-| TipoPoderesLegais | Uma lista de ocorrÍncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
+| TipoPoderesLegais | Uma lista de ocorr√™ncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 6. Listar Representantes
-Lista todos os representantes e representados que possuem alguma emiss„o de representaÁ„o outorgando poderes no SEI.
-### MÈtodo "listarRepresentantes":
+Lista todos os representantes e representados que possuem alguma emiss√£o de representa√ß√£o outorgando poderes no SEI.
+### M√©todo "listarRepresentantes":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
-| StaSituacao | SituaÁ„o da RepresentaÁ„o (A=Ativo, S=Suspensa, R=Revogada, C=Renunciada, V=Vencida, T=SubstituÌ≠da, I=Inativa). |
-| Pagina | **Opcional**. N˙mero da p·gina para paginaÁ„o dos resultados. Caso suprimido valor para este par‚metro ser· mostrada a p·gina 1. |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
+| StaSituacao | Situa√ß√£o da Representa√ß√£o (A=Ativo, S=Suspensa, R=Revogada, C=Renunciada, V=Vencida, T=Substitu√≠¬≠da, I=Inativa). |
+| Pagina | **Opcional**. N√∫mero da p√°gina para pagina√ß√£o dos resultados. Caso suprimido valor para este par√¢metro ser√° mostrada a p√°gina 1. |
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| Representantes | Uma lista de ocorrÍncias da estrutura RepresentantesItens. |
+| Representantes | Uma lista de ocorr√™ncias da estrutura RepresentantesItens. |
 
 ### Estrutura de Dados "RepresentantesItens":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do VÌ≠nculo. |
-| TipoVinculo | Tipo da Natureza do VÌ≠nculo (J=Pessoa JurÌ≠dica, F=Pessoa FÌ≠sica) |
-| CnpjRepresentado | CNPJ do Representado caso o Tipo de VÌ≠nculo seja de Pessoa JurÌ≠dica (com formataÁ„o). |
-| RazaoSocialRepresentado | Raz„o Social do Representado caso o Tipo de VÌ≠nculo seja de Pessoa JurÌ≠dica. |
-| CpfRepresentado | CPF do Representado caso o Tipo de VÌ≠nculo seja de Pessoa FÌ≠sica (com formataÁ„o). |
-| NomeRepresentado | Nome do Representado caso o Tipo de VÌ≠nculo seja de Pessoa FÌ≠sica. |
-| EmailRepresentante | EndereÁo de e-mail utilizado pelo Usu·rio Externo do Representante para acesso Ì† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu·rio Externo. |
-| StaSituacao | SituaÁ„o da RepresentaÁ„o (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=SubstituÌ≠da, I=Inativo). |
-| StaTipoRepresentacao | Tipo da RepresentaÁ„o (L=Respons·vel Legal, E=Procurador Especial, C=Procurador, S=Procurador Simples, U=AutorrepresentaÁ„o) |
-| DataLimite | Data limite da vigÍncia da RepresentaÁ„o. |
+| IdVinculoRepresentante | Id do V√≠¬≠nculo. |
+| TipoVinculo | Tipo da Natureza do V√≠¬≠nculo (J=Pessoa Jur√≠¬≠dica, F=Pessoa F√≠¬≠sica) |
+| CnpjRepresentado | CNPJ do Representado caso o Tipo de V√≠¬≠nculo seja de Pessoa Jur√≠¬≠dica (com formata√ß√£o). |
+| RazaoSocialRepresentado | Raz√£o Social do Representado caso o Tipo de V√≠¬≠nculo seja de Pessoa Jur√≠¬≠dica. |
+| CpfRepresentado | CPF do Representado caso o Tipo de V√≠¬≠nculo seja de Pessoa F√≠¬≠sica (com formata√ß√£o). |
+| NomeRepresentado | Nome do Representado caso o Tipo de V√≠¬≠nculo seja de Pessoa F√≠¬≠sica. |
+| EmailRepresentante | Endere√ßo de e-mail utilizado pelo Usu√°rio Externo do Representante para acesso √≠¬† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu√°rio Externo. |
+| StaSituacao | Situa√ß√£o da Representa√ß√£o (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substitu√≠¬≠da, I=Inativo). |
+| StaTipoRepresentacao | Tipo da Representa√ß√£o (L=Respons√°vel Legal, E=Procurador Especial, C=Procurador, S=Procurador Simples, U=Autorrepresenta√ß√£o) |
+| DataLimite | Data limite da vig√™ncia da Representa√ß√£o. |
 | ProcessosAbrangencia | Estrutura de Dados [ProcessosAbrangencia](#estrutura-de-dados-processosabrangencia). |
-| TipoPoderesLegais | Uma lista de ocorrÍncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
+| TipoPoderesLegais | Uma lista de ocorr√™ncias da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
-## 7. Listar SituaÁıes de RepresentaÁ„o
-Lista os tipos de situaÁ„o que existem sobre as representaÁıes geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=SubstituÌ≠da, V=Vencida, I=Inativa).
-### MÈtodo "listarSituacoesRepresentacao":
+## 7. Listar Situa√ß√µes de Representa√ß√£o
+Lista os tipos de situa√ß√£o que existem sobre as representa√ß√µes geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substitu√≠¬≠da, V=Vencida, I=Inativa).
+### M√©todo "listarSituacoesRepresentacao":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| parametros | Uma lista de ocorrÍncias da estrutura SituacoesRepresentacao. |
+| parametros | Uma lista de ocorr√™ncias da estrutura SituacoesRepresentacao. |
 
 ### Estrutura de Dados "SituacoesRepresentacao":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| StaEstado | Identificador do Estado da RepresentaÁ„o (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=SubstituÌ≠da, V=Vencida, I=Inativa). |
-| Nome | Nome do Estado da RepresentaÁ„o. |
+| StaEstado | Identificador do Estado da Representa√ß√£o (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substitu√≠¬≠da, V=Vencida, I=Inativa). |
+| Nome | Nome do Estado da Representa√ß√£o. |
 
-## 8. Listar Tipos de RepresentaÁ„o
-Lista os tipos de representaÁ„o que existem sobre as representaÁıes geradas no SEI (L=Respons·vel Legal, E=Procurador Especial, S=Procurador Simples, U=AutorrepresentaÁ„o).
-### MÈtodo "listarTiposRepresentacao":
+## 8. Listar Tipos de Representa√ß√£o
+Lista os tipos de representa√ß√£o que existem sobre as representa√ß√µes geradas no SEI (L=Respons√°vel Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresenta√ß√£o).
+### M√©todo "listarTiposRepresentacao":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| UsuarioExterno | Uma lista de ocorrÍncias da Estrutura de Dados TiposRepresentacao. |
+| UsuarioExterno | Uma lista de ocorr√™ncias da Estrutura de Dados TiposRepresentacao. |
 
 ### Estrutura de Dados "TiposRepresentacao":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| Nome | Nome do Tipo de RepresentaÁ„o. |
-| StrTipoRepresentacao | Identificador do Tipo de RepresentaÁ„o (L=Respons·vel Legal, E=Procurador Especial, S=Procurador Simples, U=AutorrepresentaÁ„o). |
+| Nome | Nome do Tipo de Representa√ß√£o. |
+| StrTipoRepresentacao | Identificador do Tipo de Representa√ß√£o (L=Respons√°vel Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresenta√ß√£o). |
 
-## 9. Listar Usu·rios Externos
-Lista todos os Usu·rios Externos cadastrados no SEI.
-### MÈtodo "listarUsuariosExternos"Äù:
+## 9. Listar Usu√°rios Externos
+Lista todos os Usu√°rios Externos cadastrados no SEI.
+### M√©todo "listarUsuariosExternos":
 
-| Par‚metros de Entrada |  |
+| Par√¢metros de Entrada |  |
 | ---- | ---- |
-| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. |
-| IdentificacaoServico | Valor informado no cadastro do ServiÁo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu AdministraÁ„o > Sistemas. PrÛxima vers„o do SEI somente aceitar· integraÁıes por Chave de Acesso. |
-| StaSituacao | SituaÁ„o do cadastro do Usu·rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro È independente de sua liberaÁ„o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu·rio n„o consegue mais ter acesso externo ao SEI). |
-| LiberacaoCadastro | Estado da aprovaÁ„o do cadastro do Usu·rio Externo (L=Liberado e P=Pendente). |
-| P·gina | **Opcional**. N˙mero da p·gina para paginaÁ„o dos resultados. Caso suprimido valor para este par‚metro ser· mostrada a p·gina 1. |
+| SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. |
+| IdentificacaoServico | Valor informado no cadastro do Servi√ßo ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administra√ß√£o > Sistemas. Pr√≥xima vers√£o do SEI somente aceitar√° integra√ß√µes por Chave de Acesso. |
+| StaSituacao | Situa√ß√£o do cadastro do Usu√°rio Externo (S=Ativado e N=Desativado, sendo que este estado do cadastro √© independente de sua libera√ß√£o, ou seja, mesmo liberado, se o cadastro estiver desativado o usu√°rio n√£o consegue mais ter acesso externo ao SEI). |
+| LiberacaoCadastro | Estado da aprova√ß√£o do cadastro do Usu√°rio Externo (L=Liberado e P=Pendente). |
+| P√°gina | **Opcional**. N√∫mero da p√°gina para pagina√ß√£o dos resultados. Caso suprimido valor para este par√¢metro ser√° mostrada a p√°gina 1. |
 
-| Par‚metros de SaÌ≠da |  |
+| Par√¢metros de Sa√≠¬≠da |  |
 | ---- | ---- |
-| UsuarioExterno | Uma lista de ocorrÍncias da Estrutura de Dados UsuarioExterno. |
+| UsuarioExterno | Uma lista de ocorr√™ncias da Estrutura de Dados UsuarioExterno. |
 
 ### Estrutura de Dados "UsuariosExternos":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| IdUsuario | Id interno de identificaÁ„o do usu·rio no SEI. |
-| Nome | Nome do Usu·rio Externo. |
-| Email | EndereÁo de e-mail utilizado pelo Usu·rio Externo para acesso Ì† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu·rio Externo. |
-| SituacaoAtivo | Estado do cadastro do Usu·rio Externo (S=Ativado e N=Desativado). |
-| LiberacaoCadastro | Estado da aprovaÁ„o do cadastro do Usu·rio Externo (L=Liberado e P=Pendente). |
-| DataCadastro | Data na qual o Usu·rio Externo efetivou o cadastro no SEI. |
+| IdUsuario | Id interno de identifica√ß√£o do usu√°rio no SEI. |
+| Nome | Nome do Usu√°rio Externo. |
+| Email | Endere√ßo de e-mail utilizado pelo Usu√°rio Externo para acesso √≠¬† tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usu√°rio Externo. |
+| SituacaoAtivo | Estado do cadastro do Usu√°rio Externo (S=Ativado e N=Desativado). |
+| LiberacaoCadastro | Estado da aprova√ß√£o do cadastro do Usu√°rio Externo (L=Liberado e P=Pendente). |
+| DataCadastro | Data na qual o Usu√°rio Externo efetivou o cadastro no SEI. |
 
 ## Outras Estruturas de Dados:
 
 ### Estrutura de Dados "ProcessosAbrangencia":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| ProtocoloFormatado | N˙mero do Processo SEI formatado |
+| ProtocoloFormatado | N√∫mero do Processo SEI formatado |
 
 ### Estrutura de Dados "PoderesLegais":
 
-| Dado | DescriÁ„o |
+| Dado | Descri√ß√£o |
 | ---- | ---- |
-| IdTipoPoderLegal | Id interno de identificaÁ„o do Poder Legal no SEI |
+| IdTipoPoderLegal | Id interno de identifica√ß√£o do Poder Legal no SEI |
 | Nome | Nome do Poder Legal |
-| SinAtivo | Estado do cadastro do Poder Legal (S=Ativado e N=Desativado). **ObservaÁ„o:** Pode estar presente ou n„o no retorno da consulta |
+| SinAtivo | Estado do cadastro do Poder Legal (S=Ativado e N=Desativado). **Observa√ß√£o:** Pode estar presente ou n√£o no retorno da consulta |

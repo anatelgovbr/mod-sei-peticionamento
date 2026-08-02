@@ -40,7 +40,7 @@ Verifica se uma determinada pessoa fí­sica possui login ativo e liberado como 
 
 ### Regras de Negócio:
  * Se a SiglaSistema e/ou IdentificacaoServico não forem válidos, o webservice retorna as mensagens padrão a respeito.
- * Se o CPF informado não tiver cadastro como Usuário Externo no SEI o webservice retorna a mensagem "*Não existe cadastro de Usuário Externo no SEI com o CPF informado*".
+ * Se o CPF informado não tiver cadastro como Usuário Externo no SEI o webservice retorna a mensagem "*Não existe cadastro de Usuário Externo no SEI com o CPF informado*".
  * Se o CPF informado não for válido, ou seja, não passar na validação de sua estrutura (dígito verificador inválido), o webservice retorna a mensagem "*Número de CPF inválido*".
  * Se o E-mail informado não passar na validação de formato (não pode ter espaços e tem que ter @), o webservice retorna a mensagem "*E-mail inválido*".
  * Se o CPF informado for de Usuário Externo com cadastro localizado, mas, mesmo sendo opcional, o e-mail indicado em conjunto no chamado não corresponder ao cadastrado no SEI (quando quiser fazer dupla validação), o webservice retorna a mensagem "*E-mail informado não corresponde ao registrado no cadastro do Usuário Externo no SEI*".

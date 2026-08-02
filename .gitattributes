@@ -1,2 +1,17 @@
-*.php text working-tree-encoding=iso-8859-1
 * text=auto
+*.php text working-tree-encoding=iso-8859-1
+*.md text working-tree-encoding=UTF-8
+*.markdown text working-tree-encoding=UTF-8
+*.mdown text working-tree-encoding=UTF-8
+*.mkdn text working-tree-encoding=UTF-8
+*.mdwn text working-tree-encoding=UTF-8
+*.mdtxt text working-tree-encoding=UTF-8
+*.mdtext text working-tree-encoding=UTF-8
+*.mdx text working-tree-encoding=UTF-8
+*.sh text eol=lf
+Makefile text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.bat text eol=crlf
+

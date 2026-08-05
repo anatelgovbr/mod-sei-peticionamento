@@ -45,7 +45,6 @@
         min-height: 40px;
         transition: all 0.1s ease-in-out;
     }
-
     .drop-zone-style:hover {
         background: #eee;
     }
@@ -63,6 +62,15 @@
     .drop-zone-style::file-selector-button:hover {
         background: #0494C7;
         color: white;
+    }
+    label.labelDocumentoArea {
+        font-size: 1rem !important;
+    }
+
+    .subFieldset {
+       background-color: #f8f9fa; 
+       border: 0px solid #ced4da; 
+       border-radius: 0.25rem;
     }
 
 </style>

@@ -535,12 +535,12 @@ class PeticionamentoWS extends MdPetUtilWS
             $infraException = new InfraException();
 
             // Valida CPF se informado.
-            if (empty($cpfOutorgado) || $cpfOutorgado == null) {
-                throw new InfraException('CPF não informado.');
+            if (empty($cpfOutorgado)) {
+                $infraException->lancarValidacao('CPF não informado.');
             }
 
             // Valida CPF.
-            if (strlen(trim($cpfOutorgado)) > 0 && !InfraUtil::validarCpf($cpfOutorgado)) {
+            if (!InfraUtil::validarCpf($cpfOutorgado)) {
                 $infraException->lancarValidacao('Número de CPF inválido.');
             }
 

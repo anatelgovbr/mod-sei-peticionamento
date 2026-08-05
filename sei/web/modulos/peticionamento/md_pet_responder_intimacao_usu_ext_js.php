@@ -94,10 +94,8 @@
 
         if (formatoDigitalizado.checked) {
             divTipoConferencia.style.display = 'block';
-            divTipoConferenciaBotao.style.display = 'none';
         } else {
             divTipoConferencia.style.display = 'none';
-            divTipoConferenciaBotao.style.display = '';
         }
     }
 

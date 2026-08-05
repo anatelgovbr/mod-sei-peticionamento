@@ -274,7 +274,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         alert(document.getElementById('hdnIsCnpjValidado').value);
         var isCnpjValidado = document.getElementById('hdnIsCnpjValidado').value == '1';
         if (!isCnpjValidado) {
-            alert('É necessário validar o CNPJ para continuar!');
+            alert('Antes de acionar "Peticionar" precisa validar o CNPJ. Clique em validar perto do campo onde preencheu o CNPJ nessa tela.');
             if (checked) {
                 campo.checked = false;
             }
@@ -468,7 +468,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
                     // console.log($(this)[0].tagName);
                     var idCampo = $(this)[0].localName;
-                    var valor = $(this)[0].text();
+                    var valor = $(this).text();
                     var campo = $("#" + idCampo);
                     var noCampo = $(this)[0].tagName;
 
@@ -990,7 +990,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         console.log(isCnpjValidado);
         var obj = document.getElementById('chkDeclaracao');
         if (!isCnpjValidado) {
-            alert('É necessário validar o CNPJ para continuar!');
+            alert('Antes de acionar "Peticionar" precisa validar o CNPJ. Clique em validar perto do campo onde preencheu o CNPJ nessa tela.');
             if (obj) {
                 document.getElementById('chkDeclaracao').checked = false;
             }

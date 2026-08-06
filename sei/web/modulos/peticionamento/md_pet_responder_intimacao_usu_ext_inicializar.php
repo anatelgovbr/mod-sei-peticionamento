@@ -50,14 +50,17 @@ $objProtocoloDTO->retNumIdTipoProcedimentoProcedimento();
 $objProtocolo = (new ProtocoloRN())->consultarRN0186($objProtocoloDTO);
 
 if($objProtocolo){
+
     $objMdPetCriterioDTO = new MdPetCriterioDTO();
     $objMdPetCriterioDTO->setNumIdTipoProcedimento($objProtocolo->getNumIdTipoProcedimentoProcedimento());
     $objMdPetCriterioDTO->setStrSinCriterioPadrao('N');
     $objMdPetCriterioDTO->retTodos(true);
     $objMdPetCriterioTipoProcesso = (new MdPetCriterioRN())->consultar($objMdPetCriterioDTO);
+
+    if(!empty($objMdPetCriterioTipoProcesso) && $objMdPetCriterioTipoProcesso->getStrStaNivelAcesso() == 2){
+        $nivelAcessoTpProc['nivel'] = $objMdPetCriterioTipoProcesso->getStrStaTipoNivelAcesso() == 'I' ? 1 : 0;
+        $nivelAcessoTpProc['hipotese'] = $objMdPetCriterioTipoProcesso->getNumIdHipoteseLegal();
+    }
+    
 }
 
-if($objMdPetCriterioTipoProcesso->getStrStaNivelAcesso() == 2){
-    $nivelAcessoTpProc['nivel'] = $objMdPetCriterioTipoProcesso->getStrStaTipoNivelAcesso() == 'I' ? 1 : 0;
-    $nivelAcessoTpProc['hipotese'] = $objMdPetCriterioTipoProcesso->getNumIdHipoteseLegal();
-}

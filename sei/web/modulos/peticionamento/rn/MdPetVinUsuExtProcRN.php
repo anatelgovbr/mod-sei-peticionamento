@@ -77,16 +77,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
 	        if (is_null($arrObjMdPetVincTpProcesso)) {
 		        throw new InfraException('Vinculação não configurada');
 	        }
-	        
-	        /*
-	         * Todo: Remover após testes
-	         */
-//          $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-//          $objMdPetVincRepresentantDTO->retDblIdProcedimentoVinculo();
-//	        $objMdPetVincRepresentantDTO->setNumIdContatoVinc($idContatoVinc);
-//	        $objMdPetVincRepresentantDTO->setStrTpVinc($strTpVinc);
-//	        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-//          $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($objMdPetVincRepresentantDTO);
 	
 	        //Recuperando Vinculo já existente
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
@@ -146,8 +136,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $dadosProcuracao = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbUsuarioProcuracao']);
             }
 
-            $objMdPetContatoRN = new MdPetContatoRN();
-            $idTipoContatoUsExt = $objMdPetContatoRN->getIdTipoContatoUsExt();
+            $idTipoContatoUsExt = (new MdPetContatoRN())->getIdTipoContatoUsExt();
 
             $contatoRN = new ContatoRN();
             $contatoDTO = new ContatoDTO();

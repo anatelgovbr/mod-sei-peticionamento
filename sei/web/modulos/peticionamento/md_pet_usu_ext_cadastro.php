@@ -172,7 +172,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
             </div>
             
             <div class="row mt-3">
-                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2" style="<?= $selectUfHidden ? 'display:none' : '' ?>" id="ufHidden">
+                <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3" style="<?= $selectUfHidden ? 'display:none' : '' ?>" id="ufHidden">
                     <div class="form-group">
                         <label class="infraLabelObrigatorio">
                             UF:
@@ -246,7 +246,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipInteressadoInformandoCPFeCNPJ, 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
 
-                        <div class="form-check form-check-inline">
+                        <div class="form-check form-check-inline ml-0 pl-0">
                             <input class="form-check-input infraRadio" style="position: absolute" type="radio" name="tipoPessoa" id="optTipoPessoaFisica" onclick="selecionarPF()" value="pf" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <label class="form-check-label" for="optTipoPessoaFisica">Pessoa Física</label>
                         </div>

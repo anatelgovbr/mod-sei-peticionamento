@@ -546,7 +546,6 @@
         var divTipoConferenciaBotao = document.getElementById('divTipoConferenciaBotao');
         var selTipoConferencia = document.getElementById('selTipoConferencia');
         divTipoConferencia.style.display = 'none';
-        divTipoConferenciaBotao.style.display = 'block';
         selTipoConferencia.value = 'null';
 
         var radiosFormato = document.getElementsByName("rdoFormato");
@@ -566,7 +565,6 @@
 
         if (formato == DIGITAL) {
             divTipoConferencia.style.display = '';
-            divTipoConferenciaBotao.style.display = 'none';
         }
     }
 

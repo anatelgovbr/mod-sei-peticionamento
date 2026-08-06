@@ -2143,18 +2143,15 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function selecionarFormatoDigitalizadoEssencial() {
         document.getElementById("camposDigitalizadoEssencial").style.display = 'block';
-        document.getElementById("camposDigitalizadoEssencialBotao").style.display = 'none';
     }
 
     function selecionarFormatoNatoDigitalEssencial() {
         document.getElementById("camposDigitalizadoEssencial").style.display = 'none';
-        document.getElementById("camposDigitalizadoEssencialBotao").style.display = 'block';
         //retornando a combo para seu valor inicial
         document.getElementById("TipoConferenciaEssencial").selectedIndex = 0;
     }
 
     function selecionarFormatoDigitalizadoComplementar() {
-        document.getElementById("camposDigitalizadoComplementarBotao").style.display = 'none';
         document.getElementById("camposDigitalizadoComplementar").style.display = 'block';
         //retornando a combo para seu valor inicial
         document.getElementById("TipoConferenciaComplementar").selectedIndex = 0;
@@ -2162,18 +2159,15 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function selecionarFormatoNatoDigitalComplementar() {
         document.getElementById("camposDigitalizadoComplementar").style.display = 'none';
-        document.getElementById("camposDigitalizadoComplementarBotao").style.display = 'block';
     }
 
     function selecionarFormatoDigitalizadoPrincipal() {
-        document.getElementById("camposDigitalizadoPrincipalBotao").style.display = 'none';
         document.getElementById("camposDigitalizadoPrincipal").style.display = 'block';
         //retornando a combo para seu valor inicial
         document.getElementById("TipoConferenciaPrincipal").selectedIndex = 0;
     }
 
     function selecionarFormatoNatoDigitalPrincipal() {
-        document.getElementById("camposDigitalizadoPrincipalBotao").style.display = 'block';
         document.getElementById("camposDigitalizadoPrincipal").style.display = 'none';
     }
 

@@ -75,19 +75,15 @@
 	        $formulario = $ObjMdPetTipoProcessoDTO->getStrSinDocFormulario();
 
         ?>
+
+        <div class="p-3 mb-2 subFieldset">
         
         <? if ($externo == 'S'): ?>
 
             <div class="row">
                 <div class="col-12">
-                    <div id="divArquivo" class="form-group infraAreaDados mb-4">
-                        <div class="form-group">
-                            <label class="infraLabelObrigatorio" for="fileArquivoPrincipal">
-                                Documento Principal (<?= $strTamanhoMaximoPrincipal?>):<br>
-                                <input type="hidden" name="hdnTamArquivoPrincipal" id="hdnTamArquivoPrincipal" value="<?= $strTamanhoMaximoPrincipal ?>" tabindex="-1">
-                                <input type="file" name="fileArquivoPrincipal" class="form-control-file drop-zone-style" id="fileArquivoPrincipal" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                            </label>
-                        </div>
+                    <div class="form-group mb-2">
+                        <label class="infraLabelObrigatorio labelDocumentoArea" for="fileArquivoPrincipal">Documento Principal</label>
                     </div>
                 </div>
             </div>
@@ -185,12 +181,12 @@
             </div>
 
             <div class="row mt-3">
-                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                <div class="col-12 col-md-4 col-lg-4 col-xl-3">
                     <div class="form-group">
                         <label class="infraLabelObrigatorio">
                             Formato: <?= tooltipAjuda($strMsgTooltipFormato) ?>
                         </label><br/>
-                        <div class="form-check form-check-inline mr-1">
+                        <div class="form-check form-check-inline mr-1 pl-0">
                             <input class="form-check-input infraRadio" type="radio" style="position: absolute" name="formatoDocumentoPrincipal" id="rdNato1_1" value="nato" onclick="selecionarFormatoNatoDigitalPrincipal()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <label class="form-check-label" for="rdNato1_1">Nato-digital</label>
                         </div>
@@ -213,14 +209,25 @@
 								        }
 							        ?>
                                 </select>
-                                <div class="input-group-append">
-                                    <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                </div>
                             </div>
                         </div>
-                        <div id="camposDigitalizadoPrincipalBotao">
-                            <input type="button" class="infraButton mt-3" value="Adicionar" onclick="validarUploadArquivo('1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3 mb-3">
+                <div class="col-12">
+                    <div id="divArquivo" class="form-group infraAreaDados">
+                        <div class="form-group">
+                            <label class="infraLabelObrigatorio">Tamanho máximo do arquivo: <?= $strTamanhoMaximoPrincipal?></label>
+                            <input type="hidden" name="hdnTamArquivoPrincipal" id="hdnTamArquivoPrincipal" value="<?= $strTamanhoMaximoPrincipal ?>" tabindex="-1">
+                            <input type="file" name="fileArquivoPrincipal" class="form-control-file drop-zone-style" id="fileArquivoPrincipal" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                         </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div id="camposDigitalizadoPrincipalBotao">
+                        <input type="button" class="infraButton mt-2" value="Adicionar" onclick="validarUploadArquivo('1')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     </div>
                 </div>
             </div>
@@ -233,15 +240,10 @@
 
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                    <div class="form-group mb-3">
+                    <div class="form-group">
                         <div class="input-group d-flex align-items-center">
-                            <label class="infraLabelObrigatorio pr-2 mb-0">
-                                Documento Principal:
-                            </label><br/>
-                            <label class="alert alert-primary py-2 rounded mb-0" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgLocal() ?>/documento_formulario2.svg" name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?> alt="Formulário" style="vertical-align: middle"/>
-                                <?= $strTipoDocumentoPrincipal ?>
-                                <b>(clique aqui para editar conteúdo)</b>
+                            <label class="infraLabelObrigatorio labelDocumentoArea pr-2 mb-0">
+                                Documento Principal
                             </label>
                         </div>
                     </div>
@@ -325,6 +327,30 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group mb-2">
+                        <div class="input-group d-flex align-items-center">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="infraLabelObrigatorio d-block pr-2 mb-1">
+                                        Documento:
+                                    </label>
+                                </div>
+                                <div class="col-12">
+                                    <label class="alert alert-primary d-block p-2 rounded mb-0" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgLocal() ?>/documento_formulario2.svg" name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?> alt="Formulário" style="vertical-align: middle"/>
+                                        <?= $strTipoDocumentoPrincipal ?>
+                                        <b>(clique aqui para editar conteúdo)</b>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         <? endif ?>
 	
 	    <? if ($formulario == 'S'): ?>
@@ -333,15 +359,10 @@
 
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                    <div class="form-group mb-3">
+                    <div class="form-group">
                         <div class="input-group d-flex align-items-center">
-                            <label class="infraLabelObrigatorio pr-2 mb-0">
-                                Documento Principal:
-                            </label>
-                            <label class="alert alert-primary py-2 rounded mb-0" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgLocal() ?>/documento_formulario1.svg?18" name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?> alt="Formulário" style="vertical-align: middle"/>
-							    <?= $strTipoDocumentoPrincipal ?>
-                                <b>(clique aqui para preencher o formulário)</b>
+                            <label class="infraLabelObrigatorio labelDocumentoArea pr-2 mb-0">
+                                Documento Principal
                             </label>
                         </div>
                     </div>
@@ -350,7 +371,7 @@
 
             <div class="row mb-3">
                 <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
-                    <div class="form-group mt-3">
+                    <div class="form-group mt-2">
 					
 					    <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
 
@@ -386,7 +407,7 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                    <div class="form-group mt-3" id="divhipoteseLegal1" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
+                    <div class="form-group mt-2" id="divhipoteseLegal1" style="display: <?= (($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") || (!empty($nivelAcessoDoc) && in_array($serieDTO->getNumIdSerie(), $nivelAcessoDoc['documentos']) && $nivelAcessoDoc['nivel'] == 1)) ? 'block' : 'none' ?>">
 					
 					    <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S'): ?>
 
@@ -424,6 +445,30 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group mb-2">
+                        <div class="input-group d-flex align-items-center">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="infraLabelObrigatorio d-block pr-2 mb-1">
+                                        Documento:
+                                    </label>
+                                </div>
+                                <div class="col-12">
+                                    <label class="alert alert-primary d-block p-2 rounded mb-0" onclick="abrirJanelaDocumento()" style="cursor: pointer" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgLocal() ?>/documento_formulario2.svg" name="formulario" <?= PaginaSEI::montarTitleTooltip($strMsgTooltipTipoDocumentoPrincipalFormulario) ?> alt="Formulário" style="vertical-align: middle"/>
+                                        <?= $strTipoDocumentoPrincipal ?>
+                                        <b>(clique aqui para editar conteúdo)</b>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
 	
 	    <? endif ?>
 
@@ -456,6 +501,9 @@
             </div>
 
         <? endif ?>
+
+        
+        </div>
     </form>
     <!-- ================================== FIM DOCUMENTO PRINCIPAL  =============================================== -->
 
@@ -478,20 +526,13 @@
             if (is_array($arrMdPetRelTpProcSerieDTO) && count($arrMdPetRelTpProcSerieDTO) > 0){
 
         ?>
-        <div class="row">
-            <div class="col-12">
-                <hr style="border:none; padding:0; margin: 5px 1px 12px 1px; border-top:medium double #333; margin-bottom: 30px"/>
-            </div>
-        </div>
+        <div class="p-3 mb-2 subFieldset">
+        
 
         <div class="row">
             <div class="col-12">
-                <div id="divArquivo" class="form-group infraAreaDados mb-4">
-                    <label class="infraLabelObrigatorio" for="fileArquivoEssencial">
-                        Documento Essencial (<?= $strTamanhoMaximoComplementar?>):<br>
-                        <input type="hidden" name="hdnTamArquivoEssencial" id="hdnTamArquivoEssencial" value="<?= $strTamanhoMaximoComplementar ?>">
-                        <input type="file" name="fileArquivoEssencial" class="form-control-file drop-zone-style" id="fileArquivoEssencial" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    </label>
+                <div class="form-group infraAreaDados mb-2">
+                    <label class="infraLabelObrigatorio labelDocumentoArea" for="fileArquivoEssencial">Documentos Essenciais</label>
                 </div>
             </div>
         </div>
@@ -594,12 +635,12 @@
         </div>
 
         <div class="row mt-3">
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
-                <div class="form-group">
+            <div class="col-12 col-md-4 col-lg-4 col-xl-3">
+                <div class="form-group mb-3">
                     <label class="infraLabelObrigatorio">
                         Formato: <?= tooltipAjuda($strMsgTooltipFormato) ?>
                     </label><br/>
-                    <div class="form-check form-check-inline mr-1">
+                    <div class="form-check form-check-inline mr-1 pl-0">
                         <input class="form-check-input infraRadio" type="radio" style="position: absolute" name="formatoDocumentoEssencial" id="rdNato2_1" value="nato" onclick="selecionarFormatoNatoDigitalEssencial()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                         <label class="form-check-label" for="rdNato2_1">Nato-digital</label>
                     </div>
@@ -622,15 +663,26 @@
                                     }
                                 ?>
                             </select>
-                            <div class="input-group-append">
-                                <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('2')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <div id="camposDigitalizadoEssencialBotao">
-                        <input type="button" class="infraButton mt-3" value="Adicionar" onclick="validarUploadArquivo('2')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group mb-2" id="divArquivo">
+                    <label class="infraLabelObrigatorio">Tamanho máximo do arquivo: <?= $strTamanhoMaximoComplementar ?></label>
+                    <input type="hidden" name="hdnTamArquivoEssencial" id="hdnTamArquivoEssencial" value="<?= $strTamanhoMaximoComplementar ?>">
+                    <input type="file" name="fileArquivoEssencial" class="form-control-file drop-zone-style" id="fileArquivoEssencial" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="camposDigitalizadoEssencialBotao" class="mb-3">
+                    <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('2')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                 </div>
             </div>
         </div>
@@ -663,6 +715,8 @@
             </div>
         </div>
 
+        </div>
+
         <? } ?>
     </form>
     <!-- ================================== FIM DOCUMENTOS ESSENCIAIS  =============================================== -->
@@ -689,186 +743,194 @@
 
         ?>
 
-        <div class="row">
-            <div class="col-12">
-                <hr style="border:none; padding:0; margin: 5px 1px 12px 1px; border-top:medium double #333; margin-bottom: 30px"/>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                <div id="divArquivo" class="form-group infraAreaDados mb-4">
-                    Documentos Complementares (<?= $strTamanhoMaximoComplementar ?>):
-                    <label for="fileArquivoComplementar">
-                        <input type="hidden" name="hdnTamArquivoComplementarhdnTamArquivoComplementar" id="hdnTamArquivoComplementar" value="<?= $strTamanhoMaximoComplementar ?>" tabindex="-1">
-                        <input type="file" name="fileArquivoComplementar" class="form-control-file drop-zone-style" id="fileArquivoComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
-                <div class="form-group">
-                    <label class="infraLabelObrigatorio">
-                        Tipo de Documento: <?= tooltipAjuda($strMsgTooltipTipoDocumento) ?>
-                    </label><br/>
-                    <select name="tipoDocumentoComplementar" class="infraSelect form-select" id="tipoDocumentoComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <option value=""></option>
-                        <?
-                            if (is_array($arrMdPetRelTpProcSerieDTO) && count($arrMdPetRelTpProcSerieDTO) > 0) {
-
-                                foreach ($arrMdPetRelTpProcSerieDTO as $item) {
-
-                                    $serieDTO = new SerieDTO();
-                                    $serieDTO->retTodos();
-                                    $serieDTO->setNumIdSerie($item->getNumIdSerie());
-                                    $serieDTO = $serieRN->consultarRN0644($serieDTO);
-                                    echo '<option value="'.$item->getNumIdSerie().'">'.$serieDTO->getStrNome().'</option>';
-
-                                }
-                            }
-                        ?>
-                    </select>
+        <div class="p-3 mb-2 subFieldset">
+           
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group mb-2">
+                        <label class="labelDocumentoArea">Documentos Complementares <small>(não obrigatórios)</small></label>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
-                <div class="form-group">
-                    <label class="infraLabelObrigatorio">
-                        Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
-                    </label><br/>
-                    <input type="text" name="complementoComplementar" class="form-control infraText" id="complementoComplementar" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
-                <div class="form-group mt-3">
-                    <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
-                        <div>
-                            <label class="infraLabelObrigatorio">
-                                Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
-                            </label><br/>
-                            <select class="infraSelect form-select" id="nivelAcesso3" name="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                                <?= $strItensSelNivelAcesso ?>
-                            </select>
-                        </div>
-                    <? else: ?>
+            <div class="row">
+                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    <div class="form-group">
                         <label class="infraLabelObrigatorio">
-                            Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
+                            Tipo de Documento: <?= tooltipAjuda($strMsgTooltipTipoDocumento) ?>
                         </label><br/>
-                        <select class="infraSelect form-select" disabled tabindex="-1">
-                            <option value=""><?= $strNomeNivelAcessoPadrao ?></option>
-                        </select>
-                        <input type="hidden" value="<?= $nivelAcessoPadrao ?>" id="nivelAcesso3" name="nivelAcesso3" tabindex="-1"/>
-                    <? endif ?>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                <div class="form-group mt-3" id="divhipoteseLegal3" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
-
-                    <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
-
-                        <label class="infraLabelObrigatorio">
-                            Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
-                        </label><br/>
-                        <select name="hipoteseLegal3" class="infraSelect form-select" id="hipoteseLegal3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <select name="tipoDocumentoComplementar" class="infraSelect form-select" id="tipoDocumentoComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                             <option value=""></option>
                             <?
-                                if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
-                                    foreach ($arrHipoteseLegal as $itemObj) {
-                                        echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'">'.$itemObj->getStrNome().' ('.$itemObj->getStrBaseLegal().')</option>';
+                                if (is_array($arrMdPetRelTpProcSerieDTO) && count($arrMdPetRelTpProcSerieDTO) > 0) {
+
+                                    foreach ($arrMdPetRelTpProcSerieDTO as $item) {
+
+                                        $serieDTO = new SerieDTO();
+                                        $serieDTO->retTodos();
+                                        $serieDTO->setNumIdSerie($item->getNumIdSerie());
+                                        $serieDTO = $serieRN->consultarRN0644($serieDTO);
+                                        echo '<option value="'.$item->getNumIdSerie().'">'.$serieDTO->getStrNome().'</option>';
+
                                     }
                                 }
                             ?>
                         </select>
+                    </div>
+                </div>
 
-                    <? } else if ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") { ?>
-
+                <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                    <div class="form-group">
                         <label class="infraLabelObrigatorio">
-                            Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
+                            Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
                         </label><br/>
-                        <select class="form-select infraSelect" disabled tabindex="-1">
-                            <option value=""><?= $strHipoteseLegalPadrao ?></option>
-                        </select>
-                        <input type="hidden" name="hipoteseLegal3" id="hipoteseLegal3" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>
-
-                    <? } ?>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-3">
-            <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
-                <div class="form-group">
-                    <label class="infraLabelObrigatorio">
-                        Formato:
-                        <?= tooltipAjuda($strMsgTooltipFormato) ?>
-                    </label><br/>
-                    <div class="form-check form-check-inline mr-1">
-                        <input class="form-check-input infraRadio" type="radio" style="position: absolute" name="formatoDocumentoComplementar" id="rdNato3_1" value="nato" onclick="selecionarFormatoNatoDigitalComplementar()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                        <label class="form-check-label" for="rdNato3_1">Nato-digital</label>
-                    </div>
-                    <div class="form-check form-check-inline mr-0">
-                        <input class="form-check-input infraRadio" type="radio" style="position: absolute" name="formatoDocumentoComplementar" id="rdDigitalizado3_2" value="digitalizado" onclick="selecionarFormatoDigitalizadoComplementar()">
-                        <label class="form-check-label" for="rdDigitalizado3_2">Digitalizado</label>
+                        <input type="text" name="complementoComplementar" class="form-control infraText" id="complementoComplementar" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
-                <div class="form-group">
-                    <div id="camposDigitalizadoComplementar" style="display: none;">
-                        <label class="infraLabelObrigatorio">Conferência com o documento digitalizado:</label><br/>
-                        <div class="input-group">
-                            <select class="infraSelect form-select" id="TipoConferenciaComplementar" name="TipoConferenciaComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+
+            <div class="row">
+                <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    <div class="form-group mt-3">
+                        <? if ($isUsuarioExternoPodeIndicarNivelAcesso == 'S'): ?>
+                            <div>
+                                <label class="infraLabelObrigatorio">
+                                    Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcesso) ?>
+                                </label><br/>
+                                <select class="infraSelect form-select" id="nivelAcesso3" name="nivelAcesso3" onchange="selectNivelAcesso('nivelAcesso3', 'hipoteseLegal3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                    <?= $strItensSelNivelAcesso ?>
+                                </select>
+                            </div>
+                        <? else: ?>
+                            <label class="infraLabelObrigatorio">
+                                Nível de Acesso: <?= tooltipAjuda($strMsgTooltipNivelAcessoPadraoPreDefinido) ?>
+                            </label><br/>
+                            <select class="infraSelect form-select" disabled tabindex="-1">
+                                <option value=""><?= $strNomeNivelAcessoPadrao ?></option>
+                            </select>
+                            <input type="hidden" value="<?= $nivelAcessoPadrao ?>" id="nivelAcesso3" name="nivelAcesso3" tabindex="-1"/>
+                        <? endif ?>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                    <div class="form-group mt-3" id="divhipoteseLegal3" style="display: <?= ($isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == ProtocoloRN::$NA_RESTRITO) ? 'block' : 'none' ?>">
+
+                        <? if ($isConfigHipoteseLegal && $isNivelAcessoPadrao != 'S') { ?>
+
+                            <label class="infraLabelObrigatorio">
+                                Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegal) ?>
+                            </label><br/>
+                            <select name="hipoteseLegal3" class="infraSelect form-select" id="hipoteseLegal3" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                 <option value=""></option>
                                 <?
-                                    foreach ($arrTipoConferencia as $tipoConferencia) {
-                                        echo "<option value='".$tipoConferencia->getNumIdTipoConferencia()."'>".$tipoConferencia->getStrDescricao()."</option>";
+                                    if ($isConfigHipoteseLegal && is_array($arrHipoteseLegal) && count($arrHipoteseLegal) > 0) {
+                                        foreach ($arrHipoteseLegal as $itemObj) {
+                                            echo '<option value="'.$itemObj->getNumIdHipoteseLegal().'">'.$itemObj->getStrNome().' ('.$itemObj->getStrBaseLegal().')</option>';
+                                        }
                                     }
                                 ?>
                             </select>
-                            <div class="input-group-append">
-                                <input type="button" class="infraButton" value="Adicionar" onclick="validarUploadArquivo('3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
-                            </div>
-                        </div>
-                    </div>
 
-                    <div id="camposDigitalizadoComplementarBotao">
-                        <input type="button" class="infraButton mt-3" value="Adicionar" onclick="validarUploadArquivo('3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <? } else if ($isConfigHipoteseLegal && $isNivelAcessoPadrao == 'S' && $nivelAcessoPadrao == "1") { ?>
+
+                            <label class="infraLabelObrigatorio">
+                                Hipótese Legal: <?= tooltipAjuda($strMsgTooltipHipoteseLegalPadraoPreDefinido) ?>
+                            </label><br/>
+                            <select class="form-select infraSelect" disabled tabindex="-1">
+                                <option value=""><?= $strHipoteseLegalPadrao ?></option>
+                            </select>
+                            <input type="hidden" name="hipoteseLegal3" id="hipoteseLegal3" value="<?= $idHipoteseLegalPadrao ?>" tabindex="-1"/>
+
+                        <? } ?>
+
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row mt-3">
-            <div class="col-12">
-                <div class="table-responsive">
-                    <table id="tbDocumentoComplementar" name="tbDocumentoComplementar" class="infraTable" style="width:100%;">
-                        <tr>
-                            <th class="infraTh" style="width:25%;">Nome do Arquivo</th>
-                            <th class="infraTh" style="width:80px;" align="center">Data</th>
-                            <th class="infraTh" style="width:80px;" align="center">Tamanho</th>
-                            <th class="infraTh" style="width:25%;" align="center">Documento</th>
-                            <th class="infraTh" style="width:120px;" align="center">Nível de Acesso</th>
-
-                            <!--  colunas nao exibidas na tela, usadas apenas para guardar valor na grid (note que estao com display:none) -->
-                            <th class="infraTh" style="display: none;">Hipótese Legal</th>
-                            <th class="infraTh" style="display: none;">Formato</th>
-                            <th class="infraTh" style="display: none;">Tipo de Conferência</th>
-                            <th class="infraTh" style="display: none;">Nome Upload servidor</th>
-                            <th class="infraTh" style="display: none;">ID Tipo de Documento</th>
-                            <th class="infraTh" style="display: none;">Complemento</th>
-                            <th class="infraTh" style="width: 120px;" align="center">Formato</th>
-
-                            <!-- Coluna de ações (Baixar, remover) da grid -->
-                            <th align="center" class="infraTh" style="width:50px;">Ações</th>
-                        </tr>
-                    </table>
+            <div class="row mt-3">
+                <div class="col-12 col-md-4 col-lg-4 col-xl-3">
+                    <div class="form-group mb-3">
+                        <label class="infraLabelObrigatorio">
+                            Formato:
+                            <?= tooltipAjuda($strMsgTooltipFormato) ?>
+                        </label><br/>
+                        <div class="form-check form-check-inline mr-1 pl-0">
+                            <input class="form-check-input infraRadio" type="radio" style="position: absolute" name="formatoDocumentoComplementar" id="rdNato3_1" value="nato" onclick="selecionarFormatoNatoDigitalComplementar()" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                            <label class="form-check-label" for="rdNato3_1">Nato-digital</label>
+                        </div>
+                        <div class="form-check form-check-inline mr-0">
+                            <input class="form-check-input infraRadio" type="radio" style="position: absolute" name="formatoDocumentoComplementar" id="rdDigitalizado3_2" value="digitalizado" onclick="selecionarFormatoDigitalizadoComplementar()">
+                            <label class="form-check-label" for="rdDigitalizado3_2">Digitalizado</label>
+                        </div>
+                    </div>
                 </div>
+                <div class="col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                    <div class="form-group">
+                        <div id="camposDigitalizadoComplementar" style="display: none;">
+                            <label class="infraLabelObrigatorio">Conferência com o documento digitalizado:</label><br/>
+                            <div class="input-group">
+                                <select class="infraSelect form-select" id="TipoConferenciaComplementar" name="TipoConferenciaComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                                    <option value=""></option>
+                                    <?
+                                        foreach ($arrTipoConferencia as $tipoConferencia) {
+                                            echo "<option value='".$tipoConferencia->getNumIdTipoConferencia()."'>".$tipoConferencia->getStrDescricao()."</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                    <div class="col-12">
+                        <div id="divArquivo">
+                            <div class="form-group mb-2">
+                                <label class="infraLabelObrigatorio" for="fileArquivoComplementar">Tamanho máximo do arquivo: <?= $strTamanhoMaximoComplementar ?></label>
+                                <label for="fileArquivoComplementar">
+                                    <input type="hidden" name="hdnTamArquivoComplementarhdnTamArquivoComplementar" id="hdnTamArquivoComplementar" value="<?= $strTamanhoMaximoComplementar ?>" tabindex="-1">
+                                    <input type="file" name="fileArquivoComplementar" class="form-control-file drop-zone-style" id="fileArquivoComplementar" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div id="camposDigitalizadoComplementarBotao">
+                            <input type="button" class="infraButton mt-2" value="Adicionar" onclick="validarUploadArquivo('3')" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="tbDocumentoComplementar" name="tbDocumentoComplementar" class="infraTable" style="width:100%;">
+                                <tr>
+                                    <th class="infraTh" style="width:25%;">Nome do Arquivo</th>
+                                    <th class="infraTh" style="width:80px;" align="center">Data</th>
+                                    <th class="infraTh" style="width:80px;" align="center">Tamanho</th>
+                                    <th class="infraTh" style="width:25%;" align="center">Documento</th>
+                                    <th class="infraTh" style="width:120px;" align="center">Nível de Acesso</th>
+
+                                    <!--  colunas nao exibidas na tela, usadas apenas para guardar valor na grid (note que estao com display:none) -->
+                                    <th class="infraTh" style="display: none;">Hipótese Legal</th>
+                                    <th class="infraTh" style="display: none;">Formato</th>
+                                    <th class="infraTh" style="display: none;">Tipo de Conferência</th>
+                                    <th class="infraTh" style="display: none;">Nome Upload servidor</th>
+                                    <th class="infraTh" style="display: none;">ID Tipo de Documento</th>
+                                    <th class="infraTh" style="display: none;">Complemento</th>
+                                    <th class="infraTh" style="width: 120px;" align="center">Formato</th>
+
+                                    <!-- Coluna de ações (Baixar, remover) da grid -->
+                                    <th align="center" class="infraTh" style="width:50px;">Ações</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 

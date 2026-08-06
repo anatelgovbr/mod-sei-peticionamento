@@ -1367,7 +1367,7 @@ class MdPetIntAceiteRN extends InfraRN
                 $unidadeRN = new UnidadeRN();
                 $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
-                $arrAtividadeDTO = null;
+                $arrAtividadeDTO = [];
                 if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                     $arrAtividadeDTO = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                 }

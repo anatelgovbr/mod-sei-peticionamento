@@ -61,6 +61,37 @@ switch ($_GET['acao']) {
             $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
             $strDataIntimacao = $objMdPetIntRelDestinatarioRN->consultarDadosIntimacao($idMdPetIntimacao);
 
+            //Destinatario(s) da Intimacao
+            $objMdPetIntRelDestNomeDTO = new MdPetIntRelDestinatarioDTO();
+            $objMdPetIntRelDestNomeDTO->setNumIdMdPetIntimacao($_GET['id_intimacao'], InfraDTO::$OPER_IN);
+            $objMdPetIntRelDestNomeDTO->setNumIdMdPetAceite($_GET['id_aceite'], InfraDTO::$OPER_IN);
+            $objMdPetIntRelDestNomeDTO->retStrNomeContato();
+            $objMdPetIntRelDestNomeDTO->retStrSinPessoaJuridica();
+            $objMdPetIntRelDestNomeDTO->retStrCnpjContato();
+            $objMdPetIntRelDestNomeDTO->retDblCpfContato();
+            $objMdPetIntRelDestNomeDTO->setDistinct(true);
+            $arrMdPetIntRelDestNomeDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestNomeDTO);
+
+            $arrNomeDestinatario = array();
+
+            foreach ($arrMdPetIntRelDestNomeDTO as $objDestinatarioNomeDTO) {
+
+                $strCpfCnpj = $objDestinatarioNomeDTO->getStrSinPessoaJuridica() == 'S' ? $objDestinatarioNomeDTO->getStrCnpjContato() : $objDestinatarioNomeDTO->getDblCpfContato();
+                $strNomeContato = $objDestinatarioNomeDTO->getStrNomeContato();
+
+                if (!empty($strCpfCnpj)) {
+                    $strNomeContato .= ' (' . InfraUtil::formatarCpfCnpj($strCpfCnpj) . ')';
+                }
+
+                if (!in_array($strNomeContato, $arrNomeDestinatario)) {
+                    $arrNomeDestinatario[] = $strNomeContato;
+                }
+
+            }
+
+            $strLabelDestinatario = count($arrNomeDestinatario) > 1 ? 'Destinatários da Intimação' : 'Destinatário da Intimação';
+            $strNomeDestinatario  = implode(', ', $arrNomeDestinatario);
+
             //Informações Fieldset Intimação
             $strNumeroProcesso    = $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoProcedimento();
             $strNomeTipoIntimacao = $objMdPetIntDocumentoDTO->getStrNomeTipoIntimacao();

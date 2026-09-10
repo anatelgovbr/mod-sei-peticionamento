@@ -51,7 +51,7 @@
         max-width: 100%;
     } */
 
-    #divArquivo {
+    #divArquivo, #divArquivoEssencial, #divArquivoComplementar {
         height: 95px;
     }
 

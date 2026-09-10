@@ -1048,6 +1048,7 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
         if(is_array($listaIntimacoes) && count($listaIntimacoes) > 0){
 
             $ctrlIntimacoes     = [];
+            $ctrlPorIntimacao   = [];
             $intimacoesResp     = [];
             $intimacoesCump     = [];
             $intimacoesImpedido = [];
@@ -1105,14 +1106,54 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
                         }
 
                         if(!in_array($destinatarioInfo, $ctrlIntimacoes)){
+
                             $ctrlIntimacoes[] = $destinatarioInfo;
-                            switch ($destinatarioInfo['acao']) {
-                                case 'responder': $qtdResponder++; $intimacoesResp[] = $destinatarioInfo['idIntimacao']; break;
-                                case 'aguardando': $qtdAguardando++; $intimacoesCump[] = $destinatarioInfo['idIntimacao']; break;
-                                case 'impedido': $qtdImpedido++; break;
-                                case 'incapaz': $qtdIncapaz++; break;
+
+                            $idIntimacaoAtual = $destinatarioInfo['idIntimacao'];
+
+                            if(!isset($ctrlPorIntimacao[$idIntimacaoAtual])){
+                                $ctrlPorIntimacao[$idIntimacaoAtual] = [
+                                    'qtd_responder'     => 0,
+                                    'qtd_aguardando'    => 0,
+                                    'qtd_impedido'      => 0,
+                                    'qtd_incapaz'       => 0,
+                                    'qtd_destinatarios' => 0,
+                                    'int_responder'     => [],
+                                    'int_cumprir'       => [],
+                                    'int_impedido'      => [],
+                                    'int_incapaz'       => [],
+                                    'destinatarios'     => []
+                                ];
                             }
+
+                            switch ($destinatarioInfo['acao']) {
+                                case 'responder':
+                                    $qtdResponder++;
+                                    $intimacoesResp[] = $destinatarioInfo['idIntimacao'];
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['qtd_responder']++;
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['int_responder'][] = $destinatarioInfo['idIntimacao'];
+                                    break;
+                                case 'aguardando':
+                                    $qtdAguardando++;
+                                    $intimacoesCump[] = $destinatarioInfo['idIntimacao'];
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['qtd_aguardando']++;
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['int_cumprir'][] = $destinatarioInfo['idIntimacao'];
+                                    break;
+                                case 'impedido':
+                                    $qtdImpedido++;
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['qtd_impedido']++;
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['int_impedido'][] = $destinatarioInfo;
+                                    break;
+                                case 'incapaz':
+                                    $qtdIncapaz++;
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['qtd_incapaz']++;
+                                    $ctrlPorIntimacao[$idIntimacaoAtual]['int_incapaz'][] = $destinatarioInfo;
+                                    break;
+                            }
+
                             $qtdDestinatarios++;
+                            $ctrlPorIntimacao[$idIntimacaoAtual]['qtd_destinatarios']++;
+                            $ctrlPorIntimacao[$idIntimacaoAtual]['destinatarios'][] = $destinatarioInfo;
                         }
 
                     }
@@ -1126,58 +1167,39 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
             // Valida se os contadores estão de acordo com o número de destinatários
             if(($qtdResponder + $qtdImpedido + $qtdAguardando + $qtdIncapaz) == $qtdDestinatarios){
 
-                if( $qtdAguardando == $qtdDestinatarios ){
+                $arrBotoes = $this->_definirSituacaoBotoes($qtdResponder, $qtdAguardando, $qtdImpedido, $qtdIncapaz, $qtdDestinatarios);
 
-                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'nao_cumprida';
-
-                }else if( $qtdResponder == $qtdDestinatarios ){
-
-                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'cumprida_geral';
-
-                }else if($qtdImpedido == $qtdDestinatarios ){
-
-                    $situacao['btn_responder'] = 'com_impedimento';
-                    $situacao['btn_cumprir'] = 'cumprida_geral';
-
-                }else if($qtdIncapaz == $qtdDestinatarios ){
-
-                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'com_impedimento';
-
-                }else if($qtdIncapaz == 0 && $qtdImpedido == 0 && $qtdAguardando > 0 && $qtdResponder > 0 && ($qtdAguardando + $qtdResponder) == $qtdDestinatarios ){
-
-                    $situacao['btn_responder'] = 'cumprida_parcial';
-                    $situacao['btn_cumprir'] = 'cumprida_parcial';
-
-                }else if($qtdIncapaz > 0 && $qtdImpedido == 0 && $qtdAguardando == 0 && $qtdResponder > 0 && ($qtdIncapaz + $qtdResponder) == $qtdDestinatarios ){
-
-                    $situacao['btn_responder'] = 'cumprida_parcial';
-                    $situacao['btn_cumprir'] = 'cumprida_geral';
-
-                }else if($qtdIncapaz == 0 && $qtdImpedido > 0 && $qtdAguardando == 0 && $qtdResponder > 0 && ($qtdImpedido + $qtdResponder) == $qtdDestinatarios ){
-
-                    $situacao['btn_responder'] = 'cumprida_parcial';
-                    $situacao['btn_cumprir'] = 'cumprida_geral';
-
-                }else if($qtdIncapaz == 0 && $qtdImpedido > 0 && $qtdAguardando > 0 && $qtdResponder == 0 ){
-
-                    $situacao['btn_responder'] = 'com_impedimento';
-                    $situacao['btn_cumprir'] = 'cumprida_parcial';
-
-                }else if($qtdIncapaz > 0 && $qtdImpedido > 0 && $qtdAguardando == 0 && $qtdResponder == 0 && ($qtdIncapaz + $qtdImpedido) == $qtdDestinatarios ){
-
-                    $situacao['btn_responder'] = 'com_impedimento';
-                    $situacao['btn_cumprir'] = 'com_impedimento';
-
-                }else {
-
-                    $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'nao_cumprida';
-
-                }
-
+                $situacao['btn_responder']  = $arrBotoes['btn_responder'];
+                $situacao['btn_cumprir']    = $arrBotoes['btn_cumprir'];
                 $situacao['int_responder']  = $intimacoesResp;
                 $situacao['int_cumprir']    = $intimacoesCump;
                 $situacao['int_impedido']   = $intimacoesImpedido;
                 $situacao['int_incapaz']    = $intimacoesIncapaz;
+                $situacao['por_intimacao']  = [];
+
+                // Situação específica de cada intimação do documento, necessária porque atualmente é emitida
+                // uma intimação por destinatário e as ações devem ser montadas individualmente
+                foreach($ctrlPorIntimacao as $idIntimacao => $dadosIntimacao){
+
+                    $arrBotoesIntimacao = $this->_definirSituacaoBotoes(
+                        $dadosIntimacao['qtd_responder'],
+                        $dadosIntimacao['qtd_aguardando'],
+                        $dadosIntimacao['qtd_impedido'],
+                        $dadosIntimacao['qtd_incapaz'],
+                        $dadosIntimacao['qtd_destinatarios']
+                    );
+
+                    $situacao['por_intimacao'][$idIntimacao] = [
+                        'btn_responder' => $arrBotoesIntimacao['btn_responder'],
+                        'btn_cumprir'   => $arrBotoesIntimacao['btn_cumprir'],
+                        'int_responder' => $dadosIntimacao['int_responder'],
+                        'int_cumprir'   => $dadosIntimacao['int_cumprir'],
+                        'int_impedido'  => $dadosIntimacao['int_impedido'],
+                        'int_incapaz'   => $dadosIntimacao['int_incapaz'],
+                        'destinatarios' => $dadosIntimacao['destinatarios']
+                    ];
+
+                }
 
             }
             
@@ -1185,6 +1207,73 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
             
         }
         
+    }
+
+    /**
+     * Define a situação dos botões Cumprir e Responder a partir dos contadores de destinatários.
+     *
+     * @param int $qtdResponder
+     * @param int $qtdAguardando
+     * @param int $qtdImpedido
+     * @param int $qtdIncapaz
+     * @param int $qtdDestinatarios
+     * @return array
+     */
+    private function _definirSituacaoBotoes($qtdResponder, $qtdAguardando, $qtdImpedido, $qtdIncapaz, $qtdDestinatarios)
+    {
+
+        $situacao = [];
+
+        if( $qtdAguardando == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'nao_cumprida';
+
+        }else if( $qtdResponder == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'cumprida_geral';
+
+        }else if($qtdImpedido == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = 'com_impedimento';
+            $situacao['btn_cumprir'] = 'cumprida_geral';
+
+        }else if($qtdIncapaz == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'com_impedimento';
+
+        }else if($qtdIncapaz == 0 && $qtdImpedido == 0 && $qtdAguardando > 0 && $qtdResponder > 0 && ($qtdAguardando + $qtdResponder) == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = 'cumprida_parcial';
+            $situacao['btn_cumprir'] = 'cumprida_parcial';
+
+        }else if($qtdIncapaz > 0 && $qtdImpedido == 0 && $qtdAguardando == 0 && $qtdResponder > 0 && ($qtdIncapaz + $qtdResponder) == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = 'cumprida_parcial';
+            $situacao['btn_cumprir'] = 'cumprida_geral';
+
+        }else if($qtdIncapaz == 0 && $qtdImpedido > 0 && $qtdAguardando == 0 && $qtdResponder > 0 && ($qtdImpedido + $qtdResponder) == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = 'cumprida_parcial';
+            $situacao['btn_cumprir'] = 'cumprida_geral';
+
+        }else if($qtdIncapaz == 0 && $qtdImpedido > 0 && $qtdAguardando > 0 && $qtdResponder == 0 ){
+
+            $situacao['btn_responder'] = 'com_impedimento';
+            $situacao['btn_cumprir'] = 'cumprida_parcial';
+
+        }else if($qtdIncapaz > 0 && $qtdImpedido > 0 && $qtdAguardando == 0 && $qtdResponder == 0 && ($qtdIncapaz + $qtdImpedido) == $qtdDestinatarios ){
+
+            $situacao['btn_responder'] = 'com_impedimento';
+            $situacao['btn_cumprir'] = 'com_impedimento';
+
+        }else {
+
+            $situacao['btn_responder'] = $situacao['btn_cumprir'] = 'nao_cumprida';
+
+        }
+
+        return $situacao;
+
     }
 
 }

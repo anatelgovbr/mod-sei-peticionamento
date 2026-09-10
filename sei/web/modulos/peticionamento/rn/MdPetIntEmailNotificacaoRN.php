@@ -218,6 +218,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objDestinatarioDTO->retStrSinPessoaJuridica();
         $objDestinatarioDTO->retNumIdUnidade();
         $objDestinatarioDTO->setNumIdMdPetIntimacao($idIntimacao);
+        $objDestinatarioDTO->setDistinct(true);
         $arrDestinatarios = (new MdPetIntRelDestinatarioRN())->listar($objDestinatarioDTO);
 
         if (count($arrDestinatarios) === 0) {
@@ -306,6 +307,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                 $objVinculoDTO->retStrTipoRepresentante();
                 $objVinculoDTO->setNumIdContatoVinc($objDestinatarioDTO->getNumIdContato());
                 $objVinculoDTO->setNumIdContatoProcurador($idContato);
+                $objVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
                 $arrVinculosDTO = (new MdPetVincRepresentantRN())->listar($objVinculoDTO);
             }
 

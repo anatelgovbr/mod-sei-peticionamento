@@ -104,7 +104,8 @@ class MdPetIntRespostaRN extends InfraRN {
             $urlBase = ConfiguracaoSEI::getInstance()->getValor('SEI','URL');
             $strLink = $urlBase . '/controlador_externo.php?' . $strParam . '&infra_hash=' . $hash;
 
-            $js = 'window.location = \''.$strLink.'\';';
+            //abre em nova aba para preservar a pagina de acompanhamento do processo
+            $js = 'window.open(\''.$strLink.'\', \'_blank\', \'noopener\');';
             $imgResposta = '<img src="modulos/peticionamento/imagens/svg/intimacao_peticionar_resposta.svg?'.Icone::VERSAO.'" style="width: 24px">';
             $ToolTipTitulo = 'Responder Intimação Eletrônica';
             $ToolTipText = 'Documento Principal: ';

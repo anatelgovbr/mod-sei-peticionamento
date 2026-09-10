@@ -133,7 +133,7 @@ abstract class MdPetUtilWS extends InfraWS {
         $objMonitoramentoServicoDTO = new MonitoramentoServicoDTO();
         $objMonitoramentoServicoDTO->setNumIdServico($objServicoDTO->getNumIdServico());
         $objMonitoramentoServicoDTO->setStrOperacao($func);
-        $objMonitoramentoServicoDTO->setDblTempoExecucao($numSeg*1000);
+        $objMonitoramentoServicoDTO->setDblTempoExecucao($numSeg * 1000.0);
         $objMonitoramentoServicoDTO->setStrIpAcesso(InfraUtil::getStrIpUsuario());
         $objMonitoramentoServicoDTO->setDthAcesso(InfraData::getStrDataHoraAtual());
         $objMonitoramentoServicoDTO->setStrServidor(substr($_SERVER['SERVER_NAME'].' ('.$_SERVER['SERVER_ADDR'].')',0,250));

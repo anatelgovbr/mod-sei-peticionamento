@@ -128,9 +128,10 @@ class MdPetVinculoINT extends InfraINT {
       $contatoDTO->retStrCnpj();
       $contatoDTO->retNumIdContato();
       $arrIdContato = InfraArray::converterArrInfraDTO($contatoRN->listarRN0325($contatoDTO), 'IdContato');
-      $xml = "<dados-pj>";
-      $xml .= "</dados-pj>";
+      $xml = "<dados-pj></dados-pj>";
+
       if(count($arrIdContato)>0) {
+
           $objMdPetVinculoDTO = new MdPetVinculoDTO();
           $objMdPetVinculoRN = new MdPetVinculoRN();
           $objMdPetVinculoDTO->retNumIdMdPetVinculo();
@@ -139,12 +140,15 @@ class MdPetVinculoINT extends InfraINT {
           $arrObjMdPetVinculoDTO = $objMdPetVinculoRN->listar($objMdPetVinculoDTO);
 
           if (count($arrObjMdPetVinculoDTO) > 0) {
+
               $xml = "<dados-pj>";
               $xml .= "<success>true</success>\n";
               $xml .= "<procuracao>false</procuracao>\n";
               $xml .= "<idVinculo>" . $arrObjMdPetVinculoDTO[0]->getNumIdMdPetVinculo() . "</idVinculo>\n";
               $xml .= "</dados-pj>";
+
               $idVinculo = $arrObjMdPetVinculoDTO[0]->getNumIdMdPetVinculo();
+              
               // Representante Legal
               $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
               $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
@@ -212,26 +216,30 @@ class MdPetVinculoINT extends InfraINT {
 
     }
 
-	public static function validarExistenciaVinculoCnpjOutroUsuarioMesmoCPF($dados){
-  	
-  	    $dtoMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-		$dtoMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
-		$dtoMdPetVincRepresentantDTO->retNumIdContatoVinc();
-		$dtoMdPetVincRepresentantDTO->retStrNomeProcurador();
-		$dtoMdPetVincRepresentantDTO->retStrCpfProcurador();
-		$dtoMdPetVincRepresentantDTO->retNumIdContatoProcurador();
-		$dtoMdPetVincRepresentantDTO->setStrCpfProcurador($dados['cpfUsuarioLogado']);
-		$dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-		$dtoMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
-		$dtoMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-		$dtoMdPetVincRepresentantDTO->setStrIdxContato('%' . InfraUtil::retirarFormatacao($dados['cnpjNovaVinculacao']) . '%', InfraDTO::$OPER_LIKE);
-		$dtoMdPetVincRepresentantDTO->setDistinct(true);
-		$arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincRepresentantDTO);
-		
-		if(!empty($arrObjMdPetVincRepresentantDTO)){
-			return '<dados-pj><success>false</success></dados-pj>';
-		}
-		
-	}
+    public static function validarExistenciaVinculoCnpjOutroUsuarioMesmoCPF($dados){
+
+        $verificacao = '<dados-pj><success>true</success><msg>Não existe vínculo para outro usuário com o mesmo CPF.</msg></dados-pj>';
+    
+        $dtoMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+        $dtoMdPetVincRepresentantDTO->retNumIdMdPetVinculo();
+        $dtoMdPetVincRepresentantDTO->retNumIdContatoVinc();
+        $dtoMdPetVincRepresentantDTO->retStrNomeProcurador();
+        $dtoMdPetVincRepresentantDTO->retStrCpfProcurador();
+        $dtoMdPetVincRepresentantDTO->retNumIdContatoProcurador();
+        $dtoMdPetVincRepresentantDTO->setStrCpfProcurador($dados['cpfUsuarioLogado']);
+        $dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+        $dtoMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
+        $dtoMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+        $dtoMdPetVincRepresentantDTO->setStrIdxContato('%' . InfraUtil::retirarFormatacao($dados['cnpjNovaVinculacao']) . '%', InfraDTO::$OPER_LIKE);
+        $dtoMdPetVincRepresentantDTO->setDistinct(true);
+        $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincRepresentantDTO);
+        
+        if(!empty($arrObjMdPetVincRepresentantDTO)){
+            $verificacao =  '<dados-pj><success>false</success><msg>Existe vínculo para outro usuário com o mesmo CPF.</msg></dados-pj>';
+        }
+
+        return $verificacao;
+      
+    }
 
 }

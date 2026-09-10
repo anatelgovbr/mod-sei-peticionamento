@@ -264,8 +264,8 @@ try{
 				}
 				
 				// Completa com zeros a esquerda
-				if(is_numeric($cpf) && strlen($cpf) < 11){
-					$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+				if(is_numeric($cpf) && strlen((string) $cpf) < 11){
+					$cpf = str_pad((string) $cpf, 11, '0', STR_PAD_LEFT);
 				}
 				
 				if (preg_match('/[^0-9.-]/', $cpf)) {
@@ -361,8 +361,8 @@ try{
 				}
 				
 				// Completa com zeros a esquerda
-				if(is_numeric($cnpj) && strlen($cnpj) < 14){
-					$cnpj = str_pad($cnpj, 14, '0', STR_PAD_LEFT);
+				if(is_numeric($cnpj) && strlen((string) $cnpj) < 14){
+					$cnpj = str_pad((string) $cnpj, 14, '0', STR_PAD_LEFT);
 				}
 				
 				if (!preg_match('/^[0-9.\-\/]+$/', $cnpj)) {

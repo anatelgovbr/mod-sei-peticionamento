@@ -40,13 +40,23 @@ class MdPetContatoINT extends ContatoINT
 
     public static function getTotalContatoByCPFCNPJ($cpfcnpj)
     {
-        //Contato
+
+        // Filtrando Tipos de Contato Permitidos para Seleção de Interessado
+        $objDTO2 = new MdPetRelTpCtxContatoDTO();
+        $objDTO2->retNumIdTipoContextoContato();
+        $objDTO2->setStrSinCadastroInteressado('N');
+        $objDTO2->setStrSinSelecaoInteressado('S');
+        $arrMdPetRelTpCtxContatoDTO = (new MdPetTpCtxContatoRN())->listar($objDTO2);
+        $arrTiposContatoPermitidos = InfraArray::converterArrInfraDTO($arrMdPetRelTpCtxContatoDTO, 'IdTipoContextoContato');
+
+        // Contato
         $objContextoContatoDTO = new ContatoDTO();
         $objContextoContatoDTO->retStrNome();
         $objContextoContatoDTO->retNumIdContato();
         $objContextoContatoDTO->retNumIdUsuarioCadastro();
         $objContextoContatoDTO->retStrSigla();
         $objContextoContatoDTO->retStrSinAtivo();
+        $objContextoContatoDTO->setNumIdTipoContato($arrTiposContatoPermitidos, InfraDTO::$OPER_IN);
         $objContextoContatoDTO->setDistinct(true);
         $objContextoContatoDTO->adicionarCriterio(array('Cpf', 'Cnpj'),
             array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),

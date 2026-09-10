@@ -361,7 +361,19 @@ class MdPetIntAceiteRN extends InfraRN
         $idUsuario = isset($arrParametros[5]) ? $arrParametros[5] : SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
         $staConcessao = isset($arrParametros[6]) ? $arrParametros[6] : MdPetIntAcessoExternoDocumentoRN::$STA_INTERNO;
         $objUnidade = isset($arrParametros[7]) ? $arrParametros[7] : $objMdIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
-        $jobManual = isset($arrParametros[8]) ? $arrParametros[8] : null;
+        $arrAberturasProcessoSigiloso = array_key_exists(9, $arrParametros) ? $arrParametros[9] : null;
+
+        if (!$objUnidade) {
+            return;
+        }
+
+        $arrContextoSessao = $this->_capturarContextoSessao();
+        $objProcedimentoDTO = self::_retornaObjProcedimento($idProcedimento);
+        $idUsuarioCredencial = null;
+        $objConcederCredencial = null;
+        $bolCredencialProvisoriaConcedida = false;
+        $idCertidao = null;
+        $docCertidao = null;
 
         $docPrinc = $objMdIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
         if (count($docPrinc) > 0) {
@@ -369,9 +381,14 @@ class MdPetIntAceiteRN extends InfraRN
             $docForm = $docPrinc[0];
         }
 
-        if ($objUnidade) {
+        try {
             if ($staConcessao != MdPetIntAcessoExternoDocumentoRN::$STA_INTERNO) {
+                SessaoSEI::getInstance()->setBolHabilitada(false);
                 SessaoSEI::getInstance()->simularLogin(null, null, $idUsuario, $objUnidade->getNumIdUnidade());
+            }
+
+            if ($arrAberturasProcessoSigiloso === null) {
+                $arrAberturasProcessoSigiloso = $this->_capturarAberturasProcessoSigiloso($objProcedimentoDTO);
             }
 
             $tpCumprimento = ($staConcessao == MdPetIntAcessoExternoDocumentoRN::$STA_AGENDAMENTO) ? MdPetIntimacaoRN::$STR_TP_MANUAL_USUARIO_EXTERNO_ACEITE : MdPetIntimacaoRN::$STR_TP_CUMPRIMENTO_LANC_ACESSO_DIRETO;
@@ -454,35 +471,52 @@ class MdPetIntAceiteRN extends InfraRN
 
             $objEntradaLancarAndamentoAPI->setAtributos($arrObjAtributoAndamentoAPI);
 
-            // SIGILOSO - conceder credencial
-            $objProcedimentoDTO = self::_retornaObjProcedimento($idProcedimento);
-            if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO) {
-                if (isset($jobManual)) {
-                    $objMdPetIntUsuarioRN = new MdPetIntUsuarioRN();
-                    $idUsuarioCredencial = $objMdPetIntUsuarioRN->getObjUsuarioPeticionamento(true);
+            try {
+                // SIGILOSO - conceder credencial
+                if ($this->_isProcessoSigiloso($objProcedimentoDTO)) {
+                    $idUsuarioCredencial = is_numeric($idUsuario) ? $idUsuario : null;
+                    if (is_numeric($idUsuarioCredencial) && !$this->_existeCredencialProcessoUsuarioUnidade($objProcedimentoDTO->getDblIdProcedimento(), (int)$objUnidade->getNumIdUnidade(), (int)$idUsuarioCredencial)) {
+                        $objMdPetProcedimentoRN = new MdPetProcedimentoRN();
+                        $objConcederCredencial = $objMdPetProcedimentoRN->concederCredencial([$objProcedimentoDTO, $objUnidade->getNumIdUnidade(), null, null, $idUsuarioCredencial]);
+                        $bolCredencialProvisoriaConcedida = is_array($objConcederCredencial);
+                    }
                 }
-                if (!is_numeric($idUsuarioCredencial)) {
-                    $idUsuarioCredencial = is_numeric(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) ? SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno() : null;
-                }
-                if (is_numeric($idUsuarioCredencial)) {
-                    $objMdPetProcedimentoRN = new MdPetProcedimentoRN();
-                    $objConcederCredencial = $objMdPetProcedimentoRN->concederCredencial(array($objProcedimentoDTO, $objUnidade->getNumIdUnidade(), null, null, $idUsuarioCredencial));
-                }
-            }
-            // SIGILOSO - conceder credencial - FIM
+                // SIGILOSO - conceder credencial - FIM
 
-            $objSeiRN = new SeiRN();
-            $objSeiRN->lancarAndamento($objEntradaLancarAndamentoAPI);
+                $objSeiRN = new SeiRN();
+                $objSeiRN->lancarAndamento($objEntradaLancarAndamentoAPI);
 
-            // SIGILOSO - retirando credencial provisória
-            if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO) {
-                if (is_numeric($idUsuarioCredencial)) {
-                    $objMdPetProcedimentoRN = new MdPetProcedimentoRN();
-                    $objCassarCredencial = $objMdPetProcedimentoRN->cassarCredencial($objConcederCredencial);
-                    $objMdPetProcedimentoRN->excluirAndamentoCredencial($objConcederCredencial);
+                // Mantem a semantica do fluxo: o processo e remetido pelo usuario
+                // que cumpriu a intimacao enquanto sua credencial esta ativa.
+                if ($this->_isProcessoSigiloso($objProcedimentoDTO) && is_numeric($idUsuarioCredencial)) {
+                    $this->_restaurarAberturasProcessoSigiloso($objProcedimentoDTO, $arrAberturasProcessoSigiloso);
+                    SessaoSEI::getInstance()->setBolHabilitada(false);
+                    SessaoSEI::getInstance()->simularLogin(null, null, $idUsuarioCredencial, $objUnidade->getNumIdUnidade());
+
+                    $objMdIntimacaoRN->reenviarReatribuirUnidade([
+                        $objUnidade->getNumIdUnidade(),
+                        $objProcedimentoDTO->getDblIdProcedimento(),
+                        null,
+                    ]);
                 }
+            } finally {
+                // SIGILOSO - retirando credencial provisoria
+                if ($bolCredencialProvisoriaConcedida && is_array($objConcederCredencial)) {
+                    $objMdPetProcedimentoRN = new MdPetProcedimentoRN();
+                    $objMdPetProcedimentoRN->cassarCredencial($objConcederCredencial);
+                    $arrExcluirAndamentoCredencial = $objConcederCredencial;
+                    // A restauracao exata das aberturas originais e feita por este fluxo.
+                    $arrExcluirAndamentoCredencial[9] = false;
+                    $objMdPetProcedimentoRN->excluirAndamentoCredencial($arrExcluirAndamentoCredencial);
+                }
+                // SIGILOSO - retirando credencial provisoria - FIM
             }
-            // SIGILOSO - retirando credencial provisória - FIM
+        } finally {
+            try {
+                $this->_restaurarAberturasProcessoSigiloso($objProcedimentoDTO, $arrAberturasProcessoSigiloso);
+            } finally {
+                $this->_restaurarContextoSessao($arrContextoSessao);
+            }
         }
     }
 
@@ -495,6 +529,178 @@ class MdPetIntAceiteRN extends InfraRN
         $objAtributoAndamentoAPI->setIdOrigem($id); //ID do prédio, pode ser null
 
         return $objAtributoAndamentoAPI;
+    }
+
+    /**
+     * Verifica se o processo usa o tratamento individual de credenciais.
+     *
+     * @param ProcedimentoDTO|null $objProcedimentoDTO
+     * @return bool
+     */
+    private function _isProcessoSigiloso($objProcedimentoDTO)
+    {
+        return $objProcedimentoDTO !== null &&
+            ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO ||
+                $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO);
+    }
+
+    /**
+     * Captura os pares de usuario e unidade que mantem o sigiloso aberto.
+     *
+     * @param ProcedimentoDTO|null $objProcedimentoDTO
+     * @return array
+     */
+    private function _capturarAberturasProcessoSigiloso($objProcedimentoDTO)
+    {
+        if (!$this->_isProcessoSigiloso($objProcedimentoDTO)) {
+            return [];
+        }
+
+        $objAcessoDTO = new AcessoDTO();
+        $objAcessoDTO->retNumIdUsuario();
+        $objAcessoDTO->retNumIdUnidade();
+        $objAcessoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+        $objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
+
+        $arrAberturas = [];
+        $arrChaves = [];
+        $arrObjAcessoDTO = (new AcessoRN())->listar($objAcessoDTO);
+
+        foreach ($arrObjAcessoDTO as $objAcessoDTO) {
+            $numIdUsuario = $objAcessoDTO->getNumIdUsuario();
+            $numIdUnidade = $objAcessoDTO->getNumIdUnidade();
+            $strChave = $numIdUnidade . ':' . $numIdUsuario;
+
+            if (!is_numeric($numIdUsuario) || !is_numeric($numIdUnidade) || isset($arrChaves[$strChave])) {
+                continue;
+            }
+
+            if ($this->_existeAtividadeAbertaProcessoUsuario((int)$objProcedimentoDTO->getDblIdProcedimento(), (int)$numIdUnidade, (int)$numIdUsuario)) {
+                $arrAberturas[] = [
+                    'numIdUnidade' => $numIdUnidade,
+                    'numIdUsuario' => $numIdUsuario,
+                ];
+                $arrChaves[$strChave] = true;
+            }
+        }
+
+        return $arrAberturas;
+    }
+
+    /**
+     * Verifica a abertura do processo para um usuario credenciado.
+     *
+     * @param int $numIdProcedimento
+     * @param int $numIdUnidade
+     * @param int $numIdUsuario
+     * @return bool
+     */
+    private function _existeAtividadeAbertaProcessoUsuario($numIdProcedimento, $numIdUnidade, $numIdUsuario)
+    {
+        $objAtividadeDTO = new AtividadeDTO();
+        $objAtividadeDTO->setDblIdProtocolo($numIdProcedimento);
+        $objAtividadeDTO->setNumIdUnidade($numIdUnidade);
+        $objAtividadeDTO->setNumIdUsuario($numIdUsuario);
+        $objAtividadeDTO->setDthConclusao(null, InfraDTO::$OPER_IGUAL);
+
+        return (new AtividadeRN())->contarRN0035($objAtividadeDTO) > 0;
+    }
+
+    /**
+     * Verifica se o usuario ja possui credencial no processo e unidade.
+     *
+     * @param int $numIdProcedimento
+     * @param int $numIdUnidade
+     * @param int $numIdUsuario
+     * @return bool
+     */
+    private function _existeCredencialProcessoUsuarioUnidade($numIdProcedimento, $numIdUnidade, $numIdUsuario)
+    {
+        $objAcessoDTO = new AcessoDTO();
+        $objAcessoDTO->setDblIdProtocolo($numIdProcedimento);
+        $objAcessoDTO->setNumIdUnidade($numIdUnidade);
+        $objAcessoDTO->setNumIdUsuario($numIdUsuario);
+        $objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
+
+        return (new AcessoRN())->contar($objAcessoDTO) > 0;
+    }
+
+    /**
+     * Reabre somente os pares que estavam abertos antes do aceite.
+     *
+     * @param ProcedimentoDTO|null $objProcedimentoDTO
+     * @param array $arrAberturas
+     * @return void
+     */
+    private function _restaurarAberturasProcessoSigiloso($objProcedimentoDTO, $arrAberturas)
+    {
+        if (!$this->_isProcessoSigiloso($objProcedimentoDTO) || !is_array($arrAberturas)) {
+            return;
+        }
+
+        $arrContextoSessao = $this->_capturarContextoSessao();
+
+        try {
+            foreach ($arrAberturas as $arrAbertura) {
+                $numIdUnidade = $arrAbertura['numIdUnidade'];
+                $numIdUsuario = $arrAbertura['numIdUsuario'];
+
+                if ($this->_existeAtividadeAbertaProcessoUsuario($objProcedimentoDTO->getDblIdProcedimento(), (int)$numIdUnidade, (int)$numIdUsuario)) {
+                    continue;
+                }
+
+                SessaoSEI::getInstance()->setBolHabilitada(false);
+                SessaoSEI::getInstance()->simularLogin(null, null, $numIdUsuario, $numIdUnidade);
+
+                $objEntradaReabrirProcessoAPI = new EntradaReabrirProcessoAPI();
+                $objEntradaReabrirProcessoAPI->setIdProcedimento($objProcedimentoDTO->getDblIdProcedimento());
+                $objEntradaReabrirProcessoAPI->setProtocoloProcedimento(
+                    $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado()
+                );
+
+                (new SeiRN())->reabrirProcesso($objEntradaReabrirProcessoAPI);
+            }
+        } finally {
+            $this->_restaurarContextoSessao($arrContextoSessao);
+        }
+    }
+
+    /**
+     * Captura o contexto interno antes de uma simulacao de login.
+     *
+     * @return array
+     */
+    private function _capturarContextoSessao()
+    {
+        return [
+            'bolHabilitada' => SessaoSEI::getInstance()->isBolHabilitada(),
+            'numIdUsuario' => SessaoSEI::getInstance()->getNumIdUsuario(),
+            'numIdUnidade' => SessaoSEI::getInstance()->getNumIdUnidadeAtual(),
+        ];
+    }
+
+    /**
+     * Restaura o contexto interno existente antes do aceite.
+     *
+     * @param array $arrContextoSessao
+     * @return void
+     */
+    private function _restaurarContextoSessao($arrContextoSessao)
+    {
+        $objSessaoSEI = SessaoSEI::getInstance();
+
+        if (!$arrContextoSessao['bolHabilitada']) {
+            $objSessaoSEI->setBolHabilitada(false);
+
+            if (is_numeric($arrContextoSessao['numIdUsuario']) && is_numeric($arrContextoSessao['numIdUnidade'])) {
+                $objSessaoSEI->simularLogin(null, null, $arrContextoSessao['numIdUsuario'], $arrContextoSessao['numIdUnidade']);
+            } else {
+                $objSessaoSEI->setNumIdUsuario(null);
+                $objSessaoSEI->setNumIdUnidadeAtual(null);
+            }
+        }
+
+        $objSessaoSEI->setBolHabilitada($arrContextoSessao['bolHabilitada']);
     }
 
     protected function existeAceitePorIntimacoesConectado($dados)
@@ -541,7 +747,7 @@ class MdPetIntAceiteRN extends InfraRN
     {
        
         $idUsuarioPet   = (new MdPetIntUsuarioRN())->getObjUsuarioPeticionamento(true);
-        $jobManual      = array_key_exists('acao_retorno', $_GET) && $_GET['acao_retorno'] == 'infra_agendamento_tarefa_listar';
+        $jobManual      = PaginaSEI::GET('acao_retorno') && PaginaSEI::GET('acao_retorno') == 'infra_agendamento_tarefa_listar';
 
         $arrRetornoIntimacoes = [
             'cumpridas' => 0,
@@ -568,6 +774,8 @@ class MdPetIntAceiteRN extends InfraRN
 
             $idProcedimento         = $dados[2];
             $objProcedimentoDTO     = $this->_retornaObjProcedimento($idProcedimento);
+            $bolProcessoSigiloso    = $this->_isProcessoSigiloso($objProcedimentoDTO);
+            $arrAberturasProcessoSigiloso = $this->_capturarAberturasProcessoSigiloso($objProcedimentoDTO);
 
             $arrStaEstado = array(
                 ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO,
@@ -626,7 +834,7 @@ class MdPetIntAceiteRN extends InfraRN
                     $unidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
                     $objUnidadeDTO = (new UnidadeRN())->consultarRN0125($unidadeDTO);
 
-                    $arrAtividadeDTO = null;
+                    $arrAtividadeDTO = [];
                     if ($objUnidadeDTO->getStrSinAtivo() == 'S') {
                         $arrAtividadeDTO = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
                     }
@@ -664,7 +872,7 @@ class MdPetIntAceiteRN extends InfraRN
                         $objUsuarioPetRN = new MdPetIntUsuarioRN();
                         $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 
-                        $arr = array($idProcedimento, $dataIntimacao, $datafinal, $idIntimacao, $idMdPetIntDest, $idUsuarioPet, MdPetIntAcessoExternoDocumentoRN::$STA_AGENDAMENTO, $arrParametros[1], $jobManual);
+                        $arr = array($idProcedimento, $dataIntimacao, $datafinal, $idIntimacao, $idMdPetIntDest, $idUsuarioPet, MdPetIntAcessoExternoDocumentoRN::$STA_AGENDAMENTO, $arrParametros[1], $jobManual, $arrAberturasProcessoSigiloso);
 
                         $this->lancarAndamentoAceite($arr);
 
@@ -673,7 +881,7 @@ class MdPetIntAceiteRN extends InfraRN
                         }
 
                         // REENVIAR ou REENVIAR E REATRIBUIR
-                        if (is_numeric($idUnidadeAberta) && is_numeric($idProcedimento)) {
+                        if (!$bolProcessoSigiloso && is_numeric($idUnidadeAberta) && is_numeric($idProcedimento)) {
 
                             $arrParams = array();
                             $arrParams[0] = $idUnidadeAberta;
@@ -728,48 +936,12 @@ class MdPetIntAceiteRN extends InfraRN
 		return InfraArray::converterArrInfraDTO((new AtividadeRN())->listarRN0036($objAtividadeDTO),'IdUnidade');
 		
 	}
-	
-    /**
-     * Todo: Verificar este metodo no final da implementação
-     */
-	protected function reabrirProcessoUsuariosCredenciadosSigiloso(){
-		
-		// Pega todos que tem credencial de acesso ao processo:
-		$objAcessoDTO = new AcessoDTO();
-		$objAcessoDTO->setDblIdProtocolo($idProcedimento);
-		$objAcessoDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-		$objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
-		$objAcessoDTO->retNumIdUsuario();
-		$arrIdUsuario = InfraArray::converterArrInfraDTO((new AcessoRN())->listar($objAcessoDTO),'IdUsuario');
-		
-		foreach ($arrIdUsuario as $idUsuario){
-			
-			// Verifica se o usuario credenciado esta com o processo aberto:
-			$objAtividadeDTO = new AtividadeDTO();
-			$objAtividadeDTO->setDblIdProtocolo($idProcedimento);
-			$objAtividadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-			$objAtividadeDTO->setNumIdUsuario($idUsuario);
-			$objAtividadeDTO->setDthConclusao(NULL, InfraDTO::$OPER_IGUAL);
-			$totalAtividadesAbertas = (new AtividadeRN())->contarRN0035($objAtividadeDTO);
-			
-			if( $totalAtividadesAbertas == 0 ){
-				
-				$objReabrirProcessoDTO = new ReabrirProcessoDTO();
-				$objReabrirProcessoDTO->setDblIdProcedimento($idProcedimento);
-				$objReabrirProcessoDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-				$objReabrirProcessoDTO->setNumIdUsuario($idUsuario);
-				(new ProcedimentoRN())->reabrirRN0966($objReabrirProcessoDTO);
-				
-			}
-			
-		}
-		
-	}
 		
 	protected function realizarEtapasAceiteAgendadoIndividualControlado($intimacaoPendente)
 	{
-		
-		$idUsuarioPet = (new InfraParametro(BancoSEI::getInstance()))->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
+
+        $idUsuarioPet = (new InfraParametro(BancoSEI::getInstance()))->getValor(MdPetContatoRN::$STR_INFRA_PARAMETRO_SIGLA_CONTATO, false);
+        $jobManual = PaginaSEI::GET('acao_retorno') == 'infra_agendamento_tarefa_listar';
 		
 		$objUsuarioPetRN     = new MdPetIntUsuarioRN();
 		$objMdPetIntimacaoRN = new MdPetIntimacaoRN();
@@ -788,6 +960,8 @@ class MdPetIntAceiteRN extends InfraRN
 		$dados               = $objMdPetIntimacaoRN->retornaDadosDocPrincipalIntimacao(array($idIntimacao));
 		$idProcedimento      = $dados[2];
 		$objProcedimentoDTO  = self::_retornaObjProcedimento($idProcedimento);
+        $bolProcessoSigiloso = $this->_isProcessoSigiloso($objProcedimentoDTO);
+        $arrAberturasProcessoSigiloso = $this->_capturarAberturasProcessoSigiloso($objProcedimentoDTO);
 		
 		$arrStaEstado = array(
 			ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO,
@@ -812,48 +986,6 @@ class MdPetIntAceiteRN extends InfraRN
 				//processo da intimacao
 				$idProcedimento     = $objProcedimentoDTO->getDblIdProcedimento();
 				$objUnidadeDTO      = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($idIntimacao));
-				
-				$nivelAcessoLocal   = $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo();
-				$nivelAcessoGlobal  = $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo();
-				
-				if(in_array(ProtocoloRN::$NA_SIGILOSO, [$nivelAcessoLocal, $nivelAcessoGlobal])){
-					
-					// Pega todos os Usuarios que possuem credencial de acesso ao processo:
-					$objAcessoDTO = new AcessoDTO();
-					$objAcessoDTO->setDblIdProtocolo($idProcedimento);
-					$objAcessoDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-					$objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
-					$objAcessoDTO->retNumIdUsuario();
-					$arrIdUsuarioAcesso = InfraArray::converterArrInfraDTO((new AcessoBD($this->getObjInfraIBanco()))->listar($objAcessoDTO),'IdUsuario');
-					
-					foreach ($arrIdUsuarioAcesso as $idUsuario){
-						
-						// Verifica se o usuario credenciado esta com o processo aberto:
-						$objAtividadeDTO = new AtividadeDTO();
-						$objAtividadeDTO->setDblIdProtocolo($idProcedimento);
-						$objAtividadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-						$objAtividadeDTO->setNumIdUsuario($idUsuario);
-						$objAtividadeDTO->setDthConclusao(NULL, InfraDTO::$OPER_IGUAL);
-						$totalAtividadesAbertas = (new AtividadeBD($this->getObjInfraIBanco()))->contar($objAtividadeDTO);
-						
-						// Caso nao esteja, reabre para o mesmo
-						if( $totalAtividadesAbertas == 0 ){
-							
-							SessaoSEI::getInstance()->setBolHabilitada(false);
-							
-							$objReabrirProcessoDTO = new ReabrirProcessoDTO();
-							$objReabrirProcessoDTO->setDblIdProcedimento($idProcedimento);
-							$objReabrirProcessoDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-							$objReabrirProcessoDTO->setNumIdUsuario($idUsuario);
-							$retorno = (new ProcedimentoRN())->reabrirRN0966($objReabrirProcessoDTO);
-							
-							SessaoSEI::getInstance()->setBolHabilitada(true);
-							
-						}
-						
-					}
-					
-				}
 				
 				//usuario módulo
 				$idUsuario = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
@@ -883,7 +1015,7 @@ class MdPetIntAceiteRN extends InfraRN
 				$unidadeRN = new UnidadeRN();
 				$objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 				
-				$arrAtividadeDTO = null;
+				$arrAtividadeDTO = [];
 				if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
 					$arrAtividadeDTO = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
 				}
@@ -927,7 +1059,7 @@ class MdPetIntAceiteRN extends InfraRN
 					$objUsuarioPetRN = new MdPetIntUsuarioRN();
 					$idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
 					
-					$arr = array($idProcedimento, $dataIntimacao, $datafinal, $idIntimacao, $idMdPetIntDest, $idUsuarioPet, MdPetIntAcessoExternoDocumentoRN::$STA_AGENDAMENTO, $arrParametros[1], $jobManual);
+                        $arr = array($idProcedimento, $dataIntimacao, $datafinal, $idIntimacao, $idMdPetIntDest, $idUsuarioPet, MdPetIntAcessoExternoDocumentoRN::$STA_AGENDAMENTO, $arrParametros[1], $jobManual, $arrAberturasProcessoSigiloso);
 					
 					$this->lancarAndamentoAceite($arr);
 					
@@ -936,7 +1068,7 @@ class MdPetIntAceiteRN extends InfraRN
 					}
 					
 					// REENVIAR ou REENVIAR E REATRIBUIR
-					if (is_numeric($idUnidadeAberta) && is_numeric($idProcedimento)) {
+					if (!$bolProcessoSigiloso && is_numeric($idUnidadeAberta) && is_numeric($idProcedimento)) {
 						$arrParams = array();
 						$arrParams[0] = $idUnidadeAberta;
 						$arrParams[1] = $idProcedimento;
@@ -1355,6 +1487,9 @@ class MdPetIntAceiteRN extends InfraRN
 
                 }
 
+                $bolProcessoSigiloso = $this->_isProcessoSigiloso($objProcedimentoDTO);
+                $arrAberturasProcessoSigiloso = $this->_capturarAberturasProcessoSigiloso($objProcedimentoDTO);
+
                 $arrParams = array();
                 $arrParams[0] = $objMdPetIntDestDTO->getNumIdMdPetIntimacao();
                 $arrParams[1] = $objUnidadeDTO;
@@ -1373,19 +1508,16 @@ class MdPetIntAceiteRN extends InfraRN
                 }
 
                 $idUsuarioAtribuicao = null;
+                $idUnidadeAberta = null;
 
                 if (count($arrAtividadeDTO) == 0) {
-                    // Sigiloso - não tem nenhuma credencial 
-                    if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO) {
-                        $arrParams[1] = null;
-                    } else {
-                        $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-	                    $arrParams[1] = ($idUnidadeAberta) ? $objMdPetIntimacaoRN->retornaObjUnidadePorId($idUnidadeAberta, true) : null;
-                    }
+                    $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
+	                $arrParams[1] = ($idUnidadeAberta) ? $objMdPetIntimacaoRN->retornaObjUnidadePorId($idUnidadeAberta, true) : null;
                 } else {
                     //Unidade da intimação ainda tem credencial
-                    if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO || $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO) {
-                        if (!array_search($objUnidadeDTO->getNumIdUnidade(), $arrAtividadeDTO)) {
+                    if ($bolProcessoSigiloso) {
+                        $arrIdUnidadesAbertas = InfraArray::converterArrInfraDTO($arrAtividadeDTO, 'IdUnidade');
+                        if (!in_array($objUnidadeDTO->getNumIdUnidade(), $arrIdUnidadesAbertas)) {
                             $arrParams[1] = $objMdPetIntimacaoRN->retornaObjUnidadePorId($arrAtividadeDTO[0]->getNumIdUnidade(), true);
                         }
                     }
@@ -1406,11 +1538,11 @@ class MdPetIntAceiteRN extends InfraRN
                     $objMdPetIntCertidaoRN->gerarCertidaoExterna($arrParams);
                     $idAcessoExterno = $arrParametros['id_acesso_externo'];
                     $dataIntimacao = $objMdPetIntDestRN->consultarDadosIntimacao($objMdPetIntDestDTO->getNumIdMdPetIntimacao());
-                    $arr = array($idProcedimento, $dataIntimacao, $dataCumprimento, $objMdPetIntDestDTO->getNumIdMdPetIntimacao(), $idMdPetIntDest, null, MdPetIntAcessoExternoDocumentoRN::$STA_EXTERNO, $arrParams[1]);
+                    $arr = array($idProcedimento, $dataIntimacao, $dataCumprimento, $objMdPetIntDestDTO->getNumIdMdPetIntimacao(), $idMdPetIntDest, $objMdPetIntAceiteDTO->getNumIdUsuario(), MdPetIntAcessoExternoDocumentoRN::$STA_EXTERNO, $arrParams[1], null, $arrAberturasProcessoSigiloso);
                     $this->lancarAndamentoAceite($arr);
 
                     // REENVIAR ou REENVIAR E REATRIBUIR
-                    if (is_numeric($idUnidadeAberta) && is_numeric($idProcedimento) && $qntDest == $dest) {
+                    if (!$bolProcessoSigiloso && is_numeric($idUnidadeAberta) && is_numeric($idProcedimento) && $qntDest == $dest) {
                         $arrParams = array();
                         $arrParams[0] = $idUnidadeAberta;
                         $arrParams[1] = $idProcedimento;

@@ -105,14 +105,6 @@ PaginaSEIExterna::getInstance()->fecharHead();
 ?>
 <script type="text/javascript">
 
-$('body').on('blur', '#txtNumeroCnpj', function(){
-    consultarVinculoExistenteCnpj();
-});
-
-$('body').on('submit', '#frmCNPJ', function(){
-    consultarVinculoExistenteCnpj();
-});
-
 document.getElementById('ifrConteudoHTML').onload = function() {
 	resizeIFramePorConteudo();
 }

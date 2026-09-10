@@ -766,13 +766,13 @@ class MdPetVincRepresentantRN extends InfraRN
                     case MdPetVincRepresentantRN::$PE_AUTORREPRESENTACAO:
                         $objAutoRepresentacaoDTO = $this->_buscarRepresentacaoPorId($params['hdnIdVinculoRepresent']);
                         $arrObjMdPetVincRepresentantDTO = $this->listarVincRepresentAtivosPorCPF($objAutoRepresentacaoDTO->getStrCPF());
-                        $this->suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, false, $params);
+                        $this->suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $params, false);
                         break;
 
                     case MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES:
                     case MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL:
                         $objMdPetVincRepresentantDTO = $this->_buscarRepresentacaoPorId($params['hdnIdVinculoRepresent']);
-                        $this->suspenderProcuracaoControlado(array($objMdPetVincRepresentantDTO), false, $params);
+                        $this->suspenderProcuracaoControlado(array($objMdPetVincRepresentantDTO), $params, false);
                         break;
 
                     case MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL:
@@ -814,9 +814,9 @@ class MdPetVincRepresentantRN extends InfraRN
 
             if ($params['hdnCascata'] == 'S') {
                 $arrObjMdPetVincRepresentantDTO = $this->listarVincRepresentAtivosPorCNPJ($objMdPetVincRepresentantDTO->getStrCNPJ());
-                $this->suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $agendamento, $params);
+                $this->suspenderProcuracaoControlado($arrObjMdPetVincRepresentantDTO, $params, $agendamento);
             } else {
-                $this->suspenderProcuracaoControlado(array($objMdPetVincRepresentantDTO), $agendamento, $params);
+                $this->suspenderProcuracaoControlado(array($objMdPetVincRepresentantDTO), $params, $agendamento);
             }
         }
 
@@ -1004,7 +1004,7 @@ class MdPetVincRepresentantRN extends InfraRN
             }
         }
 
-        public function suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, $agendamento = false, $params)
+        public function suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, $params, $agendamento = false)
         {
 
                 $arrObjMdPetVincRepresentantProcuradores = [];

@@ -22,6 +22,14 @@ $arrExtComplementarBD = array();
 
 if ($_POST) {
 
+    // Recupera a lista de extensões permitidas pelo core:
+    $objArquivoExtensaoDTO = new ArquivoExtensaoDTO();
+    $objArquivoExtensaoDTO->retNumIdArquivoExtensao();
+    $objArquivoExtensaoDTO->setBolExclusaoLogica(true);
+    $objArquivoExtensaoDTO->setStrSinAtivo('S');
+    $arrObjArquivoExtensaoDTO = (new ArquivoExtensaoRN())->listar($objArquivoExtensaoDTO);
+    $arrArquivoExtensoesCore = InfraArray::converterArrInfraDTO($arrObjArquivoExtensaoDTO, 'IdArquivoExtensao');
+
     $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
     $objInfraException = new InfraException();
 
@@ -59,6 +67,7 @@ if ($_POST) {
         $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
         $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
         $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrPrincipal, infraDTO::$OPER_NOT_IN);
+        $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_NOT_IN);
         $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('S');
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
@@ -75,6 +84,7 @@ if ($_POST) {
             $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
             $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numPrincipal);
             $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('S');
+            $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_IN);
             array_push($arrObjMdPetExtensoesArquivoDTO, $objMdPetExtensoesArquivoDTO);
             $sinCadastrar = true;
         }
@@ -84,6 +94,7 @@ if ($_POST) {
         $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
         $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
         $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrComplementar, infraDTO::$OPER_NOT_IN);
+        $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_NOT_IN);
         $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('N');
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
@@ -99,6 +110,7 @@ if ($_POST) {
             $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
             $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numComplementar);
             $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('N');
+            $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_IN);
             array_push($arrObjMdPetExtensoesArquivoDTO, $objMdPetExtensoesArquivoDTO);
             $sinCadastrar = true;
         }

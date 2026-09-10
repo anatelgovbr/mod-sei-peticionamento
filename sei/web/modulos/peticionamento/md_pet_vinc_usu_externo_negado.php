@@ -6,6 +6,12 @@
  *
  */
 
+$strTitulo = 'Impedimento de Substituição de Responsável Legal';
+$strResultado = '';
+$numRegistros = 0;
+$srtCnpj = '';
+$strRazaoSocial = '';
+
 try {
 
     require_once dirname(__FILE__) . '/../../SEI.php';
@@ -33,97 +39,88 @@ try {
 
         case 'md_pet_vinc_usu_ext_negado':
 
-            $strTitulo = 'Impedimento de Substituição de Responsável Legal';
+            $idVinculo = isset($_GET['idVinculo']) && ctype_digit((string) $_GET['idVinculo'])
+                ? (int) $_GET['idVinculo']
+                : 0;
+
+            if ($idVinculo <= 0) {
+                throw new InfraException('Vínculo não informado.');
+            }
+
             $idUsuarioExternoLogado = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
-            $srtCnpj = "";
-            $strRazaoSocial = "";
 
             $objUsuarioDTO = new UsuarioDTO();
             $objUsuarioDTO->setNumIdUsuario($idUsuarioExternoLogado);
             $objUsuarioDTO->retNumIdContato();
             $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
 
-            $arrTipoRepresentante = array(MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL,MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES);
-            $arrTipoDocumento = array(MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO,MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL);
+            if (is_null($objUsuarioDTO)) {
+                throw new InfraException('Usuário externo não localizado.');
+            }
+
+            $arrTipoRepresentante = [MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES];
+            $arrTipoDocumento = [MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO, MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL];
 
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->setNumIdContato($objUsuarioDTO->getNumIdContato());
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante($arrTipoRepresentante, InfraDTO::$OPER_IN);
             $objMdPetVincRepresentantDTO->setStrTipoDocumento($arrTipoDocumento, InfraDTO::$OPER_IN);
             $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($_GET['idVinculo']);
+            $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
             $objMdPetVincRepresentantDTO->retDblIdDocumento();
             $objMdPetVincRepresentantDTO->retStrRazaoSocialNomeVinc();
             $objMdPetVincRepresentantDTO->retStrCNPJ();
-            $objMdPetVincRepresentantDTO->retStrNomeProcurador();
-            $objMdPetVincRepresentantDTO->retStrCpfProcurador();
             $objMdPetVincRepresentantDTO->retStrTipoRepresentante();
             $objMdPetVincRepresentantDTO->retDthDataLimite();
             $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN)->listar($objMdPetVincRepresentantDTO);
-            $numRegistros = count($arrObjMdPetVincRepresentantDTO);
+
+            $arrProcuracoesImpedimento = [];
+            foreach ($arrObjMdPetVincRepresentantDTO as $objRepresentacaoDTO) {
+                $bolVigente = true;
+                if ($objRepresentacaoDTO->getStrTipoRepresentante() === MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES
+                    && !is_null($objRepresentacaoDTO->getDthDataLimite())) {
+                    $strDataLimite = explode(' ', $objRepresentacaoDTO->getDthDataLimite())[0];
+                    $bolVigente = InfraData::compararDatas(InfraData::getStrDataAtual(), $strDataLimite) >= 0;
+                }
+
+                if ($bolVigente) {
+                    $arrProcuracoesImpedimento[] = $objRepresentacaoDTO;
+                }
+            }
+
+            $numRegistros = count($arrProcuracoesImpedimento);
+
             if ($numRegistros > 0) {
 
                 $strResultado = '';
                 $strSumarioTabela = 'Procurações Eletrônicas';
                 $strCaptionTabela = 'Procurações Eletrônicas';
-                $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">';
+                $strResultado .= '<table width="100%" class="infraTable" summary="' . $strSumarioTabela . '">';
                 $strResultado .= '<caption class="infraCaption">' . PaginaSEIExterna::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
 
                 $strResultado .= '<tr>';
-                //$strResultado .= '<th class="infraTh" width="1%">' . PaginaSEIExterna::getInstance()->getThCheck() . '</th>' . "\n";
-                //$strResultado .= '<th class="infraTh" width="13%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'N° do Documento', 'ProtocoloFormatado', $arrObjMdPetVincRepresentantDTO) . '</th>';
-                $strResultado .= '<th class="infraTh" style="width:30%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Processo', 'CNPJ', $arrObjMdPetVincRepresentantDTO) . '</th>';
-                $strResultado .= '<th class="infraTh" style="width:35%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Procuração', 'DblIdDocumento', $arrObjMdPetVincRepresentantDTO) . '</th>';
-                $strResultado .= '<th class="infraTh" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo Procuração', 'StrTipoRepresentante', $arrObjMdPetVincRepresentantDTO) . '</th>';
+                $strResultado .= '<th class="infraTh" style="width:27%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Processo', 'CNPJ', $arrProcuracoesImpedimento) . '</th>';
+                $strResultado .= '<th class="infraTh" style="width:32%">' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Procuração', 'DblIdDocumento', $arrProcuracoesImpedimento) . '</th>';
+                $strResultado .= '<th class="infraTh" >' . PaginaSEIExterna::getInstance()->getThOrdenacao($objMdPetVincRepresentantDTO, 'Tipo Procuração', 'StrTipoRepresentante', $arrProcuracoesImpedimento) . '</th>';
                 $strResultado .= '</tr>';
 
-                $arrSelectTipoVinculo = array();
-                //Populando obj para tabela
-
                 $qntProcuracao = 0;
-                foreach ($arrObjMdPetVincRepresentantDTO as $itemObjMdPetVinculoDTO) {
-                    //verifica se a procuração é do tipo simples, caso seja existe mais uma validação a ser feita
-                    if ($itemObjMdPetVinculoDTO->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES) {
-                        // verifica se existe data limite, caso tenha existe mais uma validação a ser feita
-                        if (!is_null($itemObjMdPetVinculoDTO->getDthDataLimite())) {
-                            $dataAtual = date("Y-m-d");
-                            $anoLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 6);
-                            $mesLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 3, -5);
-                            $diaLimite = substr($itemObjMdPetVinculoDTO->getDthDataLimite(), 0, -8);
-                            $dataLimite = $anoLimite . "-" . $mesLimite . "-" . $diaLimite;
-                            //se a data estiver vigente a procuração é informada ao usuário
-                            if (strtotime($dataAtual) <= strtotime($dataLimite)) {
-                                $informaProcuracao = true;
-                            //se a data não estiver vigente a procuração
-                            } else {
-                                $informaProcuracao = false;
+                foreach ($arrProcuracoesImpedimento as $itemObjMdPetVinculoDTO) {
+                    $srtCnpj = InfraUtil::formatarCnpj($itemObjMdPetVinculoDTO->getStrCNPJ());
+                    $strRazaoSocial = $itemObjMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
 
-                            }
-                        // caso não tenha data limite a procuração é informada ao usuário
-                        } else {
-                            $informaProcuracao = true;
-                        }
-                    //se for especial é informada a procuração é informada ao usuário
-                    } else {
-                        $informaProcuracao = true;
-                    }
+                    $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+                    $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($itemObjMdPetVinculoDTO->getDblIdDocumento());
+                    $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
+                    $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo2();
+                    $objRelProtocoloProtocoloDTO = (new RelProtocoloProtocoloRN())->consultarRN0841($objRelProtocoloProtocoloDTO);
 
-                    if($informaProcuracao == true){
-                        $srtCnpj = InfraUtil::formatarCnpj($itemObjMdPetVinculoDTO->getStrCNPJ());
-                        $strRazaoSocial = $itemObjMdPetVinculoDTO->getStrRazaoSocialNomeVinc();
-                        $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
-                        $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($itemObjMdPetVinculoDTO->getDblIdDocumento());
-                        $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
-                        $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo2();
-                        $objRelProtocoloProtocoloDTO = (new RelProtocoloProtocoloRN())->consultarRN0841($objRelProtocoloProtocoloDTO);
-                        $strResultado .= '<tr class="infraTrClara" id="tr-' . $qntProcuracao . '">';
-
-                        $strResultado .= '<td>' . $objRelProtocoloProtocoloDTO->getStrProtocoloFormatadoProtocolo1() . '</td>';
-                        $strResultado .= '<td>' . $objRelProtocoloProtocoloDTO->getStrProtocoloFormatadoProtocolo2() . '</td>';
-                        $strResultado .= '<td>' . PaginaSEI::tratarHTML((new MdPetVincRepresentantDTO())->getStrNomeTipoRepresentante($itemObjMdPetVinculoDTO->getStrTipoRepresentante())) . '</td>';
-                        $strResultado .= '</tr>';
-                        $qntProcuracao++;
-                    }
+                    $strResultado .= '<tr class="infraTrClara" id="tr-' . $qntProcuracao . '">';
+                    $strResultado .= '<td>' . PaginaSEI::tratarHTML($objRelProtocoloProtocoloDTO->getStrProtocoloFormatadoProtocolo1()) . '</td>';
+                    $strResultado .= '<td class="text-center">' . PaginaSEI::tratarHTML($objRelProtocoloProtocoloDTO->getStrProtocoloFormatadoProtocolo2()) . '</td>';
+                    $strResultado .= '<td class="text-center">' . PaginaSEI::tratarHTML((new MdPetVincRepresentantDTO())->getStrNomeTipoRepresentante($itemObjMdPetVinculoDTO->getStrTipoRepresentante())) . '</td>';
+                    $strResultado .= '</tr>';
+                    $qntProcuracao++;
                 }
 
                 $strResultado .= '</table>';
@@ -172,6 +169,46 @@ PaginaSEIExterna::getInstance()->montarMeta();
 PaginaSEIExterna::getInstance()->montarTitle(':: ' . PaginaSEIExterna::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo . ' ::');
 PaginaSEIExterna::getInstance()->montarStyle();
 PaginaSEIExterna::getInstance()->abrirStyle();
+?>
+    #divInfraBarraComandosSuperior {
+        margin-bottom: 1rem;
+    }
+
+    .mdPetImpedimentoMensagem {
+        clear: both;
+        width: 100%;
+        margin: 0 0 1.25rem;
+        padding: 1rem 1.25rem;
+        border-left: 4px solid #1b6ca8;
+        border-radius: 0.25rem;
+        background-color: #f4f8fb;
+        line-height: 1.5;
+        box-sizing: border-box;
+    }
+
+    .mdPetImpedimentoMensagem p {
+        margin: 0;
+    }
+
+    .mdPetImpedimentoMensagem p + p {
+        margin-top: 0.75rem;
+    }
+
+    .mdPetImpedimentoTabela {
+        clear: both;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .mdPetImpedimentoTabela .infraAreaTabela,
+    .mdPetImpedimentoTabela .infraTable {
+        width: 100% !important;
+    }
+
+    .mdPetImpedimentoTabela .infraTable {
+        min-width: 640px;
+    }
+<?php
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
 PaginaSEIExterna::getInstance()->abrirJavaScript();
@@ -179,22 +216,30 @@ PaginaSEIExterna::getInstance()->fecharJavaScript();
 PaginaSEIExterna::getInstance()->fecharHead();
 PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
-$arrComandos = array();
-$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos = [];
+$arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="fecharJanela()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
+PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 ?>
-<p>
-    <label>
-        Não foi possível finalizar a sua Vinculação como Responsável Legal em substituição ao Responsável Legal já existente, tendo em vista ainda possuir Procurações Eletrônicas vigentes em que o Outorgante é <span style="font-weight: bold"><?php echo $strRazaoSocial; ?></span> - <span style="font-weight: bold">(<?php echo $srtCnpj; ?>)</span>.<br /><br />
-        Para prosseguir, antes você deve renunciar as Procurações abaixo ou o Outorgante deve revogá-las no menu Procurações Eletrônicas.
-    </label>
-</p>
-
+<div class="mdPetImpedimentoMensagem">
+    <p>
+        Não foi possível prosseguir a sua Vinculação como Responsável Legal em substituição ao Responsável Legal já existente, pois ainda existem Procurações Eletrônicas vigentes em que o Outorgante é <strong><?php echo PaginaSEI::tratarHTML($strRazaoSocial); ?></strong> (<strong><?php echo PaginaSEI::tratarHTML($srtCnpj); ?></strong>).
+    </p>
+    <p>
+        Para prosseguir, renuncie às procurações no menu <strong>Procurações Eletrônicas</strong> ou solicite ao Outorgante que as revogue.
+    </p>
+</div>
 
 <?
 PaginaSEIExterna::getInstance()->fecharAreaDados();
+?>
+<div class="mdPetImpedimentoTabela">
+<?php
 PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+?>
+</div>
+<?php
 PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 ?>
@@ -203,9 +248,6 @@ PaginaSEIExterna::getInstance()->fecharHtml();
 
     function inicializar() {
         infraEfeitoTabelas();
-        if (document.getElementById('selCargo') != null) {
-            document.getElementById('selCargo').focus();
-        }
     }
 
     function fecharJanela() {

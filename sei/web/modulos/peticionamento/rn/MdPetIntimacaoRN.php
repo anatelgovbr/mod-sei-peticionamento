@@ -2833,11 +2833,11 @@ class MdPetIntimacaoRN extends InfraRN
                     $unidadeDTO = new UnidadeDTO();
                     $unidadeDTO->retNumIdUnidade();
                     $unidadeDTO->retStrSinAtivo();
+                    $unidadeDTO->retStrSinEnvioProcesso();
                     $unidadeDTO->setBolExclusaoLogica(false);
                     $unidadeDTO->setNumIdUnidade($itemObjMdPetAtividadeDTO->getNumIdUnidade());
-                    $unidadeRN = new UnidadeRN();
-                    $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
-                    if (count($objUnidadeDTO) == 1 && $objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
+                    $objUnidadeDTO = (new UnidadeRN())->consultarRN0125($unidadeDTO);
+                    if (!is_null($objUnidadeDTO) && $objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
                         $idUnidadeAberta = $objUnidadeDTO->getNumIdUnidade();
                         break;
                     }
@@ -2889,9 +2889,9 @@ class MdPetIntimacaoRN extends InfraRN
                     $objEntradaReabrirProcessoAPI->setProtocoloProcedimento($objProcedimentoDTO->getStrProtocoloProcedimentoFormatado());
                     $objSEIRN->reabrirProcesso($objEntradaReabrirProcessoAPI);
 
-                    if ($usuarioTipo = "I" || $usuarioTipo = "S") {
+                    if ($usuarioTipo == "I" || $usuarioTipo == "S") {
                         SessaoSEI::getInstance()->setNumIdUnidadeAtual($idUnidadeAtual);
-                    } else if ($usuarioTipo = "E") {
+                    } else if ($usuarioTipo == "E") {
                         //DESTRUIR O SIMULA LOGIN
                     }
 
@@ -3178,13 +3178,13 @@ class MdPetIntimacaoRN extends InfraRN
 
         $objUsuarioRN = new MdPetUsuarioExternoRN();
 
-        if ($_POST['intimacaoPF'] == 't' && $_POST['hdnDadosUsuario']) {
+        if (PaginaSEI::POST('intimacaoPF') == 't' && PaginaSEI::POST('hdnDadosUsuario')) {
             /** Se o campo intimacaoPF vier preenchido com valor 't' e o campo hdnDadosUsuario tiver
              * preenchido com algum valor, isto quer dizer que pessoa(s) foram adicionadas para geração
              * de Intimação PF e por isso não poderão aparecer na listagem novamente. **/
 
             $arrNumIdContatos = array();
-            $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnDadosUsuario']);
+            $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica(PaginaSEI::POST('hdnDadosUsuario'));
             foreach ($arr as $item) {
                 $arrNumIdContatos[] = $item[0];
             }
@@ -3237,9 +3237,9 @@ class MdPetIntimacaoRN extends InfraRN
         $dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $dtoMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
 
-        if ($_POST['intimacaoPJ'] == 't' && $_POST['hdnDadosUsuario']) {
+        if (PaginaSEI::POST('intimacaoPJ') == 't' && PaginaSEI::POST('hdnDadosUsuario')) {
 
-            $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnDadosUsuario']);
+            $arr = PaginaSEI::getInstance()->getArrItensTabelaDinamica(PaginaSEI::POST('hdnDadosUsuario'));
             foreach ($arr as $item) {
                 //$arrNumIdContatos [] = $_POST['gerados'];
                 $arrNumIdContatos[] = $item[0];

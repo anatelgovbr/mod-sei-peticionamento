@@ -248,7 +248,7 @@ class MdPetIntegracaoRN extends InfraRN
 
         if (empty($cpfResponsavelLegalReceita)) {
             $xml .= "<success>false</success>\n";
-            $xml .= '<msg>Erro na consulta: ' . $consulta['faultstring'] . '</msg>';
+            $xml .= '<msg>Erro na consulta: ' . $consulta['faultstring '] . '</msg>';
             $xml .= '</dados-pj>';
             return $xml;
         }
@@ -259,18 +259,17 @@ class MdPetIntegracaoRN extends InfraRN
             $xml .= "Entre em contato com a RFB para verificar eventuais pendências.</msg>\n";
             $xml .= '</dados-pj>';
             return $xml;
-        } else {
+        } 
+        
+        // Valida se já existe vinculo do CNPJ com o CPF do Usuário logado
+        $VinculoPJ = MdPetVinculoINT::validarExistenciaVinculoCnpj($dados);
+        $strXml = simplexml_load_string($VinculoPJ);
 
-            $VinculoPJ = MdPetVinculoINT::validarExistenciaVinculoCnpj($dados);
-
-            $strXml = simplexml_load_string($VinculoPJ);
-
-            if ($VinculoPJ != "<dados-pj></dados-pj>") {
-                if (!isset($strXml->idVinculo)) {
-                    return $VinculoPJ;
-                }
-                $xml .= '<hdnIdVinculo>' . $strXml->idVinculo . '</hdnIdVinculo>';
+        if ($VinculoPJ != "<dados-pj></dados-pj>") {
+            if (!isset($strXml->idVinculo)) {
+                return $VinculoPJ;
             }
+            $xml .= '<hdnIdVinculo>' . $strXml->idVinculo . '</hdnIdVinculo>';
         }
 
         $mdPetContatoRN = new MdPetContatoRN();

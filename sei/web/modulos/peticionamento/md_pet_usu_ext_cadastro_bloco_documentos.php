@@ -671,7 +671,7 @@
 
         <div class="row">
             <div class="col-12">
-                <div class="form-group mb-2" id="divArquivo">
+                <div class="form-group mb-2" id="divArquivoEssencial">
                     <label class="infraLabelObrigatorio">Tamanho máximo do arquivo: <?= $strTamanhoMaximoComplementar ?></label>
                     <input type="hidden" name="hdnTamArquivoEssencial" id="hdnTamArquivoEssencial" value="<?= $strTamanhoMaximoComplementar ?>">
                     <input type="file" name="fileArquivoEssencial" class="form-control-file drop-zone-style" id="fileArquivoEssencial" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -886,7 +886,7 @@
                 <div class="col-12">
                     <div class="row">
                     <div class="col-12">
-                        <div id="divArquivo">
+                        <div id="divArquivoComplementar">
                             <div class="form-group mb-2">
                                 <label class="infraLabelObrigatorio" for="fileArquivoComplementar">Tamanho máximo do arquivo: <?= $strTamanhoMaximoComplementar ?></label>
                                 <label for="fileArquivoComplementar">

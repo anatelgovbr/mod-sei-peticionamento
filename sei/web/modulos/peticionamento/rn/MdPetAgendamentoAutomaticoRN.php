@@ -1096,7 +1096,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
 									try {
 									
-										$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, true, []);
+										$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, [], true);
 
 										if(is_array($suspenso)){
 									
@@ -1138,7 +1138,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
 								if(!empty($objResponsavelLegal) && $objResponsavelLegal->getStrCpfProcurador != $retorno['PessoaJuridica']['responsavel']['cpf']){
 
-									$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($objResponsavelLegal, true, []);
+									$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($objResponsavelLegal, [], true);
 									
 									if(is_array($suspenso)){
 										$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;

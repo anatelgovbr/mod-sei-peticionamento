@@ -31,10 +31,12 @@ class MdPetSoapClienteRN extends BeSimple\SoapClient\SoapClient
         // informa a versao do soap
         if ( !empty( $options) ) {
             foreach ( $options as $k => $v ) {
-                if ( $k == 'soap_version' )
-                    $arrOptions[$k] = $v == '1.1' ? SOAP_1_1 : SOAP_1_2;
-                else
+                if ( $k == 'soap_version' ){
+                    $versao = str_replace(',', '.', trim((string)$v));
+                    $arrOptions[$k] = $versao == '1.1' ? SOAP_1_1 : SOAP_1_2;
+                } else {
                     $arrOptions[$k] = $v;
+                }
             }
         }
 

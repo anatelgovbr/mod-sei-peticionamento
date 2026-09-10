@@ -7,6 +7,9 @@
                     Processo nº <?= $strNumeroProcesso ?></br>
                     Tipo de Intimação: <?= $strNomeTipoIntimacao ?> <br/>
                     Documento Principal da Intimação: <?= $strNomeDocumentoPrincipal ?><br/>
+                    <? if (!empty($strNomeDestinatario)) : ?>
+                    <?= $strLabelDestinatario ?>: <?= PaginaSEI::tratarHTML($strNomeDestinatario) ?><br/>
+                    <? endif; ?>
                     Data de Expedição da Intimação: <?= $strDataIntimacao ?><br/>
                     Tipo de Cumprimento: <?= $strTipoCumprimento ?><br/>
                     Data do Cumprimento da Intimação: <?= $strDataCumprimento ?><br/>

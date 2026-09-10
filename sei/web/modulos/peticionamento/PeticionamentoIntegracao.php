@@ -34,7 +34,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.5';
+        return '4.6.6';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -1672,7 +1672,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
 
         $arrLink = array();
-        $numRegistrosMenu = (is_array($arrMenusNomes) ? count($arrMenusNomes) : 0);
+        $numRegistrosMenu = count($arrMenusNomes);
 
         $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
@@ -1721,7 +1721,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                         }
                         break;
                     case 'Pessoas Jurídicas' :
-                        if (!is_null($objMdPetVincUsuExtPj) > 0 && !is_null($arrIdMdPetIntegFuncionalidUtilizado)) {
+                        if (!is_null($objMdPetVincUsuExtPj) && !is_null($arrIdMdPetIntegFuncionalidUtilizado)) {
                             $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinculacao_listar' . '^^' . 'Responsável Legal de Pessoa Jurídica' . '^';
                             $arrLink[] = '-^' . $urlBase . '/controlador_externo.php?acao=md_pet_vinc_usu_ext_pe_listar' . '^^' . 'Procurações Eletrônicas' . '^';
                         } elseif (!is_null($objMdPetVincUsuExtPf)) {
@@ -3119,20 +3119,22 @@ class PeticionamentoIntegracao extends SeiIntegracao
         $objMdPetIntAceiteRN = new MdPetIntAceiteRN();
         $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
 
+        $objMdPetRespostaRN = new MdPetIntRespostaRN();
+
         $existeInt = false;
         $conteudoHtml = '';
+        $idIntimacao = null;
+        $idAceite = null;
+        $idMdPetDest = array();
+        $objMdPetIntRelDestDTO = array();
+        $arrPessoaJuridica = array();
+        $arrPessoaFisica = array();
 
         if ($item) {
 
-            $objMdPetRespostaRN = new MdPetIntRespostaRN();
-            
-            $idIntimacaoBtnlink = [];
-            $idAceite = null;
             $arrRevogado = [];
-            $arrPessoaJuridica = array();
-            $arrPessoaFisica = array();
 
-            $idIntimacao = $item ? $item->getNumIdMdPetIntimacao() : null;
+            $idIntimacao = $item->getNumIdMdPetIntimacao();
             $arrDados = null;
 
             $arrDados = $objMdPetIntAceiteRN->existeAceiteIntimacaoAcao(array($idIntimacao, true));
@@ -3144,7 +3146,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
             }
 
             $objMdPetIntRelDestDTO = (new MdPetIntRelDestinatarioRN())->retornarDestinatariosIntimacao($idIntimacao, $objContato->getNumIdContato(), $idAcessoExterno);
-            $idIntimacaoBtnlink = array_merge($idIntimacaoBtnlink, array_diff(array_unique(InfraArray::converterArrInfraDTO($objMdPetIntRelDestDTO, 'IdMdPetIntimacao')), $idIntimacaoBtnlink));
 
             if (is_array($objMdPetIntRelDestDTO) && count($objMdPetIntRelDestDTO) > 0) {
 
@@ -3320,21 +3321,24 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             $situacao = (new MdPetIntRelDestinatarioRN())->getSituacaoUsuarioIntimacao($item->getDblIdProtocolo(), $idAcessoExterno);
 
-            if(!is_null($situacao) && in_array($situacao['btn_responder'], ['cumprida_geral', 'cumprida_parcial'])){
+            // A situação retornada é agregada por protocolo. Como atualmente é emitida uma intimação por
+            // destinatário, o botão precisa ser montado a partir da situação da intimação da iteração atual,
+            // caso contrário apenas a primeira intimação do documento geraria botão.
+            $situacaoIntimacao = (!is_null($situacao) && isset($situacao['por_intimacao'][$idIntimacao])) ? $situacao['por_intimacao'][$idIntimacao] : null;
 
-                if(!empty($situacao['int_responder'])){
-                    $arrPrazoResposta = (new MdPetIntPrazoRN())->retornarTipoRespostaValido([$situacao['int_responder'][0], $idMdPetDest]);
+            if(!is_null($situacaoIntimacao) && in_array($situacaoIntimacao['btn_responder'], ['cumprida_geral', 'cumprida_parcial'])){
 
-                    if(is_array($arrPrazoResposta) && count($arrPrazoResposta) > 0){
-                        $dtPrazoResposta = !is_null($arrPrazoResposta[0]->getDthDataProrrogada()) ? $arrPrazoResposta[0]->getDthDataProrrogada() : $arrPrazoResposta[0]->getDthDataLimite();
-                        if(!empty($dtPrazoResposta) && InfraData::compararDatas(date('d/m/Y'), $dtPrazoResposta) >= 0){
-                            $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaAcao(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $arrPessoaJuridica, $arrPessoaFisica));
-                        }
+                $arrPrazoResposta = (new MdPetIntPrazoRN())->retornarTipoRespostaValido([$idIntimacao, $idMdPetDest]);
+
+                if(is_array($arrPrazoResposta) && count($arrPrazoResposta) > 0){
+                    $dtPrazoResposta = !is_null($arrPrazoResposta[0]->getDthDataProrrogada()) ? $arrPrazoResposta[0]->getDthDataProrrogada() : $arrPrazoResposta[0]->getDthDataLimite();
+                    if(!empty($dtPrazoResposta) && InfraData::compararDatas(date('d/m/Y'), $dtPrazoResposta) >= 0){
+                        $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaAcao(array(array($idIntimacao), $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $arrPessoaJuridica, $arrPessoaFisica));
                     }
                 }
 
-            }else if(!is_null($situacao) && in_array($situacao['btn_responder'], ['com_impedimento'])){
-                $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaNegada(array($idIntimacaoBtnlink, $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica, $item->getDblIdProtocolo()));
+            }else if(!is_null($situacaoIntimacao) && in_array($situacaoIntimacao['btn_responder'], ['com_impedimento'])){
+                $conteudoHtml .= $objMdPetRespostaRN->addIconeRespostaNegada(array(array($idIntimacao), $idAcessoExterno, $idProcedimento, $idAceite, $idMdPetDest, $objContato->getNumIdContato(), $idContatoDestinatario, $arrPessoaJuridica, $arrPessoaFisica, $item->getDblIdProtocolo()));
             }
 
         }
@@ -4295,30 +4299,24 @@ class PeticionamentoIntegracao extends SeiIntegracao
     {
 
         $ret = null;
-        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
-        $arrObjInfraParametro = $objInfraParametro->listarValores();
-
-        $arrParametros = array(
-            'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO',
-            'MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA',
-            'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO',
-            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL',
-            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_REVOGACAO',
-            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RENUNCIA',
-            'MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO',
-            'MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO',
-            'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES',
-            'MODULO_PETICIONAMENTO_ID_SERIE_AR'
+        $arrDocsLiberados = array_values(
+            (new InfraParametro(BancoSEI::getInstance()))->listarValores(
+                array(
+                    'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_CERTIDAO_INTIMACAO_CUMPRIDA',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_REVOGACAO',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_RENUNCIA',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_VINC_RESTABELECIMENTO',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_SIMPLES',
+                    'MODULO_PETICIONAMENTO_ID_SERIE_AR'
+                ),
+                false
+            )
         );
-
-        $arrDocsLiberados = array();
-
-        foreach ($arrObjInfraParametro as $chave => $objInfra) {
-            if (in_array($chave, $arrParametros)) {
-                $arrDocsLiberados[] = $objInfra;
-            }
-        }
 
         $arrTipoDocumento = array(
             DocumentoRN::$TD_EDITOR_INTERNO,

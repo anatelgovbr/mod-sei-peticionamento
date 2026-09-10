@@ -329,6 +329,8 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
 			$numIdUnidadeAcesso		        = $params[6];
 			$numIdUsuarioAntesSigiloso      = $params[7];
 			$numIdUnidadeAtualAntesSigiloso = $params[8];
+			// Mantem a reabertura legada por padrao; fluxos com restauracao propria podem suprimi-la.
+			$bolReabrirProcesso              = !array_key_exists(9, $params) || $params[9];
 			
 			if ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == ProtocoloRN::$NA_SIGILOSO
 				|| $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo() == ProtocoloRN::$NA_SIGILOSO){
@@ -424,6 +426,10 @@ class MdPetProcedimentoRN extends ProcedimentoRN {
 					}
 				}
 				
+				if (!$bolReabrirProcesso) {
+					return;
+				}
+
 				$objMdPetIntimacaoRN = new MdPetIntimacaoRN();
 				$arrAtividadeDTO = $objMdPetIntimacaoRN->verificarUnidadeAberta( array($objProcedimentoDTO) );
 				if (count($arrAtividadeDTO)==0){

@@ -8,7 +8,6 @@ $strLinkConsultaUsuarioExternoValido = SessaoSEIExterna::getInstance()->assinarL
 $strLinkRedirecionamentoPrincipal = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext');
 $strLinkUploadArquivo = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_upload_anexo');
 $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador_ajax_externo.php?acao_ajax=md_pet_vinc_usu_ext_autocompletar');
-$strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_usu_ext_negado');
 ?>
 
 <script type="text/javascript">
@@ -28,11 +27,28 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
     //    var objAutoCompletarUsuario = null;
 
+    $(document).ready(function () {
+        $('#frmCNPJ').on('submit', function (event) {
+            event.preventDefault(); // cancela o recarregamento da página
+
+            consultarDadosReceita()
+                .then(function () {
+                    console.log('Fluxo concluído sem recarregar a tela.');
+                })
+                .catch(function (erro) {
+                    console.log('Fluxo interrompido ou com erro:', erro);
+                });
+        });
+    });
+
     function inicializar() {
+
         infraEfeitoTabelas();
+
         document.getElementsByTagName("BODY")[0].onresize = function() {
             resizeIFramePorConteudo()
         };
+        
         if (EXIBIR_HIPOTESE_LEGAL) {
             verificarHipoteseLegal();
         }
@@ -46,12 +62,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
         $("#txtNomeResponsavelLegalAlt").val($("#txtNomeResponsavelLegal").val());
         $("#txtNumeroCpfResponsavelAlt").val($("#txtNumeroCpfResponsavel").val());
-        <?php if (!$stAlterar) : ?>
-            //document.getElementById("txtCaptcha").addEventListener("keyup", controlarEnterValidarProcesso, false);
-        <?php endif; ?>
-        <?php if ($stWebService) : ?>
-            //  document.getElementById("txtNumeroCpfProcurador").addEventListener("keyup", controlarEnterValidarUsuario, false);
-        <?php endif; ?>
         
         if ("<?= $captchaValidado ?>" == '3') {
             if ("<?= $semWS ?>" == '1') {
@@ -71,7 +81,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             }
         });
     }
-
 
     function validarCpf(obj) {
         if (!infraValidarCpf(obj.value)) {
@@ -119,7 +128,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                                 770,
                                 480,
                                 '', //options
-                                false); //modal
+                                true); //modal
                             return false;
                         } else if (message.length > 0) {
                             alert(message);
@@ -282,10 +291,7 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
             return false;
         }
 
-
-
         carregarTelaNovoCnpj();
-
 
         var blocoPj = document.getElementById('informacaoPJ');
         var blocoPj_BR = document.getElementById('informacaoPJ_BR');
@@ -365,50 +371,60 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function consultarVinculoExistenteCnpj() {
+
+        let dfd = $.Deferred(); // Seto como uma promise para poder usar o done() e o fail() do ajax
         
         let self = $('#txtNumeroCnpj');
-        let vinculosExistentes = JSON.parse($('#hdnVinculoPreExistente').val());
+        let vinculosPreExistentes = JSON.parse($('#hdnVinculoPreExistente').val());
         let novoVinculo = parseInt(self.val().replace(/\D/g,''));
         let cpfUsuarioLogado = $("#hdnCpfUsuarioExternoLogado").val().replace(/\D/g, '');
         let message;
-        
-        if(self.val().length == 18) {
-            
-            if(vinculosExistentes.hasOwnProperty(parseInt(self.val().replace(/\D/g,'')))){
-                $.each(vinculosExistentes, function(key, value){
-                    if(key == novoVinculo && value == 'A'){
-                        message = 'Você já possui uma vinculação de Responsável Legal de Pessoa Jurídica Ativa com este CNPJ!';
-                    }
-                    if(key == novoVinculo && value == 'S'){
-                        message = 'Essa vinculação de Responsável Legal de Pessoa Jurídica está suspensa pela Administração do SEI.\n\nEntre em contato com a Administração do SEI para maiores informações.';
-                    }
-                });
-                alert(message);
-                document.location = '<?= $strUrlFechar ?>';
-            }
 
-            // Busca por outros vinculos com o mesmo CPF do Usuário logado
-            $.post('<?= $strLinkConsultaVinculoOutoUsuarioMesmoCPF ?>', { 'cpfUsuarioLogado': cpfUsuarioLogado, 'cnpjNovaVinculacao': novoVinculo })
-            .done(function(data) {
-                if ($(data).find('success').text() === 'false') {
-                    alert('Já existe uma vinculação de Responsável Legal de Pessoa Jurídica Ativa deste CNPJ com o CPF do Usuário Externo logado.\n\nEntre em contato com a Administração do SEI para verificar e resolver o vínculo existente antes de realizar uma nova tentativa de vinculação.');
-                    document.location = '<?= $strUrlFechar ?>';
-                }
-            }).fail(console.log);
-            
+        if (!(self.val().trim().length == 18 && infraValidarCnpj(self.val()))) {
+            alert('Informe um CNPJ válido para continuar.');
+            dfd.resolve(false); // Script não deve continuar, então resolvo a promise com false
+            return dfd.promise();
         }
+        
+        if (vinculosPreExistentes.hasOwnProperty(novoVinculo)) {
+            $.each(vinculosPreExistentes, function (key, value) {
+                if (key == novoVinculo && value == 'A') {
+                    message = 'Você já possui uma vinculação de Responsável Legal de Pessoa Jurídica Ativa com este CNPJ!';
+                }
+                if (key == novoVinculo && value == 'S') {
+                    message = 'Essa vinculação de Responsável Legal de Pessoa Jurídica está suspensa pela Administração do SEI.\n\nEntre em contato com a Administração do SEI para maiores informações.';
+                }
+            });
+            alert(message);
+            document.location = '<?= $strUrlFechar ?>';
+            dfd.resolve(false);
+            return dfd.promise();
+        }
+
+        // Busca por outros vinculos com o mesmo CPF do Usuário logado
+
+        $.post('<?= $strLinkConsultaVinculoOutoUsuarioMesmoCPF ?>', {
+            'cpfUsuarioLogado': cpfUsuarioLogado,
+            'cnpjNovaVinculacao': novoVinculo
+        })
+        .done(function (data) {
+            if ($(data).find('success').text() === 'false') {
+                alert('Já existe uma vinculação de Responsável Legal de Pessoa Jurídica Ativa deste CNPJ com o CPF do Usuário Externo logado.\n\nEntre em contato com a Administração do SEI para verificar e resolver o vínculo existente antes de realizar uma nova tentativa de vinculação.');
+                document.location = '<?= $strUrlFechar ?>';
+                dfd.resolve(false);
+            } else {
+                dfd.resolve(true);
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            dfd.reject(errorThrown || textStatus); // propaga o erro pra frente
+        });
+
+        return dfd.promise(); // devolvo só o "lado de fora" do contrato
+        
     }
 
-    function consultarDadosReceita() {
-
-        consultarVinculoExistenteCnpj();
-
-        var qtdNuCPNJ = document.getElementById('txtNumeroCnpj').value.trim().length;
-
-        if (qtdNuCPNJ == 0) {
-            alert('Antes, informe o CNPJ!');
-            return false;
-        }
+    function buscarDadosReceita() {
 
         $("#txtRazaoSocialWsdl").val('');
 
@@ -438,7 +454,9 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                 var success = $.trim($('success', data).text()).length;
                 var txtSuccess = $.trim($('success', data).text());
                 if (success > 0) {
+
                     var message = $.trim($('msg', data).text());
+                    
                     if (txtSuccess == 'false') {
                         var procuracao = $.trim($('procuracao', data).text());
                         var url = $.trim($('url', data).text());
@@ -449,14 +467,15 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
                                 770,
                                 480,
                                 '', //options
-                                false); //modal
+                                true); //modal
+                            return false;
                         } else if (message.length > 0) {
                             alert(message);
                         }
                     }
 
                     document.getElementById('hdnNumeroCnpj').value = document.getElementById('txtNumeroCnpj').value;
-                    document.getElementById('frmCNPJ').submit();
+                    document.location = '<?= $strUrlFechar ?>';
 
                     return false;
 
@@ -528,6 +547,18 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
 
     }
 
+    function consultarDadosReceita() {
+
+        consultarVinculoExistenteCnpj().then(function (isValid) {
+            if (isValid) {
+                buscarDadosReceita();
+            }
+        }).fail(function (error) {
+            console.error('Erro ao consultar vinculos pré-existentes: ', error);
+        });
+
+    }
+
     function fechar() {
         var isAlteracao = document.getElementById('isAlteracaoResponsavelLegal');
 
@@ -573,15 +604,12 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         var divTipoConferenciaBotao = document.getElementById('divTipoConferenciaBotao');
         var selTipoConferencia = document.getElementById('selTipoConferencia');
         divTipoConferencia.style.display = 'none';
-        divTipoConferenciaBotao.style.display = 'block';
         selTipoConferencia.value = 'null';
 
         if (formatoDigitalizado.checked) {
             divTipoConferencia.style.display = 'block';
-            divTipoConferenciaBotao.style.display = 'none';
         } else {
             divTipoConferencia.style.display = 'none';
-            divTipoConferenciaBotao.style.display = 'block';
         }
     }
 
@@ -776,7 +804,6 @@ $strLinkVinculoUsuarioExternoNegado = SessaoSEIExterna::getInstance()->assinarLi
         return true;
 
     }
-
 
     function criarRegistroTabelaDocumento(arr) {
         var nomeArquivo = arr['nome'];

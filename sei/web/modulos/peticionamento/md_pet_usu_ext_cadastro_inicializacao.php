@@ -19,21 +19,32 @@ if( $_GET['acao'] != "md_pet_usu_ext_download"){
 
 	$arrComandos = array();
 
+	// Recupera a lista de extensões permitidas pelo core:
+	$objArquivoExtensaoDTO = new ArquivoExtensaoDTO();
+	$objArquivoExtensaoDTO->retNumIdArquivoExtensao();
+	$objArquivoExtensaoDTO->setBolExclusaoLogica(true);
+	$objArquivoExtensaoDTO->setStrSinAtivo('S');
+	$arrObjArquivoExtensaoDTO = (new ArquivoExtensaoRN())->listar($objArquivoExtensaoDTO);
+	$arrArquivoExtensoesCore = InfraArray::converterArrInfraDTO($arrObjArquivoExtensaoDTO, 'IdArquivoExtensao');
+
 	//pegar lista de extensoes parametrizadas do módulo
 	$dtoTamanhoArquivoPrincipal = new MdPetExtensoesArquivoDTO();
 	$dtoTamanhoArquivoPrincipal->retTodos();
 	$dtoTamanhoArquivoPrincipal->setStrSinAtivo('S');
 	$dtoTamanhoArquivoPrincipal->setStrSinPrincipal('S');
+    $dtoTamanhoArquivoPrincipal->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_IN);
 	
 	$dtoTamanhoArquivoEssencialComplementar = new MdPetExtensoesArquivoDTO();
 	$dtoTamanhoArquivoEssencialComplementar->retTodos();
 	$dtoTamanhoArquivoEssencialComplementar->setStrSinAtivo('S');
 	$dtoTamanhoArquivoEssencialComplementar->setStrSinPrincipal('N');
+    $dtoTamanhoArquivoEssencialComplementar->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_IN);
 	
 	$objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
 	
 	$arrDTOTamanhoArquivoPrincipal = $objMdPetExtensoesArquivoRN->listar( $dtoTamanhoArquivoPrincipal );
 	$arrDTOTamanhoArquivoEssencialComplementar = $objMdPetExtensoesArquivoRN->listar( $dtoTamanhoArquivoEssencialComplementar );
+
 	$arrExtPermitidas = array();
 	$arrExtPermitidasEssencialComplementar = array();
 	

@@ -52,7 +52,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
                     habilitaWs();
 
-                    $('div#tipoLogradouro, div#numeroLogradouro, div#tipoLogradouro, div#expiracacaoCache, #blcUsarIntegracaoWs, #blcTipoClienteWs, #blcParamsSuspensaoAutomatica').css('display', 'block');
+                    $('div#tipoLogradouro, div#numeroLogradouro, div#tipoLogradouro, div#expiracacaoCache, #blcUsarIntegracaoWs').css('display', 'block');
                     document.getElementById('lbltxtCodRFBSuspensaoAutomatica').innerText = 'Códigos de Situação Cadastral que identifica Pessoas Jurídicas Inativas na Receita:';
 
                     $('[id^="paramSaidaTable_"]').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
@@ -90,7 +90,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     $('div#expiracacaoCache, #blcUsarIntegracaoWs, #blcTipoClienteWs, #blcEnderecoWs').css('display', 'block');
 
                     $('[id^="paramSaidaTable_"], [id^="paramEntradaTable_"]').css('display', 'none');
-                    $('#paramEntradaTable_cpfPessoa, #paramEntradaTable_identificacaoOrigem').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
+                    $('#paramEntradaTable_identificacaoOrigem').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
                     $('#paramEntradaTable_cpfUsuario').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', false);
                     $('#paramSaidaTable_codSituacaoCadastral, #paramSaidaTable_descSituacaoCadastral').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
 
@@ -126,12 +126,14 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 staUtilizaWsCheck = true;
                 if (item.value == 'N') {
                     staUtilizaWs = false;
-                    $('#blcEnderecoWs, #blcOperacaoWs, #blcCacheWs, #fldParametrosCache, #blcTipoClienteWs, #blcEntradaWs, #blcSaidaWs, #blcParamsSuspensaoAutomatica').css('display', 'none');
+                    $('#blcEnderecoWs, #blcOperacaoWs, #blcCacheWs, #fldParametrosCache, #blcEntradaWs, #blcSaidaWs, #blcParamsSuspensaoAutomatica, #blcTipoClienteWs, #blcParamsSuspensaoAutomatica').css('display', 'none');
                     $('#blcTextoSemWs').css('display', 'block');
+                    $('#blcEntradaWs, #blcSaidaWs').find('select[data-obrigatorio="true"]').attr('required', false);
                 } else {
                     staUtilizaWs = true;
                     $('#blcTipoClienteWs, #blcEnderecoWs').css('display', 'block');
                     $('#blcTextoSemWs').css('display', 'none');
+                    $('#blcEntradaWs, #blcSaidaWs').find('select[data-obrigatorio="true"]').attr('required', true);
                 }
             }
         });
@@ -266,7 +268,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
         var versao = document.getElementById('selNuVersao').value;
 
         if (enderecoWsdl == '') {
-            alert('Preenche o campo Endereço WSDL.');
+            alert('Preencha o campo Endereço WSDL.');
             return false;
         }
 

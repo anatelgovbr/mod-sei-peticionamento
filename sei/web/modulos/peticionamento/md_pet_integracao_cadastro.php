@@ -259,7 +259,6 @@ try {
 
     $arrParametrosEntradaObrig = [
         'cnpjEmpresa',
-        'cpfPessoa',
         'periodoCache',
     ];
 
@@ -338,7 +337,7 @@ try {
     $strSumarioTabelaSaida = 'Tabela de configuração dos dados de Saida do web-service.';
     $strCaptionTabelaSaida = 'Dados de Saida';
 
-    $strResultadoParamSaida .= '<table width="100%" id="tableParametroSaida" class="infraTable" summary="' . $strSumarioTabelaSaida . '">' . "\n";
+    $strResultadoParamSaida = '<table width="100%" id="tableParametroSaida" class="infraTable" summary="' . $strSumarioTabelaSaida . '">' . "\n";
     $strResultadoParamSaida .= '<tr>';
 
     $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Campo de Destino no SEI &nbsp;</th>' . "\n";

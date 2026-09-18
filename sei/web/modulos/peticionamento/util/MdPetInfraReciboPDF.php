@@ -49,7 +49,7 @@
 
 //require_once("../fpdf/fpdf.php");
 
-class MdPetInfraReciboPDF extends InfraPDF {
+class MdPetInfraReciboPDF extends InfraEtiquetasPDF {
 
 	// Private properties
 	var $_Avery_Name	= '';		 		// Name of format
@@ -107,7 +107,7 @@ class MdPetInfraReciboPDF extends InfraPDF {
 			$Tformat = $this->_Avery_Labels[$format];
 		}
 		
-		parent::InfraPDF('P', $Tformat['metric'], $Tformat['paper-size']);
+		parent::__construct($format, $unit, $posX, $posY);
 		$this->_Set_Format($Tformat);
 		$this->Set_Font_Name('Arial',$Tformat['style']);
 		$this->SetMargins(5,5);
@@ -177,7 +177,7 @@ class MdPetInfraReciboPDF extends InfraPDF {
 			$Tformat = $this->_Avery_Labels[$format];
 		}
 
-		parent::InfraPDF('P', $Tformat['metric'], $Tformat['paper-size']);
+		parent::__construct($format, $unit, $posX, $posY);
 		$this->_Set_Format($Tformat);
 		$this->Set_Font_Name('Arial',$Tformat['style']);
 		$this->SetMargins(5,5); 

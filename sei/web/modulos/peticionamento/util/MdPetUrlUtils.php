@@ -6,7 +6,7 @@
  *
  */
 
-class MdPetUrlUtils extends InfraPDF {
+class MdPetUrlUtils {
 	
 	/**
 	 * Validate field "Url - Dispositivo Normativo".
@@ -19,12 +19,12 @@ class MdPetUrlUtils extends InfraPDF {
 	
 		// Se não mandou mensagem, utiliza a padrão
 		if ($msgTamanho==''){
-			$msgTamanho=='Url possui tamanho superior a 2083 caracteres.';
+			$msgTamanho='Url possui tamanho superior a 2083 caracteres.';
 		}
 
 		// Se não mandou mensagem, utiliza a padrão
 		if ($msgInvalida=='') {
-			$msgTamanho=='URL da Norma inválido.';
+			$msgInvalida='URL da Norma inválido.';
 		}		
 		
 		

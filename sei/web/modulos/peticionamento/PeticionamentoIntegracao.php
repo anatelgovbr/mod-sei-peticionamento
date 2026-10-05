@@ -34,7 +34,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.7';
+        return '4.6.8';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -375,11 +375,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO, 'IdTipoProcedimento', 'Nome');
                 break;
 
-            case 'md_pet_tipo_processo_auto_completar_lote':
-                $arrObjTipoProcessoDTO = TipoProcedimentoINT::autoCompletarTipoProcedimentoLote($_REQUEST);
-                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO, 'IdTipoProcedimento', 'Nome');
-                break;
-
             case 'md_pet_intercorrente_tipo_processo_auto_completar':
 
 				$escaparTiposProcesso = [];
@@ -475,7 +470,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             case 'md_pet_int_usuario_auto_completar_juridica_lote':
 
-                $arrObjContatoDTO = ( new MdPetIntimacaoRN())->filtrarContatosPesquisaIntimacaoJuridicaLote($_REQUEST);
+                $arrObjContatoDTO = ( new MdPetIntimacaoRN())->filtrarContatosPesquisaIntimacaoJuridicaLote(['txtUsuario' => (string) PaginaSEI::POST('txtUsuario')]);
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
                 break;
 
@@ -488,7 +483,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_int_usuario_auto_completar_lote':
-                $arrObjContatoDTO = (new MdPetIntimacaoRN())->filtrarContatosPesquisaIntimacaoLote($_REQUEST);
+                $arrObjContatoDTO = (new MdPetIntimacaoRN())->filtrarContatosPesquisaIntimacaoLote(['txtUsuario' => (string) PaginaSEI::POST('txtUsuario')]);
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjContatoDTO,'IdContato', 'Nome');
                 break;
 
@@ -635,8 +630,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
             return null;
         }
 
-        $cnpj = str_pad(InfraUtil::retirarFormatacao($valor), 14, '0', STR_PAD_LEFT);
-        if (!preg_match('/^\d{14}$/', $cnpj) || !InfraUtil::validarCnpj($cnpj)) {
+        $cnpj = InfraUtil::prepararCnpj($valor);
+        if (!preg_match('/^[0-9A-Z]{12}[0-9]{2}$/', $cnpj) || !InfraUtil::validarCnpj($cnpj)) {
             return null;
         }
 
@@ -703,7 +698,19 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_vinc_usu_ext_dados_usuario_externo_procuracao' :
-                $xml = MdPetVincUsuarioExternoINT::consultarDadosUsuarioExternoProcuracao($_POST);
+                $numIdContatoProcuracao = $this->normalizarInteiroPositivo(isset($_POST['hdnIdUsuarioProcuracao']) ? $_POST['hdnIdUsuarioProcuracao'] : null);
+                $numIdPessoaJuridica = $this->normalizarInteiroPositivo(isset($_POST['hdnSelPessoaJuridica']) ? $_POST['hdnSelPessoaJuridica'] : null);
+                $cpfNormalizado = $this->normalizarCpfCampo(isset($_POST['hdnCpfUsuarioProcuracao']) ? $_POST['hdnCpfUsuarioProcuracao'] : null);
+
+                if ($numIdContatoProcuracao === null || $numIdPessoaJuridica === null || $cpfNormalizado === null) {
+                    return '<dados><sucesso>0</sucesso></dados>';
+                }
+
+                $xml = MdPetVincUsuarioExternoINT::consultarDadosUsuarioExternoProcuracao(array(
+                    'hdnIdUsuarioProcuracao' => $numIdContatoProcuracao,
+                    'hdnSelPessoaJuridica' => $numIdPessoaJuridica,
+                    'hdnCpfUsuarioProcuracao' => $cpfNormalizado
+                ));
                 break;
             //Verificação de Existencia de Procuração
             case 'md_pet_vinc_usu_ext_dados_usuario_externo_validar_procuracao' :
@@ -4225,7 +4232,6 @@ class PeticionamentoIntegracao extends SeiIntegracao
 			
 			if ($objGrupoContatoDTO) {
 				return true;
-				break;
 			}
 		}
 		

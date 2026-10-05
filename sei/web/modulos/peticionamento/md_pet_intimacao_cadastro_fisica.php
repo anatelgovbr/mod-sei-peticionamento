@@ -2,7 +2,13 @@
 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
 $strTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', '0');
 
-$idDocumento = isset($_REQUEST['id_documento']) ? $_REQUEST['id_documento'] : $_POST['hdnIdDocumento'];
+$idDocumento = PaginaSEI::GET('id_documento') ?? PaginaSEI::POST('id_documento') ?? PaginaSEI::POST('hdnIdDocumento');
+$idDocumento = ctype_digit((string) $idDocumento) ? (string) $idDocumento : '';
+
+$idProcedimento = PaginaSEI::GET('id_procedimento') ?? PaginaSEI::POST('id_procedimento') ?? PaginaSEI::POST('hdnIdProcedimento');
+$idProcedimento = ctype_digit((string) $idProcedimento) ? (string) $idProcedimento : '';
+
+$bolIsAlterar = (bool) (PaginaSEI::GET('is_alterar') ?? PaginaSEI::POST('is_alterar'));
 $objDocumentoDTO = new DocumentoDTO();
 $objDocumentoDTO->retDblIdDocumento();
 $objDocumentoDTO->retDblIdProcedimento();
@@ -36,7 +42,6 @@ function printHelp($msg){
     echo '<img src="'.PaginaSEI::getInstance()->getDiretorioSvgGlobal().'/ajuda.svg" name="ajuda" id="imgAjudaUsuario" '.PaginaSEI::montarTitleTooltip($msg, 'Ajuda').' class="infraImgModulo"/>';
 }
 
-$idProcedimento             = array_key_exists('id_procedimento', $_REQUEST) ? $_REQUEST['id_procedimento'] : $_POST['hdnIdProcedimento'];
 $strLinkAjaxDestinatarios   = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_usuario_auto_completar_lote'); // Input Autocomplete
 $strLinkInteressados        = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=contato_selecionar&tipo_selecao=2&id_object=objLupaInteressados');
 $alertaLimite               = $objMdPetIntimacaoRN->getTextoAlertaLimiteIntimacoesLote();
@@ -144,7 +149,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
             <!-- Todo: Destinatários em Massa Remover -->
             <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="<?php echo $_REQUEST['is_alterar'] ? '' : 'display:none' ?>">
+                    <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="<?php echo $bolIsAlterar ? '' : 'display:none' ?>">
                         <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jurídicas disponíveis" class="infraTable">
                             <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Físicas disponíveis", count($arrIntimacoes)) ?></caption>
                             <tr>
@@ -156,7 +161,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                 <th class="infraTh" width="15%">Situação da Intimação</th>
                                 <th class="infraTh" width="10%">Ações</th>
                             </tr>
-                            <? if ($_REQUEST['is_alterar']) { ?>
+                            <? if ($bolIsAlterar) { ?>
                                 <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= implode(',', array_column($arrIntimacoes, 'Id')) ?>"/>
                                 <? foreach ($arrIntimacoes as $key => $intimacao) {
                                     $countInt++;
@@ -350,12 +355,12 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
 
 <select style="display: none" multiple="multiple" id="selMainIntimacao" name="selMainIntimacao" size="12"></select>
 <select style="display: none" multiple="multiple" id="selMainIntimacaoProtocoloDisponibilizado" name="selMainIntimacaoProtocoloDisponibilizado" size="12"></select>
-<input type="hidden" id="hdnIsAlterar" name="hdnIsAlterar" value="<?php echo $_REQUEST['is_alterar'] ? '1' : '0' ?>"/>
+<input type="hidden" id="hdnIsAlterar" name="hdnIsAlterar" value="<?php echo $bolIsAlterar ? '1' : '0' ?>"/>
 <input type="hidden" id="hdnCountIntimacoes" name="hdnCountIntimacoes" value="<?php echo $countInt ?>"/>
 <input type="hidden" id="hdnProtocolosDisponibilizados" name="hdnProtocolosDisponibilizados" value="<?= $_POST['hdnProtocolosDisponibilizados'] ?>"/>
 <input type="hidden" id="hdnIdDocumento" name="hdnIdDocumento" value="<?php echo $idDocumento ?>"/>
 <input type="hidden" id="hndIdDocumento" name="hndIdDocumento" value="<?= $idDocumento ?>"/>
-<input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= array_key_exists('id_procedimento', $_REQUEST) ? $_REQUEST['id_procedimento'] : $_POST['hdnIdProcedimento'] ?>"/>
+<input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= $idProcedimento ?>"/>
 <input type="hidden" id="hdnIdsDocAnexo" name="hdnIdsDocAnexo" value=""/>
 <input type="hidden" id="hdnIdsDocDisponivel" name="hdnIdsDocDisponivel" value=""/>
 

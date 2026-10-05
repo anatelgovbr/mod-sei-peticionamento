@@ -50,9 +50,29 @@ if (isset($_POST['hdnIdUsuario']) && $_POST['hdnIdUsuario'] != '') {
     $id = explode('+', $idsUsuarios);
 
     $idContatoVinc = $_POST['selPessoaJuridica'];
+
+    // a sessão precisa representar a Pessoa Jurídica Outorgante antes de qualquer escrita
+    if (!(new MdPetVincRepresentantRN())->podeRepresentarPessoaJuridica(array(
+        'IdContatoRepresentante' => $idContatoExterno,
+        'IdContatoPessoaJuridica' => $idContatoVinc))) {
+
+        LogSEI::getInstance()->gravar(sprintf(
+            'md_pet_vinc_usu_ext_pe_cadastrar: outorga negada. Usuario externo: %s | Contato da sessao: %s | Pessoa Juridica: %s | IP: %s',
+            SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
+            $idContatoExterno,
+            $idContatoVinc,
+            isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'desconhecido'
+        ), InfraLog::$INFORMACAO);
+
+        PaginaSEIExterna::getInstance()->processarExcecao(new InfraException('Acesso negado à Pessoa Jurídica Outorgante informada.'));
+        die;
+    }
+
     $dados['idContato'] = $idContatoVinc;
     $dados['chkDeclaracao'] = 'S';
     $dados['idContatoExterno'] = $idContatoExterno;
+    $dados['hdnIdContExterno'] = $idContatoExterno;
+    $_POST['hdnIdContExterno'] = $idContatoExterno;
 
     $mdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
     $mdPetVinUsuExtProcRN->gerarProcedimentoVinculoProcuracao($dados);
@@ -273,7 +293,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         <br/>
                         <select style="display: inherit"
                                 name="selPessoaJuridicaProcSimples"
-                                class="infraSelect form-control"
+                                class="infraSelect form-select"
                                 id="selPessoaJuridicaProcSimples"
                                 tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>">
                             <?php echo $selectPjOutorgante; ?>
@@ -331,7 +351,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                     <div class="input-group">
                         <select name="selUsuario" onchange="alterarHidden(this);"
                                 id="selUsuario"
-                                class="infraSelect form-control"
+                                class="infraSelect form-select"
                                 onchange=""
                                 tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
                         </select>
@@ -401,7 +421,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                             <!-- Combo Usuário Externo -->
                             <select name="selUsuarioSimples" onchange="alterarHidden(this);"
                                     id="selUsuarioSimples"
-                                    class="infraSelect form-control"
+                                    class="infraSelect form-select"
                                     onchange=""
                                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>">
                             </select>

@@ -224,19 +224,19 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         //trata mascara
         var cnpjUsuExt = infraTrim(obj.value);
         if (cnpjUsuExt != '') {
-            cnpjUsuExt = infraRetirarFormatacao(cnpjUsuExt);
+            cnpjUsuExt = infraRetirarFormatacao(cnpjUsuExt, false).toUpperCase();
             cnpjUsuExt = infraLPad(cnpjUsuExt, 14, '0');
             cnpjUsuExt = cnpjUsuExt.substring(0, 14);
             obj.value = cnpjUsuExt;
 
             //Coloca ponto entre o segundo e o terceiro dígitos
-            cnpjUsuExt = cnpjUsuExt.replace(/^(\d{2})(\d)/, "$1.$2");
+            cnpjUsuExt = cnpjUsuExt.replace(/^([0-9A-Z]{2})([0-9A-Z])/, "$1.$2");
             //Coloca ponto entre o quinto e o sexto dígitos
-            cnpjUsuExt = cnpjUsuExt.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+            cnpjUsuExt = cnpjUsuExt.replace(/^([0-9A-Z]{2})\.([0-9A-Z]{3})([0-9A-Z])/, "$1.$2.$3");
             //Coloca uma barra entre o oitavo e o nono dígitos
-            cnpjUsuExt = cnpjUsuExt.replace(/\.(\d{3})(\d)/, ".$1/$2");
+            cnpjUsuExt = cnpjUsuExt.replace(/\.([0-9A-Z]{3})([0-9A-Z])/, ".$1/$2");
             //Coloca um hífen depois do bloco de quatro dígitos
-            cnpjUsuExt = cnpjUsuExt.replace(/(\d{4})(\d)/, "$1-$2");
+            cnpjUsuExt = cnpjUsuExt.replace(/([0-9A-Z]{4})(\d{2})$/, "$1-$2");
 
             obj.value = cnpjUsuExt;
         }
@@ -376,7 +376,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         
         let self = $('#txtNumeroCnpj');
         let vinculosPreExistentes = JSON.parse($('#hdnVinculoPreExistente').val());
-        let novoVinculo = parseInt(self.val().replace(/\D/g,''));
+        let novoVinculo = infraRetirarFormatacao(self.val(), false).toUpperCase();
         let cpfUsuarioLogado = $("#hdnCpfUsuarioExternoLogado").val().replace(/\D/g, '');
         let message;
 

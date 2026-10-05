@@ -63,27 +63,26 @@ class MdPetProcessoRN extends InfraRN {
 
     protected function gerarProcedimentoConectado( $arrParametros )
     {
+        // O core so recusa o conteudo do documento principal gerado no editor depois de abrir o processo;
+        // validar antes evita processar tudo para depois desfazer. O caminho dos arquivos vem do formulario
+        // e precisa ficar restrito a pasta temporaria.
+        $this->validarConteudoDocumentoPrincipal( $arrParametros );
+        $this->validarLocalizacaoArquivosPeticionamento( $arrParametros );
+
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
 
-        // ETAPA 1 - criacao do processo. Possui transacao propria: se falhar aqui nada foi persistido.
-        $retorno = $this->gerarProcedimentoInterno($arrParametros);
+        // ETAPAS 1 e 2 - criacao do processo e inclusao dos documentos na mesma transacao: se qualquer
+        // documento falhar, o processo tambem e desfeito e nada fica persistido.
+        $retorno = $this->gerarProcedimentoComDocumentos($arrParametros);
 
-		$arrParametrosDocumentos = [
-			$retorno['parametrosEmail'][1], // UnidadeDTO
-			$retorno['parametrosEmail'][0], // ArrParametros
-			$retorno['parametrosEmail'][2], // ObjProcedimentoDTO
-			$retorno['parametrosEmail'][4], // Recibo
-			$retorno['idsContatos']
-		];
+		$arrParametrosDocumentos = $retorno['parametrosDocumentos'];
 
-		// A partir deste ponto o processo ja esta confirmado em banco (commit da etapa 1).
+		// A partir deste ponto o processo e os documentos ja estao confirmados em banco.
 		// Como cada etapa seguinte possui transacao propria, qualquer falha exige a remocao
 		// explicita do processo e de seus documentos (rollback manual).
 		$dblIdProcedimento = $arrParametrosDocumentos[2]->getDblIdProcedimento();
 
 		try {
-
-			$this->incluirDocumentosNoProcedimento( $arrParametrosDocumentos );
 
 			$reciboGerado = (new MdPetReciboRN())->montarRecibo( $retorno['parametrosEmail'] );
 
@@ -177,6 +176,79 @@ class MdPetProcessoRN extends InfraRN {
 
     }
 
+	/**
+	 * Aplica ao conteudo do documento principal gerado no editor a mesma validacao de tags que o
+	 * core executa na inclusao do documento (EditorRN::gerarVersaoInicial).
+	 *
+	 * @param array $arrParametros
+	 * @return void
+	 * @throws InfraException
+	 */
+	private function validarConteudoDocumentoPrincipal( array $arrParametros ): void {
+
+		$strConteudo = $arrParametros['docPrincipalConteudoHTML'] ?? null;
+
+		// documento principal do tipo formulario chega como array de campos e nao passa pelo editor
+		if( !is_string( $strConteudo ) || trim( $strConteudo ) === '' ){
+			return;
+		}
+
+		EditorRN::validarTagsCriticas( EditorINT::getArrImagensPermitidas(), $strConteudo );
+
+	}
+
+	/**
+	 * Garante que os arquivos do peticionamento apontam para a pasta temporaria do SEI, mesma regra de
+	 * AnexoRN::cadastrarRN0172. O nome do arquivo temporario vem do formulario e e usado na leitura
+	 * (processarStringAnexos) e na exclusao dos temporarios apos o peticionamento (md_pet_usu_ext_concluir.php).
+	 *
+	 * @param array $arrParametros
+	 * @return void
+	 * @throws InfraException
+	 */
+	private function validarLocalizacaoArquivosPeticionamento( array $arrParametros ): void {
+
+		foreach( [ 'hdnDocPrincipal', 'hdnDocEssencial', 'hdnDocComplementar' ] as $strCampo ){
+
+			if( empty( $arrParametros[$strCampo] ) ){
+				continue;
+			}
+
+			foreach( PaginaSEI::getInstance()->getArrItensTabelaDinamica( $arrParametros[$strCampo] ) as $anexo ){
+				if( realpath( dirname( DIR_SEI_TEMP . '/' . $anexo[8] ) ) !== realpath( DIR_SEI_TEMP ) ){
+					( new InfraException() )->lancarValidacao('Anexo ' . $anexo[0] . ' com localização inválida.');
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Cria o processo e inclui os documentos em uma unica transacao: falha em qualquer documento
+	 * desfaz tambem o processo, sem depender do rollback manual.
+	 *
+	 * @param array $arrParametros
+	 * @return array retorno de gerarProcedimentoInterno com a chave 'parametrosDocumentos'
+	 * @throws InfraException
+	 */
+	protected function gerarProcedimentoComDocumentosControlado( array $arrParametros ): array {
+
+		$retorno = $this->gerarProcedimentoInterno( $arrParametros );
+
+		$retorno['parametrosDocumentos'] = [
+			$retorno['parametrosEmail'][1], // UnidadeDTO
+			$retorno['parametrosEmail'][0], // ArrParametros
+			$retorno['parametrosEmail'][2], // ObjProcedimentoDTO
+			$retorno['parametrosEmail'][4], // Recibo
+			$retorno['idsContatos']
+		];
+
+		$this->incluirDocumentosNoProcedimento( $retorno['parametrosDocumentos'] );
+
+		return $retorno;
+
+	}
+
 	protected function incluirDocumentosNoProcedimentoControlado( $arrParametrosDocumentos ){
 
 		$unidadeDTO 		= $arrParametrosDocumentos[0];
@@ -248,9 +320,9 @@ class MdPetProcessoRN extends InfraRN {
 
 		} catch(Exception $e){
 
-			// Nao efetuar rollback aqui: este metodo executa dentro de uma transacao propria
-			// que sera cancelada pelo InfraRN. A remocao do processo e feita pelo chamador
-			// (gerarProcedimentoConectado), ja fora da transacao.
+			// Nao efetuar rollback aqui: este metodo executa na transacao de
+			// gerarProcedimentoComDocumentos, que sera cancelada pelo InfraRN e desfaz
+			// tambem a criacao do processo.
 			throw new InfraException('Erro incluindo documentos Peticionamento de Processo Novo do SEI.',$e);
 		
 		}

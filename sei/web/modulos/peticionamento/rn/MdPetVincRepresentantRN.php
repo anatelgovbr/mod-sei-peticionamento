@@ -389,9 +389,27 @@ class MdPetVincRepresentantRN extends InfraRN
             $dados['NomeProcurador'] = $responsavelLegal->getStrNomeProcurador();
             $dados['CpfProcurador'] = $responsavelLegal->getStrCpfProcurador();
 
+        } elseif (!$this->existeResponsavelLegalAtivoOuSuspenso(isset($_GET['idVinculo']) ? $_GET['idVinculo'] : $_POST['hdnIdVinculo'])) {
+
+            $dados['isAlteradoRespLegal'] = true;
+            $dados['NomeProcurador'] = '';
+            $dados['CpfProcurador'] = '';
+
         }
 
         return $dados;
+    }
+
+    private function existeResponsavelLegalAtivoOuSuspenso($idVinculo)
+    {
+        $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+        $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+        $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
+        $objMdPetVincRepresentantDTO->setStrTipoRepresentante(self::$PE_RESPONSAVEL_LEGAL);
+        $objMdPetVincRepresentantDTO->setStrStaEstado([self::$RP_ATIVO, self::$RP_SUSPENSO], InfraDTO::$OPER_IN);
+        $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
+
+        return $this->consultar($objMdPetVincRepresentantDTO) != null;
     }
 
     private function tratarFalhaProcessosAlteracaoResponsavelLegal($dados, Exception $e)
@@ -458,7 +476,9 @@ class MdPetVincRepresentantRN extends InfraRN
         $objMdPetVincRepresentantDTO->retTodos();
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+        $objMdPetVincRepresentantDTO->setStrStaEstado([MdPetVincRepresentantRN::$RP_ATIVO, MdPetVincRepresentantRN::$RP_SUSPENSO], InfraDTO::$OPER_IN);
+        $objMdPetVincRepresentantDTO->setOrdDthDataCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
+        $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
         $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
 
         $idRepresentante = $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
@@ -2398,6 +2418,46 @@ class MdPetVincRepresentantRN extends InfraRN
             }
         }
         return $arrObjMdPetVincRepresentante;
+    }
+
+    /**
+     * Indica se o contato informado representa ativamente a Pessoa Juridica outorgante.
+     *
+     * @param array $arrParam IdContatoRepresentante e IdContatoPessoaJuridica
+     * @return bool
+     */
+    public function podeRepresentarPessoaJuridicaConectado($arrParam)
+    {
+        try {
+
+            $numIdContatoRepresentante = isset($arrParam['IdContatoRepresentante']) ? $arrParam['IdContatoRepresentante'] : null;
+            $numIdContatoPessoaJuridica = isset($arrParam['IdContatoPessoaJuridica']) ? $arrParam['IdContatoPessoaJuridica'] : null;
+
+            if ($numIdContatoRepresentante === null || $numIdContatoRepresentante === ''
+                || $numIdContatoPessoaJuridica === null || $numIdContatoPessoaJuridica === '') {
+                return false;
+            }
+
+            $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
+            $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
+            $objMdPetVincRepresentantDTO->setNumIdContatoVinc($numIdContatoPessoaJuridica);
+            $objMdPetVincRepresentantDTO->setStrTpVinc(self::$NT_JURIDICA);
+            $objMdPetVincRepresentantDTO->setStrStaEstado(self::$RP_ATIVO);
+            $objMdPetVincRepresentantDTO->setStrTipoRepresentante([self::$PE_RESPONSAVEL_LEGAL, self::$PE_PROCURADOR_ESPECIAL], InfraDTO::$OPER_IN);
+            $objMdPetVincRepresentantDTO->adicionarCriterio(
+                ['IdContato', 'IdContatoOutorg'],
+                [InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL],
+                [$numIdContatoRepresentante, $numIdContatoRepresentante],
+                InfraDTO::$OPER_LOGICO_OR
+            );
+
+            $objMdPetVincRepresentantBD = new MdPetVincRepresentantBD($this->getObjInfraIBanco());
+
+            return $objMdPetVincRepresentantBD->contar($objMdPetVincRepresentantDTO) > 0;
+
+        } catch (Exception $e) {
+            throw new InfraException('Erro verificando representação da Pessoa Jurídica.', $e);
+        }
     }
 
     public function existeVinculoPorContato($idContato){

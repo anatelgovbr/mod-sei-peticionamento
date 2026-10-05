@@ -139,7 +139,7 @@ class MdPetIntegracaoRN extends InfraRN
         
         $xml = '<dados-pj>';
         $headers = apache_request_headers();
-        $cnpj = InfraUtil::retirarFormatacao($dados['txtNumeroCnpj']);
+        $cnpj = InfraUtil::prepararCnpj($dados['txtNumeroCnpj']);
         $dados['idUsuarioLogado'] = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
         $integra = new MdPetIntegracaoINT();
 

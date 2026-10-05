@@ -139,7 +139,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objMdPetVincRepresentantDTO->retStrCpfProcurador();
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+        $objMdPetVincRepresentantDTO->setStrStaEstado([MdPetVincRepresentantRN::$RP_ATIVO, MdPetVincRepresentantRN::$RP_SUSPENSO], InfraDTO::$OPER_IN);
+        $objMdPetVincRepresentantDTO->setOrdDthDataCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
+        $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
         $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->consultar($objMdPetVincRepresentantDTO);
 
         if (!is_null($objMdPetVincRepresentantDTO)) {
@@ -170,7 +172,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
      */
     protected function salvarDadosContatoCnpjControlado($post)
     {
-        $cnpj = InfraUtil::retirarFormatacao($post['txtNumeroCnpj']);
+        $cnpj = InfraUtil::prepararCnpj($post['txtNumeroCnpj']);
         $objMdPetVincTpProc = $this->getConfiguracaoVinculo();
 
         //Verifica se o CNPJ já é cadastrado como contato do módulo
@@ -1975,19 +1977,16 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
     public function _getIdRepresentanteAtivoPorVinculo($idVinculo)
     {
-        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
         $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
         $objMdPetVincRepresentantDTO->retNumIdMdPetVinculoRepresent();
         $objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+        $objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $objMdPetVincRepresentantDTO->setNumIdMdPetVinculo($idVinculo);
+        $objMdPetVincRepresentantDTO->setOrdDthDataCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
+        $objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
+        $objMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->consultar($objMdPetVincRepresentantDTO);
 
-        $objMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->consultar($objMdPetVincRepresentantDTO);
-
-        if ($objMdPetVincRepresentantDTO) {
-            return $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent();
-        } else {
-            return null;
-        }
+        return ($objMdPetVincRepresentantDTO) ? $objMdPetVincRepresentantDTO->getNumIdMdPetVinculoRepresent() : null;
     }
 
     protected function salvarDadosReciboPeticionamentoControlado($dados)

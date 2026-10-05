@@ -225,32 +225,104 @@ class MdPetVincUsuarioExternoINT extends InfraINT
 
     public static function consultarDadosUsuarioExternoProcuracao($dados)
     {
+        $numIdContato = isset($dados['hdnIdUsuarioProcuracao']) ? $dados['hdnIdUsuarioProcuracao'] : null;
+        $numIdContatoVinc = isset($dados['hdnSelPessoaJuridica']) ? $dados['hdnSelPessoaJuridica'] : null;
+        $dblCpf = isset($dados['hdnCpfUsuarioProcuracao']) ? $dados['hdnCpfUsuarioProcuracao'] : null;
 
-    	$xml = '';
+        if ($numIdContato === null || $numIdContatoVinc === null || $dblCpf === null) {
+            return self::_negarConsultaProcuracao('payload incompleto', $numIdContato, $numIdContatoVinc);
+        }
 
-        $idContato = $dados['hdnIdUsuarioProcuracao'];
+        $numIdContatoSessao = self::obterIdContatoSessaoExterna();
 
-        $objUsuarioRN = new UsuarioRN();
+        if ($numIdContatoSessao === null) {
+            return self::_negarConsultaProcuracao('sessao externa sem contato associado', $numIdContato, $numIdContatoVinc);
+        }
+
+        if ((string)$numIdContato === (string)$numIdContatoSessao) {
+            return self::_negarConsultaProcuracao('outorgado igual ao usuario da sessao', $numIdContato, $numIdContatoVinc);
+        }
+
+        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+
+        $bolRepresentaPessoaJuridica = $objMdPetVincRepresentantRN->podeRepresentarPessoaJuridica(array(
+            'IdContatoRepresentante' => $numIdContatoSessao,
+            'IdContatoPessoaJuridica' => $numIdContatoVinc
+        ));
+
+        if (!$bolRepresentaPessoaJuridica) {
+            return self::_negarConsultaProcuracao('sessao nao representa a Pessoa Juridica outorgante', $numIdContato, $numIdContatoVinc);
+        }
+
+        // o par identificador/CPF precisa conferir: impede enumeracao de contatos pelo identificador
         $objUsuarioDTO = new UsuarioDTO();
         $objUsuarioDTO->retNumIdContato();
         $objUsuarioDTO->retStrNomeContato();
-        $objUsuarioDTO->retStrSigla();
         $objUsuarioDTO->retDblCpfContato();
-        $objUsuarioDTO->setNumIdContato($idContato);
+        $objUsuarioDTO->setNumIdContato($numIdContato);
+        $objUsuarioDTO->setDblCpfContato(InfraUtil::retirarFormatacao($dblCpf));
+        $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
+        $objUsuarioDTO->setStrSinAtivo('S');
+        $objUsuarioDTO->setBolExclusaoLogica(false);
+        $objUsuarioDTO->setNumMaxRegistrosRetorno(1);
 
-        $arrContato = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+        $arrObjUsuarioDTO = (new UsuarioRN())->listarRN0490($objUsuarioDTO);
 
-        if (!is_null($arrContato)) {
-            $xml .= '<dados>';
-            $xml .= '<nu-id>' . $arrContato->getNumIdContato() . '</nu-id>';
-            $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($arrContato->getDblCpfContato()) . '</nu-cpf>';
-            $xml .= '<no-usuario>' . $arrContato->getStrNomeContato() . '</no-usuario>';
-            $xml .= '<sucesso>1</sucesso>';
-            $xml .= '</dados>';
+        if (empty($arrObjUsuarioDTO)) {
+            return self::_negarConsultaProcuracao('contato nao confere com o CPF informado ou nao e Usuario Externo liberado', $numIdContato, $numIdContatoVinc);
         }
+
+        if (self::_consultarExistenciaVinculo($dados)) {
+            return '<dados><sucesso>0</sucesso><mensagem>' . InfraString::formatarXML('Este Usuário Externo já possui vínculo ativo com a Pessoa Jurídica selecionada.') . '</mensagem></dados>';
+        }
+
+        $objUsuarioDTO = $arrObjUsuarioDTO[0];
+
+        $xml = '<dados>';
+        $xml .= '<nu-id>' . $objUsuarioDTO->getNumIdContato() . '</nu-id>';
+        $xml .= '<nu-cpf>' . InfraUtil::formatarCpf($objUsuarioDTO->getDblCpfContato()) . '</nu-cpf>';
+        $xml .= '<no-usuario>' . InfraString::formatarXML($objUsuarioDTO->getStrNomeContato()) . '</no-usuario>';
+        $xml .= '<sucesso>1</sucesso>';
+        $xml .= '</dados>';
 
         return $xml;
 
+    }
+
+    /**
+     * Identificador de contato do Usuário Externo autenticado na sessão.
+     *
+     * @return int|null
+     */
+    public static function obterIdContatoSessaoExterna()
+    {
+        $numIdUsuarioExterno = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
+
+        if ($numIdUsuarioExterno === null || $numIdUsuarioExterno === '') {
+            return null;
+        }
+
+        $objUsuarioDTO = new UsuarioDTO();
+        $objUsuarioDTO->retNumIdContato();
+        $objUsuarioDTO->setNumIdUsuario($numIdUsuarioExterno);
+
+        $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
+
+        return $objUsuarioDTO !== null ? $objUsuarioDTO->getNumIdContato() : null;
+    }
+
+    private static function _negarConsultaProcuracao($strMotivo, $numIdContato, $numIdContatoVinc)
+    {
+        LogSEI::getInstance()->gravar(sprintf(
+            'md_pet_vinc_usu_ext_dados_usuario_externo_procuracao: consulta negada. Motivo: %s | Usuario externo: %s | Contato solicitado: %s | Pessoa Juridica: %s | IP: %s',
+            $strMotivo,
+            SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
+            $numIdContato,
+            $numIdContatoVinc,
+            isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'desconhecido'
+        ), InfraLog::$INFORMACAO);
+
+        return '<dados><sucesso>0</sucesso></dados>';
     }
 
     public static function consultarDadosUsuarioExterno($dados)
@@ -355,6 +427,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $objUsuarioDTO->setBolExclusaoLogica(false);
         $objUsuarioDTO->setStrSinAtivo('S');
         $objUsuarioDTO->retStrNome();
+        $objUsuarioDTO->retStrSigla();
         $objUsuarioDTO->retDblCpfContato();
         $objUsuarioDTO->retNumIdContato();
         $objUsuarioDTO->retStrStaTipo();
@@ -369,7 +442,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
                 if ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO) {
                     $xml .= ' sucesso="1" ';
                     $xml .= ' id="' . $usuarioDTO->getNumIdContato() . '"';
-                    $xml .= ' descricao="' . $usuarioDTO->getStrNome() . '"';
+                    $xml .= ' descricao="' . $usuarioDTO->getStrNome() . ' (' . $usuarioDTO->getStrSigla() . ')"';
                     $xml .= ' complemento="' . $params['cpf'] . '"';
                 } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
                     $xml .= ' sucesso="false" ';

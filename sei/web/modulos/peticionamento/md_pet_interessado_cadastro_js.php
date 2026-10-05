@@ -21,8 +21,8 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         if (document.getElementById('hdnIdContextoContato') != null) {
             document.getElementById('hdnIdContextoContato').value = '';
         }
-        if (document.getElementById('txtPjVinculada') != null) {
-            document.getElementById('txtPjVinculada').value = '';
+        if (document.getElementById('txtPjVinculadaPJ') != null) {
+            document.getElementById('txtPjVinculadaPJ').value = '';
         }
     }
 
@@ -42,14 +42,14 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
     function ocultarComboPJVinculada() {
 
-        if (document.getElementById('pjVinculada') != null) {
-            document.getElementById('pjVinculada').style.display = 'none';
+        if (document.getElementById('pjVinculadaPJ') != null) {
+            document.getElementById('pjVinculadaPJ').style.display = 'none';
         }
 
-        if (document.getElementById('txtPjVinculada') != null) {
+        if (document.getElementById('txtPjVinculadaPJ') != null) {
 
-            document.getElementById('txtPjVinculada').style.display = 'none';
-            document.getElementById('txtPjVinculada').value = '';
+            document.getElementById('txtPjVinculadaPJ').style.display = 'none';
+            document.getElementById('txtPjVinculadaPJ').value = '';
 
         }
 
@@ -57,9 +57,9 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
     function mostrarComboPJVinculada() {
 
-        if (document.getElementById('pjVinculada') != null) {
-            document.getElementById('pjVinculada').style.display = '';
-            document.getElementById('txtPjVinculada').style.display = '';
+        if (document.getElementById('pjVinculadaPJ') != null) {
+            document.getElementById('pjVinculadaPJ').style.display = '';
+            document.getElementById('txtPjVinculadaPJ').style.display = '';
         }
     }
 
@@ -113,13 +113,13 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         document.getElementById('lblrdPF2').style.display = 'none';
         <?php } ?>
 
-        if (document.getElementById('pjVinculada') != null) {
-            document.getElementById('pjVinculada').style.display = 'none';
+        if (document.getElementById('pjVinculadaPJ') != null) {
+            document.getElementById('pjVinculadaPJ').style.display = 'none';
         }
 
-        if (document.getElementById('txtPjVinculada') != null) {
-            document.getElementById('txtPjVinculada').style.display = 'none';
-            document.getElementById('txtPjVinculada').value = '';
+        if (document.getElementById('txtPjVinculadaPJ') != null) {
+            document.getElementById('txtPjVinculadaPJ').style.display = 'none';
+            document.getElementById('txtPjVinculadaPJ').value = '';
         }
 
         <?php if( !isset($_GET['cnpj']) ) { ?>
@@ -203,11 +203,11 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
     function inicializar() {
 
         var hdnIdContexto = document.getElementById('hdnIdContextoContato');
-        var txtPjVinculada = document.getElementById('txtPjVinculada');
+        var txtPjVinculada = document.getElementById('txtPjVinculadaPJ');
 
         if (txtPjVinculada != null && hdnIdContexto != null) {
 
-            objAutoCompletarContexto = new infraAjaxAutoCompletar('hdnIdContextoContato', 'txtPjVinculada', '<?=$strLinkAjaxContatos?>');
+            objAutoCompletarContexto = new infraAjaxAutoCompletar('hdnIdContextoContato', 'txtPjVinculadaPJ', '<?=$strLinkAjaxContatos?>');
             objAutoCompletarContexto.limparCampo = true;
 
             objAutoCompletarContexto.prepararExecucao = function () {
@@ -216,7 +216,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
                     alert('Informe Tipo de Interessado');
                     return false;
                 } else {
-                    return 'id_tipo_contexto_contato=' + document.getElementById('tipoInteressado').value + '&palavras_pesquisa=' + document.getElementById('txtPjVinculada').value;
+                    return 'id_tipo_contexto_contato=' + document.getElementById('tipoInteressado').value + '&palavras_pesquisa=' + document.getElementById('txtPjVinculadaPJ').value;
                 }
             };
 
@@ -224,7 +224,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
                 if (id != '') {
                     document.getElementById('hdnIdContextoContato').value = id;
-                    document.getElementById('txtPjVinculada').value = descricao;
+                    document.getElementById('txtPjVinculadaPJ').value = descricao;
                 }
 
             };
@@ -272,12 +272,12 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         document.getElementById("txtCPF").value = "<?= InfraUtil::formatarCpf($_POST['txtCPF']) ?>";
         <?php } ?>
 
-        <?php if( isset($_POST['hdnIdContextoContato']) && $_POST['txtPjVinculada'] != "" && isset($_GET['cpf']) ) { ?>
+        <?php if( isset($_POST['hdnIdContextoContato']) && $_POST['txtPjVinculadaPJ'] != "" && isset($_GET['cpf']) ) { ?>
 
         //rdPF2 com vinculo
         document.getElementById("rdPF2").checked = 'checked';
         document.getElementById("rdPF2").click();
-        document.getElementById("txtPjVinculada").value = '<?php echo $_POST['txtPjVinculada']; ?>';
+        document.getElementById("txtPjVinculadaPJ").value = '<?php echo $_POST['txtPjVinculadaPJ']; ?>';
 
         <?php } else if( isset($_GET['cpf']) ) { ?>
 
@@ -360,9 +360,9 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
 
         <?php if( isset($_GET['edicaoExibir']) ) { ?>
 
-        if (document.getElementById('txtPjVinculada') != null) {
-            document.getElementById('txtPjVinculada').disabled = true;
-            document.getElementById('txtPjVinculada').disabled = 'disabled';
+        if (document.getElementById('txtPjVinculadaPJ') != null) {
+            document.getElementById('txtPjVinculadaPJ').disabled = true;
+            document.getElementById('txtPjVinculadaPJ').disabled = 'disabled';
         }
 
         document.getElementById('tipoInteressado').disabled = true;
@@ -457,12 +457,12 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         }
 
         //validar pj vinculada (caso exista)
-        var pjVinculada = document.getElementById('txtPjVinculada') != null ? document.getElementById('txtPjVinculada').value : '';
+        var pjVinculada = document.getElementById('txtPjVinculadaPJ') != null ? document.getElementById('txtPjVinculadaPJ').value : '';
         var idContextoAjax = document.getElementById('hdnIdContextoContato');
 
         if (interessado1 == 'pf' && interessado2 == '1' && (pjVinculada == '' || idContextoAjax == null || idContextoAjax.value == '')) {
-            alert('Informe a Razão Social da Pessoa Jurídica vinculada.');
-            document.getElementById('txtPjVinculada').focus();
+            alert('Informe a Razão Social da Pessoa Jurídica vinculada. Interessado1: ' + interessado1 + '. Interessado2: ' + interessado2 + '. Razão Social: ' + document.getElementById('txtPjVinculadaPJ').value + '. IdContextoAjax: ' + idContextoAjax);
+            document.getElementById('txtPjVinculadaPJ').focus();
             return;
         }
 

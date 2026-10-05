@@ -85,7 +85,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
 <script>
 txtNumeroCnpj = window.opener.document.getElementById('txtNumeroCnpj').value;
 txtRazaoSocial = window.opener.document.getElementById('txtRazaoSocial').value;
-document.getElementById('lblPessoaJuridica').innerHTML = txtRazaoSocial + ' (CNPJ: ' + txtNumeroCnpj + ')'; 
+document.getElementById('lblPessoaJuridica').textContent = txtRazaoSocial + ' (CNPJ: ' + txtNumeroCnpj + ')'; 
 </script>
 <?php
 //PaginaSEIExterna::getInstance()->montarAreaDebug();

@@ -248,10 +248,16 @@ try {
 
 	          }else{
 
-                  $ultimoVinculo = end($arrObjMdPetVinculoDTO);
+                  // Se o CPF informado for o do Responsavel Legal suspenso nao deixa se vincular
+                  $objMdPetVincRepresentantSuspensoDTO = new MdPetVincRepresentantDTO();
+                  $objMdPetVincRepresentantSuspensoDTO->setNumIdMdPetVinculo($dados['hdnIdVinculo']);
+                  $objMdPetVincRepresentantSuspensoDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
+                  $objMdPetVincRepresentantSuspensoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_SUSPENSO);
+                  $objMdPetVincRepresentantSuspensoDTO->setStrCpfProcurador(InfraUtil::retirarFormatacao($dados['txtNumeroCpfResponsavel']));
+                  $objMdPetVincRepresentantSuspensoDTO->retNumIdMdPetVinculoRepresent();
+                  $objMdPetVincRepresentantSuspensoDTO->setNumMaxRegistrosRetorno(1);
 
-                  // Se o último vinculado foi ele e foi suspenso nao deixa se vincular
-                  if($ultimoVinculo->getNumIdContato() == $objUsuarioLogado->getNumIdContato() && $ultimoVinculo->getStrStaEstado() == MdPetVincRepresentantRN::$RP_SUSPENSO){
+                  if($objMdPetVinculoRepresentRN->consultar($objMdPetVincRepresentantSuspensoDTO) != null){
                       echo '<p style="font:13px sans-serif;padding:.75rem 1.25rem;color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:.25rem">Não é possível realizar o processo de Alteração de Responsável Legal para este Usuário Externo. Procure a administração do SEI do órgão para maiores informações.</p>';
                       echo "<script>";
                       echo "setTimeout(function(){ parent.infraFecharJanelaModal(); }, 5000);";

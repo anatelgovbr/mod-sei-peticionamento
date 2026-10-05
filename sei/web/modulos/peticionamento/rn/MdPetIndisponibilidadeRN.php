@@ -14,6 +14,8 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 	public static $SIM = 'S';
 	public static $NAO = 'N';
 	public static $ID_TAREFA_PRORROGACAO = 'MD_PET_INTIMACAO_PRORROGACAO_AUTOMATICA_PRAZO_EXT';
+	//Chave seletora do log de erro de upload: true grava GET e FILES integrais, false grava apenas o resumo minimizado
+	public static $LOG_UPLOAD_DADOS_COMPLETOS = false;
 
 	public function __construct() {
 		parent::__construct ();
@@ -699,14 +701,21 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 		
 				$strTextoLog .= "\nServidor: ". $_SERVER['SERVER_NAME'] . " (".$_SERVER['SERVER_ADDR'].")";
 				$strTextoLog .= "\nErro: ".substr($ret,5);
-				$strTextoLog .= "\nNavegador: ". $_SERVER['HTTP_USER_AGENT'];
-				
-				if (is_array($_GET)){
-					$strTextoLog .= "\nGET:\n".print_r($_GET,true);
-				}
-		
-				if (is_array($_FILES)) {
-					$strTextoLog .= "\nFILES:\n" . print_r($_FILES, true);
+				$strTextoLog .= "\nCampo: ".$this->_higienizarValorLog($strCampoArquivo);
+
+				if (self::$LOG_UPLOAD_DADOS_COMPLETOS){
+
+					$strTextoLog .= "\nNavegador: ". $_SERVER['HTTP_USER_AGENT'];
+
+					if (is_array($_GET)){
+						$strTextoLog .= "\nGET:\n".print_r($_GET,true);
+					}
+
+					if (is_array($_FILES)) {
+						$strTextoLog .= "\nFILES:\n" . print_r($_FILES, true);
+					}
+				}else{
+					$strTextoLog .= $this->_montarResumoRequisicaoUpload($strCampoArquivo);
 				}
 		
 				try{
@@ -719,6 +728,75 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 			echo $ret;
 			
 		}
+
+	/**
+	 * Monta o resumo minimizado da requisição para o log de erro de upload.
+	 *
+	 * @param string $strCampoArquivo nome do campo de arquivo processado
+	 * @return string trecho de log sem dump integral de GET e FILES
+	 */
+	private function _montarResumoRequisicaoUpload($strCampoArquivo){
+
+		$arrChavesGetPermitidas = ['acao', 'acao_origem'];
+		$strResumo = '';
+
+		if (is_array($_GET)){
+
+			$arrResumoGet = [];
+
+			foreach ($_GET as $strChave => $mixValor){
+
+				$strItemGet = $this->_higienizarValorLog($strChave);
+
+				if (in_array($strChave, $arrChavesGetPermitidas, true) && !is_array($mixValor)){
+					$strItemGet .= '='.$this->_higienizarValorLog($mixValor);
+				}
+
+				$arrResumoGet[] = $strItemGet;
+			}
+
+			$strResumo .= "\nGET (chaves): ".(count($arrResumoGet) > 0 ? implode(', ', $arrResumoGet) : 'nenhuma');
+		}
+
+		if (is_array($_FILES)){
+
+			$strResumo .= "\nFILES (campos): ".count($_FILES);
+
+			if (isset($_FILES[$strCampoArquivo]) && is_array($_FILES[$strCampoArquivo])){
+
+				$arrArquivo = $_FILES[$strCampoArquivo];
+				$strExtensao = 'não identificada';
+
+				if (isset($arrArquivo['name']) && !is_array($arrArquivo['name'])){
+
+					$arrStrNomeLog = explode('.', $arrArquivo['name']);
+
+					if (count($arrStrNomeLog) > 1){
+						$strExtensaoArquivo = $this->_higienizarValorLog(end($arrStrNomeLog));
+						if ($strExtensaoArquivo !== ''){
+							$strExtensao = $strExtensaoArquivo;
+						}
+					}
+				}
+
+				$strResumo .= "\nArquivo: extensão=".$strExtensao
+					.', tamanho='.(isset($arrArquivo['size']) && !is_array($arrArquivo['size']) ? (int)$arrArquivo['size'] : 0)
+					.' bytes, código de erro='.(isset($arrArquivo['error']) && !is_array($arrArquivo['error']) ? (int)$arrArquivo['error'] : 'n/d');
+			}
+		}
+
+		return $strResumo;
+	}
+
+	/**
+	 * Remove caracteres fora de [A-Za-z0-9_-] e limita o tamanho, evitando injeção de conteúdo no log.
+	 *
+	 * @param string $strValor valor bruto vindo da requisição
+	 * @return string
+	 */
+	private function _higienizarValorLog($strValor){
+		return substr(preg_replace('/[^A-Za-z0-9_\-]/', '', (string)$strValor), 0, 60);
+	}
 
 	protected function buscarDadosDocumentoConectado($idDocumento){
 		$objDocumentoDTO = new DocumentoDTO();

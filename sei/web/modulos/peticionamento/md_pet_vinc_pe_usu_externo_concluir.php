@@ -53,6 +53,34 @@ try {
               $objMdPetProcessoRN->validarSenha($arrParam);
               $params['pwdsenhaSEI'] = '***********';
               $_POST['pwdsenhaSEI'] = '***********';
+
+              // outorgante e vínculo com a Pessoa Jurídica saem da sessão, nunca do POST
+              $numIdContatoExternoSessao = MdPetVincUsuarioExternoINT::obterIdContatoSessaoExterna();
+
+              if ($numIdContatoExternoSessao === null) {
+                  throw new InfraException('Sessão de Usuário Externo inválida.');
+              }
+
+              $numIdContatoOutorgante = $_POST['selTipoProcuracao'] == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL
+                  ? (isset($_POST['selPessoaJuridica']) ? $_POST['selPessoaJuridica'] : null)
+                  : (isset($_POST['hdnSelPJSimples']) ? $_POST['hdnSelPJSimples'] : null);
+
+              if ($numIdContatoOutorgante !== null && $numIdContatoOutorgante !== ''
+                  && !(new MdPetVincRepresentantRN())->podeRepresentarPessoaJuridica(array(
+                      'IdContatoRepresentante' => $numIdContatoExternoSessao,
+                      'IdContatoPessoaJuridica' => $numIdContatoOutorgante))) {
+
+                  LogSEI::getInstance()->gravar(sprintf(
+                      'peticionamento_usuario_externo_vinc_pe: outorga negada. Usuario externo: %s | Contato da sessao: %s | Pessoa Juridica: %s | IP: %s',
+                      SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
+                      $numIdContatoExternoSessao,
+                      $numIdContatoOutorgante,
+                      isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'desconhecido'
+                  ), InfraLog::$INFORMACAO);
+
+                  throw new InfraException('Acesso negado à Pessoa Jurídica Outorgante informada.');
+              }
+
               $dados= $_POST;
               $contatoRN = new ContatoRN();
               $contatoDTO =  new ContatoDTO();
@@ -80,7 +108,9 @@ try {
              }
               $dados['idContato']= $idContatoVinc;
               $dados['chkDeclaracao'] = 'S';
-              $dados['idContatoExterno']= $_POST['hdnIdContExterno'];
+              $dados['idContatoExterno']= $numIdContatoExternoSessao;
+              $dados['hdnIdContExterno'] = $numIdContatoExternoSessao;
+              $_POST['hdnIdContExterno'] = $numIdContatoExternoSessao;
 
               $mdPetVinUsuExtProcRN = new MdPetVinUsuExtProcRN();
               $mdPetVinUsuExtProcRN->gerarProcedimentoVinculoProcuracao($dados);

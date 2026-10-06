@@ -437,13 +437,23 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $arrObjUsuarioDTO = $objUsuarioRN->listarRN0490($objUsuarioDTO);
 
         if (count($arrObjUsuarioDTO) > 0) {
+
+            // usuario ativo pode ter contato desativado, que a geracao da procuracao nao localiza
+            $objContatoDTO = new ContatoDTO();
+            $objContatoDTO->retNumIdContato();
+            $objContatoDTO->setNumIdContato(InfraArray::converterArrInfraDTO($arrObjUsuarioDTO, 'IdContato'), InfraDTO::$OPER_IN);
+            $arrIdContatoAtivo = InfraArray::converterArrInfraDTO((new ContatoRN())->listarRN0325($objContatoDTO), 'IdContato');
+
             foreach ($arrObjUsuarioDTO as $usuarioDTO) {
                 $xml .= '<contato';
-                if ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO) {
+                if ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO && in_array($usuarioDTO->getNumIdContato(), $arrIdContatoAtivo)) {
                     $xml .= ' sucesso="1" ';
                     $xml .= ' id="' . $usuarioDTO->getNumIdContato() . '"';
                     $xml .= ' descricao="' . $usuarioDTO->getStrNome() . ' (' . $usuarioDTO->getStrSigla() . ')"';
                     $xml .= ' complemento="' . $params['cpf'] . '"';
+                } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO) {
+                    $xml .= ' sucesso="false" ';
+                    $xml .= ' mensagem="Usuário Externo com cadastro de contato desativado. Faça contato com a administração do SEI do órgão." ';
                 } elseif ($usuarioDTO->getStrStaTipo() == UsuarioRN::$TU_EXTERNO_PENDENTE) {
                     $xml .= ' sucesso="false" ';
                     $xml .= ' mensagem="Usuário Externo com cadastro pendente de liberação. Faça contato com a administração do SEI do Órgão." ';

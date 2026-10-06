@@ -1528,6 +1528,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         $contatoRN = new ContatoRN();
         $Outorgante = $contatoRN->consultarRN0324($contatoDTO);
+
+        if ($Outorgante == null) {
+            (new InfraException())->lancarValidacao('Usuário Externo Outorgado não localizado ou com cadastro de contato desativado. Faça contato com a administração do SEI do órgão.');
+        }
+
         $dadosProcuracacao['Outorgado']['dadosOutorgado'] = $Outorgante;
 
         // Recuperando data e Hora atual

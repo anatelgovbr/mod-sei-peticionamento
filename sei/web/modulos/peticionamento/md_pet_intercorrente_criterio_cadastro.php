@@ -6,6 +6,7 @@ try {
     session_start();
 
     SessaoSEI::getInstance()->validarLink();
+    SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
     require_once 'md_pet_intercorrente_criterio_cadastro_inicializar.php';
 
@@ -50,19 +51,22 @@ try {
     $objInfraParametroDTO = $objMdPetParametroRN->consultar($objInfraParametroDTO);
     $valorParametroHipoteseLegal = $objInfraParametroDTO->getStrValor();
 
+    $numIdCriterioIntercorrentePeticionamento = PaginaSEI::GET('id_criterio_intercorrente_peticionamento');
+    $numIdCriterioIntercorrentePeticionamento = ctype_digit((string) $numIdCriterioIntercorrentePeticionamento) ? (int) $numIdCriterioIntercorrentePeticionamento : null;
+
     if (in_array($_GET['acao'], array('md_pet_intercorrente_criterio_cadastrar', 'md_pet_intercorrente_criterio_consultar', 'md_pet_intercorrente_criterio_alterar'))) {
 
-        if (isset($_REQUEST['id_criterio_intercorrente_peticionamento']) || isset($_POST['hdnIdTipoProcesso'])) {
-            if (isset($_REQUEST['id_criterio_intercorrente_peticionamento'])) {
+        if ($numIdCriterioIntercorrentePeticionamento !== null || isset($_POST['hdnIdTipoProcesso'])) {
+            if ($numIdCriterioIntercorrentePeticionamento !== null) {
                 $alterar = true;
                 $objMdPetCriterioDTO = new MdPetCriterioDTO();
-                $objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento($_GET['id_criterio_intercorrente_peticionamento']);
+                $objMdPetCriterioDTO->setNumIdCriterioIntercorrentePeticionamento($numIdCriterioIntercorrentePeticionamento);
                 $objMdPetCriterioDTO->retStrNomeProcesso();
                 $objMdPetCriterioDTO->retTodos(true);
 
                 $objMdPetCriterioRN = new MdPetCriterioRN();
                 $objMdPetCriterioDTO = $objMdPetCriterioRN->consultar($objMdPetCriterioDTO);
-                $IdCriterioIntercorrentePeticionamento = $_REQUEST['id_criterio_intercorrente_peticionamento'];
+                $IdCriterioIntercorrentePeticionamento = $numIdCriterioIntercorrentePeticionamento;
                 $nomeTipoProcesso = $objMdPetCriterioDTO->getStrNomeProcesso();
                 $idTipoProcesso = $objMdPetCriterioDTO->getNumIdTipoProcedimento();
             } else {

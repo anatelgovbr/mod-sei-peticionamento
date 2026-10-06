@@ -21,6 +21,12 @@ try {
   SessaoSEIExterna::getInstance()->validarLink();
   SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
 
+  $strIdProcedimento = PaginaSEIExterna::GET('id_procedimento') ?? PaginaSEIExterna::POST('id_procedimento');
+  $strIdProcedimento = ctype_digit((string) $strIdProcedimento) ? (string) $strIdProcedimento : '';
+
+  $strIdTipoProcedimento = PaginaSEIExterna::GET('id_tipo_procedimento') ?? PaginaSEIExterna::POST('id_tipo_procedimento');
+  $strIdTipoProcedimento = ctype_digit((string) $strIdTipoProcedimento) ? (string) $strIdTipoProcedimento : '';
+
   //=====================================================
   //INICIO - VARIAVEIS PRINCIPAIS E LISTAS DA PAGINA
   //=====================================================
@@ -180,7 +186,7 @@ $arrComandos[] = '<button tabindex="-1" type="button" accesskey="a" name="Assina
 $arrComandos[] = '<button tabindex="-1" type="button" accesskey="c" name="btnFechar" value="Fechar" onclick="infraFecharJanelaModal()" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 //url para assinar o intercorrente
-$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intercorrente_usu_ext_concluir&id_procedimento='.$_REQUEST['id_procedimento'].'&id_tipo_procedimento='.$_REQUEST['id_tipo_procedimento'].'&acao_origem='.$_GET['acao']);
+$urlAssinada = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_intercorrente_usu_ext_concluir&id_procedimento='.$strIdProcedimento.'&id_tipo_procedimento='.$strIdTipoProcedimento.'&acao_origem='.$_GET['acao']);
 
 //url para assinar o resposta
 $urlAssinadaRespostaIntimacao = SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_responder_intimacao_usu_ext_concluir&acao_origem='.$_GET['acao']);
@@ -267,8 +273,8 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
             <?php endif; ?>
                     
         </div>
-        <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $_REQUEST['id_tipo_procedimento'] ?>" />
-        <input type="hidden" id="id_procedimento" name="id_procedimento" value="<?= $_REQUEST['id_procedimento'] ?>" />
+        <input type="hidden" id="id_tipo_procedimento" name="id_tipo_procedimento" value="<?= $strIdTipoProcedimento ?>" />
+        <input type="hidden" id="id_procedimento" name="id_procedimento" value="<?= $strIdProcedimento ?>" />
 
         <?php
         //campos hidden especificos de uso do resposta a intimacao

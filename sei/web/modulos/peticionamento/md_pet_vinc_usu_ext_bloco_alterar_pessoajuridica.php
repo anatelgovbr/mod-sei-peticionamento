@@ -25,7 +25,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
                 CNPJ:
             </label>
             <input type="text" class="infraText" id="txtNumeroCnpj" name="txtNumeroCnpj" maxlength="18" readonly="readonly"
-                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getStrCNPJ()) : null; ?>"
+                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? PaginaSEI::tratarHTML(InfraUtil::formatarCnpj($arrDadosPessoaJuridicaVinculo->getStrCNPJ())) : null; ?>"
                    onkeypress="return infraMascaraCnpj(this,event);"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
@@ -37,7 +37,7 @@ $readOnlyConsultar = $stConsultar ? 'readonly="readonly"' : null;
             </label>
             <input type="text" class="infraText blocInformacaoPj" id="txtRazaoSocialAlt" name="txtRazaoSocialAlt" readonly="readonly"
                 <?php echo $readOnly ?>
-                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? $arrDadosPessoaJuridicaVinculo->getStrRazaoSocialNomeVinc() : null; ?>"
+                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? PaginaSEI::tratarHTML($arrDadosPessoaJuridicaVinculo->getStrRazaoSocialNomeVinc()) : null; ?>"
                    onkeypress="return infraMascaraCnpj(this,event);"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>

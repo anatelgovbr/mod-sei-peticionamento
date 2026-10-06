@@ -221,11 +221,16 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
             url: '<?php echo $strLinkConsultaDadosUsuario?>',
             data: {
                 'hdnIdUsuarioProcuracao': hdnIdUsuarioProcuracao,
-                'hdnSelPessoaJuridica': hdnSelPessoaJuridica
+                'hdnSelPessoaJuridica': hdnSelPessoaJuridica,
+                'hdnCpfUsuarioProcuracao': nuCpf
             },
             success: function (data) {
 
-                var valido = $(data).find('sucesso').text();
+                if ($(data).find('sucesso').text() != '1') {
+                    var mensagem = $(data).find('mensagem').text();
+                    alert(mensagem != '' ? mensagem : 'Não foi possível validar o Usuário Externo informado para esta Pessoa Jurídica. Refaça a consulta pelo CPF.');
+                    return false;
+                }
 
                 var dados = [];
                 $('dados', data).children().each(function () {

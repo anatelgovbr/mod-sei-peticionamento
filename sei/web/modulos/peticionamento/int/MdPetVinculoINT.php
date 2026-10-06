@@ -117,7 +117,7 @@ class MdPetVinculoINT extends InfraINT {
 
       CaptchaSEI::getInstance()->configurarCaptcha("Cadastro de Responsável Legal de Pessoa Jurídica");
       
-      $cnpj = InfraUtil::retirarFormatacao($dados['txtNumeroCnpj']);
+      $cnpj = InfraUtil::prepararCnpj($dados['txtNumeroCnpj']);
       $idUsuarioLogado = isset($dados['idUsuarioLogado']) ? $dados['idUsuarioLogado'] : SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
 
       $xml = "";
@@ -230,7 +230,7 @@ class MdPetVinculoINT extends InfraINT {
         $dtoMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
         $dtoMdPetVincRepresentantDTO->setStrTpVinc(MdPetVincRepresentantRN::$NT_JURIDICA);
         $dtoMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-        $dtoMdPetVincRepresentantDTO->setStrIdxContato('%' . InfraUtil::retirarFormatacao($dados['cnpjNovaVinculacao']) . '%', InfraDTO::$OPER_LIKE);
+        $dtoMdPetVincRepresentantDTO->setStrIdxContato('%' . InfraString::prepararIndexacao(InfraUtil::prepararCnpj($dados['cnpjNovaVinculacao'])) . '%', InfraDTO::$OPER_LIKE);
         $dtoMdPetVincRepresentantDTO->setDistinct(true);
         $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listar($dtoMdPetVincRepresentantDTO);
         

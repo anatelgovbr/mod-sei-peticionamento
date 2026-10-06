@@ -23,7 +23,7 @@
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtRazaoSocial" name="txtRazaoSocial" maxlength="250" onkeypress="return infraMascaraTexto(this,event,250);"
                     <?php echo $readOnly ?>
-                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? $arrDadosPessoaJuridicaVinculo->getStrRazaoSocialNomeVinc() : null; ?>"
+                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? PaginaSEI::tratarHTML($arrDadosPessoaJuridicaVinculo->getStrRazaoSocialNomeVinc()) : null; ?>"
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
@@ -34,7 +34,7 @@
                 </label>
                 <input type="text" class="infraText blocInformacaoPj" id="txtNomeResponsavelLegal" name="txtNomeResponsavelLegal" maxlength="250"
                     readonly
-                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? $arrDadosPessoaJuridicaVinculo->getStrNomeContatoRepresentante() : null; ?>"
+                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? PaginaSEI::tratarHTML($arrDadosPessoaJuridicaVinculo->getStrNomeContatoRepresentante()) : null; ?>"
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
@@ -45,7 +45,7 @@
             </label>
             <input type="text" class="infraText blocInformacaoPj" id="txtNumeroCpfResponsavel" name="txtNumeroCpfResponsavel"
                    readonly
-                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? InfraUtil::formatarCpf($arrDadosPessoaJuridicaVinculo->getStrCpfContatoRepresentante()) : null; ?>"
+                   value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? PaginaSEI::tratarHTML(InfraUtil::formatarCpf($arrDadosPessoaJuridicaVinculo->getStrCpfContatoRepresentante())) : null; ?>"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
@@ -58,7 +58,7 @@
             </label>
             <input onkeypress="return infraMascaraTexto(this,event,130)"  type="text" class="infraText blocInformacaoPj" id="txtLogradouro" name="txtLogradouro" maxlength="130"
                 <?php echo $readOnly?>
-                   value="<?php echo $strEndereco;?>"
+                   value="<?php echo PaginaSEI::tratarHTML($strEndereco);?>"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
@@ -69,7 +69,7 @@
             </label>
             <input type="text" class="infraText blocInformacaoPj" id="txtBairro" name="txtBairro" maxlength="70" onkeypress="return infraMascaraTexto(this,event, 70);"
                 <?php echo $readOnly?>
-                   value="<?php echo !is_null($arrContatoDTO) ? $arrContatoDTO->getStrBairro() : null?>"
+                   value="<?php echo !is_null($arrContatoDTO) ? PaginaSEI::tratarHTML($arrContatoDTO->getStrBairro()) : null?>"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>
@@ -89,7 +89,7 @@
                 <input type="hidden"
                        name="<?php echo $slUfLabel; ?>"
                        id="<?php echo $slUfLabel; ?>"
-                       value="<?php echo $arrContatoDTO->getStrSiglaUf()?>"/>
+                       value="<?php echo PaginaSEI::tratarHTML($arrContatoDTO->getStrSiglaUf())?>"/>
             <?php }?>
             </div>
         </div>
@@ -114,7 +114,7 @@
                    onkeypress="return infraMascaraNumero(this,event, 9);"
                    onkeyup="return infraMascara(this, event, '#####-###');" onchange="return controlarMascaraCep(this);"
                 <?php echo $readOnly?>
-                   value="<?php echo !is_null($arrContatoDTO) ? $arrContatoDTO->getStrCep() : null?>"
+                   value="<?php echo !is_null($arrContatoDTO) ? PaginaSEI::tratarHTML($arrContatoDTO->getStrCep()) : null?>"
                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"/>
             </div>
         </div>

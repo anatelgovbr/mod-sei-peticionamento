@@ -469,7 +469,7 @@ class MdPetContatoRN extends InfraRN {
 
 	protected function consultarContatoConectado($dados)
 	{
-		$cnpj = InfraUtil::retirarFormatacao($dados['txtNumeroCnpj']);
+		$cnpj = InfraUtil::prepararCnpj($dados['txtNumeroCnpj']);
 		$xml = '<dados-pj>';
 
 		if (!InfraUtil::validarCnpj($cnpj)) {

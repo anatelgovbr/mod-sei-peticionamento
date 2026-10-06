@@ -27,10 +27,10 @@
         <div class="col-sm-12 col-md-8 col-lg-8">
             <div class="form-group mb-3">
                 <input type="hidden" class="infraText blocInformacaoPj" id="txtNomeResponsavelLegal" name="txtNomeResponsavelLegal" maxlength="250"
-                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? $arrDadosPessoaJuridicaVinculo->getStrNomeContatoRepresentante() : null; ?>"
+                    value="<?php echo !is_null($arrDadosPessoaJuridicaVinculo) ? PaginaSEIExterna::tratarHTML($arrDadosPessoaJuridicaVinculo->getStrNomeContatoRepresentante()) : null; ?>"
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 <input type="hidden" class="infraText blocInformacaoPj" id="txtNumeroCpfResponsavel" name="txtNumeroCpfResponsavel"
-                    value = '<?php echo (!$stWebService) ? InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCpf()) : ''; ?>'
+                    value = '<?php echo (!$stWebService) ? PaginaSEIExterna::tratarHTML(InfraUtil::formatarCpfCnpj($objContatoDTO->getDblCpf())) : ''; ?>'
                     tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados(); ?>"/>
                 <label class="infraLabelObrigatorio" for="txtLogradouro">
                     Endereço:
@@ -89,9 +89,9 @@
     <input type="hidden" name="hdnInformacaoPj" id="hdnInformacaoPj"/>
     <input type="hidden" name="isAlteracaoResponsavelLegal" id="isAlteracaoResponsavelLegal" value="0"/>
     <input type="hidden" name="hdnNomeUsuarioExterno" id="hdnNomeUsuarioExterno"
-           value="<?php echo SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno(); ?>"/>
+           value="<?php echo PaginaSEIExterna::tratarHTML(SessaoSEIExterna::getInstance()->getStrNomeUsuarioExterno()); ?>"/>
     <input type="hidden" name="hdnCpfUsuarioExterno" id="hdnCpfUsuarioExterno"
-           value="<?php echo $cpfUsuarioExterno; ?>"/>
+           value="<?php echo PaginaSEIExterna::tratarHTML($cpfUsuarioExterno); ?>"/>
     <input type="hidden" name="hdnValidadoCnpj" id="hdnValidadoCnpj" value="0"/>
 </fieldset>
 <br id="informacaoPJ_BR" style="display: none;">

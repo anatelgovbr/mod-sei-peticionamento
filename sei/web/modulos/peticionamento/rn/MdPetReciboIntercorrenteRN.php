@@ -100,7 +100,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         if ($arrParametros['sin_pessoa_juridica'] == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA) {
             $html .= '<tr>';
             $html .= '<td style="font-weight: bold; width: 400px;">Pessoa Jurídica:</td>';
-            $html .= '<td>' . $arrParametros['nome_contato'] . '</td>';
+            $html .= '<td>' . $arrParametros['nome_contato'] . ($arrParametros['sin_pessoa_juridica'] == 'S' ? ' - ' . $arrParametros['doc_contato'] : '') . '</td>';
             $html .= '</tr>';
             $html .= '<tr>';
             $html .= '<td style="font-weight: bold; width: 400px;">Usuário Externo (Representante):</td>';

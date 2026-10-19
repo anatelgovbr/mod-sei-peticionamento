@@ -38,7 +38,7 @@ class MdPetIntRelTipoRespINT extends InfraINT {
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntRelTipoRespDTO, 'IdMdPetIntRelTipoResp', 'IdMdPetIntRelTipoResp');
     }
 
-    public static function montarSelectTipoResposta($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntimacao = '', $idMdPetIntRelDestinatario)
+    public static function montarSelectTipoResposta($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntimacao, $idMdPetIntRelDestinatario)
     {
         
         $objMdPetIntPrazoTipoRespostaRN = new MdPetIntPrazoRN();

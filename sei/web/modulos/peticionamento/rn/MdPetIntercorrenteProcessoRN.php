@@ -1358,6 +1358,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objMdPetIntRelDestinatarioDTO->retStrSinPessoaJuridica();
         $objMdPetIntRelDestinatarioDTO->retNumIdContato();
         $objMdPetIntRelDestinatarioDTO->retStrNomeContato();
+        $objMdPetIntRelDestinatarioDTO->retStrCnpjContato();
+        $objMdPetIntRelDestinatarioDTO->retDblCpfContato();
         $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
         $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->consultar($objMdPetIntRelDestinatarioDTO);
 
@@ -1373,7 +1375,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 $params['id_contato'] = $objMdPetIntRelDestinatarioDTO->getNumIdContato();
                 $params['sin_pessoa_juridica'] = $objMdPetIntRelDestinatarioDTO->getStrSinPessoaJuridica();
                 $params['nome_contato'] = $objMdPetIntRelDestinatarioDTO->getStrNomeContato();
-                $params['nome_contato'] = $objMdPetIntRelDestinatarioDTO->getStrNomeContato();
+                $params['doc_contato'] = $objMdPetIntRelDestinatarioDTO->getStrSinPessoaJuridica() == 'S' ? InfraUtil::formatarCnpj($objMdPetIntRelDestinatarioDTO->getStrCnpjContato()) : InfraUtil::formatarCpf($objMdPetIntRelDestinatarioDTO->getDblCpfContato());
                 $params['nome_usuario'] = $objUsuarioDTO->getStrNome();
             }
         }

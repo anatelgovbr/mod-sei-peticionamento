@@ -515,7 +515,7 @@ $strLinkEdicaHash = PaginaSEIExterna::getInstance()->formatarXHTML(
                             <input type="text" class="infraText form-control"
                                    tabindex="<?= PaginaSEIExterna::getInstance()->getProxTabDados() ?>"
                                    onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
-                                   name="txtPjVinculada" id="txtPjVinculadaPJ"
+                                   name="txtPjVinculadaPJ" id="txtPjVinculadaPJ"
                                    autocomplete="off" style="display: none;"/>
 
                             <input type="hidden" name="hdnIdContextoContato" id="hdnIdContextoContato"

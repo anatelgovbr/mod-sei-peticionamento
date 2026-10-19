@@ -536,6 +536,7 @@ class MdPetRegrasGeraisRN extends InfraRN
 
     private function _retornaDocumentoPrincipalProcesso($objDTO)
     {
+        
         $arrIdTipoProcessoPeticionamento = InfraArray::converterArrInfraDTO($objDTO, 'IdTipoProcessoPeticionamento');
 
         $objMdPetTipoProcessoDTO = new MdPetTipoProcessoDTO();
@@ -544,25 +545,15 @@ class MdPetRegrasGeraisRN extends InfraRN
         $objMdPetTipoProcessoDTO->retStrNomeProcesso();
         $objMdPetTipoProcessoDTO->retStrNomeSerie();
         $objMdPetTipoProcessoDTO->retNumIdSerie();
+        $objMdPetTipoProcesso = (new MdPetTipoProcessoRN())->listar($objMdPetTipoProcessoDTO);
 
+        $arrTpProcesso = [];
 
-        $objMdPetTipoProcessoRN = new MdPetTipoProcessoRN();
-        $objMdPetTipoProcesso = $objMdPetTipoProcessoRN->listar($objMdPetTipoProcessoDTO);
-
-        $arrTpProcesso = array();
         foreach ($objMdPetTipoProcesso as $tpProcesso) {
-            if (!array_key_exists($tpProcesso->getNumIdTipoProcessoPeticionamento(), $tpProcesso)) {
-                $arrProcesso[$tpProcesso->getNumIdTipoProcessoPeticionamento()] = array();
-            }
-            if (!array_key_exists($tpProcesso->getNumIdTipoProcessoPeticionamento(), $tpProcesso)) {
-                $arrProcesso[$tpProcesso->getNumIdTipoProcessoPeticionamento()]['NomeProcesso'] = array();
-            }
-            if (!array_key_exists($tpProcesso->getNumIdTipoProcessoPeticionamento(), $tpProcesso)) {
-                $arrProcesso[$tpProcesso->getNumIdTipoProcessoPeticionamento()]['Documento'] = array();
-            }
-
-            $arrTpProcesso[$tpProcesso->getNumIdTipoProcessoPeticionamento()]['NomeProcesso'] = $tpProcesso->getStrNomeProcesso();
-            $arrTpProcesso[$tpProcesso->getNumIdTipoProcessoPeticionamento()]['Documento'] = $tpProcesso->getStrNomeSerie();
+            $arrTpProcesso[$tpProcesso->getNumIdTipoProcessoPeticionamento()] = [
+                'NomeProcesso' => $tpProcesso->getStrNomeProcesso(),
+                'Documento' => $tpProcesso->getStrNomeSerie(),
+            ];
         }
 
         return $arrTpProcesso;

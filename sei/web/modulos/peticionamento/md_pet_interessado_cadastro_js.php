@@ -461,7 +461,7 @@ $strLinkAjaxCidade = SessaoSEIExterna::getInstance()->assinarLink('controlador_a
         var idContextoAjax = document.getElementById('hdnIdContextoContato');
 
         if (interessado1 == 'pf' && interessado2 == '1' && (pjVinculada == '' || idContextoAjax == null || idContextoAjax.value == '')) {
-            alert('Informe a Razão Social da Pessoa Jurídica vinculada. Interessado1: ' + interessado1 + '. Interessado2: ' + interessado2 + '. Razão Social: ' + document.getElementById('txtPjVinculadaPJ').value + '. IdContextoAjax: ' + idContextoAjax);
+            alert('Informe a Razão Social da Pessoa Jurídica vinculada.');
             document.getElementById('txtPjVinculadaPJ').focus();
             return;
         }

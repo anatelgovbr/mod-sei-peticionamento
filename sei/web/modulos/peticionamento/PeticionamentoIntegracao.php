@@ -34,7 +34,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.8';
+        return '4.6.9';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -922,12 +922,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
             case 'md_pet_contato_cpf_cnpj':
 
-                $cpfcnpj = $_POST['cpfcnpj'];
-                $cpfcnpj = str_replace(".", "", $cpfcnpj);
-                $cpfcnpj = str_replace("-", "", $cpfcnpj);
-                $cpfcnpj = str_replace("/", "", $cpfcnpj);
+                $tipoPessoa = $_POST['tipo_pessoa'] == 'pj' ? 'J' : 'F';
+                $cpfcnpj = str_replace(['.', '-', '/'], '', $_POST['cpfcnpj']);
 
-                $objContextoContatoDTO = MdPetContatoINT::getTotalContatoByCPFCNPJ($cpfcnpj);
+                $objContextoContatoDTO = MdPetContatoINT::getTotalContatoByCPFCNPJ($cpfcnpj, $tipoPessoa);
 
                 $qtdObjContextoContatoDTO = (is_array($objContextoContatoDTO) ? count($objContextoContatoDTO) : 0);
                 if ($qtdObjContextoContatoDTO > 0) {

@@ -160,7 +160,7 @@ class MdPetIntCertidaoRN extends InfraRN
 
         if (is_null($objMdPetIntRelDestinatarioDTO)) {
             //simular sessao de usuario interno do SEI
-            $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()));
+            $objContato = $objMdPetIntAceiteRN->retornaObjContatoIdUsuario(array(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()), true);
         } else {
             $objContato = $this->_retornarObjContatoPorId($objMdPetIntRelDestinatarioDTO->getNumIdContato());
         }
@@ -261,6 +261,9 @@ class MdPetIntCertidaoRN extends InfraRN
         $objContatoDTO->retStrNome();
         $objContatoDTO->retStrEmail();
         $objContatoDTO->retStrSinAtivo();
+        $objContatoDTO->retStrStaNatureza();
+        $objContatoDTO->retStrCnpj();
+        $objContatoDTO->retDblCpf();
         $lista = $objContatoRN->listarRN0325($objContatoDTO);
 
         if (count($lista) > 0) {
@@ -291,7 +294,7 @@ class MdPetIntCertidaoRN extends InfraRN
 
         $situacaoInt = $objIntimacao->getStrStaSituacaoIntimacao();
         $situacaoCertidao = $situacaoInt == MdPetIntimacaoRN::$INTIMACAO_CUMPRIDA_POR_ACESSO ? MdPetIntCertidaoRN::$STR_TP_CUMPRIMENTO_CERTIDAO_ACESSO_DIRETO : MdPetIntCertidaoRN::$STR_TP_CUMPRIMENTO_CERTIDAO_PRAZO_TACITO;
-
+        
         //Get Data
         if (is_null($objMdPetIntDestDTO)) {
             $objMdPetIntDestDTO = $objMdPetIntDestRN->retornaRelIntDestinatario(array($idIntimacao, false, $objContato));
@@ -307,7 +310,7 @@ class MdPetIntCertidaoRN extends InfraRN
 
         $html .= '<tr>';
         $html .= '<td style="font-weight: bold; width: 300px">Destinatário:</td>';
-        $html .= '<td>' . $objMdPetIntDestDTO->getStrNomeContato() . '</td>';
+        $html .= '<td>' . $objMdPetIntDestDTO->getStrNomeContato() . ($objMdPetIntDestDTO->getStrSinPessoaJuridica() == 'S' ? ' - ' . InfraUtil::formatarCnpj($objContato->getStrCnpj()) : '') . '</td>';
         $html .= '</tr>';
 
         $html .= '<tr>';

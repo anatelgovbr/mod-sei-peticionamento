@@ -11,30 +11,36 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 
 class MdPetExtensoesArquivoINT extends InfraINT {
 
-public static function montarSelectExtensoes($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $strSinPrincipal){
+/** @param int[]|string[]|null $arrArquivoExtensoesCore */
+public static function montarSelectExtensoes($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $strSinPrincipal, ?array $arrArquivoExtensoesCore = null): string {
+
+    // Recupera a lista de extensões permitidas pelo core:
+    $arrArquivoExtensoesCore = $arrArquivoExtensoesCore ?? self::recuperarExtensoesPermitidasCore();
+    if (!$arrArquivoExtensoesCore) {
+        return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, [], 'IdArquivoExtensao', 'Extensao');
+    }
 
     $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
     $objMdPetExtensoesArquivoDTO->retNumIdArquivoExtensao();
     $objMdPetExtensoesArquivoDTO->retStrExtensao();
     $objMdPetExtensoesArquivoDTO->setStrSinPrincipal($strSinPrincipal);
+    // Filtra dentre as extensões cadastradas no peticionamento as permitidas pelo core
+    $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, infraDTO::$OPER_IN);
     $objMdPetExtensoesArquivoDTO->setOrdStrExtensao(InfraDTO::$TIPO_ORDENACAO_ASC);
-
-    $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
-
-    $arrObjMdPetExtensoesArquivoDTO = $objMdPetExtensoesArquivoRN->listar($objMdPetExtensoesArquivoDTO);
+    $arrObjMdPetExtensoesArquivoDTO = (new MdPetExtensoesArquivoRN())->listar($objMdPetExtensoesArquivoDTO);
 
     return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetExtensoesArquivoDTO, 'IdArquivoExtensao', 'Extensao');
+
   }
 
-  public static function recuperaExtensoes($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $strSinPrincipal){
+  /** @return string Extensoes entre aspas separadas por virgula. */
+  public static function recuperaExtensoes($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $strSinPrincipal): string {
 
       // Recupera a lista de extensões permitidas pelo core:
-      $objArquivoExtensaoDTO = new ArquivoExtensaoDTO();
-      $objArquivoExtensaoDTO->retNumIdArquivoExtensao();
-      $objArquivoExtensaoDTO->setBolExclusaoLogica(true);
-      $objArquivoExtensaoDTO->setStrSinAtivo('S');
-      $arrObjArquivoExtensaoDTO = (new ArquivoExtensaoRN())->listar($objArquivoExtensaoDTO);
-      $arrArquivoExtensoesCore = InfraArray::converterArrInfraDTO($arrObjArquivoExtensaoDTO, 'IdArquivoExtensao');
+      $arrArquivoExtensoesCore = self::recuperarExtensoesPermitidasCore();
+      if (!$arrArquivoExtensoesCore) {
+          return '';
+      }
 
       $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
       $objMdPetExtensoesArquivoDTO->retNumIdArquivoExtensao();
@@ -56,6 +62,19 @@ public static function montarSelectExtensoes($strPrimeiroItemValor, $strPrimeiro
       }
       
       return $arrExtPerm;
+
+  }
+
+  /** @return int[]|string[] */
+  public static function recuperarExtensoesPermitidasCore(): array {
+
+      // Recupera a lista de extensões permitidas pelo core:
+      $objArquivoExtensaoDTO = new ArquivoExtensaoDTO();
+      $objArquivoExtensaoDTO->retNumIdArquivoExtensao();
+      $objArquivoExtensaoDTO->setBolExclusaoLogica(true);
+      $objArquivoExtensaoDTO->setStrSinAtivo('S');
+      $arrObjArquivoExtensaoDTO = (new ArquivoExtensaoRN())->listar($objArquivoExtensaoDTO);
+      return InfraArray::converterArrInfraDTO($arrObjArquivoExtensaoDTO, 'IdArquivoExtensao');
 
   }
   

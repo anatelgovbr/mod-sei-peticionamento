@@ -38,7 +38,7 @@ class MdPetContatoINT extends ContatoINT
         return $objContextoContatoDTO;
     }
 
-    public static function getTotalContatoByCPFCNPJ($cpfcnpj)
+    public static function getTotalContatoByCPFCNPJ($cpfcnpj, $tipoPessoa)
     {
 
         // Filtrando Tipos de Contato Permitidos para Seleção de Interessado
@@ -58,12 +58,12 @@ class MdPetContatoINT extends ContatoINT
         $objContextoContatoDTO->retStrSinAtivo();
         $objContextoContatoDTO->setNumIdTipoContato($arrTiposContatoPermitidos, InfraDTO::$OPER_IN);
         $objContextoContatoDTO->setDistinct(true);
-        $objContextoContatoDTO->adicionarCriterio(array('Cpf', 'Cnpj'),
-            array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
-            array($cpfcnpj, $cpfcnpj),
-            array(InfraDTO::$OPER_LOGICO_OR)
-        );
-
+        $objContextoContatoDTO->setStrStaNatureza($tipoPessoa);
+        if ($tipoPessoa === 'J') {
+            $objContextoContatoDTO->setStrCnpj($cpfcnpj);
+        } else {
+            $objContextoContatoDTO->setDblCpf($cpfcnpj);
+        }
         $objContatoRN = new ContatoRN();
         $arrObjContextoContatoDTO = $objContatoRN->listarRN0325($objContextoContatoDTO);
 
@@ -99,11 +99,12 @@ class MdPetContatoINT extends ContatoINT
                     $objContextoContatoDTO->retStrSinAtivo();
                     $objContextoContatoDTO->setDistinct(true);
                     $objContextoContatoDTO->setOrd('IdContato', InfraDTO::$TIPO_ORDENACAO_DESC);
-                    $objContextoContatoDTO->adicionarCriterio(array('Cpf', 'Cnpj'),
-                        array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
-                        array($cpfcnpj, $cpfcnpj),
-                        array(InfraDTO::$OPER_LOGICO_OR)
-                    );
+                    $objContextoContatoDTO->setStrStaNatureza($tipoPessoa);
+                    if ($tipoPessoa === 'J') {
+                        $objContextoContatoDTO->setStrCnpj($cpfcnpj);
+                    } else {
+                        $objContextoContatoDTO->setDblCpf($cpfcnpj);
+                    } 
                     $objContextoContatoDTO->adicionarCriterio(array('IdUsuarioCadastro'),
                         array(InfraDTO::$OPER_DIFERENTE),
                         array(NULL)

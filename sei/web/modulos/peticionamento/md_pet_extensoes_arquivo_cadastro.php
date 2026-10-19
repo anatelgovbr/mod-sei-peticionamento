@@ -9,8 +9,12 @@ try {
 
     session_start();
 
-    SessaoSei::getInstance()->validarLink();
-    SessaoSei::getInstance()->validarPermissao($_GET['acao']);
+    SessaoSEI::getInstance()->validarLink();
+    $strAcao = PaginaSEI::GET('acao');
+    if (!is_string($strAcao) || $strAcao !== 'md_pet_extensoes_arquivo_cadastrar') {
+        throw new InfraException('Ação inválida.');
+    }
+    SessaoSEI::getInstance()->validarPermissao($strAcao);
 
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
@@ -20,19 +24,40 @@ $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
 $arrExtPrincipalBD = array();
 $arrExtComplementarBD = array();
 
-if ($_POST) {
+// Recupera a lista de extensões permitidas pelo core:
+$arrArquivoExtensoesCore = MdPetExtensoesArquivoINT::recuperarExtensoesPermitidasCore();
 
-    // Recupera a lista de extensões permitidas pelo core:
-    $objArquivoExtensaoDTO = new ArquivoExtensaoDTO();
-    $objArquivoExtensaoDTO->retNumIdArquivoExtensao();
-    $objArquivoExtensaoDTO->setBolExclusaoLogica(true);
-    $objArquivoExtensaoDTO->setStrSinAtivo('S');
-    $arrObjArquivoExtensaoDTO = (new ArquivoExtensaoRN())->listar($objArquivoExtensaoDTO);
-    $arrArquivoExtensoesCore = InfraArray::converterArrInfraDTO($arrObjArquivoExtensaoDTO, 'IdArquivoExtensao');
+if (PaginaSEI::SERVER('REQUEST_METHOD') === 'POST') {
 
-    $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
     $objInfraException = new InfraException();
+    $arrSelecoes = [];
+    foreach (['hdnPrincipal', 'hdnComplementar'] as $strCampo) {
+        $arrIds = [];
+        $strSelecao = PaginaSEI::POST($strCampo);
+        if ($strSelecao !== null && !is_string($strSelecao)) {
+            $objInfraException->adicionarValidacao('Seleção de extensões inválida.', PaginaSEI::$TIPO_MSG_ERRO);
+        } else {
+            foreach (PaginaSEI::getInstance()->getArrValuesSelect($strSelecao ?? '') as $strId) {
+                $numId = filter_var($strId, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+                if ($numId === false) {
+                    $objInfraException->adicionarValidacao('Identificador de extensão inválido.', PaginaSEI::$TIPO_MSG_ERRO);
+                    break;
+                }
+                $arrIds[] = $numId;
+            }
+        }
+        $arrSelecoes[$strCampo] = array_values(array_intersect(array_unique($arrIds), $arrArquivoExtensoesCore));
+    }
+    $arrPrincipal = $arrSelecoes['hdnPrincipal'];
+    $arrComplementar = $arrSelecoes['hdnComplementar'];
 
+    if (!$arrPrincipal) {
+        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento principal.', PaginaSEI::$TIPO_MSG_ERRO);
+    }
+    if (!$arrComplementar) {
+        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento complementar.', PaginaSEI::$TIPO_MSG_ERRO);
+    }
+    $objInfraException->lancarValidacoes();
 
     // excluindo registros anteriores
     $objMdPetExtensoesArquivoDTO->retTodos();
@@ -48,26 +73,14 @@ if ($_POST) {
         }
     }
 
-    $arrPrincipal = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnPrincipal']);
-    $arrComplementar = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnComplementar']);
-
-    if (!$arrPrincipal) {
-        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento principal.', PaginaSEI::$TIPO_MSG_ERRO);
-    }
-
-    if (!$arrComplementar) {
-        $objInfraException->adicionarValidacao('Informe pelo menos uma extensão para documento complementar.', PaginaSEI::$TIPO_MSG_ERRO);
-    }
-
-    $objInfraException->lancarValidacoes();
-
-    $arrObjMdPetExtensoesArquivoDTO = array();
+    $arrObjMdPetExtensoesArquivoDTO = [];
+    $sinCadastrar = false;
 
     if ($arrPrincipal) {
+
         $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
         $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
         $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrPrincipal, infraDTO::$OPER_NOT_IN);
-        $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_NOT_IN);
         $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('S');
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
@@ -75,26 +88,28 @@ if ($_POST) {
         if ($listaExtensoesPrincipal) {
             $objMdPetExtensoesArquivoRN->excluir($listaExtensoesPrincipal);
         }
+
     }
 
     foreach ($arrPrincipal as $numPrincipal) {
+
         if (!in_array($numPrincipal, $arrExtPrincipalBD)) {
             // criando os novos
             $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
             $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
             $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numPrincipal);
             $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('S');
-            $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_IN);
             array_push($arrObjMdPetExtensoesArquivoDTO, $objMdPetExtensoesArquivoDTO);
             $sinCadastrar = true;
         }
+
     }
 
     if ($arrComplementar) {
+
         $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
         $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
         $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrComplementar, infraDTO::$OPER_NOT_IN);
-        $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_NOT_IN);
         $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('N');
         $objMdPetExtensoesArquivoDTO->retTodos();
         $objMdPetExtensoesArquivoRN = new MdPetExtensoesArquivoRN();
@@ -102,18 +117,21 @@ if ($_POST) {
         if ($listaExtensoesComplementar) {
             $objMdPetExtensoesArquivoRN->excluir($listaExtensoesComplementar);
         }
+
     }
 
     foreach ($arrComplementar as $numComplementar) {
+
         if (!in_array($numComplementar, $arrExtComplementarBD)) {
+            // criando os novos
             $objMdPetExtensoesArquivoDTO = new MdPetExtensoesArquivoDTO();
             $objMdPetExtensoesArquivoDTO->setStrSinAtivo('S');
             $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($numComplementar);
             $objMdPetExtensoesArquivoDTO->setStrSinPrincipal('N');
-            $objMdPetExtensoesArquivoDTO->setNumIdArquivoExtensao($arrArquivoExtensoesCore, InfraDTO::$OPER_IN);
             array_push($arrObjMdPetExtensoesArquivoDTO, $objMdPetExtensoesArquivoDTO);
             $sinCadastrar = true;
         }
+
     }
 
     if ($sinCadastrar) {
@@ -121,16 +139,17 @@ if ($_POST) {
     }
 
     PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
+
 }
 
-$strSelExtensoesPrin = MdPetExtensoesArquivoINT::montarSelectExtensoes(null, null, null, 'S');
-$strSelExtensoesComp = MdPetExtensoesArquivoINT::montarSelectExtensoes(null, null, null, 'N');
+$strSelExtensoesPrin = MdPetExtensoesArquivoINT::montarSelectExtensoes(null, null, null, 'S', $arrArquivoExtensoesCore);
+$strSelExtensoesComp = MdPetExtensoesArquivoINT::montarSelectExtensoes(null, null, null, 'N', $arrArquivoExtensoesCore);
 
 
 $strTitulo = "Peticionamento - Extensões de Arquivos Permitidas";
 
 $arrComandos[] = '<button type="submit" accesskey="s" name="sbmCadastrarGrupoUnidade" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
-$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSei::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem=' . $_GET['acao'])) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
+$arrComandos[] = '<button type="button" accesskey="c" name="btnFechar" id="btnFechar" value="Fechar" onclick="location.href=\'' . PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_controlar&acao_origem=' . $strAcao)) . '\';" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>';
 
 PaginaSEI::getInstance()->montarDocType();
 PaginaSEI::getInstance()->abrirHtml();
@@ -146,7 +165,7 @@ PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
     <form id="frmGrupoCadastro" method="post" onsubmit="return OnSubmitForm();"
-          action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSei::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'])) ?>">
+          action="<?= PaginaSEI::getInstance()->formatarXHTML(SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $strAcao . '&acao_origem=' . $strAcao)) ?>">
         <?
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('45em');

@@ -1281,7 +1281,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             }
 
             //se chegar aqui o CPF/CNPJ está valido, entao consultar via AJAX para ver se o contato já está cadastrado
-            var formData = "cpfcnpj=" + conteudo;  //Name value Pair
+            var tipoPessoa = $('input[name="tipoPessoa"]:checked').val();
+            var formData = "cpfcnpj=" + conteudo + "&tipo_pessoa=" + tipoPessoa;  //Name value Pair
             $.ajax({
                 url: "<?= $strLinkAjaxContato ?>",
                 type: "POST",

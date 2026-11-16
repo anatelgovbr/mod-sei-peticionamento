@@ -1621,6 +1621,38 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         }
     }
 
+    // O complemento escapado e enviado na coluna 10 e persistido em nome_arvore.
+    function validarTamanhoComplementoDocumento(idCampo) {
+        var campo = document.getElementById(idCampo);
+        var complemento = $("<pre>").text(campo.value).html();
+        var limite = <?= MdPetProcessoRN::TAMANHO_MAXIMO_COMPLEMENTO_DOCUMENTO ?>;
+        var idMensagem = idCampo + 'ErroTamanho';
+        var mensagem = document.getElementById(idMensagem);
+
+        if (complemento.length <= limite) {
+            if (mensagem) {
+                mensagem.remove();
+            }
+            campo.removeAttribute('aria-invalid');
+            campo.removeAttribute('aria-describedby');
+            return true;
+        }
+
+        if (!mensagem) {
+            mensagem = document.createElement('span');
+            mensagem.id = idMensagem;
+            mensagem.className = 'text-danger d-block';
+            mensagem.setAttribute('role', 'alert');
+            campo.parentNode.appendChild(mensagem);
+        }
+        mensagem.textContent = 'O Complemento do Tipo de Documento deve ter no máximo ' + limite +
+            ' caracteres. Caracteres como &, < e > ocupam mais espaço. Reduza o complemento e tente novamente.';
+        campo.setAttribute('aria-invalid', 'true');
+        campo.setAttribute('aria-describedby', idMensagem);
+        campo.focus();
+        return false;
+    }
+
     //campo de upload de documentos principais
     function carregarCamposDocPrincipalUpload() {
 
@@ -1710,6 +1742,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             }
 
             objPrincipalUpload.validar = function (arr) {
+
+                if (!validarTamanhoComplementoDocumento('complementoPrincipal')) {
+                    return false;
+                }
 
                 //INICIO VALIDACAO EXTENSOES
                 var arrExtensoesPermitidas = [<?=$strSelExtensoesPrin?>];
@@ -1872,6 +1908,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         objEssencialUpload.validar = function (arr) {
 
+            if (!validarTamanhoComplementoDocumento('complementoEssencial')) {
+                return false;
+            }
+
             //INICIO VALIDACAO EXTENSOES
             var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];
             if ($("#fileArquivoEssencial").val().replace(/^.*\./, '') != '' && $.inArray($("#fileArquivoEssencial").val().replace(/^.*\./, '').toLowerCase(), arrExtensoesPermitidas) == -1) {
@@ -2023,6 +2063,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         }
 
         objComplementarUpload.validar = function (arr) {
+
+            if (!validarTamanhoComplementoDocumento('complementoComplementar')) {
+                return false;
+            }
 
             //INICIO VALIDACAO EXTENSOES
             var arrExtensoesPermitidas = [<?=$strSelExtensoesComp?>];

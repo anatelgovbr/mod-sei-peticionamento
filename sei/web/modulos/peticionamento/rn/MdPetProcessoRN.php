@@ -10,6 +10,8 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 
 class MdPetProcessoRN extends InfraRN {
 
+	const TAMANHO_MAXIMO_COMPLEMENTO_DOCUMENTO = 40;
+
 	public static $INDICACAO_DIRETA = 'I';
 	public static $DOC_GERADO = 'G';
 	public static $DOC_EXTERNO = 'E';	
@@ -66,6 +68,7 @@ class MdPetProcessoRN extends InfraRN {
         // O core so recusa o conteudo do documento principal gerado no editor depois de abrir o processo;
         // validar antes evita processar tudo para depois desfazer. O caminho dos arquivos vem do formulario
         // e precisa ficar restrito a pasta temporaria.
+        $this->validarComplementosDocumentos( $arrParametros );
         $this->validarConteudoDocumentoPrincipal( $arrParametros );
         $this->validarLocalizacaoArquivosPeticionamento( $arrParametros );
 
@@ -175,6 +178,39 @@ class MdPetProcessoRN extends InfraRN {
         return $retorno['paramentrosRecibo'];
 
     }
+
+	/**
+	 * Valida antes de criar o processo, inclusive quando o POST ignora o maxlength do formulario.
+	 * A coluna 10 contem o complemento; o nome original do arquivo fica na coluna 0.
+	 */
+	private function validarComplementosDocumentos( array $arrParametros ): void {
+
+		$arrCampos = [
+			'hdnDocPrincipal' => 'principal',
+			'hdnDocEssencial' => 'essencial',
+			'hdnDocComplementar' => 'complementar'
+		];
+
+		foreach( $arrCampos as $strCampo => $strTipo ){
+			if( empty( $arrParametros[$strCampo] ) ){
+				continue;
+			}
+			foreach( PaginaSEI::getInstance()->getArrItensTabelaDinamica( $arrParametros[$strCampo] ) as $numIndice => $anexo ){
+				$this->validarComplementoDocumento( $anexo[10] ?? null, 'Documento ' . $strTipo . ' ' . ($numIndice + 1) );
+			}
+		}
+
+	}
+
+	private function validarComplementoDocumento( $strComplemento, $strDocumento = 'Documento' ): void {
+
+		// O SEI utiliza ISO-8859-1: cada caractere ocupa um byte. Validar a mesma representacao
+		// atribuida ao DTO, sem decodificar entidades HTML nem truncar o texto informado.
+		if( $strComplemento !== null && (!is_string( $strComplemento ) || strlen( $strComplemento ) > self::TAMANHO_MAXIMO_COMPLEMENTO_DOCUMENTO) ){
+			(new InfraException())->lancarValidacao( $strDocumento . ': o Complemento do Tipo de Documento deve ter no máximo ' . self::TAMANHO_MAXIMO_COMPLEMENTO_DOCUMENTO . ' caracteres. Alguns caracteres especiais ocupam mais espaço. Reduza o complemento e tente novamente.' );
+		}
+
+	}
 
 	/**
 	 * Aplica ao conteudo do documento principal gerado no editor a mesma validacao de tags que o
@@ -1270,6 +1306,11 @@ class MdPetProcessoRN extends InfraRN {
     }
 
 	public function assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTO, $objProcedimentoDTO ){
+
+			if( $documentoDTO->isSetStrNomeArvore() ){
+				$this->validarComplementoDocumento( $documentoDTO->getStrNomeArvore() );
+			}
+
 			
 		    //consultar email da unidade (orgao)
 		    $orgaoRN = new OrgaoRN();

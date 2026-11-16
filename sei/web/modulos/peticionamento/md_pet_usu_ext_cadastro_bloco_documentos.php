@@ -103,7 +103,7 @@
                         <label class="infraLabelObrigatorio">
                             Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
                         </label><br/>
-                        <input type="text" name="complementoPrincipal" class="form-control infraText" id="complementoPrincipal" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <input type="text" name="complementoPrincipal" class="form-control infraText" id="complementoPrincipal" maxlength="<?= MdPetProcessoRN::TAMANHO_MAXIMO_COMPLEMENTO_DOCUMENTO ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
                 </div>
             </div>
@@ -573,7 +573,7 @@
                     <label class="infraLabelObrigatorio">
                         Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
                     </label><br/>
-                    <input type="text" name="complementoEssencial" class="form-control infraText" id="complementoEssencial" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                    <input type="text" name="complementoEssencial" class="form-control infraText" id="complementoEssencial" maxlength="<?= MdPetProcessoRN::TAMANHO_MAXIMO_COMPLEMENTO_DOCUMENTO ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                 </div>
             </div>
         </div>
@@ -784,7 +784,7 @@
                         <label class="infraLabelObrigatorio">
                             Complemento do Tipo de Documento: <?= tooltipAjuda($strMsgTooltipComplementoTipoDocumento) ?>
                         </label><br/>
-                        <input type="text" name="complementoComplementar" class="form-control infraText" id="complementoComplementar" maxlength="40" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        <input type="text" name="complementoComplementar" class="form-control infraText" id="complementoComplementar" maxlength="<?= MdPetProcessoRN::TAMANHO_MAXIMO_COMPLEMENTO_DOCUMENTO ?>" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                     </div>
                 </div>
             </div>

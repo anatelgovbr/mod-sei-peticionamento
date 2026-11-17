@@ -10,6 +10,7 @@
 
 <script type="text/javascript">
     var objTabelaDinamicaProcesso = null;
+    var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
 
     function inicializar() {
         iniciarGridDinamicaProcesso();
@@ -31,7 +32,7 @@
          validarNumeroProcesso();
          adicionarProcesso();
 
-       <? } ?>
+       <?php } ?>
     }
 
     function setaCamposNivelHipotese() {
@@ -622,7 +623,7 @@
 
             var extensaoConfigurada = arrExtensoesPermitidas.length > 0;
             if (!extensaoConfigurada) {
-                alert('Extensão de Arquivos Permitidos não foi configurado na Administração do Sistema.');
+                alert('Extensão de Arquivos Permitidos não foi configurada na Administração do Sistema.');
                 input.value = '';
                 input.focus();
                 return false;
@@ -665,6 +666,9 @@
         if (complementoTipoDocumento == '') {
             alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
             document.getElementById('txtComplementoTipoDocumento').focus();
+            return false;
+        }
+        if (!mdPetValidarCaracteresComplemento(document.getElementById('txtComplementoTipoDocumento'))) {
             return false;
         }
         var nivelAcesso = document.getElementById('selNivelAcesso');
@@ -839,26 +843,18 @@
 
         if (validarDocumento()) {
             objUploadArquivo.executar();
-            
-            document.getElementById('tbDocumento').style.display = '';
-            var minHeightFieldSetDocumentos = document.getElementById("field_documentos").style.minHeight;
-            minHeightFieldSetDocumentos = parseInt(minHeightFieldSetDocumentos.replace("px", ""));
-            document.getElementById("field_documentos").style.minHeight = minHeightFieldSetDocumentos + 50 + "px";
-
-            document.getElementById("selNivelAcesso").removeAttribute("disabled").value = '';
-            document.querySelector('input[name="hdnNivelAcesso"]').remove();
-
-            document.getElementById("selHipoteseLegal").removeAttribute("disabled").value = '';
-            document.querySelector('input[name="hdnHipoteseLegal"]').remove();
-            document.getElementById('divBlcHipoteseLegal').style.display = 'none';
-            
         }
     }
 
     function iniciarObjUploadArquivo() {
         var tbDocumento = document.getElementById('tbDocumento');
         objUploadArquivo = new infraUpload('frmPeticionamentoIntercorrente', '<?=$strLinkUploadArquivo?>');
+        mdPetVerificarTamanhoNoUpload(objUploadArquivo, objMdPetLimitesDoSei);
         objUploadArquivo.finalizou = function (arr) {
+            if (!mdPetValidarRetornoUpload(arr)) {
+                return false;
+            }
+
             //===========================================//
             //--------- Validações pós-upload  ----------//
             //===========================================//
@@ -890,6 +886,10 @@
             //===========================================//
 
             criarRegistroTabelaDocumento(arr);
+            document.getElementById('tbDocumento').style.display = '';
+            var minHeightFieldSetDocumentos = document.getElementById('field_documentos').style.minHeight;
+            minHeightFieldSetDocumentos = parseInt(minHeightFieldSetDocumentos.replace('px', ''), 10);
+            document.getElementById('field_documentos').style.minHeight = minHeightFieldSetDocumentos + 50 + 'px';
             corrigirPosicaoAcaoExcluir();
             limparCampoDocumento();
             setaCamposNivelHipotese();

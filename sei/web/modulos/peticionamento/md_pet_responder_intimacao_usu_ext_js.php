@@ -1,8 +1,10 @@
+<?php ?>
 <script type="text/javascript">
     "use strict";
 
     var RESTRITO = '<?= ProtocoloRN::$NA_RESTRITO ?>';
     var TAMANHO_MAXIMO = '<?= $tamanhoMaximo ?>';
+    var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
     var EXIBIR_HIPOTESE_LEGAL = '<?= $exibirHipoteseLegal ?>';
     var arrExtensoesPermitidas = [<?= $extensoesPermitidas ?>];
     var objAjaxSelectTipoDocumento = null;
@@ -131,9 +133,15 @@
         var hdnNivelAcesso = document.getElementById('hdnNivelAcesso');
         hdnNivelAcesso.value = selNivelAcesso.value;
 
+        // RT-PET-025: a hipótese escolhida antes não vale para o novo nível; sem a limpeza, o documento Público levava a
+        // hipótese escondida e o SEI recusava a resposta inteira
+        if (EXIBIR_HIPOTESE_LEGAL) {
+            selHipoteseLegal.value = '';
+            document.getElementById('hdnHipoteseLegal').value = '';
+        }
+
         if (selNivelAcesso.value == RESTRITO && EXIBIR_HIPOTESE_LEGAL) {
             divBlcHipoteseLegal.style.display = '';
-            selHipoteseLegal.value = '';
             selHipoteseLegal.class = 'infraSelect form-control';
         } else {
             divBlcHipoteseLegal.style.display = 'none';
@@ -190,19 +198,35 @@
         }
     }
 
+    // Limite do módulo, conferido antes da transferência e de novo no retorno do upload (ADR-PET-010). O tamanho chega
+    // em bytes.
+    function validarTamanhoMaximoDoArquivo(numTamanho) {
+        var fileArquivo = document.getElementById('fileArquivo');
+        var tamanhoArquivo = (numTamanho / 1024 / 1024).toFixed(2);
+        if (tamanhoArquivo > parseInt(TAMANHO_MAXIMO)) {
+            alert('Tamanho máximo para o arquivo é de ' + TAMANHO_MAXIMO + 'Mb');
+            fileArquivo.value = '';
+            fileArquivo.focus();
+            verificarTabelaVazia(1);
+            return false;
+        }
+
+        return true;
+    }
+
     function iniciarObjUploadArquivo() {
         var tbDocumento = document.getElementById('tbDocumento');
         objUploadArquivo = new infraUpload('frmResponderIntimacao', '<?= $strUrlUploadArquivo ?>');
+        mdPetVerificarTamanhoNoUpload(objUploadArquivo, objMdPetLimitesDoSei, validarTamanhoMaximoDoArquivo);
         objUploadArquivo.finalizou = function (arr) {
+            if (!mdPetValidarRetornoUpload(arr)) {
+                return false;
+            }
+
 
             //Tamanho do Arquivo
             var fileArquivo = document.getElementById('fileArquivo');
-            var tamanhoArquivo = (arr['tamanho'] / 1024 / 1024).toFixed(2);
-            if (tamanhoArquivo > parseInt(TAMANHO_MAXIMO)) {
-                alert('Tamanho máximo para o arquivo é de ' + TAMANHO_MAXIMO + 'Mb');
-                fileArquivo.value = '';
-                fileArquivo.focus();
-                verificarTabelaVazia(1);
+            if (!validarTamanhoMaximoDoArquivo(arr['tamanho'])) {
                 return false;
             }
 
@@ -274,6 +298,10 @@
 
         document.getElementById('selNivelAcesso').value = 'null';
         document.getElementById('selHipoteseLegal').value = 'null';
+        // RT-PET-025: o próximo documento não herda o nível nem a hipótese do anterior; o setaCamposNivelHipotese abaixo
+        // grava de novo os valores definidos pela administração
+        document.getElementById('hdnNivelAcesso').value = '';
+        document.getElementById('hdnHipoteseLegal').value = '';
 
         $('#selNivelAcesso').prop('disabled', false);
         $('#selHipoteseLegal').prop('disabled', false);
@@ -318,6 +346,10 @@
         if (complementoTipoDocumento == '') {
             alert('Informe o Complemento do Tipo de Documento. \nPara mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
             document.getElementById('txtComplementoTipoDocumento').focus();
+            return false;
+        }
+
+        if (!mdPetValidarCaracteresComplemento(document.getElementById('txtComplementoTipoDocumento'))) {
             return false;
         }
 

@@ -91,7 +91,7 @@
                                 success: function (result) {
 
                                     if($(result).find('uf').text() == '' || $(result).find('cidade').text() == ''){
-                                        alert('Na configuração de Múltiplas Unidades, o contato da Unidade precisa ter UF e Cidade cadastrados.');
+                                        alert('Na configuração de Múltiplas Unidades, o contato da Unidade precisa ter UF e Cidade cadastradas.');
                                         return false;
                                     }
 

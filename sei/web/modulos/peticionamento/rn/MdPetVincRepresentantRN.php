@@ -94,7 +94,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante(trim($objMdPetVincRepresentantDTO->getStrTipoRepresentante()));
 
             if (strlen($objMdPetVincRepresentantDTO->getStrTipoRepresentante()) > 1) {
-                $objInfraException->adicionarValidacao(' possui tamanho superior a 1 caracteres.');
+                $objInfraException->adicionarValidacao(' possui tamanho superior a 1 caractere.');
             }
         }
     }
@@ -102,17 +102,17 @@ class MdPetVincRepresentantRN extends InfraRN
     private function validarDthDataCadastro(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getDthDataCadastro())) {
-            $objInfraException->adicionarValidacao('DthDataCadastro não informad.');
+            $objInfraException->adicionarValidacao('DthDataCadastro não informada.');
         }
     }
 
     private function validarStrStaEstado(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getStrStaEstado())) {
-            $objInfraException->adicionarValidacao('StaEstado não informad.');
+            $objInfraException->adicionarValidacao('StaEstado não informado.');
         } else {
             if (!in_array($objMdPetVincRepresentantDTO->getStrStaEstado(), InfraArray::converterArrInfraDTO($this->listarValoresEstado(), 'StaEstado'))) {
-                $objInfraException->adicionarValidacao(' inválid.');
+                $objInfraException->adicionarValidacao(' inválido.');
             }
         }
     }
@@ -356,7 +356,18 @@ class MdPetVincRepresentantRN extends InfraRN
     public function realizarProcessosAlteracaoResponsavelLegal($dados)
     {
 
-        $dadosAlteracao = $this->prepararProcessosAlteracaoResponsavelLegal($dados);
+        (new MdPetVinculoUsuExtRN())->validarXssDocumentosVinculo($dados);
+        MdPetRastreioINT::registrar('Encerramento do Responsável Legal anterior: iniciado.');
+
+        try {
+            $dadosAlteracao = $this->prepararProcessosAlteracaoResponsavelLegal($dados);
+        } catch (Exception $objExceptionPreparacao) {
+            $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($objExceptionPreparacao, MdPetVinculoUsuExtRN::$MSG_ALTERACAO_NAO_CONCLUIDA);
+            MdPetRastreioINT::registrarFalha('Encerramento do Responsável Legal anterior: falhou, e o banco desfez tudo o que ele tinha gravado.', $objExceptionPreparacao, MdPetExcecaoINT::lerMensagem($objValidacao));
+            throw $objValidacao;
+        }
+
+        MdPetRastreioINT::registrar('Encerramento do Responsável Legal anterior: concluído.');
 
         try {
             $objMdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
@@ -412,22 +423,54 @@ class MdPetVincRepresentantRN extends InfraRN
         return $this->consultar($objMdPetVincRepresentantDTO) != null;
     }
 
+    /**
+     * Desfaz o encerramento do responsável legal anterior. Se o desfazimento falhar, o log guarda os dois erros para a
+     * correção manual, e a mensagem pede o contato com a gestão do SEI (ADR-PET-007).
+     *
+     * @param array<string, mixed> $dados dados devolvidos pela preparação da alteração
+     * @param Exception $e erro da etapa que falhou
+     * @return never
+     * @throws Exception
+     */
     private function tratarFalhaProcessosAlteracaoResponsavelLegal($dados, Exception $e)
     {
+        $strMotivo = MdPetExcecaoINT::lerMensagem(MdPetExcecaoINT::converterFalhaTecnica($e, MdPetVinculoUsuExtRN::$MSG_ALTERACAO_NAO_CONCLUIDA));
+        MdPetRastreioINT::registrarInicioDoRollback('Encerramento do Responsável Legal anterior: rollback iniciado para devolver o responsável legal anterior como estava.');
+
         try {
             $this->realizarRollbackProcessosAlteracaoResponsavelLegal($dados);
         } catch (Exception $eRollback) {
-            throw new InfraException('Erro no processamento da alteracao do responsavel legal e falha ao reverter as etapas anteriores.', $eRollback);
+            $idVinculo = $dados['rollbackAlteracaoRespLegal']['idVinculo'];
+            MdPetRastreioINT::registrarFalha('Encerramento do Responsável Legal anterior: o rollback falhou no vínculo ' . (int) $idVinculo . ', e o banco manteve tudo como estava antes dele. O vínculo precisa de correção manual.', $eRollback);
+            LogSEI::getInstance()->gravar('Falha ao reverter a alteração do responsável legal do vínculo ' . $idVinculo . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
+            (new MdPetAvisoRollbackRN())->avisarFalha('Encerramento do Responsável Legal', 'vínculo ' . (int) $idVinculo, $e, $eRollback, $strMotivo);
+            $objProcedimentoDTO = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($idVinculo);
+            (new InfraException())->lancarValidacao(sprintf(MdPetVinculoUsuExtRN::$MSG_ALTERACAO_NAO_DESFEITA, $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado()), null, $eRollback);
         }
+
+        MdPetRastreioINT::registrar('Encerramento do Responsável Legal anterior: rollback concluído com sucesso.');
+        (new MdPetAvisoRollbackRN())->avisarAcionamento('Encerramento do Responsável Legal', 'vínculo ' . (int) ($dados['rollbackAlteracaoRespLegal']['idVinculo'] ?? 0), $e, $strMotivo);
 
         throw $e;
     }
 
-    private function realizarRollbackProcessosAlteracaoResponsavelLegal($dados)
+    /**
+     * Desfaz o encerramento do responsável legal anterior em uma só transação: se um passo falhar, nada é desfeito.
+     *
+     * @param array<string, mixed> $dados dados devolvidos pela preparação da alteração
+     * @return void
+     */
+    protected function realizarRollbackProcessosAlteracaoResponsavelLegalControlado($dados)
     {
         $rollbackAlteracao = array_key_exists('rollbackAlteracaoRespLegal', $dados) ? $dados['rollbackAlteracaoRespLegal'] : null;
 
         if (empty($rollbackAlteracao) || !is_array($rollbackAlteracao)) {
+            return;
+        }
+
+        // Se o desfazimento da alteração falhou, o novo responsável legal segue ativo e o anterior não pode voltar
+        if ($this->existeResponsavelLegalAtivoOuSuspenso($rollbackAlteracao['idVinculo'])) {
+            MdPetRastreioINT::registrar('Encerramento do Responsável Legal anterior: rollback dispensado, porque o vínculo ' . (int) $rollbackAlteracao['idVinculo'] . ' já tem responsável legal ativo ou suspenso.');
             return;
         }
 
@@ -440,11 +483,13 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetVincRepresentantDTO->setStrMotivo(array_key_exists('motivoAnterior', $rollbackAlteracao) ? $rollbackAlteracao['motivoAnterior'] : null);
             $objMdPetVincRepresentantDTO->setDthDataEncerramento(array_key_exists('dataEncerramentoAnterior', $rollbackAlteracao) ? $rollbackAlteracao['dataEncerramentoAnterior'] : null);
             $this->alterar($objMdPetVincRepresentantDTO);
+            MdPetRastreioINT::registrarPassoDoRollback('Encerramento do Responsável Legal anterior', 'responsável legal anterior ' . $idRepresentante . ' restaurado.');
         }
 
         $idDocumentoJustificativa = array_key_exists('idDocumentoJustificativa', $rollbackAlteracao) ? $rollbackAlteracao['idDocumentoJustificativa'] : null;
         if (is_numeric($idRepresentante) && is_numeric($idDocumentoJustificativa)) {
             $this->removerDocumentoJustificativaAlteracaoResponsavelLegal($idRepresentante, $idDocumentoJustificativa);
+            MdPetRastreioINT::registrarPassoDoRollback('Encerramento do Responsável Legal anterior', 'ligação do documento ' . $idDocumentoJustificativa . ' com o responsável legal anterior removida.');
         }
     }
 
@@ -500,7 +545,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $idDocumentoJustificativa = $arrObjDocumentoDTO->getDblIdDocumento();
 
             $tpProtocolo = MdPetVincDocumentoRN::$TP_PROTOCOLO_RECIBO;
-            $objMdPetVinculoUsuExtRN->_adicionarDadosArquivoVinculacao($idDocumentoJustificativa, $tpProtocolo, $idRepresentante);
+            $objMdPetVinculoUsuExtRN->_adicionarDadosArquivoVinculacao($idDocumentoJustificativa, $idRepresentante, $tpProtocolo);
         }
 
         $objMdPetVincRepresentantDTO->setStrMotivo($_POST['txtMotivo']);
@@ -508,6 +553,7 @@ class MdPetVincRepresentantRN extends InfraRN
         $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentantDTO);
 
         return array(
+            'idVinculo' => $idVinculo,
             'idRepresentante' => $idRepresentante,
             'estadoAnterior' => $estadoAnterior,
             'motivoAnterior' => $motivoAnterior,
@@ -556,7 +602,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
                 $bolNaoReestabelecer = false;
-                $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+                $strMensagemNaoReestabelecer = 'Não é possível Restabelecer a vinculação desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
                 $usuariosExternosDesativados = [];
 
                 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
@@ -1541,35 +1587,28 @@ class MdPetVincRepresentantRN extends InfraRN
             return $objProtocolo->getStrProtocoloFormatado();
         }
 
+        /** Gera na unidade do processo e restaura o contexto de execução anterior. */
         private function _gerarDocumentoAgendamento($params)
         {
+            return (new MdPetIntUsuarioRN())->executarComoUsuarioPeticionamento(function () use ($params) {
+                $objSaidaDocumentoAPI = $this->_gerarDocumento($params);
 
-            // DEVE SIMULAR LOGIN NA UNIDADE PARA GERAR DOCUMENTO E DEPOIS REESTABELECER
-            $objUsuarioPetRN = new MdPetIntUsuarioRN();
-            $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
-            SessaoSEI::getInstance()->setBolHabilitada(false);
-            SessaoSEI::getInstance()->setNumIdUnidadeAtual($params['procedimento']->getNumIdUnidadeGeradoraProtocolo());
-            SessaoSEI::getInstance()->setNumIdUsuario($idUsuarioPet);
+                //necessario forçar update da coluna sta_documento da tabela documento
+                //Add conteúdo atualizado com o nome do documento formatado gerado.
+                //inclusão via SeiRN não permitiu definir como documento de formulário automático
 
-            $objSaidaDocumentoAPI = $this->_gerarDocumento($params);
+                $objDocumentoRN = new DocumentoRN();
+                $objDocumentoDTO = new DocumentoDTO();
 
-            //necessario forçar update da coluna sta_documento da tabela documento
-            //Add conteúdo atualizado com o nome do documento formatado gerado.
-            //inclusão via SeiRN não permitiu definir como documento de formulário automático
+                $objDocumentoDTO->retTodos();
+                $objDocumentoDTO->setDblIdDocumento($objSaidaDocumentoAPI->getIdDocumento());
+                $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+                $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_FORMULARIO_AUTOMATICO);
+                $objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
+                $objDocumentoBD->alterar($objDocumentoDTO);
 
-            $objDocumentoRN = new DocumentoRN();
-            $objDocumentoDTO = new DocumentoDTO();
-
-            $objDocumentoDTO->retTodos();
-            $objDocumentoDTO->setDblIdDocumento($objSaidaDocumentoAPI->getIdDocumento());
-            $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
-            $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_FORMULARIO_AUTOMATICO);
-            $objDocumentoBD = new DocumentoBD($this->getObjInfraIBanco());
-            $objDocumentoBD->alterar($objDocumentoDTO);
-
-            SessaoSEI::getInstance()->setBolHabilitada(true);
-
-            return $objSaidaDocumentoAPI;
+                return $objSaidaDocumentoAPI;
+            }, $params['procedimento']->getNumIdUnidadeGeradoraProtocolo());
         }
 
         private function _gerarDocumento($params)
@@ -1791,7 +1830,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $htmlModelo = file_get_contents($url);
             $htmlModelo = str_replace('@procuracaoTipo', $procuracaoTipo, $htmlModelo);
             $htmlModelo = str_replace('@procuracaoDocNum', $params['procuracao_doc_num'], $htmlModelo);
-            $htmlModelo = str_replace('@outorganteTipoPessoa', 'Pessoa Fsica', $htmlModelo);
+            $htmlModelo = str_replace('@outorganteTipoPessoa', 'Pessoa Física', $htmlModelo);
             $htmlModelo = str_replace('@procuracaoDados', $this->_retornaProcuradorDados($params), $htmlModelo);
             $htmlModelo = str_replace('@outorganteDados', $this->_retornaOrtoganteDados($params['ortoganteNome']), $htmlModelo);
             $htmlModelo = str_replace('@outorgadoNome', $params['ortogadoNome'], $htmlModelo);
@@ -1906,7 +1945,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             if (in_array($params['tipoVinculo'], [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])) {
 
-                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2" style="font: bold 12pt Calibri, sans-serif">Dados da Procurao Eletrônica:</td></tr>';
+                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2" style="font: bold 12pt Calibri, sans-serif">Dados da Procuração Eletrônica:</td></tr>';
                 $procuracaoDados .= '<tr>';
                 $procuracaoDados .= '<td class="tdTabulacao" style="font: bold 12pt Calibri, sans-serif">Validade:</td>';
                 $procuracaoDados .= '<td style="font-weight: normal">' . (!empty($params['dtLimiteValidade']) ? $params['dtLimiteValidade'] : 'Indeterminada') . '</td>';
@@ -2016,7 +2055,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objContatoRN = new ContatoRN();
             $objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
 
-            $msg = "Usurio Externo desativado em razo da Situao Cadastral de seu CPF na Receita Federal - Data: " . InfraData::getStrDataAtual() . ".\n" . $objContatoDTO->getStrObservacao();
+            $msg = "Usuário Externo desativado em razão da Situação Cadastral de seu CPF na Receita Federal - Data: " . InfraData::getStrDataAtual() . ".\n" . $objContatoDTO->getStrObservacao();
             $objContatoDTO->setStrObservacao($msg);
             $objContatoRN->alterarRN0323($objContatoDTO);
 
@@ -2115,7 +2154,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             $dados['procuracao_tipo'] = $objMdPetVincRepresentantDTO->getStrNomeTipoVinculacao();
 
-            $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer o Procurador, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+            $strMensagemNaoReestabelecer = 'Não é possível Restabelecer o Procurador, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
             $bolNaoReestabelecer = false;
 
             // BUSCA OS DADOS DO USUÁRIO EXTERNO DO PROCURADOR:

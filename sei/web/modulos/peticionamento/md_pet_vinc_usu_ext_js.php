@@ -17,6 +17,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
     var stWebserviceBol = '<?= $stWebService ? 1 : 0 ?>';
     var RESTRITO = '<?= ProtocoloRN::$NA_RESTRITO ?>';
     var TAMANHO_MAXIMO = '<?= $tamanhoMaximo ?>';
+    var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
     var EXIBIR_HIPOTESE_LEGAL = '<?= $exibirHipoteseLegal ?>';
     var arrExtensoesPermitidas = [<?= $extensoesPermitidas ?>];
     var objAjaxSelectTipoDocumento = null;
@@ -124,7 +125,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
                         console.log(url);
                         if (procuracao == 'true') {
                             infraAbrirJanela(window.atob(url),
-                                'Impedimento de Substitução de Responsável Legal',
+                                'Impedimento de Substituição de Responsável Legal',
                                 770,
                                 480,
                                 '', //options
@@ -463,7 +464,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
 
                         if (procuracao == 'true') {
                             infraAbrirJanela(window.atob(url),
-                                'Impedimento de Substitução de Responsável Legal',
+                                'Impedimento de Substituição de Responsável Legal',
                                 770,
                                 480,
                                 '', //options
@@ -563,7 +564,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         var isAlteracao = document.getElementById('isAlteracaoResponsavelLegal');
 
         if (isAlteracao && isAlteracao.value != 0) {
-            if (confirm('As alteração não serão salvas, para conclui-lá é necessário Peticionar!! Deseja continuar?')) {
+            if (confirm('As alterações não serão salvas, para concluí-las é necessário Peticionar!! Deseja continuar?')) {
                 document.location = '<?php echo $strUrlFechar ?>';
             }
         } else {
@@ -635,19 +636,35 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         }
     }
 
+    // Limite do módulo, conferido antes da transferência e de novo no retorno do upload (ADR-PET-010). O tamanho chega
+    // em bytes.
+    function validarTamanhoMaximoDoArquivo(numTamanho) {
+        var fileArquivo = document.getElementById('fileArquivo');
+        var tamanhoArquivo = (numTamanho / 1024 / 1024).toFixed(2);
+        if (tamanhoArquivo > parseInt(TAMANHO_MAXIMO)) {
+            alert('Tamanho máximo para o arquivo é de ' + TAMANHO_MAXIMO + 'Mb');
+            fileArquivo.value = '';
+            fileArquivo.focus();
+            verificarTabelaVazia(1);
+            return false;
+        }
+
+        return true;
+    }
+
     function iniciarObjUploadArquivo() {
         var tbDocumento = document.getElementById('tbDocumento');
         objUploadArquivo = new infraUpload('frmDocumentoAto', '<?php echo $strLinkUploadArquivo ?>');
+        mdPetVerificarTamanhoNoUpload(objUploadArquivo, objMdPetLimitesDoSei, validarTamanhoMaximoDoArquivo);
 
         objUploadArquivo.finalizou = function(arr) {
+            if (!mdPetValidarRetornoUpload(arr)) {
+                return false;
+            }
+
             //Tamanho do Arquivo
             var fileArquivo = document.getElementById('fileArquivo');
-            var tamanhoArquivo = (arr['tamanho'] / 1024 / 1024).toFixed(2);
-            if (tamanhoArquivo > parseInt(TAMANHO_MAXIMO)) {
-                alert('Tamanho máximo para o arquivo é de ' + TAMANHO_MAXIMO + 'Mb');
-                fileArquivo.value = '';
-                fileArquivo.focus();
-                verificarTabelaVazia(1);
+            if (!validarTamanhoMaximoDoArquivo(arr['tamanho'])) {
                 return false;
             }
 
@@ -761,6 +778,10 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         if (complementoTipoDocumento == '') {
             alert('Informe o Complemento do Tipo de Documento. \nPara mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
             document.getElementById('txtComplementoTipoDocumento').focus();
+            return false;
+        }
+
+        if (!mdPetValidarCaracteresComplemento(document.getElementById('txtComplementoTipoDocumento'))) {
             return false;
         }
 
@@ -1116,6 +1137,20 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
 
         if (isAlteracao && !isAlteracaoRespLql && isTabelaVazia) {
             alert('Para realizar o Peticionamento é necessário adicionar documentos ou Alterar o Responsável Legal!');
+            return false;
+        }
+
+        var arrCamposXss = [];
+        document.querySelectorAll('.blocInformacaoPj').forEach(function (objCampo) {
+            if (objCampo.nodeName === 'INPUT' && objCampo.value !== '' &&
+                objCampo.id !== 'txtNumeroCpfResponsavel' && objCampo.id !== 'txtNumeroCEP') {
+                arrCamposXss.push(objCampo);
+            }
+        });
+        if (arrCamposXss.length > 0 && !mdPetValidarXssCamposAntesDaAcao(
+            arrCamposXss,
+            '<?= PaginaSEIExterna::getInstance()->formatarParametrosJavaScript(PeticionamentoIntegracao::MSG_CONTEUDO_NAO_PERMITIDO, false) ?>'
+        )) {
             return false;
         }
 

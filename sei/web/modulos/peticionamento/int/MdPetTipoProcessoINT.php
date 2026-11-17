@@ -1145,7 +1145,7 @@ class MdPetTipoProcessoINT extends InfraINT
         }
 
         if ($msg != '') {
-            $msg = 'O Critério não pôde ser cadastrado, pois os Tipo de Processo abaixo não permite o Nível de Acesso [ ' . $arrayDescricoes[$params['selNivelAcesso']] . " ]\n\r" . $msg;
+            $msg = 'O Critério não pôde ser cadastrado, pois os Tipos de Processo abaixo não permitem o Nível de Acesso [ ' . $arrayDescricoes[$params['selNivelAcesso']] . " ]\n\r" . $msg;
             $xml .= '<MensagemValidacao>' . $msg . '</MensagemValidacao>';
         }
 
@@ -1253,7 +1253,7 @@ class MdPetTipoProcessoINT extends InfraINT
         }
 
         if ($msg != '') {
-            $msg = 'O Critério não pôde ser cadastrado, pois existe Tipo de Processo que não possue indicação de pelo menos uma sugestão de assunto' . "\n\r" . $msg;
+            $msg = 'O Critério não pôde ser cadastrado, pois existe Tipo de Processo que não possui indicação de pelo menos uma sugestão de assunto' . "\n\r" . $msg;
             $xml .= '<MensagemValidacao>' . $msg . '</MensagemValidacao>';
         }
 

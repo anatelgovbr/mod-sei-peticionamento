@@ -13,17 +13,17 @@
     {
 
     	public static function xmlToArray ( $xmlTexto ) {
-    		
+
     		$Class = Array();
     		$Class['UsersFileXml'] = $xmlTexto;
     		$Class['FileXml'] = simplexml_load_string($Class['UsersFileXml']);
     		$Class['FileJson'] = json_encode($Class['FileXml']);
     		$Array = json_decode($Class['FileJson'],TRUE);
     		unset($Class);
-    		
+
     		return $Array;
     	}
-        
+
         /**
          * Função responsável por gerar o XML para validação do número Processo
          * @param int $numeroProcesso
@@ -135,9 +135,9 @@
             // Valida se o processo é de representação e se a validação de processo de representação deve ser feita para peticionamento intercorrente
             if($validaProcessoRepresentacao) {
                 $strMsgProcessoDeRepresentacao = 'O "Processo de Controle de Representação" é exclusivo para recepção dos documentos gerados automaticamente pelo SEI na operação das funcionalidades de Representação de Pessoas Físicas ou Pessoas Jurídicas por meio da emissão pelo próprio SEI de Procurações Eletrônicas.
-                
+
 Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo ou insira o número de um Processo já existente relacionado com sua demanda.';
-                
+
                 $objMdPetProRepresWhitRN = new MdPetProRepresWhitRN();
                 $objMdPetVinculoDTO = new MdPetVinculoDTO();
                 $objMdPetVinculoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
@@ -145,7 +145,7 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
                 $objMdPetVinculoDTO->retDblIdProtocolo();
                 $objMdPetVinculoDTO->setNumMaxRegistrosRetorno(1);
                 $arrObjMdPetVinculoDTO = ( new MdPetVinculoRN() )->listar($objMdPetVinculoDTO);
-                
+
                 if (is_array($arrObjMdPetVinculoDTO) && count($arrObjMdPetVinculoDTO) > 0) {
                     $objMdPetVinculoDTO = $arrObjMdPetVinculoDTO[0];
 
@@ -353,7 +353,7 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
 
             $objHipoteseLegalPetRN       = new MdPetHipoteseLegalRN();
             $arrObjMdPetHipoteseLegalDTO = $objHipoteseLegalPetRN->listar($objMdPetHipoteseLegalDTO);
-           
+
             $strOptions = '<option value=""></option>';
         	if( is_array( $arrObjMdPetHipoteseLegalDTO ) && count( $arrObjMdPetHipoteseLegalDTO ) > 0){
         		foreach ($arrObjMdPetHipoteseLegalDTO as $objMdPetHipoteseLegalDTO) {
@@ -375,13 +375,13 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
         /**
          * Função responsável por montar o array com os documentos que foram adicionados na grid da tela Peticionamento
          * Interorrente
-         * @param $idProcedimento
-         * @param $hdnTabelaDinamicaDocumento
-         * @return  array $arrDocumentoAPI
+         * @param int|string $idProcedimento
+         * @param string $hdnTabelaDinamicaDocumento
+         * @param string $strDiretorio diretório dos arquivos temporários
+         * @return  DocumentoAPI[] $arrDocumentoAPI
          * @since  15/12/2016
-         * @author André Luiz <andre.luiz@castgroup.com.br>
          */
-        public static function montarArrDocumentoAPI($idProcedimento, $hdnTabelaDinamicaDocumento)
+        public static function montarArrDocumentoAPI(int|string $idProcedimento, string $hdnTabelaDinamicaDocumento, string $strDiretorio = DIR_SEI_TEMP): array
         {
 
 	        LimiteSEI::getInstance()->configurarNivel3();
@@ -396,11 +396,12 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
                 $documentoAPI->setDescricao($itemTbDocumento[2]);
                 $documentoAPI->setNomeArvore($itemTbDocumento[2]);
                 $documentoAPI->setNivelAcesso($itemTbDocumento[3]);
-                $documentoAPI->setIdHipoteseLegal($itemTbDocumento[4]);
+                // RT-PET-025: hipótese legal só justifica documento Restrito; com outro nível, o SEI recusa a resposta inteira
+                $documentoAPI->setIdHipoteseLegal($itemTbDocumento[3] == ProtocoloRN::$NA_RESTRITO ? $itemTbDocumento[4] : null);
                 $documentoAPI->setIdTipoConferencia($itemTbDocumento[6]);
                 $documentoAPI->setNomeArquivo($itemTbDocumento[9]);
                 $documentoAPI->setTipo(ProtocoloRN::$TP_DOCUMENTO_RECEBIDO);
-                $caminhoArquivo = DIR_SEI_TEMP . '/' . $itemTbDocumento[7];
+                $caminhoArquivo = $strDiretorio . '/' . $itemTbDocumento[7];
                 $documentoAPI->setConteudo(base64_encode(file_get_contents($caminhoArquivo)));
                 $documentoAPI->setData(InfraData::getStrDataAtual());
                 $documentoAPI->setIdArquivo($itemTbDocumento[7]);
@@ -494,7 +495,7 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
                 }else{
                     $retorno = is_null($objDocs->getNumIdTipoConferencia()) ? MdPetIntercorrenteProcessoRN::$FORMATO_NATO_DIGITAL : MdPetIntercorrenteProcessoRN::$FORMATO_DIGITALIZADO;
                 }
-               
+
             }
 
             return $retorno;

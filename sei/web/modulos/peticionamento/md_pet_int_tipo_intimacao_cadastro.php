@@ -100,7 +100,7 @@ try {
                 try {
                     $objMdPetIntTipoIntimacaoRN = new MdPetIntTipoIntimacaoRN();
                     $objMdPetIntTipoIntimacaoRN->alterar($objMdPetIntTipoIntimacaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntTipoIntimacaoDTO->getNumIdMdPetIntTipoIntimacao() . '" alterad com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntTipoIntimacaoDTO->getNumIdMdPetIntTipoIntimacao() . '" alterada com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdPetIntTipoIntimacaoDTO->getNumIdMdPetIntTipoIntimacao())));
                     die;
                 } catch (Exception $e) {
@@ -204,7 +204,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
                 <label id="lblNome" for="txtNome" accesskey="" class="infraLabelObrigatorio">Nome:
                     <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decisão que motiva a intimação e não a possível resposta do Usuário Externo. \n \n Exemplos: Descisão de 1ª Instância, Decisão de Inadmissibilidade de Recurso, Exigência para Complementação de Informações, Decisão sobre Recurso.', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever nome que reflita o documento ou decisão que motiva a intimação e não a possível resposta do Usuário Externo. \n \n Exemplos: Decisão de 1ª Instância, Decisão de Inadmissibilidade de Recurso, Exigência para Complementação de Informações, Decisão sobre Recurso.', 'Ajuda') ?>
                          class="infraImgModulo"/></label>
                 <input type="text" id="txtNome" name="txtNome" class="infraTex form-control"
                        value="<?= PaginaSEI::tratarHTML($objMdPetIntTipoIntimacaoDTO->getStrNome()); ?>"

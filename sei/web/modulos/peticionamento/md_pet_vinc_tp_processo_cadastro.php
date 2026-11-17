@@ -380,7 +380,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <fieldset class="infraFieldset sizeFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Física
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                         id="imgAjudaVincUsuarioExternoPF" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir o Usuário Externo logado emitir Procurações Eletrônicas simples para que outro Usuário Externo possa representá-lo como Pessoa Física. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Usuário Externo será aberto.', 'Ajuda') ?>
+                         id="imgAjudaVincUsuarioExternoPF" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir ao Usuário Externo logado emitir Procurações Eletrônicas simples para que outro Usuário Externo possa representá-lo como Pessoa Física. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Usuário Externo será aberto.', 'Ajuda') ?>
                          class="infraImgFielset"/>
                 </legend>
                 <!--  Tipo de Processo  -->
@@ -504,7 +504,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <fieldset class="infraFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Jurídica
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                         id="imgAjudaVincUsuarioExternoPJ" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir o Usuário Externo logado emitir Procurações Eletrônicas simples ou Procurações Eletrônicas Especiais para que outro Usuário Externo possa representar Pessoa Jurídica. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Pessoa Jurídica será aberto.', 'Ajuda') ?>
+                         id="imgAjudaVincUsuarioExternoPJ" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir ao Usuário Externo logado emitir Procurações Eletrônicas simples ou Procurações Eletrônicas Especiais para que outro Usuário Externo possa representar Pessoa Jurídica. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Pessoa Jurídica será aberto.', 'Ajuda') ?>
                          class="infraImgFielset"/>
                 </legend>
                 <!--  Tipo de Processo  -->
@@ -593,7 +593,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 Pessoa
                                 Jurídica:</label>
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
-                                 id="imgAjudaMenuAcessoExternoPJ" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externos. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.', 'Ajuda') ?>
+                                 id="imgAjudaMenuAcessoExternoPJ" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externos. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se a integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.', 'Ajuda') ?>
                                  class="infraImgModulo"/>
                             <br/>
                             <input <?php if ($exibirMenuAcessoExterno == 'S') {

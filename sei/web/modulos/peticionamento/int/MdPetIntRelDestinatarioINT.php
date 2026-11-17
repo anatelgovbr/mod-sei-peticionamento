@@ -38,7 +38,20 @@ class MdPetIntRelDestinatarioINT extends InfraINT {
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntRelDestinatarioDTO, 'IdMdPetIntRelDestinatario', 'IdMdPetIntRelDestinatario');
     }
 
-    public static function montarSelectRazaoSocial($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $numIdMdPetIntimacao = '', $idMdPetIntRelDestinatario,$idDocumento,$idAceite, $idContatoVincRepresentant)
+    /**
+     * Opções das pessoas jurídicas destinatárias da intimação que o usuário externo ainda representa.
+     *
+     * @param string $strPrimeiroItemValor
+     * @param string $strPrimeiroItemDescricao
+     * @param string $strValorItemSelecionado
+     * @param array<int, string>|string|null $numIdMdPetIntimacao intimações da URL, sem uso na consulta
+     * @param int|null $idMdPetIntRelDestinatario
+     * @param string|float|null $idDocumento documento principal da intimação
+     * @param array<int, string>|string $idAceite aceites da URL
+     * @param int|null $idContatoVincRepresentant contato do usuário externo
+     * @return string opções do select
+     */
+    public static function montarSelectRazaoSocial(string $strPrimeiroItemValor, string $strPrimeiroItemDescricao, string $strValorItemSelecionado, $numIdMdPetIntimacao, $idMdPetIntRelDestinatario, $idDocumento, $idAceite, $idContatoVincRepresentant): string
     {
             $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
 			//$objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($numIdMdPetIntimacao);

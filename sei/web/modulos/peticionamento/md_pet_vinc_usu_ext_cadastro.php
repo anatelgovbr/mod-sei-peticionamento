@@ -15,6 +15,12 @@ try {
 
     SessaoSEIExterna::getInstance()->validarLink();
     $possuiPermissao = SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
+    $mixTextosXss = PaginaSEI::POST('mdPetXssTextos');
+    if ($mixTextosXss !== null) {
+        echo PaginaSEI::tratarHTML(PeticionamentoIntegracao::consultarXssTextosAjax($mixTextosXss));
+        return;
+    }
+
     require_once 'md_pet_vinc_usu_ext_inicializar.php';
     require_once 'md_pet_vinc_usu_ext_acoes.php';
 

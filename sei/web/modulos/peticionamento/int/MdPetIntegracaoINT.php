@@ -150,7 +150,15 @@ class MdPetIntegracaoINT extends InfraINT {
       }
     }
 
-    public static function trataDadosSaida($arrParametrosEntradaSaidaWsdl, $operacao = null, &$arrParametro)
+    /**
+     * Parâmetros de saída da operação do webservice, a partir dos tipos lidos do WSDL.
+     *
+     * @param array<string, mixed> $arrParametrosEntradaSaidaWsdl tipos do WSDL
+     * @param string|null $operacao nome da operação
+     * @param array<string, mixed> $arrParametro recebe os parâmetros de saída
+     * @return void
+     */
+    public static function trataDadosSaida(array $arrParametrosEntradaSaidaWsdl, ?string $operacao, array &$arrParametro): void
     {
         $tipoRetorno = $operacao . 'Response';
         $campoPrincipal = array_key_first($arrParametrosEntradaSaidaWsdl[$tipoRetorno]['fields']);

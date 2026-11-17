@@ -39,7 +39,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
 		
 		$numSeg = InfraUtil::verificarTempoProcessamento();
-		InfraDebug::getInstance()->gravar('CUMPRINDO INTIMACOES POR DECURSO DE PRAZO EM ' . InfraData::getStrDataAtual());
+		InfraDebug::getInstance()->gravar('CUMPRINDO INTIMAÇÕES POR DECURSO DE PRAZO EM ' . InfraData::getStrDataAtual());
 
 		// Contingencia para evitar que intimação fique no limbo:
 		(new MdPetIntimacaoRN())->preencherDadaPrazoTacito();
@@ -50,7 +50,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		// Busca pela pelas intimações a cumprir na data de hoje:
 		$intimacoesPendentes = (new MdPetIntimacaoRN())->retornarDadosIntimacaoPrazoExpirado();
 		
-		InfraDebug::getInstance()->gravar('Qtd. Intimacoes Pendentes: ' . count($intimacoesPendentes));
+		InfraDebug::getInstance()->gravar('Qtd. Intimações Pendentes: ' . count($intimacoesPendentes));
 		
 		if (count($intimacoesPendentes) > 0) {
 			
@@ -80,14 +80,14 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 			}
 
 			// Step 2 - Logar o resultado:
-			InfraDebug::getInstance()->gravar('Qtd. Intimacoes Cumpridas: ' . $processamento['cumpridas']);
-			InfraDebug::getInstance()->gravar('Qtd. Intimacoes Nao Cumpridas: ' . $processamento['naoCumpridas']);
+			InfraDebug::getInstance()->gravar('Qtd. Intimações Cumpridas: ' . $processamento['cumpridas']);
+			InfraDebug::getInstance()->gravar('Qtd. Intimações Não Cumpridas: ' . $processamento['naoCumpridas']);
 
 			if(isset($processamento['erros']) && count($processamento['erros']) > 0) {
 					
 				$mensagem = ':: Este é um e-mail automático ::\n\n';
-				$mensagem .= 'Qtd. Intimacoes Cumpridas: ' . $processamento['cumpridas'].'\n';
-				$mensagem .= 'Qtd. Intimacoes Nao Cumpridas: ' . $processamento['naoCumpridas'].'\n';
+				$mensagem .= 'Qtd. Intimações Cumpridas: ' . $processamento['cumpridas'].'\n';
+				$mensagem .= 'Qtd. Intimações Não Cumpridas: ' . $processamento['naoCumpridas'].'\n';
 				$mensagem .= 'Processos em que o cumprimento falhou: \n';
 
 				foreach ($processamento['erros'] as $erro) {
@@ -124,7 +124,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		}
 
 		$numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-		InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+		InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: ' . $numSeg . ' s');
 		InfraDebug::getInstance()->gravar('FIM');
 		LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
 		
@@ -149,11 +149,11 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
 
             $numSeg = InfraUtil::verificarTempoProcessamento();
-            InfraDebug::getInstance()->gravar('CUMPRINDO INTIMACOES POR DECURSO DE PRAZO');
+            InfraDebug::getInstance()->gravar('CUMPRINDO INTIMAÇÕES POR DECURSO DE PRAZO');
 
             $intimacoesPendentes = (new MdPetIntimacaoRN())->retornarDadosIntimacaoPrazoExpirado();
 
-            InfraDebug::getInstance()->gravar('Qtd. Intimacoes Pendentes: ' . count($intimacoesPendentes));
+            InfraDebug::getInstance()->gravar('Qtd. Intimações Pendentes: ' . count($intimacoesPendentes));
 
             if (count($intimacoesPendentes) > 0) {
 	
@@ -187,8 +187,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	            	
 	            }
 
-                InfraDebug::getInstance()->gravar('Qtd. Intimacoes Cumpridas: ' . $arrIntimacoes['cumpridas']);
-                InfraDebug::getInstance()->gravar('Qtd. Intimacoes Nao Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
+                InfraDebug::getInstance()->gravar('Qtd. Intimações Cumpridas: ' . $arrIntimacoes['cumpridas']);
+                InfraDebug::getInstance()->gravar('Qtd. Intimações Não Cumpridas: ' . $arrIntimacoes['naoCumpridas']);
 
                 if(isset($arrIntimacoes['procedimentos'])) {
                     foreach ($arrIntimacoes['procedimentos'] as $procedimento) {
@@ -204,7 +204,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
             
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
             
@@ -217,8 +217,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
             SessaoSEI::getInstance(false);
 
-            LogSEI::getInstance()->gravar('Erro cumprindo intimacao por decurso de prazo.' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro cumprindo intimacao por decurso de prazo.', $e);
+            LogSEI::getInstance()->gravar('Erro cumprindo intimação por decurso de prazo.' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro cumprindo intimação por decurso de prazo.', $e);
             
         }
 
@@ -239,7 +239,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             SessaoSEI::getInstance(false);
            
             $numSeg = InfraUtil::verificarTempoProcessamento();
-            InfraDebug::getInstance()->gravar('ALTERANDO SITUACAO DE PROCURACOES VENCIDAS');
+            InfraDebug::getInstance()->gravar('ALTERANDO SITUAÇÃO DE PROCURAÇÕES VENCIDAS');
 
             //Alterando o Status das Procurações Eletrônicas
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
@@ -265,10 +265,10 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             }
         }
            
-            InfraDebug::getInstance()->gravar('Qtd. Procuracoes Vencidas: '.$contador.' ');
+            InfraDebug::getInstance()->gravar('Qtd. Procurações Vencidas: '.$contador.' ');
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: '.$numSeg.' s');
             InfraDebug::getInstance()->gravar('FIM');
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
         } catch (Exception $e) {
@@ -279,8 +279,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
             SessaoSEI::getInstance(false);
             
-            LogSEI::getInstance()->gravar('Erro alterando situacao da procuracao eletronica.' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro alterando situacao da procuracao eletronica.',$e);
+            LogSEI::getInstance()->gravar('Erro alterando situação da procuração eletrônica.' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro alterando situação da procuração eletrônica.',$e);
         }
 
     }
@@ -295,7 +295,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
     protected function gravaLogs($startScript){
         $numSeg = InfraUtil::verificarTempoProcessamento($startScript);
-        InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+        InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: ' . $numSeg . ' s');
         InfraDebug::getInstance()->gravar('FIM');
         LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
     }
@@ -324,7 +324,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
             if(count($intimacoesExigeRespostaDTO) == 0 || count($intimacoesExigeRespostaJuridicoDTO) == 0){
                 $this->configDebugSession();
-                InfraDebug::getInstance()->gravar('NEHUMA INTIMAÇÃO A REITERAR.');
+                InfraDebug::getInstance()->gravar('NENHUMA INTIMAÇÃO A REITERAR.');
                 $this->gravaLogs($startScript);
             }
 
@@ -333,7 +333,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
                 $this->configDebugSession();
 
-                InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES QUE EXIGEM RESPOSTA PF');
+                InfraDebug::getInstance()->gravar('REITERANDO INTIMAÇÕES QUE EXIGEM RESPOSTA PF');
 
                 $qtdEnviadas = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacao(array($intimacoesExigeRespostaDTO, $pessoa = "F"));
                 if (is_numeric($qtdEnviadas['qtdEnviadas'])) {
@@ -355,7 +355,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
                 $this->configDebugSession();
 
-                InfraDebug::getInstance()->gravar('REITERANDO INTIMACOES QUE EXIGEM RESPOSTA PJ');
+                InfraDebug::getInstance()->gravar('REITERANDO INTIMAÇÕES QUE EXIGEM RESPOSTA PJ');
 
                 $qtdEnviadasJuridico = $objMdPetIntEmailNotificacaoRN->enviarEmailReiteracaoIntimacaoJuridico(array($intimacoesExigeRespostaJuridicoDTO, $pessoa = "J"));
                 if (is_numeric($qtdEnviadasJuridico['qtdEnviadas'])) {
@@ -378,8 +378,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
             SessaoSEI::getInstance(false);
 
-            LogSEI::getInstance()->gravar('Erro reiterando intimacoes pendentes exige resposta.' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
+            LogSEI::getInstance()->gravar('Erro reiterando intimações pendentes que exigem resposta.' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro reiterando intimações pendentes que exigem resposta.', $e);
         }
 
     }
@@ -397,16 +397,16 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             SessaoSEI::getInstance(false);
 
             $numSeg = InfraUtil::verificarTempoProcessamento();
-            InfraDebug::getInstance()->gravar('ATUALIZANDO O ESTADO DE INTIMACOES VENCIDAS E SEM RESPOSTA');
+            InfraDebug::getInstance()->gravar('ATUALIZANDO O ESTADO DE INTIMAÇÕES VENCIDAS E SEM RESPOSTA');
 
             $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
 
             $intimacoesVencidas = $objMdPetIntRelDestRN->retornaAtualizaIntimacoesSemRespostaVencidas();
 
-            InfraDebug::getInstance()->gravar('Qtd. Intimacoes Vencidas e Sem Resposta: ' . $intimacoesVencidas);
+            InfraDebug::getInstance()->gravar('Qtd. Intimações Vencidas e Sem Resposta: ' . $intimacoesVencidas);
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
 
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
@@ -419,8 +419,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
             SessaoSEI::getInstance(false);
 
-            LogSEI::getInstance()->gravar('Erro atualizando o estado das intimacoes vencidas e sem resposta.' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro atualizando o estado das intimacoes vencidas e sem resposta.', $e);
+            LogSEI::getInstance()->gravar('Erro atualizando o estado das intimações vencidas e sem resposta.' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro atualizando o estado das intimações vencidas e sem resposta.', $e);
         }
 
     }
@@ -437,7 +437,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
             SessaoSEI::getInstance(false);
 
             $numSeg = InfraUtil::verificarTempoProcessamento();
-            InfraDebug::getInstance()->gravar('ATUALIZANDO O ESTADO DE TODAS AS INTIMACOES JA REALIZADAS NO SEI');
+            InfraDebug::getInstance()->gravar('ATUALIZANDO O ESTADO DE TODAS AS INTIMAÇÕES JÁ REALIZADAS NO SEI');
 
             $objMdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
             $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
@@ -460,10 +460,10 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
                 $objMdPetIntRelDestRN->atualizarCadaEstadoIntimacao($arrSituacaoSeparado, MdPetIntimacaoRN::$INTIMACAO_PRAZO_VENCIDO);
             }
 
-            InfraDebug::getInstance()->gravar('Qtd. Intimacoes Atualizadas: ' . $count);
+            InfraDebug::getInstance()->gravar('Qtd. Intimações Atualizadas: ' . $count);
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
 
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
@@ -476,8 +476,8 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
             SessaoSEI::getInstance(false);
 
-            LogSEI::getInstance()->gravar('Erro atualizando o estado das intimacoes.' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro atualizando o estado das intimacoes.', $e);
+            LogSEI::getInstance()->gravar('Erro atualizando o estado das intimações.' . $e, InfraLog::$INFORMACAO);
+            throw new InfraException('Erro atualizando o estado das intimações.', $e);
         }
     }
 	
@@ -491,7 +491,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 			InfraDebug::getInstance()->limpar();
 			
 			$numSeg = InfraUtil::verificarTempoProcessamento();
-			InfraDebug::getInstance()->gravar('ATUALIZANDO REGISTROS DE USUARIOS EXTERNOS AUTORREPRESENTAVEIS');
+			InfraDebug::getInstance()->gravar('ATUALIZANDO REGISTROS DE USUÁRIOS EXTERNOS AUTORREPRESENTÁVEIS');
 			
 			// USANDO SQL PURO E NOT EXISTS PARA COMPATIBILIDADE ENTRE OS BANCOS
 			$sqlContatoUsuarioNovos = "SELECT t1.id_contato
@@ -559,7 +559,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 			if($atualizaVinculacoes = false){
 				
 				// ATUALIZAR REPRESENTANTES EXISTENTES DE USUARIOS AUTORREPRESENTAVEIS
-				InfraDebug::getInstance()->gravar('ATUALIZANDO REPRESENTANTES EXISTENTES DE USUARIOS AUTORREPRESENTAVEIS');
+				InfraDebug::getInstance()->gravar('ATUALIZANDO REPRESENTANTES EXISTENTES DE USUÁRIOS AUTORREPRESENTÁVEIS');
 				
 				$objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 				
@@ -607,7 +607,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 			}
 			
 			$numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-			InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+			InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: ' . $numSeg . ' s');
 			InfraDebug::getInstance()->gravar('FIM');
 			
 			LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
@@ -620,6 +620,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		}
 	}
 
+	/** Consulta e suspende PJ sob a identidade técnica do Peticionamento. */
 	protected function ConsultarSituacaoReceitaCnpjConectado()
 	{
 
@@ -628,19 +629,21 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	
 	  	if(!empty($qtConsulta) && $qtConsulta > 0){
 		
-		  	// $filaConsultaCNPJ = $this->recuperarFilaConsultaCnpj($qtConsulta);
-
-			$filaConsultaCNPJ = ['75552133000170', '76535764000143', '40432544000147', '76535764000143'];
+		  (new MdPetIntUsuarioRN())->executarSuspensaoAutomatica(function () use ($qtConsulta, $numSeg): void {
+				$filaConsultaCNPJ = $this->recuperarFilaConsultaCnpj($qtConsulta);
+				// $filaConsultaCNPJ = ['75552133000170', '76535764000143', '40432544000147', '76535764000143'];
 		
-		  	$retorno = $this->consultarAtualizarVinculoPJ($filaConsultaCNPJ, 0, $qtConsulta);
+				$retorno = $this->consultarAtualizarVinculoPJ($filaConsultaCNPJ, 0, $qtConsulta);
 		
-		  	$titulo = 'ALTERANDO RESPONSÁVEIS LEGAIS E PROCURACÕES ELETRÔNICAS DE PESSOAS JURÍDICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL';
-		 	$this->logarSuspensaoVinculacoesEProcuracoes($retorno, $numSeg, $titulo, MdPetVincRepresentantRN::$NT_JURIDICA, $qtConsulta);
+				$titulo = 'ALTERANDO RESPONSÁVEIS LEGAIS E PROCURAÇÕES ELETRÔNICAS DE PESSOAS JURÍDICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL';
+				$this->logarSuspensaoVinculacoesEProcuracoes($retorno, $numSeg, $titulo, MdPetVincRepresentantRN::$NT_JURIDICA, $qtConsulta);
+		  });
 		
 	  	}
 	  
   	}
 
+  /** Consulta e suspende PF sob a identidade técnica do Peticionamento. */
   protected function ConsultarSituacaoReceitaCpfConectado()
   {
   	
@@ -653,17 +656,20 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
       
       if(!empty($qtConsulta)){
 	
-	      $filaConsultaCPF = $this->recuperarFilaConsultaCpf($qtConsulta);
+      (new MdPetIntUsuarioRN())->executarSuspensaoAutomatica(function () use ($qtConsulta, $numSeg): void {
+		      $filaConsultaCPF = $this->recuperarFilaConsultaCpf($qtConsulta);
 	
-	      $retorno = $this->consultarAtualizarVinculoPF($filaConsultaCPF, 0, $qtConsulta);
+		      $retorno = $this->consultarAtualizarVinculoPF($filaConsultaCPF, 0, $qtConsulta);
 	
-	      $titulo = 'ALTERANDO AUTORREPRESENTAÇÕES E PROCURACÕES ELETRÔNICAS DE PESSOAS FÍSICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL';
-	      $this->logarSuspensaoVinculacoesEProcuracoes($retorno, $numSeg, $titulo, MdPetVincRepresentantRN::$NT_FISICA, $qtConsulta);
+		      $titulo = 'ALTERANDO AUTORREPRESENTAÇÕES E PROCURAÇÕES ELETRÔNICAS DE PESSOAS FÍSICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL';
+		      $this->logarSuspensaoVinculacoesEProcuracoes($retorno, $numSeg, $titulo, MdPetVincRepresentantRN::$NT_FISICA, $qtConsulta);
+      });
       	
       }
       
   }
 
+  /** Registra o resultado sem substituir a identidade do agendamento. */
   protected function logarSuspensaoVinculacoesEProcuracoes($filaProcessada, $numSeg, $titulo, $origem, $qtConsulta)
   {
       InfraDebug::getInstance()->setBolLigado(true);
@@ -671,9 +677,6 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
       InfraDebug::getInstance()->setBolEcho(false);
       InfraDebug::getInstance()->limpar();
 
-      $objUsuarioPetRN = new MdPetIntUsuarioRN();
-      $idUsuarioPet = $objUsuarioPetRN->getObjUsuarioPeticionamento(true);
-      SessaoSEI::getInstance(false)->simularLogin(null, SessaoSEI::$UNIDADE_TESTE, $idUsuarioPet, null);
       InfraDebug::getInstance()->gravar($titulo);
 	
 	  $suspensos = $filaProcessada['arrObjMdPetVincRepresentantSuspensos'];
@@ -787,12 +790,12 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	
 	  // CASO AGENDAMENTO TENHA SIDO EXECUTADO PELA CONSULTA AUTOREPRESENTAÇÃO
 	  if($origem == MdPetVincRepresentantRN::$NT_FISICA){
-		  InfraDebug::getInstance()->gravar('Qtd. de Autorepresentação suspensas: ' . $qtdeAutorepresentacoes);
+		  InfraDebug::getInstance()->gravar('Qtd. de Autorrepresentações suspensas: ' . $qtdeAutorepresentacoes);
           InfraDebug::getInstance()->gravar('Qtd. de Usuários Externos desativados: ' . $qtdeAutorepresentacoes);
       }
 
       InfraDebug::getInstance()->gravar('Qtd. de Vinculações à Pessoa Jurídica suspensas: ' . $qtdeResponsavelLegal);
-      InfraDebug::getInstance()->gravar('Qtd. de Procurações Eletrônica suspensas: ' . $qtdeProcuradores);
+      InfraDebug::getInstance()->gravar('Qtd. de Procurações Eletrônicas suspensas: ' . $qtdeProcuradores);
       InfraDebug::getInstance()->gravar('------------------------------------------------------------------------------');
 
       foreach($arrMsg as $msg){
@@ -810,7 +813,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	  }
 
       $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-      InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
+      InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUÇÃO: ' . $numSeg . ' s');
       InfraDebug::getInstance()->gravar('FIM');
       LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
       
@@ -863,11 +866,6 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	  
     foreach ($filaConsultaCPF as $cpf) {
     	
-	    $situacao = 'processando';
-	    
-	    // Adicionando os cnpjs na tabela de log
-	    BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cpf."', 'F', '".date('Y-m-d H:i:s')."', '".$situacao."')");
-	
 	    $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 	
 	    if (InfraUtil::validarCpf($cpf) && $qtConsulta > 0 && $count < $qtConsulta){
@@ -890,49 +888,28 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 					    // 3.1. OUTORGANTE - Suspende procurações emitidas pela PF (Doc e E-mail)
 					    $outorgante = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgante'], [], true);
 					    if(!empty($outorgante)){
-						    $situacao = 'susp_outorgant';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgante;
 					    }
 					
 					    // 3.2. OUTORGADO - Suspende procurações recebidas de PF, PJ e Vinculações à Pessoa Jurídica (Doc e E-mail)
 					    $outorgado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['outorgado'], [], true);
 					    if(!empty($outorgado)){
-						    $situacao = 'susp_outorgado';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $outorgado;
 					    }
 					    
 					    // 3.3. AUTORREPRESENTADO - Suspende Autorrepresentação (Doc e E-mail)
 					    $autorrepresentado = $objMdPetVincRepresentantRN->suspenderVinculacoesConectado($vinculos['autorrepresentado'], [], true);
 					    if(!empty($autorrepresentado)){
-						    $situacao = 'suspenso';
 						    $arrObjMdPetVincRepresentantSuspensos[] = $autorrepresentado;
 					    }
 				    
-				    }else{
-
-					    $situacao = 'sem_vinculos';
-
 				    }
 				
-			    }else{
-
-					$situacao = 'nao_localizado';
-					
-				}
+			    }
 		    	
-		    }else{
-
-		    	$situacao = 'sem_processo';
-
 		    }
 		
-	    }else{
-		
-		    $situacao = 'cpf_invalido';
-		    
 	    }
-	
-	    BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cpf."'");
 	
 	    $count ++;
 	    $this->atualizarDataUltimaConsultaRFB($cpf, MdPetVincRepresentantRN::$NT_FISICA);
@@ -1073,11 +1050,6 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
 				if ($qtConsulta > 0 && $count < $qtConsulta){
 
-					$situacao = 'processando';
-
-					// Adicionando o cnpj na tabela de log
-					BancoSEI::getInstance()->executarSql("INSERT INTO md_pet_fila_consulta_rfb (cpf_cnpj, tipo, created_at, situacao) VALUES ('".$cnpj."', 'J', '".date('Y-m-d H:i:s')."', '".$situacao."')");
-
 					try {
 						
 						$resultadoConsultaReceitaWS = $objMdPetIntegracaoRN->consultarCNPJReceitaWsResponsavelLegal($cnpj);
@@ -1101,28 +1073,13 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 										if(is_array($suspenso)){
 									
 											$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
-											$situacao = 'suspenso';
-									
-										}else{
-
-											$situacao = 'falha_suspensao';
-
 										}
 									
 									} catch (\Throwable $th) {
-
-										$situacao = 'erro_suspensao';
-
+										// A falha na suspensão deste CNPJ não interrompe a consulta dos demais
 									}
 
-								}else{
-
-									$situacao = 'no_vinc_ativo';
-
 								}
-
-								// Atualizando o cnpj na tabela de log
-								BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
 
 							}else{
 
@@ -1142,31 +1099,16 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 									
 									if(is_array($suspenso)){
 										$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
-										$situacao = 'resp_diver_susp';
-									}else{
-										$situacao = 'falha';
 									}
 
 								}
 
 							}
 
-						}else{
-
-							$situacao = 'consultado';
-
-							// Atualizando o cnpj na tabela de log
-							BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
-
 						}
 
 					} catch (\Throwable $th) {
-						
-						$situacao = 'erro_ws';
-
-						// Atualizando o cnpj na tabela de log
-						BancoSEI::getInstance()->executarSql("UPDATE md_pet_fila_consulta_rfb SET situacao = '".$situacao."' where cpf_cnpj = '".$cnpj."'");
-
+						// A falha no processamento deste CNPJ não interrompe a consulta dos demais
 					}
 
 				}
@@ -1552,7 +1494,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
     private static function logErroConsultaModulosAnatel()
     {
         $log  = "00001 - ERRO DE RECURSO NO SEI IA\n";
-        $log .= "00002 - NÃO FOI POSSIVEL CONSULTAR OS MÓDULOS MANTIDOS PELA ANATEL\n";
+        $log .= "00002 - NÃO FOI POSSÍVEL CONSULTAR OS MÓDULOS MANTIDOS PELA ANATEL\n";
         $log .= "00003 - DATA E HORA: " . InfraData::getStrDataHoraAtual() . "\n";
         $log .= "00004 - FIM\n";
 

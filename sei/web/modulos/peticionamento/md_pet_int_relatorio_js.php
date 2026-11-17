@@ -104,7 +104,7 @@ function validarPesquisa(){
         }
 
         if (infraCompararDatas(document.getElementById('txtDataInicio').value, document.getElementById('txtDataFim').value) < 0) {
-            alert('Data Final deve ser igual ou superior a Data Inicial.');
+            alert('Data Final deve ser igual ou superior à Data Inicial.');
             document.getElementById('txtDataInicio').focus();
             return false;
         }

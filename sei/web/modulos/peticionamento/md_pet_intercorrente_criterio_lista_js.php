@@ -42,7 +42,7 @@
             alert('Nenhum Tipo de Processo selecionado.');
             return;
         }
-        if (confirm("Confirma a reativação dos Critérios Intercorrentes selecionadas?")) {
+        if (confirm("Confirma a reativação dos Critérios Intercorrentes selecionados?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmLista').action = '<?=$strLinkReativar?>';
             document.getElementById('frmLista').submit();

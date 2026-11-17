@@ -407,7 +407,7 @@ function inicializar(){
                     }
 
                     if (/^(\d)\1{10}$/.test(cpfClean)) {
-                        cpfsInvalidos.push(cpf + ' - Sequëncia inválida');
+                        cpfsInvalidos.push(cpf + ' - Sequência inválida');
                         continue; // Pula para o próximo CPF
                     }
 

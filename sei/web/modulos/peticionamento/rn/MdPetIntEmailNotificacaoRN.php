@@ -208,7 +208,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
     protected function enviarEmailIntimacaoPorIdConectado($idIntimacao)
     {
         if (!ctype_digit((string) $idIntimacao) || (int) $idIntimacao <= 0) {
-            throw new InfraException('Identificador de intimacao invalido.');
+            throw new InfraException('Identificador de intimação inválido.');
         }
 
         $objDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
@@ -222,7 +222,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $arrDestinatarios = (new MdPetIntRelDestinatarioRN())->listar($objDestinatarioDTO);
 
         if (count($arrDestinatarios) === 0) {
-            throw new InfraException('Destinatario da intimacao nao encontrado.');
+            throw new InfraException('Destinatário da intimação não encontrado.');
         }
 
         $objIntimacaoDTO = new MdPetIntimacaoDTO();
@@ -231,7 +231,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objIntimacaoDTO = (new MdPetIntimacaoRN())->consultar($objIntimacaoDTO);
 
         if (is_null($objIntimacaoDTO)) {
-            throw new InfraException('Intimacao nao encontrada.');
+            throw new InfraException('Intimação não encontrada.');
         }
 
         $objProtocoloDTO = new MdPetIntProtocoloDTO();
@@ -241,7 +241,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objProtocoloDTO = (new MdPetIntProtocoloRN())->consultar($objProtocoloDTO);
 
         if (is_null($objProtocoloDTO)) {
-            throw new InfraException('Documento principal da intimacao nao encontrado.');
+            throw new InfraException('Documento principal da intimação não encontrado.');
         }
 
         $objDocumentoDTO = new DocumentoDTO();
@@ -289,7 +289,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $idsAcessoExterno = array_unique(InfraArray::converterArrInfraDTO($arrRelDestExternoDTO, 'IdAcessoExterno'));
 
         if (count($idsAcessoExterno) === 0) {
-            throw new InfraException('Acessos externos da intimacao nao encontrados.');
+            throw new InfraException('Acessos externos da intimação não encontrados.');
         }
 
         $objAcessoExternoDTO = new AcessoExternoDTO();
@@ -375,7 +375,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
     private function registrarFalhaNotificacao($idIntimacao, Throwable $e)
     {
         LogSEI::getInstance()->gravar(
-            'Falha no envio pos-commit da intimacao ' . (int) $idIntimacao . ' [' . get_class($e) . '].',
+            'Falha no envio pós-commit da intimação ' . (int) $idIntimacao . ' [' . get_class($e) . '].',
             InfraLog::$INFORMACAO
         );
     }
@@ -383,7 +383,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
     private function formatarTipoVinculoIntimacao($tipoRepresentante)
     {
         $tipos = [
-            MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsavel Legal',
+            MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL => 'Responsável Legal',
             MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL => 'Procurador Especial',
             MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES => 'Procurador Simples'
         ];
@@ -611,7 +611,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
         } catch (Exception $e) {
             LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
+            throw new InfraException('Erro reiterando intimações pendentes que exigem resposta.', $e);
         }
     }
 
@@ -748,7 +748,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
                                     $arrDadosEmail['razaoSocial'] = $value->getStrRazaoSocialNomeVinc();
 
                                     if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL) {
-                                        $arrDadosEmail['tpVinc'] = "Responsavel Legal";
+                                        $arrDadosEmail['tpVinc'] = "Responsável Legal";
                                     }
                                     if ($value->getStrTipoRepresentante() == MdPetVincRepresentantRN::$PE_PROCURADOR_ESPECIAL) {
                                         $arrDadosEmail['tpVinc'] = "Procurador Especial";
@@ -856,7 +856,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
             return array('qtdEnviadas' => $qtdEnviadas, 'qtdNãoEnviadas' => $qtdNaoEnviadas, 'arrDadosEmailNaoEnviados' => $arrDadosEmailNaoEnviados);
         } catch (Exception $e) {
             LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
+            throw new InfraException('Erro reiterando intimações pendentes que exigem resposta.', $e);
         }
     }
 
@@ -1020,7 +1020,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         if (is_null($objEmailSistemaDTO)) {
-            throw new InfraException('Tipo de email '.$emailSistemaModulo.' não encontrado');
+            throw new InfraException('Tipo de e-mail '.$emailSistemaModulo.' não encontrado');
         }
 
         //Monta Email
@@ -1733,7 +1733,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = $objEmailSistemaRN->consultar($objEmailSistemaDTO);
 
         if (is_null($objEmailSistemaDTO)) {
-            throw new InfraException('Tipo de email '.$emailSistemaModulo.' não encontrado');
+            throw new InfraException('Tipo de e-mail '.$emailSistemaModulo.' não encontrado');
         }
 
         //Monta Email
@@ -1788,7 +1788,7 @@ class MdPetIntEmailNotificacaoRN extends InfraRN
         $objEmailSistemaDTO = (new EmailSistemaRN())->consultar($objEmailSistemaDTO);
 
         if (is_null($objEmailSistemaDTO)) {
-            throw new InfraException('Tipo de email '.$emailSistemaModulo.' não encontrado');
+            throw new InfraException('Tipo de e-mail '.$emailSistemaModulo.' não encontrado');
         }
 
         // Monta Email

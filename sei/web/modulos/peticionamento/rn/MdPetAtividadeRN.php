@@ -1627,7 +1627,7 @@ class MdPetAtividadeRN extends AtividadeRN {
 						$arrObjEmailUnidadeDTO = $objEmailUnidadeRN->listar($objEmailUnidadeDTO);
 							
 						if (count($arrObjEmailUnidadeDTO)==0){
-							$objInfraException->lancarValidacao('Unidade '.$objUnidadeDTO->getStrSigla().'/'.$objUnidadeDTO->getStrSiglaOrgao().' não possui email cadastrado.');
+							$objInfraException->lancarValidacao('Unidade '.$objUnidadeDTO->getStrSigla().'/'.$objUnidadeDTO->getStrSiglaOrgao().' não possui e-mail cadastrado.');
 						}
 							
 						$strDe = $objEmailSistemaDTO->getStrDe();

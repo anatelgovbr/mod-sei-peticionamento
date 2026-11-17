@@ -30,7 +30,7 @@ switch ($_GET['acao']) {
             $objContatoRN = new ContatoRN();
             $objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
 
-            $texto  = '<p>Você não possui mais permissão para Responder a Intimação Eletrônica, conforme abaixo:</p>';
+            $texto  = '<p>Você não possui mais permissão para Responder à Intimação Eletrônica, conforme abaixo:</p>';
             $texto .= '<p>Destinatários não permitidos:</p>';
             $texto .= '<ul>';
 

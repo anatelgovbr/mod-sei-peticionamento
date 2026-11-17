@@ -158,8 +158,8 @@ $strLinkTipoProcessoSelecaoJLote = SessaoSEI::getInstance()->assinarLink('contro
                     <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela"
                          style="<?php echo $bolIsAlterar ? '' : 'display:none' ?>">
                         <div id="hiddeTable">
-                            <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jurídicas disponiveis" class="infraTable">
-                                <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Jurídicas disponiveis", count($arrIntimacoes)) ?></caption>
+                            <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jurídicas disponíveis" class="infraTable">
+                                <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Jurídicas disponíveis", count($arrIntimacoes)) ?></caption>
                                 <tr>
                                     <th style="display:none;">ID</th>
                                     <th class="infraTh">Razão Social</th>

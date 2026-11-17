@@ -173,7 +173,7 @@
         var hipoteseLegal = document.getElementById('idHipoteseLegal').value;
 
         if( nivelAcesso == 'R' && hipoteseLegal == '' ){
-            alert('Selecione a Hipotese Legal.');
+            alert('Selecione a Hipótese Legal.');
             document.getElementById('idHipoteseLegal').focus();
             return false;
         }

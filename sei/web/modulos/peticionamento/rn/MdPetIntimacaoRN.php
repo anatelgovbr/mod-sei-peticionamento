@@ -641,7 +641,7 @@ class MdPetIntimacaoRN extends InfraRN
 
     public function getTextoAlertaLimiteIntimacoesLote()
     {
-        return '<div style="padding: 10px; border-left: 6px solid #f00; margin: 15px;"><p style="margin-bottom: 0px"><span style="font-weight: bold; color: #f00">Atenção:</span> <b>Intimação Eletrônica não deve ser utilizada como mala direta</b>. Ela deve ser utilizada para dar ciência oficial aos interessados sobre atos processuais, conforme art. 26 da Lei nº 9.784/1999. Apenas em processos administrativos que juridicamente demandam múltiplos interessados deve enviar intimações para vários destinatários.</p></div>';
+        return '<div style="padding: 10px; border-left: 6px solid #f00; margin: 15px;"><p style="margin-bottom: 0px"><span style="font-weight: bold; color: #f00">Atenção:</span> <b>Intimação Eletrônica não deve ser utilizada como mala direta</b>. Ela deve ser utilizada para dar ciência oficial aos interessados sobre atos processuais, conforme art. 26 da Lei nº 9.784/1999. Apenas em processos administrativos que juridicamente demandam múltiplos interessados devem ser enviadas intimações para vários destinatários.</p></div>';
     }
 
     public function getTextoTolTipIntimacaoEletronica($arr)
@@ -1115,7 +1115,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntRelDestExternoRN->cadastrar($objMdPetIntRelDestExternoDTO);
             //Fim novo
 
-            //verifica se existe procurador simples para a pessoa fí­sica em questão
+            //verifica se existe procurador simples para a pessoa física em questão
             $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
             $dtoMdPetVincReptDTO->setNumIdContatoVinc($objMdPetIntRelDestinatarioDTO->getNumIdContato());
             $dtoMdPetVincReptDTO->retNumIdContatoVinc();
@@ -1458,7 +1458,7 @@ class MdPetIntimacaoRN extends InfraRN
     private function _verificarDocumentosDuplicados($idDocumentoPrinc, $arrIdsAnexo, $hdnIdsUsuarios, $idProcedimento, $tipoPessoa)
     {
         $msg = '';
-        $msgFim = "\nNão será possí­vel concluir esta Intimação. Para prosseguir, antes é necessário remover o Destinatário acima sobre o qual constam os conflitos indicados ou retirar os protocolos do conflito da presente Intimação.";
+        $msgFim = "\nNão será possível concluir esta Intimação. Para prosseguir, antes é necessário remover o Destinatário acima sobre o qual constam os conflitos indicados ou retirar os protocolos do conflito da presente Intimação.";
         $arrMsgAnexo = array();
         $idsDocs = $arrIdsAnexo;
         $objMdPetIntDestRN = new MdPetIntRelDestinatarioRN();
@@ -1471,7 +1471,7 @@ class MdPetIntimacaoRN extends InfraRN
         	
             $idContato      = $usuario;
             $nomeContato    = $this->_getNomeContato($idContato);
-            $msgInicio      = "O Destinatário " . PaginaSEI::tratarHTML($nomeContato) . " já possui protocolos indicados nesta Intimação a ser gerada vinculados a Intimação anterior neste processo. Veja a lista abaixo: \n\n";
+            $msgInicio      = "O Destinatário " . PaginaSEI::tratarHTML($nomeContato) . " já possui protocolos indicados nesta Intimação a ser gerada vinculados à Intimação anterior neste processo. Veja a lista abaixo: \n\n";
 
             $objMdPetIntDestDTO = new MdPetIntRelDestinatarioDTO();
             $objMdPetIntDestDTO->retNumIdMdPetIntimacao();
@@ -2120,7 +2120,7 @@ class MdPetIntimacaoRN extends InfraRN
 
         } catch (Exception $e) {
             LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
+            throw new InfraException('Erro reiterando intimações pendentes que exigem resposta.', $e);
         }
 
     }
@@ -2566,8 +2566,8 @@ class MdPetIntimacaoRN extends InfraRN
         return array();
     }
 
-    /* Função responsável por verificar a exibição de documentos,  se o documento é disponí­vel e anexo retorna 2,
-       se ele é disponí­vel retorna 1 e se for somente anexo retorna 0. Obs: Leva em consideração todas as Intimações para o usuário
+    /* Função responsável por verificar a exibição de documentos,  se o documento é disponível e anexo retorna 2,
+       se ele é disponível retorna 1 e se for somente anexo retorna 0. Obs: Leva em consideração todas as Intimações para o usuário
       logado. */
     protected function retornaIntimacoesVinculadasDocumentoConectado($idDocumento)
     {
@@ -2740,7 +2740,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objAtividadeDTO->retStrSiglaUsuarioAtribuicao();
             $objAtividadeDTO->retStrNomeUsuarioAtribuicao();
 
-            //ordena descendente pois no envio de processo que já existe na unidade e está atribuí­do ficará com mais de um andamento em aberto
+            //ordena descendente pois no envio de processo que já existe na unidade e está atribuído ficará com mais de um andamento em aberto
             //desta forma os andamentos com usuário nulo (envios do processo) serão listados depois
             $objAtividadeDTO->setOrdStrSiglaUsuarioAtribuicao(InfraDTO::$TIPO_ORDENACAO_DESC);
         }
@@ -2794,7 +2794,7 @@ class MdPetIntimacaoRN extends InfraRN
         $arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
 
         if ($strStaNivelAcessoGlobal != ProtocoloRN::$NA_SIGILOSO) {
-            //filtra andamentos com indicação de usuário atribuí­do
+            //filtra andamentos com indicação de usuário atribuído
             $arrObjAtividadeDTO = InfraArray::distinctArrInfraDTO($arrObjAtividadeDTO, 'SiglaUnidade');
         }
 
@@ -3468,7 +3468,7 @@ class MdPetIntimacaoRN extends InfraRN
 
                     if(!empty($arrOficiosPrinc)){
 
-                        $msgValidacao = (new PeticionamentoIntegracao())->getNome() . ": Em razão do processo ser sigiloso e estar vinculado à sua credencial de acesso não é possível conclui-lo, enquanto existirem Intimações Eletrônicas ainda em curso.\nIsso inclui cumprimento ainda pendente e prazo limite para possí­vel resposta de Intimação disponibilizada sobre os documentos principais abaixo: \n\n";
+                        $msgValidacao = (new PeticionamentoIntegracao())->getNome() . ": Em razão do processo ser sigiloso e estar vinculado à sua credencial de acesso não é possível concluí-lo, enquanto existirem Intimações Eletrônicas ainda em curso.\nIsso inclui cumprimento ainda pendente e prazo limite para possível resposta de Intimação disponibilizada sobre os documentos principais abaixo: \n\n";
                         $msgValidacao .= $arrOficiosPrinc;
 
                         $objInfraException = new InfraException();

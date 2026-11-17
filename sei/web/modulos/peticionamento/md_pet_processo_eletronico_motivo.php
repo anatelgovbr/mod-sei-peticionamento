@@ -13,6 +13,12 @@ SessaoSEIExterna::getInstance()->validarLink();
 
 SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
 
+$mixTextoXss = PaginaSEI::POST('mdPetXssTexto');
+if ($mixTextoXss !== null) {
+    echo PaginaSEI::tratarHTML(PeticionamentoIntegracao::consultarXssTextoAjax($mixTextoXss));
+    return;
+}
+
 switch ($_GET['acao']) {
     case 'processo_eletronico_responder_motivo_renunciar':
         $strTitulo = 'Renunciar Procuração Eletrônica';
@@ -109,6 +115,7 @@ PaginaSEIExterna::getInstance()->abrirStyle();
 
 PaginaSEIExterna::getInstance()->fecharStyle();
 PaginaSEIExterna::getInstance()->montarJavaScript();
+require_once 'js/md_pet_global_js.php';
 PaginaSEIExterna::getInstance()->abrirJavaScript();
 if (0){
 ?>
@@ -121,6 +128,12 @@ if (0){
             alert('Informe o Motivo da <?php echo $termo; ?>');
             return false;
         } else {
+            if (!mdPetValidarXssAntesDaAcao(
+                document.getElementById('txtJustificativa'),
+                '<?= PaginaSEIExterna::getInstance()->formatarParametrosJavaScript(PeticionamentoIntegracao::MSG_CONTEUDO_NAO_PERMITIDO, false) ?>'
+            )) {
+                return false;
+            }
 
             parent.infraAbrirJanelaModal('<?php echo PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_vinc_pe_desvinculo_concluir&tipoDocumento=' . $tpDocumento . '&tpVinc=' . $tipoVinculo . '&acao_origem=' . $_GET['acao']))?>',
                 800,

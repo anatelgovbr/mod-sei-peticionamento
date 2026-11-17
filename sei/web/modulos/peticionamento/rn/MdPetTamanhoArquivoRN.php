@@ -11,6 +11,12 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 class MdPetTamanhoArquivoRN extends InfraRN {
 	
 	public static $ID_FIXO_TAMANHO_ARQUIVO = '1';
+
+	/** Início da recusa por tamanho, com os marcadores que o servidor e a tela trocam pelo nome e pelo tamanho (ADR-PET-010). */
+	private const RECUSA_POR_TAMANHO = 'O arquivo "{nome}" tem {tamanho} MB.';
+
+	/** Recusa do arquivo de 0 byte, que o SEI só recusa quando o anexo entra no processo (RT-PET-027). */
+	private const RECUSA_ARQUIVO_VAZIO = 'O arquivo "{nome}" está vazio. Escolha um arquivo com conteúdo.';
 	
 	public function __construct() {
 		parent::__construct ();
@@ -38,9 +44,177 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 			return $ret;
 
 		} catch (Exception $e) {
-			throw new InfraException ('Erro listando Tamanho Maximo Peticionamento.', $e);
+			throw new InfraException ('Erro listando Tamanho Máximo Peticionamento.', $e);
 		}
 	}	
+
+	/**
+	 * Recusa, com o nome de cada arquivo, o arquivo vazio e o tamanho acima do limite que o SEI aplica quando o anexo entra
+	 * no processo (ADR-PET-010 e RT-PET-027). Repete a regra de AnexoRN::validarNumTamanhoRN0867: vale o limite da extensão em Extensões de Arquivos
+	 * Permitidas e, sem ele, o parâmetro SEI_TAM_MB_DOC_EXTERNO; o limite da extensão acima do limite geral é recusado como
+	 * erro de configuração, como no SEI. Lê o limite pela BD, sem a permissão do usuário interno, porque roda também no
+	 * acesso externo.
+	 *
+	 * @param list<array{nome: string, tamanho: int}> $arrArquivos nome informado pelo usuário e tamanho em bytes
+	 * @return list<string> uma mensagem por arquivo recusado
+	 */
+	protected function conferirTamanhoConectado(array $arrArquivos): array
+	{
+		$numLimiteGeralMb = (int) (new InfraParametro($this->getObjInfraIBanco()))->getValor('SEI_TAM_MB_DOC_EXTERNO');
+		$arrLimitePorExtensao = [];
+		$arrRecusas = [];
+
+		foreach ($arrArquivos as $arrArquivo) {
+			if ((int) $arrArquivo['tamanho'] === 0) {
+				$arrRecusas[] = strtr(self::RECUSA_ARQUIVO_VAZIO, ['{nome}' => self::tratarNomeParaMensagem($arrArquivo['nome'])]);
+				continue;
+			}
+
+			$strExtensao = self::obterExtensao($arrArquivo['nome']);
+			if ($strExtensao === null) {
+				continue;
+			}
+
+			if (!array_key_exists($strExtensao, $arrLimitePorExtensao)) {
+				$arrLimitePorExtensao[$strExtensao] = $this->consultarLimiteDaExtensaoMb($strExtensao);
+			}
+
+			$strRecusa = self::descreverRecusaPorTamanho($arrArquivo['nome'], (int) $arrArquivo['tamanho'], $strExtensao, $arrLimitePorExtensao[$strExtensao], $numLimiteGeralMb);
+			if ($strRecusa !== null) {
+				$arrRecusas[] = $strRecusa;
+			}
+		}
+
+		return array_values(array_unique($arrRecusas));
+	}
+
+	/**
+	 * Limites do SEI e textos da recusa por tamanho, para a tela conferir o arquivo no navegador antes de transferi-lo, sem
+	 * requisição ao servidor (ADR-PET-010). Vêm da mesma regra e dos mesmos textos de conferirTamanho, que o upload e a RN
+	 * repetem com o tamanho real. Para a extensão repetida, vale o primeiro limite, como no SEI.
+	 *
+	 * @return array{recusa: string, vazio: string, geral: array{bytes: int, frase: string}, extensoes: array<string, array{bytes: int, frase: string}>, configuracoesInvalidas: array<string, string>}
+	 */
+	protected function obterLimitesParaTelaConectado(): array
+	{
+		$numLimiteGeralMb = (int) (new InfraParametro($this->getObjInfraIBanco()))->getValor('SEI_TAM_MB_DOC_EXTERNO');
+		$arrLimites = [
+			'recusa' => self::RECUSA_POR_TAMANHO,
+			'vazio' => self::RECUSA_ARQUIVO_VAZIO,
+			'geral' => ['bytes' => $numLimiteGeralMb * 1048576, 'frase' => self::montarFraseDoLimiteGeral($numLimiteGeralMb)],
+			'extensoes' => [],
+			'configuracoesInvalidas' => [],
+		];
+
+		$objArquivoExtensaoDTO = new ArquivoExtensaoDTO();
+		$objArquivoExtensaoDTO->retStrExtensao();
+		$objArquivoExtensaoDTO->retNumTamanhoMaximo();
+		$objArquivoExtensaoDTO->setNumTamanhoMaximo(null, InfraDTO::$OPER_DIFERENTE);
+
+		foreach ((new ArquivoExtensaoBD($this->getObjInfraIBanco()))->listar($objArquivoExtensaoDTO) as $objExtensaoDTO) {
+			$strExtensao = str_replace(' ', '', InfraString::transformarCaixaBaixa($objExtensaoDTO->getStrExtensao()));
+			if (isset($arrLimites['extensoes'][$strExtensao]) || isset($arrLimites['configuracoesInvalidas'][$strExtensao])) {
+				continue;
+			}
+
+			$numLimiteMb = (int) $objExtensaoDTO->getNumTamanhoMaximo();
+			if ($numLimiteMb > $numLimiteGeralMb) {
+				$arrLimites['configuracoesInvalidas'][$strExtensao] = self::montarRecusaDeConfiguracao($strExtensao, $numLimiteMb, $numLimiteGeralMb);
+				continue;
+			}
+
+			$arrLimites['extensoes'][$strExtensao] = ['bytes' => $numLimiteMb * 1048576, 'frase' => self::montarFraseDoLimiteDaExtensao($strExtensao, $numLimiteMb)];
+		}
+
+		return $arrLimites;
+	}
+
+	/**
+	 * Extensão como o SEI a lê: o trecho depois do último ponto, em minúsculas e sem espaços.
+	 *
+	 * @param string $strNome
+	 * @return string|null null quando o nome não tem extensão, caso que o upload do SEI já recusa
+	 */
+	private static function obterExtensao(string $strNome): ?string
+	{
+		$arrPartes = explode('.', $strNome);
+		if (count($arrPartes) < 2) {
+			return null;
+		}
+
+		return str_replace(' ', '', InfraString::transformarCaixaBaixa(end($arrPartes)));
+	}
+
+	/**
+	 * @param string $strExtensao
+	 * @return int|null limite em MB da extensão, ou null quando ela não tem limite próprio
+	 */
+	private function consultarLimiteDaExtensaoMb(string $strExtensao): ?int
+	{
+		$objArquivoExtensaoDTO = new ArquivoExtensaoDTO();
+		$objArquivoExtensaoDTO->retNumTamanhoMaximo();
+		$objArquivoExtensaoDTO->setStrExtensao($strExtensao);
+		$objArquivoExtensaoDTO->setNumTamanhoMaximo(null, InfraDTO::$OPER_DIFERENTE);
+		$objArquivoExtensaoDTO->setNumMaxRegistrosRetorno(1);
+
+		$objArquivoExtensaoDTO = (new ArquivoExtensaoBD($this->getObjInfraIBanco()))->consultar($objArquivoExtensaoDTO);
+
+		return $objArquivoExtensaoDTO === null ? null : (int) $objArquivoExtensaoDTO->getNumTamanhoMaximo();
+	}
+
+	/**
+	 * @return string|null mensagem de recusa, ou null quando o arquivo cabe no limite
+	 */
+	private static function descreverRecusaPorTamanho(string $strNome, int $numTamanho, string $strExtensao, ?int $numLimiteExtensaoMb, int $numLimiteGeralMb): ?string
+	{
+		if ($numLimiteExtensaoMb !== null && $numLimiteExtensaoMb > $numLimiteGeralMb) {
+			return self::montarRecusaDeConfiguracao($strExtensao, $numLimiteExtensaoMb, $numLimiteGeralMb);
+		}
+
+		if ($numTamanho <= ($numLimiteExtensaoMb ?? $numLimiteGeralMb) * 1024 * 1024) {
+			return null;
+		}
+
+		// Arredondado para cima: o arquivo recusado nunca aparece com o mesmo tamanho do limite
+		$strTamanhoMb = number_format(ceil($numTamanho * 100 / 1048576) / 100, 2, ',', '.');
+		// Uma passada só: o nome com um dos marcadores não é trocado de novo
+		$strArquivo = strtr(self::RECUSA_POR_TAMANHO, ['{nome}' => self::tratarNomeParaMensagem($strNome), '{tamanho}' => $strTamanhoMb]);
+		$strLimite = $numLimiteExtensaoMb !== null
+			? self::montarFraseDoLimiteDaExtensao($strExtensao, $numLimiteExtensaoMb)
+			: self::montarFraseDoLimiteGeral($numLimiteGeralMb);
+
+		return $strArquivo . ' ' . $strLimite;
+	}
+
+	/** Recusa de configuração do SEI, quando o limite da extensão passa do limite geral. */
+	private static function montarRecusaDeConfiguracao(string $strExtensao, int $numLimiteExtensaoMb, int $numLimiteGeralMb): string
+	{
+		return 'Limite de tamanho ' . $numLimiteExtensaoMb . 'Mb configurado para a extensão ' . InfraString::transformarCaixaAlta($strExtensao) . ' é maior que o limite geral de ' . $numLimiteGeralMb . 'Mb.';
+	}
+
+	private static function montarFraseDoLimiteDaExtensao(string $strExtensao, int $numLimiteMb): string
+	{
+		return 'O tamanho máximo permitido para arquivos ' . InfraString::transformarCaixaAlta($strExtensao) . ' é ' . $numLimiteMb . ' MB.';
+	}
+
+	private static function montarFraseDoLimiteGeral(int $numLimiteGeralMb): string
+	{
+		return 'O tamanho máximo geral permitido para documentos externos é ' . $numLimiteGeralMb . ' MB.';
+	}
+
+	/**
+	 * Nome em uma linha, com até 100 caracteres, sem caractere de controle, sem "#", que separa os campos do retorno do
+	 * upload, e sem "<", ">" e "&": o InfraUpload lê o retorno do upload como HTML, e o nome não pode virar marcação.
+	 *
+	 * @param string $strNome
+	 * @return string
+	 */
+	private static function tratarNomeParaMensagem(string $strNome): string
+	{
+		$strNome = trim((string) preg_replace('/[#<>&]/', '', (string) preg_replace('/[\x00-\x1F\x7F]+/', ' ', $strNome)));
+
+		return strlen($strNome) > 100 ? substr($strNome, 0, 100) . '...' : $strNome;
+	}
 
     /**
 	 * Short description of method listarConectado

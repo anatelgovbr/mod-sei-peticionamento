@@ -25,7 +25,7 @@ try {
     switch($_GET['acao']){
    
         case 'md_pet_pessoa_juridica':
-            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Destinatario','Selecionar Destinatarios');
+            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Destinatário','Selecionar Destinatários');
         break;
 
         default:
@@ -359,7 +359,7 @@ PaginaSEI::getInstance()->abrirAreaDados();
                 }
 
                 if (/^(\d)\1{10}$/.test(cnpjClean)) {
-                    cnpjsInvalidos.push(cnpj + ' - Sequëncia inválida');
+                    cnpjsInvalidos.push(cnpj + ' - Sequência inválida');
                     continue; // Pula para o próximo CNPJ
                 }
 
@@ -382,18 +382,18 @@ PaginaSEI::getInstance()->abrirAreaDados();
             
             $('.pesquisa-destinatarios-lote').fadeToggle(200);
 
-            let mode = $('#divInfraBarraLocalizacao h1').html() == 'Selecionar Destinatarios' ? 'normal' : 'lote';
+            let mode = $('#divInfraBarraLocalizacao h1').html() == 'Selecionar Destinatários' ? 'normal' : 'lote';
 
             if(mode == 'normal'){
                 
-                $('#divInfraBarraLocalizacao h1').html('Selecionar Destinatarios em Lote');
+                $('#divInfraBarraLocalizacao h1').html('Selecionar Destinatários em Lote');
                 $('.btnToggleLote').val('Fechar seleção em Lote');
                 $('.fecharLote').css('display', 'none');
                 $('#cnpjList').focus();
                 
             }else{
                 
-                $('#divInfraBarraLocalizacao h1').html('Selecionar Destinatarios');
+                $('#divInfraBarraLocalizacao h1').html('Selecionar Destinatários');
                 $('.btnToggleLote').val('Selecionar em Lote');
                 $('form.fecharLote, div.fecharLote').fadeIn(100);
                 $('input.fecharLote, button.fecharLote').css('display', 'inline-block');

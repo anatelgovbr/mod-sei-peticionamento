@@ -14,7 +14,7 @@ require_once dirname(__FILE__).'/../../../SEI.php';
 
 class MdPetArquivoExtensaoDTO extends ArquivoExtensaoDTO {
 
-  public function montar(){
+  public function montar(): void {
     parent::montar();
     $this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'PalavrasPesquisa');
   }	

@@ -15,6 +15,12 @@ class MdPetVinculoUsuExtRN extends InfraRN
     public static $TIPO_PETICIONAMENTO_ALTERACAO_VINC_PJ = 'de Alteração da Vinculação a Pessoa Jurídica';
     public static $TIPO_PETICIONAMENTO_RECIBO_VINC_PJ = 'Vinculação a Pessoa Jurídica';
 
+    //Mensagens da falha técnica na conclusão (ADR-PET-007)
+    public static $MSG_VINCULACAO_NAO_CONCLUIDA = 'Não foi possível concluir a Vinculação de Responsável Legal, e nenhum processo foi criado. Tente novamente. Se o erro continuar, entre em contato com a gestão do SEI deste órgão.';
+    public static $MSG_ALTERACAO_NAO_CONCLUIDA = 'Não foi possível concluir a alteração do Responsável Legal, e nada foi alterado. Tente novamente. Se o erro continuar, entre em contato com a gestão do SEI deste órgão.';
+    public static $MSG_VINCULACAO_NAO_DESFEITA = 'Não foi possível concluir a Vinculação de Responsável Legal. Não tente novamente. Entre em contato com a gestão do SEI deste órgão e informe o processo %s.';
+    public static $MSG_ALTERACAO_NAO_DESFEITA = 'Não foi possível concluir a alteração do Responsável Legal. Não tente novamente. Entre em contato com a gestão do SEI deste órgão e informe o processo %s.';
+
     public function __construct()
     {
         parent::__construct();
@@ -168,10 +174,30 @@ class MdPetVinculoUsuExtRN extends InfraRN
     */
 
     /**
-     * Verifica e salva os dados do contato do CNPJ sendo vinculado
+     * Verifica e salva os dados do contato do CNPJ sendo vinculado.
+     * @param array<string, mixed> $post
+     * @return int|string|null
      */
-    protected function salvarDadosContatoCnpjControlado($post)
+    protected function salvarDadosContatoCnpjControlado(array $post)
     {
+        $strInformacaoPj = $post['hdnInformacaoPj'] ?? null;
+        if (!is_string($strInformacaoPj)) {
+            throw new InfraException('Dados da pessoa jurídica não informados ou inválidos.');
+        }
+
+        $dadosPj = current(PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($strInformacaoPj));
+        if (!is_array($dadosPj)) {
+            throw new InfraException('Dados da pessoa jurídica não informados ou inválidos.');
+        }
+        foreach ($dadosPj as $strValor) {
+            if (!is_string($strValor)) {
+                throw new InfraException('Dados da pessoa jurídica não informados ou inválidos.');
+            }
+            PeticionamentoIntegracao::validarXssTextoGenerico($strValor);
+        }
+
+        $this->validarXssDocumentosVinculo($post);
+
         $cnpj = InfraUtil::prepararCnpj($post['txtNumeroCnpj']);
         $objMdPetVincTpProc = $this->getConfiguracaoVinculo();
 
@@ -181,7 +207,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objContatoDTORetorno = $objMdPetContatoRN->getContatoInclusoModPet($cnpj);
         $idUsuario = SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno();
         $isAlteracao = array_key_exists('isAlteracaoCrud', $post) ? $post['isAlteracaoCrud'] && $post['isAlteracaoCrud'] : false;
-        $dadosPj = current(PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($_POST['hdnInformacaoPj']));
 
         $objMdPetIntegracaoDTO = new MdPetIntegracaoDTO();
         $objMdPetIntegracaoDTO->setNumIdMdPetIntegFuncionalid(MdPetIntegFuncionalidRN::$ID_FUNCIONALIDADE_CNPJ_RECEITA_FEDERAL);
@@ -357,7 +382,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
         if (is_null($unidadeDTO)) {
-            throw new InfraException('Tipo de unidade não encontrada.');
+            throw new InfraException('Tipo de unidade não encontrado.');
         }
 
         return $unidadeDTO;
@@ -590,27 +615,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
         return $objProcedimentoDTO;
     }
 
-    private function _consultarReciboVinculacao($idProcedimento)
-    {
-
-        $objRecibo = null;
-        $objMdPetReciboRN = new MdPetReciboRN();
-        $objMdPetReciboDTO = new MdPetReciboDTO();
-        $objMdPetReciboDTO->setNumIdProtocolo($idProcedimento);
-        $objMdPetReciboDTO->setOrdDthDataHoraRecebimentoFinal(InfraDTO::$TIPO_ORDENACAO_DESC);
-        $objMdPetReciboDTO->setStrSinAtivo('S');
-        $objMdPetReciboDTO->setStrStaTipoPeticionamento(MdPetReciboRN::$TP_RECIBO_VINCULACAO);
-        $objMdPetReciboDTO->setNumMaxRegistrosRetorno(1);
-        $objMdPetReciboDTO->retTodos();
-        $count = $objMdPetReciboRN->contar($objMdPetReciboDTO);
-
-        if ($count > 0) {
-            $objRecibo = $objMdPetReciboRN->consultar($objMdPetReciboDTO);
-        }
-
-        return $objRecibo;
-    }
-
     /**
      * @param $dados
      * @throws InfraException
@@ -618,31 +622,29 @@ class MdPetVinculoUsuExtRN extends InfraRN
     public function gerarProcedimentoVinculoAlteracaoResponsavelLegal($dados)
     {
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal, etapa 1 de 3 (gravação do recibo e do novo responsável legal): iniciada.');
 
-        $dadosCadastro = $this->prepararGeracaoProcedimentoAlteracaoResponsavelLegal($dados);
+        try {
+            $dadosCadastro = $this->prepararGeracaoProcedimentoAlteracaoResponsavelLegal($dados);
+        } catch (Exception $objExceptionPreparacao) {
+            $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($objExceptionPreparacao, self::$MSG_ALTERACAO_NAO_CONCLUIDA);
+            MdPetRastreioINT::registrarFalha('Alteração de Responsável Legal, etapa 1 de 3 (gravação do recibo e do novo responsável legal): falhou, e o banco desfez tudo o que ela tinha gravado.', $objExceptionPreparacao, MdPetExcecaoINT::lerMensagem($objValidacao));
+            throw $objValidacao;
+        }
+
+        $strProcesso = MdPetRastreioINT::descreverProcesso($dadosCadastro['idProcedimento'], ($dadosCadastro['objProcedimentoDTO'] ?? null)?->getStrProtocoloProcedimentoFormatado());
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal, etapa 1 de 3 (gravação do recibo e do novo responsável legal): concluída no ' . $strProcesso . '.');
         $bolConcluido = false;
 
         try {
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal, etapa 2 de 3 (formulário, atos constitutivos, assinatura e recibo): iniciada no ' . $strProcesso . '.');
             $dadosCadastro = $this->incluirDocumentosGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal, etapa 2 de 3 (formulário, atos constitutivos, assinatura e recibo): concluída no ' . $strProcesso . '.');
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal, etapa 3 de 3 (procuradores, andamento, acesso externo e envio à unidade): iniciada no ' . $strProcesso . '.');
             $dadosCadastro = $this->finalizarGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
-            $this->realizarPosProcessamentoGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
-
-            $dadosGeracao = $dadosCadastro['dados'];
-            if (array_key_exists('hdnIdContatoNovo', $dadosGeracao) && $dadosGeracao['hdnIdContatoNovo'] == '' && $dadosCadastro['acessoExterno'] == true) {
-                $arrParams = array();
-                $arrParams[0] = $dadosGeracao;
-                $arrParams[1] = $dadosCadastro['objUnidadeDTO'];
-                $arrParams[2] = $dadosCadastro['objProcedimentoDTO'];
-                $arrParams[3] = array();
-                $arrParams[4] = $dadosCadastro['reciboDTOBasico'];
-                $arrParams[5] = $dadosCadastro['reciboDTOBasico'];
-
-                $this->enviarEmail($arrParams);
-            }
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal, etapa 3 de 3 (procuradores, andamento, acesso externo e envio à unidade): concluída no ' . $strProcesso . '.');
 
             $bolConcluido = true;
-
-            return $dadosCadastro['reciboDTOBasico'];
         } catch (Exception $e) {
             $this->tratarFalhaGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro, $e);
         } finally {
@@ -653,7 +655,9 @@ class MdPetVinculoUsuExtRN extends InfraRN
             }
         }
 
-        return false;
+        $this->enviarEmailVinculoConcluido($dadosCadastro);
+
+        return $dadosCadastro['reciboDTOBasico'];
     }
 
     protected function prepararGeracaoProcedimentoAlteracaoResponsavelLegalControlado($dados)
@@ -663,7 +667,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $idVinculo = array_key_exists('hdnIdVinculo', $dados) && !empty($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
 
         if (is_null($idVinculo)) {
-            throw new InfraException('Vinculo nao informado para a alteracao do responsavel legal.');
+            throw new InfraException('Vínculo não informado para a alteração do responsável legal.');
         }
 
         $acessoExterno = isset($dados['chkDeclaracao']) ? true : false;
@@ -681,7 +685,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $idProcedimento = $this->_getIdProcessoPorVinculo($idVinculo);
 
         if (is_null($idProcedimento)) {
-            throw new InfraException('Processo do vinculo nao encontrado.');
+            throw new InfraException('Processo do vínculo não encontrado.');
         }
 
         $reciboDTOBasico = null;
@@ -698,12 +702,12 @@ class MdPetVinculoUsuExtRN extends InfraRN
         }
 
         if ($idRepresentant == null) {
-            throw new InfraException('Erro buscar Representante da Vinculacao');
+            throw new InfraException('Erro ao buscar Representante da Vinculação');
         }
 
         $objProcedimentoDTO = $this->_getObjProcedimentoPorVinculo($idVinculo);
         if (is_null($objProcedimentoDTO)) {
-            throw new InfraException('Processo do vinculo nao localizado para gerar a alteracao do responsavel legal.');
+            throw new InfraException('Processo do vínculo não localizado para gerar a alteração do responsável legal.');
         }
 
         return array(
@@ -736,6 +740,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $objArquivoPrincipal = null;
         if ($isAlteradoRespLegal) {
             $objArquivoPrincipal = $this->_gerarFormularioVinculacao($dados, $objProcedimentoDTO, $reciboDTOBasico, $objUnidadeDTO, $idRepresentant, $idVinculo);
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal: formulário gerado como documento ' . $objArquivoPrincipal->getIdDocumento() . '.');
 
             $documentoRN = new DocumentoRN();
             $objDocumentoDTO = new DocumentoDTO();
@@ -747,8 +752,10 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
         $arrIdDocumentosAtos = array();
         $arrSeries = $this->_adicionarArquivosAtosContitutivos($dados, $objUnidadeDTO->getNumIdUnidade(), $objProcedimentoDTO, $reciboDTOBasico, $idRepresentant, $arrIdDocumentosAtos);
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal: atos constitutivos incluídos como documentos ' . implode(', ', $arrIdDocumentosAtos) . '.');
 
         $this->_atualizarConteudoFormulario($idVinculo, $dados, $arrSeries, $objArquivoPrincipal, true);
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal: conteúdo do formulário atualizado com a lista de documentos.');
 
         if (!is_null($objArquivoPrincipal)) {
             $parObjDocumentoDTO = new DocumentoDTO();
@@ -757,10 +764,12 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $parObjDocumentoDTO = (new DocumentoRN())->consultarRN0005($parObjDocumentoDTO);
 
             (new mdPetProcessoRN())->assinarETravarDocumentoProcesso($objUnidadeDTO, $dados, $parObjDocumentoDTO, $objProcedimentoDTO);
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal: formulário assinado.');
         }
 
         if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) && $dadosCadastro['acessoExterno'] == true && $reciboDTOBasico != null) {
             $reciboDTOBasico = $this->gerarReciboVinculacao(array($dados, $objProcedimentoDTO, $reciboDTOBasico, $objArquivoPrincipal, $idVinculo, $idRepresentant, self::$TIPO_PETICIONAMENTO_RECIBO_VINC_PJ, null, $objUnidadeDTO));
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal: recibo gerado como documento ' . $reciboDTOBasico->getDblIdDocumento() . '.');
         }
 
         $dadosCadastro['dados'] = $dados;
@@ -780,7 +789,10 @@ class MdPetVinculoUsuExtRN extends InfraRN
         if ($dadosCadastro['isAlteradoRespLegal']) {
             $this->_atualizarProcuradoresVinculo($idVinculo, $dados);
             $this->setDataEncerramentoVinculo(array($idVinculo));
+            MdPetRastreioINT::registrar('Alteração de Responsável Legal: procuradores atualizados e vínculo encerrado.');
         }
+
+        $this->realizarPosProcessamentoGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
 
         return $dadosCadastro;
     }
@@ -799,6 +811,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $strTipoPeticionamento = (new MdPetRegrasGeraisRN())->getTipoPeticionamento($tipoPeticionamento, true);
 
         $this->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal: andamento lançado no processo.');
 
         if (!is_null($idProcedimento)) {
             if (!empty($dados['hdnIdContato'])) {
@@ -808,28 +821,65 @@ class MdPetVinculoUsuExtRN extends InfraRN
             }
         }
 
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal: acesso externo concedido.');
         $this->_remeterProcesso($objProcedimentoDTO, $objUnidadeDTO);
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal: processo enviado à unidade.');
     }
 
+    /**
+     * ADR-PET-002: desfaz as etapas já gravadas. Se o desfazimento falhar, o log guarda o processo para a correção manual.
+     * ADR-PET-007: a mensagem ao usuário sai depois do desfazimento, porque só então se sabe o que ficou gravado.
+     * ADR-PET-008: o administrador do SEI recebe o aviso do rollback antes da mensagem.
+     *
+     * @param array<string, mixed> $dadosCadastro dados devolvidos pelas etapas
+     * @param Exception $e erro da etapa que falhou
+     * @return never
+     * @throws Exception
+     */
     private function tratarFalhaGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro, Exception $e)
     {
+        $strProcesso = MdPetRastreioINT::descreverProcesso($dadosCadastro['idProcedimento'], ($dadosCadastro['objProcedimentoDTO'] ?? null)?->getStrProtocoloProcedimentoFormatado());
+        $strProcessoFormatado = (string) $dadosCadastro['objProcedimentoDTO']?->getStrProtocoloProcedimentoFormatado();
+        $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($e, self::$MSG_ALTERACAO_NAO_CONCLUIDA);
+        $strMotivo = MdPetExcecaoINT::lerMensagem($objValidacao);
+        MdPetRastreioINT::registrarFalha('Alteração de Responsável Legal: a etapa em andamento falhou no ' . $strProcesso . '.', $e, $strMotivo);
+        MdPetRastreioINT::registrarInicioDoRollback('Alteração de Responsável Legal: rollback iniciado para apagar o que as etapas gravaram no ' . $strProcesso . '.');
+
         try {
             $this->realizarRollbackGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
         } catch (Exception $eRollback) {
-            throw new InfraException('Erro no processamento da alteracao do responsavel legal e falha ao reverter as etapas anteriores.', $eRollback);
+            MdPetRastreioINT::registrarFalha('Alteração de Responsável Legal: o rollback falhou no ' . $strProcesso . ', e o banco manteve tudo como estava antes dele. O processo precisa de correção manual.', $eRollback);
+            LogSEI::getInstance()->gravar('Falha ao reverter a alteração do responsável legal do processo ' . $dadosCadastro['idProcedimento'] . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
+            (new MdPetAvisoRollbackRN())->avisarFalha('Alteração de Responsável Legal', 'processo ' . $strProcessoFormatado, $e, $eRollback, $strMotivo);
+            (new InfraException())->lancarValidacao(sprintf(self::$MSG_ALTERACAO_NAO_DESFEITA, $strProcessoFormatado), null, $eRollback);
         }
 
-        throw $e;
+        MdPetRastreioINT::registrar('Alteração de Responsável Legal: rollback concluído com sucesso. Tudo o que a tentativa gravou no ' . $strProcesso . ' foi apagado.');
+        (new MdPetAvisoRollbackRN())->avisarAcionamento('Alteração de Responsável Legal', 'processo ' . $strProcessoFormatado, $e, $strMotivo);
+
+        throw $objValidacao;
     }
 
-    private function realizarRollbackGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro)
+    /**
+     * Desfaz as etapas já gravadas em uma só transação: se um passo falhar, nada é desfeito e o processo fica como estava,
+     * sem ficar pela metade.
+     *
+     * @param array<string, mixed> $dadosCadastro dados devolvidos pelas etapas já gravadas
+     * @return void
+     */
+    protected function realizarRollbackGeracaoProcedimentoAlteracaoResponsavelLegalControlado($dadosCadastro)
     {
         if (empty($dadosCadastro) || !is_array($dadosCadastro)) {
             return;
         }
 
+        $objMdPetReciboRN = new MdPetReciboRN();
+        $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+        $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
+        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+
         $reciboDTOBasico = array_key_exists('reciboDTOBasico', $dadosCadastro) ? $dadosCadastro['reciboDTOBasico'] : null;
-        $arrIdDocumentos = array();
+        $arrIdDocumentos = [];
 
         if (array_key_exists('arrIdDocumentosAtos', $dadosCadastro) && is_array($dadosCadastro['arrIdDocumentosAtos'])) {
             $arrIdDocumentos = array_merge($arrIdDocumentos, $dadosCadastro['arrIdDocumentosAtos']);
@@ -840,7 +890,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $arrIdDocumentos[] = $objArquivoPrincipal->getIdDocumento();
         }
 
-        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getDblIdDocumento())) {
+        // Quando a inclusão dos documentos falha, o recibo da primeira etapa ainda não tem documento
+        if (!is_null($reciboDTOBasico) && $reciboDTOBasico->isSetDblIdDocumento() && is_numeric($reciboDTOBasico->getDblIdDocumento())) {
             $arrIdDocumentos[] = $reciboDTOBasico->getDblIdDocumento();
         }
 
@@ -849,7 +900,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objMdPetRelReciboDocumentoAnexoDTO->retNumIdReciboDocumentoAnexoPeticionamento();
             $objMdPetRelReciboDocumentoAnexoDTO->retNumIdDocumento();
             $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($reciboDTOBasico->getNumIdReciboPeticionamento());
-            $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
             $arrObjMdPetRelReciboDocumentoAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->listar($objMdPetRelReciboDocumentoAnexoDTO);
 
             if (is_array($arrObjMdPetRelReciboDocumentoAnexoDTO)) {
@@ -858,12 +908,15 @@ class MdPetVinculoUsuExtRN extends InfraRN
                     $objMdPetRelReciboDocumentoAnexoRN->excluir($objMdPetRelReciboDocumentoAnexoItemDTO);
                 }
             }
+
+            // O recibo sai antes dos documentos: md_pet_rel_recibo_protoc.id_documento referencia o documento do recibo
+            $objMdPetReciboRN->excluir($reciboDTOBasico);
+            MdPetRastreioINT::registrarPassoDoRollback('Alteração de Responsável Legal', 'recibo ' . $reciboDTOBasico->getNumIdReciboPeticionamento() . ' excluído.');
         }
 
         $arrIdDocumentos = array_values(array_unique(array_filter($arrIdDocumentos, 'is_numeric')));
 
         if (!empty($arrIdDocumentos)) {
-            $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
             $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
             $objMdPetVincDocumentoDTO->retNumIdMdPetVincDocumento();
             $objMdPetVincDocumentoDTO->setDblIdDocumento($arrIdDocumentos, InfraDTO::$OPER_IN);
@@ -871,29 +924,28 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
             if (!empty($arrObjMdPetVincDocumentoDTO)) {
                 $objMdPetVincDocumentoRN->excluir($arrObjMdPetVincDocumentoDTO);
+                MdPetRastreioINT::registrarPassoDoRollback('Alteração de Responsável Legal', 'ligações dos documentos com o vínculo excluídas.');
             }
 
             foreach (array_reverse($arrIdDocumentos) as $idDocumento) {
-                $this->excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento);
+                $this->excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento, 'Alteração de Responsável Legal');
             }
         }
 
         if (!empty($dadosCadastro['rollbackProcuradores'])) {
             $this->reverterProcuradoresAlteracaoResponsavelLegal($dadosCadastro['rollbackProcuradores']);
-        }
-
-        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getNumIdReciboPeticionamento())) {
-            (new MdPetReciboRN())->excluir($reciboDTOBasico);
+            MdPetRastreioINT::registrarPassoDoRollback('Alteração de Responsável Legal', 'procuradores restaurados como estavam antes da tentativa.');
         }
 
         if (!empty($dadosCadastro['isAlteradoRespLegal']) && is_numeric($dadosCadastro['idRepresentante'])) {
             $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
             $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($dadosCadastro['idRepresentante']);
-            (new MdPetVincRepresentantRN())->excluir(array($objMdPetVincRepresentantDTO));
+            $objMdPetVincRepresentantRN->excluir([$objMdPetVincRepresentantDTO]);
+            MdPetRastreioINT::registrarPassoDoRollback('Alteração de Responsável Legal', 'representante ' . $dadosCadastro['idRepresentante'] . ' excluído.');
         }
     }
 
-    private function excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento)
+    private function excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento, string $strFluxo)
     {
         $objDocumentoDTO = new DocumentoDTO();
         $objDocumentoDTO->retDblIdDocumento();
@@ -907,10 +959,17 @@ class MdPetVinculoUsuExtRN extends InfraRN
             return;
         }
 
+        // A etapa cancelada pode ter deixado o recibo apontando para um documento que voltou com a transacao
+        if ($objDocumentoDTO === null) {
+            MdPetRastreioINT::registrarPassoDoRollback($strFluxo, 'documento ' . $idDocumento . ' já tinha sido cancelado pelo banco junto com a etapa que falhou.');
+            return;
+        }
+
         $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EDITOR_INTERNO);
         $objDocumentoDTO->setStrSinBloqueado('N');
         (new DocumentoBD($this->getObjInfraIBanco()))->alterar($objDocumentoDTO);
         (new DocumentoRN())->excluirRN0006($objDocumentoDTO);
+        MdPetRastreioINT::registrarPassoDoRollback($strFluxo, 'documento ' . $idDocumento . ' excluído.');
     }
 
     private function obterRollbackProcuradoresAlteracaoResponsavelLegal($idVinculo)
@@ -961,6 +1020,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
      */
     public function gerarProcedimentoVinculo($dados)
     {
+        $this->validarXssDocumentosVinculo($dados);
+
         $idVinculo = array_key_exists('hdnIdVinculo', $dados) && !empty($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
 
         if (!is_null($idVinculo)) {
@@ -968,30 +1029,29 @@ class MdPetVinculoUsuExtRN extends InfraRN
         }
 
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal, etapa 1 de 3 (abertura do processo e gravação do vínculo, do responsável legal e do recibo): iniciada.');
 
-        $dadosCadastro = $this->prepararGeracaoProcedimentoVinculo($dados);
+        try {
+            $dadosCadastro = $this->prepararGeracaoProcedimentoVinculo($dados);
+        } catch (Exception $objExceptionPreparacao) {
+            $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($objExceptionPreparacao, self::$MSG_VINCULACAO_NAO_CONCLUIDA);
+            MdPetRastreioINT::registrarFalha('Vinculação de Responsável Legal, etapa 1 de 3 (abertura do processo e gravação do vínculo, do responsável legal e do recibo): falhou, e o banco desfez tudo o que ela tinha gravado.', $objExceptionPreparacao, MdPetExcecaoINT::lerMensagem($objValidacao));
+            throw $objValidacao;
+        }
+
+        $strProcesso = MdPetRastreioINT::descreverProcesso($dadosCadastro['idProcedimento'], ($dadosCadastro['objProcedimentoDTO'] ?? null)?->getStrProtocoloProcedimentoFormatado());
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal, etapa 1 de 3 (abertura do processo e gravação do vínculo, do responsável legal e do recibo): concluída. Criado o ' . $strProcesso . '.');
         $bolConcluido = false;
 
         try {
+            MdPetRastreioINT::registrar('Vinculação de Responsável Legal, etapa 2 de 3 (formulário, atos constitutivos, procurações, assinatura e recibo): iniciada no ' . $strProcesso . '.');
             $dadosCadastro = $this->incluirDocumentosGeracaoProcedimentoVinculo($dadosCadastro);
+            MdPetRastreioINT::registrar('Vinculação de Responsável Legal, etapa 2 de 3 (formulário, atos constitutivos, procurações, assinatura e recibo): concluída no ' . $strProcesso . '.');
+            MdPetRastreioINT::registrar('Vinculação de Responsável Legal, etapa 3 de 3 (andamento, acesso externo e envio à unidade): iniciada no ' . $strProcesso . '.');
             $dadosCadastro = $this->finalizarGeracaoProcedimentoVinculo($dadosCadastro);
-
-            $dadosGeracao = $dadosCadastro['dados'];
-            if (array_key_exists('hdnIdContatoNovo', $dadosGeracao) && $dadosGeracao['hdnIdContatoNovo'] == '' && $dadosCadastro['acessoExterno'] == true) {
-                $arrParams = array();
-                $arrParams[0] = $dadosGeracao;
-                $arrParams[1] = $dadosCadastro['objUnidadeDTO'];
-                $arrParams[2] = $dadosCadastro['objProcedimentoDTO'];
-                $arrParams[3] = array();
-                $arrParams[4] = $dadosCadastro['reciboDTOBasico'];
-                $arrParams[5] = $dadosCadastro['reciboDTOBasico'];
-
-                $this->enviarEmail($arrParams);
-            }
+            MdPetRastreioINT::registrar('Vinculação de Responsável Legal, etapa 3 de 3 (andamento, acesso externo e envio à unidade): concluída no ' . $strProcesso . '.');
 
             $bolConcluido = true;
-
-            return $dadosCadastro['reciboDTOBasico'];
         } catch (Exception $e) {
             $this->tratarFalhaGeracaoProcedimentoVinculo($dadosCadastro, $e);
         } finally {
@@ -1002,7 +1062,57 @@ class MdPetVinculoUsuExtRN extends InfraRN
             }
         }
 
-        return false;
+        $this->enviarEmailVinculoConcluido($dadosCadastro);
+
+        return $dadosCadastro['reciboDTOBasico'];
+    }
+
+    /**
+     * Envia o aviso por e-mail da vinculação ou da alteração do responsável legal depois que as etapas foram confirmadas
+     * no banco. A falha no envio vai para o log e não desfaz o que foi gravado, como no posCadastroIntercorrente do
+     * Peticionamento Intercorrente.
+     *
+     * @param array<string, mixed> $dadosCadastro dados devolvidos pelas etapas
+     * @return void
+     */
+    private function enviarEmailVinculoConcluido(array $dadosCadastro): void
+    {
+        $dadosGeracao = $dadosCadastro['dados'];
+        if (!array_key_exists('hdnIdContatoNovo', $dadosGeracao) || $dadosGeracao['hdnIdContatoNovo'] != '' || $dadosCadastro['acessoExterno'] != true) {
+            return;
+        }
+
+        try {
+            $this->enviarEmail([$dadosGeracao, $dadosCadastro['objUnidadeDTO'], $dadosCadastro['objProcedimentoDTO'], [], $dadosCadastro['reciboDTOBasico'], $dadosCadastro['reciboDTOBasico']]);
+        } catch (\Throwable $e) {
+            LogSEI::getInstance()->gravar('Falha no envio de e-mail da vinculação do processo ' . $dadosCadastro['idProcedimento'] . ".\n\n" . InfraException::inspecionar($e), InfraLog::$INFORMACAO);
+        }
+    }
+
+    /**
+     * ADR-PET-002: confere os arquivos da tabela de documentos com as regras do filtro XSS do módulo e, pela ADR-PET-010,
+     * com o limite de tamanho do SEI antes da primeira etapa, para que a recusa ocorra sem processo aberto e sem alteração
+     * no vínculo.
+     *
+     * @param array<string, mixed> $dados dados do formulário, com a tabela hdnTbDocumento
+     * @param string $strDiretorio diretório dos arquivos temporários
+     * @return void
+     * @throws InfraException validação para o usuário quando o conteúdo não é permitido ou o arquivo passa do limite
+     */
+    public function validarXssDocumentosVinculo(array $dados, string $strDiretorio = DIR_SEI_TEMP): void
+    {
+        $arrArquivos = [];
+        $objInfraException = new InfraException();
+
+        foreach (PaginaSEI::getInstance()->getArrItensTabelaDinamica($dados['hdnTbDocumento'] ?? '') as $itemAnexo) {
+            PeticionamentoIntegracao::validarXssComplemento($itemAnexo[2] ?? null, $objInfraException);
+            $arrArquivos[$itemAnexo[7]] = $itemAnexo[9];
+        }
+
+        $objInfraException->lancarValidacoes();
+        PeticionamentoIntegracao::validarArquivosDisponiveisConclusao($arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarXssConclusao(null, $arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarTamanhoConclusao($arrArquivos, $strDiretorio);
     }
 
     protected function gerarProcedimentoVinculoLegadoControlado($dados)
@@ -1076,11 +1186,14 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $idVinculo = $dadosCadastro['idVinculo'];
 
         $objArquivoPrincipal = $this->_gerarFormularioVinculacao($dados, $objProcedimentoDTO, $reciboDTOBasico, $objUnidadeDTO, $idRepresentante, $idVinculo);
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: formulário gerado como documento ' . $objArquivoPrincipal->getIdDocumento() . '.');
 
         $arrIdDocumentosAtos = array();
         $arrSeries = $this->_adicionarArquivosAtosContitutivos($dados, $objUnidadeDTO->getNumIdUnidade(), $objProcedimentoDTO, $reciboDTOBasico, $idRepresentante, $arrIdDocumentosAtos);
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: atos constitutivos incluídos como documentos ' . implode(', ', $arrIdDocumentosAtos) . '.');
         $arrDadosProcuracao = $this->_vincularProcuradores($objProcedimentoDTO, $idVinculo, $dados, $objUnidadeDTO);
         $arrIdDocumentosProcuracao = $this->_extrairIdsDocumentosProcuracaoGeracaoVinculo($arrDadosProcuracao);
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: procurações processadas' . ($arrIdDocumentosProcuracao ? ', documentos ' . implode(', ', $arrIdDocumentosProcuracao) : ', sem procuração para gerar') . '.');
 
         $documentoRN = new DocumentoRN();
         $objDocumentoDTO = new DocumentoDTO();
@@ -1090,6 +1203,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $dados['nomeTipoDocumento'] = $objDocumentoDTO->getStrNomeSerie();
 
         $this->_atualizarConteudoFormulario($idVinculo, $dados, $arrSeries, $objArquivoPrincipal, false);
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: conteúdo do formulário atualizado com a lista de documentos.');
 
         if (!is_null($objArquivoPrincipal)) {
             $parObjDocumentoDTO = new DocumentoDTO();
@@ -1098,10 +1212,12 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $parObjDocumentoDTO = (new DocumentoRN())->consultarRN0005($parObjDocumentoDTO);
 
             (new mdPetProcessoRN())->assinarETravarDocumentoProcesso($objUnidadeDTO, $dados, $parObjDocumentoDTO, $objProcedimentoDTO);
+            MdPetRastreioINT::registrar('Vinculação de Responsável Legal: formulário assinado.');
         }
 
         if (!empty(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()) && $dadosCadastro['acessoExterno'] == true) {
             $reciboDTOBasico = $this->gerarReciboVinculacao(array($dados, $objProcedimentoDTO, $reciboDTOBasico, $objArquivoPrincipal, $idVinculo, $idRepresentante, 'Vinculação de Responsável Legal a Pessoa Jurídica', $arrDadosProcuracao, $objUnidadeDTO));
+            MdPetRastreioINT::registrar('Vinculação de Responsável Legal: recibo gerado como documento ' . $reciboDTOBasico->getDblIdDocumento() . '.');
         }
 
         $dadosCadastro['dados'] = $dados;
@@ -1129,6 +1245,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $strTipoPeticionamento = (new MdPetRegrasGeraisRN())->getTipoPeticionamento($tipoPeticionamento, true);
 
         $this->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $objUnidadeDTO->getNumIdUnidade()));
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: andamento lançado no processo.');
 
         if (!is_null($idProcedimento)) {
             if (!empty($dados['hdnIdContato'])) {
@@ -1138,31 +1255,70 @@ class MdPetVinculoUsuExtRN extends InfraRN
             }
         }
 
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: acesso externo concedido.');
         $this->_remeterProcesso($objProcedimentoDTO, $objUnidadeDTO);
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: processo enviado à unidade.');
 
         return $dadosCadastro;
     }
 
+    /**
+     * ADR-PET-002: desfaz as etapas já gravadas. Se o desfazimento falhar, o log guarda o processo para a correção manual.
+     * ADR-PET-007: a mensagem ao usuário sai depois do desfazimento, porque só então se sabe o que ficou gravado.
+     * ADR-PET-008: o administrador do SEI recebe o aviso do rollback antes da mensagem.
+     *
+     * @param array<string, mixed> $dadosCadastro dados devolvidos pelas etapas
+     * @param Exception $e erro da etapa que falhou
+     * @return never
+     * @throws Exception
+     */
     private function tratarFalhaGeracaoProcedimentoVinculo($dadosCadastro, Exception $e)
     {
+        $strProcesso = MdPetRastreioINT::descreverProcesso($dadosCadastro['idProcedimento'], ($dadosCadastro['objProcedimentoDTO'] ?? null)?->getStrProtocoloProcedimentoFormatado());
+        $strProcessoFormatado = (string) $dadosCadastro['objProcedimentoDTO']?->getStrProtocoloProcedimentoFormatado();
+        $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($e, self::$MSG_VINCULACAO_NAO_CONCLUIDA);
+        $strMotivo = MdPetExcecaoINT::lerMensagem($objValidacao);
+        MdPetRastreioINT::registrarFalha('Vinculação de Responsável Legal: a etapa em andamento falhou no ' . $strProcesso . '.', $e, $strMotivo);
+        MdPetRastreioINT::registrarInicioDoRollback('Vinculação de Responsável Legal: rollback iniciado para apagar o que as etapas gravaram no ' . $strProcesso . '.');
+
         try {
             $this->realizarRollbackGeracaoProcedimentoVinculo($dadosCadastro);
         } catch (Exception $eRollback) {
-            throw new InfraException('Erro no cadastro da vinculacao e falha ao reverter as etapas anteriores.', $eRollback);
+            MdPetRastreioINT::registrarFalha('Vinculação de Responsável Legal: o rollback falhou no ' . $strProcesso . ', e o banco manteve tudo como estava antes dele. O processo precisa de correção manual.', $eRollback);
+            LogSEI::getInstance()->gravar('Falha ao reverter a vinculação do processo ' . $dadosCadastro['idProcedimento'] . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
+            (new MdPetAvisoRollbackRN())->avisarFalha('Vinculação de Responsável Legal', 'processo ' . $strProcessoFormatado, $e, $eRollback, $strMotivo);
+            (new InfraException())->lancarValidacao(sprintf(self::$MSG_VINCULACAO_NAO_DESFEITA, $strProcessoFormatado), null, $eRollback);
         }
 
-        throw $e;
+        MdPetRastreioINT::registrar('Vinculação de Responsável Legal: rollback concluído com sucesso. O ' . $strProcesso . ' e tudo o que a tentativa gravou foram apagados.');
+        (new MdPetAvisoRollbackRN())->avisarAcionamento('Vinculação de Responsável Legal', 'processo ' . $strProcessoFormatado, $e, $strMotivo);
+
+        throw $objValidacao;
     }
 
-    private function realizarRollbackGeracaoProcedimentoVinculo($dadosCadastro)
+    /**
+     * Desfaz as etapas já gravadas em uma só transação: se um passo falhar, nada é desfeito e o processo fica como estava,
+     * sem ficar pela metade.
+     *
+     * @param array<string, mixed> $dadosCadastro dados devolvidos pelas etapas já gravadas
+     * @return void
+     */
+    protected function realizarRollbackGeracaoProcedimentoVinculoControlado($dadosCadastro)
     {
         if (empty($dadosCadastro) || !is_array($dadosCadastro)) {
             return;
         }
 
+        $objMdPetReciboRN = new MdPetReciboRN();
+        $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
+        $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
+        $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+        $objMdPetVinculoRN = new MdPetVinculoRN();
+        $objProcedimentoRN = new ProcedimentoRN();
+
         $reciboDTOBasico = array_key_exists('reciboDTOBasico', $dadosCadastro) ? $dadosCadastro['reciboDTOBasico'] : null;
-        $arrIdDocumentos = array();
-        $arrIdRepresentantes = array();
+        $arrIdDocumentos = [];
+        $arrIdRepresentantes = [];
 
         if (array_key_exists('idRepresentante', $dadosCadastro) && is_numeric($dadosCadastro['idRepresentante'])) {
             $arrIdRepresentantes[] = $dadosCadastro['idRepresentante'];
@@ -1181,7 +1337,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $arrIdDocumentos[] = $objArquivoPrincipal->getIdDocumento();
         }
 
-        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getDblIdDocumento())) {
+        // Quando a inclusão dos documentos falha, o recibo da primeira etapa ainda não tem documento
+        if (!is_null($reciboDTOBasico) && $reciboDTOBasico->isSetDblIdDocumento() && is_numeric($reciboDTOBasico->getDblIdDocumento())) {
             $arrIdDocumentos[] = $reciboDTOBasico->getDblIdDocumento();
         }
 
@@ -1190,7 +1347,6 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $objMdPetRelReciboDocumentoAnexoDTO->retNumIdReciboDocumentoAnexoPeticionamento();
             $objMdPetRelReciboDocumentoAnexoDTO->retNumIdDocumento();
             $objMdPetRelReciboDocumentoAnexoDTO->setNumIdReciboPeticionamento($reciboDTOBasico->getNumIdReciboPeticionamento());
-            $objMdPetRelReciboDocumentoAnexoRN = new MdPetRelReciboDocumentoAnexoRN();
             $arrObjMdPetRelReciboDocumentoAnexoDTO = $objMdPetRelReciboDocumentoAnexoRN->listar($objMdPetRelReciboDocumentoAnexoDTO);
 
             if (is_array($arrObjMdPetRelReciboDocumentoAnexoDTO)) {
@@ -1199,12 +1355,15 @@ class MdPetVinculoUsuExtRN extends InfraRN
                     $objMdPetRelReciboDocumentoAnexoRN->excluir($objMdPetRelReciboDocumentoAnexoItemDTO);
                 }
             }
+
+            // O recibo sai antes dos documentos: md_pet_rel_recibo_protoc.id_documento referencia o documento do recibo
+            $objMdPetReciboRN->excluir($reciboDTOBasico);
+            MdPetRastreioINT::registrarPassoDoRollback('Vinculação de Responsável Legal', 'recibo ' . $reciboDTOBasico->getNumIdReciboPeticionamento() . ' excluído.');
         }
 
         $arrIdDocumentos = array_values(array_unique(array_filter($arrIdDocumentos, 'is_numeric')));
 
         if (!empty($arrIdDocumentos)) {
-            $objMdPetVincDocumentoRN = new MdPetVincDocumentoRN();
             $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
             $objMdPetVincDocumentoDTO->retNumIdMdPetVincDocumento();
             $objMdPetVincDocumentoDTO->retNumIdMdPetVinculoRepresent();
@@ -1218,37 +1377,37 @@ class MdPetVinculoUsuExtRN extends InfraRN
                     }
                 }
                 $objMdPetVincDocumentoRN->excluir($arrObjMdPetVincDocumentoDTO);
+                MdPetRastreioINT::registrarPassoDoRollback('Vinculação de Responsável Legal', 'ligações dos documentos com o vínculo excluídas.');
             }
 
             foreach (array_reverse($arrIdDocumentos) as $idDocumento) {
-                $this->excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento);
+                $this->excluirDocumentoGeradoAlteracaoResponsavelLegal($idDocumento, 'Vinculação de Responsável Legal');
             }
-        }
-
-        if (!is_null($reciboDTOBasico) && is_numeric($reciboDTOBasico->getNumIdReciboPeticionamento())) {
-            (new MdPetReciboRN())->excluir($reciboDTOBasico);
         }
 
         $arrIdRepresentantes = array_values(array_unique(array_filter($arrIdRepresentantes, 'is_numeric')));
         if (!empty($arrIdRepresentantes)) {
-            $arrObjMdPetVincRepresentantDTO = array();
+            $arrObjMdPetVincRepresentantDTO = [];
             foreach ($arrIdRepresentantes as $idRepresentante) {
                 $objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
                 $objMdPetVincRepresentantDTO->setNumIdMdPetVinculoRepresent($idRepresentante);
                 $arrObjMdPetVincRepresentantDTO[] = $objMdPetVincRepresentantDTO;
             }
-            (new MdPetVincRepresentantRN())->excluir($arrObjMdPetVincRepresentantDTO);
+            $objMdPetVincRepresentantRN->excluir($arrObjMdPetVincRepresentantDTO);
+            MdPetRastreioINT::registrarPassoDoRollback('Vinculação de Responsável Legal', 'representantes ' . implode(', ', $arrIdRepresentantes) . ' excluídos.');
         }
 
         if (array_key_exists('idVinculo', $dadosCadastro) && is_numeric($dadosCadastro['idVinculo'])) {
             $objMdPetVinculoDTO = new MdPetVinculoDTO();
             $objMdPetVinculoDTO->setNumIdMdPetVinculo($dadosCadastro['idVinculo']);
-            (new MdPetVinculoRN())->excluir(array($objMdPetVinculoDTO));
+            $objMdPetVinculoRN->excluir([$objMdPetVinculoDTO]);
+            MdPetRastreioINT::registrarPassoDoRollback('Vinculação de Responsável Legal', 'vínculo ' . $dadosCadastro['idVinculo'] . ' excluído.');
         }
 
         $objProcedimentoDTO = array_key_exists('objProcedimentoDTO', $dadosCadastro) ? $dadosCadastro['objProcedimentoDTO'] : null;
         if ($objProcedimentoDTO instanceof ProcedimentoDTO && is_numeric($objProcedimentoDTO->getDblIdProcedimento())) {
-            (new ProcedimentoRN())->excluirRN0280($objProcedimentoDTO);
+            $objProcedimentoRN->excluirRN0280($objProcedimentoDTO);
+            MdPetRastreioINT::registrarPassoDoRollback('Vinculação de Responsável Legal', 'processo ' . $objProcedimentoDTO->getDblIdProcedimento() . ' excluído.');
         }
     }
 
@@ -1347,7 +1506,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 }
 
                 if ($idRepresentant == null) {
-                    throw new InfraException('Erro buscar Representante da Vinculação');
+                    throw new InfraException('Erro ao buscar Representante da Vinculação');
                 }
 
                 $objProcedimentoDTO = $this->_getObjProcedimentoPorVinculo($idVinculo);
@@ -1440,7 +1599,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             return $arrRetorno;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando processo peticionamento do SEI.', $e);
+            throw new InfraException('Erro cadastrando processo de peticionamento do SEI.', $e);
         }
 
     }
@@ -1525,16 +1684,8 @@ class MdPetVinculoUsuExtRN extends InfraRN
 
                 $objEditorDTO->setArrObjSecaoDocumentoDTO($arrObjSecaoDocumentoDTO);
 
-                try {
-                    $objEditorRN = new EditorRN();
-                    $numVersao = $objEditorRN->adicionarVersao($objEditorDTO);
-                } catch (Exception $e) {
-                    if ($e instanceof InfraException && $e->contemValidacoes()) {
-                        die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
-                    }
-
-                    PaginaSEI::getInstance()->processarExcecao($e); //vai para a página de erro padrão
-                }
+                // A falha sobe para o rollback da etapa e para a mensagem na página de conclusão (ADR-PET-003)
+                (new EditorRN())->adicionarVersao($objEditorDTO);
 
             }
 

@@ -15,6 +15,12 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
     public static $FORMATO_DIGITALIZADO = 'D';
     public static $FORMATO_NATO_DIGITAL = 'N';
 
+    //Mensagens da falha na conclusão: a Resposta a Intimação usa o mesmo cadastro do Intercorrente (ADR-PET-007)
+    public static $MSG_INTERCORRENTE_NAO_CONCLUIDO = 'Não foi possível concluir o Peticionamento Intercorrente, e nenhum documento foi incluído. Tente novamente. Se o erro continuar, entre em contato com a gestão do SEI deste órgão.';
+    public static $MSG_INTERCORRENTE_NAO_DESFEITO = 'Não foi possível concluir o Peticionamento Intercorrente. Não tente novamente. Entre em contato com a gestão do SEI deste órgão e informe o processo %s.';
+    public static $MSG_RESPOSTA_NAO_CONCLUIDA = 'Não foi possível concluir a Resposta a Intimação, e nenhum documento foi incluído. Tente novamente. Se o erro continuar, entre em contato com a gestão do SEI deste órgão.';
+    public static $MSG_RESPOSTA_NAO_DESFEITA = 'Não foi possível concluir a Resposta a Intimação. Não tente novamente. Entre em contato com a gestão do SEI deste órgão e informe o processo %s.';
+
 
     private $objAcessoExternoDTO = null;
     private $objUsuarioDTO = null;
@@ -921,12 +927,35 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
      */
     public function cadastrar($params)
     {
-        $dadosCadastro = $this->prepararCadastroIntercorrente($params);
+        $strFluxo = self::nomearFluxo($params);
+        $strProcesso = MdPetRastreioINT::descreverProcesso((int) ($params['id_procedimento'] ?? 0));
+        MdPetRastreioINT::registrar($strFluxo . ', etapa 1 de 3 (conferência dos dados, critério e reabertura do processo): iniciada no ' . $strProcesso . '.');
+
+        try {
+            $dadosCadastro = $this->prepararCadastroIntercorrente($params);
+        } catch (\Throwable $objExceptionPreparacao) {
+            $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($objExceptionPreparacao, isset($params['isRespostaIntimacao']) ? self::$MSG_RESPOSTA_NAO_CONCLUIDA : self::$MSG_INTERCORRENTE_NAO_CONCLUIDO);
+            MdPetRastreioINT::registrarFalha($strFluxo . ', etapa 1 de 3 (conferência dos dados, critério e reabertura do processo): falhou no ' . $strProcesso . ', e o banco desfez tudo o que ela tinha gravado.', $objExceptionPreparacao, MdPetExcecaoINT::lerMensagem($objValidacao));
+            throw $objValidacao;
+        }
+
+        // Número e id do processo que recebe os documentos: o indicado ou o relacionado que a etapa 1 criou
+        $numIdProcessoIndicado = (int) ($params['id_procedimento'] ?? 0);
+        $numIdProcesso = (int) ($dadosCadastro['params']['id_procedimento'] ?? $numIdProcessoIndicado);
+        $strProcesso = MdPetRastreioINT::descreverProcesso($numIdProcesso, $this->getProcedimentoDTO()?->getStrProtocoloProcedimentoFormatado());
+        $strConclusao = $numIdProcesso === $numIdProcessoIndicado
+            ? 'concluída no ' . $strProcesso . '.'
+            : 'concluída. Os documentos vão para o ' . $strProcesso . ', criado nesta etapa e relacionado ao processo ' . $numIdProcessoIndicado . '.';
+        MdPetRastreioINT::registrar($strFluxo . ', etapa 1 de 3 (conferência dos dados, critério e reabertura do processo): ' . $strConclusao);
 
         try {
 
+            MdPetRastreioINT::registrar($strFluxo . ', etapa 2 de 3 (inclusão dos documentos): iniciada no ' . $strProcesso . '.');
             $dadosCadastro = $this->incluirDocumentosCadastroIntercorrente($dadosCadastro);
+            MdPetRastreioINT::registrar($strFluxo . ', etapa 2 de 3 (inclusão dos documentos): concluída no ' . $strProcesso . '.');
+            MdPetRastreioINT::registrar($strFluxo . ', etapa 3 de 3 (recibo e andamentos): iniciada no ' . $strProcesso . '.');
             $resultado = $this->finalizarCadastroIntercorrente($dadosCadastro);
+            MdPetRastreioINT::registrar($strFluxo . ', etapa 3 de 3 (recibo e andamentos): concluída no ' . $strProcesso . '.');
 
         } catch (\Throwable $e) {
             
@@ -943,12 +972,31 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
     }
 
+    /**
+     * Etapa 1 do cadastro (ver cadastrar): valida, decide se o peticionamento entra no processo indicado ou num
+     * processo relacionado novo, reabre o processo ou a unidade quando preciso, define a unidade que recebe os
+     * documentos e copia os interessados do processo principal.
+     *
+     * @param array $params dados da conclusão do peticionamento
+     * @return array dados para as etapas seguintes
+     */
     protected function prepararCadastroIntercorrenteControlado($params)
     {
         // Bloco de validações
         $this->validarCadastro($params);
+        $this->validarXssDocumentos($params['hdnTbDocumento']);
 
-        $atividadeRN = new AtividadeRN();
+        $objAtividadeRN = new AtividadeRN();
+        $objProcedimentoRN = new ProcedimentoRN();
+        $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
+        $objMdPetCriterioRN = new MdPetCriterioRN();
+        $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+        $objUnidadeRN = new UnidadeRN();
+        $objAcessoRN = new AcessoRN();
+        $objMdPetIntercorrenteReaberturaRN = new MdPetIntercorrenteReaberturaRN();
+        $objMdPetIntercorrenteAndamentoSigilosoRN = new MdPetIntercorrenteAndamentoSigilosoRN();
+        $objParticipanteRN = new ParticipanteRN();
+        $objMdPetParticipanteRN = new MdPetParticipanteRN();
 
         // setando atributos que serão utilizados em outros métodos
         $this->setCargoDTO($params['selCargo']);
@@ -956,290 +1004,420 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $params['pwdsenhaSEI'] = '***********';
         $_POST['pwdsenhaSEI'] = '***********';
         $idProcedimentoProcesso = $params['id_procedimento'];
-        //Busca o Procedimento Principal
 
-        $objProcedimentoDTO = new ProcedimentoDTO();
-        $objProcedimentoRN  = new ProcedimentoRN();
-        $objProcedimentoDTO->setDblIdProcedimento($params['id_procedimento']);
-        $objProcedimentoDTO->retTodos(true);
-        $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
-
+        // Processo anexado: o peticionamento vai para o processo anexador
+        $objProcedimentoDTO = $this->consultarProcedimentoPeticionado($params['id_procedimento'], $objProcedimentoRN);
         if ($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO) {
-
-            $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
-            $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
-            $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
-            $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($objProcedimentoDTO->getDblIdProcedimento());
-            $objRelProtocoloProtocoloDTO->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO);
-            $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
-            $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
-
-            $params['id_procedimento'] = $objRelProtocoloProtocoloDTO->getDblIdProtocolo1();
-
-            $objProcedimentoDTO = new ProcedimentoDTO();
-            $objProcedimentoDTO->setDblIdProcedimento($objRelProtocoloProtocoloDTO->getDblIdProtocolo1());
-            $objProcedimentoDTO->retTodos(true);
-            $objProcedimentoRN = new ProcedimentoRN();
-            $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
-
+            $params['id_procedimento'] = $this->consultarProcessoAnexador($objProcedimentoDTO, $objRelProtocoloProtocoloRN)->getDblIdProtocolo1();
+            $objProcedimentoDTO = $this->consultarProcedimentoPeticionado($params['id_procedimento'], $objProcedimentoRN);
         }
 
         $params['sta_estado_protocolo'] = $objProcedimentoDTO->getStrStaEstadoProtocolo();
 
-        $objMdPetCriterioRN = new MdPetCriterioRN();
         $objCriterioIntercorrenteDTO = $objMdPetCriterioRN->retornarCriterioPorTipoProcesso($params);
+        $objCriterioIntercorrentePadraoDTO = $this->consultarCriterioPadrao($objMdPetCriterioRN);
 
-        $objMdPetCriterioDTO = new MdPetCriterioDTO();
-        $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
-        $objMdPetCriterioDTO->retTodos(true);
-        $objCriterioIntercorrentePadraoDTO = (new MdPetCriterioRN())->consultar($objMdPetCriterioDTO);
-
-        // Verifica se o processo possui critério intercorrente cadastrado
-        //Se não possui busca o padrão e cria um processo relacionado ao processo selecionado
-        $arrObjReciboDocPet = array();
-        $arrDadosRecibo = array();
+        $arrDadosRecibo = [];
         $arrDadosRecibo['idProcedimento'] = $params['id_procedimento'];
 
-        // Remententes
-        $contatoDTOUsuarioLogado = $this->getContatoDTOUsuarioLogado();
-        $idsRemententes = array();
-        $idsRemententes[] = $contatoDTOUsuarioLogado->getNumIdContato();
-
-        $estadosReabrirRelacionado = array(ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO, ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO, ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO);
-        /**
-         * Verifica se:
-         * 1 - Se o processo eh sigiloso (nivel de acesso global ou local eh igual a 2)
-         * 2 - Se o Tipo do Processo do procedimento informado nao possui um intercorrente cadastrado(neste caso irah utilizar o Intercorrente Padrao)
-         */
         $params['diretoProcessoIndicado'] = false;
 
         $arrUnidadeProcesso = null;
         $qtdArrUnidadeProcesso = 0;
         $gerouNovoProcedimento = false;
+        $arrIdUnidadesReabertas = [];
 
-        if (!$params['isRespostaIntimacao'] == true && (($params['isRespostaIntercorrente'] == true && $objCriterioIntercorrenteDTO->getStrSinAtivo() == "N") || $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S'
-                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado))
-                || ($objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == 2 && $objCriterioIntercorrentePadraoDTO->getStrSinIntercorrenteSigiloso() == 'N')
-        ) {
+        if ($this->isNecessarioProcessoRelacionado($params, $objProcedimentoDTO, $objCriterioIntercorrenteDTO, $objCriterioIntercorrentePadraoDTO)) {
             $especificacao = 'Peticionamento Intercorrente relacionado ao Processo nº ' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado();
-            $objSaidaGerarProcedimentoAPI = $this->gerarProcedimentoApi(array($objProcedimentoDTO, $objCriterioIntercorrenteDTO, $especificacao));
+            $objSaidaGerarProcedimentoAPI = $this->gerarProcedimentoApi([$objProcedimentoDTO, $objCriterioIntercorrenteDTO, $especificacao]);
 
             $arrDadosRecibo['idProcedimentoRel'] = $params['id_procedimento'];
             $arrDadosRecibo['idProcedimento'] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
             $params['id_procedimento'] = $objSaidaGerarProcedimentoAPI->getIdProcedimento();
-            //Se possui critérios intercorrentes setta os documentos no processo existente
             $this->setProcedimentoDTO($objSaidaGerarProcedimentoAPI->getIdProcedimento());
             $gerouNovoProcedimento = true;
+        } elseif ($this->isPeticionamentoNoProcessoIndicado($params, $objCriterioIntercorrenteDTO)) {
+            $arrIdUnidadesAbertasAntes = $this->listarIdUnidadesAbertas($params['id_procedimento']);
 
-            //SE o criterio existe, e NAO é o criterio padrao, tenta incluir documento no proprio processo (caso o mesmo esteja aberto) ou reabrir o processo (caso o mesmo esteja fechado)
-        } else if ($params['isRespostaIntimacao'] == true || ($objCriterioIntercorrenteDTO != null && $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'N')) {
-
-            //se for intimação
             if (isset($params['isRespostaIntimacao'])) {
-                $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
-                $objUnidadeDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao(array($params['id_intimacao']));
-
-                if(!empty($objUnidadeDTO)){
-                    //unidade esta ativa
-                    $unidadeDTO = new UnidadeDTO();
-                    $unidadeDTO->retTodos();
-                    $unidadeDTO->setBolExclusaoLogica(false);
-                    $unidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
-                    $unidadeRN = new UnidadeRN();
-                    $objUnidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
-
-                    if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
-                        $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                        $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
-                        if ($qtdArrUnidadeProcesso == 0) {
-                            $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
-                            if (is_numeric($idUnidadeAberta)) {
-                                $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $idUnidadeAberta));
-                                $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
-                            }
-                        }
-                    }
-                }
-
-                
-                //se for necessario, executar reabertura do processo
+                $arrUnidadeProcesso = $this->obterUnidadeAbertaDaIntimacao($params['id_intimacao'], $objProcedimentoDTO, $objMdPetIntimacaoRN, $objUnidadeRN);
+                $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
             } else {
-
-                /*
-                * Tratamento reabertura de Processo Sigiloso por Intercorrente
-                * Adicionado em 02/12/2025 por Gabriel Glauber
-                */
-
-                $naGlobal           = $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo();
-                $naLocal            = $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo();
-                $isSigiloso         = in_array(ProtocoloRN::$NA_SIGILOSO, [$naGlobal, $naLocal]);
-                $idProcedimento     = $objProcedimentoDTO->getDblIdProcedimento();
-
-                if($isSigiloso){
-
-                    // Retorna as unidades onde o processo esta aberto em ordem de abertura decrescente
-                    $arrUnidadesProcessoAberto = $this->retornaUnidadesProcessoAberto($idProcedimento);
-                    // $arrUnidadesProcessoAberto = (new MdPetIntercorrenteAndamentoSigilosoRN())->retornaUltimaUnidadeProcessoSigilosoAberto($idProcedimento);
-
-                    $idUnidadeProcesso = !empty($arrUnidadesProcessoAberto) ? current( $arrUnidadesProcessoAberto )->getNumIdUnidade() : null;
-
-                    // Não havendo Unidade aberta:
-                    if(is_null($idUnidadeProcesso)){
-                        
-                        $reabriu = false;
-
-                        $objAtividadeDTO = new MdPetAtividadeIntercorrenteDTO();
-                        $objAtividadeDTO->retDthConclusao();
-                        $objAtividadeDTO->retNumIdUnidade();
-                        $objAtividadeDTO->retNumIdUsuario();
-                        $objAtividadeDTO->setDistinct(true);
-                        $objAtividadeDTO->setStrSinAtivoUnidade('S');
-                        $objAtividadeDTO->setDblIdProcedimentoProtocolo($idProcedimento);
-                        $objAtividadeDTO->setOrdDthConclusao(InfraDTO::$TIPO_ORDENACAO_DESC);
-                        $objAtividadeDTO->setNumIdTarefa(array_merge(
-                            TarefaRN::getArrTarefasTramitacao(), 
-                            TarefaRN::getArrTarefasConcessaoCredencial(false), 
-                            TarefaRN::getArrTarefasRenunciaCredencial(), 
-                            TarefaRN::getArrTarefasCassacaoCredencial(false),
-                            TarefaRN::getArrTarefasAnulacaoCredencial(false)
-                        ), InfraDTO::$OPER_IN);
-                        // $objAtividadeDTO->setNumIdTarefa([TarefaRN::$TI_CONCLUSAO_PROCESSO_UNIDADE, TarefaRN::$TI_CONCLUSAO_AUTOMATICA_UNIDADE, TarefaRN::$TI_CONCLUSAO_PROCESSO_USUARIO], InfraDTO::$OPER_IN);
-                        $arrObjAtividadeDTO = (new AtividadeRN())->listarRN0036($objAtividadeDTO);
-                        
-                        $arrIdUnidadesParaReaberturaProcesso = array_unique(InfraArray::converterArrInfraDTO($arrObjAtividadeDTO, 'IdUnidade'));
-
-                        if(!empty($arrIdUnidadesParaReaberturaProcesso) && count($arrIdUnidadesParaReaberturaProcesso) > 0){
-
-                            foreach($arrIdUnidadesParaReaberturaProcesso as $idUnidadeReabertura){
-
-                                if($reabriu){
-                                    break;
-                                }
-
-                                $objAcessoDTO = new AcessoDTO();
-                                $objAcessoDTO->retNumIdUsuario();
-                                $objAcessoDTO->setDblIdProtocolo($idProcedimento);
-                                $objAcessoDTO->setNumIdUnidade($idUnidadeReabertura);
-                                $objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
-                                $objAcessoDTO->setOrdNumIdAcesso(InfraDTO::$TIPO_ORDENACAO_DESC);
-                                $arrObjAcessoDTO = (new AcessoRN())->listar($objAcessoDTO);
-
-                                $arrIdUsuarios = InfraArray::converterArrInfraDTO($arrObjAcessoDTO, 'IdUsuario');
-
-                                if(!empty($arrIdUsuarios) && count($arrIdUsuarios) > 0){
-
-                                    foreach($arrIdUsuarios as $idUsuario){
-
-                                        $this->simularLogin($idUnidadeReabertura, $idUsuario);
-
-                                        $objReabrirProcessoDTO = new ReabrirProcessoDTO();
-                                        $objReabrirProcessoDTO->setDblIdProcedimento($idProcedimento);
-                                        $objReabrirProcessoDTO->setNumIdUnidade($idUnidadeReabertura);
-                                        $objReabrirProcessoDTO->setNumIdUsuario($idUsuario);
-                                        (new ProcedimentoRN())->reabrirRN0966($objReabrirProcessoDTO);
-                                        $reabriu = true;
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                // Fim do tratamento reabertura de Processo Sigiloso por Intercorrente
-                $reaberturaRN = new MdPetIntercorrenteReaberturaRN();
-                $reabrir = $reaberturaRN->isNecessarioReabrirProcedimento($objProcedimentoDTO);
-
-                // Fluxo antigo mantido
-                if ($reabrir) {
-
-                    $reaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
-                    //$idUnidadeReabrirProcesso = $reaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
-
-                    //if (!$idUnidadeReabrirProcesso) {
-                    //	$objInfraException = new InfraException();
-                    //	$objInfraException->lancarValidacao('O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
-                    //}
-                
-                }
+                $this->reabrirProcessoSigilosoSemUnidadeAberta($objProcedimentoDTO, $objAtividadeRN, $objAcessoRN, $objProcedimentoRN);
+                $this->reabrirProcessoSeNecessario($objProcedimentoDTO, $objMdPetIntercorrenteReaberturaRN);
             }
 
+            $arrIdUnidadesReabertas = array_values(array_diff($this->listarIdUnidadesAbertas($params['id_procedimento']), $arrIdUnidadesAbertasAntes));
             $params['diretoProcessoIndicado'] = true;
             $this->setProcedimentoDTO($params['id_procedimento']);
-
-            //obter o id da maior atividade de liberacao de acesso externo para comparar na hora de limpar o historico
-            $atividadeConsultaDTO = new AtividadeDTO();
-            $atividadeConsultaDTO->retNumIdAtividade();
-            $atividadeConsultaDTO->setDblIdProtocolo($params['id_procedimento']);
-            $atividadeConsultaDTO->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
-            $atividadeConsultaDTO->setOrd('IdAtividade', InfraDTO::$TIPO_ORDENACAO_DESC);
-            $arrDTOAtividadesConsulta = $atividadeRN->listarRN0036($atividadeConsultaDTO);
-
-            if ($arrDTOAtividadesConsulta != null && is_array($arrDTOAtividadesConsulta) && count($arrDTOAtividadesConsulta) > 0) {
-                $this->maxIdAtividade = $arrDTOAtividadesConsulta[0]->getNumIdAtividade();
-            }
-
-        }
-        
-        // 1) ANEXADO, vai pegar do ANEXADOR/PRINCIPAL
-        if ($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO) {
-
-            $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
-            $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
-            $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
-            $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($objProcedimentoDTO->getDblIdProcedimento());
-            $objRelProtocoloProtocoloDTO->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO);
-
-            $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
-            $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
-            $qtdObjRelProtocoloProtocoloDTO = isset($objRelProtocoloProtocoloDTO) ? count($objRelProtocoloProtocoloDTO) : 0;
-            
-            if ($qtdObjRelProtocoloProtocoloDTO == 1) {
-                $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
-                $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
-            }
-
-        // 2) Última aberta
-        } else if ($qtdArrUnidadeProcesso == 0) {
-
-            $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($this->getProcedimentoDTO()->getDblIdProcedimento()));
-            $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
-
+            $this->guardarUltimaAtividadeAcessoExterno($params['id_procedimento'], $objAtividadeRN);
         }
 
-        $idUnidadeProcesso = null;
-        $idUsuarioAtribuicao = null;
-
-        if ($qtdArrUnidadeProcesso > 0) {
-            if (is_numeric($arrUnidadeProcesso[0])) {
-                $idUnidadeProcesso = $arrUnidadeProcesso[0];
-                if (is_numeric($arrUnidadeProcesso[1])) {
-                    $idUsuarioAtribuicao = $arrUnidadeProcesso[1];
-                }
-            } else {
-                $idUnidadeProcesso = $arrUnidadeProcesso[0]->getNumIdUnidade();
-                if ($arrUnidadeProcesso[0]->isSetNumIdUsuarioAtribuicao()) {
-                    $idUsuarioAtribuicao = $arrUnidadeProcesso[0]->getNumIdUsuarioAtribuicao();
-                }
-            }
-        }
+        $arrUnidadeProcesso = $this->obterUnidadesAbertasDoPeticionamento($objProcedimentoDTO, $arrUnidadeProcesso, $qtdArrUnidadeProcesso, $objRelProtocoloProtocoloRN);
+        [$idUnidadeProcesso, $idUsuarioAtribuicao] = $this->extrairUnidadeEUsuarioAtribuicao($arrUnidadeProcesso);
 
         if (!is_numeric($idUnidadeProcesso)) {
-            $mdPetAndamentoSigilosoRN = new MdPetIntercorrenteAndamentoSigilosoRN();
-            $idUnidadeProcesso = $mdPetAndamentoSigilosoRN->retornaIdUnidadeAberturaProcesso($this->getProcedimentoDTO()->getDblIdProcedimento());
+            $idUnidadeProcesso = $objMdPetIntercorrenteAndamentoSigilosoRN->retornaIdUnidadeAberturaProcesso($this->getProcedimentoDTO()->getDblIdProcedimento());
         }
-        // Unidade - fim
 
+        $arrobjParticipanteProcPrinc = $this->copiarInteressadosDoProcessoPrincipal($objProcedimentoDTO, $objParticipanteRN, $objMdPetParticipanteRN);
 
-        $idsParticipantes = array();
+        $idUnidadeRespostaIntimacao = $params['isRespostaIntimacao'] ? $idUnidadeProcesso : null;
 
-        //Interessados
-        // Processo Principal - Interessados
+        return [
+            'params' => $params,
+            'arrDadosRecibo' => $arrDadosRecibo,
+            'arrobjParticipanteProcPrinc' => $arrobjParticipanteProcPrinc,
+            'idProcedimentoProcesso' => $idProcedimentoProcesso,
+            'idUnidadeProcesso' => $idUnidadeProcesso,
+            'idUsuarioAtribuicao' => $idUsuarioAtribuicao,
+            'idUnidadeRespostaIntimacao' => $idUnidadeRespostaIntimacao,
+            'gerouNovoProcedimento' => $gerouNovoProcedimento,
+            'arrIdUnidadesReabertas' => $arrIdUnidadesReabertas,
+            'arrObjReciboDocPet' => []
+        ];
+    }
+
+    /**
+     * @param int|string $idProcedimento
+     * @param ProcedimentoRN $objProcedimentoRN
+     * @return ProcedimentoDTO|null
+     */
+    private function consultarProcedimentoPeticionado($idProcedimento, ProcedimentoRN $objProcedimentoRN): ?ProcedimentoDTO
+    {
+        $objProcedimentoDTO = new ProcedimentoDTO();
+        $objProcedimentoDTO->setDblIdProcedimento($idProcedimento);
+        $objProcedimentoDTO->retTodos(true);
+
+        return $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
+    }
+
+    /**
+     * Associação do processo anexado com o processo anexador (protocolo 1).
+     *
+     * @param ProcedimentoDTO $objProcedimentoDTO processo anexado
+     * @param RelProtocoloProtocoloRN $objRelProtocoloProtocoloRN
+     * @return RelProtocoloProtocoloDTO|null
+     */
+    private function consultarProcessoAnexador(ProcedimentoDTO $objProcedimentoDTO, RelProtocoloProtocoloRN $objRelProtocoloProtocoloRN): ?RelProtocoloProtocoloDTO
+    {
+        $objRelProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
+        $objRelProtocoloProtocoloDTO->retDblIdProtocolo1();
+        $objRelProtocoloProtocoloDTO->retStrProtocoloFormatadoProtocolo1();
+        $objRelProtocoloProtocoloDTO->setDblIdProtocolo2($objProcedimentoDTO->getDblIdProcedimento());
+        $objRelProtocoloProtocoloDTO->setStrStaAssociacao(RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO);
+
+        return $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
+    }
+
+    /**
+     * @param MdPetCriterioRN $objMdPetCriterioRN
+     * @return MdPetCriterioDTO|null critério para Intercorrente padrão
+     */
+    private function consultarCriterioPadrao(MdPetCriterioRN $objMdPetCriterioRN): ?MdPetCriterioDTO
+    {
+        $objMdPetCriterioDTO = new MdPetCriterioDTO();
+        $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
+        $objMdPetCriterioDTO->retTodos(true);
+
+        return $objMdPetCriterioRN->consultar($objMdPetCriterioDTO);
+    }
+
+    /**
+     * O peticionamento abre um processo relacionado ao indicado quando, fora da Resposta a Intimação, o critério do
+     * Intercorrente está inativo, vale o critério padrão ou o processo está sobrestado, anexado ou bloqueado; e, em
+     * qualquer caso, quando o processo é sigiloso e o critério padrão não aceita Intercorrente em processo sigiloso.
+     *
+     * @param array $params
+     * @param ProcedimentoDTO $objProcedimentoDTO
+     * @param MdPetCriterioDTO|null $objCriterioIntercorrenteDTO
+     * @param MdPetCriterioDTO|null $objCriterioIntercorrentePadraoDTO
+     * @return bool
+     */
+    private function isNecessarioProcessoRelacionado(
+        array $params,
+        ProcedimentoDTO $objProcedimentoDTO,
+        ?MdPetCriterioDTO $objCriterioIntercorrenteDTO,
+        ?MdPetCriterioDTO $objCriterioIntercorrentePadraoDTO
+    ): bool {
+        $estadosReabrirRelacionado = [ProtocoloRN::$TE_PROCEDIMENTO_SOBRESTADO, ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO, ProtocoloRN::$TE_PROCEDIMENTO_BLOQUEADO];
+
+        if (!$params['isRespostaIntimacao'] == true && (($params['isRespostaIntercorrente'] == true && $objCriterioIntercorrenteDTO->getStrSinAtivo() == "N") || $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'S'
+                || in_array($objProcedimentoDTO->getStrStaEstadoProtocolo(), $estadosReabrirRelacionado))) {
+            return true;
+        }
+
+        return $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() == 2 && $objCriterioIntercorrentePadraoDTO->getStrSinIntercorrenteSigiloso() == 'N';
+    }
+
+    /**
+     * O peticionamento entra no próprio processo indicado na Resposta a Intimação e quando há critério do tipo de
+     * processo que não é o padrão.
+     *
+     * @param array $params
+     * @param MdPetCriterioDTO|null $objCriterioIntercorrenteDTO
+     * @return bool
+     */
+    private function isPeticionamentoNoProcessoIndicado(array $params, ?MdPetCriterioDTO $objCriterioIntercorrenteDTO): bool
+    {
+        return $params['isRespostaIntimacao'] == true || ($objCriterioIntercorrenteDTO != null && $objCriterioIntercorrenteDTO->getStrSinCriterioPadrao() == 'N');
+    }
+
+    /**
+     * Unidade da intimação aberta no processo. Unidade inativa ou que não recebe processo fica de fora; a unidade
+     * fechada é reaberta antes de ser consultada de novo.
+     *
+     * @param int|string $idIntimacao
+     * @param ProcedimentoDTO $objProcedimentoDTO
+     * @param MdPetIntimacaoRN $objMdPetIntimacaoRN
+     * @param UnidadeRN $objUnidadeRN
+     * @return array|null unidades abertas devolvidas por MdPetIntimacaoRN::verificarUnidadeAberta, ou null sem unidade
+     */
+    private function obterUnidadeAbertaDaIntimacao(
+        $idIntimacao,
+        ProcedimentoDTO $objProcedimentoDTO,
+        MdPetIntimacaoRN $objMdPetIntimacaoRN,
+        UnidadeRN $objUnidadeRN
+    ) {
+        $objUnidadeDTO = $objMdPetIntimacaoRN->getUnidadeIntimacao([$idIntimacao]);
+
+        if (empty($objUnidadeDTO)) {
+            return null;
+        }
+
+        //unidade esta ativa
+        $unidadeDTO = new UnidadeDTO();
+        $unidadeDTO->retTodos();
+        $unidadeDTO->setBolExclusaoLogica(false);
+        $unidadeDTO->setNumIdUnidade($objUnidadeDTO->getNumIdUnidade());
+        $objUnidadeDTO = $objUnidadeRN->consultarRN0125($unidadeDTO);
+
+        if ($objUnidadeDTO->getStrSinAtivo() != 'S' || $objUnidadeDTO->getStrSinEnvioProcesso() != 'S') {
+            return null;
+        }
+
+        $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta([$objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()]);
+        $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
+
+        if ($qtdArrUnidadeProcesso != 0) {
+            return $arrUnidadeProcesso;
+        }
+
+        $idUnidadeAberta = $objMdPetIntimacaoRN->reabrirUnidade([$objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()]);
+
+        if (!is_numeric($idUnidadeAberta)) {
+            return $arrUnidadeProcesso;
+        }
+
+        return $objMdPetIntimacaoRN->verificarUnidadeAberta([$objProcedimentoDTO, $idUnidadeAberta]);
+    }
+
+    /**
+     * Tratamento reabertura de Processo Sigiloso por Intercorrente, adicionado em 02/12/2025 por Gabriel Glauber:
+     * processo sigiloso sem unidade aberta é reaberto na primeira unidade ativa, pela conclusão mais recente, em que
+     * houve tramitação ou credencial, por cada usuário com credencial nessa unidade.
+     *
+     * @param ProcedimentoDTO $objProcedimentoDTO
+     * @param AtividadeRN $objAtividadeRN
+     * @param AcessoRN $objAcessoRN
+     * @param ProcedimentoRN $objProcedimentoRN
+     * @return void
+     */
+    private function reabrirProcessoSigilosoSemUnidadeAberta(
+        ProcedimentoDTO $objProcedimentoDTO,
+        AtividadeRN $objAtividadeRN,
+        AcessoRN $objAcessoRN,
+        ProcedimentoRN $objProcedimentoRN
+    ): void {
+        $naGlobal           = $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo();
+        $naLocal            = $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo();
+        $isSigiloso         = in_array(ProtocoloRN::$NA_SIGILOSO, [$naGlobal, $naLocal]);
+        $idProcedimento     = $objProcedimentoDTO->getDblIdProcedimento();
+
+        if (!$isSigiloso) {
+            return;
+        }
+
+        // Retorna as unidades onde o processo esta aberto em ordem de abertura decrescente
+        $arrUnidadesProcessoAberto = $this->retornaUnidadesProcessoAberto($idProcedimento);
+        // $arrUnidadesProcessoAberto = (new MdPetIntercorrenteAndamentoSigilosoRN())->retornaUltimaUnidadeProcessoSigilosoAberto($idProcedimento);
+
+        $idUnidadeProcesso = !empty($arrUnidadesProcessoAberto) ? current( $arrUnidadesProcessoAberto )->getNumIdUnidade() : null;
+
+        // Havendo Unidade aberta, não reabre
+        if (!is_null($idUnidadeProcesso)) {
+            return;
+        }
+
+        $objAtividadeDTO = new MdPetAtividadeIntercorrenteDTO();
+        $objAtividadeDTO->retDthConclusao();
+        $objAtividadeDTO->retNumIdUnidade();
+        $objAtividadeDTO->retNumIdUsuario();
+        $objAtividadeDTO->setDistinct(true);
+        $objAtividadeDTO->setStrSinAtivoUnidade('S');
+        $objAtividadeDTO->setDblIdProcedimentoProtocolo($idProcedimento);
+        $objAtividadeDTO->setOrdDthConclusao(InfraDTO::$TIPO_ORDENACAO_DESC);
+        $objAtividadeDTO->setNumIdTarefa(array_merge(
+            TarefaRN::getArrTarefasTramitacao(),
+            TarefaRN::getArrTarefasConcessaoCredencial(false),
+            TarefaRN::getArrTarefasRenunciaCredencial(),
+            TarefaRN::getArrTarefasCassacaoCredencial(false),
+            TarefaRN::getArrTarefasAnulacaoCredencial(false)
+        ), InfraDTO::$OPER_IN);
+        // $objAtividadeDTO->setNumIdTarefa([TarefaRN::$TI_CONCLUSAO_PROCESSO_UNIDADE, TarefaRN::$TI_CONCLUSAO_AUTOMATICA_UNIDADE, TarefaRN::$TI_CONCLUSAO_PROCESSO_USUARIO], InfraDTO::$OPER_IN);
+        $arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
+
+        $arrIdUnidadesParaReaberturaProcesso = array_unique(InfraArray::converterArrInfraDTO($arrObjAtividadeDTO, 'IdUnidade'));
+
+        foreach ($arrIdUnidadesParaReaberturaProcesso as $idUnidadeReabertura) {
+
+            $objAcessoDTO = new AcessoDTO();
+            $objAcessoDTO->retNumIdUsuario();
+            $objAcessoDTO->setDblIdProtocolo($idProcedimento);
+            $objAcessoDTO->setNumIdUnidade($idUnidadeReabertura);
+            $objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
+            $objAcessoDTO->setOrdNumIdAcesso(InfraDTO::$TIPO_ORDENACAO_DESC);
+            $arrObjAcessoDTO = $objAcessoRN->listar($objAcessoDTO);
+
+            $arrIdUsuarios = InfraArray::converterArrInfraDTO($arrObjAcessoDTO, 'IdUsuario');
+
+            if (empty($arrIdUsuarios)) {
+                continue;
+            }
+
+            foreach ($arrIdUsuarios as $idUsuario) {
+
+                $this->simularLogin($idUnidadeReabertura, $idUsuario);
+
+                $objReabrirProcessoDTO = new ReabrirProcessoDTO();
+                $objReabrirProcessoDTO->setDblIdProcedimento($idProcedimento);
+                $objReabrirProcessoDTO->setNumIdUnidade($idUnidadeReabertura);
+                $objReabrirProcessoDTO->setNumIdUsuario($idUsuario);
+                $objProcedimentoRN->reabrirRN0966($objReabrirProcessoDTO);
+
+            }
+
+            // Reabre só na primeira unidade com credencial
+            return;
+        }
+    }
+
+    /**
+     * Fluxo antigo mantido: reabre pela API do SEI o processo indicado que não tem unidade aberta.
+     *
+     * @param ProcedimentoDTO $objProcedimentoDTO
+     * @param MdPetIntercorrenteReaberturaRN $objMdPetIntercorrenteReaberturaRN
+     * @return void
+     */
+    private function reabrirProcessoSeNecessario(ProcedimentoDTO $objProcedimentoDTO, MdPetIntercorrenteReaberturaRN $objMdPetIntercorrenteReaberturaRN): void
+    {
+        if (!$objMdPetIntercorrenteReaberturaRN->isNecessarioReabrirProcedimento($objProcedimentoDTO)) {
+            return;
+        }
+
+        $objMdPetIntercorrenteReaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
+        //$idUnidadeReabrirProcesso = $reaberturaRN->reabrirProcessoApi($objProcedimentoDTO);
+
+        //if (!$idUnidadeReabrirProcesso) {
+        //	$objInfraException = new InfraException();
+        //	$objInfraException->lancarValidacao('O processo indicado não aceita peticionamento intercorrente. Utilize o Peticionamento de Processo Novo para protocolizar sua demanda.');
+        //}
+    }
+
+    /**
+     * Guarda o id da maior atividade de liberação de acesso externo, para comparar na hora de limpar o histórico.
+     *
+     * @param int|string $idProcedimento
+     * @param AtividadeRN $objAtividadeRN
+     * @return void
+     */
+    private function guardarUltimaAtividadeAcessoExterno($idProcedimento, AtividadeRN $objAtividadeRN): void
+    {
+        $atividadeConsultaDTO = new AtividadeDTO();
+        $atividadeConsultaDTO->retNumIdAtividade();
+        $atividadeConsultaDTO->setDblIdProtocolo($idProcedimento);
+        $atividadeConsultaDTO->setNumIdTarefa(TarefaRN::$TI_ACESSO_EXTERNO_SISTEMA);
+        $atividadeConsultaDTO->setOrd('IdAtividade', InfraDTO::$TIPO_ORDENACAO_DESC);
+        $arrDTOAtividadesConsulta = $objAtividadeRN->listarRN0036($atividadeConsultaDTO);
+
+        if ($arrDTOAtividadesConsulta == null || !is_array($arrDTOAtividadesConsulta) || count($arrDTOAtividadesConsulta) == 0) {
+            return;
+        }
+
+        $this->maxIdAtividade = $arrDTOAtividadesConsulta[0]->getNumIdAtividade();
+    }
+
+    /**
+     * Unidades abertas que recebem o peticionamento: no processo anexado, a última aberta do anexador; sem unidade
+     * definida até aqui, a última aberta do processo que recebe os documentos.
+     *
+     * @param ProcedimentoDTO $objProcedimentoDTO
+     * @param array|null $arrUnidadeProcesso unidades já definidas na Resposta a Intimação
+     * @param int $qtdArrUnidadeProcesso
+     * @param RelProtocoloProtocoloRN $objRelProtocoloProtocoloRN
+     * @return array|null
+     */
+    private function obterUnidadesAbertasDoPeticionamento(
+        ProcedimentoDTO $objProcedimentoDTO,
+        $arrUnidadeProcesso,
+        int $qtdArrUnidadeProcesso,
+        RelProtocoloProtocoloRN $objRelProtocoloProtocoloRN
+    ) {
+        // 1) ANEXADO, vai pegar do ANEXADOR/PRINCIPAL
+        if ($objProcedimentoDTO->getStrStaEstadoProtocolo() == ProtocoloRN::$TE_PROCEDIMENTO_ANEXADO) {
+            $objRelProtocoloProtocoloDTO = $this->consultarProcessoAnexador($objProcedimentoDTO, $objRelProtocoloProtocoloRN);
+
+            if ($objRelProtocoloProtocoloDTO == null) {
+                return $arrUnidadeProcesso;
+            }
+
+            return $this->retornaUltimaUnidadeProcessoAberto([$objRelProtocoloProtocoloDTO->getDblIdProtocolo1()]);
+        }
+
+        if ($qtdArrUnidadeProcesso != 0) {
+            return $arrUnidadeProcesso;
+        }
+
+        // 2) Última aberta
+        return $this->retornaUltimaUnidadeProcessoAberto([$this->getProcedimentoDTO()->getDblIdProcedimento()]);
+    }
+
+    /**
+     * Unidade e usuário de atribuição da primeira unidade aberta, que chega como par numérico ou como AtividadeDTO.
+     *
+     * @param array|null $arrUnidadeProcesso
+     * @return array{0: mixed, 1: mixed} id da unidade e id do usuário de atribuição, ou null
+     */
+    private function extrairUnidadeEUsuarioAtribuicao($arrUnidadeProcesso): array
+    {
+        $qtdArrUnidadeProcesso = isset($arrUnidadeProcesso) ? count($arrUnidadeProcesso) : 0;
+
+        if ($qtdArrUnidadeProcesso == 0) {
+            return [null, null];
+        }
+
+        if (is_numeric($arrUnidadeProcesso[0])) {
+            return [$arrUnidadeProcesso[0], is_numeric($arrUnidadeProcesso[1]) ? $arrUnidadeProcesso[1] : null];
+        }
+
+        $idUnidadeProcesso = $arrUnidadeProcesso[0]->getNumIdUnidade();
+
+        return [$idUnidadeProcesso, $arrUnidadeProcesso[0]->isSetNumIdUsuarioAtribuicao() ? $arrUnidadeProcesso[0]->getNumIdUsuarioAtribuicao() : null];
+    }
+
+    /**
+     * Copia os interessados do processo principal para o processo que recebe os documentos.
+     *
+     * @param ProcedimentoDTO $objProcedimentoDTO processo principal
+     * @param ParticipanteRN $objParticipanteRN
+     * @param MdPetParticipanteRN $objMdPetParticipanteRN
+     * @return ParticipanteDTO[] interessados do processo principal
+     */
+    private function copiarInteressadosDoProcessoPrincipal(
+        ProcedimentoDTO $objProcedimentoDTO,
+        ParticipanteRN $objParticipanteRN,
+        MdPetParticipanteRN $objMdPetParticipanteRN
+    ) {
         $objParticipanteProcPrincDTO = new ParticipanteDTO();
         $objParticipanteProcPrincDTO->retNumIdParticipante();
         $objParticipanteProcPrincDTO->retNumIdContato();
@@ -1249,12 +1427,10 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objParticipanteProcPrincDTO->retNumSequencia();
         $objParticipanteProcPrincDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
         $objParticipanteProcPrincDTO->setStrStaParticipacao(ParticipanteRN::$TP_INTERESSADO);
+        $arrobjParticipanteProcPrinc = $objParticipanteRN->listarRN0189($objParticipanteProcPrincDTO);
 
-        $objParticipanteProcPrincRN = new ParticipanteRN();
-        $arrobjParticipanteProcPrinc = $objParticipanteProcPrincRN->listarRN0189($objParticipanteProcPrincDTO);
-        // Processo Principal - Interessados - FIM
+        $idsParticipantes = [];
 
-        // Processo - Interessados
         $i = 0;
         foreach ($arrobjParticipanteProcPrinc as $objParticipanteProcPrinc) {
 
@@ -1268,26 +1444,9 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $i++;
         }
 
-        $objMdPetParticipanteRN = new MdPetParticipanteRN();
-        $arrInteressado = array();
-        $arrInteressado[0] = $this->getProcedimentoDTO()->getDblIdProcedimento();
-        $arrInteressado[1] = $idsParticipantes;
-        $objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento($arrInteressado);
-        // Processo - Interessados - FIM
+        $objMdPetParticipanteRN->setInteressadosRemetentesProcedimentoDocumento([$this->getProcedimentoDTO()->getDblIdProcedimento(), $idsParticipantes]);
 
-        $idUnidadeRespostaIntimacao = $params['isRespostaIntimacao'] ? $idUnidadeProcesso : null;
-
-        return array(
-            'params' => $params,
-            'arrDadosRecibo' => $arrDadosRecibo,
-            'arrobjParticipanteProcPrinc' => $arrobjParticipanteProcPrinc,
-            'idProcedimentoProcesso' => $idProcedimentoProcesso,
-            'idUnidadeProcesso' => $idUnidadeProcesso,
-            'idUsuarioAtribuicao' => $idUsuarioAtribuicao,
-            'idUnidadeRespostaIntimacao' => $idUnidadeRespostaIntimacao,
-            'gerouNovoProcedimento' => $gerouNovoProcedimento,
-            'arrObjReciboDocPet' => array()
-        );
+        return $arrobjParticipanteProcPrinc;
     }
 
     protected function incluirDocumentosCadastroIntercorrenteControlado($dadosCadastro)
@@ -1522,20 +1681,46 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         return false;
     }
 
+    /**
+     * Nome do fluxo para o rastro e o aviso do rollback.
+     *
+     * @param array<string, mixed> $params parâmetros do peticionamento
+     * @return string
+     */
+    private static function nomearFluxo(array $params): string
+    {
+        return isset($params['isRespostaIntimacao']) ? 'Resposta a Intimação' : 'Peticionamento Intercorrente';
+    }
+
     private function tratarFalhaCadastroIntercorrente($dadosCadastro, \Throwable $e)
     {
+        $bolResposta = isset($dadosCadastro['params']['isRespostaIntimacao']);
+        $strFluxo = self::nomearFluxo($dadosCadastro['params'] ?? []);
+        $strProcessoFormatado = (string) $this->getProcedimentoDTO()?->getStrProtocoloProcedimentoFormatado();
+        $strProcesso = MdPetRastreioINT::descreverProcesso((int) ($dadosCadastro['params']['id_procedimento'] ?? 0), $strProcessoFormatado);
+        $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($e, $bolResposta ? self::$MSG_RESPOSTA_NAO_CONCLUIDA : self::$MSG_INTERCORRENTE_NAO_CONCLUIDO);
+        $strMotivo = MdPetExcecaoINT::lerMensagem($objValidacao);
+        MdPetRastreioINT::registrarFalha($strFluxo . ': a etapa em andamento falhou no ' . $strProcesso . '.', $e, $strMotivo);
+        MdPetRastreioINT::registrarInicioDoRollback($strFluxo . ': rollback iniciado para apagar o que as etapas gravaram no ' . $strProcesso . '.');
+
         try {
             $this->realizarRollbackCadastroIntercorrente($dadosCadastro);
         } catch (\Throwable $eRollback) {
+            MdPetRastreioINT::registrarFalha($strFluxo . ': o rollback falhou no ' . $strProcesso . ', e o banco manteve tudo como estava antes dele. O processo precisa de correção manual.', $eRollback);
             LogSEI::getInstance()->gravar(
-                'Falha ao tentar reverter cadastro de peticionamento intercorrente apos erro original ['
-                . $e->getMessage() . ']: ' . $eRollback->getMessage(),
+                'Falha ao tentar reverter cadastro de peticionamento intercorrente após erro original ['
+                . $e->getMessage() . ']: ' . $eRollback->getMessage() . ' Rastreio: pet=' . MdPetRastreioINT::obterUuid(),
                 InfraLog::$ERRO
             );
-            throw new InfraException('Erro no cadastro do peticionamento intercorrente e falha ao reverter as etapas anteriores.', $eRollback);
+            (new MdPetAvisoRollbackRN())->avisarFalha($strFluxo, 'processo ' . $strProcessoFormatado, $e, $eRollback, $strMotivo);
+            (new InfraException())->lancarValidacao(sprintf($bolResposta ? self::$MSG_RESPOSTA_NAO_DESFEITA : self::$MSG_INTERCORRENTE_NAO_DESFEITO, $strProcessoFormatado), null, $eRollback);
         }
 
-        throw $e;
+        MdPetRastreioINT::registrar($strFluxo . ': rollback concluído com sucesso. Tudo o que a tentativa gravou no ' . $strProcesso . ' foi apagado.');
+        $this->concluirProcessoNasUnidadesReabertas($dadosCadastro['arrIdUnidadesReabertas'] ?? [], $strFluxo);
+        (new MdPetAvisoRollbackRN())->avisarAcionamento($strFluxo, 'processo ' . $strProcessoFormatado, $e, $strMotivo);
+
+        throw $objValidacao;
     }
 
     /*
@@ -1553,7 +1738,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $this->enviarEmail($params);
         } catch (\Throwable $e) {
             LogSEI::getInstance()->gravar(
-                'Falha no envio de e-mail de notificacao do peticionamento intercorrente'
+                'Falha no envio de e-mail de notificação do peticionamento intercorrente'
                 . ' (processo ' . (isset($params['id_procedimento']) ? $params['id_procedimento'] : 'indefinido') . ')'
                 . ': ' . $e->getMessage(),
                 InfraLog::$INFORMACAO
@@ -1571,10 +1756,18 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         }
     }
 
-    private function realizarRollbackCadastroIntercorrente($dadosCadastro)
+    /**
+     * Desfaz as etapas já gravadas em uma só transação: se um passo falhar, nada é desfeito e o processo fica como estava,
+     * sem ficar pela metade.
+     *
+     * @param array<string, mixed> $dadosCadastro dados devolvidos pela primeira etapa
+     * @return void
+     */
+    protected function realizarRollbackCadastroIntercorrenteControlado($dadosCadastro)
     {
+        $strFluxo = self::nomearFluxo($dadosCadastro['params'] ?? []);
         $objReciboDTO = $this->getReciboDTO();
-        if ($objReciboDTO != null && is_numeric($objReciboDTO->getNumIdReciboPeticionamento())) {
+        if ($objReciboDTO != null && is_numeric($objReciboDTO->getNumIdReciboPeticionamento()) && $this->reciboFoiGravado($objReciboDTO, $strFluxo)) {
             $objRelReciboDocDTO = new MdPetRelReciboDocumentoAnexoDTO();
             $objRelReciboDocDTO->retNumIdReciboDocumentoAnexoPeticionamento();
             $objRelReciboDocDTO->setNumIdReciboPeticionamento($objReciboDTO->getNumIdReciboPeticionamento());
@@ -1583,6 +1776,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
                 $objRelReciboDocRN->excluir($objRelReciboDocItemDTO);
             }
             (new MdPetReciboRN())->excluir($objReciboDTO);
+            MdPetRastreioINT::registrarPassoDoRollback($strFluxo, 'recibo ' . $objReciboDTO->getNumIdReciboPeticionamento() . ' excluído.');
         }
 
         $arrDocumentos = $this->getDocumentos();
@@ -1590,6 +1784,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         if ($objDocumentoReciboDTO != null) {
             $arrDocumentos[] = $objDocumentoReciboDTO;
         }
+
+        $arrCredencial = null;
 
         foreach (array_reverse($arrDocumentos) as $documentoDTO) {
 
@@ -1611,19 +1807,138 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $objDocumentoDTO = (new DocumentoRN())->consultarRN0005($objDocumentoDTO);
 
             if ($objDocumentoDTO == null) {
+                MdPetRastreioINT::registrarPassoDoRollback($strFluxo, 'documento ' . $idDocumento . ' já tinha sido cancelado pelo banco junto com a etapa que falhou.');
                 continue;
             }
 
+            $arrCredencial ??= $this->concederCredencialParaDesfazer($dadosCadastro['idUnidadeProcesso'] ?? null);
             $objDocumentoDTO->setStrStaDocumento(DocumentoRN::$TD_EDITOR_INTERNO);
             $objDocumentoDTO->setStrSinBloqueado('N');
             (new DocumentoBD($this->getObjInfraIBanco()))->alterar($objDocumentoDTO);
             (new DocumentoRN())->excluirRN0006($objDocumentoDTO);
+            MdPetRastreioINT::registrarPassoDoRollback($strFluxo, 'documento ' . $idDocumento . ' excluído.');
             
         }
 
+        $this->cassarCredencialDoDesfazimento($arrCredencial);
+
         if (!empty($dadosCadastro['gerouNovoProcedimento'])) {
             (new ProcedimentoRN())->excluirRN0280($this->getProcedimentoDTO());
+            MdPetRastreioINT::registrarPassoDoRollback($strFluxo, 'processo criado pela tentativa excluído.');
         }
+    }
+
+    /**
+     * No processo sigiloso, a credencial provisória da inclusão dos documentos já foi cassada, e o core só exclui o
+     * documento com andamento aberto para o usuário: o desfazimento precisa da mesma credencial.
+     *
+     * @param int|null $idUnidadeProcesso unidade que recebeu os documentos
+     * @return array<int, mixed>|null dados da credencial, ou null no processo que não é sigiloso
+     */
+    private function concederCredencialParaDesfazer($idUnidadeProcesso): ?array
+    {
+        $objProcedimentoDTO = $this->getProcedimentoDTO();
+
+        if ($objProcedimentoDTO === null || !in_array(ProtocoloRN::$NA_SIGILOSO, [$objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo(), $objProcedimentoDTO->getStrStaNivelAcessoLocalProtocolo()])) {
+            return null;
+        }
+
+        $arrCredencial = (new MdPetProcedimentoRN())->concederCredencial([$objProcedimentoDTO, $idUnidadeProcesso]);
+        SessaoSEI::getInstance()->simularLogin(null, null, $arrCredencial[4], $arrCredencial[6]);
+
+        return $arrCredencial;
+    }
+
+    /**
+     * @param array<int, mixed>|null $arrCredencial dados devolvidos por concederCredencialParaDesfazer
+     * @return void
+     */
+    private function cassarCredencialDoDesfazimento(?array $arrCredencial): void
+    {
+        if ($arrCredencial === null) {
+            return;
+        }
+
+        $objMdPetProcedimentoRN = new MdPetProcedimentoRN();
+        $objMdPetProcedimentoRN->cassarCredencial($arrCredencial);
+        $objMdPetProcedimentoRN->excluirAndamentoCredencial($arrCredencial);
+    }
+
+    /**
+     * Devolve à situação anterior o processo que a primeira etapa reabriu. Roda depois do desfazimento, em transação
+     * própria: se o core recusar a conclusão, o peticionamento já foi desfeito, e a falha fica só no rastro.
+     *
+     * @param list<int> $arrIdUnidades unidades reabertas pela primeira etapa
+     * @return void
+     */
+    private function concluirProcessoNasUnidadesReabertas(array $arrIdUnidades, string $strFluxo): void
+    {
+        foreach ($arrIdUnidades as $idUnidade) {
+            try {
+                foreach ($this->listarIdUsuariosDaConclusao($idUnidade) as $idUsuario) {
+                    SessaoSEI::getInstance()->simularLogin(null, null, $idUsuario, $idUnidade);
+                    $objEntradaConcluirProcessoAPI = new EntradaConcluirProcessoAPI();
+                    $objEntradaConcluirProcessoAPI->setIdProcedimento($this->getProcedimentoDTO()->getDblIdProcedimento());
+                    (new SeiRN())->concluirProcesso($objEntradaConcluirProcessoAPI);
+                }
+                MdPetRastreioINT::registrar($strFluxo . ': depois do rollback, o processo foi concluído de novo na unidade ' . $idUnidade . ', como estava antes da reabertura.');
+            } catch (\Throwable $objErroConclusao) {
+                MdPetRastreioINT::registrarFalha($strFluxo . ': depois do rollback, o processo não foi concluído de novo na unidade ' . $idUnidade . ' e continua aberto nela.', $objErroConclusao);
+            }
+        }
+    }
+
+    /**
+     * O processo sigiloso fica aberto para cada usuário com credencial na unidade, e só ele conclui; nos demais, basta o
+     * usuário externo, como na reabertura.
+     *
+     * @param int $idUnidade unidade reaberta
+     * @return list<int>
+     */
+    private function listarIdUsuariosDaConclusao($idUnidade): array
+    {
+        $objProcedimentoDTO = $this->getProcedimentoDTO();
+
+        if ($objProcedimentoDTO === null || $objProcedimentoDTO->getStrStaNivelAcessoGlobalProtocolo() !== ProtocoloRN::$NA_SIGILOSO) {
+            return [SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno()];
+        }
+
+        $objAcessoDTO = new AcessoDTO();
+        $objAcessoDTO->retNumIdUsuario();
+        $objAcessoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
+        $objAcessoDTO->setNumIdUnidade($idUnidade);
+        $objAcessoDTO->setStrStaTipo(AcessoRN::$TA_CREDENCIAL_PROCESSO);
+
+        return InfraArray::converterArrInfraDTO((new AcessoRN())->listar($objAcessoDTO), 'IdUsuario');
+    }
+
+    /**
+     * @param int|string $idProcedimento processo
+     * @return list<int> unidades em que o processo está aberto
+     */
+    private function listarIdUnidadesAbertas($idProcedimento): array
+    {
+        return array_values(array_unique(InfraArray::converterArrInfraDTO($this->retornaUnidadesProcessoAberto($idProcedimento), 'IdUnidade')));
+    }
+
+    /**
+     * Confere se o recibo continua no banco: a etapa cancelada pode ter deixado em memória um recibo que voltou com a
+     * transação.
+     *
+     * @param MdPetReciboDTO $objReciboDTO recibo guardado pela etapa
+     * @return bool
+     */
+    private function reciboFoiGravado(MdPetReciboDTO $objReciboDTO, string $strFluxo): bool
+    {
+        $objReciboPesquisaDTO = new MdPetReciboDTO();
+        $objReciboPesquisaDTO->setNumIdReciboPeticionamento($objReciboDTO->getNumIdReciboPeticionamento());
+
+        if ((new MdPetReciboRN())->contar($objReciboPesquisaDTO) > 0) {
+            return true;
+        }
+
+        MdPetRastreioINT::registrarPassoDoRollback($strFluxo, 'recibo ' . $objReciboDTO->getNumIdReciboPeticionamento() . ' já tinha sido cancelado pelo banco junto com a etapa que falhou.');
+        return false;
     }
 
     private function _controlarAcessoExterno($arrDados, $arrObjDocumentos, $objReciboDTO)
@@ -1927,6 +2242,35 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         if (InfraString::isBolVazia($hdnTbDocumento)) {
             $objInfraException->adicionarValidacao('Nenhum documento foi enviado.');
         }
+    }
+
+    /**
+     * ADR-PET-005: passa pelo filtro XSS do core o nome e o complemento de cada documento do Peticionamento
+     * Intercorrente e da Resposta a Intimação e confere os arquivos com as regras do upload, inclusive o limite de tamanho
+     * do SEI (ADR-PET-010), antes de gravar.
+     *
+     * @param string $strTbDocumento tabela de documentos da tela: complemento na coluna 2, arquivo temporário na 7 e
+     * nome do arquivo na 9
+     * @param string $strDiretorio diretório dos arquivos temporários
+     * @return void
+     * @throws InfraException validação para o usuário quando o conteúdo não é permitido ou o arquivo passa do limite
+     */
+    public function validarXssDocumentos(string $strTbDocumento, string $strDiretorio = DIR_SEI_TEMP): void
+    {
+        $objInfraException = new InfraException();
+        $arrArquivos = [];
+
+        foreach (PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($strTbDocumento) as $arrDocumento) {
+            PeticionamentoIntegracao::validarXssCampo($arrDocumento[9] ?? null, 'Nome de arquivo enviado', $objInfraException);
+            PeticionamentoIntegracao::validarXssComplemento($arrDocumento[2] ?? null, $objInfraException);
+            $arrArquivos[$arrDocumento[7] ?? ''] = $arrDocumento[9] ?? '';
+        }
+
+        $objInfraException->lancarValidacoes();
+
+        PeticionamentoIntegracao::validarArquivosDisponiveisConclusao($arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarXssConclusao(null, $arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarTamanhoConclusao($arrArquivos, $strDiretorio);
     }
 
     private function validarNumIdProcedimento($numIdProcedimento, InfraException $objInfraException)

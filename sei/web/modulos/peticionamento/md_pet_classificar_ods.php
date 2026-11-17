@@ -21,7 +21,7 @@
 
         PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
 
-        $strTitulo = 'Classificacao pelos Objetivos de Desenvolvimento Sustentável da ONU';
+        $strTitulo = 'Classificação pelos Objetivos de Desenvolvimento Sustentável da ONU';
 
         $objMdIaAdmObjetivoOdsDTO = new MdIaAdmObjetivoOdsDTO();
         $objMdIaAdmObjetivoOdsDTO->retNumIdMdIaAdmObjetivoOds();

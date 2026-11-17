@@ -8,19 +8,19 @@
 | ---- |
 | Os métodos abaixo documentados somente funcionarão se o Serviço correspondente do Sistema indicado possuir pelo menos a operação "Listar Constatos" no menu Administração > Sistemas. |
 
-# Sumário das Operações Disponí­veis
-1. **[Consultar Usuário Externo](#1-consultar-usuário-externo)**: Verifica se uma determinada pessoa fí­sica possui login ativo e liberado como Usuário Externo no SEI.
+# Sumário das Operações Disponíveis
+1. **[Consultar Usuário Externo](#1-consultar-usuário-externo)**: Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
 2. **[Listar Poderes Legais](#2-listar-poderes-legais)**: Lista os tipos de poderes legais que podem ser utilizados na emissão de Procurações Eletrí´nicas Simples geradas no SEI.
-3. **[Listar Representação de Pessoa Fí­sica](#3-listar-representação-de-pessoa-fí­sica)**: Lista os representantes de determinada pessoa fí­sica outorgante, se houver emitido representação no SEI.
-4. **[Listar Representação de Pessoa Jurí­dica](#4-listar-representação-de-pessoa-jurí­dica)**: Lista os representantes de determinada pessoa jurí­dica outorgante, se houver emitido representação no SEI.
-5. **[Listar Representados](#5-listar-representados)**: Lista todos os representados por determinada pessoa fí­sica, se alguém houver emissão de representação outorgando poderes para ela no SEI.
+3. **[Listar Representação de Pessoa Física](#3-listar-representação-de-pessoa-física)**: Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
+4. **[Listar Representação de Pessoa Jurídica](#4-listar-representação-de-pessoa-jurídica)**: Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
+5. **[Listar Representados](#5-listar-representados)**: Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
 6. **[Listar Representantes](#6-listar-representantes)**: Lista todos os representantes e representados que possuem alguma emissão de representação outorgando poderes no SEI.
-7. **[Listar Situações de Representação](#7-listar-situações-de-representação)**: Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituí­da, V=Vencida, I=Inativa).
+7. **[Listar Situações de Representação](#7-listar-situações-de-representação)**: Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
 8. **[Listar Tipos de Representação](#8-listar-tipos-de-representação)**: Lista os tipos de representação que existem sobre as representações geradas no SEI (L=Responsável Legal, E=Procurador Especial, S=Procurador Simples, U=Autorrepresentação).
 9. **[Listar Usuários Externos](#9-listar-usuários-externos)**: Lista todos os Usuários Externos cadastrados no SEI.
 
 ## 1. Consultar Usuário Externo
-Verifica se uma determinada pessoa fí­sica possui login ativo e liberado como Usuário Externo no SEI.
+Verifica se uma determinada pessoa física possui login ativo e liberado como Usuário Externo no SEI.
 ### Método "consultarUsuarioExterno":
 
 | Parâmetros de Entrada |  |
@@ -30,7 +30,7 @@ Verifica se uma determinada pessoa fí­sica possui login ativo e liberado como 
 | Email | **Opcional**. Endereço de e-mail indicado pelo Usuário Externo em seu cadastro no SEI para fins de autenticação. Caso seja informado, tem que corresponder ao e-mail vinculado ao CPF indicado (se não corresponder retornará erro indicando "*E-mail informado não corresponde ao registrado no cadastro do Usuário Externo no SEI*"). |
 | Cpf | CPF, sem formatação e incluindo zeros í  esquerda, para consulta se existe cadastro correspondente como Usuário Externo no SEI. |
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | UsuarioExterno | Uma lista de ocorrências da Estrutura de Dados UsuarioExterno. |
 
@@ -75,12 +75,12 @@ Lista os tipos de poderes legais que podem ser utilizados na emissão de Procura
 | SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administração > Sistemas. |
 | IdentificacaoServico | Valor informado no cadastro do Serviço ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administração > Sistemas. Próxima versão do SEI somente aceitará integrações por Chave de Acesso. |
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | PoderesLegais | Uma lista de ocorrências da estrutura [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
-## 3. Listar Representação de Pessoa Fí­sica
-Lista os representantes de determinada pessoa fí­sica outorgante, se houver emitido representação no SEI.
+## 3. Listar Representação de Pessoa Física
+Lista os representantes de determinada pessoa física outorgante, se houver emitido representação no SEI.
 ### Método "listarRepresentacaoPessoaFisica":
 
 | Parâmetros de Entrada |  |
@@ -88,7 +88,7 @@ Lista os representantes de determinada pessoa fí­sica outorgante, se houver em
 | SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administração > Sistemas. |
 | IdentificacaoServico | Valor informado no cadastro do Serviço ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administração > Sistemas. Próxima versão do SEI somente aceitará integrações por Chave de Acesso. |
 | CpfOutorgante | CPF do Outorgante, sem formatação e incluindo zeros í  esquerda, para consulta se existe cadastro correspondente como Usuário Externo no SEI. |
-| StaSituacao | Estado da representação (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=Substituí­do, I=Inativo) |
+| StaSituacao | Estado da representação (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=Substituído, I=Inativo) |
 
 ### Regras de Negócio:
  * Se a SiglaSistema e/ou IdentificacaoServico não forem válidos, o webservice retorna as mensagens padrão a respeito.
@@ -96,7 +96,7 @@ Lista os representantes de determinada pessoa fí­sica outorgante, se houver em
  * Se o CPF informado não for válido, ou seja, não passar na validação de sua estrutura (dígito verificador inválido), o webservice retorna a mensagem "*Número de CPF inválido*".
  * Demais regras devem ser implementadas pelo sistema cliente da integração, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo" e "LiberacaoCadastro" conforme estrutura de dados "UsuarioExterno" abaixo especificada.
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | RepresentacaoPessoaFisica | Uma lista de ocorrências da Estrutura de Dados RepresentacaoPessoaFisica. |
 
@@ -104,7 +104,7 @@ Lista os representantes de determinada pessoa fí­sica outorgante, se houver em
 
 | Dado | Descrição |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do Ví­nculo. |
+| IdVinculoRepresentante | Id do Vínculo. |
 | Cpf | Número do CPF do Usuário Externo (sem formatação). |
 | Nome | Nome do Usuário Externo. |
 | Email | Endereço de e-mail utilizado pelo Usuário Externo para acesso í  tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usuário Externo.. |
@@ -114,8 +114,8 @@ Lista os representantes de determinada pessoa fí­sica outorgante, se houver em
 | ProcessosAbrangencia | Estrutura de Dados [ProcessosAbrangencia](#estrutura-de-dados-processosabrangencia). |
 | TipoPoderesLegais |  Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
-## 4. Listar Representação de Pessoa Jurí­dica
-Lista os representantes de determinada pessoa jurí­dica outorgante, se houver emitido representação no SEI.
+## 4. Listar Representação de Pessoa Jurídica
+Lista os representantes de determinada pessoa jurídica outorgante, se houver emitido representação no SEI.
 ### Método "listarRepresentacaoPessoaJuridica":
 
 | Parâmetros de Entrada |  |
@@ -123,14 +123,14 @@ Lista os representantes de determinada pessoa jurí­dica outorgante, se houver 
 | SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administração > Sistemas. |
 | IdentificacaoServico | Valor informado no cadastro do Serviço ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administração > Sistemas. Próxima versão do SEI somente aceitará integrações por Chave de Acesso. |
 | CnpjOutorgante | CNPJ do Outorgante, sem formatação e incluindo zeros í  esquerda, para consulta se existe cadastro correspondente como Usuário Externo no SEI. |
-| StaSituacao | Estado da representação (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substituí­da, I=Inativo). |
+| StaSituacao | Estado da representação (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substituída, I=Inativo). |
 
 ### Regras de Negócio:
  * Se a SiglaSistema e/ou IdentificacaoServico não forem válidos, o webservice retorna as mensagens padrão a respeito.
  * Se o CNPJ informado não for válido, ou seja, não passar na validação de sua estrutura (dígito verificador inválido), o webservice retorna a mensagem "*Número de CNPJ inválido*".
  * Demais regras devem ser implementadas pelo sistema cliente da integração, combinando os dados retornados, especialmente referente aos dados de "SituacaoAtivo" e "LiberacaoCadastro" conforme estrutura de dados "UsuarioExterno" abaixo especificada.
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | parametros | Uma lista de ocorrências da Estrutura de Dados RepresentacaoPessoaJuridica. |
 
@@ -138,7 +138,7 @@ Lista os representantes de determinada pessoa jurí­dica outorgante, se houver 
 
 | Dado | Descrição |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do Ví­nculo. |
+| IdVinculoRepresentante | Id do Vínculo. |
 | Cpf | Número do CPF do Usuário Externo (sem formatação). |
 | Nome | Nome do Usuário Externo. |
 | Email | Endereço de e-mail utilizado pelo Usuário Externo para acesso í  tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usuário Externo. |
@@ -149,7 +149,7 @@ Lista os representantes de determinada pessoa jurí­dica outorgante, se houver 
 | TipoPoderesLegais | Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 5. Listar Representados
-Lista todos os representados por determinada pessoa fí­sica, se alguém houver emissão de representação outorgando poderes para ela no SEI.
+Lista todos os representados por determinada pessoa física, se alguém houver emissão de representação outorgando poderes para ela no SEI.
 ### Método "listarRepresentados":
 
 | Parâmetros de Entrada |  |
@@ -157,14 +157,14 @@ Lista todos os representados por determinada pessoa fí­sica, se alguém houver
 | SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administração > Sistemas. |
 | IdentificacaoServico | Valor informado no cadastro do Serviço ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administração > Sistemas. Próxima versão do SEI somente aceitará integrações por Chave de Acesso. |
 | Cpf | CPF do Representante, sem formatação e incluindo zeros í  esquerda, para consulta se existe cadastro correspondente como Usuário Externo no SEI. |
-| StaSituacao | **Opcional**. Situação da Representação (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substituí­da, I=Inativo). |
+| StaSituacao | **Opcional**. Situação da Representação (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substituída, I=Inativo). |
 
 ### Regras de Negócio:
  * Se a SiglaSistema e/ou IdentificacaoServico não forem válidos, o webservice retorna as mensagens padrão a respeito.
  * Se o CPF informado não tiver cadastro como Usuário Externo no SEI o webservice retorna a mensagem "*Não existe cadastro de Usuário Externo no SEI com o CPF informado*".
  * Se o CPF informado não for válido, ou seja, não passar na validação de sua estrutura (dígito verificador inválido), o webservice retorna a mensagem "*Número de CPF inválido*".
  
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | Representados | Uma lista de ocorrências da estrutura Representados. |
 
@@ -172,7 +172,7 @@ Lista todos os representados por determinada pessoa fí­sica, se alguém houver
 
 | Dado | Descrição |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do Ví­nculo. |
+| IdVinculoRepresentante | Id do Vínculo. |
 | CnpjCpf | CPF ou CNPJ do Representado. |
 | RazaoSocial | Razão Social do Representado. |
 | DataLimite | Data limite da representação. Retorna vazio caso seja representação por tempo indeterminado. |
@@ -185,7 +185,7 @@ Lista todos os representados por determinada pessoa fí­sica, se alguém houver
 | Nome | Nome do Representante. |
 | Cpf | CPF do Representante. |
 | Email | Endereço de e-mail utilizado pelo Usuário Externo para acesso í  tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usuário Externo. |
-| StaSituacao | Situação do Representante (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=Substituí­do, I=Inativo). |
+| StaSituacao | Situação do Representante (A=Ativo, S=Suspenso, R=Revogado, C=Renunciado, V=Vencido, T=Substituído, I=Inativo). |
 | StaTipoRepresentacao | Tipo da Representação (L=Responsável Legal, E=Procurador Especial, C=Procurador, S=Procurador Simples, U=Autorrepresentação) |
 | ProcessosAbrangencia | Estrutura de Dados [ProcessosAbrangencia](#estrutura-de-dados-processosabrangencia). |
 | TipoPoderesLegais | Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
@@ -198,10 +198,10 @@ Lista todos os representantes e representados que possuem alguma emissão de rep
 | ---- | ---- |
 | SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administração > Sistemas. |
 | IdentificacaoServico | Valor informado no cadastro do Serviço ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administração > Sistemas. Próxima versão do SEI somente aceitará integrações por Chave de Acesso. |
-| StaSituacao | Situação da Representação (A=Ativo, S=Suspensa, R=Revogada, C=Renunciada, V=Vencida, T=Substituí­da, I=Inativa). |
+| StaSituacao | Situação da Representação (A=Ativo, S=Suspensa, R=Revogada, C=Renunciada, V=Vencida, T=Substituída, I=Inativa). |
 | Pagina | **Opcional**. Número da página para paginação dos resultados. Caso suprimido valor para este parâmetro será mostrada a página 1. |
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | Representantes | Uma lista de ocorrências da estrutura RepresentantesItens. |
 
@@ -209,21 +209,21 @@ Lista todos os representantes e representados que possuem alguma emissão de rep
 
 | Dado | Descrição |
 | ---- | ---- |
-| IdVinculoRepresentante | Id do Ví­nculo. |
-| TipoVinculo | Tipo da Natureza do Ví­nculo (J=Pessoa Jurí­dica, F=Pessoa Fí­sica) |
-| CnpjRepresentado | CNPJ do Representado caso o Tipo de Ví­nculo seja de Pessoa Jurí­dica (com formatação). |
-| RazaoSocialRepresentado | Razão Social do Representado caso o Tipo de Ví­nculo seja de Pessoa Jurí­dica. |
-| CpfRepresentado | CPF do Representado caso o Tipo de Ví­nculo seja de Pessoa Fí­sica (com formatação). |
-| NomeRepresentado | Nome do Representado caso o Tipo de Ví­nculo seja de Pessoa Fí­sica. |
+| IdVinculoRepresentante | Id do Vínculo. |
+| TipoVinculo | Tipo da Natureza do Vínculo (J=Pessoa Jurídica, F=Pessoa Física) |
+| CnpjRepresentado | CNPJ do Representado caso o Tipo de Vínculo seja de Pessoa Jurídica (com formatação). |
+| RazaoSocialRepresentado | Razão Social do Representado caso o Tipo de Vínculo seja de Pessoa Jurídica. |
+| CpfRepresentado | CPF do Representado caso o Tipo de Vínculo seja de Pessoa Física (com formatação). |
+| NomeRepresentado | Nome do Representado caso o Tipo de Vínculo seja de Pessoa Física. |
 | EmailRepresentante | Endereço de e-mail utilizado pelo Usuário Externo do Representante para acesso í  tela de Acesso Externo do SEI, indicado quando efetivou seu cadastro no SEI como Usuário Externo. |
-| StaSituacao | Situação da Representação (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substituí­da, I=Inativo). |
+| StaSituacao | Situação da Representação (A=Ativo, S=Suspenso, R=Revogada, C=Renunciada, V=Vencida, T=Substituída, I=Inativo). |
 | StaTipoRepresentacao | Tipo da Representação (L=Responsável Legal, E=Procurador Especial, C=Procurador, S=Procurador Simples, U=Autorrepresentação) |
 | DataLimite | Data limite da vigência da Representação. |
 | ProcessosAbrangencia | Estrutura de Dados [ProcessosAbrangencia](#estrutura-de-dados-processosabrangencia). |
 | TipoPoderesLegais | Uma lista de ocorrências da Estrutura de Dados [PoderesLegais](#estrutura-de-dados-podereslegais). |
 
 ## 7. Listar Situações de Representação
-Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituí­da, V=Vencida, I=Inativa).
+Lista os tipos de situação que existem sobre as representações geradas no SEI (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa).
 ### Método "listarSituacoesRepresentacao":
 
 | Parâmetros de Entrada |  |
@@ -231,7 +231,7 @@ Lista os tipos de situação que existem sobre as representações geradas no SE
 | SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administração > Sistemas. |
 | IdentificacaoServico | Valor informado no cadastro do Serviço ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administração > Sistemas. Próxima versão do SEI somente aceitará integrações por Chave de Acesso. |
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | parametros | Uma lista de ocorrências da estrutura SituacoesRepresentacao. |
 
@@ -239,7 +239,7 @@ Lista os tipos de situação que existem sobre as representações geradas no SE
 
 | Dado | Descrição |
 | ---- | ---- |
-| StaEstado | Identificador do Estado da Representação (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituí­da, V=Vencida, I=Inativa). |
+| StaEstado | Identificador do Estado da Representação (S=Suspensa, A=Ativa, C=Renunciada, R=Revogada, T=Substituída, V=Vencida, I=Inativa). |
 | Nome | Nome do Estado da Representação. |
 
 ## 8. Listar Tipos de Representação
@@ -251,7 +251,7 @@ Lista os tipos de representação que existem sobre as representações geradas 
 | SiglaSistema | Valor informado no cadastro do Sistema cliente no SEI no menu Administração > Sistemas. |
 | IdentificacaoServico | Valor informado no cadastro do Serviço ou a Chave de Acesso correspondente para o Sistema cliente no SEI no menu Administração > Sistemas. Próxima versão do SEI somente aceitará integrações por Chave de Acesso. |
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | UsuarioExterno | Uma lista de ocorrências da Estrutura de Dados TiposRepresentacao. |
 
@@ -274,7 +274,7 @@ Lista todos os Usuários Externos cadastrados no SEI.
 | LiberacaoCadastro | Estado da aprovação do cadastro do Usuário Externo (L=Liberado e P=Pendente). |
 | Página | **Opcional**. Número da página para paginação dos resultados. Caso suprimido valor para este parâmetro será mostrada a página 1. |
 
-| Parâmetros de Saí­da |  |
+| Parâmetros de Saída |  |
 | ---- | ---- |
 | UsuarioExterno | Uma lista de ocorrências da Estrutura de Dados UsuarioExterno. |
 

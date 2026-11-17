@@ -132,10 +132,11 @@ try {
 			if (isset($_POST['hdnSubmit'])) {
 
 				try{
+					$txtConteudo = $_POST['txaConteudo'];
+					PeticionamentoIntegracao::validarXssEditor($txtConteudo);
 					//TODO: Possível risco de consumo excessivo de memória do servidor
 					SessaoSEIExterna::getInstance()->setAtributo('docPrincipalConteudoHTML', $_POST['txaConteudo']);
 					SessaoSEIExterna::getInstance()->setAtributo('idConjuntoEstilo', $_POST['idConjuntoEstilo']);
-					$txtConteudo = $_POST['txaConteudo'];
 					
 				}catch(Exception $e){
 					PaginaSEIExterna::getInstance()->processarExcecao($e);

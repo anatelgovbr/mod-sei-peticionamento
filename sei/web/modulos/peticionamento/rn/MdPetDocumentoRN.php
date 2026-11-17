@@ -31,7 +31,7 @@ class MdPetDocumentoRN extends InfraRN {
 	private function atribuirComponentesDigitais(DocumentoDTO $parObjDocumentoDTO, $parArrObjComponentesDigitais)
 	{
 		if(!isset($parArrObjComponentesDigitais)) {
-			throw new InfraException('Componentes digitais do documento não informado.');
+			throw new InfraException('Componentes digitais do documento não informados.');
 		}
 	
 		//TODO: Aplicar mesmas validações realizadas no momento do upload de um documento InfraPagina::processarUpload
@@ -1075,7 +1075,7 @@ class MdPetDocumentoRN extends InfraRN {
 				}
 	
 				if ($objProtocoloDTO->getStrStaProtocolo()==ProtocoloRN::$TP_DOCUMENTO_RECEBIDO && $objProtocoloDTO->getNumIdTipoConferenciaDocumento()==null){
-					$objInfraException->adicionarValidacao('Documento ' . $objProtocoloDTO->getStrProtocoloFormatado() . ' não possui Tipo de Conferência informada.');
+					$objInfraException->adicionarValidacao('Documento ' . $objProtocoloDTO->getStrProtocoloFormatado() . ' não possui Tipo de Conferência informado.');
 				}
 			}
 	

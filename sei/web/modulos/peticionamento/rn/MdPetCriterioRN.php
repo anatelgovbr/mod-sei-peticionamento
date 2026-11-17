@@ -45,7 +45,7 @@ class MdPetCriterioRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException ('Erro listando', $e);
+            throw new InfraException ('Erro ao listar os critérios para Intercorrente', $e);
         }
     }
 
@@ -73,7 +73,7 @@ class MdPetCriterioRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando', $e);
+            throw new InfraException('Erro ao consultar o critério para Intercorrente', $e);
         }
     }
 
@@ -103,7 +103,7 @@ class MdPetCriterioRN extends InfraRN
             $objRetorno = $objMdPetCriterioBD->alterar($objMdPetCriterioDTO);
             return $objRetorno;
         } catch (Exception $e) {
-            throw new InfraException ('Erro alterando', $e);
+            throw new InfraException ('Erro ao alterar o critério para Intercorrente', $e);
         }
     }
 
@@ -123,51 +123,68 @@ class MdPetCriterioRN extends InfraRN
             // Valida Permissao
             SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_cadastrar', __METHOD__, $objMdPetCriterioDTO);
 
-            //Cadastrar Indisponibilidade
-            $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
-            
-            $objInfraException = new InfraException();
-
-            // Adiciona valor padrão para o campo SinIntercorrenteSigiloso caso o mesmo nao esteja presente no objeto
-            if(!$objMdPetCriterioDTO->isSetStrSinIntercorrenteSigiloso()){
-                $objMdPetCriterioDTO->setStrSinIntercorrenteSigiloso('S');
-            }
-
-            $this->_validarCamposObrigatorios($objMdPetCriterioDTO, $objInfraException);
-
-            $objInfraException->lancarValidacoes();
-
-            $objRetorno = $objMdPetCriterioBD->cadastrar($objMdPetCriterioDTO);
-
-            return $objRetorno;
+            return $this->cadastrarInterno($objMdPetCriterioDTO);
         } catch (Exception $e) {
-            throw new InfraException ('Erro cadastrando Tamanho de Arquivo Peticionamento.', $e);
+            throw new InfraException ('Erro ao cadastrar o critério para Intercorrente', $e);
         }
     }
 
     /**
-     * Short description of method cadastrarControlado
+     * Valida e grava o critério na transação de quem chama.
      *
-     * @access protected
-     * @author Marcelo Bezerra <marcelo.bezerra@castgroup.com.br>
-     * @param  $objMdPetCriterioDTO
-     * @return mixed
+     * @param MdPetCriterioDTO $objMdPetCriterioDTO
+     * @return MdPetCriterioDTO
      * @throws InfraException
      */
-    public function cadastrarPadrao(MdPetCriterioDTO $objMdPetCriterioDTO)
+    private function cadastrarInterno(MdPetCriterioDTO $objMdPetCriterioDTO)
     {
-        $objCriterioIntercorrentePadraoConsultaDTO = new MdPetCriterioDTO();
-        $objCriterioIntercorrentePadraoConsultaDTO->setStrSinCriterioPadrao('S');
-        $objCriterioIntercorrentePadraoConsultaDTO->retTodos();
-        $objMdPetCriterioRN = new MdPetCriterioRN();
-        $objCriterioIntercorrentePadraoDTO = $objMdPetCriterioRN->consultar($objCriterioIntercorrentePadraoConsultaDTO);
+        //Cadastrar Indisponibilidade
+        $objMdPetCriterioBD = new MdPetCriterioBD($this->getObjInfraIBanco());
 
-        if($objCriterioIntercorrentePadraoDTO){
-            $this->excluir(array($objCriterioIntercorrentePadraoDTO));
+        $objInfraException = new InfraException();
+
+        // Adiciona valor padrão para o campo SinIntercorrenteSigiloso caso o mesmo nao esteja presente no objeto
+        if(!$objMdPetCriterioDTO->isSetStrSinIntercorrenteSigiloso()){
+            $objMdPetCriterioDTO->setStrSinIntercorrenteSigiloso('S');
         }
 
-        $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
-        return $this->cadastrarControlado($objMdPetCriterioDTO);
+        $this->_validarCamposObrigatorios($objMdPetCriterioDTO, $objInfraException);
+
+        $objInfraException->lancarValidacoes();
+
+        return $objMdPetCriterioBD->cadastrar($objMdPetCriterioDTO);
+    }
+
+    /**
+     * Troca o critério padrão em uma só transação: se o novo for recusado, o atual continua gravado.
+     *
+     * @param MdPetCriterioDTO $objMdPetCriterioDTO
+     * @return MdPetCriterioDTO
+     * @throws InfraException
+     */
+    protected function cadastrarPadraoControlado(MdPetCriterioDTO $objMdPetCriterioDTO)
+    {
+
+        try {
+            $objMdPetCriterioDTO->setStrSinCriterioPadrao('S');
+
+            // Valida Permissao
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_pet_intercorrente_criterio_cadastrar', __METHOD__, $objMdPetCriterioDTO);
+
+            $objCriterioIntercorrentePadraoConsultaDTO = new MdPetCriterioDTO();
+            $objCriterioIntercorrentePadraoConsultaDTO->setStrSinCriterioPadrao('S');
+            $objCriterioIntercorrentePadraoConsultaDTO->retTodos();
+            $objMdPetCriterioRN = new MdPetCriterioRN();
+            $objCriterioIntercorrentePadraoDTO = $objMdPetCriterioRN->consultar($objCriterioIntercorrentePadraoConsultaDTO);
+
+            if($objCriterioIntercorrentePadraoDTO){
+                $this->excluir([$objCriterioIntercorrentePadraoDTO]);
+            }
+
+            return $this->cadastrarInterno($objMdPetCriterioDTO);
+        } catch (Exception $e) {
+            throw new InfraException('Erro ao cadastrar o critério padrão para Intercorrente', $e);
+        }
     }
 
     /**
@@ -203,7 +220,7 @@ class MdPetCriterioRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException ('Erro desativando.', $e);
+            throw new InfraException ('Erro ao desativar o critério para Intercorrente', $e);
         }
 
     }
@@ -231,7 +248,7 @@ class MdPetCriterioRN extends InfraRN
             }
 
         } catch(Exception $e) {
-            throw new InfraException ('Erro desativando Critério Intercorrente Peticionamento.', $e );
+            throw new InfraException ('Erro ao reativar o critério para Intercorrente', $e );
         }
     }
 
@@ -255,7 +272,7 @@ class MdPetCriterioRN extends InfraRN
                 $objMdPetCriterioBD->excluir($arrMdPetCriterioDTO[$i]);
             }
         } catch (Exception $e) {
-            throw new InfraException ('Erro excluindo.', $e);
+            throw new InfraException ('Erro ao excluir o critério para Intercorrente', $e);
         }
 
     }
@@ -280,11 +297,9 @@ class MdPetCriterioRN extends InfraRN
         }
 
         $objCriterioIntercorrentePeticionamentoValidarDTO->retTodos();
-        $arrObjCriterioIntercorrentePeticionamentoValidarDTO = $this->consultar($objCriterioIntercorrentePeticionamentoValidarDTO);
+        $objCriterioIntercorrentePeticionamentoExistenteDTO = $this->consultar($objCriterioIntercorrentePeticionamentoValidarDTO);
 
-        $criterioIntercorrentePeticionamentoCount = (is_array($arrObjCriterioIntercorrentePeticionamentoValidarDTO) ? count($arrObjCriterioIntercorrentePeticionamentoValidarDTO) : 0);
-        if ($criterioIntercorrentePeticionamentoCount > 0 &&
-            $objMdPetCriterioDTO->getStrSinCriterioPadrao() == $arrObjCriterioIntercorrentePeticionamentoValidarDTO->getStrSinCriterioPadrao()){
+        if ($objCriterioIntercorrentePeticionamentoExistenteDTO != null) {
             $objInfraException->adicionarValidacao('Tipo de Processo já possui Critério Intercorrente associado.');
         }
 
@@ -370,7 +385,7 @@ class MdPetCriterioRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro contando', $e);
+            throw new InfraException('Erro ao contar os critérios para Intercorrente', $e);
         }
     }
 
@@ -434,7 +449,7 @@ class MdPetCriterioRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando', $e);
+            throw new InfraException('Erro ao consultar o critério para Intercorrente do tipo de processo', $e);
         }
     }
 

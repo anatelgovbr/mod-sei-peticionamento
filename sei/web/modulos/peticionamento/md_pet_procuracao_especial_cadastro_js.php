@@ -196,12 +196,12 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
         dsNome = dsNome.trim();
 
         if (nuCpf.length == 0) {
-            alert('CPF do usuário externo é de preenchimento obrigátorio.');
+            alert('CPF do usuário externo é de preenchimento obrigatório.');
             return false;
         }
 
         if (dsNome.length == 0) {
-            alert('Nome do usuário externo é de preenchimento obrigátorio.');
+            alert('Nome do usuário externo é de preenchimento obrigatório.');
             return false;
         }
 
@@ -330,7 +330,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                     if (valor > 0)
                         validarCampos();
                     else
-                        alert('Usuario não é um Responsável Legal.');
+                        alert('Usuário não é um Responsável Legal.');
                 })
             }
         });
@@ -405,7 +405,7 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
 
                 var data = document.getElementById('txtDt').value;
                 if (infraCompararDatas(document.getElementById('hdnDtAtual').value, data) < 0) {
-                    alert("A data informada no campo Validade não é permitida. Informe uma data posterior a data atual.");
+                    alert("A data informada no campo Validade não é permitida. Informe uma data posterior à data atual.");
                     return false;
                 }
             }
@@ -850,14 +850,14 @@ $strLinkAjaxValidarExistenciaProc = SessaoSEIExterna::getInstance()->assinarLink
                 msg = 'Informe o CPF do usuário externo completo ou válido para realizar a pesquisa.';
             }
         } else {
-            msg = 'É necessário preecher o campo CPF do Usuário Externo com 11 caracteres.';
+            msg = 'É necessário preencher o campo CPF do Usuário Externo com 11 caracteres.';
             erro = true;
         }
 
         //Verificando Usuário Logado
         if (valor == cpfUsuariologado) {
             erro = true;
-            msg = "Não é permitida a geração de Procuração Eletrônica para você mesmo. \n Informe o CPF da Pessoa Física que irá te representar.";
+            msg = "Não é permitida a geração de Procuração Eletrônica para você mesmo. \n Informe o CPF da Pessoa Física que irá representar você.";
         }
 
         if (erro) {

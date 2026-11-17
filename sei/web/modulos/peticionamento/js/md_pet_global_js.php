@@ -1,4 +1,156 @@
+<?php ?>
 <script type="text/javascript">
+    function mdPetValidarXssAntesDaAcao(objCampo, strMensagem) {
+        return mdPetEnviarValidacaoXss({mdPetXssTexto: objCampo.value}, objCampo, strMensagem);
+    }
+
+    function mdPetValidarXssCamposAntesDaAcao(arrCampos, strMensagem) {
+        var arrTextos = arrCampos.map(function (objCampo) { return objCampo.value; });
+        return mdPetEnviarValidacaoXss({mdPetXssTextos: arrTextos}, arrCampos[0], strMensagem);
+    }
+
+    function mdPetEnviarValidacaoXss(objDados, objCampo, strMensagem) {
+        var strResultado = null;
+        $.ajax({
+            url: window.location.href.split('#')[0],
+            type: 'POST',
+            async: false,
+            dataType: 'text',
+            data: objDados,
+            success: function (strResposta) {
+                strResultado = strResposta.trim();
+            }
+        });
+
+        if (strResultado === 'OK') {
+            return true;
+        }
+
+        alert(strResultado === 'RECUSADO' ? strMensagem : 'Não foi possível verificar o conteúdo. Tente novamente.');
+        objCampo.focus();
+        return false;
+    }
+
+    // RT-PET-024: o navegador envia como &#NNN; o caractere que não existe na codificação da página, e o SEI recusa o
+    // Complemento com esse caractere. Confere ao clicar em Adicionar, antes do upload e sem requisição ao servidor; o upload
+    // e a conclusão repetem a verificação. A página é ISO-8859-1, que o navegador envia como Windows-1252: os 27 caracteres
+    // do Windows-1252 acima de 255 chegam ao servidor como byte e são aceitos. A referência &#NNN; digitada como texto chega
+    // ao servidor igual à que o navegador gera e também é recusada quando passa de 255.
+    function mdPetValidarCaracteresComplemento(objCampo) {
+        var strCaracteresExtrasWindows1252 = '\u20AC\u201A\u0192\u201E\u2026\u2020\u2021\u02C6\u2030\u0160\u2039\u0152\u017D\u2018\u2019' +
+            '\u201C\u201D\u2022\u2013\u2014\u02DC\u2122\u0161\u203A\u0153\u017E\u0178';
+        var bolTemReferenciaNaoAceita = (objCampo.value.match(/&#\d+;/g) || []).some(function (strReferencia) {
+            return parseInt(strReferencia.slice(2, -1), 10) > 255;
+        });
+        var bolTemCaractereNaoAceito = Array.prototype.some.call(objCampo.value, function (strCaractere) {
+            return strCaractere.charCodeAt(0) > 255 && strCaracteresExtrasWindows1252.indexOf(strCaractere) === -1;
+        });
+
+        if (!bolTemReferenciaNaoAceita && !bolTemCaractereNaoAceito) {
+            return true;
+        }
+
+        alert('<?= PaginaSEI::formatarParametrosJavaScript(PeticionamentoIntegracao::MSG_COMPLEMENTO_CARACTERE_NAO_ACEITO, false) ?>');
+        objCampo.focus();
+        return false;
+    }
+
+    function mdPetValidarRetornoUpload(arrUpload) {
+        var strNomeTemporario = arrUpload && arrUpload['nome_upload'];
+        var bolValido = typeof strNomeTemporario === 'string' && strNomeTemporario !== '' &&
+            !/[<>\/\\\r\n]/.test(strNomeTemporario) &&
+            typeof arrUpload['nome'] === 'string' && arrUpload['nome'] !== '' &&
+            /^\d+$/.test(String(arrUpload['tamanho'])) &&
+            /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/.test(arrUpload['data_hora']);
+
+        if (!bolValido) {
+            alert('Não foi possível adicionar o arquivo. Verifique a sessão e tente novamente.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // ADR-PET-010: antes de transferir o arquivo, confere no navegador o nome e o tamanho informados pelo navegador com os
+    // limites do SEI que a página trouxe ao carregar, sem requisição ao servidor. O upload e a conclusão repetem a verificação
+    // com o tamanho real.
+    function mdPetValidarTamanhoAntesDoUpload(objCampoArquivo, objLimitesDoSei) {
+        var objArquivo = objCampoArquivo && objCampoArquivo.files && objCampoArquivo.files.length > 0 ? objCampoArquivo.files[0] : null;
+        if (objArquivo === null || !objLimitesDoSei) {
+            return true;
+        }
+
+        var strRecusa = mdPetDescreverRecusaPorTamanho(objArquivo.name, objArquivo.size, objLimitesDoSei);
+        if (strRecusa === null) {
+            return true;
+        }
+
+        alert(strRecusa);
+        objCampoArquivo.value = '';
+        objCampoArquivo.focus();
+        return false;
+    }
+
+    // Mesma regra de MdPetTamanhoArquivoRN::conferirTamanho, com os limites e os textos que o servidor gerou para a página.
+    function mdPetDescreverRecusaPorTamanho(strNome, numTamanho, objLimitesDoSei) {
+        // Mesmo tratamento do nome que o servidor aplica, sem caractere de controle, "#", "<", ">" e "&"
+        var strNomeTratado = strNome.replace(/[\x00-\x1F\x7F]+/g, ' ').replace(/[#<>&]/g, '').trim();
+        if (strNomeTratado.length > 100) {
+            strNomeTratado = strNomeTratado.substring(0, 100) + '...';
+        }
+
+        // RT-PET-027: o SEI só recusa o arquivo de 0 byte quando o anexo entra no processo
+        if (numTamanho === 0) {
+            return objLimitesDoSei.vazio.replace('{nome}', function () {
+                return strNomeTratado;
+            });
+        }
+
+        var arrPartes = strNome.split('.');
+        if (arrPartes.length < 2) {
+            return null;
+        }
+
+        var strExtensao = arrPartes[arrPartes.length - 1].toLowerCase().replace(/ /g, '');
+        if (objLimitesDoSei.configuracoesInvalidas[strExtensao]) {
+            return objLimitesDoSei.configuracoesInvalidas[strExtensao];
+        }
+
+        var objLimite = objLimitesDoSei.extensoes[strExtensao] || objLimitesDoSei.geral;
+        if (numTamanho <= objLimite.bytes) {
+            return null;
+        }
+
+        // Arredondado para cima, com vírgula decimal e ponto de milhar, como o servidor escreve
+        var arrTamanho = (Math.ceil(numTamanho * 100 / 1048576) / 100).toFixed(2).split('.');
+        var strTamanho = arrTamanho[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + arrTamanho[1];
+
+        // Uma passada só: o nome com um dos marcadores não é trocado de novo
+        return objLimitesDoSei.recusa.replace(/\{nome\}|\{tamanho\}/g, function (strMarcador) {
+            return strMarcador === '{nome}' ? strNomeTratado : strTamanho;
+        }) + ' ' + objLimite.frase;
+    }
+
+    // ADR-PET-010: faz o upload passar pelas verificações de tamanho antes da transferência, inclusive quando o arquivo é
+    // arrastado. O limite do módulo vem antes dos limites do SEI: fnValidarLimiteDoModulo recebe o tamanho em bytes, mostra a
+    // mensagem da tela e devolve false na recusa.
+    function mdPetVerificarTamanhoNoUpload(objUpload, objLimitesDoSei, fnValidarLimiteDoModulo) {
+        var fnExecutar = objUpload.executar;
+        objUpload.executar = function () {
+            var objCampoArquivo = objUpload.inputFile;
+            var bolTemArquivo = objCampoArquivo && objCampoArquivo.files && objCampoArquivo.files.length > 0;
+            if (bolTemArquivo && typeof fnValidarLimiteDoModulo === 'function' && !fnValidarLimiteDoModulo(objCampoArquivo.files[0].size)) {
+                return false;
+            }
+
+            if (!mdPetValidarTamanhoAntesDoUpload(objCampoArquivo, objLimitesDoSei)) {
+                return false;
+            }
+
+            return fnExecutar.apply(objUpload, arguments);
+        };
+    }
+
     function carregarComponenteLupaTpDocComplementar(acaoComponente) {
         acaoComponente == 'S' ? objLupaTipoDocumento.selecionar(700, 500) : objLupaTipoDocumento.remover();
     }
@@ -260,7 +412,7 @@
             if (!valido) {
                 document.getElementById('txtDtInicio').value = '';
                 document.getElementById('txtDtFim').value = '';
-                alert('A Data/Hora Inicio deve ser menor que a Data/Hora Fim');
+                alert('A Data/Hora Início deve ser menor que a Data/Hora Fim');
                 return false;
             }
         }

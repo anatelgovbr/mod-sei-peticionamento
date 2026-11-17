@@ -13,6 +13,10 @@ class MdPetProcessoRN extends InfraRN {
 	public static $INDICACAO_DIRETA = 'I';
 	public static $DOC_GERADO = 'G';
 	public static $DOC_EXTERNO = 'E';	
+
+	//Mensagens da falha na conclusão (ADR-PET-007)
+	public static $MSG_PROCESSO_NOVO_NAO_CONCLUIDO = 'Não foi possível concluir o Peticionamento de Processo Novo, e nenhum processo foi criado. Tente novamente. Se o erro continuar, entre em contato com a gestão do SEI deste órgão.';
+	public static $MSG_PROCESSO_NOVO_NAO_DESFEITO = 'Não foi possível concluir o Peticionamento de Processo Novo. Não tente novamente. Entre em contato com a gestão do SEI deste órgão e informe o processo %s.';
 	
 	public function __construct() {
 		
@@ -68,21 +72,43 @@ class MdPetProcessoRN extends InfraRN {
         // e precisa ficar restrito a pasta temporaria.
         $this->validarConteudoDocumentoPrincipal( $arrParametros );
         $this->validarLocalizacaoArquivosPeticionamento( $arrParametros );
+        $this->validarXssPeticionamento( $arrParametros );
 
         FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(true);
 
-        // ETAPAS 1 e 2 - criacao do processo e inclusao dos documentos na mesma transacao: se qualquer
-        // documento falhar, o processo tambem e desfeito e nada fica persistido.
-        $retorno = $this->gerarProcedimentoComDocumentos($arrParametros);
+        // ETAPA 1 - criacao do processo. Possui transacao propria: se falhar aqui nada foi persistido.
+        // Cada etapa tem transacao propria para nao reter o bloqueio da numeracao do processo (ADR-PET-002).
+        MdPetRastreioINT::registrar('Peticionamento de Processo Novo, etapa 1 de 3 (abertura do processo): iniciada.');
 
-		$arrParametrosDocumentos = $retorno['parametrosDocumentos'];
+        try {
+            $retorno = $this->gerarProcedimentoInterno($arrParametros);
+        } catch (Throwable $objExceptionPreparacao) {
+            $objValidacao = MdPetExcecaoINT::converterFalhaTecnica($objExceptionPreparacao, self::$MSG_PROCESSO_NOVO_NAO_CONCLUIDO);
+            MdPetRastreioINT::registrarFalha('Peticionamento de Processo Novo, etapa 1 de 3 (abertura do processo): falhou, e o banco desfez tudo o que ela tinha gravado.', $objExceptionPreparacao, MdPetExcecaoINT::lerMensagem($objValidacao));
+            throw $objValidacao;
+        }
 
-		// A partir deste ponto o processo e os documentos ja estao confirmados em banco.
+		$arrParametrosDocumentos = [
+			$retorno['parametrosEmail'][1], // UnidadeDTO
+			$retorno['parametrosEmail'][0], // ArrParametros
+			$retorno['parametrosEmail'][2], // ObjProcedimentoDTO
+			$retorno['parametrosEmail'][4], // Recibo
+			$retorno['idsContatos']
+		];
+
+		// A partir deste ponto o processo ja esta confirmado em banco (commit da etapa 1).
 		// Como cada etapa seguinte possui transacao propria, qualquer falha exige a remocao
 		// explicita do processo e de seus documentos (rollback manual).
 		$dblIdProcedimento = $arrParametrosDocumentos[2]->getDblIdProcedimento();
+		$strProcesso = MdPetRastreioINT::descreverProcesso($dblIdProcedimento, $arrParametrosDocumentos[2]->getStrProtocoloProcedimentoFormatado());
+		MdPetRastreioINT::registrar('Peticionamento de Processo Novo, etapa 1 de 3 (abertura do processo): concluída. Criado o ' . $strProcesso . '.');
 
 		try {
+
+			MdPetRastreioINT::registrar('Peticionamento de Processo Novo, etapa 2 de 3 (inclusão dos documentos): iniciada no ' . $strProcesso . '.');
+			$this->incluirDocumentosNoProcedimento( $arrParametrosDocumentos );
+			MdPetRastreioINT::registrar('Peticionamento de Processo Novo, etapa 2 de 3 (inclusão dos documentos): concluída no ' . $strProcesso . '.');
+			MdPetRastreioINT::registrar('Peticionamento de Processo Novo, etapa 3 de 3 (recibo, andamentos, acesso externo e envio à unidade): iniciada no ' . $strProcesso . '.');
 
 			$reciboGerado = (new MdPetReciboRN())->montarRecibo( $retorno['parametrosEmail'] );
 
@@ -137,30 +163,41 @@ class MdPetProcessoRN extends InfraRN {
 
 			}
 
+			MdPetRastreioINT::registrar('Peticionamento de Processo Novo, etapa 3 de 3 (recibo, andamentos, acesso externo e envio à unidade): concluída no ' . $strProcesso . '.');
+
 		} catch(Throwable $e){
 
-			$bolRevertido = false;
+			$objValidacao = MdPetExcecaoINT::converterFalhaTecnica($e, self::$MSG_PROCESSO_NOVO_NAO_CONCLUIDO);
+			$strMotivo = MdPetExcecaoINT::lerMensagem($objValidacao);
+			MdPetRastreioINT::registrarFalha('Peticionamento de Processo Novo: a etapa em andamento falhou no ' . $strProcesso . '.', $e, $strMotivo);
+			MdPetRastreioINT::registrarInicioDoRollback('Peticionamento de Processo Novo: rollback iniciado para apagar o ' . $strProcesso . ' e tudo o que as etapas gravaram nele.');
+			$strProcessoFormatado = $arrParametrosDocumentos[2]->getStrProtocoloProcedimentoFormatado();
 
 			try {
 
 				// executa em transacao propria: ou remove tudo, ou nada e alterado
 				$bolRevertido = $this->reverterProcedimentoPeticionamento( $dblIdProcedimento );
+				MdPetRastreioINT::registrar($bolRevertido
+					? 'Peticionamento de Processo Novo: rollback concluído com sucesso. O ' . $strProcesso . ' e tudo o que a tentativa gravou foram apagados.'
+					: 'Peticionamento de Processo Novo: rollback concluído sem exclusão, porque o ' . $strProcesso . ' não chegou a ficar gravado.');
 				LogSEI::getInstance()->gravar('Falha na abertura do processo ['.$dblIdProcedimento.'] no Peticionamento de Processo Novo. Tente novamente.');
 			
 			} catch(Throwable $eRollback){
+				MdPetRastreioINT::registrarFalha('Peticionamento de Processo Novo: o rollback falhou no ' . $strProcesso . ', e o banco manteve tudo como estava antes dele. O processo precisa de correção manual.', $eRollback);
 				//nao pode mascarar o erro original
 				try {
-					LogSEI::getInstance()->gravar('Erro revertendo processo ['.$dblIdProcedimento.'] do Peticionamento.'."\n".InfraException::inspecionar($eRollback));
+					LogSEI::getInstance()->gravar('Erro revertendo processo ['.$dblIdProcedimento.'] do Peticionamento. Rastreio: pet='.MdPetRastreioINT::obterUuid()."\n".InfraException::inspecionar($eRollback));
 				} catch(Throwable $eLog){}
+
+				FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+				(new MdPetAvisoRollbackRN())->avisarFalha('Peticionamento de Processo Novo', 'processo ' . $strProcessoFormatado, $e, $eRollback, $strMotivo);
+				(new InfraException())->lancarValidacao(sprintf(self::$MSG_PROCESSO_NOVO_NAO_DESFEITO, $strProcessoFormatado), null, $eRollback);
 			}
 
 			FeedSEIProtocolos::getInstance()->setBolAcumularFeeds(false);
+			(new MdPetAvisoRollbackRN())->avisarAcionamento('Peticionamento de Processo Novo', 'processo ' . $strProcessoFormatado, $e, $strMotivo);
 
-			$strMsg = $bolRevertido
-				? 'Erro concluindo o Peticionamento de Processo Novo do SEI. O processo gerado foi excluído.'
-				: 'Erro concluindo o Peticionamento de Processo Novo do SEI. Não foi possível excluir automaticamente o processo gerado.';
-
-			throw new InfraException($strMsg, $e);
+			throw $objValidacao;
 
 		}
 
@@ -224,28 +261,47 @@ class MdPetProcessoRN extends InfraRN {
 	}
 
 	/**
-	 * Cria o processo e inclui os documentos em uma unica transacao: falha em qualquer documento
-	 * desfaz tambem o processo, sem depender do rollback manual.
+	 * ADR-PET-005: antes da etapa 1, passa pelo filtro XSS do core a especificacao, o nome e o complemento de cada
+	 * arquivo e os campos do formulario do Documento Principal, e confere o texto do editor e os arquivos com as regras
+	 * do salvar no editor e do upload (ADR-PET-002), para que a recusa ocorra sem processo aberto. Roda depois de
+	 * validarLocalizacaoArquivosPeticionamento.
 	 *
-	 * @param array $arrParametros
-	 * @return array retorno de gerarProcedimentoInterno com a chave 'parametrosDocumentos'
+	 * @param array<string, mixed> $arrParametros
+	 * @param string $strDiretorio diretorio dos arquivos temporarios
+	 * @return void
 	 * @throws InfraException
 	 */
-	protected function gerarProcedimentoComDocumentosControlado( array $arrParametros ): array {
+	public function validarXssPeticionamento( array $arrParametros, string $strDiretorio = DIR_SEI_TEMP ): void {
 
-		$retorno = $this->gerarProcedimentoInterno( $arrParametros );
+		$objInfraException = new InfraException();
 
-		$retorno['parametrosDocumentos'] = [
-			$retorno['parametrosEmail'][1], // UnidadeDTO
-			$retorno['parametrosEmail'][0], // ArrParametros
-			$retorno['parametrosEmail'][2], // ObjProcedimentoDTO
-			$retorno['parametrosEmail'][4], // Recibo
-			$retorno['idsContatos']
-		];
+		PeticionamentoIntegracao::validarXssEspecificacao( $arrParametros['txtEspecificacaoDocPrincipal'] ?? null, $objInfraException );
 
-		$this->incluirDocumentosNoProcedimento( $retorno['parametrosDocumentos'] );
+		$strConteudo = $arrParametros['docPrincipalConteudoHTML'] ?? null;
+		$arrArquivos = [];
 
-		return $retorno;
+		foreach( [ 'hdnDocPrincipal', 'hdnDocEssencial', 'hdnDocComplementar' ] as $strCampo ){
+
+			if( empty( $arrParametros[$strCampo] ) ){
+				continue;
+			}
+
+			foreach( PaginaSEI::getInstance()->getArrItensTabelaDinamica( $arrParametros[$strCampo] ) as $anexo ){
+				PeticionamentoIntegracao::validarXssCampo( $anexo[0], 'Nome de arquivo enviado', $objInfraException );
+				PeticionamentoIntegracao::validarXssComplemento( $anexo[10] ?? null, $objInfraException );
+				$arrArquivos[$anexo[8]] = $anexo[0];
+			}
+		}
+
+		$objInfraException->lancarValidacoes();
+
+		// documento principal do tipo formulario chega como array de campos, que o core nao submete ao filtro XSS
+		if( is_array( $strConteudo ) ){
+			$this->validarCamposFormulario( $strConteudo );
+		}
+
+		PeticionamentoIntegracao::validarXssConclusao( is_string( $strConteudo ) ? $strConteudo : null, $arrArquivos, $strDiretorio );
+		PeticionamentoIntegracao::validarTamanhoConclusao( $arrArquivos, $strDiretorio );
 
 	}
 
@@ -320,10 +376,10 @@ class MdPetProcessoRN extends InfraRN {
 
 		} catch(Exception $e){
 
-			// Nao efetuar rollback aqui: este metodo executa na transacao de
-			// gerarProcedimentoComDocumentos, que sera cancelada pelo InfraRN e desfaz
-			// tambem a criacao do processo.
-			throw new InfraException('Erro incluindo documentos Peticionamento de Processo Novo do SEI.',$e);
+			// Nao efetuar rollback aqui: este metodo executa dentro de uma transacao propria
+			// que sera cancelada pelo InfraRN. A remocao do processo e feita pelo chamador
+			// (gerarProcedimentoConectado), ja fora da transacao.
+			throw new InfraException('Erro incluindo documentos do Peticionamento de Processo Novo do SEI.',$e);
 		
 		}
 
@@ -394,9 +450,12 @@ class MdPetProcessoRN extends InfraRN {
 
 			//verificar se esta vindo o array de participantes
 			//participantes selecionados via pop up OU indicados diretamente por CPF/CNPJ
-			else if( $objMdPetTipoProcessoDTO[0]->getStrSinIIProprioUsuarioExterno() == 'N' && 
-				isset( $arrParametros['hdnListaInteressados'] ) && 
-				$arrParametros['hdnListaInteressados'] != "" ){			
+			else if( $objMdPetTipoProcessoDTO[0]->getStrSinIIProprioUsuarioExterno() == 'N' ){
+
+				// A tela exige o interessado; a regra se repete aqui porque a lista pode chegar vazia por outro caminho
+				if( InfraString::isBolVazia( $arrParametros['hdnListaInteressados'] ?? null ) ){
+					( new InfraException() )->lancarValidacao( 'Informe o(s) Interessado(s).' );
+				}
 				
 				$arrContatosInteressados = array();
 				
@@ -595,14 +654,18 @@ class MdPetProcessoRN extends InfraRN {
 			$objProcedimentoDTO->getNumIdUnidadeGeradoraProtocolo() );
 
 		$this->removerDependenciasPeticionamento( $dblIdProcedimento );
+		MdPetRastreioINT::registrarPassoDoRollback('Peticionamento de Processo Novo', 'recibos excluídos.');
 		$this->removerDocumentosProcedimento( $dblIdProcedimento );
+		MdPetRastreioINT::registrarPassoDoRollback('Peticionamento de Processo Novo', 'documentos excluídos.');
 		$this->removerAcessosExternosProcedimento( $dblIdProcedimento );
+		MdPetRastreioINT::registrarPassoDoRollback('Peticionamento de Processo Novo', 'acessos externos removidos.');
 
 		// Operacao oficial do core: exclui o processo e seus vinculos
 		$objEntradaExcluirProcessoAPI = new EntradaExcluirProcessoAPI();
 		$objEntradaExcluirProcessoAPI->setIdProcedimento( $dblIdProcedimento );
 
 		( new SeiRN() )->excluirProcesso( $objEntradaExcluirProcessoAPI );
+		MdPetRastreioINT::registrarPassoDoRollback('Peticionamento de Processo Novo', 'processo ' . $dblIdProcedimento . ' excluído.');
 
 		return true;
 
@@ -1235,10 +1298,19 @@ class MdPetProcessoRN extends InfraRN {
 		
     }
 
+    /**
+     * Confere os campos do formulario do Documento Principal pelas regras do core e pelo filtro XSS do core, com o
+     * rotulo do campo na mensagem (ADR-PET-005). Usado ao salvar a janela do formulario e de novo antes da etapa 1.
+     *
+     * @param array<string, mixed> $arrPrincipalFormulario campos enviados pela janela do formulario
+     * @return mixed retorno do RelProtocoloAtributoRN::validarValores
+     * @throws InfraException
+     */
     public function validarCamposFormulario($arrPrincipalFormulario)
     {
         $objAtributoRN = new AtributoRN();
         $numTamPrefixo = 11;
+        $objInfraException = new InfraException();
 
 	      foreach ($arrPrincipalFormulario as $campo => $key) {
 		      if(in_array(substr($campo,0, $numTamPrefixo), ['txtAtributo', 'selAtributo', 'txaAtributo', 'hdnAtributo', 'rdoAtributo', 'chkAtributo'])){
@@ -1263,10 +1335,16 @@ class MdPetProcessoRN extends InfraRN {
 
                 $arrObjRelProtocoloAtributoDTO[] = $objRelProtocoloAtributoDTO;
 
+                PeticionamentoIntegracao::validarXssCampo($key, '"' . $objAtributoDTO->getStrRotulo() . '"', $objInfraException);
+
             }
         }
 
-	      return (new RelProtocoloAtributoRN)->validarValores($arrObjRelProtocoloAtributoDTO);
+	      $ret = (new RelProtocoloAtributoRN)->validarValores($arrObjRelProtocoloAtributoDTO);
+
+	      $objInfraException->lancarValidacoes();
+
+	      return $ret;
     }
 
 	public function assinarETravarDocumentoProcesso( $objUnidadeDTO, $arrParametros, $documentoDTO, $objProcedimentoDTO ){

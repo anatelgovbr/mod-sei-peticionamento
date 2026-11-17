@@ -304,21 +304,7 @@ if ($numRegistros > 0) {
         
         // Quando o Outorgante é PF:
         if (InfraUtil::formatarCnpj($arrObjMdPetVincRepresentantDTO[$i]->getStrCNPJ()) == "") {
-            
-            //Pegando idContato
-            $contatoDTO = new ContatoDTO();
-            $contatoDTO->setNumIdContato($arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoOutorg());
-            $contatoDTO->retDblCpf();
-            $contatoDTO->retStrCnpj();
-            $valor = (new ContatoRN())->consultarRN0324($contatoDTO);
-            
-            if ($valor->getStrCnpj() == null) {
-                $strResultado .= '<td align="center">' . InfraUtil::formatarCpf($valor->getDblCpf()) . '</td>';
-            } else {
-                $strResultado .= '<td align="center">' . InfraUtil::formatarCnpj($valor->getStrCnpj()) . '</td>';
-
-            }
-
+            $strResultado .= '<td align="center">' . MdPetVincRepresentantINT::formatarCpfCnpjOutorgante($arrObjMdPetVincRepresentantDTO[$i]->getNumIdContatoOutorg()) . '</td>';
         } else {
             $strResultado .= '<td align="center">' . InfraUtil::formatarCnpj($arrObjMdPetVincRepresentantDTO[$i]->getStrCNPJ()) . '</td>';
         }
@@ -447,7 +433,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
 
 <form id="frmPesquisa" method="post"
       action="<?= SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEIExterna::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
     ?>
@@ -682,12 +668,12 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
     <input type="hidden" name="hdnDataFim" id="hdnDtFim" value="<?php echo $dataFim; ?>">
 
     <!-- /div -->
-    <?
+    <?php
     PaginaSEIExterna::getInstance()->fecharAreaDados();
     PaginaSEIExterna::getInstance()->montarAreaTabela($strResultado, $numRegistros);
     ?>
 </form>
-<?
+<?php
 PaginaSEIExterna::getInstance()->fecharBody();
 PaginaSEIExterna::getInstance()->fecharHtml();
 require_once 'js/md_pet_global_js.php';

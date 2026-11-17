@@ -100,16 +100,16 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
         if ($arrParametros['sin_pessoa_juridica'] == MdPetIntRelDestinatarioRN::$PESSOA_JURIDICA) {
             $html .= '<tr>';
             $html .= '<td style="font-weight: bold; width: 400px;">Pessoa Jurídica:</td>';
-            $html .= '<td>' . $arrParametros['nome_contato'] . ($arrParametros['sin_pessoa_juridica'] == 'S' ? ' - ' . $arrParametros['doc_contato'] : '') . '</td>';
+            $html .= '<td>' . PaginaSEI::tratarHTML($arrParametros['nome_contato']) . ($arrParametros['sin_pessoa_juridica'] == 'S' ? ' - ' . PaginaSEI::tratarHTML($arrParametros['doc_contato']) : '') . '</td>';
             $html .= '</tr>';
             $html .= '<tr>';
             $html .= '<td style="font-weight: bold; width: 400px;">Usuário Externo (Representante):</td>';
-            $html .= '<td>' . $arrParametros['nome_usuario'] . '</td>';
+            $html .= '<td>' . PaginaSEI::tratarHTML($arrParametros['nome_usuario']) . '</td>';
             $html .= '</tr>';
         } else {
             $html .= '<tr>';
             $html .= '<td style="font-weight: bold; width: 400px;">Usuário Externo (signatário):</td>';
-            $html .= '<td>' . $objUsuarioDTO->getStrNome() . '</td>';
+            $html .= '<td>' . PaginaSEI::tratarHTML($objUsuarioDTO->getStrNome()) . '</td>';
             $html .= '</tr>';
         }
         //$html .= '<tr>';
@@ -202,7 +202,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
 
             $html .= '<tr>';
             $html .= '<td style="font-weight: bold;">Documento Principal da Intimação:</td>';
-            $html .= '<td> ' . $texto_doc . ' </td>';
+            $html .= '<td> ' . PaginaSEI::tratarHTML($texto_doc) . ' </td>';
             $html .= '</tr>';
 
             $html .= '<tr>';
@@ -241,7 +241,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
 
             foreach ($arrInteressados as $interessado) {
                 $html .= '<tr>';
-                $html .= '<td colspan="2" >&nbsp&nbsp&nbsp&nbsp ' . $interessado->getStrNome() . '</td>';
+                $html .= '<td colspan="2" >&nbsp&nbsp&nbsp&nbsp ' . PaginaSEI::tratarHTML($interessado->getStrNome()) . '</td>';
                 $html .= '</tr>';
             }
         }
@@ -257,7 +257,7 @@ class MdPetReciboIntercorrenteRN extends MdPetReciboRN {
                 //concatenar tipo e complemento
                 $strNome = $documentoDTO->getStrNomeSerie() . ' ' . $documentoDTO->getStrDescricaoProtocolo() . ' ' . $documentoDTO->getStrNumero();
                 $html .= '<tr>';
-                $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $strNome . '</td>';
+                $html .= '<td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . PaginaSEI::tratarHTML($strNome) . '</td>';
                 $html .= '<td>' . $strNumeroSEI . '</td>';
                 $html .= '</tr>';
             }

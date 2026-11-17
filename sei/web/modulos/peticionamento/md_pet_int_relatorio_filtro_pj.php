@@ -14,13 +14,13 @@
                 <div id="divOpcoesDestinatario">
                     <img id="imgLupaDestinatarioPJ" onclick="objLupaDestinatarioPJ.selecionar(700,500);"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/pesquisar.svg?<?= Icone::VERSAO ?>"
-                         alt="Selecionar Pessoas Jurícas"
-                         title="Selecionar Pessoas Jurícas" class="infraImg"/>
+                         alt="Selecionar Pessoas Jurídicas"
+                         title="Selecionar Pessoas Jurídicas" class="infraImg"/>
                     <br>
                     <img id="imgExcluirDestinatarioPJ" onclick="objLupaDestinatarioPJ.remover();"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/remover.svg?<?= Icone::VERSAO ?>"
-                         alt="Remover Pessoas Jurícas Selecionados"
-                         title="Remover Pessoas Jurícas Selecionados" class="infraImg"/>
+                         alt="Remover Pessoas Jurídicas Selecionadas"
+                         title="Remover Pessoas Jurídicas Selecionadas" class="infraImg"/>
                 </div>
             </div>
         </div>

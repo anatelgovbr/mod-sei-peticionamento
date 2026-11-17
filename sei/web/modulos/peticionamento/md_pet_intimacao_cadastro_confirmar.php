@@ -52,7 +52,7 @@ switch($acao) {
             $texto .= "automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. ";
 
             $texto .= "<p style='text-align:justify'> ";
-            $texto .= "O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o ";
+            $texto .= "O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegido até o ";
             $texto .= "cumprimento da Intimação.";
 
             $texto .= "<p style='text-align:justify'> ";
@@ -84,7 +84,7 @@ switch($acao) {
             $texto .= "</p>";
 
             $texto .= "<p style='text-align:justify'> ";
-            $texto .= "O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.";
+            $texto .= "O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegido até o cumprimento da Intimação.";
             $texto .= "</p>";
 
             $texto .= "<p style='text-align:justify'> ";
@@ -163,7 +163,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
             var dataHoraInicio = null;
 
             if (destinatarios.length === 0) {
-                alert('Nenhum destinatario foi informado.');
+                alert('Nenhum destinatário foi informado.');
                 return;
             }
 
@@ -173,7 +173,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
             }
 
             dataHoraInicio = new Date();
-            btn.prop('disabled', true).html('Aguarde, gerando intimacoes...');
+            btn.prop('disabled', true).html('Aguarde, gerando intimações...');
             btnFechar.prop('disabled', true);
             $('#divProgressoLote').show();
             $('.textoIntimacaoEletronica').hide();
@@ -261,14 +261,14 @@ PaginaSEI::getInstance()->abrirJavaScript();
                     var dataHoraConclusao = new Date();
                     $(".infraBarraLocalizacao h1").html('Gerar Intimação Eletrônica - Concluído');
                     $('.progress').hide();
-                    $('#destinatarioAtual').addClass('alert alert-success').html('Processamento concluido.').css('padding', '10px 15px');
+                    $('#destinatarioAtual').addClass('alert alert-success').html('Processamento concluído.').css('padding', '10px 15px');
                     $('#resumoLote').html(
                         '<strong>Resumo final:</strong> ' + contadores.sucessos + ' geradas, '
                         + contadores.ignorados + ' ignoradas e ' + contadores.erros + ' com erro.'
                     ).show();
 
                     var conteudo = [
-                        'RELATORIO DE PROCESSAMENTO DE INTIMACOES',
+                        'RELATÓRIO DE PROCESSAMENTO DE INTIMAÇÕES',
                         'In\u00edcio do processamento: ' + formatarDataHora(dataHoraInicio),
                         'Conclus\u00e3o do processamento: ' + formatarDataHora(dataHoraConclusao),
                         '',
@@ -330,7 +330,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
                                 }
 
                                 resultados[indiceResultado] = '[SUCESSO] ' + descricao
-                                    + ' - Intimacao gerada com sucesso. Notifica\u00e7\u00e3o por e-mail: '
+                                    + ' - Intimação gerada com sucesso. Notifica\u00e7\u00e3o por e-mail: '
                                     + notificacao.mensagem;
                             })
                         );
@@ -339,12 +339,12 @@ PaginaSEI::getInstance()->abrirJavaScript();
                         resultados.push('[IGNORADO] ' + descricao + ' - ' + (resposta.mensagem || 'Duplicidade identificada.'));
                     } else {
                         contadores.erros++;
-                        resultados.push('[ERRO] ' + descricao + ' - ' + (resposta.mensagem || 'Resposta invalida do servidor.'));
+                        resultados.push('[ERRO] ' + descricao + ' - ' + (resposta.mensagem || 'Resposta inválida do servidor.'));
                     }
                 }).fail(function(xhr) {
                     var mensagem = xhr.responseJSON && xhr.responseJSON.mensagem
                         ? xhr.responseJSON.mensagem
-                        : 'Falha de comunicacao com o servidor da aplicacao.';
+                        : 'Falha de comunicação com o servidor da aplicação.';
                     contadores.erros++;
                     resultados.push('[ERRO] ' + descricao + ' - ' + mensagem);
                 }).always(function() {

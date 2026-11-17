@@ -227,7 +227,7 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                 <legend class="infraLegend" class="infraLabelObrigatorio"> Documentos da Intimação <img
                             style="margin-top:1px; margin-bottom: -3px"
                             src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                            id="imgAjudaAnexosDocumentosIntimacao" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até ' . $numNumPrazo . ' dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegidos até o cumprimento da Intimação.', 'Ajuda') ?> />
+                            id="imgAjudaAnexosDocumentosIntimacao" <?= PaginaSEI::montarTitleTooltip('Considerar-se-á cumprida a Intimação Eletrônica com a consulta ao Documento Principal ou, se indicados, a qualquer um dos Protocolos dos Anexos da Intimação. \n\n Caso a consulta não seja efetuada em até ' . $numNumPrazo . ' dias corridos da data de geração da Intimação Eletrônica, automaticamente ocorrerá seu Cumprimento por Decurso do Prazo Tácito. \n\n O Documento Principal e possíveis Anexos terão o acesso ao seu teor protegido até o cumprimento da Intimação.', 'Ajuda') ?> />
                 </legend>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">

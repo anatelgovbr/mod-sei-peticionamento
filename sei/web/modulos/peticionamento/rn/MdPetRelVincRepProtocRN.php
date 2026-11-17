@@ -31,7 +31,7 @@ class MdPetRelVincRepProtocRN extends InfraRN {
 			return $ret;
 			
 		} catch (Exception $e) {
-			throw new InfraException ('Erro listando Rel Vinculo Representante Poder.', $e);
+			throw new InfraException ('Erro listando Rel Vínculo Representante Poder.', $e);
 		}
 	}
 	
@@ -45,7 +45,7 @@ class MdPetRelVincRepProtocRN extends InfraRN {
 			return $ret;
 				
 		} catch (Exception $e) {
-			throw new InfraException ('Erro consultando Rel Vinculo Representante Poder.', $e);
+			throw new InfraException ('Erro consultando Rel Vínculo Representante Poder.', $e);
 		}
 	}
 	
@@ -59,7 +59,7 @@ class MdPetRelVincRepProtocRN extends InfraRN {
 			return $ret;
 			
 		} catch ( Exception $e ) {
-			throw new InfraException ('Erro Cadastrando Rel Vinculo Representante Poder.', $e );
+			throw new InfraException ('Erro Cadastrando Rel Vínculo Representante Poder.', $e );
 		}
 	}
 
@@ -75,7 +75,7 @@ class MdPetRelVincRepProtocRN extends InfraRN {
 			return $ret;
 			
 		} catch ( Exception $e ) {
-			throw new InfraException ('Erro alterando Rel Vinculo Representante Poder.', $e );
+			throw new InfraException ('Erro alterando Rel Vínculo Representante Poder.', $e );
 		}
 	}
 

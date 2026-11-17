@@ -68,24 +68,24 @@ try{
 
     function mdPetValidarContratoAjax($acao, $contratos){
         if (!isset($contratos[$acao])) {
-            throw new InfraException("Acao '{$acao}' nao reconhecida pelo controlador AJAX do Peticionamento.");
+            throw new InfraException("Ação '{$acao}' não reconhecida pelo controlador AJAX do Peticionamento.");
         }
 
         $contrato = $contratos[$acao];
         $extrasGet = array_diff(array_keys($_GET), $contrato['get']);
         if (!empty($extrasGet)) {
-            throw new InfraException('Parametro(s) GET fora do contrato: '.implode(', ', $extrasGet).'.');
+            throw new InfraException('Parâmetro(s) GET fora do contrato: '.implode(', ', $extrasGet).'.');
         }
 
 		$postPermitido = array_merge($contrato['post_required'], $contrato['post_optional']);
         $extrasPost = array_diff(array_keys($_POST), $postPermitido);
         if (!empty($extrasPost)) {
-            throw new InfraException('Parametro(s) POST fora do contrato: '.implode(', ', $extrasPost).'.');
+            throw new InfraException('Parâmetro(s) POST fora do contrato: '.implode(', ', $extrasPost).'.');
         }
 
         foreach ($contrato['post_required'] as $chaveObrigatoria) {
             if (!array_key_exists($chaveObrigatoria, $_POST)) {
-                throw new InfraException("Parametro POST obrigatorio nao informado: {$chaveObrigatoria}.");
+                throw new InfraException("Parâmetro POST obrigatório não informado: {$chaveObrigatoria}.");
             }
         }
     }
@@ -496,7 +496,7 @@ try{
 
 			$idIntimacao = PaginaSEI::GET('id_intimacao');
 			if (!ctype_digit((string) $idIntimacao) || (int) $idIntimacao <= 0) {
-				mdPetNegarAcessoAjaxExterno('Identificador de intimacao invalido.');
+				mdPetNegarAcessoAjaxExterno('Identificador de intimação inválido.');
 			}
 
 			$objUnidadeDTO = (new MdPetIntimacaoRN())->getUnidadeIntimacao([(int) $idIntimacao]);
@@ -527,7 +527,7 @@ try{
 				(new MdPetIntEmailNotificacaoRN())->enviarEmailIntimacaoPorId((int) $idIntimacao);
 			} catch (Exception $e) {
 				LogSEI::getInstance()->gravar(
-					'Falha no envio pos-commit da intimacao ' . (int) $idIntimacao . ' [' . get_class($e) . '].',
+					'Falha no envio pós-commit da intimação ' . (int) $idIntimacao . ' [' . get_class($e) . '].',
 					InfraLog::$INFORMACAO
 				);
 			}

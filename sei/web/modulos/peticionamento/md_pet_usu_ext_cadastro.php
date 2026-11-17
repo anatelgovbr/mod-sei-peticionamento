@@ -28,6 +28,12 @@ try {
 
     SessaoSEIExterna::getInstance()->validarLink();
     SessaoSEIExterna::getInstance()->validarPermissao($_GET['acao']);
+    $mixTextoXss = PaginaSEI::POST('mdPetXssTexto');
+    if ($mixTextoXss !== null) {
+        echo PaginaSEI::tratarHTML(PeticionamentoIntegracao::consultarXssTextoAjax($mixTextoXss));
+        return;
+    }
+
     SessaoSEIExterna::getInstance()->removerAtributo('docPrincipalConteudoHTML');
 
     //=====================================================
@@ -176,7 +182,7 @@ PaginaSEIExterna::getInstance()->abrirAreaDados('auto');
                     <div class="form-group">
                         <label class="infraLabelObrigatorio">
                             UF:
-                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possí­vel abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
+                            <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip("Neste campo somente são listadas as UFs em que é possível abrir Processo Novo para o Tipo de Processo selecionado. \n \n Selecione abaixo a UF na qual deseja que este Processo seja aberto. ", 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
                         </label><br/>
 
                         <select onchange="pesquisarCidade(this)" id="selUF" name="selUF" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" >

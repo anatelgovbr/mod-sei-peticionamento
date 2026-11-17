@@ -93,7 +93,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $existeDocumento = $objMdPetIndisponibilidadeDocRN->contar($objMdPetIndisponibilidadeDocDTO)>0;
 
         if($existeDocumento){
-            $msg.='Não é permitido '.$acao.' o documento pois o mesmo está vinculado à uma indisponilidade.';
+            $msg.='Não é permitido '.$acao.' o documento pois o mesmo está vinculado a uma indisponibilidade.';
         }
         return $msg;
     }
@@ -446,7 +446,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $objMdPetIndisponibilidade = $objMdPetIndisponibilidadeRN->listar($objMdPetIndisponibilidadeDTO);
 
         $msg ="Não é permitido ".$acao ." esta Unidade, pois ela é utilizada pelo Módulo de Peticionamento e Intimação ";
-        $msg.="Eletrônicos. Verifique os Documentos vinculados a esta Unidade no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI.\n\n Referente ao periodo:\n\n";
+        $msg.="Eletrônicos. Verifique os Documentos vinculados a esta Unidade no menu Administração > Peticionamento Eletrônico > Indisponibilidades do SEI.\n\n Referente ao período:\n\n";
         foreach ($objMdPetIndisponibilidade as $obj){
             $dtInicio = str_replace(' ', ' - ',substr($obj->getDthDataInicio(), 0, -3));
             $dtFim= str_replace(' ', ' - ',substr($obj->getDthDataFim(), 0, -3));
@@ -465,7 +465,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         foreach ($objMdPetIntRelDestDTO as $obj) {
             $numeroDoc='';
             if($obj->getStrNumero()>0){
-                $numeroDoc = 'n°'.$obj->getStrNumero();
+                $numeroDoc = 'nº'.$obj->getStrNumero();
             }
 
             $msg .= "     - Intimação do Documento Principal ". $obj->getStrNomeSerie() ." ".$numeroDoc . " ( SEI nº" . $obj->getStrProtocoloFormatadoDocumento() . " )\n";
@@ -763,7 +763,7 @@ class MdPetRegrasGeraisRN extends InfraRN
         $arrayTiposDocumento[] = $objInfraParametro->getValor('MODULO_PETICIONAMENTO_ID_SERIE_VINC_SUSPENSAO');
 
         if (array_intersect($arrIds, array_map('intval', $arrayTiposDocumento))) {
-	        return 'Não é possível ' . $acao . ' este Tipo de Documento, pois o seu ID ainda está associado a parâmetros afetos a geração de documentos do módulo SEI Peticionamento, Intimação e Procuração.';
+	        return 'Não é possível ' . $acao . ' este Tipo de Documento, pois o seu ID ainda está associado a parâmetros afetos à geração de documentos do módulo SEI Peticionamento, Intimação e Procuração.';
         }
     }
 
@@ -1052,7 +1052,7 @@ class MdPetRegrasGeraisRN extends InfraRN
                 return $objDTORetorno;
             }
         }catch(Exception $e){
-            throw new InfraException('Não foi consultar a Unidade.',$e);
+            throw new InfraException('Não foi possível consultar a Unidade.',$e);
         }
     }
 

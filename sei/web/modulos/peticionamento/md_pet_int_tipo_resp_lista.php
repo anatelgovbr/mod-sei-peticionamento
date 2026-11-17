@@ -210,8 +210,8 @@ try {
             $strSumarioTabela = 'Tabela de .';
             $strCaptionTabela = 'Tipos de Respostas';
         } else {
-            $strSumarioTabela = 'Tabela de  Inativs.';
-            $strCaptionTabela = ' Inativs';
+            $strSumarioTabela = 'Tabela de  Inativos.';
+            $strCaptionTabela = ' Inativos';
         }
 
         $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";

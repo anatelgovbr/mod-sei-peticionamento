@@ -21,19 +21,19 @@ class MdPetIntRelRespDocRN extends InfraRN {
 
   private function validarNumIdMdPetIntRespDocumento(MdPetIntRelRespDocDTO $objMdPetIntRelRespDocDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelRespDocDTO->getNumIdMdPetIntRespDocumento())){
-      $objInfraException->adicionarValidacao(' não informad.');
+      $objInfraException->adicionarValidacao(' não informado.');
     }
   }
 
   private function validarNumIdMdPetIntDestResposta(MdPetIntRelRespDocDTO $objMdPetIntRelRespDocDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelRespDocDTO->getNumIdMdPetIntDestResposta())){
-      $objInfraException->adicionarValidacao(' não informad.');
+      $objInfraException->adicionarValidacao(' não informado.');
     }
   }
 
   private function validarDblIdDocumento(MdPetIntRelRespDocDTO $objMdPetIntRelRespDocDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntRelRespDocDTO->getDblIdDocumento())){
-      $objInfraException->adicionarValidacao(' não informad.');
+      $objInfraException->adicionarValidacao(' não informado.');
     }
   }
 

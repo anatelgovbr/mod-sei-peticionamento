@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -95,6 +95,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 <script type="text/javascript">
 
     var objAjaxContato = null;
+    var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
     var objPrincipalUpload = null;
     var objTabelaDocPrincipal = null;
 
@@ -115,7 +116,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     var arrDocForcaNivelAcesso = JSON.parse('<?= json_encode($nivelAcessoDoc['documentos']) ?>');
     var nivel = '<?= $nivelAcessoDoc['nivel'] ?>';
     var hipotese = '<?= $nivelAcessoDoc['hipotese'] ?>';
-    <? endif ?>
+    <?php endif ?>
 
     var div = $('#divArquivo');
 
@@ -278,6 +279,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 return;
             }
 
+            //validar caracteres do campo Complemento (RT-PET-024)
+            else if (!mdPetValidarCaracteresComplemento(document.getElementById('complemento' + complemento))) {
+                isValido = false;
+                return;
+            }
+
             //validar campo nivel de acesso
             else if (strNivelAcesso == "") {
                 alert('Informe o Nível de Acesso.');
@@ -430,6 +437,12 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 alert('Informe o Complemento do Tipo de Documento. Para mais informações, clique no ícone de Ajuda ao lado do nome do campo.');
                 isValido = false;
                 document.getElementById('complemento' + complemento).focus();
+                return;
+            }
+
+            //validar caracteres do campo Complemento (RT-PET-024)
+            else if (!mdPetValidarCaracteresComplemento(document.getElementById('complemento' + complemento))) {
+                isValido = false;
                 return;
             }
 
@@ -889,7 +902,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         //Validar combos
         if (document.getElementById('selOrgao') && document.getElementById('selOrgao').value === '') {
-            alert("Informe o Orgão.");
+            alert("Informe o Órgão.");
             document.getElementById("selOrgao").focus();
             return false;
         }
@@ -1184,7 +1197,10 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     function abrirPeticionar() {
 
-        if (validarFormulario()) {
+        if (validarFormulario() && mdPetValidarXssAntesDaAcao(
+            document.getElementById('txtEspecificacao'),
+            '<?= PaginaSEIExterna::getInstance()->formatarParametrosJavaScript(PeticionamentoIntegracao::MSG_XSS_ESPECIFICACAO, false) ?>'
+        )) {
             parent.infraAbrirJanelaModal('<?=PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&acao=peticionamento_usuario_externo_concluir&tipo_selecao=2'))?>',
                 800,
                 520,
@@ -1254,7 +1270,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 traco = txtcpf.split("-");
 
                 //cpf tem que ser valido , ter 2 pontos e um traço (ou seja, estar na mascara)
-                if (!infraValidarCpf(infraTrim(txtcpf)) || (ponto.length - 1) != 2 || (traco.length - 1) != 1) {
+                if (!infraValidarCpf(infraTrim(txtcpf), false) || (ponto.length - 1) != 2 || (traco.length - 1) != 1) {
 
                     alert('CPF Inválido.');
                     document.getElementById('txtCPF').focus();
@@ -1269,7 +1285,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 traco = txtcnpj.indexOf("-");
                 barra = txtcnpj.indexOf("/");
 
-                if (!infraValidarCnpj(infraTrim(txtcnpj)) || ponto.length != 3 || traco != 15 || barra != 10) {
+                if (!infraValidarCnpj(infraTrim(txtcnpj), false) || ponto.length != 3 || traco != 15 || barra != 10) {
 
                     alert('CNPJ Inválido.');
                     document.getElementById('txtCNPJ').focus();
@@ -1510,7 +1526,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         }
 
-        <? if( $objTipoProcDTO->getStrSinIIIndicacaoDiretaContato() == 'S') { ?>
+        <?php if( $objTipoProcDTO->getStrSinIIIndicacaoDiretaContato() == 'S') { ?>
         objLupaInteressados = new infraLupaSelect('selInteressados', 'hdnInteressados', '<?=$strLinkInteressadosSelecao?>');
 
         objAutoCompletarInteressado = new infraAjaxAutoCompletar('hdnIdInteressado', 'txtInteressado', '<?=$strLinkAjaxInteressado?>');
@@ -1547,22 +1563,22 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 document.getElementById('txtInteressado').focus();
             }
         };
-        <? } ?>
+        <?php } ?>
 
-        <? if( $externo == "S" ) { ?>
+        <?php if( $externo == "S" ) { ?>
         //tem doc principal externo
         carregarCamposDocPrincipalUpload();
-        <? } ?>
+        <?php } ?>
 
-        <? if( $temDocEssencial ) { ?>
+        <?php if( $temDocEssencial ) { ?>
         //tem doc essencial
         carregarCamposDocEssencialUpload();
-        <? } ?>
+        <?php } ?>
 
-        <? if( $temDocComplementar ) { ?>
+        <?php if( $temDocComplementar ) { ?>
         //tem doc complementar
         carregarCamposDocComplementarUpload();
-        <? } ?>
+        <?php } ?>
 
         infraEfeitoTabelas();
         document.getElementById('txtEspecificacao').focus();
@@ -1621,14 +1637,33 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         }
     }
 
+    // Limite do módulo para a área do documento, conferido antes da transferência e de novo no retorno do upload
+    // (ADR-PET-010). O tamanho chega em bytes.
+    function validarTamanhoPermitidoDoDocumento(numTamanho, strIdCampoDoLimite, strArea) {
+        var tamanhoMb = numTamanho / 1024 / 1024;
+        var tamanhoPermitidoMb = parseInt(document.getElementById(strIdCampoDoLimite).value.toLowerCase().replace(' mb', ''));
+        if (tamanhoMb > tamanhoPermitidoMb) {
+            alert('Arquivo ' + strArea + ' com tamanho maior que o permitido. \nTamanho do arquivo: ' + tamanhoMb.toFixed(2) + 'Mb\nTamanho permitido: ' + tamanhoPermitidoMb + 'Mb');
+            return false;
+        }
+
+        return true;
+    }
+
     //campo de upload de documentos principais
     function carregarCamposDocPrincipalUpload() {
 
         try {
 
             objPrincipalUpload = new infraUpload('frmDocumentoPrincipal', '<?=$strLinkUploadDocPrincipal?>');
+            mdPetVerificarTamanhoNoUpload(objPrincipalUpload, objMdPetLimitesDoSei, function (numTamanho) {
+                return validarTamanhoPermitidoDoDocumento(numTamanho, 'hdnTamArquivoPrincipal', 'Principal');
+            });
 
             objPrincipalUpload.finalizou = function (arr) {
+                if (!mdPetValidarRetornoUpload(arr)) {
+                    return false;
+                }
 
                 var nomeUpload = arr['nome_upload'];
                 var nome = arr['nome'];
@@ -1638,10 +1673,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 var tamanhoFormatado = infraFormatarTamanhoBytes(arr['tamanho']);
 
                 //Tamanho
-                var tamanhoMb = tamanho / 1024 / 1024;
-                var tamanhoPermitidoMb = parseInt(document.getElementById('hdnTamArquivoPrincipal').value.toLowerCase().replace(' mb', ''));
-                if (tamanhoMb > tamanhoPermitidoMb) {
-                    alert('Arquivo Principal com tamanho maior que o permitido. \nTamanho do arquivo: ' + tamanhoMb.toFixed(2) + 'Mb\nTamanho permitido: ' + tamanhoPermitidoMb + 'Mb');
+                if (!validarTamanhoPermitidoDoDocumento(tamanho, 'hdnTamArquivoPrincipal', 'Principal')) {
                     return false;
                 }
 
@@ -1680,7 +1712,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
                 var strHashPrincipal = document.getElementById('hdnDocPrincipal').value;
                 var arrHashPrincipal = strHashPrincipal.split('±');
 
-                <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
+                <?php $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
                 var urlBase = "<?= $linkBase ?>";
 
                 document.getElementById('hdnNomeArquivoDownload').value = arrHashPrincipal[0];
@@ -1775,8 +1807,14 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     function carregarCamposDocEssencialUpload() {
 
         objEssencialUpload = new infraUpload('frmDocumentosEssenciais', '<?=$strLinkUploadDocEssencial?>');
+        mdPetVerificarTamanhoNoUpload(objEssencialUpload, objMdPetLimitesDoSei, function (numTamanho) {
+            return validarTamanhoPermitidoDoDocumento(numTamanho, 'hdnTamArquivoEssencial', 'Essencial');
+        });
 
         objEssencialUpload.finalizou = function (arr) {
+            if (!mdPetValidarRetornoUpload(arr)) {
+                return false;
+            }
 
             var nomeUpload = arr['nome_upload'];
             var nome = arr['nome'];
@@ -1787,10 +1825,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var tamanhoFormatado = infraFormatarTamanhoBytes(arr['tamanho']);
 
             //Tamanho
-            var tamanhoMb = tamanho / 1024 / 1024;
-            var tamanhoPermitidoMb = parseInt(document.getElementById('hdnTamArquivoEssencial').value.toLowerCase().replace(' mb', ''));
-            if (tamanhoMb > tamanhoPermitidoMb) {
-                alert('Arquivo Essencial com tamanho maior que o permitido. \nTamanho do arquivo: ' + tamanhoMb.toFixed(2) + 'Mb\nTamanho permitido: ' + tamanhoPermitidoMb + 'Mb');
+            if (!validarTamanhoPermitidoDoDocumento(tamanho, 'hdnTamArquivoEssencial', 'Essencial')) {
                 return false;
             }
 
@@ -1840,7 +1875,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var strHashEssencial = document.getElementById('hdnDocEssencial').value;
             var arrHashEssencial = strHashEssencial.split('±');
 
-            <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
+            <?php $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
             var urlBase = "<?= $linkBase ?>";
 
             document.getElementById('hdnNomeArquivoDownload').value = arrHashEssencial[0];
@@ -1931,8 +1966,14 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     function carregarCamposDocComplementarUpload() {
 
         objComplementarUpload = new infraUpload('frmDocumentosComplementares', '<?=$strLinkUploadDocComplementar?>');
+        mdPetVerificarTamanhoNoUpload(objComplementarUpload, objMdPetLimitesDoSei, function (numTamanho) {
+            return validarTamanhoPermitidoDoDocumento(numTamanho, 'hdnTamArquivoComplementar', 'Complementar');
+        });
 
         objComplementarUpload.finalizou = function (arr) {
+            if (!mdPetValidarRetornoUpload(arr)) {
+                return false;
+            }
 
             var nomeUpload = arr['nome_upload'];
             var nome = arr['nome'];
@@ -1943,10 +1984,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var tamanhoFormatado = infraFormatarTamanhoBytes(arr['tamanho']);
 
             //Tamanho
-            var tamanhoMb = tamanho / 1024 / 1024;
-            var tamanhoPermitidoMb = parseInt(document.getElementById('hdnTamArquivoComplementar').value.toLowerCase().replace(' mb', ''));
-            if (tamanhoMb > tamanhoPermitidoMb) {
-                alert('Arquivo Complementar com tamanho maior que o permitido. \nTamanho do arquivo: ' + tamanhoMb.toFixed(2) + 'Mb\nTamanho permitido: ' + tamanhoPermitidoMb + 'Mb');
+            if (!validarTamanhoPermitidoDoDocumento(tamanho, 'hdnTamArquivoComplementar', 'Complementar')) {
                 return false;
             }
 
@@ -1995,7 +2033,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             var strHashComplementar = document.getElementById('hdnDocComplementar').value;
             var arrHashComplementar = strHashComplementar.split('±');
 
-            <? $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
+            <?php $linkBase = PaginaSEIExterna::getInstance()->formatarXHTML(SessaoSEIExterna::getInstance()->assinarLink('controlador_externo.php?acao=md_pet_usu_ext_download&id_tipo_procedimento=' . $_GET['id_tipo_procedimento'] . '&id_orgao_acesso_externo=' . $_GET['id_orgao_acesso_externo'])); ?>
             var urlBase = "<?= $linkBase ?>";
 
             document.getElementById('hdnNomeArquivoDownload').value = arrHashComplementar[0];

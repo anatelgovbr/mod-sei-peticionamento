@@ -9,7 +9,7 @@
             document.getElementById('hdnStrTipoVinculo').value == 'U' &&
             document.getElementById('hdnPossuiProcurador').value == 'false'
         ) {
-            alert('Não é possível suspender um Autorepresentado sem procurador. Realize a operação na administração de Usuários Externos.');
+            alert('Não é possível suspender um Autorrepresentado sem procurador. Realize a operação na administração de Usuários Externos.');
             return false;
         }
 
@@ -18,7 +18,7 @@
             return false;
         }
         if (document.getElementById('txtRazaoSocial').value.trim().length == 0) {
-            alert('Razão Social não informado.');
+            alert('Razão Social não informada.');
             return false;
         }
         if (document.getElementById('txtCpf').value.trim().length == 0) {

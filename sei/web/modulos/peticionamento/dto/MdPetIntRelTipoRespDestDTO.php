@@ -29,8 +29,8 @@ class MdPetIntRelTipoRespDestDTO extends InfraDTO {
     $this->configurarFK('IdMdPetIntRelDest', 'md_pet_int_rel_dest mddes', 'mddes.id_md_pet_int_rel_dest');
     $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaSituacaoIntimacao', 'mddes.sta_situacao_intimacao', 'md_pet_int_rel_dest mddes');
 
-    $this->configurarFK('idMdPetIntRelTipoResp', 'md_pet_int_rel_tipo_resp', 'id_md_pet_int_rel_tipo_resp');
-    $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetIntimacao',  'id_md_pet_intimacao', 'md_pet_int_tipo_resp');
+    $this->configurarFK('IdMdPetIntRelTipoResp', 'md_pet_int_rel_tipo_resp mdtpr', 'mdtpr.id_md_pet_int_rel_tipo_resp');
+    $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdPetIntimacao',  'mdtpr.id_md_pet_intimacao', 'md_pet_int_rel_tipo_resp mdtpr');
 
   }
 }

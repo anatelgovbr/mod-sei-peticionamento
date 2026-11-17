@@ -92,7 +92,7 @@ try {
                 $documentoReciboDTO = $documentoRN->consultarRN0005( $documentoReciboDTO );
                 
                 if( $documentoReciboDTO != null ){
-                  $strTitulo = 'Recibo Eletrônico de Protocolo - SEI n° ' . $documentoReciboDTO->getStrProtocoloDocumentoFormatado();
+                  $strTitulo = 'Recibo Eletrônico de Protocolo - SEI nº ' . $documentoReciboDTO->getStrProtocoloDocumentoFormatado();
                 } else {
                 	$strTitulo = 'Recibo Eletrônico de Protocolo';
                 }

@@ -240,6 +240,8 @@ class MdPetIntDestRespostaRN extends InfraRN
 
     protected function salvarRespostaControlado($arrParametros)
     {
+        // ADR-PET-005: antes de gravar e fora do try, para a recusa chegar ao usuário como validação
+        (new MdPetIntercorrenteProcessoRN())->validarXssDocumentos($arrParametros['tbDocumentos']);
 
         try {
 

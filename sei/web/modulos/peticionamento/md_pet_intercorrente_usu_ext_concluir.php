@@ -156,7 +156,7 @@ try {
 		SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
 	}
 
-    PaginaSEIExterna::getInstance()->processarExcecao($e);
+    PaginaSEIExterna::getInstance()->processarExcecao(MdPetExcecaoINT::converter($e));
 }
 
 $hashAnexo = "";

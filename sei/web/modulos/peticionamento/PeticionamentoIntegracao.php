@@ -21,6 +21,26 @@ class PeticionamentoIntegracao extends SeiIntegracao
     public static $INTIMACAO_CUMPRIDA = 2;
     public static $INTIMACAO_NEGADA = 3;
     public static $ICONS_VERSION = 19;
+    public const MSG_XSS_COMPLEMENTO = 'A operação não foi realizada por envolver conteúdo não permitido por restrição de segurança no texto do campo Complemento do Tipo de Documento. Revise o que está inserindo e tente novamente.';
+    public const MSG_XSS_ESPECIFICACAO = 'A operação não foi realizada por envolver conteúdo não permitido por restrição de segurança no texto do campo Especificação. Revise o que está inserindo e tente novamente.';
+    public const MSG_XSS_ARQUIVO = "A operação não foi realizada por envolver conteúdo não permitido por restrição de segurança no arquivo '%s'. Revise o que está inserindo e tente novamente.";
+    public const MSG_XSS_CAMPO = 'A operação não foi realizada por envolver conteúdo não permitido por restrição de segurança no texto do campo %s. Revise o que está inserindo e tente novamente.';
+    public const MSG_CONTEUDO_NAO_PERMITIDO = 'A operação não foi realizada por envolver conteúdo não permitido por restrição de segurança. Revise o que está inserindo e tente novamente.';
+    public const MSG_ARQUIVO_INDISPONIVEL = 'Entre o carregamento dos arquivos e a conclusão passou-se muito tempo e o arquivo carregado não está mais disponível para concluir o Peticionamento. Feche essa janela e repita o procedimento do início.';
+    public const MSG_INTIMACAO_PENDENTE_CUMPRIMENTO = "Existe intimação eletrônica dentro desse processo com pendência de cumprimento.\nClique para acessar o processo.";
+    public const MSG_INTIMACOES_CUMPRIDAS = "Existe intimação eletrônica dentro desse processo e todas já estão cumpridas. Verifique se precisa Responder Intimação.\nClique para acessar o processo.";
+    public const MSG_COMPLEMENTO_CARACTERE_NAO_ACEITO = 'O campo "Complemento do Tipo de Documento" contém caracteres que o SEI não aceita. Tente digitar em vez de copiar e colar.';
+    public const MSG_COMPLEMENTO_TAMANHO = 'Complemento do Tipo de Documento possui tamanho superior a 50 caracteres.';
+    /** Tamanho do Nome na Árvore do documento (documento.nome_arvore), que recebe o complemento. */
+    public const TAMANHO_MAXIMO_COMPLEMENTO = 50;
+
+    /**
+     * ADR-PET-001: PDF que o Smalot\PdfParser não consegue ler, por estar protegido ou fora do padrão, é aceito sem
+     * verificação no upload externo quando true e recusado quando false.
+     *
+     * @var bool
+     */
+    private static $bolAceitarPdfNaoLido = true;
 
     public function __construct()
     {
@@ -34,7 +54,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.9';
+        return '4.6.10';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -868,7 +888,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_usu_ext_upload_anexo':
                 if (isset($_FILES['fileArquivoEssencial'])) {
 	                LimiteSEI::getInstance()->configurarNivel3();
-	                PaginaSEIExterna::getInstance()->processarUpload('fileArquivoEssencial', DIR_SEI_TEMP, true);
+	                echo self::processarUploadExterno('fileArquivoEssencial', true);
                 }
                 die;
 
@@ -876,7 +896,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 if (isset($_FILES['fileArquivoPrincipal'])) {
 	                LimiteSEI::getInstance()->configurarNivel3();
-                    PaginaSEIExterna::getInstance()->processarUpload('fileArquivoPrincipal', DIR_SEI_TEMP, false);
+                    echo self::processarUploadExterno('fileArquivoPrincipal', false, 'complementoPrincipal');
                 }
                 die;
 
@@ -884,7 +904,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 if (isset($_FILES['fileArquivoEssencial'])) {
 	                LimiteSEI::getInstance()->configurarNivel3();
-                    PaginaSEIExterna::getInstance()->processarUpload('fileArquivoEssencial', DIR_SEI_TEMP, false);
+                    echo self::processarUploadExterno('fileArquivoEssencial', false, 'complementoEssencial');
                 }
                 die;
 
@@ -892,7 +912,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
                 if (isset($_FILES['fileArquivoComplementar'])) {
 	                LimiteSEI::getInstance()->configurarNivel3();
-                    PaginaSEIExterna::getInstance()->processarUpload('fileArquivoComplementar', DIR_SEI_TEMP, false);
+                    echo self::processarUploadExterno('fileArquivoComplementar', false, 'complementoComplementar');
                 }
                 die;
 
@@ -957,7 +977,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_usu_ext_upload_arquivo':
                 if (isset($_FILES['fileArquivo'])) {
 	                LimiteSEI::getInstance()->configurarNivel3();
-                    PaginaSEIExterna::getInstance()->processarUpload('fileArquivo', DIR_SEI_TEMP, false);
+                    echo self::processarUploadExterno('fileArquivo', false, 'txtComplementoTipoDocumento');
                 }
                 die;
 
@@ -994,14 +1014,14 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_usu_ext_resposta_upload_anexo':
                 if (isset($_FILES['fileArquivo'])) {
                 	LimiteSEI::getInstance()->configurarNivel3();
-                    PaginaSEIExterna::getInstance()->processarUpload('fileArquivo', DIR_SEI_TEMP, true);
+                    echo self::processarUploadExterno('fileArquivo', true, 'txtComplementoTipoDocumento');
                 }
                 die;
 
             case 'md_pet_vinc_usu_ext_upload_anexo':
                 if (isset($_FILES['fileArquivo'])) {
 	                LimiteSEI::getInstance()->configurarNivel3();
-                    PaginaSEIExterna::getInstance()->processarUpload('fileArquivo', DIR_SEI_TEMP, true);
+                    echo self::processarUploadExterno('fileArquivo', true, 'txtComplementoTipoDocumento');
                 }
                 die;
 
@@ -1964,7 +1984,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 				$numRecibo = $objReciboPetDTO->getStrNumeroProcessoFormatadoDoc();
 			}
 			
-			$msg = $this->getNome() . ': Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI n° ' . $numRecibo . '.';
+			$msg = $this->getNome() . ': Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI nº ' . $numRecibo . '.';
 			$objInfraException = new InfraException();
 			$objInfraException->adicionarValidacao($msg);
 			$objInfraException->lancarValidacoes();
@@ -2035,92 +2055,87 @@ class PeticionamentoIntegracao extends SeiIntegracao
         }
     }
 
-    //Intimação Eletrônica - Monta ícone na página inicial do Usuário Externo
-    public function montarAcaoControleAcessoExterno($arrObjAcessoExternoAPI)
+    /**
+     * Intimação Eletrônica na página inicial do usuário externo: um único ícone por processo com intimação, em tons
+     * vermelhos quando alguma intimação do processo está pendente de cumprimento (RF-PET-044). As intimações de todos os
+     * processos da página vêm de uma única consulta.
+     *
+     * @param AcessoExternoAPI[] $arrObjAcessoExternoAPI acessos externos listados na página
+     * @return array<int, list<string>> HTML do ícone por acesso externo, só dos processos com intimação
+     */
+    public function montarAcaoControleAcessoExterno($arrObjAcessoExternoAPI): array
     {
+        $arrIdProcedimentoAcesso = [];
+        foreach ($arrObjAcessoExternoAPI as $objAcessoExternoAPI) {
+            $arrIdProcedimentoAcesso[$objAcessoExternoAPI->getIdAcessoExterno()] = $objAcessoExternoAPI->getProcedimento()->getIdProcedimento();
+        }
 
-        $arrIcones = array();
+        if ($arrIdProcedimentoAcesso === []) {
+            return [];
+        }
+
         $objUsuarioDTO = new UsuarioDTO();
         $objUsuarioDTO->retNumIdContato();
         $objUsuarioDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-        $objUsuarioRN = new UsuarioRN();
-        $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
+        $objUsuarioDTO = (new UsuarioRN())->consultarRN0489($objUsuarioDTO);
 
-        foreach ($arrObjAcessoExternoAPI as $objAcessoExternoAPI) {
-            $conteudoHtml = '';
-            $idAcessoExt = $objAcessoExternoAPI->getIdAcessoExterno();
+        $objMdPetIntRelDestinatarioDTOPesquisa = new MdPetIntRelDestinatarioDTO();
+        $objMdPetIntRelDestinatarioDTOPesquisa->setNumIdAcessoExterno(array_keys($arrIdProcedimentoAcesso), InfraDTO::$OPER_IN);
+        $objMdPetIntRelDestinatarioDTOPesquisa->setDblIdProcedimento(array_values(array_unique($arrIdProcedimentoAcesso)), InfraDTO::$OPER_IN);
+        $objMdPetIntRelDestinatarioDTOPesquisa->setNumIdContatoParticipante($objUsuarioDTO->getNumIdContato());
+        $objMdPetIntRelDestinatarioDTOPesquisa->setStrSinPrincipalDoc('S');
+        $objMdPetIntRelDestinatarioDTOPesquisa->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
+        $objMdPetIntRelDestinatarioDTOPesquisa->retNumIdAcessoExterno();
+        $objMdPetIntRelDestinatarioDTOPesquisa->retDblIdProcedimento();
+        $objMdPetIntRelDestinatarioDTOPesquisa->retStrStaSituacaoIntimacao();
 
-            $objMdPetIntRelDestRN = new MdPetIntRelDestinatarioRN();
-            $objMdPetIntRelDestDTO = new MdPetIntRelDestinatarioDTO();
-            $objMdPetIntRelDestDTO->setNumIdAcessoExterno($idAcessoExt);
-            $objMdPetIntRelDestDTO->setNumIdContatoParticipante($objUsuarioDTO->getNumIdContato());
-            $objMdPetIntRelDestDTO->retNumIdMdPetIntimacao();
-            $objMdPetIntRelDestDTO->retNumIdMdPetIntRelDestinatario();
-            $objMdPetIntRelDestDTO->retDblIdDocumento();
-            $objMdPetIntRelDestDTO->setStrSinPrincipalDoc('S');
-            $objMdPetIntRelDestDTO->retDblIdProcedimento();
-            $objMdPetIntRelDestDTO->retDblIdProtocolo();
-            $objMdPetIntRelDestDTO->retStrProtocoloFormatadoDocumento();
-            $objMdPetIntRelDestDTO->retDthDataCadastro();
-            $objMdPetIntRelDestDTO->setDblIdProcedimento($objAcessoExternoAPI->getProcedimento()->getIdProcedimento());
-            $objMdPetIntRelDestDTO->setProcedimentoDocTIPOFK(InfraDTO::$TIPO_FK_OBRIGATORIA);
-
-            $arrObjMdPetIntRelDestDTO = $objMdPetIntRelDestRN->listar($objMdPetIntRelDestDTO);
-
-            SessaoSEIExterna::getInstance()->configurarAcessoExterno($objAcessoExternoAPI->getIdAcessoExterno());
-
-            foreach ($arrObjMdPetIntRelDestDTO as $objMdPetIntRelDestDTO) {
-                $strLink = '';
-                if (is_array(explode(' ', $objMdPetIntRelDestDTO->getDthDataCadastro()))) {
-                    $dtIntimacao = explode(' ', $objMdPetIntRelDestDTO->getDthDataCadastro());
-                    $dtIntimacao = $dtIntimacao[0];
-                } else {
-                    $dtIntimacao = $objMdPetIntRelDestDTO->getDthDataCadastro();
-                }
-
-                $numeroDocumento = $objMdPetIntRelDestDTO->getStrProtocoloFormatadoDocumento();
-
-                //Obter informacoes do Documento Principal da Intimacao
-                $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
-                $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-                $objMdPetIntDocumentoDTO->retTodos();
-                $objMdPetIntDocumentoDTO->retDblIdProtocolo();
-                $objMdPetIntDocumentoDTO->retDblIdDocumento();
-                $objMdPetIntDocumentoDTO->retStrNumeroDocumento();
-                $objMdPetIntDocumentoDTO->retNumIdSerie();
-                $objMdPetIntDocumentoDTO->retStrNomeSerie();
-                $objMdPetIntDocumentoDTO->retStrProtocoloFormatadoDocumento();
-
-                $objMdPetIntDocumentoDTO->setNumIdMdPetIntimacao($objMdPetIntRelDestDTO->getNumIdMdPetIntimacao());
-                $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
-                $objMdPetIntDocumentoDTO->setNumMaxRegistrosRetorno(1);
-                $objMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->consultar($objMdPetIntDocumentoDTO);
-
-                //Icone Sinalizador do Processo com Intimacao Eletronica
-                $strMsgTooltipSinalizadorProcesso = "Intimação Eletrônica";
-                $strMsgTooltipTextoSinalizadorProcesso = "Expedida em {$dtIntimacao}\n";
-                $strMsgTooltipTextoSinalizadorProcesso .= "Documento Principal: ";
-                $strMsgTooltipTextoSinalizadorProcesso .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ';
-                if ($objMdPetIntDocumentoDTO->getStrNumeroDocumento()) {
-                    $strMsgTooltipTextoSinalizadorProcesso .= $objMdPetIntDocumentoDTO->getStrNumeroDocumento() . ' ';
-                }
-                $strMsgTooltipTextoSinalizadorProcesso .= "(SEI n° {$numeroDocumento})\n\n";
-
-                $strMsgTooltipTextoSinalizadorProcesso .= 'Clique para acessar o processo e consultar a Intimação.';
-
-                $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $objAcessoExternoAPI->getIdAcessoExterno());
-
-                $strLink = '<a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');"><img src="modulos/peticionamento/imagens/svg/intimacao_controle_de_acessos_externos_destaque.svg?'.Icone::VERSAO.'" class="infraImg" style="width:24px" ';
-                $strLink .= str_replace('\n', '<br/>', PaginaSEI::montarTitleTooltip($strMsgTooltipTextoSinalizadorProcesso, $strMsgTooltipSinalizadorProcesso));
-                $strLink .= '/></a>&nbsp;';
-
-                $conteudoHtml .= ' ' . $strLink;
+        $arrPendenciaAcesso = [];
+        foreach ((new MdPetIntRelDestinatarioRN())->listar($objMdPetIntRelDestinatarioDTOPesquisa) as $objMdPetIntRelDestinatarioDTO) {
+            $numIdAcessoExterno = $objMdPetIntRelDestinatarioDTO->getNumIdAcessoExterno();
+            if (($arrIdProcedimentoAcesso[$numIdAcessoExterno] ?? null) != $objMdPetIntRelDestinatarioDTO->getDblIdProcedimento()) {
+                continue;
             }
 
-            $arrIcones[$objAcessoExternoAPI->getIdAcessoExterno()][] = $conteudoHtml;
+            $arrPendenciaAcesso[$numIdAcessoExterno] = ($arrPendenciaAcesso[$numIdAcessoExterno] ?? false)
+                || self::isIntimacaoPendenteCumprimento($objMdPetIntRelDestinatarioDTO->getStrStaSituacaoIntimacao());
+        }
+
+        $arrIcones = [];
+        foreach ($arrPendenciaAcesso as $numIdAcessoExterno => $bolPendenteCumprimento) {
+            $arrIcones[$numIdAcessoExterno][] = self::montarIconeIntimacaoControleAcessoExterno($numIdAcessoExterno, $bolPendenteCumprimento);
         }
 
         return $arrIcones;
+    }
+
+    /**
+     * Intimação ainda não cumprida: situação Pendente ou sem situação gravada.
+     */
+    private static function isIntimacaoPendenteCumprimento(?string $strStaSituacaoIntimacao): bool
+    {
+        return in_array($strStaSituacaoIntimacao, [null, '', '0', MdPetIntimacaoRN::$INTIMACAO_PENDENTE], true);
+    }
+
+    /**
+     * Ícone da intimação no Controle de Acessos Externos, com o link do processo assinado para o acesso externo, como a
+     * linha do core assina o próprio link. Nos esquemas Preto e Cinza Escuro, o ícone fica sobre fundo branco para manter
+     * o contraste com a linha escura.
+     */
+    private static function montarIconeIntimacaoControleAcessoExterno(int $numIdAcessoExterno, bool $bolPendenteCumprimento): string
+    {
+        SessaoSEIExterna::getInstance()->configurarAcessoExterno($numIdAcessoExterno);
+        $strLinkProcedimento = SessaoSEIExterna::getInstance()->assinarLink('processo_acesso_externo_consulta.php?id_acesso_externo=' . $numIdAcessoExterno);
+        $strImagem = $bolPendenteCumprimento ? 'intimacao_controle_de_acessos_externos_pendente.svg' : 'intimacao_controle_de_acessos_externos_destaque.svg';
+        $strDescricao = $bolPendenteCumprimento ? 'Intimação eletrônica pendente de cumprimento' : 'Intimação eletrônica cumprida';
+        $strTexto = $bolPendenteCumprimento ? self::MSG_INTIMACAO_PENDENTE_CUMPRIMENTO : self::MSG_INTIMACOES_CUMPRIDAS;
+        $strEstilo = 'width:24px';
+        if (in_array(PaginaSEIExterna::getInstance()->getStrEsquemaCores(), [InfraPaginaEsquema3::$ESQUEMA_PRETO, InfraPaginaEsquema3::$ESQUEMA_CINZA_ESCURO], true)) {
+            $strEstilo .= ';background-color:#fff;border-radius:4px;padding:2px';
+        }
+
+        return ' <a href="javascript:void(0);" onclick="window.open(\'' . $strLinkProcedimento . '\');"><img src="modulos/peticionamento/imagens/svg/'
+            . $strImagem . '?' . Icone::VERSAO . '" class="infraImg" style="' . $strEstilo . '" alt="' . $strDescricao . '" '
+            . str_replace('\n', '<br/>', PaginaSEI::montarTitleTooltip($strTexto, 'Intimação Eletrônica')) . '/></a>&nbsp;';
     }
 
     public function montarBotaoProcesso(ProcedimentoAPI $objProcedimentoAPI)
@@ -2143,7 +2158,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
         if ($intQntdIntimacao > 0 && SessaoSEI::getInstance()->verificarPermissao('md_pet_intimacao_eletronica_listar')) {
-            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg?'.Icone::VERSAO.'" class="infraCorBarraSistema" alt="Ver Intimação Eletrônica" title="Ver Intimação Eletrônica" widtt="30"/></a>';
+            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg?'.Icone::VERSAO.'" class="infraCorBarraSistema" alt="Ver Intimação Eletrônica" title="Ver Intimação Eletrônica" width="30"/></a>';
         }
 
         if (!SessaoSEI::getInstance()->verificarPermissao('md_pet_adm_vinc_consultar') && $objProcedimentoAPI->getCodigoAcesso() > 0)
@@ -4543,23 +4558,513 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     }
 
-    public static function validarXssFormulario($arrPost, $arrayCampos, $objInfraException)
+    /**
+     * @param array<string, mixed> $arrPost
+     * @param array<string, string> $arrayCampos
+     */
+    public static function validarXssFormulario(array $arrPost, array $arrayCampos, InfraException $objInfraException): bool
     {
-        //Validação Xss
-        $retorno = false;
+        $bolRecusado = false;
         foreach ($arrPost as $chave => $elemento) {
-            try {
-                SeiINT::validarXss($elemento);
-            } catch (Exception $e) {
-                $retorno = true;
-                if (strpos($e->__toString(), SeiINT::$MSG_ERRO_XSS) !== false) {
-                    $objInfraException->adicionarValidacao(self::getNome() . ': O texto do campo ' . $arrayCampos[$chave] . ' possui conteúdo não permitido.');
-                } else {
-                    throw $e;
+            $strRotulo = $arrayCampos[$chave] ?? null;
+
+            if (is_array($elemento)) {
+                $arrRotulos = $strRotulo === null ? [] : array_fill_keys(array_keys($elemento), $strRotulo);
+                if (self::validarXssFormulario($elemento, $arrRotulos, $objInfraException)) {
+                    $bolRecusado = true;
                 }
+                continue;
+            }
+
+            if (!is_string($elemento)) {
+                throw new InfraException('Valor de formulário inválido para validação XSS.');
+            }
+            if (!self::isConteudoXss($elemento)) {
+                continue;
+            }
+
+            $bolRecusado = true;
+            $objInfraException->adicionarValidacao($strRotulo === null
+                ? self::MSG_CONTEUDO_NAO_PERMITIDO
+                : sprintf(self::MSG_XSS_CAMPO, PaginaSEI::tratarHTML($strRotulo)));
+        }
+        return $bolRecusado;
+    }
+
+    /** Mantém o retorno do infraUpload seguro quando o nome contém HTML ou o separador do protocolo. */
+    private static function mensagemXssArquivo(string $strNome): string
+    {
+        if ($strNome === '' || preg_match('/[#<&\\x00-\\x1F\\x7F]/', $strNome)) {
+            return self::MSG_CONTEUDO_NAO_PERMITIDO;
+        }
+
+        return sprintf(self::MSG_XSS_ARQUIVO, $strNome);
+    }
+
+    /** Consulta o filtro do core para entrada recebida em UTF-8 pelo Ajax. */
+    public static function consultarXssTextoAjax(mixed $mixTexto): string
+    {
+        if (!is_string($mixTexto) || !mb_check_encoding($mixTexto, 'UTF-8')) {
+            throw new InfraException('Texto de validação XSS inválido.');
+        }
+
+        $strTexto = mb_encode_numericentity($mixTexto, [0x100, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8');
+        $strTexto = mb_convert_encoding($strTexto, 'ISO-8859-1', 'UTF-8');
+
+        return self::isConteudoXss($strTexto) ? 'RECUSADO' : 'OK';
+    }
+
+    /** Consulta em lote os campos de texto enviados pelo Ajax. */
+    public static function consultarXssTextosAjax(mixed $mixTextos): string
+    {
+        if (!is_array($mixTextos) || !array_is_list($mixTextos) || count($mixTextos) === 0 || count($mixTextos) > 32) {
+            throw new InfraException('Lista de textos para validação XSS inválida.');
+        }
+
+        foreach ($mixTextos as $mixTexto) {
+            if (self::consultarXssTextoAjax($mixTexto) === 'RECUSADO') {
+                return 'RECUSADO';
             }
         }
-        return $retorno;
+
+        return 'OK';
+    }
+
+    /** Confere a especificação antes da assinatura e antes de abrir o processo. */
+    public static function validarXssEspecificacao(?string $strValor, InfraException $objInfraException): void
+    {
+        if ($strValor === null || $strValor === '' || !self::isConteudoXss($strValor)) {
+            return;
+        }
+
+        $objInfraException->adicionarValidacao(self::MSG_XSS_ESPECIFICACAO);
+    }
+
+    /**
+     * Confere o complemento antes do upload e novamente antes da gravação: filtro XSS do core, caractere que o SEI não
+     * aceita e tamanho do Nome na Árvore do documento.
+     */
+    public static function validarXssComplemento(?string $strValor, InfraException $objInfraException): bool
+    {
+        $strRecusaComplemento = self::lerRecusaComplemento($strValor);
+        if ($strRecusaComplemento === null) {
+            return false;
+        }
+
+        $objInfraException->adicionarValidacao($strRecusaComplemento);
+        return true;
+    }
+
+    /**
+     * O navegador envia o caractere que não existe na codificação da página como referência numérica (&#NNN;). A
+     * referência ocupa de 6 a 9 posições do Nome na Árvore e aparece como está na árvore do processo.
+     *
+     * @param string|null $strComplemento
+     * @return string|null mensagem da recusa, ou null quando o complemento é aceito
+     */
+    private static function lerRecusaComplemento(?string $strComplemento): ?string
+    {
+        if ($strComplemento === null || $strComplemento === '') {
+            return null;
+        }
+
+        if (self::isConteudoXss($strComplemento)) {
+            return self::MSG_XSS_COMPLEMENTO;
+        }
+
+        preg_match_all('/&#(\d+);/', $strComplemento, $arrReferenciasNumericas);
+        foreach ($arrReferenciasNumericas[1] as $strCodigoCaractere) {
+            if ((int) $strCodigoCaractere > 255) {
+                return self::MSG_COMPLEMENTO_CARACTERE_NAO_ACEITO;
+            }
+        }
+
+        if (strlen(trim($strComplemento)) > self::TAMANHO_MAXIMO_COMPLEMENTO) {
+            return self::MSG_COMPLEMENTO_TAMANHO;
+        }
+
+        return null;
+    }
+
+    /** @return string|null retorno de erro do infraUpload ou null quando o complemento é permitido */
+    public static function validarXssComplementoUpload(string $strCampo): ?string
+    {
+        $strValor = PaginaSEI::POST($strCampo);
+        if (!is_string($strValor)) {
+            throw new InfraException('Complemento do tipo de documento não informado ou inválido.');
+        }
+
+        $strRecusaComplemento = self::lerRecusaComplemento($strValor);
+
+        return $strRecusaComplemento === null ? null : 'ERRO#' . $strRecusaComplemento;
+    }
+
+    /** Recusa conteúdo de texto não permitido com a mensagem genérica do módulo. */
+    public static function validarXssTextoGenerico(string $strTexto): void
+    {
+        if (!self::isConteudoXss($strTexto)) {
+            return;
+        }
+
+        (new InfraException())->lancarValidacao(self::MSG_CONTEUDO_NAO_PERMITIDO);
+    }
+
+    /** Recusa o motivo da revogação ou da renúncia antes de gerar o documento (ADR-PET-005). */
+    public static function validarXssMotivoProcuracao(string $strMotivo): void
+    {
+        self::validarXssTextoGenerico($strMotivo);
+    }
+
+    /**
+     * Confere o texto salvo no editor do Documento Principal do Peticionamento Externo, antes da conclusão.
+     *
+     * @param string $strConteudo
+     * @return void
+     * @throws InfraException validação para o usuário quando o filtro XSS do core acusa o conteúdo
+     */
+    public static function validarXssEditor(string $strConteudo): void
+    {
+        if (self::isConteudoXss($strConteudo)) {
+            (new InfraException())->lancarValidacao(self::MSG_CONTEUDO_NAO_PERMITIDO);
+        }
+    }
+
+    /**
+     * Confere um valor informado pelo usuário com o filtro XSS do core e registra a recusa como validação do campo, como
+     * os métodos validarStr* das RNs do core (ADR-PET-005). Valor nulo ou vazio não é conferido.
+     *
+     * @param string|null $strValor
+     * @param string $strRotulo nome do campo na mensagem
+     * @param InfraException $objInfraException
+     * @return void
+     */
+    public static function validarXssCampo(?string $strValor, string $strRotulo, InfraException $objInfraException): void
+    {
+        if ($strValor === null || $strValor === '') {
+            return;
+        }
+
+        if (self::isConteudoXss($strValor)) {
+            $objInfraException->adicionarValidacao(sprintf(self::MSG_XSS_CAMPO, $strRotulo));
+        }
+    }
+
+    /**
+     * Recebe o arquivo pelo upload do core e confere o conteúdo antes da conclusão do Peticionamento Externo.
+     *
+     * @param string $strCampoArquivo
+     * @param bool $bolArquivoTemporarioIdentificado
+     * @param string|null $strCampoComplemento campo de texto enviado junto ao arquivo
+     * @return string retorno do infraUpload: "nome_upload#nome#tipo#tamanho#data#" ou "ERRO#mensagem"
+     */
+    public static function processarUploadExterno(string $strCampoArquivo, bool $bolArquivoTemporarioIdentificado, ?string $strCampoComplemento = null): string
+    {
+        if ($strCampoComplemento !== null) {
+            $strErro = self::validarXssComplementoUpload($strCampoComplemento);
+            if ($strErro !== null) {
+                return $strErro;
+            }
+        }
+
+        ob_start();
+        PaginaSEIExterna::getInstance()->processarUpload($strCampoArquivo, DIR_SEI_TEMP, $bolArquivoTemporarioIdentificado);
+
+        return self::validarTamanhoUpload(self::validarXssUpload((string) ob_get_clean(), DIR_SEI_TEMP), DIR_SEI_TEMP);
+    }
+
+    /**
+     * O nome original do arquivo passa pelo filtro XSS do core (ADR-PET-005). Arquivo identificado como HTML passa pelo
+     * filtro, como na conclusão (AnexoRN::validarConteudo), e o PDF passa pela verificação da ADR-PET-001. O arquivo
+     * recusado é apagado da área temporária e o retorno passa a ser de erro.
+     *
+     * @param string $strRetornoUpload retorno do InfraPagina::processarUpload
+     * @param string $strDiretorio diretório em que o upload gravou o arquivo
+     * @return string
+     */
+    public static function validarXssUpload(string $strRetornoUpload, string $strDiretorio): string
+    {
+        if (strpos($strRetornoUpload, 'ERRO#') === 0) {
+            return $strRetornoUpload;
+        }
+
+        [$strArquivo, $strNome] = self::lerArquivoDoRetornoUpload($strRetornoUpload, $strDiretorio);
+
+        if (self::isConteudoXss($strNome)) {
+            unlink($strArquivo);
+
+            return 'ERRO#' . self::MSG_CONTEUDO_NAO_PERMITIDO;
+        }
+
+        if (!self::isArquivoNaoPermitido($strArquivo)) {
+            return $strRetornoUpload;
+        }
+
+        unlink($strArquivo);
+
+        return 'ERRO#' . self::mensagemXssArquivo($strNome);
+    }
+
+    /**
+     * ADR-PET-002: antes da primeira etapa da conclusão, confere o texto do editor do Documento Principal e os arquivos
+     * temporários com as regras do salvar no editor e do upload, para recusar sem abrir processo. Arquivo inexistente
+     * ou fora do diretório fica para as validações do core.
+     *
+     * @param string|null $strConteudoEditor texto do editor do Documento Principal, quando houver
+     * @param array<string, string> $arrArquivos nome do arquivo temporário => nome exibido ao usuário
+     * @param string $strDiretorio diretório dos arquivos temporários
+     * @return void
+     * @throws InfraException validação para o usuário quando o conteúdo não é permitido
+     */
+    public static function validarXssConclusao(?string $strConteudoEditor, array $arrArquivos, string $strDiretorio): void
+    {
+        $objInfraException = new InfraException();
+
+        if ($strConteudoEditor !== null && self::isConteudoXss($strConteudoEditor)) {
+            $objInfraException->adicionarValidacao(self::MSG_CONTEUDO_NAO_PERMITIDO);
+        }
+
+        foreach ($arrArquivos as $strNomeTemporario => $strNome) {
+            $strArquivo = $strDiretorio . '/' . $strNomeTemporario;
+
+            if (realpath(dirname($strArquivo)) !== realpath($strDiretorio) || !is_file($strArquivo)) {
+                continue;
+            }
+
+            if (self::isArquivoNaoPermitido($strArquivo)) {
+                $objInfraException->adicionarValidacao(self::mensagemXssArquivo($strNome));
+            }
+        }
+
+        $objInfraException->lancarValidacoes();
+    }
+
+    /**
+     * RT-PET-026: antes da primeira etapa da conclusão, confere se cada arquivo carregado ainda está na área temporária. A
+     * limpeza da área temporária pode apagar o arquivo entre o carregamento e a conclusão; sem a conferência, a leitura do
+     * arquivo falhava depois de gravar, e a conclusão era desfeita.
+     *
+     * @param array<string, string> $arrArquivos nome do arquivo temporário => nome exibido ao usuário
+     * @param string $strDiretorio diretório dos arquivos temporários
+     * @return void
+     * @throws InfraException validação para o usuário quando algum arquivo não está mais disponível
+     */
+    public static function validarArquivosDisponiveisConclusao(array $arrArquivos, string $strDiretorio): void
+    {
+        foreach (array_keys($arrArquivos) as $strNomeTemporario) {
+            $strCaminhoArquivo = $strDiretorio . '/' . $strNomeTemporario;
+            clearstatcache(true, $strCaminhoArquivo);
+
+            if ($strNomeTemporario === '' || realpath(dirname($strCaminhoArquivo)) !== realpath($strDiretorio) || !is_file($strCaminhoArquivo)) {
+                (new InfraException())->lancarValidacao(self::MSG_ARQUIVO_INDISPONIVEL);
+            }
+        }
+    }
+
+    /**
+     * ADR-PET-010: recusa o arquivo enviado acima do limite do SEI para a extensão dele, antes de entrar na grade, com o
+     * tamanho real. O arquivo recusado é apagado da área temporária, e o retorno passa a ser de erro.
+     *
+     * @param string $strRetornoUpload retorno do InfraPagina::processarUpload, já conferido pelo filtro XSS
+     * @param string $strDiretorio diretório em que o upload gravou o arquivo
+     * @return string
+     */
+    public static function validarTamanhoUpload(string $strRetornoUpload, string $strDiretorio): string
+    {
+        if (strpos($strRetornoUpload, 'ERRO#') === 0) {
+            return $strRetornoUpload;
+        }
+
+        [$strArquivo, $strNome] = self::lerArquivoDoRetornoUpload($strRetornoUpload, $strDiretorio);
+        $arrRecusas = (new MdPetTamanhoArquivoRN())->conferirTamanho([['nome' => $strNome, 'tamanho' => (int) filesize($strArquivo)]]);
+
+        if ($arrRecusas === []) {
+            return $strRetornoUpload;
+        }
+
+        unlink($strArquivo);
+
+        return 'ERRO#' . $arrRecusas[0];
+    }
+
+    /**
+     * ADR-PET-010: antes da primeira etapa da conclusão, confere o tamanho dos arquivos temporários com o limite do SEI,
+     * junto da verificação XSS. Arquivo inexistente ou fora do diretório fica para as validações do core.
+     *
+     * @param array<string, string> $arrArquivos nome do arquivo temporário => nome exibido ao usuário
+     * @param string $strDiretorio diretório dos arquivos temporários
+     * @return void
+     * @throws InfraException validação para o usuário, uma por arquivo recusado
+     */
+    public static function validarTamanhoConclusao(array $arrArquivos, string $strDiretorio): void
+    {
+        $arrArquivosMedidos = [];
+
+        foreach ($arrArquivos as $strNomeTemporario => $strNome) {
+            $strArquivo = $strDiretorio . '/' . $strNomeTemporario;
+
+            if (realpath(dirname($strArquivo)) !== realpath($strDiretorio) || !is_file($strArquivo)) {
+                continue;
+            }
+
+            $arrArquivosMedidos[] = ['nome' => (string) $strNome, 'tamanho' => (int) filesize($strArquivo)];
+        }
+
+        if ($arrArquivosMedidos === []) {
+            return;
+        }
+
+        $objInfraException = new InfraException();
+        foreach ((new MdPetTamanhoArquivoRN())->conferirTamanho($arrArquivosMedidos) as $strRecusa) {
+            $objInfraException->adicionarValidacao($strRecusa);
+        }
+
+        $objInfraException->lancarValidacoes();
+    }
+
+    /**
+     * ADR-PET-010: limites do SEI e textos da recusa por tamanho para o JavaScript da tela, que confere o arquivo antes da
+     * transferência sem requisição ao servidor. Sai em ASCII, com os acentos em \u, e com marcação, aspas e "&" escapados, para
+     * entrar no script da página.
+     *
+     * @return string JSON com recusa, geral, extensoes e configuracoesInvalidas
+     */
+    public static function montarLimitesDeTamanhoParaTela(): string
+    {
+        return json_encode(self::converterParaUtf8((new MdPetTamanhoArquivoRN())->obterLimitesParaTela()), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * Textos e chaves de Latin-1 para UTF-8, como o json_encode exige.
+     *
+     * @param mixed $mixValor
+     * @return mixed
+     */
+    private static function converterParaUtf8(mixed $mixValor): mixed
+    {
+        if (is_string($mixValor)) {
+            return mb_convert_encoding($mixValor, 'UTF-8', 'ISO-8859-1');
+        }
+
+        if (!is_array($mixValor)) {
+            return $mixValor;
+        }
+
+        $arrConvertido = [];
+        foreach ($mixValor as $mixChave => $mixItem) {
+            $arrConvertido[self::converterParaUtf8($mixChave)] = self::converterParaUtf8($mixItem);
+        }
+
+        return $arrConvertido;
+    }
+
+    /**
+     * Caminho do arquivo temporário e nome original, lidos do retorno do upload. O nome pode ter "#", o separador dos campos.
+     *
+     * @param string $strRetornoUpload retorno do InfraPagina::processarUpload, sem erro
+     * @param string $strDiretorio diretório em que o upload gravou o arquivo
+     * @return array{string, string}
+     */
+    private static function lerArquivoDoRetornoUpload(string $strRetornoUpload, string $strDiretorio): array
+    {
+        $arrRetornoUpload = explode('#', $strRetornoUpload);
+        $strNome = count($arrRetornoUpload) > 6
+            ? implode('#', array_slice($arrRetornoUpload, 1, -4))
+            : ($arrRetornoUpload[1] ?? '');
+
+        return [$strDiretorio . '/' . $arrRetornoUpload[0], $strNome];
+    }
+
+    /**
+     * @param string $strArquivo
+     * @return bool
+     */
+    private static function isArquivoNaoPermitido(string $strArquivo): bool
+    {
+        $strMime = (string) mime_content_type($strArquivo);
+
+        if (strpos($strMime, 'text/html') !== false) {
+            return self::isConteudoXss((string) file_get_contents($strArquivo));
+        }
+
+        if ($strMime === 'application/pdf') {
+            return self::isPdfNaoPermitido($strArquivo);
+        }
+
+        return false;
+    }
+
+    /**
+     * ADR-PET-001: recusa o PDF com JavaScript ou com ação de abrir programa, enviar ou importar dados, ou cujo texto o
+     * filtro XSS do core acusa. O nível N do bloco XSS desliga a verificação, e o PDF que o parser não lê segue a flag
+     * $bolAceitarPdfNaoLido.
+     *
+     * @param string $strArquivo
+     * @return bool
+     */
+    private static function isPdfNaoPermitido(string $strArquivo): bool
+    {
+        if (ConfiguracaoSEI::getInstance()->getValor('XSS', 'NivelVerificacao', false, 'A') === 'N') {
+            return false;
+        }
+
+        try {
+            $objDocumento = (new \Smalot\PdfParser\Parser())->parseFile($strArquivo);
+
+            foreach ($objDocumento->getObjects() as $objPdf) {
+                if (self::contemAcaoAtivaPdf($objPdf->getDetails())) {
+                    return true;
+                }
+            }
+
+            $strTexto = $objDocumento->getText();
+        } catch (Throwable $e) {
+            return !self::$bolAceitarPdfNaoLido;
+        }
+
+        return self::isConteudoXss($strTexto);
+    }
+
+    /**
+     * Procura chave JS ou ação S de JavaScript, Launch, SubmitForm ou ImportData no dicionário do objeto e nos
+     * dicionários e listas embutidos nele. O objeto referenciado é verificado quando chega a vez dele.
+     *
+     * @param array<mixed> $arrDetalhes
+     * @return bool
+     */
+    private static function contemAcaoAtivaPdf(array $arrDetalhes): bool
+    {
+        if (array_key_exists('JS', $arrDetalhes) || in_array($arrDetalhes['S'] ?? null, ['JavaScript', 'Launch', 'SubmitForm', 'ImportData'], true)) {
+            return true;
+        }
+
+        foreach ($arrDetalhes as $valor) {
+            if (is_array($valor) && self::contemAcaoAtivaPdf($valor)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Passa o conteúdo pelo SeiINT::validarXss, com o nível e as listas da ConfiguracaoSEI. Outro erro é repassado.
+     *
+     * @param string $strConteudo
+     * @return bool
+     */
+    private static function isConteudoXss(string $strConteudo): bool
+    {
+        try {
+            SeiINT::validarXss($strConteudo);
+        } catch (Exception $e) {
+            if (strpos($e->__toString(), SeiINT::$MSG_ERRO_XSS) === false) {
+                throw $e;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 		
 		public static function verificaSeModIAVersaoMinima()

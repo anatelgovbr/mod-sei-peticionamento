@@ -23,4 +23,46 @@ class MdPetVincDocumentoINT extends InfraINT {
 
     return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetVincDocumentoDTO, '', 'IdMdPetVincDocumento');
   }
+
+  /**
+   * Devolve o documento de vinculação ou de procuração de cada representante, com null para o representante sem documento.
+   *
+   * @param int[] $arrIdRepresentante
+   * @return array<int, string|null> id do representante => id do documento ou null
+   */
+  public static function listarIdDocumentoPorRepresentante(array $arrIdRepresentante): array {
+    $objMdPetVincDocumentoDTO = new MdPetVincDocumentoDTO();
+    $objMdPetVincDocumentoDTO->setNumIdMdPetVinculoRepresent($arrIdRepresentante, InfraDTO::$OPER_IN);
+    $objMdPetVincDocumentoDTO->retDblIdDocumento();
+    $objMdPetVincDocumentoDTO->retStrProtocoloFormatadoProtocolo();
+    $objMdPetVincDocumentoDTO->retNumIdMdPetVinculoRepresent();
+    $objMdPetVincDocumentoDTO->adicionarCriterio(
+        [
+            'TipoDocumento',
+            'TipoDocumento',
+            'TipoDocumento',
+        ],
+        [
+            InfraDTO::$OPER_IGUAL,
+            InfraDTO::$OPER_IGUAL,
+            InfraDTO::$OPER_IGUAL,
+        ],
+        [
+            MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO_ESPECIAL,
+            MdPetVincDocumentoRN::$TP_PROTOCOLO_PRINCIPAL,
+            MdPetVincDocumentoRN::$TP_PROTOCOLO_PROCURACAO,
+        ],
+        [
+            InfraDTO::$OPER_LOGICO_OR,
+            InfraDTO::$OPER_LOGICO_OR,
+        ]
+    );
+
+    $arrIdDocumento = array_fill_keys($arrIdRepresentante, null);
+    foreach ((new MdPetVincDocumentoRN())->listar($objMdPetVincDocumentoDTO) as $objMdPetVincDocumentoItemDTO) {
+      $arrIdDocumento[$objMdPetVincDocumentoItemDTO->getNumIdMdPetVinculoRepresent()] = $objMdPetVincDocumentoItemDTO->getDblIdDocumento();
+    }
+
+    return $arrIdDocumento;
+  }
 }

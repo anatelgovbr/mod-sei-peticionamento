@@ -10,7 +10,7 @@
             <td style="font-weight: normal;"> @Cnpj </td>
         </tr>
         <tr>
-            <td style="padding-left: 15px;">Responsavel Legal:</td>
+            <td style="padding-left: 15px;">Responsável Legal:</td>
             <td style="font-weight: normal;">  @nomeRespLegal </td>
         </tr>
         <tr>

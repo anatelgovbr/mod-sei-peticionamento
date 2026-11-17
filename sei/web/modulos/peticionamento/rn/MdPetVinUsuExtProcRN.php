@@ -30,7 +30,50 @@ class MdPetVinUsuExtProcRN extends InfraRN
         return BancoSEI::getInstance();
     }
     
-    public function gerarProcedimentoVinculoProcuracaoControlado($dados)
+    /**
+     * Grava a procuração e só depois do commit avisa por e-mail: com a falha na gravação, nenhum e-mail sai.
+     *
+     * @param array<string, mixed> $dados dados da conclusão
+     * @return bool
+     */
+    public function gerarProcedimentoVinculoProcuracao($dados)
+    {
+        $arrParametrosEmail = $this->gravarProcedimentoVinculoProcuracao($dados);
+        $this->enviarEmailProcuracao($arrParametrosEmail);
+
+        return true;
+    }
+
+    /**
+     * Revoga ou renuncia a procuração e só depois do commit avisa por e-mail: com a falha na gravação, nenhum e-mail sai.
+     *
+     * @param array<string, mixed> $dados dados da conclusão
+     * @return bool
+     */
+    public function gerarProcedimentoVinculoProcuracaoMotivo($dados)
+    {
+        $arrParametrosEmail = $this->gravarProcedimentoVinculoProcuracaoMotivo($dados);
+        $this->enviarEmailProcuracao($arrParametrosEmail);
+
+        return true;
+    }
+
+    /**
+     * A procuração já foi gravada: a falha no envio vai para o log e não desfaz a operação.
+     *
+     * @param array<int, mixed> $arrParams dados do e-mail, devolvidos pela gravação
+     * @return void
+     */
+    private function enviarEmailProcuracao(array $arrParams): void
+    {
+        try {
+            (new MdPetVinculoUsuExtRN())->enviarEmail($arrParams);
+        } catch (\Throwable $e) {
+            LogSEI::getInstance()->gravar('Falha no envio de e-mail da procuração do processo ' . $arrParams[2]->getDblIdProcedimento() . ".\n\n" . InfraException::inspecionar($e), InfraLog::$INFORMACAO);
+        }
+    }
+
+    protected function gravarProcedimentoVinculoProcuracaoControlado($dados)
     {
         $retorno = $this->gerarProcedimentoVinculoProcuracaoInterno($dados);
 
@@ -48,18 +91,16 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         }
 
-        $mdPetVinculoUsuExtRN = new MdPetVinculoUsuExtRN();
-        $mdPetVinculoUsuExtRN->enviarEmail($retorno);
-
-        return true;
+        return $retorno;
     }
 
     /**
-     * @param $dados
+     * @param array<string, mixed> $dados dados da conclusão
+     * @return array<int, mixed> dados do e-mail da procuração
      * @throws InfraException
      */    
     
-    public function gerarProcedimentoVinculoProcuracaoInterno($dados)
+    public function gerarProcedimentoVinculoProcuracaoInterno(array $dados): array
     {
     	
         $existeProc = false;
@@ -129,7 +170,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
             if (is_null($unidadeDTO)) {
-                throw new InfraException('Tipo de unidade não encontrada.');
+                throw new InfraException('Tipo de unidade não encontrado.');
             }
 
             if (isset($_POST['hdnTbUsuarioProcuracao']) && $_POST['hdnTbUsuarioProcuracao'] != "") {
@@ -470,6 +511,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
                 $objMdPetVinculoUsuExtRN->gerarAndamentoVinculo(array($idProcedimento, $strTipoPeticionamento, $idDocumentoRecibo, $unidadeDTO->getNumIdUnidade()));
 
+                $arrUnidadeProcesso = [];
+
                 if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
 
                     $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
@@ -496,11 +539,11 @@ class MdPetVinUsuExtProcRN extends InfraRN
                     $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
 
                     if (!is_null($objRelProtocoloProtocoloDTO)) {
-                        $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
+                        $arrUnidadeProcesso = $this->obterUltimaUnidadeAberta($objRelProtocoloProtocoloDTO->getDblIdProtocolo1());
                     }
                     // 2) Última aberta
                 } else if (count($arrUnidadeProcesso) == 0) {
-                    $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objProcedimentoDTO->getDblIdProcedimento()));
+                    $arrUnidadeProcesso = $this->obterUltimaUnidadeAberta($objProcedimentoDTO->getDblIdProcedimento());
                 }
 
                 $idUnidadeProcesso = null;
@@ -582,8 +625,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
                 $objAtividadeDTO->setArrObjAtributoAndamentoDTO($arrObjAtributoAndamentoDTO);
                 $objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
 
-                $mdPetVinculoUsuExtRN->enviarEmail($arrParams);
-
                 //Disponibilazando Acesso Externo ao Responsável Legal
                 $objMdPetAcessoExternoRN = new MdPetAcessoExternoRN();
                 $objMdPetAcessoExternoRN->gerarAcessoExternoVinculo(array($idVinculo, $idProcedimento));
@@ -597,6 +638,18 @@ class MdPetVinUsuExtProcRN extends InfraRN
             throw new InfraException('Erro cadastrando processo peticionamento do SEI.', $e);
         }
 
+    }
+
+    /**
+     * Última unidade em que o processo está aberto, pela RN do Intercorrente, que declara o método. A resposta fica vazia
+     * quando o processo não está aberto em nenhuma unidade.
+     *
+     * @param int|float|string $dblIdProcedimento processo consultado
+     * @return array<int, mixed> unidade na posição 0 e usuário de atribuição na posição 1
+     */
+    private function obterUltimaUnidadeAberta(int|float|string $dblIdProcedimento): array
+    {
+        return (new MdPetIntercorrenteProcessoRN())->retornaUltimaUnidadeProcessoAberto([$dblIdProcedimento, null]) ?? [];
     }
 
     /**
@@ -793,14 +846,19 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
         if (is_null($unidadeDTO)) {
-            throw new InfraException('Tipo de unidade não encontrada.');
+            throw new InfraException('Tipo de unidade não encontrado.');
         }
 
         return $unidadeDTO;
     }
 
-    public function gerarProcedimentoVinculoProcuracaoMotivoControlado($dados)
+    /**
+     * @param array<string, mixed> $dados dados da conclusão
+     * @return array<int, mixed> dados do e-mail da procuração
+     */
+    protected function gravarProcedimentoVinculoProcuracaoMotivoControlado(array $dados): array
     {
+        PeticionamentoIntegracao::validarXssMotivoProcuracao($dados['txtJustificativa']);
 
         try {
 
@@ -858,7 +916,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
             if (is_null($unidadeDTO)) {
-                throw new InfraException('Tipo de unidade não encontrada.');
+                throw new InfraException('Tipo de unidade não encontrado.');
             }
 
             //dados do procurador e Pj
@@ -906,9 +964,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
 
             //gerar modelo de Revogação
-            $objMdPetVincRepresentantDTO = $this->_gerarModeloDesvinculoProcuracao($dados, $objProcedimentoDTO, $objMdPetVincRepresentantDTO, $unidadeDTO);
-
-            return true;
+            return $this->_gerarModeloDesvinculoProcuracao($dados, $objProcedimentoDTO, $objMdPetVincRepresentantDTO, $unidadeDTO);
 
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando processo peticionamento do SEI.', $e);
@@ -916,11 +972,14 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
     }
 
-    /*
+    /**
      * gerar modelo de Revogação
+     *
+     * @param array<string, mixed> $dados dados da conclusão
+     * @return array<int, mixed> dados do e-mail da procuração
      */
 
-    private function _gerarModeloDesvinculoProcuracao($dados, $objProcedimentoDTO, $objMdPetVincRepresentantDTO, $objUnidadeDTO)
+    private function _gerarModeloDesvinculoProcuracao(array $dados, ProcedimentoDTO $objProcedimentoDTO, MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, UnidadeDTO $objUnidadeDTO): array
     {
 
         $idProcedimento = $objProcedimentoDTO->getDblIdProcedimento();
@@ -1288,16 +1347,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $objEditorDTO->setArrObjSecaoDocumentoDTO($arrObjSecaoDocumentoDTO);
 
-            try {
-                $objEditorRN = new EditorRN();
-                $numVersao = $objEditorRN->adicionarVersao($objEditorDTO);
-            } catch (Exception $e) {
-                if ($e instanceof InfraException && $e->contemValidacoes()) {
-                    die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
-                }
-
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a página de erro padrão
-            }
+            // A falha sobe para o rollback e para a mensagem na página de conclusão (ADR-PET-003)
+            (new EditorRN())->adicionarVersao($objEditorDTO);
 
         }
 
@@ -1356,6 +1407,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $arrParams[4] = $reciboDTOBasico;
         $arrParams[5] = $reciboDTOBasico;
 
+        $arrUnidadeProcesso = [];
+
         if ($objUnidadeDTO->getStrSinAtivo() == 'S' && $objUnidadeDTO->getStrSinEnvioProcesso() == 'S') {
             $arrUnidadeProcesso = $objMdPetIntimacaoRN->verificarUnidadeAberta(array($objProcedimentoDTO, $objUnidadeDTO->getNumIdUnidade()));
             if (count($arrUnidadeProcesso) == 0) {
@@ -1377,12 +1430,12 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $objRelProtocoloProtocoloRN = new RelProtocoloProtocoloRN();
             $objRelProtocoloProtocoloDTO = $objRelProtocoloProtocoloRN->consultarRN0841($objRelProtocoloProtocoloDTO);
 
-            if (count($objRelProtocoloProtocoloDTO) == 1) {
-                $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objRelProtocoloProtocoloDTO->getDblIdProtocolo1()));
+            if (!is_null($objRelProtocoloProtocoloDTO)) {
+                $arrUnidadeProcesso = $this->obterUltimaUnidadeAberta($objRelProtocoloProtocoloDTO->getDblIdProtocolo1());
             }
             // 2) Última aberta
         } else if (count($arrUnidadeProcesso) == 0) {
-            $arrUnidadeProcesso = $this->retornaUltimaUnidadeProcessoAberto(array($objProcedimentoDTO->getDblIdProcedimento()));
+            $arrUnidadeProcesso = $this->obterUltimaUnidadeAberta($objProcedimentoDTO->getDblIdProcedimento());
         }
 
         $idUnidadeProcesso = null;
@@ -1424,9 +1477,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objAtividadeDTO->setNumIdTarefa(TarefaRN::$TI_PROCESSO_REMETIDO_UNIDADE);
 
 
-        $mdPetVinculoUsuExtRN->enviarEmail($arrParams);
-
-
         $objMdRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $strTipoPeticionamento = $objMdRegrasGeraisRN->getTipoPeticionamento($tipoPeticionamento, true);
 
@@ -1438,7 +1488,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
         $objAtividadeRN = new AtividadeRN();
         $objAtividadeRN->gerarInternaRN0727($objAtividadeDTO);
-        return $objMdPetVincRepresentantDTO;
+        return $arrParams;
     }
 
     /*
@@ -1712,16 +1762,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $objEditorDTO->setArrObjSecaoDocumentoDTO($arrObjSecaoDocumentoDTO);
 
-            try {
-                $objEditorRN = new EditorRN();
-                $numVersao = $objEditorRN->adicionarVersao($objEditorDTO);
-            } catch (Exception $e) {
-                if ($e instanceof InfraException && $e->contemValidacoes()) {
-                    die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
-                }
-
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a página de erro padrão
-            }
+            // A falha sobe para o rollback e para a mensagem na página de conclusão (ADR-PET-003)
+            (new EditorRN())->adicionarVersao($objEditorDTO);
 
         }
 
@@ -1961,16 +2003,8 @@ class MdPetVinUsuExtProcRN extends InfraRN
 
             $objEditorDTO->setArrObjSecaoDocumentoDTO($arrObjSecaoDocumentoDTO);
 
-            try {
-                $objEditorRN = new EditorRN();
-                $numVersao = $objEditorRN->adicionarVersao($objEditorDTO);
-            } catch (Exception $e) {
-                if ($e instanceof InfraException && $e->contemValidacoes()) {
-                    die("INFRA_VALIDACAO\n" . $e->__toString()); //retorna para o iframe exibir o alert
-                }
-
-                PaginaSEI::getInstance()->processarExcecao($e); //vai para a página de erro padrão
-            }
+            // A falha sobe para o rollback e para a mensagem na página de conclusão (ADR-PET-003)
+            (new EditorRN())->adicionarVersao($objEditorDTO);
 
         }
 
@@ -2093,24 +2127,6 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $objMdPetVincRepresentantRN->alterar($objMdPetVincRepresentantDTO);
 
         return $objMdPetVincRepresentantDTO;
-    }
-
-    protected function gerarReciboVinculacaoControlado($idProcedimento)
-    {
-        $objMdPetReciboDTO = new MdPetReciboDTO();
-        $objMdPetReciboDTO->retTodos();
-
-        $objMdPetReciboDTO->setNumIdProtocolo($idProcedimento);
-        $objMdPetReciboDTO->setNumIdUsuario(SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno());
-        $objMdPetReciboDTO->setDthDataHoraRecebimentoFinal(InfraData::getStrDataHoraAtual());
-        $objMdPetReciboDTO->setStrIpUsuario(InfraUtil::getStrIpUsuario());
-        $objMdPetReciboDTO->setStrSinAtivo('S');
-        $objMdPetReciboDTO->setStrStaTipoPeticionamento(MdPetReciboRN::$TP_RECIBO_VINCULACAO);
-
-        $objBD = new MdPetReciboBD($this->getObjInfraIBanco());
-        $ret = $objBD->cadastrar($objMdPetReciboDTO);
-        return $ret;
-
     }
 
     public function _adicionarDadosArquivoVinculacao($idDocumento, $tpProtocolo, $idMdPetVinculoRepresent = null)

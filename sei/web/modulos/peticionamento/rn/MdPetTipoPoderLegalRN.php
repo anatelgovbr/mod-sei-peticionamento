@@ -149,7 +149,7 @@ class MdPetTipoPoderLegalRN extends InfraRN {
              $arrObjMdPetRelVincRepTpPoderRN = $objMdPetRelVincRepTpPoderRN->listar($objMdPetRelVincRepTpPoderDTO);
 			
 			 if(count($arrObjMdPetRelVincRepTpPoderRN) > 0){
-				$objInfraException->adicionarValidacao('Não é possivel excluir este Tipo de Poder Legal, pois ele já foi utilizado no sistema.');
+				$objInfraException->adicionarValidacao('Não é possível excluir este Tipo de Poder Legal, pois ele já foi utilizado no sistema.');
 				$objInfraException->lancarValidacoes();
 			 }
 

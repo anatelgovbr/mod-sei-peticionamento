@@ -21,13 +21,13 @@ class MdPetVinculoRN extends InfraRN {
 
   private function validarNumIdMdPetVinculo(MdPetVinculoDTO $objMdPetVinculoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVinculoDTO->getNumIdMdPetVinculo())){
-      $objInfraException->adicionarValidacao(' não informad.');
+      $objInfraException->adicionarValidacao(' não informado.');
     }
   }
 
   private function validarNumIdContato(MdPetVinculoDTO $objMdPetVinculoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVinculoDTO->getNumIdContato())){
-      $objInfraException->adicionarValidacao(' não informad.');
+      $objInfraException->adicionarValidacao(' não informado.');
     }
   }
 
@@ -36,7 +36,7 @@ class MdPetVinculoRN extends InfraRN {
       $objInfraException->adicionarValidacao('Sinalizador de  não informado.');
     }else{
       if (!InfraUtil::isBolSinalizadorValido($objMdPetVinculoDTO->getStrSinValidado())){
-        $objInfraException->adicionarValidacao('Sinalizador de  inválid.');
+        $objInfraException->adicionarValidacao('Sinalizador de  inválido.');
       }
     }
   }

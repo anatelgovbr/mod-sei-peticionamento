@@ -149,4 +149,27 @@ class MdPetVincRepresentantINT extends InfraINT {
 
   }
 
+  /**
+   * CPF ou CNPJ formatado do outorgante da procuração, para a coluna CPF/CNPJ Outorgante da tela Procurações Eletrônicas
+   * do acesso externo.
+   *
+   * @param int $numIdContatoOutorg
+   * @return string
+   */
+  public static function formatarCpfCnpjOutorgante(int $numIdContatoOutorg): string {
+    // O módulo permite desativar o contato do outorgante depois que a procuração deixa de estar ativa
+    $objContatoDTO = new ContatoDTO();
+    $objContatoDTO->setBolExclusaoLogica(false);
+    $objContatoDTO->setNumIdContato($numIdContatoOutorg);
+    $objContatoDTO->retDblCpf();
+    $objContatoDTO->retStrCnpj();
+    $objContatoOutorganteDTO = (new ContatoRN())->consultarRN0324($objContatoDTO);
+
+    if ($objContatoOutorganteDTO->getStrCnpj() == null) {
+      return InfraUtil::formatarCpf($objContatoOutorganteDTO->getDblCpf());
+    }
+
+    return InfraUtil::formatarCnpj($objContatoOutorganteDTO->getStrCnpj());
+  }
+
 }

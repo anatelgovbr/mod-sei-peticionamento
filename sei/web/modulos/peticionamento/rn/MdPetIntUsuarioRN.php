@@ -15,6 +15,79 @@ class MdPetIntUsuarioRN extends InfraRN {
     public static $SIM = 'S';
     public static $NAO = 'N';
 
+    private static ?UsuarioDTO $objUsuarioEmExecucao = null;
+    private static bool $bolSuspensaoAutomatica = false;
+
+    /** Executa sob a identidade técnica e restaura a sessão, inclusive em falha. */
+    public function executarComoUsuarioPeticionamento(callable $executar, ?int $numIdUnidade = null): mixed
+    {
+        $objSessao = SessaoSEI::getInstance();
+        $bolHabilitadaAnterior = $objSessao->isBolHabilitada();
+        $objUsuarioAnterior = self::$objUsuarioEmExecucao;
+        $arrEstadoAnterior = [];
+
+        // Os campos simulados são separados dos campos da sessão autenticada.
+        $objSessao->setBolHabilitada(false);
+        try {
+            foreach ([
+                'NumIdOrgaoSistema', 'StrDescricaoOrgaoSistema', 'NumIdSistema',
+                'StrSiglaOrgaoUsuario', 'StrDescricaoOrgaoUsuario', 'NumIdOrgaoUsuario',
+                'NumIdUsuario', 'StrIdOrigemUsuario', 'StrSiglaUsuario', 'StrNomeUsuario',
+                'NumIdUnidadeAtual', 'StrIdOrigemUnidadeAtual', 'StrSiglaUnidadeAtual',
+                'NumIdOrgaoUnidadeAtual', 'StrSiglaOrgaoUnidadeAtual', 'StrDescricaoOrgaoUnidadeAtual',
+            ] as $strCampo) {
+                $arrEstadoAnterior[$strCampo] = $objSessao->{'get' . $strCampo}();
+            }
+
+            if (self::$objUsuarioEmExecucao === null) {
+                $objUsuarioDTO = $this->getObjUsuarioPeticionamento();
+                if (!$objUsuarioDTO instanceof UsuarioDTO
+                    || filter_var($objUsuarioDTO->getNumIdUsuario(), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false
+                    || $objUsuarioDTO->getStrStaTipo() !== UsuarioRN::$TU_SISTEMA
+                    || $objUsuarioDTO->getStrSinAtivo() !== self::$SIM) {
+                    throw new InfraException('Usuário técnico inválido ou ausente em MODULO_PETICIONAMENTO_ID_USUARIO_SISTEMA.');
+                }
+                self::$objUsuarioEmExecucao = $objUsuarioDTO;
+            }
+
+            $objSessao->simularLogin(
+                null,
+                $numIdUnidade === null ? SessaoSEI::$UNIDADE_TESTE : null,
+                self::$objUsuarioEmExecucao->getNumIdUsuario(),
+                $numIdUnidade
+            );
+
+            return $executar();
+        } finally {
+            foreach ($arrEstadoAnterior as $strCampo => $valor) {
+                $objSessao->{'set' . $strCampo}($valor);
+            }
+            self::$objUsuarioEmExecucao = $objUsuarioAnterior;
+            $objSessao->setBolHabilitada($bolHabilitadaAnterior);
+        }
+    }
+
+    /** Delimita a suspensão RFB dos agendamentos CPF/CNPJ. */
+    public function executarSuspensaoAutomatica(callable $executar): mixed
+    {
+        $bolSuspensaoAnterior = self::$bolSuspensaoAutomatica;
+        try {
+            self::$bolSuspensaoAutomatica = true;
+            return $this->executarComoUsuarioPeticionamento($executar);
+        } finally {
+            self::$bolSuspensaoAutomatica = $bolSuspensaoAnterior;
+        }
+    }
+
+    /** Autoriza o hook apenas no escopo ativo com a identidade técnica validada. */
+    public static function isExecutandoSuspensaoAutomatica(): bool
+    {
+        return self::$bolSuspensaoAutomatica
+            && self::$objUsuarioEmExecucao !== null
+            && (string) SessaoSEI::getInstance()->getNumIdUsuario()
+                === (string) self::$objUsuarioEmExecucao->getNumIdUsuario();
+    }
+
     public function __construct() {
         parent::__construct ();
     }

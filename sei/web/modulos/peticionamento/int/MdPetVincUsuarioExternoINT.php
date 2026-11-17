@@ -236,11 +236,11 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $numIdContatoSessao = self::obterIdContatoSessaoExterna();
 
         if ($numIdContatoSessao === null) {
-            return self::_negarConsultaProcuracao('sessao externa sem contato associado', $numIdContato, $numIdContatoVinc);
+            return self::_negarConsultaProcuracao('sessão externa sem contato associado', $numIdContato, $numIdContatoVinc);
         }
 
         if ((string)$numIdContato === (string)$numIdContatoSessao) {
-            return self::_negarConsultaProcuracao('outorgado igual ao usuario da sessao', $numIdContato, $numIdContatoVinc);
+            return self::_negarConsultaProcuracao('outorgado igual ao usuário da sessão', $numIdContato, $numIdContatoVinc);
         }
 
         $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
@@ -251,7 +251,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         ));
 
         if (!$bolRepresentaPessoaJuridica) {
-            return self::_negarConsultaProcuracao('sessao nao representa a Pessoa Juridica outorgante', $numIdContato, $numIdContatoVinc);
+            return self::_negarConsultaProcuracao('sessão não representa a Pessoa Jurídica outorgante', $numIdContato, $numIdContatoVinc);
         }
 
         // o par identificador/CPF precisa conferir: impede enumeracao de contatos pelo identificador
@@ -269,7 +269,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
         $arrObjUsuarioDTO = (new UsuarioRN())->listarRN0490($objUsuarioDTO);
 
         if (empty($arrObjUsuarioDTO)) {
-            return self::_negarConsultaProcuracao('contato nao confere com o CPF informado ou nao e Usuario Externo liberado', $numIdContato, $numIdContatoVinc);
+            return self::_negarConsultaProcuracao('contato não confere com o CPF informado ou não é Usuário Externo liberado', $numIdContato, $numIdContatoVinc);
         }
 
         if (self::_consultarExistenciaVinculo($dados)) {
@@ -314,7 +314,7 @@ class MdPetVincUsuarioExternoINT extends InfraINT
     private static function _negarConsultaProcuracao($strMotivo, $numIdContato, $numIdContatoVinc)
     {
         LogSEI::getInstance()->gravar(sprintf(
-            'md_pet_vinc_usu_ext_dados_usuario_externo_procuracao: consulta negada. Motivo: %s | Usuario externo: %s | Contato solicitado: %s | Pessoa Juridica: %s | IP: %s',
+            'md_pet_vinc_usu_ext_dados_usuario_externo_procuracao: consulta negada. Motivo: %s | Usuário externo: %s | Contato solicitado: %s | Pessoa Jurídica: %s | IP: %s',
             $strMotivo,
             SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
             $numIdContato,

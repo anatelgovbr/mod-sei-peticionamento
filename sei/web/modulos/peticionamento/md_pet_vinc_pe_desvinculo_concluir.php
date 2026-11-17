@@ -60,21 +60,7 @@ try {
       if (isset($_POST['pwdsenhaSEI'])) {
           if(isset($_POST['txtJustificativa']) && $_POST['txtJustificativa']!=''){
 
-              if($_POST['hdnTpDocumento'] == 'revogar'){
-                  $arrCampos = [
-                      'txtJustificativa' => "'Motivo da Revogação (constará no teor do documento de Revogação que será gerado)'"
-                  ];
-              } else {
-                  $arrCampos = [
-                      'txtJustificativa' => "'Motivo da Renúncia (constará no teor do documento de Renúncia que será gerado)'"
-                  ];
-              }
-
-              $objInfraException = new InfraException();
-
-              if(PeticionamentoIntegracao::validarXssFormulario($_POST, $arrCampos, $objInfraException)) {
-                  $objInfraException->lancarValidacoes();
-              }
+              PeticionamentoIntegracao::validarXssMotivoProcuracao(PaginaSEI::POST('txtJustificativa'));
 
               $arrParam = array();
               $arrParam['pwdsenhaSEI'] = $_POST['pwdsenhaSEI'];
@@ -130,7 +116,7 @@ try {
     SessaoSEIExterna::getInstance()->removerAtributo('idDocPrincipalGerado');
   }
 
-  PaginaSEIExterna::getInstance()->processarExcecao($e);
+  PaginaSEIExterna::getInstance()->processarExcecao(MdPetExcecaoINT::converter($e));
 }
 
 $hashAnexo = "";
@@ -237,7 +223,7 @@ PaginaSEIExterna::getInstance()->fecharHtml();
         var senha = document.getElementById("pwdsenhaSEI").value;
 
         if (cargo == "") {
-            alert('Favor informe o Cargo/Função.');
+            alert('Favor informar o Cargo/Função.');
             document.getElementById("selCargo").focus();
             return false;
         } else if (senha == "") {

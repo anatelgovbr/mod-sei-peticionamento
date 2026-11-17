@@ -60,7 +60,7 @@ class MdPetIntRespostaRN extends InfraRN {
 
             $ToolTipText .= $objMdPetIntDocumentoDTO->getStrNomeSerie() . ' ' . $objMdPetIntDocumentoDTO->getStrNumeroDocumento() .' (SEI nº ' . $objMdPetIntDocumentoDTO->getStrProtocoloFormatadoDocumento() . ')';
 
-            $ToolTipText .= '<br />Clique para Peticionar Resposta a Intimação.';
+            $ToolTipText .= '<br />Clique para Peticionar Resposta à Intimação.';
 
             $conteudoHtml  = '<a onclick="'.$js.'"';
             $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\''.$ToolTipText.'\',\''.$ToolTipTitulo.'\')"';
@@ -219,7 +219,7 @@ class MdPetIntRespostaRN extends InfraRN {
                 }
             }
 
-            $ToolTipText .= "<br />Você não possui mais permissão para responder a Intimação Eletrônica. Verifique seus Poderes de Representação.";
+            $ToolTipText .= "<br />Você não possui mais permissão para responder à Intimação Eletrônica. Verifique seus Poderes de Representação.";
 
             $conteudoHtml = '<a onclick="' . $js . '"';
             $conteudoHtml .= 'onmouseover ="return infraTooltipMostrar(\'' . $ToolTipText . '\',\'' . $ToolTipTitle . '\')"';

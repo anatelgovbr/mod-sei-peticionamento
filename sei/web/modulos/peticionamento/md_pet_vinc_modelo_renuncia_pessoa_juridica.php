@@ -30,7 +30,7 @@
             <td style="font-weight: normal;">@cnpj</td>
         </tr>
         <!-- <tr>
-            <td style="padding-left: 15px;">Responsavel Legal:</td>
+            <td style="padding-left: 15px;">Responsável Legal:</td>
             <td style="font-weight: normal;">@respLegal </td>
         </tr> -->
         <tr>

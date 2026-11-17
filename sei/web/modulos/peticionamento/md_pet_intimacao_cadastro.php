@@ -129,18 +129,18 @@ try {
                 try {
                     if (!in_array($dadosCadastro['tipoPessoa'], ['F', 'J'], true)
                         || $dadosCadastro['hdnTipoPessoa'] !== $dadosCadastro['tipoPessoa']) {
-                        throw new InfraException('Tipo de destinatario invalido.');
+                        throw new InfraException('Tipo de destinatário inválido.');
                     }
 
                     foreach (['hdnIdProcedimento', 'hdnIdDocumento', 'hndIdDocumento'] as $campoId) {
                         if (!ctype_digit((string) $dadosCadastro[$campoId]) || (int) $dadosCadastro[$campoId] <= 0) {
-                            throw new InfraException('Identificador invalido para gerar a intimacao.');
+                            throw new InfraException('Identificador inválido para gerar a intimação.');
                         }
                     }
 
                     if (!ctype_digit((string) $dadosCadastro['selTipoIntimacao'])
                         || (int) $dadosCadastro['selTipoIntimacao'] <= 0) {
-                        throw new InfraException('Tipo de intimacao invalido.');
+                        throw new InfraException('Tipo de intimação inválido.');
                     }
 
                     $tipoAcesso = $dadosCadastro['optIntegral'] ?: $dadosCadastro['optParcial'];
@@ -148,12 +148,12 @@ try {
                         MdPetIntAcessoExternoDocumentoRN::$ACESSO_INTEGRAL,
                         MdPetIntAcessoExternoDocumentoRN::$ACESSO_PARCIAL
                     ], true) || (!empty($dadosCadastro['optIntegral']) && !empty($dadosCadastro['optParcial']))) {
-                        throw new InfraException('Tipo de acesso externo invalido.');
+                        throw new InfraException('Tipo de acesso externo inválido.');
                     }
 
                     foreach ($dadosCadastro['selTipoResposta'] as $idTipoResposta) {
                         if (!ctype_digit((string) $idTipoResposta) || (int) $idTipoResposta <= 0) {
-                            throw new InfraException('Tipo de resposta invalido.');
+                            throw new InfraException('Tipo de resposta inválido.');
                         }
                     }
 
@@ -165,7 +165,7 @@ try {
 
                     if (is_null($objDocumentoDTO)
                         || (int) $objDocumentoDTO->getDblIdProcedimento() !== (int) $dadosCadastro['hdnIdProcedimento']) {
-                        throw new InfraException('Documento principal nao pertence ao processo informado.');
+                        throw new InfraException('Documento principal não pertence ao processo informado.');
                     }
 
                     $arrDestinatarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dadosCadastro['hdnDadosUsuario2']);
@@ -174,7 +174,7 @@ try {
                         || (int) $arrDestinatarios[0][0] <= 0
                         || !isset($arrDestinatarios[0][1])
                         || trim((string) $arrDestinatarios[0][1]) === '') {
-                        throw new InfraException('A requisicao deve conter exatamente um destinatario valido.');
+                        throw new InfraException('A requisição deve conter exatamente um destinatário válido.');
                     }
 
                     $dadosCadastro['hdnDadosUsuario'] = $dadosCadastro['hdnDadosUsuario2'];
@@ -209,13 +209,13 @@ try {
 
                 } catch (Exception $e) {
                     LogSEI::getInstance()->gravar(
-                        'Erro gerando unidade de intimacao em lote [' . get_class($e) . '].',
+                        'Erro gerando unidade de intimação em lote [' . get_class($e) . '].',
                         InfraLog::$INFORMACAO
                     );
                     http_response_code(400);
                     echo json_encode([
                         'status' => 'erro',
-                        'mensagem' => 'Nao foi possivel gerar a intimacao deste destinatario.'
+                        'mensagem' => mb_convert_encoding('Não foi possível gerar a intimação deste destinatário.', 'UTF-8', 'ISO-8859-1')
                     ]);
                 }
 
@@ -388,7 +388,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 }
             },
             error: function (msgError) {
-                msgCommit = "Erro selecionar tipo de destinatário: " + msgError.responseText;
+                msgCommit = "Erro ao selecionar tipo de destinatário: " + msgError.responseText;
                 console.log(msgCommit);
             },
             complete: function (result) {

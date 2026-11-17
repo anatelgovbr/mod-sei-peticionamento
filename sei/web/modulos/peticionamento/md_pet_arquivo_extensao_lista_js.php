@@ -12,7 +12,7 @@ function inicializar(){
 
 <? if ($bolAcaoDesativar){ ?>
 function acaoDesativar(id,desc){
-  if (confirm("Confirma desativaÁ„o da Extens„o de Arquivo \""+desc+"\"?")){
+  if (confirm("Confirma desativa√ß√£o da Extens√£o de Arquivo \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkDesativar?>';
     document.getElementById('frmArquivoExtensaoLista').submit();
@@ -21,10 +21,10 @@ function acaoDesativar(id,desc){
 
 function acaoDesativacaoMultipla(){
   if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhuma Extens„o de Arquivo selecionada.');
+    alert('Nenhuma Extens√£o de Arquivo selecionada.');
     return;
   }
-  if (confirm("Confirma desativaÁ„o das Extensıes de Arquivos selecionadas?")){
+  if (confirm("Confirma desativa√ß√£o das Extens√µes de Arquivos selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkDesativar?>';
     document.getElementById('frmArquivoExtensaoLista').submit();
@@ -34,7 +34,7 @@ function acaoDesativacaoMultipla(){
 
 <? if ($bolAcaoReativar){ ?>
 function acaoReativar(id,desc){
-  if (confirm("Confirma reativaÁ„o da Extens„o de Arquivo \""+desc+"\"?")){
+  if (confirm("Confirma reativa√ß√£o da Extens√£o de Arquivo \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkReativar?>';
     document.getElementById('frmArquivoExtensaoLista').submit();
@@ -43,10 +43,10 @@ function acaoReativar(id,desc){
 
 function acaoReativacaoMultipla(){
   if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhuma Extens„o de Arquivo selecionada.');
+    alert('Nenhuma Extens√£o de Arquivo selecionada.');
     return;
   }
-  if (confirm("Confirma reativaÁ„o das Extensıes de Arquivos selecionadas?")){
+  if (confirm("Confirma reativa√ß√£o das Extens√µes de Arquivos selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkReativar?>';
     document.getElementById('frmArquivoExtensaoLista').submit();
@@ -56,7 +56,7 @@ function acaoReativacaoMultipla(){
 
 <? if ($bolAcaoExcluir){ ?>
 function acaoExcluir(id,desc){
-  if (confirm("Confirma exclus„o da Extens„o de Arquivo \""+desc+"\"?")){
+  if (confirm("Confirma exclus√£o da Extens√£o de Arquivo \""+desc+"\"?")){
     document.getElementById('hdnInfraItemId').value=id;
     document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkExcluir?>';
     document.getElementById('frmArquivoExtensaoLista').submit();
@@ -65,10 +65,10 @@ function acaoExcluir(id,desc){
 
 function acaoExclusaoMultipla(){
   if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhuma Extens„o de Arquivo selecionada.');
+    alert('Nenhuma Extens√£o de Arquivo selecionada.');
     return;
   }
-  if (confirm("Confirma exclus„o das Extensıes de Arquivos selecionadas?")){
+  if (confirm("Confirma exclus√£o das Extens√µes de Arquivos selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmArquivoExtensaoLista').action='<?=$strLinkExcluir?>';
     document.getElementById('frmArquivoExtensaoLista').submit();

@@ -814,7 +814,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <label name="lblUnidadeUnica" for="rdUnidadeUnica"
                                     class="infraLabelRadio">Unidade Única <img align="top"
                                                                                                     src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha para a abertura do Processo Novo, sendo sempre aberto na Unidade pré definida aqui.', 'Ajuda') ?>
+                                                                                                    name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha para a abertura do Processo Novo, sendo sempre aberto na Unidade predefinida aqui.', 'Ajuda') ?>
                                                                                                     class="infraImg"/></label>
                                 <div id="divCpUnidadeUnica" <?php echo $divUnidadeUnica; ?> class="col-sm-12 col-md-7 col-lg-7 col-xl-7">
                                     <div class="input-group mb-3">
@@ -861,7 +861,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <label id="lblUnidadeMultipla" name="lblUnidadeMultipla" for="rdUnidadeMultipla"
                                     class="infraLabelRadio">Múltiplas Unidades <img align="top"
                                                                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo terá opção de escolha do Órgão, da UF ou da Cidade onde quer que o Processo Novo seja aberto. \n \n As três opções de escolha que o Usuário Externo verá depende das Unidades aqui adicionadas, quando possuirem diferentes Órgãos, UFs ou Cidades.', 'Ajuda') ?>
+                                                                                                        name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo terá opção de escolha do Órgão, da UF ou da Cidade onde quer que o Processo Novo seja aberto. \n \n As três opções de escolha que o Usuário Externo verá dependem das Unidades aqui adicionadas, quando possuírem diferentes Órgãos, UFs ou Cidades.', 'Ajuda') ?>
                                                                                                         class="infraImg"/></label>
                                 <div id="divCpUnidadeMultipla" <?php echo $divUnidadeMultipla; ?>>
                                     <div id="divOrgaoUnidadeMultipla" class="infraAreaDados">
@@ -1179,7 +1179,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <label name="lblPadrao" for="rdPadrao" class="infraLabelRadio">Padrão pré
                                     definido <img align="top" class="infraImg"
                                                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha do Nível de Acesso para os Documentos, sendo sempre adicionados com o Nível de Acesso pré definido aqui.', 'Ajuda') ?>
+                                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo não terá opção de escolha do Nível de Acesso para os Documentos, sendo sempre adicionados com o Nível de Acesso predefinido aqui.', 'Ajuda') ?>
                                     /></label>
                             </div>
                         </div>
@@ -1239,7 +1239,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                     <img
                                             align="top"
                                             src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá preencher um Documento de modelo pré definido, utilizando o Editor HTML do SEI. \n \n Neste caso, selecione Tipo de Documento parametrizado na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n ATENÇÃO: por limitações técnicas, o Usuário Externo somente visualizará e editará a seção Princial (Corpo do Texto) do modelo do Documento.', 'Ajuda') ?>
+                                            name="ajuda" <?= PaginaSEI::montarTitleTooltip('O Usuário Externo deverá preencher um Documento de modelo predefinido, utilizando o Editor HTML do SEI. \n \n Neste caso, selecione Tipo de Documento parametrizado na Administração com Aplicabilidade de Documentos Internos ou Internos e Externos. \n \n ATENÇÃO: por limitações técnicas, o Usuário Externo somente visualizará e editará a seção Principal (Corpo do Texto) do modelo do Documento.', 'Ajuda') ?>
                                             class="infraImg"/></label>
                             </div>
                             <div class="divDocumentoPrincipalExterno">

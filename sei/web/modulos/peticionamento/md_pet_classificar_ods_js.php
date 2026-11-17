@@ -155,7 +155,7 @@
             dataType: 'html',
             async: false,
             beforeSend: function(){
-                $('#metas-selecionadas').html('Atualziando metas selecionadas...');
+                $('#metas-selecionadas').html('Atualizando metas selecionadas...');
             },
             success: function (lista) {
                 $('#metas-selecionadas').html(lista);

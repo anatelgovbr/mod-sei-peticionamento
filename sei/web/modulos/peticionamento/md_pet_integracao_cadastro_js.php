@@ -208,13 +208,13 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosSaida_codSituacaoCadastral').value) == '') {
-                    alert('Indique o dado de saida do webservice para Código da Situação Cadastral.');
+                    alert('Indique o dado de saída do webservice para Código da Situação Cadastral.');
                     document.getElementById('nomeFuncionalDadosSaida_codSituacaoCadastral').focus();
                     return false;
                 }
 
                 if (infraTrim(document.getElementById('nomeFuncionalDadosSaida_descSituacaoCadastral').value) == '') {
-                    alert('Indique o dado de saida do webservice para Descrição da Situação Cadastral.');
+                    alert('Indique o dado de saída do webservice para Descrição da Situação Cadastral.');
                     document.getElementById('nomeFuncionalDadosSaida_descSituacaoCadastral').focus();
                     return false;
                 }

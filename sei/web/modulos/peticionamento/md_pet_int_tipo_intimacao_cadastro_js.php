@@ -73,7 +73,7 @@
         }
 
         if (!document.getElementById('optTipoRespostaFacultativa').checked && !document.getElementById('optTipoRespostaExige').checked && !document.getElementById('optTipoSemResposta').checked) {
-            alert('Informe o Tipo de Resposta para a Intimação.');
+            alert('Informe o Tipo de Resposta para a IntimaÃ§Ã£o.');
             document.getElementById('selTipoResposta').focus();
             return false;
         }

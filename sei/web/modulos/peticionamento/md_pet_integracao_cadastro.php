@@ -270,7 +270,7 @@ try {
         'codSituacaoCadastral' => 'Código da Situação Cadastral',
         'descSituacaoCadastral' => 'Descrição da Situação Cadastral',
         'dtUltAltSituacaoCadastral' => 'Data da Última Alteração da Situação Cadastral',
-        'tpLogradouro' => 'Tipo Logradouro do Endereço',
+        'tpLogradouro' => 'Tipo de Logradouro do Endereço',
         'logradouro' => 'Logradouro do Endereço',
         'numero' => 'Número do Endereço',
         'complemento' => 'Complemento do Endereço',
@@ -321,7 +321,7 @@ try {
 
         if ($chave == 'periodoCache') {
             $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-select' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
-            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses em que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
         } else {
             $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosEntrada[$chave]' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select>";
         }
@@ -334,14 +334,14 @@ try {
 
     $strResultadoParamEntrada .= '</table>';
 
-    $strSumarioTabelaSaida = 'Tabela de configuração dos dados de Saida do web-service.';
-    $strCaptionTabelaSaida = 'Dados de Saida';
+    $strSumarioTabelaSaida = 'Tabela de configuração dos dados de Saída do web-service.';
+    $strCaptionTabelaSaida = 'Dados de Saída';
 
     $strResultadoParamSaida = '<table width="100%" id="tableParametroSaida" class="infraTable" summary="' . $strSumarioTabelaSaida . '">' . "\n";
     $strResultadoParamSaida .= '<tr>';
 
     $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Campo de Destino no SEI &nbsp;</th>' . "\n";
-    $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Dados de Saida no Webservice&nbsp;</th>' . "\n";
+    $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Dados de Saída no Webservice&nbsp;</th>' . "\n";
     $strResultadoParamSaida .= '</tr>' . "\n";
     $strCssTr = '';
     $i = 0;
@@ -424,7 +424,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <legend class="infraLegend">&nbsp;Indicação de Integração com a Receita Federal&nbsp; <img
                                 id="imgAjuda2"
                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
-                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('É extremamente recomendado que se utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jurídica e Procuração Eletrônica para os Usuários Externos Sem Integração com a base da Receita Federal, os Usuários Externos continuarão a declarar a responsabilidade, até penal, sobre as informações prestadas, mas poderão ocorrer contradição e, caso necessite, Suspensão e Alteração da vinculação podem ser efetivadas pelo menu Administração > Peticionamento Eletrônico > Vinculações e Procurações Eletrônicas.', 'Ajuda') ?>
+                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('É extremamente recomendado que se utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jurídica e Procuração Eletrônica para os Usuários Externos Sem Integração com a base da Receita Federal, os Usuários Externos continuarão a declarar a responsabilidade, até penal, sobre as informações prestadas, mas poderão ocorrer contradições e, caso necessite, Suspensão e Alteração da vinculação podem ser efetivadas pelo menu Administração > Peticionamento Eletrônico > Vinculações e Procurações Eletrônicas.', 'Ajuda') ?>
                                 alt="Ajuda" class="infraImgFielset"/></legend>
                     <div class="form-group">
                         <span>
@@ -434,7 +434,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração
                                 <img id="imgAjudaIntegracaoNao"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.', 'Ajuda') ?>
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da autodeclaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.', 'Ajuda') ?>
                                     alt="Ajuda" class="infraImgModulo"/></label>
                         </span>
                         <span>
@@ -596,7 +596,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div class="container">
                     <div class="bloco" style="display:none;">
                         <div class="form-group">
-                            <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento" class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Operação que retorna a Data de Armazenamento do cache da informações da Receita Federal e que foi utilizado na validação do período de expiração definido nos campo abaixo.', 'Ajuda') ?>alt="Ajuda" class="infraImgModulo" /></label>
+                            <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento" class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Operação que retorna a Data de Armazenamento do cache das informações da Receita Federal e que foi utilizado na validação do período de expiração definido nos campos abaixo.', 'Ajuda') ?>alt="Ajuda" class="infraImgModulo" /></label>
                             <select id="selCacheDataArmazenamento" style="width:300px;" name="selCacheDataArmazenamento" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
                         </div>
                     </div>

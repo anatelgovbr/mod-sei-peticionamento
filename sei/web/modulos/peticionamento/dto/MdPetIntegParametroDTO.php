@@ -30,6 +30,10 @@ class MdPetIntegParametroDTO extends InfraDTO {
 
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'ValorPadrao', 'valor_padrao');
 
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaLocalParametro', 'sta_local_parametro');
+
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinDadoConfidencial', 'sin_dado_confidencial');
+
     $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeMdPetIntegracao', 'nome', 'md_pet_adm_integracao');
 
     $this->configurarPK('IdMdPetIntegParametro',InfraDTO::$TIPO_PK_NATIVA);

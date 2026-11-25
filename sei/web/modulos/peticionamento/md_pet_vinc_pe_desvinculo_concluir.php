@@ -223,7 +223,7 @@ PaginaSEIExterna::getInstance()->fecharHtml();
         var senha = document.getElementById("pwdsenhaSEI").value;
 
         if (cargo == "") {
-            alert('Favor informar o Cargo/Função.');
+            alert('Favor informe o Cargo/Função.');
             document.getElementById("selCargo").focus();
             return false;
         } else if (senha == "") {

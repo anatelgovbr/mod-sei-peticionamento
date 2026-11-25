@@ -37,24 +37,24 @@ class MdPetVincDocumentoRN extends InfraRN {
 
   private function validarNumIdMdPetVincDocumento(MdPetVincDocumentoDTO $objMdPetVincDocumentoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVincDocumentoDTO->getNumIdMdPetVincDocumento())){
-      $objInfraException->adicionarValidacao('IdMdPetVincDocumento não informado.');
+      $objInfraException->adicionarValidacao('IdMdPetVincDocumento não informad.');
     }
   }
 
   private function validarDblIdDocumento(MdPetVincDocumentoDTO $objMdPetVincDocumentoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVincDocumentoDTO->getDblIdDocumento())){
-      $objInfraException->adicionarValidacao('IdDocumento não informado.');
+      $objInfraException->adicionarValidacao('IdDocumento não informad.');
     }
   }
 
   private function validarStrTipoDocumento(MdPetVincDocumentoDTO $objMdPetVincDocumentoDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetVincDocumentoDTO->getStrTipoDocumento())){
-      $objInfraException->adicionarValidacao('TipoDocumento não informado.');
+      $objInfraException->adicionarValidacao('TipoDocumento não informad.');
     }else{
       $objMdPetVincDocumentoDTO->setStrTipoDocumento(trim($objMdPetVincDocumentoDTO->getStrTipoDocumento()));
 
       if (strlen($objMdPetVincDocumentoDTO->getStrTipoDocumento())>1){
-        $objInfraException->adicionarValidacao('TipoDocumento possui tamanho superior a 1 caractere.');
+        $objInfraException->adicionarValidacao('TipoDocumento possui tamanho superior a 1 caracteres.');
       }
     }
   }

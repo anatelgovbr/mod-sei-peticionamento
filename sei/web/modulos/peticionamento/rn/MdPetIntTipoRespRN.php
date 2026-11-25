@@ -46,7 +46,7 @@ class MdPetIntTipoRespRN extends InfraRN
             $objMdPetIntTipoRespDTO->setStrTipoPrazoExterno(trim($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno()));
 
             if (strlen($objMdPetIntTipoRespDTO->getStrTipoPrazoExterno()) > 1) {
-                $objInfraException->adicionarValidacao('Prazo Externo possui tamanho superior a 1 caractere.');
+                $objInfraException->adicionarValidacao('Prazo Externo possui tamanho superior a 1 caracteres.');
                 $objInfraException->lancarValidacoes();
             }
         }
@@ -124,13 +124,13 @@ class MdPetIntTipoRespRN extends InfraRN
     private function validarStrTipoRespostaAceita(MdPetIntTipoRespDTO $objMdPetIntTipoRespDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetIntTipoRespDTO->getStrTipoRespostaAceita())) {
-            $objInfraException->adicionarValidacao('Resposta do Usuário Externo não informada.');
+            $objInfraException->adicionarValidacao('Resposta do Usuário Externo não informado.');
             $objInfraException->lancarValidacoes();
         } else {
             $objMdPetIntTipoRespDTO->setStrTipoRespostaAceita(trim($objMdPetIntTipoRespDTO->getStrTipoRespostaAceita()));
 
             if (strlen($objMdPetIntTipoRespDTO->getStrTipoRespostaAceita()) > 1) {
-                $objInfraException->adicionarValidacao('Resposta do Usuário Externo possui tamanho superior a 1 caractere.');
+                $objInfraException->adicionarValidacao('Resposta do Usuário Externo possui tamanho superior a 1 caracteres.');
                 $objInfraException->lancarValidacoes();
             }
         }
@@ -243,7 +243,7 @@ class MdPetIntTipoRespRN extends InfraRN
                 } else {
                     $nomeTpResp = $this->_getNomeTipoResposta($arrObjMdPetIntTipoRespDTO[$i]->getNumIdMdPetIntTipoResp());
                     $objInfraException = new InfraException();
-                    $objInfraException->adicionarValidacao('O Tipo de Resposta "'.$nomeTpResp.'" não pode ser excluído pois está vinculado a uma Intimação.');
+                    $objInfraException->adicionarValidacao('O Tipo de Resposta "'.$nomeTpResp.'" não pode ser excluído pois está vinculado à uma Intimação.');
                     $objInfraException->lancarValidacoes();
                 }
             }

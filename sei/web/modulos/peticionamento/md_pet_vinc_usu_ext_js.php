@@ -18,6 +18,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
     var RESTRITO = '<?= ProtocoloRN::$NA_RESTRITO ?>';
     var TAMANHO_MAXIMO = '<?= $tamanhoMaximo ?>';
     var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
+    const objMdPetLimiteAnexos = <?= MdPetTamanhoArquivoRN::montarLimiteAnexosExternosParaTela() ?>;
     var EXIBIR_HIPOTESE_LEGAL = '<?= $exibirHipoteseLegal ?>';
     var arrExtensoesPermitidas = [<?= $extensoesPermitidas ?>];
     var objAjaxSelectTipoDocumento = null;
@@ -125,7 +126,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
                         console.log(url);
                         if (procuracao == 'true') {
                             infraAbrirJanela(window.atob(url),
-                                'Impedimento de Substituição de Responsável Legal',
+                                'Impedimento de Substitução de Responsável Legal',
                                 770,
                                 480,
                                 '', //options
@@ -464,7 +465,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
 
                         if (procuracao == 'true') {
                             infraAbrirJanela(window.atob(url),
-                                'Impedimento de Substituição de Responsável Legal',
+                                'Impedimento de Substitução de Responsável Legal',
                                 770,
                                 480,
                                 '', //options
@@ -564,7 +565,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         var isAlteracao = document.getElementById('isAlteracaoResponsavelLegal');
 
         if (isAlteracao && isAlteracao.value != 0) {
-            if (confirm('As alterações não serão salvas, para concluí-las é necessário Peticionar!! Deseja continuar?')) {
+            if (confirm('As alteração não serão salvas, para conclui-lá é necessário Peticionar!! Deseja continuar?')) {
                 document.location = '<?php echo $strUrlFechar ?>';
             }
         } else {
@@ -656,6 +657,8 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         var tbDocumento = document.getElementById('tbDocumento');
         objUploadArquivo = new infraUpload('frmDocumentoAto', '<?php echo $strLinkUploadArquivo ?>');
         mdPetVerificarTamanhoNoUpload(objUploadArquivo, objMdPetLimitesDoSei, validarTamanhoMaximoDoArquivo);
+
+        mdPetLimitarAnexosNoUpload(objUploadArquivo, objMdPetLimiteAnexos, () => objTabelaDinamicaDocumento);
 
         objUploadArquivo.finalizou = function(arr) {
             if (!mdPetValidarRetornoUpload(arr)) {
@@ -1014,6 +1017,9 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
     }
 
     function peticionar() {
+        if (!mdPetValidarQuantidadeAnexos(objMdPetLimiteAnexos, 0, objTabelaDinamicaDocumento)) {
+            return;
+        }
 
         var isVinculacao = document.getElementById('hdnIdVinculo').value == '' ? false : true;
         var isAlteracao = document.getElementById('hdnIsAlteracao').value == '1' || isVinculacao == true ? true : false;

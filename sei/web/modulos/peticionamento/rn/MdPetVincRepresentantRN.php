@@ -94,7 +94,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objMdPetVincRepresentantDTO->setStrTipoRepresentante(trim($objMdPetVincRepresentantDTO->getStrTipoRepresentante()));
 
             if (strlen($objMdPetVincRepresentantDTO->getStrTipoRepresentante()) > 1) {
-                $objInfraException->adicionarValidacao(' possui tamanho superior a 1 caractere.');
+                $objInfraException->adicionarValidacao(' possui tamanho superior a 1 caracteres.');
             }
         }
     }
@@ -102,17 +102,17 @@ class MdPetVincRepresentantRN extends InfraRN
     private function validarDthDataCadastro(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getDthDataCadastro())) {
-            $objInfraException->adicionarValidacao('DthDataCadastro não informada.');
+            $objInfraException->adicionarValidacao('DthDataCadastro não informad.');
         }
     }
 
     private function validarStrStaEstado(MdPetVincRepresentantDTO $objMdPetVincRepresentantDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdPetVincRepresentantDTO->getStrStaEstado())) {
-            $objInfraException->adicionarValidacao('StaEstado não informado.');
+            $objInfraException->adicionarValidacao('StaEstado não informad.');
         } else {
             if (!in_array($objMdPetVincRepresentantDTO->getStrStaEstado(), InfraArray::converterArrInfraDTO($this->listarValoresEstado(), 'StaEstado'))) {
-                $objInfraException->adicionarValidacao(' inválido.');
+                $objInfraException->adicionarValidacao(' inválid.');
             }
         }
     }
@@ -442,7 +442,7 @@ class MdPetVincRepresentantRN extends InfraRN
         } catch (Exception $eRollback) {
             $idVinculo = $dados['rollbackAlteracaoRespLegal']['idVinculo'];
             MdPetRastreioINT::registrarFalha('Encerramento do Responsável Legal anterior: o rollback falhou no vínculo ' . (int) $idVinculo . ', e o banco manteve tudo como estava antes dele. O vínculo precisa de correção manual.', $eRollback);
-            LogSEI::getInstance()->gravar('Falha ao reverter a alteração do responsável legal do vínculo ' . $idVinculo . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
+            LogSEI::getInstance()->gravar('Falha ao reverter a alteracao do responsavel legal do vinculo ' . $idVinculo . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
             (new MdPetAvisoRollbackRN())->avisarFalha('Encerramento do Responsável Legal', 'vínculo ' . (int) $idVinculo, $e, $eRollback, $strMotivo);
             $objProcedimentoDTO = (new MdPetVinculoUsuExtRN())->_getObjProcedimentoPorVinculo($idVinculo);
             (new InfraException())->lancarValidacao(sprintf(MdPetVinculoUsuExtRN::$MSG_ALTERACAO_NAO_DESFEITA, $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado()), null, $eRollback);
@@ -602,7 +602,7 @@ class MdPetVincRepresentantRN extends InfraRN
                 $arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listar($objMdPetVincRepresentantDTO);
 
                 $bolNaoReestabelecer = false;
-                $strMensagemNaoReestabelecer = 'Não é possível Restabelecer a vinculação desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+                $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer desta Pessoa Jurídica, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
                 $usuariosExternosDesativados = [];
 
                 foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
@@ -1116,6 +1116,10 @@ class MdPetVincRepresentantRN extends InfraRN
 	                    }
 
 	                } catch (Exception $e) {
+		                // No agendamento, a falha desfaz a suspensão inteira do CNPJ.
+		                if ($agendamento) {
+			                throw $e;
+		                }
 		                PaginaSEI::getInstance()->processarExcecao($e, true);
 	                }
 
@@ -1125,6 +1129,11 @@ class MdPetVincRepresentantRN extends InfraRN
 
                     // CRIA DOCUMENTO DE SUSPENSO
                     $objDocumento = $this->_encaminhamentoParaCriarDocumento($params, $autoRepresentacao, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
+
+                    if (!$objDocumento) {
+                        throw new InfraException('O documento de suspensão do vínculo ' . $idVinculo . ' não foi gerado.');
+                    }
+
                     $arrRerepentVincSuspensos['documentoSuspensao'] = $objDocumento->getDocumentoFormatado();
 
                     //BUSCAR PROCEDIMENTO DA PROCURACAO
@@ -1149,8 +1158,10 @@ class MdPetVincRepresentantRN extends InfraRN
                     $paramsParaEmail['documento_suspensao_procuracao'] = $paramsParaEmail['dados']['hdnNumeroSei'];
 
                     //E-MAIL  DIFERENTE PARA RESPONSAVEL LEGAL / PROCURADOR / AUTOREPRESENTACAO
+                    $arrEmails = [];
+
                     if ($objResponsavelLegal) {
-                        (new MdPetIntEmailNotificacaoRN())->enviarEmailVincSuspensao($paramsParaEmail);
+                        $arrEmails[] = static fn() => (new MdPetIntEmailNotificacaoRN())->enviarEmailVincSuspensao($paramsParaEmail);
                     }
 
                     if($autoRepresentacao){
@@ -1160,14 +1171,23 @@ class MdPetVincRepresentantRN extends InfraRN
                         $paramsAuto['objUsuarioAutorepresentacao'] = $objUsuarioAutorepresentacao;
                         $paramsAuto['autoRepresentacao'] = $autoRepresentacao;
                         $paramsAuto['agendamento'] = $agendamento;
-                        (new MdPetIntEmailNotificacaoRN())->enviarEmailSuspensaoAutorepresentacao($paramsAuto);
+                        $arrEmails[] = static fn() => (new MdPetIntEmailNotificacaoRN())->enviarEmailSuspensaoAutorepresentacao($paramsAuto);
                     }
 
                     foreach($arrObjMdPetVincRepresentantProcuradores as $objMdPetVincRepresentantProcuradores){
                         $paramsParaEmail['dados']['hdnIdVinculoRepresent'] = $objMdPetVincRepresentantProcuradores->getNumIdMdPetVinculoRepresent();
                         $paramsParaEmail['dados']['procuracao_tipo']       = $objMdPetVincRepresentantProcuradores->getStrNomeTipoVinculacao();
                         $paramsParaEmail['dados']['procuracao_doc_num']    = $this->_buscarProcuracaoDocNum($objMdPetVincRepresentantProcuradores->getNumIdMdPetVinculoRepresent());
-                        (new MdPetIntEmailNotificacaoRN())->enviarEmailProcuracaoSuspRest($paramsParaEmail);
+                        $arrEmails[] = static fn() => (new MdPetIntEmailNotificacaoRN())->enviarEmailProcuracaoSuspRest($paramsParaEmail);
+                    }
+
+                    // No agendamento, os e-mails saem só depois do commit da suspensão do CNPJ.
+                    if ($agendamento) {
+                        $arrRerepentVincSuspensos['emails'] = $arrEmails;
+                    } else {
+                        foreach ($arrEmails as $fnEnviarEmail) {
+                            $fnEnviarEmail();
+                        }
                     }
 
                     //VINCULAR DOCUMENTO DE JUSTIFICATIVA AO VINCULO CASO NAO SEJA DE AGENDAMENTO
@@ -1349,7 +1369,7 @@ class MdPetVincRepresentantRN extends InfraRN
                   $objResponsavelLegal,
                   $arrObjMdPetVincRepresentantProcuradores,
                   $agendamento,
-                  $params['hdnOperacao'],
+                  $operacao,
                   $params['hdnNumeroSei']
                 );
             }
@@ -1830,7 +1850,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $htmlModelo = file_get_contents($url);
             $htmlModelo = str_replace('@procuracaoTipo', $procuracaoTipo, $htmlModelo);
             $htmlModelo = str_replace('@procuracaoDocNum', $params['procuracao_doc_num'], $htmlModelo);
-            $htmlModelo = str_replace('@outorganteTipoPessoa', 'Pessoa Física', $htmlModelo);
+            $htmlModelo = str_replace('@outorganteTipoPessoa', 'Pessoa Fsica', $htmlModelo);
             $htmlModelo = str_replace('@procuracaoDados', $this->_retornaProcuradorDados($params), $htmlModelo);
             $htmlModelo = str_replace('@outorganteDados', $this->_retornaOrtoganteDados($params['ortoganteNome']), $htmlModelo);
             $htmlModelo = str_replace('@outorgadoNome', $params['ortogadoNome'], $htmlModelo);
@@ -1945,7 +1965,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             if (in_array($params['tipoVinculo'], [MdPetVincRepresentantRN::$PE_PROCURADOR, MdPetVincRepresentantRN::$PE_PROCURADOR_SIMPLES])) {
 
-                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2" style="font: bold 12pt Calibri, sans-serif">Dados da Procuração Eletrônica:</td></tr>';
+                $procuracaoDados .= '<tr class="trEspaco"><td colspan="2" style="font: bold 12pt Calibri, sans-serif">Dados da Procurao Eletrônica:</td></tr>';
                 $procuracaoDados .= '<tr>';
                 $procuracaoDados .= '<td class="tdTabulacao" style="font: bold 12pt Calibri, sans-serif">Validade:</td>';
                 $procuracaoDados .= '<td style="font-weight: normal">' . (!empty($params['dtLimiteValidade']) ? $params['dtLimiteValidade'] : 'Indeterminada') . '</td>';
@@ -2055,7 +2075,7 @@ class MdPetVincRepresentantRN extends InfraRN
             $objContatoRN = new ContatoRN();
             $objContatoDTO = $objContatoRN->consultarRN0324($objContatoDTO);
 
-            $msg = "Usuário Externo desativado em razão da Situação Cadastral de seu CPF na Receita Federal - Data: " . InfraData::getStrDataAtual() . ".\n" . $objContatoDTO->getStrObservacao();
+            $msg = "Usurio Externo desativado em razo da Situao Cadastral de seu CPF na Receita Federal - Data: " . InfraData::getStrDataAtual() . ".\n" . $objContatoDTO->getStrObservacao();
             $objContatoDTO->setStrObservacao($msg);
             $objContatoRN->alterarRN0323($objContatoDTO);
 
@@ -2154,7 +2174,7 @@ class MdPetVincRepresentantRN extends InfraRN
 
             $dados['procuracao_tipo'] = $objMdPetVincRepresentantDTO->getStrNomeTipoVinculacao();
 
-            $strMensagemNaoReestabelecer = 'Não é possível Restabelecer o Procurador, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
+            $strMensagemNaoReestabelecer = 'Não é possível Reestabelecer o Procurador, tendo em vista que os Usuários Externos abaixo estão desativados: \n \n';
             $bolNaoReestabelecer = false;
 
             // BUSCA OS DADOS DO USUÁRIO EXTERNO DO PROCURADOR:

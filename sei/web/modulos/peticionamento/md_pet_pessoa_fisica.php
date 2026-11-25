@@ -48,10 +48,10 @@ try {
 
   // Destinatarios em massa: Pega os Usuarios Externos que ja receberam o documento principal por intimacao:
   $arrContatosIntimados = [];
-  $idDocumento = '';
-  if(isset($_REQUEST['id_documento']) && !empty($_REQUEST['id_documento'])){
-      $idDocumento = $_REQUEST['id_documento'];
-      $arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradas($_REQUEST['id_documento']), 'Id');
+  $idDocumento = PaginaSEI::GET('id_documento');
+  $idDocumento = ctype_digit((string) $idDocumento) && (int) $idDocumento > 0 ? (string) $idDocumento : '';
+  if ($idDocumento !== '') {
+      $arrContatosIntimados = (new MdPetIntimacaoRN())->listarIdsContatosIntimadosDocumento($idDocumento);
   }
 
   $objUsuarioDTO = new UsuarioDTO();
@@ -196,6 +196,25 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema().' - '.$strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
+?>
+    fieldset.selecao-lote img.infraImgModulo {
+        background-color: white;
+        border-radius: .2rem;
+    }
+
+    fieldset.selecao-lote button.infraButton {
+        border-color: currentColor;
+    }
+
+    fieldset.selecao-lote :is(button.infraButton, textarea.infraTextarea):focus {
+        outline: 2px solid currentColor !important;
+        outline-offset: 2px;
+    }
+
+    fieldset.selecao-lote button.infraButton:focus {
+        background-color: transparent !important;
+    }
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -223,7 +242,7 @@ function inicializar(){
 
     <div class="row pesquisa-usuarios-lote my-2" style="display: none">
         <div class="col">
-            <div class="wrapper bg-light py-3 px-4 mb-3">
+            <fieldset class="infraFieldset selecao-lote py-3 px-4 mb-3">
                 <div class="mb-3">
                     <div class="cpf-validation-check">
                         <div class="row">
@@ -232,7 +251,7 @@ function inicializar(){
                                     <label for="cpfList">Seleção em lote por CPF:
                                         <img src="/infra_css/svg/ajuda.svg" name="ajuda" id="imgAjudaUsuario" onmouseover="return infraTooltipMostrar('Cole no campo abaixo a lista de CPFs válidos para pesquisa em lote, contento um CPF por linha, com ou sem formatação conforme os exemplos abaixo: \n\n 99999999999 ou 777.777.777-77','Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                                     </label><br>
-                                    <textarea class="infraTextarea" id="cpfList" rows="5" style="width: 100%"></textarea>
+                                    <textarea class="infraTextarea" id="cpfList" rows="5" style="width: 100%; border-color: currentColor"></textarea>
                                 </div>
                             </div>
                             <div class="col-5 pt-4">
@@ -254,8 +273,8 @@ function inicializar(){
                         <div class="mt-3">
                             <div class="row">
                                 <div class="col-7">
-                                    <label for="">Lista de CPFs Não localizados:</label><br>
-                                    <textarea class="infraTextarea" id="notFoundCpfs" rows="5" style="width: 100%" readonly></textarea>
+                                    <label for="notFoundCpfs">Lista de CPFs Não localizados:</label><br>
+                                    <textarea class="infraTextarea text-reset opacity-100" id="notFoundCpfs" rows="5" style="width: 100%; border-color: currentColor" readonly></textarea>
                                 </div>
                                 <div class="col-5 pt-1">
                                     <!--  <button type="button" class="infraButton mt-3" id="downloadBtn">Exportar lista de CPFs não localizados</button>-->
@@ -265,7 +284,7 @@ function inicializar(){
                         </div>
                     </div>
                 </div>
-            </div>
+            </fieldset>
         </div>
     </div>
 
@@ -407,7 +426,7 @@ function inicializar(){
                     }
 
                     if (/^(\d)\1{10}$/.test(cpfClean)) {
-                        cpfsInvalidos.push(cpf + ' - Sequência inválida');
+                        cpfsInvalidos.push(cpf + ' - Sequëncia inválida');
                         continue; // Pula para o próximo CPF
                     }
 

@@ -88,7 +88,7 @@ class MdPetAcessoExternoRN extends InfraRN {
 	private function validarNumDias($objAcessoExternoDTO, InfraException $objInfraException)
 	{
 		if (InfraString::isBolVazia($objAcessoExternoDTO->getNumDias())) {
-			$objInfraException->adicionarValidacao('Validade do acesso não informada.');
+			$objInfraException->adicionarValidacao('Validade do acesso não informada..');
 		} else {
 			if ($objAcessoExternoDTO->getNumDias() <= 0) {
 				$objInfraException->adicionarValidacao('Validade do acesso deve ser de pelo menos um dia.');
@@ -1334,11 +1334,11 @@ class MdPetAcessoExternoRN extends InfraRN {
 				break;
 
 			case static::$MD_PET_PROCURACAO_REVOGACAO :
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido à revogação realizada à Procuração Eletrônica concedida.';
+				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a revogação realizada à Procuração Eletrônica concedida.';
 				break;
 
 			case static::$MD_PET_PROCURACAO_RENUCIA :
-				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido à renúncia realizada à Procuração Eletrônica concedida.';
+				$strMotivo = 'Criado automaticamente por meio do módulo Peticionamento e Intimação Eletrônicos devido a renúncia realizada à Procuração Eletrônica concebida.';
 				break;
 
 		}

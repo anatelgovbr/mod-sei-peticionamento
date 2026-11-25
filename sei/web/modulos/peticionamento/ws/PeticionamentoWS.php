@@ -157,7 +157,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro ao listar Situações de Representação.', $e);
+            throw new InfraException('Erro ao listar Situações de de Representação.', $e);
         }
     }
 
@@ -279,11 +279,11 @@ class PeticionamentoWS extends MdPetUtilWS
                     }
                 }
                 if (!$ret) {
-                    $infraException->lancarValidacao('Nenhum Representante encontrado para o CNPJ informado com os filtros utilizados.');
+                    $infraException->lancarValidacao('Nenhum Representante encontrato para o CNPJ informado com os filtros utilizados.');
                 }
             } else {
                 if (!empty($staSituacao) || !empty($idsTipoPoderLegal)) {
-                    $infraException->lancarValidacao('Nenhum Representante encontrado para o CNPJ informado com os filtros utilizados.');
+                    $infraException->lancarValidacao('Nenhum Representante encontrato para o CNPJ informado com os filtros utilizados.');
                 }
                 $infraException->lancarValidacao('O CNPJ informado não tem nenhum Representante formalizado pelo Acesso Externo do SEI.');
             }
@@ -427,7 +427,7 @@ class PeticionamentoWS extends MdPetUtilWS
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro ao consultar Representação de Pessoa Física.', $e);
+            throw new InfraException('Erro Consultar Representação de Pessoa Física.', $e);
         }
     }
 
@@ -914,7 +914,7 @@ class PeticionamentoWS extends MdPetUtilWS
     private function validarPaginaVazia($arr, $pagina)
     {
         if (empty($arr) && $pagina > 1) {
-            throw new InfraException('Não existe registro para a página informada.');
+            throw new InfraException('Não exite registro para página informada.');
         }
     }
 

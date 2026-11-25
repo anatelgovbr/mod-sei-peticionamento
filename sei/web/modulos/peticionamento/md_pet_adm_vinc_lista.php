@@ -322,7 +322,7 @@ if ($numRegistros > 0) {
 	        if ( $isAdm ) {
 		
 		        $msgAtivo           = 'Este registro de Autorrepresentação está vinculado diretamente ao cadastro do Usuário Externo.\n\nDeve realizar a gestão de cadastro de Usuário Externo pelo menu Administração > Usuários Externos.';
-		        $msgInativo         = 'ATENÇÃO: Este registro de Autorrepresentação está suspenso em razão de agendamento com consulta à base da Receita Federal para verificação de situação de seu cadastro na Receita.\n\nEste registro está vinculado diretamente ao cadastro do Usuário Externo.\n\nRealizar a gestão de cadastro de Usuário Externo pelo menu Administração > Usuários Externos.';
+		        $msgInativo         = 'ATENÇÃO: Este registro de Autorrepresentação está suspenso em razão de agendamento com consulta à base da Receita Federal para verificação de situação de seu cadastro na Receita.\n\nEste registro está vinculado diretamente ao cadastro do Usuário Externo.\n\nRealizar a gestão de cadastro de Usuário Externo pelo meno Administração > Usuários Externos.';
 		        $strMsgAjuda        = $strLabelSituacao == 'Ativa' ? $msgAtivo : $msgInativo;
 		
 		        $strResultado      .= '<td align="center"><img align="top" alt="Ícone de Ajuda" src="'. PaginaSEI::getInstance()->getDiretorioSvgGlobal() .'/ajuda.svg"name="ajuda"'. PaginaSEI::montarTitleTooltip($strMsgAjuda, 'Ajuda') .' class="infraImg"/></td>';

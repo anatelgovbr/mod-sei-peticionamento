@@ -92,7 +92,7 @@ class MdPetReciboRN extends InfraRN
                 // Data Incio e Data Fim - Comparando
                 if ($objDTO->isSetDthInicial() && $objDTO->isSetDthFinal()) {
                     if (InfraData::compararDataHora($objDTO->getDthInicial(), $objDTO->getDthFinal()) < 0) {
-                        $objInfraException->lancarValidacao('A Data/Hora Início deve ser menor que a Data/Hora Fim.');
+                        $objInfraException->lancarValidacao('A Data/Hora Inicio deve ser menor que a Data/Hora Fim.');
                     }
                     // Data Incio e Data Fim - Comparando
                     $objDTO->adicionarCriterio(array('DataHoraRecebimentoFinal', 'DataHoraRecebimentoFinal'),
@@ -596,7 +596,7 @@ class MdPetReciboRN extends InfraRN
         $contador = 0;
         foreach ($erroDocumentos as $chave => $erro) {
             if($contador == 0){
-                $objInfraException->adicionarValidacao('Não foi possível gerar o Recibo do Peticionamento devido à ausência de:');
+                $objInfraException->adicionarValidacao('Não foi possível gerar o Recibo do Peticionamento devido a ausência de:');
             }
             if ($chave == 'documentoPrincipal') {
                 $objInfraException->adicionarValidacao(' - Documento Principal.');
@@ -630,7 +630,7 @@ class MdPetReciboRN extends InfraRN
 
             if(!empty($arrIdMetasSelecionadas)){
 
-                $html .= '<p style="font-weight: bold;">Objetivos de Desenvolvimento Sustentável da ONU</p>';
+                $html .= '<p style="font-weight: bold;">Objetos de Desenvolvimento Sustentável da ONU</p>';
                 $html .= '<p>O Usuário Externo acima identificado, no momento deste peticionamento indicou corroboração dos documentos protocolados com os ODS e Metas abaixo:</p>';
 
                 $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();

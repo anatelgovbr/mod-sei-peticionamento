@@ -72,10 +72,10 @@ try {
 
     // Destinatarios em massa: Pega os Usuarios Externos que ja receberam o documento principal por intimacao:
     $arrContatosIntimados = [];
-    $idDocumento = '';
-    if(isset($_REQUEST['id_documento']) && !empty($_REQUEST['id_documento'])){
-        $idDocumento = $_REQUEST['id_documento'];
-        $arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradasJuridico($idDocumento), 'Id');
+    $idDocumento = PaginaSEI::GET('id_documento');
+    $idDocumento = ctype_digit((string) $idDocumento) && (int) $idDocumento > 0 ? (string) $idDocumento : '';
+    if ($idDocumento !== '') {
+        $arrContatosIntimados = (new MdPetIntimacaoRN())->listarIdsPessoasJuridicasIntimadasDocumento($idDocumento);
     }
 
     $numRegistros = count($arrJuridicas);
@@ -154,6 +154,25 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(':: '.PaginaSEI::getInstance()->getStrNomeSistema().' - '.$strTitulo.' ::');
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
+?>
+    fieldset.selecao-lote img.infraImgModulo {
+        background-color: white;
+        border-radius: .2rem;
+    }
+
+    fieldset.selecao-lote button.infraButton {
+        border-color: currentColor;
+    }
+
+    fieldset.selecao-lote :is(button.infraButton, textarea.infraTextarea):focus {
+        outline: 2px solid currentColor !important;
+        outline-offset: 2px;
+    }
+
+    fieldset.selecao-lote button.infraButton:focus {
+        background-color: transparent !important;
+    }
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -167,7 +186,7 @@ PaginaSEI::getInstance()->abrirAreaDados();
 
 <div class="row pesquisa-destinatarios-lote my-2" style="display: none">
     <div class="col">
-        <div class="wrapper bg-light py-3 px-4 mb-3">
+        <fieldset class="infraFieldset selecao-lote py-3 px-4 mb-3">
             <div class="mb-3">
                 <div class="cnpj-validation-check">
                     <div class="row">
@@ -176,7 +195,7 @@ PaginaSEI::getInstance()->abrirAreaDados();
                                 <label for="cnpjList">Seleção em lote por CNPJ:
                                     <img src="/infra_css/svg/ajuda.svg" name="ajuda" id="imgAjudaUsuario" onmouseover="return infraTooltipMostrar('Cole no campo abaixo a lista de CNPJs válidos para pesquisa em lote, contento um CNPJ por linha, com ou sem formatação conforme os exemplos abaixo: \n\n 12345678000100 ou 12.345.678/0001-00','Ajuda');" onmouseout="return infraTooltipOcultar();" class="infraImgModulo">
                                 </label><br>
-                                <textarea class="infraTextarea" id="cnpjList" rows="5" style="width: 100%"></textarea>
+                                <textarea class="infraTextarea" id="cnpjList" rows="5" style="width: 100%; border-color: currentColor"></textarea>
                             </div>
                         </div>
                         <div class="col-5 pt-4">
@@ -197,8 +216,8 @@ PaginaSEI::getInstance()->abrirAreaDados();
                     <div class="mt-3">
                         <div class="row">
                             <div class="col-7">
-                                <label for="">Lista de CNPJs Não elegíveis:</label><br>
-                                <textarea class="infraTextarea" id="notFoundCnpjs" rows="5" style="width: 100%" readonly></textarea>
+                                <label for="notFoundCnpjs">Lista de CNPJs Não elegíveis:</label><br>
+                                <textarea class="infraTextarea text-reset opacity-100" id="notFoundCnpjs" rows="5" style="width: 100%; border-color: currentColor" readonly></textarea>
                             </div>
                             <div class="col-5 pt-1">
                                 <!--  <button type="button" class="infraButton mt-3" id="downloadBtn">Exportar lista de CNPJs não elegíveis</button>-->
@@ -208,7 +227,7 @@ PaginaSEI::getInstance()->abrirAreaDados();
                     </div>
                 </div>
             </div>
-        </div>
+        </fieldset>
     </div>
 </div>
 
@@ -359,7 +378,7 @@ PaginaSEI::getInstance()->abrirAreaDados();
                 }
 
                 if (/^(\d)\1{10}$/.test(cnpjClean)) {
-                    cnpjsInvalidos.push(cnpj + ' - Sequência inválida');
+                    cnpjsInvalidos.push(cnpj + ' - Sequëncia inválida');
                     continue; // Pula para o próximo CNPJ
                 }
 

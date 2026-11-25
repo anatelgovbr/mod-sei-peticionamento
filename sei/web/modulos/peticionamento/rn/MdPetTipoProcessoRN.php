@@ -351,7 +351,7 @@ class MdPetTipoProcessoRN extends InfraRN {
         $objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'N'
     ) {
 			if (InfraString::isBolVazia ($objMdPetTipoProcessoDTO->getNumIdSerie())) {
-				$objInfraException->adicionarValidacao('Tipo de Documento principal não informado.');
+				$objInfraException->adicionarValidacao('Tipo de Documento principal não informada.');
 			}
 		}
 		

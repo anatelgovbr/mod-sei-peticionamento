@@ -31,20 +31,22 @@
         return false;
     }
 
+    function mdPetCaractereForaDaCodificacao(strCaractere) {
+        var strCaracteresExtrasWindows1252 = '\u20AC\u201A\u0192\u201E\u2026\u2020\u2021\u02C6\u2030\u0160\u2039\u0152\u017D\u2018\u2019' +
+            '\u201C\u201D\u2022\u2013\u2014\u02DC\u2122\u0161\u203A\u0153\u017E\u0178';
+        return strCaractere.charCodeAt(0) > 255 && strCaracteresExtrasWindows1252.indexOf(strCaractere) === -1;
+    }
+
     // RT-PET-024: o navegador envia como &#NNN; o caractere que não existe na codificação da página, e o SEI recusa o
     // Complemento com esse caractere. Confere ao clicar em Adicionar, antes do upload e sem requisição ao servidor; o upload
     // e a conclusão repetem a verificação. A página é ISO-8859-1, que o navegador envia como Windows-1252: os 27 caracteres
     // do Windows-1252 acima de 255 chegam ao servidor como byte e são aceitos. A referência &#NNN; digitada como texto chega
     // ao servidor igual à que o navegador gera e também é recusada quando passa de 255.
     function mdPetValidarCaracteresComplemento(objCampo) {
-        var strCaracteresExtrasWindows1252 = '\u20AC\u201A\u0192\u201E\u2026\u2020\u2021\u02C6\u2030\u0160\u2039\u0152\u017D\u2018\u2019' +
-            '\u201C\u201D\u2022\u2013\u2014\u02DC\u2122\u0161\u203A\u0153\u017E\u0178';
         var bolTemReferenciaNaoAceita = (objCampo.value.match(/&#\d+;/g) || []).some(function (strReferencia) {
             return parseInt(strReferencia.slice(2, -1), 10) > 255;
         });
-        var bolTemCaractereNaoAceito = Array.prototype.some.call(objCampo.value, function (strCaractere) {
-            return strCaractere.charCodeAt(0) > 255 && strCaracteresExtrasWindows1252.indexOf(strCaractere) === -1;
-        });
+        var bolTemCaractereNaoAceito = Array.prototype.some.call(objCampo.value, mdPetCaractereForaDaCodificacao);
 
         if (!bolTemReferenciaNaoAceita && !bolTemCaractereNaoAceito) {
             return true;
@@ -53,6 +55,20 @@
         alert('<?= PaginaSEI::formatarParametrosJavaScript(PeticionamentoIntegracao::MSG_COMPLEMENTO_CARACTERE_NAO_ACEITO, false) ?>');
         objCampo.focus();
         return false;
+    }
+
+    function mdPetNomeAnexoTemCaracteresEspeciais(strNome) {
+        // Simula as referências numéricas que o navegador geraria ao enviar o nome na conclusão.
+        var strNomeCodificado = strNome.replace(/&amp;/g, '&').replace(/[^\u0000-\u00FF]/gu, function (strCaractere) {
+            return mdPetCaractereForaDaCodificacao(strCaractere) ? '&#' + strCaractere.codePointAt(0) + ';' : strCaractere;
+        });
+
+        // Mesmas combinações de letra e referência que InfraString::removerAcentosHTML aceita.
+        var strNomeNormalizado = strNomeCodificado.replace(
+            /a&#(?:768|769|770|771|776);|e&#(?:768|769|770|776);|[iu]&#(?:769|776);|o&#(?:769|770|771|776);|c&#807;|n&#771;/gi,
+            '_'
+        );
+        return strNomeNormalizado.includes('&#');
     }
 
     function mdPetValidarRetornoUpload(arrUpload) {
@@ -65,6 +81,11 @@
 
         if (!bolValido) {
             alert('Não foi possível adicionar o arquivo. Verifique a sessão e tente novamente.');
+            return false;
+        }
+
+        if (mdPetNomeAnexoTemCaracteresEspeciais(arrUpload['nome'])) {
+            alert('<?= PaginaSEI::formatarParametrosJavaScript(PeticionamentoIntegracao::MSG_NOME_ANEXO_CARACTERE_ESPECIAL, false) ?>');
             return false;
         }
 
@@ -148,6 +169,39 @@
             }
 
             return fnExecutar.apply(objUpload, arguments);
+        };
+    }
+
+    function mdPetValidarQuantidadeAnexos(objLimite, numInclusoes, ...arrTabelas) {
+        if (objLimite === null) {
+            return true;
+        }
+
+        const numAnexos = arrTabelas.reduce(function (numTotal, objTabela) {
+            return numTotal + (objTabela?.obterItens().length ?? 0);
+        }, numInclusoes);
+
+        if (numAnexos <= objLimite.limite) {
+            return true;
+        }
+
+        alert(objLimite.mensagem);
+        return false;
+    }
+
+    function mdPetLimitarAnexosNoUpload(objUpload, objLimite, obterTabela) {
+        if (objLimite === null) {
+            return;
+        }
+
+        const executarUpload = objUpload.executar;
+        objUpload.executar = function () {
+            if (objUpload.inputFile.files.length > 0 &&
+                (objUpload.bolExecutando || !mdPetValidarQuantidadeAnexos(objLimite, 1, obterTabela()))) {
+                return false;
+            }
+
+            return executarUpload.apply(objUpload, arguments);
         };
     }
 
@@ -412,7 +466,7 @@
             if (!valido) {
                 document.getElementById('txtDtInicio').value = '';
                 document.getElementById('txtDtFim').value = '';
-                alert('A Data/Hora Início deve ser menor que a Data/Hora Fim');
+                alert('A Data/Hora Inicio deve ser menor que a Data/Hora Fim');
                 return false;
             }
         }

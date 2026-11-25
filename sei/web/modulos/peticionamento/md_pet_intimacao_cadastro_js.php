@@ -1034,7 +1034,7 @@
         //Valida se foi selecionado um Tipo de Acesso
         if (!document.getElementById("optParcial").checked && !document.getElementById("optIntegral").checked) {
             alert("Selecione um Tipo de Acesso.");
-            document.getElementById("optIntegral").focus();
+            (document.getElementById("optIntegral").disabled ? document.getElementById("optParcial") : document.getElementById("optIntegral")).focus();
             return false;
         }
 

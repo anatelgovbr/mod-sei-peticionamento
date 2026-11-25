@@ -62,7 +62,7 @@
         alert('Nenhum menu selecionado.');
         return;
       }
-      if (confirm("Confirma a exclusão dos Menus selecionados?")){
+      if (confirm("Confirma a exclusão dos Menus selecionadas?")){
         document.getElementById('hdnInfraItemId').value='';
         document.getElementById('frmLista').action='<?=$strLinkExcluir?>';
         document.getElementById('frmLista').submit();

@@ -547,7 +547,7 @@ class MdPetContatoRN extends InfraRN {
 
 		if($numRegistros>0){
 			$objInfraException = new InfraException();
-			$objInfraException->lancarValidacao("Não é permitido ".$acao." este contato, pois ele está sendo usado no módulo de Peticionamento e Intimação Eletrônicos.");
+			$objInfraException->lancarValidacao("Não é permitido ".$acao." este contato, pois ele esta sendo usado no módulo de Peticionamento e Intimação Eletrônicos.");
 		}
 		return true;
 	}

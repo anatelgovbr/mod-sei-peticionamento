@@ -38,6 +38,24 @@ class MdPetIntegracaoDTO extends InfraDTO
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'OperacaoWsdl', 'operacao_wsdl');
 
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'EnderecoOpenapi', 'endereco_openapi');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'EnderecoExecucao', 'endereco_execucao');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'MetodoHttp', 'metodo_http');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'CaminhoOperacao', 'caminho_operacao');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaMetodoAutenticacao', 'sta_metodo_autenticacao');
+
+        $this->adicionarAtributo(InfraDTO::$PREFIXO_ARR, 'LinhasHeaders');
+
+        $this->adicionarAtributo(InfraDTO::$PREFIXO_ARR, 'Headers');
+
+        $this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'TokenAutenticacao');
+
+        $this->adicionarAtributo(InfraDTO::$PREFIXO_STR, 'CampoTokenAutenticacao');
+
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinCache', 'sin_cache');
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinTpLogradouro', 'sin_tp_lougradouro');

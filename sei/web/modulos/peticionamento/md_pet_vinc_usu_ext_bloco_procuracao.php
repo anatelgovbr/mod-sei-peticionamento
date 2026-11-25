@@ -97,7 +97,7 @@ $disabledConsultar = $stConsultar  ? 'disabled="disabled"' : null;
         var noUsuario = document.getElementById('txtNomeProcurador').value.trim();
 
         if (noUsuario.length == 0) {
-            alert('Nome do Usuário é de Preenchimento Obrigatório.')
+            alert('Nome do Usuário é de Preenchimento Obrigátorio.')
             return false;
         }
 

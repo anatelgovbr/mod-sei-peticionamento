@@ -24,7 +24,7 @@ class MdPetIntegFuncionalidRN extends InfraRN {
 
   private function validarStrNome(MdPetIntegFuncionalidDTO $objMdPetIntegFuncionalidDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntegFuncionalidDTO->getStrNome())){
-      $objInfraException->adicionarValidacao('Funcionalidade não informada.');
+      $objInfraException->adicionarValidacao('Funcionalidade não informad.');
     }else{
       $objMdPetIntegFuncionalidDTO->setStrNome(trim($objMdPetIntegFuncionalidDTO->getStrNome()));
 

@@ -16,6 +16,8 @@ try {
     $strDesabilitar = '';
 
     $arrComandos = array();
+    $arrObjMdPetWhitelist = [];
+    $strIdProcessosRepresentacao = '';
 
     //Tipo Processo - Nivel de Acesso
     $strLinkAjaxNivelAcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_tipo_processo_nivel_acesso_auto_completar');
@@ -222,7 +224,6 @@ try {
 
                         $arrIdTipoDocumento = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerie']);
                         $arrIdTipoDocumentoEssencial = PaginaSEI::getInstance()->getArrValuesSelect($_POST['hdnSerieEssencial']);
-                        $arrIdProcessoRepresentacao = $_POST['hdnIdProcessoRepresentacao'];
 
                         $nomeTipoProcesso = $_POST['txtTipoProcesso'];
                         $idTipoProcesso = $objMdPetVincTpProcessoDTO->getNumIdTipoProcedimento();
@@ -308,22 +309,34 @@ try {
 
                     $objMdPetVincRelSerieDTO = $objMdPetVincRelSerieRN->cadastrar($arrObjMdPetVincRelSerieDTO);
 
-                    // cadastrando whitelist de processos de representação
-                    $objMdPetProRepresWhitRN = new MdPetProRepresWhitRN();
-                    
-                    //removendo para repopular com os selecionados
-                    $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
-                    $objMdPetProRepresWhitDTO->retNumIdMdPetProRepresWhit();
-                    $objMdPetProRepresWhitRN->excluir($objMdPetProRepresWhitRN->listar($objMdPetProRepresWhitDTO));
+                    // Sincroniza somente a whitelist de processos do peticionamento intercorrente.
+                    $strIdProcessosRepresentacao = trim((string) PaginaSEI::POST('hdnIdProcessoRepresentacao'));
+                    $arrIdProcessosRepresentacao = [];
 
-                    if (!empty($arrIdProcessoRepresentacao)) {
-                        $arrIdProcessoRepresentacao = explode(',', $arrIdProcessoRepresentacao);
-                        foreach ($arrIdProcessoRepresentacao as $numIdProcessoRepresentacao) {
-                        $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
-                            $objMdPetProRepresWhitDTO->setDblIdProtocolo($numIdProcessoRepresentacao);
-                            $objMdPetProRepresWhitRN->cadastrar($objMdPetProRepresWhitDTO);
+                    if ($strIdProcessosRepresentacao !== '') {
+                        foreach (explode(',', $strIdProcessosRepresentacao) as $strIdProcessoRepresentacao) {
+                            $strIdProcessoRepresentacao = trim($strIdProcessoRepresentacao);
+                            if ($strIdProcessoRepresentacao === ''
+                                || preg_match('/^[0-9]+$/D', $strIdProcessoRepresentacao) !== 1) {
+                                throw new InfraException('A lista de processos de representação é inválida.');
+                            }
+
+                            $strIdProcessoRepresentacao = ltrim($strIdProcessoRepresentacao, '0');
+                            if ($strIdProcessoRepresentacao === '') {
+                                throw new InfraException('A lista de processos de representação deve conter apenas identificadores positivos.');
+                            }
+
+                            $arrIdProcessosRepresentacao[$strIdProcessoRepresentacao] = $strIdProcessoRepresentacao;
                         }
                     }
+
+                    $arrIdProcessosRepresentacaoNormalizados = array_values($arrIdProcessosRepresentacao);
+                    $objMdPetWhitelistDTO = new MdPetWhitelistDTO();
+                    $objMdPetWhitelistDTO->setStrStaFinalidade(MdPetWhitelistRN::FINALIDADE_PETICIONAMENTO_INTERCORRENTE);
+                    $objMdPetWhitelistDTO->setStrStaTipoObjeto(MdPetWhitelistRN::TIPO_PROCESSO);
+                    $objMdPetWhitelistDTO->setArrIdObjetos($arrIdProcessosRepresentacaoNormalizados);
+                    MdPetWhitelistINT::validarProcessosRepresentacao($arrIdProcessosRepresentacaoNormalizados);
+                    (new MdPetWhitelistRN())->sincronizarContexto($objMdPetWhitelistDTO);
 
                     PaginaSEI::getInstance()->adicionarMensagem("Os dados foram salvos com sucesso.", PaginaSEI::$TIPO_MSG_AVISO);
                     //header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_tipo_processo_peticionamento=' . $objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento() . PaginaSEI::getInstance()->montarAncora($objMdPetTipoProcessoDTO->getNumIdTipoProcessoPeticionamento())));
@@ -337,13 +350,17 @@ try {
 
     }
 
-    // Lista todos os processos de representação para o select
-    $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
-    $objMdPetProRepresWhitDTO->retStrProtocoloFormatado();
-    $objMdPetProRepresWhitDTO->retStrNomeTipoProcedimento();
-    $objMdPetProRepresWhitDTO->retDblIdProtocolo();
-    $objMdPetProRepresWhitDTO->setDistinct(true);
-    $arrObjMdPetProRepresWhit = ( new MdPetProRepresWhitRN() )->listar($objMdPetProRepresWhitDTO);
+    // Lista os processos de representação do contexto de peticionamento intercorrente.
+    $objMdPetWhitelistDTO = new MdPetWhitelistDTO();
+    $objMdPetWhitelistDTO->setStrStaFinalidade(MdPetWhitelistRN::FINALIDADE_PETICIONAMENTO_INTERCORRENTE);
+    $objMdPetWhitelistDTO->setStrStaTipoObjeto(MdPetWhitelistRN::TIPO_PROCESSO);
+    $arrObjMdPetWhitelist = (new MdPetWhitelistRN())->listarContextoInterno($objMdPetWhitelistDTO);
+
+    $arrIdProcessosRepresentacao = [];
+    foreach ($arrObjMdPetWhitelist as $objMdPetWhitelist) {
+        $arrIdProcessosRepresentacao[] = $objMdPetWhitelist->getDblIdObjeto();
+    }
+    $strIdProcessosRepresentacao = implode(',', $arrIdProcessosRepresentacao);
 
 
 } catch (Exception $e) {
@@ -380,7 +397,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <fieldset class="infraFieldset sizeFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Física
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                         id="imgAjudaVincUsuarioExternoPF" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir ao Usuário Externo logado emitir Procurações Eletrônicas simples para que outro Usuário Externo possa representá-lo como Pessoa Física. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Usuário Externo será aberto.', 'Ajuda') ?>
+                         id="imgAjudaVincUsuarioExternoPF" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir o Usuário Externo logado emitir Procurações Eletrônicas simples para que outro Usuário Externo possa representá-lo como Pessoa Física. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Usuário Externo será aberto.', 'Ajuda') ?>
                          class="infraImgFielset"/>
                 </legend>
                 <!--  Tipo de Processo  -->
@@ -504,7 +521,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <fieldset class="infraFieldset form-control" style="height: auto">
                 <legend class="infraLegend">Configurações para Vinculação de Usuário Externo a Pessoa Jurídica
                     <img src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif" name="ajuda"
-                         id="imgAjudaVincUsuarioExternoPJ" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir ao Usuário Externo logado emitir Procurações Eletrônicas simples ou Procurações Eletrônicas Especiais para que outro Usuário Externo possa representar Pessoa Jurídica. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Pessoa Jurídica será aberto.', 'Ajuda') ?>
+                         id="imgAjudaVincUsuarioExternoPJ" <?= PaginaSEI::montarTitleTooltip('Preencha estas configurações para permitir o Usuário Externo logado emitir Procurações Eletrônicas simples ou Procurações Eletrônicas Especiais para que outro Usuário Externo possa representar Pessoa Jurídica. \n \n Defina o Tipo de Processo e a Unidade onde cada Processo de controle de representação por Pessoa Jurídica será aberto.', 'Ajuda') ?>
                          class="infraImgFielset"/>
                 </legend>
                 <!--  Tipo de Processo  -->
@@ -593,7 +610,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 Pessoa
                                 Jurídica:</label>
                             <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>" name="ajuda"
-                                 id="imgAjudaMenuAcessoExternoPJ" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externos. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se a integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.', 'Ajuda') ?>
+                                 id="imgAjudaMenuAcessoExternoPJ" <?= PaginaSEI::montarTitleTooltip('Esta configuração permite exibir o menu "Responsável Legal de Pessoa Jurídica" para os Usuários Externos. \n \n Além dessa configuração, para exibir o menu ainda é necessário o Mapeamento da Integração com a Receita Federal para consultar os dados do CNPJ. Se integração ainda não foi mapeada, acesse Administração >> Peticionamento Eletrônico >> Integrações >> Novo >> Funcionalidade: Consultar Dados CNPJ Receita Federal. \n \n Ainda, para exibir o menu nesse caso, necessariamente tem que selecionar acima para Exibir o menu de Procuração Eletrônica.', 'Ajuda') ?>
                                  class="infraImgModulo"/>
                             <br/>
                             <input <?php if ($exibirMenuAcessoExterno == 'S') {
@@ -853,7 +870,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                             <table width="100%" summary="Tabela de Processos de Representação" class="infraTable"
                                                 id="tableTipoUnidade">
                                                 <caption class="infraCaption">Lista de Processos de Representação (<span
-                                                            id="qtdRegistros"><?php echo isset($arrObjMdPetProRepresWhit) && count($arrObjMdPetProRepresWhit) > 0 ? count($arrObjMdPetProRepresWhit) : '0'; ?></span> registros):
+                                                            id="qtdRegistros"><?php echo isset($arrObjMdPetWhitelist) && count($arrObjMdPetWhitelist) > 0 ? count($arrObjMdPetWhitelist) : '0'; ?></span> registros):
                                                 </caption>
                                                 <thead>
                                                     <tr>
@@ -864,26 +881,26 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                                 </thead>
                                                 <tbody id="tabelaProcessoRepresentacao">
                                                 <?php
-                                                if (!empty($arrObjMdPetProRepresWhit)) {
+                                                if (!empty($arrObjMdPetWhitelist)) {
 
-                                                    foreach ($arrObjMdPetProRepresWhit as $objMdPetProRepresWhit) {
+                                                    foreach ($arrObjMdPetWhitelist as $objMdPetWhitelist) {
                                                         $tipoProcessoRestricaoErro = false;
-                                                        $idMdPetProRepresWhit = $objMdPetProRepresWhit->getDblIdProtocolo();
+                                                        $idMdPetWhitelist = PaginaSEI::tratarHTML((string) $objMdPetWhitelist->getDblIdObjeto());
                                                        
                                                         ?>
-                                                        <tr class="infraTrClara linhas linhasRepresent" id="<?php echo $idMdPetProRepresWhit; ?>">
+                                                        <tr class="infraTrClara linhas linhasRepresent" id="<?php echo $idMdPetWhitelist; ?>">
                                                             <td align="center" class="linhas_processo">
-                                                                <?php echo $objMdPetProRepresWhit->getStrProtocoloFormatado(); ?>
+                                                                <?php echo PaginaSEI::tratarHTML($objMdPetWhitelist->getStrIdentificadorObjeto()); ?>
                                                             </td>
                                                             <td align="center">
-                                                                <?php echo $objMdPetProRepresWhit->getStrNomeTipoProcedimento(); ?>
+                                                                <?php echo PaginaSEI::tratarHTML($objMdPetWhitelist->getStrDescricaoObjeto()); ?>
                                                             </td>
                                                             <td align="center">
                                                                 <a>
                                                                     <img title="Remover Permissão para Peticionamento Intercorrente nesse Processo de Representação"
                                                                         alt="Remover Permissão para Peticionamento Intercorrente nesse Processo de Representação"
                                                                         src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg"
-                                                                        onclick="removerPermissaoPetIntercorrente('<?php echo $idMdPetProRepresWhit; ?>');"
+                                                                        onclick="removerPermissaoPetIntercorrente('<?php echo $idMdPetWhitelist; ?>');"
                                                                         id="imgExcluirProcessoSobrestado">
                                                                 </a>
                                                             </td>
@@ -900,7 +917,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 </div>
 
                             </div>
-                            <input type="hidden" id="hdnIdProcessoRepresentacao" name="hdnIdProcessoRepresentacao" value="<?= $_POST['hdnIdProcessoRepresentacao'] ?>"/>
+                            <input type="hidden" id="hdnIdProcessoRepresentacao" name="hdnIdProcessoRepresentacao" value="<?= PaginaSEI::tratarHTML($strIdProcessosRepresentacao) ?>"/>
                         </fieldset>
                         
                     </div>

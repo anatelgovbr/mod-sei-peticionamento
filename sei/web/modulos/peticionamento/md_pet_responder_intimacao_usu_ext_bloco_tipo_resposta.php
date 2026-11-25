@@ -14,7 +14,7 @@
                     <label class="infraLabelObrigatorio" for="selRazaoSocial">Responder em nome de:
                         <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                             name="ajuda" class="infraImgModulo"
-                        <?= PaginaSEI::montarTitleTooltip("Esta Intimação possui como destinatários você e/ou as Pessoas Jurídicas listadas neste campo. \n \n Selecione seu registro para responder à Intimação em seu nome próprio ou a Pessoa Jurídica que representa para responder em nome da mesma.", 'Ajuda') ?>>
+                        <?= PaginaSEI::montarTitleTooltip("Esta Intimação possui como destinatários você e/ou as Pessoas Jurídicas listadas neste campo. \n \n Selecione seu registro para responder a Intimação em seu nome próprio ou a Pessoa Jurídica que representa para responder em nome da mesma.", 'Ajuda') ?>>
                     </label>
                     <select class="infraSelect form-control"
                             onchange="mudarSelect(this);exibirFieldsetDocumentos(this);alterarHidden(this);"

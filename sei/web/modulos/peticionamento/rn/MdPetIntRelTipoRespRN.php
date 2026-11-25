@@ -64,7 +64,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             return $ret;
 
         }catch(Exception $e){
-            throw new InfraException('Erro cadastrando Tipo de Resposta da Intimação.',$e);
+            throw new InfraException('Erro cadastrando Tipo De Resposta da Intimação.',$e);
         }
     }
 
@@ -95,7 +95,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro alterando Tipo de Resposta da Intimação.',$e);
+            throw new InfraException('Erro alterando Tipo De Resposta da Intimação.',$e);
         }
     }
 
@@ -118,7 +118,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro excluindo Tipo de Resposta da Intimação.',$e);
+            throw new InfraException('Erro excluindo Tipo De Resposta da Intimação.',$e);
         }
     }
 
@@ -140,7 +140,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro consultando Tipo de Resposta da Intimação.',$e);
+            throw new InfraException('Erro consultando Tipo De Resposta da Intimação.',$e);
         }
     }
 
@@ -208,7 +208,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro desativando Tipo de Resposta da Intimação.',$e);
+            throw new InfraException('Erro desativando Tipo De Resposta da Intimação.',$e);
         }
     }
 
@@ -231,7 +231,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
             //Auditoria
 
         }catch(Exception $e){
-            throw new InfraException('Erro reativando Tipo de Resposta da Intimação.',$e);
+            throw new InfraException('Erro reativando Tipo De Resposta da Intimação.',$e);
         }
     }
 
@@ -253,7 +253,7 @@ class MdPetIntRelTipoRespRN extends InfraRN {
 
             return $ret;
         }catch(Exception $e){
-            throw new InfraException('Erro bloqueando Tipo de Resposta da Intimação.',$e);
+            throw new InfraException('Erro bloqueando Tipo De Resposta da Intimação.',$e);
         }
     }
 

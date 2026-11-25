@@ -442,7 +442,7 @@ class MdPetProtocoloRN extends ProtocoloRN {
 				}
 		   
 				if (!$objParticipanteDTO->isSetStrStaParticipacao()){
-					$objInfraException->lancarValidacao('Tipo de participação do participante não informado.');
+					$objInfraException->lancarValidacao('Tipo de participação do participante não informada.');
 				}
 		   
 				$arrDuplicados[] = $objParticipanteDTO->getNumIdContato().'-'.$objParticipanteDTO->getStrStaParticipacao();

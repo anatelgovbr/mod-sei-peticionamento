@@ -163,7 +163,7 @@ class MdPetSoapClienteRN extends BeSimple\SoapClient\SoapClient
     public function execOperacao($strOperacao,$montarParametroEntrada = []) {
         try {
             if ( ! InfraWS::isBolServicoExiste($this, $strOperacao))
-                return ['suc' => false , 'msg' => "Não existe ou não foi encontrada a operação: $strOperacao."];
+                return ['suc' => false , 'msg' => "Não existe ou não foi encontrado a operação: $strOperacao."];
 
             $arrResultado = $this->__soapCall($strOperacao, $montarParametroEntrada);
 

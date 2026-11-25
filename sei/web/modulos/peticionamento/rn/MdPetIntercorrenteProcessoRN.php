@@ -1708,7 +1708,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         } catch (\Throwable $eRollback) {
             MdPetRastreioINT::registrarFalha($strFluxo . ': o rollback falhou no ' . $strProcesso . ', e o banco manteve tudo como estava antes dele. O processo precisa de correção manual.', $eRollback);
             LogSEI::getInstance()->gravar(
-                'Falha ao tentar reverter cadastro de peticionamento intercorrente após erro original ['
+                'Falha ao tentar reverter cadastro de peticionamento intercorrente apos erro original ['
                 . $e->getMessage() . ']: ' . $eRollback->getMessage() . ' Rastreio: pet=' . MdPetRastreioINT::obterUuid(),
                 InfraLog::$ERRO
             );
@@ -1738,7 +1738,7 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
             $this->enviarEmail($params);
         } catch (\Throwable $e) {
             LogSEI::getInstance()->gravar(
-                'Falha no envio de e-mail de notificação do peticionamento intercorrente'
+                'Falha no envio de e-mail de notificacao do peticionamento intercorrente'
                 . ' (processo ' . (isset($params['id_procedimento']) ? $params['id_procedimento'] : 'indefinido') . ')'
                 . ': ' . $e->getMessage(),
                 InfraLog::$INFORMACAO
@@ -2260,7 +2260,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objInfraException = new InfraException();
         $arrArquivos = [];
 
-        foreach (PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($strTbDocumento) as $arrDocumento) {
+        $arrDocumentos = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($strTbDocumento);
+        foreach ($arrDocumentos as $arrDocumento) {
             PeticionamentoIntegracao::validarXssCampo($arrDocumento[9] ?? null, 'Nome de arquivo enviado', $objInfraException);
             PeticionamentoIntegracao::validarXssComplemento($arrDocumento[2] ?? null, $objInfraException);
             $arrArquivos[$arrDocumento[7] ?? ''] = $arrDocumento[9] ?? '';
@@ -2268,8 +2269,14 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
         $objInfraException->lancarValidacoes();
 
+        MdPetTamanhoArquivoRN::validarQuantidadeAnexosExternos(
+            count($arrDocumentos),
+            new InfraParametro(BancoSEI::getInstance()),
+            LogSEI::getInstance()
+        );
         PeticionamentoIntegracao::validarArquivosDisponiveisConclusao($arrArquivos, $strDiretorio);
         PeticionamentoIntegracao::validarXssConclusao(null, $arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarNomesAnexosConclusao($arrArquivos);
         PeticionamentoIntegracao::validarTamanhoConclusao($arrArquivos, $strDiretorio);
     }
 

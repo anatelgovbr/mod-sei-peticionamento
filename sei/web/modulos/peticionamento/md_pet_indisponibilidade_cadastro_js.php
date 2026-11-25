@@ -233,7 +233,7 @@
         var valido = (dataInicial.getTime() <= dataFinal.getTime());
 
         if (!valido) {
-            alert('A Data/Hora Início deve ser menor que a Data/Hora Fim');
+            alert('A Data/Hora Inicio deve ser menor  que a Data/Hora Fim');
             return false;
         }
 
@@ -290,7 +290,7 @@
         var valido = (dataInicial.getTime() < dataFinal.getTime());
 
         if (!valido) {
-            alert('A Data/Hora Início deve ser menor que a Data/Hora Fim');
+            alert('A Data/Hora Inicio deve ser menor que a Data/Hora Fim');
             return false;
         }
 
@@ -317,7 +317,7 @@
 
 
         if (tipoDocumento != '' && qtdDocAdicionado < 2) {
-            alert('O documento informado no número SEI não foi adicionado e não será salvo. Caso seja necessário vincular o documento é preciso antes adicioná-lo.');
+            alert('O documento informado no número SEI não foi adicionado e não será salvo.Caso seja necessário vincular o documento é preciso antes adicioná-lo.');
             return false;
         }
 

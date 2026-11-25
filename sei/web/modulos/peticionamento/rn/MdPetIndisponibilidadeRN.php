@@ -69,7 +69,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 		
 		return $objArrMdPetProrrogacaoAutomaticaPrazosDTO;
 		}catch(Exception $e){
-			throw new InfraException('Erro listando valores de Prorrogação.',$e);
+			throw new InfraException('Erro listando valores de Prorrogacao.',$e);
 		}
 	}
 	
@@ -289,7 +289,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 
 	private function _validarTxtResumoIndisponibilidade($objInfraException, $objMdPetIndisponibilidadeDTO){
 		if (InfraString::isBolVazia ($objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade())) {
-			$objInfraException->adicionarValidacao('Resumo da Indisponibilidade não informado.');
+			$objInfraException->adicionarValidacao('Resumo da Indisponibilidade não informada.');
 		}
 		if (trim ( $objMdPetIndisponibilidadeDTO->getStrResumoIndisponibilidade () ) != '')
 		{
@@ -623,7 +623,7 @@ class MdPetIndisponibilidadeRN extends InfraRN {
 										break;
 		
 									default:
-										$ret = 'ERRO#Erro desconhecido transferindo arquivo ['.$_FILES[$strCampoArquivo]["error"].'].';
+										$ret = 'ERRO#Erro desconhecido tranferindo arquivo ['.$_FILES[$strCampoArquivo]["error"].'].';
 										break;
 								}
 		

@@ -57,7 +57,7 @@ if (isset($_POST['hdnIdUsuario']) && $_POST['hdnIdUsuario'] != '') {
         'IdContatoPessoaJuridica' => $idContatoVinc))) {
 
         LogSEI::getInstance()->gravar(sprintf(
-            'md_pet_vinc_usu_ext_pe_cadastrar: outorga negada. Usuário externo: %s | Contato da sessão: %s | Pessoa Jurídica: %s | IP: %s',
+            'md_pet_vinc_usu_ext_pe_cadastrar: outorga negada. Usuario externo: %s | Contato da sessao: %s | Pessoa Juridica: %s | IP: %s',
             SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
             $idContatoExterno,
             $idContatoVinc,
@@ -269,7 +269,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                         </label>
                         <img align="top" src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                             name="ajuda"
-                            <?= PaginaSEI::montarTitleTooltip('Neste campo são listadas as Pessoas Jurídicas das quais você é o Responsável Legal com situação Ativa, pois somente o Responsável Legal de Pessoa Jurídica pode emitir Procuração Eletrônica Especial. \n \n Se você é o Responsável Legal e a Pessoa Jurídica não foi listada, então confira se a vinculação está cadastrada no menu "Responsável Legal de Pessoa Jurídica": \n \n 1.1. Se a Pessoa Jurídica não for listada no citado menu, clique no botão "Novo Responsável Legal" e realize o cadastro. \n 1.2. Se a Pessoa Jurídica foi listada no citado menu, mas não está com situação Ativa, regularize a situação juntamente ao Órgão.') ?>
+                            <?= PaginaSEI::montarTitleTooltip('Neste campo são listadas as Pessoas Jurídicas que você é o Responsável Legal com situação Ativa, pois somente o Responsável Legal de Pessoa Jurídica pode emitir Procuração Eletrônica Especial. \n \n Se você é o Responsavel Legal e a Pessoa Jurídica não foi listada, então confira se a vinculação está cadastrada no menu "Responsável Legal de Pessoa Jurídica": \n \n 1.1. Se a Pessoa Jurídica não for listada no citado menu, clique no botão "Novo Responsável Legal" e realize o cadastro. \n 1.2. Se a Pessoa Jurídica foi listada no citado menu, mas não está com situação Ativa, regularize a situação juntamente ao Órgão.') ?>
                             class="infraImgModulo"/>
                         <br/>
                         <select class="infraSelect form-selec"
@@ -291,7 +291,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                 align="top"
                                 name="ajuda"
                                 id="imgPj"
-                                <?= PaginaSEI::montarTitleTooltip('Neste campo são listadas as Pessoas Jurídicas das quais você é o Responsável Legal com situação Ativa ou das quais possua Procuração Eletrônica Especial vigente. \n \n Se você é o Responsável Legal e a Pessoa Jurídica não foi listada, então confira se a vinculação está cadastrada no menu "Responsável Legal de Pessoa Jurídica": \n \n 1.1. Se a Pessoa Jurídica não for listada no citado menu, clique no botão "Novo Responsável Legal" e realize o cadastro. \n 1.2. Se a Pessoa Jurídica foi listada no citado menu, mas não está com situação Ativa, regularize a situação juntamente ao Órgão.', 'Ajuda') ?>
+                                <?= PaginaSEI::montarTitleTooltip('Neste campo são listadas as Pessoas Jurídicas que você é o Responsável Legal com situação Ativa ou que possua Procuração Eletrônica Especial vigente. \n \n Se você é o Responsavel Legal e a Pessoa Jurídica não foi listada, então confira se a vinculação está cadastrada no menu "Responsável Legal de Pessoa Jurídica": \n \n 1.1. Se a Pessoa Jurídica não for listada no citado menu, clique no botão "Novo Responsável Legal" e realize o cadastro. \n 1.2. Se a Pessoa Jurídica foi listada no citado menu, mas não está com situação Ativa, regularize a situação juntamente ao Órgão.', 'Ajuda') ?>
                                 class="infraImgModulo"/>
                         </label>
                         <br/>
@@ -538,7 +538,7 @@ PaginaSEIExterna::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"'
                                 </label>
                                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg?<?= Icone::VERSAO ?>"
                                     name="ajuda"
-                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o Procurador representará o Outorgante somente em processos específicos, que devem ser adicionados na lista abaixo. \n \n Após marcar esta opção, torna-se necessário informar o número válido de cada processo sobre o qual o Procurador poderá atuar.', 'Ajuda') ?>
+                                    <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, o Procurador representará o Outorgante somente em processos específicos, que devem ser adionados na lista abaixo. \n \n Após marcar esta opção, torna-se necessário informar o número válido de cada processo sobre os quais o Procurador poderá atuar.', 'Ajuda') ?>
                                     class="infraImgModulo"/>
                             </div>
                         </div>

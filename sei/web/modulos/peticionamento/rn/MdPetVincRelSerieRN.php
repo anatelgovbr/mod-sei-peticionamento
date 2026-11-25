@@ -36,7 +36,7 @@ class MdPetVincRelSerieRN extends InfraRN
             }
             return $arrRetorno;
         } catch (Exception $e) {
-            throw  new InfraException('Erro cadastrando tipo de documento relacionado ao tipo de processo da vinculação.', $e);
+            throw  new InfraException('Erro cadastrando tipo documento relacionado ao tipo processo da vinculação.', $e);
         }
     }
 
@@ -51,7 +51,7 @@ class MdPetVincRelSerieRN extends InfraRN
             	$objMdPetVincRelSerieBD->excluir($arrObjMdPetVincRelSerieDTO[$i]);
             }
         } catch (Exception $e) {
-            throw  new InfraException('Erro excluindo tipo de documento relacionado ao tipo de processo da vinculação.', $e);
+            throw  new InfraException('Erro excluindo tipo documento relacionado ao tipo processo da vinculação.', $e);
         }
     }
 
@@ -66,7 +66,7 @@ class MdPetVincRelSerieRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando tipo de documento relacionado ao tipo de processo da vinculação', $e);
+            throw new InfraException('Erro consultando tipo documento relacionado ao tipo processo da vinculação', $e);
         }
     }
 
@@ -81,7 +81,7 @@ class MdPetVincRelSerieRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando tipo de documento relacionado ao tipo de processo da vinculação', $e);
+            throw new InfraException('Erro contando tipo documento relacionado ao tipo processo da vinculação', $e);
         }
     }
 

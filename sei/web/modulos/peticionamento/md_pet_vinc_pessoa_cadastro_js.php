@@ -10,7 +10,7 @@ $strLinkUsuarioAjax = SessaoSEIExterna::getInstance()->assinarLink('controlador_
         var cpfAtual = infraRetirarFormatacao(document.getElementById('txtCpfCad').value.trim());
 
         if(parseFloat(nuCpf) == parseFloat(cpfAtual)){
-            alert('O CPF informado pertence ao atual Responsável Legal dessa PJ.');
+            alert('O Cpf informado pertence ao atual Responsável Legal dessa PJ.');
             return false;
         }
 

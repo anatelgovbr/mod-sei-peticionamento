@@ -37,10 +37,10 @@ class MdPetIntRelDestinatarioRN extends InfraRN {
 
     private function validarStrSinPessoaJuridica(MdPetIntRelDestinatarioDTO $objMdPetIntRelDestinatarioDTO, InfraException $objInfraException){
         if (InfraString::isBolVazia($objMdPetIntRelDestinatarioDTO->getStrSinPessoaJuridica())){
-            $objInfraException->adicionarValidacao('Sinalizador de Pessoa Jurídica não informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Pessoa Juridica não informado.');
         }else{
             if (!InfraUtil::isBolSinalizadorValido($objMdPetIntRelDestinatarioDTO->getStrSinPessoaJuridica())){
-                $objInfraException->adicionarValidacao('Sinalizador de Pessoa Jurídica inválido.');
+                $objInfraException->adicionarValidacao('Sinalizador de Pessoa Juridica inválida.');
             }
         }
     }

@@ -49,7 +49,7 @@ try {
 				try {
 					$objMdPetIntPrazoTacitaRN = new MdPetIntPrazoTacitaRN();
 					$objMdPetIntPrazoTacitaDTO = $objMdPetIntPrazoTacitaRN->cadastrar($objMdPetIntPrazoTacitaDTO);
-					PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() . '" cadastrado com sucesso.');
+					PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdPetIntPrazoTacitaDTO->getNumNumPrazo() . '" cadastrad com sucesso.');
 					header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora()));
 					die;
 				} catch (Exception $e) {
@@ -235,7 +235,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
     var objAutoCompletarTipoProcesso = null;
 
     function limparTipoProcessoSelect(){
-        if(confirm('Deseja realmente limpar todos os campos da seção Prazo customizado por Tipo de Processo Específico?')) {
+        if(confirm('Deseja realmente limpar todos os campos da seção Prazo customizado por Tipo de Processo Específicos?')) {
             $('#fldPrazoCustomizadoTipoProcessoEspecifico').children(':input').each(function() { $(this).val(''); });
             $('#fldPrazoCustomizadoTipoProcessoEspecifico select>option:eq(0)').prop('selected', true);
             $('#fldPrazoCustomizadoTipoProcessoEspecifico #selTipoProcesso').find('option').remove();
@@ -353,7 +353,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
                 <label id="lblNumPrazo" for="txtNumPrazo" accesskey="" class="infraLabelObrigatorio">Prazo em Dias:</label>
                 <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda"
-                     id="imgAjudaPrazo" <?= PaginaSEI::montarTitleTooltip('O Prazo para Intimação Tácita é aquele ao fim do qual, contado da data de expedição, caso o Destinatário não consulte os documentos diretamente no sistema, a intimação será considerada automaticamente cumprida por Decurso do Prazo Tácito.\n\n Em geral, recomenda-se utilizar 10 dias, tendo como parâmetro o art. 5º, § 3º, da Lei nº 11.419/2006.\n\n ATENÇÃO: Alteração nesse prazo afetará apenas novas intimações, geradas depois da alteração.', 'Ajuda') ?>
+                     id="imgAjudaPrazo" <?= PaginaSEI::montarTitleTooltip('O Prazo para Intimação Tácita é aquele que, a partir da data de expedição, caso o Destinatário não consulte os documentos diretamente no sistema, a intimação será considerada automaticamente cumprida por Decurso do Prazo Tácito.\n\n Em geral, recomenda-se utilizar 10 dias, tendo como parâmetro o art. 5º, § 3º, da Lei nº 11.419/2006.\n\n ATENÇÃO: Alteração nesse prazo afetará apenas novas intimações, geradas depois da alteração.', 'Ajuda') ?>
                      class="infraImgModulo"/>
                 <input type="text" id="txtNumPrazo" name="txtNumPrazo"
                        onkeypress="return infraMascaraNumero(this, event)"

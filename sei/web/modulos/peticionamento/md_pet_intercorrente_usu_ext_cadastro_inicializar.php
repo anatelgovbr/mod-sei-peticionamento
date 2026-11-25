@@ -1,7 +1,7 @@
 <?php
 
-    //INICIALIZAÇÃO DE VARIÁVEIS DA PÁGINA
-    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao número do processo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluídos diretamente no processo indicado ou em processo novo relacionado.";
+    //INICIALIZAÇÃO DE VARIÁVEIS DA PÁGINA
+    $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao nÃºmero do processo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluí­dos diretamente no processo indicado ou em processo novo relacionado.";
 
     $arrComandos   = array();
     $arrComandos[] = '<button tabindex="-1" type="button" accesskey="p" name="Peticionar" id="Peticionar" value="Peticionar" onclick="abrirPeticionar()" class="infraButton"><span class="infraTeclaAtalho">P</span>eticionar</button>';
@@ -18,7 +18,7 @@
     //Msgs dos Tooltips de Ajuda
     $strMsgTooltipTipoDocumento						= 'Selecione o Tipo de Documento que melhor identifique o documento a ser carregado e complemente o Tipo no campo ao lado.';
     $strMsgTooltipComplementoTipoDocumento			= 'O Complemento do Tipo de Documento é o texto que completa a identificação do documento a ser carregado, adicionando ao nome do Tipo o texto que for digitado no referido campo (Tipo "Recurso" e Complemento "de 1ª Instância" identificará o documento como "Recurso de 1ª Instância").\n\n\n Exemplos: O Complemento do Tipo "Nota" pode ser "Fiscal Eletrônica" ou "Fiscal nº 75/2016". O Complemento do Tipo "Comprovante" pode ser "de Pagamento" ou "de Endereço".';
-    $strMsgTooltipNivelAcesso						= 'O Nível de Acesso que for indicado é de sua exclusiva responsabilidade e estará condicionado à análise por servidor público, que poderá alterá-lo a qualquer momento sem necessidade de prévio aviso.\n\n\n Selecione "Público" se no teor do documento a ser carregado não existirem informações restritas. Se no teor do documento existirem informações restritas, selecione "Restrito".';
+    $strMsgTooltipNivelAcesso						= 'O Nível de Acesso que for indicado é de sua exclusiva responsabilidade e estará condicionado à análise por servidor público, que poderá alterá-lo a qualquer momento sem necessidade de prévio aviso.\n\n\n Selecione "Público" se no teor do documento a ser carregado não existir informações restritas. Se no teor do documento existir informações restritas, selecione "Restrito".';
     $strMsgTooltipHipoteseLegal						= 'Para o Nível de Acesso "Restrito" é obrigatória a indicação da Hipótese Legal correspondente à informação restrita constante no teor do documento a ser carregado, sendo de sua exclusiva responsabilidade a referida indicação. Em caso de dúvidas, pesquise sobre a legislação indicada entre parênteses em cada Hipótese listada.';
     $strMsgTooltipNivelAcessoPadraoPreDefinido		= 'Para o Número de Processo indicado o Nível de Acesso é previamente definido.';
     $strMsgTooltipHipoteseLegalPadraoPreDefinido	= 'Para o Número de Processo indicado o Nível de Acesso é previamente definido como "Restrito" e, assim, a Hipótese Legal também é previamente definida.';

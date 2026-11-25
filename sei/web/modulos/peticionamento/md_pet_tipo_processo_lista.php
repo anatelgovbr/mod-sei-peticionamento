@@ -281,7 +281,7 @@ try {
             $strSumarioTabela = 'Tabela de Tipos de Processos para Peticionamento de Processo Novo';
             $strCaptionTabela = 'Tipos de Processos para Peticionamento de Processo Novo';
         } else {
-            $strSumarioTabela = 'Tabela de Tipos de Processo Inativos.';
+            $strSumarioTabela = 'Tabela de Tipo de Processos Inativos.';
             $strCaptionTabela = 'Tipos de Processos Inativos';
         }
 
@@ -625,7 +625,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
     alert('Nenhum Tipo de Processo selecionado.');
     return;
     }
-    if (confirm("Confirma a reativação dos Tipos de Processo selecionados?")){
+    if (confirm("Confirma a reativação dos Tipo de Processos selecionadas?")){
     document.getElementById('hdnInfraItemId').value='';
     document.getElementById('frmTipoProcessoPeticionamentoLista').action='<?= $strLinkReativar ?>';
     document.getElementById('frmTipoProcessoPeticionamentoLista').submit();
@@ -644,7 +644,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
     function acaoExclusaoMultipla(){
     if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhum Tipo de Processo selecionado.');
+    alert('Nenhuma Tipo de Processo selecionado.');
     return;
     }
     if (confirm("Confirma a exclusão dos Tipos de Processo selecionados?")){

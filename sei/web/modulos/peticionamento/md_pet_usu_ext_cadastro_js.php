@@ -96,6 +96,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
     var objAjaxContato = null;
     var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
+    const objMdPetLimiteAnexos = <?= MdPetTamanhoArquivoRN::montarLimiteAnexosExternosParaTela() ?>;
     var objPrincipalUpload = null;
     var objTabelaDocPrincipal = null;
 
@@ -902,7 +903,7 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
 
         //Validar combos
         if (document.getElementById('selOrgao') && document.getElementById('selOrgao').value === '') {
-            alert("Informe o Órgão.");
+            alert("Informe o Orgão.");
             document.getElementById("selOrgao").focus();
             return false;
         }
@@ -1196,6 +1197,11 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
     }
 
     function abrirPeticionar() {
+        if (!mdPetValidarQuantidadeAnexos(
+            objMdPetLimiteAnexos, 0, objTabelaDocPrincipal, objTabelaDocEssencial, objTabelaDocComplementar
+        )) {
+            return;
+        }
 
         if (validarFormulario() && mdPetValidarXssAntesDaAcao(
             document.getElementById('txtEspecificacao'),
@@ -1811,6 +1817,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
             return validarTamanhoPermitidoDoDocumento(numTamanho, 'hdnTamArquivoEssencial', 'Essencial');
         });
 
+        mdPetLimitarAnexosNoUpload(objEssencialUpload, objMdPetLimiteAnexos, () => objTabelaDocEssencial);
+
         objEssencialUpload.finalizou = function (arr) {
             if (!mdPetValidarRetornoUpload(arr)) {
                 return false;
@@ -1969,6 +1977,8 @@ $strLinkAjaxChecarConteudoDocumento = SessaoSEIExterna::getInstance()->assinarLi
         mdPetVerificarTamanhoNoUpload(objComplementarUpload, objMdPetLimitesDoSei, function (numTamanho) {
             return validarTamanhoPermitidoDoDocumento(numTamanho, 'hdnTamArquivoComplementar', 'Complementar');
         });
+
+        mdPetLimitarAnexosNoUpload(objComplementarUpload, objMdPetLimiteAnexos, () => objTabelaDocComplementar);
 
         objComplementarUpload.finalizou = function (arr) {
             if (!mdPetValidarRetornoUpload(arr)) {

@@ -70,7 +70,7 @@
         var hipoteseLegal = document.getElementById('idHipoteseLegal').value;
 
         if( nivelAcesso == 'R' && hipoteseLegal == '' ){
-            alert('Selecione a Hipótese Legal para o Nível de Acesso Restrito.');
+            alert('Selecione a Hipotese Legal para o Nível de Acesso Restrito.');
             document.getElementById('idHipoteseLegal').focus();
             return false;
         }

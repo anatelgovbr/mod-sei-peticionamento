@@ -124,7 +124,7 @@ try {
                             campo abaixo. Todas as Procurações Eletrônicas geradas serão restabelecidas, o Usuário Externo
                             será notificado e este ato constará no processo referente à Pessoa Jurídica.';
                 } else {
-                    $subTitulo = 'A Suspensão do Responsável Legal deve ser motivada em documento específico, a ser indicado no campo abaixo. Todas as Procurações Eletrônicas geradas pelo Responsável Legal serão suspensas, o Usuário Externo será notificado e este ato constará no processo referente à Pessoa Jurídica. A suspensão como Responsável Legal não impede o Usuário Externo de peticionar em próprio nome.';
+                    $subTitulo = 'A Suspensão do Responsável Legal deve ser motivado em documento específico, a ser indicado no campo abaixo. Todas as Procurações Eletrônicas geradas pelo Responsável Legal serão suspensas, o Usuário Externo será notificado e este ato constará no processo referente à Pessoa Jurídica. A suspensão como Responsável Legal não impede o Usuário Externo de peticionar em próprio nome.';
                 }
             }
 
@@ -133,7 +133,7 @@ try {
         // Nao vai mais entrar aqui
         case 'md_pet_vinc_suspender_autorepresentacao':
 	
-	        throw new InfraException('A Suspensão ou Restabelecimento de vínculos de Autorrepresentação, cujo registro está vinculado diretamente ao cadastro do Usuário Externo, devem ser realizados através do menu: Administração > Usuários Externos');
+	        throw new InfraException('A Suspensão ou Restabelecimento de vinculos de Autorrepresentação, cujo registro está vinculado diretamente ao cadastro do Usuário Externo, devem ser realizados através do menu: Adminstração > Usuários Externos');
 
 	        // Todo: Remover conteudo abaixo
 //            $idVinculoRepresent = isset($_GET['idVinculoRepresent']) ? $_GET['idVinculoRepresent'] : $_POST['hdnIdVinculoRepresent'];

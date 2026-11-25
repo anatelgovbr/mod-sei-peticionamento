@@ -29,6 +29,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
     public const MSG_ARQUIVO_INDISPONIVEL = 'Entre o carregamento dos arquivos e a conclusão passou-se muito tempo e o arquivo carregado não está mais disponível para concluir o Peticionamento. Feche essa janela e repita o procedimento do início.';
     public const MSG_INTIMACAO_PENDENTE_CUMPRIMENTO = "Existe intimação eletrônica dentro desse processo com pendência de cumprimento.\nClique para acessar o processo.";
     public const MSG_INTIMACOES_CUMPRIDAS = "Existe intimação eletrônica dentro desse processo e todas já estão cumpridas. Verifique se precisa Responder Intimação.\nClique para acessar o processo.";
+    public const MSG_NOME_ANEXO_CARACTERE_ESPECIAL = 'Nome do anexo possui caracteres especiais.';
     public const MSG_COMPLEMENTO_CARACTERE_NAO_ACEITO = 'O campo "Complemento do Tipo de Documento" contém caracteres que o SEI não aceita. Tente digitar em vez de copiar e colar.';
     public const MSG_COMPLEMENTO_TAMANHO = 'Complemento do Tipo de Documento possui tamanho superior a 50 caracteres.';
     /** Tamanho do Nome na Árvore do documento (documento.nome_arvore), que recebe o complemento. */
@@ -54,7 +55,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '4.6.10';
+        return '5.0.0';
     }
 
     public static function getIaMenorVersaoRequerida()
@@ -70,6 +71,16 @@ class PeticionamentoIntegracao extends SeiIntegracao
     public function inicializar($strVersaoSEI)
     {
 
+    }
+
+    /**
+     * Pasta dos ícones de menu do módulo.
+     *
+     * @return string
+     */
+    public function obterDiretorioIconesMenu(): string
+    {
+        return 'modulos/peticionamento/imagens/svg';
     }
 
     public function processarControlador($strAcao)
@@ -117,6 +128,67 @@ class PeticionamentoIntegracao extends SeiIntegracao
             case 'md_pet_tipo_processo_cadastrar_orientacoes':
                 require_once dirname(__FILE__) . '/md_pet_tipo_processo_cadastro_orientacoes.php';
                 return true;
+
+            case 'md_pet_pi_tp_processo_listar':
+            case 'md_pet_pi_tp_processo_desativar':
+            case 'md_pet_pi_tp_processo_reativar':
+            case 'md_pet_pi_tp_processo_excluir':
+                require_once dirname(__FILE__) . '/md_pet_pi_tp_processo_lista.php';
+                return true;
+
+            case 'md_pet_pi_tp_processo_cadastrar':
+            case 'md_pet_pi_tp_processo_alterar':
+            case 'md_pet_pi_tp_processo_consultar':
+                require_once dirname(__FILE__) . '/md_pet_pi_tp_processo_cadastro.php';
+                return true;
+
+            case 'md_pet_pi_orientacao_cadastrar':
+                require_once dirname(__FILE__) . '/md_pet_pi_orientacao_cadastro.php';
+                return true;
+
+            case 'md_pet_pi_peticao_iniciar':
+                require_once dirname(__FILE__) . '/md_pet_pi_peticao_inicio.php';
+                return true;
+
+            case 'md_pet_pi_peticao_cadastrar':
+                require_once dirname(__FILE__) . '/md_pet_pi_peticao_cadastro.php';
+                return true;
+
+            case 'md_pet_pi_peticao_listar':
+                require_once dirname(__FILE__) . '/md_pet_pi_peticao_lista.php';
+                return true;
+
+            case 'md_pet_pi_peticao_editor_montar':
+                require_once dirname(__FILE__) . '/md_pet_pi_peticao_editor.php';
+                return true;
+
+            case 'md_pet_pi_peticao_formulario_gerar':
+                require_once dirname(__FILE__) . '/md_pet_pi_peticao_formulario.php';
+                return true;
+
+            case 'md_pet_pi_peticao_confirmar':
+                require_once dirname(__FILE__) . '/md_pet_pi_peticao_confirmacao.php';
+                return true;
+
+            case 'md_pet_pi_rel_peticao_usu_listar':
+            case 'md_pet_pi_rel_peticao_usu_cadastrar':
+            case 'md_pet_pi_rel_peticao_usu_excluir':
+                require_once dirname(__FILE__) . '/md_pet_pi_rel_peticao_usu_lista.php';
+                return true;
+
+            case 'md_pet_pi_peticao_upload_principal':
+
+                SessaoSEI::getInstance()->validarPermissao($strAcao);
+
+                echo MdPetPiPeticaoINT::processarUploadArquivo('filArquivoDocPrinc', MdPetPiPeticaoINT::obterTamanhoMaximoDocPrincipalMb(), 'Documento Principal', 'txtComplementoDocPrinc');
+                die;
+
+            case 'md_pet_pi_peticao_upload_anexo':
+
+                SessaoSEI::getInstance()->validarPermissao($strAcao);
+
+                echo MdPetPiPeticaoINT::processarUploadAnexo();
+                die;
 
             case 'md_pet_serie_selecionar':
                 require_once dirname(__FILE__) . '/md_pet_serie_lista.php';
@@ -257,6 +329,13 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_pet_int_relatorio_exp_excel.php';
                 return true;
 
+            case 'md_pet_exc_suspensao_auto_listar':
+            case 'md_pet_exc_suspensao_auto_selecionar':
+            case 'md_pet_exc_suspensao_auto_cadastrar':
+            case 'md_pet_exc_suspensao_auto_excluir':
+                require_once dirname(__FILE__) . '/md_pet_exc_suspensao_auto_lista.php';
+                return true;
+
             case 'md_pet_vinc_tp_processo_cadastrar':
                 require_once dirname(__FILE__) . '/md_pet_vinc_tp_processo_cadastro.php';
                 return true;
@@ -373,6 +452,18 @@ class PeticionamentoIntegracao extends SeiIntegracao
         return false;
     }
 
+    /**
+     * Os casos Ajax da administração do Peticionamento Interno só servem para cadastrar e alterar o Tipo de Processo.
+     *
+     * @return void
+     */
+    private function validarPermissaoAjaxTpProcessoPeticionamentoInterno()
+    {
+        if (!SessaoSEI::getInstance()->verificarPermissao('md_pet_pi_tp_processo_cadastrar')) {
+            SessaoSEI::getInstance()->validarPermissao('md_pet_pi_tp_processo_alterar');
+        }
+    }
+
     public function processarControladorAjax($strAcao)
     {
 
@@ -430,6 +521,65 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 $arrObjUnidadeDTO = UnidadeINT::autoCompletarUnidades($_POST['palavras_pesquisa'], true, '');
                 $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjUnidadeDTO, 'IdUnidade', 'Sigla');
                 break;
+
+            case 'md_pet_pi_tp_processo_auto_completar':
+                $this->validarPermissaoAjaxTpProcessoPeticionamentoInterno();
+                $arrObjTipoProcessoDTO = MdPetPiTpProcessoINT::autoCompletarTipoProcedimento(MdPetPiEntradaINT::postStr('palavras_pesquisa'));
+                $xml = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcessoDTO, 'IdTipoProcedimento', 'Nome');
+                break;
+
+            case 'md_pet_pi_tp_processo_assunto_validar':
+                $this->validarPermissaoAjaxTpProcessoPeticionamentoInterno();
+                $xml = InfraAjax::gerarXMLComplementosArray(MdPetPiTpProcessoINT::validarTipoProcessoComAssunto(MdPetPiEntradaINT::postInt('idTipoProcesso')));
+                break;
+
+            case 'md_pet_pi_modelo_protocolo_validar':
+                $this->validarPermissaoAjaxTpProcessoPeticionamentoInterno();
+                $xml = InfraAjax::gerarXMLComplementosArray(MdPetPiTpProcessoINT::validarModeloPorProtocolo(MdPetPiEntradaINT::postStr('protocoloFormatado')));
+                break;
+
+            case 'md_pet_pi_nivel_acesso_auto_completar':
+                $this->validarPermissaoAjaxTpProcessoPeticionamentoInterno();
+                $xml = InfraAjax::gerarXMLSelect(MdPetPiTpProcessoINT::montarSelectNivelAcesso(null, null, null, MdPetPiEntradaINT::postInt('idTipoProcesso')));
+                break;
+
+            case 'md_pet_pi_peticao_remover_arquivo':
+                SessaoSEI::getInstance()->validarPermissao('md_pet_pi_peticao_cadastrar');
+                $xml = MdPetPiPeticaoINT::removerArquivoUpload(MdPetPiEntradaINT::postStr('nomeArquivo'));
+                break;
+
+            case 'md_pet_pi_peticao_senha_validar':
+                SessaoSEI::getInstance()->validarPermissao('md_pet_pi_peticao_confirmar');
+                $xml = InfraAjax::gerarXMLComplementosArray(MdPetPiPeticaoINT::validarSenhaAssinatura(is_string(PaginaSEI::POST('pwdSenha')) ? InfraString::fromUTF8(urldecode(PaginaSEI::POST('pwdSenha'))) : ''));
+                break;
+
+            case 'md_pet_pi_peticao_editor_confirmar':
+                SessaoSEI::getInstance()->validarPermissao('md_pet_pi_peticao_editor_montar');
+                $xml = InfraAjax::gerarXMLComplementosArray(['Confirmar' => 'N', 'Mensagem' => '']);
+                break;
+
+            // O Salvar do editor espera JSON, como o controlador_rest.php do core, e não o XML do controlador Ajax
+            case 'md_pet_pi_peticao_editor_salvar':
+                try {
+                    SessaoSEI::getInstance()->validarPermissao('md_pet_pi_peticao_editor_montar');
+
+                    InfraRest::decodificarRequisicaoHttp();
+                    InfraRest::verificarMetodoHttpRequisicao('post');
+
+                    $arrResposta = MdPetPiPeticaoINT::salvarEditorCompletoDocPrincipal(
+                        MdPetPiEntradaINT::getInt('id_md_pet_pi_tp_processo'),
+                        InfraRest::getJsonRequisicao()
+                    );
+
+                    InfraRest::enviarJson(InfraRest::converterParaJson($arrResposta));
+                } catch (Throwable $e) {
+                    if (!$e instanceof InfraException || !$e->contemValidacoes()) {
+                        LogSEI::getInstance()->gravar('ERRO md_pet_pi_peticao_editor_salvar: ' . InfraException::inspecionar($e));
+                    }
+
+                    InfraRest::processarExcecao($e);
+                }
+                die;
 
             case 'md_pet_tipo_processo_nivel_acesso_auto_completar':
                 $arrObjNivelAcessoDTO = MdPetTipoProcessoINT::montarSelectNivelAcesso(null, null, null, $_POST['idTipoProcesso']);
@@ -554,10 +704,10 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_integracao_busca_operacao_wsdl':
-                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDL($_POST['endereco_wsdl'], $_POST['versao']);
+                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDL($_POST['endereco_wsdl'], $_POST['versao'], ($_POST['tipo'] ?? '') === MdPetIntegFabricaRN::TIPO_REST ? MdPetIntegFabricaRN::TIPO_REST : MdPetIntegFabricaRN::TIPO_SOAP);
                 break;
             case 'md_pet_integracao_busca_parametro_wsdl':
-                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDLParametro($_POST['endereco_wsdl'], $_POST['operacao_wsdl'], $_POST['tipo_parametro'], $_POST['versao']);
+                $xml = MdPetIntegracaoINT::montarXMLBuscarOperacaoWSDLParametro($_POST['endereco_wsdl'], $_POST['operacao_wsdl'], $_POST['tipo_parametro'], $_POST['versao'], ($_POST['tipo'] ?? '') === MdPetIntegFabricaRN::TIPO_REST ? MdPetIntegFabricaRN::TIPO_REST : MdPetIntegFabricaRN::TIPO_SOAP);
                 break;
 
             case 'md_pet_vinc_responsavellegal_cpf_consultar' :
@@ -574,7 +724,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 break;
 
             case 'md_pet_validar_numero_processo_vinculacao':
-                $xml = MdPetProRepresWhitINT::validarProcessoRepresentacao($_POST['protocolo']);
+                $xml = MdPetWhitelistINT::validarProcessoRepresentacao($_POST['protocolo']);
                 break;
 
             case 'md_pet_tipo_documento_auto_completar':
@@ -1307,7 +1457,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         }
 
-        return $arrObjArvoreAcaoItemAPI;
+        return array_merge($arrObjArvoreAcaoItemAPI, $this->montarIconeProcessoPeticionamentoInterno($objProcedimentoAPI));
     }
 
     //método geral para apoio na montagem de icones para as 3 telas (Controle de Processos, Tela interna/arvore do processo e Acompanhamento Especial)
@@ -1604,7 +1754,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
             }
         } //fim do foor de ArrProcedimentoApi
 
-        return $arrParam;
+        return $this->adicionarIconeProcessoPeticionamentoInterno($arrObjProcedimentoDTO, $arrParam);
     }
 
     //Icone exibido na tela "Acompanhamento Especial"
@@ -1625,7 +1775,132 @@ class PeticionamentoIntegracao extends SeiIntegracao
             }
         }
 
+        return $this->adicionarIconeProcessoPeticionamentoInterno($arrObjProcedimentoDTO, $arrParam);
+    }
+
+    /**
+     * Ícone P ao lado dos documentos incluídos pelo Peticionamento Interno na árvore do processo: cinza, e vermelho nos
+     * Documentos Adicionais Gerados Automaticamente. Uma consulta para todos os documentos da árvore.
+     *
+     * @param ProcedimentoAPI $objProcedimentoAPI
+     * @param DocumentoAPI[] $arrObjDocumentoAPI
+     * @return array|null ArvoreAcaoItemAPI[] por id de documento
+     */
+    public function montarIconeDocumento(ProcedimentoAPI $objProcedimentoAPI, $arrObjDocumentoAPI)
+    {
+        $arrIdDocumento = [];
+
+        if (is_array($arrObjDocumentoAPI)) {
+            foreach ($arrObjDocumentoAPI as $objDocumentoAPI) {
+                $arrIdDocumento[] = $objDocumentoAPI->getIdDocumento();
+            }
+        }
+
+        if (count($arrIdDocumento) == 0) {
+            return null;
+        }
+
+        $objMdPetPiRelPeticaoDocDTO = new MdPetPiRelPeticaoDocDTO();
+        $objMdPetPiRelPeticaoDocDTO->setDblIdDocumento($arrIdDocumento, InfraDTO::$OPER_IN);
+
+        $ret = [];
+
+        foreach ((new MdPetPiRelPeticaoDocRN())->obterPapeisDocumentos($objMdPetPiRelPeticaoDocDTO) as $objMdPetPiRelPeticaoDocDTO) {
+            $dblIdDocumento = $objMdPetPiRelPeticaoDocDTO->getDblIdDocumento();
+            $bolAutomatico = $objMdPetPiRelPeticaoDocDTO->getStrStaPapel() === MdPetPiRelPeticaoDocRN::$PAPEL_ADICIONAL_AUTOMATICO;
+
+            $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
+            $objArvoreAcaoItemAPI->setTipo('PETICIONAMENTO');
+            $objArvoreAcaoItemAPI->setId('PETPI' . $dblIdDocumento);
+            $objArvoreAcaoItemAPI->setIdPai($dblIdDocumento);
+            $objArvoreAcaoItemAPI->setTitle('Peticionamento Interno\n' . MdPetPiPeticaoINT::obterDescricaoPapelDocumento($objMdPetPiRelPeticaoDocDTO->getStrStaPapel()));
+            $objArvoreAcaoItemAPI->setIcone('modulos/peticionamento/imagens/svg/' . ($bolAutomatico ? 'peticionamento_interno_automatico.svg' : 'peticionamento_interno.svg') . '?' . Icone::VERSAO);
+            $objArvoreAcaoItemAPI->setTarget(null);
+            $objArvoreAcaoItemAPI->setHref('javascript:;');
+            $objArvoreAcaoItemAPI->setSinHabilitado('S');
+
+            $ret[$dblIdDocumento] = [$objArvoreAcaoItemAPI];
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Ícone P cinza do processo aberto pelo Peticionamento Interno, no topo da árvore.
+     *
+     * @param ProcedimentoAPI $objProcedimentoAPI
+     * @return ArvoreAcaoItemAPI[]
+     */
+    private function montarIconeProcessoPeticionamentoInterno(ProcedimentoAPI $objProcedimentoAPI)
+    {
+        $dblIdProcedimento = $objProcedimentoAPI->getIdProcedimento();
+        $arrDataPeticionamento = $this->obterDataPeticionamentoInterno([$objProcedimentoAPI]);
+
+        if (!isset($arrDataPeticionamento[$dblIdProcedimento])) {
+            return [];
+        }
+
+        $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
+        $objArvoreAcaoItemAPI->setTipo('PETICIONAMENTO');
+        $objArvoreAcaoItemAPI->setId('PETPI' . $dblIdProcedimento);
+        $objArvoreAcaoItemAPI->setIdPai($dblIdProcedimento);
+        $objArvoreAcaoItemAPI->setTitle('Peticionamento Interno\nGerado: ' . $arrDataPeticionamento[$dblIdProcedimento]);
+        $objArvoreAcaoItemAPI->setIcone('modulos/peticionamento/imagens/svg/peticionamento_interno.svg?' . Icone::VERSAO);
+        $objArvoreAcaoItemAPI->setTarget(null);
+        $objArvoreAcaoItemAPI->setHref('javascript:;');
+        $objArvoreAcaoItemAPI->setSinHabilitado('S');
+
+        return [$objArvoreAcaoItemAPI];
+    }
+
+    /**
+     * Acrescenta o ícone P cinza aos processos abertos pelo Peticionamento Interno no Controle de Processos e no
+     * Acompanhamento Especial. Uma consulta para todos os processos da tela.
+     *
+     * @param ProcedimentoAPI[] $arrObjProcedimentoAPI
+     * @param array $arrParam ícones já montados pelo módulo, por id de processo
+     * @return array
+     */
+    private function adicionarIconeProcessoPeticionamentoInterno($arrObjProcedimentoAPI, $arrParam)
+    {
+        foreach ($this->obterDataPeticionamentoInterno($arrObjProcedimentoAPI) as $dblIdProcedimento => $strData) {
+            $strImg = '<img src="modulos/peticionamento/imagens/svg/peticionamento_interno.svg?' . Icone::VERSAO . '" ' . PaginaSEI::montarTitleTooltip('Gerado: ' . $strData, 'Peticionamento Interno') . ' style="width:24px;" />';
+            $arrParam[$dblIdProcedimento] = isset($arrParam[$dblIdProcedimento]) ? array_merge($arrParam[$dblIdProcedimento], [$strImg]) : [$strImg];
+        }
+
         return $arrParam;
+    }
+
+    /**
+     * Data do Peticionamento Interno de cada processo informado que foi aberto por ele.
+     *
+     * @param ProcedimentoAPI[] $arrObjProcedimentoAPI
+     * @return string[] data dd/mm/aaaa por id de processo
+     */
+    private function obterDataPeticionamentoInterno($arrObjProcedimentoAPI)
+    {
+        $arrIdProcedimento = [];
+
+        if (is_array($arrObjProcedimentoAPI)) {
+            foreach ($arrObjProcedimentoAPI as $objProcedimentoAPI) {
+                $arrIdProcedimento[] = $objProcedimentoAPI->getIdProcedimento();
+            }
+        }
+
+        if (count($arrIdProcedimento) == 0) {
+            return [];
+        }
+
+        $objMdPetPiPeticaoDTO = new MdPetPiPeticaoDTO();
+        $objMdPetPiPeticaoDTO->setDblIdProcedimento($arrIdProcedimento, InfraDTO::$OPER_IN);
+
+        $ret = [];
+
+        foreach ((new MdPetPiPeticaoRN())->obterPeticoesProcessos($objMdPetPiPeticaoDTO) as $objMdPetPiPeticaoDTO) {
+            $ret[$objMdPetPiPeticaoDTO->getDblIdProcedimento()] = substr($objMdPetPiPeticaoDTO->getDthPeticionamento(), 0, 10);
+        }
+
+        return $ret;
     }
 
     public function montarMenuUsuarioExterno()
@@ -1984,7 +2259,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 				$numRecibo = $objReciboPetDTO->getStrNumeroProcessoFormatadoDoc();
 			}
 			
-			$msg = $this->getNome() . ': Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI nº ' . $numRecibo . '.';
+			$msg = $this->getNome() . ': Não é permitido cancelar este documento, pois ele é oriundo de Peticionamento Eletrônico, conforme Recibo Eletrônico de Protocolo SEI n° ' . $numRecibo . '.';
 			$objInfraException = new InfraException();
 			$objInfraException->adicionarValidacao($msg);
 			$objInfraException->lancarValidacoes();
@@ -2140,6 +2415,42 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function montarBotaoProcesso(ProcedimentoAPI $objProcedimentoAPI)
     {
+        return array_merge($this->montarBotaoProcessoPeticionamento($objProcedimentoAPI), $this->montarBotaoControleAcessoPeticionamentoInterno($objProcedimentoAPI));
+    }
+
+    /**
+     * Botão do Peticionamento Interno: Disponibilizar e Remover acesso: só para quem peticionou, na unidade de abertura, em processo
+     * de Interesse Pessoal com ao menos um documento peticionado de nível próprio Restrito.
+     *
+     * @param ProcedimentoAPI $objProcedimentoAPI
+     * @return string[]
+     */
+    private function montarBotaoControleAcessoPeticionamentoInterno(ProcedimentoAPI $objProcedimentoAPI)
+    {
+        if ($objProcedimentoAPI->getIdUnidadeGeradora() != SessaoSEI::getInstance()->getNumIdUnidadeAtual()
+            || !SessaoSEI::getInstance()->verificarPermissao('md_pet_pi_rel_peticao_usu_listar')
+            || !SessaoSEI::getInstance()->verificarPermissao('md_pet_pi_rel_peticao_doc_listar')) {
+            return [];
+        }
+
+        $objMdPetPiRelPeticaoDocDTO = new MdPetPiRelPeticaoDocDTO();
+        $objMdPetPiRelPeticaoDocDTO->setDblIdProcedimentoPeticao($objProcedimentoAPI->getIdProcedimento());
+        $objMdPetPiRelPeticaoDocDTO->setStrStaIndicacaoInteressadoPeticao(MdPetPiTpProcessoRN::$II_INTERESSE_PESSOAL);
+        $objMdPetPiRelPeticaoDocDTO->setNumIdUsuarioPeticao(SessaoSEI::getInstance()->getNumIdUsuario());
+        $objMdPetPiRelPeticaoDocDTO->setNumIdUnidadePeticao(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+        $objMdPetPiRelPeticaoDocDTO->setStrStaNivelAcessoLocalProtocolo(ProtocoloRN::$NA_RESTRITO);
+
+        if ((new MdPetPiRelPeticaoDocRN())->contar($objMdPetPiRelPeticaoDocDTO) == 0) {
+            return [];
+        }
+
+        $strLink = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_pi_rel_peticao_usu_listar&acao_origem=procedimento_visualizar&acao_retorno=arvore_visualizar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento() . '&arvore=1');
+
+        return ['<a href="' . PaginaSEI::getInstance()->formatarXHTML($strLink) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '" class="botaoSEI"><img class="infraCorBarraSistema" src="modulos/peticionamento/imagens/svg/peticionamento_interno_controle_acesso.svg?' . Icone::VERSAO . '" alt="Peticionamento Interno: Disponibilizar e Remover acesso" title="Peticionamento Interno: Disponibilizar e Remover acesso" /></a>'];
+    }
+
+    private function montarBotaoProcessoPeticionamento(ProcedimentoAPI $objProcedimentoAPI)
+    {
 
         $arrBotoes = array();
 
@@ -2158,7 +2469,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
         //encontrou o tipo de documento na parametrizacao do sistema e o perfil possui o recurso
         if ($intQntdIntimacao > 0 && SessaoSEI::getInstance()->verificarPermissao('md_pet_intimacao_eletronica_listar')) {
-            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg?'.Icone::VERSAO.'" class="infraCorBarraSistema" alt="Ver Intimação Eletrônica" title="Ver Intimação Eletrônica" width="30"/></a>';
+            $arrBotoes[] = '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $objProcedimentoAPI->getIdProcedimento()) . '" class="botaoSEI" tabindex="' . PaginaSEI::getInstance()->getProxTabBarraComandosSuperior() . '"><img src="modulos/peticionamento/imagens/svg/intimacao_eletronica_ver.svg?'.Icone::VERSAO.'" class="infraCorBarraSistema" alt="Ver Intimação Eletrônica" title="Ver Intimação Eletrônica" widtt="30"/></a>';
         }
 
         if (!SessaoSEI::getInstance()->verificarPermissao('md_pet_adm_vinc_consultar') && $objProcedimentoAPI->getCodigoAcesso() > 0)
@@ -4101,6 +4412,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function desativarTipoProcesso($arrObjTipoProcessoDTO)
     {
+        (new MdPetPiTpProcessoRN())->validarOperacaoTipoProcesso($arrObjTipoProcessoDTO, true);
 
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaTipoProcesso(array($arrObjTipoProcessoDTO, 'desativar'));
@@ -4116,6 +4428,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function desativarTipoDocumento($arrObjSerieAPI)
     {
+        (new MdPetPiTpProcessoRN())->validarOperacaoTipoDocumento($arrObjSerieAPI, true);
 
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaTipoDocumento(array($arrObjSerieAPI, 'desativar'));
@@ -4169,6 +4482,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function excluirTipoProcesso($arrObjTipoProcessoDTO)
     {
+        (new MdPetPiTpProcessoRN())->validarOperacaoTipoProcesso($arrObjTipoProcessoDTO, false);
 
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaTipoProcesso(array($arrObjTipoProcessoDTO, 'excluir'));
@@ -4187,6 +4501,7 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     public function excluirTipoDocumento($arrObjSerieAPI)
     {
+        (new MdPetPiTpProcessoRN())->validarOperacaoTipoDocumento($arrObjSerieAPI, false);
 
         $mdPetRegrasGeraisRN = new MdPetRegrasGeraisRN();
         $msg = $mdPetRegrasGeraisRN->verificarExistenciaTipoDocumento(array($arrObjSerieAPI, 'excluir'));
@@ -4216,8 +4531,102 @@ class PeticionamentoIntegracao extends SeiIntegracao
             $objInfraException = new InfraException();
             $objInfraException->lancarValidacao($msg);
         } else {
+            (new MdPetPiTpProcessoRN())->validarExclusaoDocumentoModelo($objDocumentoAPI);
+
+            $this->excluirDocumentoPeticionamentoInterno($objDocumentoAPI->getIdDocumento());
+
             return $objDocumentoAPI;
         }
+    }
+
+    /**
+     * Evento do core, chamado antes da exclusão do processo: tira o registro do Peticionamento Interno para a chave
+     * estrangeira para protocolo não impedir a exclusão.
+     *
+     * @param ProcedimentoAPI $objProcedimentoAPI
+     * @return ProcedimentoAPI
+     */
+    public function excluirProcesso(ProcedimentoAPI $objProcedimentoAPI)
+    {
+        $objMdPetPiPeticaoDTO = new MdPetPiPeticaoDTO();
+        $objMdPetPiPeticaoDTO->retNumIdMdPetPiPeticao();
+        $objMdPetPiPeticaoDTO->setDblIdProcedimento($objProcedimentoAPI->getIdProcedimento());
+
+        $objMdPetPiPeticaoRN = new MdPetPiPeticaoRN();
+        $arrObjMdPetPiPeticaoDTO = $objMdPetPiPeticaoRN->listar($objMdPetPiPeticaoDTO);
+
+        if (count($arrObjMdPetPiPeticaoDTO) > 0) {
+            $objMdPetPiPeticaoRN->excluir($arrObjMdPetPiPeticaoDTO);
+        }
+
+        return $objProcedimentoAPI;
+    }
+
+    /**
+     * Tira o documento do registro do Peticionamento Interno, pelo mesmo motivo do excluirProcesso.
+     *
+     * @param float $dblIdDocumento
+     * @return void
+     */
+    private function excluirDocumentoPeticionamentoInterno($dblIdDocumento)
+    {
+        $objMdPetPiRelPeticaoDocDTO = new MdPetPiRelPeticaoDocDTO();
+        $objMdPetPiRelPeticaoDocDTO->retNumIdMdPetPiPeticao();
+        $objMdPetPiRelPeticaoDocDTO->retDblIdDocumento();
+        $objMdPetPiRelPeticaoDocDTO->setDblIdDocumento($dblIdDocumento);
+
+        $objMdPetPiRelPeticaoDocRN = new MdPetPiRelPeticaoDocRN();
+        $arrObjMdPetPiRelPeticaoDocDTO = $objMdPetPiRelPeticaoDocRN->listar($objMdPetPiRelPeticaoDocDTO);
+
+        if (count($arrObjMdPetPiRelPeticaoDocDTO) > 0) {
+            $objMdPetPiRelPeticaoDocRN->excluir($arrObjMdPetPiRelPeticaoDocDTO);
+        }
+    }
+
+    /**
+     * Cadeado do Peticionamento Interno: em processo de Interesse Pessoal, na unidade de abertura, o documento Restrito
+     * incluído pelo peticionamento fica negado para quem não peticionou. O processo e os demais documentos seguem o core.
+     * Vale o nível próprio do documento: o do DocumentoAPI é o global, que acompanha o do processo.
+     * Uma única consulta, sem transação e sem efeito colateral.
+     *
+     * @param DocumentoAPI[] $arrObjDocumentoAPI
+     * @param array|null $ret retorno já montado pelas demais regras do módulo
+     * @return array|null
+     */
+    private function negarAcessoPeticionamentoInterno($arrObjDocumentoAPI, $ret)
+    {
+        $arrIdDocumento = [];
+
+        if (is_array($arrObjDocumentoAPI)) {
+            foreach ($arrObjDocumentoAPI as $objDocumentoAPI) {
+                if ($objDocumentoAPI->getNivelAcesso() != ProtocoloRN::$NA_PUBLICO) {
+                    $arrIdDocumento[] = $objDocumentoAPI->getIdDocumento();
+                }
+            }
+        }
+
+        if (count($arrIdDocumento) == 0) {
+            return $ret;
+        }
+
+        $objMdPetPiRelPeticaoDocDTO = new MdPetPiRelPeticaoDocDTO();
+        $objMdPetPiRelPeticaoDocDTO->setDblIdDocumento($arrIdDocumento, InfraDTO::$OPER_IN);
+
+        $arrObjMdPetPiRelPeticaoDocDTO = (new MdPetPiRelPeticaoDocRN())->obterDocumentosNegadosUnidadeAbertura($objMdPetPiRelPeticaoDocDTO);
+
+        if (count($arrObjMdPetPiRelPeticaoDocDTO) == 0) {
+            return $ret;
+        }
+
+        if (!is_array($ret)) {
+            $ret = [];
+        }
+
+        foreach ($arrObjMdPetPiRelPeticaoDocDTO as $objMdPetPiRelPeticaoDocDTO) {
+            $ret[$objMdPetPiRelPeticaoDocDTO->getDblIdDocumento()] = SeiIntegracao::$TAM_NEGADO;
+        }
+
+        return $ret;
     }
 
     public function excluirContato($arrObjContatoAPI)
@@ -4371,6 +4780,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
                 }
             }
         }
+
+        $ret = $this->negarAcessoPeticionamentoInterno($arrObjDocumentoAPI, $ret);
 
         return $ret;
     }
@@ -4716,7 +5127,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
     }
 
     /**
-     * Confere o texto salvo no editor do Documento Principal do Peticionamento Externo, antes da conclusão.
+     * Confere o texto salvo no editor do Documento Principal do Peticionamento Externo e do Peticionamento Interno
+     * (ADR-PET-004), antes da conclusão.
      *
      * @param string $strConteudo
      * @return void
@@ -4769,13 +5181,53 @@ class PeticionamentoIntegracao extends SeiIntegracao
         ob_start();
         PaginaSEIExterna::getInstance()->processarUpload($strCampoArquivo, DIR_SEI_TEMP, $bolArquivoTemporarioIdentificado);
 
-        return self::validarTamanhoUpload(self::validarXssUpload((string) ob_get_clean(), DIR_SEI_TEMP), DIR_SEI_TEMP);
+        return self::validarArquivoUpload((string) ob_get_clean(), DIR_SEI_TEMP);
+    }
+
+    /** Valida o arquivo temporário antes de devolver o resultado do upload à grade. */
+    public static function validarArquivoUpload(string $strRetornoUpload, string $strDiretorio): string
+    {
+        $strRetornoUpload = self::validarXssUpload($strRetornoUpload, $strDiretorio);
+        if (str_starts_with($strRetornoUpload, 'ERRO#')) {
+            return $strRetornoUpload;
+        }
+
+        // Trata a referência literal antes que infraUpload separe o retorno por "#".
+        [$strArquivo, $strNome] = self::lerArquivoDoRetornoUpload($strRetornoUpload, $strDiretorio);
+        if (self::nomeAnexoTemCaracteresEspeciais($strNome)) {
+            unlink($strArquivo);
+            return 'ERRO#' . self::MSG_NOME_ANEXO_CARACTERE_ESPECIAL;
+        }
+
+        return self::validarTamanhoUpload($strRetornoUpload, $strDiretorio);
+    }
+
+    /**
+     * Antecipa a validação de AnexoRN antes de qualquer gravação do peticionamento.
+     *
+     * @param array<string, string> $arrArquivos nomes exibidos ao usuário, indexados pelos nomes temporários
+     */
+    public static function validarNomesAnexosConclusao(array $arrArquivos): void
+    {
+        foreach ($arrArquivos as $strNome) {
+            if (self::nomeAnexoTemCaracteresEspeciais($strNome)) {
+                (new InfraException())->lancarValidacao(self::MSG_NOME_ANEXO_CARACTERE_ESPECIAL);
+            }
+        }
+    }
+
+    /** Aplica a mesma normalização de AnexoRN::validarStrNomeRN0228. */
+    private static function nomeAnexoTemCaracteresEspeciais(string $strNome): bool
+    {
+        $strNome = str_replace('&amp;', '&', trim($strNome));
+        return str_contains($strNome, '&#') && str_contains(InfraString::removerAcentosHTML($strNome), '&#');
     }
 
     /**
      * O nome original do arquivo passa pelo filtro XSS do core (ADR-PET-005). Arquivo identificado como HTML passa pelo
      * filtro, como na conclusão (AnexoRN::validarConteudo), e o PDF passa pela verificação da ADR-PET-001. O arquivo
-     * recusado é apagado da área temporária e o retorno passa a ser de erro.
+     * recusado é apagado da área temporária e o retorno passa a ser de erro. O upload do Peticionamento Interno usa a
+     * mesma verificação.
      *
      * @param string $strRetornoUpload retorno do InfraPagina::processarUpload
      * @param string $strDiretorio diretório em que o upload gravou o arquivo
@@ -4807,7 +5259,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
     /**
      * ADR-PET-002: antes da primeira etapa da conclusão, confere o texto do editor do Documento Principal e os arquivos
      * temporários com as regras do salvar no editor e do upload, para recusar sem abrir processo. Arquivo inexistente
-     * ou fora do diretório fica para as validações do core.
+     * ou fora do diretório fica para as validações do core. O Peticionamento Interno usa a mesma conferência antes de
+     * abrir o processo (ADR-PET-004).
      *
      * @param string|null $strConteudoEditor texto do editor do Documento Principal, quando houver
      * @param array<string, string> $arrArquivos nome do arquivo temporário => nome exibido ao usuário
@@ -4862,7 +5315,8 @@ class PeticionamentoIntegracao extends SeiIntegracao
 
     /**
      * ADR-PET-010: recusa o arquivo enviado acima do limite do SEI para a extensão dele, antes de entrar na grade, com o
-     * tamanho real. O arquivo recusado é apagado da área temporária, e o retorno passa a ser de erro.
+     * tamanho real. O arquivo recusado é apagado da área temporária, e o retorno passa a ser de erro. O upload do
+     * Peticionamento Interno usa a mesma verificação.
      *
      * @param string $strRetornoUpload retorno do InfraPagina::processarUpload, já conferido pelo filtro XSS
      * @param string $strDiretorio diretório em que o upload gravou o arquivo

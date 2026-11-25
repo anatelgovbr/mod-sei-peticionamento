@@ -199,7 +199,7 @@ try {
             $strSumarioTabela = 'Tabela de Indisponibilidades.';
             $strCaptionTabela = 'Indisponibilidades';
         } else {
-            $strSumarioTabela = 'Tabela de Indisponibilidades Inativas.';
+            $strSumarioTabela = 'Tabela de Indisponibilidades Inativos.';
             $strCaptionTabela = 'Indisponibilidades Inativos';
         }
 

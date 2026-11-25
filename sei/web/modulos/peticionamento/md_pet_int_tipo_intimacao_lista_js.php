@@ -25,7 +25,7 @@
             alert('Nenhuma  selecionada.');
             return;
         }
-        if (confirm("Confirma desativação dos  selecionados?")) {
+        if (confirm("Confirma desativação ds  selecionads?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkDesativar ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();
@@ -48,7 +48,7 @@
             alert('Nenhuma  selecionada.');
             return;
         }
-        if (confirm("Confirma reativação dos  selecionados?")) {
+        if (confirm("Confirma reativação ds  selecionads?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkReativar ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();
@@ -71,7 +71,7 @@
             alert('Nenhuma  selecionada.');
             return;
         }
-        if (confirm("Confirma exclusão dos  selecionados?")) {
+        if (confirm("Confirma exclusão ds  selecionads?")) {
             document.getElementById('hdnInfraItemId').value = '';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').action = '<?= $strLinkExcluir ?>';
             document.getElementById('frmMdPetIntTipoIntimacaoLista').submit();

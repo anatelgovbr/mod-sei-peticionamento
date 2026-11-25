@@ -30,7 +30,7 @@ switch ($_GET['acao']) {
 
             if(is_array($arrImpedimentos) && count($arrImpedimentos) > 0){
                 
-                $texto = 'Você não possui mais permissão para responder à Intimação Eletrônica conforme abaixo:<br><br>Destinatários não permitidos:<br>';
+                $texto = 'Você não possui mais permissão para responder a Intimação Eletrônica conforme abaixo:<br><br>Destinatários não permitidos:<br>';
                 foreach($arrImpedimentos as $impedimento){
                     if(!in_array($impedimento['cpfCnpjDestinatario'], $impedidos)){
                         $texto .= '&nbsp;&nbsp;&nbsp;&nbsp;- '. $impedimento['nomeDestinatario'] . ' (' . InfraUtil::formatarCpfCnpj($impedimento['cpfCnpjDestinatario']) . '), verifique seus Poderes de Representação.<br>';

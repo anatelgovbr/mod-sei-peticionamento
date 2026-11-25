@@ -41,12 +41,12 @@ class MdPetIntegParametroRN extends InfraRN {
 
   private function validarStrTpParametro(MdPetIntegParametroDTO $objMdPetIntegParametroDTO, InfraException $objInfraException){
     if (InfraString::isBolVazia($objMdPetIntegParametroDTO->getStrTpParametro())){
-      $objInfraException->adicionarValidacao('Tipo do Parâmetro não informado.');
+      $objInfraException->adicionarValidacao('Tipo do Parâmetro não informad.');
     }else{
       $objMdPetIntegParametroDTO->setStrTpParametro(trim($objMdPetIntegParametroDTO->getStrTpParametro()));
 
       if (strlen($objMdPetIntegParametroDTO->getStrTpParametro())>1){
-        $objInfraException->adicionarValidacao('Tipo do Parâmetro possui tamanho superior a 1 caractere.');
+        $objInfraException->adicionarValidacao('Tipo do Parâmetro possui tamanho superior a 1 caracteres.');
       }
     }
   }

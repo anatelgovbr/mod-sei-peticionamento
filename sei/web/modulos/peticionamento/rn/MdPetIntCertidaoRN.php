@@ -419,7 +419,7 @@ class MdPetIntCertidaoRN extends InfraRN
             <ul>
                 <li>sempre é excluído da contagem o dia do começo e incluído o do vencimento;</li>
                 <li>o dia do começo e o do vencimento nunca ocorrem em dia não útil, prorrogando-o para o primeiro dia útil seguinte;</li>
-                <li>a consulta à intimação ocorrida em dia não útil tem a correspondente data apresentada em linha separada, sendo a "Data do Cumprimento" a do primeiro dia útil seguinte.</li>
+                <li>a consulta a intimação ocorrida em dia não útil tem a correspondente data apresentada em linha separada, sendo a "Data do Cumprimento" a do primeiro dia útil seguinte.</li>
             </ul>
         </li>
         <li>Para todos os efeitos legais, somente após a geração da presente Certidão e com base exclusivamente na "Data do Cumprimento" é que o Destinatário, ou a Pessoa Jurídica ou Física por ele representada, é considerado efetivamente intimado e são iniciados os possíveis prazos externos para Peticionamento de Resposta.

@@ -175,7 +175,7 @@ class MdPetVinculoINT extends InfraINT {
                                 $xml = "<dados-pj>";
                                 $xml .= "<success>false</success>\n";
                                 $xml .= "<procuracao>false</procuracao>\n";
-                                $xml .= "<msg>O Usuário logado (".$arrObjUsuarioDTO->getStrNome().") já possui vínculo de Responsável Legal com este CNPJ.</msg>\n";
+                                $xml .= "<msg>O Usuário logado (".$arrObjUsuarioDTO->getStrNome().") já possui vinculo de Responsável Legal com este CNPJ.</msg>\n";
                                 $xml .= "</dados-pj>";
                             }
 

@@ -5,6 +5,7 @@
     var RESTRITO = '<?= ProtocoloRN::$NA_RESTRITO ?>';
     var TAMANHO_MAXIMO = '<?= $tamanhoMaximo ?>';
     var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
+    const objMdPetLimiteAnexos = <?= MdPetTamanhoArquivoRN::montarLimiteAnexosExternosParaTela() ?>;
     var EXIBIR_HIPOTESE_LEGAL = '<?= $exibirHipoteseLegal ?>';
     var arrExtensoesPermitidas = [<?= $extensoesPermitidas ?>];
     var objAjaxSelectTipoDocumento = null;
@@ -156,6 +157,9 @@
     }
 
     function responderIntimacao() {
+        if (!mdPetValidarQuantidadeAnexos(objMdPetLimiteAnexos, 0, objTabelaDinamicaDocumento)) {
+            return;
+        }
 
         var relDest = document.getElementById('hdnIdMdPetIntRelDest').value;
         var frm = document.getElementById('frmResponderIntimacao');
@@ -218,6 +222,8 @@
         var tbDocumento = document.getElementById('tbDocumento');
         objUploadArquivo = new infraUpload('frmResponderIntimacao', '<?= $strUrlUploadArquivo ?>');
         mdPetVerificarTamanhoNoUpload(objUploadArquivo, objMdPetLimitesDoSei, validarTamanhoMaximoDoArquivo);
+        mdPetLimitarAnexosNoUpload(objUploadArquivo, objMdPetLimiteAnexos, () => objTabelaDinamicaDocumento);
+
         objUploadArquivo.finalizou = function (arr) {
             if (!mdPetValidarRetornoUpload(arr)) {
                 return false;

@@ -382,7 +382,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
         if (is_null($unidadeDTO)) {
-            throw new InfraException('Tipo de unidade não encontrado.');
+            throw new InfraException('Tipo de unidade não encontrada.');
         }
 
         return $unidadeDTO;
@@ -667,7 +667,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $idVinculo = array_key_exists('hdnIdVinculo', $dados) && !empty($dados['hdnIdVinculo']) ? $dados['hdnIdVinculo'] : null;
 
         if (is_null($idVinculo)) {
-            throw new InfraException('Vínculo não informado para a alteração do responsável legal.');
+            throw new InfraException('Vinculo nao informado para a alteracao do responsavel legal.');
         }
 
         $acessoExterno = isset($dados['chkDeclaracao']) ? true : false;
@@ -685,7 +685,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $idProcedimento = $this->_getIdProcessoPorVinculo($idVinculo);
 
         if (is_null($idProcedimento)) {
-            throw new InfraException('Processo do vínculo não encontrado.');
+            throw new InfraException('Processo do vinculo nao encontrado.');
         }
 
         $reciboDTOBasico = null;
@@ -702,12 +702,12 @@ class MdPetVinculoUsuExtRN extends InfraRN
         }
 
         if ($idRepresentant == null) {
-            throw new InfraException('Erro ao buscar Representante da Vinculação');
+            throw new InfraException('Erro buscar Representante da Vinculacao');
         }
 
         $objProcedimentoDTO = $this->_getObjProcedimentoPorVinculo($idVinculo);
         if (is_null($objProcedimentoDTO)) {
-            throw new InfraException('Processo do vínculo não localizado para gerar a alteração do responsável legal.');
+            throw new InfraException('Processo do vinculo nao localizado para gerar a alteracao do responsavel legal.');
         }
 
         return array(
@@ -849,7 +849,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $this->realizarRollbackGeracaoProcedimentoAlteracaoResponsavelLegal($dadosCadastro);
         } catch (Exception $eRollback) {
             MdPetRastreioINT::registrarFalha('Alteração de Responsável Legal: o rollback falhou no ' . $strProcesso . ', e o banco manteve tudo como estava antes dele. O processo precisa de correção manual.', $eRollback);
-            LogSEI::getInstance()->gravar('Falha ao reverter a alteração do responsável legal do processo ' . $dadosCadastro['idProcedimento'] . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
+            LogSEI::getInstance()->gravar('Falha ao reverter a alteracao do responsavel legal do processo ' . $dadosCadastro['idProcedimento'] . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
             (new MdPetAvisoRollbackRN())->avisarFalha('Alteração de Responsável Legal', 'processo ' . $strProcessoFormatado, $e, $eRollback, $strMotivo);
             (new InfraException())->lancarValidacao(sprintf(self::$MSG_ALTERACAO_NAO_DESFEITA, $strProcessoFormatado), null, $eRollback);
         }
@@ -1085,7 +1085,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
         try {
             $this->enviarEmail([$dadosGeracao, $dadosCadastro['objUnidadeDTO'], $dadosCadastro['objProcedimentoDTO'], [], $dadosCadastro['reciboDTOBasico'], $dadosCadastro['reciboDTOBasico']]);
         } catch (\Throwable $e) {
-            LogSEI::getInstance()->gravar('Falha no envio de e-mail da vinculação do processo ' . $dadosCadastro['idProcedimento'] . ".\n\n" . InfraException::inspecionar($e), InfraLog::$INFORMACAO);
+            LogSEI::getInstance()->gravar('Falha no envio de e-mail da vinculacao do processo ' . $dadosCadastro['idProcedimento'] . ".\n\n" . InfraException::inspecionar($e), InfraLog::$INFORMACAO);
         }
     }
 
@@ -1104,14 +1104,21 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $arrArquivos = [];
         $objInfraException = new InfraException();
 
-        foreach (PaginaSEI::getInstance()->getArrItensTabelaDinamica($dados['hdnTbDocumento'] ?? '') as $itemAnexo) {
+        $arrDocumentos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dados['hdnTbDocumento'] ?? '');
+        foreach ($arrDocumentos as $itemAnexo) {
             PeticionamentoIntegracao::validarXssComplemento($itemAnexo[2] ?? null, $objInfraException);
             $arrArquivos[$itemAnexo[7]] = $itemAnexo[9];
         }
 
         $objInfraException->lancarValidacoes();
+        MdPetTamanhoArquivoRN::validarQuantidadeAnexosExternos(
+            count($arrDocumentos),
+            new InfraParametro(BancoSEI::getInstance()),
+            LogSEI::getInstance()
+        );
         PeticionamentoIntegracao::validarArquivosDisponiveisConclusao($arrArquivos, $strDiretorio);
         PeticionamentoIntegracao::validarXssConclusao(null, $arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarNomesAnexosConclusao($arrArquivos);
         PeticionamentoIntegracao::validarTamanhoConclusao($arrArquivos, $strDiretorio);
     }
 
@@ -1285,7 +1292,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             $this->realizarRollbackGeracaoProcedimentoVinculo($dadosCadastro);
         } catch (Exception $eRollback) {
             MdPetRastreioINT::registrarFalha('Vinculação de Responsável Legal: o rollback falhou no ' . $strProcesso . ', e o banco manteve tudo como estava antes dele. O processo precisa de correção manual.', $eRollback);
-            LogSEI::getInstance()->gravar('Falha ao reverter a vinculação do processo ' . $dadosCadastro['idProcedimento'] . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
+            LogSEI::getInstance()->gravar('Falha ao reverter a vinculacao do processo ' . $dadosCadastro['idProcedimento'] . ".\nRastreio: pet=" . MdPetRastreioINT::obterUuid() . "\n\nErro original:\n" . InfraException::inspecionar($e) . "Erro ao reverter:\n" . InfraException::inspecionar($eRollback), InfraLog::$ERRO);
             (new MdPetAvisoRollbackRN())->avisarFalha('Vinculação de Responsável Legal', 'processo ' . $strProcessoFormatado, $e, $eRollback, $strMotivo);
             (new InfraException())->lancarValidacao(sprintf(self::$MSG_VINCULACAO_NAO_DESFEITA, $strProcessoFormatado), null, $eRollback);
         }
@@ -1506,7 +1513,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
                 }
 
                 if ($idRepresentant == null) {
-                    throw new InfraException('Erro ao buscar Representante da Vinculação');
+                    throw new InfraException('Erro buscar Representante da Vinculação');
                 }
 
                 $objProcedimentoDTO = $this->_getObjProcedimentoPorVinculo($idVinculo);
@@ -1599,7 +1606,7 @@ class MdPetVinculoUsuExtRN extends InfraRN
             return $arrRetorno;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando processo de peticionamento do SEI.', $e);
+            throw new InfraException('Erro cadastrando processo peticionamento do SEI.', $e);
         }
 
     }

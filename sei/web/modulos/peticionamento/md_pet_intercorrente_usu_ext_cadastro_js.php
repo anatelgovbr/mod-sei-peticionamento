@@ -11,6 +11,7 @@
 <script type="text/javascript">
     var objTabelaDinamicaProcesso = null;
     var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
+    const objMdPetLimiteAnexos = <?= MdPetTamanhoArquivoRN::montarLimiteAnexosExternosParaTela() ?>;
 
     function inicializar() {
         iniciarGridDinamicaProcesso();
@@ -169,6 +170,9 @@
      * Salva um peticionamento
      */
     function abrirPeticionar() {
+        if (!mdPetValidarQuantidadeAnexos(objMdPetLimiteAnexos, 0, objTabelaDinamicaDocumento)) {
+            return;
+        }
         if (validarCamposObrigatorios()) {
             var urlValida = document.getElementById('urlValidaAssinaturaProcesso');
 
@@ -623,7 +627,7 @@
 
             var extensaoConfigurada = arrExtensoesPermitidas.length > 0;
             if (!extensaoConfigurada) {
-                alert('Extensão de Arquivos Permitidos não foi configurada na Administração do Sistema.');
+                alert('Extensão de Arquivos Permitidos não foi configurado na Administração do Sistema.');
                 input.value = '';
                 input.focus();
                 return false;
@@ -850,6 +854,8 @@
         var tbDocumento = document.getElementById('tbDocumento');
         objUploadArquivo = new infraUpload('frmPeticionamentoIntercorrente', '<?=$strLinkUploadArquivo?>');
         mdPetVerificarTamanhoNoUpload(objUploadArquivo, objMdPetLimitesDoSei);
+        mdPetLimitarAnexosNoUpload(objUploadArquivo, objMdPetLimiteAnexos, () => objTabelaDinamicaDocumento);
+
         objUploadArquivo.finalizou = function (arr) {
             if (!mdPetValidarRetornoUpload(arr)) {
                 return false;

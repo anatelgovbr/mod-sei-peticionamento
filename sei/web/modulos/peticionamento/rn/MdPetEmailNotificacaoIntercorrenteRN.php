@@ -269,7 +269,7 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
                         InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
                     } catch (\Throwable $eMail) {
                         $arrFalhasEmail[] = array(
-                            'contexto' => 'E-mail à unidade (' . $mail->getStrEmail() . ')',
+                            'contexto' => 'E-mail a unidade (' . $mail->getStrEmail() . ')',
                             'erro'     => $eMail->getMessage()
                         );
                     }
@@ -321,12 +321,12 @@ class MdPetEmailNotificacaoIntercorrenteRN extends MdPetEmailNotificacaoRN {
                 $objEmailDTO->setStrMensagem(
                     'Prezado(a) Administrador(a),' . "\n\n"
                     . 'O sistema registrou ' . count($arrFalhas) . ' falha(s) no envio de e-mail'
-                    . ' de notificação do peticionamento intercorrente (processo ' . $idProcedimento . ').' . "\n\n"
+                    . ' de notificacao do peticionamento intercorrente (processo ' . $idProcedimento . ').' . "\n\n"
                     . 'Detalhes das falhas:' . "\n\n"
                     . $strDetalhes
-                    . 'O peticionamento foi concluído com sucesso. Apenas o envio de e-mail falhou.' . "\n\n"
+                    . 'O peticionamento foi concluido com sucesso. Apenas o envio de e-mail falhou.' . "\n\n"
                     . 'Atenciosamente,' . "\n"
-                    . 'SEI - Sistema Eletrônico de Informações'
+                    . 'SEI - Sistema Eletronico de Informacoes'
                 );
                 MailSEI::getInstance()->adicionar($objEmailDTO);
                 MailSEI::getInstance()->enviar();

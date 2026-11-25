@@ -159,7 +159,7 @@ try {
 
             $objMdPetProcessoRN = new MdPetProcessoRN();
             $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
-	        $strSubTitulo = 'Substituição/Atualização de Representante Legal';
+	        $strSubTitulo = 'Substituição/Atualização de Representente Legal';
 
             if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
                 (new InfraException())->lancarValidacao(MdPetUsuarioExternoRN::$MSG_GERAR_SENHA, InfraPagina::$TIPO_MSG_AVISO);
@@ -296,7 +296,7 @@ try {
 
 		  $objMdPetProcessoRN = new MdPetProcessoRN();
 		  $strTitulo = 'Concluir Peticionamento - Assinatura Eletrônica';
-		  $strSubTitulo = 'Atualização de Atos Constitutivos de Representante Legal';
+		  $strSubTitulo = 'Atualização de Atos Constitutivos de Representente Legal';
 
             if(MdPetUsuarioExternoRN::usuarioSsoSemSenha()){
                 (new InfraException())->lancarValidacao(MdPetUsuarioExternoRN::$MSG_GERAR_SENHA, InfraPagina::$TIPO_MSG_AVISO);

@@ -10,6 +10,7 @@ require_once dirname(__FILE__) . '/../../SEI.php';
 
 session_start();
 SessaoSEI::getInstance()->validarLink();
+SessaoSEI::getInstance()->validarPermissao(PaginaSEI::GET('acao'));
 PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '1024M');
@@ -155,7 +156,7 @@ if ($numRegistros > 0) {
         }
 	
 	    $strLinkDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=documento_visualizar&id_documento='.$arrObjIntimacao[$i]->getDblIdProtocolo());
-	    $strNomeDocPrincipal    .= ' (<a href="'.$strLinkDocumento.'" class="ancoraPadraoAzul" target="_blank">'.$arrObjIntimacao[$i]->getStrProtocoloFormatadoDocumento().'</a>)';
+	    $strNomeDocPrincipal    .= ' (<a href="'.$strLinkDocumento.'" class="ancoraPadraoAzul p-0" target="_blank">'.$arrObjIntimacao[$i]->getStrProtocoloFormatadoDocumento().'</a>)';
 	    
         $strResultado .= '<td class="text-center" width="150">';
         $strResultado .= $strNomeDocPrincipal;

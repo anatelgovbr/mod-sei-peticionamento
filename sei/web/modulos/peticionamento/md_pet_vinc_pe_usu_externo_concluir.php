@@ -71,7 +71,7 @@ try {
                       'IdContatoPessoaJuridica' => $numIdContatoOutorgante))) {
 
                   LogSEI::getInstance()->gravar(sprintf(
-                      'peticionamento_usuario_externo_vinc_pe: outorga negada. Usuário externo: %s | Contato da sessão: %s | Pessoa Jurídica: %s | IP: %s',
+                      'peticionamento_usuario_externo_vinc_pe: outorga negada. Usuario externo: %s | Contato da sessao: %s | Pessoa Juridica: %s | IP: %s',
                       SessaoSEIExterna::getInstance()->getNumIdUsuarioExterno(),
                       $numIdContatoExternoSessao,
                       $numIdContatoOutorgante,

@@ -73,6 +73,9 @@ try {
                 $objMdPetIntegracaoDTO->setStrOperacaoWsdl($_POST['selOperacaoWsdl']);
                 $objMdPetIntegracaoDTO->setStrCodReceitaSuspAuto($_POST['txtCodRFBSuspensaoAutomatica']);
                 $objMdPetIntegracaoDTO->setStrSinCache('');
+                MdPetIntegracaoINT::preencherTipoIntegracao($objMdPetIntegracaoDTO, $_POST);
+                // O conteúdo dos headers e do token fica fora da requisição gravada na auditoria; a RN recebe pelo DTO (ADR-PET-012 e ADR-PET-013)
+                unset($_POST['hdnTbHeaders'], $_POST['txtTokenAutenticacao']);
                 $objMdPetIntegracaoDTO->setStrSinAtivo('S');
             }
 
@@ -130,6 +133,9 @@ try {
                 $objMdPetIntegracaoDTO->setStrSinTpLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinTipo']));
                 $objMdPetIntegracaoDTO->setStrSinNuLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinNumero']));
                 $objMdPetIntegracaoDTO->setStrSinCompLogradouro(PaginaSEI::getInstance()->getCheckbox($_POST['chkSinComplemento']));
+                MdPetIntegracaoINT::preencherTipoIntegracao($objMdPetIntegracaoDTO, $_POST);
+                // O conteúdo dos headers e do token fica fora da requisição gravada na auditoria; a RN recebe pelo DTO (ADR-PET-012 e ADR-PET-013)
+                unset($_POST['hdnTbHeaders'], $_POST['txtTokenAutenticacao']);
             }
 
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdPetIntegracaoDTO->getNumIdMdPetIntegracao())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
@@ -181,6 +187,9 @@ try {
         if ($objMdPetIntegracaoDTO->getStrTpClienteWs() == 'S') {
             $staTpClienteWs = "checked='checked'";
         }
+        $staTpClienteWsRest = $objMdPetIntegracaoDTO->getStrTpClienteWs() == MdPetIntegFabricaRN::TIPO_REST ? "checked='checked'" : '';
+        $strEnderecoDocumento = $staTpClienteWsRest !== '' && $objMdPetIntegracaoDTO->isSetStrEnderecoOpenapi() ? $objMdPetIntegracaoDTO->getStrEnderecoOpenapi() : $objMdPetIntegracaoDTO->getStrEnderecoWsdl();
+        $strEnderecoExecucao = $objMdPetIntegracaoDTO->isSetStrEnderecoExecucao() ? $objMdPetIntegracaoDTO->getStrEnderecoExecucao() : '';
 
         $numNuVersao = $objMdPetIntegracaoDTO->getDblNuVersao();
         $codReceitaSuspAuto = $objMdPetIntegracaoDTO->getStrCodReceitaSuspAuto();
@@ -213,11 +222,18 @@ try {
         $arrParametrosCadastrados = array();
         if (!empty($arrObjMdPetIntegParametroDTO)) {
             foreach ($arrObjMdPetIntegParametroDTO as $item) {
-                $arrParametrosCadastrados[] = array(
-                    'nome' => $item->getStrNome(),
-                    'campo_nome' => $item->getStrNomeCampo(),
-                    'valor' => $item->getStrValorPadrao()
-                );
+                // Os headers do REST ficam na grade própria; o valor do Dado Restrito não vai para o navegador (ADR-PET-012 e ADR-PET-013)
+                if ($item->getStrTpParametro() !== MdPetIntegFabricaRN::PARAMETRO_HEADER) {
+                    $arrParametrosCadastrados[] = array(
+                        'nome' => $item->getStrNome(),
+                        'campo_nome' => $item->getStrNomeCampo(),
+                        'valor' => $item->getStrSinDadoConfidencial() === 'S' ? null : $item->getStrValorPadrao()
+                    );
+                }
+
+                if ($item->getStrNome() === MdPetIntegFabricaRN::ENTRADA_TOKEN && $item->getStrTpParametro() === MdPetIntegFabricaRN::PARAMETRO_ENTRADA) {
+                    $bolTokenGravado = true;
+                }
 
                 if (trim($item->getStrNomeCampo()) == 'PrazoExpiracao') {
                     $strItensSelCachePrazoExpiracao = $item->getStrNome();
@@ -238,6 +254,9 @@ try {
             }
         }
 
+        $strItensHeaders = MdPetIntegracaoINT::montarItensHeaders($arrObjMdPetIntegParametroDTO ?: []);
+        $strItensSelMetodoAutenticacao = MdPetIntegracaoINT::montarSelectMetodoAutenticacao($objMdPetIntegracaoDTO->isSetStrStaMetodoAutenticacao() ? $objMdPetIntegracaoDTO->getStrStaMetodoAutenticacao() : null);
+
         $strItensSelMdPetIntegFuncionalid = MdPetIntegFuncionalidINT::montarSelectNomeNaoUtilizado('null', '&nbsp;', $objMdPetIntegracaoDTO->getNumIdMdPetIntegFuncionalid(), $objMdPetIntegracaoDTO->getNumIdMdPetIntegracao());
 
     } else {
@@ -245,6 +264,11 @@ try {
         $staUtilizarWsNao = "";
         $staUtilizarWsSim = "";
         $staTpClienteWs = "";
+        $staTpClienteWsRest = '';
+        $strEnderecoDocumento = '';
+        $strEnderecoExecucao = '';
+        $strItensHeaders = '';
+        $strItensSelMetodoAutenticacao = MdPetIntegracaoINT::montarSelectMetodoAutenticacao(null);
     }
 
     // Aqui são listados tanto parâmetros da integração de CNPJ quanto da CPF:
@@ -255,11 +279,13 @@ try {
         'cpfUsuario' => 'CPF Usuário',
         'identificacaoOrigem' => 'Identificação Origem',
         'periodoCache' => 'Período de Expiração do Cache',
+        MdPetIntegFabricaRN::ENTRADA_TOKEN => 'Authorization',
     );
 
     $arrParametrosEntradaObrig = [
         'cnpjEmpresa',
         'periodoCache',
+        MdPetIntegFabricaRN::ENTRADA_TOKEN,
     ];
 
     $arrParametrosSaida = array(
@@ -270,7 +296,7 @@ try {
         'codSituacaoCadastral' => 'Código da Situação Cadastral',
         'descSituacaoCadastral' => 'Descrição da Situação Cadastral',
         'dtUltAltSituacaoCadastral' => 'Data da Última Alteração da Situação Cadastral',
-        'tpLogradouro' => 'Tipo de Logradouro do Endereço',
+        'tpLogradouro' => 'Tipo Logradouro do Endereço',
         'logradouro' => 'Logradouro do Endereço',
         'numero' => 'Número do Endereço',
         'complemento' => 'Complemento do Endereço',
@@ -310,7 +336,8 @@ try {
     foreach ($arrParametrosEntradas as $chave => $itemParametroEntrada) {
 
         $idLinha = $i;
-        $strCssTr = '<tr id="paramEntradaTable_' . $chave . '" class="infraTrClara">';
+        // A linha do token só aparece no Body Authentication by Token, pelo JavaScript da tela
+        $strCssTr = '<tr id="paramEntradaTable_' . $chave . '" class="infraTrClara"' . ($chave === MdPetIntegFabricaRN::ENTRADA_TOKEN ? ' style="display: none;"' : '') . '>';
 
         $strResultadoParamEntrada .= $strCssTr;
         $strResultadoParamEntrada .= "<td id='campo_{$chave}'  style='padding: 8px;' >";
@@ -321,7 +348,10 @@ try {
 
         if ($chave == 'periodoCache') {
             $strResultadoParamEntrada .= "<select id='selCachePrazoExpiracao' style='width:52%; float: left' name='selCachePrazoExpiracao' class='infraSelect form-select' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip("Selecione o campo de entrada da Operação que define o Prazo de Expiração do Cache das informações da Receita Federal.", 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
-            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses em que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<input type='text' id='txtPrazo' style='width:25%;' name='txtPrazo' class='infraText' value='" . $strItensSelCacheDataArmazenamento . "' onkeypress='return infraMascaraNumero(this,event,2);' maxlength='30' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Defina a quantidade de meses que o SEI deve considerar as informações em cache atualizadas. Se atribuído valor igual a 0 (zero), o SEI irá ignorar o cache e obterá as informações direto da Receita Federal.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
+        } elseif ($chave === MdPetIntegFabricaRN::ENTRADA_TOKEN) {
+            $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' style='width:52%; float: left' class='infraSelect selParametrosS form-select' name='nomeFuncionalDadosEntrada[$chave]' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'></select> <img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Selecione o campo de entrada da Operação que recebe o token. O token é enviado sempre no corpo da chamada.', 'Ajuda') . " alt='Ajuda' style='margin-left: 0% !important; margin-right: 3%' class='infraImgModulo' />";
+            $strResultadoParamEntrada .= "<input type='text' id='txtTokenAutenticacao' style='width:35%;' name='txtTokenAutenticacao' class='infraText' value='" . (isset($bolTokenGravado) ? MdPetIntegFabricaRN::MASCARA_DADO_RESTRITO : '') . "' maxlength='100' autocomplete='off' tabindex='" . PaginaSEI::getInstance()->getProxTabDados() . "'/><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/ajuda.svg' name='ajuda' " . PaginaSEI::montarTitleTooltip('Informe o conteúdo do token, com até 100 caracteres. O conteúdo gravado não é exibido; mantenha ***** para não alterá-lo.', 'Ajuda') . " alt='Ajuda' class='infraImgModulo' />";
         } else {
             $strResultadoParamEntrada .= "<select id='nomeFuncionalDadosEntrada_$chave' class='infraSelect selParametrosS  form-select' name='nomeFuncionalDadosEntrada[$chave]' ".(in_array($chave, $arrParametrosEntradaObrig) ? 'data-obrigatorio="true"' : '' )."></select>";
         }
@@ -334,14 +364,14 @@ try {
 
     $strResultadoParamEntrada .= '</table>';
 
-    $strSumarioTabelaSaida = 'Tabela de configuração dos dados de Saída do web-service.';
-    $strCaptionTabelaSaida = 'Dados de Saída';
+    $strSumarioTabelaSaida = 'Tabela de configuração dos dados de Saida do web-service.';
+    $strCaptionTabelaSaida = 'Dados de Saida';
 
     $strResultadoParamSaida = '<table width="100%" id="tableParametroSaida" class="infraTable" summary="' . $strSumarioTabelaSaida . '">' . "\n";
     $strResultadoParamSaida .= '<tr>';
 
     $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Campo de Destino no SEI &nbsp;</th>' . "\n";
-    $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Dados de Saída no Webservice&nbsp;</th>' . "\n";
+    $strResultadoParamSaida .= '<th class="infraTh" width="50%">&nbsp;Dados de Saida no Webservice&nbsp;</th>' . "\n";
     $strResultadoParamSaida .= '</tr>' . "\n";
     $strCssTr = '';
     $i = 0;
@@ -424,7 +454,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <legend class="infraLegend">&nbsp;Indicação de Integração com a Receita Federal&nbsp; <img
                                 id="imgAjuda2"
                                 src="<?= PaginaSEI::getInstance()->getDiretorioImagensGlobal() ?>/ajuda.gif"
-                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('É extremamente recomendado que se utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jurídica e Procuração Eletrônica para os Usuários Externos Sem Integração com a base da Receita Federal, os Usuários Externos continuarão a declarar a responsabilidade, até penal, sobre as informações prestadas, mas poderão ocorrer contradições e, caso necessite, Suspensão e Alteração da vinculação podem ser efetivadas pelo menu Administração > Peticionamento Eletrônico > Vinculações e Procurações Eletrônicas.', 'Ajuda') ?>
+                                name="ajuda" <?= PaginaSEI::montarTitleTooltip('É extremamente recomendado que se utilize Integração com a base de dados da Receita Federal para validar se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal. \n \n Caso opte por ativar as funcionalidades afetas a Pessoa Jurídica e Procuração Eletrônica para os Usuários Externos Sem Integração com a base da Receita Federal, os Usuários Externos continuarão a declarar a responsabilidade, até penal, sobre as informações prestadas, mas poderão ocorrer contradição e, caso necessite, Suspensão e Alteração da vinculação podem ser efetivadas pelo menu Administração > Peticionamento Eletrônico > Vinculações e Procurações Eletrônicas.', 'Ajuda') ?>
                                 alt="Ajuda" class="infraImgFielset"/></legend>
                     <div class="form-group">
                         <span>
@@ -434,7 +464,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <label for="rdStaUtilizarWsNao" id="lblStaUtilizarWsNao" class="infraLabelRadio">Sem Integração
                                 <img id="imgAjudaIntegracaoNao"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da autodeclaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.', 'Ajuda') ?>
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Ao selecionar esta opção, não ocorrerá qualquer validação se o CPF do Usuário Externo que está formalizando a vinculação como Responsável Legal de Pessoa Jurídica é de fato do Responsável Legal pelo CNPJ constante na Receita Federal, ficando exclusivamente sob responsabilidade, até penal, da auto declaração efetivada pelo Usuário Externo e documentos que anexar no Peticionamento de formalização.', 'Ajuda') ?>
                                     alt="Ajuda" class="infraImgModulo"/></label>
                         </span>
                         <span>
@@ -478,12 +508,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                <div class="row">
                    <div class="col-6 col-xl-5">
                        <div class="form-group">
-                           <label id="lblStaTpClienteWs" for="txtStaTpClienteWs" class="infraLabelObrigatorio">Tipo Cliente WS:</label><br/>
-                           <input <?php echo $staTpClienteWs; ?> type="radio" name="rdStaTpClienteWs" id="rdStaTpClienteWsSoap" class="infraRadio" value="S">
+                           <label id="lblStaTpClienteWs" for="txtStaTpClienteWs" class="infraLabelObrigatorio">Tipo de Integração:</label><br/>
+                           <input <?php echo $staTpClienteWs; ?> type="radio" name="rdStaTpClienteWs" id="rdStaTpClienteWsSoap" class="infraRadio" value="S" onclick="tipoIntegracaoSelecionar()">
                            <label for="rdStaTpClienteWsSoap" id="lblStaTpClienteWsSoap" class="infraLabelRadio">SOAP</label>
+                           <input <?php echo $staTpClienteWsRest; ?> type="radio" name="rdStaTpClienteWs" id="rdStaTpClienteWsRest" class="infraRadio" value="R" onclick="tipoIntegracaoSelecionar()">
+                           <label for="rdStaTpClienteWsRest" id="lblStaTpClienteWsRest" class="infraLabelRadio">REST</label>
                        </div>
                    </div>
-                   <div class="col-6 col-xl-5">
+                   <div class="col-6 col-xl-5" id="blcNuVersao">
                        <div class="form-group">
                            <label id="lblNuVersao" for="txtNuVersao" class="infraLabelObrigatorio">Versão SOAP:</label>
                            <select id="selNuVersao" name="selNuVersao" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
@@ -502,14 +534,69 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblEnderecoWsdl" for="txtEnderecoWsdl" class="infraLabelObrigatorio">Endereço do Webservice:</label>
                     <div class="input-group mb-3">
                         <input type="text" id="txtEnderecoWsdl" name="txtEnderecoWsdl" class="infraText form-control"
-                            value="<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrEnderecoWsdl()); ?>"
+                            value="<?= PaginaSEI::tratarHTML($strEnderecoDocumento); ?>"
                             onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
-                        <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar" class="infraButton" onclick="validarWsdl();">
+                        <button type="button" accesskey="V" name="btnValidar" id="btnValidar" value="Validar" class="infraButton" onclick="validarWsdl(true);">
                             <span class="infraTeclaAtalho">V</span>alidar
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row initHidden mb-3" id="blcRestWs" style="display: none;">
+            <div class="col-12 col-xl-10">
+                <div class="form-group mb-3">
+                    <label id="lblEnderecoExecucao" for="txtEnderecoExecucao" class="infraLabelObrigatorio">Endereço de Execução:
+                        <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Endereço base das chamadas ao serviço REST, que pode ser o próprio serviço ou um gateway. Ao validar o documento OpenAPI, o endereço declarado nele é sugerido.', 'Ajuda') ?> alt="Ajuda" class="infraImgModulo"/>
+                    </label>
+                    <input type="text" id="txtEnderecoExecucao" name="txtEnderecoExecucao" class="infraText form-control"
+                           value="<?= PaginaSEI::tratarHTML($strEnderecoExecucao); ?>"
+                           onkeypress="return infraMascaraTexto(this,event,250);" maxlength="250"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                </div>
+                <div class="form-group mb-3">
+                    <label id="lblMetodoAutenticacao" for="selMetodoAutenticacao" class="infraLabelObrigatorio">Método de Autenticação:</label>
+                    <select id="selMetodoAutenticacao" name="selMetodoAutenticacao" class="infraSelect form-select"
+                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
+                        <?= $strItensSelMetodoAutenticacao ?>
+                    </select>
+                </div>
+                <fieldset class="infraFieldset p-3" id="fldHeaders">
+                    <legend class="infraLegend">Headers</legend>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label id="lblAtributoHeader" for="txtAtributoHeader" class="infraLabelOpcional">Atributo:</label>
+                            <input type="text" id="txtAtributoHeader" class="infraText form-control" maxlength="30"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label id="lblConteudoHeader" for="txtConteudoHeader" class="infraLabelOpcional">Conteúdo:</label>
+                            <input type="text" id="txtConteudoHeader" class="infraText form-control" maxlength="100" autocomplete="off"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                        </div>
+                        <div class="col-md-2" style="padding-top: 2.0em;">
+                            <input type="checkbox" id="chkDadoRestrito" class="infraCheckbox"
+                                   tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+                            <label id="lblDadoRestrito" for="chkDadoRestrito" class="infraLabelCheckbox">Dado Restrito</label>
+                        </div>
+                        <div class="col-md-2" style="padding-top: 1.7em;">
+                            <button type="button" id="btnAdicionarHeader" class="infraButton" onclick="adicionarHeader();"
+                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">Adicionar</button>
+                        </div>
+                    </div>
+                    <table id="tblHeaders" width="100%" class="infraTable mt-2" summary="Headers">
+                        <caption class="infraCaption">&nbsp;</caption>
+                        <tr>
+                            <th style="display: none;">ID</th>
+                            <th class="infraTh">Atributo</th>
+                            <th class="infraTh">Conteúdo</th>
+                            <th class="infraTh">Dado Restrito</th>
+                            <th style="display: none;">Conteúdo Enviado</th>
+                            <th class="infraTh" style="width: 15%;">Ações</th>
+                        </tr>
+                    </table>
+                </fieldset>
             </div>
         </div>
         <div class="row initHidden mb-3" id="blcOperacaoWs" style="display: none;">
@@ -596,7 +683,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <div class="container">
                     <div class="bloco" style="display:none;">
                         <div class="form-group">
-                            <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento" class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Operação que retorna a Data de Armazenamento do cache das informações da Receita Federal e que foi utilizado na validação do período de expiração definido nos campos abaixo.', 'Ajuda') ?>alt="Ajuda" class="infraImgModulo" /></label>
+                            <label id="lblCacheDataArmazenamento" for="selCacheDataArmazenamento" class="infraLabelObrigatorio">Campo de Retorno da Data de Armazenamento: <img src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione o campo da Operação que retorna a Data de Armazenamento do cache da informações da Receita Federal e que foi utilizado na validação do período de expiração definido nos campo abaixo.', 'Ajuda') ?>alt="Ajuda" class="infraImgModulo" /></label>
                             <select id="selCacheDataArmazenamento" style="width:300px;" name="selCacheDataArmazenamento" class="infraSelect form-select" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></select>
                         </div>
                     </div>
@@ -621,6 +708,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     ?>
     <input type="hidden" id="hdnIdMdPetIntegracao" name="hdnIdMdPetIntegracao" value="<?= $objMdPetIntegracaoDTO->getNumIdMdPetIntegracao(); ?>" />
     <input type="hidden" id="bolIsConsultar" value="<?= isset($bolIsConsultar) ? 'S' : 'N'?>">
+    <input type="hidden" id="hdnTbHeaders" name="hdnTbHeaders" value="<?= $strItensHeaders ?>">
 </form>
 <?
 require_once "md_pet_integracao_cadastro_js.php";

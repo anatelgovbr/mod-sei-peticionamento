@@ -168,7 +168,7 @@ require_once('md_pet_tp_ctx_contato_cadastro_inicializacao.php');
 
                           <img id="imgExcluirPrincipal" onclick="objLupaPrincipal.remover();"
                                onkeypress="objLupaPrincipal.remover();" src="<?=PaginaSEI::getInstance()->getDiretorioSvgGlobal()?>/remover.svg"
-                               alt="Remover Tipos de Contatos Selecionados" title="Remover Tipos de Contatos Selecionados"
+                               alt="Remover Tipos de Contatos Selecionadas" title="Remover Tipos de Contatos Selecionados"
                                class="infraImg" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
                       </div>

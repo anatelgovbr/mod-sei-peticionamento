@@ -203,7 +203,7 @@ class MdPetIntTipoIntimacaoRN extends InfraRN {
         if (!$permiteExclusao) {
             $nomeTpIntimacao   = $this->_getNomeTipoIntimacao($idTipoIntimacao);
             $objInfraException = new InfraException();
-            $objInfraException->adicionarValidacao('O Tipo de Intimação Eletrônica "'.$nomeTpIntimacao.'" não pode ser excluído pois está vinculado a uma Intimação.');
+            $objInfraException->adicionarValidacao('O Tipo de Intimação Eletrônica "'.$nomeTpIntimacao.'" não pode ser excluído pois está vinculado à uma Intimação.');
             $objInfraException->lancarValidacoes();
             return false;
         }

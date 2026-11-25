@@ -69,7 +69,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         try {
             (new MdPetVinculoUsuExtRN())->enviarEmail($arrParams);
         } catch (\Throwable $e) {
-            LogSEI::getInstance()->gravar('Falha no envio de e-mail da procuração do processo ' . $arrParams[2]->getDblIdProcedimento() . ".\n\n" . InfraException::inspecionar($e), InfraLog::$INFORMACAO);
+            LogSEI::getInstance()->gravar('Falha no envio de e-mail da procuracao do processo ' . $arrParams[2]->getDblIdProcedimento() . ".\n\n" . InfraException::inspecionar($e), InfraLog::$INFORMACAO);
         }
     }
 
@@ -170,7 +170,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
             if (is_null($unidadeDTO)) {
-                throw new InfraException('Tipo de unidade não encontrado.');
+                throw new InfraException('Tipo de unidade não encontrada.');
             }
 
             if (isset($_POST['hdnTbUsuarioProcuracao']) && $_POST['hdnTbUsuarioProcuracao'] != "") {
@@ -846,7 +846,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
         $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
         if (is_null($unidadeDTO)) {
-            throw new InfraException('Tipo de unidade não encontrado.');
+            throw new InfraException('Tipo de unidade não encontrada.');
         }
 
         return $unidadeDTO;
@@ -916,7 +916,7 @@ class MdPetVinUsuExtProcRN extends InfraRN
             $unidadeDTO = $unidadeRN->consultarRN0125($unidadeDTO);
 
             if (is_null($unidadeDTO)) {
-                throw new InfraException('Tipo de unidade não encontrado.');
+                throw new InfraException('Tipo de unidade não encontrada.');
             }
 
             //dados do procurador e Pj

@@ -12,6 +12,11 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 	
 	public static $ID_FIXO_TAMANHO_ARQUIVO = '1';
 
+	public const PARAMETRO_LIMITE_ANEXOS_EXTERNOS = 'MODULO_PETICIONAMENTO_QTD_LIMITE_ANEXOS_PET_EXTERNO';
+	public const LIMITE_PADRAO_ANEXOS_EXTERNOS = '100';
+
+	private const RECUSA_POR_QUANTIDADE = 'Este peticionamento permite no máximo %d arquivo(s). Remova arquivos da lista para continuar.';
+
 	/** Início da recusa por tamanho, com os marcadores que o servidor e a tela trocam pelo nome e pelo tamanho (ADR-PET-010). */
 	private const RECUSA_POR_TAMANHO = 'O arquivo "{nome}" tem {tamanho} MB.';
 
@@ -26,6 +31,60 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 		return BancoSEI::getInstance ();
 	}
 	
+	/** Lê o limite de arquivos do Peticionamento Externo. Null indica limite desativado. */
+	public static function obterLimiteAnexosExternos(InfraParametro $objInfraParametro, LogSEI $objLogSEI): ?int
+	{
+		$strValor = $objInfraParametro->getValor(self::PARAMETRO_LIMITE_ANEXOS_EXTERNOS, false);
+		if ($strValor === null || $strValor === '') {
+			return null;
+		}
+
+		if (ctype_digit($strValor)) {
+			$numLimite = filter_var(ltrim($strValor, '0') ?: '0', FILTER_VALIDATE_INT);
+			if ($numLimite !== false) {
+				return $numLimite;
+			}
+		}
+
+		$strValorLog = preg_replace('/[\x00-\x1f\x7f-\x9f]/', ' ', substr($strValor, 0, 100));
+		$objLogSEI->gravar(
+			'Parâmetro ' . self::PARAMETRO_LIMITE_ANEXOS_EXTERNOS . ' com valor "' . $strValorLog
+			. '": o limite de arquivos do Peticionamento Externo continua desativado.',
+			InfraLog::$AVISO
+		);
+		return null;
+	}
+
+	/** Prepara o limite e a mensagem de recusa usados nas telas de Peticionamento Externo. */
+	public static function montarLimiteAnexosExternosParaTela(): string
+	{
+		$numLimite = self::obterLimiteAnexosExternos(new InfraParametro(BancoSEI::getInstance()), LogSEI::getInstance());
+		if ($numLimite === null) {
+			return 'null';
+		}
+
+		return json_encode([
+			'limite' => $numLimite,
+			'mensagem' => mb_convert_encoding(sprintf(self::RECUSA_POR_QUANTIDADE, $numLimite), 'UTF-8', 'ISO-8859-1'),
+		], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
+	}
+
+	/** Recusa a quantidade informada antes de gravar o Peticionamento Externo. */
+	public static function validarQuantidadeAnexosExternos(
+		int $numAnexos,
+		InfraParametro $objInfraParametro,
+		LogSEI $objLogSEI
+	): void {
+		$numLimite = self::obterLimiteAnexosExternos($objInfraParametro, $objLogSEI);
+		if ($numLimite === null || $numAnexos <= $numLimite) {
+			return;
+		}
+
+		$objInfraException = new InfraException();
+		$objInfraException->adicionarValidacao(sprintf(self::RECUSA_POR_QUANTIDADE, $numLimite));
+		$objInfraException->lancarValidacoes();
+	}
+
     /**
 	 * Short description of method listarParaUsuarioExternoConectado
 	 *
@@ -44,7 +103,7 @@ class MdPetTamanhoArquivoRN extends InfraRN {
 			return $ret;
 
 		} catch (Exception $e) {
-			throw new InfraException ('Erro listando Tamanho Máximo Peticionamento.', $e);
+			throw new InfraException ('Erro listando Tamanho Maximo Peticionamento.', $e);
 		}
 	}	
 

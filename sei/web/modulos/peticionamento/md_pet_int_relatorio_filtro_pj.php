@@ -29,7 +29,7 @@
 
 <script>
     
-    objAutoCompletarDestinatarioPJ = new infraAjaxAutoCompletar('hdnIdDestinatario' , 'txtDestinatarioPJ',  '<?= SessaoSEI::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax.php?acao_ajax=contato_auto_completar&origem=relatorios') ?>');
+    objAutoCompletarDestinatarioPJ = new infraAjaxAutoCompletar('hdnIdDestinatario' , 'txtDestinatarioPJ',  '<?= SessaoSEI::getInstance()->assinarLink('modulos/peticionamento/controlador_ajax.php?acao_ajax=contato_auto_completar') ?>');
     objAutoCompletarDestinatarioPJ.limparCampo = true;
     objAutoCompletarDestinatarioPJ.tamanhoMinimo = 3;
     objAutoCompletarDestinatarioPJ.prepararExecucao = function(){

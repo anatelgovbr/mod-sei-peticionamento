@@ -160,9 +160,9 @@ try{
 			'post_optional' => array()
 		),
         'contato_auto_completar' => array(
-			'get' => array('acao_ajax', 'origem', 'infra_sistema', 'infra_unidade_atual', 'infra_hash'), 
-			'post_required' => array('palavras_pesquisa', 'id_grupo_contato', 'tipo_contato'), 
-			'post_optional' => array()
+			'get' => array('acao_ajax', 'infra_sistema', 'infra_unidade_atual', 'infra_hash'), 
+			'post_required' => array('palavras_pesquisa', 'tipo_contato'), 
+			'post_optional' => array('id_grupo_contato')
 		)
 	);
 
@@ -539,7 +539,7 @@ try{
 			validarPermissaoAjaxPeticionamento($acaoAjax, $objSessaoSEI);
 			
 			$strPalavrasPesquisa = utf8_decode(urldecode($_POST['palavras_pesquisa']));
-			$numIdGrupoContato = $_POST['id_grupo_contato'];
+			$numIdGrupoContato = PaginaSEI::POST('id_grupo_contato');
 			$natureza = $_POST['tipo_contato'];
 			
 			$arrObjContatoDTO = array();

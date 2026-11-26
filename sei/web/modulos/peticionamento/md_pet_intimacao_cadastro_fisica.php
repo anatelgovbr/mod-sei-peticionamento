@@ -1,5 +1,9 @@
 <?php
+SessaoSEI::getInstance()->validarLink();
+SessaoSEI::getInstance()->validarPermissao('md_pet_intimacao_cadastrar');
+
 $objMdPetIntimacaoRN = new MdPetIntimacaoRN();
+$bolOcultarAcessoIntegral = MdPetIntimacaoRN::deveOcultarAcessoIntegral(new InfraParametro(BancoSEI::getInstance()), LogSEI::getInstance());
 $strTipoIntimacao = MdPetIntTipoIntimacaoINT::montarSelectIdMdPetIntTipoIntimacao('0', '', '0');
 
 $idDocumento = PaginaSEI::GET('id_documento') ?? PaginaSEI::POST('id_documento') ?? PaginaSEI::POST('hdnIdDocumento');
@@ -8,7 +12,6 @@ $idDocumento = ctype_digit((string) $idDocumento) ? (string) $idDocumento : '';
 $idProcedimento = PaginaSEI::GET('id_procedimento') ?? PaginaSEI::POST('id_procedimento') ?? PaginaSEI::POST('hdnIdProcedimento');
 $idProcedimento = ctype_digit((string) $idProcedimento) ? (string) $idProcedimento : '';
 
-$bolIsAlterar = (bool) (PaginaSEI::GET('is_alterar') ?? PaginaSEI::POST('is_alterar'));
 $objDocumentoDTO = new DocumentoDTO();
 $objDocumentoDTO->retDblIdDocumento();
 $objDocumentoDTO->retDblIdProcedimento();
@@ -24,9 +27,6 @@ $objDocumentoDTO->setDblIdDocumento($idDocumento);
 $objDocumentoRN = new DocumentoRN();
 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
-
-//  Buscar Intimações cadastradas.
-$arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradasFisica($idDocumento);
 
 // Buscar o Prazo Tacita
 $objMdPetIntPrazoTacitaDTO = ( new MdPetIntPrazoTacitaRN() )->getTipoPrazoTacitoGeralEspecifico( $objDocumentoDTO->getNumIdTipoProcedimentoProcedimento() );
@@ -58,7 +58,6 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
     #divOpcoesDadosUsuario2 {position:relative;left:85.2%;top:14.4%;width: 1px}
 </style>
 <br>
-<input type="hidden" id="intimacoesFisica" value="<?php echo count($arrIntimacoes) ?>"/>
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
         <fieldset class="fldDestinatarios infraFieldset sizeFieldset form-control">
@@ -149,9 +148,9 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
             <!-- Todo: Destinatários em Massa Remover -->
             <div class="row" style="display:none">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="<?php echo $bolIsAlterar ? '' : 'display:none' ?>">
+                    <div id="divTabelaUsuarioExterno" class="tabUsuario infraAreaTabela" style="display:none">
                         <table id="tblEnderecosEletronicos" width="100%" summary="Lista de Pessoas Jurídicas disponíveis" class="infraTable">
-                            <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Físicas disponíveis", count($arrIntimacoes)) ?></caption>
+                            <caption id="test" class="infraCaption"><?= PaginaSEI::getInstance()->gerarCaptionTabela("Pessoas Físicas disponíveis", 0) ?></caption>
                             <tr>
                                 <th style="display:none;">ID</th>
                                 <th class="infraTh">Destinatário</th>
@@ -161,30 +160,6 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                                 <th class="infraTh" width="15%">Situação da Intimação</th>
                                 <th class="infraTh" width="10%">Ações</th>
                             </tr>
-                            <? if ($bolIsAlterar) { ?>
-                                <input type="hidden" id="hdnIdUsuarios" name="hdnIdUsuarios" value="<?= implode(',', array_column($arrIntimacoes, 'Id')) ?>"/>
-                                <? foreach ($arrIntimacoes as $key => $intimacao) {
-                                    $countInt++;
-                                    ?>
-                                    <tr id="changeColor<?php echo $key ?>" class="infraTrClara">
-                                        <!--<tr class="<?php echo $key % 2 == 0 ? 'infraTrClara' : 'infraTrEscura'; ?>">-->
-                                        <td class="d-none"> <?= $intimacao['Id'] ?></td>
-                                        <td class="text-center"><?= $intimacao['Nome'] ?></td>
-                                        <td class="text-center"><?= $intimacao['Email'] ?></td>
-                                        <td class="text-center"><?= InfraUtil::formatarCpf($intimacao['Cpf']) ?></td>
-                                        <td class="text-center"><?= $intimacao['DataIntimacao'] ?></td>
-                                        <td class="text-center"><?= $intimacao['Situacao'] ?></td>
-                                        <td class="text-center">
-                                            <a href='#' onclick="abrirIntimacaoCadastrada('<?= $intimacao['Url'] ?>','<?= $key ?>')">
-                                                <img title='Consultar Intimação Eletrônica'
-                                                     alt='Consultar Intimação Eletrônica'
-                                                     src='<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal(); ?>/consultar.svg'
-                                                     class='infraImg'/>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <? }
-                            } ?>
                         </table>
                         <br/>
                         <label for="hdnIdDadosUsuario">hdnIdDadosUsuario</label>
@@ -289,9 +264,9 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
                 <!-- Tipo de Acesso Externo -->
                 <div class="row">
                     <div class="col-sm-12 col-md-8 col-lg-8 col-xl-6">
-                        <div id="divOptTipoPessoaFisica" class="infraDivRadio">
+                        <div id="divOptTipoPessoaFisica" class="infraDivRadio"<?= $bolOcultarAcessoIntegral ? ' style="display:none"' : '' ?>>
                             <div class="infraRadioDiv ">
-                                <input type="radio" id="optIntegral" name="optIntegral" value="I" class="infraRadio"
+                                <input type="radio" id="optIntegral" name="optIntegral" value="I"<?= $bolOcultarAcessoIntegral ? ' disabled="disabled"' : '' ?> class="infraRadio"
                                        onclick="mostrarProtocoloParcial(this)"
                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
                                 <label class="infraRadioLabel" for="optIntegral"></label>
@@ -355,8 +330,8 @@ $strLinkTipoProcessoSelecaoFLote = SessaoSEI::getInstance()->assinarLink('contro
 
 <select style="display: none" multiple="multiple" id="selMainIntimacao" name="selMainIntimacao" size="12"></select>
 <select style="display: none" multiple="multiple" id="selMainIntimacaoProtocoloDisponibilizado" name="selMainIntimacaoProtocoloDisponibilizado" size="12"></select>
-<input type="hidden" id="hdnIsAlterar" name="hdnIsAlterar" value="<?php echo $bolIsAlterar ? '1' : '0' ?>"/>
-<input type="hidden" id="hdnCountIntimacoes" name="hdnCountIntimacoes" value="<?php echo $countInt ?>"/>
+<input type="hidden" id="hdnIsAlterar" name="hdnIsAlterar" value="0"/>
+<input type="hidden" id="hdnCountIntimacoes" name="hdnCountIntimacoes" value="0"/>
 <input type="hidden" id="hdnProtocolosDisponibilizados" name="hdnProtocolosDisponibilizados" value="<?= $_POST['hdnProtocolosDisponibilizados'] ?>"/>
 <input type="hidden" id="hdnIdDocumento" name="hdnIdDocumento" value="<?php echo $idDocumento ?>"/>
 <input type="hidden" id="hndIdDocumento" name="hndIdDocumento" value="<?= $idDocumento ?>"/>

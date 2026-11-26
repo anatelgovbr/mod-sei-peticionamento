@@ -2260,7 +2260,8 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
         $objInfraException = new InfraException();
         $arrArquivos = [];
 
-        foreach (PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($strTbDocumento) as $arrDocumento) {
+        $arrDocumentos = PaginaSEIExterna::getInstance()->getArrItensTabelaDinamica($strTbDocumento);
+        foreach ($arrDocumentos as $arrDocumento) {
             PeticionamentoIntegracao::validarXssCampo($arrDocumento[9] ?? null, 'Nome de arquivo enviado', $objInfraException);
             PeticionamentoIntegracao::validarXssComplemento($arrDocumento[2] ?? null, $objInfraException);
             $arrArquivos[$arrDocumento[7] ?? ''] = $arrDocumento[9] ?? '';
@@ -2268,8 +2269,14 @@ class MdPetIntercorrenteProcessoRN extends MdPetProcessoRN
 
         $objInfraException->lancarValidacoes();
 
+        MdPetTamanhoArquivoRN::validarQuantidadeAnexosExternos(
+            count($arrDocumentos),
+            new InfraParametro(BancoSEI::getInstance()),
+            LogSEI::getInstance()
+        );
         PeticionamentoIntegracao::validarArquivosDisponiveisConclusao($arrArquivos, $strDiretorio);
         PeticionamentoIntegracao::validarXssConclusao(null, $arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarNomesAnexosConclusao($arrArquivos);
         PeticionamentoIntegracao::validarTamanhoConclusao($arrArquivos, $strDiretorio);
     }
 

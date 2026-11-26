@@ -13,6 +13,32 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 {
 	const URL_ANATEL = 'https://sei.anatel.gov.br/sei/controlador_ws.php';
 
+	/** Resultado do processamento de cada CNPJ, usado no resumo da execução. */
+	private const RESULTADO_CNPJ_INVALIDO = 'cnpj_invalido';
+	private const RESULTADO_ERRO_WS = 'erro_ws';
+	private const RESULTADO_REGULAR = 'regular';
+	private const RESULTADO_SUSPENSO = 'suspenso';
+	private const RESULTADO_SEM_VINCULO_ATIVO = 'no_vinc_ativo';
+	private const RESULTADO_RESPONSAVEL_DIVERGENTE = 'resp_diver_susp';
+	private const RESULTADO_ERRO_SUSPENSAO = 'erro_suspensao';
+
+	/** Ordem e rótulo de cada resultado nos contadores do resumo. */
+	private const ROTULOS_RESULTADO = [
+		self::RESULTADO_REGULAR => 'Sem alteração (situação regular e responsável legal confere com a Receita Federal)',
+		self::RESULTADO_SUSPENSO => 'Vínculos suspensos',
+		self::RESULTADO_RESPONSAVEL_DIVERGENTE => 'Responsável Legal suspenso por divergência',
+		self::RESULTADO_SEM_VINCULO_ATIVO => 'Situação cadastral de suspensão, sem vínculo ativo para suspender',
+		self::RESULTADO_ERRO_WS => 'Sem resposta da Receita Federal',
+		self::RESULTADO_ERRO_SUSPENSAO => 'Suspensão com falha, desfeita',
+		self::RESULTADO_CNPJ_INVALIDO => 'CNPJ inválido, não consultado',
+	];
+
+	/** Tamanho máximo da mensagem de falha no log e no e-mail ao administrador. */
+	private const TAMANHO_MAXIMO_MENSAGEM_ERRO = 300;
+
+	/** Tamanho máximo de cada texto da situação cadastral devolvida pela Receita no log e no e-mail ao administrador. */
+	private const TAMANHO_MAXIMO_TEXTO_RECEITA = 100;
+
     public function __construct()
     {
         parent::__construct();
@@ -620,28 +646,22 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		}
 	}
 
-	/** Consulta e suspende PJ sob a identidade técnica do Peticionamento. */
-	protected function ConsultarSituacaoReceitaCnpjConectado()
-	{
+  /** Consulta e suspende PJ sob a identidade técnica do Peticionamento. */
+  protected function ConsultarSituacaoReceitaCnpjConectado()
+  {
+      $numSeg     = InfraUtil::verificarTempoProcessamento();
+      $qtConsulta = intval($this->recuperarQuantidadeParametrizadaPessoaJuridica());
 
-  		$numSeg       = InfraUtil::verificarTempoProcessamento();
-	  	$qtConsulta   = intval($this->recuperarQuantidadeParametrizadaPessoaJuridica());
-	
-	  	if(!empty($qtConsulta) && $qtConsulta > 0){
-		
-		  (new MdPetIntUsuarioRN())->executarSuspensaoAutomatica(function () use ($qtConsulta, $numSeg): void {
-				$filaConsultaCNPJ = $this->recuperarFilaConsultaCnpj($qtConsulta);
-				// $filaConsultaCNPJ = ['75552133000170', '76535764000143', '40432544000147', '76535764000143'];
-		
-				$retorno = $this->consultarAtualizarVinculoPJ($filaConsultaCNPJ, 0, $qtConsulta);
-		
-				$titulo = 'ALTERANDO RESPONSÁVEIS LEGAIS E PROCURAÇÕES ELETRÔNICAS DE PESSOAS JURÍDICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL';
-				$this->logarSuspensaoVinculacoesEProcuracoes($retorno, $numSeg, $titulo, MdPetVincRepresentantRN::$NT_JURIDICA, $qtConsulta);
-		  });
-		
-	  	}
-	  
-  	}
+      if ($qtConsulta <= 0) {
+          return;
+      }
+
+      (new MdPetIntUsuarioRN())->executarSuspensaoAutomatica(function () use ($qtConsulta, $numSeg): void {
+          $filaConsultaCNPJ = $this->recuperarFilaConsultaCnpj($qtConsulta);
+          $arrResultado = $this->consultarAtualizarVinculoPJ($filaConsultaCNPJ);
+          $this->registrarResultadoConsultaCnpj($arrResultado, $numSeg, $qtConsulta);
+      });
+  }
 
   /** Consulta e suspende PF sob a identidade técnica do Peticionamento. */
   protected function ConsultarSituacaoReceitaCpfConectado()
@@ -865,7 +885,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
     $arrObjMdPetVincRepresentantSuspensos = [];
 	  
     foreach ($filaConsultaCPF as $cpf) {
-    	
+	
 	    $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
 	
 	    if (InfraUtil::validarCpf($cpf) && $qtConsulta > 0 && $count < $qtConsulta){
@@ -910,6 +930,7 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		    }
 		
 	    }
+	
 	
 	    $count ++;
 	    $this->atualizarDataUltimaConsultaRFB($cpf, MdPetVincRepresentantRN::$NT_FISICA);
@@ -1035,102 +1056,486 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 		
 	}
 
-  protected function consultarAtualizarVinculoPJ($filaConsultaCNPJ, $count, $qtConsulta)
+  /**
+   * Consulta cada CNPJ da fila na Receita Federal e suspende os vínculos conforme o retorno.
+   * Fica Conectado de propósito: o lote continua depois da falha de um CNPJ, e a suspensão
+   * de cada CNPJ roda na própria transação, em suspenderVinculosCnpj.
+   *
+   * @param string[] $filaConsultaCNPJ
+   * @return array[] um item por CNPJ, no formato de novoItemConsultaCnpj
+   */
+  protected function consultarAtualizarVinculoPJ(array $filaConsultaCNPJ): array
   {
-	
-	  	$erros = [];
-	  	$objMdPetIntegracaoRN = new MdPetIntegracaoRN();
-	  	$arrObjMdPetVincRepresentantSuspensos = [];
-	  
-	  	foreach ($filaConsultaCNPJ as $cnpj) {
-		
-			if(!empty($cnpj) && InfraUtil::validarCnpj($cnpj)){
-			
-				$objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+      $objMdPetIntegracaoRN = new MdPetIntegracaoRN();
+      $arrResultado = [];
 
-				if ($qtConsulta > 0 && $count < $qtConsulta){
+      foreach ($filaConsultaCNPJ as $cnpj) {
+          $arrResultado[] = $this->concluirCnpj($this->processarCnpj($objMdPetIntegracaoRN, $cnpj), false);
+      }
 
-					try {
-						
-						$resultadoConsultaReceitaWS = $objMdPetIntegracaoRN->consultarCNPJReceitaWsResponsavelLegal($cnpj);
+      // A falha do WS costuma ser passageira: o CNPJ tenta mais uma vez, no fim do lote.
+      foreach ($arrResultado as $numIndice => $arrItem) {
+          if ($arrItem['situacao'] === self::RESULTADO_ERRO_WS) {
+              $arrNovaTentativa = $this->processarCnpj($objMdPetIntegracaoRN, $arrItem['cnpj']);
+              $arrNovaTentativa['tentativas'] = 2;
+              $arrResultado[$numIndice] = $this->concluirCnpj($arrNovaTentativa, true);
+          }
+      }
 
-						if(is_array($resultadoConsultaReceitaWS)) {
+      return $arrResultado;
+  }
 
-							$retorno 			= $resultadoConsultaReceitaWS['RetornoConsultaReceitaWS'];
-							$codigosSuspender 	= $resultadoConsultaReceitaWS['IntegracaoCodigosParaSuspensao'];
-							$codigoRetornado 	= isset($retorno['PessoaJuridica']['situacaoCadastral']['codigo']) ? $retorno['PessoaJuridica']['situacaoCadastral']['codigo'] : null;
+  /**
+   * Item do resultado de um CNPJ, antes do processamento.
+   *
+   * @return array<string, mixed>
+   */
+  private function novoItemConsultaCnpj(string $cnpj): array
+  {
+      return [
+          'cnpj' => $cnpj,
+          'situacao' => self::RESULTADO_CNPJ_INVALIDO,
+          'situacaoReceita' => '',
+          'suspensaoPretendida' => '',
+          'responsaveisSuspensos' => 0,
+          'procuracoesSuspensas' => 0,
+          'procuracoesMantidas' => 0,
+          'documentos' => [],
+          'emailsNaoEnviados' => [],
+          'erros' => [],
+          'tentativas' => 0,
+      ];
+  }
 
-							if(!empty($codigoRetornado) && in_array($codigoRetornado, $codigosSuspender)){
+  /** Consulta um CNPJ, o que também atualiza o contato da PJ, e suspende os vínculos quando a Receita indica. */
+  private function processarCnpj(MdPetIntegracaoRN $objMdPetIntegracaoRN, string $cnpj): array
+  {
+      $arrItem = $this->novoItemConsultaCnpj($cnpj);
 
-								$arrObjMdPetVincRepresentantDTO = $objMdPetVincRepresentantRN->listarVincRepresentAtivosPorCNPJ($cnpj);
+      if (!InfraUtil::validarCnpj($cnpj)) {
+          return $arrItem;
+      }
 
-								if(!empty($arrObjMdPetVincRepresentantDTO)){
+      $arrItem['tentativas'] = 1;
 
-									try {
-									
-										$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($arrObjMdPetVincRepresentantDTO, [], true);
+      try {
+          $arrConsulta = $this->consultarReceitaCnpj($objMdPetIntegracaoRN, $cnpj);
+      } catch (Throwable $e) {
+          $arrItem['situacao'] = self::RESULTADO_ERRO_WS;
+          $arrItem['erros'][] = $this->obterMensagemErro($e);
+          return $arrItem;
+      }
 
-										if(is_array($suspenso)){
-									
-											$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
-										}
-									
-									} catch (\Throwable $th) {
-										// A falha na suspensão deste CNPJ não interrompe a consulta dos demais
-									}
+      try {
+          $arrItem['situacaoReceita'] = $this->descreverSituacaoCadastral($arrConsulta);
+          $arrObjMdPetVincRepresentantDTO = (new MdPetVincRepresentantRN())->listarVincRepresentAtivosPorCNPJ($cnpj);
 
-								}
+          if ($this->isSituacaoCadastralSuspensa($arrConsulta, $arrConsulta['IntegracaoCodigosParaSuspensao'])) {
+              if ($arrObjMdPetVincRepresentantDTO === []) {
+                  $arrItem['situacao'] = self::RESULTADO_SEM_VINCULO_ATIVO;
+                  return $arrItem;
+              }
+              return $this->suspenderVinculosItem($arrItem, $arrObjMdPetVincRepresentantDTO, self::RESULTADO_SUSPENSO);
+          }
 
-							}else{
+          $arrResponsaveisDivergentes = $this->filtrarResponsaveisLegaisDivergentes($arrObjMdPetVincRepresentantDTO, $arrConsulta['CpfResponsavelLegal'] ?? null);
 
-								// Resgatando vinculo do Responsavel Legal cadastrado
-								$objMdPetVincRepresentantDTO = new MdPetVincRepresentantDTO();
-								$objMdPetVincRepresentantDTO->retTodos(true);
-								$objMdPetVincRepresentantDTO->setStrCNPJ($cnpj);
-								$objMdPetVincRepresentantDTO->setStrTipoRepresentante(MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL);
-								$objMdPetVincRepresentantDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
-								$objMdPetVincRepresentantDTO->setOrd('IdMdPetVinculoRepresent', InfraDTO::$TIPO_ORDENACAO_DESC);
-								$objMdPetVincRepresentantDTO->setNumMaxRegistrosRetorno(1);
-								$objResponsavelLegal = (new MdPetVincRepresentantRN())->consultar($objMdPetVincRepresentantDTO);
+          if ($arrResponsaveisDivergentes === []) {
+              $arrItem['situacao'] = self::RESULTADO_REGULAR;
+              return $arrItem;
+          }
 
-								if(!empty($objResponsavelLegal) && $objResponsavelLegal->getStrCpfProcurador != $retorno['PessoaJuridica']['responsavel']['cpf']){
+          // Sem cascata: as procurações da empresa continuam ativas, e o resumo informa quantas.
+          $arrItem['procuracoesMantidas'] = count(array_filter($arrObjMdPetVincRepresentantDTO, static function (MdPetVincRepresentantDTO $objDTO): bool {
+              return $objDTO->getStrTipoRepresentante() !== MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL;
+          }));
 
-									$suspenso = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($objResponsavelLegal, [], true);
-									
-									if(is_array($suspenso)){
-										$arrObjMdPetVincRepresentantSuspensos[] = $suspenso;
-									}
+          return $this->suspenderVinculosItem($arrItem, $arrResponsaveisDivergentes, self::RESULTADO_RESPONSAVEL_DIVERGENTE);
+      } catch (Throwable $e) {
+          $arrItem['situacao'] = self::RESULTADO_ERRO_SUSPENSAO;
+          $arrItem['erros'][] = $this->obterMensagemErro($e);
+          return $arrItem;
+      }
+  }
 
-								}
+  /** Consulta o CNPJ na Receita Federal pela integração do módulo, que também atualiza o contato da PJ. */
+  protected function consultarReceitaCnpj(MdPetIntegracaoRN $objMdPetIntegracaoRN, string $cnpj): array
+  {
+      return $objMdPetIntegracaoRN->consultarCNPJReceitaWsResponsavelLegal($cnpj);
+  }
 
-							}
+  /** Indica se o código da situação cadastral retornado está entre os códigos de suspensão da integração. */
+  private function isSituacaoCadastralSuspensa(array $arrConsulta, array $arrCodigosSuspensao): bool
+  {
+      $strCodigo = $arrConsulta['CodigoSituacaoCadastral'] ?? null;
 
-						}
+      return !InfraString::isBolVazia($strCodigo)
+          && in_array((int) $strCodigo, array_map('intval', $arrCodigosSuspensao), true);
+  }
 
-					} catch (\Throwable $th) {
-						// A falha no processamento deste CNPJ não interrompe a consulta dos demais
-					}
+  /**
+   * Descreve a situação cadastral devolvida pela Receita, como "BAIXADA (código 08)".
+   *
+   * @param array<string, mixed> $arrConsulta retorno de MdPetIntegracaoRN::consultarCNPJReceitaWsResponsavelLegal
+   */
+  private function descreverSituacaoCadastral(array $arrConsulta): string
+  {
+      $strDescricao = $this->limparTextoReceita($arrConsulta['DescricaoSituacaoCadastral'] ?? '');
+      $strCodigo = $this->limparTextoReceita($arrConsulta['CodigoSituacaoCadastral'] ?? '');
 
-				}
-			
-			}
+      if ($strDescricao === '') {
+          return $strCodigo === '' ? 'não informada' : 'código ' . $strCodigo;
+      }
 
-			$count ++;
-			$this->atualizarDataUltimaConsultaRFB($cnpj, MdPetVincRepresentantRN::$NT_JURIDICA);
-      
-	  	}
-	
-		$erros = array_map(function($erro) {
-			return is_array($erro) ? implode(', ', $erro) : $erro;
-		}, $erros);
-		
-		$retorno['count'] = $count;
-		$retorno['erros'] = $erros;
-		$retorno['arrObjMdPetVincRepresentantSuspensos'] = $arrObjMdPetVincRepresentantSuspensos;
-		
-		return $retorno;
-    
-  	}
+      return $strCodigo === '' ? $strDescricao : $strDescricao . ' (código ' . $strCodigo . ')';
+  }
+
+  /** Troca os caracteres de controle por espaço e limita o tamanho do texto da Receita, que vai para o log e o e-mail. */
+  private function limparTextoReceita(mixed $valor): string
+  {
+      $strTexto = trim((string) preg_replace('/[[:cntrl:]]+/', ' ', (string) $valor));
+
+      return rtrim(substr($strTexto, 0, self::TAMANHO_MAXIMO_TEXTO_RECEITA));
+  }
+
+  /**
+   * Devolve os responsáveis legais ativos cujo CPF difere do responsável informado pela Receita.
+   *
+   * @param MdPetVincRepresentantDTO[] $arrObjMdPetVincRepresentantDTO
+   * @return MdPetVincRepresentantDTO[]
+   */
+  private function filtrarResponsaveisLegaisDivergentes(array $arrObjMdPetVincRepresentantDTO, ?string $strCpfReceita): array
+  {
+      $strCpfReceita = InfraUtil::retirarFormatacao($strCpfReceita);
+
+      if ($strCpfReceita === '') {
+          return [];
+      }
+
+      $strCpfReceita = str_pad($strCpfReceita, 11, '0', STR_PAD_LEFT);
+
+      return array_values(array_filter($arrObjMdPetVincRepresentantDTO, static function (MdPetVincRepresentantDTO $objDTO) use ($strCpfReceita): bool {
+          return $objDTO->getStrTipoRepresentante() === MdPetVincRepresentantRN::$PE_RESPONSAVEL_LEGAL
+              && str_pad(InfraUtil::retirarFormatacao($objDTO->getStrCpfProcurador()), 11, '0', STR_PAD_LEFT) !== $strCpfReceita;
+      }));
+  }
+
+  /**
+   * Suspende os vínculos na transação do CNPJ. Só depois do commit indexa os documentos e envia os e-mails.
+   * Wrapper público da operação transacional suspenderVinculosCnpj, usado pelo agendamento.
+   *
+   * @param array $arrItem item do CNPJ, no formato de novoItemConsultaCnpj
+   * @param MdPetVincRepresentantDTO[] $arrObjMdPetVincRepresentantDTO
+   * @param string $strSituacao resultado gravado quando a suspensão é confirmada
+   * @return array item atualizado
+   */
+  public function suspenderVinculosItem(array $arrItem, array $arrObjMdPetVincRepresentantDTO, string $strSituacao): array
+  {
+      $arrItem['suspensaoPretendida'] = $strSituacao;
+      $objFeedSEIProtocolos = FeedSEIProtocolos::getInstance();
+      $objFeedSEIProtocolos->setBolAcumularFeeds(true);
+
+      try {
+          $arrSuspensoes = $this->suspenderVinculosCnpj($arrObjMdPetVincRepresentantDTO);
+      } catch (Throwable $e) {
+          $objFeedSEIProtocolos->setBolAcumularFeeds(false);
+          $arrItem['situacao'] = self::RESULTADO_ERRO_SUSPENSAO;
+          $arrItem['erros'][] = $this->obterMensagemErro($e);
+          return $arrItem;
+      }
+
+      $objFeedSEIProtocolos->setBolAcumularFeeds(false);
+      $objFeedSEIProtocolos->indexarFeeds();
+
+      $arrItem['situacao'] = $strSituacao;
+
+      foreach ($arrSuspensoes as $arrSuspensao) {
+          $arrItem['documentos'][] = $arrSuspensao['documentoSuspensao'];
+          $arrItem['responsaveisSuspensos'] += isset($arrSuspensao['responsavel_legal']) ? 1 : 0;
+          $arrItem['procuracoesSuspensas'] += count($arrSuspensao['procuracoes'] ?? []);
+
+          foreach ($arrSuspensao['emails'] as $fnEnviarEmail) {
+              try {
+                  $fnEnviarEmail();
+              } catch (Throwable $e) {
+                  $arrItem['emailsNaoEnviados'][] = $this->obterMensagemErro($e);
+              }
+          }
+      }
+
+      return $arrItem;
+  }
+
+  /**
+   * Suspende os vínculos ativos de um CNPJ em uma única transação, um vínculo de cada vez.
+   * Os e-mails voltam no retorno, para o envio depois do commit.
+   *
+   * @param MdPetVincRepresentantDTO[] $arrObjMdPetVincRepresentantDTO
+   * @return array[] retorno de suspenderProcuracaoConectado de cada vínculo
+   */
+  protected function suspenderVinculosCnpjControlado(array $arrObjMdPetVincRepresentantDTO): array
+  {
+      $arrPorVinculo = [];
+      foreach ($arrObjMdPetVincRepresentantDTO as $objMdPetVincRepresentantDTO) {
+          $arrPorVinculo[$objMdPetVincRepresentantDTO->getNumIdMdPetVinculo()][] = $objMdPetVincRepresentantDTO;
+      }
+
+      $objMdPetVincRepresentantRN = new MdPetVincRepresentantRN();
+      $arrSuspensoes = [];
+
+      foreach ($arrPorVinculo as $numIdVinculo => $arrObjDoVinculo) {
+          $arrSuspensao = $objMdPetVincRepresentantRN->suspenderProcuracaoConectado($arrObjDoVinculo, [], true);
+
+          if (!isset($arrSuspensao['documentoSuspensao'])) {
+              throw new InfraException('Nenhum representante do vínculo ' . $numIdVinculo . ' foi suspenso.');
+          }
+
+          $arrSuspensoes[] = $arrSuspensao;
+      }
+
+      return $arrSuspensoes;
+  }
+
+  /** Manda o CNPJ para o fim da fila. O erro do WS que ainda vai ser repetido fica com a data anterior. */
+  private function concluirCnpj(array $arrItem, bool $bolUltimaTentativa): array
+  {
+      if ($arrItem['situacao'] === self::RESULTADO_ERRO_WS && !$bolUltimaTentativa) {
+          return $arrItem;
+      }
+
+      try {
+          $this->atualizarDataUltimaConsultaRfbCnpj($arrItem['cnpj']);
+      } catch (Throwable $e) {
+          $arrItem['erros'][] = 'Data da consulta não atualizada: ' . $this->obterMensagemErro($e);
+      }
+
+      return $arrItem;
+  }
+
+  /** Marca a consulta em todos os vínculos PJ do CNPJ, que vão para o fim da fila. */
+  private function atualizarDataUltimaConsultaRfbCnpj(string $cnpj): void
+  {
+      $objMdPetVinculoDTO = new MdPetVinculoDTO();
+      $objMdPetVinculoDTO->retNumIdMdPetVinculo();
+      $objMdPetVinculoDTO->setStrTpVinculo(MdPetVincRepresentantRN::$NT_JURIDICA);
+      $objMdPetVinculoDTO->setStrCNPJ($cnpj);
+
+      $objMdPetVinculoRN = new MdPetVinculoRN();
+      $strDataHora = InfraData::getStrDataHoraAtual();
+
+      foreach ($objMdPetVinculoRN->listar($objMdPetVinculoDTO) as $objVinculoDTO) {
+          $objVinculoDTO->setDthDataUltimaConsultaRFB($strDataHora);
+          $objMdPetVinculoRN->alterar($objVinculoDTO);
+      }
+  }
+
+  /** Grava o resumo da execução no log do SEI e envia o mesmo texto ao administrador. */
+  protected function registrarResultadoConsultaCnpj(array $arrResultado, $numSeg, int $qtConsulta): void
+  {
+      $strResumo = $this->montarResumoConsultaCnpj($arrResultado, $numSeg, $qtConsulta);
+      LogSEI::getInstance()->gravar($strResumo, InfraLog::$INFORMACAO);
+
+      if ($arrResultado !== []) {
+          $this->enviarResumoConsultaCnpj($strResumo);
+      }
+  }
+
+  /**
+   * Monta o resumo da execução sem dado pessoal: contadores, motivos de suspensão e o detalhe
+   * dos CNPJs com suspensão, falha ou aviso.
+   */
+  private function montarResumoConsultaCnpj(array $arrResultado, $numSeg, int $qtConsulta): string
+  {
+      $arrQuantidades = array_count_values(array_column($arrResultado, 'situacao'));
+      $arrEmailsNaoEnviados = array_merge([], ...array_column($arrResultado, 'emailsNaoEnviados'));
+      $numProcuracoesMantidas = 0;
+
+      foreach ($arrResultado as $arrItem) {
+          if ($arrItem['situacao'] === self::RESULTADO_RESPONSAVEL_DIVERGENTE) {
+              $numProcuracoesMantidas += $arrItem['procuracoesMantidas'];
+          }
+      }
+
+      $arrLinhas = ['ALTERANDO RESPONSÁVEIS LEGAIS E PROCURAÇÕES ELETRÔNICAS DE PESSOAS JURÍDICAS CONFORME SITUAÇÃO CADASTRAL NA RECEITA FEDERAL', ''];
+      $arrLinhas[] = 'RESUMO';
+      $arrLinhas[] = 'CNPJs consultados: ' . count($arrResultado) . ' (limite do agendamento: ' . $qtConsulta . ')';
+
+      foreach (self::ROTULOS_RESULTADO as $strSituacao => $strRotulo) {
+          $arrLinhas[] = '- ' . $strRotulo . ': ' . ($arrQuantidades[$strSituacao] ?? 0);
+      }
+
+      $arrLinhas[] = '';
+      $arrLinhas[] = 'TOTAIS';
+      $arrLinhas[] = 'Responsáveis legais suspensos: ' . array_sum(array_column($arrResultado, 'responsaveisSuspensos'));
+      $arrLinhas[] = 'Procurações eletrônicas suspensas: ' . array_sum(array_column($arrResultado, 'procuracoesSuspensas'));
+      $arrLinhas[] = 'Procurações eletrônicas mantidas ativas nos casos de responsável legal divergente: ' . $numProcuracoesMantidas;
+      $arrLinhas[] = 'Documentos de suspensão gerados: ' . count(array_merge([], ...array_column($arrResultado, 'documentos')));
+      $arrLinhas[] = 'E-mails de notificação não enviados: ' . count($arrEmailsNaoEnviados)
+          . ($arrEmailsNaoEnviados === [] ? '' : ' (' . $this->juntarMensagens($arrEmailsNaoEnviados) . ')');
+
+      $arrLinhas[] = '';
+      $arrLinhas[] = 'MOTIVOS DE SUSPENSÃO';
+      $arrLinhas[] = '- Situação cadastral: A situação do CNPJ na Receita Federal está entre os códigos de suspensão automática da integração de consulta de CNPJ. Ficam suspensos o Responsável Legal e as procurações eletrônicas da empresa.';
+      $arrLinhas[] = '- Responsável Legal divergente: A situação do CNPJ não é de suspensão, mas o CPF do responsável pela empresa na Receita Federal é diferente do CPF do responsável legal ativo no SEI. Fica suspenso só o responsável legal; as procurações eletrônicas continuam ativas.';
+
+      $arrLinhas[] = '';
+      $arrLinhas[] = 'CNPJs COM SUSPENSÃO, FALHA OU AVISO';
+      $arrDetalhes = array_values(array_filter(array_map([$this, 'descreverItemConsultaCnpj'], $arrResultado)));
+      $arrLinhas = array_merge($arrLinhas, $arrDetalhes === [] ? ['Nenhum.'] : $arrDetalhes);
+
+      $arrLinhas[] = '';
+      $arrLinhas[] = 'Tempo total de execução: ' . number_format((float) InfraUtil::verificarTempoProcessamento($numSeg), 1, ',', '.') . ' s';
+      $arrLinhas[] = 'FIM';
+
+      return implode("\n", $arrLinhas);
+  }
+
+  /**
+   * Descreve um CNPJ no detalhe do resumo. Devolve vazio para o CNPJ sem alteração, sem falha e sem aviso.
+   *
+   * @param array<string, mixed> $arrItem
+   */
+  private function descreverItemConsultaCnpj(array $arrItem): string
+  {
+      $strCnpj = '- CNPJ ' . ($arrItem['situacao'] === self::RESULTADO_CNPJ_INVALIDO ? $arrItem['cnpj'] : InfraUtil::formatarCnpj($arrItem['cnpj'])) . ': ';
+      $strSituacaoRfb = $arrItem['situacaoReceita'] === '' ? '' : 'Situação RFB ' . $arrItem['situacaoReceita'] . '. ';
+      $strDocumentos = $arrItem['documentos'] === [] ? '' : ' ' . (count($arrItem['documentos']) === 1 ? 'Documento SEI ' : 'Documentos SEI ') . implode(', ', $arrItem['documentos']) . '.';
+      $strErros = $this->juntarMensagens($arrItem['erros']);
+
+      switch ($arrItem['situacao']) {
+          case self::RESULTADO_SUSPENSO:
+              $strTexto = $strCnpj . $strSituacaoRfb . 'Suspensos: ' . $this->descreverVinculosSuspensos($arrItem) . '.' . $strDocumentos;
+              break;
+
+          case self::RESULTADO_RESPONSAVEL_DIVERGENTE:
+              $strTexto = $strCnpj . $strSituacaoRfb . 'Responsável Legal divergente. Suspenso apenas o Responsável Legal; '
+                  . ($arrItem['procuracoesMantidas'] === 0 ? 'a empresa não tem procurações eletrônicas ativas' : $this->quantificar($arrItem['procuracoesMantidas'], 'procuração eletrônica continua ativa', 'procurações eletrônicas continuam ativas'))
+                  . '.' . $strDocumentos;
+              break;
+
+          case self::RESULTADO_SEM_VINCULO_ATIVO:
+              $strTexto = $strCnpj . $strSituacaoRfb . 'Sem vínculo ativo para suspender.';
+              break;
+
+          case self::RESULTADO_ERRO_WS:
+              return $strCnpj . 'Sem resposta da Receita Federal em ' . $this->quantificar($arrItem['tentativas'], 'tentativa', 'tentativas') . ': ' . $strErros . '. O CNPJ volta a ser consultado na próxima passagem da fila.';
+
+          case self::RESULTADO_ERRO_SUSPENSAO:
+              return $strCnpj . $strSituacaoRfb . $this->descreverSuspensaoPretendida($arrItem) . ': ' . $strErros . '.';
+
+          case self::RESULTADO_CNPJ_INVALIDO:
+              return $strCnpj . 'CNPJ inválido, não consultado na Receita Federal.';
+
+          default:
+              $strTexto = $arrItem['erros'] === [] && $arrItem['emailsNaoEnviados'] === [] ? '' : $strCnpj . $strSituacaoRfb . 'Sem alteração.';
+      }
+
+      if ($strTexto === '') {
+          return '';
+      }
+
+      if ($arrItem['erros'] !== []) {
+          $strTexto .= ' Falha: ' . $strErros . '.';
+      }
+
+      if ($arrItem['emailsNaoEnviados'] !== []) {
+          $strTexto .= ' Aviso: ' . $this->quantificar(count($arrItem['emailsNaoEnviados']), 'e-mail de notificação não enviado', 'e-mails de notificação não enviados')
+              . ': ' . $this->juntarMensagens($arrItem['emailsNaoEnviados']) . '.';
+      }
+
+      return $strTexto;
+  }
+
+  /**
+   * Junta mensagens distintas, sem o ponto final de cada uma, para compor uma frase do resumo.
+   *
+   * @param string[] $arrMensagens
+   */
+  private function juntarMensagens(array $arrMensagens): string
+  {
+      return implode('; ', array_unique(array_map(static function (string $strMensagem): string {
+          return rtrim(trim($strMensagem), '.');
+      }, $arrMensagens)));
+  }
+
+  /**
+   * Diz o que a suspensão com falha pretendia fazer, para o resumo.
+   *
+   * @param array<string, mixed> $arrItem
+   */
+  private function descreverSuspensaoPretendida(array $arrItem): string
+  {
+      if ($arrItem['suspensaoPretendida'] === self::RESULTADO_SUSPENSO) {
+          return 'A suspensão pela situação cadastral falhou e foi desfeita, sem documento nem e-mail';
+      }
+
+      if ($arrItem['suspensaoPretendida'] === self::RESULTADO_RESPONSAVEL_DIVERGENTE) {
+          return 'Responsável Legal divergente. A suspensão do Responsável Legal falhou e foi desfeita, sem documento nem e-mail';
+      }
+
+      return 'Falha ao verificar os vínculos ativos, nada foi suspenso';
+  }
+
+  /**
+   * Lista os vínculos suspensos de um CNPJ, como "1 Responsável Legal e 2 procurações eletrônicas".
+   *
+   * @param array<string, mixed> $arrItem
+   */
+  private function descreverVinculosSuspensos(array $arrItem): string
+  {
+      $arrPartes = [];
+
+      if ($arrItem['responsaveisSuspensos'] > 0) {
+          $arrPartes[] = $this->quantificar($arrItem['responsaveisSuspensos'], 'Responsável Legal', 'Responsáveis Legais');
+      }
+
+      if ($arrItem['procuracoesSuspensas'] > 0) {
+          $arrPartes[] = $this->quantificar($arrItem['procuracoesSuspensas'], 'procuração eletrônica', 'procurações eletrônicas');
+      }
+
+      return implode(' e ', $arrPartes);
+  }
+
+  private function quantificar(int $numQuantidade, string $strSingular, string $strPlural): string
+  {
+      return $numQuantidade . ' ' . ($numQuantidade === 1 ? $strSingular : $strPlural);
+  }
+
+  /** Envia o resumo ao administrador do SEI. A falha no envio fica só no log e não muda o resultado. */
+  private function enviarResumoConsultaCnpj(string $strResumo): void
+  {
+      try {
+          $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+          $strEmailSistema = $objInfraParametro->getValor('SEI_EMAIL_SISTEMA', false);
+          $strEmailAdministrador = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR', false);
+
+          if (InfraString::isBolVazia($strEmailSistema) || InfraString::isBolVazia($strEmailAdministrador)) {
+              return;
+          }
+
+          $objEmailDTO = new EmailDTO();
+          $objEmailDTO->setStrDe($strEmailSistema);
+          $objEmailDTO->setStrPara($strEmailAdministrador);
+          $objEmailDTO->setStrAssunto('SEI - Resultado da consulta de CNPJ na Receita Federal');
+          $objEmailDTO->setStrMensagem('Prezado(a) Administrador(a),' . "\n\n" . $strResumo . "\n\n" . 'Atenciosamente,' . "\n" . 'SEI - Sistema Eletrônico de Informações');
+
+          MailSEI::getInstance()->limpar();
+          MailSEI::getInstance()->adicionar($objEmailDTO);
+          MailSEI::getInstance()->enviar();
+      } catch (Throwable $e) {
+          LogSEI::getInstance()->gravar('Falha no envio do resultado da consulta de CNPJ na Receita Federal: ' . $this->obterMensagemErro($e), InfraLog::$INFORMACAO);
+      }
+  }
+
+  /** Devolve a mensagem da causa original, sem o invólucro da InfraRN e sem a trilha, com tamanho limitado. */
+  private function obterMensagemErro(Throwable $e): string
+  {
+      while ($e->getPrevious() !== null) {
+          $e = $e->getPrevious();
+      }
+
+      return substr(MdPetExcecaoINT::lerMensagem($e), 0, self::TAMANHO_MAXIMO_MENSAGEM_ERRO);
+  }
 
   protected function atualizarDataUltimaConsultaRFB($cpfCnpj, $natureza)
   {
@@ -1220,7 +1625,29 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 
   }
 
-  protected function recuperarFilaConsultaCpf($qtConsulta)
+  /** Recupera documentos das excecoes S/C, separados pela natureza do contato. */
+  private function recuperarDocumentosExcecoesSuspensao(string $strNatureza): array
+  {
+      $objWhitelistDTO = new MdPetWhitelistDTO();
+      $objWhitelistDTO->setStrStaFinalidade(MdPetWhitelistRN::FINALIDADE_SUSPENSAO_AUTOMATICA);
+      $objWhitelistDTO->setStrStaTipoObjeto(MdPetWhitelistRN::TIPO_CONTATO);
+      $arrExcecoes = (new MdPetWhitelistRN())->recuperarExcecoesSuspensaoInterno($objWhitelistDTO);
+
+      $arrDocumentos = [];
+      foreach ($arrExcecoes as $objExcecao) {
+          if ($objExcecao->getStrNaturezaContato() === $strNatureza
+              && $objExcecao->getStrDocumentoContato() !== '') {
+              $arrDocumentos[] = $strNatureza === ContatoRN::$TN_PESSOA_FISICA
+                  ? InfraUtil::retirarFormatacao($objExcecao->getStrDocumentoContato())
+                  : InfraUtil::prepararCnpj($objExcecao->getStrDocumentoContato());
+          }
+      }
+
+      return array_values(array_unique($arrDocumentos));
+  }
+
+  /** Retorna a fila de CPFs sem os documentos excepcionados. */
+  protected function recuperarFilaConsultaCpf($qtConsulta): array
   {
 	
 	  $objMdPetVinculoDTO = new MdPetVinculoDTO();
@@ -1229,6 +1656,10 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	  $objMdPetVinculoDTO->setStrTpVinculo('F');
 	  $objMdPetVinculoDTO->setDblIdProtocolo(NULL, InfraDTO::$OPER_DIFERENTE); // Pega apenas os que tem processo de vinculacao
 	  $objMdPetVinculoDTO->setOrdDthDataUltimaConsultaRFB(InfraDTO::$TIPO_ORDENACAO_ASC);
+	  $arrCpfExcecoes = $this->recuperarDocumentosExcecoesSuspensao(ContatoRN::$TN_PESSOA_FISICA);
+	  if (!empty($arrCpfExcecoes)) {
+		  $objMdPetVinculoDTO->setStrCpfContatoRepresentante($arrCpfExcecoes, InfraDTO::$OPER_NOT_IN);
+	  }
 	  $objMdPetVinculoDTO->setNumMaxRegistrosRetorno($qtConsulta);
 	  $arrObjMdPetVinculoRN = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
 	
@@ -1242,25 +1673,32 @@ class MdPetAgendamentoAutomaticoRN extends InfraRN
 	 
   }
 
-  protected function recuperarFilaConsultaCnpj($qtConsulta)
+  /** Retorna a fila de CNPJs dos vínculos com representante ativo, sem os excepcionados, pela consulta mais antiga. */
+  protected function recuperarFilaConsultaCnpj($qtConsulta): array
   {
 	
 	  $objMdPetVinculoDTO = new MdPetVinculoDTO();
+	  $objMdPetVinculoDTO->setDistinct(true);
 	  $objMdPetVinculoDTO->retNumIdMdPetVinculo();
 	  $objMdPetVinculoDTO->retStrCNPJ();
+	  $objMdPetVinculoDTO->retDthDataUltimaConsultaRFB();
 	  $objMdPetVinculoDTO->setStrTpVinculo('J');
-	  $objMdPetVinculoDTO->setOrdDthDataUltimaConsultaRFB(InfraDTO::$TIPO_ORDENACAO_DESC);
+	  $objMdPetVinculoDTO->setStrStaEstado(MdPetVincRepresentantRN::$RP_ATIVO);
+	  $objMdPetVinculoDTO->setOrdDthDataUltimaConsultaRFB(InfraDTO::$TIPO_ORDENACAO_ASC);
+	  $arrCnpjExcecoes = $this->recuperarDocumentosExcecoesSuspensao(ContatoRN::$TN_PESSOA_JURIDICA);
+	  if (!empty($arrCnpjExcecoes)) {
+		  $objMdPetVinculoDTO->setStrCNPJ($arrCnpjExcecoes, InfraDTO::$OPER_NOT_IN);
+	  }
 	  $objMdPetVinculoDTO->setNumMaxRegistrosRetorno($qtConsulta);
 	  $arrObjMdPetVinculoRN = (new MdPetVinculoRN())->listar($objMdPetVinculoDTO);
 	
 	  $filaConsultaCNPJ = InfraArray::converterArrInfraDTO($arrObjMdPetVinculoRN, 'CNPJ');
 	
-	  $filaConsultaCNPJ = array_filter($filaConsultaCNPJ, function($value) {
-		  return !is_null($value);
-	  });
-	
-	  return $filaConsultaCNPJ;
-  
+	  // CNPJ vazio não é consultável, e o CNPJ de mais de um vínculo é consultado uma vez.
+	  return array_values(array_unique(array_filter($filaConsultaCNPJ, static function ($value) {
+		  return !InfraString::isBolVazia($value);
+	  })));
+
   }
 
   protected function EnviarDadosSistemaModuloConectado(): void

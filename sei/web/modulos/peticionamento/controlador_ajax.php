@@ -250,7 +250,7 @@ try{
 				break;
 			}
 			$idDocumento = (int) $idDocumentoAssinado;
-			$arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradas($idDocumento), 'Id');
+			$arrContatosIntimados = (new MdPetIntimacaoRN())->listarIdsContatosIntimadosDocumento($idDocumento);
 			
 			$cpfRegex = '/^(\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{11})$/';
 			
@@ -348,7 +348,7 @@ try{
 				break;
 			}
 			$idDocumento = (int) $idDocumentoAssinado;
-			$arrContatosIntimados = array_column((new MdPetIntimacaoRN())->buscaIntimacoesCadastradasJuridico($idDocumento), 'Id');
+			$arrContatosIntimados = (new MdPetIntimacaoRN())->listarIdsPessoasJuridicasIntimadasDocumento($idDocumento);
 			
 			$cnpjRegex = '/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$|^\d{14}$/';
 			

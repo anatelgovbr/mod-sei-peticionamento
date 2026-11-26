@@ -7,9 +7,12 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
     var preencheCache = false;
     var staUtilizaWs = false;
     var staUtilizaWsCheck = null;
+    // Depois do clique em Validar, a operação e o mapeamento gravados deixam de ser selecionados
+    var bolDescartarGravado = false;
 
     function inicializar() {
 
+        iniciarTabelaHeaders();
         comportamentoMedianteFuncionalidade();
         habilitaWs();
 
@@ -38,7 +41,9 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
         function comportamentoMedianteFuncionalidade() {
 
-            $("#rdStaTpClienteWsSoap").attr("checked", "checked");
+            if (!$('input[name="rdStaTpClienteWs"]:checked').length) {
+                $("#rdStaTpClienteWsSoap").attr("checked", "checked");
+            }
             $('.initHidden').css('display', 'none');
 
             switch ($('#selMdPetIntegFuncionalid').val()) {
@@ -58,7 +63,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     $('[id^="paramSaidaTable_"]').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
                     $('#paramEntradaTable_cnpjEmpresa').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
                     $('#paramEntradaTable_cpfPessoa').css('display', 'none').find('select[data-obrigatorio="true"]').attr('required', false);
-                    $('#paramSaidaTable_cpfPessoa, #paramSaidaTable_tpLogradouro, #paramSaidaTable_numero, #paramSaidaTable_complemento, #paramSaidaTable_cpfUsuario').css('display', 'none');
+                    $('#paramSaidaTable_cpfPessoa, #paramSaidaTable_tpLogradouro, #paramSaidaTable_numero, #paramSaidaTable_complemento, #paramSaidaTable_cpfUsuario').css('display', 'none').find('select[data-obrigatorio="true"]').attr('required', false);
 
                     if($('#chkSinCache:checked').length){
                         $('#paramEntradaTable_periodoCache').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
@@ -67,7 +72,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                         $('#paramSaidaTable_tpLogradouro').css('display', 'table-row');
                     }
                     if($('#chkSinNumero:checked').length){
-                        $('#paramSaidaTable_numero').css('display', 'table-row');
+                        $('#paramSaidaTable_numero').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', staUtilizaWs);
                     }
                     if($('#chkSinComplemento:checked').length){
                         $('#paramSaidaTable_complemento').css('display', 'table-row');
@@ -89,12 +94,12 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     $('div#tipoLogradouro, div#numeroLogradouro, div#complementoLogradouro').css('display', 'none');
                     $('div#expiracacaoCache, #blcUsarIntegracaoWs, #blcTipoClienteWs, #blcEnderecoWs').css('display', 'block');
 
-                    $('[id^="paramSaidaTable_"], [id^="paramEntradaTable_"]').css('display', 'none');
+                    $('[id^="paramSaidaTable_"], [id^="paramEntradaTable_"]').css('display', 'none').find('select[data-obrigatorio="true"]').attr('required', false);
                     $('#paramEntradaTable_identificacaoOrigem').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
                     $('#paramEntradaTable_cpfUsuario').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', false);
                     $('#paramSaidaTable_codSituacaoCadastral, #paramSaidaTable_descSituacaoCadastral').css('display', 'table-row').find('select[data-obrigatorio="true"]').attr('required', true);
 
-                    $(':radio:not(:checked)').attr('disabled', true);
+                    $('input[name="rdStaUtilizarWs"]:not(:checked)').attr('disabled', true);
 
                     if($('#chkSinCache:checked').length){
                         $('#paramEntradaTable_periodoCache').css('display', 'table-row');
@@ -110,10 +115,16 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     break;
             }
 
+            atualizarLinhaToken();
+
         }
 
         $('#selMdPetIntegFuncionalid').change(function (){
             comportamentoMedianteFuncionalidade();
+        });
+
+        $('#selMetodoAutenticacao').change(function () {
+            atualizarLinhaToken();
         });
 
     }
@@ -126,19 +137,99 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 staUtilizaWsCheck = true;
                 if (item.value == 'N') {
                     staUtilizaWs = false;
-                    $('#blcEnderecoWs, #blcOperacaoWs, #blcCacheWs, #fldParametrosCache, #blcEntradaWs, #blcSaidaWs, #blcParamsSuspensaoAutomatica, #blcTipoClienteWs, #blcParamsSuspensaoAutomatica').css('display', 'none');
+                    $('#blcEnderecoWs, #blcOperacaoWs, #blcCacheWs, #fldParametrosCache, #blcEntradaWs, #blcSaidaWs, #blcParamsSuspensaoAutomatica, #blcTipoClienteWs, #blcParamsSuspensaoAutomatica, #blcRestWs').css('display', 'none');
                     $('#blcTextoSemWs').css('display', 'block');
                     $('#blcEntradaWs, #blcSaidaWs').find('select[data-obrigatorio="true"]').attr('required', false);
                 } else {
                     staUtilizaWs = true;
                     $('#blcTipoClienteWs, #blcEnderecoWs').css('display', 'block');
                     $('#blcTextoSemWs').css('display', 'none');
-                    $('#blcEntradaWs, #blcSaidaWs').find('select[data-obrigatorio="true"]').attr('required', true);
+                    // Campo em linha oculta não leva required, senão o navegador bloqueia o envio; o prazo do cache segue o cacheMarcaDesmarca
+                    $('#blcEntradaWs, #blcSaidaWs').find('select[data-obrigatorio="true"]').not('#selCachePrazoExpiracao').filter(function () {
+                        return $(this).closest('tr').css('display') !== 'none';
+                    }).attr('required', true);
+                    tipoIntegracaoSelecionar(false);
                 }
             }
         });
 
         if(changeRadio) validarWsdl();
+    }
+
+    function isRest() {
+        return $('#rdStaTpClienteWsRest').is(':checked');
+    }
+
+    // Mostra os campos do tipo escolhido; na troca de tipo, a operação e o mapeamento voltam a ser descobertos
+    function tipoIntegracaoSelecionar(bolLimpar = true) {
+        var bolRest = isRest();
+        $('#blcNuVersao').css('display', bolRest ? 'none' : 'block');
+        $('#blcRestWs').css('display', bolRest && staUtilizaWs ? 'block' : 'none');
+        $('#lblEnderecoWsdl').text(bolRest ? 'Endereço do Documento OpenAPI:' : 'Endereço do Webservice:');
+
+        if (bolLimpar) {
+            document.getElementById('selOperacaoWsdl').options.length = 0;
+            $('#blcOperacaoWs, #blcCacheWs, #blcEntradaWs, #blcSaidaWs').css('display', 'none');
+        }
+        atualizarLinhaToken();
+    }
+
+    // A linha Authorization da tabela de entrada só aparece no Body Authentication by Token do REST (ADR-PET-013)
+    function atualizarLinhaToken() {
+        var bolToken = isRest() && staUtilizaWs && document.getElementById('selMetodoAutenticacao').value == '<?= MdPetIntegFabricaRN::AUTENTICACAO_CORPO ?>';
+        $('#paramEntradaTable_<?= MdPetIntegFabricaRN::ENTRADA_TOKEN ?>').css('display', bolToken ? 'table-row' : 'none');
+    }
+
+    var objTabelaHeaders = null;
+    var idHeaderAlterar = null;
+    var numHeaderNovo = 0;
+    var MASCARA_DADO_RESTRITO = '<?= MdPetIntegFabricaRN::MASCARA_DADO_RESTRITO ?>';
+
+    // Grade de headers do REST no padrão do Utilidades; o conteúdo do dado restrito gravado chega só como máscara
+    function iniciarTabelaHeaders() {
+        var bolEditar = '<?= $_GET['acao'] ?>' != 'md_pet_integracao_consultar';
+        objTabelaHeaders = new infraTabelaDinamica('tblHeaders', 'hdnTbHeaders', bolEditar, bolEditar);
+        objTabelaHeaders.gerarEfeitoTabela = true;
+        objTabelaHeaders.alterar = function (arrLinha) {
+            idHeaderAlterar = arrLinha[0];
+            document.getElementById('txtAtributoHeader').value = arrLinha[1];
+            document.getElementById('txtConteudoHeader').value = arrLinha[4];
+            document.getElementById('chkDadoRestrito').checked = arrLinha[3] == 'Sim';
+            document.getElementById('txtAtributoHeader').focus();
+        };
+    }
+
+    function adicionarHeader() {
+        var strAtributo = infraTrim(document.getElementById('txtAtributoHeader').value);
+        var strConteudo = infraTrim(document.getElementById('txtConteudoHeader').value);
+        var bolRestrito = document.getElementById('chkDadoRestrito').checked;
+
+        if (strAtributo == '' || strConteudo == '' || (!bolRestrito && strConteudo == MASCARA_DADO_RESTRITO)) {
+            alert('Informe o Atributo e o Conteúdo do header.');
+            document.getElementById(strAtributo == '' ? 'txtAtributoHeader' : 'txtConteudoHeader').focus();
+            return;
+        }
+
+        var strId = idHeaderAlterar !== null ? idHeaderAlterar : 'novo_' + (++numHeaderNovo);
+        var strAtributoHtml = $('<pre>').text(strAtributo).html();
+        var strConteudoHtml = $('<pre>').text(strConteudo).html();
+        objTabelaHeaders.adicionar([strId, strAtributoHtml, bolRestrito ? MASCARA_DADO_RESTRITO : strConteudoHtml, bolRestrito ? 'Sim' : 'Não', strConteudoHtml]);
+
+        idHeaderAlterar = null;
+        document.getElementById('txtAtributoHeader').value = '';
+        document.getElementById('txtConteudoHeader').value = '';
+        document.getElementById('chkDadoRestrito').checked = false;
+        document.getElementById('txtAtributoHeader').focus();
+    }
+
+    function possuiHeaderRestrito() {
+        var tbl = document.getElementById('tblHeaders');
+        for (var i = 1; i < tbl.rows.length; i++) {
+            if (infraTrim(tbl.rows[i].cells[3].innerText) == 'Sim') {
+                return true;
+            }
+        }
+        return false;
     }
 
     function validarCadastro() {
@@ -163,15 +254,27 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
 
         if (staUtilizaWs == true) {
 
-            if (infraTrim(document.getElementById('selNuVersao').value) == '') {
+            if (!isRest() && infraTrim(document.getElementById('selNuVersao').value) == '') {
                 alert('Informe a versão SOAP.');
                 document.getElementById('selNuVersao').focus();
                 return false;
             }
 
             if (infraTrim(document.getElementById('txtEnderecoWsdl').value) == '') {
-                alert('Informe Endereço do Webservice.');
+                alert(isRest() ? 'Informe o Endereço do Documento OpenAPI.' : 'Informe Endereço do Webservice.');
                 document.getElementById('txtEnderecoWsdl').focus();
+                return false;
+            }
+
+            if (isRest() && infraTrim(document.getElementById('txtEnderecoExecucao').value) == '') {
+                alert('Informe o Endereço de Execução.');
+                document.getElementById('txtEnderecoExecucao').focus();
+                return false;
+            }
+
+            if (isRest() && document.getElementById('selMetodoAutenticacao').value == '<?= MdPetIntegFabricaRN::AUTENTICACAO_HEADER ?>' && !possuiHeaderRestrito()) {
+                alert('O Método de Autenticação Header Authentication by Token exige ao menos um header marcado como Dado Restrito.');
+                document.getElementById('txtAtributoHeader').focus();
                 return false;
             }
 
@@ -179,6 +282,19 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 alert('Informe Operação.');
                 document.getElementById('selOperacaoWsdl').focus();
                 return false;
+            }
+
+            if (isRest() && document.getElementById('selMetodoAutenticacao').value == '<?= MdPetIntegFabricaRN::AUTENTICACAO_CORPO ?>') {
+                if (infraTrim(document.getElementById('nomeFuncionalDadosEntrada_<?= MdPetIntegFabricaRN::ENTRADA_TOKEN ?>').value) == '') {
+                    alert('Indique o dado de entrada no webservice para Authorization.');
+                    document.getElementById('nomeFuncionalDadosEntrada_<?= MdPetIntegFabricaRN::ENTRADA_TOKEN ?>').focus();
+                    return false;
+                }
+                if (infraTrim(document.getElementById('txtTokenAutenticacao').value) == '') {
+                    alert('Informe o conteúdo do Authorization.');
+                    document.getElementById('txtTokenAutenticacao').focus();
+                    return false;
+                }
             }
 
             if(document.getElementById('selOperacaoWsdl').value.includes('PessoaFisica')){
@@ -257,19 +373,50 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             select.options[i].selected = true;
         }
 
+        // No REST, o local de cada dado de entrada na chamada segue a opção escolhida
+        $('#frmMdPetIntegracaoCadastro input[name^="localDadosEntrada"]').remove();
+        if (isRest()) {
+            $('select[id^="nomeFuncionalDadosEntrada_"]').each(function () {
+                $('<input type="hidden">')
+                    .attr('name', 'localDadosEntrada[' + this.id.replace('nomeFuncionalDadosEntrada_', '') + ']')
+                    .val($(this).find('option:selected').attr('data-local') || '')
+                    .appendTo('#frmMdPetIntegracaoCadastro');
+            });
+        }
+
         return true;
 
         //return validarCadastro();
     }
 
-    function validarWsdl() {
+    // Limpa a grade de headers e os campos de destino do mapeamento; Endereço de Execução e Método de Autenticação ficam
+    function limparMapeamento() {
+        bolDescartarGravado = true;
+        objTabelaHeaders.limpar();
+        idHeaderAlterar = null;
+        $('#txtAtributoHeader, #txtConteudoHeader').val('');
+        document.getElementById('chkDadoRestrito').checked = false;
+        document.getElementById('chkSinCache').checked = false;
+        document.getElementById('txtTokenAutenticacao').value = '';
+        $('#selOperacaoWsdl, #selCachePrazoExpiracao, #selCacheDataArmazenamento, select[id^="nomeFuncionalDadosEntrada_"], select[id^="nomeFuncionalDadosSaida_"]').each(function () {
+            this.options.length = 0;
+        });
+        $('#paramEntradaTable_periodoCache').css('display', 'none');
+        $('#blcOperacaoWs, #blcCacheWs, #blcEntradaWs, #blcSaidaWs').css('display', 'none');
+    }
+
+    function validarWsdl(bolLimpar = false) {
 
         var enderecoWsdl = document.getElementById('txtEnderecoWsdl').value;
         var versao = document.getElementById('selNuVersao').value;
 
         if (enderecoWsdl == '') {
-            alert('Preencha o campo Endereço WSDL.');
+            alert(isRest() ? 'Preencha o campo Endereço do Documento OpenAPI.' : 'Preencha o campo Endereço WSDL.');
             return false;
+        }
+
+        if (bolLimpar) {
+            limparMapeamento();
         }
 
         $.ajax({
@@ -278,7 +425,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             dataType: "xml",
             data: {
                 endereco_wsdl: enderecoWsdl,
-                versao: versao
+                versao: versao,
+                tipo: isRest() ? 'R' : 'S'
             },
             beforeSend: function () {
                 if( document.querySelector('#bolIsConsultar').value == 'N' ) infraExibirAviso(false);
@@ -293,7 +441,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     opt.value = '';
                     opt.innerHTML = '';
                     select.appendChild(opt);
-                    var selectedValor = '<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrOperacaoWsdl());?>';
+                    var selectedValor = bolDescartarGravado ? '' : '<?= PaginaSEI::tratarHTML($objMdPetIntegracaoDTO->getStrOperacaoWsdl());?>';
                     $.each($(result).find('operacao'), function (key, value) {
                         var opt = document.createElement('option');
                         opt.value = $(value).text();
@@ -311,6 +459,11 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     preencheCache = false;
 
                     $('#blcOperacaoWs, #blcParamsSuspensaoAutomatica').css('display', 'inherit');
+
+                    var sugestao = $(result).find('sugestao').text();
+                    if (sugestao != '' && infraTrim(document.getElementById('txtEnderecoExecucao').value) == '') {
+                        document.getElementById('txtEnderecoExecucao').value = sugestao;
+                    }
 
                     $('#blcTextoSemWs').css('display', 'none');
 
@@ -356,7 +509,8 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 endereco_wsdl: enderecoWsdl,
                 operacao_wsdl: operacaoWsdl,
                 tipo_parametro: tipo_parametro,
-                versao: versao
+                versao: versao,
+                tipo: isRest() ? 'R' : 'S'
             },
             beforeSend: function () {
                 infraExibirAviso(false);
@@ -371,6 +525,9 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                     }else{
                         var select = document.getElementById('selCacheDataArmazenamento');
                         var selectedValor = '<?= $strItensSelCacheDataArmazenamento;?>';
+                    }
+                    if (bolDescartarGravado) {
+                        selectedValor = '';
                     }
 
                     //limpar todos os options
@@ -400,6 +557,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                         arraySelect.push('nomeFuncionalDadosEntrada_cpfPessoa');
                         arraySelect.push('nomeFuncionalDadosEntrada_cpfUsuario');
                         arraySelect.push('nomeFuncionalDadosEntrada_identificacaoOrigem');
+                        arraySelect.push('nomeFuncionalDadosEntrada_<?= MdPetIntegFabricaRN::ENTRADA_TOKEN ?>');
                     } else {
                         arraySelect.push('nomeFuncionalDadosSaida_cnpjEmpresa');
                         arraySelect.push('nomeFuncionalDadosSaida_cpfPessoa');
@@ -463,6 +621,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
             var select = document.getElementById('selCacheDataArmazenamento');
             select.options.length = 0;
         }
+        $('#selCachePrazoExpiracao').attr('required', objeto.checked);
         infraAvisoCancelar();
     }
 
@@ -480,6 +639,7 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
         } else {
             document.getElementById('paramSaidaTable_numero').style.display = 'none';
         }
+        $('#nomeFuncionalDadosSaida_numero').attr('required', objeto.checked && staUtilizaWs);
     }
 
     function complementoMarcaDesmarca(objeto) {
@@ -540,10 +700,15 @@ $strLinkAjaxBuscarParametroWsdl = SessaoSEI::getInstance()->assinarLink('control
                 });
             }
 
+            if (bolDescartarGravado) {
+                selectedValor = '';
+            }
+
             if (key != "endereco") {
 
                 if (tipo_parametro == 'e') {
                     var opt = document.createElement('option');
+                    opt.setAttribute('data-local', $(value).attr('local') || '');
                     if (key > 99) {
                         opt.value = 'endereco.' + $(value).text();
                         opt.innerHTML = 'endereco.' + $(value).text();

@@ -1,6 +1,6 @@
 <?php
 
-    //INICIALIZAÇÃO DE VARIÁVEIS DA PÁGINA
+    //INICIALIZAÇÃO DE VARIÁVEIS DA PÁGINA
     $txtOrientacoes = "Este peticionamento serve para protocolizar documentos em processos já existentes. Condicionado ao número do processo e parametrizações da administração sobre o Tipo de Processo correspondente, os documentos poderão ser incluídos diretamente no processo indicado ou em processo novo relacionado.";
 
     $arrComandos   = array();

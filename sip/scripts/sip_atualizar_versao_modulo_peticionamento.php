@@ -1,14 +1,14 @@
-<?
+<?php
 require_once dirname(__FILE__) . '/../web/Sip.php';
 
 class MdPetAtualizadorSipRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.6.0';
+    private $versaoAtualDesteModulo = '5.0.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-	private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0', '4.5.0', '4.6.0');
+	private $historicoVersoes = ['0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'];
 	
 	public function __construct()
     {
@@ -90,7 +90,7 @@ class MdPetAtualizadorSipRN extends InfraRN
             }
 
             //testando versao do framework
-	        $numVersaoInfraRequerida = '2.45.1';
+	        $numVersaoInfraRequerida = '3.1.8';
 	        if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
 		        $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
@@ -171,6 +171,8 @@ class MdPetAtualizadorSipRN extends InfraRN
 		            $this->instalarv450();
                 case '4.5.0':
 		            $this->instalarv460();
+                case '4.6.0':
+		            $this->instalarv500();
                     break;
 
                 default:
@@ -1429,13 +1431,13 @@ class MdPetAtualizadorSipRN extends InfraRN
         $objItemRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_pet_integracao_consultar');
 
 
-        $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Peticionamento Eletrônico->Integrações EM Administrador');
+        $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Peticionamento Eletrônico->Mapeamento das Integrações EM Administrador');
         $this->adicionarItemMenu($numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
             $objItemMenuDTOPeticionamentoEletronico->getNumIdItemMenu(),
             $objItemRecursoIntegracaoListarDTO->getNumIdRecurso(),
-            'Integrações',
+            'Mapeamento das Integrações',
             90);
 
 
@@ -2048,6 +2050,422 @@ class MdPetAtualizadorSipRN extends InfraRN
 		
 		$this->atualizarNumeroVersao($nmVersao);
 	}
+
+    protected function instalarv500()
+    {
+        $nmVersao = '5.0.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $objSistemaRN = new SistemaRN();
+        $objPerfilRN = new PerfilRN();
+        $objMenuRN = new MenuRN();
+        $objItemMenuRN = new ItemMenuRN();
+
+        $objSistemaDTO = new SistemaDTO();
+        $objSistemaDTO->retNumIdSistema();
+        $objSistemaDTO->setStrSigla('SEI');
+        $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
+
+        if ($objSistemaDTO == null) {
+            throw new InfraException('Sistema SEI não encontrado.');
+        }
+
+        $numIdSistemaSei = $objSistemaDTO->getNumIdSistema();
+
+        $this->logar('INSTALANDO EXCECOES DE SUSPENSAO AUTOMATICA - ' . $nmVersao);
+
+        $objPerfilDTO = new PerfilDTO();
+        $objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilDTO->setStrNome('Administrador');
+        $objPerfilDTO->retNumIdPerfil();
+        $objPerfilDTO = (new PerfilRN())->consultar($objPerfilDTO);
+
+        if ($objPerfilDTO === null) {
+            throw new InfraException('Perfil Administrador do SEI nao encontrado.');
+        }
+
+        $numIdPerfil = $objPerfilDTO->getNumIdPerfil();
+
+        $objMenuDTO = new MenuDTO();
+        $objMenuDTO->setNumIdSistema($numIdSistemaSei);
+        $objMenuDTO->setStrNome('Principal');
+        $objMenuDTO->retNumIdMenu();
+        $objMenuDTO = (new MenuRN())->consultar($objMenuDTO);
+
+        if ($objMenuDTO === null) {
+            throw new InfraException('Menu Principal do SEI nao encontrado.');
+        }
+
+        $numIdMenu = $objMenuDTO->getNumIdMenu();
+
+        $numIdPai = null;
+        $numIdPeticionamento = null;
+        $objItemMenuRN = new ItemMenuRN();
+
+        foreach (['Administração', 'Peticionamento Eletrônico', 'Vinculações e Procurações Eletrônicas'] as $strRotulo) {
+            $objItemDTO = new ItemMenuDTO();
+            $objItemDTO->setNumIdSistema($numIdSistemaSei);
+            $objItemDTO->setNumIdMenu($numIdMenu);
+            $objItemDTO->setNumIdMenuPai($numIdPai === null ? null : $numIdMenu);
+            $objItemDTO->setNumIdItemMenuPai($numIdPai);
+            $objItemDTO->setStrRotulo($strRotulo);
+            $objItemDTO->retNumIdItemMenu();
+            $objItemDTO = $objItemMenuRN->consultar($objItemDTO);
+            if ($objItemDTO === null) {
+                throw new InfraException('Item de menu administrativo nao encontrado: ' . $strRotulo);
+            }
+            $numIdPai = $objItemDTO->getNumIdItemMenu();
+            if ($strRotulo === 'Peticionamento Eletrônico') {
+                $numIdPeticionamento = $numIdPai;
+            }
+        }
+
+        $objItemIntegracaoDTO = new ItemMenuDTO();
+        $objItemIntegracaoDTO->setNumIdSistema($numIdSistemaSei);
+        $objItemIntegracaoDTO->setNumIdMenu($numIdMenu);
+        $objItemIntegracaoDTO->setNumIdMenuPai($numIdMenu);
+        $objItemIntegracaoDTO->setNumIdItemMenuPai($numIdPeticionamento);
+        $objItemIntegracaoDTO->setStrNomeRecurso('md_pet_integracao_listar');
+        // Instalação nova já cria o item com o rótulo novo (instalarv300); atualização pode ter o antigo.
+        $objItemIntegracaoDTO->setStrRotulo(['Integrações', 'Mapeamento das Integrações'], InfraDTO::$OPER_IN);
+        $objItemIntegracaoDTO->retNumIdMenu();
+        $objItemIntegracaoDTO->retNumIdItemMenu();
+        $objItemIntegracaoDTO->retStrRotulo();
+        $objItemIntegracaoDTO = $objItemMenuRN->consultar($objItemIntegracaoDTO);
+
+        if ($objItemIntegracaoDTO === null) {
+            throw new InfraException('Item de menu administrativo de integracoes nao encontrado.');
+        }
+
+        if ($objItemIntegracaoDTO->getStrRotulo() !== 'Mapeamento das Integrações') {
+            $this->logar('RENOMEANDO ITEM DE MENU - Mapeamento das Integrações');
+            $objItemAlteracaoDTO = new ItemMenuDTO();
+            $objItemAlteracaoDTO->setNumIdMenu($objItemIntegracaoDTO->getNumIdMenu());
+            $objItemAlteracaoDTO->setNumIdItemMenu($objItemIntegracaoDTO->getNumIdItemMenu());
+            $objItemAlteracaoDTO->setStrRotulo('Mapeamento das Integrações');
+            $objItemMenuRN->alterar($objItemAlteracaoDTO);
+        }
+
+        $objRecursoVinculacaoDTO = $this->adicionarRecursoPerfil(
+            $numIdSistemaSei,
+            $numIdPerfil,
+            'md_pet_adm_vinc_listar'
+        );
+
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
+            $numIdPerfil,
+            $numIdMenu,
+            $numIdPai,
+            $objRecursoVinculacaoDTO->getNumIdRecurso(),
+            'Administrar Vinculações e Procurações Eletrônicas',
+            5
+        );
+
+        $arrRecursos = [];
+        foreach (['listar', 'selecionar', 'cadastrar', 'excluir'] as $strOperacao) {
+            $arrRecursos[$strOperacao] = $this->adicionarRecursoPerfil(
+                $numIdSistemaSei,
+                $numIdPerfil,
+                'md_pet_exc_suspensao_auto_' . $strOperacao
+            );
+        }
+
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
+            $numIdPerfil,
+            $numIdMenu,
+            $numIdPai,
+            $arrRecursos['listar']->getNumIdRecurso(),
+            'Exceções de Suspensão Automática',
+            10
+        );
+
+        $objRegraDTO = new RegraAuditoriaDTO();
+        $objRegraDTO->setNumIdSistema($numIdSistemaSei);
+        $objRegraDTO->setStrDescricao('Modulo_Peticionamento_Eletronico');
+        $objRegraDTO->retNumIdRegraAuditoria();
+        $objRegraRN = new RegraAuditoriaRN();
+        $objRegraDTO = $objRegraRN->consultar($objRegraDTO);
+
+        if ($objRegraDTO === null) {
+            $objRegraDTO = new RegraAuditoriaDTO();
+            $objRegraDTO->setNumIdSistema($numIdSistemaSei);
+            $objRegraDTO->setStrDescricao('Modulo_Peticionamento_Eletronico');
+            $objRegraDTO->setStrSinAtivo('S');
+            $objRegraDTO->setArrObjRelRegraAuditoriaRecursoDTO([]);
+            $objRegraDTO = $objRegraRN->cadastrar($objRegraDTO);
+        }
+
+        $objRelRN = new RelRegraAuditoriaRecursoRN();
+
+        foreach (['cadastrar', 'excluir'] as $strOperacao) {
+            $objRelDTO = new RelRegraAuditoriaRecursoDTO();
+            $objRelDTO->setNumIdSistema($numIdSistemaSei);
+            $objRelDTO->setNumIdRegraAuditoria($objRegraDTO->getNumIdRegraAuditoria());
+            $objRelDTO->setNumIdRecurso($arrRecursos[$strOperacao]->getNumIdRecurso());
+            if ($objRelRN->contar($objRelDTO) === 0) {
+                $objRelRN->cadastrar($objRelDTO);
+            }
+        }
+
+        $objReplicacaoDTO = new ReplicacaoRegraAuditoriaDTO();
+        $objReplicacaoDTO->setStrStaOperacao('A');
+        $objReplicacaoDTO->setNumIdRegraAuditoria($objRegraDTO->getNumIdRegraAuditoria());
+        $objSistemaRN->replicarRegraAuditoria($objReplicacaoDTO);
+
+        // PETICIONAMENTO INTERNO - Perfil Administrador do sistema SEI
+
+        $objPerfilDTO = new PerfilDTO();
+        $objPerfilDTO->retNumIdPerfil();
+        $objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilDTO->setStrNome('Administrador');
+        $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
+
+        if ($objPerfilDTO == null) {
+            throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
+        }
+
+        $numIdPerfilSeiAdministrador = $objPerfilDTO->getNumIdPerfil();
+
+        $objMenuDTO = new MenuDTO();
+        $objMenuDTO->retNumIdMenu();
+        $objMenuDTO->setNumIdSistema($numIdSistemaSei);
+        $objMenuDTO->setStrNome('Principal');
+        $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
+
+        if ($objMenuDTO == null) {
+            throw new InfraException('Menu do sistema SEI não encontrado.');
+        }
+
+        $numIdMenuSei = $objMenuDTO->getNumIdMenu();
+
+        $objItemMenuDTO = new ItemMenuDTO();
+        $objItemMenuDTO->retNumIdItemMenu();
+        $objItemMenuDTO->setNumIdSistema($numIdSistemaSei);
+        $objItemMenuDTO->setStrRotulo('Peticionamento Eletrônico');
+        $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
+
+        if ($objItemMenuDTO == null) {
+            throw new InfraException('Item de menu Administração/Peticionamento Eletrônico do sistema SEI não encontrado.');
+        }
+
+        $numIdItemMenuPeticionamento = $objItemMenuDTO->getNumIdItemMenu();
+
+        $arrRecursos = [
+            'md_pet_pi_tp_processo_listar',
+            'md_pet_pi_tp_processo_cadastrar',
+            'md_pet_pi_tp_processo_alterar',
+            'md_pet_pi_tp_processo_consultar',
+            'md_pet_pi_tp_processo_excluir',
+            'md_pet_pi_tp_processo_desativar',
+            'md_pet_pi_tp_processo_reativar',
+            'md_pet_pi_doc_princ_cadastrar',
+            'md_pet_pi_doc_princ_alterar',
+            'md_pet_pi_doc_princ_excluir',
+            'md_pet_pi_anexo_obrig_cadastrar',
+            'md_pet_pi_anexo_obrig_alterar',
+            'md_pet_pi_anexo_obrig_excluir',
+            'md_pet_pi_doc_auto_cadastrar',
+            'md_pet_pi_doc_auto_alterar',
+            'md_pet_pi_doc_auto_excluir',
+            'md_pet_pi_rel_orgao_cadastrar',
+            'md_pet_pi_rel_orgao_excluir',
+            'md_pet_pi_rel_unidade_cadastrar',
+            'md_pet_pi_rel_unidade_excluir',
+            'md_pet_pi_orientacao_cadastrar',
+        ];
+
+        $this->logar('CRIANDO e VINCULANDO RECURSOS DO PETICIONAMENTO INTERNO EM Administrador');
+        $objTpProcessoListarDTO = null;
+
+        foreach ($arrRecursos as $strRecurso) {
+            $objRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, $strRecurso);
+
+            if ($strRecurso === 'md_pet_pi_tp_processo_listar') {
+                $objTpProcessoListarDTO = $objRecursoDTO;
+            }
+        }
+
+        $this->logar('CRIANDO e VINCULANDO ITEM MENU - Administração->Peticionamento Eletrônico->Tipos para Peticionamento Interno');
+        $this->adicionarItemMenu($numIdSistemaSei,
+            $numIdPerfilSeiAdministrador,
+            $numIdMenuSei,
+            $numIdItemMenuPeticionamento,
+            $objTpProcessoListarDTO->getNumIdRecurso(),
+            'Tipos para Peticionamento Interno',
+            15);
+
+        $objPerfilBasicoDTO = new PerfilDTO();
+        $objPerfilBasicoDTO->retNumIdPerfil();
+        $objPerfilBasicoDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilBasicoDTO->setStrNome('Básico');
+        $objPerfilBasicoDTO = $objPerfilRN->consultar($objPerfilBasicoDTO);
+
+        if ($objPerfilBasicoDTO == null) {
+            throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
+        }
+
+        $numIdPerfilSeiBasico = $objPerfilBasicoDTO->getNumIdPerfil();
+
+        $this->logar('VINCULANDO EM Básico OS RECURSOS DE LEITURA DA CONFIGURAÇÃO DO PETICIONAMENTO INTERNO');
+        $arrRecursosLeituraConfiguracao = [
+            'md_pet_pi_tp_processo_listar',
+            'md_pet_pi_doc_princ_listar',
+            'md_pet_pi_doc_princ_consultar',
+            'md_pet_pi_anexo_obrig_listar',
+            'md_pet_pi_doc_auto_listar',
+            'md_pet_pi_rel_orgao_listar',
+            'md_pet_pi_rel_unidade_listar',
+            'md_pet_pi_orientacao_listar',
+            'md_pet_pi_orientacao_consultar',
+        ];
+
+        foreach ($arrRecursosLeituraConfiguracao as $strRecurso) {
+            $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, $strRecurso);
+        }
+
+        $arrRecursosPeticionamento = [
+            'md_pet_pi_peticao_listar',
+            'md_pet_pi_peticao_consultar',
+            'md_pet_pi_peticao_iniciar',
+            'md_pet_pi_peticao_cadastrar',
+            'md_pet_pi_peticao_excluir',
+            'md_pet_pi_peticao_confirmar',
+            'md_pet_pi_peticao_upload_principal',
+            'md_pet_pi_peticao_upload_anexo',
+            'md_pet_pi_peticao_editor_montar',
+            'md_pet_pi_peticao_formulario_gerar',
+            'md_pet_pi_rel_peticao_doc_listar',
+            'md_pet_pi_rel_peticao_doc_cadastrar',
+            'md_pet_pi_rel_peticao_doc_excluir',
+            'md_pet_pi_rel_peticao_usu_listar',
+            'md_pet_pi_rel_peticao_usu_cadastrar',
+            'md_pet_pi_rel_peticao_usu_excluir',
+        ];
+
+        $this->logar('CRIANDO e VINCULANDO RECURSOS DO PETICIONAMENTO INTERNO EM Básico');
+        $objPeticaoIniciarDTO = null;
+        $objPeticaoListarDTO = null;
+
+        foreach ($arrRecursosPeticionamento as $strRecurso) {
+            $objRecursoDTO = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, $strRecurso);
+
+            if ($strRecurso === 'md_pet_pi_peticao_iniciar') {
+                $objPeticaoIniciarDTO = $objRecursoDTO;
+            }
+
+            if ($strRecurso === 'md_pet_pi_peticao_listar') {
+                $objPeticaoListarDTO = $objRecursoDTO;
+            }
+        }
+
+        $objItemMenuIniciarProcessoDTO = new ItemMenuDTO();
+        $objItemMenuIniciarProcessoDTO->retNumSequencia();
+        $objItemMenuIniciarProcessoDTO->setNumIdSistema($numIdSistemaSei);
+        $objItemMenuIniciarProcessoDTO->setNumIdMenu($numIdMenuSei);
+        $objItemMenuIniciarProcessoDTO->setNumIdMenuPai(null);
+        $objItemMenuIniciarProcessoDTO->setNumIdItemMenuPai(null);
+        $objItemMenuIniciarProcessoDTO->setStrRotulo('Iniciar Processo');
+        $objItemMenuIniciarProcessoDTO = $objItemMenuRN->consultar($objItemMenuIniciarProcessoDTO);
+
+        if ($objItemMenuIniciarProcessoDTO == null) {
+            throw new InfraException('Item de menu Iniciar Processo do sistema SEI não encontrado.');
+        }
+
+        $this->logar('CRIANDO e VINCULANDO ITEM MENU - Peticionamento Interno');
+        $objItemMenuPeticionamentoInternoDTO = $this->adicionarItemMenu($numIdSistemaSei,
+            $numIdPerfilSeiBasico,
+            $numIdMenuSei,
+            null,
+            null,
+            'Peticionamento Interno',
+            $objItemMenuIniciarProcessoDTO->getNumSequencia());
+
+        $this->logar('ATRIBUINDO ICONE AO ITEM MENU - Peticionamento Interno');
+        $objItemMenuIconeDTO = new ItemMenuDTO();
+        $objItemMenuIconeDTO->setNumIdMenu($numIdMenuSei);
+        $objItemMenuIconeDTO->setNumIdItemMenu($objItemMenuPeticionamentoInternoDTO->getNumIdItemMenu());
+        $objItemMenuIconeDTO->setStrIcone('iniciar_peticionamento_interno.svg');
+        $objItemMenuRN->alterar($objItemMenuIconeDTO);
+
+        $this->logar('CRIANDO e VINCULANDO ITEM MENU - Peticionamento Interno->Iniciar Processo');
+        $this->adicionarItemMenu($numIdSistemaSei,
+            $numIdPerfilSeiBasico,
+            $numIdMenuSei,
+            $objItemMenuPeticionamentoInternoDTO->getNumIdItemMenu(),
+            $objPeticaoIniciarDTO->getNumIdRecurso(),
+            'Iniciar Processo',
+            10);
+
+        $this->logar('CRIANDO e VINCULANDO ITEM MENU - Peticionamento Interno->Meus Processos');
+        $this->adicionarItemMenu($numIdSistemaSei,
+            $numIdPerfilSeiBasico,
+            $numIdMenuSei,
+            $objItemMenuPeticionamentoInternoDTO->getNumIdItemMenu(),
+            $objPeticaoListarDTO->getNumIdRecurso(),
+            'Meus Processos',
+            20);
+
+        $this->logar('CRIANDO REGRA DE AUDITORIA PARA OS RECURSOS DE ESCRITA DO PETICIONAMENTO INTERNO');
+        $objRegraAuditoriaDTO = new RegraAuditoriaDTO();
+        $objRegraAuditoriaDTO->retNumIdRegraAuditoria();
+        $objRegraAuditoriaDTO->setNumIdSistema($numIdSistemaSei);
+        $objRegraAuditoriaDTO->setStrDescricao('Modulo_Peticionamento_Eletronico');
+
+        $objRegraAuditoriaRN = new RegraAuditoriaRN();
+        $objRegraAuditoriaDTO = $objRegraAuditoriaRN->consultar($objRegraAuditoriaDTO);
+
+        if ($objRegraAuditoriaDTO == null) {
+            throw new InfraException('Regra de auditoria Modulo_Peticionamento_Eletronico não encontrada.');
+        }
+
+        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
+          \'md_pet_pi_tp_processo_cadastrar\',
+          \'md_pet_pi_tp_processo_alterar\',
+          \'md_pet_pi_tp_processo_excluir\',
+          \'md_pet_pi_tp_processo_desativar\',
+          \'md_pet_pi_tp_processo_reativar\',
+          \'md_pet_pi_doc_princ_cadastrar\',
+          \'md_pet_pi_doc_princ_alterar\',
+          \'md_pet_pi_doc_princ_excluir\',
+          \'md_pet_pi_anexo_obrig_cadastrar\',
+          \'md_pet_pi_anexo_obrig_alterar\',
+          \'md_pet_pi_anexo_obrig_excluir\',
+          \'md_pet_pi_doc_auto_cadastrar\',
+          \'md_pet_pi_doc_auto_alterar\',
+          \'md_pet_pi_doc_auto_excluir\',
+          \'md_pet_pi_rel_orgao_cadastrar\',
+          \'md_pet_pi_rel_orgao_excluir\',
+          \'md_pet_pi_rel_unidade_cadastrar\',
+          \'md_pet_pi_rel_unidade_excluir\',
+          \'md_pet_pi_orientacao_cadastrar\',
+          \'md_pet_pi_peticao_cadastrar\',
+          \'md_pet_pi_peticao_excluir\',
+          \'md_pet_pi_rel_peticao_doc_cadastrar\',
+          \'md_pet_pi_rel_peticao_doc_excluir\',
+          \'md_pet_pi_rel_peticao_usu_cadastrar\',
+          \'md_pet_pi_rel_peticao_usu_excluir\'
+          )'
+        );
+
+        foreach ($rs as $recurso) {
+            $numQtd = BancoSip::getInstance()->consultarSql('select count(*) as qtd from rel_regra_auditoria_recurso where id_regra_auditoria = ' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ' and id_sistema = ' . $numIdSistemaSei . ' and id_recurso = ' . $recurso['id_recurso']);
+
+            if ($numQtd[0]['qtd'] == 0) {
+                BancoSip::getInstance()->executarSql('insert into rel_regra_auditoria_recurso (id_regra_auditoria, id_sistema, id_recurso) values (' . $objRegraAuditoriaDTO->getNumIdRegraAuditoria() . ', ' . $numIdSistemaSei . ', ' . $recurso['id_recurso'] . ')');
+            }
+        }
+
+        $objReplicacaoRegraAuditoriaDTO = new ReplicacaoRegraAuditoriaDTO();
+        $objReplicacaoRegraAuditoriaDTO->setStrStaOperacao('A');
+        $objReplicacaoRegraAuditoriaDTO->setNumIdRegraAuditoria($objRegraAuditoriaDTO->getNumIdRegraAuditoria());
+
+        $objSistemaRN->replicarRegraAuditoria($objReplicacaoRegraAuditoriaDTO);
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
 
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)
     {

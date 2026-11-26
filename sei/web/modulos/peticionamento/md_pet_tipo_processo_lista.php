@@ -644,7 +644,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 
     function acaoExclusaoMultipla(){
     if (document.getElementById('hdnInfraItensSelecionados').value==''){
-    alert('Nenhum Tipo de Processo selecionado.');
+    alert('Nenhuma Tipo de Processo selecionado.');
     return;
     }
     if (confirm("Confirma a exclusão dos Tipos de Processo selecionados?")){

@@ -164,6 +164,39 @@ class MdPetVinculoRN extends InfraRN {
     }
   }
 
+  /** Filtra contatos principais em lote para pesquisa e inclusão de exceções S/C. */
+  protected function filtrarContatosSuspensaoConectado(MdPetVinculoDTO $objMdPetVinculoDTO): array {
+    try {
+      SessaoSEI::getInstance()->validarPermissao('md_pet_exc_suspensao_auto_listar');
+      if (!$objMdPetVinculoDTO->isSetNumIdContato()
+          || !is_array($objMdPetVinculoDTO->getNumIdContato())
+          || empty($objMdPetVinculoDTO->getNumIdContato())) {
+        throw new InfraException('Informe os identificadores de contato para filtrar vinculações.');
+      }
+      $arrIds = [];
+      foreach ($objMdPetVinculoDTO->getNumIdContato() as $mixIdContato) {
+        $numIdContato = filter_var($mixIdContato, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        if ($numIdContato === false) {
+          throw new InfraException('Identificador de contato inválido para filtrar vinculações.');
+        }
+        $arrIds[$numIdContato] = $numIdContato;
+      }
+      $objFiltroDTO = new MdPetVinculoDTO();
+      $objFiltroDTO->setNumIdContato(array_values($arrIds), InfraDTO::$OPER_IN);
+      $objFiltroDTO->retNumIdContato();
+      $objFiltroDTO->setDistinct(true);
+      SessaoSEI::getInstance()->validarAuditarPermissao(
+          'md_pet_exc_suspensao_auto_selecionar',
+          __METHOD__,
+          $objFiltroDTO
+      );
+      $objMdPetVinculoBD = new MdPetVinculoBD($this->getObjInfraIBanco());
+      return $objMdPetVinculoBD->listar($objFiltroDTO);
+    } catch (Exception $e) {
+      throw new InfraException('Erro filtrando contatos vinculados para exceções de suspensão automática.', $e);
+    }
+  }
+
   protected function contarConectado(MdPetVinculoDTO $objMdPetVinculoDTO){
     try {
 

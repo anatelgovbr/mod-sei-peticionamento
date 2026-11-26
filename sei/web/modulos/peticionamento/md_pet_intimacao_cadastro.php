@@ -83,8 +83,6 @@ try {
     $strLinkAjaxTransportaUsuarios = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=usuario_dados_tabela');
     $strLinkAjaxBuscaTiposRespostaTipoIntimacao = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=busca_tipo_resposta_intimacao');
     $strLinkAjaxValidacoesSubmit = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_pet_int_validar_cadastro');
-    $isAlterar = false;
-    $countInt = 0;
     $urlTipoFisica = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_cadastro_fisica');
     $urlTipoJuridica = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_cadastro_juridica');
 
@@ -97,11 +95,17 @@ try {
 
             $idProcedimento = PaginaSEI::GET('id_procedimento') ?? $dadosCadastro['hdnIdProcedimento'];
 
-            $countIntimacao = is_countable($objMdPetIntimacaoRN->getIntimacoesProcesso($idProcedimento)) ? count($objMdPetIntimacaoRN->getIntimacoesProcesso($idProcedimento)) : 0;
-
             $arrComandos[] = '<button type="button" onclick="onSubmitForm();" accesskey="G" name="sbmCadastrarMdPetIntimacao" id="sbmCadastrarMdPetIntimacao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">G</span>erar Intimação</button>';
-            if($countIntimacao > 0){
-                $arrComandos[] = '<button type="button" onclick="infraAbrirJanelaModal(\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $idProcedimento) . '\', 1200 , 600 );" class="infraButton" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" accesskey="V"><span class="infraTeclaAtalho">V</span>er intimações do processo ('.$countIntimacao.')</button>';
+            if (!$isLoteUnitario && SessaoSEI::getInstance()->verificarPermissao('md_pet_intimacao_eletronica_listar')) {
+                $objMdPetIntProtocoloDTO = new MdPetIntProtocoloDTO();
+                $objMdPetIntProtocoloDTO->retNumIdMdPetIntProtocolo();
+                $objMdPetIntProtocoloDTO->setDblIdProcedimento($idProcedimento);
+                $objMdPetIntProtocoloDTO->setStrSinPrincipal('S');
+                $objMdPetIntProtocoloDTO->setNumMaxRegistrosRetorno(1);
+
+                if (!empty((new MdPetIntProtocoloRN())->listar($objMdPetIntProtocoloDTO))) {
+                    $arrComandos[] = '<button type="button" onclick="infraAbrirJanelaModal(\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_pet_intimacao_eletronica_listar&id_procedimento=' . $idProcedimento) . '\', 1200 , 600 );" class="infraButton" accesskey="V"><span class="infraTeclaAtalho">V</span>er intimações do processo</button>';
+                }
             }
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $acao) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -118,10 +122,6 @@ try {
             $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
             $strProtocoloDocumentoFormatado = !is_null($objDocumentoDTO) ? $objDocumentoDTO->getStrProtocoloDocumentoFormatado() : '';
-
-//            Buscar Intimações cadastradas.
-            $arrIntimacoes = $objMdPetIntimacaoRN->buscaIntimacoesCadastradas($idDocumento);
-            $isAlterar = (!empty($arrIntimacoes)) ? true : false;
 
             if ($isLoteUnitario) {
                 header('Content-Type: application/json; charset=utf-8');
@@ -215,7 +215,7 @@ try {
                     http_response_code(400);
                     echo json_encode([
                         'status' => 'erro',
-                        'mensagem' => mb_convert_encoding('Não foi possível gerar a intimação deste destinatário.', 'UTF-8', 'ISO-8859-1')
+                        'mensagem' => 'Nao foi possivel gerar a intimacao deste destinatario.'
                     ]);
                 }
 
@@ -375,9 +375,6 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             data: {
                 id_documento: <?= $idDocumento?>,
                 id_procedimento: <?= (int) $idProcedimento ?>
-                <?php if($isAlterar){?>
-                , is_alterar: <?= $isAlterar ?>
-                <?php }?>
             },
             success: function (result) {
                 $('#div_tipo_destinatario').html(result);

@@ -138,7 +138,6 @@
 
 Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo ou insira o número de um Processo já existente relacionado com sua demanda.';
 
-                $objMdPetProRepresWhitRN = new MdPetProRepresWhitRN();
                 $objMdPetVinculoDTO = new MdPetVinculoDTO();
                 $objMdPetVinculoDTO->setDblIdProtocolo($objProcedimentoDTO->getDblIdProcedimento());
                 $objMdPetVinculoDTO->retNumIdMdPetVinculo();
@@ -149,11 +148,12 @@ Para prosseguir com sua demanda, utilize o menu Peticionamento de Processo Novo 
                 if (is_array($arrObjMdPetVinculoDTO) && count($arrObjMdPetVinculoDTO) > 0) {
                     $objMdPetVinculoDTO = $arrObjMdPetVinculoDTO[0];
 
-                    $objMdPetProRepresWhitDTO = new MdPetProRepresWhitDTO();
-                    $objMdPetProRepresWhitDTO->retDblIdProtocolo();
-                    $objMdPetProRepresWhitDTO->setDblIdProtocolo($objMdPetVinculoDTO->getDblIdProtocolo());
+                    $objMdPetWhitelistDTO = new MdPetWhitelistDTO();
+                    $objMdPetWhitelistDTO->setStrStaFinalidade(MdPetWhitelistRN::FINALIDADE_PETICIONAMENTO_INTERCORRENTE);
+                    $objMdPetWhitelistDTO->setStrStaTipoObjeto(MdPetWhitelistRN::TIPO_PROCESSO);
+                    $objMdPetWhitelistDTO->setDblIdObjeto($objMdPetVinculoDTO->getDblIdProtocolo());
 
-                    if(empty($objMdPetProRepresWhitRN->consultar($objMdPetProRepresWhitDTO))) {
+                    if (!(new MdPetWhitelistRN())->verificarPermitidoInterno($objMdPetWhitelistDTO)) {
                         return sprintf($xmlMensagemErro, $strMsgProcessoDeRepresentacao);
                     }
                 }

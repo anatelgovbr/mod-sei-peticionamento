@@ -45,7 +45,6 @@ try {
             $objMdPetTipoProcessoDTO->retTodos();
             $objMdPetTipoProcessoDTO->retStrNomeProcesso();
             $objMdPetTipoProcessoDTO->retStrNomeSerie();
-            $objMdPetTipoProcessoDTO->retStrNomeFormulario();
             $objMdPetTipoProcessoDTO = (new MdPetTipoProcessoRN())->consultar($objMdPetTipoProcessoDTO);
 
             $idTipoProcedimento         = $objMdPetTipoProcessoDTO->getNumIdProcedimento();
@@ -233,7 +232,6 @@ try {
             $externo                = $objMdPetTipoProcessoDTO->getStrSinDocExterno() == 'S' ? 'checked = checked' : '';
             $formulario             = $objMdPetTipoProcessoDTO->getStrSinDocFormulario() == 'S' ? 'checked = checked' : '';
             $nomeSerie              = $objMdPetTipoProcessoDTO->getStrNomeSerie();
-            $nomeFormulario         = $objMdPetTipoProcessoDTO->getStrNomeFormulario();
 	        $nomeDocumentoPrincipal = $nomeSerie;
 	        
 	        $idSerie                = $objMdPetTipoProcessoDTO->getNumIdSerie(); // Reutilizado tanto para tipos comuns quanto para formulário
@@ -513,7 +511,6 @@ try {
                 $objMdPetTipoProcessoDTO->setStrSinDocExterno('N');
                 $objMdPetTipoProcessoDTO->setStrSinDocFormulario('N');
                 $objMdPetTipoProcessoDTO->setNumIdSerie($_POST['hdnIdTipoDocPrinc']);
-                $objMdPetTipoProcessoDTO->setNumIdTipoFormulario(null);
                 break;
 
               case 2:
@@ -521,7 +518,6 @@ try {
                 $objMdPetTipoProcessoDTO->setStrSinDocExterno('S');
                 $objMdPetTipoProcessoDTO->setStrSinDocFormulario('N');
                 $objMdPetTipoProcessoDTO->setNumIdSerie($_POST['hdnIdTipoDocPrinc']);
-                $objMdPetTipoProcessoDTO->setNumIdTipoFormulario(null);
                 break;
 
               case 3:

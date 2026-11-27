@@ -21,6 +21,11 @@ class MdPetIntimacaoRN extends InfraRN
     public static $TIPO_ACESSO_EXTERNO_INTEGRAL = 'I';
     public static $TIPO_ACESSO_EXTERNO_PARCIAL = 'P';
 
+    //parâmetro que oculta a opção Integral da tela Gerar Intimação Eletrônica
+    public const PARAMETRO_OCULTA_ACESSO_INTEGRAL = 'MODULO_PETICIONAMENTO_OCULTA_GERAR_INTIMACAO_ACESSO_INTEGRAL';
+    public const VALOR_OCULTA_ACESSO_INTEGRAL = '1';
+    public const VALOR_EXIBE_ACESSO_INTEGRAL = '0';
+
     //Id Situação Intimação
     public static $INTIMACAO_PENDENTE = '1';
     public static $INTIMACAO_CUMPRIDA_PRAZO = '2';
@@ -1115,7 +1120,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objMdPetIntRelDestExternoRN->cadastrar($objMdPetIntRelDestExternoDTO);
             //Fim novo
 
-            //verifica se existe procurador simples para a pessoa física em questão
+            //verifica se existe procurador simples para a pessoa fí­sica em questão
             $dtoMdPetVincReptDTO = new MdPetVincRepresentantDTO();
             $dtoMdPetVincReptDTO->setNumIdContatoVinc($objMdPetIntRelDestinatarioDTO->getNumIdContato());
             $dtoMdPetVincReptDTO->retNumIdContatoVinc();
@@ -1953,8 +1958,61 @@ class MdPetIntimacaoRN extends InfraRN
         return '<message>' . PaginaSEI::tratarHTML($this->verificarDuplicidadeIntimacao($dadosCadastro)) . '</message>';
     }
 
+    /**
+     * Indica se a tela Gerar Intimação Eletrônica oculta a opção Integral. Só o valor '1' oculta.
+     * Valor preenchido que o módulo não usa fica registrado em Infra > Log, e a opção continua exibida.
+     *
+     * @param InfraParametro $objInfraParametro
+     * @param LogSEI $objLogSEI
+     * @return bool
+     */
+    public static function deveOcultarAcessoIntegral(InfraParametro $objInfraParametro, LogSEI $objLogSEI): bool
+    {
+        $strValor = $objInfraParametro->getValor(self::PARAMETRO_OCULTA_ACESSO_INTEGRAL, false);
+
+        if ($strValor === self::VALOR_OCULTA_ACESSO_INTEGRAL) {
+            return true;
+        }
+
+        if (!in_array($strValor, [null, '', self::VALOR_EXIBE_ACESSO_INTEGRAL], true)) {
+            $objLogSEI->gravar(
+                'Parâmetro ' . self::PARAMETRO_OCULTA_ACESSO_INTEGRAL . ' com valor "' . $strValor
+                . '": a opção Integral continua exibida na tela Gerar Intimação Eletrônica, porque só o valor '
+                . self::VALOR_OCULTA_ACESSO_INTEGRAL . ' oculta a opção',
+                InfraLog::$AVISO
+            );
+        }
+
+        return false;
+    }
+
+    /**
+     * Recusa o pedido de Acesso Externo Integral quando o parâmetro oculta essa opção na tela Gerar Intimação Eletrônica.
+     *
+     * @param mixed $optIntegral valor bruto do campo optIntegral do POST
+     * @param InfraParametro $objInfraParametro
+     * @param LogSEI $objLogSEI
+     * @return void
+     * @throws InfraException
+     */
+    public static function validarAcessoIntegralPermitido(mixed $optIntegral, InfraParametro $objInfraParametro, LogSEI $objLogSEI): void
+    {
+        if (empty($optIntegral) || !self::deveOcultarAcessoIntegral($objInfraParametro, $objLogSEI)) {
+            return;
+        }
+
+        $objInfraException = new InfraException();
+        $objInfraException->adicionarValidacao('O Tipo de Acesso Externo Integral está desabilitado nesta instalação.');
+        $objInfraException->lancarValidacoes();
+    }
+
     public function cadastrarIntimacaoControlado(array $dadosCadastro)
     {
+        self::validarAcessoIntegralPermitido(
+            $dadosCadastro['optIntegral'] ?? null,
+            new InfraParametro(BancoSEI::getInstance()),
+            LogSEI::getInstance()
+        );
 
         $dataHoraGeracao = InfraData::getStrDataHoraAtual();
         $objDocumentoRN = new DocumentoRN();
@@ -2120,7 +2178,7 @@ class MdPetIntimacaoRN extends InfraRN
 
         } catch (Exception $e) {
             LogSEI::getInstance()->gravar('ReiterarIntimacaoExigeResposta: ' . $e, InfraLog::$INFORMACAO);
-            throw new InfraException('Erro reiterando intimações pendentes que exigem resposta.', $e);
+            throw new InfraException('Erro reiterando intimacoes pendentes exige resposta.', $e);
         }
 
     }
@@ -2201,103 +2259,44 @@ class MdPetIntimacaoRN extends InfraRN
 
     }
 
-    public function buscaIntimacoesCadastradas($idDocumento)
+    /**
+     * Contatos dos usuarios externos que ja receberam o documento como principal de intimacao, inclusive como
+     * representantes da Pessoa Juridica intimada, em uma unica consulta.
+     *
+     * @param int|string $idDocumento
+     * @return int[]
+     */
+    public function listarIdsContatosIntimadosDocumento($idDocumento): array
     {
-        $arrContatos = array();
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idDocumento);
-        $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
-        $objMdPetIntDocumentoDTO->retTodos();
+        $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+        $objMdPetIntRelDestinatarioDTO->setDistinct(true);
+        $objMdPetIntRelDestinatarioDTO->retNumIdContatoParticipante();
+        $objMdPetIntRelDestinatarioDTO->setDblIdProtocolo($idDocumento);
+        $objMdPetIntRelDestinatarioDTO->setStrSinPrincipalDoc('S');
 
-        $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
-        $arrMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->listar($objMdPetIntDocumentoDTO);
+        $arrObjMdPetIntRelDestinatarioDTO = (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntRelDestinatarioDTO);
 
-        if (!empty($arrMdPetIntDocumentoDTO)) {
-            foreach ($arrMdPetIntDocumentoDTO as $MdPetIntDocumento) {
-                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-                $objMdPetIntRelDestinatarioDTO->retTodos();
-                $objMdPetIntRelDestinatarioDTO->retNumIdContatoParticipante();
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($MdPetIntDocumento->getNumIdMdPetIntimacao());
-
-                $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
-                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-
-                if (!empty($objMdPetIntRelDestinatarioDTO)) {
-                    foreach ($objMdPetIntRelDestinatarioDTO as $MdPetIntRelDestinatario) {
-                        $arrContatos[] = MdPetContatoINT::getDadosContatos($MdPetIntRelDestinatario->getNumIdContatoParticipante(), $idDocumento, false);
-                    }
-                }
-            }
-        }
-        return $arrContatos;
+        return array_values(array_filter(InfraArray::converterArrInfraDTO($arrObjMdPetIntRelDestinatarioDTO, 'IdContatoParticipante')));
     }
 
-    //Juri
-
-    public function buscaIntimacoesCadastradasJuridico($idDocumento)
+    /**
+     * Contatos das Pessoas Juridicas que ja receberam o documento como principal de intimacao, em uma unica consulta.
+     *
+     * @param int|string $idDocumento
+     * @return int[]
+     */
+    public function listarIdsPessoasJuridicasIntimadasDocumento($idDocumento): array
     {
-        $arrContatos = array();
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idDocumento);
-        $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
-        $objMdPetIntDocumentoDTO->retTodos();
+        $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
+        $objMdPetIntRelDestinatarioDTO->setDistinct(true);
+        $objMdPetIntRelDestinatarioDTO->retNumIdContato();
+        $objMdPetIntRelDestinatarioDTO->setDblIdProtocolo($idDocumento);
+        $objMdPetIntRelDestinatarioDTO->setStrSinPrincipalDoc('S');
+        $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('S');
 
-        $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
-        $arrMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->listar($objMdPetIntDocumentoDTO);
+        $arrObjMdPetIntRelDestinatarioDTO = (new MdPetIntRelDestinatarioRN())->listar($objMdPetIntRelDestinatarioDTO);
 
-        if (!empty($arrMdPetIntDocumentoDTO)) {
-            foreach ($arrMdPetIntDocumentoDTO as $MdPetIntDocumento) {
-                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-                $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('S');
-                $objMdPetIntRelDestinatarioDTO->retTodos();
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($MdPetIntDocumento->getNumIdMdPetIntimacao());
-
-                $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
-                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-
-                if (!empty($objMdPetIntRelDestinatarioDTO)) {
-                    foreach ($objMdPetIntRelDestinatarioDTO as $mdPetIntRelDestinatario) {
-
-                        $arrContatos[] = MdPetContatoINT::getDadosContatosJuridicoRecuperar($mdPetIntRelDestinatario->getNumIdContato(), $idDocumento, false);
-                    }
-                }
-            }
-        }
-        return $arrContatos;
-    }
-
-    //Pessoa Fisica
-    public function buscaIntimacoesCadastradasFisica($idDocumento)
-    {
-        $arrContatos = array();
-        $objMdPetIntDocumentoDTO = new MdPetIntProtocoloDTO();
-        $objMdPetIntDocumentoDTO->setDblIdProtocolo($idDocumento);
-        $objMdPetIntDocumentoDTO->setStrSinPrincipal('S');
-        $objMdPetIntDocumentoDTO->retTodos();
-
-        $objMdPetIntDocumentoRN = new MdPetIntProtocoloRN();
-        $arrMdPetIntDocumentoDTO = $objMdPetIntDocumentoRN->listar($objMdPetIntDocumentoDTO);
-
-        if (is_iterable($arrMdPetIntDocumentoDTO)) {
-
-            foreach ($arrMdPetIntDocumentoDTO as $MdPetIntDocumento) {
-
-                $objMdPetIntRelDestinatarioDTO = new MdPetIntRelDestinatarioDTO();
-                $objMdPetIntRelDestinatarioDTO->setStrSinPessoaJuridica('N');
-                $objMdPetIntRelDestinatarioDTO->retTodos();
-                $objMdPetIntRelDestinatarioDTO->setNumIdMdPetIntimacao($MdPetIntDocumento->getNumIdMdPetIntimacao());
-
-                $objMdPetIntRelDestinatarioRN = new MdPetIntRelDestinatarioRN();
-                $objMdPetIntRelDestinatarioDTO = $objMdPetIntRelDestinatarioRN->listar($objMdPetIntRelDestinatarioDTO);
-
-                if (is_iterable($objMdPetIntRelDestinatarioDTO)) {
-                    foreach ($objMdPetIntRelDestinatarioDTO as $MdPetIntRelDestinatario) {
-                        $arrContatos[] = MdPetContatoINT::getDadosContatos($MdPetIntRelDestinatario->getNumIdContato(), $idDocumento, false);
-                    }
-                }
-            }
-        }
-        return $arrContatos;
+        return InfraArray::converterArrInfraDTO($arrObjMdPetIntRelDestinatarioDTO, 'IdContato');
     }
 	
     public function preencherDadaPrazoTacito(){
@@ -2499,33 +2498,6 @@ class MdPetIntimacaoRN extends InfraRN
         return $isIntimacao;
     }
 
-    protected function verificaProcessoPossuiIntimacaoConectado($idProcedimento)
-    {
-        $arrIdsDoc = $this->_getDocumentosProcesso($idProcedimento);
-        $isIntimacao = false;
-
-        if (count($arrIdsDoc) > 0) {
-            $objDTO = new MdPetIntProtDisponivelDTO();
-            $objRN = new MdPetIntProtDisponivelRN();
-
-            $objDTO->setDblIdDocumento($arrIdsDoc, InfraDTO::$OPER_IN);
-            $objDTO->retDblIdDocumento();
-            $isIntimacao = $objRN->contar($objDTO) > 0 ? true : false;
-
-            if (!$isIntimacao) {
-                $objDTO = new MdPetIntProtocoloDTO();
-                $objRN = new MdPetIntProtocoloRN();
-
-                $objDTO->setDblIdDocumento($arrIdsDoc, InfraDTO::$OPER_IN);
-                $objDTO->retDblIdDocumento();
-
-                $isIntimacao = $objRN->contar($objDTO) > 0 ? true : false;
-            }
-        }
-
-        return $isIntimacao;
-    }
-
     private function _getDocumentosProcesso($idProcedimento)
     {
         //Init Vars
@@ -2566,8 +2538,8 @@ class MdPetIntimacaoRN extends InfraRN
         return array();
     }
 
-    /* Função responsável por verificar a exibição de documentos,  se o documento é disponível e anexo retorna 2,
-       se ele é disponível retorna 1 e se for somente anexo retorna 0. Obs: Leva em consideração todas as Intimações para o usuário
+    /* Função responsável por verificar a exibição de documentos,  se o documento é disponí­vel e anexo retorna 2,
+       se ele é disponí­vel retorna 1 e se for somente anexo retorna 0. Obs: Leva em consideração todas as Intimações para o usuário
       logado. */
     protected function retornaIntimacoesVinculadasDocumentoConectado($idDocumento)
     {
@@ -2740,7 +2712,7 @@ class MdPetIntimacaoRN extends InfraRN
             $objAtividadeDTO->retStrSiglaUsuarioAtribuicao();
             $objAtividadeDTO->retStrNomeUsuarioAtribuicao();
 
-            //ordena descendente pois no envio de processo que já existe na unidade e está atribuído ficará com mais de um andamento em aberto
+            //ordena descendente pois no envio de processo que já existe na unidade e está atribuí­do ficará com mais de um andamento em aberto
             //desta forma os andamentos com usuário nulo (envios do processo) serão listados depois
             $objAtividadeDTO->setOrdStrSiglaUsuarioAtribuicao(InfraDTO::$TIPO_ORDENACAO_DESC);
         }
@@ -2794,7 +2766,7 @@ class MdPetIntimacaoRN extends InfraRN
         $arrObjAtividadeDTO = $objAtividadeRN->listarRN0036($objAtividadeDTO);
 
         if ($strStaNivelAcessoGlobal != ProtocoloRN::$NA_SIGILOSO) {
-            //filtra andamentos com indicação de usuário atribuído
+            //filtra andamentos com indicação de usuário atribuí­do
             $arrObjAtividadeDTO = InfraArray::distinctArrInfraDTO($arrObjAtividadeDTO, 'SiglaUnidade');
         }
 

@@ -1104,14 +1104,21 @@ class MdPetVinculoUsuExtRN extends InfraRN
         $arrArquivos = [];
         $objInfraException = new InfraException();
 
-        foreach (PaginaSEI::getInstance()->getArrItensTabelaDinamica($dados['hdnTbDocumento'] ?? '') as $itemAnexo) {
+        $arrDocumentos = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dados['hdnTbDocumento'] ?? '');
+        foreach ($arrDocumentos as $itemAnexo) {
             PeticionamentoIntegracao::validarXssComplemento($itemAnexo[2] ?? null, $objInfraException);
             $arrArquivos[$itemAnexo[7]] = $itemAnexo[9];
         }
 
         $objInfraException->lancarValidacoes();
+        MdPetTamanhoArquivoRN::validarQuantidadeAnexosExternos(
+            count($arrDocumentos),
+            new InfraParametro(BancoSEI::getInstance()),
+            LogSEI::getInstance()
+        );
         PeticionamentoIntegracao::validarArquivosDisponiveisConclusao($arrArquivos, $strDiretorio);
         PeticionamentoIntegracao::validarXssConclusao(null, $arrArquivos, $strDiretorio);
+        PeticionamentoIntegracao::validarNomesAnexosConclusao($arrArquivos);
         PeticionamentoIntegracao::validarTamanhoConclusao($arrArquivos, $strDiretorio);
     }
 

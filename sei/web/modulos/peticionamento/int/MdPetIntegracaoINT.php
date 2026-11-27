@@ -34,21 +34,31 @@ class MdPetIntegracaoINT extends InfraINT {
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdPetIntegracaoDTO, 'IdMdPetIntegracao', 'Nome');
     }
 
-    public static function montarXMLBuscarOperacaoWSDL($enderecoWSDL, $versao){
+    /**
+     * Operações do serviço, pelo WSDL no SOAP ou pelo documento OpenAPI no REST, para a tela de cadastro da integração.
+     *
+     * @param string|null $enderecoWSDL endereço validado; o cliente usa o endereço enviado pela tela
+     * @param mixed $versao versão SOAP
+     * @param string|null $strTipo tipo de integração: S, SOAP, ou R, REST
+     * @return string
+     */
+    public static function montarXMLBuscarOperacaoWSDL($enderecoWSDL, $versao, $strTipo = 'S'){
         $xml = "";
         $xml .= "<operacoes>\n";
+        $objDescoberta = MdPetIntegFabricaRN::criarDescoberta($strTipo, $_POST['endereco_wsdl'], $versao);
 
         try{
 
-            if (!filter_var($enderecoWSDL, FILTER_VALIDATE_URL) || !InfraUtil::isBolUrlValida( $enderecoWSDL, FILTER_VALIDATE_URL )) {
+            $bolRest = $strTipo === MdPetIntegFabricaRN::TIPO_REST;
+            // No REST, o isBolUrlValida fica de fora: ele testa com HEAD, que há serviço que recusa, e a descoberta já baixa o documento com GET
+            if (!filter_var($enderecoWSDL, FILTER_VALIDATE_URL) || (!$bolRest && !InfraUtil::isBolUrlValida( $enderecoWSDL, FILTER_VALIDATE_URL ))) {
                 $xml .= "<success>false</success>\n";
-                $xml .= "<msg>O endereço WSDL não é uma URL válida.</msg>\n";
+                $xml .= $bolRest ? "<msg>O endereço do documento OpenAPI não é uma URL válida.</msg>\n" : "<msg>O endereço WSDL não é uma URL válida.</msg>\n";
                 $xml .= "</operacoes>\n";
                 return $xml;
             }
 
-            $objMdPetSoapClienteRN = new MdPetSoapClienteRN($_POST['endereco_wsdl'] , ['soap_version' => $versao]);
-            $operacaoArr = $objMdPetSoapClienteRN->getFunctions();
+            $operacaoArr = $objDescoberta->listarOperacoes();
 
             if(empty($operacaoArr)){
                 $xml .= "<success>false</success>\n";
@@ -60,51 +70,46 @@ class MdPetIntegracaoINT extends InfraINT {
             $xml .= "<success>true</success>\n";
             asort($operacaoArr);
             foreach ($operacaoArr as $key=>$operacao){
-                $xml .= "<operacao key='{$key}'>{$operacao}</operacao>\n";
+                $strOperacao = htmlspecialchars((string) $operacao, ENT_QUOTES, 'ISO-8859-1');
+                $xml .= "<operacao key='{$key}'>{$strOperacao}</operacao>\n";
+            }
+
+            $strSugestao = $objDescoberta->sugerirEnderecoExecucao((string) $_POST['endereco_wsdl']);
+            if ($strSugestao !== null) {
+                $xml .= '<sugestao>' . htmlspecialchars($strSugestao, ENT_QUOTES, 'ISO-8859-1') . "</sugestao>\n";
             }
 
         }catch(Exception $e){
             $xml = "<operacoes>\n";
             $xml .= "<success>false</success>\n";
-            $xml .= "<msg>Erro na conexão SOAP: {$e->getMessage()}</msg>\n";
+            $xml .= '<msg>' . $objDescoberta->descreverFalha($e) . "</msg>\n";
         }
 
         $xml .= '</operacoes>';
         return $xml;
     }
 
-    public static function montarXMLBuscarOperacaoWSDLParametro($enderecoWSDL, $operacaoWSDL, $tipo_parametro, $versao){
+    /**
+     * Campos de entrada ("e") ou de saída da operação, no formato de caminho que o mapeamento grava. No REST, cada campo
+     * de entrada leva também o local dele na chamada.
+     *
+     * @param string|null $enderecoWSDL endereço do WSDL ou do documento OpenAPI
+     * @param string|null $operacaoWSDL
+     * @param string|null $tipo_parametro
+     * @param mixed $versao versão SOAP
+     * @param string|null $strTipo tipo de integração: S, SOAP, ou R, REST
+     * @return string
+     */
+    public static function montarXMLBuscarOperacaoWSDLParametro($enderecoWSDL, $operacaoWSDL, $tipo_parametro, $versao, $strTipo = 'S'){
 
         $xml = "<parametros>\n";
-        $objMdPetSoapClienteRN = new MdPetSoapClienteRN($enderecoWSDL , ['soap_version' => $versao]);
-        $arrParametro = [];
-
-        if ($tipo_parametro=='e'){
-            self::trataDadosEntrada( $objMdPetSoapClienteRN->getParametrosEntradaSaidaWsdl() , $operacaoWSDL , $arrParametro);
-        }else{
-            self::trataDadosSaida( $objMdPetSoapClienteRN->getParametrosEntradaSaidaWsdl() , $operacaoWSDL, $arrParametro);
-        }
-        ksort($arrParametro);
+        $arrCampos = MdPetIntegFabricaRN::criarDescoberta($strTipo, $enderecoWSDL, $versao)->listarCampos((string) $operacaoWSDL, (string) $tipo_parametro);
         $xml .= "<success>true</success>\n";
 
-        foreach ($arrParametro as $key=>$arrayParam) {
-
-            if(is_array($arrayParam)) {
-                ksort($arrayParam);
-                foreach ($arrayParam as $chave => $item) {
-                    if(is_array($item)){
-                        foreach($item as $chaveItem => $value) {
-                            $chaveFormatada = $key . " - " . $chave . " - " . $chaveItem;
-                            $xml .= "<parametro key='{$chaveFormatada}'>{$chaveFormatada}</parametro>\n";
-                        }
-                    } else {
-                        $chaveFormatada = $key . " - " . $item;
-                        $xml .= "<parametro key='{$chaveFormatada}'>{$chaveFormatada}</parametro>\n";
-                    }
-                }
-            } else {
-                $xml .= "<parametro key='{$arrayParam}'>{$arrayParam}</parametro>\n";
-            }
+        foreach ($arrCampos as $arrCampo) {
+            $strCampo = htmlspecialchars($arrCampo['campo'], ENT_QUOTES, 'ISO-8859-1');
+            $strLocal = $arrCampo['local'] === null ? '' : " local='{$arrCampo['local']}'";
+            $xml .= "<parametro key='{$strCampo}'{$strLocal}>{$strCampo}</parametro>\n";
         }
 
         $xml .= '</parametros>';
@@ -189,6 +194,95 @@ class MdPetIntegracaoINT extends InfraINT {
             }
         }
         return $saida;
+    }
+
+    /**
+     * Completa a integração com os dados do Tipo de Integração REST enviados pela tela: o endereço do documento OpenAPI vai
+     * para a coluna própria, o método e o caminho saem da operação escolhida, e as linhas da grade de headers e o token do
+     * corpo vão para a RN pelo DTO. Nos demais tipos, nada muda.
+     *
+     * @param MdPetIntegracaoDTO $objMdPetIntegracaoDTO
+     * @param array<string, mixed> $arrPost
+     * @return void
+     */
+    public static function preencherTipoIntegracao(MdPetIntegracaoDTO $objMdPetIntegracaoDTO, array $arrPost): void
+    {
+        if (($arrPost['rdStaTpClienteWs'] ?? null) !== MdPetIntegFabricaRN::TIPO_REST) {
+            return;
+        }
+
+        $strOperacao = trim((string) ($arrPost['selOperacaoWsdl'] ?? ''));
+        [$strMetodo, $strCaminho] = str_contains($strOperacao, ' ') ? MdPetIntegOpenApiRN::separarOperacao($strOperacao) : [null, null];
+
+        $objMdPetIntegracaoDTO->setStrTpClienteWs(MdPetIntegFabricaRN::TIPO_REST);
+        $objMdPetIntegracaoDTO->setDblNuVersao(null);
+        $objMdPetIntegracaoDTO->setStrEnderecoWsdl(null);
+        $objMdPetIntegracaoDTO->setStrEnderecoOpenapi(trim((string) ($arrPost['txtEnderecoWsdl'] ?? '')));
+        $objMdPetIntegracaoDTO->setStrEnderecoExecucao(trim((string) ($arrPost['txtEnderecoExecucao'] ?? '')));
+        $objMdPetIntegracaoDTO->setStrMetodoHttp($strMetodo);
+        $objMdPetIntegracaoDTO->setStrCaminhoOperacao($strCaminho);
+        $strMetodoAutenticacao = $arrPost['selMetodoAutenticacao'] ?? null;
+        $objMdPetIntegracaoDTO->setStrStaMetodoAutenticacao(in_array($strMetodoAutenticacao, [MdPetIntegFabricaRN::AUTENTICACAO_SEM, MdPetIntegFabricaRN::AUTENTICACAO_HEADER, MdPetIntegFabricaRN::AUTENTICACAO_CORPO], true) ? $strMetodoAutenticacao : null);
+        $objMdPetIntegracaoDTO->setArrLinhasHeaders(PaginaSEI::getInstance()->getArrItensTabelaDinamica((string) ($arrPost['hdnTbHeaders'] ?? '')));
+        $objMdPetIntegracaoDTO->setStrCampoTokenAutenticacao(trim((string) ($arrPost['nomeFuncionalDadosEntrada'][MdPetIntegFabricaRN::ENTRADA_TOKEN] ?? '')));
+        $objMdPetIntegracaoDTO->setStrTokenAutenticacao(trim((string) ($arrPost['txtTokenAutenticacao'] ?? '')));
+    }
+
+    /**
+     * Opções do Método de Autenticação do REST, no padrão do Utilidades; sem método gravado, fica "Sem Autenticação".
+     *
+     * @param string|null $strSelecionado método gravado
+     * @return string
+     */
+    public static function montarSelectMetodoAutenticacao(?string $strSelecionado): string
+    {
+        $arrMetodos = [
+            MdPetIntegFabricaRN::AUTENTICACAO_SEM => 'Sem Autenticação',
+            MdPetIntegFabricaRN::AUTENTICACAO_HEADER => 'Header Authentication by Token',
+            MdPetIntegFabricaRN::AUTENTICACAO_CORPO => 'Body Authentication by Token',
+        ];
+
+        return InfraINT::montarSelectArray(null, null, $strSelecionado ?? MdPetIntegFabricaRN::AUTENTICACAO_SEM, $arrMetodos);
+    }
+
+    /**
+     * Headers fixos gravados, para a grade da tela: id, atributo, conteúdo exibido, dado restrito e conteúdo enviado. O
+     * conteúdo do dado restrito não volta ao navegador e vai como máscara nas duas colunas (ADR-PET-012).
+     *
+     * @param array<MdPetIntegParametroDTO> $arrObjMdPetIntegParametroDTO mapeamento da integração
+     * @return string
+     */
+    public static function montarItensHeaders(array $arrObjMdPetIntegParametroDTO): string
+    {
+        $arrItens = [];
+        foreach ($arrObjMdPetIntegParametroDTO as $objMdPetIntegParametroDTO) {
+            if ($objMdPetIntegParametroDTO->getStrTpParametro() !== MdPetIntegFabricaRN::PARAMETRO_HEADER) {
+                continue;
+            }
+
+            $bolRestrito = $objMdPetIntegParametroDTO->getStrSinDadoConfidencial() === 'S';
+            $strConteudo = $bolRestrito ? MdPetIntegFabricaRN::MASCARA_DADO_RESTRITO : (string) $objMdPetIntegParametroDTO->getStrValorPadrao();
+            $arrItens[] = [$objMdPetIntegParametroDTO->getNumIdMdPetIntegParametro(), $objMdPetIntegParametroDTO->getStrNome(), $strConteudo, $bolRestrito ? 'Sim' : 'Não', $strConteudo];
+        }
+
+        return PaginaSEI::getInstance()->gerarItensTabelaDinamica($arrItens);
+    }
+
+    /**
+     * Ofuscação do dado restrito, a mesma do Utilidades (MdUtlAdmIntegracaoINT::gerenciaDadosRestritos): base64 e inversão
+     * da string, duas vezes. Não é criptografia (ADR-PET-012).
+     */
+    public static function ofuscarDadoRestrito(string $strValor): string
+    {
+        return base64_encode(strrev(base64_encode(strrev($strValor))));
+    }
+
+    /**
+     * Desfaz a ofuscação de ofuscarDadoRestrito, só para montar a chamada ao serviço.
+     */
+    public static function desfazerOfuscacao(string $strValor): string
+    {
+        return strrev(base64_decode(strrev(base64_decode($strValor))));
     }
 
     public static function acessarDadoPorChave($array, $chave) {

@@ -18,6 +18,7 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
     var RESTRITO = '<?= ProtocoloRN::$NA_RESTRITO ?>';
     var TAMANHO_MAXIMO = '<?= $tamanhoMaximo ?>';
     var objMdPetLimitesDoSei = <?= PeticionamentoIntegracao::montarLimitesDeTamanhoParaTela() ?>;
+    const objMdPetLimiteAnexos = <?= MdPetTamanhoArquivoRN::montarLimiteAnexosExternosParaTela() ?>;
     var EXIBIR_HIPOTESE_LEGAL = '<?= $exibirHipoteseLegal ?>';
     var arrExtensoesPermitidas = [<?= $extensoesPermitidas ?>];
     var objAjaxSelectTipoDocumento = null;
@@ -657,6 +658,8 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
         objUploadArquivo = new infraUpload('frmDocumentoAto', '<?php echo $strLinkUploadArquivo ?>');
         mdPetVerificarTamanhoNoUpload(objUploadArquivo, objMdPetLimitesDoSei, validarTamanhoMaximoDoArquivo);
 
+        mdPetLimitarAnexosNoUpload(objUploadArquivo, objMdPetLimiteAnexos, () => objTabelaDinamicaDocumento);
+
         objUploadArquivo.finalizou = function(arr) {
             if (!mdPetValidarRetornoUpload(arr)) {
                 return false;
@@ -1014,6 +1017,9 @@ $strLinkAjaxUsuarios = SessaoSEIExterna::getInstance()->assinarLink('controlador
     }
 
     function peticionar() {
+        if (!mdPetValidarQuantidadeAnexos(objMdPetLimiteAnexos, 0, objTabelaDinamicaDocumento)) {
+            return;
+        }
 
         var isVinculacao = document.getElementById('hdnIdVinculo').value == '' ? false : true;
         var isAlteracao = document.getElementById('hdnIsAlteracao').value == '1' || isVinculacao == true ? true : false;

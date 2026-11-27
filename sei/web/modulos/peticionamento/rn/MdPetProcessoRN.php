@@ -278,6 +278,7 @@ class MdPetProcessoRN extends InfraRN {
 		PeticionamentoIntegracao::validarXssEspecificacao( $arrParametros['txtEspecificacaoDocPrincipal'] ?? null, $objInfraException );
 
 		$strConteudo = $arrParametros['docPrincipalConteudoHTML'] ?? null;
+		$numAnexos = 0;
 		$arrArquivos = [];
 
 		foreach( [ 'hdnDocPrincipal', 'hdnDocEssencial', 'hdnDocComplementar' ] as $strCampo ){
@@ -287,6 +288,7 @@ class MdPetProcessoRN extends InfraRN {
 			}
 
 			foreach( PaginaSEI::getInstance()->getArrItensTabelaDinamica( $arrParametros[$strCampo] ) as $anexo ){
+				$numAnexos++;
 				PeticionamentoIntegracao::validarXssCampo( $anexo[0], 'Nome de arquivo enviado', $objInfraException );
 				PeticionamentoIntegracao::validarXssComplemento( $anexo[10] ?? null, $objInfraException );
 				$arrArquivos[$anexo[8]] = $anexo[0];
@@ -294,6 +296,11 @@ class MdPetProcessoRN extends InfraRN {
 		}
 
 		$objInfraException->lancarValidacoes();
+		MdPetTamanhoArquivoRN::validarQuantidadeAnexosExternos(
+			$numAnexos,
+			new InfraParametro(BancoSEI::getInstance()),
+			LogSEI::getInstance()
+		);
 
 		// documento principal do tipo formulario chega como array de campos, que o core nao submete ao filtro XSS
 		if( is_array( $strConteudo ) ){
@@ -301,6 +308,7 @@ class MdPetProcessoRN extends InfraRN {
 		}
 
 		PeticionamentoIntegracao::validarXssConclusao( is_string( $strConteudo ) ? $strConteudo : null, $arrArquivos, $strDiretorio );
+		PeticionamentoIntegracao::validarNomesAnexosConclusao( $arrArquivos );
 		PeticionamentoIntegracao::validarTamanhoConclusao( $arrArquivos, $strDiretorio );
 
 	}

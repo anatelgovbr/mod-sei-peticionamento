@@ -1116,6 +1116,10 @@ class MdPetVincRepresentantRN extends InfraRN
 	                    }
 
 	                } catch (Exception $e) {
+		                // No agendamento, a falha desfaz a suspensão inteira do CNPJ.
+		                if ($agendamento) {
+			                throw $e;
+		                }
 		                PaginaSEI::getInstance()->processarExcecao($e, true);
 	                }
 
@@ -1125,6 +1129,11 @@ class MdPetVincRepresentantRN extends InfraRN
 
                     // CRIA DOCUMENTO DE SUSPENSO
                     $objDocumento = $this->_encaminhamentoParaCriarDocumento($params, $autoRepresentacao, $arrObjMdPetVincRepresentantProcuradores, $objResponsavelLegal, $agendamento);
+
+                    if (!$objDocumento) {
+                        throw new InfraException('O documento de suspensão do vínculo ' . $idVinculo . ' não foi gerado.');
+                    }
+
                     $arrRerepentVincSuspensos['documentoSuspensao'] = $objDocumento->getDocumentoFormatado();
 
                     //BUSCAR PROCEDIMENTO DA PROCURACAO
@@ -1149,8 +1158,10 @@ class MdPetVincRepresentantRN extends InfraRN
                     $paramsParaEmail['documento_suspensao_procuracao'] = $paramsParaEmail['dados']['hdnNumeroSei'];
 
                     //E-MAIL  DIFERENTE PARA RESPONSAVEL LEGAL / PROCURADOR / AUTOREPRESENTACAO
+                    $arrEmails = [];
+
                     if ($objResponsavelLegal) {
-                        (new MdPetIntEmailNotificacaoRN())->enviarEmailVincSuspensao($paramsParaEmail);
+                        $arrEmails[] = static fn() => (new MdPetIntEmailNotificacaoRN())->enviarEmailVincSuspensao($paramsParaEmail);
                     }
 
                     if($autoRepresentacao){
@@ -1160,14 +1171,23 @@ class MdPetVincRepresentantRN extends InfraRN
                         $paramsAuto['objUsuarioAutorepresentacao'] = $objUsuarioAutorepresentacao;
                         $paramsAuto['autoRepresentacao'] = $autoRepresentacao;
                         $paramsAuto['agendamento'] = $agendamento;
-                        (new MdPetIntEmailNotificacaoRN())->enviarEmailSuspensaoAutorepresentacao($paramsAuto);
+                        $arrEmails[] = static fn() => (new MdPetIntEmailNotificacaoRN())->enviarEmailSuspensaoAutorepresentacao($paramsAuto);
                     }
 
                     foreach($arrObjMdPetVincRepresentantProcuradores as $objMdPetVincRepresentantProcuradores){
                         $paramsParaEmail['dados']['hdnIdVinculoRepresent'] = $objMdPetVincRepresentantProcuradores->getNumIdMdPetVinculoRepresent();
                         $paramsParaEmail['dados']['procuracao_tipo']       = $objMdPetVincRepresentantProcuradores->getStrNomeTipoVinculacao();
                         $paramsParaEmail['dados']['procuracao_doc_num']    = $this->_buscarProcuracaoDocNum($objMdPetVincRepresentantProcuradores->getNumIdMdPetVinculoRepresent());
-                        (new MdPetIntEmailNotificacaoRN())->enviarEmailProcuracaoSuspRest($paramsParaEmail);
+                        $arrEmails[] = static fn() => (new MdPetIntEmailNotificacaoRN())->enviarEmailProcuracaoSuspRest($paramsParaEmail);
+                    }
+
+                    // No agendamento, os e-mails saem só depois do commit da suspensão do CNPJ.
+                    if ($agendamento) {
+                        $arrRerepentVincSuspensos['emails'] = $arrEmails;
+                    } else {
+                        foreach ($arrEmails as $fnEnviarEmail) {
+                            $fnEnviarEmail();
+                        }
                     }
 
                     //VINCULAR DOCUMENTO DE JUSTIFICATIVA AO VINCULO CASO NAO SEJA DE AGENDAMENTO
@@ -1349,7 +1369,7 @@ class MdPetVincRepresentantRN extends InfraRN
                   $objResponsavelLegal,
                   $arrObjMdPetVincRepresentantProcuradores,
                   $agendamento,
-                  $params['hdnOperacao'],
+                  $operacao,
                   $params['hdnNumeroSei']
                 );
             }

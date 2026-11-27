@@ -107,7 +107,7 @@ try {
             break;
 
         case 'md_pet_integracao_listar':
-            $strTitulo = 'Integrações';
+            $strTitulo = 'Mapeamento das Integrações';
             break;
 
         default:

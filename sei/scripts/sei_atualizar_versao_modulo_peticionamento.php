@@ -1,14 +1,14 @@
-<?
+<?php
 require_once dirname(__FILE__) . '/../web/SEI.php';
 
 class MdPetAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '4.6.0';
+    private $versaoAtualDesteModulo = '5.0.0';
     private $nomeDesteModulo = 'MÓDULO DE PETICIONAMENTO E INTIMAÇÃO ELETRÔNICOS';
     private $nomeParametroModulo = 'VERSAO_MODULO_PETICIONAMENTO';
-    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0', '4.5.0', '4.6.0');
+    private $historicoVersoes = array('0.0.1', '0.0.2', '1.0.3', '1.0.4', '1.1.0', '2.0.0', '2.0.1', '2.0.2', '2.0.3', '2.0.4', '2.0.5', '3.0.0', '3.0.1', '3.1.0', '3.2.0', '3.3.0', '3.4.0', '3.4.1', '3.4.2', '3.4.3', '4.0.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1.0', '4.2.0', '4.3.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0');
     public static $MD_PET_ID_SERIE_RECIBO = 'MODULO_PETICIONAMENTO_ID_SERIE_RECIBO_PETICIONAMENTO';
     public static $MD_PET_ID_SERIE_FORMULARIO = 'MODULO_PETICIONAMENTO_ID_SERIE_VINC_FORMULARIO';
     public static $MD_PET_ID_SERIE_PROCURACAOE = 'MODULO_PETICIONAMENTO_ID_SERIE_PROCURACAO_ELETRONICA_ESPECIAL';
@@ -92,7 +92,7 @@ class MdPetAtualizadorSeiRN extends InfraRN
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '2.45.1';
+            $numVersaoInfraRequerida = '3.1.8';
 	        if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
@@ -173,6 +173,8 @@ class MdPetAtualizadorSeiRN extends InfraRN
                     $this->instalarv450();
                 case '4.5.0':
                     $this->instalarv460();
+                case '4.6.0':
+                    $this->instalarv500();
                     break;
 
                 default:
@@ -3239,6 +3241,268 @@ ATENÇÃO: As informações contidas neste e-mail, incluindo seus anexos, podem 
             $objInfraMetaBD->adicionarColuna('md_pet_vinculo', 'id_procedimento', $objInfraMetaBD->tipoNumeroGrande(), 'NULL');
             BancoSEI::getInstance()->executarSql('UPDATE md_pet_vinculo SET id_procedimento = id_procedimento_old');
             $objInfraMetaBD->excluirColuna('md_pet_vinculo', 'id_procedimento_old');
+        }
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv500()
+    {
+        $nmVersao = '5.0.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+        $objInfraMetaBD->setBolValidarIdentificador(true);
+
+        $this->logar('>>>> CRIANDO TABELA "md_pet_adm_whitelist" ');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_adm_whitelist ( 
+                id_md_pet_adm_whitelist ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
+                sta_finalidade ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                sta_tipo_objeto ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                id_objeto  ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_adm_whitelist', 'pk_md_pet_adm_whitelist', array('id_md_pet_adm_whitelist'));
+
+        $bolExisteWhitelistAntiga = count($objInfraMetaBD->obterTabelas('md_pet_adm_pro_repres_whit')) == 1;
+
+        $numInicialSequencia = 1;
+        if ($bolExisteWhitelistAntiga) {
+            $arrMaxId = $objInfraMetaBD->obterMaxIdTabela('md_pet_adm_pro_repres_whit');
+            if ($arrMaxId[0]['maximo'] === 'erro') {
+                throw new InfraException('Erro obtendo o maior identificador da tabela md_pet_adm_pro_repres_whit.');
+            }
+            $numInicialSequencia = (int) $arrMaxId[0]['maximo'] + 1;
+        }
+
+        $this->logar('----- CRIANDO A SEQUENCE "seq_md_pet_adm_whitelist"');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_adm_whitelist', $numInicialSequencia, true);
+
+        if ($bolExisteWhitelistAntiga) {
+            $this->logar('>>>> MIGRANDO OS PROCESSOS DA TABELA "md_pet_adm_pro_repres_whit" PARA A TABELA "md_pet_adm_whitelist"');
+            // 'V' = MdPetWhitelistRN::FINALIDADE_PROCESSO_VINCULACAO e 'P' = MdPetWhitelistRN::TIPO_PROCESSO
+            BancoSEI::getInstance()->executarSql('INSERT INTO md_pet_adm_whitelist (id_md_pet_adm_whitelist, sta_finalidade, sta_tipo_objeto, id_objeto)
+                SELECT MIN(id_md_pet_adm_pro_repres_whit), \'V\', \'P\', id_procedimento
+                FROM md_pet_adm_pro_repres_whit
+                GROUP BY id_procedimento'
+            );
+
+            $arrTotalMigrado = BancoSEI::getInstance()->consultarSql('SELECT COUNT(*) AS total FROM md_pet_adm_whitelist');
+            $this->logar('----- ' . $arrTotalMigrado[0]['total'] . ' PROCESSO(S) MIGRADO(S)');
+        }
+
+        $this->logar('>>>> CRIANDO INDICE UNICO CONTEXTUAL DA WHITELIST');
+        $objInfraMetaBD->criarIndice(
+            'md_pet_adm_whitelist',
+            'i01_md_pet_adm_whitelist',
+            ['sta_finalidade', 'sta_tipo_objeto', 'id_objeto'],
+            true
+        );
+
+        $this->logar('>>>> REMOVENDO A SEQUENCE "seq_md_pet_adm_pro_repres_whit"');
+        if (BancoSEI::getInstance() instanceof InfraOracle) {
+            $sql = 'SELECT lower(sequence_name) as nome FROM all_sequences
+                    WHERE lower(sequence_owner) = \'' . strtolower(BancoSEI::getInstance()->getUsuario()) . '\'
+                    AND lower(sequence_name) = \'seq_md_pet_adm_pro_repres_whit\'';
+
+            if (!empty(BancoSEI::getInstance()->consultarSql($sql))) {
+                BancoSEI::getInstance()->executarSql('DROP SEQUENCE seq_md_pet_adm_pro_repres_whit');
+            }
+        } else if (BancoSEI::getInstance() instanceof InfraPostgreSql) {
+            $sql = 'SELECT sequence_name FROM information_schema.sequences WHERE sequence_name = \'seq_md_pet_adm_pro_repres_whit\'';
+
+            if (!empty(BancoSEI::getInstance()->consultarSql($sql))) {
+                BancoSEI::getInstance()->executarSql('DROP SEQUENCE seq_md_pet_adm_pro_repres_whit');
+            }
+        } else if (count($objInfraMetaBD->obterTabelas('seq_md_pet_adm_pro_repres_whit')) == 1) {
+            BancoSEI::getInstance()->executarSql('DROP TABLE seq_md_pet_adm_pro_repres_whit');
+        }
+
+        if ($bolExisteWhitelistAntiga) {
+            $this->logar('>>>> REMOVENDO A TABELA "md_pet_adm_pro_repres_whit"');
+            BancoSEI::getInstance()->executarSql('DROP TABLE md_pet_adm_pro_repres_whit');
+        }
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_tp_processo');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_tp_processo (
+                id_md_pet_pi_tp_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_tipo_procedimento ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+                orientacoes ' . $objInfraMetaBD->tipoTextoGrande() . ' NOT NULL,
+                orientacoes_pos_pet ' . $objInfraMetaBD->tipoTextoGrande() . ' NULL,
+                sta_indicacao_interessado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_tp_processo', 'pk_md_pet_pi_tp_processo', ['id_md_pet_pi_tp_processo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_tp_proc_tproc', 'md_pet_pi_tp_processo', ['id_tipo_procedimento'], 'tipo_procedimento', ['id_tipo_procedimento']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_tp_proc_conjunto', 'md_pet_pi_tp_processo', ['id_conjunto_estilos'], 'conjunto_estilos', ['id_conjunto_estilos']);
+
+        $this->logar('----- CRIANDO A SEQUENCE seq_md_pet_pi_tp_processo');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_pi_tp_processo', 1);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_doc_princ');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_doc_princ (
+                id_md_pet_pi_tp_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                sta_aplicabilidade ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                id_serie ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+                id_protocolo_modelo ' . $objInfraMetaBD->tipoNumeroGrande() . ' NULL,
+                sta_tipo_nivel_acesso ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                sta_nivel_acesso ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+                id_hipotese_legal ' . $objInfraMetaBD->tipoNumero() . ' NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_doc_princ', 'pk_md_pet_pi_doc_princ', ['id_md_pet_pi_tp_processo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_princ_proc', 'md_pet_pi_doc_princ', ['id_md_pet_pi_tp_processo'], 'md_pet_pi_tp_processo', ['id_md_pet_pi_tp_processo'], false);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_princ_serie', 'md_pet_pi_doc_princ', ['id_serie'], 'serie', ['id_serie']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_princ_prot', 'md_pet_pi_doc_princ', ['id_protocolo_modelo'], 'protocolo', ['id_protocolo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_princ_hip', 'md_pet_pi_doc_princ', ['id_hipotese_legal'], 'hipotese_legal', ['id_hipotese_legal']);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_anexo_obrig');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_anexo_obrig (
+                id_md_pet_pi_anexo_obrig ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_md_pet_pi_tp_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_serie ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                sta_tipo_nivel_acesso ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                sta_nivel_acesso ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NULL,
+                id_hipotese_legal ' . $objInfraMetaBD->tipoNumero() . ' NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_anexo_obrig', 'pk_md_pet_pi_anexo_obrig', ['id_md_pet_pi_anexo_obrig']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_anexo_obr_proc', 'md_pet_pi_anexo_obrig', ['id_md_pet_pi_tp_processo'], 'md_pet_pi_tp_processo', ['id_md_pet_pi_tp_processo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_anexo_obr_serie', 'md_pet_pi_anexo_obrig', ['id_serie'], 'serie', ['id_serie']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_anexo_obr_hip', 'md_pet_pi_anexo_obrig', ['id_hipotese_legal'], 'hipotese_legal', ['id_hipotese_legal']);
+
+        $this->logar('----- CRIANDO A SEQUENCE seq_md_pet_pi_anexo_obrig');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_pi_anexo_obrig', 1);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_doc_auto');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_doc_auto (
+                id_md_pet_pi_doc_auto ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_md_pet_pi_tp_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_serie ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_protocolo_modelo ' . $objInfraMetaBD->tipoNumeroGrande() . ' NULL,
+                sta_nivel_acesso ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                id_hipotese_legal ' . $objInfraMetaBD->tipoNumero() . ' NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_doc_auto', 'pk_md_pet_pi_doc_auto', ['id_md_pet_pi_doc_auto']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_auto_proc', 'md_pet_pi_doc_auto', ['id_md_pet_pi_tp_processo'], 'md_pet_pi_tp_processo', ['id_md_pet_pi_tp_processo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_auto_serie', 'md_pet_pi_doc_auto', ['id_serie'], 'serie', ['id_serie']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_auto_prot', 'md_pet_pi_doc_auto', ['id_protocolo_modelo'], 'protocolo', ['id_protocolo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_doc_auto_hip', 'md_pet_pi_doc_auto', ['id_hipotese_legal'], 'hipotese_legal', ['id_hipotese_legal']);
+
+        $this->logar('----- CRIANDO A SEQUENCE seq_md_pet_pi_doc_auto');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_pi_doc_auto', 1);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_rel_orgao');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_rel_orgao (
+                id_md_pet_pi_tp_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_orgao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_rel_orgao', 'pk_md_pet_pi_rel_orgao', ['id_md_pet_pi_tp_processo', 'id_orgao']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_orgao_proc', 'md_pet_pi_rel_orgao', ['id_md_pet_pi_tp_processo'], 'md_pet_pi_tp_processo', ['id_md_pet_pi_tp_processo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_orgao_org', 'md_pet_pi_rel_orgao', ['id_orgao'], 'orgao', ['id_orgao']);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_rel_unidade');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_rel_unidade (
+                id_md_pet_pi_tp_processo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_rel_unidade', 'pk_md_pet_pi_rel_unidade', ['id_md_pet_pi_tp_processo', 'id_unidade']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_unid_proc', 'md_pet_pi_rel_unidade', ['id_md_pet_pi_tp_processo'], 'md_pet_pi_tp_processo', ['id_md_pet_pi_tp_processo']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_unid_uni', 'md_pet_pi_rel_unidade', ['id_unidade'], 'unidade', ['id_unidade']);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_orientacao');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_orientacao (
+                id_md_pet_pi_orientacao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_conjunto_estilos ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+                orientacoes_gerais ' . $objInfraMetaBD->tipoTextoGrande() . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_orientacao', 'pk_md_pet_pi_orientacao', ['id_md_pet_pi_orientacao']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_orient_conjunto', 'md_pet_pi_orientacao', ['id_conjunto_estilos'], 'conjunto_estilos', ['id_conjunto_estilos']);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_peticao');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_peticao (
+                id_md_pet_pi_peticao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_procedimento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
+                id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                sta_indicacao_interessado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                dth_peticionamento ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_peticao', 'pk_md_pet_pi_peticao', ['id_md_pet_pi_peticao']);
+        $objInfraMetaBD->criarIndice('md_pet_pi_peticao', 'i01_md_pet_pi_peticao_proc', ['id_procedimento'], true);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_peticao_prot', 'md_pet_pi_peticao', ['id_procedimento'], 'protocolo', ['id_protocolo'], false);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_peticao_usu', 'md_pet_pi_peticao', ['id_usuario'], 'usuario', ['id_usuario']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_peticao_uni', 'md_pet_pi_peticao', ['id_unidade'], 'unidade', ['id_unidade']);
+
+        $this->logar('----- CRIANDO A SEQUENCE seq_md_pet_pi_peticao');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_pet_pi_peticao', 1);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_rel_peticao_doc');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_rel_peticao_doc (
+                id_md_pet_pi_peticao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
+                sta_papel ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_rel_peticao_doc', 'pk_md_pet_pi_rel_peticao_doc', ['id_md_pet_pi_peticao', 'id_documento']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_pet_doc_pet', 'md_pet_pi_rel_peticao_doc', ['id_md_pet_pi_peticao'], 'md_pet_pi_peticao', ['id_md_pet_pi_peticao']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_pet_doc_doc', 'md_pet_pi_rel_peticao_doc', ['id_documento'], 'documento', ['id_documento']);
+
+        $this->logar('>>>> CRIANDO A TABELA md_pet_pi_rel_peticao_usu');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_pet_pi_rel_peticao_usu (
+                id_md_pet_pi_peticao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL
+            )'
+        );
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_pet_pi_rel_peticao_usu', 'pk_md_pet_pi_rel_peticao_usu', ['id_md_pet_pi_peticao', 'id_usuario']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_pet_usu_pet', 'md_pet_pi_rel_peticao_usu', ['id_md_pet_pi_peticao'], 'md_pet_pi_peticao', ['id_md_pet_pi_peticao']);
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk_md_pet_pi_rel_pet_usu_usu', 'md_pet_pi_rel_peticao_usu', ['id_usuario'], 'usuario', ['id_usuario']);
+
+        $this->logar('EXCLUINDO COLUNA id_tipo_formulario DA TABELA md_pet_tipo_processo');
+        BancoSEI::getInstance()->executarSql('ALTER TABLE md_pet_tipo_processo DROP COLUMN id_tipo_formulario');
+
+        $this->logar('>>>> CRIANDO PARÂMETRO ' . MdPetIntimacaoRN::PARAMETRO_OCULTA_ACESSO_INTEGRAL . ' COM O VALOR ' . MdPetIntimacaoRN::VALOR_EXIBE_ACESSO_INTEGRAL);
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        if (!$objInfraParametro->isSetValor(MdPetIntimacaoRN::PARAMETRO_OCULTA_ACESSO_INTEGRAL)) {
+            $objInfraParametro->setValor(MdPetIntimacaoRN::PARAMETRO_OCULTA_ACESSO_INTEGRAL, MdPetIntimacaoRN::VALOR_EXIBE_ACESSO_INTEGRAL);
+        }
+
+        $this->logar('>>>> INSERINDO AS COLUNAS DA INTEGRAÇÃO REST NA TABELA "md_pet_adm_integracao"');
+        $objInfraMetaBD->adicionarColuna('md_pet_adm_integracao', 'endereco_openapi', $objInfraMetaBD->tipoTextoVariavel(250), 'NULL');
+        $objInfraMetaBD->adicionarColuna('md_pet_adm_integracao', 'endereco_execucao', $objInfraMetaBD->tipoTextoVariavel(250), 'NULL');
+        $objInfraMetaBD->adicionarColuna('md_pet_adm_integracao', 'metodo_http', $objInfraMetaBD->tipoTextoVariavel(10), 'NULL');
+        $objInfraMetaBD->adicionarColuna('md_pet_adm_integracao', 'caminho_operacao', $objInfraMetaBD->tipoTextoVariavel(250), 'NULL');
+
+        $this->logar('>>>> INSERINDO A COLUNA "sta_local_parametro" NA TABELA "md_pet_adm_integ_param"');
+        $objInfraMetaBD->adicionarColuna('md_pet_adm_integ_param', 'sta_local_parametro', $objInfraMetaBD->tipoTextoFixo(1), 'NULL');
+
+        $this->logar('>>>> INSERINDO A AUTENTICAÇÃO DA INTEGRAÇÃO REST NAS TABELAS "md_pet_adm_integracao" E "md_pet_adm_integ_param"');
+        $objInfraMetaBD->adicionarColuna('md_pet_adm_integracao', 'sta_metodo_autenticacao', $objInfraMetaBD->tipoTextoFixo(1), 'NULL');
+        $objInfraMetaBD->adicionarColuna('md_pet_adm_integ_param', 'sin_dado_confidencial', $objInfraMetaBD->tipoTextoFixo(1), 'NULL');
+        $objInfraMetaBD->alterarColuna('md_pet_adm_integ_param', 'valor_padrao', $objInfraMetaBD->tipoTextoVariavel(200), 'null');
+
+        if (!$objInfraParametro->isSetValor(MdPetTamanhoArquivoRN::PARAMETRO_LIMITE_ANEXOS_EXTERNOS)) {
+            $this->logar('>>>> CRIANDO PARÂMETRO ' . MdPetTamanhoArquivoRN::PARAMETRO_LIMITE_ANEXOS_EXTERNOS . ' COM O VALOR ' . MdPetTamanhoArquivoRN::LIMITE_PADRAO_ANEXOS_EXTERNOS);
+            $objInfraParametro->setValor(MdPetTamanhoArquivoRN::PARAMETRO_LIMITE_ANEXOS_EXTERNOS, MdPetTamanhoArquivoRN::LIMITE_PADRAO_ANEXOS_EXTERNOS);
         }
 
         $this->atualizarNumeroVersao($nmVersao);
